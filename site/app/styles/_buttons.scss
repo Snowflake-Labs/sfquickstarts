@@ -1,0 +1,295 @@
+
+
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+%btn,
+.btn {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 0 1rem 0;
+	padding: 12px 27px;
+	font-family: $texta-black;
+	font-size: 16px;
+	background: $mid-blue;
+	color: #fff;
+	line-height: 1;
+	text-transform:uppercase;
+	text-decoration:none;
+	border:none;
+	white-space: nowrap;
+	border-radius: 40px;
+	transition: all 200ms ease-in-out;
+
+	&:hover {
+		background: $mid-blue-hover;
+		color: #fff;
+	}
+
+	&:active,
+	&:focus {
+		background: $mid-blue-hover;
+		color: #fff;
+	}
+
+	&:visited {
+		color: #fff;
+	}
+
+	&.hollow {
+		background: none;
+		border: 1px solid $mid-blue;
+		color: $mid-blue;
+
+		&:hover,&:active, &:focus {
+			background: $mid-blue;
+			color: #fff;
+		}
+	}
+
+	&.btn-blue {
+		background: $blue;
+		color:#fff;
+
+		&:hover,&:active, &:focus {
+			background: $blue-hover;
+		}
+
+		&.hollow {
+			background: none;
+			border: 1px solid $blue;
+			color: $blue;
+
+			&:hover,&:active, &:focus {
+				background: $blue !important;
+				color: #fff !important;
+			}
+		}
+	}
+
+	&.btn-valencia-orange {
+		background: $valencia-orange;
+		color:#fff;
+
+		&:hover,&:active, &:focus {
+			background: $valencia-orange-hover;
+		}
+
+		&.hollow {
+			background: none;
+			border: 1px solid $valencia-orange;
+			color: $valencia-orange;
+
+			&:hover,&:active, &:focus {
+				background: $valencia-orange;
+				color: #fff;
+			}
+		}
+	}
+
+	&.btn-reverse {
+		background: transparent;
+		color: $blue;
+		border: 1px solid $blue;
+
+		&:hover,&:active, &:focus {
+			background: $blue-hover;
+			color: $white;
+			border: 1px solid $blue-hover;
+		}
+	}
+
+	&.btn-first-light {
+		background: $first-light;
+
+		&:hover,&:active, &:focus {
+			background: $first-light-hover;
+		}
+
+		&.hollow {
+			background: none;
+			border: 1px solid $first-light;
+			color: $first-light;
+
+			&:hover,&:active, &:focus {
+				background: $first-light;
+				color: #fff;
+			}
+		}
+	}
+
+	&.btn-star-blue {
+		background: $star-blue;
+
+		&:hover,&:active, &:focus {
+			background: $star-blue-hover;
+		}
+
+		&.hollow {
+			background: none;
+			border: 1px solid $star-blue;
+			color: $star-blue;
+
+			&:hover,&:active, &:focus {
+				background: $star-blue;
+				color: #fff;
+			}
+		}
+	}
+
+	&.btn-purple-moon {
+		background: $purple-moon;
+
+		&:hover,&:active, &:focus {
+			background: $purple-moon-hover;
+		}
+
+		&.hollow {
+			background: none;
+			border: 1px solid $purple-moon;
+			color: $purple-moon;
+
+			&:hover,&:active, &:focus {
+				background: $purple-moon;
+				color: #fff;
+			}
+		}
+	}
+
+  &.btn-windy-city {
+		background: $windy-city;
+
+		&:hover,&:active, &:focus {
+			background: $windy-city-hover;
+		}
+
+		&.hollow {
+			background: none;
+			border: 1px solid $windy-city;
+			color: $windy-city;
+
+			&:hover,&:active, &:focus {
+				background: $windy-city;
+				color: #fff;
+			}
+		}
+	}
+
+  &.btn-white {
+		background: #fff;
+    color: $blue;
+
+		&:hover,&:active, &:focus {
+			background: $midnight;
+      color: #fff;
+		}
+
+		&.black-text {
+			color: $midnight;
+
+			&:hover,&:active, &:focus {
+	      color: #fff;
+			}
+		}
+
+    &.hollow {
+			background: none;
+			border: 1px solid #fff !important;
+			color: #fff !important;
+
+			&:hover,&:active, &:focus {
+				background: #fff !important;
+				color: #000 !important;
+			}
+		}
+
+	}
+
+  &.btn-midnight {
+		background: $midnight;
+    color: #fff;
+
+		&:hover,&:active, &:focus {
+			background: #fff;
+      color: #000;
+		}
+
+    &.hollow {
+			background: none;
+			border: 1px solid #000;
+			color: #000;
+
+			&:hover,&:active, &:focus {
+				background: #000;
+				color: #fff;
+			}
+		}
+
+	}
+
+
+
+}
+
+.btn-small {
+	padding: 8px 20px;
+	font-size: 12px !important;
+	height: auto;
+}
+
+.btn-medium {
+	padding: 12px 27px;
+	font-size: 16px;
+}
+
+.btn-large {
+	padding: 12px 27px;
+	font-size: 18px;
+}
+
+
+.btn-icon {
+	i {
+		margin-right:3px;
+		font-size: 16px;
+		margin-left: -10px;
+	}
+}
+
+.btn-editor {
+    margin: 1rem 0;
+}
+
+.btn-ghost {
+	text-transform:uppercase;
+	color:#fff;
+	border:1px solid #fff;
+	padding: 12px 27px;
+	color: #F9F7F5;
+	text-decoration:none;
+	margin: 0;
+	white-space: nowrap;
+	background-color: transparent;
+	line-height:1;
+
+	&:hover {
+		background-color:#fff;
+		color:$blue !important;
+		border:1px solid #fff;
+	}
+	&:visited {
+		color:#fff;
+	}
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  margin: 0 auto;
+
+  a.btn {
+    margin: 0 10px;
+  }
+}

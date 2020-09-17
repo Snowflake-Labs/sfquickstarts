@@ -1,0 +1,371 @@
+
+
+@font-face {
+  font-family: 'snowflake';
+  src: url('../fonts/snowflake.eot?99183483');
+  src: url('../fonts/snowflake.eot?99183483#iefix') format('embedded-opentype'),
+       url('../fonts/snowflake.woff2?99183483') format('woff2'),
+       url('../fonts/snowflake.woff?99183483') format('woff'),
+       url('../fonts/snowflake.ttf?99183483') format('truetype'),
+       url('../fonts/snowflake.svg?99183483#snowflake') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'snowflake';
+    src: url('../../fonts/snowflake.svg?12857058#snowflake') format('svg');
+  }
+}
+*/
+
+ [class^="icon-"]:before, [class*=" icon-"]:before, .snowflake-icon {
+  font-family: "snowflake";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: auto;
+  height:auto;
+  margin: 0;
+  text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+%snowflake-icon {
+  font-family: "snowflake";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: auto;
+  height:auto;
+  margin: 0;
+  text-align: center;
+
+  font-variant: normal;
+  text-transform: none;
+
+  line-height: 1em;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-hamburger:before { content: '\e800'; } /* '' */
+.icon-globe:before { content: '\e801'; } /* '' */
+.icon-plus-circled:before { content: '\e802'; } /* '' */
+.icon-sapphire:before { content: '\e803'; } /* '' */
+.icon-emerald:before { content: '\e804'; } /* '' */
+.icon-vps:before { content: '\e805'; } /* '' */
+.icon-data-economy:before { content: '\e806'; } /* '' */
+.icon-arrow-down:before { content: '\e807'; } /* '' */
+.icon-data-visionary:before { content: '\e808'; } /* '' */
+.icon-crown:before { content: '\e809'; } /* '' */
+.icon-scale-1:before { content: '\e80a'; } /* '' */
+.icon-make-eachother-best:before { content: '\e80b'; } /* '' */
+.icon-adtech-advertising-marketing:before { content: '\e80c'; } /* '' */
+.icon-banking:before { content: '\e80d'; } /* '' */
+.icon-builder-developer:before { content: '\e80e'; } /* '' */
+.icon-consumer-packaged-goods:before { content: '\e80f'; } /* '' */
+.icon-digital-health:before { content: '\e810'; } /* '' */
+.icon-ecommerce:before { content: '\e811'; } /* '' */
+.icon-fintech:before { content: '\e812'; } /* '' */
+.icon-genomics:before { content: '\e813'; } /* '' */
+.icon-hardware-semiconductors:before { content: '\e814'; } /* '' */
+.icon-health-payers-insurance:before { content: '\e815'; } /* '' */
+.icon-insurance:before { content: '\e816'; } /* '' */
+.icon-investments:before { content: '\e817'; } /* '' */
+.icon-lending-mortgages:before { content: '\e818'; } /* '' */
+.icon-sports:before { content: '\e819'; } /* '' */
+.icon-telecommunications:before { content: '\e81a'; } /* '' */
+.icon-complete-own-launch:before { content: '\e81b'; } /* '' */
+.icon-contact-sales:before { content: '\e81c'; } /* '' */
+.icon-easy-consolidate:before { content: '\e81d'; } /* '' */
+.icon-single-source-truth:before { content: '\e81e'; } /* '' */
+.icon-simplify-database-admin:before { content: '\e81f'; } /* '' */
+.icon-secure-data-sharing:before { content: '\e820'; } /* '' */
+.icon-scale-expand-share:before { content: '\e821'; } /* '' */
+.icon-retail:before { content: '\e822'; } /* '' */
+.icon-public-data-exchange:before { content: '\e823'; } /* '' */
+.icon-private-data-exchange:before { content: '\e824'; } /* '' */
+.icon-multiple:before { content: '\e825'; } /* '' */
+.icon-gears:before { content: '\e826'; } /* '' */
+.icon-augmented-data-lake:before { content: '\e827'; } /* '' */
+.icon-modern-data-warehouse:before { content: '\e828'; } /* '' */
+.icon-data-application-of-the-year:before { content: '\e829'; } /* '' */
+.icon-thickarrowleft:before { content: '\e832'; } /* '' */
+.icon-quote:before { content: '\e833'; } /* '' */
+.icon-search:before { content: '\e83b'; } /* '' */
+.icon-technology:before { content: '\e83c'; } /* '' */
+.icon-arrowleft:before { content: '\e83d'; } /* '' */
+.icon-simplicity:before { content: '\e83e'; } /* '' */
+.icon-concurrency:before { content: '\e83f'; } /* '' */
+.icon-industry:before { content: '\e841'; } /* '' */
+.icon-architecture:before { content: '\e842'; } /* '' */
+.icon-benefits:before { content: '\e843'; } /* '' */
+.icon-blog:before { content: '\e844'; } /* '' */
+.icon-brand-assets:before { content: '\e845'; } /* '' */
+.icon-business-intel-acceleration:before { content: '\e846'; } /* '' */
+.icon-case-study:before { content: '\e847'; } /* '' */
+.icon-company-facts:before { content: '\e848'; } /* '' */
+.icon-compatible-data-apps:before { content: '\e849'; } /* '' */
+.icon-consolidate-data:before { content: '\e84b'; } /* '' */
+.icon-culture:before { content: '\e84c'; } /* '' */
+.icon-data-analytics:before { content: '\e84d'; } /* '' */
+.icon-data-lake:before { content: '\e84e'; } /* '' */
+.icon-data-report:before { content: '\e84f'; } /* '' */
+.icon-data-warehouse-modernization:before { content: '\e850'; } /* '' */
+.icon-database-cloud:before { content: '\e851'; } /* '' */
+.icon-designed-for-cloud:before { content: '\e852'; } /* '' */
+.icon-economies-of-scale:before { content: '\e853'; } /* '' */
+.icon-eliminate-complexity:before { content: '\e854'; } /* '' */
+.icon-enterprise-edition-pricing:before { content: '\e855'; } /* '' */
+.icon-enterprise-edition-sensitive-material:before { content: '\e856'; } /* '' */
+.icon-hadoop-replacement:before { content: '\e857'; } /* '' */
+.icon-location:before { content: '\e858'; } /* '' */
+.icon-mobile:before { content: '\e859'; } /* '' */
+.icon-multimedia-assets:before { content: '\e85a'; } /* '' */
+.icon-no-limitations:before { content: '\e85b'; } /* '' */
+.icon-pay-for-what-you-use:before { content: '\e85c'; } /* '' */
+.icon-performance:before { content: '\e85d'; } /* '' */
+.icon-perks:before { content: '\e85e'; } /* '' */
+.icon-photography-headshot:before { content: '\e85f'; } /* '' */
+.icon-premier-edition-pricing:before { content: '\e860'; } /* '' */
+.icon-pricing:before { content: '\e861'; } /* '' */
+.icon-processing-80-percent-graph:before { content: '\e862'; } /* '' */
+.icon-scale-storage-compute:before { content: '\e863'; } /* '' */
+.icon-scale:before { content: '\e864'; } /* '' */
+.icon-security-protect-lock:before { content: '\e865'; } /* '' */
+.icon-security:before { content: '\e866'; } /* '' */
+.icon-servers:before { content: '\e867'; } /* '' */
+.icon-simplify-compliance:before { content: '\e868'; } /* '' */
+.icon-standard-edition-pricing:before { content: '\e86a'; } /* '' */
+.icon-support-data-apps:before { content: '\e86b'; } /* '' */
+.icon-video:before { content: '\e86c'; } /* '' */
+.icon-webinar:before { content: '\e86d'; } /* '' */
+.icon-whitepaper:before { content: '\e86e'; } /* '' */
+.icon-why-snowflake:before { content: '\e86f'; } /* '' */
+.icon-brain:before { content: '\e870'; } /* '' */
+.icon-be-excellent:before { content: '\e871'; } /* '' */
+.icon-own-it:before { content: '\e872'; } /* '' */
+.icon-thickarrow:before { content: '\e873'; } /* '' */
+.icon-playbutton:before { content: '\e874'; } /* '' */
+.icon-snowflake:before { content: '\e875'; } /* '' */
+.icon-referral:before { content: '\e876'; } /* '' */
+.icon-diamond:before { content: '\e877'; } /* '' */
+.icon-on-demand:before { content: '\e878'; } /* '' */
+.icon-capacity:before { content: '\e879'; } /* '' */
+.icon-per-second-pricing:before { content: '\e87a'; } /* '' */
+.icon-instant-elasticity:before { content: '\e87b'; } /* '' */
+.icon-analytics:before { content: '\e87c'; } /* '' */
+.icon-online-mobile-gaming:before { content: '\e87d'; } /* '' */
+.icon-pharmaceuticals:before { content: '\e87e'; } /* '' */
+.icon-providers-health-systems:before { content: '\e87f'; } /* '' */
+.icon-retail-wholesale:before { content: '\e880'; } /* '' */
+.icon-software-saas:before { content: '\e881'; } /* '' */
+.icon-pricing2:before { content: '\e882'; } /* '' */
+.icon-speed2:before { content: '\e883'; } /* '' */
+.icon-traditional-media:before { content: '\e884'; } /* '' */
+.icon-healthcare-analytics:before { content: '\e885'; } /* '' */
+.icon-cost-savings:before { content: '\e886'; } /* '' */
+.icon-data-monetization:before { content: '\e887'; } /* '' */
+.icon-avro:before { content: '\e888'; } /* '' */
+.icon-event:before { content: '\e889'; } /* '' */
+.icon-finance-option:before { content: '\e88a'; } /* '' */
+.icon-financial-services:before { content: '\e88b'; } /* '' */
+.icon-flexibility:before { content: '\e88c'; } /* '' */
+.icon-free-trial:before { content: '\e88d'; } /* '' */
+.icon-cloud:before { content: '\e88e'; } /* '' */
+.icon-live-demo:before { content: '\e88f'; } /* '' */
+.icon-best-bi:before { content: '\e890'; } /* '' */
+.icon-data-driver:before { content: '\e891'; } /* '' */
+.icon-customer-first:before { content: '\e892'; } /* '' */
+.icon-csv:before { content: '\e893'; } /* '' */
+.icon-data-pioneer:before { content: '\e894'; } /* '' */
+.icon-data-scientist:before { content: '\e895'; } /* '' */
+.icon-mug:before { content: '\e896'; } /* '' */
+.icon-embrace-partners:before { content: '\e897'; } /* '' */
+.icon-target:before { content: '\e898'; } /* '' */
+.icon-time:before { content: '\e899'; } /* '' */
+.icon-workshop:before { content: '\e89a'; } /* '' */
+.icon-advanced-data-science:before { content: '\e89b'; } /* '' */
+.icon-agile-data-app-development:before { content: '\e89c'; } /* '' */
+.icon-accelerated-data-analytics:before { content: '\e89d'; } /* '' */
+.icon-integrated-data-engineering:before { content: '\e89e'; } /* '' */
+.icon-generic-file-2:before { content: '\e89f'; } /* '' */
+.icon-generic-file:before { content: '\e8a0'; } /* '' */
+.icon-government:before { content: '\e8a1'; } /* '' */
+.icon-coffee:before { content: '\e8a2'; } /* '' */
+.icon-healthcare:before { content: '\e8a5'; } /* '' */
+.icon-javascript:before { content: '\e8a6'; } /* '' */
+.icon-json:before { content: '\e8a7'; } /* '' */
+.icon-log:before { content: '\e8ab'; } /* '' */
+.icon-patient-data:before { content: '\e8b0'; } /* '' */
+.icon-x:before { content: '\e8b2'; } /* '' */
+.icon-checkmark:before { content: '\e8b3'; } /* '' */
+.icon-users:before { content: '\e8b4'; } /* '' */
+.icon-zero-management:before { content: '\e8b5'; } /* '' */
+.icon-sql:before { content: '\e8c1'; } /* '' */
+.icon-snow:before { content: '\e8c3'; } /* '' */
+.icon-sno-warehouse:before { content: '\e8c5'; } /* '' */
+.icon-xml:before { content: '\e8ca'; } /* '' */
+.icon-embedded-analytics:before { content: '\e8e4'; } /* '' */
+.icon-artificial-intelligence:before { content: '\e8e5'; } /* '' */
+.icon-eyeball:before { content: '\e8ec'; } /* '' */
+.icon-fuel-pump:before { content: '\e8ed'; } /* '' */
+.icon-shooting-star:before { content: '\e8ee'; } /* '' */
+.icon-exploding:before { content: '\e8ef'; } /* '' */
+.icon-up-arrow-1:before { content: '\e8f0'; } /* '' */
+.icon-up-arrow-2:before { content: '\e8f1'; } /* '' */
+.icon-checkmarks:before { content: '\e8f6'; } /* '' */
+.icon-all-your-data:before { content: '\e8f9'; } /* '' */
+.icon-calendar:before { content: '\e908'; } /* '' */
+.icon-twitter:before { content: '\f099'; } /* '' */
+.icon-facebook:before { content: '\f09a'; } /* '' */
+.icon-linkedin:before { content: '\f0e1'; } /* '' */
+.icon-youtube-play:before { content: '\f16a'; } /* '' */
+
+.icon-arrowright:before {
+  content: '\e83d';
+  -webkit-transform: rotate(180deg); /* Ch <36, Saf 5.1+, iOS < 9.2, An =<4.4.4 */
+        -ms-transform: rotate(180deg); /* IE 9 */
+            transform: rotate(180deg); /* IE 10, Fx 16+, Op 12.1+ */
+
+} /* '' */
+
+
+@font-face {
+  font-family: 'Texta-Heavy';
+  src: url('../fonts/texta-heavy.eot');
+  src: url('../fonts/texta-heavy.eot?#iefix') format('embedded-opentype'),
+             url('../fonts/texta-heavy.woff2') format('woff2'),
+       url('../fonts/texta-heavy.woff') format('woff'),
+       url('../fonts/texta-heavy.ttf') format('truetype'),
+       url('../fonts/texta-heavy.svg#youworkforthem') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+$texta-heavy: 'Texta-Heavy', sans-serif;
+
+@font-face {
+  font-family: 'Texta-Bold';
+  src: url('../fonts/texta-bold.eot');
+  src: url('../fonts/texta-bold.eot?#iefix') format('embedded-opentype'),
+             url('../fonts/texta-bold.woff2') format('woff2'),
+       url('../fonts/texta-bold.woff') format('woff'),
+       url('../fonts/texta-bold.ttf') format('truetype'),
+       url('../fonts/texta-bold.svg#youworkforthem') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+$texta-bold: 'Texta-Bold', sans-serif;
+
+@font-face {
+  font-family: 'Texta-Black';
+  src: url('../fonts/texta-black.eot');
+  src: url('../fonts/texta-black.eot?#iefix') format('embedded-opentype'),
+             url('../fonts/texta-black.woff2') format('woff2'),
+       url('../fonts/texta-black.woff') format('woff'),
+       url('../fonts/texta-black.ttf') format('truetype'),
+       url('../fonts/texta-black.svg#youworkforthem') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+$texta-black: 'Texta-Black', sans-serif;
+
+
+@font-face {
+  font-family: 'Lato-Regular';
+  src: url('../fonts/Lato-Regular.eot');
+  src: url('../fonts/Lato-Regular.eot?#iefix') format('embedded-opentype'),
+             url('../fonts/Lato-Regular.woff2') format('woff2'),
+       url('../fonts/Lato-Regular.woff') format('woff'),
+       url('../fonts/Lato-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+$lato: 'Lato-Regular', sans-serif;
+
+@font-face {
+  font-family: 'Lato-Medium';
+  src: url('../fonts/Lato-Medium.eot');
+  src: url('../fonts/Lato-Medium.eot?#iefix') format('embedded-opentype'),
+             url('../fonts/Lato-Medium.woff2') format('woff2'),
+       url('../fonts/Lato-Medium.woff') format('woff'),
+       url('../fonts/Lato-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+$lato-medium: 'Lato-Medium', sans-serif;
+
+@font-face {
+  font-family: 'Lato-Bold';
+  src: url('../fonts/Lato-Bold.eot');
+  src: url('../fonts/Lato-Bold.eot?#iefix') format('embedded-opentype'),
+             url('../fonts/Lato-Bold.woff2') format('woff2'),
+       url('../fonts/Lato-Bold.woff') format('woff'),
+       url('../fonts/Lato-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+$lato-bold: 'Lato-Bold', sans-serif;
+
+// @font-face {
+//   font-family: 'Lato-Heavy';
+//   src: url('../fonts/Lato-Heavy.eot');
+//   src: url('../fonts/Lato-Heavy.eot?#iefix') format('embedded-opentype'),
+//              url('../fonts/Lato-Heavy.woff2') format('woff2'),
+//        url('../fonts/Lato-Heavy.woff') format('woff'),
+//        url('../fonts/Lato-Heavy.ttf') format('truetype');
+//   font-weight: normal;
+//   font-style: normal;
+//   font-display: swap;
+// }
+$lato-heavy: $lato-bold;
+
+// @font-face {
+//   font-family: 'Lato-Black';
+//   src: url('../fonts/Lato-Black.eot');
+//   src: url('../fonts/Lato-Black.eot?#iefix') format('embedded-opentype'),
+//              url('../fonts/Lato-Black.woff2') format('woff2'),
+//        url('../fonts/Lato-Black.woff') format('woff'),
+//        url('../fonts/Lato-Black.ttf') format('truetype');
+//   font-weight: normal;
+//   font-style: normal;
+// }
+// $lato-black: 'Lato-Black', sans-serif;

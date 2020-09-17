@@ -17,7 +17,7 @@
 @import "_variables";
 
 #footer {
-  background-color: $grey800;
+  background-color: $black;
   font-size: 13px;
   padding: 40px 0;
 
@@ -36,7 +36,6 @@
   }
 
   .link-list {
-    border-top: 1px solid $grey700;
     flex: 1;
     margin-right: $keyline*4;
 
@@ -48,14 +47,21 @@
     label {
       display: block;
       color: #fff;
-      margin: $keyline 0 $keyline*2;
+      margin: $keyline 0;
+      font-family: $lato-bold;
+      text-transform: uppercase;
+    }
+
+    ul li a {
+      color: #fff;
+
     }
   }
 }
 
 .footerbar {
-  background-color: $grey700;
-  color: #fff;
+  background-color: $white;
+  color: #000;
   font-size: 13px;
   padding: 10px 0;
 

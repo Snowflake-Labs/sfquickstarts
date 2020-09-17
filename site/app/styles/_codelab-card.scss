@@ -34,11 +34,13 @@ $card-col-height: 200px; // column mode
   flex-direction: column;
   flex: 1 0 $card-width;
   margin: 0 $keyline * 2 $keyline * 2 0;
-  background-color: #fff;
   max-width: $card-width;
-  border-radius: $radius;
-  box-shadow: 0 1px rgba(0,0,0,0.15);
+  border-radius: 0;
   border-bottom: 2px solid transparent;
+
+  -webkit-box-shadow: 2px 4px 10px 0 rgba(0,0,0,.1);
+  box-shadow: 2px 4px 10px 0 rgba(0,0,0,.1);
+  background-color: #fff;
 
   &:nth-of-type(3n) {
     margin-right: 0;
@@ -53,6 +55,7 @@ $card-col-height: 200px; // column mode
     justify-content: space-between;
     align-items: center;
     padding: $keyline * 2 $keyline * 2 0 $keyline * 2;
+    font-family: $lato-bold !important;
   }
 
   .card-duration {
@@ -82,6 +85,7 @@ $card-col-height: 200px; // column mode
     flex: 1 0 auto;
     color: #212121;
     -webkit-font-smoothing: antialiased;
+    font-family: $lato-bold !important;
   }
 }
 
@@ -97,6 +101,9 @@ $card-col-height: 200px; // column mode
     color: #fff;
     text-transform: none;
     padding: 13px 25px;
+    border-radius: 50px !important;
+    font-family: $texta-black;
+    text-transform: uppercase;
   }
 
   .category-icon {

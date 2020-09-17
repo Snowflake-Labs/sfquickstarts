@@ -1,0 +1,33 @@
+
+#filters {
+  #tabsContent {
+    .paper-tab-0 {
+      font-family: $lato-bold !important;
+    }
+
+  }
+}
+
+.paper-input-container-1 .input-content.paper-input-container input, .paper-input-container-1 .input-content.paper-input-container textarea, .paper-input-container-1 .input-content.paper-input-container iron-autogrow-textarea, .paper-input-container-1 .input-content.paper-input-container .paper-input-input {
+  font-family: $lato !important;
+}
+
+.paper-header-panel-0 #dropShadow.has-shadow.paper-header-panel {
+  opacity: 0 !important;
+}
+
+
+/* Snowflake specific category classes */
+
+$color-data-applications: #475CA7;
+$color-data-exchange: #282A72;
+
+@include codelab-card(['data-engineering'], $snowflake-blue, 'data-engineering.svg');
+@include codelab-card(['data-lake'], $star-blue, 'data-lake.svg');
+@include codelab-card(['data-warehouse'], $mid-blue, 'data-warehouse.svg');
+@include codelab-card(['data-science'], $first-light, 'data-science.svg');
+@include codelab-card(['data-applications'], $color-data-applications, 'data-applications.svg');
+@include codelab-card(['data-exchange'], $color-data-exchange, 'data-exchange.svg');
+@include codelab-card(['retail'], $snowflake-blue, 'data-engineering.svg');
+@include codelab-card(['energy'], $snowflake-blue, 'data-engineering.svg');
+@include codelab-card(['healthcare'], $snowflake-blue, 'data-engineering.svg');

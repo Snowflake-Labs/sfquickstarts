@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@import "_variables";
+
 @import "_material";
 
 * {
@@ -77,10 +77,9 @@ ul, li {
 }
 
 #banner {
-  background-color: #fff;
+  background-color: $snowflake-blue;
   @include keyline-40();
   padding: 40px 0 48px 0;
-  box-shadow: 0px 3px 6px -3px $grey400;
 
   &[down] {
     .banner-slider {
@@ -92,13 +91,25 @@ ul, li {
   }
 
   h2, h3 {
-    font-weight: 300;
+    color: #fff;
+  }
+
+  p {
+    color: #fff;
+
+    a {
+      margin-top: 1.5rem;
+    }
   }
 
   #logo {
     height: 125px;
     width: auto;
     max-width: 100%;
+  }
+
+  a {
+    @extend %btn;
   }
 
   .banner-slider {

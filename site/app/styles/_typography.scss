@@ -15,6 +15,7 @@
  */
 
 @import "material";
+@import "fonts";
 
 body {
   @include md-font-subhead();
@@ -36,4 +37,48 @@ h3 {
 
 h4 {
   @include md-font-headline();
+}
+
+
+
+body {
+  font-family: $lato;
+}
+
+p {
+  font-family: $lato;
+  line-height: 1.75;
+}
+
+h1 {
+  font-family: $texta-black;
+  text-transform: uppercase;
+  line-height: 0.79;
+}
+
+h2 {
+  font-family: $texta-heavy;
+  text-transform: uppercase;
+  line-height: 0.9;
+}
+h3 {
+  font-family: $lato-heavy;
+  font-weight: normal;
+  line-height: 1.15;
+}
+h4 {
+  font-family: $lato-bold;
+  font-weight: normal;
+  line-height: 1.25;
+}
+h5 {
+  font-family: $lato-bold;
+  font-weight: normal;
+  line-height: 1.4;
+}
+h6 {
+  text-transform: uppercase;
+  font-family: $lato-bold;
+  font-weight: normal;
+  line-height: 1.4;
 }
