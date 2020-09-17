@@ -20,8 +20,8 @@
   display: flex;
   align-items: center;
   height: $keyline * 8;
-  background-color: $blueGrey700;
-  color: #fff;
+  background-color: #fff;
+  color: #000;
   padding: $keyline * 2;
 
   paper-icon-button[icon="menu"] {
@@ -47,13 +47,14 @@
 }
 
 #searchbar {
-  border-radius: $radius;
+  border-radius: 52.5px;
+
 
   paper-input-container {
     padding: 0;
 
     label, input {
-      color: #fff;
+      color: #000;
     }
 
     label {
@@ -64,13 +65,24 @@
 
 @media (min-width: $tablet-breakpoint-min) {
   #searchbar {
-    background-color: $blueGrey600;
     transition: background-color 400ms cubic-bezier(0,0,0.2,1);
     width: 100%;
 
-    &:hover {
-      background-color: $blueGrey400;
+    background: #fff;
+    // -webkit-box-shadow: 0 5px 10px 0 rgba(0,0,0,.03);
+    // box-shadow: 0 5px 10px 0 rgba(0,0,0,.03);
+
+    border: 1px solid rgba(138,153,158,.5);
+    padding: 2px 0;
+    font-family: $lato;
+
+    #icon {
+      color: $mid-blue;
     }
+
+    // &:hover {
+    //   background-color: $blueGrey400;
+    // }
   }
   .logo-devs {
     margin: 5px $keyline*4 0 0;

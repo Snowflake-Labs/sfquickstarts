@@ -14,6 +14,80 @@
  * limitations under the License.
  */
 
+ /* Snowflake Colors */
+
+ $black:            #000000;
+ $white:            #FFFFFF;
+ $grey:             #F8F8F9;
+
+ $snowflake-blue:   #29B5E8;
+ $blue:             $snowflake-blue;
+ $mid-blue:         #11567F;
+ $dark-blue:        #0080B0;
+ $midnight:         #000000;
+ $star-blue:        #71D3DC;
+ $valencia-orange:  #FF9F36;
+ $purple-moon:      #7D44CF;
+ $first-light:      #D45B90;
+ $windy-city:       #8A999E;
+ $snow:             #ffffff;
+
+ $error:            #F60000;
+
+ $blue-hover:              #077EA8;
+ $mid-blue-hover:          #013D61;
+ $star-blue-hover:         #429DA6;
+ $valencia-orange-hover:   #CF7B1F;
+ $purple-moon-hover:       #56269B;
+ $first-light-hover:       #8A2F57;
+ $windy-city-hover:        #5A6569;
+
+
+ /* Snowflake Gradients */
+ .g-data-engineering {
+   background: rgb(55,180,226);
+   background: linear-gradient(180deg, rgba(55,180,226,1) 0%, rgba(0,138,192,1) 100%);
+ }
+ .g-data-lake {
+   background: rgb(0,160,168);
+   background: linear-gradient(-44deg, rgba(0,160,168,1) 35%, rgba(0,175,193,1) 61%);
+ }
+ .g-data-warehouse {
+   background: rgb(0,51,71);
+   background: linear-gradient(-41deg, rgba(0,51,71,1) 0%, rgba(0,74,105,1) 50%);
+ }
+ .g-data-science {
+   background: rgb(152,76,155);
+   background: linear-gradient(135deg, rgba(152,76,155,1) 39%, rgba(103,42,117,1) 100%);
+ }
+ .g-data-application {
+   background: rgb(44,93,169);
+   background: linear-gradient(135deg, rgba(44,93,169,1) 3%, rgba(71,92,167,1) 46%, rgba(46,49,144,1) 100%);
+ }
+ .g-data-exchange {
+   background: rgb(40,42,114);
+   background: linear-gradient(-43deg, rgba(40,42,114,1) 32%, rgba(43,51,142,1) 62%);
+ }
+ .g-snowflake-blue-gt {
+   background: rgb(41,181,232);
+   background: linear-gradient(45deg, rgba(41,181,232,1) 0%, rgba(0,127,175,1) 100%);
+ }
+ .g-mid-blue-gt {
+   background: rgb(41,181,232);
+   background: linear-gradient(135deg, rgba(41,181,232,1) 0%, rgba(0,0,0,1) 100%);
+ }
+ .bg-white {
+   background-color: #ffffff;
+ }
+ .bg-blue, .bg-snowflake-blue, .blue-section {
+   background-color: $snowflake-blue !important;
+ }
+ .bg-mid-blue {
+   background-color: $mid-blue !important;
+ }
+
+
+
 /* Colors */
 
 $lime700: #AFB42B;
@@ -34,9 +108,9 @@ $grey500: #9e9e9e;
 $grey700: #616161;
 $grey800: #424242;
 
-$backgroundColor: #ECEFF1;
-$mainColor: $cyan;
-$accentColor: #0097A7;
+$backgroundColor: #fff;
+$mainColor: $snowflake-blue;
+$accentColor: $valencia-orange;
 
 /* Typography */
 
