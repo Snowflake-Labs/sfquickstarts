@@ -17,3 +17,8 @@ app/js/bundle
 
 /build/
 /dist/
+
+/devlabs/*
+
+!/devlabs/*.md
+!/devlabs/assets
