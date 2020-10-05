@@ -3,7 +3,7 @@
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
 ## What are Devlabs?
-Devlabs are interactive tutorials and self-serve demos written in markdown syntax. Devlabs provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at developers.snowflake.com/devlabs
+Devlabs are interactive tutorials and self-serve demos written in markdown syntax. Devlabs provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [developers.snowflake.com/devlabs](developers.snowflake.com/devlabs)
 
 You can submit your own devlab to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own devlabs!
 
@@ -56,7 +56,7 @@ Congratulations! You now have the DevLabs landing page running.
 
 #### Now lets add our first devlab:
 
-  1. Terminate the runnig gulp server with `ctrl C` and navigate to the devlab directory
+  1. Terminate the running gulp server with `ctrl C` and navigate to the devlab directory
   ````bash
   cd site/devlabs
   ````
@@ -67,7 +67,7 @@ Congratulations! You now have the DevLabs landing page running.
   claat export sample.md
   ````
 
-  You should see `ok sample` as the reponse. This means claat has successfully converted your .md file to HTML and created a new directory named `sample`.
+  You should see `ok sample` as the response. This means claat has successfully converted your .md file to HTML and created a new directory named `sample`.
    
   3. Now lets run our server again, this time specifying our devlabs directory of content
    ````bash
@@ -81,7 +81,7 @@ You can use the [sample devlab](site/devlabs/sample.md) as a template, just chan
 
 - Review the [sample.md](site/devlabs/sample.md) file to learn more about to to structure your devlab for the claat tool. 
 - You can also see more formating information in the [claat documentation](claat/README.md), and use the command `claat -h`
-- You can see the supported devlab catagories [here](site/app/styles/_overrides.scss). If you want to suggest a new catagory please create a github issue!
+- You can see the supported devlab categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 
 If you want to learn more about devlabs, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
@@ -95,6 +95,6 @@ If you want to learn more about devlabs, check out this [excellent tutorial](htt
 6. Push it back to your repo
 7. Open this repository on GitHub.com
 8. Click the Pull Request button to open a new pull request
-9. Snowflake will review and approve the submition
+9. Snowflake will review and approve the submission
 
 To learn more how to submit a pull request on GitHub in general, checkout github's [official documentation](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
