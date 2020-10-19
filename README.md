@@ -82,8 +82,9 @@ You can use the [sample devlab](site/devlabs/sample.md) as a template, just chan
 - Review the [sample.md](site/devlabs/sample.md) file to learn more about to to structure your devlab for the claat tool. 
 - You can also see more formating information in the [claat documentation](claat/README.md), and use the command `claat -h`
 - You can see the supported devlab categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
+- Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
+- If you want to learn more about devlabs, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
-If you want to learn more about devlabs, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
 ## How do I publish my Devlab to developers.snowflake.com?
 
