@@ -12,7 +12,7 @@ authors: Daniel Myers
 ## Overview 
 Duration: 1
 
-Please use this markdown file as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
@@ -55,7 +55,7 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
 - **status**: Published
   - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the snowguide is ready to be published. `Hidden` implies the snowguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
 - **feedback link**: https://github.com/Snowflake-Labs/devlabs/issues
-- **tags**: Getting Started, Data Science Twitter 
+- **tags**: Getting Started, Data Science, Twitter 
   - Add relevant  tags to make your snowguide easily found and SEO friendly.
 - **authors**: Daniel Myers 
   - Indicate the author(s) of this specific snowguide.
@@ -66,24 +66,34 @@ You can see the source metadata for this guide you are reading now, on [the gith
 
 
 <!-- ------------------------ -->
-## Setting Duration
+## Creating a Step
 Duration: 2
 
-To indicate how long each slide will take to go through, set the `Duration` under each Heading 2 (i.e. `##`) to an integer. 
-The integers refer to minutes. If you set `Duration: 4` then a particular slide will take 4 minutes to complete. 
+A single snowguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
-The total time will automatically be calculated for you and will be displayed on the codelab once you create it. 
+```markdown
+## Step 1 Title
+Duration: 3
+
+All the content for the step goes here.
+
+## Step 2 Title
+Duration: 1
+
+All the content for the step goes here.
+```
+
+To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+
+The total snowguide completion time is calculated automatically for you and will be displayed on the landing page. 
 
 <!-- ------------------------ -->
 ## Code Snippets
-Duration: 3
+Duration: 2
 
-To include code snippets you can do a few things. 
-- Inline highlighting can be done using the tiny tick mark on your keyboard: "`"
-- Embedded code
+Look at the [markdown source for this snowguide](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 
 ### JavaScript
-
 ```javascript
 { 
   key1: "string", 
@@ -93,22 +103,54 @@ To include code snippets you can do a few things.
 ```
 
 ### Java
-
 ```java
 for (statement 1; statement 2; statement 3) {
   // code block to be executed
 }
 ```
 
-<!-- ------------------------ -->
-## Hyperlinking and Embedded Images
-Duration: 1
+### Info Boxes
+Positive
+: This will appear in a positive info box.
+
+
+Negative
+: This will appear in a negative info box.
+
+### Buttons
+<button>
+  [This is a download button](link.com)
+</button>
+
 ### Hyperlinking
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+
+<!-- ------------------------ -->
+## Embedding Images, Videos, and Surveys
+Duration: 2
 
 ### Images
 All images are stored in the assets directory. 
 ![alt-text-here](assets/puppy.jpg)
+
+### Videos
+Videos from youtube can be directly embedded:
+<video id="dQw4w9WgXcQ"></video>
+
+### Inline Surveys
+<form>
+  <name>What is your favorite color?</name>
+  <input type="radio" value="Blue">
+  <input type="radio" value="Green">
+</form>
+
+### Embed an iframe
+![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+
+<!-- ------------------------ -->
+## Importing markdown files
+Duration: 1
+<<sample_import.md>>
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -117,3 +159,9 @@ Duration: 1
 At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
 
 If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+
+### What we've covered
+- creating steps and setting duration
+- adding code snippets
+- embedding images, videos, and surveys
+- importing other markdown files
