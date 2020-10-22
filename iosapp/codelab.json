@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-10-21T22:21:23-07:00",
+  "id": "iosapp",
+  "duration": 53,
+  "title": "Using Snowflake to process iOS Health Data",
+  "summary": "Building a data application with Snowflake as the backend",
+  "source": "iosapp.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data applications"
+  ],
+  "tags": [
+    "medium"
+  ],
+  "feedback": "https://developers.snowflake.com",
+  "url": "iosapp"
+}
