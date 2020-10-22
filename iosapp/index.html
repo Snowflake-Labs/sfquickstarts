@@ -1,0 +1,209 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Using Snowflake to process iOS Health Data</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="iosapp"
+                  title="Using Snowflake to process iOS Health Data"
+                  environment="web"
+                  feedback-link="https://developers.snowflake.com">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Our phones collect a lot of health data which has a lot of potential uses. IOS healthkit SDK makes it possible for app developers to tie into the iPhone and offers a centralized data repo for health data. The same SDK makes it possible to pull data from this central repository. The possible data points are documented on apple&#39;s healthkit docs. In short, apples are capturing body measurements, vital signs, lab and test results, nutrition, physical activity, etc.</p>
+<p>The bridge application serves the purpose to read this data set and through an HTTP post call sent it AWS. This application is open to all and makes it easy to pull datasets and requires users permission on which data sets to pull.</p>
+<p>The users are asked to provide permission for the bridge application to pull the following information, if available.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul>
+<li>How to pull data from iOS using Swift</li>
+<li>How to process that data in AWS S3</li>
+<li>Ingest that data using Snowpipe into Snowflake.</li>
+<li>Report that data back to your iOS application.</li>
+</ul>
+<h2 is-upgraded>Prereqiusites</h2>
+<ul>
+<li>Snowflake account with ACCOUNTADMIN access</li>
+<li>AWS account with admin access to IAM, Lambda, API Gateway, and S3</li>
+<li>iOS operating system (with xCode)</li>
+</ul>
+<h2 is-upgraded>Data Pipeline</h2>
+<p class="image-container"><img alt="alt-text-here" src="img/8651e8bab0d1f83.png"></p>
+<h3 is-upgraded>Note: This is an advanced lab that requires some experience using the AWS services mentioned.</h3>
+<h2 is-upgraded>HTTP Post</h2>
+<p>The iOS bridge application is to send the data to AWS API Gateway through an HTTP post call. This HTTP post call is formatted in JSON and contains all the information that the user gives permission to pull above.</p>
+<h2 is-upgraded>AWS Cloud Infrastructure</h2>
+<p>AWS is the cloud provider of choice to provide the cloud scale. This is of personal preference Azure &amp; GCP can be used all the same.</p>
+<h2 is-upgraded>API Gateway</h2>
+<p>When a user uses the iPhone bridge application, the app will make an HTTP post call. This post call needs to be handled somewhere and API Gateway is the receiver of this information. Once the API gateway receives this information it will need to pass it along to Lambda to do something with the data.</p>
+<p>For those new to API Gateway, please review this <a href="https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway-tutorial.html" target="_blank">AWS tutorial</a> to get familiar with the service.</p>
+<h2 is-upgraded>Lambda</h2>
+<p>Lambda offers immediate and scalable infrastructure to do something with data once API Gateway passes the information to a specific Lambda function. This Lambda function is given access to S3 and with that permission it takes the JSON and saves it to S3 bucket for Snowpipe to ingest.</p>
+<h2 is-upgraded>S3</h2>
+<p>Serves as a persistent data store from Lambda for Swipe to ingest.</p>
+<h2 is-upgraded>Snowflake</h2>
+<p>Snowflake is the perfect environment for this data set offering a fully scalable database that is able to effectively the JSON data incoming from the source system (IOS Healthkit). Bringing structure and data availability.</p>
+<h2 is-upgraded>Snowpipe</h2>
+<p>Snowpipe is used to ingest data once it reaches the S3 environment in AWS. Usually the lag time of this data set is two minutes, but depends on when the SNS/SQS messaging alerts Snowpipe of the file PUT drop.</p>
+<h2 is-upgraded>Snowflake</h2>
+<p>The data is saved in its original JSON format in Snowflake and through SQL is provided structure to data consumption tools.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Source Code" duration="2">
+        <h2 is-upgraded>Download or Clone the GitHub Repo</h2>
+<p>We will modify the  several elements of the code in order for the app run in your development environment, use your AWS infrastructure, and connect to your Snowfalke account.</p>
+<p><a href="https://github.com/mariusndini/snowhealth" target="_blank">SnowHealth GitHub Repo</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Snowflake Objects" duration="15">
+        <p>Running the <a href="https://github.com/mariusndini/snowhealth/tree/master/SQLs" target="_blank">SQL scripts</a> within Snowflake to create the perform the following:</p>
+<ul>
+<li>Schemas and Tables for storing the data</li>
+<li>Stored Procedure that will be executed consume the data</li>
+</ul>
+<p class="image-container"><img alt="alt-text-here" src="img/3424f6e589dcddb7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure AWS for Data Ingestion" duration="15">
+        <p>When a user uses the iPhone bridge application, the app will make an HTTP post call. This post call needs to be handled somewhere and API Gateway is the receiver of this information. Once the API gateway receives this information it will need to pass it along to Lambda to do something with the data.</p>
+<h2 is-upgraded>Create an S3 Bucket</h2>
+<p>In your AWS account, create an S3 bucket with a name unique to your project. <img alt="alt-text-here" src="img/6370cb1b4acab9d6.png"></p>
+<h2 is-upgraded>Kinesis Firehose</h2>
+<p>Amazon Kinesis Data Firehose is the easiest way to reliably load streaming data into data lakes, data stores, and analytics services. It can capture, transform, and deliver streaming data to Amazon S3.</p>
+<p>Create a Kinesis stream according the the image below.</p>
+<ul>
+<li>The name should be health-data-stream</li>
+<li>Use the name of the S3 bucket you created in the previous step.</li>
+</ul>
+<p class="image-container"><img alt="alt-text-here" src="img/87d34b7d517157b3.jpg"></p>
+<h2 is-upgraded>Configure and deploy Lambda Function for Kinesis</h2>
+<p>In the <a href="https://github.com/mariusndini/snowhealth/blob/master/Lambda%20Func/kinesis%20route/index.js" target="_blank">snowhealth/Lambda Func/kinesis route/index.js</a> file, update the UserPoolId and ClientId with those of your kinesis stream .</p>
+<pre><code language="language-javascript" class="language-javascript"> var config = {
+    &#34;amazon&#34;:{
+    &#34;UserPoolId&#34;: &#34;xxx&#34;,
+        &#34;ClientId&#34;: &#34;xxx&#34;
+    },
+    &#34;kinesis&#34;:{
+        &#34;region&#34;: &#34;us-east-1&#34;,
+        &#34;apiVersion&#34;: &#34;2015-08-04&#34;
+    }
+}
+
+const AWS = require(&#39;aws-sdk&#39;);
+var kinesis = new AWS.Firehose(config.kinesis);
+
+exports.handler = async (event) =&gt; {
+    var json = JSON.stringify(event.body);
+    
+    kinesis.putRecord({
+	Record:{Data: json},
+        DeliveryStreamName: &#39;health-data-stream&#39; //NEED TO PROVIDE EXISTING STREAM FOR DATA TO BE ROUTED
+    }, function(err, data) {
+        if (err) {
+            console.error(err);
+        }
+        console.log(data);
+    });
+    
+};
+</code></pre>
+<h2 is-upgraded>API Gateway - Kinesis Route Lambda Function</h2>
+<p>Configure an API Gateway for your Kinesis Route lambda as indicated below.</p>
+<p class="image-container"><img alt="alt-text-here" src="img/216c323f51c1d5d3.png"></p>
+<h2 is-upgraded>Configure and Deploy Your HealkitDataAPI Lambda Function</h2>
+<p>Update the file: <a href="https://github.com/mariusndini/snowhealth/blob/master/Lambda%20Func/Snowflake%20connect/HealkitDataAPI/config.json" target="_blank">snowhealth/Lambda Func/Snowflake connect/HealkitDataAPI/config.json</a> to include the Snowflake credentials needed for the application:</p>
+<pre><code language="language-javascript" class="language-javascript">{
+    &#34;snowflake&#34;:{
+        &#34;account&#34;:&#34;YOUR ACCOUNT&#34;,
+        &#34;username&#34;:&#34;YOUR USER&#34;,
+        &#34;password&#34;:&#34;USER PW&#34;,
+        &#34;warehouse&#34;:&#34;WH TO RUN QUERIES&#34;,
+        &#34;database&#34;:&#34;YOUR DB NAME&#34;,
+        &#34;role&#34;:&#34;ROLE W/ ACCESS TO ABOVE&#34;
+    }
+}
+</code></pre>
+<h2 is-upgraded>API Gateway - HealkitDataAPI Lambda Function</h2>
+<p>Configure an API Gateway for your Kinesis Route lambda as indicated below.</p>
+<p class="image-container"><img alt="alt-text-here" src="img/9103309db88e5ce8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring Snowpipe" duration="10">
+        <h2 is-upgraded>Prerequisite</h2>
+<p>Before setting up Snowpipe for autoingesting, create a secure storage integration between your S3 bucket and Snowflake:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#step-1-configure-access-permissions-for-the-s3-bucket" target="_blank">Creating a secure storage integration between Snowflake and S3</a></li>
+</ul>
+<h2 is-upgraded>Snowpipe</h2>
+<p>Snowpipe is used to ingest data once it reaches the S3 environment in AWS. Usually the lag time of this data set is two minutes, but depends on when the SNS/SQS messaging alerts Snowpipe of the file PUT drop.</p>
+<p class="image-container"><img alt="alt-text-here" src="img/eb5c2dc43cb454bb.png"></p>
+<p>Creating a pipe is simple and straightforward.</p>
+<pre><code language="language-javascript" class="language-javascript">create pipe snowpipe_db.public.mypipe auto_ingest=true as
+  copy into snowpipe_db.public.mytable
+  from @snowpipe_db.public.mystage
+  file_format = (type = &#39;JSON&#39;);
+</code></pre>
+<h2 is-upgraded>SQS Notification</h2>
+<p>The most common option for triggering Snowpipe data loads automatically using Amazon SQS (Simple Queue Service)notifications for an S3 bucket.</p>
+<p>Execute the SHOW PIPES command in Snowflake:</p>
+<pre><code language="language-javascript" class="language-javascript">show pipes;
+</code></pre>
+<p>Note the ARN of the SQS queue for the stage in the notification_channel column. Copy the ARN to a convenient location.</p>
+<p>Log into the Amazon S3 console. Configure an event notification for your S3 bucket using the instructions provided in the <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/enable-event-notifications.html" target="_blank">Amazon S3 documentation</a>. Complete the fields as follows:</p>
+<ul>
+<li>Name: Name of the event notification (e.g. Auto-ingest Snowflake).</li>
+<li>Events: Select the ObjectCreate (All) option.</li>
+<li>Send to: Select SQS Queue from the dropdown list.</li>
+<li>SQS: Select Add SQS queue ARN from the dropdown list.</li>
+<li>SQS queue ARN: Paste the SQS queue name from the SHOW PIPES output.</li>
+<li>Upload and deploy your lamba function via the AWS console or through <a href="https://www.serverless.com/blog/serverless-express-rest-api" target="_blank">Serverless</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running SnowHealth in your dev environment" duration="10">
+        <p>Make the following changes in the xcode package provided:</p>
+<p>In the DataSend.swift file, update the https endpoint using your API Gateway endpoint you create in the previous steps to send data to your Kinesis Firehose topic.</p>
+<p class="image-container"><img alt="alt-text-here" src="img/5fa8cdb990bde03e.png"></p>
+<p>Your app should now be ready to build and run!</p>
+<p class="image-container"><img alt="alt-text-here" src="img/c60109e2f50f7c62.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
