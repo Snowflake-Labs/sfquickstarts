@@ -1,14 +1,14 @@
-# Snowflake Devlabs
+# Snowflake Guides
 
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
-## What are Devlabs?
-Devlabs are interactive tutorials and self-serve demos written in markdown syntax. Devlabs provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [developers.snowflake.com/devlabs](developers.snowflake.com/devlabs)
+## What are Snowflake Guides?
+Devlabs are interactive tutorials and self-serve demos written in markdown syntax. Devlabs provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](guides.snowflake.com)
 
 You can submit your own devlab to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own devlabs!
 
 
-## What's special about the Devlab format?
+## What's special about the SF Guide format?
 
 * Powerful and flexible authoring flow in Markdown text
 * Ability to produce interactive web or markdown tutorials without writing any code
