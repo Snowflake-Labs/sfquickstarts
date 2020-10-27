@@ -31,7 +31,9 @@ You can submit your own devlab to be published on Snowflake's website by submitt
   4. add `/usr/local/go/bin` to the `PATH` environment variable. You can do this by adding the following line to your profile (`.bashrc` or `.zshrc`):
 
 ````bash
+#adding Golang to path
 export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$HOME/go/bin
 ````
 ***Note: Changes made to a profile file may not apply until the next time you log into your computer. To apply the changes immediately, just run the shell commands directly or execute them from the profile using a command such as `source $HOME/.zshrc`.***
 
