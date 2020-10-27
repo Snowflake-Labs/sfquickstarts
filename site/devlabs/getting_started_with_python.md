@@ -13,24 +13,26 @@ Duration: 1
 You can connect to Snowflake in many languages. If your language of choice is Python, you'll want to begin here to connect to Snowflake. We'll walk you through getting the Python Connector up and running, and then explore the basic operations you can do with it. You'll find the Python Connector to be quite robust, as it even supports integration with Pandas DataFrames.
 
 ### Prerequisites
-- something
+- Familiarity with Python
 
 ### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+- how to set up the Python connector
+- how to test your installation
+- how to connect to Snowflake
+- how to set session parameters
+- how to create a warehouse
+- how to create a database
+- how to create a schema
+- how to create a table
+- how to insert data
+- how to query data
 
 ### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
+- A [Snowflake](https://www.snowflake.com/) Account 
+- A Text Editor
 
 ### What You’ll Build 
-- A Snowflake Guide
-
+- Examples of using the Snowflake Python Connector
 
 <!-- ------------------------ -->
 ## Set up the Python Connector
