@@ -56,6 +56,7 @@ Log in to the web interface on your browser. The URL contains your [account name
 3.  Increase Your Account Permission
 
 The Snowflake web interface has a lot to offer, but for now, we’ll just switch the account role from the default SYSADMIN to ACCOUNTADMIN. This increase in permissions will allow the user account to create objects.
+![account-role-change-image](assets/Snowflake_SwitchRole.png)
 
 4.  Download the SnowSQL Installer 
 
@@ -73,6 +74,7 @@ bootstrap version 1.2 and SnowSQL version 1.2.9.
 `curl -O
 https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86_64/snowsql-1.2.9-d
 arwin_x86_64.pkg​`
+![Snowflake_Download_Installer_image](assets/Snowflake_Download_Installer.png)
 
 5.  Install SnowSQL Locally
 - Double-click the installer file and walk through the wizard prompts.
@@ -116,6 +118,7 @@ start_date date
 ```
 
 Running [​create or replace table​](https://docs.snowflake.com/en/sql-reference/sql/create-table.html) will build a new table based on the parameters specified. This example reflects the same columns in the sample CSV employee data files.
+![Snowflake_Create_Table_image](assets/Snowflake_createTable.png)
 
 4. Make a Virtual Warehouse
 ```
@@ -125,11 +128,10 @@ auto_suspend = 180
 auto_resume = true
 initially_suspended=true;
 ```
-After creation, this virtual warehouse will be active for your current session and begin running
-once the computing resources are needed.
+After creation, this virtual warehouse will be active for your current session and begin running once the computing resources are needed.
+![Snowflake_createWarehouse_image](assets/Snowflake_createWarehouse.png)
 
-With the database objects ready, you’ll employ SnowSQL to move the sample data onto the
-`emp_basic` table.
+With the database objects ready, you’ll employ SnowSQL to move the sample data onto the `emp_basic` table.
 
 <!-- ------------------------ -->
 ## Transport Your Data to the Cloud
@@ -147,8 +149,8 @@ schema, and table the staged files are headed.
 
 `put file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;`
 
-Here is a PUT call to stage the sample employee CSV files from a macOS `file:///tmp/` folder
-onto the `emp_basic` table within the `sf_tuts` database.
+Here is a PUT call to stage the sample employee CSV files from a macOS `file:///tmp/` folder onto the `emp_basic` table within the `sf_tuts` database.
+![Snowflake_StagePut_image](assets/Snowflake_StagePut.png)
 
 2. LIST Staged Files
 
@@ -160,6 +162,7 @@ To check your staged files, run the `list` command.
 
 The example command above is to output the staged files for the `emp_basic` table. Learn
 more LIST syntax [​here​](https://docs.snowflake.com/en/sql-reference/sql/list.html).
+![Snowflake_ViewStaged_image](assets/Snowflake_ViewStaged.png)
 
 3. [COPY INTO​](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) Your Table
 
@@ -171,6 +174,7 @@ copy into emp_basic
   on_error = 'skip_file';
 ```
 After getting the files staged, the data is copied into the `emp_basic` table. This DML command also auto-resumes the virtual warehouse made earlier.
+![Snowflake_CopyStaged_image](assets/Snowflake_CopyStaged.png)
 
 The output indicates if the data was successfully copied and records any errors.
 
@@ -188,7 +192,7 @@ put your data on speed-dial.
 `select * from emp_basic;`
 
 Here is an example command to `select` everything on the `emp_basic` table.
-
+![Snowflake_SELECT_image](assets/Snowflake_SELECT.png)
 Sifting through everything on your table may not be the best use of your time. Getting specific
 results is simple, with a few functions and some query syntax.
 
@@ -197,13 +201,14 @@ results is simple, with a few functions and some query syntax.
 `select * from emp_basic where first_name = ‘Ron’;`
 
 This query returns a list of employees by the `first_name` of ‘Ron’ from the `emp_basic` table.
+![Snowflake_SELECTRon_image](assets/Snowflake_SELECTRon.png)
 
 - [LIKE​](https://docs.snowflake.com/en/sql-reference/functions/like.html) function supports wildcard `%` and `_`.
 
 `select email from emp_basic where email like '%.au';`
 
 The like function checks all emails in the `emp_basic` table for `au` and returns a record.
-
+![Snowflake_SELECTEmailAU_image](assets/Snowflake_SELECTEmailAU.png)
 Snowflake supports many [​functions](https://docs.snowflake.com/en/sql-reference-functions.html)​, [​operators](https://docs.snowflake.com/en/sql-reference/operators.html)​, and [​commands](https://docs.snowflake.com/en/sql-reference-commands.html)​. However, if you need more
 specific tasks performed, consider setting up an [​external function](https://docs.snowflake.com/en/sql-reference/external-functions-introduction.html)​​.
 
@@ -226,7 +231,7 @@ insert into emp_basic values
 Plaza','Fangshan','2017-1-26');
 ```
 In the command displayed, `insert` is used to add two new employees to the `emp_basic` table.
-
+![Snowflake_INSERT_image](assets/Snowflake_INSERT.png)
 - [DROP​](https://docs.snowflake.com/en/sql-reference/sql/drop.html) objects no longer in use.
 
 `drop database if exists sf_tuts;`
@@ -235,6 +240,7 @@ In the command displayed, `insert` is used to add two new employees to the `emp_
 
 After practicing the basics covered in this tutorial, you’ll no longer need the `sf-tuts` database
 and warehouse. To remove them altogether, use the `drop` command.
+![Snowflake_DROP_image](assets/Snowflake_DROP.png)
 
 - Close Your Connection with `!exit` or `!disconnect`
 
