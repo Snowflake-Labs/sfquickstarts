@@ -1,5 +1,5 @@
-summary: Guide to deploy Snowpipe auto-integration.
-id:Continuous_Data_Loading_using_SnowPipe
+summary: Guide to deploy Snowpipe auto-integration
+id: Continuous_Data_Loading_using_SnowPipe
 categories: data-management
 environments: web
 status: Draft
@@ -11,7 +11,7 @@ tags: Getting Started, AWS, SQL, Data Engineering
 ## Overview 
 Duration: 5
 
-When building data applications, your users count on seeing the latest. Stale data is less actionable and could lead to costly errors. That's why continuously generated data is essential. Snowflake provides a data loading tool to drive updates,ensuring your databases are accurate by updating tables in micro-batches.
+When building data applications, your users count on seeing the latest. Stale data is less actionable and could lead to costly errors. That's why continuously generated data is essential. Snowflake provides a data loading tool to drive updates, ensuring your databases are accurate by updating tables in micro-batches.
 
 Let's look into how Snowpipe can be configured for continual loading. Then, we can review how you can efficiently perform basic management tasks. But first, If you’re unfamiliar with Snowflake or loading database objects, check out these resources to get familiar with the topics ahead.
 
@@ -30,7 +30,6 @@ Let's look into how Snowpipe can be configured for continual loading. Then, we c
 ### What You’ll Need 
 - Create a [Snowflake account](https://signup.snowflake.com/) with an **ACCOUNTADMIN** role
 - AWS [Account](https://aws.amazon.com/free/?sc_icampaign=acq_aws_takeover-1st-visit-free-tier&sc_ichannel=ha&sc_icontent=awssm-evergreen-1st-visit&sc_iplace=hero&trk=ha_awssm-evergreen-1st-visit&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc) with access to a Snowflake supported [region](https://docs.snowflake.com/en/user-guide/intro-regions.html)
-- Local [Browser and OS Requirements](https://docs.snowflake.com/en/user-guide/setup.html)
 
 ### What You’ll Build 
 - Automated data loading with Snowpipe between AWS S3 bucket and Snowflake database.
