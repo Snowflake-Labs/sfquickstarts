@@ -44,7 +44,7 @@ For this guide, we'll be using Python 3. Let's check what version of Python you 
 python --version
 ```
 
-If it outputs 3.5 or higher, you're good to go! If not, you'll need to install a newer version of Python. You cangrab the latest release on the Python website.
+If it outputs 3.5 or higher, you're good to go! If not, you'll need to install a newer version of Python. You can grab the latest release on the Python website.
 
 Once you've got a recent version of Python, you can install the Snowflake Connector for Python. You'll do this via the Python package installer `pip` and by running the following command:
 
