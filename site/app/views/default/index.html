@@ -116,11 +116,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <header id="banner" {% if view.id != 'default' -%}down{%- else %}down$="[[_toBoolean(selectedFilter)]]"{%- endif %}>
       <div class="site-width">
         {% if view.id == 'default' %}
-        <h2 class="banner-title">Welcome to Snowflake Guides</h2>
+        <h2 class="banner-title">Getting Started with Snowflake</h2>
         <div class="banner-description"
              data-filter-selected$="{% raw %}[[_toBoolean(selectedFilter)]]{% endraw %}">
           <p class="banner-info">
-            Snowflake Guides (SFGuides) provide a tutorial, hands-on learning experience. These guides cover key concepts of the Snowflake Data Cloud, provide step-by-step walkthroughs of building on Snowflake, and provide end-to-end solution sample code.
+            Follow along with our tutorials and step-by-step walkthroughs of building on the Snowflake Data Cloud.
             <br>
             <a href="https://github.com/Snowflake-Labs/devlabs">Snowflake Guides on GitHub</a> 
             <a href="https://www.snowflake.com/virtual-hands-on-lab">Live Virtual Hands on Labs</a>
@@ -150,7 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-tabs>
         </div>
 
-        {% if view.id == 'default' %}
+        <!-- {% if view.id == 'default' %}
         <paper-dropdown-menu
           label="Choose an event"
           class="dropdown-filter"
@@ -171,7 +171,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             {%- endfor %}
           </paper-listbox>
         </paper-dropdown-menu>
-        {% endif %}
+        {% endif %} -->
 
         {%- if showcats -%}
         <paper-dropdown-menu

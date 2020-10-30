@@ -5,3 +5,5 @@ bazel-*
 debug.test
 *pb.go
 node_modules
+site/.firebaserc
+site/.firebase/**
