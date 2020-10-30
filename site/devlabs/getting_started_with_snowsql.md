@@ -1,19 +1,17 @@
-summary: Guide to Loading Files With SnowSQL
-id:LoadDataWithSnowSQL
-categories: data-management
+summary: Getting Started with SnowSQL
+id:getting_started_with_snowsql
+categories: getting-started
 environments: web
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: Getting Started, SQL, Data Engineering
+tags: Getting Started, SQL, Data Engineering, SnowSQL
 
-# Load Data With SnowSQL
+# Getting Started With SnowSQL
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
+Duration: 2
 
-Nearly any application has to send data somewhere, and it can be daunting setting up your much-needed database. You might be familiar with databases but less so with getting them hosted on the cloud. Get the ease of using SQL commands to run your cloud database from the command-line client SnowSQL. We’ll get started with Snowflake, spin up a database, load data, and learn helpful commands to manage your tables. Soon you’ll be equipped to host in the cloud after practicing some SnowSQL basics.
-
-Before we go to the cloud and never look back, below are some helpful resources to familiarize you with the concepts we’ll be traversing.
+SnowSQL is the software CLI tool used to interact with Snowflake. Using SnowSQL, you can control all aspects of your Snowflake Data Cloud, including uploading data, querying data, changing data, and deleting data.  This guide will review SnowSQL and use it to create a database, load data, and learn helpful commands to manage your tables and data directly from your CLI. 
 
 ### Prerequisites
 - Quick Video [Introduction to Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc.)
@@ -39,44 +37,46 @@ Be sure to check the needed computing requirements before beginning. Also, downl
 - A connection to cloud host and manage data with SnowSQL.
 
 <!-- ------------------------ -->
-## Set up Your Account and Install SnowSQL
-Duration: 15
+## Set up SnowSQL
+Duration: 8
 First, you’ll get a Snowflake account and get comfortable navigating in the web console. After downloading the SnowSQL installer, you’ll install and confirm your success.
 
-1.  Create a Snowflake Account
+### Create a Snowflake Account
 
 Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/).
 
-2.  Access Snowflake’s Web Console
+### Access Snowflake’s Web Console
 
 `https://<account-name>.snowflakecomputing.com/console/login`
     
 Log in to the web interface on your browser. The URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region.
 
-3.  Increase Your Account Permission
+### Increase Your Account Permission
 
-The Snowflake web interface has a lot to offer, but for now, we’ll just switch the account role from the default SYSADMIN to ACCOUNTADMIN. This increase in permissions will allow the user account to create objects.
+The Snowflake web interface has a lot to offer, but for now, we’ll just switch the account role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow the user account to create objects.
+
 ![account-role-change-image](assets/Snowflake_SwitchRole.png)
 
-4.  Download the SnowSQL Installer 
+### Download the SnowSQL Installer 
 
 SnowSQL can be downloaded and installed on Linux, Windows, or Mac. In this example, we’ll download the installer for macOS via the AWS endpoint. If you’re using a different OS or prefer other methods, check out all the ways to get SnowSQL [here](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html#).
 
-`$ curl -O
-https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/​<bootstrap-version>/darwin_x86_
-4/snowsql-<snowsql-version>-darwin_x86_64.pkg`
+```console
+curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/​<bootstrap-version>/darwin_x86_4/snowsql-<snowsql-version>-darwin_x86_64.pkg
+```
 
 Specify `​<bootstrap-version>` and `<snowsql-version>`​ number within the cURL command.
 
 The example below is a cURL command to the AWS endpoint for a macOS to download the
 bootstrap version 1.2 and SnowSQL version 1.2.9.
 
-`curl -O
-https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86_64/snowsql-1.2.9-d
-arwin_x86_64.pkg​`
+```console
+curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86_64/snowsql-1.2.9-darwin_x86_64.pkg​
+```
+
 ![Snowflake_Download_Installer_image](assets/Snowflake_Download_Installer.png)
 
-5.  Install SnowSQL Locally
+### Install SnowSQL Locally
 - Double-click the installer file and walk through the wizard prompts.
 - Confirm the install was successful by checking the version `$ snowsql -v`.
 - Reboot your machine and check again if necessary.
@@ -84,87 +84,117 @@ arwin_x86_64.pkg​`
 After completing these steps, you’ll be ready to use SnowSQL to make a database in the next section.
 
 <!-- ------------------------ -->
-## Whip up a Database
-Duration: 15
+## Create a Database
+Duration: 6
 With your account active and SnowSQL installed, you’ll use the terminal to sign in and create
 the needed objects for cloud storage.
 
-1. Sign in From the Terminal
+### Sign in From the Terminal
 
-`$ snowsql -a <account-name> -u <username>`
+```console
+snowsql -a <account-name> -u <username>
+```
 
 The `-a` flag represents the Snowflake account, and the `-u` represents the username.
 
-2.  Create a Database and Schema
+### Create a Database and Schema
 
-`create or replace database sf_tuts;`
+```console
+create or replace database sf_tuts;
+```
 
 The command [​create or replace database​](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) makes a new database and auto-creates the schema ‘public.’ It’ll also make the new database active for your current session.
 
-To check which database is in use for your current session, execute `select current_database(),
-current_schema();`.
-
-3. Generate a Table
+To check which database is in use for your current session, execute:
 
 ```
+select current_database(),
+current_schema();
+```
+
+### Generate a Table
+
+```console
 create or replace table emp_basic (
-first_name string ,
-last_name string ,
-email string ,
-streetaddress string ,
-city string ,
-start_date date
-);
+  first_name string ,
+  last_name string ,
+  email string ,
+  streetaddress string ,
+  city string ,
+  start_date date
+  );
 ```
 
 Running [​create or replace table​](https://docs.snowflake.com/en/sql-reference/sql/create-table.html) will build a new table based on the parameters specified. This example reflects the same columns in the sample CSV employee data files.
+
 ![Snowflake_Create_Table_image](assets/Snowflake_createTable.png)
 
-4. Make a Virtual Warehouse
-```
+### Make a Virtual Warehouse
+```console
 create or replace warehouse sf_tuts_wh with
-warehouse_size='X-SMALL'
-auto_suspend = 180
-auto_resume = true
-initially_suspended=true;
+  warehouse_size='X-SMALL'
+  auto_suspend = 180
+  auto_resume = true
+  initially_suspended=true;
 ```
 After creation, this virtual warehouse will be active for your current session and begin running once the computing resources are needed.
+
 ![Snowflake_createWarehouse_image](assets/Snowflake_createWarehouse.png)
 
 With the database objects ready, you’ll employ SnowSQL to move the sample data onto the `emp_basic` table.
 
 <!-- ------------------------ -->
-## Transport Your Data to the Cloud
-Duration: 15
+## Upload Data
+Duration: 8
 In this section, you’ll stage your sample CVS employee files and execute a SQL command to
 copy the data onto your table.
 
-1. Stage Files With PUT
+If you have not already done so, you can download the sample files here:
 
-`put file:///tmp/employees0*.csv @<database-name>.<schema-name>.%<table-name>;`
+<button>[Download Sample Data](https://docs.snowflake.com/en/_downloads/7f8af74a42c077b86e5bf12cf8ca3247/getting-started.zip)</button>
+
+### Stage Files With PUT
+
+#### Linux
+```console
+put file:///tmp/employees0*.csv @<database-name>.<schema-name>.%<table-name>;
+```
+#### Windows
+````console
+put file://c:\temp\employees0*.csv @sf_tuts.public.%emp_basic;
+````
 
 - `file` specifies the *local* file path of the files to be staged. File paths are OS-specific.
 - `@<database-name>.<schema-name>.%<table-name>` is the specific database,
 schema, and table the staged files are headed.
+- The `@` sign before the database and schema name `@sf_tuts.public` indicates that the files are being uploaded to an internal stage, rather than an external stage. The `%` sign before the table name `%emp_basic` indicates that the internal stage being used is the stage for the table. For more details about stages, see Staging Data Files from a Local File System.
 
-`put file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;`
+```console
+put file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;
+```
 
 Here is a PUT call to stage the sample employee CSV files from a macOS `file:///tmp/` folder onto the `emp_basic` table within the `sf_tuts` database.
+
 ![Snowflake_StagePut_image](assets/Snowflake_StagePut.png)
 
-2. LIST Staged Files
+### LIST Staged Files
 
-`list @<database-name>.<schema-name>.%<table-name>;`
+```
+list @<database-name>.<schema-name>.%<table-name>;
+```
 
 To check your staged files, run the `list` command.
 
-`list @sf_tuts.public.%emp_basic;`
+```
+list @sf_tuts.public.%emp_basic;
+```
 
 The example command above is to output the staged files for the `emp_basic` table. Learn
 more LIST syntax [​here​](https://docs.snowflake.com/en/sql-reference/sql/list.html).
+
 ![Snowflake_ViewStaged_image](assets/Snowflake_ViewStaged.png)
 
-3. [COPY INTO​](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) Your Table
+### [COPY INTO​](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) Your Table
 
 ```
 copy into emp_basic
@@ -174,12 +204,13 @@ copy into emp_basic
   on_error = 'skip_file';
 ```
 After getting the files staged, the data is copied into the `emp_basic` table. This DML command also auto-resumes the virtual warehouse made earlier.
+
 ![Snowflake_CopyStaged_image](assets/Snowflake_CopyStaged.png)
 
 The output indicates if the data was successfully copied and records any errors.
 
 <!-- ------------------------ -->
-## Summon Your Data
+## Query Data
 Duration: 15
 
 With your data in the cloud, you need to know how to query it. We’ll go over a few calls that will
@@ -187,34 +218,43 @@ put your data on speed-dial.
 
 - The `select` command followed by the wildcard `*` returns all rows and columns in `<table-name>`.
 
-`select * from <table-name>;`
-
-`select * from emp_basic;`
+```
+select * from emp_basic;
+```
 
 Here is an example command to `select` everything on the `emp_basic` table.
+
 ![Snowflake_SELECT_image](assets/Snowflake_SELECT.png)
+
 Sifting through everything on your table may not be the best use of your time. Getting specific
 results is simple, with a few functions and some query syntax.
 
 - [WHERE​](https://docs.snowflake.com/en/sql-reference/constructs/where.html#where) is an additional clause you can add to your select query.
 
-`select * from emp_basic where first_name = ‘Ron’;`
+```
+select * from emp_basic where first_name = ‘Ron’;
+```
 
 This query returns a list of employees by the `first_name` of ‘Ron’ from the `emp_basic` table.
+
 ![Snowflake_SELECTRon_image](assets/Snowflake_SELECTRon.png)
 
 - [LIKE​](https://docs.snowflake.com/en/sql-reference/functions/like.html) function supports wildcard `%` and `_`.
 
-`select email from emp_basic where email like '%.au';`
+```
+select email from emp_basic where email like '%.au';
+```
 
 The like function checks all emails in the `emp_basic` table for `au` and returns a record.
+
 ![Snowflake_SELECTEmailAU_image](assets/Snowflake_SELECTEmailAU.png)
+
 Snowflake supports many [​functions](https://docs.snowflake.com/en/sql-reference-functions.html)​, [​operators](https://docs.snowflake.com/en/sql-reference/operators.html)​, and [​commands](https://docs.snowflake.com/en/sql-reference-commands.html)​. However, if you need more
 specific tasks performed, consider setting up an [​external function](https://docs.snowflake.com/en/sql-reference/external-functions-introduction.html)​​.
 
 <!-- ------------------------ -->
-## Manage and Clean Up Your Data
-Duration: 15
+## Manage and Delete Data
+Duration: 6
 
 Often data isn’t static. We’ll review a few common ways to maintain your cloud database.
 
@@ -222,41 +262,49 @@ If HR updated the CSV file after hiring another employee, downloading, staging, 
 the whole CSV would be tedious. Instead, simply insert the new employee information into the
 targeted table.
 
-- [​INSERT​](https://docs.snowflake.com/en/sql-reference/sql/insert.html) will update a table with additional values.
+#### Insert Data
+[​INSERT​](https://docs.snowflake.com/en/sql-reference/sql/insert.html) will update a table with additional values.
+
 
 ```
 insert into emp_basic values
-('Clementine','Adamou','cadamou@sf_tuts.com','10510 Sachs Road','Klenak','2017-9-22') ,
-('Marlowe','De Anesy','madamouc@sf_tuts.co.uk','36768 Northfield
-Plaza','Fangshan','2017-1-26');
+  ('Clementine','Adamou','cadamou@sf_tuts.com','10510 Sachs Road','Klenak','2017-9-22') ,
+  ('Marlowe','De Anesy','madamouc@sf_tuts.co.uk','36768 Northfield Plaza','Fangshan','2017-1-26');
 ```
+#### Drop Objects
 In the command displayed, `insert` is used to add two new employees to the `emp_basic` table.
+
 ![Snowflake_INSERT_image](assets/Snowflake_INSERT.png)
+
 - [DROP​](https://docs.snowflake.com/en/sql-reference/sql/drop.html) objects no longer in use.
 
-`drop database if exists sf_tuts;`
+```
+drop database if exists sf_tuts;
 
-`drop warehouse if exists sf_tuts_wh;`
+drop warehouse if exists sf_tuts_wh;
+```
 
-After practicing the basics covered in this tutorial, you’ll no longer need the `sf-tuts` database
-and warehouse. To remove them altogether, use the `drop` command.
-![Snowflake_DROP_image](assets/Snowflake_DROP.png)
+After practicing the basics covered in this tutorial, you’ll no longer need the `sf-tuts` database and warehouse. To remove them altogether, use the `drop` command.
+<!--![Snowflake_DROP_image](assets/Snowflake_DROP.png)-->
 
 - Close Your Connection with `!exit` or `!disconnect`
 
-For security reasons, it’s best not to leave your terminal connection open unnecessarily. Once
-you’re ready to close your SnowSQL connection, simply enter `!exit`.
+For security reasons, it’s best not to leave your terminal connection open unnecessarily. Once you’re ready to close your SnowSQL connection, simply enter `!exit`.
 <!-- ------------------------ -->
-## Use SnowSQL for Your Application
-Duration: 5
+## Conclusion
+Duration: 1
 
+### Use SnowSQL for Your Application
 You’ve created a Snowflake account, set up a cloud database with compute resources, and
 migrated data to the cloud with SnowSQL. Nice work! There are many advantages to using the
 cloud. Now that you know how easy getting started with Snowflake is, it’s time to consider your
 next steps.
 
 With your firm grasp of loading data with SnowSQL, start using it to run your application.
-Continue by [​developing an application](https://docs.snowflake.com/en/developer-apps.html)​ with SnowSQL to learn how to connect your data to a
-Python application. If you already have application data, consider migrating it to the cloud with
-the same steps we used to complete the `emp_basic` table. Snowflake’s tools and
-documentation are extensive and give you the power of cloud computing.
+Continue by [​developing an application](https://docs.snowflake.com/en/developer-apps.html)​ with SnowSQL to learn how to connect your data to a Python application. If you already have application data, consider migrating it to the cloud with the same steps we used to complete the `emp_basic` table. Snowflake’s tools and documentation are extensive and give you the power of cloud computing.
+
+### What we've covered
+- SnowSQL setup
+- Uploading data using SnowSQL
+- Querying data using SnowSQL
+- Managing and deleting data using SnowSQL

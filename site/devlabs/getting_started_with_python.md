@@ -1,9 +1,10 @@
 summary: Getting Started with Python
 id: getting_started_with_python
-categories: data-applications
+categories: getting-started
 tags: python
-status: Draft
+status: Published
 Feedback Link: https://github.com/Snowflake-Labs/devlabs/issues
+tags: Getting Started, SQL, Data Engineering, SnowSQL, Python
 
 # Getting Started with Python
 <!-- ------------------------ -->
@@ -71,17 +72,17 @@ import snowflake.connector
 
 # Gets the version
 ctx = snowflake.connector.connect(
-user='<your_user_name>',
-password='<your_password>',
-account='<your_account_name>'
-)
+    user='<your_user_name>',
+    password='<your_password>',
+    account='<your_account_name>'
+    )
 cs = ctx.cursor()
 try:
-cs.execute("SELECT current_version()")
-one_row = cs.fetchone()
-print(one_row[0])
+    cs.execute("SELECT current_version()")
+    one_row = cs.fetchone()
+    print(one_row[0])
 finally:
-cs.close()
+    cs.close()
 ctx.close()
 ```
 
@@ -115,10 +116,10 @@ You'll use those variables within the Python Connector like so:
 
 ```
 conn = snowflake.connector.connect(
-user=USER,
-password=PASSWORD,
-account=ACCOUNT
-)
+    user=USER,
+    password=PASSWORD,
+    account=ACCOUNT
+    )
 ```
 
 Nice! Now let’s delve into the specifics. 
@@ -131,12 +132,12 @@ You can set session parameters to tweak your session and have it set up just the
 
 ```
 con = snowflake.connector.connect(
-user='XXXX',
-password='XXXX',
-account='XXXX',
-session_parameters={
-'QUERY_TAG': 'EndOfMonthFinancials',
-}
+    user='XXXX',
+    password='XXXX',
+    account='XXXX',
+    session_parameters={
+        'QUERY_TAG': 'EndOfMonthFinancials',
+    }
 )
 ```
 
@@ -177,7 +178,6 @@ The `CREATE WAREHOUSE` command creates a warehouse, as expected, but also implic
 
 ```
 conn.cursor().execute("USE WAREHOUSE tiny_warehouse_mg")
-
 ```
 
 Now that you have a warehouse, let’s talk about databases.
@@ -231,9 +231,9 @@ Duration: 2
 Alright, with a warehouse, database, and schema created you have everything you need to begin manipulating data in tables. First, you'll need to create the table. That's done with the `CREATE TABLE` command.
 
 ```
-conn.cursor().execute(
+con.cursor().execute(
     "CREATE OR REPLACE TABLE "
-"test_table(col1 integer, col2 string)")
+    "test_table(col1 integer, col2 string)")
 ```
 
 Within `conn.cursor().execute` this example creates a table named `test_table` with two columns, one named `col1` which will contain integers and `col2` which will contain strings.
@@ -245,10 +245,9 @@ Duration: 2
 With the table `test_table` created, you can add data to it. You can do so with the command `INSERT`.
 
 ```
-conn.cursor().execute(
-"INSERT INTO test_table(col1, col2) VALUES " +
-" (123, 'test string1'), " +
-" (456, 'test string2')")
+con.cursor().execute(
+    "INSERT INTO test_table(col1, col2) "
+    "VALUES(123, 'test string1'),(456, 'test string2')")
 ```
 
 This command inserts data into `test_table` row by row. The value found in the first column and first row is “123” and so on.
@@ -256,9 +255,8 @@ This command inserts data into `test_table` row by row. The value found in the f
 If you don't want to manually insert data row by row, however, you can load data instead. This is done with a combination of the `PUT` and `COPY INTO` commands.
 
 ```
-con.cursor().execute("PUT file:///tmp/data/file* @%testtable")
-con.cursor().execute("COPY INTO testtable")
-
+con.cursor().execute("PUT file:///tmp/data/file* @%test_table")
+con.cursor().execute("COPY INTO test_table")
 ```
 
 The `PUT` command here is staging the file, and the `COPY INTO` command is copying that data from that file into the specified table. You can also use the `COPY INTO` command to copy data from an external location.
@@ -271,17 +269,16 @@ Of course, you'll want to query your data at some point. It's easy to do that wi
 
 
 ```
-col1, col2 = con.cursor().execute("SELECT col1, col2 FROM testtable").fetchone()
+col1, col2 = con.cursor().execute("SELECT col1, col2 FROM test_table").fetchone()
 print('{0}, {1}'.format(col1, col2))
-
 ```
 
-This code snippet is using the SQL command `SELECT col1, col2 FROM testtable` to select specific columns, and then is printing the first values in each, or in other words, the first row.
+This code snippet is using the SQL command `SELECT col1, col2 FROM test_table` to select specific columns, and then is printing the first values in each, or in other words, the first row.
 
 If you'd like to print entire columns, you can do so in a similar manner.
 
 ```
-for (col1, col2) in con.cursor().execute("SELECT col1, col2 FROM testtable"):
+for (col1, col2) in con.cursor().execute("SELECT col1, col2 FROM test_table"):
 	print('{0}, {1}'.format(col1, col2))
 ```
 
