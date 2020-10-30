@@ -41,7 +41,7 @@ Be sure to check the needed computing requirements before beginning. Also, downl
 <!-- ------------------------ -->
 ## Set up Your Account and Install SnowSQL
 Duration: 15
-First, you’ll get a Snowflake account and get comfortable navigating in the web console. After downloading the SnowSQL installer, you’ll install and confirm your success.
+First, you’ll get a Snowflake account and get comfortable navigating the web console. After downloading the SnowSQL installer, you’ll install and confirm your success.
 
 1.  Create a Snowflake Account
 
@@ -108,11 +108,11 @@ current_schema();`.
 
 ```
 create or replace table emp_basic (
-first_name string ,
-last_name string ,
-email string ,
-streetaddress string ,
-city string ,
+first_name string,
+last_name string,
+email string,
+streetaddress string,
+city string,
 start_date date
 );
 ```
@@ -250,7 +250,7 @@ you’re ready to close your SnowSQL connection, simply enter `!exit`.
 ## Use SnowSQL for Your Application
 Duration: 5
 
-You’ve created a Snowflake account, set up a cloud database with compute resources and
+You’ve created a Snowflake account, set up a cloud database with compute resources, and
 migrated data to the cloud with SnowSQL. Nice work! There are many advantages to using the
 cloud. Now that you know how easy getting started with Snowflake is, it’s time to consider your
 next steps.
