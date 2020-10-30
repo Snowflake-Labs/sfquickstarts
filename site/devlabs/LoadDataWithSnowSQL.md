@@ -194,7 +194,7 @@ put your data on speed-dial.
 Here is an example command to `select` everything on the `emp_basic` table.
 ![Snowflake_SELECT_image](assets/Snowflake_SELECT.png)
 Sifting through everything on your table may not be the best use of your time. Getting specific
-results is simple, with a few functions and some query syntax.
+results are simple, with a few functions and some query syntax.
 
 - [WHERE​](https://docs.snowflake.com/en/sql-reference/constructs/where.html#where) is an additional clause you can add to your select query.
 
@@ -250,7 +250,7 @@ you’re ready to close your SnowSQL connection, simply enter `!exit`.
 ## Use SnowSQL for Your Application
 Duration: 5
 
-You’ve created a Snowflake account, set up a cloud database with compute resources, and
+You’ve created a Snowflake account, set up a cloud database with compute resources and
 migrated data to the cloud with SnowSQL. Nice work! There are many advantages to using the
 cloud. Now that you know how easy getting started with Snowflake is, it’s time to consider your
 next steps.
@@ -259,4 +259,4 @@ With your firm grasp of loading data with SnowSQL, start using it to run your ap
 Continue by [​developing an application](https://docs.snowflake.com/en/developer-apps.html)​ with SnowSQL to learn how to connect your data to a
 Python application. If you already have application data, consider migrating it to the cloud with
 the same steps we used to complete the `emp_basic` table. Snowflake’s tools and
-documentation are extensive and give you the power of cloud computing.
+documentation is extensive and give you the power of cloud computing.
