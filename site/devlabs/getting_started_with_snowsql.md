@@ -6,7 +6,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Getting Started, SQL, Data Engineering, SnowSQL
 
-# Getting Started With SnowSQL
+# Getting Started with SnowSQL
 <!-- ------------------------ -->
 ## Overview 
 Duration: 2

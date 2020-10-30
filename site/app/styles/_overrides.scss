@@ -21,7 +21,7 @@
 
 $color-data-applications: #475CA7;
 $color-data-exchange: #282A72;
-@include codelab-card(['getting-started'], $snowflake-blue, '');
+@include codelab-card(['getting-started'], $color-data-exchange, '');
 @include codelab-card(['data-engineering'], $snowflake-blue, 'data-engineering.svg');
 @include codelab-card(['data-lake'], $star-blue, 'data-lake.svg');
 @include codelab-card(['data-warehouse'], $mid-blue, 'data-warehouse.svg');
