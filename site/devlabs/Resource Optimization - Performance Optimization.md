@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Performance, Optimization, Performance Optimization, Monitoring 
 authors: Matt Meredith
 
-#Performance Optimization Guide to Resource Optimization
+#(5/5) Performance Optimization Guide to Resource Optimization
 
 <!-- -------------->
 
@@ -15,19 +15,9 @@ authors: Matt Meredith
 
 The queries provided in this guide are intended to help you setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
 
-###Query Tiers
-Each query within the Resource Optimization Snowflake Guides will have a tier designation just below its name. The following tier descriptions should help to better understand those designations.
+For information on the tiers designated to each query, please refer to the "Introduction to Snowflake Resource Optimization" Snowflake Guide.
 
-####Tier 1 Queries
-At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
-
-####Tier 2 Queries
-Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.
-
-####Tier 3 Queries
-Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake. While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 & 2.
-
-##Long Running Queries
+##Long Running Queries (T1)
 ######Tier 1
 ####Description:
 Identifies which queries have been the longest running over a specified time period.  
@@ -64,7 +54,7 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
 ####Screenshot
 ![alt-text-here](assets/longestrunningqueries.png)
 
-##Data Ingest with Snowpipe and "Copy"
+##Data Ingest with Snowpipe and "Copy" (T1)
 ######Tier 1
 ####Description:
 This query returns an aggregated daily summary of all loads for each table in Snowflake showing average file size, total rows, total volume and the ingest method (copy or snowpipe)
@@ -97,7 +87,7 @@ ORDER BY 3,4,5,1,2
 ####Screenshot
 ![alt-text-here](assets/dataingestwithsnowpipe.png)
 
-##Scale Up vs. Out (Size vs. Multi-cluster)
+##Scale Up vs. Out (Size vs. Multi-cluster) (T2)
 ######Tier 2
 ####Description:
 Two separate queries that list out the warehouses and times that could benefit from either a MCW setting OR scaling up to a larger size
@@ -139,7 +129,7 @@ AND (
 
 ![alt-text-here](assets/scaleupvsout2.png)
 
-##Warehouse Cache Usage
+##Warehouse Cache Usage (T3)
 ######Tier 3
 ####Description:
 Aggregate across all queries broken out by warehouses showing the percentage of data scanned from the warehouse cache.
@@ -167,7 +157,7 @@ ORDER BY 5
 ;
 ```
 
-##Heavy Scanners
+##Heavy Scanners (T3)
 ######Tier 3
 ####Description:
 Ordered list of users that run queries that scan a lot of data.
@@ -192,7 +182,7 @@ order by 3 desc
 ;
 ```
 
-##Full Table Scans by User
+##Full Table Scans by User (T3)
 ######Tier 3
 ####Description:
 These queries are the list of users that run the most queries with near full table scans and then the list of the queries themselves
@@ -223,7 +213,7 @@ ORDER BY PARTITIONS_SCANNED DESC
 ```
 
 
-##Top 10 Spillers Remote
+##Top 10 Spillers Remote (T3)
 ######Tier 3
 ####Description:
 Identifies the top 10 worst offending queries in terms of bytes spilled to remote storage
@@ -242,7 +232,7 @@ limit 10
 ;
 ```
 
-##AutoClustering History & 7-Day Average
+##AutoClustering History & 7-Day Average (T3)
 ######Tier 3
 ####Description:
 Average daily credits consumed by Auto-Clustering grouped by week over the last year.
@@ -272,8 +262,8 @@ ORDER BY 1
 ;
 ```
 
-##Materialized Views History & 7-Day Average
-######Tier 3
+##Materialized Views History & 7-Day Average (T3)
+######Tier 3 
 ####Description:
 Average daily credits consumed by Materialized Views grouped by week over the last year.
 ####How to Interpret Results:
@@ -302,7 +292,7 @@ ORDER BY 1
 ;
 ```
 
-##Search Optimization History & 7-Day Average
+##Search Optimization History & 7-Day Average (T3)
 ######Tier 3
 ####Description:
 Average daily credits consumed by Search Optimization grouped by week over the last year.
@@ -332,7 +322,7 @@ ORDER BY 1
 ;
 ```
 
-##Snowpipe History & 7-Day Average
+##Snowpipe History & 7-Day Average (T3)
 ######Tier 3
 ####Description:
 Average daily credits consumed by Snowpipe grouped by week over the last year.

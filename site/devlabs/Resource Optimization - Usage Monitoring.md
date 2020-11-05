@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Consumption, Usage Monitoring, Usage, Monitoring 
 authors: Matt Meredith
 
-#Usage Monitoring Guide to Resource Optimization
+#(3/5) Usage Monitoring Guide to Resource Optimization
 
 <!-- -------------->
 
@@ -15,17 +15,10 @@ authors: Matt Meredith
 
 Usage Monitoring queries are designed to identify the warehouses, queries, tools, and users that are responsible for consuming the most credits over a specified period of time.  These queries can be used to determine which of those resources are consuming more credits than anticipated and take the necessary steps to reduce their consumption.
 
-###Query Tiers
-Each query within the Resource Optimization Snowflake Guides will have a tier designation just below its name. The following tier descriptions should help to better understand those designations.
-
-####Tier 1 Queries
-At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
-
-####Tier 2 Queries
-Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.
+For information on the tiers designated to each query, please refer to the "Introduction to Snowflake Resource Optimization" Snowflake Guide.
 
 
-##Warehouse Utilization
+##Warehouse Utilization (T1)
 ######Tier 1
 ####Description:
 This query is designed to give a rough idea of how busy Warehouses are compared to the credit consumption per hour. It will show the end user the number of credits consumed, the number of queries executed and the total execution time of those queries in each hour window.
@@ -130,7 +123,7 @@ GROUP BY
 ####Screenshot
 ![alt-text-here](assets/warehouseutilization.png)
 
-##Credit Consumption by Warehouse
+##Credit Consumption by Warehouse (T1)
 ######Tier 1
 ####Description:
 Shows the total credit consumption for each warehouse over a specific time period.  
@@ -160,7 +153,7 @@ SELECT WAREHOUSE_NAME
 ####Screenshot
 ![alt-text-here](assets/creditconsumptionbywarehouse.png)
 
-##Average Hour-by-Hour Consumption Over the Past 7 Days
+##Average Hour-by-Hour Consumption Over the Past 7 Days (T1)
 ######Tier 1
 ####Description:
 Shows the total credit consumption on an hourly basis to help understand consumption trends (peaks, valleys) over the past 7 days. 
@@ -197,7 +190,7 @@ SELECT DATE_PART('HOUR', START_TIME) AS START_HOUR
 ####Screenshot
 ![alt-text-here](assets/averagehourbyhourconsumption2.png)
 
-##Average Query Volume by Hour (Past 7 Days)
+##Average Query Volume by Hour (Past 7 Days) (T1)
 ######Tier 1
 ####Description:
 Shows average number of queries run on an hourly basis to help better understand typical query activity.
@@ -218,7 +211,7 @@ SELECT DATE_TRUNC(HOUR, START_TIME) AS QUERY_START_HOUR
 ####Screenshot
 ![alt-text-here](assets/averagequeryvolumebyhour.png)
 
-##Constantly Running Queries
+##Constantly Running Queries (T1)
 ######Tier 1
 ####Description:
 Shows the frequency of Query Text in a specified time period.  Identifies which queries or query strings are being run most frequently. 
@@ -242,7 +235,7 @@ SELECT QUERY_TEXT
 ####Screenshot
 ![alt-text-here](assets/constantlyrunningqueries.png)
 
-##Warehouse Utilization Over 7 Day Average
+##Warehouse Utilization Over 7 Day Average (T1)
 ######Tier 1
 ####Description:
 This query returns the daily average of credit consumption grouped by week and warehouse.
@@ -274,7 +267,7 @@ ORDER BY 1,2
 ####Screenshot
 ![alt-text-here](assets/warehouseutilization7days.png)
 
-##Forecasting Usage/Billing (Introductory)
+##Forecasting Usage/Billing (T1)
 ######Tier 1
 ####Description:
 This query provides three distinct consumption metrics for each day of the contract term. (1) the contracted consumption is the dollar amount consumed if usage was flat for the entire term. (2) the actual consumption pulls from the various usage views and aggregates dollars at a day level. (3) the forecasted consumption creates a straight line regression from the actuals to project go-forward consumption.
@@ -433,7 +426,7 @@ JOIN        FORECASTED_USAGE_SLOPE_INTERCEPT                FU ON 1 = 1
 ####Screenshot
 ![alt-text-here](assets/forecastingusagebillingintro.png)
 
-##Partner Tools Consuming Credits
+##Partner Tools Consuming Credits (T1)
 ######Tier 1
 ####Description:
 Identifies which of Snowflake's partner tools/solutions (BI, ETL, etc.) are consuming the most credits.
@@ -497,7 +490,7 @@ ORDER BY 3 DESC
 ####Screenshot
 ![alt-text-here](assets/partnertoolsconsumingcredits2.png)
 
-##Credit Consumption by User
+##Credit Consumption by User (T1)
 ######Tier 1
 ####Description:
 Identifies which users are consuming the most credits within your Snowflake environment.  
@@ -551,7 +544,7 @@ ORDER BY 3 DESC
 ####Screenshot
 ![alt-text-here](assets/creditconsumptionbyuser.png)
 
-##Queries by # of Times Executed and Execution Time
+##Queries by # of Times Executed and Execution Time (T2)
 ######Tier 2
 ####Description:
 Are there any queries that get executed a ton?? how much execution time do they take up?
@@ -577,7 +570,7 @@ QUERY_TEXT
   ;
 ```
 
-##Top 50 Longest Running Queries
+##Top 50 Longest Running Queries (T2)
 ######Tier 2
 ####Description:
 Looks at the top 50 longest running queries to see if there are patterns
@@ -610,7 +603,7 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
 ```
 
 
-##Top 50 Queries that Scanned the Most Data
+##Top 50 Queries that Scanned the Most Data (T2)
 ######Tier 2
 ####Description:
 Looks at the top 50 queries that scan the largest number of micro partitions
@@ -643,7 +636,7 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
    ;
 ```
 
-##Queries by Execution Buckets over the Past 7 Days
+##Queries by Execution Buckets over the Past 7 Days (T2)
 ######Tier 2
 ####Description:
 Group the queries for a given warehouse by execution time buckets
@@ -691,7 +684,7 @@ order by COALESCE(b.execution_time_lower_bound,120000)
 ####Screenshot
 ![alt-text-here](assets/queriesbyexecutiontimebuckets.png)
 
-##Warehouses Approaching Cloud Billing Threshold
+##Warehouses Approaching Cloud Billing Threshold (T2)
 ######Tier 2
 ####Description:
 Shows the warehouses that are not using enough compute to cover the cloud services portion of compute, ordered by the ratio of cloud services to total compute

@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Consumption, Setup, Configuration, Administration, Monitoring 
 authors: Matt Meredith
 
-#Setup & Configuration Guide to Resource Optimization
+#(2/5) Setup & Configuration Guide to Resource Optimization
 
 <!-- -------------->
 
@@ -31,17 +31,10 @@ To help control costs and avoid unexpected credit usage caused by running wareho
 
 Resource monitors can be used to impose limits on the number of credits that are consumed by virtual warehouses. The number of credits consumed depends on the size of the warehouse and how long it runs. Limits can be set for a specified interval or date range. When these limits are reached and/or are approaching, the resource monitor can trigger various actions, such as sending alert notifications and/or suspending the warehouses.
 
-###Query Tiers
-Each query within the Resource Optimization Snowflake Guides will have a tier designation just below its name. The following tier descriptions should help to better understand those designations.
-
-####Tier 1 Queries
-At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
-
-####Tier 2 Queries
-Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.
+For information on the tiers designated to each query, please refer to the "Introduction to Snowflake Resource Optimization" Snowflake Guide.
 
 
-##Warehouses without Auto-Resume
+##Warehouses without Auto-Resume (T1)
 ######Tier 1
 ####Description:
 Identifies all warehouses that do not have auto-resume enabled.  Enabling this feature will automatically resume a warehouse any time a query is submitted against that specific warehouse. By default, all warehouses have auto-resume enabled.
@@ -60,7 +53,7 @@ SELECT "name" AS WAREHOUSE_NAME
 ;
 ```
 
-##Warehouses without Auto-Suspend
+##Warehouses without Auto-Suspend (T1)
 ######Tier 1
 ####Description:
 Identifies all warehouses that do not have auto-suspend enabled.  Enabling this feature will ensure that warehouses become suspended after a specific amount of inactive time in order to prevent runaway costs.  By default, all warehouses have auto-suspend enabled.
@@ -80,7 +73,7 @@ SELECT "name" AS WAREHOUSE_NAME
 ```
 
 
-##Warehouses with Long Timeouts
+##Warehouses with Long Timeouts (T1)
 ######Tier 1
 ####Description:
 Identifies warehouses that have the longest timeouts.  Timeout parameters are used to define how long a query may run for before timing out.  By default, statement lockout is set for two days.
@@ -102,7 +95,7 @@ SELECT "name" AS WAREHOUSE_NAME
 ;
 ```
 
-##Warehouses without Resource Monitors
+##Warehouses without Resource Monitors (T1)
 ######Tier 1
 ####Description:
 Identifies all warehouses without resource monitors in place.  Resource monitors provide the ability to set limits on credits consumed against a warehouse during a specific time interval or date range.  This can help prevent certain warehouses from unintentionally consuming more credits than typically expected.
@@ -121,7 +114,7 @@ SELECT "name" AS WAREHOUSE_NAME
 ;
 ```
 
-##User Segmentation
+##User Segmentation (T1)
 ######Tier 1
 ####Description:
 Lists out all warehouses that are used by multiple ROLEs in Snowflake and returns the average execution time  and count of all queries executed by each ROLE in each warehouse.
@@ -155,7 +148,7 @@ order by 1,2
 ####Screenshot
 ![alt-text-here](assets/usersegmentation.png)
 
-##Idle Users
+##Idle Users (T2)
 ######Tier 2
 ####Description:
 Users in the Snowflake platform that have not logged in in the last 30 days
@@ -172,7 +165,7 @@ WHERE LAST_SUCCESS_LOGIN < DATEADD(month, -1, CURRENT_TIMESTAMP())
 AND DELETED_ON IS NULL;
 ```
 
-##Users Never Logged In
+##Users Never Logged In (T2)
 ######Tier 2
 ####Description:
 Users that have never logged in to Snowflake
@@ -188,7 +181,7 @@ FROM SNOWFLAKE.ACCOUNT_USAGE.USERS
 WHERE LAST_SUCCESS_LOGIN IS NULL;
 ```
 
-##Idle Roles
+##Idle Roles (T2)
 ######Tier 2
 ####Description:
 Roles that have not been used in the last 30 days
@@ -212,7 +205,7 @@ WHERE Q.ROLE_NAME IS NULL
 and DELETED_ON IS NULL;
 ```
 
-##Idle Warehouses
+##Idle Warehouses (T2)
 ######Tier 2
 ####Description:
 Warehouses that have not been used in the last 30 days
@@ -233,7 +226,7 @@ left join (select distinct WAREHOUSE_NAME from SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE
 where b.WAREHOUSE_NAME is null;
 ```
 
-##Set Account Statement Timeouts
+##Set Account Statement Timeouts (T2)
 ######Tier 2
 ####Description:
 Account Statement parameter setting at the Account and Warehouse levels
@@ -247,7 +240,7 @@ SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN ACCOUNT;
 SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN WAREHOUSE <warehouse-name>;
 ```
 
-##Stale Table Streams
+##Stale Table Streams (T2)
 ######Tier 2
 ####Description:
 Indicates whether the offset for the stream is positioned at a point earlier than the data retention period for the table (or 14 days, whichever period is longer). Change data capture (CDC) activity cannot be returned for the table. 
@@ -264,7 +257,7 @@ from table(result_scan(last_query_id()))
 where "stale" = true;
 ```
 
-##Failed Tasks
+##Failed Tasks (T2)
 ######Tier 2
 ####Description:
 Returns a list of task executions that failed
@@ -281,7 +274,7 @@ select *
   ;
 ```
 
-##Long Running Tasks
+##Long Running Tasks (T2)
 ######Tier 2
 ####Description:
 Returns an ordered list of the longest running tasks

@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Consumption, Monitoring, Optimization
 authors: Matt Meredith
 
-#Introduction to Snowflake Resource Optimization
+#(1/5) Introduction to Snowflake Resource Optimization
 
 <!-- -------------->
 
@@ -15,7 +15,7 @@ authors: Matt Meredith
 
 This guide is to serve as the introduction to a series of Snowflake Resource Optimization guides to help our customers better optimize their credit consumption within Snowflake.  It is in the mutual interest of both Snowflake and our customers to ensure an efficient process when it comes to monitoring and consuming credits within Snowflake.  This set of Snowflake Guides focused on Resource Optimization are just one key asset helping with this process.  The following Snowflake Guides are available to assist you in your journey of optimizing how you consume credits on Snowflake.
 
-###Snowflake Guides for Resource Optimization
+##Snowflake Guides for Resource Optimization
 
 ####Setup & Configuration Guide to Resource Optimization
 This guide is designed to enable Snowflake customers to better understand and identify focal points around how their warehouses, users, and other factors are setup and configured to control consumption.  These queries are critical to preventing and limiting excess-consumption against your Snowflake account.
@@ -31,8 +31,8 @@ These metrics also seek to identify those queries that are consuming the most am
 ####Performance Optimization Guide to Resource Optimization
 The queries provided in this guide are intended to help you identify areas in which poor performance might be causing excess consumption, driven by a variety of factors.
 
-###Query Tiers
-Each query within the Resource Optimization Snowflake Guides will have a tier designation just below its name.  The following tier descriptions should help to better understand those designations.
+##Query Tiers
+Each query within the Resource Optimization Snowflake Guides will have a tier designation just to the right of its name as "(T*)".  The following tier descriptions should help to better understand those designations.
 
 ####Tier 1 Queries
 At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
