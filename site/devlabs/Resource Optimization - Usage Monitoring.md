@@ -1,6 +1,6 @@
-summary: This is a guide that can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption.
+summary: This guide can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption.
 id: resourceoptimization-usagemonitoring
-categories: data-science 
+categories: resource-optimization 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
@@ -15,15 +15,25 @@ authors: Matt Meredith
 
 Usage Monitoring queries are designed to identify the warehouses, queries, tools, and users that are responsible for consuming the most credits over a specified period of time.  These queries can be used to determine which of those resources are consuming more credits than anticipated and take the necessary steps to reduce their consumption.
 
+###Query Tiers
+Each query within the Resource Optimization Snowflake Guides will have a tier designation just below its name. The following tier descriptions should help to better understand those designations.
+
+####Tier 1 Queries
+At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
+
+####Tier 2 Queries
+Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.
+
+
 ##Warehouse Utilization
 ######Tier 1
-#####Description:
+####Description:
 This query is designed to give a rough idea of how busy Warehouses are compared to the credit consumption per hour. It will show the end user the number of credits consumed, the number of queries executed and the total execution time of those queries in each hour window.
-#####How to Interpret Results:
+####How to Interpret Results:
 This data can be used to draw correlations between credit consumption and the #/duration of query executions. The more queries or higher query duration for the fewest number of credits may help drive more value per credit.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 SELECT
        WMH.WAREHOUSE_NAME
@@ -117,18 +127,18 @@ GROUP BY
 
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/warehouseutilization.png)
 
 ##Credit Consumption by Warehouse
 ######Tier 1
-#####Description:
+####Description:
 Shows the total credit consumption for each warehouse over a specific time period.  
-#####How to Interpret Results:
+####How to Interpret Results:
 Are there specific warehouses that are consuming more credits than the others?  Should they be?  Are there specific warehouses that are consuming more credits than anticipated for that warehouse?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 // Credits used (all time = past year)
 SELECT WAREHOUSE_NAME
@@ -147,18 +157,18 @@ SELECT WAREHOUSE_NAME
  ORDER BY 2 DESC
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/creditconsumptionbywarehouse.png)
 
 ##Average Hour-by-Hour Consumption Over the Past 7 Days
 ######Tier 1
-#####Description:
+####Description:
 Shows the total credit consumption on an hourly basis to help understand consumption trends (peaks, valleys) over the past 7 days. 
-#####How to Interpret Results:
+####How to Interpret Results:
 At which points of the day are we seeing spikes in our consumption?  Is that expected?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL (by hour, warehouse)
 ```sql
 // Credits used by [hour, warehouse] (past 7 days)
 SELECT START_TIME
@@ -170,9 +180,9 @@ SELECT START_TIME
  ORDER BY 1 DESC,2
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/averagehourbyhourconsumption.png)
-#####SQL
+####SQL (by hour)
 ```sql
 // Credits used (avg) by [hour] (past 7 days)
 SELECT DATE_PART('HOUR', START_TIME) AS START_HOUR
@@ -184,18 +194,18 @@ SELECT DATE_PART('HOUR', START_TIME) AS START_HOUR
  ORDER BY 1
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/averagehourbyhourconsumption2.png)
 
 ##Average Query Volume by Hour (Past 7 Days)
 ######Tier 1
-#####Description:
+####Description:
 Shows average number of queries run on an hourly basis to help better understand typical query activity.
-#####How to Interpret Results:
+####How to Interpret Results:
 How many queries are being run on an hourly basis?  Is this more or less than we anticipated?  What could be causing this?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 SELECT DATE_TRUNC(HOUR, START_TIME) AS QUERY_START_HOUR
       ,COUNT(*) AS NUM_QUERIES
@@ -205,18 +215,18 @@ SELECT DATE_TRUNC(HOUR, START_TIME) AS QUERY_START_HOUR
  ORDER BY 1 DESC
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/averagequeryvolumebyhour.png)
 
 ##Constantly Running Queries
 ######Tier 1
-#####Description:
+####Description:
 Shows the frequency of Query Text in a specified time period.  Identifies which queries or query strings are being run most frequently. 
-#####How to Interpret Results:
+####How to Interpret Results:
 Are there specific queries that are being run on a recurring basis? Is there a reason that they're running so frequently?  If not, is this a source of unnecessary credit consumption?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 // Top 10 most common queries (min 10 occurrences) by count (past 7 days)
 SELECT QUERY_TEXT
@@ -229,18 +239,18 @@ SELECT QUERY_TEXT
  LIMIT 10
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/constantlyrunningqueries.png)
 
 ##Warehouse Utilization Over 7 Day Average
 ######Tier 1
-#####Description:
+####Description:
 This query returns the daily average of credit consumption grouped by week and warehouse.
-#####How to Interpret Results:
+####How to Interpret Results:
 Use this to idenitify anomolies in credit consumption for warehouses across weeks from the past year.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 WITH DAILY_CONSUMPTION AS (
     SELECT 
@@ -261,18 +271,18 @@ GROUP BY 1,2
 ORDER BY 1,2
   ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/warehouseutilization7days.png)
 
 ##Forecasting Usage/Billing (Introductory)
 ######Tier 1
-#####Description:
+####Description:
 This query provides three distinct consumption metrics for each day of the contract term. (1) the contracted consumption is the dollar amount consumed if usage was flat for the entire term. (2) the actual consumption pulls from the various usage views and aggregates dollars at a day level. (3) the forecasted consumption creates a straight line regression from the actuals to project go-forward consumption.
-#####How to Interpret Results:
+####How to Interpret Results:
 This data should be mapped as line graphs with a running total calculation to estimate future forecast against the contract amount.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 USE ROLE SYSADMIN;
 USE DATABASE SNOWFLAKE;
@@ -420,18 +430,18 @@ JOIN        FORECASTED_USAGE_SLOPE_INTERCEPT                FU ON 1 = 1
 ;
 
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/forecastingusagebillingintro.png)
 
 ##Partner Tools Consuming Credits
 ######Tier 1
-#####Description:
+####Description:
 Identifies which of Snowflake's partner tools/solutions (BI, ETL, etc.) are consuming the most credits.
-#####How to Interpret Results:
+####How to Interpret Results:
 Are there certain partner solutions that are consuming more credits than anticipated?  What is the reasoning for this?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 --THIS IS APPROXIMATE CREDIT CONSUMPTION BY CLIENT APPLICATION
 WITH CLIENT_HOUR_EXECUTION_CTE AS (
@@ -484,18 +494,18 @@ ORDER BY 3 DESC
 ;
 
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/partnertoolsconsumingcredits2.png)
 
 ##Credit Consumption by User
 ######Tier 1
-#####Description:
+####Description:
 Identifies which users are consuming the most credits within your Snowflake environment.  
-#####How to Interpret Results:
+####How to Interpret Results:
 Are there certain users that are consuming more credits than they should? What is the purpose behind this additional usage?  
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 --THIS IS APPROXIMATE CREDIT CONSUMPTION BY USER
 WITH USER_HOUR_EXECUTION_CTE AS (
@@ -538,18 +548,18 @@ GROUP BY 1,2
 ORDER BY 3 DESC
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/creditconsumptionbyuser.png)
 
 ##Queries by # of Times Executed and Execution Time
 ######Tier 2
-#####Description:
+####Description:
 Are there any queries that get executed a ton?? how much execution time do they take up?
-#####How to Interpret Results:
+####How to Interpret Results:
 Opportunity to materialize the result set as a table?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 SELECT 
 QUERY_TEXT
@@ -569,13 +579,13 @@ QUERY_TEXT
 
 ##Top 50 Longest Running Queries
 ######Tier 2
-#####Description:
+####Description:
 Looks at the top 50 longest running queries to see if there are patterns
-#####How to Interpret Results:
+####How to Interpret Results:
 Is there an opportunity to optimize with clustering or upsize the warehouse?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 select
           
@@ -602,13 +612,13 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
 
 ##Top 50 Queries that Scanned the Most Data
 ######Tier 2
-#####Description:
+####Description:
 Looks at the top 50 queries that scan the largest number of micro partitions
-#####How to Interpret Results:
+####How to Interpret Results:
 Is there an opportunity to optimize with clustering or upsize the warehouse?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 select
           
@@ -635,13 +645,13 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
 
 ##Queries by Execution Buckets over the Past 7 Days
 ######Tier 2
-#####Description:
+####Description:
 Group the queries for a given warehouse by execution time buckets
-#####How to Interpret Results:
+####How to Interpret Results:
 This is an opportunity to identify query SLA trends and make a decision to downsize a warehouse, upsize a warehouse, or separate out some queries to another warehouse
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 WITH BUCKETS AS (
 
@@ -678,20 +688,31 @@ group by 1,COALESCE(b.execution_time_lower_bound,120000)
 order by COALESCE(b.execution_time_lower_bound,120000)
   ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/queriesbyexecutiontimebuckets.png)
 
 ##Warehouses Approaching Cloud Billing Threshold
 ######Tier 2
-#####Description:
-TBD
-#####How to Interpret Results:
-TBD
-#####Primary Schema:
+####Description:
+Shows the warehouses that are not using enough compute to cover the cloud services portion of compute, ordered by the ratio of cloud services to total compute
+####How to Interpret Results:
+Focus on Warehouses that are using a high volume and ratio of cloud services compute. Investigate why this is the case to reduce overall cost (might be cloning, listing files in S3, partner tools setting session parameters, etc.).
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
-TBD
+select 
+    WAREHOUSE_NAME
+    ,SUM(CREDITS_USED) as CREDITS_USED
+    ,SUM(CREDITS_USED_CLOUD_SERVICES) as CREDITS_USED_CLOUD_SERVICES
+    ,SUM(CREDITS_USED_CLOUD_SERVICES)/SUM(CREDITS_USED) as PERCENT_CLOUD_SERVICES
+from "SNOWFLAKE"."ACCOUNT_USAGE"."WAREHOUSE_METERING_HISTORY"
+where TO_DATE(START_TIME) >= DATEADD(month,-1,CURRENT_TIMESTAMP())
+and CREDITS_USED_CLOUD_SERVICES > 0
+group by 1
+order by 4 desc
+
+;
 ```
-#####Screenshot
-![alt-text-here](assets/puppy.jpg)
+####Screenshot
+![alt-text-here](assets/warehousesapproachingcloudbilling.png)

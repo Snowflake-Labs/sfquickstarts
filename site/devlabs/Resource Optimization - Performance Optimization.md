@@ -1,6 +1,6 @@
-summary: This is a guide that can be used to help customers setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
+summary: This guide can be used to help customers setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
 id: resourceoptimization-performanceoptimization
-categories: data-science 
+categories: resource-optimization
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
@@ -13,17 +13,29 @@ authors: Matt Meredith
 
 ##Introduction
 
-The queries provided in this guide are intended to help you better understand..
+The queries provided in this guide are intended to help you setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
+
+###Query Tiers
+Each query within the Resource Optimization Snowflake Guides will have a tier designation just below its name. The following tier descriptions should help to better understand those designations.
+
+####Tier 1 Queries
+At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
+
+####Tier 2 Queries
+Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.
+
+####Tier 3 Queries
+Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake. While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 & 2.
 
 ##Long Running Queries
 ######Tier 1
-#####Description:
+####Description:
 Identifies which queries have been the longest running over a specified time period.  
-#####How to Interpret Results:
+####How to Interpret Results:
 Are there certain queries that are poorly constructed and lead to high compute costs due to longer run times?  How can we optimize?
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 -- Longest running queries in the last 3 months
 select
@@ -49,18 +61,18 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
    
    ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/longestrunningqueries.png)
 
 ##Data Ingest with Snowpipe and "Copy"
 ######Tier 1
-#####Description:
+####Description:
 This query returns an aggregated daily summary of all loads for each table in Snowflake showing average file size, total rows, total volume and the ingest method (copy or snowpipe)
-#####How to Interpret Results:
+####How to Interpret Results:
 With this high-level information you can determine if file sizes are too small or too big for optimal ingest. If you can map the volume to credit consumption you can determine which tables are consuming more credits per TB loaded.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 SELECT 
   TO_DATE(LAST_LOAD_TIME) as LOAD_DATE
@@ -82,18 +94,18 @@ GROUP BY 1,2,3,4,5,6
 ORDER BY 3,4,5,1,2
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/dataingestwithsnowpipe.png)
 
 ##Scale Up vs. Out (Size vs. Multi-cluster)
 ######Tier 2
-#####Description:
-TBD
-#####How to Interpret Results:
-TBD
-#####Primary Schema:
+####Description:
+Two separate queries that list out the warehouses and times that could benefit from either a MCW setting OR scaling up to a larger size
+####How to Interpret Results:
+Use this list to determine reconfiguration of a warehouse and the times or users that are causing contention on the warehouse
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 --LIST OF WAREHOUSES AND DAYS WHERE MCW COULD HAVE HELPED
 SELECT TO_DATE(START_TIME) as DATE
@@ -122,20 +134,20 @@ AND (
      )--this is 100 MB )
 ;
 ```
-#####Screenshot
+####Screenshot
 ![alt-text-here](assets/scaleupvsout1.png)
 
 ![alt-text-here](assets/scaleupvsout2.png)
 
 ##Warehouse Cache Usage
 ######Tier 3
-#####Description:
+####Description:
 Aggregate across all queries broken out by warehouses showing the percentage of data scanned from the warehouse cache.
-#####How to Interpret Results:
+####How to Interpret Results:
 Look for warehouses that are used from querying/reporting and have a low percentage. This indicates that the warehouse is suspending too quickly
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 SELECT WAREHOUSE_NAME
 ,COUNT(*) AS QUERY_COUNT
@@ -157,13 +169,13 @@ ORDER BY 5
 
 ##Heavy Scanners
 ######Tier 3
-#####Description:
+####Description:
 Ordered list of users that run queries that scan a lot of data.
-#####How to Interpret Results:
+####How to Interpret Results:
 This is a potential opportunity to train the user or enable clustering.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 with  heavy_scanners as
 (
@@ -182,13 +194,13 @@ order by 3 desc
 
 ##Full Table Scans by User
 ######Tier 3
-#####Description:
+####Description:
 These queries are the list of users that run the most queries with near full table scans and then the list of the queries themselves
-#####How to Interpret Results:
+####How to Interpret Results:
 This is a potential opportunity to train the user or enable clustering.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 --who are the users with the most (near) full table scans
 SELECT USER_NAME
@@ -213,13 +225,13 @@ ORDER BY PARTITIONS_SCANNED DESC
 
 ##Top 10 Spillers Remote
 ######Tier 3
-#####Description:
+####Description:
 Identifies the top 10 worst offending queries in terms of bytes spilled to remote storage
-#####How to Interpret Results:
+####How to Interpret Results:
 These queries should most likely be run on larger warehouses that have more local storage and memory.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 select query_id, substr(query_text, 1, 50) partial_query_text, user_name, warehouse_name, warehouse_size, 
        BYTES_SPILLED_TO_REMOTE_STORAGE, start_time, end_time, total_elapsed_time/1000 total_elapsed_time
@@ -232,13 +244,13 @@ limit 10
 
 ##AutoClustering History & 7-Day Average
 ######Tier 3
-#####Description:
+####Description:
 Average daily credits consumed by Auto-Clustering grouped by week over the last year.
-#####How to Interpret Results:
+####How to Interpret Results:
 Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 WITH CREDITS_BY_DAY AS (
 SELECT TO_DATE(START_TIME) as DATE
@@ -262,12 +274,13 @@ ORDER BY 1
 
 ##Materialized Views History & 7-Day Average
 ######Tier 3
-#####Description:
+####Description:
 Average daily credits consumed by Materialized Views grouped by week over the last year.
-#####How to Interpret Results:
-Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption#####Primary Schema:
+####How to Interpret Results:
+Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 WITH CREDITS_BY_DAY AS (
 SELECT TO_DATE(START_TIME) as DATE
@@ -291,13 +304,13 @@ ORDER BY 1
 
 ##Search Optimization History & 7-Day Average
 ######Tier 3
-#####Description:
+####Description:
 Average daily credits consumed by Search Optimization grouped by week over the last year.
-#####How to Interpret Results:
+####How to Interpret Results:
 Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 WITH CREDITS_BY_DAY AS (
 SELECT TO_DATE(START_TIME) as DATE
@@ -321,13 +334,13 @@ ORDER BY 1
 
 ##Snowpipe History & 7-Day Average
 ######Tier 3
-#####Description:
+####Description:
 Average daily credits consumed by Snowpipe grouped by week over the last year.
-#####How to Interpret Results:
+####How to Interpret Results:
 Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
-#####Primary Schema:
+####Primary Schema:
 Account_Usage
-#####SQL
+####SQL
 ```sql
 WITH CREDITS_BY_DAY AS (
 SELECT TO_DATE(START_TIME) as DATE
