@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Performance, Optimization, Performance Optimization, Monitoring 
 authors: Matt Meredith
 
-#(5/5) Performance Optimization Guide to Resource Optimization
+#Performance Optimization Guide to Resource Optimization
 
 <!-- -------------->
 

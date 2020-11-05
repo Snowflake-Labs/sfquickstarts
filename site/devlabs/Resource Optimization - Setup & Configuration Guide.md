@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Consumption, Setup, Configuration, Administration, Monitoring 
 authors: Matt Meredith
 
-#(2/5) Setup & Configuration Guide to Resource Optimization
+#Setup & Configuration Guide to Resource Optimization
 
 <!-- -------------->
 
