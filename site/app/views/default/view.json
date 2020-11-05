@@ -1,12 +1,12 @@
 {
-  "title": "Codelabs",
-  "description": "Codelabs provide a guided, tutorial, hands-on coding experience. Most codelabs will step you through the process of building a small application, or adding a new feature to an existing application.",
+  "title": "Snowflake Guides",
+  "description": "Follow along with our tutorials and step-by-step walkthroughs to get you up and running with the Snowflake Data Cloud",
   "tags": [],
   "categories": [],
   "exclude": [
     "^lang-.*"
   ],
-  "logoUrl": "/images/logo.png",
+  "logoUrl": "/images/og-image.png",
   "toolbarBgColor": "#37474F",
   "sort": "mainCategory",
   "pins": []

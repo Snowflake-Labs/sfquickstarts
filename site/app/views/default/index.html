@@ -76,15 +76,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="og:title" property="og:title" content="{{view.title}}" />
   <meta name="og:description" property="og:description" content="{{view.description}}" />
   <meta name="og:url" property="og:url" content="{{canonicalViewUrl(view)}}" />
-  <meta name="og:site_name" property="og:site_name" content="Codelabs" />
-  <meta name="og:determiner" property="og:determiner" content="the" />
+  <meta name="og:site_name" property="og:site_name" content="Snowflake Guides" />
+  <meta name="og:determiner" property="og:determiner" content="" />
   <meta name="og:locale" property="og:locale" content="en_US" />
   <meta name="og:image" property="og:image" content="/images/og-image.png" />
   <meta name="og:image:url" property="og:image:url" content="/images/og-image.png" />
   <meta name="og:image:type" property="og:image:type" content="image/png" />
   <meta name="og:image:width" property="og:image:width" content="1200" />
   <meta name="og:image:height" property="og:image:height" content="1200" />
-  <meta name="og:image:alt" property="og:image:alt" content="Codelabs" />
+  <meta name="og:image:alt" property="og:image:alt" content="Snowflake Guides" />
 
   <meta name="twitter:card" property="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" property="twitter:title" content="{{view.title}}" />
@@ -116,16 +116,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <header id="banner" {% if view.id != 'default' -%}down{%- else %}down$="[[_toBoolean(selectedFilter)]]"{%- endif %}>
       <div class="site-width">
         {% if view.id == 'default' %}
-        <h2 class="banner-title">Welcome to Codelabs!</h2>
+        <h2 class="banner-title">Getting Started with Snowflake</h2>
         <div class="banner-description"
              data-filter-selected$="{% raw %}[[_toBoolean(selectedFilter)]]{% endraw %}">
           <p class="banner-info">
-            Codelabs provide a guided, tutorial, hands-on
-            coding experience. Most codelabs will step you through the process
-            of building a small application, or adding a new feature to an
-            existing application.
+            Follow along with our tutorials and step-by-step walkthroughs to get you up and running with the Snowflake Data Cloud
             <br>
-            <a href="https://github.com/googlecodelabs/tools">Codelab tools on GitHub</a>
+            <a href="https://github.com/Snowflake-Labs/devlabs">Snowflake Guides on GitHub</a> 
+            <a href="https://www.snowflake.com/virtual-hands-on-lab">Virtual Hands-on Labs</a>
+            <a href="https://trial.snowflake.com">Free Trial</a>
           </p>
         {%- else -%}
           <div class="banner-description">
@@ -151,7 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-tabs>
         </div>
 
-        {% if view.id == 'default' %}
+        <!-- {% if view.id == 'default' %}
         <paper-dropdown-menu
           label="Choose an event"
           class="dropdown-filter"
@@ -172,7 +171,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             {%- endfor %}
           </paper-listbox>
         </paper-dropdown-menu>
-        {% endif %}
+        {% endif %} -->
 
         {%- if showcats -%}
         <paper-dropdown-menu
@@ -231,34 +230,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </card-sorter>
 
       <div id="loading-placeholder" class="site-width">
-        Loading Codelabs, please wait...
+        Loading guides, please wait...
       </div>
     </main>
 
     <footer id="footer">
       <div class="footer-wrapper site-width">
         <div class="link-list">
+          <img class="" data-src="https://1amiydhcmj36tz3733v94f15-wpengine.netdna-ssl.com/wp-content/themes/snowflake/assets/img/logo-white.svg" alt="Snowflake Inc." src="https://1amiydhcmj36tz3733v94f15-wpengine.netdna-ssl.com/wp-content/themes/snowflake/assets/img/logo-white.svg">
+          </div>
+        <div class="link-list">
+          <label>Platform</label>
+          <ul>
+            <li><a href="https://www.snowflake.com/cloud-data-platform/">Cloud Data Platform</a></li>
+            <li><a href="https://www.snowflake.com/product/architecture/">Architecture</a></li>
+            <li><a href="https://www.snowflake.com/pricing/">Pricing</a></li>
+            <li><a href="https://www.snowflake.com/data-marketplace/">Data Marketplace</a></li>
+          </ul>
+        </div>
+        <div class="link-list">
           <label>Connect</label>
           <ul>
-            <li><a href="https://www.example.com/">Example</a></li>
+            <li><a href="https://community.snowflake.com/s/">Community</a></li>
+            <li><a href="https://developers.snowflake.com/">Developers</a></li>
+            <li><a href="https://medium.com/snowflake">Blog</a></li>
           </ul>
         </div>
         <div class="link-list">
-          <label>Programs</label>
+          <label>Resources</label>
           <ul>
-            <li><a href="https://www.example.com/">Example</a></li>
-          </ul>
-        </div>
-        <div class="link-list">
-          <label>Developer Consoles</label>
-          <ul>
-            <li><a href="https://www.example.com/">Example</a></li>
-          </ul>
-        </div>
-        <div class="link-list">
-          <label>Explore</label>
-           <ul>
-            <li><a href="https://www.example.com/">Example</a></li>
+            <li><a href="https://resources.snowflake.com/">Resource Library</a></li>
+            <li><a href="https://www.snowflake.com/about/webinars/">Webinars</a></li>
+            <li><a href="https://docs.snowflake.com/">Documentation</a></li>
+            <li><a href="https://www.snowflake.com/legal/">Legal</a></li>
           </ul>
         </div>
       </div>
@@ -267,9 +271,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="footerbar">
       <div class="site-width layout horizontal center justified">
         <span>
-          <a href="https://example.com">Terms</a>
+          <a href="https://www.snowflake.com/terms-of-service/">Terms</a>
           &nbsp; | &nbsp;
-          <a href="https://example.com">Privacy</a>
+          <a href="https://www.snowflake.com/privacy-policy/">Privacy</a>
         </span>
       </div>
     </div>

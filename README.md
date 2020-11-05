@@ -3,12 +3,12 @@
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
 ## What are Snowflake Guides?
-Devlabs are interactive tutorials and self-serve demos written in markdown syntax. Devlabs provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](guides.snowflake.com)
+Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](guides.snowflake.com)
 
-You can submit your own devlab to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own devlabs!
+You can submit your own SFGuide to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own SFGuide!
 
 
-## What's special about the SF Guide format?
+## What's special about the SFGuide format?
 
 * Powerful and flexible authoring flow in Markdown text
 * Ability to produce interactive web or markdown tutorials without writing any code
@@ -54,15 +54,15 @@ export PATH=$PATH:$HOME/go/bin
    gulp serve
    ````
 
-Congratulations! You now have the DevLabs landing page running.
+Congratulations! You now have the Snowflake Guides landing page running.
 
-#### Now lets add our first devlab:
+#### Now lets add our first SFGudie:
 
   1. Terminate the running gulp server with `ctrl C` and navigate to the devlab directory
   ````bash
   cd site/devlabs
   ````
-  The devlabs directory is where to store all devlab content, written in markdown.
+  The devlabs directory is where to store all SFGuide content, written in markdown.
   
   2. Use the claat tool to convert the markdown file to HTML
   ````bash
@@ -77,18 +77,18 @@ Congratulations! You now have the DevLabs landing page running.
    ````
 You can now navigate to the landing page in your browser to see your new codelab!
 
-You can use the [sample devlab](site/devlabs/sample.md) as a template, just change the name of the file and the id listed in the header. 
+You can use the [sample SFGuide](site/devlabs/sample.md) as a template, just change the name of the file and the id listed in the header. 
 
 ### Tips
 
-- Review the [sample.md](site/devlabs/sample.md) file to learn more about to to structure your devlab for the claat tool. 
+- Review the [sample.md](site/devlabs/sample.md) file to learn more about to to structure your SFGuide for the claat tool. 
 - You can also see more formating information in the [claat documentation](claat/README.md), and use the command `claat -h`
-- You can see the supported devlab categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
+- You can see the supported SFGuide categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
-- If you want to learn more about devlabs, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
+- If you want to learn more about SFGuides, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
 
-## How do I publish my Devlab to developers.snowflake.com?
+## How do I publish my Snowflake Guide to [guides.snowflake.com](https://guides.snowflake.com)?
 
 1. You will need to sign Snowflake's CLA 
 2. Fork this repository
