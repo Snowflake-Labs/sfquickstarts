@@ -129,19 +129,16 @@ Negative
 ## Embedding Images, Videos, and Surveys
 Duration: 2
 
-### Images
-All images are stored in the assets directory. 
-![alt-text-here](assets/puppy.jpg)
-
 ### Videos
 Videos from youtube can be directly embedded:
-<video id="dQw4w9WgXcQ"></video>
+<video id="KmeiFXrZucE"></video>
 
 ### Inline Surveys
 <form>
-  <name>What is your favorite color?</name>
-  <input type="radio" value="Blue">
-  <input type="radio" value="Green">
+  <name>How do you rate yourself as a user of Snowflake?</name>
+  <input type="radio" value="Beginner">
+  <input type="radio" value="Intermediate">
+  <input type="radio" value="Advanced">
 </form>
 
 ### Embed an iframe

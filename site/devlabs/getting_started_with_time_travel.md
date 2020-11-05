@@ -1,5 +1,5 @@
 summary: Use Time Travel to query previous database states and undrop data.
-Id: Use_Time_Travel_to_Query_Old_Database_States
+Id: getting_started_with_time_travel
 categories: getting-started
 environments: web
 status: Published
