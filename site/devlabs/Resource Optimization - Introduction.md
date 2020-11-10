@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Consumption, Monitoring, Optimization
 authors: Matt Meredith
 
-#Introduction to Snowflake Resource Optimization
+#RO_01: Introduction to Snowflake Resource Optimization
 
 <!-- -------------->
 
