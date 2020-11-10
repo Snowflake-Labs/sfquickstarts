@@ -18,111 +18,6 @@ Usage Monitoring queries are designed to identify the warehouses, queries, tools
 For information on the tiers designated to each query, please refer to the "Introduction to Snowflake Resource Optimization" Snowflake Guide.
 
 
-##Warehouse Utilization (T1)
-######Tier 1
-####Description:
-This query is designed to give a rough idea of how busy Warehouses are compared to the credit consumption per hour. It will show the end user the number of credits consumed, the number of queries executed and the total execution time of those queries in each hour window.
-####How to Interpret Results:
-This data can be used to draw correlations between credit consumption and the #/duration of query executions. The more queries or higher query duration for the fewest number of credits may help drive more value per credit.
-####Primary Schema:
-Account_Usage
-####SQL
-```sql
-SELECT
-       WMH.WAREHOUSE_NAME
-      ,WMH.START_TIME
-      ,WMH.CREDITS_USED
-      ,SUM(COALESCE(B.EXECUTION_TIME_SECONDS,0)) as TOTAL_EXECUTION_TIME_SECONDS
-      ,SUM(COALESCE(QUERY_COUNT,0)) AS QUERY_COUNT
-
-FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY WMH
-LEFT JOIN (
-
-      --QUERIES FULLY EXECUTED WITHIN THE HOUR
-      SELECT
-         WMH.WAREHOUSE_NAME
-        ,WMH.START_TIME
-        ,SUM(COALESCE(QH.EXECUTION_TIME,0))/(1000) AS EXECUTION_TIME_SECONDS
-        ,COUNT(DISTINCT QH.QUERY_ID) AS QUERY_COUNT
-      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
-      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
-                                                                          AND QH.START_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
-                                                                          AND QH.END_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
-      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      GROUP BY
-      WMH.WAREHOUSE_NAME
-      ,WMH.START_TIME
-
-      UNION ALL
-
-      --FRONT part OF QUERIES Executed longer than 1 Hour
-      SELECT
-         WMH.WAREHOUSE_NAME
-        ,WMH.START_TIME
-        ,SUM(COALESCE(DATEDIFF(seconds,QH.START_TIME,WMH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
-        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
-      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
-      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
-                                                                          AND QH.START_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
-                                                                          AND QH.END_TIME > WMH.END_TIME
-      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      GROUP BY
-      WMH.WAREHOUSE_NAME
-      ,WMH.START_TIME
-
-      UNION ALL
-
-      --Back part OF QUERIES Executed longer than 1 Hour
-      SELECT
-         WMH.WAREHOUSE_NAME
-        ,WMH.START_TIME
-        ,SUM(COALESCE(DATEDIFF(seconds,WMH.START_TIME,QH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
-        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
-      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
-      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
-                                                                          AND QH.END_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
-                                                                          AND QH.START_TIME < WMH.START_TIME
-      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      GROUP BY
-      WMH.WAREHOUSE_NAME
-      ,WMH.START_TIME
-
-      UNION ALL
-
-      --Middle part OF QUERIES Executed longer than 1 Hour
-      SELECT
-         WMH.WAREHOUSE_NAME
-        ,WMH.START_TIME
-        ,SUM(COALESCE(DATEDIFF(seconds,WMH.START_TIME,WMH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
-        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
-      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
-      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
-                                                                          AND WMH.START_TIME > QH.START_TIME
-                                                                          AND WMH.END_TIME < QH.END_TIME
-      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-      GROUP BY
-      WMH.WAREHOUSE_NAME
-      ,WMH.START_TIME
-
-) B ON B.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME AND B.START_TIME = WMH.START_TIME
-
-WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
-GROUP BY
-
-      WMH.WAREHOUSE_NAME
-      ,WMH.START_TIME
-      ,WMH.CREDITS_USED
-
-
-;
-```
-####Screenshot
-![alt-text-here](assets/warehouseutilization.png)
-
 ##Credit Consumption by Warehouse (T1)
 ######Tier 1
 ####Description:
@@ -167,7 +62,7 @@ Account_Usage
 SELECT START_TIME
       ,WAREHOUSE_NAME
       ,CREDITS_USED_COMPUTE
-  FROM ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+  FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
  WHERE START_TIME >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
    AND WAREHOUSE_ID > 0  // Skip pseudo-VWs such as "CLOUD_SERVICES_ONLY"
  ORDER BY 1 DESC,2
@@ -177,18 +72,18 @@ SELECT START_TIME
 ![alt-text-here](assets/averagehourbyhourconsumption.png)
 ####SQL (by hour)
 ```sql
-// Credits used (avg) by [hour] (past 7 days)
 SELECT DATE_PART('HOUR', START_TIME) AS START_HOUR
+      ,WAREHOUSE_NAME
       ,AVG(CREDITS_USED_COMPUTE) AS CREDITS_USED_COMPUTE_AVG
-  FROM ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+  FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
  WHERE START_TIME >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
    AND WAREHOUSE_ID > 0  // Skip pseudo-VWs such as "CLOUD_SERVICES_ONLY"
- GROUP BY 1
- ORDER BY 1
+ GROUP BY 1, 2
+ ORDER BY 1, 2
 ;
 ```
 ####Screenshot
-![alt-text-here](assets/averagehourbyhourconsumption2.png)
+![alt-text-here](assets/averagehourbyhourconsumption3.png)
 
 ##Average Query Volume by Hour (Past 7 Days) (T1)
 ######Tier 1
@@ -200,72 +95,49 @@ How many queries are being run on an hourly basis?  Is this more or less than we
 Account_Usage
 ####SQL
 ```sql
-SELECT DATE_TRUNC(HOUR, START_TIME) AS QUERY_START_HOUR
+SELECT DATE_TRUNC('HOUR', START_TIME) AS QUERY_START_HOUR
+      ,WAREHOUSE_NAME
       ,COUNT(*) AS NUM_QUERIES
-  FROM ACCOUNT_USAGE.QUERY_HISTORY
+  FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
  WHERE START_TIME >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())  // Past 7 days
- GROUP BY 1
- ORDER BY 1 DESC
+ GROUP BY 1, 2
+ ORDER BY 1 DESC, 2
 ;
 ```
 ####Screenshot
 ![alt-text-here](assets/averagequeryvolumebyhour.png)
-
-##Constantly Running Queries (T1)
-######Tier 1
-####Description:
-Shows the frequency of Query Text in a specified time period.  Identifies which queries or query strings are being run most frequently. 
-####How to Interpret Results:
-Are there specific queries that are being run on a recurring basis? Is there a reason that they're running so frequently?  If not, is this a source of unnecessary credit consumption?
-####Primary Schema:
-Account_Usage
-####SQL
-```sql
-// Top 10 most common queries (min 10 occurrences) by count (past 7 days)
-SELECT QUERY_TEXT
-      ,COUNT(*) AS NUM_QUERIES
-  FROM ACCOUNT_USAGE.QUERY_HISTORY
- WHERE START_TIME >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())  // Past 7 days
- GROUP BY 1
- HAVING COUNT(*) >= 10
- ORDER BY 2 DESC
- LIMIT 10
-;
-```
-####Screenshot
-![alt-text-here](assets/constantlyrunningqueries.png)
 
 ##Warehouse Utilization Over 7 Day Average (T1)
 ######Tier 1
 ####Description:
 This query returns the daily average of credit consumption grouped by week and warehouse.
 ####How to Interpret Results:
-Use this to idenitify anomolies in credit consumption for warehouses across weeks from the past year.
+Use this to identify anomolies in credit consumption for warehouses across weeks from the past year.
 ####Primary Schema:
 Account_Usage
 ####SQL
 ```sql
-WITH DAILY_CONSUMPTION AS (
-    SELECT 
-         TO_DATE(START_TIME) as CONSUMPTION_DATE
+WITH CTE_DATE_WH AS(
+  SELECT TO_DATE(START_TIME) AS START_DATE
         ,WAREHOUSE_NAME
-        ,SUM(CREDITS_USED) as CREDITS_USED
-    FROM "SNOWFLAKE"."ACCOUNT_USAGE"."WAREHOUSE_METERING_HISTORY"
-    GROUP BY 1,2
-  )
-
-SELECT 
-   DATE_TRUNC('week',CONSUMPTION_DATE) AS CONSUMPTION_WEEK
-  ,WAREHOUSE_NAME
-  ,AVG(CREDITS_USED) AS CREDITS_USED
-
-FROM   DAILY_CONSUMPTION
-GROUP BY 1,2
-ORDER BY 1,2
-  ;
+        ,SUM(CREDITS_USED) AS CREDITS_USED_DATE_WH
+    FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+   GROUP BY START_DATE
+           ,WAREHOUSE_NAME
+)
+SELECT START_DATE
+      ,WAREHOUSE_NAME
+      ,CREDITS_USED_DATE_WH
+      ,AVG(CREDITS_USED_DATE_WH) OVER (PARTITION BY WAREHOUSE_NAME ORDER BY START_DATE ROWS 7 PRECEDING) AS CREDITS_USED_7_DAY_AVG
+      ,100.0*((CREDITS_USED_DATE_WH / CREDITS_USED_7_DAY_AVG) - 1) AS PCT_OVER_TO_7_DAY_AVERAGE
+  FROM CTE_DATE_WH
+QUALIFY CREDITS_USED_DATE_WH > 100  // Minimum N=100 credits
+    AND PCT_OVER_TO_7_DAY_AVERAGE >= 0.5  // Minimum 50% increase over past 7 day average
+ ORDER BY PCT_OVER_TO_7_DAY_AVERAGE DESC
+;
 ```
 ####Screenshot
-![alt-text-here](assets/warehouseutilization7days.png)
+![alt-text-here](assets/warehouseutilization7days2.png)
 
 ##Forecasting Usage/Billing (T1)
 ######Tier 1
@@ -709,3 +581,129 @@ order by 4 desc
 ```
 ####Screenshot
 ![alt-text-here](assets/warehousesapproachingcloudbilling.png)
+
+##Warehouse Utilization (T2)
+######Tier 2
+####Description:
+This query is designed to give a rough idea of how busy Warehouses are compared to the credit consumption per hour. It will show the end user the number of credits consumed, the number of queries executed and the total execution time of those queries in each hour window.
+####How to Interpret Results:
+This data can be used to draw correlations between credit consumption and the #/duration of query executions. The more queries or higher query duration for the fewest number of credits may help drive more value per credit.
+####Primary Schema:
+Account_Usage
+####SQL
+```sql
+SELECT
+       WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+      ,WMH.CREDITS_USED
+      ,SUM(COALESCE(B.EXECUTION_TIME_SECONDS,0)) as TOTAL_EXECUTION_TIME_SECONDS
+      ,SUM(COALESCE(QUERY_COUNT,0)) AS QUERY_COUNT
+
+FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY WMH
+LEFT JOIN (
+
+      --QUERIES FULLY EXECUTED WITHIN THE HOUR
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(QH.EXECUTION_TIME,0))/(1000) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QH.QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND QH.START_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+                                                                          AND QH.END_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+      UNION ALL
+
+      --FRONT part OF QUERIES Executed longer than 1 Hour
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(DATEDIFF(seconds,QH.START_TIME,WMH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND QH.START_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+                                                                          AND QH.END_TIME > WMH.END_TIME
+      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+      UNION ALL
+
+      --Back part OF QUERIES Executed longer than 1 Hour
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(DATEDIFF(seconds,WMH.START_TIME,QH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND QH.END_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+                                                                          AND QH.START_TIME < WMH.START_TIME
+      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+      UNION ALL
+
+      --Middle part OF QUERIES Executed longer than 1 Hour
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(DATEDIFF(seconds,WMH.START_TIME,WMH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND WMH.START_TIME > QH.START_TIME
+                                                                          AND WMH.END_TIME < QH.END_TIME
+      WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+) B ON B.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME AND B.START_TIME = WMH.START_TIME
+
+WHERE TO_DATE(WMH.START_TIME) >= DATEADD(week,-1,CURRENT_TIMESTAMP())
+GROUP BY
+
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+      ,WMH.CREDITS_USED
+;
+```
+####Screenshot
+![alt-text-here](assets/warehouseutilization.png)
+
+##Constantly Running Queries (T2)
+######Tier 2
+####Description:
+Shows the frequency of Query Text in a specified time period.  Identifies which queries or query strings are being run most frequently. 
+####How to Interpret Results:
+Are there specific queries that are being run on a recurring basis? Is there a reason that they're running so frequently?  If not, is this a source of unnecessary credit consumption?
+####Primary Schema:
+Account_Usage
+####SQL
+```sql
+SELECT QUERY_TEXT
+      ,COUNT(*) AS NUM_QUERIES
+  FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+ WHERE START_TIME >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())  // Past 7 days
+ GROUP BY 1
+ HAVING COUNT(*) >= 10
+ ORDER BY 2 DESC
+ LIMIT 10
+;
+```
+####Screenshot
+![alt-text-here](assets/constantlyrunningqueries.png)

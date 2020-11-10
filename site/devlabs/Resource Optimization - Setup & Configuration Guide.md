@@ -40,8 +40,7 @@ For information on the tiers designated to each query, please refer to the "Intr
 Identifies all warehouses that do not have auto-resume enabled.  Enabling this feature will automatically resume a warehouse any time a query is submitted against that specific warehouse. By default, all warehouses have auto-resume enabled.
 ####How to Interpret Results:
 Make sure all warehouses are set to auto resume.  If you are going to implement auto suspend and proper timeout limits, this is a must or users will not be able to query the system.
-####Primary Schema:
-Account_Usage
+
 ####SQL
 ```sql
 SHOW WAREHOUSES
@@ -59,8 +58,7 @@ SELECT "name" AS WAREHOUSE_NAME
 Identifies all warehouses that do not have auto-suspend enabled.  Enabling this feature will ensure that warehouses become suspended after a specific amount of inactive time in order to prevent runaway costs.  By default, all warehouses have auto-suspend enabled.
 ####How to Interpret Results:
 Make sure all warehouses are set to auto suspend. This way when they are not processing queries your compute footprint will shrink and thus your credit burn.
-####Primary Schema:
-Account_Usage
+
 ####SQL
 ```sql
 SHOW WAREHOUSES
@@ -79,11 +77,13 @@ SELECT "name" AS WAREHOUSE_NAME
 Identifies warehouses that have the longest timeouts.  Timeout parameters are used to define how long a query may run for before timing out.  By default, statement lockout is set for two days.
 ####How to Interpret Results:
 All warehouses should have an appropriate timeout for the workload.
+
 – For Tasks, Loading and ETL/ELT warehouses set to immediate suspension.
-– For BI and SELECT query warehouses set to 10 minutes for suspension to keep data caches .warm for end users
+
+– For BI and SELECT query warehouses set to 10 minutes for suspension to keep data caches warm for end users
+
 – For DevOps, DataOps and Data Science warehouses set to 5 minutes for suspension as warm cache is not as important to ad-hoc and highly unique queries.
-####Primary Schema:
-Account_Usage
+
 ####SQL
 ```sql
 SHOW WAREHOUSES
@@ -101,8 +101,7 @@ SELECT "name" AS WAREHOUSE_NAME
 Identifies all warehouses without resource monitors in place.  Resource monitors provide the ability to set limits on credits consumed against a warehouse during a specific time interval or date range.  This can help prevent certain warehouses from unintentionally consuming more credits than typically expected.
 ####How to Interpret Results:
 Warehouses without resource monitors in place could be prone to excessive costs if a warehouse consumes more credits than anticipated.  Leverage the results of this query to identify the warehouses that should have resource monitors in place to prevent future runaway costs.
-####Primary Schema:
-Account_Usage
+
 ####SQL
 ```sql
 SHOW WAREHOUSES
@@ -141,7 +140,7 @@ FROM (
   group by 1,2
 ) A
 WHERE A.ROLES_PER_WAREHOUSE > 1
-order by 1,2
+order by 5 DESC,1,2
 ;
 ```
 
@@ -211,8 +210,7 @@ and DELETED_ON IS NULL;
 Warehouses that have not been used in the last 30 days
 ####How to Interpret Results:
 Should these warehouses be removed? Should the users of these warehouses be enabled/onboarded?
-####Primary Schema:
-Account_Usage
+
 ####SQL
 ```sql
 SHOW WAREHOUSES;
@@ -229,15 +227,17 @@ where b.WAREHOUSE_NAME is null;
 ##Set Account Statement Timeouts (T2)
 ######Tier 2
 ####Description:
-Account Statement parameter setting at the Account and Warehouse levels
+Statement timeouts provide additional controls around how long a query is able to run before cancelling it. Using this feature will ensure that any queries that get hung up for extended periods of time will not cause excessive consumption of credits.
+
+Show parameter settings at the Account, Warehouse, and User levels.
 ####How to Interpret Results:
 Should this be adjusted?
-####Primary Schema:
-Account_Usage
+
 ####SQL
 ```sql
 SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN ACCOUNT;
 SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN WAREHOUSE <warehouse-name>;
+SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN USER <username>;
 ```
 
 ##Stale Table Streams (T2)
@@ -246,8 +246,7 @@ SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN WAREHOUSE <warehouse-name
 Indicates whether the offset for the stream is positioned at a point earlier than the data retention period for the table (or 14 days, whichever period is longer). Change data capture (CDC) activity cannot be returned for the table. 
 ####How to Interpret Results:
 To return CDC activity for the table, recreate the stream. To prevent a stream from becoming stale, consume the stream records within a transaction during the retention period for the table.
-####Primary Schema:
-Account_Usage
+
 ####SQL
 ```sql
 SHOW STREAMS;
@@ -260,17 +259,18 @@ where "stale" = true;
 ##Failed Tasks (T2)
 ######Tier 2
 ####Description:
-Returns a list of task executions that failed
+Returns a list of task executions that failed.
 ####How to Interpret Results:
-Revisit these task executions to resolve the errors
+Revisit these task executions to resolve the errors.
 ####Primary Schema:
 Account_Usage
 ####SQL
 ```sql
 select *
-  from table(snowflake.information_schema.task_history(result_limit => 10000))
+  from snowflake.account_usage.task_history
   WHERE STATE = 'FAILED'
-  order by scheduled_time
+  and query_start_time >= DATEADD (day, -7, CURRENT_TIMESTAMP())
+  order by query_start_time DESC
   ;
 ```
 
@@ -286,8 +286,9 @@ Account_Usage
 ```sql
 select DATEDIFF(seconds, QUERY_START_TIME,COMPLETED_TIME) as DURATION_SECONDS
                 ,*
-from table(snowflake.information_schema.task_history(result_limit => 10000))
+from snowflake.account_usage.task_history
 WHERE STATE = 'SUCCEEDED'
+and query_start_time >= DATEADD (day, -7, CURRENT_TIMESTAMP())
 order by DURATION_SECONDS desc
   ;
 ```
