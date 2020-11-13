@@ -6,7 +6,7 @@ status: Published
 
 # Security - Authentication Pattern
 
-## Authentication Scenarios
+## INTRODUCTION
 ### INTENDED AUDIENCE
 
 This document is for Enterprise and Solution Architects who want to
@@ -279,107 +279,18 @@ a password and only initiate their sessions through external OAuth.
 
 The following related information is available.
 
-+-----------------------------------|-----------------------------------+
-| Snowflake Related Patterns
-+-----------------------------------|-----------------------------------+
-| Snowflake Community Posts
-|                                   | Snowflake
-|                                   | ww.google.com/url?q=https://www.s |
-|                                   | nowflake.com/blog/using-sso-betwe |
-|                                   | en-power-bi-and-snowflake/&sa=D&u |
-|                                   | st=1605288006082000&usg=AOvVaw0nx |
-|                                   | aLU5NE25OrqfcHUgzSK)
-|                                   | Using OAuth 2.0 with            |
-|                                   | Snowflake                         |
-|                                   | 
-|                                   | tps://www.snowflake.com/blog/usin |
-|                                   | g-oauth-2-0-with-snowflake/&sa=D& |
-|                                   | ust=1605288006083000&usg=AOvVaw12 |
-|                                   | GuJV00K4OXlKhQbBt860)
-|                                   |                                   |
-|                                   | Snowflake Service Account       |
-|                                   | Security Part                     |
-|                                   | 1
-|                                   | www.google.com/url?q=https://www. |
-|                                   | snowflake.com/blog/snowflake-serv |
-|                                   | ice-account-securitypart-1/&sa=D& |
-|                                   | ust=1605288006083000&usg=AOvVaw1y |
-|                                   | X-eUbTn4aEreqUba4hLT)
-|                                   |                                   |
-|                                   | Snowflake Service Account       |
-|                                   | Security Part                     |
-|                                   | 2
-|                                   | ww.google.com/url?q=https://www.s |
-|                                   | nowflake.com/blog/snowflake-servi |
-|                                   | ce-account-security-part-2/&sa=D& |
-|                                   | ust=1605288006083000&usg=AOvVaw0s |
-|                                   | 4QZNkTYdzqTuQfwPbcha)
-+-----------------------------------|-----------------------------------+
-| Snowflake Documentation
-|                                   | Policy                            |
-|                                   | 
-|                                   | tps://docs.snowflake.com/en/user- |
-|                                   | guide/admin-user-management.html% |
-|                                   | 23snowflake-password-policy&sa=D& |
-|                                   | ust=1605288006084000&usg=AOvVaw2W |
-|                                   | FgynzEzkV3cBcDhWN5Ch)
-|                                   |                                   |
-|                                   | Federated Authentication &      |
-|                                   | SSO
-|                                   | //www.google.com/url?q=https://do |
-|                                   | cs.snowflake.com/en/user-guide/ad |
-|                                   | min-security-fed-auth.html&sa=D&u |
-|                                   | st=1605288006085000&usg=AOvVaw2dU |
-|                                   | Szz1RKu8XPtyCsPoCJR)
-|                                   | Using Key Pair                  |
-|                                   | Authentication
-|                                   | /www.google.com/url?q=https://doc |
-|                                   | s.snowflake.com/en/user-guide/odb |
-|                                   | c-parameters.html%23:~:text%3DSno |
-|                                   | wflake%2520supports%2520using%252 |
-|                                   | 0key%2520pair,will%2520use%2520th |
-|                                   | e%2520Snowflake%2520client.&sa=D& |
-|                                   | ust=1605288006085000&usg=AOvVaw3u |
-|                                   | tYDHBxMAOZq-d5HrQxQC)
-|                                   |                                   |
-|                                   | Snowflake                       |
-|                                   | OAuth                             |
-|                                   | 
-|                                   | tps://docs.snowflake.com/en/user- |
-|                                   | guide/oauth-snowflake.html&sa=D&u |
-|                                   | st=1605288006085000&usg=AOvVaw1gq |
-|                                   | VFbZK1oe2fEYHFvprH2)
-|                                   | External                        |
-|                                   | OAu                               |
-|                                   | th
-|                                   | https://docs.snowflake.com/en/use |
-|                                   | r-guide/oauth-external.html&sa=D& |
-|                                   | ust=1605288006086000&usg=AOvVaw2q |
-|                                   | 0MPRVxuqd6TFA-SQDUeC)
-|                                   |                                   |
-|                                   | Summary of Security             |
-|                                   | Featur                            |
-|                                   | es
-|                                   | https://docs.snowflake.com/en/use |
-|                                   | r-guide/admin-security.html&sa=D& |
-|                                   | ust=1605288006086000&usg=AOvVaw2K |
-|                                   | 2ZGQhV5L_7CIm0EiBcPU)
-|                                   |                                   |
-|                                   | 
-+-----------------------------------|-----------------------------------+
-| Partner Documentation
-|                                   | Snowflake
-|                                   | om/url?q=https://docs.microsoft.c |
-|                                   | om/en-us/azure/active-directory/s |
-|                                   | aas-apps/snowflake-tutorial&sa=D& |
-|                                   | ust=1605288006087000&usg=AOvVaw0n |
-|                                   | IhP1SYlZjTHNYkFPlpAS)
-|                                   |                                   |
-|                                   | Configure SSO - Okta and        |
-|                                   | Snowflake
-|                                   | le.com/url?q=https://saml-doc.okt |
-|                                   | a.com/SAML_Docs/How-to-Configure- |
-|                                   | SAML-2.0-for-Snowflake.html&sa=D& |
-|                                   | ust=1605288006087000&usg=AOvVaw2Z |
-|                                   | iWwq35T9Fzw9eQ0Jy6y3)
-+-----------------------------------|-----------------------------------+
+- Snowflake Community Posts
+  - [Using SSO between PowerBI and Snowflake](https://www.snowflake.com/blog/using-sso-between-power-bi-and-snowflake/)
+  - [Using OAuth 2.0 with Snowflake](https://www.snowflake.com/blog/using-oauth-2-0-with-snowflake/)
+  - [Snowflake Service Account Security Part 1](https://www.snowflake.com/blog/snowflake-service-account-securitypart-1/)
+  - [Snowflake Service Account Security Part 2](https://www.snowflake.com/blog/snowflake-service-account-security-part-2/)
+- Snowflake Documentation
+  - [Snowflake Password Policy](https://docs.snowflake.com/en/user-guide/admin-user-management.html#snowflake-password-policy)
+  - [Federated Authentication & SSO](https://docs.snowflake.com/en/user-guide/admin-security-fed-auth.html)
+  - [Using Key Pair Authentication](https://docs.snowflake.com/en/user-guide/odbc-parameters.html#:~:text=Snowflake%20supports%20using%20key%20pair,will%20use%20the%20Snowflake%20client.)
+  - [Snowflake OAuth](https://docs.snowflake.com/en/user-guide/oauth-snowflake.html)
+  - [External OAuth](https://docs.snowflake.com/en/user-guide/oauth-external.html)
+  - [Summary of Security Features](https://docs.snowflake.com/en/user-guide/admin-security.html)
+- Partner Documentation
+  - [Configure SSO - Azure AD and Snowflake](https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/snowflake-tutorial)
+  - [Configure SSO - Okta and Snowflake](https://saml-doc.okta.com/SAML_Docs/How-to-Configure-SAML-2.0-for-Snowflake.html)
