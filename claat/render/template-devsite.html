@@ -27,9 +27,12 @@ the License.
     <meta name="hide_last_updated" value="true" />
     <meta name="hide_ratings_widget" value="true" />
     <meta name="page_type" value="codelab" />
-    <meta name="duration" value="{{.Meta.Duration}}" />
+    <meta name="duration_minutes" value="{{.Meta.Duration}}" />
     {{if .Meta.Authors}}
-      <meta name="authors" value="{{.Meta.Authors}}" />
+      <meta name="author_name" value="{{.Meta.Authors}}" />
+    {{end}}
+    {{if .Meta.Extra.robots}}
+      <meta name="robots" value="{{.Meta.Extra.robots}}">
     {{end}}
     <style>
       body {
@@ -62,7 +65,7 @@ the License.
                                   {{if $.Meta.BadgePath}}badge-path="{{$.Meta.BadgePath}}"{{end}}>
             </google-codelab-about>
           {{end}}
-          {{.Content | renderHTML $.Env}}
+          {{.Content | renderHTML $.Context}}
         </google-codelab-step>
       {{end}}{{end}}
     </google-codelab>

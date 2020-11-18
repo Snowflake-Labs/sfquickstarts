@@ -75,17 +75,24 @@ func isBoldAndItalic(hn *html.Node) bool {
 }
 
 func isConsole(hn *html.Node) bool {
-	if hn.Type == html.TextNode {
-		hn = hn.Parent
-	}
-	return hn.DataAtom == atom.Code && hn.Parent.DataAtom != atom.Pre
+    if hn.Type == html.TextNode {
+        hn = hn.Parent
+    }
+    if (hn.DataAtom == atom.Code) {
+        for _, a := range hn.Attr {
+            if (a.Key == "class" && a.Val == "language-console") {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 func isCode(hn *html.Node) bool {
 	if hn.Type == html.TextNode {
 		hn = hn.Parent
 	}
-	return hn.DataAtom == atom.Code && hn.Parent.DataAtom == atom.Pre
+	return hn.DataAtom == atom.Code && !isConsole(hn)
 }
 
 func isButton(hn *html.Node) bool {
@@ -140,7 +147,7 @@ func isTable(hn *html.Node) bool {
 	if hn.DataAtom != atom.Table {
 		return false
 	}
-	return countTwo(hn, atom.Tr) > 1 || countTwo(hn, atom.Td) > 1
+	return countTwo(hn, atom.Tr) >= 1 || countTwo(hn, atom.Td) >= 1
 }
 
 func isList(hn *html.Node) bool {
