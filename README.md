@@ -56,7 +56,7 @@ export PATH=$PATH:$HOME/go/bin
 
 Congratulations! You now have the Snowflake Guides landing page running.
 
-#### Now lets add our first SFGudie:
+#### Now lets add our first SFGuide:
 
   1. Terminate the running gulp server with `ctrl C` and navigate to the devlab directory
   ````bash
