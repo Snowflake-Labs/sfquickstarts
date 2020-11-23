@@ -3,7 +3,7 @@
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
 ## What are Snowflake Guides?
-Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](guides.snowflake.com)
+Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](https://guides.snowflake.com/)
 
 You can submit your own SFGuide to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own SFGuide!
 
