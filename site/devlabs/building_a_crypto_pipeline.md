@@ -241,7 +241,9 @@ create or replace stream CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_tabl
 ## Create Stored Procedure to Move Data from Raw to Stage
 Duration: 6
 
-Create a Stored Procedure to encapsulate the steps to move the data from the raw, unencrypted table to the staging, encrypted table. The encryption of the sensitive data column, `data_stuff`, will take place during this process. Rights to run this Stored Procedure will be granted to the `CRYPTO_PIPE_TASK_OWNER` role since it will be run from a [Task](https://docs.snowflake.com/en/user-guide/tasks-intro.html). Note that we could have granted the `CRYPTO_PIPE_TASK_OWNER` role rights to [all future Stored Procedures](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege.html#future-grants-on-database-or-schema-objects) instead of granting rights to each one specifically. We use the more restricted rights here in keeping with the least privileges principle. 
+Create a Stored Procedure to encapsulate the steps to move the data from the raw, unencrypted table to the staging, encrypted table. This will leverage the stream on the raw table in order to always only insert those rows which have already been successfully processed at the time the Stored Procedure runs.  
+
+The encryption of the sensitive data column, `data_stuff`, will take place during this process. Rights to run this Stored Procedure will be granted to the `CRYPTO_PIPE_TASK_OWNER` role since it will be run from a [Task](https://docs.snowflake.com/en/user-guide/tasks-intro.html). Note that we could have granted the `CRYPTO_PIPE_TASK_OWNER` role rights to [all future Stored Procedures](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege.html#future-grants-on-database-or-schema-objects) instead of granting rights to each one specifically. We use the more restricted rights here in keeping with the least privileges principle. 
 
 > NOTE: In this lab we are supplying the [Initialization Vector (IV)](https://docs.snowflake.com/en/sql-reference/functions/encrypt_raw.html#arguments) as a string which would be used for all the encryption operations. In a real world scenario, you may choose to either allow for a random IV to be set by leaving it `NULL`, having the IV stored with the key and AD, or generating it based on the `batch_id` or other value. The important thing to realize is that if you would wish to use the column being encrypted in joins later, then to get consistent results in multiple tables the same informaiton would need to use the same encryption material - including the same IV - when it is encrypted. So to make the columns joinable, the IVs would need to be the same.
 
@@ -312,7 +314,7 @@ grant usage on PROCEDURE CRYPTODEMO.UNENCRYPTED.move_and_encrypt_raw_data_to_sta
 ## Create Stored Procedure to Move Data from Stage to Target
 Duration: 3
 
-Create a Stored Procedure to encapsulate the steps to move the data from the staging, encrypted table to the final table where the data will live in its encrypted form.
+Create a Stored Procedure to encapsulate the steps to move the data from the staging, encrypted table to the final table where the data will live in its encrypted form. This will leverage one of the streams on the staging table in order to always only insert those rows which have already been successfully processed at the time the Stored Procedure runs. 
 
 ```
 use role CRYPTO_PIPE_PROD_USER;
@@ -355,7 +357,7 @@ grant usage on PROCEDURE CRYPTODEMO.ENCRYPTED.staged_to_target_data_insert() to 
 ## Create Stored Procedure to Delete Data from Raw
 Duration: 4
 
-Create a Stored Procedure to encapsulate the steps to delete the data from the raw, unencrypted table once it's in the staging table.This will leverage one of the stream on the staging table in order to always only delete those rows which have already been successfully processed at the time the Stored Procedure runs. 
+Create a Stored Procedure to encapsulate the steps to delete the data from the raw, unencrypted table once it's in the staging table.This will leverage one of the streams on the staging table in order to always only delete those rows which have already been successfully processed at the time the Stored Procedure runs. 
 
 ```
 use role CRYPTO_PIPE_RAW_USER;
@@ -396,20 +398,133 @@ grant usage on PROCEDURE CRYPTODEMO.UNENCRYPTED.delete_raw_based_on_staged_data(
 ```
 
 <!-- ------------------------ -->
+## Create Stored Procedure to Delete Data from Staging
+Duration: 4
 
-## Decide on an Import Mechanism
-Duration: 1
+Create a Stored Procedure to encapsulate the steps to delete the data from the staging table. This will leverage the stream on the target table in order to always only delete those rows which have already been successfully processed at the time the Stored Procedure runs. 
 
-In the real world, your import methods for data would likely involve sophisticated ELT/ETL routines like [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html). For the purposes of this lab we will use Snowflake's built in `COPY` capabilities. If you did not create the resources in the *Elevated Rights and CSP Resources* section, then an alternative will be provided as a third option.
+```
+use role CRYPTO_PIPE_PROD_USER;
+CREATE OR REPLACE PROCEDURE CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table()
+  returns string
+  language javascript
+  execute as owner
+  as
+  $$
+  function snowflakeRunStatement(SQL) {
+    try {
+        let results = snowflake.execute({ sqlText: SQL});
+        
+        return results;
+    } catch (err)  {
+        var error =  "Failed: Code: " + err.code + "\n  State: " + err.state;
+        error += "\n  Message: " + err.message;
+        error += "\nStack Trace:\n" + err.stackTraceTxt; 
 
-There are two ways you can approach using the `COPY` command. The first is to create a stored procedure to to automate these whole process. However, this will not use client side encryption of the file you will import. If you wish to use client side encryption, then you can run the same process with extra steps in the middle where you apply the client side encryption ot the file. 
+        throw error;
+    }
+  }
+  
+  // STEP 1 - insert Into Target From Staged
+    var deleteFromStagedSQL = `delete from CRYPTODEMO.ENCRYPTED.staged_data S where 
+        S.batch_id IN (
+            select DISTINCT batch_id from CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table_stream where METADATA$ACTION = 'INSERT'
+        )
+  `;
+  
+  snowflakeRunStatement(deleteFromStagedSQL);
 
-Using client side encryption would be recommended in a real world implamentation of this. What that provides is maximum security for the sensitive information being loaded. It means that the file contianing this information will be encrypted by your side fo the conversation and Snowflake would only be able to process it when your organization supplies the key. 
+  return 0;
+  $$
+;
 
-Choose one of these options and follow the subsequest step's instructions:
-1. To use a stored procedure to automate the process but skip client side encryption, go to the "*[Copy with a Stored Procedure](#Copy-with-a-Stored-Procedure)*" step.
-2. To use client side encryption and run the `COPY` process manually, go to the "*Copy with Client Side Encryption*" step.
-3. To use the alternative with no `COPY` or client side encryption, go to the "*Load with SQL*" step.
+grant usage on PROCEDURE CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table() to role CRYPTO_PIPE_TASK_OWNER;
+```
+
+<!-- ------------------------ -->
+## Create Tasks to Automate Data Movement
+Duration: 4
+
+Create Tasks which will move the data through the process of being encrypted and inserted to the target table after it has landed in the raw table. The Tasks will use the Stored Procedures we created in the last steps. The first Task will be the root of a tree which will run on an agressive 1 minute schedule looking for new data in the raw table to process. All other Tasks will trigger based on the success of their preceding Task in the tree. 
+
+```
+use role CRYPTO_PIPE_TASK_OWNER;
+
+CREATE OR REPLACE TASK CRYPTODEMO.TASKS.insert_data_from_raw_to_stage
+  WAREHOUSE = RESET_WH
+  SCHEDULE = '1 minute'
+WHEN
+  SYSTEM$STREAM_HAS_DATA('CRYPTODEMO.UNENCRYPTED.raw_to_staged_insert_stream')
+AS
+  CALL CRYPTODEMO.UNENCRYPTED.move_and_encrypt_raw_data_to_stage();
+
+CREATE OR REPLACE TASK CRYPTODEMO.TASKS.delete_data_from_raw_after_hits_staged
+  WAREHOUSE = RESET_WH
+AFTER 
+  CRYPTODEMO.TASKS.insert_data_from_raw_to_stage
+AS
+  CALL CRYPTODEMO.UNENCRYPTED.delete_raw_based_on_staged_data();
+
+CREATE OR REPLACE TASK CRYPTODEMO.TASKS.insert_data_from_stage_to_target
+  WAREHOUSE = RESET_WH
+AFTER 
+  CRYPTODEMO.TASKS.delete_data_from_raw_after_hits_staged
+AS
+  CALL CRYPTODEMO.ENCRYPTED.staged_to_target_data_insert();
+
+CREATE OR REPLACE TASK CRYPTODEMO.TASKS.delete_data_from_stage_after_hits_target
+  WAREHOUSE = RESET_WH
+AFTER 
+  CRYPTODEMO.TASKS.insert_data_from_stage_to_target
+AS
+  CALL CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table();
+```
+
+Activate the Tasks so they will run. Note that when Tasks are arranged in a tree like this, you must always operate on the branches while the root task is in a suspended state. 
+
+```
+use role CRYPTO_PIPE_TASK_OWNER;
+ALTER TASK IF EXISTS CRYPTODEMO.TASKS.insert_data_from_stage_to_target RESUME;
+ALTER TASK IF EXISTS CRYPTODEMO.TASKS.delete_data_from_stage_after_hits_target RESUME;
+ALTER TASK IF EXISTS CRYPTODEMO.TASKS.delete_data_from_raw_after_hits_staged RESUME;
+ALTER TASK IF EXISTS CRYPTODEMO.TASKS.insert_data_from_raw_to_stage RESUME;
+```
+
+<!-- ------------------------ -->
+## Create Role to Monitor Task Progess (Optional)
+Duration: 4
+
+Create a role with rights to view the progress of Tasks moving data. Since this role would have access to both the unencrypted and encypted areas as well as elevated rights on these, it certainly violates the principle of least privilege. Since this is a lab, however, it makes sense to be able to see this progress all from one place. 
+
+```
+use role USERADMIN;
+create or replace role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+use role SECURITYADMIN;
+grant usage on database CRYPTODEMO to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant usage on schema CRYPTODEMO.UNENCRYPTED to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant usage on schema CRYPTODEMO.ENCRYPTED to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant select on table CRYPTODEMO.UNENCRYPTED.raw_data to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant select on table CRYPTODEMO.ENCRYPTED.staged_data to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant select on table CRYPTODEMO.ENCRYPTED.target_table to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+use role CRYPTO_PIPE_RAW_USER;
+grant select on stream CRYPTODEMO.UNENCRYPTED.raw_to_staged_insert_stream to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+use role CRYPTO_PIPE_PROD_USER;
+grant select on stream CRYPTODEMO.ENCRYPTED.staged_to_target_data_stream to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant select on stream CRYPTODEMO.ENCRYPTED.delete_raw_based_on_staged_data_stream to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant select on stream CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table_stream to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+use role SECURITYADMIN;
+grant usage on warehouse RESET_WH to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST to user <YOURUSERNAME>;
+```
+
+<!-- ------------------------ -->
+
+## Kick Off Tasks by Inserting Into Raw Table
+Duration: 10
+
+In the real world, your import methods for data would likely involve sophisticated ELT/ETL routines like [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html). For the purposes of this lab we will use Snowflake's built in [`COPY`](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) capabilities. If you did not create the resources in the *Elevated Rights and CSP Resources* section, then an alternative will be provided in the penultimate step.
+
+
 
 <!-- ------------------------ -->
 ## Copy with a Stored Procedure
@@ -421,6 +536,7 @@ This will create a stored procedure to load data into the
 ## Copy with Client Side Encryption
 Duration: 2
 
+Using client side encryption would be recommended in a real world implamentation of this. What that provides is maximum security for the sensitive information being loaded. It means that the file contianing this information will be encrypted by your side fo the conversation and Snowflake would only be able to process it when your organization supplies the key. 
 <!-- ------------------------ -->
 
 ## Load with SQL
