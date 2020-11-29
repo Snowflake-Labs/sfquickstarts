@@ -527,17 +527,16 @@ In the real world, your import methods for data would likely involve sophisticat
 
 
 <!-- ------------------------ -->
-## Copy with a Stored Procedure
-Duration: 2
-
-This will create a stored procedure to load data into the 
-
-<!-- ------------------------ -->
 ## Copy with Client Side Encryption
 Duration: 2
 
 Using client side encryption would be recommended in a real world implamentation of this. What that provides is maximum security for the sensitive information being loaded. It means that the file contianing this information will be encrypted by your side fo the conversation and Snowflake would only be able to process it when your organization supplies the key. 
-<!-- ------------------------ -->
 
-## Load with SQL
+<!-- ------------------------ -->
+## Watch Progress as Tasks Move Data (Optional)
+Duration: 2
+
+
+<!-- ------------------------ -->
+## Alternate Mechanism to Run Lab Without Elevated Rights
 Duration: 2
