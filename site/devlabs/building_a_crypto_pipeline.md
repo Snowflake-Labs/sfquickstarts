@@ -109,13 +109,13 @@ Duration: 12
 
 In this step, you will need elevated rights (`ACCOUNTADMIN` role and `SECURITYADMIN` role) as well as cloud service provider (CSP) resources (cloud storage resources and API resources). If you do not have these rigths and resources, a future step will provide an alternative where you can move ahead without the things we create here. You can skip this step now if you don't have the elevated rights and cloud service provider resoruces. 
 
-You've already heard how Snowflake separates storage and compute. Virtual warehouses are the "compute," and in order to do things like run queries a role will need rights to use a warehouse object. Here we use `SECURITYADMIN` to grant access to existnig warehouses since that built in role will always have access to grant rights to anything. Up to now we've been using the absolute least amount of privilege to accomplish each step. If you want to continue to do that (which is always a good idea) and you know the role that owns the specific warehouse you want to grant rights to, then you can change `SECURITYADMIN` to the specifc role which owns that warehouse in this next block of SQL.
+Here we use `SECURITYADMIN` to grant access to existnig warehouses since that built in role will always have access to grant rights to anything. Up to now we've been using the absolute least amount of privilege to accomplish each step. If you want to continue to do that (which is always a good idea) and you know the role that owns the specific warehouse you want to grant rights to, then you can change `SECURITYADMIN` to the specifc role which owns that warehouse in this next block of SQL.
 
 ```
 use role SECURITYADMIN;
-grant usage on warehouse RESET_WH to role CRYPTO_PIPE_RAW_USER;
-grant usage on warehouse RESET_WH to role CRYPTO_PIPE_PROD_USER;
-grant usage on warehouse RESET_WH to role CRYPTO_PIPE_TASK_OWNER;
+grant usage on warehouse <YOURWAREHOUSE> to role CRYPTO_PIPE_RAW_USER;
+grant usage on warehouse <YOURWAREHOUSE> to role CRYPTO_PIPE_PROD_USER;
+grant usage on warehouse <YOURWAREHOUSE> to role CRYPTO_PIPE_TASK_OWNER;
 ```
 
 Next we will set up access to a storage integration and an API integration. Again, if you know the roles that own the storage integration and API integration you will use here, then you can change `SECURITYADMIN` to the specifc role which owns that integration in this next block of SQL.
@@ -124,14 +124,14 @@ Setting up access to a storage integration and an API integration implies both o
 - [Creating a Storage Integration](https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration.html)
 - [Creating an API Integration](https://docs.snowflake.com/en/sql-reference/sql/create-api-integration.html)
 
-Once you have these integrations ready, here's the first block of SQL you will run:
+Once you have these integrations ready, here's the block of SQL you will run:
 ```
 use role SECURITYADMIN;
 grant usage on integration MULTIVERSE to role CRYPTO_PIPE_RAW_USER; 
 grant usage on integration first_ext_function_api_int to role GET_DATA_KEY; 
 ```
 
-Finally, the task privilege must be granted to the role which will run tasks. The task privilege can only be done by `ACCOUNTADMIN` (at the time of this writing). 
+Finally, the task privilege must be granted to the role which will run tasks. The task privilege can only be granted by `ACCOUNTADMIN` (at the time of this writing). 
 ```
 use role ACCOUNTADMIN;
 grant execute task on account to CRYPTO_PIPE_TASK_OWNER;
@@ -185,12 +185,11 @@ create or replace masking policy CRYPTODEMO.POLICIES.hide_unencrypted_values as 
   case
     when current_role() in ('CRYPTO_PIPE_RAW_USER') then val
     else '*** UNAUTHORIZED!!! ***'
-  end; // doc that this is not the BEST idea/practice in form
+  end; 
 grant apply on masking policy CRYPTODEMO.POLICIES.hide_unencrypted_values to role CRYPTO_PIPE_RAW_USER;
 grant usage on schema CRYPTODEMO.POLICIES to role CRYPTO_PIPE_RAW_USER; 
 use role CRYPTO_PIPE_RAW_USER;
 alter table if exists CRYPTODEMO.UNENCRYPTED.raw_data modify column data_stuff set masking policy CRYPTODEMO.POLICIES.hide_unencrypted_values;
-// doc how you could choose to let the masking admin apply, but then they need some rights in unencrypted area
 ```
 
 <!-- ------------------------ -->
@@ -205,7 +204,7 @@ Note that we grant the `CRYPTO_PIPE_RAW_USER` role rights on this table as it wi
 
 ```
 use role CRYPTO_PIPE_PROD_USER;
-use warehouse RESET_WH;
+use warehouse <YOURWAREHOUSE>;
 create or replace table CRYPTODEMO.ENCRYPTED.staged_data as (
   select ENCRYPT_RAW(
                 TO_BINARY(HEX_ENCODE('data worth encrypting'), 'HEX'), 
@@ -232,7 +231,7 @@ Create a table which represents the final, target table where the data being pro
 
 ```
 use role CRYPTO_PIPE_PROD_USER;
-use warehouse RESET_WH;
+use warehouse <YOURWAREHOUSE>;
 create or replace table CRYPTODEMO.ENCRYPTED.target_table (data_stuff VARIANT, id_thing VARCHAR(10), batch_id number(10)); // doc diff from above
 create or replace stream CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table_stream ON TABLE CRYPTODEMO.ENCRYPTED.target_table append_only=true;
 ```
@@ -451,7 +450,7 @@ Create Tasks which will move the data through the process of being encrypted and
 use role CRYPTO_PIPE_TASK_OWNER;
 
 CREATE OR REPLACE TASK CRYPTODEMO.TASKS.insert_data_from_raw_to_stage
-  WAREHOUSE = RESET_WH
+  WAREHOUSE = <YOURWAREHOUSE>
   SCHEDULE = '1 minute'
 WHEN
   SYSTEM$STREAM_HAS_DATA('CRYPTODEMO.UNENCRYPTED.raw_to_staged_insert_stream')
@@ -459,21 +458,21 @@ AS
   CALL CRYPTODEMO.UNENCRYPTED.move_and_encrypt_raw_data_to_stage();
 
 CREATE OR REPLACE TASK CRYPTODEMO.TASKS.delete_data_from_raw_after_hits_staged
-  WAREHOUSE = RESET_WH
+  WAREHOUSE = <YOURWAREHOUSE>
 AFTER 
   CRYPTODEMO.TASKS.insert_data_from_raw_to_stage
 AS
   CALL CRYPTODEMO.UNENCRYPTED.delete_raw_based_on_staged_data();
 
 CREATE OR REPLACE TASK CRYPTODEMO.TASKS.insert_data_from_stage_to_target
-  WAREHOUSE = RESET_WH
+  WAREHOUSE = <YOURWAREHOUSE>
 AFTER 
   CRYPTODEMO.TASKS.delete_data_from_raw_after_hits_staged
 AS
   CALL CRYPTODEMO.ENCRYPTED.staged_to_target_data_insert();
 
 CREATE OR REPLACE TASK CRYPTODEMO.TASKS.delete_data_from_stage_after_hits_target
-  WAREHOUSE = RESET_WH
+  WAREHOUSE = <YOURWAREHOUSE>
 AFTER 
   CRYPTODEMO.TASKS.insert_data_from_stage_to_target
 AS
@@ -513,7 +512,7 @@ grant select on stream CRYPTODEMO.ENCRYPTED.staged_to_target_data_stream to role
 grant select on stream CRYPTODEMO.ENCRYPTED.delete_raw_based_on_staged_data_stream to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
 grant select on stream CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table_stream to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
 use role SECURITYADMIN;
-grant usage on warehouse RESET_WH to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+grant usage on warehouse <YOURWAREHOUSE> to role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
 grant role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST to user <YOURUSERNAME>;
 ```
 
@@ -524,13 +523,264 @@ Duration: 10
 
 In the real world, your import methods for data would likely involve sophisticated ELT/ETL routines like [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html). For the purposes of this lab we will use Snowflake's built in [`COPY`](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) capabilities. If you did not create the resources in the *Elevated Rights and CSP Resources* section, then an alternative will be provided in the penultimate step.
 
+First we will create a file with data that suits our needs by copying some data into a file from the sample data Snowflake supplies out of the box. For these SQL statements, you can simply pick a number each time you run them, but if you run them many times in rapid succession be careful to pick a different number each imte. Use that number in the SQL where you see `RANDOMNUMBER`.
+```
+use role CRYPTO_PIPE_RAW_USER;
+COPY INTO @CRYPTODEMO.UNENCRYPTED.cyptostream_stage/testTransformOnLoad<RANDOMNUMBER>.csv
+  FROM (
+        SELECT 
+            C.C_LAST_NAME as data_stuff,
+            D.CD_DEMO_SK as id_thing, 
+            '<RANDOMNUMBER>' as batch_id
+        FROM 
+            SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.CUSTOMER C, 
+            SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.CUSTOMER_DEMOGRAPHICS D  
+        WHERE
+            C.C_CUSTOMER_SK = D.CD_DEMO_SK
+        QUALIFY 
+            ROW_NUMBER() OVER (PARTITION BY C.C_LAST_NAME ORDER BY C.C_LAST_NAME) = 1
+        LIMIT 5 -- you can use as many rows as you like by changing this
+       )
+  FILE_FORMAT = (FORMAT_NAME = CRYPTODEMO.UNENCRYPTED.cyptostream_csv_format)
+;
+```
 
+This copies the data from the file into the raw table to start the automated process of encrypting and inserting the data into the target table. Be sure to use the same `RANDOMNUMBER` value as you did in the last block of SQL. If you wish to also use the Client Side Encryption options, then see the next step (*Copy with Client Side Encryption*) for how to do that. Those steps would be inserted between the preceeding and the following blocks of SQL.
+```
+COPY INTO CRYPTODEMO.UNENCRYPTED.raw_data 
+  FROM (
+        select t.$1, t.$2, t.$3 
+        from @CRYPTODEMO.UNENCRYPTED.cyptostream_stage/testTransformOnLoad<RANDOMNUMBER>.csv t
+    )
+  -- only use this encryption line when using the Cliwnt Side Encryption options
+  --ENCRYPTION = ( TYPE = 'AWS_CSE' MASTER_KEY = '<BASE64ENCODEDCSEKEY> )
+  FILE_FORMAT = (FORMAT_NAME = CRYPTODEMO.UNENCRYPTED.cyptostream_csv_format)
+  ON_ERROR = CONTINUE
+  PURGE = TRUE;
+;
+```
 
 <!-- ------------------------ -->
-## Copy with Client Side Encryption
+## Copy with Client Side Encryption (Optional)
 Duration: 2
 
-Using client side encryption would be recommended in a real world implamentation of this. What that provides is maximum security for the sensitive information being loaded. It means that the file contianing this information will be encrypted by your side fo the conversation and Snowflake would only be able to process it when your organization supplies the key. 
+Using client side encryption would be recommended in a real world implamentation of this. What that provides is maximum security for the sensitive information being loaded. It means that the file contianing this information will be encrypted by your side fo the conversation and Snowflake would only be able to process it when your organization supplies the key. This code is a modified version of the AWS sample for doing Client Side Encryption. It requires a number of different Java modules to run as is, and the second block of code shows how it would be called at the command line. You can also take this as guidance and apply your own approach to this, as long as it conforms to the AWS requirements. Of course, you can also apply a similar approach for other CSPs as is appropriate for your operations. 
+
+```
+/*
+ * Copyright 2018-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * 
+ * This file is licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License. A copy of
+ * the License is located at
+ * 
+ * http://aws.amazon.com/apache2.0/
+ * 
+ * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
+// snippet-sourcedescription:[S3ClientSideEncryptionSymMasterKey.java demonstrates how to upload and download encrypted objects using S3 with a client-side symmetric master key.]
+// snippet-service:[s3]
+// snippet-keyword:[Java]
+// snippet-sourcesyntax:[java]
+// snippet-keyword:[Amazon S3]
+// snippet-keyword:[Code Sample]
+// snippet-keyword:[PUT Object]
+// snippet-keyword:[GET Object]
+// snippet-sourcetype:[full-example]
+// snippet-sourcedate:[2019-01-28]
+// snippet-sourceauthor:[AWS]
+// snippet-start:[s3.java.s3_client_side_encryption_sym_master_key.complete]
+
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3EncryptionClientBuilder;
+import com.amazonaws.services.s3.model.*;
+
+import org.apache.commons.cli.*;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
+public class S3ClientSideEncryptionSymMasterKey {
+
+    public static void main(String[] args) throws Exception {
+        //silly defaults to show the variables we need
+        Regions clientRegion = Regions.DEFAULT_REGION;
+        String bucketName = "*** Bucket name ***";
+        String objectKeyName = "*** our Filename ***";
+	    String filePath = "*** our Filepath ***";
+        String keyString = "12345678901234567890123456789012"; // 32 chars = 256 bit key
+
+        // grab real settings using Apache Commons CLI library
+        CommandLineParser parser = new DefaultParser();
+
+        // create the Options
+        Options options = new Options();
+        options.addOption( "r", "region", true, "AWS region where S3 bucket lives" );
+        options.addOption( "b", "bucket", true, "AWS S3 bucket name" );
+        options.addOption( "f", "filename", true, "Name of file to be uploaded" );
+        options.addOption( "p", "filepath", true, "Path to file to be uploaded" );
+        options.addOption( "k", "key", true, "Plain text string of secret key not encoded" );
+        
+        try {
+            // parse the command line arguments
+            CommandLine line = parser.parse( options, args );
+        
+            // make the help 
+            HelpFormatter formatter = new HelpFormatter();
+
+            // validate that options are set correctly
+            if( line.hasOption( "r" ) ) {
+	            clientRegion = Regions.fromName( line.getOptionValue( "r" ) );
+            } else {
+                formatter.printHelp("S3ClientSideEncryptionSymMasterKey CLI", options);
+                System.exit(1);
+            }
+            if( line.hasOption( "b" ) ) {
+	            bucketName = line.getOptionValue( "b" );
+            } else {
+                formatter.printHelp("S3ClientSideEncryptionSymMasterKey CLI", options);
+                System.exit(1);
+            }
+            if( line.hasOption( "f" ) ) {
+	            objectKeyName = line.getOptionValue( "f" );
+            } else {
+                formatter.printHelp("S3ClientSideEncryptionSymMasterKey CLI", options);
+                System.exit(1);
+            }
+            if( line.hasOption( "p" ) ) {
+	            filePath = line.getOptionValue( "p" );
+            } else {
+                formatter.printHelp("S3ClientSideEncryptionSymMasterKey CLI", options);
+                System.exit(1);
+            }
+            if( line.hasOption( "k" ) ) {
+	            keyString = line.getOptionValue( "k" );
+            } else {
+                formatter.printHelp("S3ClientSideEncryptionSymMasterKey CLI", options);
+                System.exit(1);
+            }
+        }
+        catch( ParseException exp ) {
+            System.out.println( "Unexpected exception:" + exp.getMessage() );
+        }
+
+        String fullPath = filePath + "/" + objectKeyName;
+        File file = new File(fullPath);
+
+        /*
+        * This is how you would generate and manage a dynamic key.
+        * We want to use the same key across uses, so we will make
+        * one to use and apply it both here and in Snowflake. But
+        * keeping this code here for reference.
+        *
+        // Generate a symmetric 256-bit AES key.
+        KeyGenerator symKeyGenerator = KeyGenerator.getInstance("AES");
+        symKeyGenerator.init(256);
+        SecretKey symKey = symKeyGenerator.generateKey();
+
+        // To see how it works, save and load the key to and from the file system.
+        saveSymmetricKey(masterKeyDir, masterKeyName, symKey);
+        System.out.println("masterKeyName: " + masterKeyName);
+        System.out.println("masterKeyDir: " + masterKeyDir);
+        symKey = loadSymmetricAESKey(masterKeyDir, masterKeyName, "AES");
+        System.out.println(symKey);
+        */
+
+        //Make our own 256 bit key
+        SecretKey key = new SecretKeySpec(keyString.getBytes(), "AES"); 
+        
+        // output the base64 key to use with Snowflake stage
+        // only here for convenience
+        String encodedKey = Base64.getEncoder().encodeToString(key.getEncoded());
+        System.out.println("Base64 Encoded Key: " + encodedKey);
+
+        try {
+            // Create the Amazon S3 encryption client.
+            EncryptionMaterials encryptionMaterials = new EncryptionMaterials(key);
+            AmazonS3 s3EncryptionClient = AmazonS3EncryptionClientBuilder.standard()
+                    .withCredentials(new ProfileCredentialsProvider())
+                    .withEncryptionMaterials(new StaticEncryptionMaterialsProvider(encryptionMaterials))
+                    .withRegion(clientRegion)
+                    .build();
+
+            // Upload a new object. The encryption client automatically encrypts it.
+            byte[] plaintext = "S3 Object Encrypted Using Client-Side Symmetric Master Key.".getBytes();
+            System.out.println("Putting file in bucket: " + bucketName);
+            s3EncryptionClient.putObject(new PutObjectRequest(
+                bucketName,
+                objectKeyName,
+	            file));
+
+            // not needed for this example
+            // Download and decrypt the object.
+            // S3Object downloadedObject = s3EncryptionClient.getObject(bucketName, objectKeyName);
+            // byte[] decrypted = com.amazonaws.util.IOUtils.toByteArray(downloadedObject.getObjectContent());
+
+            // Verify that the data that you downloaded is the same as the original data.
+            // System.out.println("Plaintext: " + new String(plaintext));
+            // System.out.println("Decrypted text: " + new String(decrypted));
+        } catch (AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process 
+            // it, so it returned an error response.
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+        }
+    }
+
+    // used with dynamic keys
+    private static void saveSymmetricKey(String masterKeyDir, String masterKeyName, SecretKey secretKey) throws IOException {
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(secretKey.getEncoded());
+        FileOutputStream keyOutputStream = new FileOutputStream(masterKeyDir + File.separator + masterKeyName);
+        keyOutputStream.write(x509EncodedKeySpec.getEncoded());
+        keyOutputStream.close();
+    }
+
+    // used with dynamic keys
+    private static SecretKey loadSymmetricAESKey(String masterKeyDir, String masterKeyName, String algorithm)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
+        // Read the key from the specified file.
+        File keyFile = new File(masterKeyDir + File.separator + masterKeyName);
+        FileInputStream keyInputStream = new FileInputStream(keyFile);
+        byte[] encodedPrivateKey = new byte[(int) keyFile.length()];
+        keyInputStream.read(encodedPrivateKey);
+        keyInputStream.close();
+
+        // Reconstruct and return the master key.
+        return new SecretKeySpec(encodedPrivateKey, "AES");
+    }
+}
+
+// snippet-end:[s3.java.s3_client_side_encryption_sym_master_key.complete]
+```
+
+Here is an example of how this code might be used at the command line. You would download the file created in the previous step, and then run this code to encrypt that file and upload it in that encrypted form to the Snowflake stage location. In this example, we use a *terribe* key as an example, `12345678901234567890123456789012`. This serves to show the minumum length of the key, but this very simplistic key should never be used in production. Note that the program will output the base64 encoded version of the key that can then be used in the `COPY` SQL statement in the last step. 
+
+> NOTE: This example uses a key string, `12345678901234567890123456789012`, which should *NEVER* be used to protect an real sensitive information. 
+
+```
+$ aws s3 cp s3://<YOURFULLSTORAGEURIANDPATH>/testTransformOnLoad999.csv_0_0_0.csv.gz ./
+download: s3://<YOURFULLSTORAGEURIANDPATH>/testTransformOnLoad999.csv_0_0_0.csv.gz to ./testTransformOnLoad999.csv_0_0_0.csv.gz
+$ java -cp .:/full/path/v1/aws-java-sdk-1.11.868/lib/aws-java-sdk-1.11.868.jar:/full/path/v1/aws-java-sdk-1.11.868/third-party/lib/*:/full/path/commons-cli/commons-cli-1.4/commons-cli-1.4.jar S3ClientSideEncryptionSymMasterKey -b <YOURFULLSTORAGEURIANDPATH> -f testTransformOnLoad999.csv_0_0_0.csv.gz -k 12345678901234567890123456789012 -p ./ -r <YOURREGION>
+Base64 Encoded Key: MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=
+Putting file in bucket: <YOURFULLSTORAGEURIANDPATH>
+```
 
 <!-- ------------------------ -->
 ## Watch Progress as Tasks Move Data (Optional)
@@ -538,5 +788,9 @@ Duration: 2
 
 
 <!-- ------------------------ -->
-## Alternate Mechanism to Run Lab Without Elevated Rights
+## Alternate Mechanism to Run Lab Without Elevated Rights (Optional)
+Duration: 2
+
+<!-- ------------------------ -->
+## Conclusion
 Duration: 2
