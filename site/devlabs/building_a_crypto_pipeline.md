@@ -11,23 +11,27 @@ tags: Security, Encryption, SQL, Data Engineering, SnowSQL, Python
 ## Overview
 Duration: 1
 
-All data stored in Snowflake is encrypted at rest and uses encrypted tunnels to get to and from you to Snowflake and back. For some sensitive information, that may not be enough. If you want to also encrypt the information stored in the tables, you need to take advantage of the next layers of Snowflake's encryption features. We'll walk you through how to keep your data encrypted at every possible step along the way from loading to consumption. You'll build an automated pipeline to consume data and automatically encrypt it with keys managed in your organization's key management service.
+All data stored in Snowflake is encrypted at rest and uses encrypted tunnels to get to and from you to Snowflake and back. For some sensitive information, you may wish to add even more encryption than that. If you want to also encrypt the information stored in the tables, you need to take advantage of the next layers of Snowflake's encryption features. We'll walk you through how to keep your data encrypted at every possible step along the way from loading to consumption. You'll build an automated pipeline to consume data and automatically encrypt it with keys managed in your organization's key management service.
 
 ### Prerequisites
 - Basic familiarity with Snowflake connectivity and SQL syntax
 - Basic familiarity with encryption concepts
 - Basic familiarity with runnning Java and Python code
+- An appreciation of running with least prvileges to enhance security
 
 ### What You’ll Learn 
-- how to query data
+- How to use Snowflake's built-in encryption functions and client side encryption support
 
 ### What You’ll Need 
-- A [Snowflake](https://www.snowflake.com/) Account 
+- A [Snowflake](https://www.snowflake.com/) Account and user
 - A Text Editor or IDE
-- A Snowflake user with full ACCOUNTADMIN rights, and the ability to grant it any other role
+- Rights to use the Snowflake built in sample data
+- (Optional but suggested) Access to the `SYSADMIN`, `USERADMIN`, `SECURITYADMIN`, and `ACCOUNTADMIN` roles, or a means to have SQL run as these roles
+- (Optional but suggested) Access to an S3 bucket where you can read and write
+- (Optional but suggested) Access to an AWS API Gateway and the ability to run Lambda code there
 
 ### What You’ll Build 
-- Examples of using the Snowflake Python Connector
+- An example pipline that takes sensitive information and automatically encrypts it at the field level
 
 <!-- ------------------------ -->
 ## Clean Up from Last Time (Optional)
@@ -78,6 +82,8 @@ grant role CRYPTO_PIPE_TASK_OWNER to user <YOURUSERNAME>;
 Duration: 3
 
 Here we will set up the database and all the schemas for this lab. In real life you may integrate much of this into pre-existing resources. 
+
+> NOTE: If you do not have access to `SYSADMIN` role, then you can create these objects wherever you like as long as you adjust all the following SQL to use that database in place of the `CRYPTODEMO` database used by default.
 
 ```
 use role SYSADMIN;
@@ -770,7 +776,7 @@ public class S3ClientSideEncryptionSymMasterKey {
 // snippet-end:[s3.java.s3_client_side_encryption_sym_master_key.complete]
 ```
 
-Here is an example of how this code might be used at the command line. You would download the file created in the previous step, and then run this code to encrypt that file and upload it in that encrypted form to the Snowflake stage location. In this example, we use a *terribe* key as an example, `12345678901234567890123456789012`. This serves to show the minumum length of the key, but this very simplistic key should never be used in production. Note that the program will output the base64 encoded version of the key that can then be used in the `COPY` SQL statement in the last step. 
+Here is an example of how this code might be used at the command line. You would download the file created in the previous step, and then run this code to encrypt that file and upload it in that encrypted form to the Snowflake stage location. In this example, we use a *terribe* key as an example, `12345678901234567890123456789012`. This serves to show the minumum length of the key, which is 32 charachters, but this very simplistic key should never be used in production. Note that the program will output the base64 encoded version of the key that can then be used in the `COPY` SQL statement in the last step. Run this between the first and second blocks of SQL in the previous step. 
 
 > NOTE: This example uses a key string, `12345678901234567890123456789012`, which should *NEVER* be used to protect an real sensitive information. 
 
@@ -786,10 +792,48 @@ Putting file in bucket: <YOURFULLSTORAGEURIANDPATH>
 ## Watch Progress as Tasks Move Data (Optional)
 Duration: 2
 
+Once data is inserted into the raw table, the tasks will kick in and process it. Run this SQL to watch the progress as the data flows from raw to stage to target. You would run this several times over a 5-7 minute period to see the data move through a full cycle. At the end you expect the count to increate in the target table by the amount it processed through the raw and stage tables. 
+```
+use role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+select (select count(*) from CRYPTODEMO.UNENCRYPTED.raw_data) as RAWCOUNT, (select count(*) from CRYPTODEMO.ENCRYPTED.staged_data) as STAGECOUNT, (select count(*) from CRYPTODEMO.ENCRYPTED.target_table) as TARGETCOUNT;
+```
 
 <!-- ------------------------ -->
 ## Alternate Mechanism to Run Lab Without Elevated Rights (Optional)
 Duration: 2
+
+If you did not have the rights or resources to run the steps in the *Set Up Elevated Rights and CSP Resources* step above, you can still see how the `ENCRYPT_RAW` function is used to process the data by doing several steps manually. 
+
+To insert data into the raw table, you can use the same SQL from the `COPY` in a `INSERT AS SELECT` syntax:
+```
+use role CRYPTO_PIPE_RAW_USER;
+insert into CRYPTODEMO.UNENCRYPTED.raw_data 
+        SELECT 
+            C.C_LAST_NAME as data_stuff,
+            D.CD_DEMO_SK as id_thing, 
+            '999' as batch_id
+        FROM 
+            SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.CUSTOMER C, 
+            SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.CUSTOMER_DEMOGRAPHICS D  
+        WHERE
+            C.C_CUSTOMER_SK = D.CD_DEMO_SK
+        QUALIFY 
+            ROW_NUMBER() OVER (PARTITION BY C.C_LAST_NAME ORDER BY C.C_LAST_NAME) = 1
+        LIMIT 5;
+```
+
+If you also could not create the Tasks, then you can run each of the Stored Procedures in succession as the owners:
+```
+use role CRYPTO_PIPE_RAW_USER;
+CALL CRYPTODEMO.UNENCRYPTED.move_and_encrypt_raw_data_to_stage()
+CALL CRYPTODEMO.UNENCRYPTED.delete_raw_based_on_staged_data()
+
+use role CRYPTO_PIPE_PROD_USER;
+CALL CRYPTODEMO.ENCRYPTED.staged_to_target_data_insert()
+CALL CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_table()
+```
+
+In the end, you should see the same results as if you had all the other rights and resources set up for automation. 
 
 <!-- ------------------------ -->
 ## Conclusion
