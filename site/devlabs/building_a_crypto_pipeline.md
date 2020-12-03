@@ -836,7 +836,7 @@ In the end, you should see the same results as if you had all the other rights a
 ## Read Data with Other Systems Using Same Key Materials (Optional)
 Duration: 5
 
-Consuming the data using the keys and other cryptographic materials is the next step in a real world application of this pipeline. This is an example of how to do that using Python calling to the AWS Secrets Manager. If you delivered the key materials in a different way, you can adjust this code to call that - or even simply pass these key materials when needed in the code. 
+Consuming the data using the keys and other cryptographic materials is the next step in a real world application of this pipeline. This is an example of how to do that using Python calling to the AWS Secrets Manager. If you delivered the key materials in a different way, you can adjust this code to call that - or even simply pass these key materials when needed in the code. If you do use the AWS method, this code assumes you have an AWS credential configured in the session with proper access to interact with AWS. 
 
 ```
 from Crypto.Cipher import AES
@@ -939,9 +939,9 @@ def get_secret_from_aws_secrets_manager():
             return decoded_binary_secret
 
 # the creds for talking to snowflake
-sfuser = input("Username: ")
-sfrole = input("Role: ")
-sfpass = getpass.getpass("Password: ")
+sfuser = input("Snowflake Username: ")
+sfrole = input("Snowflake Role: ")
+sfpass = getpass.getpass("Snowflake Password: ")
 
 # get the encrypted data from Snowflake (a pseudorandom, single row)
 rowFromSnowflakeRaw = get_single_encrypted_result_from_snowflake(sfuser, sfrole, sfpass)
