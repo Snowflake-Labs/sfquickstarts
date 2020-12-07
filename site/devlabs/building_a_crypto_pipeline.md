@@ -54,8 +54,10 @@ drop role if exists CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
 ```
 
 <!-- ------------------------ -->
-## Set up the Lab Roles
-Duration: 2
+## Set up the Lab Roles and Objects Using Elevated Rights
+Duration: 6
+
+In this step, you will need elevated rights (`ACCOUNTADMIN` role, `USERADMIN` role, `SYSADMIN` role, and `SECURITYADMIN` role). If you do not have these rigths, future steps will provide an alternative where you can move ahead without the things we create here. We will assume you have the rights and you can adjust as needed.
 
 Throughout this lab, we will try to stick to security best practices. We're going to to attempt to separate out the permissions being used into roles with the least privileges needed. So we will need different roles to own and operate all the moving pieces. Comments on each line of SQL explain what each role is used to do.
 
@@ -77,14 +79,7 @@ grant role CRYPTO_PIPE_PROD_USER to user <YOURUSERNAME>;
 grant role CRYPTO_PIPE_TASK_OWNER to user <YOURUSERNAME>;
 ```
 
-<!-- ------------------------ -->
-
-## Set up the Lab Database and Schemas
-Duration: 3
-
-Here we will set up the database and all the schemas for this lab. In real life you may integrate much of this into pre-existing resources. 
-
-> NOTE: If you do not have access to `SYSADMIN` role, then you can create these objects wherever you like as long as you adjust all the following SQL to use that database in place of the `CRYPTODEMO` database used by default.
+Here we will set up the database and all the schemas for this lab. In real life you may integrate much of this into pre-existing resources. If you do not have access to `SYSADMIN` role, then you can create these objects wherever you like as long as you adjust all the following SQL to use that database in place of the `CRYPTODEMO` database used by default.
 
 ```
 use role SYSADMIN;
@@ -109,33 +104,13 @@ use role CRYPTO_PIPE_RAW_USER;
 grant usage on schema CRYPTODEMO.UNENCRYPTED to role CRYPTO_PIPE_TASK_OWNER;
 ```
 
-<!-- ------------------------ -->
-
-## Set Up Elevated Rights and CSP Resources
-Duration: 7
-
-In this step, you will need elevated rights (`ACCOUNTADMIN` role and `SECURITYADMIN` role) as well as cloud service provider (CSP) resources (cloud storage resources and API resources). If you do not have these rigths and resources, a future step will provide an alternative where you can move ahead without the things we create here. You can skip this step now if you don't have the elevated rights and cloud service provider resoruces. 
-
-Here we use `SECURITYADMIN` to grant access to existnig warehouses since that built in role will always have access to grant rights to anything. Up to now we've been using the absolute least amount of privilege to accomplish each step. If you want to continue to do that (which is always a good idea) and you know the role that owns the specific warehouse you want to grant rights to, then you can change `SECURITYADMIN` to the specifc role which owns that warehouse in this next block of SQL.
+Here we use `SECURITYADMIN` to grant access to existnig warehouses since that built in role will always have access to grant rights to anything. If you want to continue to use the least privileges needed (which is always a good idea) and you know the role that owns the specific warehouse you want to grant rights to, then you can change `SECURITYADMIN` to the specifc role which owns that warehouse in this next block of SQL.
 
 ```
 use role SECURITYADMIN;
 grant usage on warehouse <YOURWAREHOUSE> to role CRYPTO_PIPE_RAW_USER;
 grant usage on warehouse <YOURWAREHOUSE> to role CRYPTO_PIPE_PROD_USER;
 grant usage on warehouse <YOURWAREHOUSE> to role CRYPTO_PIPE_TASK_OWNER;
-```
-
-Next we will set up access to a storage integration and an API integration. Again, if you know the roles that own the storage integration and API integration you will use here, then you can change `SECURITYADMIN` to the specifc role which owns that integration in this next block of SQL.
-
-Setting up access to a storage integration and an API integration implies both of these exist. Setting these up is out of the scope of this guide, but you can find the instructions on how to do this here:
-- [Creating a Storage Integration](https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration.html)
-- [Creating an API Integration](https://docs.snowflake.com/en/sql-reference/sql/create-api-integration.html)
-
-Once you have these integrations ready, here's the block of SQL you will run:
-```
-use role SECURITYADMIN;
-grant usage on integration <YOURSTORAGEINTEGRATION> to role CRYPTO_PIPE_RAW_USER; 
-grant usage on integration <YOURAPIINTEGRATION> to role GET_DATA_KEY; 
 ```
 
 Finally, the task privilege must be granted to the role which will run tasks. The task privilege can only be granted by `ACCOUNTADMIN` (at the time of this writing). 
@@ -145,10 +120,24 @@ grant execute task on account to CRYPTO_PIPE_TASK_OWNER;
 ```
 
 <!-- ------------------------ -->
-## Set Up Stage and External Function
-Duration: 5
 
-If you skipped the "Set Up Elevated Rights and CSP Resources" step, then you should skip this as well. 
+## Set Up Cloud Service Provider (CSP) Resources
+Duration: 10
+
+In this step, you will need elevated rights (`SECURITYADMIN` role) as well as cloud service provider (CSP) resources (cloud storage resources and API resources). If you do not have these rigths and resources, future steps will provide an alternative where you can move ahead without the things we create here. We will assume you have the rights and you can adjust as needed.
+
+Next we will set up access to a storage integration and an API integration. 
+
+Setting up access to a storage integration and an API integration implies both of these exist. Setting these up is out of the scope of this guide, but you can find the instructions on how to do this here:
+- [Creating a Storage Integration](https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration.html)
+- [Creating an API Integration](https://docs.snowflake.com/en/sql-reference/sql/create-api-integration.html)
+
+Once you have these integrations ready, here's the block of SQL you will run. Again, if you know the roles that own the storage integration and API integration you will use here, then you can change `SECURITYADMIN` to the specifc role which owns that integration in this next block of SQL:
+```
+use role SECURITYADMIN;
+grant usage on integration <YOURSTORAGEINTEGRATION> to role CRYPTO_PIPE_RAW_USER; 
+grant usage on integration <YOURAPIINTEGRATION> to role GET_DATA_KEY; 
+```
 
 Create a stage where the files containing the data we will import can live.
 ```
@@ -173,10 +162,9 @@ CREATE or REPLACE EXTERNAL FUNCTION CRYPTODEMO.UNENCRYPTED.key_external_function
     ;
 ```
 
-
 <!-- ------------------------ -->
-## Create Table for Raw Data
-Duration: 5
+## Create Tables
+Duration: 6
 
 Create a table where the raw, unencrypted data will land before it's processed. Note that this table is a transient table and has `DATA_RETENTION_TIME_IN_DAYS = 0`. This deactivates [Fail Safe](https://docs.snowflake.com/en/user-guide/data-failsafe.html) and [Time Travel](https://docs.snowflake.com/en/user-guide/data-time-travel.html) for this table, respectively, in order to avoid anyone using these features to see unencrypted data after it's been procssed to be encrypted. Like the other tables we will create in the next steps, this table also has a [Stream](https://docs.snowflake.com/en/user-guide/streams.html) on it, which will be used to manage the pipeline of data in a consistent manner. This table will also have a [Masking Policy](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro.html) set to protect the column where unencrypted, sensitive data will reside. This will prevent users with elevated rights (like `ACCOUNTADMIN`) from easily seeing this information improperly. 
 
@@ -198,10 +186,6 @@ grant usage on schema CRYPTODEMO.POLICIES to role CRYPTO_PIPE_RAW_USER;
 use role CRYPTO_PIPE_RAW_USER;
 alter table if exists CRYPTODEMO.UNENCRYPTED.raw_data modify column data_stuff set masking policy CRYPTODEMO.POLICIES.hide_unencrypted_values;
 ```
-
-<!-- ------------------------ -->
-## Create Table for Staged Data
-Duration: 5
 
 Create a table where the sensitive data can be encrypted and then await further processesing. Here we use a `CREATE as SELECT` syntax only to demonstrate how the [`ENCRYPT_RAW`](https://docs.snowflake.com/en/sql-reference/functions/encrypt_raw.html) function works. As we will see in the next step, this will produce a column of type variant, and we could have simply created the column with that type.
 
@@ -230,10 +214,6 @@ grant select on table CRYPTODEMO.ENCRYPTED.staged_data to role CRYPTO_PIPE_RAW_U
 grant select on CRYPTODEMO.ENCRYPTED.delete_raw_based_on_staged_data_stream to role CRYPTO_PIPE_RAW_USER;
 ```
 
-<!-- ------------------------ -->
-## Create Table for Production Data
-Duration: 2
-
 Create a table which represents the final, target table where the data being processed will land. Note that we simply give the `data_stuff` column where the encrypted data will live type `VARIANT`. 
 
 ```
@@ -245,7 +225,7 @@ create or replace stream CRYPTODEMO.ENCRYPTED.delete_staged_based_on_target_tabl
 
 <!-- ------------------------ -->
 ## Create Stored Procedure to Move Data from Raw to Stage
-Duration: 10
+Duration: 5
 
 Create a Stored Procedure to encapsulate the steps to move the data from the raw, unencrypted table to the staging, encrypted table. This will leverage the stream on the raw table in order to always only insert those rows which have already been successfully processed at the time the Stored Procedure runs.  
 
@@ -317,8 +297,8 @@ grant usage on PROCEDURE CRYPTODEMO.UNENCRYPTED.move_and_encrypt_raw_data_to_sta
 ```
 
 <!-- ------------------------ -->
-## Create Stored Procedure to Move Data from Stage to Target
-Duration: 4
+## Create Other Stored Procedures to Move Data to Target
+Duration: 6
 
 Create a Stored Procedure to encapsulate the steps to move the data from the staging, encrypted table to the final table where the data will live in its encrypted form. This will leverage one of the streams on the staging table in order to always only insert those rows which have already been successfully processed at the time the Stored Procedure runs. 
 
@@ -359,10 +339,6 @@ CREATE OR REPLACE PROCEDURE CRYPTODEMO.ENCRYPTED.staged_to_target_data_insert()
 grant usage on PROCEDURE CRYPTODEMO.ENCRYPTED.staged_to_target_data_insert() to role CRYPTO_PIPE_TASK_OWNER;
 ```
 
-<!-- ------------------------ -->
-## Create Stored Procedure to Delete Data from Raw
-Duration: 4
-
 Create a Stored Procedure to encapsulate the steps to delete the data from the raw, unencrypted table once it's in the staging table.This will leverage one of the streams on the staging table in order to always only delete those rows which have already been successfully processed at the time the Stored Procedure runs. 
 
 ```
@@ -402,10 +378,6 @@ CREATE OR REPLACE PROCEDURE CRYPTODEMO.UNENCRYPTED.delete_raw_based_on_staged_da
 
 grant usage on PROCEDURE CRYPTODEMO.UNENCRYPTED.delete_raw_based_on_staged_data() to role CRYPTO_PIPE_TASK_OWNER;
 ```
-
-<!-- ------------------------ -->
-## Create Stored Procedure to Delete Data from Staging
-Duration: 4
 
 Create a Stored Procedure to encapsulate the steps to delete the data from the staging table. This will leverage the stream on the target table in order to always only delete those rows which have already been successfully processed at the time the Stored Procedure runs. 
 
@@ -524,9 +496,8 @@ grant role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST to user <YOURUSERNAME>;
 ```
 
 <!-- ------------------------ -->
-
-## Kick Off Tasks by Inserting Into Raw Table
-Duration: 6
+## Create File with Copy and Apply Client Side Encryption 
+Duration: 10
 
 In the real world, your import methods for data would likely involve sophisticated ELT/ETL routines like [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html). For the purposes of this lab we will use Snowflake's built in [`COPY`](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) capabilities. If you did not create the resources in the *Elevated Rights and CSP Resources* section, then an alternative will be provided in the penultimate step.
 
@@ -551,25 +522,6 @@ COPY INTO @CRYPTODEMO.UNENCRYPTED.cyptostream_stage/testTransformOnLoad<RANDOMNU
   FILE_FORMAT = (FORMAT_NAME = CRYPTODEMO.UNENCRYPTED.cyptostream_csv_format)
 ;
 ```
-
-This copies the data from the file into the raw table to start the automated process of encrypting and inserting the data into the target table. Be sure to use the same `RANDOMNUMBER` value as you did in the last block of SQL. If you wish to also use the Client Side Encryption options, then see the next step (*Copy with Client Side Encryption*) for how to do that. Those steps would be inserted between the preceeding and the following blocks of SQL.
-```
-COPY INTO CRYPTODEMO.UNENCRYPTED.raw_data 
-  FROM (
-        select t.$1, t.$2, t.$3 
-        from @CRYPTODEMO.UNENCRYPTED.cyptostream_stage/testTransformOnLoad<RANDOMNUMBER>.csv t
-    )
-  -- only use this encryption line when using the Client Side Encryption options
-  --ENCRYPTION = ( TYPE = 'AWS_CSE' MASTER_KEY = '<BASE64ENCODEDCSEKEY> )
-  FILE_FORMAT = (FORMAT_NAME = CRYPTODEMO.UNENCRYPTED.cyptostream_csv_format)
-  ON_ERROR = CONTINUE
-  PURGE = TRUE;
-;
-```
-
-<!-- ------------------------ -->
-## Copy with Client Side Encryption (Optional)
-Duration: 10
 
 Using client side encryption would be recommended in a real world implamentation of this. What that provides is maximum security for the sensitive information being loaded. It means that the file contianing this information will be encrypted by your side fo the conversation and Snowflake would only be able to process it when your organization supplies the key. This code is a modified version of the AWS sample for doing Client Side Encryption. It requires a number of different Java modules to run as is, and the second block of code shows how it would be called at the command line. You can also take this as guidance and apply your own approach to this, as long as it conforms to the AWS requirements. Of course, you can also apply a similar approach for other CSPs as is appropriate for your operations. 
 
@@ -785,21 +737,29 @@ Base64 Encoded Key: MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=
 Putting file in bucket: <YOURFULLSTORAGEURIANDPATH>
 ```
 
-<!-- ------------------------ -->
-## Watch Progress as Tasks Move Data (Optional)
-Duration: 5
 
-Once data is inserted into the raw table, the tasks will kick in and process it. Run this SQL to watch the progress as the data flows from raw to stage to target. You would run this several times over a 5-7 minute period to see the data move through a full cycle. At the end you expect the count to increate in the target table by the amount it processed through the raw and stage tables. 
-```
-use role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
-select (select count(*) from CRYPTODEMO.UNENCRYPTED.raw_data) as RAWCOUNT, (select count(*) from CRYPTODEMO.ENCRYPTED.staged_data) as STAGECOUNT, (select count(*) from CRYPTODEMO.ENCRYPTED.target_table) as TARGETCOUNT;
-```
 
 <!-- ------------------------ -->
-## Alternate Mechanism to Run Lab Without Elevated Rights (Optional)
-Duration: 3
 
-If you did not have the rights or resources to run the steps in the *Set Up Elevated Rights and CSP Resources* step above, you can still see how the `ENCRYPT_RAW` function is used to process the data by doing several steps manually. 
+## Kick Off Tasks by Inserting Into Raw Table
+Duration: 6
+
+This copies the data from the file into the raw table to start the automated process of encrypting and inserting the data into the target table. Be sure to use the same `RANDOMNUMBER` value as you did in the last block of SQL. If you wish to also use the Client Side Encryption options, then see the next step (*Copy with Client Side Encryption*) for how to do that. Those steps would be inserted between the preceeding and the following blocks of SQL.
+```
+COPY INTO CRYPTODEMO.UNENCRYPTED.raw_data 
+  FROM (
+        select t.$1, t.$2, t.$3 
+        from @CRYPTODEMO.UNENCRYPTED.cyptostream_stage/testTransformOnLoad<RANDOMNUMBER>.csv t
+    )
+  -- only use this encryption line when using the Client Side Encryption options
+  --ENCRYPTION = ( TYPE = 'AWS_CSE' MASTER_KEY = '<BASE64ENCODEDCSEKEY>' )
+  FILE_FORMAT = (FORMAT_NAME = CRYPTODEMO.UNENCRYPTED.cyptostream_csv_format)
+  ON_ERROR = CONTINUE
+  PURGE = TRUE;
+;
+```
+
+If you did not have the rights or resources to run the steps using Elevated Rights and CSP Resources, you can still see how the `ENCRYPT_RAW` function is used to process the data by doing several steps manually. 
 
 To insert data into the raw table, you can use the same SQL from the `COPY` in a `INSERT AS SELECT` syntax:
 ```
@@ -817,6 +777,16 @@ insert into CRYPTODEMO.UNENCRYPTED.raw_data
         QUALIFY 
             ROW_NUMBER() OVER (PARTITION BY C.C_LAST_NAME ORDER BY C.C_LAST_NAME) = 1
         LIMIT 5;
+```
+
+<!-- ------------------------ -->
+## Watch Progress as Tasks Move Data or Move it Manually
+Duration: 5
+
+Once data is inserted into the raw table, the tasks will kick in and process it. Run this SQL to watch the progress as the data flows from raw to stage to target. You would run this several times over a 5-7 minute period to see the data move through a full cycle. At the end you expect the count to increate in the target table by the amount it processed through the raw and stage tables. 
+```
+use role CRYPTO_PIPE_CONVENIENCE_SHOULD_NOT_EXIST;
+select (select count(*) from CRYPTODEMO.UNENCRYPTED.raw_data) as RAWCOUNT, (select count(*) from CRYPTODEMO.ENCRYPTED.staged_data) as STAGECOUNT, (select count(*) from CRYPTODEMO.ENCRYPTED.target_table) as TARGETCOUNT;
 ```
 
 If you also could not create the Tasks, then you can run each of the Stored Procedures in succession as the owners:
