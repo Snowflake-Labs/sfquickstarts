@@ -13,7 +13,9 @@ authors: Matt Meredith
 
 ##Introduction
 
-This guide is an introduction to a series of four Snowflake Resource Optimization modules meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Guides for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming [education and training](https://www.snowflake.com/education-and-training/).  
+This guide is an introduction to a series of four Snowflake Resource Optimization modules meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Guides for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming [education and training](https://www.snowflake.com/education-and-training/). 
+
+This [blog post](https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/) can provide you with a better understanding of Snowflake's Resource Optimization capabilities.
 
 The following Snowflake Guides are available to help you optimize how you consume credits on Snowflake. Contact our team at [marketing@snowflake.com](mailto:marketing@snowflake.com), we appreciate your feedback. 
 
