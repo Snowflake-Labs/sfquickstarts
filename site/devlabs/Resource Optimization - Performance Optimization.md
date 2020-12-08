@@ -2,9 +2,9 @@ summary: This guide can be used to help customers setup and run queries pertaini
 id: resourceoptimization-performanceoptimization
 categories: resource-optimization
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: Resource Optimization, Cost Optimization, Performance, Optimization, Performance Optimization, Monitoring 
+tags: Resource Optimization, Cost Optimization, Performance, Optimization, Performance Optimization, Monitoring
 authors: Matt Meredith
 
 #RO_05: Performance Optimization Guide to Resource Optimization
@@ -16,43 +16,6 @@ authors: Matt Meredith
 The queries provided in this guide are intended to help you setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
 
 For information on the tiers designated to each query, please refer to the "Introduction to Snowflake Resource Optimization" Snowflake Guide.
-
-##Long Running Queries (T1)
-######Tier 1
-####Description:
-Identifies which queries have been the longest running over a specified time period.  
-####How to Interpret Results:
-Are there certain queries that are poorly constructed and lead to high compute costs due to longer run times?  How can we optimize?
-####Primary Schema:
-Account_Usage
-####SQL
-```sql
--- Longest running queries in the last 3 months
-select
-          
-          QUERY_ID
-         ,'https://'||CURRENT_ACCOUNT()||'.snowflakecomputing.com/console#/monitoring/queries/detail?queryId='||Q.QUERY_ID as QUERY_PROFILE_URL
-         ,ROW_NUMBER() OVER(ORDER BY PARTITIONS_SCANNED DESC) as QUERY_ID_INT
-         ,QUERY_TEXT
-         ,TOTAL_ELAPSED_TIME/1000 AS QUERY_EXECUTION_TIME_SECONDS
-         ,PARTITIONS_SCANNED
-         ,PARTITIONS_TOTAL
-
-from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
- where 1=1
-    and TO_DATE(Q.START_TIME) >= DATEADD(month,-3,TO_DATE(CURRENT_TIMESTAMP()))
-    and TOTAL_ELAPSED_TIME > 0 --only get queries that actually used compute
-    and ERROR_CODE iS NULL
-    and PARTITIONS_SCANNED is not null
-   
-  order by  TOTAL_ELAPSED_TIME desc
-   
-   LIMIT 50
-   
-   ;
-```
-####Screenshot
-![alt-text-here](assets/longestrunningqueries.png)
 
 ##Data Ingest with Snowpipe and "Copy" (T1)
 ######Tier 1
@@ -85,7 +48,7 @@ ORDER BY 3,4,5,1,2
 ;
 ```
 ####Screenshot
-![alt-text-here](assets/dataingestwithsnowpipe.png)
+![alt-text-here](assets/dataingestwithsnowpipe2.png)
 
 ##Scale Up vs. Out (Size vs. Multi-cluster) (T2)
 ######Tier 2
@@ -115,19 +78,14 @@ SELECT QUERY_ID
 ,WAREHOUSE_SIZE
 ,BYTES_SCANNED
 ,BYTES_SPILLED_TO_REMOTE_STORAGE
-
+,BYTES_SPILLED_TO_REMOTE_STORAGE / BYTES_SCANNED AS SPILLING_READ_RATIO
 FROM "SNOWFLAKE"."ACCOUNT_USAGE"."QUERY_HISTORY"
-WHERE BYTES_SPILLED_TO_REMOTE_STORAGE > 0 
-AND (
-      BYTES_SPILLED_TO_REMOTE_STORAGE >= BYTES_SCANNED 
-    OR BYTES_SPILLED_TO_REMOTE_STORAGE >= (100*POWER(1024,2))
-     )--this is 100 MB )
+WHERE BYTES_SPILLED_TO_REMOTE_STORAGE > BYTES_SCANNED * 5  -- Each byte read was spilled 5x on average
+ORDER BY SPILLING_READ_RATIO DESC
 ;
 ```
 ####Screenshot
 ![alt-text-here](assets/scaleupvsout1.png)
-
-![alt-text-here](assets/scaleupvsout2.png)
 
 ##Warehouse Cache Usage (T3)
 ######Tier 3
@@ -142,20 +100,17 @@ Account_Usage
 SELECT WAREHOUSE_NAME
 ,COUNT(*) AS QUERY_COUNT
 ,SUM(BYTES_SCANNED) AS BYTES_SCANNED
-,SUM(BYTES_SCANNED_FROM_CACHE) AS BYTES_SCANNED_FROM_CACHE
-,SUM(BYTES_SCANNED_FROM_CACHE) / SUM(BYTES_SCANNED) AS PERCENT_SCANNED_FROM_CACHE
-FROM (
-      SELECT WAREHOUSE_NAME
-      ,BYTES_SCANNED
-      ,BYTES_SCANNED*PERCENTAGE_SCANNED_FROM_CACHE as BYTES_SCANNED_FROM_CACHE
-      FROM "SNOWFLAKE"."ACCOUNT_USAGE"."QUERY_HISTORY"
-      WHERE START_TIME >= dateadd(month,-1,current_timestamp())
-      and bytes_scanned > 0
-  ) A
+,SUM(BYTES_SCANNED*PERCENTAGE_SCANNED_FROM_CACHE) AS BYTES_SCANNED_FROM_CACHE
+,SUM(BYTES_SCANNED*PERCENTAGE_SCANNED_FROM_CACHE) / SUM(BYTES_SCANNED) AS PERCENT_SCANNED_FROM_CACHE
+FROM "SNOWFLAKE"."ACCOUNT_USAGE"."QUERY_HISTORY"
+WHERE START_TIME >= dateadd(month,-1,current_timestamp())
+AND BYTES_SCANNED > 0
 GROUP BY 1
-ORDER BY 5 
+ORDER BY 5
 ;
 ```
+####Screenshot
+![alt-text-here](assets/warehousecacheusage.png)
 
 ##Heavy Scanners (T3)
 ######Tier 3
@@ -167,16 +122,12 @@ This is a potential opportunity to train the user or enable clustering.
 Account_Usage
 ####SQL
 ```sql
-with  heavy_scanners as
-(
-      select user_name, warehouse_name, start_time::date query_date,
-             avg(case when partitions_total > 0 then partitions_scanned / partitions_total else 0 end) avg_pct_scanned
-      from   snowflake.account_usage.query_history
-      where  start_time::date > dateadd('days', -45, current_date)
-      group by 1, 2, 3
-)
-select user_name, warehouse_name, avg(avg_pct_scanned) avg_pct_scanned
-from  heavy_scanners
+select 
+  User_name
+, warehouse_name
+, avg(case when partitions_total > 0 then partitions_scanned / partitions_total else 0 end) avg_pct_scanned
+from   snowflake.account_usage.query_history
+where  start_time::date > dateadd('days', -45, current_date)
 group by 1, 2
 order by 3 desc
 ;
@@ -185,7 +136,7 @@ order by 3 desc
 ##Full Table Scans by User (T3)
 ######Tier 3
 ####Description:
-These queries are the list of users that run the most queries with near full table scans and then the list of the queries themselves
+These queries are the list of users that run the most queries with near full table scans and then the list of the queries themselves.
 ####How to Interpret Results:
 This is a potential opportunity to train the user or enable clustering.
 ####Primary Schema:
@@ -209,6 +160,7 @@ WHERE START_TIME >= dateadd(month,-1,current_timestamp())
 AND PARTITIONS_SCANNED > (PARTITIONS_TOTAL*0.95)
 AND QUERY_TYPE NOT LIKE 'CREATE%'
 ORDER BY PARTITIONS_SCANNED DESC
+LIMIT 50  -- Configurable threshold that defines "TOP N=50"
 ;
 ```
 
@@ -216,7 +168,7 @@ ORDER BY PARTITIONS_SCANNED DESC
 ##Top 10 Spillers Remote (T3)
 ######Tier 3
 ####Description:
-Identifies the top 10 worst offending queries in terms of bytes spilled to remote storage
+Identifies the top 10 worst offending queries in terms of bytes spilled to remote storage.
 ####How to Interpret Results:
 These queries should most likely be run on larger warehouses that have more local storage and memory.
 ####Primary Schema:
@@ -226,7 +178,8 @@ Account_Usage
 select query_id, substr(query_text, 1, 50) partial_query_text, user_name, warehouse_name, warehouse_size, 
        BYTES_SPILLED_TO_REMOTE_STORAGE, start_time, end_time, total_elapsed_time/1000 total_elapsed_time
 from   snowflake.account_usage.query_history
-where  start_time::date > dateadd('days', -45, current_date)
+where  BYTES_SPILLED_TO_REMOTE_STORAGE > 0
+and start_time::date > dateadd('days', -45, current_date)
 order  by BYTES_SPILLED_TO_REMOTE_STORAGE desc
 limit 10
 ;
@@ -237,7 +190,7 @@ limit 10
 ####Description:
 Average daily credits consumed by Auto-Clustering grouped by week over the last year.
 ####How to Interpret Results:
-Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption
+Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
 ####Primary Schema:
 Account_Usage
 ####SQL
@@ -267,7 +220,7 @@ ORDER BY 1
 ####Description:
 Average daily credits consumed by Materialized Views grouped by week over the last year.
 ####How to Interpret Results:
-Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption
+Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
 ####Primary Schema:
 Account_Usage
 ####SQL
@@ -297,7 +250,7 @@ ORDER BY 1
 ####Description:
 Average daily credits consumed by Search Optimization grouped by week over the last year.
 ####How to Interpret Results:
-Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
+Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
 ####Primary Schema:
 Account_Usage
 ####SQL
@@ -325,9 +278,8 @@ ORDER BY 1
 ##Snowpipe History & 7-Day Average (T3)
 ######Tier 3
 ####Description:
-Average daily credits consumed by Snowpipe grouped by week over the last year.
-####How to Interpret Results:
-Look for anomolies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
+Average daily credits consumed by Snowpipe grouped by week over the last year.####How to Interpret Results:
+Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
 ####Primary Schema:
 Account_Usage
 ####SQL
@@ -338,6 +290,36 @@ SELECT TO_DATE(START_TIME) as DATE
 
 
 FROM "SNOWFLAKE"."ACCOUNT_USAGE"."PIPE_USAGE_HISTORY"
+
+WHERE START_TIME >= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC('week',DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+```
+
+##Replication History & 7-Day Average (T3)
+######Tier 3
+####Description:
+Average daily credits consumed by Replication grouped by week over the last year.
+####How to Interpret Results:
+Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.
+####Primary Schema:
+Account_Usage
+####SQL
+```sql
+WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM "SNOWFLAKE"."ACCOUNT_USAGE"."REPLICATION_USAGE_HISTORY"
 
 WHERE START_TIME >= dateadd(year,-1,current_timestamp()) 
 GROUP BY 1

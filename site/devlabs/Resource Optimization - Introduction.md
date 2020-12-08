@@ -13,15 +13,17 @@ authors: Matt Meredith
 
 ##Introduction
 
-This guide is to serve as the introduction to a series of Snowflake Resource Optimization guides to help our customers better optimize their credit consumption within Snowflake.  It is in the mutual interest of both Snowflake and our customers to ensure an efficient process when it comes to monitoring and consuming credits within Snowflake.  This set of Snowflake Guides focused on Resource Optimization are just one key asset helping with this process.  The following Snowflake Guides are available to assist you in your journey of optimizing how you consume credits on Snowflake.
+This guide is an introduction to a series of four Snowflake Resource Optimization modules meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Guides for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming [education and training](https://www.snowflake.com/education-and-training/).  
+
+The following Snowflake Guides are available to help you optimize how you consume credits on Snowflake. Contact our team at [marketing@snowflake.com](mailto:marketing@snowflake.com), we appreciate your feedback. 
 
 ##Snowflake Guides for Resource Optimization
 
 ####Setup & Configuration Guide to Resource Optimization
-This guide is designed to enable Snowflake customers to better understand and identify focal points around how their warehouses, users, and other factors are setup and configured to control consumption.  These queries are critical to preventing and limiting excess-consumption against your Snowflake account.
+This guide is designed to enable Snowflake users to better understand and identify how warehouses, users, and other factors are setup and configured to control resource consumption. These queries are critical to preventing and limiting excess-consumption against your Snowflake account.
 
 ####Usage Monitoring Guide to Resource Optimization
-These queries are designed to identify the warehouses, queries, tools, and users that are responsible for consuming the most credits over a specified period of time. These queries can be used to determine which of those resources are consuming more credits than anticipated and take the necessary steps to reduce their consumption.
+These queries are designed to identify the warehouses, queries, tools, and users that are responsible for consuming the most credits over a specified period of time. These queries can be used to determine which resources are consuming more credits than anticipated and take the necessary steps to reduce consumption.
 
 ####Billing Metrics Guide to Resource Optimization
 Billing queries are responsible for identifying total costs associated with the high level functions of the Snowflake Cloud Data Platform, which includes warehouse compute, snowpipe compute, and storage costs. If costs are noticeably higher in one category versus the others, you may want to evaluate what might be causing that.

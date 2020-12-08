@@ -149,9 +149,6 @@ This data should be mapped as line graphs with a running total calculation to es
 Account_Usage
 ####SQL
 ```sql
-USE ROLE SYSADMIN;
-USE DATABASE SNOWFLAKE;
-USE WAREHOUSE JCRAMER_WH;
 SET CREDIT_PRICE = 4.00; --edit this number to reflect credit price
 SET TERM_LENGTH = 12; --integer value in months
 SET TERM_START_DATE = '2020-01-01';
@@ -256,6 +253,22 @@ ACTUAL_USAGE AS (
            ,'ACTUAL COMPUTE' AS MEASURE_TYPE
    from    SNOWFLAKE.ACCOUNT_USAGE.SEARCH_OPTIMIZATION_HISTORY SOH
    UNION ALL
+   --COMPUTE FROM REPLICATION
+   SELECT
+            'Replication' AS WAREHOUSE_GROUP_NAME
+           ,DATABASE_NAME AS WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,RUH.START_TIME
+           ,RUH.END_TIME
+           ,RUH.CREDITS_USED
+           ,$CREDIT_PRICE
+           ,($CREDIT_PRICE*RUH.CREDITS_USED) AS DOLLARS_USED
+           ,'ACTUAL COMPUTE' AS MEASURE_TYPE
+   from    SNOWFLAKE.ACCOUNT_USAGE.REPLICATION_USAGE_HISTORY RUH
+   UNION ALL
+
    --STORAGE COSTS
    SELECT
             'Storage' AS WAREHOUSE_GROUP_NAME
@@ -296,7 +309,7 @@ JOIN        FORECASTED_USAGE_SLOPE_INTERCEPT                FU ON 1 = 1
 
 ```
 ####Screenshot
-![alt-text-here](assets/forecastingusagebillingintro.png)
+![alt-text-here](assets/forecastingusagebillingintro3.png)
 
 ##Partner Tools Consuming Credits (T1)
 ######Tier 1
@@ -317,7 +330,7 @@ WITH CLIENT_HOUR_EXECUTION_CTE AS (
          WHEN CLIENT_APPLICATION_ID LIKE 'JDBC %' THEN 'JDBC'
          WHEN CLIENT_APPLICATION_ID LIKE 'PythonConnector %' THEN 'Python'
          WHEN CLIENT_APPLICATION_ID LIKE 'ODBC %' THEN 'ODBC'
-         ELSE 'NOT YET MAPPED ' || CLIENT_APPLICATION_ID
+         ELSE 'NOT YET MAPPED: ' || CLIENT_APPLICATION_ID
        END AS CLIENT_APPLICATION_NAME
     ,WAREHOUSE_NAME
     ,DATE_TRUNC('hour',START_TIME) as START_TIME_HOUR
@@ -438,7 +451,9 @@ QUERY_TEXT
   and TO_DATE(Q.START_TIME) >     DATEADD(month,-1,TO_DATE(CURRENT_TIMESTAMP())) 
  and TOTAL_ELAPSED_TIME > 0 --only get queries that actually used compute
   group by 1
+  having count(*) >= 10 --configurable/minimal threshold
   order by 2 desc
+  limit 100 --configurable upper bound threshold
   ;
 ```
 
@@ -455,6 +470,7 @@ Account_Usage
 select
           
           QUERY_ID
+         --reconfigure the url if your account is not in AWS US-West
          ,'https://'||CURRENT_ACCOUNT()||'.snowflakecomputing.com/console#/monitoring/queries/detail?queryId='||Q.QUERY_ID as QUERY_PROFILE_URL
          ,ROW_NUMBER() OVER(ORDER BY PARTITIONS_SCANNED DESC) as QUERY_ID_INT
          ,QUERY_TEXT
@@ -472,6 +488,7 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
   order by  TOTAL_ELAPSED_TIME desc
    
    LIMIT 50
+   ;
 ```
 
 
@@ -488,6 +505,7 @@ Account_Usage
 select
           
           QUERY_ID
+          --reconfigure the url if your account is not in AWS US-West
          ,'https://'||CURRENT_ACCOUNT()||'.snowflakecomputing.com/console#/monitoring/queries/detail?queryId='||Q.QUERY_ID as QUERY_PROFILE_URL
          ,ROW_NUMBER() OVER(ORDER BY PARTITIONS_SCANNED DESC) as QUERY_ID_INT
          ,QUERY_TEXT
@@ -556,12 +574,12 @@ order by COALESCE(b.execution_time_lower_bound,120000)
 ####Screenshot
 ![alt-text-here](assets/queriesbyexecutiontimebuckets.png)
 
-##Warehouses Approaching Cloud Billing Threshold (T2)
+##Warehouses with High Cloud Services Usage (T2)
 ######Tier 2
 ####Description:
 Shows the warehouses that are not using enough compute to cover the cloud services portion of compute, ordered by the ratio of cloud services to total compute
 ####How to Interpret Results:
-Focus on Warehouses that are using a high volume and ratio of cloud services compute. Investigate why this is the case to reduce overall cost (might be cloning, listing files in S3, partner tools setting session parameters, etc.).
+Focus on Warehouses that are using a high volume and ratio of cloud services compute. Investigate why this is the case to reduce overall cost (might be cloning, listing files in S3, partner tools setting session parameters, etc.).  The goal to reduce cloud services credit consumption is to aim for cloud services credit to be less than 10% of overall credits.
 ####Primary Schema:
 Account_Usage
 ####SQL
@@ -576,7 +594,6 @@ where TO_DATE(START_TIME) >= DATEADD(month,-1,CURRENT_TIMESTAMP())
 and CREDITS_USED_CLOUD_SERVICES > 0
 group by 1
 order by 4 desc
-
 ;
 ```
 ####Screenshot
@@ -684,26 +701,3 @@ GROUP BY
 ```
 ####Screenshot
 ![alt-text-here](assets/warehouseutilization.png)
-
-##Constantly Running Queries (T2)
-######Tier 2
-####Description:
-Shows the frequency of Query Text in a specified time period.  Identifies which queries or query strings are being run most frequently. 
-####How to Interpret Results:
-Are there specific queries that are being run on a recurring basis? Is there a reason that they're running so frequently?  If not, is this a source of unnecessary credit consumption?
-####Primary Schema:
-Account_Usage
-####SQL
-```sql
-SELECT QUERY_TEXT
-      ,COUNT(*) AS NUM_QUERIES
-  FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
- WHERE START_TIME >= DATEADD(DAY, -7, CURRENT_TIMESTAMP())  // Past 7 days
- GROUP BY 1
- HAVING COUNT(*) >= 10
- ORDER BY 2 DESC
- LIMIT 10
-;
-```
-####Screenshot
-![alt-text-here](assets/constantlyrunningqueries.png)

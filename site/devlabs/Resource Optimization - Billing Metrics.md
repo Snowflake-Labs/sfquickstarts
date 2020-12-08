@@ -145,6 +145,40 @@ from    SNOWFLAKE.ACCOUNT_USAGE.MATERIALIZED_VIEW_REFRESH_HISTORY MVH
 
 UNION ALL
 
+--COMPUTE FROM SEARCH OPTIMIZATION
+SELECT
+         'Search Optimization' AS WAREHOUSE_GROUP_NAME
+        ,DATABASE_NAME || '.' || SCHEMA_NAME || '.' || TABLE_NAME AS WAREHOUSE_NAME
+        ,NULL AS GROUP_CONTACT
+        ,NULL AS GROUP_COST_CENTER
+        ,NULL AS GROUP_COMMENT
+        ,SOH.START_TIME
+        ,SOH.END_TIME
+        ,SOH.CREDITS_USED
+        ,$CREDIT_PRICE
+        ,($CREDIT_PRICE*SOH.CREDITS_USED) AS DOLLARS_USED
+        ,'ACTUAL COMPUTE' AS MEASURE_TYPE
+from    SNOWFLAKE.ACCOUNT_USAGE.SEARCH_OPTIMIZATION_HISTORY SOH
+
+UNION ALL
+
+--COMPUTE FROM REPLICATION
+SELECT
+         'Replication' AS WAREHOUSE_GROUP_NAME
+        ,DATABASE_NAME AS WAREHOUSE_NAME
+        ,NULL AS GROUP_CONTACT
+        ,NULL AS GROUP_COST_CENTER
+        ,NULL AS GROUP_COMMENT
+        ,RUH.START_TIME
+        ,RUH.END_TIME
+        ,RUH.CREDITS_USED
+        ,$CREDIT_PRICE
+        ,($CREDIT_PRICE*RUH.CREDITS_USED) AS DOLLARS_USED
+        ,'ACTUAL COMPUTE' AS MEASURE_TYPE
+from    SNOWFLAKE.ACCOUNT_USAGE.REPLICATION_USAGE_HISTORY RUH
+
+UNION ALL
+
 --STORAGE COSTS
 SELECT
          'Storage' AS WAREHOUSE_GROUP_NAME
@@ -160,7 +194,6 @@ SELECT
         ,'ACTUAL COMPUTE' AS MEASURE_TYPE
 from    SNOWFLAKE.ACCOUNT_USAGE.STORAGE_USAGE SU
 JOIN    (SELECT COUNT(*) AS DAYS_IN_MONTH,TO_DATE(DATE_PART('year',D_DATE)||'-'||DATE_PART('month',D_DATE)||'-01') as DATE_MONTH FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.DATE_DIM GROUP BY TO_DATE(DATE_PART('year',D_DATE)||'-'||DATE_PART('month',D_DATE)||'-01')) DA ON DA.DATE_MONTH = TO_DATE(DATE_PART('year',USAGE_DATE)||'-'||DATE_PART('month',USAGE_DATE)||'-01')
-
 
 UNION ALL
 
@@ -275,7 +308,7 @@ LIMIT 200
 ```
 
 
-##Price per Query (T2)
+##Average Cost per Query by Warehouse (T2)
 ######Tier 2
 ####Description:
 This summarize the query activity and credit consumption per warehouse over the last month. The query also includes the ratio of queries executed to credits consumed on the warehouse
@@ -285,7 +318,7 @@ Highlights any scenarios where warehouse consumption is significantly out of lin
 Account_Usage
 ####SQL
 ```sql
-set credit_price = 4;
+set credit_price = 4;  --edit this value to reflect your credit price
 
 SELECT
     COALESCE(WC.WAREHOUSE_NAME,QC.WAREHOUSE_NAME) AS WAREHOUSE_NAME
@@ -374,8 +407,7 @@ ORDER BY 5 DESC
 
 ;
 ```
-####Screenshot
-![alt-text-here](assets/warehouseutilization.png)
+
 
 ##Search Optimization Cost History (by Day by Object) (T3)
 ######Tier 3
@@ -403,8 +435,7 @@ ORDER BY 5 DESC
 
 ;
 ```
-####Screenshot
-![alt-text-here](assets/warehouseutilization.png)
+
 
 ##Snowpipe Cost History (by Day by Object) (T3)
 ######Tier 3
@@ -430,5 +461,24 @@ ORDER BY 3 DESC
 
 ;
 ```
-####Screenshot
-![alt-text-here](assets/warehouseutilization.png)
+
+##Replication Cost History (by Day by Object) (T3)
+######Tier 3
+####Description:
+Full list of replicated databases and the volume of credits consumed via the replication service over the last 30 days, broken out by day.
+####How to Interpret Results:
+Look for irregularities in the credit consumption or consistently high consumption
+####Primary Schema:
+Account_Usage
+####SQL
+```sql
+SELECT 
+TO_DATE(START_TIME) as DATE
+,DATABASE_NAME
+,SUM(CREDITS_USED) as CREDITS_USED
+FROM "SNOWFLAKE"."ACCOUNT_USAGE"."REPLICATION_USAGE_HISTORY"
+WHERE START_TIME >= dateadd(month,-1,current_timestamp()) 
+GROUP BY 1,2
+ORDER BY 3 DESC 
+;
+```
