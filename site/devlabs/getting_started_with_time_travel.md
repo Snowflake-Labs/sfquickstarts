@@ -172,4 +172,4 @@ drop database if exists timeTravel_db;
 
 ![Snowflake_TT_DropDB-image](assets/Snowflake_TT_DropDB.png)
 
-With the database now removed, you’ve completed learning how to call, copy, and erase the past. Time Travel is a simple solution for data recovery, but what if you need your old database back after the selected data retention days? Snowflake has you covered with [Fail Safe](https://docs.snowflake.com/en/user-guide/data-failsafe.html). Check out the documentation to discover how Snowflake agents can retrieve your data after your Time Travel retention lapses.
+With the database now removed, you’ve completed learning how to call, copy, and erase the past. 
