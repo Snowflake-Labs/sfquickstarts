@@ -7,32 +7,63 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Billing, Billing Metrics, Monitoring 
 authors: Matt Meredith
 
-#RO_04: Billing Metrics Guide to Resource Optimization
+#Resource Optimization: Billing Metrics
 
 <!-- -------------->
 
-##Introduction
+## Overview
+This resource optimization guide represents one module of the four contained in the series. These guides are meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Guides for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming [education and training](https://www.snowflake.com/education-and-training/). 
 
+This [blog post](https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/) can provide you with a better understanding of Snowflake's Resource Optimization capabilities.
+
+Contact our team at [marketing@snowflake.com](mailto:marketing@snowflake.com), we appreciate your feedback. 
+
+### Billing Metrics
 Billing queries are responsible for identifying total costs associated with the high level functions of the Snowflake Cloud Data Platform, which includes warehouse compute, snowpipe compute, and storage costs.  If costs are noticeably higher in one category versus the others, you may want to evaluate what might be causing that.
 
 These metrics also seek to identify those queries that are consuming the most amount of credits.  From there, each of these queries can be analyze for their importance (do they need to be run as frequently, if at all) and explore if additional controls need to be in place to prevent excessive consumption (i.e. resource monitors, statement timeouts, etc.).
 
-For information on the tiers designated to each query, please refer to the "Introduction to Snowflake Resource Optimization" Snowflake Guide.
+### What You’ll Learn 
+- how to identify and analyze Snowflake consumption across all services
+- how to analyze most resource-intensive queries
+- how to analyze serverless consumption
+  
+### What You’ll Need 
+- A [Snowflake](https://www.snowflake.com/) Account 
+- Access to view [Account Usage Data Share](https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles)
 
-##Billing Metrics (T1)
-######Tier 1
-####Description:
-Identify key metrics as it pertains to total compute costs from warehouses and Snowpipe and total storage costs.  
-####How to Interpret Results:
+### Related Materials
+- Resource Optimization: Setup & Configuration
+- Resource Optimization: Usage Monitoring
+- Resource Optimization: Performance
+
+## Query Tiers
+Each query within the Resource Optimization Snowflake Guides will have a tier designation just to the right of its name as "(T*)".  The following tier descriptions should help to better understand those designations.
+
+### Tier 1 Queries
+At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
+
+### Tier 2 Queries
+Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.
+
+### Tier 3 Queries
+Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake.  While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 & 2.
+
+## Billing Metrics (T1)
+###### Tier 1
+#### Description:
+Identify key metrics as it pertains to total compute costs from warehouses,
+serverless features, and total storage costs.  
+#### How to Interpret Results:
 Where are we seeing most of our costs coming from (compute, serverless, storage)?  Are seeing excessive costs in any of those categories that are above expectations?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 /* These queries can be used to measure where costs have been incurred by 
    the different cost vectors within a Snowflake account including:
    1) Warehouse Costs
-   2) Snowpipe Costs
+   2) Serverless Costs
    3) Storage Costs
    
    To accurately report the dollar amounts, make changes to the variables
@@ -230,16 +261,15 @@ SELECT
         ,'CONTRACT VALUES' AS MEASURE_TYPE
 FROM    PROJECTED_USAGE PU
 ;
-
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/billingmetrics.png)
 
-##Most Expensive Queries (T2)
-######Tier 2
-####Description:
+## Most Expensive Queries (T2)
+###### Tier 2
+#### Description:
 This query orders the most expensive queries from the last 30 days. It takes into account the warehouse size, assuming that a 1 minute query on larger warehouse is more expensive than a 1 minute query on a smaller warehouse
-####How to Interpret Results:
+#### How to Interpret Results:
 This is an opportunity to evaluate expensive queries and take some action. The admin could:
 
 -look at the query profile
@@ -248,10 +278,10 @@ This is an opportunity to evaluate expensive queries and take some action. The a
 
 -take action to optimize these queries
 
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
 
-####SQL
+#### SQL
 ```sql
 WITH WAREHOUSE_SIZE AS
 (
@@ -303,20 +333,19 @@ FROM QUERY_HISTORY QH
 JOIN WAREHOUSE_SIZE WS ON WS.WAREHOUSE_SIZE = upper(QH.WAREHOUSE_SIZE)
 ORDER BY RELATIVE_PERFORMANCE_COST DESC
 LIMIT 200
-
 ;
 ```
 
 
-##Average Cost per Query by Warehouse (T2)
-######Tier 2
-####Description:
+## Average Cost per Query by Warehouse (T2)
+###### Tier 2
+#### Description:
 This summarize the query activity and credit consumption per warehouse over the last month. The query also includes the ratio of queries executed to credits consumed on the warehouse
-####How to Interpret Results:
+#### How to Interpret Results:
 Highlights any scenarios where warehouse consumption is significantly out of line with the number of queries executed. Maybe auto-suspend needs to be adjusted or warehouses need to be consolidated.
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 set credit_price = 4;  --edit this value to reflect your credit price
 
@@ -350,18 +379,18 @@ JOIN (
 ORDER BY COST_PER_QUERY DESC
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/priceperquery.png)
 
-##AutoClustering Cost History (by Day by Object) (T3)
-######Tier 3
-####Description:
+## AutoClustering Cost History (by Day by Object) (T3)
+###### Tier 3
+#### Description:
 Full list of tables with auto-clustering and the volume of credits consumed via the service over the last 30 days, broken out by day.
-####How to Interpret Results:
+#### How to Interpret Results:
 Look for irregularities in the credit consumption or consistently high consumption
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SELECT TO_DATE(START_TIME) as DATE
 ,DATABASE_NAME
@@ -375,21 +404,20 @@ FROM "SNOWFLAKE"."ACCOUNT_USAGE"."AUTOMATIC_CLUSTERING_HISTORY"
 WHERE START_TIME >= dateadd(month,-1,current_timestamp()) 
 GROUP BY 1,2,3,4
 ORDER BY 5 DESC 
-
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/autoclusteringcosthistory.png)
 
-##Materialized Views Cost History (by Day by Object) (T3)
-######Tier 3
-####Description:
+## Materialized Views Cost History (by Day by Object) (T3)
+###### Tier 3
+#### Description:
 Full list of materialized views and the volume of credits consumed via the service over the last 30 days, broken out by day.
-####How to Interpret Results:
+#### How to Interpret Results:
 Look for irregularities in the credit consumption or consistently high consumption
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SELECT 
 
@@ -404,20 +432,19 @@ FROM "SNOWFLAKE"."ACCOUNT_USAGE"."MATERIALIZED_VIEW_REFRESH_HISTORY"
 WHERE START_TIME >= dateadd(month,-1,current_timestamp()) 
 GROUP BY 1,2,3,4
 ORDER BY 5 DESC 
-
 ;
 ```
 
 
-##Search Optimization Cost History (by Day by Object) (T3)
-######Tier 3
-####Description:
+## Search Optimization Cost History (by Day by Object) (T3)
+###### Tier 3
+#### Description:
 Full list of tables with search optimization and the volume of credits consumed via the service over the last 30 days, broken out by day.
-####How to Interpret Results:
+#### How to Interpret Results:
 Look for irregularities in the credit consumption or consistently high consumption
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 TSELECT 
 
@@ -432,20 +459,19 @@ FROM "SNOWFLAKE"."ACCOUNT_USAGE"."SEARCH_OPTIMIZATION_HISTORY"
 WHERE START_TIME >= dateadd(month,-1,current_timestamp()) 
 GROUP BY 1,2,3,4
 ORDER BY 5 DESC 
-
 ;
 ```
 
 
-##Snowpipe Cost History (by Day by Object) (T3)
-######Tier 3
-####Description:
+## Snowpipe Cost History (by Day by Object) (T3)
+###### Tier 3
+#### Description:
 Full list of pipes and the volume of credits consumed via the service over the last 30 days, broken out by day.
-####How to Interpret Results:
+#### How to Interpret Results:
 Look for irregularities in the credit consumption or consistently high consumption
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SELECT 
 
@@ -458,19 +484,18 @@ FROM "SNOWFLAKE"."ACCOUNT_USAGE"."PIPE_USAGE_HISTORY"
 WHERE START_TIME >= dateadd(month,-1,current_timestamp()) 
 GROUP BY 1,2
 ORDER BY 3 DESC 
-
 ;
 ```
 
-##Replication Cost History (by Day by Object) (T3)
-######Tier 3
-####Description:
+## Replication Cost History (by Day by Object) (T3)
+###### Tier 3
+#### Description:
 Full list of replicated databases and the volume of credits consumed via the replication service over the last 30 days, broken out by day.
-####How to Interpret Results:
+#### How to Interpret Results:
 Look for irregularities in the credit consumption or consistently high consumption
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SELECT 
 TO_DATE(START_TIME) as DATE
