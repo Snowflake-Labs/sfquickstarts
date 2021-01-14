@@ -7,26 +7,56 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Resource Optimization, Cost Optimization, Consumption, Usage Monitoring, Usage, Monitoring 
 authors: Matt Meredith
 
-#RO_03: Usage Monitoring Guide to Resource Optimization
+#Resource Optimization: Usage Monitoring
 
 <!-- -------------->
 
-##Introduction
+## Overview
+This resource optimization guide represents one module of the four contained in the series. These guides are meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Guides for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming [education and training](https://www.snowflake.com/education-and-training/). 
 
+This [blog post](https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/) can provide you with a better understanding of Snowflake's Resource Optimization capabilities.
+
+Contact our team at [marketing@snowflake.com](mailto:marketing@snowflake.com), we appreciate your feedback. 
+
+### Usage Monitoring
 Usage Monitoring queries are designed to identify the warehouses, queries, tools, and users that are responsible for consuming the most credits over a specified period of time.  These queries can be used to determine which of those resources are consuming more credits than anticipated and take the necessary steps to reduce their consumption.
 
-For information on the tiers designated to each query, please refer to the "Introduction to Snowflake Resource Optimization" Snowflake Guide.
+### What You’ll Learn 
+- how to analyze consumption trends and patterns
+- how to identify consumption anomolies
+- how to analyze partner tool consumption metrics
+
+### What You’ll Need 
+- A [Snowflake](https://www.snowflake.com/) Account 
+- Access to view [Account Usage Data Share](https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles)
+
+### Related Materials
+- Resource Optimization: Setup & Configuration
+- Resource Optimization: Billing Metrics
+- Resource Optimization: Performance
+
+## Query Tiers
+Each query within the Resource Optimization Snowflake Guides will have a tier designation just to the right of its name as "(T*)".  The following tier descriptions should help to better understand those designations.
+
+### Tier 1 Queries
+At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.
+
+### Tier 2 Queries
+Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.
+
+### Tier 3 Queries
+Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake.  While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 & 2.
 
 
-##Credit Consumption by Warehouse (T1)
-######Tier 1
-####Description:
+## Credit Consumption by Warehouse (T1)
+###### Tier 1
+#### Description:
 Shows the total credit consumption for each warehouse over a specific time period.  
-####How to Interpret Results:
+#### How to Interpret Results:
 Are there specific warehouses that are consuming more credits than the others?  Should they be?  Are there specific warehouses that are consuming more credits than anticipated for that warehouse?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 // Credits used (all time = past year)
 SELECT WAREHOUSE_NAME
@@ -45,18 +75,18 @@ SELECT WAREHOUSE_NAME
  ORDER BY 2 DESC
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/creditconsumptionbywarehouse.png)
 
-##Average Hour-by-Hour Consumption Over the Past 7 Days (T1)
-######Tier 1
-####Description:
+## Average Hour-by-Hour Consumption Over the Past 7 Days (T1)
+###### Tier 1
+#### Description:
 Shows the total credit consumption on an hourly basis to help understand consumption trends (peaks, valleys) over the past 7 days. 
-####How to Interpret Results:
+#### How to Interpret Results:
 At which points of the day are we seeing spikes in our consumption?  Is that expected?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL (by hour, warehouse)
+#### SQL (by hour, warehouse)
 ```sql
 // Credits used by [hour, warehouse] (past 7 days)
 SELECT START_TIME
@@ -68,7 +98,7 @@ SELECT START_TIME
  ORDER BY 1 DESC,2
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/averagehourbyhourconsumption.png)
 ####SQL (by hour)
 ```sql
@@ -82,18 +112,18 @@ SELECT DATE_PART('HOUR', START_TIME) AS START_HOUR
  ORDER BY 1, 2
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/averagehourbyhourconsumption3.png)
 
-##Average Query Volume by Hour (Past 7 Days) (T1)
-######Tier 1
-####Description:
+## Average Query Volume by Hour (Past 7 Days) (T1)
+###### Tier 1
+#### Description:
 Shows average number of queries run on an hourly basis to help better understand typical query activity.
-####How to Interpret Results:
+#### How to Interpret Results:
 How many queries are being run on an hourly basis?  Is this more or less than we anticipated?  What could be causing this?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SELECT DATE_TRUNC('HOUR', START_TIME) AS QUERY_START_HOUR
       ,WAREHOUSE_NAME
@@ -104,18 +134,18 @@ SELECT DATE_TRUNC('HOUR', START_TIME) AS QUERY_START_HOUR
  ORDER BY 1 DESC, 2
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/averagequeryvolumebyhour.png)
 
-##Warehouse Utilization Over 7 Day Average (T1)
-######Tier 1
-####Description:
+## Warehouse Utilization Over 7 Day Average (T1)
+###### Tier 1
+#### Description:
 This query returns the daily average of credit consumption grouped by week and warehouse.
-####How to Interpret Results:
+#### How to Interpret Results:
 Use this to identify anomolies in credit consumption for warehouses across weeks from the past year.
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 WITH CTE_DATE_WH AS(
   SELECT TO_DATE(START_TIME) AS START_DATE
@@ -136,18 +166,18 @@ QUALIFY CREDITS_USED_DATE_WH > 100  // Minimum N=100 credits
  ORDER BY PCT_OVER_TO_7_DAY_AVERAGE DESC
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/warehouseutilization7days2.png)
 
-##Forecasting Usage/Billing (T1)
-######Tier 1
-####Description:
+## Forecasting Usage/Billing (T1)
+###### Tier 1
+#### Description:
 This query provides three distinct consumption metrics for each day of the contract term. (1) the contracted consumption is the dollar amount consumed if usage was flat for the entire term. (2) the actual consumption pulls from the various usage views and aggregates dollars at a day level. (3) the forecasted consumption creates a straight line regression from the actuals to project go-forward consumption.
-####How to Interpret Results:
+#### How to Interpret Results:
 This data should be mapped as line graphs with a running total calculation to estimate future forecast against the contract amount.
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SET CREDIT_PRICE = 4.00; --edit this number to reflect credit price
 SET TERM_LENGTH = 12; --integer value in months
@@ -308,18 +338,18 @@ JOIN        FORECASTED_USAGE_SLOPE_INTERCEPT                FU ON 1 = 1
 ;
 
 ```
-####Screenshot
+#### creenshot
 ![alt-text-here](assets/forecastingusagebillingintro3.png)
 
-##Partner Tools Consuming Credits (T1)
-######Tier 1
-####Description:
+## Partner Tools Consuming Credits (T1)
+###### Tier 1
+#### Description:
 Identifies which of Snowflake's partner tools/solutions (BI, ETL, etc.) are consuming the most credits.
-####How to Interpret Results:
+#### How to Interpret Results:
 Are there certain partner solutions that are consuming more credits than anticipated?  What is the reasoning for this?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 --THIS IS APPROXIMATE CREDIT CONSUMPTION BY CLIENT APPLICATION
 WITH CLIENT_HOUR_EXECUTION_CTE AS (
@@ -372,18 +402,18 @@ ORDER BY 3 DESC
 ;
 
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/partnertoolsconsumingcredits2.png)
 
-##Credit Consumption by User (T1)
-######Tier 1
-####Description:
+## Credit Consumption by User (T1)
+###### Tier 1
+#### Description:
 Identifies which users are consuming the most credits within your Snowflake environment.  
-####How to Interpret Results:
+#### How to Interpret Results:
 Are there certain users that are consuming more credits than they should? What is the purpose behind this additional usage?  
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 --THIS IS APPROXIMATE CREDIT CONSUMPTION BY USER
 WITH USER_HOUR_EXECUTION_CTE AS (
@@ -426,18 +456,18 @@ GROUP BY 1,2
 ORDER BY 3 DESC
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/creditconsumptionbyuser.png)
 
-##Queries by # of Times Executed and Execution Time (T2)
-######Tier 2
-####Description:
+## Queries by # of Times Executed and Execution Time (T2)
+###### Tier 2
+#### Description:
 Are there any queries that get executed a ton?? how much execution time do they take up?
-####How to Interpret Results:
+#### How to Interpret Results:
 Opportunity to materialize the result set as a table?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SELECT 
 QUERY_TEXT
@@ -457,15 +487,15 @@ QUERY_TEXT
   ;
 ```
 
-##Top 50 Longest Running Queries (T2)
-######Tier 2
-####Description:
+## Top 50 Longest Running Queries (T2)
+###### Tier 2
+#### Description:
 Looks at the top 50 longest running queries to see if there are patterns
-####How to Interpret Results:
+#### How to Interpret Results:
 Is there an opportunity to optimize with clustering or upsize the warehouse?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 select
           
@@ -492,15 +522,15 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
 ```
 
 
-##Top 50 Queries that Scanned the Most Data (T2)
-######Tier 2
-####Description:
+## Top 50 Queries that Scanned the Most Data (T2)
+###### Tier 2
+#### Description:
 Looks at the top 50 queries that scan the largest number of micro partitions
-####How to Interpret Results:
+#### How to Interpret Results:
 Is there an opportunity to optimize with clustering or upsize the warehouse?
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 select
           
@@ -526,15 +556,15 @@ from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
    ;
 ```
 
-##Queries by Execution Buckets over the Past 7 Days (T2)
-######Tier 2
-####Description:
+## Queries by Execution Buckets over the Past 7 Days (T2)
+###### Tier 2
+#### Description:
 Group the queries for a given warehouse by execution time buckets
-####How to Interpret Results:
+#### How to Interpret Results:
 This is an opportunity to identify query SLA trends and make a decision to downsize a warehouse, upsize a warehouse, or separate out some queries to another warehouse
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 WITH BUCKETS AS (
 
@@ -571,18 +601,18 @@ group by 1,COALESCE(b.execution_time_lower_bound,120000)
 order by COALESCE(b.execution_time_lower_bound,120000)
   ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/queriesbyexecutiontimebuckets.png)
 
-##Warehouses with High Cloud Services Usage (T2)
-######Tier 2
-####Description:
+## Warehouses with High Cloud Services Usage (T2)
+###### Tier 2
+#### Description:
 Shows the warehouses that are not using enough compute to cover the cloud services portion of compute, ordered by the ratio of cloud services to total compute
-####How to Interpret Results:
+#### How to Interpret Results:
 Focus on Warehouses that are using a high volume and ratio of cloud services compute. Investigate why this is the case to reduce overall cost (might be cloning, listing files in S3, partner tools setting session parameters, etc.).  The goal to reduce cloud services credit consumption is to aim for cloud services credit to be less than 10% of overall credits.
 ####Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 select 
     WAREHOUSE_NAME
@@ -596,18 +626,18 @@ group by 1
 order by 4 desc
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/warehousesapproachingcloudbilling.png)
 
-##Warehouse Utilization (T2)
-######Tier 2
-####Description:
+## Warehouse Utilization (T2)
+###### Tier 2
+#### Description:
 This query is designed to give a rough idea of how busy Warehouses are compared to the credit consumption per hour. It will show the end user the number of credits consumed, the number of queries executed and the total execution time of those queries in each hour window.
-####How to Interpret Results:
+#### How to Interpret Results:
 This data can be used to draw correlations between credit consumption and the #/duration of query executions. The more queries or higher query duration for the fewest number of credits may help drive more value per credit.
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
-####SQL
+#### SQL
 ```sql
 SELECT
        WMH.WAREHOUSE_NAME
@@ -699,5 +729,5 @@ GROUP BY
       ,WMH.CREDITS_USED
 ;
 ```
-####Screenshot
+#### Screenshot
 ![alt-text-here](assets/warehouseutilization.png)
