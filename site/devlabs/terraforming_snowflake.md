@@ -1,6 +1,6 @@
 summary: Learn how to manage Snowflake using Terraform
 id: terraforming_snowflake
-categories: getting-started 
+categories: Getting Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues

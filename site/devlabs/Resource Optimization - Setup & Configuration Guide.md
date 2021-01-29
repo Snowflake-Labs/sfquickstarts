@@ -1,6 +1,6 @@
 summary: This guide can be used to help customers setup and run queries pertaining to specific setup & configuration items that might be causing over-consumption.
 id: resourceoptimization-setupconfiguration
-categories: resource-optimization 
+categories: Resource Optimization 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
