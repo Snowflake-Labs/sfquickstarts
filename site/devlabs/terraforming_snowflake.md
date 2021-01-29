@@ -389,7 +389,7 @@ You will want to make the decision of how you isolate your environments and proj
 
 You may also need to evaluate other tools to complete your infrastructure management. Terraform is a powerful tool for managing many resources in Snowflake but does have limitations managing schema and data changes. More robust tools are available to manage things like data migrations and table schema changes.
 
-If you had any issues with this project you can pull [a working version](http://github.com/bculberson/tf-snow) directly from Github.
+If you had any issues with this project you can pull [a working version](https://github.com/Snowflake-Labs/sfguide-terraform-sample) directly from Github.
 
 ### What we've covered
 - Getting started with Terraform
