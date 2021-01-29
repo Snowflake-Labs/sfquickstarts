@@ -1,5 +1,10 @@
 
 #filters {
+
+  .paper-item-0 {
+    text-transform: capitalize;
+  }
+
   #tabsContent {
     .paper-tab-0 {
       font-family: $lato-bold !important;
