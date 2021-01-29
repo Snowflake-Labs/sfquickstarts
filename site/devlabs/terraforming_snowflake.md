@@ -1,4 +1,4 @@
-summary: This is an introduction to using Terraform to manage Snowflake
+summary: Learn how to manage Snowflake using Terraform
 id: terraforming_snowflake
 categories: getting-started 
 environments: web
@@ -16,22 +16,22 @@ Duration: 5
 
 Being declarative, you define the resources and configurations you want and Terraform will calculate the dependencies, look at previous state and make all necessary change to converge to the new desired state.
 
-This is a very easy way to deploy new projects, make infrastructure changes in production, and REALLY convenient for managing dependencies between providers.
+Using Terraform is a great way to deploy new projects and make infrastructure changes in production. Terraform is an easy way for managing dependencies between cloud providers.
 
-Examples:
+Example Terraform use-cases:
  - Set up storage in your cloud provider and adding it to Snowflake as an external stage
  - Add storage and connect it to Snowpipe
  - Create a service user and push the key (or rotate) into the secrets manager of your choice.
 
- Many customers prefer to have their infrastructure as code to abide by their compliance controls, maintain consistency, support similar engineering workflows for infrastructure as other updates.
+ Many Snowflake customers prefer to have their infrastructure as code to abide by their compliance controls, maintain consistency, support similar engineering workflows for infrastructure as other updates.
 
 In this tutorial we will show you how to install and use Terraform to create and manage your Snowflake environment. We will create a Database, Schema, Warehouse, Roles, and a Service User. This will show you how you could use Terraform to manage your Snowflake configurations in an automated and source controlled way.
 
-We will not cover a specific cloud provider or how to integrate Terraform into specific ci/cd tool in this introduction to Snowflake due the variety used by different customers. Those may be covered (separately) in future labs content.
+We will not cover a specific cloud provider or how to integrate Terraform into specific CI/CD tool in this introduction to Snowflake due the variety used by different customers. Those may be covered (separately) in future labs content.
 
 ### Prerequisites
 - Familiarity with Git, Snowflake, and Snowflake objects
-- AccountAdmin role access to a Snowflake account
+- `ACCOUNTADMIN` role access to a Snowflake account
 
 ### What You’ll Learn 
 - basic usage of Terraform
@@ -72,7 +72,7 @@ If you have problems with the commands above, check that your ssh key is setup p
 ## Create a Service User for Terraform
 Duration: 5
 
-We will now create a separate user from your own which will use key pair authenticaion. This is primarily done in this lab due to limitations in the provider to cache credentials and lack of support of 2fa. It will also be how most ci/cd pipelines will run Terraform leveraging service users.
+We will now create a separate user from your own which will use key pair authentication. This is primarily done in this lab due to limitations in the provider to cache credentials and lack of support of 2fa. It will also be how most CI/CD pipelines will run Terraform leveraging service users.
 
 ### Create an RSA key for Authentication
 
@@ -87,11 +87,11 @@ $ openssl rsa -in snowflake_tf_snow_key -pubout -out snowflake_tf_snow_key.pub
 
 ### Create the User in Snowflake
 
-Log into the Snowflake console and create the user by running this command as ACCOUNTADMIN role.
+Log into the Snowflake console and create the user by running this command as `ACCOUNTADMIN` role.
 
-Copy the contents of text from `~/.ssh/snowflake_tf_snow_key.pub` file after the PUBLIC KEY header and before the PUBLIC KEY footer over the `RSA_PUBLIC_KEY_HERE` text below.
+Copy the contents of text from `~/.ssh/snowflake_tf_snow_key.pub` file after the `PUBLIC KEY` header and before the `PUBLIC KEY` footer over the `RSA_PUBLIC_KEY_HERE` text below.
 
-Execute both sql statements below to create the user and grant it access to the SYSADMIN and SECURITYADMIN role needed for account management.
+Execute both sql statements below to create the user and grant it access to the `SYSADMIN` and `SECURITYADMIN` role needed for account management.
 
 ```SQL
 CREATE USER "tf-snow" RSA_PUBLIC_KEY='RSA_PUBLIC_KEY_HERE' DEFAULT_ROLE=PUBLIC MUST_CHANGE_PASSWORD=FALSE;
@@ -100,7 +100,7 @@ GRANT ROLE SYSADMIN TO USER "tf-snow";
 GRANT ROLE SECURITYADMIN TO USER "tf-snow";
 ```
 
-While we are granting this user SYSADMIN and SECURITYADMIN in this case for simplicity, it is a best practice to limit all user accounts to least priviledges. In your production environments, this key should also be well secured leveraging technologies like Hashicorp Vault, Azure Key Vault, or AWS Secrets Manager.
+While we are granting this user `SYSADMIN` and `SECURITYADMIN` in this case for simplicity, it is a best practice to limit all user accounts to least privileges. In your production environments, this key should also be well secured leveraging technologies like Hashicorp Vault, Azure Key Vault, or AWS Secrets Manager.
 
 ## Setup Terraform Authentication
 Duration: 1
@@ -110,7 +110,7 @@ In order for Terraform to authenticate as the user we'll need to pass the provid
 Find your `YOUR_SNOWFLAKE_ACCOUNT_HERE` and `YOUR_SNOWFLAKE_REGION_HERE` values needed from the Snowflake console by running:
 
 ```SQL
-select current_account(), current_region();
+SELECT current_account(), current_region();
 ```
 
 ### Add Account Information to Environment
@@ -129,9 +129,9 @@ If you plan on working on this/more project(s) in multiple shells, it may be con
 ## Declaring Resources
 Duration: 3
 
-Add a file to your project in the base directroy named main.tf. In main.tf we will setup the provider as well as define the configuration for the database and the warehouse we want Terraform to create.
+Add a file to your project in the base directory named `main.tf`. In `main.tf` we will setup the provider as well as define the configuration for the database and the warehouse we want Terraform to create.
 
-Copy the contents of this block to your main.tf
+Copy the contents of this block to your `main.tf`
 
 ```JSON
 terraform {
@@ -174,11 +174,11 @@ $ terraform init
 
 This will download the dependencies needed to run Terraform onto your computer.
 
-In this demo we will be using local state for Terraform. The state files are requried to calculate all changes and are extremely important to merge changes correctly in the future. If Terraform is ran by multiple users and/or on different computers and/or through CI/CD the state files, state **SHOULD REALLY** be put in [Remote Storage](https://www.terraform.io/docs/language/state/remote.html). While using local state, you'll see the current state stored in `*.tfstate` and old versions named `*.tfstate.*`.
+In this demo we will be using local state for Terraform. The state files are required to calculate all changes and are extremely important to merge changes correctly in the future. If Terraform is ran by multiple users and/or on different computers and/or through CI/CD the state files, state **needs** be put in [Remote Storage](https://www.terraform.io/docs/language/state/remote.html). While using local state, you'll see the current state stored in `*.tfstate` and old versions named `*.tfstate.*`.
 
 The `.terraform` folder is where all the dependencies are downloaded, it is safe to add that as well as the state files to the `.gitignore` to minimize changes.
 
-Create a file in your project root named .gitignore with this for the contents:
+Create a file in your project root named `.gitignore` with this for the contents:
 
 ```plaintext
 *.terraform*
@@ -207,7 +207,7 @@ In order to manage the different environments (dev/test/prod) resources can be n
 
 Your workflow will be dependent on your environment and account topology, requirements, workflows, and compliance needs.
 
-For this lab, you can simulate the CI/CD job proposed and do a plan to see what Terraform wants to change. During plan, Terraform will compare it's known and stored state with what is in the desired resources and display all changes needed to conform the resources. 
+For this lab, you can simulate the proposed CI/CD job and do a plan to see what Terraform wants to change. During plan, Terraform will compare it's known and stored state with what is in the desired resources and display all changes needed to conform the resources. 
 
 From a shell in your project folder (with your Account Information in environment) run:
 
@@ -233,7 +233,7 @@ Login to your Snowflake Account and verify that the database and the warehouse h
 ## Changing and Adding Resources
 Duration: 5
 
-All databases need a Schema to store tables so we'll add that as well as a service user so our application/client can connect to the database and schema. You will see this syntax is very similar to the database and warehouse you already created, you have already learned everything you need to know to create and update resources in Snowflake. We'll also add priviledges so the service role/user can use the database and schema.
+All databases need a Schema to store tables so we'll add that as well as a service user so our application/client can connect to the database and schema. You will see this syntax is very similar to the database and warehouse you already created, you have already learned everything you need to know to create and update resources in Snowflake. We'll also add privileges so the service role/user can use the database and schema.
 
 You'll see most of this is what you expected, the only complicated part is really the private key creation as Terraform tls private key generator doesn't export the public key in a format the Terraform provider can consume so some string manipulations are needed.
 
@@ -383,9 +383,9 @@ If you are new to Terraform there is still a lot to learn. We suggest you resear
 
 The Terraform provider for Snowflake is an open-source project, we would love your help making it better. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest), we welcome contributions. We also highly encourage you to submit issues and feedback to the [Github Project](https://github.com/chanzuckerberg/terraform-provider-snowflake) so we can all make the project and experience better.
 
-Next Steps for you are to decide how you will run your Terraform changes. In this demo we ran all of this on your local computer but that is rarely done in production environments. Best practices will have ci/cd pipelines which automate all workflows changing shared environments. This will allow for better gates to change those environments as well as an audit trail in source control to review the history of an environment.
+Next Steps for you are to decide how you will run your Terraform changes. In this demo we ran all of this on your local computer but that is rarely done in production environments. Best practices will have CI/CD pipelines which automate all workflows changing shared environments. This will allow for better gates to change those environments as well as an audit trail in source control to review the history of an environment.
 
-You will want to make the decision of how you isolate your environments and projects whether via namespacing/RBAC or via multiple accounts. Changing this later will be very difficult as most modules and ci/cd infrastructure will need to be heavily modified for the alternative approach.
+You will want to make the decision of how you isolate your environments and projects whether via namespacing/RBAC or via multiple accounts. Changing this later will be very difficult as most modules and CI/CD infrastructure will need to be heavily modified for the alternative approach.
 
 You may also need to evaluate other tools to complete your infrastructure management. Terraform is a powerful tool for managing many resources in Snowflake but does have limitations managing schema and data changes. More robust tools are available to manage things like data migrations and table schema changes.
 
