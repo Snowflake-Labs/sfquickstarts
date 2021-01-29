@@ -1,25 +1,19 @@
 summary: Auto-Ingest Twitter Data into Snowflake
 id: Auto-Ingest_Twitter_Data_into_Snowflake
-categories:
-status: Draft
+categories: Demos
+status: Published
 Feedback Link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: Snowpipe, Twitter
+tags: Snowpipe, Twitter, Auto Ingest, Cloud Storage
 
 # Auto-Ingest Twitter Data into Snowflake
 <!-- ------------------------ -->
 ## Overview
 Duration: 1
 
-In this guide, we’ll be walking you through how to auto-ingest streaming and event-driven data from Twitter into Snowflake using Snowpipe. While this guide is Twitter-specific, the lessons found within can be applied to any streaming or event-driven data source.  Let’s get going!
+In this guide, we’ll be walking you through how to auto-ingest streaming and event-driven data from Twitter into Snowflake using Snowpipe. While this guide is Twitter-specific, the lessons found within can be applied to any streaming or event-driven data source. All source code for this guide can be found on [GitHub](https://github.com/Snowflake-Labs/sfguide-twitter-auto-ingest). Let’s get going!
 
 ### Prerequisites
 - Familiarity with command-line navigation
-
-### What You’ll Learn
-- Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe
-- Semi-structured data: Querying semi-structured data (JSON) without needing transformations
-- Secure Views: Create a Secure View to allow data analysts to query the data
-- Snowpipe: Overview and configuration
 
 ### What You’ll Need
 - A [Snowflake](https://www.snowflake.com/) Account
@@ -29,8 +23,30 @@ In this guide, we’ll be walking you through how to auto-ingest streaming and e
 - [Twitter Developer](https://developer.twitter.com/) account (free)
 - [AWS](https://aws.amazon.com/) account (12-month free tier)
 
+### What You’ll Learn
+- Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe
+- Semi-structured data: Querying semi-structured data (JSON) without needing transformations
+- Secure Views: Create a Secure View to allow data analysts to query the data
+- Snowpipe: Overview and configuration
+
+
 ### What You’ll Build
 - A docker image containing a python application that listens and saves live tweets; those tweets are uploaded into Snowflake using AWS S3 as a file stage.
+
+<!-- ------------------------ -->
+## Application Architecture 
+Duration: 5
+
+It's important to understand how the data flows within this application. This application consists of four main parts: 
+
+1. **A Python application**: this is running locally in a Docker container and listens for live tweets using the Twitter REST API.
+2. **An AWS S3 staging environment**: this is used to store the live tweets from the Python application
+3. **Snowpipe**: this listens for new objects created in AWS S3 and ingests the data into a user-configured table in Snowflake
+4. **Snowflake**: we use Snowflake to directly query and transform the raw, semi-structured JSON data.
+
+### Architecture Diagram
+![Twitter Auto Ingest Architecture Diagram](assets/twitter_auto_ingest_architecture.png)
+
 
 <!-- ------------------------ -->
 ## Download the repository
@@ -38,13 +54,13 @@ Duration: 5
 
 The demo can be found as a repository on Snowflake's GitHub. After installing git, you can clone the repository using your terminal. Open a terminal and run the following line to clone the repository to your local system. It'll download the repository in your home folder by default, so you may want to navigate to another folder if that's where you want the demo to be located.
 
-```
+```bash
 git clone https://github.com/Snowflake-Labs/demo-twitter-auto-ingest
 ```
 
 Great! You now have the demo on your computer. You'll need to be in the repository to be able to modify it. Navigate to the repository using the following command:
 
-```
+```bash
 cd demo-twitter-auto-ingest
 ```
 
@@ -92,7 +108,7 @@ The second file you need to modify is `0_setup_twitter_snowpipe.sql`. Open the f
 
 The other line you need to modify is line 23, which specifies the URL that directs to your AWS S3 bucket; this is where you want the data to be stored.
 
-```
+```sql
 /*********************************************************************************
 Create external S3 stage pointing to the S3 buckets storing the tweets
 *********************************************************************************/
@@ -113,7 +129,7 @@ Duration: 5
 
 With your credentials established, you can now build the Dockerfile. From the command line, making sure you're still in the `demo-twitter-auto-ingest` directory, run the following command:
 
-```
+```bash
 docker build . -t snowflake-twitter
 ```
 
@@ -133,7 +149,7 @@ Duration: 5
 
 Running the image is straightforward and can be done with the following command:
 
-```
+```bash
 $ docker run --name <YOUR_CONTAINER_NAME> snowflake-twitter:latest <YOUR_TWITTER_KEYWORD>
 ```
 
@@ -144,7 +160,7 @@ There are two parameters you'll want to modify:
 
 Let's give it a try! Here's an example that pulls tweets with #success using the container "twitter-success":
 
-```
+```bash
 $ docker run --name twitter-success snowflake-twitter:latest success
 ```
 
@@ -187,15 +203,20 @@ The setup is now complete! You're good to go, but it's important to be cognizant
 
 Containers timeout within 15 minutes, but if you'd like to stop it earlier, you can run the following command:
 
-```
+```bash
 docker stop <YOUR_CONTAINER_NAME>
 ```
 
 Or if you’d prefer, you can stop (and even delete it) through the Docker Desktop app. That's it! You now have full control over running your Docker container.
 
 <!-- ------------------------ -->
-## Next Steps:
+## Conclusion
 Duration: 1
 
-Snowflake offers a lot of options for what you can do with this data once you've added it with Snowpipe. Check out our [Getting Started with Python](https://guides.snowflake.com/guide/getting_started_with_python/index.html?index=..%2F..index#0) guide to see how you can use Python to empower your interactions with your data. And of course, be sure to check out the full [documentation](https://docs.snowflake.com/en/index.html).
+Snowflake offers a lot of options for what you can do with this data once you've added it with Snowpipe. Check out our [Getting Started with Python](https://guides.snowflake.com/guide/getting_started_with_python/) guide to see how you can use Python to empower your interactions with your data. And of course, be sure to check out the full [documentation](https://docs.snowflake.com/en/index.html).
 
+### What we've covered
+- Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe
+- Semi-structured data: Querying semi-structured data (JSON) without needing transformations
+- Secure Views: Create a Secure View to allow data analysts to query the data
+- Snowpipe: Overview and configuration

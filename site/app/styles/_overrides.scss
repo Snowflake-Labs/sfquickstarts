@@ -24,10 +24,15 @@
 
 /* Snowflake specific category classes */
 
-$color-data-applications: #475CA7;
+$color-resource-optimization: #134369;
+$color-demos2: #21a2e0;
+$color-getting-started: #5bc6d1;
+$color-demos: #c7477a;
+$color-data-applications: #282A72;
 $color-data-exchange: #282A72;
-@include codelab-card(['getting-started'], $color-data-exchange, '');
-@include codelab-card(['resource-optimization'], $color-data-exchange, '');
+@include codelab-card(['getting-started'], $color-getting-started, '');
+@include codelab-card(['resource-optimization'], $color-resource-optimization, '');
+@include codelab-card(['demos'], $color-demos, '');
 @include codelab-card(['data-engineering'], $snowflake-blue, 'data-engineering.svg');
 @include codelab-card(['data-lake'], $star-blue, 'data-lake.svg');
 @include codelab-card(['data-warehouse'], $mid-blue, 'data-warehouse.svg');
