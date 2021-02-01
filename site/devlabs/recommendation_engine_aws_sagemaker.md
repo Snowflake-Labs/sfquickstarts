@@ -1,9 +1,9 @@
-summary: Build a Recommendation Engine with AWS SageMaker
+summary: Build a Recommendation Engine with AWS SageMaker and Snowflake
 Id: recommendation_engine_aws_sagemaker
-categories:
-status: Draft
+categories: Demos
+status: Published
 Feedback Link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: SageMaker, AWS
+tags: SageMaker, AWS, Machine Learning
 # Build a Recommendation Engine with AWS SageMaker
 
 <!-- ------------------------ -->
@@ -14,6 +14,8 @@ Duration: 1
 This guide will walk you through how to train a recommendation system using Amazon SageMaker with data stored in Snowflake. Along the way, we'll introduce you to the power of External Functions in Snowflake, showing you how we can use them to call external API endpoints.  The lessons found within will serve as an excellent introduction to bringing extensibility to your data pipelines.
 
 We'll be using the [MovieLens dataset](https://grouplens.org/datasets/movielens/) to build a movie recommendation system. We'll use Snowflake as the dataset repository and Amazon SageMaker to train and deploy our Machine Learning model. The recommendations are powered by the SVD algorithm provided by the [Surprise](http://surpriselib.com/) python library.
+
+You can view all source code of this guide on [GitHub](https://github.com/Snowflake-Labs/sfguide-recommender-pipeline).
 
 ### Prerequisites
 - Familiarity with command-line navigation
@@ -42,7 +44,11 @@ We'll be using the [MovieLens dataset](https://grouplens.org/datasets/movielens/
 ## Load the data into Snowflake
 Duration: 5
 
-The first thing you'll need to do is download a small version of the dataset. Grab it [here](http://files.grouplens.org/datasets/movielens/ml-latest-small.zip) and download it. Then, unzip the folder.
+The first thing you'll need to do is download a small version of the dataset. Once downloaded, unzip the folder.
+
+<button>
+  [Download Dataset](http://files.grouplens.org/datasets/movielens/ml-latest-small.zip)
+</button>
 
 We're going to take that data and load it into some tables on Snowflake. First, you'll want to sign in to Snowflake. Then run the following block of code to create the tables:
 
@@ -531,3 +537,8 @@ Alright, so what's next? Well, that's the end of this guide, but that's not the 
 
 Not sure where to start? Check out Snowflake's [Continuous Data Pipelines](https://docs.snowflake.com/en/user-guide/data-pipelines.html) to automate `Tasks`. The tasks in question will be the External Functions you created above. Happy automating!
 
+### What We've Covered
+- Load datasets into Snowflake
+- Prepare Amazon SageMaker for training and model deployment
+- Deploy AWS Lambda Functions & API Gateway Using Serverless Framework
+- Model Training, Deployment, and Inference Using Snowflake External Functions
