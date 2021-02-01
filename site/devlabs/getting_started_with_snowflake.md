@@ -1,13 +1,12 @@
-summary: Getting Started with Snowflake
+summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 id: getting_started_with_snowflake
-categories: getting-started
+categories: Getting Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Getting Started, Data Science, Data Engineering
-authors: Sitara Simons, transferring previously written VHOL guide Q3 Refresh with edits by Jessica Hvozdovich
 
-# Getting Started with Snowflake - Icebreaker
+# Getting Started with Snowflake - Zero to Snowflake
 
 <!-- ------------------------ -->
 
@@ -16,6 +15,9 @@ authors: Sitara Simons, transferring previously written VHOL guide Q3 Refresh wi
 Duration: 2
 
 Welcome to Snowflake! This entry-level guide designed for database and data warehouse administrators and architects will help you navigate the Snowflake interface and introduce you to some of our core capabilities. [Sign up for a free 30-day trial of Snowflake](https://trial.snowflake.com) and follow along with this lab exercise. Once we cover the basics you’ll be ready to start processing your own data and diving into Snowflake’s more advanced features like a pro.
+
+### Free Virtual Hands-on Lab
+This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab. [Sign up for the VHOL today](https://www.snowflake.com/virtual-hands-on-lab/).
 
 ### Prerequisites:
 
@@ -45,7 +47,13 @@ If you haven’t already, register for a [Snowflake free 30-day trial](https://t
 
 The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.
 
-Click ​[here](https://s3.amazonaws.com/snowflake-workshop-lab/lab_scripts_OnlineZTS.sql) to download the lab_scripts_OnlineZTS.sql file to your local machine. This file contains pre-written SQL commands to be used later in the lab.
+### Sample Code
+
+<button>
+  [Download Code](https://s3.amazonaws.com/snowflake-workshop-lab/lab_scripts_OnlineZTS.sql)
+</button>
+
+Download the source code that we will use for this guide. This file contains pre-written SQL commands to be used later in the lab.
 
 <!-- ------------------------ -->
 
@@ -116,13 +124,13 @@ The **History** tab allows you to view the details of all queries executed in th
 
 ![history tab](assets/3UIStory_9.png)
 
-Clicking on your username in the top right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of SYSADMIN and will stay in this role for the majority of the lab.
+Clicking on your username in the top right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
 
 ![user preferences dropdown](assets/3UIStory_10.png)
 
 Negative
 : **SYSADMIN**
-The SYSADMIN (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account.
+The `SYSADMIN` (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account.
 In a real-world environment, you would use different roles for the tasks in this lab, and assign roles to your users. We will cover more on Snowflake access control in Section 9 and you can find additional information in the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
 
 ### The Lab Story
@@ -146,7 +154,7 @@ This section will walk you through the steps to:
 - create a file format for the data
 
 Negative
-:**Getting Data into Snowflake**
+: **Getting Data into Snowflake**
 There are many ways to get data into Snowflake from many locations including the COPY command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT products. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide-data-load.html).
 We are manually using the COPY command and S3 storage for instructional purposes. A customer would more likely use an automated process or ETL product.
 
@@ -160,9 +168,9 @@ It is in comma-delimited format with double quote enclosing and a single header 
 
 ### Create a Database and Table
 
-First, let’s create a database called CITIBIKE that will be used for loading the structured data.
+First, let’s create a database called `CITIBIKE` that will be used for loading the structured data.
 
-Navigate to the Databases tab. Click Create, name the database CITIBIKE, then click Finish.
+Navigate to the Databases tab. Click Create, name the database `CITIBIKE`, then click Finish.
 
 ![worksheet creation](assets/4PreLoad_2.png)
 
@@ -173,10 +181,10 @@ Now navigate to the Worksheets tab. You should see the worksheet with all the SQ
 We need to set the context appropriately within the worksheet. In the top right, click on the drop-down arrow next to the Context section to show the worksheet context menu. Here we control what elements the user can see and run from each worksheet. We are using the UI here to set the context. Later in the lab we will accomplish this via SQL commands within the worksheet.
 
 Select the following context settings:
-Role: SYSADMIN
-Warehouse: COMPUTE_WH (XL)
-Database: CITIBIKE
-Schema = PUBLIC
+Role: `SYSADMIN`
+Warehouse: `COMPUTE_WH (XL)`
+Database: `CITIBIKE`
+Schema = `PUBLIC`
 
 ![context settings](assets/4PreLoad_4.png)
 
@@ -186,7 +194,7 @@ All the DDL operations we have done so far do not require compute resources, so 
 
 Next we’ll create a table called TRIPS that will be used for loading the comma-delimited data. We will use the UI within the Worksheets tab to run the DDL that creates the table. The SQL text below is what we previously loaded into the worksheet:
 
-```
+```SQL
 create or replace table trips
 (tripduration integer,
 starttime timestamp,
@@ -242,7 +250,7 @@ We are working with structured, comma-delimited data that has already been stage
 Positive
 : For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake environment.
 
-From the Databases tab, click on the CITIBIKE database, select Stages, then Create...
+From the Databases tab, click on the `CITIBIKE` database, select Stages, then Create...
 
 ![stages create](assets/4PreLoad_10.png)
 
@@ -252,17 +260,18 @@ Select the option for Existing Amazon S3 Location and click Next.
 
 On the Create Stage box, enter the following settings, then click Finish.
 
-Name: citibike_trips
-Schema Name: PUBLIC
-URL: s3://snowflake-workshop-lab/citibike-trips
+Name: `citibike_trips`
+Schema Name: `PUBLIC`
+URL: `s3://snowflake-workshop-lab/citibike-trips`
+
 Positive
 : The S3 bucket for this lab is public so you can leave the key fields empty. Such buckets will likely require key information in the future.
 
 ![create stage settings](assets/4PreLoad_12.png)
 
-Now let’s take a look at the contents of the citibike_trips stage. Navigate to the Worksheets tab, then execute the following statement:
+Now let’s take a look at the contents of the `citibike_trips` stage. Navigate to the Worksheets tab, then execute the following statement:
 
-```
+```SQL
 list @citibike_trips;
 ```
 
@@ -276,13 +285,13 @@ You should see the output in the Results window in the bottom pane:
 
 Before we can load the data into Snowflake, we have to create a File Format that matches the data structure.
 
-From the Databases tab, click on the CITIBIKE database hyperlink. Select File Formats and Create.
+From the Databases tab, click on the `CITIBIKE` database hyperlink. Select File Formats and Create.
 
 ![create file format](assets/4PreLoad_15.png)
 
 On the resulting page we create a file format. In the box that appears, leave all the default settings as-is but make the changes below:
 
-Name: CSV
+Name: `CSV`
 Field optionally enclosed by: Double Quote
 Null string: <Delete the existing text in this field so it is empty>
 [ ] Error on Column Count Mismatch: <uncheck this box>
@@ -347,20 +356,20 @@ Change the Size of this data warehouse from X-Large to Small. Then click the Fin
 
 ### Load the Data
 
-Now we can run a COPY command to load the data into the TRIPS table we created earlier.
+Now we can run a COPY command to load the data into the `TRIPS` table we created earlier.
 
 Navigate back to the Worksheets tab. In the top right of the worksheet, make sure the context is correct with these settings:
 
-Role: SYSADMIN
-Warehouse: COMPUTE_WH (S)
-Database: CITIBIKE
-Schema = PUBLIC
+Role: `SYSADMIN`
+Warehouse: `COMPUTE_WH (S)`
+Database: `CITIBIKE`
+Schema = `PUBLIC`
 
 ![worksheet context](assets/5Load_4.png)
 
 Execute the following statements in the worksheet to load the staged data into the table. This may take up to 30 seconds.
 
-```
+```SQL
 copy into trips from @citibike_trips
 file_format=CSV;
 ```
@@ -373,13 +382,13 @@ Once the load is done, at the bottom right of the worksheet click on the small a
 
 ![open history arrow](assets/5Load_6.png)
 
-In the History window see the “copy into trips from @citibike_trips file_format=CSV;” SQL query you just ran and note the duration, bytes scanned, and rows. Use the slider on the left side of the pane to expand it if needed.
+In the History window see the `copy into trips from @citibike_trips file_format=CSV;` SQL query you just ran and note the duration, bytes scanned, and rows. Use the slider on the left side of the pane to expand it if needed.
 
 ![history and duration](assets/5Load_7.png)
 
 Go back to the worksheet to clear the table of all data and metadata by using the TRUNCATE TABLE command.
 
-```
+```SQL
 truncate table trips;
 ```
 
@@ -389,7 +398,7 @@ Open the worksheet context menu, then click on Resize to increase the warehouse 
 
 Go back to the worksheet and execute the following statement to load the same data again.
 
-```
+```SQL
 copy into trips from @citibike_trips
 file_format=CSV;
 ```
@@ -402,7 +411,7 @@ Once the load is done, at the bottom of the worksheet in the History window comp
 
 Going back to the lab story, let’s assume the Citi Bike team wants to eliminate resource contention between their data loading/ETL workloads and the analytical end users using BI tools to query Snowflake. As mentioned earlier, Snowflake can easily do this by assigning different, appropriately-sized warehouses to various workloads. Since Citi Bike already has a warehouse for data loading, let’s create a new warehouse for the end users running analytics. We will use this warehouse to perform analytics in the next section.
 
-Navigate to the Warehouses tab, click Create…, and name the new warehouse ANALYTICS_WH with size Large. If you have Snowflake’s Enterprise Edition or higher, you will see a setting for Maximum Clusters. Set this to 1.
+Navigate to the Warehouses tab, click Create…, and name the new warehouse `ANALYTICS_WH` with size Large. If you have Snowflake’s Enterprise Edition or higher, you will see a setting for Maximum Clusters. Set this to 1.
 
 Leave the other settings at their defaults. It should look like:
 
@@ -416,7 +425,7 @@ Click on the Finish button to create the warehouse.
 
 Duration: 8
 
-In the previous exercises, we loaded data into two tables using Snowflake’s bulk loader COPY command and the warehouse COMPUTE_WH. Now we are going to take on the role of the analytics users at Citi Bike who need to query data in those tables using the worksheet and the second warehouse ANALYTICS_WH.
+In the previous exercises, we loaded data into two tables using Snowflake’s bulk loader `COPY` command and the warehouse `COMPUTE_WH`. Now we are going to take on the role of the analytics users at Citi Bike who need to query data in those tables using the worksheet and the second warehouse `ANALYTICS_WH`.
 
 Negative
 : **Real World Roles and Querying**
@@ -427,14 +436,14 @@ Additionally, querying would typically be done with a business intelligence prod
 
 Go to the Worksheets tab. Within the worksheet, verify your context is the following:
 
-Role: SYSADMIN
-Warehouse: ANALYTICS_WH (L)
-Database: CITIBIKE
-Schema = PUBLIC
+Role: `SYSADMIN`
+Warehouse: `ANALYTICS_WH (L)`
+Database: `CITIBIKE`
+Schema = `PUBLIC`
 
 Run the query below to see a sample of the trips data:
 
-```
+```SQL
 select * from trips limit 20;
 ```
 
@@ -442,7 +451,7 @@ select * from trips limit 20;
 
 First let’s look at some basic hourly statistics on Citi Bike usage. Run the query below in the worksheet. It will show for each hour the number of trips, average trip duration, and average trip distance.
 
-```
+```SQL
 select date_trunc('hour', starttime) as "date",
 count(*) as "num trips",
 avg(tripduration)/60 as "avg duration (mins)",
@@ -457,7 +466,7 @@ Snowflake has a result cache that holds the results of every query executed in t
 
 Let’s see the result cache in action by running the exact same query again.
 
-```
+```SQL
 select date_trunc('hour', starttime) as "date",
 count(*) as "num trips",
 avg(tripduration)/60 as "avg duration (mins)",
@@ -472,7 +481,7 @@ In the History window note that the second query runs significantly faster becau
 
 Next, let's run this query to see which months are the busiest:
 
-```
+```SQL
 select
 monthname(starttime) as "month",
 count(*) as "num trips"
@@ -494,7 +503,7 @@ A massive benefit of zero-copy cloning is that the underlying data is not copied
 
 Run the following command in the worksheet to create a development (dev) table:
 
-```
+```SQL
 create table trips_dev clone trips
 ```
 
@@ -515,7 +524,7 @@ Going back to the lab’s example, the Citi Bike analytics team wants to determi
 
 - Load weather data in JSON format held in a public S3 bucket
 - Create a View and query the semi-structured data using SQL dot notation
-- Run a query that joins the JSON data to the previously loaded TRIPS data
+- Run a query that joins the JSON data to the previously loaded `TRIPS` data
 - Analyze the weather and ride count data to determine their relationship
 
 The JSON data consists of weather information provided by OpenWeatherMap detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 57.9k rows, 61 objects, and 2.5MB compressed. The raw JSON in GZ files and in a text editor looks like:
@@ -528,24 +537,24 @@ Snowflake can easily load and query semi-structured data such as JSON, Parquet, 
 
 ### Create a Database and Table
 
-First, via the worksheet, let’s create a database called WEATHER that will be used for storing the unstructured data.
+First, via the worksheet, let’s create a database called `WEATHER` that will be used for storing the unstructured data.
 
-```
+```SQL
 create database weather;
 ```
 
 Set the context appropriately within the worksheet.
 
-```
+```SQL
 use role sysadmin;
 use warehouse compute_wh;
 use database weather;
 use schema public;
 ```
 
-Next, let’s create a table called JSON_WEATHER_DATA that will be used for loading the JSON data. In the worksheet, run the SQL text below. Snowflake has a special column type called VARIANT which will allow us to store the entire JSON object and eventually query it directly.
+Next, let’s create a table called `JSON_WEATHER_DATA` that will be used for loading the JSON data. In the worksheet, run the SQL text below. Snowflake has a special column type called `VARIANT` which will allow us to store the entire JSON object and eventually query it directly.
 
-```
+```SQL
 create table json_weather_data (v variant);
 ```
 
@@ -553,11 +562,11 @@ Negative
 : **Semi-Structured Data Magic**
 The VARIANT data type allows Snowflake to ingest semi-structured data without having to pre-define the schema.
 
-Verify that your table JSON_WEATHER_DATA has been created. At the bottom of the worksheet you should see a Results section which says “Table JSON_WEATHER_DATA successfully created.”
+Verify that your table `JSON_WEATHER_DATA` has been created. At the bottom of the worksheet you should see a Results section which says “Table JSON_WEATHER_DATA successfully created.”
 
 ![success message](assets/7SemiStruct_2.png)
 
-Navigate to the Databases tab and click on the WEATHER database link. You should see your newly created JSON_WEATHER_DATA table.
+Navigate to the Databases tab and click on the `WEATHER` database link. You should see your newly created `JSON_WEATHER_DATA` table.
 
 ![JSON_WEATHER_DATA table](assets/7SemiStruct_3.png)
 
@@ -565,14 +574,14 @@ Navigate to the Databases tab and click on the WEATHER database link. You should
 
 Via the worksheet create a stage from where the unstructured data is stored on AWS S3.
 
-```
+```SQL
 create stage nyc_weather
 url = 's3://snowflake-workshop-lab/weather-nyc';
 ```
 
-Now let’s take a look at the contents of the nyc_weather stage. Navigate to the Worksheets tab. Execute the following statement with a LIST command to display the list of files:
+Now let’s take a look at the contents of the `nyc_weather` stage. Navigate to the Worksheets tab. Execute the following statement with a `LIST` command to display the list of files:
 
-```
+```SQL
 list @nyc_weather;
 ```
 
@@ -584,11 +593,11 @@ You should see the output in the Results window in the bottom pane with many gz 
 
 For this section, we will use a warehouse to load the data from the S3 bucket into the Snowflake table we just created.
 
-Via the worksheet, run a COPY command to load the data into the JSON_WEATHER_DATA table we created earlier.
+Via the worksheet, run a `COPY` command to load the data into the `JSON_WEATHER_DATA` table we created earlier.
 
-Note how in the SQL command we can specify a FILE FORMAT object inline. In the previous section where we loaded structured data, we had to define a file format in detail. Because the JSON data here is well formatted, we are able to use default settings and simply specify the JSON type.
+Note how in the SQL command we can specify a `FILE FORMAT` object inline. In the previous section where we loaded structured data, we had to define a file format in detail. Because the JSON data here is well formatted, we are able to use default settings and simply specify the JSON type.
 
-```
+```SQL
 copy into json_weather_data
 from @nyc_weather
 file_format = (type=json);
@@ -596,7 +605,7 @@ file_format = (type=json);
 
 Take a look at the data that has been loaded.
 
-```
+```SQL
 select * from json_weather_data limit 10;
 ```
 
@@ -617,7 +626,7 @@ There are also Materialized Views in which SQL results are stored as though the 
 
 Run the following command from the Worksheets tab. It will create a view of the unstructured JSON weather data in a columnar view so it is easier for analysts to understand and query. The city_id 5128638 corresponds to New York City.
 
-```
+```SQL
 create view json_weather_data_view as
 select
 v:time::timestamp as observation_time,
@@ -639,15 +648,15 @@ from json_weather_data
 where city_id = 5128638;
 ```
 
-SQL dot notation (v.city.coord.lat) is used in this command to pull out values at lower levels within the JSON hierarchy. This allows us to treat each field as if it were a column in a relational table.
+SQL dot notation `v.city.coord.lat` is used in this command to pull out values at lower levels within the JSON hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
-The new view should appear just under the table json_weather_data at the top left of the UI. You may need to expand or refresh the database objects browser in order to see it.
+The new view should appear just under the table `json_weather_data` at the top left of the UI. You may need to expand or refresh the database objects browser in order to see it.
 
 ![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_7.png)
 
 Via the worksheet, verify the view with the following query. Notice the results look just like a regular structured data source. Your result set may have different observation_time values.
 
-```
+```SQL
 select * from json_weather_data_view
 where date_trunc('month',observation_time) = '2018-01-01'
 limit 20;
@@ -657,14 +666,15 @@ limit 20;
 
 ### Use a Join Operation to Correlate Against Data Sets
 
-We will now join the JSON weather data to our CITIBIKE.PUBLIC.TRIPS data to answer our original question of how weather impacts the number of rides.
+We will now join the JSON weather data to our `CITIBIKE.PUBLIC.TRIPS` data to answer our original question of how weather impacts the number of rides.
 
-Run the command below to join WEATHER to TRIPS and count the number of trips associated with certain weather conditions .
+Run the command below to join `WEATHER` to `TRIPS` and count the number of trips associated with certain weather conditions .
 
 Positive
-: Since we are still in a worksheet use the WEATHER database as default. We will fully qualify our reference to the TRIPS table by providing its database and schema name.
+: Since we are still in a worksheet use the `WEATHER` database as default. We will fully qualify our reference to the `TRIPS` table by providing its database and schema name.
 
-```
+
+```SQL
 select weather as conditions
 ,count(*) as num_trips
 from citibike.public.trips
@@ -698,13 +708,13 @@ First let’s see how we can restore data objects that have been accidentally or
 
 From the worksheet, run the following DROP command to remove the json_weather_data table:
 
-```
+```SQL
 drop table json_weather_data;
 ```
 
 Run a SELECT statement on the json_weather_data table. In the Results pane you should see an error because the underlying table has been dropped.
 
-```
+```SQL
 select * from json_weather_data limit 10;
 ```
 
@@ -712,7 +722,7 @@ select * from json_weather_data limit 10;
 
 Now restore the table:
 
-```
+```SQL
 undrop table json_weather_data;
 ```
 
@@ -722,11 +732,11 @@ The json_weather_data table should be restored.
 
 ### Roll Back a Table
 
-Let’s roll back a table to a previous state to fix an unintentional DML error that replaces all the station names in the CITIBIKE database’s TRIPS table with the word “oops.”
+Let’s roll back a table to a previous state to fix an unintentional DML error that replaces all the station names in the `CITIBIKE` database’s `TRIPS` table with the word “oops.”
 
 First make sure your worksheet has the proper context:
 
-```
+```SQL
 use role sysadmin;
 use warehouse compute_wh;
 use database citibike;
@@ -735,13 +745,13 @@ use schema public;
 
 Run the following command to replace all of the station names in the table with the word “oops”.
 
-```
+```SQL
 update trips set start_station_name = 'oops';
 ```
 
 Now run a query that returns the top 20 stations by number of rides. Notice that the station names result is only one row.
 
-```
+```SQL
 select
 start_station_name as "station",
 count(*) as "rides"
@@ -755,7 +765,7 @@ limit 20;
 
 Normally we would need to scramble and hope we have a backup lying around. In Snowflake, we can simply run commands to find the query ID of the last UPDATE command and store it in a variable called $QUERY_ID.
 
-```
+```SQL
 set query_id =
 (select query_id from table(information_schema.query_history_by_session (result_limit=>5))
 where query_text like 'update%' order by start_time limit 1);
@@ -763,14 +773,14 @@ where query_text like 'update%' order by start_time limit 1);
 
 Re-create the table with the correct station names:
 
-```
+```SQL
 create or replace table trips as
 (select * from trips before (statement => $query_id));
 ```
 
 Run the SELECT statement again to verify that the station names have been restored:
 
-```
+```SQL
 select
 start_station_name as "station",
 count(*) as "rides"
@@ -788,9 +798,9 @@ limit 20;
 
 Duration: 8
 
-In this section we will explore aspects of Snowflake’s role-based access control (RBAC), such as creating a new role and granting it specific permissions. We will also cover the ACCOUNTADMIN (Account Administrator) role.
+In this section we will explore aspects of Snowflake’s role-based access control (RBAC), such as creating a new role and granting it specific permissions. We will also cover the `ACCOUNTADMIN` (Account Administrator) role.
 
-To continue with the Citi Bike story, let’s assume a junior DBA has joined Citi Bike and we want to create a new role for them with less privileges than the system-defined, default role of SYSADMIN.
+To continue with the Citi Bike story, let’s assume a junior DBA has joined Citi Bike and we want to create a new role for them with less privileges than the system-defined, default role of `SYSADMIN`.
 
 Negative
 : **Role-Based Access Control**
@@ -798,67 +808,67 @@ Snowflake offers very powerful and granular RBAC that dictates what objects and 
 
 ### Create a New Role and Add a User
 
-In the worksheet switch to the ACCOUNTADMIN role to create a new role. ACCOUNTADMIN encapsulates the SYSADMIN and SECURITYADMIN system-defined roles. It is the top-level role in the system and should be granted only to a limited number of users in your account. In the worksheet, run:
+In the worksheet switch to the `ACCOUNTADMIN` role to create a new role. `ACCOUNTADMIN` encapsulates the `SYSADMIN` and `SECURITYADMIN` system-defined roles. It is the top-level role in the system and should be granted only to a limited number of users in your account. In the worksheet, run:
 
-```
+```SQL
 use role accountadmin;
 ```
 
-Notice at the top right of the worksheet the context has changed to the role ACCOUNTADMIN
+Notice at the top right of the worksheet the context has changed to the role `ACCOUNTADMIN`
 
 ![ACCOUNTADMIN context](assets/9Role_1.png)
 
-In order for any role to function, we need at least one user assigned to it. So let’s create a new role called junior_dba and assign your username to it. Your username appears at the top right of the UI. In the screenshot below it is USER123.
+In order for any role to function, we need at least one user assigned to it. So let’s create a new role called `junior_dba` and assign your username to it. Your username appears at the top right of the UI. In the screenshot below it is `USER123`.
 
 ![username display](assets/9Role_2.png)
 
 Create the role and add your username to it:
 
-```
+```SQL
 create role junior_dba;
 grant role junior_dba to user YOUR_USER_NAME_GOES HERE;
 ```
 
 Positive
-: If you tried to perform this operation while in a role like SYSADMIN, it would fail due to insufficient privileges. The SYSADMIN role by default cannot create new roles or users.
+: If you tried to perform this operation while in a role like `SYSADMIN`, it would fail due to insufficient privileges. The `SYSADMIN` role by default cannot create new roles or users.
 
-Change your worksheet context to the new junior_dba role:
+Change your worksheet context to the new `junior_dba` role:
 
-```
+```SQL
 use role junior_dba;
 ```
 
-At the top right of the worksheet, note that the context has changed to reflect the junior_dba role.
+At the top right of the worksheet, note that the context has changed to reflect the `junior_dba` role.
 
 ![JUNIOR_DBA context](assets/9Role_3.png)
 
-On the left side of the UI in the database object browser pane the CITIBIKE and WEATHER databases no longer appear. This is because the junior_dba role does not have access to view them.
+On the left side of the UI in the database object browser pane the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `junior_dba` role does not have access to view them.
 
 ![object browser pane without databases](assets/9Role_4.png)
 
-Switch back to the ACCOUNTADMIN role and grant the junior_dba the ability to view and use the CITIBIKE and WEATHER databases:
+Switch back to the `ACCOUNTADMIN` role and grant the `junior_dba` the ability to view and use the `CITIBIKE` and `WEATHER` databases:
 
-```
+```SQL
 use role accountadmin;
 grant usage on database citibike to role junior_dba;
 grant usage on database weather to role junior_dba;
 ```
 
-Switch to the junior_dba role:
+Switch to the `junior_dba` role:
 
-```
+```SQL
 use role junior_dba;
 ```
 
-Note that the CITIBIKE and WEATHER databases now appear. Try clicking the refresh icon if they do not.
+Note that the `CITIBIKE` and `WEATHER` databases now appear. Try clicking the refresh icon if they do not.
 
 ![object browser pane with databases](assets/9Role_5.png)
 
 ### Account Administrator View
 
-Let’s change our security role to ACCOUNTADMIN to see other parts of the UI accessible only to this role.
+Let’s change our security role to `ACCOUNTADMIN` to see other parts of the UI accessible only to this role.
 
-In the top right corner of the UI, click on your username to show the User Preferences menu. Go to Switch Role, then select the ACCOUNTADMIN role.
+In the top right corner of the UI, click on your username to show the User Preferences menu. Go to Switch Role, then select the `ACCOUNTADMIN` role.
 
 ![switch role](assets/9Role_6.png)
 
@@ -866,7 +876,7 @@ Negative
 : **Roles in User Preference vs Worksheet**
 We just changed the security role for the session in the user preference menu. This is different from the worksheet context menu where we assign a role that is applied to that specific worksheet. Also, the session security role can simultaneously be different from the role used in a worksheet.
 
-Notice at the top of the UI you will now see a sixth tab called Account that you can only view in the ACCOUNTADMIN role.
+Notice at the top of the UI you will now see a sixth tab called Account that you can only view in the `ACCOUNTADMIN` role.
 
 Click on this Account tab. Towards the top of the page click on Usage. Here you can find information on credits, storage, and daily or hourly usage for each warehouse, including cloud services. Select a day to review its usage.
 
@@ -874,7 +884,7 @@ Click on this Account tab. Towards the top of the page click on Usage. Here you 
 
 To the right of Usage is Billing where you can add a credit card and continue beyond your free trial’s $400 of credits. Further to the right is information on Users, Roles, and Resource Monitors. The latter set limits on your account's credit consumption so you can appropriately monitor and manage your credits.
 
-Stay in the ACCOUNTADMIN role for the next section.
+Stay in the `ACCOUNTADMIN` role for the next section.
 
 <!-- ------------------------ -->
 
@@ -889,7 +899,7 @@ With Secure Data Sharing:
 - There is only one copy of the data that lives in the data provider’s account
 - Shared data is always live, real-time, and immediately available to consumers
 - Providers can establish revocable, fine-grained access to shares
-- Data sharing is simple and safe, especially compared to older data sharing methods which were often manual and insecure, involving the transfer of large .csv files across the internet
+- Data sharing is simple and safe, especially compared to older data sharing methods which were often manual and insecure, involving the transfer of large `.csv` files across the internet
 
 Positive
 : To share data across regions or cloud providers you must set up replication. This is outside the scope of the lab, but more information can be found in [this Snowflake article](https://www.snowflake.com/trending/what-is-data-replication).
@@ -900,11 +910,11 @@ Secure data sharing also powers the Snowflake Data Marketplace, which is availab
 
 ### See Existing Shares
 
-Click on the blue Snowflake logo at the very top left of the UI. On the left side of the page in the database object browser, notice the database SNOWFLAKE_SAMPLE_DATA. The small arrow on the database icon indicates this is a share.
+Click on the blue Snowflake logo at the very top left of the UI. On the left side of the page in the database object browser, notice the database `SNOWFLAKE_SAMPLE_DATA`. The small arrow on the database icon indicates this is a share.
 
 ![arrow over database icon](assets/10Share_1.png)
 
-At the top right of the UI, verify that you are in the ACCOUNTADMIN role. Navigate to the Shares tab and notice you are looking at your Inbound Secure Shares. There are two shares provided by Snowflake. One contains your account usage and the other has sample data. This is data sharing in action - your Snowflake account is a consumer of data shared by Snowflake!
+At the top right of the UI, verify that you are in the `ACCOUNTADMIN` role. Navigate to the Shares tab and notice you are looking at your Inbound Secure Shares. There are two shares provided by Snowflake. One contains your account usage and the other has sample data. This is data sharing in action - your Snowflake account is a consumer of data shared by Snowflake!
 
 ![secure Snowflake shares](assets/10Share_2.png)
 
@@ -918,9 +928,9 @@ Navigate to the Shares tab. Further down on the page click on the Outbound butto
 
 Click the Create button and fill in the following fields:
 
-Secure Share Name: TRIPS_SHARE
-Database: CITIBIKE
-Tables & Views: CITIBIKE > PUBLIC > TRIPS.
+Secure Share Name: `TRIPS_SHARE`
+Database: `CITIBIKE`
+Tables & Views: `CITIBIKE` > `PUBLIC` > `TRIPS`.
 
 ![share fields](assets/10Share_4.png)
 
@@ -958,7 +968,7 @@ The search bar in the top right allows you to query for a listing or data provid
 
 ![health tab](assets/10Share_10.png)
 
-Today we will use Starschema’s COVID-19 Epidemiological Data. Make sure you are in the ACCOUNTADMIN role.
+Today we will use Starschema’s COVID-19 Epidemiological Data. Make sure you are in the `ACCOUNTADMIN` role.
 
 ![check context](assets/10Share_11.png)
 
@@ -974,7 +984,7 @@ Now click View Database.
 
 ![covid19 databases](assets/10Share_14.png)
 
-Two schemas are available - INFORMATION_SCHEMA and PUBLIC. Click PUBLIC to see the available tables.
+Two schemas are available - `INFORMATION_SCHEMA` and `PUBLIC`. Click `PUBLIC` to see the available tables.
 
 ![covid19 tables](assets/10Share_15.png)
 
@@ -990,22 +1000,6 @@ Further to the right you will see the Database Details including the owner of th
 
 You have now successfully subscribed to the COVID-19 dataset from StarSchema which is updated daily with global COVID data. Note that we didn’t have to create databases, tables, views, or an ETL process. We simply can search for and access shared data from the Snowflake Data Marketplace.
 
-<!-- ------------------------ -->
-
-## Summary & Next Steps
-
-Duration: 2
-
-Congratulations on completing this introductory lab exercise! You’ve mastered the Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.
-
-We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
-
-- At the top of the UI click on the Partner Connect icon to access ETL and BI tools to import and analyze more data within Snowflake
-- Read the [“Definitive Guide to Maximizing Your Free Trial”](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document
-- Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers
-- [Join the Snowflake community(https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
-- [Sign up for Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
-- [Contact our Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more
 
 <!-- ------------------------ -->
 
@@ -1017,7 +1011,7 @@ If you would like to reset your environment by deleting all the objects created 
 
 First set the worksheet context:
 
-```
+```SQL
 use role accountadmin;
 use warehouse compute_wh;
 use database weather;
@@ -1026,10 +1020,37 @@ use schema public;
 
 Then run this SQL to drop all the objects we created in the lab:
 
-```
+```SQL
 drop share if exists trips_share;
 drop database if exists citibike;
 drop database if exists weather;
 drop warehouse if exists analytics_wh;
 drop role if exists junior_dba;
 ```
+
+<!-- ------------------------ -->
+
+## Conclusion & Next Steps
+
+Duration: 2
+
+Congratulations on completing this introductory lab exercise! You’ve mastered the Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.
+
+We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. 
+### Additional Resources:
+
+- Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document
+- Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers
+- [Join the Snowflake community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
+- [Sign up for Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
+- [Contact our Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more
+
+### What we've covered:
+
+- how to create stages, databases, tables, views, and warehouses
+- how to load structured and semi-structured data
+- how to query data including joins between tables
+- how to clone objects
+- how to undo user errors
+- how to create roles and users, and grant them privileges
+- how to securely and easily share data with other accounts
