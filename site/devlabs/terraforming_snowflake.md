@@ -122,7 +122,7 @@ SELECT current_account(), current_region();
 Run these commands in your shell. Be sure to replace the `YOUR_SNOWFLAKE_ACCOUNT_HERE` and `YOUR_SNOWFLAKE_REGION_HERE` placeholders with the correct values.
 
 ```Shell
-$ export SNOWFLAKE_USER="tf-user"
+$ export SNOWFLAKE_USER="tf-snow"
 $ export SNOWFLAKE_PRIVATE_KEY_PATH="~/.ssh/snowflake_tf_snow_key"
 $ export SNOWFLAKE_ACCOUNT="YOUR_SNOWFLAKE_ACCOUNT_HERE"
 $ export SNOWFLAKE_REGION="YOUR_SNOWFLAKE_REGION_HERE"
@@ -225,16 +225,18 @@ Duration: 3
 Now that you have reviewed the plan, we simulate the next step of the CI/CD job by applying those changes to your account.
 
 1. From a shell in your project folder (with your Account Information in environment) run:
-   ```Shell
-   $ terraform apply
-   ```
 
-   Terraform recreates the plan and applies the needed changes after you verify it. In this case, Terraform will be creating two new resources, and have no other changes.
+    ```
+    $ terraform apply
+    ```
+1. Terraform recreates the plan and applies the needed changes after you verify it. In this case, Terraform will be creating two new resources, and have no other changes.
 
 1. Log in to your Snowflake account and verify that Terraform created the database and the warehouse.
 
+
 ## Changing and Adding Resources
 Duration: 5
+
 
 All databases need a schema to store tables, so we'll add that and a service user so that our application/client can connect to the database and schema. The syntax is very similar to the database and warehouse you already created. By now you have learned everything you need to know to create and update resources in Snowflake. We'll also add privileges so the service role/user can use the database and schema.
 
@@ -244,86 +246,86 @@ You'll see that most of this is what you would expect. The only complicated part
 
 1. Add the following resources to your `main.tf` file:
 
-   ```JSON
+   ```
    provider "snowflake" {
-     alias    = "security_admin"
-     role     = "SECURITYADMIN"
+       alias    = "security_admin"
+       role     = "SECURITYADMIN"
    }
 
    resource "snowflake_role" "role" {
-     provider = snowflake.security_admin
-     name     = "TF_DEMO_SVC_ROLE"
+       provider = snowflake.security_admin
+       name     = "TF_DEMO_SVC_ROLE"
    }
 
    resource "snowflake_database_grant" "grant" {
-     database_name = snowflake_database.db.name
+       database_name = snowflake_database.db.name
 
-     privilege = "USAGE"
-     roles     = [snowflake_role.role.name]
+       privilege = "USAGE"
+       roles     = [snowflake_role.role.name]
 
-     with_grant_option = false
+       with_grant_option = false
    }
 
    resource "snowflake_schema" "schema" {
-     database = snowflake_database.db.name
-     name     = "TF_DEMO"
+       database = snowflake_database.db.name
+       name     = "TF_DEMO"
 
-     is_managed = false
+       is_managed = false
    }
 
    resource "snowflake_schema_grant" "grant" {
-     database_name = snowflake_database.db.name
-     schema_name   = snowflake_schema.schema.name
+       database_name = snowflake_database.db.name
+       schema_name   = snowflake_schema.schema.name
 
-     privilege = "USAGE"
-     roles     = [snowflake_role.role.name]
+       privilege = "USAGE"
+       roles     = [snowflake_role.role.name]
 
-     with_grant_option = false
+       with_grant_option = false
    }
 
    resource "snowflake_warehouse_grant" "grant" {
-     warehouse_name = snowflake_warehouse.warehouse.name
-     privilege      = "USAGE"
+       warehouse_name = snowflake_warehouse.warehouse.name
+       privilege      = "USAGE"
 
-     roles = [snowflake_role.role.name]
+       roles = [snowflake_role.role.name]
 
-     with_grant_option = false
+       with_grant_option = false
    }
 
    resource "tls_private_key" "svc_key" {
-     algorithm = "RSA"
-     rsa_bits  = 2048
+       algorithm = "RSA"
+       rsa_bits  = 2048
    }
 
    resource "snowflake_user" "user" {
-     provider = snowflake.security_admin
-     name     = "tf_demo_user"
+       provider = snowflake.security_admin
+       name     = "tf_demo_user"
 
-     default_warehouse = snowflake_warehouse.warehouse.name
-     default_role      = snowflake_role.role.name
-     default_namespace = "${snowflake_database.db.name}.${snowflake_schema.schema.name}"
-     rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
+       default_warehouse = snowflake_warehouse.warehouse.name
+       default_role      = snowflake_role.role.name
+       default_namespace = "${snowflake_database.db.name}.${snowflake_schema.schema.name}"
+       rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
    }
 
    resource "snowflake_role_grants" "grants" {
-     role_name = snowflake_role.role.name
-     users     = [snowflake_user.user.name]
+       role_name = snowflake_role.role.name
+       users     = [snowflake_user.user.name]
    }
    ```
 
 1. To get the public and private key information for the application, use Terraform [output variables](https://www.terraform.io/docs/language/values/outputs.html).
 
-   Add the following resources to a new file named `outputs.tf`
+    Add the following resources to a new file named `outputs.tf`
 
-   ```JSON
-   output "snowflake_svc_public_key" {
-     value = tls_private_key.svc_key.public_key_pem
-   }
+    ```
+    output "snowflake_svc_public_key" {
+        value = tls_private_key.svc_key.public_key_pem
+    }
 
-   output "snowflake_svc_private_key" {
-     value = tls_private_key.svc_key.private_key_pem
-   }
-   ```
+    output "snowflake_svc_private_key" {
+        value = tls_private_key.svc_key.private_key_pem
+    }
+    ```
 
 ## Commit Changes to Source Control
 Duration: 3
@@ -347,12 +349,12 @@ To simulate the CI/CD pipeline, we can apply the changes to conform the desired 
 
 1. From a shell in your project folder (with your Account Information in environment) run:
 
-   ```Shell
+   ```
    $ terraform apply
    ```
 
-2. Accept the changes if they look appropriate.
-3. Log in to the console to see all the changes complete.
+1. Accept the changes if they look appropriate.
+1. Log in to the console to see all the changes complete.
 
 Because all changes are stored in source control and applied by CI/CD, you can get a history of all your environment changes. You can  put compliance controls into place and limit authorization to directly manage the environments to fewer users. But this also makes it easy to bring up new environments that are identical to others in a timely manner without managing SQL scripts.
 
@@ -365,7 +367,7 @@ You're almost done with the demo. We have one thing left to do: clean up your ac
 
 1. From a shell in your project folder (with your Account Information in environment) run:
 
-   ```Shell
+   ```
     $ terraform destroy
    ```
    Accept the changes if they look appropriate.
