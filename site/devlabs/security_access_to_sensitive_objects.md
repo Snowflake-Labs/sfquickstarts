@@ -4,11 +4,20 @@ categories: patterns
 tags: patterns, security, rbac, objects, access
 status: Published 
 
-# Access to Sensitive Objects
+# Architecture Pattern : Access to Sensitive Objects
 
-## PATTERN SUMMARY
 
-The pattern outlined in this document provides an
+## Overview
+
+### Security Guides
+
+This guide is part of a series on Security. The guides are:
+- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
+- [Authentication](../security_authentication_pattern/index.html)
+- [Network Architecture](../security_network_architecture_pattern/index.html)
+
+### Access to Sensitive objects
+This pattern provides an
 approach for granting access to schemas containing sensitive data
 without creating a fork in the RBAC role hierarchy.  Forking the RBAC
 hierarchy is commonly prescribed in order to provide one role set which
@@ -33,9 +42,11 @@ row or column level security, or grant roles to users; each of which may
 also be required.  The scope of this pattern is simply how to provide
 visibility to the objects themselves.  
 
+### What you'll learn
 
+A technique for granting access rights in a simple way, while allowing powerful control over access to sensitive data.
 
-## WHEN TO USE THIS PATTERN
+## When To Use This Pattern
 
 This pattern implements well when the following
 conditions are true:
@@ -50,7 +61,7 @@ conditions are true:
     functional role.  The functional role could be at a group or
     individual level.  
 
-## PATTERN DETAILS
+## Pattern Details
 
 Objects in Snowflake are contained in a hierarchy of containers.
  Databases contain schemas which contain objects.  Each level of the
@@ -98,7 +109,7 @@ Key Points
     functional role which has been approved to access the sensitive
     data. 
 
-## PATTERN EXAMPLE
+## Pattern Example
 
 This is a working example of how this pattern could be
 implemented, within a particular context.
@@ -175,11 +186,16 @@ Fig 1.0 Suggested Approach
 
 Fig 2.0 Traditional Pattern
 
+## Conclusion
 
-## GUIDANCE
+### What we have learned
+1. Snowflake's Role Based Access Control enables complex access requirements to be developed through access and functional roles
+2. Snowflake can integrate with Enterprise permissions management systems
+3. Sensitive data access can be managed simply and clearly for users
 
+### Guidance
 
-### INCOMPATIBILITIES
+#### Incompatibilities
 
 1.  This pattern assumes a user should have the same
     access level permissions on objects in a database.  If the user
@@ -187,7 +203,7 @@ Fig 2.0 Traditional Pattern
     within the same database the model may need to be extended or a
     different model used.  
 
-### OTHER IMPLICATIONS
+#### Other Implications
 
 1.  Some applications which integrate with SCIM may not support all
     functionality required to properly manage this approach requiring
@@ -196,7 +212,7 @@ Fig 2.0 Traditional Pattern
 
 
 
-## DESIGN PRINCIPLES ENABLED BY THIS PATTERN
+### Design Principles Enabled by this Pattern
 
 With a traditional approach of having non-sensitive
 and sensitive versions of RBAC roles for a database and/or schema, the
@@ -211,7 +227,7 @@ the user is making is which datasets the user should be able to view.
 
 
 
-## BENEFITS ENABLED BY THIS PATTERN
+### Key Benefits of this Pattern
 
 The benefit of this pattern is when a user is
  reviewing the possible roles to request access to, they only see three

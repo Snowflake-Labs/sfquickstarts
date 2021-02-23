@@ -4,10 +4,18 @@ categories: patterns
 tags: patterns, authentication, security
 status: Published
 
-# Security - Authentication Pattern
+# Architecture Pattern : Security - Authentication 
 
-## INTRODUCTION
-### INTENDED AUDIENCE
+## Overview
+
+### Security Guides
+
+This guide is part of a series on Security. The guides are:
+- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
+- [Authentication](../security_authentication_pattern/index.html)
+- [Network Architecture](../security_network_architecture_pattern/index.html)
+
+### Intended Audience
 
 This document is for Enterprise and Solution Architects who want to
 understand the connectivity capabilities and best practices of Snowflake
@@ -15,7 +23,7 @@ and Snowflake Partner technologies. This document is
 not
 implementation example may be provided.
 
-### PATTERN SUMMARY
+### Pattern Summary
 
 Snowflake supports authentication methods that cover a number of
 scenarios, ranging from human interactive scenarios,  to programmatic
@@ -32,7 +40,7 @@ following scenarios:
 2.  Non-interactive authentication for non-human users, such as
     programmatic accounts and service accounts
 
-### WHEN TO USE THESE PATTERNS
+### When To Use These Patterns
 
 The patterns in this document satisfy one or more of the following
 requirements:
@@ -47,7 +55,14 @@ requirements:
 4.  Legal or contractual agreements require the organization to
     implement specific authentication methods. 
 
-## PATTERN DETAILS
+### What you'll learn
+
+How to apply two techniques for authenticating access to Snowflake:
+- Federated authentication
+- Key pairs
+
+
+## Pattern Details
 
 Across the three authentication patterns, there are five ways to
 authenticate to Snowflake: 
@@ -93,7 +108,7 @@ uses public keys to decrypt it and authenticate. A third option is
 External OAuth, which is the only method that allows for an SSO-based
 user credential in the programmatic scenario.
 
-## PATTERN EXAMPLE 1
+## Pattern Example 1
 
 Now let's look at two applications, Tableau and Microsoft Power BI,
  that support OAuth. The type of OAuth supported differs and in each
@@ -131,8 +146,7 @@ Snowflake administrators. Outages with an IdP may prevent Snowflake
 administrators whose passwords are stored in the IdP from logging in to
 Snowflake. In this case SAML SSO is not recommended and customers opt to
 maintain an administrator with a Snowflake password to manage federated
-authentication and troubleshoot any issues that occur.\
-\
+authentication and troubleshoot any issues that occur.
 SAML SSO is also not appropriate if the client applications do not
 support that method. Consider evaluating if the application supports an
 SSO-like experience similar to Power BI and Tableau. 
@@ -141,11 +155,11 @@ Some customers use Cloud Service Provider (CSP) private networking
 technologies such as AWS PrivateLink and Azure Private Link with the use
 of SAML SSO. This is an appropriate scenario but requires a choice.
 Currently customers can only configure single sign-on to either work
-with their regular, non-PrivateLink  URL, or with the PrivateLink URL.
+with their regular, non-PrivateLink URL, or with the PrivateLink URL.
 
-### GUIDANCE
+### Guidance
 
-#### INCOMPATIBILITIES
+#### Incompatibilities
 
 1.  At the time of this writing, SAML-based SSO can only be used on
     either public or private Snowflake endpoints at one time. This will
@@ -154,11 +168,11 @@ with their regular, non-PrivateLink  URL, or with the PrivateLink URL.
     at a time for each Snowflake Account for SSO. 
 3.  For SSO the web UI only supports SAML 2.
 
-#### OTHER IMPLICATIONS
+#### Other Implications
 
 Not applicable at the time of this writing.
 
-### DESIGN PRINCIPLES & BENEFITS ENABLED BY THIS PATTERN
+### Design Principles & Benefits Enabled by this Pattern
 
 The benefit of configuring Snowflake for federated authentication is
 users need to log in just once with one set of credentials to get access
@@ -179,7 +193,7 @@ of the systems users need to authenticate to Snowflake. This matrix
 needs to be considered along with the three scenarios described to
 enable SSO for as many systems as possible.
 
-## PATTERN EXAMPLE 2
+## Pattern example 2
 
 This pattern example compares when you should use key pair
 authentication for  non-human users versus when you should use external
@@ -246,18 +260,18 @@ pair, that answer lives in Snowflake. This model also supports examples
 where customers want to deprovision service identities from a
 centralized place.  
 
-### GUIDANCE 
+### Guidance 
 
-#### INCOMPATIBILITIES
+#### Incompatibilities
 
 1.  Snowflake OAuth is not applicable in the programmatic scenario.
     External OAuth should be used.
 
-#### OTHER IMPLICATIONS
+#### Other Implications
 
 Not applicable at the time of this writing.
 
-### DESIGN PRINCIPLES & BENEFITS ENABLED BY THIS PATTERN
+### Design Principles & Benefits Enabled by this Pattern
 
 The benefits of configuring Snowflake for Key Pair Authentication
 include:
@@ -274,8 +288,15 @@ exclusively for programmatic access will only ever be able to use
 Snowflake data when going through the External OAuth configured service.
 Customers benefit from sessions initiated with Snowflake do not require
 a password and only initiate their sessions through external OAuth.
+## Conclusion
 
-## RELATED RESOURCES
+### Key Takeaways
+
+1. Snowflake allows multiple authentication methods
+2. Single Sign On and OAuth can be used
+3. Service accounts have special considerations in how they should be used, with key-pair authentication providing an option
+
+### Related Resources
 
 The following related information is available.
 

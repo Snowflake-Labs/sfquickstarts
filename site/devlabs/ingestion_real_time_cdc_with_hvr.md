@@ -3,9 +3,9 @@ id: ingestion_real_time_cdc_with_hvr
 categories: patterns
 tags: patterns, ingestion, hvr
 status: Published
-# REAL-TIME DATA CAPTURE WITH HVR
+# Architecture Pattern : Real-Time Data Capture with HVR
 
-## PATTERN SUMMARY
+## Introduction
 
 HVR provides log based change data capture (CDC) rich replication from many sources to Snowflake. This includes
 capturing inserts, updates, and deletes as well as bulk data loads, data
@@ -16,7 +16,7 @@ replication of data.
 This pattern provides advice on when HVR is an
 appropriate solution
 
-## WHEN TO USE THIS PATTERN
+## When To Use This Pattern
 
 This pattern should be used when data needs to be
 extracted, in near real time, from its source in a traditional RDBMSs,
@@ -25,7 +25,7 @@ bseg, etc.) and loading into Snowflake.
 
 ![HVR_Hub_SourcesAndTargets-image](assets/HVR_Hub_SourcesAndTargets.png)
 
-## PATTERN DETAILS
+## Pattern Details
 
 To replicate data with HVR the following steps must be
 considered and implemented:
@@ -37,7 +37,7 @@ considered and implemented:
     synchronization
 5.  Data verification
 
-## STEP 1: Deployment of HVR hub and agents
+## Step 1: Deployment of HVR hub and agents
 
 HVR requires the deployment of a hub system.
 Additionally, users have the option of deploying agents. The hub can be
@@ -82,7 +82,7 @@ Snowflake.
 ![HVR_Hub_Collated-image](assets/HVR_Hub_Collocated.png)
 ![HVR_HubAndAgents-image](assets/HVR_HubAndAgents.png)
 
-## STEP 2: Configuration of Locations and Channels
+## Step 2: Configuration of Locations and Channels
 
 ### Locations
 
@@ -142,7 +142,7 @@ one capture action and one integrate action. Other actions include
 ColumnProperties, TableProperties, CollisionDetect, Transform, etc.
  [Full list of actions](https://www.hvr-software.com/docs/actions)
 
-## STEP 3: Job Initialization and Scheduling
+## Step 3: Job Initialization and Scheduling
 
 Once a channel is defined and after any changes to said
 channel definition it must then be initialized. Initialization creates
@@ -158,7 +158,7 @@ continuously.
 
 ![HVR_InitializeChannel-image](assets/HVR_InitializeChannel.png)
 
-## STEP 4: Initial Data Load and Location Synchronization
+## Step 4: Initial Data Load and Location Synchronization
 
 When replicating data in near real time, an initial
 data load is used to synchronize both the source and target to a point
@@ -168,7 +168,7 @@ to synchronize a source and target to fix errors. This refresh will
 utilize the channel definition including the location groups and actions
 to perform on the data. 
 
-## STEP 5: Data Verification
+## Step 5: Data Verification
 
 Finally, HVR has the ability to compare the data in the source and
 target system to verify that they are in sync or to identify the
@@ -178,9 +178,9 @@ level and takes into account actions defined in the channel definition.
 
 ![HVR_Compare-image](assets/HVR_Compare.png)
 
-## PATTERN EXAMPLE
+## Pattern Example
 
-### STEP 1: Deployment of HVR hub and agents
+### Step 1: Deployment of HVR hub and agents
 
 #### Installation of HVR
 
@@ -201,7 +201,7 @@ Install and configure clients for sources and targets:
 Verify your source RDBMS is configured with supplemental logging. 
 [For Oracle use the following](https://www.hvr-software.com/docs/location-class-requirements/requirements-for-oracle#RequirementsforOracle-SupplementalLogging)
 
-### STEP 2: Configuration of Locations and Channels
+### Step 2: Configuration of Locations and Channels
 
 #### Setup Locations in HVR’s Location Configuration:
 
@@ -398,7 +398,7 @@ of a replication activity.
               2.  Select Integrate Action /Burst
               3.  Click OK.
 
-### STEP 3: Job Initialization and Scheduling
+### Step 3: Job Initialization and Scheduling
 
 Before replication can take place, HVR must assemble
 and deploy scripts and jobs. This is done via HVR Initialize. Any time
@@ -431,7 +431,7 @@ initial data load.
 2.  Find the job with \*-cap-\* in its name, Right
     click and select Start
 
-### STEP 4: Initial Data Load and Location Synchronization
+### Step 4: Initial Data Load and Location Synchronization
 
 #### Initial data load
 
@@ -462,7 +462,7 @@ during HVR Initialize.
 Changes will now be captured on the source, expanded,
 and integrated into the target.
 
-### STEP 5: Data Verification
+### Step 5: Data Verification
 
 If verification of data loads or continuous replication
 is needed an HVR Compare can be executed to confirm everything is in
@@ -482,22 +482,9 @@ tell you exactly what rows are different, and if Verbose SQL is selected
 exactly what SQL needs to be run on the target to get it back in sync
 with the source.
 
-## GUIDANCE
+## Conclusion
 
-### MISAPPLICATIONS TO AVOID
-
-None known at time of publication
-
-### INCOMPATIBILITIES
-
-HVR does not currently support Snowflake data type
-VARIANT, OBJECT, and ARRAY
-
-### OTHER IMPLICATIONS
-
-None known at time of publication
-
-### DESIGN PRINCIPLES & BENEFITS ENABLED BY THIS PATTERN
+### Key Takeaways
 
 This Pattern unlocks critical business data from proprietary encoded
 tables in SAP and delivers it to
@@ -518,9 +505,22 @@ to deliver data into Snowflake without requiring multiple hub
 installations. Adding more sources is as simple as adding location for
 them and defining how you want the data to flow.
 
+### Guidance
 
+#### Misapplications To Avoid
 
-## RELATED RESOURCES
+None known at time of publication
+
+#### Incompatibilities
+
+HVR does not currently support Snowflake data type
+VARIANT, OBJECT, and ARRAY
+
+#### Other Implications
+
+None known at time of publication
+
+### Related Resources
 
 The following related information is available.
 

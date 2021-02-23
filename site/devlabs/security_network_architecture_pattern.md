@@ -4,9 +4,17 @@ categories: patterns
 tags: patterns, security, network
 status: Published
 
-# Security - Network Architecture Pattern
+# Architecture Pattern - Security - Network 
+## Overview
 
-## INTENDED AUDIENCE
+### Security Guides
+
+This guide is part of a series on Security. The guides are:
+- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
+- [Authentication](../security_authentication_pattern/index.html)
+- [Network Architecture](../security_network_architecture_pattern/index.html)
+
+### Intended audience
 
 This document is for Enterprise and Solution Architects who want to
 understand the connectivity capabilities and best practices of Snowflake
@@ -14,7 +22,7 @@ and Snowflake Partner technologies. This document is
 not intended for use by implementation teams, although an
 implementation example is provided. 
 
-## PATTERN SUMMARY
+### Security - Network
 
 SaaS-style cloud data platforms present a number of network
 connectivity challenges. This is especially true with regards to
@@ -51,7 +59,7 @@ include:
 Alone or in combination, these measures comprise network connectivity
 patterns that are extremely secure.
 
-## WHEN TO USE 
+## When to use this pattern
 
 Consider patterns that incorporate Network Policies or private
 networking if any of the following requirements describe your
@@ -73,7 +81,7 @@ If your organization does not [have one or more of these
 requirements, then the out-of-the-box Snowflake network security
 controls are likely more than sufficient to meet your needs. 
 
-## PATTERN DETAILS
+## Pattern Details
 
 All Snowflake network connectivity architectures include five basic
 connections:
@@ -194,7 +202,7 @@ of DNS and routing. The Snowflake driver or connector is unaware of all
 the DNS and routing work, and therefore there is full support for this
 in all of the platforms for which Snowflake has drivers or connectors.
 
-## PATTERN EXAMPLE
+## Pattern Example
 
 Let's look at a real world example of how a customer applied all of
 these approaches in the same deployment. This customer is in the
@@ -245,9 +253,19 @@ connectivity to connect to systems running in their CSP private
 networks. Other users that also needed both sets of access used similar
 approaches.
 
-## GUIDANCE 
+## Conclusion
 
-### MISAPPLICATIONS TO AVOID 
+Network access control is an important tool you can use as a part of securing access to Snowflake.
+
+### Key takeaways
+
+1. The different components of the Snowflake service have different types of network access
+2. Network policies allow an additional layer of access control to the Snowflake Service
+3. CSP provider features such as PrivateLink can also provide an additional layer of security
+
+### Guidance 
+
+#### Misapplications to avoid 
 
 1.  Any design where a Network Policy is being used for every user
     is likely on the wrong path based on all evidence at the time
@@ -258,15 +276,13 @@ approaches.
     Consider CSP private networking only where large volumes of data or
     extremely sensitive data is flowing.
 
-### INCOMPATIBILITIES
-
+#### Incompatibilities
 1.  At the time of this writing, SAML-based SSO can only be used
     on either public URL or private URL (for CSP private networking
     integration) Snowflake endpoints at one time. This will be addressed
     in future releases.
 
-## RELATED RESOURCES
-
+### Related Resources
 
 - Snowflake community posts
  - [Setup Considerations When Integrating AWS PrivateLink with Snowflake](https://community.snowflake.com/s/article/Setup-Considerations-When-Integrating-AW S-PrivateLink-With-Snowflake&sa=D&ust=1608660555642000&usg=AOvVaw0 KBxtnlWlRTigNdRvsnmvH) 
