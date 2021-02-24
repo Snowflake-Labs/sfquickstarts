@@ -1,0 +1,42 @@
+name: Builder
+
+on: pull_request
+
+jobs:
+  builder:
+    name: Build the site
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: site
+
+    steps:
+      - name: Checkout code and install dependencies
+        uses: actions/checkout@v2
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y npm git golang-go          
+          go get github.com/googlecodelabs/tools/claat
+
+      # Build docs
+      - name: Build html from markdown
+        run: |
+          pushd devlabs && for f in *.md; do /root/go/bin/claat export -f html "$f" ; done && pushd
+
+      # Build site
+      - name: Build html for site
+        run: |
+          npm install --global gulp-cli
+          gulp dist --codelabs-dir=devlabs
+
+      # Package site
+      - name: Package site
+        run: |
+          rm ./dist/codelabs && cp -R ./devlabs/ ./dist/codelabs/ && tar -czf dist.tar.gz dist
+
+      - name: Save package
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist.tar.gz
