@@ -1,6 +1,6 @@
 name: Builder
 
-on: pull_request
+on: [push, pull_request]
 
 jobs:
   builder:
@@ -17,28 +17,24 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y npm git golang-go          
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y npm git          
           go get github.com/googlecodelabs/tools/claat
 
       # Build docs
       - name: Build html from markdown
         run: |
-          pushd devlabs && for f in *.md; do /root/go/bin/claat export -f html "$f" ; done && pushd
+          pushd devlabs && for f in *.md; do ~/go/bin/claat export -f html "$f" ; done && pushd
 
       # Build site
       - name: Build html for site
         run: |
-          npm install --global gulp-cli
-          gulp dist --codelabs-dir=devlabs
-
-      # Package site
-      - name: Package site
-        run: |
-          rm ./dist/codelabs && cp -R ./devlabs/ ./dist/codelabs/ && tar -czf dist.tar.gz dist
+          npm install gulp-cli
+          gulp dist --codelabs-dir=./devlabs
 
       - name: Save package
         uses: actions/upload-artifact@v2
         with:
-          name: dist
-          path: dist.tar.gz
+          name: dist ${{ matrix.node-version }}
+          path: ${{ github.workspace }}/site/dist/
+          if-no-files-found: error

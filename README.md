@@ -1,5 +1,7 @@
 # Snowflake Guides
 
+[![Builder](https://github.com/bculberson/sfguides/actions/workflows/build.yml/badge.svg)](https://github.com/bculberson/sfguides/actions/workflows/build.yml)
+
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
 ## What are Snowflake Guides?
