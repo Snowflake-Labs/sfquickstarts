@@ -31,7 +31,7 @@ service-account use cases. Client applications that connect to data
 sources like Snowflake typically have their own specifically supported
 authentication methods that vary from application to application.
 Consider BI tools, for example: Some support SAML 2.0 for single
-sign-on, while others don\'t. 
+sign-on, while others don't. 
 
 This document spotlights authentication patterns that support the
 following scenarios:
@@ -51,7 +51,7 @@ requirements:
     eliminates the need for users to maintain multiple passwords for
     different systems. 
 3.  The organization has service accounts that require an authentication
-    method that\'s more secure than username and password. 
+    method that's more secure than username and password. 
 4.  Legal or contractual agreements require the organization to
     implement specific authentication methods. 
 
@@ -113,8 +113,8 @@ user credential in the programmatic scenario.
 Now let's look at two applications, Tableau and Microsoft Power BI,
  that support OAuth. The type of OAuth supported differs and in each
 case the client application determines which technology you should use.
-We will start with Tableau.\
-\
+We will start with Tableau.
+
 When connecting to Snowflake, Tableau Desktop/Server/Online supports an
 SSO-like experience through Snowflake OAuth. This example is appropriate
 when customers want to provide an SSO-like experience to their Tableau
@@ -161,16 +161,12 @@ with their regular, non-PrivateLink URL, or with the PrivateLink URL.
 
 #### Incompatibilities
 
-1.  At the time of this writing, SAML-based SSO can only be used on
+1.  As of March 2021, SAML-based SSO can only be used on
     either public or private Snowflake endpoints at one time. This will
     be addressed in future releases. 
-2.   At the time of this writing, Snowflake only supports a single IdP
+2.  As of March 2021, Snowflake only supports a single IdP
     at a time for each Snowflake Account for SSO. 
 3.  For SSO the web UI only supports SAML 2.
-
-#### Other Implications
-
-Not applicable at the time of this writing.
 
 ### Design Principles & Benefits Enabled by this Pattern
 
@@ -179,13 +175,13 @@ users need to log in just once with one set of credentials to get access
 to all corporate apps, websites, and data for which they have
 permission. This benefits users in the form of simplicity as they do not
 have to manage multiple passwords for access to SaaS applications, data,
-or websites required to perform their job duties.\
-\
+or websites required to perform their job duties.
+
 The unification of user access management means there is a central
 directory to provision and deprovision users. Configuring SSO for
 Snowflake with any SAML 2.0 compliant IdP helps customers think of
 Snowflake as many other SaaS applications that use this common protocol.
- 
+
 
 SSO for human interactive use cases must consider the capabilities
 supported by Snowflake in concert with the authentication capabilities
@@ -196,10 +192,10 @@ enable SSO for as many systems as possible.
 ## Pattern example 2
 
 This pattern example compares when you should use key pair
-authentication for  non-human users versus when you should use external
+authentication for non-human users versus when you should use external
 OAuth for secure, programmatic access to Snowflake data. This example is
 relevant to programmatic or service account requirements that require
-access to Snowflake.  An evaluation of supported authentication methods
+access to Snowflake. An evaluation of supported authentication methods
 of service accounts and programmatic access requirements helps to
 determine which non-human user authentication methods to use with
 Snowflake. 
@@ -215,7 +211,7 @@ and the public key lives in Snowflake.
 
 An additional example appropriate for key pair authentication is if the
 customer wants to remove the management of the secret from the service
-account authenticating to Snowflake.  With key pair authentication, the
+account authenticating to Snowflake. With key pair authentication, the
 private key does not need to be in the possession of the user. The key
 is managed by code and therefore the service account itself is not in
 possession of the key. 
@@ -223,7 +219,7 @@ possession of the key.
 This example allows for the aggressive rotation of keys without
 disrupting connectivity. Since Snowflake allows for two active public
 key values at any time, consider this as part of the pattern. This
-example  is best used with a secrets management platform like Hashicorp
+example is best used with a secrets management platform like Hashicorp
 Vault, AWS Secrets Manager, or Azure Key Vault to manage the private
 key. 
 
@@ -244,13 +240,12 @@ has to go through the External OAuth configured service. Customers with
 this requirement may have additional requirements to centralize the
 monitoring of authorizations across a number of applications. Customers
 that do not wish to pass credentials over the wire or store secrets in
-Snowflake will find this method useful. 
+Snowflake will find this method useful.
 
 More specific examples where OAuth is appropriate include embedding
 Snowflake into your application where the application requires access to
 Snowflake, or if SAML cannot be accomplished because there is a program
 that requires access to Snowflake then OAuth is an appropriate pattern.
-
 
 Customers with centralized monitoring requirements should consider
 OAuth. With OAuth, customers can see delegated access to Snowflake and
@@ -258,7 +253,7 @@ other applications such as Salesforce in one place. This differs from
 key pair in that, if I want to audit users authenticating through key
 pair, that answer lives in Snowflake. This model also supports examples
 where customers want to deprovision service identities from a
-centralized place.  
+centralized place.
 
 ### Guidance 
 
@@ -267,10 +262,6 @@ centralized place.  
 1.  Snowflake OAuth is not applicable in the programmatic scenario.
     External OAuth should be used.
 
-#### Other Implications
-
-Not applicable at the time of this writing.
-
 ### Design Principles & Benefits Enabled by this Pattern
 
 The benefits of configuring Snowflake for Key Pair Authentication
@@ -278,9 +269,7 @@ include:
 
 1.  The secret does not travel over the network
 2.  The user does not need the private key. 
-3.  Snowflake allows for the aggressive rotation of key pairs.  \
-    The outcome of key pair authentication is that it is more secure
-    than username and password. 
+3.  Snowflake allows for the aggressive rotation of key pairs. The outcome of key pair authentication is that it is more secure than username and password. 
 
 The result of External OAuth authentication is centralized management of
 tokens issued to Snowflake, and service accounts or users used
@@ -288,6 +277,7 @@ exclusively for programmatic access will only ever be able to use
 Snowflake data when going through the External OAuth configured service.
 Customers benefit from sessions initiated with Snowflake do not require
 a password and only initiate their sessions through external OAuth.
+
 ## Conclusion
 
 ### Key Takeaways

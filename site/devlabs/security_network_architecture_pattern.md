@@ -146,7 +146,7 @@ connectivity.
 The second pattern is to  add Snowflake Network Policies to the
 out-of-the-box connectivity shown in Figure 1. The full scope of options
 for [Network Policies is discussed at length in the Snowflake
-documentation(https://docs.snowflake.com/en/user-guide/network-policies.html&sa=D&ust=1608660555636000&usg=AOvVaw0fln45ribJ65YZRAZd3B09).
+documentation](https://docs.snowflake.com/en/user-guide/network-policies.html).
 For this discussion we will only note a few details that could affect
 architectural considerations:
 
@@ -155,19 +155,19 @@ architectural considerations:
 2.  One can apply a Network Policy to the entire Snowflake account, to
     specific integrations that have endpoints for network communications 
     exposed on channel 1 e.g.
-    [SCIM](https://docs.snowflake.com/en/user-guide/scim-okta.html%23managing-scim-network-policies&sa=D&ust=1608660555637000&usg=AOvVaw0TwE5tPJz7HWyKKAhghe7X),
+    [SCIM](https://docs.snowflake.com/en/user-guide/scim-okta.html#managing-scim-network-policies),
     or to specific Snowflake Users. The most specific Policy always
     wins. 
 3.  There can be only one active Network Policy in any given context at
-    one time (e.g. only one per account, integration, or
+    one time (e.g.only one per account, integration, or
     user).
 
 The third pattern incorporates integration with Cloud Service Provider
 (CSP) private networking options. Right now the integrations available
 are with [AWS
-PrivateLink](https://docs.snowflake.com/en/user-guide/admin-security-privatelink.html&sa=D&ust=1608660555637000&usg=AOvVaw3DS8Sw1mfTxXHH-mQUUDkj) and
+PrivateLink](https://docs.snowflake.com/en/user-guide/admin-security-privatelink.html) and
 [Azure Private
-Link](https://docs.snowflake.com/en/user-guide/privatelink-azure.html&sa=D&ust=1608660555637000&usg=AOvVaw0xFGBgO9lxih6LxWZYi60m).
+Link](https://docs.snowflake.com/en/user-guide/privatelink-azure.html).
 These offerings from the CSPs offer a point-to-point, client-side
 initiated private network channel for communications. They do not have
 the downsides of VPN or peering, but still offer a point-to-point
@@ -285,16 +285,16 @@ Network access control is an important tool you can use as a part of securing ac
 ### Related Resources
 
 - Snowflake community posts
- - [Setup Considerations When Integrating AWS PrivateLink with Snowflake](https://community.snowflake.com/s/article/Setup-Considerations-When-Integrating-AW S-PrivateLink-With-Snowflake&sa=D&ust=1608660555642000&usg=AOvVaw0 KBxtnlWlRTigNdRvsnmvH) 
- - [HOWTO: Troubleshoot PrivateLink Configuration for Snowflake](https://community.snowflake.com/s/article/HowTo-Troubleshoot-Privatelink-configuration-for-Snowflake&sa=D&ust=1608660555642000&usg=AOvVaw09an1usJu4boVLW6RZrJlg)
- - [HOWTO: Block a Specific IP in Snowflake](https://community.snowflake.com/s/article/How-to-block-a-specific-IP-address-using-Network-Policies-in-Snowflake&sa=D& ust=1608660555643000&usg=AOvVaw1d HDpoNWSqD-DvHmrdyOUL)
+ - [Setup Considerations When Integrating AWS PrivateLink with Snowflake](https://community.snowflake.com/s/article/Setup-Considerations-When-Integrating-AWS-PrivateLink-With-Snowflake) 
+ - [HOWTO: Troubleshoot PrivateLink Configuration for Snowflake](https://community.snowflake.com/s/article/HowTo-Troubleshoot-Privatelink-configuration-for-Snowflake)
+ - [HOWTO: Block a Specific IP in Snowflake](https://community.snowflake.com/s/article/How-to-block-a-specific-IP-address-using-Network-Policies-in-Snowflake)
 - Snowflake documentation
- - [Snowflake Network Policies](https://docs.snowflake.com/en/user-guide/network-policies.html&sa=D&ust=1608660555644000&usg=AOvVaw1HnlcIB716s1iY2eSwmLN1)
- - [Applying Network Policy to a specific SCIM integration](https://docs.snowflake.com/en/user-guide/scim-okta.html%23managing-scim-network-policies&sa=D&ust=1608660555645000&usg=AOvVaw1KoDtqquPq5rdvXiPIp)
-   - e.g. [Okta in this case](https://docs.snowflake.com/en/user-guide/scim-okta.html%23managing-scim-network-policies&sa=D&ust=1608660555645000) 
- - [Snowflake AWS PrivateLink Integration](https://docs.snowflake.com/en/user-guide/network-policies.html&sa=D&ust=1608660555646000&usg=AOvVaw31CecZFXzAuqdn_LfXd82e) 
- - [Snowflake Azure Private Link Integration](https://docs.snowflake.com/en/user-guide/privatelink-azure.html&sa=D&ust=1608660555647000&usg=AOvVaw0tSUK-gnAAZU5cRcaTYVm3) 
- - [Summary of Snowflake Security Features](https://docs.snowflake.com/en/user-guide/admin-security.html&sa=D&ust=1608660555647000&usg=AOvVaw2BYQEouQULFaVQwAYCpL6y)
+ - [Snowflake Network Policies](https://docs.snowflake.com/en/user-guide/network-policies.html)
+ - [Applying Network Policy to a specific SCIM integration](https://docs.snowflake.com/en/user-guide/scim-okta.html#managing-scim-network-policies)
+   - e.g. [Okta in this case](https://docs.snowflake.com/en/user-guide/scim-okta.html#managing-scim-network-policies) 
+ - [Snowflake AWS PrivateLink Integration](https://docs.snowflake.com/en/user-guide/network-policies.html) 
+ - [Snowflake Azure Private Link Integration](https://docs.snowflake.com/en/user-guide/privatelink-azure.html) 
+ - [Summary of Snowflake Security Features](https://docs.snowflake.com/en/user-guide/admin-security.html)
 - Partner documentation 
  - [AWS PrivateLink Product Page](https://aws.amazon.com/privatelink/&sa=D&ust=1608660555648000&usg=AOvVaw16Wgd1tOdpAgnOMU3hiYII) 
  - [AWS PrivateLink Documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html%23what-is-privatelink&sa=D&ust=1608660555649000&usg=AOvVaw1Q1lpnr0FYZf_X3kHthIya)

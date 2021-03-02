@@ -128,55 +128,54 @@ implemented, within a particular context.
 
 ### Pattern Details
 
-1.  Database PROD\_DB contains two schemas,
-    PUBLIC\_SCHEMA and SENSITIVE\_SCHEMA.
-2.  A PROD\_DB\_RO role is created.  The following
+1.  Database `PROD_DB` contains two schemas,
+    `PUBLIC_SCHEMA` and `SENSITIVE_SCHEMA`.
+2.  A `PROD_DB_RO` role is created. The following
     privileges are granted to the role 
-    1.  USAGE on PROD\_DB
-    2.  USAGE on PUBLIC\_SCHEMA
-    3.  SELECT on all TABLES in PROD\_DB
-3.  A PROD\_DB\_RW role is created.  The following
+    1.  `USAGE` on `PROD_DB`
+    2.  `USAGE` on `PUBLIC_SCHEMA`
+    3.  `SELECT` on all `TABLES` in `PROD_DB`
+3.  A `PROD_DB_RW` role is created. The following
     privileges are granted to the role
-    1.  INSERT & UPDATE on all TABLES in  database
-        PROD\_DB
-    2.  PROD\_DB\_RO is granted to PROD\_DB\_RW
-4.  A PROD\_DB\_SENSITIVE is created.  The following
-    privileges are granted to the role:
-    1.  USAGE on schema SENSITIVE\_SCHEMA
+    1.  `INSERT` & `UPDATE` on all `TABLES` in database
+        `PROD_DB` 
+    2.  `PROD_DB_RO` is granted to `PROD_DB_RW`
+4.  A privileges are granted to the role:
+    1.  `USAGE` on schema `SENSITIVE_SCHEMA`
     2.  Note there are no lower level object grants to the
-        SENSITIVE schema role.  It also is not inherited nor does it inherit
-        other object access roles.  
-5.  A functional role, IT\_ANALYTICS\_ROLE  is
-    created.  This role will inherit the access level roles and be
-    granted to users.  This role will be activated by the user.
+        `SENSITIVE` schema role. It also is not inherited nor does it inherit
+        other object access roles. 
+5.  A functional role, `IT_ANALYTICS_ROLE` is
+    created. This role will inherit the access level roles and be
+    granted to users. This role will be activated by the user.
 6.  Within the enterprise identity governance and
     access management solution, the following roles will be listed for a
     user to request, with a user required to select at least one from
     each category:
     1.  Access roles:
-        1.  PROD\_DB\_RO
-        2.  PROD\_DB\_RW
-        3.  PROD\_DB\_SENSITIVE
+        1.  `PROD_DB_RO`
+        2.  `PROD_DB_RW`
+        3.  `PROD_DB_SENSITIVE`
     2.  Functional Roles
-        1.  IT\_ANALYTICS\_ROLE
+        1.  `IT_ANALYTICS_ROLE`
 7.  Scenario 1: Bill, an IT Business Analyst, requires
-    read write access to non sensitive data in PROD\_DB.  
-    1.  Bill already has the IT\_ANALYTICS granted to his
+    read write access to non sensitive data in `PROD_DB`.  
+    1.  Bill already has the IT_ANALYTICS granted to his
         user.  
-    2.  Bill requests PROD\_DB\_RW.  
-    3.  The PROD\_DB\_RW, after following the approval
-        process, is granted the IT\_ANALYTICS role.  Bill now has the
+    2.  Bill requests `PROD_DB_RW`.  
+    3.  The `PROD_DB_RW`, after following the approval
+        process, is granted the `IT_ANALYTICS` role.  Bill now has the
         read/write on all objects in the public schema. 
 8.  Scenario 2: Alice, an HR Business Analyst,
-    requires read access to PROD\_DB but also requires access to payroll
+    requires read access to `PROD_DB` but also requires access to payroll
     data kept within the sensitive schema.  
-    1.  Alice already has the HR\_ANALYSTS functional role
+    1.  Alice already has the `HR_ANALYSTS` functional role
         granted to her user.
-    2.  Alice requests the PROD\_DB\_RO role
-    3.  Alice requests the PROD\_DB\_SENSITIVE role
+    2.  Alice requests the `PROD_DB_RO` role
+    3.  Alice requests the `PROD_DB_SENSITIVE` role
     4.  After the appropriate approval process, the roles
-        are granted to the HR\_ANALYSTS role and Alice can now read all
-        tables in both the PUBLIC and SENSITIVE schemas.  
+        are granted to the `HR_ANALYSTS` role and Alice can now read all
+        tables in both the `PUBLIC` and `SENSITIVE` schemas.  
 
 ![Snowflake_RBAC_Suggested-image](assets/Snowflake_RBAC_Suggested.png)
 
@@ -198,19 +197,16 @@ Fig 2.0 Traditional Pattern
 #### Incompatibilities
 
 1.  This pattern assumes a user should have the same
-    access level permissions on objects in a database.  If the user
+    access level permissions on objects in a database. If the user
     indeed requires separate permissions levels for schemas contained
     within the same database the model may need to be extended or a
-    different model used.  
+    different model used.
 
 #### Other Implications
 
 1.  Some applications which integrate with SCIM may not support all
     functionality required to properly manage this approach requiring
-    custom SCIM
-    or JDBC integration.
-
-
+    custom SCIM or JDBC integration.
 
 ### Design Principles Enabled by this Pattern
 
@@ -230,17 +226,17 @@ the user is making is which datasets the user should be able to view.
 ### Key Benefits of this Pattern
 
 The benefit of this pattern is when a user is
- reviewing the possible roles to request access to, they only see three
+ reviewing the possible roles to request access to, they only see three
 roles and must decide 1) what privilege level do I need and 2) do I need
-access to sensitive data.  These decisions are made independently of
-each other.  In a typical model, this same hierarchy would require at
+access to sensitive data. These decisions are made independently of
+each other. In a typical model, this same hierarchy would require at
 least 4 roles, and each role would be a distinct set of combined
 privileges. More importantly, a legacy model would require at least 9
 grants to be made of privileges to roles whereas the suggested pattern
-only requires 5.  These numbers may seem insignificant, however as
+only requires 5. These numbers may seem insignificant, however as
 implementations of snowflake grow and evolve, simplification of RBAC
 hierarchies will be critical to successful extensibility and ease of
-management.  
+management.
 
 1.  Simplified RBAC Hierarchy
 2.  Simplified enterprise catalog of available
