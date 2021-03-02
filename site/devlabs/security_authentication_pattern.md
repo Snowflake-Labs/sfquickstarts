@@ -95,7 +95,7 @@ the best supported method. Any SAML 2 compatible IdP can achieve this.
 Some partner applications also deliver federated SSO experiences
 leveraging OAuth 2.0, however, client application support for federated
 authentication varies. SAML 2 is an option in some cases through
-Snowflake's \"External Browser\" mode on the desktop. When a desktop
+Snowflake's "External Browser" mode on the desktop. When a desktop
 application is configured to use External Browser mode, a
 Snowflake-provided driver opens a new browser tab/window so the user can
 authenticate with their IdP credentials.  
