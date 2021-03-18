@@ -48,17 +48,18 @@ This tutorial demonstrates how you can use Terraform to manage your Snowflake co
 ## Create a New Repository
 Duration: 5
 
-[Create](https://github.com/new) a new repository to hold your Terraform project. We use the name `tf-snow` in this lab. Here are the commands to use if you use the git command-line client:
+[Create](https://github.com/new) a new repository to hold your Terraform project. We use the name `sfguide-terraform-sample` in this lab. 
+
+Run the following commands if you use the git command-line client replacing `YOUR_GITHUB_USERNAME` with your username:
 
 ```Shell
-$ mkdir tf-snow && cd tf-snow
-$ echo "# tf-snow" >> README.md
+$ mkdir sfguide-terraform-sample && cd sfguide-terraform-sample
+$ echo "# sfguide-terraform-sample" >> README.md
 $ git init
 $ git add README.md
 $ git commit -m "first commit"
 $ git branch -M main
-$ GHUSER=`git config user.name`
-$ git remote add origin git@github.com:${GHUSER}/tf-snow.git
+$ git remote add origin git@github.com:YOUR_GITHUB_USERNAME/sfguide-terraform-sample.git
 $ git push -u origin main
 ```
 
@@ -66,9 +67,6 @@ Positive
 : **Tip** – If the commands don't work, verify that you can connect to GitHub using your SSH key, and that your git config is correct for your account.
 
 You now have an empty repo that we will use in subsequent steps to Terraform your Snowflake account.
-
-
-
 
 ## Create a Service User for Terraform
 Duration: 5
@@ -340,7 +338,10 @@ $ git commit -m "Add Service User, Schema, Grants"
 $ git push origin HEAD
 ```
 
-You can log in to Github to create the Pull Request and merge the changes.
+You can log in to Github to create the Pull Request and merge the changes. Pull Requests allow for process controls for reviews
+and the centralized git repo can automatically event CI/CD workflows
+as desired.
+
 
 ## Apply and Verify the Changes
 Duration: 2
@@ -356,7 +357,7 @@ To simulate the CI/CD pipeline, we can apply the changes to conform the desired 
 1. Accept the changes if they look appropriate.
 1. Log in to the console to see all the changes complete.
 
-Because all changes are stored in source control and applied by CI/CD, you can get a history of all your environment changes. You can  put compliance controls into place and limit authorization to directly manage the environments to fewer users. But this also makes it easy to bring up new environments that are identical to others in a timely manner without managing SQL scripts.
+Because all changes are stored in source control and applied by CI/CD, you can get a [history](https://github.com/Snowflake-Labs/sfguide-terraform-sample/commits/main/main.tf) of all your environment changes. You can put compliance controls into place and limit authorization to directly manage the environments to fewer users. This also makes it easy to bring up new environments that are identical to others in a timely manner without managing SQL scripts.
 
 ## Cleanup
 Duration: 1
@@ -370,12 +371,12 @@ You're almost done with the demo. We have one thing left to do: clean up your ac
    ```
     $ terraform destroy
    ```
-   Accept the changes if they look appropriate.
-1. Log in to the console to verify that all the objects are destroyed.
+1.  Accept the changes if they look appropriate.
+1. Log in to the console to verify that all the objects are destroyed. The database, schema, warehouse, role, and the user objects created by Terraform will be automatically deleted.
 
 ### Drop the User we added
 
-1. From your Snowflake console run:
+- From your Snowflake console run:
 
    ```SQL
    DROP USER "tf-snow";
@@ -394,7 +395,13 @@ The Terraform provider for Snowflake is an open-source project. If you need Terr
 
 * You will want to make the decision about how you isolate your environments and projects, whether via namespacing/RBAC or via multiple accounts. Changing this later is difficult as most modules and CI/CD infrastructure will need to be heavily modified for the alternative approach.
 
-* You may also need to evaluate other tools to complete your infrastructure management. Terraform is a powerful tool for managing many resources in Snowflake, but it has limitations managing schema and data changes. More robust tools are available to manage things like data migrations and table schema changes.
+* You may also need to evaluate other tools to complete your infrastructure management. Terraform is a powerful tool for managing many resources in Snowflake, but it has limitations managing schema and data changes.
+
+Other tools are available to manage things like data migrations and table schema changes. We often see Terraform paired with one of the following to meet all customer requirements.
+- [dbt](https://www.getdbt.com/)
+- [snowchange](https://github.com/Snowflake-Labs/snowchange)
+- [Flyway](https://flywaydb.org/)
+
 
 If you had any issues with this project you can pull [a working version](https://github.com/Snowflake-Labs/sfguide-terraform-sample) directly from Github.
 
