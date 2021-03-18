@@ -19,6 +19,7 @@ app/js/bundle
 /dist/
 
 /devlabs/*
+!/devlabs/imports
 
 !/devlabs/*.md
 !/devlabs/assets
