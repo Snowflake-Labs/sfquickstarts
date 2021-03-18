@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Getting Started, Fivetran, Marketing Analytics, dbt
 authors: Snowflake
 
-# Getting started with Fivetran
+# Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -19,7 +19,29 @@ It is important to include on the first page of your guide the following section
 The rest of this Snowflake Guide explains the steps of writing your own guide. 
 
 ### Prerequisites
-- Familiarity with Markdown syntax
+To participate in the virtual hands-on lab, attendees need the following:
+
+1. Prior to attending the lab
+
+a. Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free. https://github.com/join.  See appendix 1 for step-by-step instructions. 
+
+b. Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a free trial.  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
+
+c. OPTIONAL: Log in to your Google account, if you have one.
+
+d. OPTIONAL: Google Ads account credentials. 
+Sample Google Ads data will be provided if you do not have a Google Ads account.
+
+
+2. During the lab
+ 
+a. Sample Google Ads data (Google Sheets) - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links -- all of these sheets are copies of the same data, you can use any link on that page.
+
+
+b. dbt Project Github Repository URL (https://github.com/fivetran/snowflake_fivetran_vhol)
+
+
+c. SQL Script file - Participants will load this file into a  Snowflake worksheet when prompted during the lab.  Save this file where you can easily find it during the lab.
 
 ### What You’ll Learn 
 - how to set the metadata for a guide (category, author, id, etc)
