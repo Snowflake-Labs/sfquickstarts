@@ -88,7 +88,7 @@ To indicate how long each step will take, set the `Duration` under the step titl
 The total snowguide completion time is calculated automatically for you and will be displayed on the landing page. 
 
 <!-- ------------------------ -->
-## Code Snippets
+## Code Snippets, Info Boxes, and Tables
 Duration: 2
 
 Look at the [markdown source for this snowguide](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
@@ -122,12 +122,32 @@ Negative
   [This is a download button](link.com)
 </button>
 
+### Tables
+<table>
+    <thead>
+        <tr>
+            <th colspan="2"> **The table header** </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>The table body</td>
+            <td>with two columns</td>
+        </tr>
+    </tbody>
+</table>
+
 ### Hyperlinking
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
 
 <!-- ------------------------ -->
-## Embedding Images, Videos, and Surveys
+## Images, Videos, and Surveys, and iFrames
 Duration: 2
+
+Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md) to see how to use markdown to generate these elements. 
+
+### Images
+![Puppy](assets/puppy.jpg)
 
 ### Videos
 Videos from youtube can be directly embedded:
