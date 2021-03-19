@@ -12,195 +12,180 @@ authors: Snowflake
 ## Overview 
 Duration: 1
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
-
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
-
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
-
 ### Prerequisites
 To participate in the virtual hands-on lab, attendees need the following:
 
 1. Prior to attending the lab
 
-a. Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free. https://github.com/join.  See appendix 1 for step-by-step instructions. 
+    * Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: [link])(https://github.com/join).  See appendix 1 for step-by-step instructions. 
 
-b. Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a free trial.  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
+    * Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
 
-c. OPTIONAL: Log in to your Google account, if you have one.
+    * OPTIONAL: Log in to your Google account, if you have one.
 
-d. OPTIONAL: Google Ads account credentials. 
+    * OPTIONAL: Google Ads account credentials. 
 Sample Google Ads data will be provided if you do not have a Google Ads account.
-
 
 2. During the lab
  
-a. Sample Google Ads data (Google Sheets) - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links -- all of these sheets are copies of the same data, you can use any link on that page.
+    * [Sample Google Ads data](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md) - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links -- all of these sheets are copies of the same data, you can use any link on that page.
 
 
-b. dbt Project Github Repository URL (https://github.com/fivetran/snowflake_fivetran_vhol)
+    * [dbt Project Github Repository](https://github.com/fivetran/snowflake_fivetran_vhol)
 
 
-c. SQL Script file - Participants will load this file into a  Snowflake worksheet when prompted during the lab.  Save this file where you can easily find it during the lab.
+        * [SQL Script file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) - Participants will load [this file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) into a Snowflake worksheet when prompted during the lab.  Save this file where you can easily find it during the lab.
 
-### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+### INTRODUCTION
+With the growth of your data and business, so does the complexity involved in traditional approaches and architecture. Snowflake and Fivetran have partnered to bring you the Data Cloud and the most automated data integration solution which helps customers simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance. In this virtual hands-on lab, you will follow a step-by-step guide to perform marketing analytics for Google Ads data by using Fivetran, Snowflake, and dbt. Let’s get started. 
 
-### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
+## SNOWFLAKE CONFIGURATION  
+1. Login to your Snowflake trial account.  
+![Snowflake Log In Screen](assets/image124.png)  
 
-### What You’ll Build 
-- A Snowflake Guide
+2. UI Tour (SE will walk through this live). For post-workshop participants, click [here](https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface) for a quick tour of the UI.  
+![Snowflake Worksheets](assets/image29.png)  
+
+3. Let’s change our role and enable notifications. We need to work in the ACCOUNTADMIN role for this lab and notifications are how Snowflake will alert you when resource monitor thresholds have been crossed. Click on your User Name in the upper right-hand corner.  
+![Change role - step 1](assets/image27.png)  
+
+4. You’ll get a popup with 4 items; click on Switch Role.  
+![Change role - step 2](assets/image22.png)  
+
+5. Select ACCOUNTADMIN.  
+![Change role - step 3](assets/image62.png)  
+
+6. The UI will refresh and you should see ACCOUNTADMIN under your username. If you don’t, go back to step 5.  
+![Change role - step 4](assets/image30.png)  
+
+7. Click on your username again and you’ll get the same popup with 4 items; click on Preferences.  
+![Preferences - step 1](assets/image59.png)  
+
+8. Click on Notifications.  
+![Preferences - step 2](assets/image137.png)  
+
+9. Select All, which will send notifications to your email address and this UI (in the Notifications tile in the upper right).  
+![Preferences - step 3](assets/image100.png)  
+
+10. Now let’s create your Fivetran account.  Click on the Partner Connect tile at the top of the UI...
+![Create Fivetran Account - step 1](assets/image89.png)  
+
+11. ...and then click on the Fivetran tile inside Snowflake Partner Connect. (if you aren’t in the ACCOUNTADMIN role you’ll receive a warning.  Go back and complete steps 6-9.)  
+![Create Fivetran Account - step 2](assets/image134.png)  
+
+12. Click on Connect.  
+![Create Fivetran Account - step 2](assets/image122.png)  
+
+13.	Click on Activate in the pop-up that appears. This will open a new browser tab and take you to Fivetran where you will enter a password for the trial account. 
+![Create Fivetran Account - step 3](assets/image61.png)  
 
 <!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+## FIVETRAN CONFIGURATION
+![Fivetran](assets/image79.png)  
+
+In this section we will create an automated data pipeline, with an extract-load (ELT) architecture::
+1.	Extract and Load:
+    * Complete Fivetran Account Setup
+    * Upload Sample Adwords Data using the Fivetran Google Sheets Connector
+2.	Transform:
+    * Create our first dbt project
+    * Setup Fivetran dbt Transformations
+
+Let’s get started!
+
+### COMPLETE FIVETRAN ACCOUNT SETUP
+1. Create a password.  
+![Fivetran - Password](assets/image107.png)  
+
+2. That is it! Hang out on this screen until the next section. 
+To log into Fivetran in the future, you can navigate to [https://fivetran.com/dashboard](https://fivetran.com/dashboard). Your email is the same as your Snowflake email (at the time you connected with Partner Connect) and your password is whatever you entered in Step 1 of this section.
+![Fivetran - Source](assets/image3.png)  
+
+### UPLOAD SAMPLE ADWORDS DATA WITH GOOGLE SHEETS
+**Note**: The **Setup Fivetran dbt Transformations** section assumes you have uploaded the sample data as outlined in this section. If you used your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in the next section.
+
+For your convenience we have included sample Google Adwords data in the form of a Google Sheets containing three workbooks. Each workbook corresponds to a table to be synced to the Snowflake warehouse. This gives us the opportunity to explore another Fivetran feature, the Google Sheets connector. Google Sheets is, in fact, the most popular connector used by Fivetran customers. In the next section, we will:
+* Use the Google Sheets connector to create a new Schema and Tables
+* We will create one Google Sheets connector per table. 
+* We will use any one of the Google Sheet links found in this document: [link](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md)
 
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the snowguide is ready to be published. `Hidden` implies the snowguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/devlabs/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your snowguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific snowguide.
+1. Google Sheets is the first connector in the list! Click on **Google Sheets**.
+![Fivetran - Source2](assets/image57.png)  
 
+2. You should see this screen.  
+![Fivetran - Google Sheet](assets/image21.png)  
+
+3. Please use the following values for the two fields:
+    * Destination schema: **google_ads_demo**
+    * Destination table: **final_url_performance**
+![Fivetran - Google Sheet2](assets/image132.png)  
+
+4. Scroll down the page a bit, and paste the URL you just copied into the Sheet URL field. ([Follow these instructions to get a Google Sheets URL](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md))
+Then, click the **FIND SHEET** button. This step will take a few moments. 
+![Fivetran - Google Sheet3](assets/image118.png)  
+
+5. In the **Named Range** field, choose **final_url_performance**.
+![Fivetran - Google Sheet4](assets/image68.png)  
+
+6. Click **SAVE & TEST**.
+![Fivetran - Google Sheet5](assets/image18.png)  
+
+7. When you see **All connection tests passed!**, click the **VIEW CONNECTOR** button.
+![Fivetran - Google Sheet6](assets/image42.png)  
+
+8. Click **Start Initial Sync**. This will start the data sync into the warehouse! Now any updates to these sheets will be automatically synced to Snowflake.
+![Fivetran - Google Sheet7](assets/image77.png)  
+
+9. Great! The Google Sheets connector is now syncing. Let’s setup the next table. Click the **Connectors** menu.  
+![Fivetran - Google Sheet8](assets/image86.png)  
+
+10. Click the **+Connector** button.  
+![Fivetran - Google Sheet9](assets/image36.png)  
+
+11. Please use the following values for the two fields:
+    * Destination schema: **google_ads_demo**
+    * Destination table: **criteria_performance**
+![Fivetran - Google Sheet10](assets/image6.png)  
+
+12. Scroll down the page a bit, and paste the URL you just copied into the Sheet URL field. (Use the same Sheets URL as step 4, or [follow these instructions to get a new Google Sheets URL](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md).)
+Then, click the **FIND SHEET** button. This step will take a few moments. 
+![Fivetran - Google Sheet11](assets/image126.png)  
+
+13. In the **Named Range** field, choose **criteria_performance**. Click **SAVE & TEST**.
+![Fivetran - Google Sheet12](assets/image52.png)  
+
+14. When the connection tests complete, click **VIEW CONNECTOR**.
+![Fivetran - Google Sheet13](assets/image42.png)  
+
+15. Click **Start Initial Sync**. Then click **Connectors** on the left-hand menu.
+![Fivetran - Google Sheet14](assets/image38.png)  
+
+16. Click **+Connector**.  
+![Fivetran - Google Sheet15](assets/image108.png)  
+
+17. Please use the following values for the two fields:
+    * Destination schema: **google_ads_demo**
+    * Destination table: **click_performance**
+![Fivetran - Google Sheet16](assets/image121.png)  
+
+18. Scroll down the page a bit, and paste the URL you just copied into the Sheet URL field. (Use the same Sheets URL as step 4, or [follow these instructions to get a new Google Sheets URL](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md).) 
+![Fivetran - Google Sheet17](assets/image95.png)  
+
+19. Then, click the **FIND SHEET** button. This step will take a few moments.  
+![Fivetran - Google Sheet18](assets/image64.png)  
+
+20. In the **Named Range** field, choose **click_performance**. Click **SAVE & TEST**.
+![Fivetran - Google Sheet19](assets/image42.png)  
+
+21. When the connection tests complete, click **VIEW CONNECTOR**.
+![Fivetran - Google Sheet20](assets/image117.png)  
+
+22. Click **Start Initial Sync**. Then click **Connectors** on the left-hand menu.
+![Fivetran - Google Sheet21](assets/image75.png)  
+
+23. Congratulations! You can see your 3 Google Sheets connectors running, each creating one of our three sample data tables. Click on **Google Sheets (3)**.
+![Fivetran - Google Sheet22](assets/image48.png)  
 ---
 
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md).
-
-
-<!-- ------------------------ -->
-## Creating a Step
-Duration: 2
-
-A single snowguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
-```
-
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
-
-The total snowguide completion time is calculated automatically for you and will be displayed on the landing page. 
-
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this snowguide](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-Positive
-: This will appear in a positive info box.
-
-
-Negative
-: This will appear in a negative info box.
-
-### Buttons
-<button>
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
-
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/devlabs/master/site/devlabs/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Puppy](assets/puppy.jpg)
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
-
-<!-- ------------------------ -->
-## Importing markdown files
-Duration: 1
-<<sample_import.md>>
-
-<!-- ------------------------ -->
-## Conclusion
-Duration: 1
-
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
-
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
