@@ -167,7 +167,7 @@ Videos from youtube can be directly embedded:
 <!-- ------------------------ -->
 ## Importing markdown files
 Duration: 1
-<<sample_import.md>>
+<<imports/sample_import.md>>
 
 <!-- ------------------------ -->
 ## Conclusion
