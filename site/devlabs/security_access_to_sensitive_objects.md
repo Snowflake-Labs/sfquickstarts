@@ -252,8 +252,10 @@ management.
 - Snowflake community posts
   - [Role Inheritance and Role Composition in Snowflake](https://community.snowflake.com/s/article/snowflake-rbac-security-prefers-role-inheritance-to-role-composition)
 - Snowflake Documentation
-  - [Access Control in Snowflake](https://docs.snowflake.com/en/user-guide/security-access-control.html)
+ - [Access Control in Snowflake](https://docs.snowflake.com/en/user-guide/security-access-control.html)
   - [Overview of Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-overview.html)
   - [Access Control Considerations](https://docs.snowflake.com/en/user-guide/security-access-control-considerations.html)
   - [Access Control Privileges](https://docs.snowflake.com/en/user-guide/security-access-control-privileges.html)
   - [Configuring Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-configure.html)
+  - [User Management](https://docs.snowflake.com/en/user-guide/admin-user-management.html)
+  - [User & Security DDL](https://docs.snowflake.com/en/sql-reference/ddl-user-security.html)
