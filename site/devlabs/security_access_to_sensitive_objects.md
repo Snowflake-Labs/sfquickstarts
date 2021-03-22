@@ -247,3 +247,13 @@ management.
     Access Management) or IGA (Identity Governance and Administration)
     tools
 
+### Related Resources
+
+- Snowflake community posts
+  - [Role Inheritance and Role Composition in Snowflake](https://community.snowflake.com/s/article/snowflake-rbac-security-prefers-role-inheritance-to-role-composition)
+- Snowflake Documentation
+  - [Access Control in Snowflake](https://docs.snowflake.com/en/user-guide/security-access-control.html)
+  - [Overview of Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-overview.html)
+  - [Access Control Considerations](https://docs.snowflake.com/en/user-guide/security-access-control-considerations.html)
+  - [Access Control Privileges](https://docs.snowflake.com/en/user-guide/security-access-control-privileges.html)
+  - [Configuring Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-configure.html)
