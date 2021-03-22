@@ -81,9 +81,10 @@ If your organization does not [have one or more of these
 requirements, then the out-of-the-box Snowflake network security
 controls are likely more than sufficient to meet your needs. 
 
-## What you'll learn
+### What you'll learn
 
-How to apply network security policies to control access to Snowflake.
+How to apply network security policies to control access to Snowflake, how different component use the network and how to integrate with CSP networking features.
+
 ## Pattern Details
 
 All Snowflake network connectivity architectures include five basic
@@ -205,7 +206,7 @@ of DNS and routing. The Snowflake driver or connector is unaware of all
 the DNS and routing work, and therefore there is full support for this
 in all of the platforms for which Snowflake has drivers or connectors.
 
-## Pattern Example
+## Pattern Example - Pharmaceuticals
 
 Let's look at a real world example of how a customer applied all of
 these approaches in the same deployment. This customer is in the
