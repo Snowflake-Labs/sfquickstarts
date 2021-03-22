@@ -22,7 +22,7 @@ and Snowflake Partner technologies. This document is
 not intended for use by implementation teams, although an
 implementation example is provided. 
 
-### Security - Network
+### Pattern Summary
 
 SaaS-style cloud data platforms present a number of network
 connectivity challenges. This is especially true with regards to
@@ -81,6 +81,9 @@ If your organization does not [have one or more of these
 requirements, then the out-of-the-box Snowflake network security
 controls are likely more than sufficient to meet your needs. 
 
+## What you'll learn
+
+How to apply network security policies to control access to Snowflake.
 ## Pattern Details
 
 All Snowflake network connectivity architectures include five basic
