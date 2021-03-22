@@ -108,7 +108,7 @@ uses public keys to decrypt it and authenticate. A third option is
 External OAuth, which is the only method that allows for an SSO-based
 user credential in the programmatic scenario.
 
-## Pattern Example 1
+## Pattern Example - OAuth 
 
 Now let's look at two applications, Tableau and Microsoft Power BI,
  that support OAuth. The type of OAuth supported differs and in each
@@ -189,7 +189,7 @@ of the systems users need to authenticate to Snowflake. This matrix
 needs to be considered along with the three scenarios described to
 enable SSO for as many systems as possible.
 
-## Pattern example 2
+## Pattern example - Key Pair Authentication 
 
 This pattern example compares when you should use key pair
 authentication for non-human users versus when you should use external
