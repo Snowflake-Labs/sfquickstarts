@@ -109,7 +109,7 @@ Key Points
     functional role which has been approved to access the sensitive
     data. 
 
-## Pattern Example
+## Pattern Example - Sensitive RBAC Hierarchy
 
 This is a working example of how this pattern could be
 implemented, within a particular context.
@@ -121,7 +121,7 @@ implemented, within a particular context.
     a customer will be granted need to be listed in this catalog.  Given
     the volume of databases in schemas for the project, an emphasis on
     role reduction must be made.
-2.  The data set in snowflake will include two
+2.  The data set in Snowflake will include two
     sensitivity classifications.  Sensitive, which will have limited
     access,  and non sensitive which all users will have access
     to.
