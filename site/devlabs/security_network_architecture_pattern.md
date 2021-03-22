@@ -59,7 +59,7 @@ include:
 Alone or in combination, these measures comprise network connectivity
 patterns that are extremely secure.
 
-## When to use this pattern
+### When to use this pattern
 
 Consider patterns that incorporate Network Policies or private
 networking if any of the following requirements describe your

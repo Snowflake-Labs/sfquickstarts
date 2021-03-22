@@ -46,7 +46,7 @@ visibility to the objects themselves.  
 
 A technique for granting access rights in a simple way, while allowing powerful control over access to sensitive data.
 
-## When To Use This Pattern
+### When To Use This Pattern
 
 This pattern implements well when the following
 conditions are true:
