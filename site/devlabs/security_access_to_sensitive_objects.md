@@ -6,7 +6,6 @@ status: Published
 
 # Architecture Pattern : Access to Sensitive Objects
 
-
 ## Overview
 
 ### Security Guides
@@ -16,7 +15,16 @@ This guide is part of a series on Security. The guides are:
 - [Authentication](../security_authentication_pattern/index.html)
 - [Network Architecture](../security_network_architecture_pattern/index.html)
 
-### Access to Sensitive objects
+### Intended Audience
+
+This document is for Enterprise and Solution Architects who want to
+understand the connectivity capabilities and best practices of Snowflake
+and Snowflake Partner technologies. This document is
+not
+implementation example may be provided.
+
+### Pattern Summary
+
 This pattern provides an
 approach for granting access to schemas containing sensitive data
 without creating a fork in the RBAC role hierarchy.  Forking the RBAC
@@ -42,10 +50,6 @@ row or column level security, or grant roles to users; each of which may
 also be required.  The scope of this pattern is simply how to provide
 visibility to the objects themselves.  
 
-### What you'll learn
-
-A technique for granting access rights in a simple way, while allowing powerful control over access to sensitive data.
-
 ### When To Use This Pattern
 
 This pattern implements well when the following
@@ -60,6 +64,10 @@ conditions are true:
 4.  Access roles are inherited by some level of
     functional role.  The functional role could be at a group or
     individual level.  
+
+### What You'll Learn
+
+A technique for granting access rights in a simple way, while allowing powerful control over access to sensitive data.
 
 ## Pattern Details
 

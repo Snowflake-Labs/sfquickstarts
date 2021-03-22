@@ -40,7 +40,7 @@ following scenarios:
 2.  Non-interactive authentication for non-human users, such as
     programmatic accounts and service accounts
 
-### When To Use These Patterns
+### When To Use This Pattern
 
 The patterns in this document satisfy one or more of the following
 requirements:
@@ -55,12 +55,11 @@ requirements:
 4.  Legal or contractual agreements require the organization to
     implement specific authentication methods. 
 
-### What you'll learn
+### What You'll Learn
 
 How to apply two techniques for authenticating access to Snowflake:
 - Federated authentication
 - Key pairs
-
 
 ## Pattern Details
 
@@ -189,7 +188,7 @@ of the systems users need to authenticate to Snowflake. This matrix
 needs to be considered along with the three scenarios described to
 enable SSO for as many systems as possible.
 
-## Pattern example - Key Pair Authentication 
+## Pattern Example - Key Pair Authentication 
 
 This pattern example compares when you should use key pair
 authentication for non-human users versus when you should use external

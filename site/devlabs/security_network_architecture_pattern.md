@@ -14,7 +14,7 @@ This guide is part of a series on Security. The guides are:
 - [Authentication](../security_authentication_pattern/index.html)
 - [Network Architecture](../security_network_architecture_pattern/index.html)
 
-### Intended audience
+### Intended Audience
 
 This document is for Enterprise and Solution Architects who want to
 understand the connectivity capabilities and best practices of Snowflake
@@ -51,15 +51,12 @@ include:
     out-of-the-box security, security-sensitive organizations typically
     implement Network Policies to specify which IP addresses can connect
     to the Snowflake data platform. 
-3.  **Integrating CSP capabilities that may add more security to network
-    connectivity**. A smaller number of organizations choose to
-    use cloud service provider features such as private networking if
-    they determine it's appropriate. 
+3.  **Integrating CSP capabilities that may add more security to network connectivity**. A smaller number of organizations choose to use cloud service provider features such as private networking if they determine it's appropriate. 
 
 Alone or in combination, these measures comprise network connectivity
 patterns that are extremely secure.
 
-### When to use this pattern
+### When To Use This Pattern
 
 Consider patterns that incorporate Network Policies or private
 networking if any of the following requirements describe your
@@ -81,9 +78,11 @@ If your organization does not [have one or more of these
 requirements, then the out-of-the-box Snowflake network security
 controls are likely more than sufficient to meet your needs. 
 
-### What you'll learn
+### What You'll Learn
 
-How to apply network security policies to control access to Snowflake, how different component use the network and how to integrate with CSP networking features.
+1. The different components of the Snowflake service have different types of network access
+2. Network policies allow an additional layer of access control to the Snowflake Service
+3. CSP provider features such as PrivateLink can also provide an additional layer of security
 
 ## Pattern Details
 
@@ -274,7 +273,7 @@ Network access control is an important tool you can use as a part of securing ac
 1.  Any design where a Network Policy is being used for every user
     is likely on the wrong path based on all evidence at the time
     of this writing. 
-2.  Many organisations will attempt to apply CSP private networking
+2.  Many organizations will attempt to apply CSP private networking
     technologies to many communication channels where it provides little
     additional security, but does add a lot of operational overhead.
     Consider CSP private networking only where large volumes of data or
