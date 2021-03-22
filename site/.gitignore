@@ -18,8 +18,5 @@ app/js/bundle
 /build/
 /dist/
 
-/devlabs/*
-!/devlabs/imports
-
-!/devlabs/*.md
-!/devlabs/assets
+/sfguides/dist/*
+temp/

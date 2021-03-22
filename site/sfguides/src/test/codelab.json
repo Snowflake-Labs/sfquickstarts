@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-41491190-9",
+  "updated": "2021-03-21T22:36:59-05:00",
+  "id": "test",
+  "duration": 10,
+  "title": "Snowflake Guide Template asdasd",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting started"
+  ],
+  "tags": [
+    "data engineering",
+    "data science",
+    "getting started",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "test"
+}

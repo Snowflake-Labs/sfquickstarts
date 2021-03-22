@@ -1,0 +1,20 @@
+{
+  "name": "sfguide-bootstrap",
+  "version": "1.0.0",
+  "description": "use nodemon to watch changes on md file, rebuild sfguide on saves",
+  "main": "index.js",
+  "scripts": {
+    "watch": "nodemon --watch test.md --exec \"claat export -o temp/ test.md && ./node_modules/kill-port/cli.js --port 9090 && cd temp/test && claat serve\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Snowflake-Labs/sfguides"
+  },
+  "keywords": [
+    "sfguide"
+  ],
+  "dependencies": {
+    "kill-port": "^1.6.1",
+    "nodemon": "^2.0.3"
+  }
+}

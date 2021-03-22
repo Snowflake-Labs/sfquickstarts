@@ -41,7 +41,7 @@ const swig = require('swig-templates');
 const url = require('url');
 
 // DEFAULT_GA is the default Google Analytics tracker ID
-const DEFAULT_GA = 'G-8F0LLPS2LV';
+const DEFAULT_GA = 'UA-41491190-9';
 
 // DEFAULT_VIEW_META_PATH is the default path to view metadata.
 const DEFAULT_VIEW_META_PATH = 'app/views/default/view.json';
@@ -55,12 +55,17 @@ const DEFAULT_CATEGORY = 'Default';
 // BASE_URL is the canonical base URL where the site will reside. This should
 // always include the protocol (http:// or https://) and NOT including a
 // trailing slash.
-const BASE_URL = args.baseUrl || 'https://example.com';
+const BASE_URL = args.baseUrl || 'https://guides.snowflake.com';
 
-// CODELABS_DIR is the directory where the actual codelabs exist on disk.
+// CODELABS_BUILD_DIR is the directory where the actual codelabs exist on disk.
 // Despite being a constant, this can be overridden with the --codelabs-dir
 // flag.
-const CODELABS_DIR = args.codelabsDir || '.';
+const CODELABS_BUILD_DIR = args.codelabsDir || 'sfguides/dist';
+
+// CODELABS_SRC_DIR is the directory where the actual codelabs exist on disk.
+// Despite being a constant, this can be overridden with the --codelabs-dir
+// flag.
+const CODELABS_SRC_DIR = args.codelabsSrcDir || 'sfguides/src';
 
 // CODELABS_ENVIRONMENT is the environment for which to build codelabs.
 const CODELABS_ENVIRONMENT = args.codelabsEnv || 'web';
@@ -72,7 +77,7 @@ const CODELABS_FILTER = args.codelabsFilter || '*';
 const CODELABS_FORMAT = args.codelabsFormat || 'html';
 
 // CODELABS_NAMESPACE is the content namespace.
-const CODELABS_NAMESPACE = (args.codelabsNamespace || 'codelabs').replace(/^\/|\/$/g, '');
+const CODELABS_NAMESPACE = (args.codelabsNamespace || 'sfguides').replace(/^\/|\/$/g, '');
 
 // DELETE_MISSING controls whether missing files at the destination are deleted.
 // The default value is true.
@@ -381,10 +386,10 @@ gulp.task('codelabs:export', (callback) => {
 
   if (source !== undefined) {
     const sources = Array.isArray(source) ? source : [source];
-    claat.run(CODELABS_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, sources, callback);
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
   } else {
-    const codelabIds = collectCodelabs().map((c) => { return c.id });
-    claat.run(CODELABS_DIR, 'update', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, codelabIds, callback);
+    const sources = ["*/*.md"]; //export all markdown files in the src directory
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
   }
 });
 
@@ -495,7 +500,7 @@ const collectMetadata = () => {
       views[view.id] = view;
     }
 
-    const codelabFiles = glob.sync(`${CODELABS_DIR}/*/codelab.json`);
+    const codelabFiles = glob.sync(`${CODELABS_BUILD_DIR}/*/codelab.json`);
     for (let i = 0; i < codelabFiles.length; i++) {
       const codelab = parseCodelabMetadata(codelabFiles[i]);
       codelabs.push(codelab);
@@ -636,7 +641,7 @@ const viewFuncs = {
           return codelab.category.indexOf(category) !== -1;
         })
         .filter((codelab) => {
-          // Rilter hidden codelabs from the default view. All other views are
+          // Filter hidden codelabs from the default view. All other views are
           // explictly opt-in via metadata.
           return viewId !== 'default' || codelab.status.indexOf('hidden') === -1;
         });
@@ -862,7 +867,7 @@ const copyFilteredCodelabs = (dest) =>  {
   // No filters were specified, symlink the codelabs folder directly and save
   // processing.
   if (CODELABS_FILTER === '*' && VIEWS_FILTER === '*') {
-    const source = path.join(CODELABS_DIR);
+    const source = path.join(CODELABS_BUILD_DIR);
     const target = path.join(dest, CODELABS_NAMESPACE);
     fs.ensureSymlinkSync(source, target, 'dir');
     return
@@ -872,7 +877,7 @@ const copyFilteredCodelabs = (dest) =>  {
 
   for(let i = 0; i < codelabs.length; i++) {
     const codelab = codelabs[i];
-    const source = path.join(CODELABS_DIR, codelab.id);
+    const source = path.join(CODELABS_BUILD_DIR, codelab.id);
     const target = path.join(dest, CODELABS_NAMESPACE, codelab.id);
     fs.ensureSymlinkSync(source, target, 'dir');
   }

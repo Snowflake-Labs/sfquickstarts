@@ -2,7 +2,7 @@
 
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
-## What are Snowflake Guides?
+## What are Snowflake Guides (Quickstarts)?
 Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](https://guides.snowflake.com/)
 
 You can submit your own SFGuide to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own SFGuide!
@@ -17,7 +17,7 @@ You can submit your own SFGuide to be published on Snowflake's website by submit
 * Support for multiple target environments or events (conferences, kiosk, web, offline, etc.)
 * Support for anonymous use - ideal for public computers at developer events
 * Looks great, with a responsive web implementation
-* Remembers where the student left off when returning to a codelab
+* Remembers where the student left off when returning to a sfguide
 * Mobile friendly user experience
 
 ## How to get started
@@ -58,11 +58,11 @@ Congratulations! You now have the Snowflake Guides landing page running.
 
 #### Now lets add our first SFGuide:
 
-  1. Terminate the running gulp server with `ctrl C` and navigate to the devlab directory
+  1. Terminate the running gulp server with `ctrl C` and navigate to the sfguide directory
   ````bash
-  cd site/devlabs
+  cd site/sfguides
   ````
-  The devlabs directory is where to store all SFGuide content, written in markdown.
+  The sfguides directory is where to store all SFGuide content, written in markdown.
   
   2. Use the claat tool to convert the markdown file to HTML
   ````bash
@@ -71,17 +71,17 @@ Congratulations! You now have the Snowflake Guides landing page running.
 
   You should see `ok sample` as the response. This means claat has successfully converted your .md file to HTML and created a new directory named `sample`.
    
-  3. Now lets run our server again, this time specifying our devlabs directory of content
+  3. Now lets run our server again, this time specifying our sfguides directory of content
    ````bash
-   gulp serve --codelabs-dir=devlabs
+   gulp serve --codelabs-dir=sfguides
    ````
-You can now navigate to the landing page in your browser to see your new codelab!
+You can now navigate to the landing page in your browser to see your new sfguide!
 
-You can use the [sample SFGuide](site/devlabs/sample.md) as a template, just change the name of the file and the id listed in the header. 
+You can use the [sample SFGuide](site/sfguides/sample.md) as a template, just change the name of the file and the id listed in the header. 
 
 ### Tips
 
-- Review the [sample.md](site/devlabs/sample.md) file to learn more about to to structure your SFGuide for the claat tool. 
+- Review the [sample.md](site/sfguides/sample.md) file to learn more about to to structure your SFGuide for the claat tool. 
 - You can also see more formating information in the [claat documentation](claat/README.md), and use the command `claat -h`
 - You can see the supported SFGuide categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
