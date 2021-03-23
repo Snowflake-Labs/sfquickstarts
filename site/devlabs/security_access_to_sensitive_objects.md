@@ -1,29 +1,12 @@
 summary: Security - Access to Sensitive Objects
 id: security_access_to_sensitive_objects
-categories: patterns
+categories: Architecture Patterns
 tags: patterns, security, rbac, objects, access
 status: Published 
 
-# Architecture Pattern : Access to Sensitive Objects
+# Architecture Pattern: Security - Access to Sensitive Objects
 
 ## Overview
-
-### Security Guides
-
-This guide is part of a series on Security. The guides are:
-- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
-- [Authentication](../security_authentication_pattern/index.html)
-- [Network Architecture](../security_network_architecture_pattern/index.html)
-
-### Intended Audience
-
-This document is for Enterprise and Solution Architects who want to
-understand the connectivity capabilities and best practices of Snowflake
-and Snowflake Partner technologies. This document is
-not
-implementation example may be provided.
-
-### Pattern Summary
 
 This pattern provides an
 approach for granting access to schemas containing sensitive data
@@ -45,10 +28,21 @@ to . Instead of the user having to request a sensitive role with its own
 access privileges, they can  simply request  the enabling of sensitive
 data access.
 
-This pattern does not prescribe  how to populate these objects,perform
+This pattern does not prescribe  how to populate these objects, perform
 row or column level security, or grant roles to users; each of which may
 also be required.  The scope of this pattern is simply how to provide
 visibility to the objects themselves.  
+
+### Pattern Series: Security
+
+This guide is part of a series on Security. The guides are:
+- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
+- [Authentication](../security_authentication_pattern/index.html)
+- [Network Architecture](../security_network_architecture_pattern/index.html)
+
+### Intended Audience
+
+This document is for Enterprise and Solution Architects who want to understand the connectivity capabilities and best practices of Snowflake and Snowflake Partner technologies. This document is not intended for use by implementation teams, although an implementation example is provided.
 
 ### When To Use This Pattern
 
@@ -67,7 +61,10 @@ conditions are true:
 
 ### What You'll Learn
 
-A technique for granting access rights in a simple way, while allowing powerful control over access to sensitive data.
+1. Snowflake's Role Based Access Control enables complex access requirements to be developed through access and functional roles
+2. Snowflake can integrate with Enterprise permissions management systems
+3. Sensitive data access can be managed simply and clearly for users
+
 
 ## Pattern Details
 
@@ -106,7 +103,7 @@ inheritance can be implemented using either SCIM2.0 API, JDBC calls to
 customer stored procedures, or calling procedures or executing SQL
 directly in Snowflake.
 
-Key Points
+#### Key Points
 
 1.  Even if a role has privileges on an object, if it does not have the
     USAGE privilege on the database and schema containing the object it
@@ -168,7 +165,7 @@ implemented, within a particular context.
         1.  `IT_ANALYTICS_ROLE`
 7.  Scenario 1: Bill, an IT Business Analyst, requires
     read write access to non sensitive data in `PROD_DB`.  
-    1.  Bill already has the IT_ANALYTICS granted to his
+    1.  Bill already has the `IT_ANALYTICS` granted to his
         user.  
     2.  Bill requests `PROD_DB_RW`.  
     3.  The `PROD_DB_RW`, after following the approval
@@ -195,7 +192,8 @@ Fig 2.0 Traditional Pattern
 
 ## Conclusion
 
-### What we have learned
+### What We've Covered
+
 1. Snowflake's Role Based Access Control enables complex access requirements to be developed through access and functional roles
 2. Snowflake can integrate with Enterprise permissions management systems
 3. Sensitive data access can be managed simply and clearly for users
@@ -227,9 +225,6 @@ properly trained and experienced with Snowflake RBAC.  With the model
 proposed in this pattern, the access level has already been determined,
 likely based on the organizational role of the user.  The only request
 the user is making is which datasets the user should be able to view.
- 
-
-
 
 ### Key Benefits of this Pattern
 

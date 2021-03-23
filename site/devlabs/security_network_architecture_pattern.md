@@ -1,28 +1,11 @@
 summary: Security - Network Architecture Pattern
 id: security_network_architecture_pattern
-categories: patterns
+categories: Architecture Patterns
 tags: patterns, security, network
 status: Published
 
-# Architecture Pattern - Security - Network 
+# Architecture Pattern: Security - Network 
 ## Overview
-
-### Security Guides
-
-This guide is part of a series on Security. The guides are:
-- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
-- [Authentication](../security_authentication_pattern/index.html)
-- [Network Architecture](../security_network_architecture_pattern/index.html)
-
-### Intended Audience
-
-This document is for Enterprise and Solution Architects who want to
-understand the connectivity capabilities and best practices of Snowflake
-and Snowflake Partner technologies. This document is
-not intended for use by implementation teams, although an
-implementation example is provided. 
-
-### Pattern Summary
 
 SaaS-style cloud data platforms present a number of network
 connectivity challenges. This is especially true with regards to
@@ -55,6 +38,21 @@ include:
 
 Alone or in combination, these measures comprise network connectivity
 patterns that are extremely secure.
+
+### Pattern Series: Security
+
+This guide is part of a series on Security. The guides are:
+- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
+- [Authentication](../security_authentication_pattern/index.html)
+- [Network Architecture](../security_network_architecture_pattern/index.html)
+
+### Intended Audience
+
+This document is for Enterprise and Solution Architects who want to
+understand the connectivity capabilities and best practices of Snowflake
+and Snowflake Partner technologies. This document is
+not intended for use by implementation teams, although an
+implementation example is provided. 
 
 ### When To Use This Pattern
 
@@ -260,7 +258,7 @@ approaches.
 
 Network access control is an important tool you can use as a part of securing access to Snowflake.
 
-### Key takeaways
+### What We've Covered
 
 1. The different components of the Snowflake service have different types of network access
 2. Network policies allow an additional layer of access control to the Snowflake Service
@@ -271,8 +269,7 @@ Network access control is an important tool you can use as a part of securing ac
 #### Misapplications to avoid 
 
 1.  Any design where a Network Policy is being used for every user
-    is likely on the wrong path based on all evidence at the time
-    of this writing. 
+    is likely on the wrong path based on all evidence as of March 2021. 
 2.  Many organizations will attempt to apply CSP private networking
     technologies to many communication channels where it provides little
     additional security, but does add a lot of operational overhead.
@@ -280,7 +277,7 @@ Network access control is an important tool you can use as a part of securing ac
     extremely sensitive data is flowing.
 
 #### Incompatibilities
-1.  At the time of this writing, SAML-based SSO can only be used
+1.  As of March 2021, SAML-based SSO can only be used
     on either public URL or private URL (for CSP private networking
     integration) Snowflake endpoints at one time. This will be addressed
     in future releases.

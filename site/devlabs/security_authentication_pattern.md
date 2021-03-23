@@ -1,29 +1,12 @@
 summary: Security - Authentication Pattern
 id: security_authentication_pattern
-categories: patterns
+categories: Architecture Patterns
 tags: patterns, authentication, security
 status: Published
 
-# Architecture Pattern : Security - Authentication 
+# Architecture Pattern: Security - Authentication 
 
 ## Overview
-
-### Security Guides
-
-This guide is part of a series on Security. The guides are:
-- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
-- [Authentication](../security_authentication_pattern/index.html)
-- [Network Architecture](../security_network_architecture_pattern/index.html)
-
-### Intended Audience
-
-This document is for Enterprise and Solution Architects who want to
-understand the connectivity capabilities and best practices of Snowflake
-and Snowflake Partner technologies. This document is
-not
-implementation example may be provided.
-
-### Pattern Summary
 
 Snowflake supports authentication methods that cover a number of
 scenarios, ranging from human interactive scenarios,  to programmatic
@@ -39,6 +22,17 @@ following scenarios:
 1.  Interactive, SSO authentication for humans
 2.  Non-interactive authentication for non-human users, such as
     programmatic accounts and service accounts
+
+### Pattern Series: Security
+
+This guide is part of a series on Security. The guides are:
+- [Access to sensitive objects](../security_access_to_sensitive_objects/index.html)
+- [Authentication](../security_authentication_pattern/index.html)
+- [Network Architecture](../security_network_architecture_pattern/index.html)
+
+### Intended Audience
+
+This document is for Enterprise and Solution Architects who want to understand the connectivity capabilities and best practices of Snowflake and Snowflake Partner technologies. This document is not intended for use by implementation teams, although an implementation example is provided.
 
 ### When To Use This Pattern
 
@@ -279,7 +273,7 @@ a password and only initiate their sessions through external OAuth.
 
 ## Conclusion
 
-### Key Takeaways
+### What We've Covered
 
 1. Snowflake allows multiple authentication methods
 2. Single Sign On and OAuth can be used
