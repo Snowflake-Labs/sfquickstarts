@@ -135,12 +135,13 @@ TODO: Insert Picture of final notebook...
 
 <!-- ------------------------ -->
 ## Query Snowflake
-Duration 5
+Duration: 5
 
 
 <!-- ------------------------ -->
 ## Install and Import Python Libaries
-Duration 5
+Duration: 5
+
 ### Overview
 Zepl provides several options for loading libraries. The two most used are Custom Images ([Account Activation Required](https://new-docs.zepl.com/docs/getting-started/trial-and-billing#activate-your-organization)) and install during notebook run time. For this guide we will use the python package manager `pip` to install all of our required libraries
 
