@@ -7,22 +7,14 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 authors: Snowflake
 
-# Gitbook test
-<!-- ------------------------ -->
-
----
-description: This was created from a Word doc that was converted by Gitbook to MD
----
-
 # Fivetran VHOL Lab Guide - Gitbook
-
+<!-- ------------------------ -->
+## Overview 
 SNOWFLAKE VIRTUAL HANDS-ON LAB
 
 Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 
 ![](assets/vhol_fivetran/image0.png)
-
-## 
 
 Format & Agenda
 
@@ -51,10 +43,6 @@ Sample Google Ads data will be provided if you do not have a Google Ads account.
 * 1. [**Sample Google Ads data \(Google Sheets\)**](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md) - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links -- all of these sheets are copies of the same data, you can use any link on that page. 
   2. [**dbt Project Github Repository URL**](https://github.com/fivetran/snowflake_fivetran_vhol) **\(**[**https://github.com/fivetran/snowflake\_fivetran\_vhol**](https://github.com/fivetran/snowflake_fivetran_vhol)**\)** 
   3. [**SQL Script file**](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) **-** Participants will load [this file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) into a Snowflake worksheet when prompted during the lab. Save this file where you can easily find it during the lab.
-
-## 
-
-## 
 
 Lab Script
 
@@ -116,7 +104,7 @@ With the growth of your data and business, so does the complexity involved in tr
 
 1. Click on Activate in the pop-up that appears. This will open a new browser tab and take you to Fivetran where you will enter a password for the trial account.
 
-### Fivetran
+## Fivetran
 
 ![](assets/vhol_fivetran/image14.png)
 
@@ -147,7 +135,7 @@ To log into Fivetran in the future, you can navigate to [https://fivetran.com/da
 
 #### 
 
-## 2. UPLOAD SAMPLE ADWORDS DATA WITH GOOGLE SHEETS
+2. UPLOAD SAMPLE ADWORDS DATA WITH GOOGLE SHEETS
 
 _**Note:**_ _The_ **Setup Fivetran dbt Transformations** _section assumes you have uploaded the sample data as outlined in this section. If you used your own Google Ads data, that is fine; you will just need to edit the dbt\_project.yml file as discussed in the next section._
 
@@ -267,7 +255,7 @@ This view shows you all of your Google Sheets connectors. Some of your connector
 
 **In Snowflake \(optional\):** When the sync is complete, you can see your schema and tables in Snowflake’s Worksheet view. You should be able to see the data in the tables by clicking into the **PC\_FIVETRAN\_DB** database, into the **GOOGLE\_ADS\_DEMO** schema, then clicking on one of the tables and then clicking **Preview Data**.
 
-## 3. FORK SAMPLE DBT PROJECT ON GITHUB
+3. FORK SAMPLE DBT PROJECT ON GITHUB
 
 _**Note:**_ _The_ **Setup Fivetran dbt Transformations** _section assumes you have uploaded the sample data as outlined in the previous section. If you use your own Google Ads data, that is fine; you will just need to edit the dbt\_project.yml file as discussed in this section._
 
@@ -331,9 +319,8 @@ This is where you can include outside packages to run! See [hub.getdbt.com](http
 
 This is a Fivetran-specific file that configures _what_ jobs will run _when_, leveraging a [crontab-style syntax](https://crontab.guru/) for scheduling. Documentation can be found in the file itself. Remember, as described above, you can edit files directly in Github!
 
-#### 
 
-## 4. SETUP FIVETRAN DBT TRANSFORMATIONS
+4. SETUP FIVETRAN DBT TRANSFORMATIONS
 
 In this section we will take the dbt project we created in the previous section, and run it via Fivetran to generate models! We will be showing how Fivetran is used to orchestrate dbt jobs, and the first step is to connect to your dbt project in Github. There are a lot of steps in this section, but for the most part they are not too complicated. Let’s get started!
 
@@ -651,10 +638,6 @@ _**Time Travel also enables you to query and replace tables as of a particular p
 1. ...and monthly/daily storage usage \(you won’t see much for storage yet since our data is small\). In addition to these screens you can query the Snowflake metadata layer for the same info and build reports in your favorite BI tool.
 
 This concludes the lab. We hope you learned a lot and are interested in exploring Fivetran and Snowflake for your use cases. Please feel free to ask questions.
-
-### 
-
-## 
 
 Status on the timeline, as per below.
 
