@@ -47,19 +47,24 @@ With the growth of your data and business, so does the complexity involved in tr
 ![Snowflake Worksheets](assets/vhol_fivetran/image29.png)  
 
 3. Let’s change our role and enable notifications. We need to work in the ACCOUNTADMIN role for this lab and notifications are how Snowflake will alert you when resource monitor thresholds have been crossed. Click on your User Name in the upper right-hand corner.  
-![Change role - step 1](assets/vhol_fivetran/image27.png)  
+<!--- ![Change role - step 1](assets/vhol_fivetran/image27.png)  -->
+<img src="assets/vhol_fivetran/image27.png" width="400">
 
 4. You’ll get a popup with 4 items; click on Switch Role.  
-![Change role - step 2](assets/vhol_fivetran/image22.png)  
+<!--- ![Change role - step 2](assets/vhol_fivetran/image22.png)  -->
+<img src="assets/vhol_fivetran/image22.png" width="400">
 
 5. Select ACCOUNTADMIN.  
-![Change role - step 3](assets/vhol_fivetran/image62.png)  
+<!--- ![Change role - step 3](assets/vhol_fivetran/image62.png)  -->
+<img src="assets/vhol_fivetran/image62.png" width="500">
 
 6. The UI will refresh and you should see ACCOUNTADMIN under your username. If you don’t, go back to step 5.  
-![Change role - step 4](assets/vhol_fivetran/image30.png)  
+<!--- ![Change role - step 4](assets/vhol_fivetran/image30.png)  -->
+<img src="assets/vhol_fivetran/image30.png" width="400">
 
 7. Click on your username again and you’ll get the same popup with 4 items; click on Preferences.  
-![Preferences - step 1](assets/vhol_fivetran/image59.png)  
+<!---![Preferences - step 1](assets/vhol_fivetran/image59.png)  -->
+<img src="assets/vhol_fivetran/image59.png" width="500">
 
 8. Click on Notifications.  
 ![Preferences - step 2](assets/vhol_fivetran/image137.png)  
@@ -68,7 +73,8 @@ With the growth of your data and business, so does the complexity involved in tr
 ![Preferences - step 3](assets/vhol_fivetran/image100.png)  
 
 10. Now let’s create your Fivetran account.  Click on the Partner Connect tile at the top of the UI...
-![Create Fivetran Account - step 1](assets/vhol_fivetran/image89.png)  
+<!--- ![Create Fivetran Account - step 1](assets/vhol_fivetran/image89.png)  -->
+<img src="assets/vhol_fivetran/image89.png" width="500">
 
 11. ...and then click on the Fivetran tile inside Snowflake Partner Connect. (if you aren’t in the ACCOUNTADMIN role you’ll receive a warning.  Go back and complete steps 6-9.)  
 ![Create Fivetran Account - step 2](assets/vhol_fivetran/image134.png)  
@@ -81,8 +87,9 @@ With the growth of your data and business, so does the complexity involved in tr
 
 <!-- ------------------------ -->
 
-## Fivetran - Configure Source
-![Fivetran](assets/vhol_fivetran/image79.png)  
+## Fivetran - Configure Source  
+<!-- ![Fivetran](assets/vhol_fivetran/image79.png) --> 
+<img src="assets/vhol_fivetran/image79.png" width="500">
 
 In the next three sections we will create an automated data pipeline, with an extract-load (ELT) architecture::
 1.	Extract and Load:
@@ -223,12 +230,15 @@ There are three very important configuration files to be aware, all at the top l
 ![Fork repo - 4](assets/vhol_fivetran/image24.png)  
 Various configuration settings are found in this file. Please see [dbt’s documentation](https://www.google.com/url?q=https://docs.getdbt.com/reference/dbt_project.yml&sa=D&source=editors&ust=1616123302487000&usg=AOvVaw12rRQqPxS0DgB5smw3o6Zj) for more information on these settings.
 
-**Did You Know?**  
+Positive
+: **Did You Know?**  
+*******************************************************************************  
 As previously mentioned, **if you want to use your own Google Ads data**, you will need to edit **dbt_project**.yml. You can edit files directly in Github using the pencil icon at the top of the file view (mid-upper right, to the right of the Blame button). All you need to do is remove or comment out the lines that say:  
 ```
     vars
-    google_ad_schema: 'GOOGLE_ADS_DEMO'
+        google_ad_schema: 'GOOGLE_ADS_DEMO'
 ```
+*******************************************************************************  
 That’s it! Remove those lines and you are good to go. This assumes, of course, that you loaded your own Google Ads data in the previous section! If you have an **ADWORDS** schema in your Snowflake warehouse, you successfully loaded Google Ads data.
 
 
@@ -249,7 +259,7 @@ In this section we will take the dbt project we created in the previous section,
 If you see this screen, please reach out to Fivetran sales -- we can enable dbt Transformations beta for your account.  
 ![Transformations - 1](assets/vhol_fivetran/image12.png)  
 
-1.If you have not already, **switch back to your Fivetran tab in your web browser**.
+1. If you have not already, **switch back to your Fivetran tab in your web browser**.
 First click on the **Transformations** section of your Fivetran interface. You should see the following interface. We will be clicking the button labeled **Try dbt Transformations**.
 ![Transformations - 2](assets/vhol_fivetran/image51.png)  
 
@@ -292,9 +302,10 @@ Phew! Done! If at any time you want to revoke Fivetran’s access to this reposi
 12. For **Default Schema Name** field, enter **GOOGLE_ADS_DBT** 
 ![Transformations - 10](assets/vhol_fivetran/image2.png)  
 
-As of this writing, you need to perform the next actions to continue.
-Positive
-: Github has changed their default branch name to “main”. This change was made very recently, and Fivetran has not yet caught up to the new naming convention. For the time being, for this guide, we will need to manually change the branch name.  
+    As of this writing, you need to perform the next actions to continue.  
+
+    **Note**: Github has changed their default branch name to “main”. This change was made very recently, and Fivetran has not yet caught up to the new naming convention. For the time being, for this guide, we will need to manually change the branch name.  
+<!--- FDP: Wish the above could be done as a positive box -->
 
 13. Click Show Advanced Options.
 ![Transformations - 10](assets/vhol_fivetran/image67.png)  
@@ -432,41 +443,241 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 20. ...and now you’re in!  Over 100 providers have made datasets available for you to enrich your data.  Today we’re going to grab a sample of weather data.  Click the Ready to Query checkbox…  
 ![Snowflake Part 2 - 20](assets/vhol_fivetran/image82.png)  
 
-And then find the Weather Source  tile.  Once you find it, click on it.  
+21. And then find the **Weather Source** tile.  Once you find it, click on it.  
+![Snowflake Part 2 - 21](assets/vhol_fivetran/image84.png)  
 
-Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click .
+22. Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click ![Get Data](assets/vhol_fivetran/image40.png).
+![Snowflake Part 2 - 22](assets/vhol_fivetran/image56.png)  
 
-In the pop-up, rename the database to WEATHERSOURCE (important!),  check the “I accept…” box and then .  No need to add additional roles (though you might in real-life).  
-What is happening here?  Weather Source has granted access to this data from their Snowflake account to yours.  You’re creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts!  When you query you’ll really be querying the data that lives in the Weather Source account.  If they change the data you’ll automatically see those changes.  No need to define schemas, move data,  or create a data pipeline either. Isn’t that slick?
+23. In the pop-up, rename the database to WEATHERSOURCE (**important!**),  check the “I accept…” box and then ![Snowflake Part 2 - 23](assets/vhol_fivetran/image26.png).  No need to add additional roles (though you might in real-life).  
+![Snowflake Part 2 - 24](assets/vhol_fivetran/image28.png)  
 
-Now click Done. You can close this browser tab and go back to the other Snowflake UI that you started in.
+    What is happening here?  Weather Source has granted access to this data from their Snowflake account to yours.  You’re creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts!  When you query you’ll really be querying the data that lives in the Weather Source account.  If they change the data you’ll automatically see those changes.  No need to define schemas, move data,  or create a data pipeline either. Isn’t that slick?
 
-Refresh the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you’ll see views under the PUBLIC schema. We’ll use one of these next.  
+24. Now click **Done**. You can close this browser tab and go back to the other Snowflake UI that you started in.
+![Snowflake Part 2 - 25](assets/vhol_fivetran/image31.png)  
 
-With production-sized data sets we are likely to have very large tables and complex queries; therefore, we might want to increase the amount of compute we’re using to perform this analysis.  In Snowflake this is fast and easy.  Run the statement in section G.  Notice how fast it scales up. No disruption. No shuffling of data.  We’ve changed from an XS (one node cluster) to an XL (16 node cluster) in seconds.  Ready to go!
+25. Refresh the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you’ll see views under the PUBLIC schema. We’ll use one of these next.  
+![Snowflake Part 2 - 26](assets/vhol_fivetran/image25.png)  
 
-So, let’s join that weather data to our Google Ads data and see if there is a correlation between clicks and snowfall.  Run the correlation query in section H. Remember that we’re actually joining data across two accounts, but the experience and performance is seamless and fast.  
- 
+26. With production-sized data sets we are likely to have very large tables and complex queries; therefore, we might want to increase the amount of compute we’re using to perform this analysis.  In Snowflake this is fast and easy.  Run the statement in section **G**.  Notice how fast it scales up. No disruption. No shuffling of data.  We’ve changed from an XS (one node cluster) to an XL (16 node cluster) in seconds.  Ready to go!
+![Snowflake Part 2 - 27](assets/vhol_fivetran/image110.png)  
 
-It’s a weak correlation so maybe our hypothesis isn’t worth exploring further. But our ability to quickly source Marketplace data and mash it with our own data has saved us lots of time and we can iterate further.
+27. So, let’s join that weather data to our Google Ads data and see if there is a correlation between clicks and snowfall.  Run the correlation query in section **H**. Remember that we’re actually joining data across two accounts, but the experience and performance is seamless and fast.  
+![Snowflake Part 2 - 28](assets/vhol_fivetran/image88.png)  
 
-Because this combination may yet have value, let’s create a view that combines the correlations with the URL data so others can take a look more easily.  Run the SQL in section I.  One creates the view and the other queries it.
-       
-Now that our heavy lifting is done, let’s scale down the warehouse size. No need to pay for more compute than we need. Run the SQL in section J.
+    It’s a weak correlation so maybe our hypothesis isn’t worth exploring further. But our ability to quickly source Marketplace data and mash it with our own data has saved us lots of time and we can iterate further.
+    ![Snowflake Part 2 - 29](assets/vhol_fivetran/image125.png)  
 
-For our last trick let’s imagine we’ve accidentally dropped the table we’re working with.  No one has ever done that!  Run the DROP statement in section K and then refresh the database browser.  Notice the table is gone.  Now run the UNDROP and refresh.  It’s back! This is the power of time travel.  You can restore lost data for up to 90 days of history.  
-Time Travel also enables you to query and replace tables as of a particular point in time or prior to a specific SQL statement.
+28. Because this combination may yet have value, let’s create a view that combines the correlations with the URL data so others can take a look more easily.  Run the SQL in section **I**.  One creates the view and the other queries it.
+![Snowflake Part 2 - 29](assets/vhol_fivetran/image34.png)  
 
-One last thing. How is our Snowflake consumption looking?  It’s easy to understand.  We’ll look in two places. First, you might have a Notification, so click on that tile.  When you have notifications enabled and resource monitors built, you’ll get notifications.
+29. Now that our heavy lifting is done, let’s scale down the warehouse size. No need to pay for more compute than we need. Run the SQL in section **J**.
+![Snowflake Part 2 - 30](assets/vhol_fivetran/image87.png)  
 
-See anything that looks like this?  These notifications come from the resource monitor we set up earlier in the lab.  You’ll also get emails with the same information.
+30. For our last trick let’s imagine we’ve accidentally dropped the table we’re working with.  No one has ever done that!  Run the DROP statement in section K and then refresh the database browser.  Notice the table is gone.  Now run the UNDROP and refresh.  It’s back! This is the power of time travel.  You can restore lost data for up to 90 days of history.  
+![Snowflake Part 2 - 31](assets/vhol_fivetran/image127.png)  
 
-Now, click on the Account tile.
+    Positive
+    : Time Travel also enables you to query and replace tables as of a particular point in time or prior to a specific SQL statement.
 
-Then click on Usage.
+31. One last thing. How is our Snowflake consumption looking?  It’s easy to understand.  We’ll look in two places. First, you might have a Notification, so click on that tile.  When you have notifications enabled and resource monitors built, you’ll get notifications.
+![Snowflake Part 2 - 32](assets/vhol_fivetran/image123.png)  
 
-Here you can see monthly/daily credit usage…
+32. See anything that looks like this?  These notifications come from the resource monitor we set up earlier in the lab.  You’ll also get emails with the same information.
+![Snowflake Part 2 - 33](assets/vhol_fivetran/image101.png)  
+![Snowflake Part 2 - 33](assets/vhol_fivetran/image101.png)<!-- .element style="width: 25%; border: 0; background: None; box-shadow: None" -->
+<img src="assets/vhol_fivetran/image101.png" width="400">
 
-...and monthly/daily storage usage (you won’t see much for storage yet since our data is small).  In addition to these screens you can query the Snowflake metadata layer for the same info and build reports in your favorite BI tool.  
+33. Now, click on the Account tile.
+![Snowflake Part 2 - 34](assets/vhol_fivetran/image16.png)  
+
+34. Then click on Usage.
+![Snowflake Part 2 - 35](assets/vhol_fivetran/image91.png)  
+
+35. Here you can see monthly/daily credit usage…
+![Snowflake Part 2 - 36](assets/vhol_fivetran/image19.png)  
+
+36. ...and monthly/daily storage usage (you won’t see much for storage yet since our data is small).  In addition to these screens you can query the Snowflake metadata layer for the same info and build reports in your favorite BI tool.  
+![Snowflake Part 2 - 37](assets/vhol_fivetran/image35.png)  
 
 **This concludes the lab.  We hope you learned a lot and are interested in exploring Fivetran and Snowflake for your use cases.  Please feel free to ask questions.**
+
+## Appendix I: Github Account Creation
+
+Enter a username, email address, and password.
+![Appendix I - 1](assets/vhol_fivetran/image120.png)  
+
+Solve the puzzle and continue!
+![Appendix I - 2](assets/vhol_fivetran/image114.png)  
+
+You can skip down to the bottom of this screen, or take the time to choose your interests.
+![Appendix I - 3](assets/vhol_fivetran/image99.png)  
+
+Choose Complete setup.
+![Appendix I - 4](assets/vhol_fivetran/image8.png)  
+
+Head to your email application and verify your email address.
+![Appendix I - 5](assets/vhol_fivetran/image131.png)  
+
+That’s it! You now have a Github account.
+![Appendix I - 6](assets/vhol_fivetran/image106.png)  
+
+## Appendix II: Snowflake Account Creation
+
+1. Go to <https://signup.snowflake.com/>.  
+
+2. Enter your personal information.  You need to use a valid email address that you can access and haven’t used previously.
+![Appendix II - 1](assets/vhol_fivetran/image14.png)  
+
+3. When you sign up for Snowflake it auto-populates to **Enterprise**. This is the best choice for this lab. Choose the cloud/region closest to you and click the "GET STARTED" button. 
+![Appendix II - 2](assets/vhol_fivetran/image115.png)  
+
+4. Your account will provision in 1-2 minutes and you will receive an email activation link like this to create a user.  Click on the ‘CLICK TO ACTIVATE’ link.  
+![Appendix II - 3](assets/vhol_fivetran/image76.png)  
+
+5. Next, you'll see this page your browser. Specify your username and password. Be sure to store your credentials in a safe location.  
+![Appendix II - 4](assets/vhol_fivetran/image47.png)  
+
+6. You will be logged in to your new account and it will look like this.  You will also receive another email with your username and account URL.  
+![Appendix II - 5](assets/vhol_fivetran/image5.png)  
+
+### Congratulations, you are ready to work in Snowflake!
+
+## Appendix III: Fivetran - Configure Google Adwords Connector
+
+Log into Fivetran and you should see the following screen, which shows our selection of source connectors. Use the type-down or the drop-down menu to find the [Google Ads](https://fivetran.com/docs/applications/google-ads) connector. If you have already setup your first connector, you may need to go to the Connectors tab in the Fivetran web application, and choose **+ Connector**.  
+![Appendix III - 1](assets/vhol_fivetran/image44.png)  
+
+The Fivetran Google Ads connector setup screen is shown below, before we begin to modify it. On the left are the configuration controls. On the right are inline, helpful setup instructions.  
+![Appendix III - 2](assets/vhol_fivetran/image78.png)  
+
+Obtain your customer ID per the instructions on the right.  
+![Appendix III - 3](assets/vhol_fivetran/image54.png)  
+
+And enter it in the field on the left. Click AUTHORIZE to sign in to Google.  
+![Appendix III - 4](assets/vhol_fivetran/image60.png)  
+
+Choose the account with which you wish to authenticate.  
+![Appendix III - 5](assets/vhol_fivetran/image139.png)  
+
+Authorize Fivetran to access your Google Ads data by clicking Allow.  
+![Appendix III - 5](assets/vhol_fivetran/image96.png)  
+
+Now we need to configure three reports. These three reports will give us the raw data that we will use to generate our models later. Each report will require:
+* A Destination Table Name
+* A Report Type
+* A selection of Fields  
+
+For each report, we will use Configuration Type: Use Custom Report.
+
+Positive
+: **Did You Know?**  
+*******************************************************************************  
+You can find the configuration requirements for these three reports in the documentation of the Fivetran dbt package for Google Ads we will be using later, [dbt_google_ads_source](https://hub.getdbt.com/fivetran/google_ads_source/latest/). You can always find a list of all of Fivetranour available packages on [dbt Hub](https://hub.getdbt.com/) and in our [documentation](https://fivetran.com/docs/transformations/dbt).  
+*******************************************************************************  
+Ads connectors, also known as Marketing connectors,  are different from most other Fivetran connectors in that, rather than replicate a set schema, you configure a series of reports. Each report becomes a table in the destination schema. This is necessary as the raw data that is returned from Ads connectors changes depending on the Fields chosen in the report. After the Hands-on Lab, you can always return to the connector setup and add more reports.
+
+For the first report, use the following configuration:
+* Destination Table Name: final_url_performance
+* Report Type: FINAL_URL_REPORT
+* Fields:
+    * AccountDescriptiveName
+    * AdGroupId
+    * AdGroupName
+    * AdGroupStatus
+    * CampaignId
+    * CampaignName
+    * CampaignStatus
+    * Clicks
+    * Cost
+    * Date
+    * EffectiveFinalUrl
+    * ExternalCustomerId
+    * Impressions  
+
+![Appendix III - 7](assets/vhol_fivetran/image39.png)  
+
+For the second report, use the following configuration:
+* Destination Table Name: criteria_performance
+* Report Type: CRITERIA_PERFORMANCE_REPORT
+* Fields:
+    * AccountDescriptiveName
+    * AdGroupId
+    * AdGroupName
+    * AdGroupStatus
+    * CampaignId
+    * CampaignName
+    * CampaignStatus
+    * Clicks
+    * Cost
+    * Criteria
+    * CriteriaDestinationUrl
+    * CriteriaType
+    * Date
+    * ExternalCustomerId
+    * Id
+    * Impressions  
+
+![Appendix III - 8](assets/vhol_fivetran/image73.png)  
+
+For the third report, use the following configuration:
+* Destination Table Name: click_performance
+* Report Type: CLICK_PERFORMANCE_REPORT
+* Fields:
+    * AccountDescriptiveName
+    * AdGroupId
+    * AdGroupName
+    * AdGroupStatus
+    * CampaignId
+    * CampaignName
+    * CampaignStatus
+    * Clicks
+    * CriteriaId
+    * Date
+    * ExternalCustomerId
+    * GclId  
+
+![Appendix III - 9](assets/vhol_fivetran/image46.png)  
+
+That’s it for setting up reports! To review, your connector configuration screen should look like the screen shot below:  
+![Appendix III - 10](assets/vhol_fivetran/image83.png)  
+
+Great! Now click **SAVE & TEST** to save your configuration.  
+![Appendix III - 11](assets/vhol_fivetran/image9.png)  
+
+Click CONTINUE to see the next screen, where you can **Start Initial Sync** to start the data flowing!  
+![Appendix III - 12](assets/vhol_fivetran/image113.png)  
+
+Positive
+: **Did You Know?**  
+*******************************************************************************  
+Fivetran does more than just sync Ad connector reports. Fivetran has over 170 source connectors that you can use to keep your data in sync in Snowflake.  With Fivetran’s Database (e.g.,x. Oracle, PostgreSQL) and Application (e.g., ex Salesforce, Marketo, NetSuite) connectors, your data is automatically kept up-to-date without any intervention on your part. Any schema changes to your source data are automatically updated in Snowflake with our Automatic Schema Migration technology. Never miss or lose data, and never worry about updating your data pipelines again.
+*******************************************************************************  
+Moreover, Fivetran keeps your data up-to-date on your schedule, with recurring syncs on the timetable you specify. Keep reading for more information.
+
+Before we start the first sync, let’s take a look at the configuration Fivetran provides for connectors.
+![Appendix III - 13](assets/vhol_fivetran/image7.png)  
+
+First let’s look at the **Schema** tab. Here, depending on the connector type, you can configure up to three settings:
+* Block a table from syncing to Snowflake.
+* Block a column from syncing to Snowflake.
+* Hash a column’s values before they are stored in Snowflake.
+    * Used to protect Personally Identifiable Information from being accessed by the users of the data, while maintaining the ability to SQL JOIN on those values.  
+![Appendix III - 14](assets/vhol_fivetran/image85.png)  
+
+With Ads connectors, you can enable or disable a particular report from syncing.
+
+Next let’s visit the **Setup** tab. There is one very important configuration tool here, and that is the Sync Frequency. This can be set to as frequently as every 5 minutes, to as infrequently as every 24 hours. Fivetran starts and stops the Snowflake warehouse used for data loading on demand, and is extremely efficient at data loading, so you only pay for the time Fivetran is actually loading data.  
+![Appendix III - 15](assets/vhol_fivetran/image129.png)  
+
+OK! That is it! The Schema setup in the **Schema** tab, and the Sync Frequency setting in the **Setup** tab are the only configuration details you need to manage, and even those can be left on the defaults for flawless operation! With that visited, let’s go back to the **Status** tab and start the sync!
+
+Once the **Start Initial Sync** button is clicked, you should see your sync start up.  
+![Appendix III - 16](assets/vhol_fivetran/image15.png)  
+
+While the sync is running, we can take a quick detour into the **Logs** tab. This is a real-time view into the data loading process. Fivetran offers ways to export these logs into your preferred log aggregation service. We even have a free connector called the [Fivetran Log](https://fivetran.com/docs/logs/fivetran-log) connector, that exports log data, schema operation metadata, and Fivetran credit consumption data!  
+![Appendix III - 17](assets/vhol_fivetran/image70.png)  
+
+For this demo, I chose to only sync 3 months of historical data, so the initial sync finished relatively quickly at two and a half minutes. When your sync has completed, you will see its status on the timeline, as per below.  
+![Appendix III - 13](assets/vhol_fivetran/image63.png)  
