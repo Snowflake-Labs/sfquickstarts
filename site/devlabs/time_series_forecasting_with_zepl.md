@@ -134,23 +134,43 @@ Positive
 TODO: Insert Picture of final notebook...
 
 <!-- ------------------------ -->
-## Install and Import Python Libaries
+## Query Snowflake
 Duration 5
 
-```
+
+<!-- ------------------------ -->
+## Install and Import Python Libaries
+Duration 5
+### Overview
+Zepl provides several options for loading libraries. The two most used are Custom Images ([Account Activation Required](https://new-docs.zepl.com/docs/getting-started/trial-and-billing#activate-your-organization)) and install during notebook run time. For this guide we will use the python package manager `pip` to install all of our required libraries
+
+### In the Zepl Notebook:
+Add this code to the first paragraph and select run paragraph:
+```sh
 %python
-# Download requirements.txt from prophet git repo
+# Download requirements.txt from prophet git repo to ensure all dependencies are installed
 !wget https://raw.githubusercontent.com/facebook/prophet/master/python/requirements.txt
+
 # Install libraries
 !pip install -r requirements.txt
 !pip install fbprophet
 ```
+Positive
+: Startup time: This code may take several minutes to complete execution. The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
 
+### Code Explained
+`!wget https://raw.githubusercontent.com/facebook/prophet/master/python/requirements.txt`</br>
+This statement uses the `!` to access the container cli and calls the `wget` linux command to download a text file containing all of the dependencies to the FBProphet library
 
-<!-- ------------------------ -->
-## Query Snowflake
-Duration 5
+`!pip install -r requirements.txt`</br>
+This statement uses the `!` to access the container cli and calls the `pip install` linux command to install the packages provided by the _requirements.txt_ file
 
+`!pip install fbprophet`</br>
+This statement installs the fbprophet library
+
+### Troubleshooting
+* Startup time: This code may take several minutes to complete execution. The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
+* Documentation on FBProphet: [Link](https://facebook.github.io/prophet/)
 
 <!-- ------------------------ -->
 ## Visualize Data
