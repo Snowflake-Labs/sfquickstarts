@@ -59,7 +59,7 @@ SELECT * FROM "ZEPL_US_STOCKS_DAILY"."PUBLIC"."STOCK_HISTORY" LIMIT 10
 ```
 
 Check if privileges are set correctly:
-This database needs to have `SELECT` privileges for a Role that your user has access to. Setting the `SELECT` privlage for the PUBLIC role will allow all users to read data from this database.
+This database needs to have `SELECT` privileges for a Role that your user has access to. Setting the `SELECT` privilege for the PUBLIC role will allow all users to read data from this database.
 * View privilege: [Doc](https://docs.snowflake.com/en/sql-reference/sql/show-grants.html)
 * Assign privileges: [Doc](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege.html)
 
@@ -79,7 +79,8 @@ Duration: 5
 </br> <img src="./assets/zepl_us_stock_datasource.png" width="600" height="900" />
 
 * __Account Details:__ Account, Warehouse, Database, and Schema should all match the values entered in Step 2
-* __Credentials:__ Username, Password, and Role should match the Snowflake user and role with permissions to query this database
+* __Credentials:__ Username, and Password and should match the Snowflake user and role with permissions to query this database
+ * __ROLE:__ Be sure this role has permissions to run the specified WAREHOUSE
 * __Credential Type:__ [Learn more here](https://new-docs.zepl.com/docs/connect-to-data/zepl-data-sources#data-source-security)
 
 #### *Troubleshooting* 
@@ -109,24 +110,24 @@ Zepl Containers are isolated environments that are used to execute code. Paired 
 
 __Image:__ [Doc](https://new-docs.zepl.com/docs/configure-infrastructure/images)
 
-Zepl Images can help you and your team save significant time by making creating reproducible environments for all notebooks to access. The Zepl Image builds all of the libaries required to run a notebook so your users dont have to worry about long wait times for installing libraries at the beginning of every notebook and hoping that each notebook environment is configured the same.
+Zepl Images can help you and your team save significant time by making creating reproducible environments for all notebooks to access. The Zepl Image builds all of the libraries required to run a notebook so your users don't have to worry about long wait times for installing libraries at the beginning of every notebook and hoping that each notebook environment is configured the same.
 
 __Spaces:__ [Doc](https://new-docs.zepl.com/docs/manage-your-organization/spaces)
 
 A Zepl Space is a collection of notebooks that can be shared with built-in access controls.  The "My Notebooks" space is a private space dedicated to your user only. Typically, new spaces are created for a specific project or working group; it's a place for a group of people who are working together on a set of data science problems.
 
-### Importing an existing notebook
+### Importing an existing notebook (optional)
 Positive
-: Complete notebook code can be found here: [Notebook](https://app.zepl.com/placecholder)
+: Complete notebook code can be found here: TODO: [Notebook](https://app.zepl.com/placecholder)
 
 [Zepl Documentation](https://new-docs.zepl.com/docs/using-the-zepl-notebook/zepl-notebook-experience/importing-notebooks)
 
 1. From any screen, Select _Add New_ (upper left)
 2. Select _+ Import Notebook_
 3. Type: _Fetch From URL_
-4. Paste either link in the textfield labeled _Link to your notebook_: 
- * link from Zepl's Published Notebook: `https://app.zepl.com/viewonlynotebook`
- * link from Github repository: `https://github.repo.reponame/viewonlynotebook`
+4. Paste either link in the text field labeled _Link to your notebook_: 
+ TODO: * link from Zepl's Published Notebook: `https://app.zepl.com/viewonlynotebook`
+ TODO: * link from Github repository: `https://github.repo.reponame/viewonlynotebook`
 5. Apply
 
 TODO: Insert Picture of final notebook...
@@ -134,7 +135,58 @@ TODO: Insert Picture of final notebook...
 <!-- ------------------------ -->
 ## Query Snowflake
 Duration: 5
-#### Attach Snowflake Data Source
+### Attach Snowflake Data Source
+[Zepl Documentation](https://new-docs.zepl.com/docs/connect-to-data/zepl-data-sources#attaching-a-data-source)
+1. In your notebook, select the Data Source icon <img src="./assets/zepl_datasource_icon.png" width="35" /> on the right hand side of the screen.
+2. Select the plus icon next to the data source labeled 'US_STOCKS_DAILY' which you created in step 3. </br>
+<img src="./assets/zepl_attach_datasource.png" width="350"/>
+
+### In the Zepl Notebook:
+First, Add this code to the first paragraph:
+
+```python
+%python
+import pandas as pd
+
+# Create a Snowflake Cursor Object
+cur = z.getDatasource("US_STOCKS_DAILY")
+
+# Un-comment if warehouse is not specified in the Data Source
+# cur.execute("USE WAREHOUSE COMPUTE_WH")
+
+# execute query
+cur.execute("""SELECT * FROM ZEPL_US_STOCKS_DAILY.PUBLIC.STOCK_HISTORY LIMIT 100""")
+
+# convert datasource into pandas dataframe
+df_100 = cur.fetch_pandas_all()
+
+# print dataframe as table
+z.show(df_100)
+```
+
+Second, Select Run Paragraph: <br/> 
+<img src="./assets/zepl_query_snowflake_simple.png" />
+
+#### Code Explained
+`import pandas as pd` <br/>
+Zepl's General Purpose Image pre-installs the pandas library so all you have to do is import.
+
+`cur = z.getDatasource("US_STOCKS_DAILY")`<br/>
+This function is used to access any data source that is attached to the notebook. A [Cursor object](https://docs.snowflake.com/en/user-guide/python-connector-api.html#object-cursor) is returned to the `cur` variable. The specific data source is specified by setting the string input to the corresponding name of your data source. Lastly, the data source must be attached to the notebook before starting the container.
+
+`cur.execute("""SELECT * FROM ZEPL_US_STOCKS_DAILY.PUBLIC.STOCK_HISTORY LIMIT 100""")`<br/>
+This will execute a specified query in Snowflake. 
+
+`df_100 = cur.fetch_pandas_all()`<br/>
+Return a Pandas DataFrame to the `df_100` variable using. See documentation for more details [here](https://docs.snowflake.com/en/user-guide/python-connector-api.html#fetch_pandas_all)
+
+### Troubleshooting:
+* A data source must be attached to the notebook while the container is _Stopped_.
+* Start your container and restart it any time you make a change to your data source, such as updating Account Details or Credentials.
+* Several Errors to look out for
+`ProgrammingError: 000606 (57P03): No active warehouse selected in the current session.  Select an active warehouse with the 'use warehouse' command.`
+Resolution:
+...
 
 
 
@@ -146,7 +198,7 @@ Duration: 5
 Zepl provides several options for loading libraries. The two most used are Custom Images ([Account Activation Required](https://new-docs.zepl.com/docs/getting-started/trial-and-billing#activate-your-organization)) and install during notebook run time. For this guide we will use the python package manager `pip` to install all of our required libraries
 
 ### In the Zepl Notebook:
-Add this code to the first paragraph and select run paragraph:
+Add this code to the first paragraph and select run paragraph <img src="" />:
 ```sh
 %python
 # Install fbprophet Deendencies
@@ -170,7 +222,6 @@ Add this code to the first paragraph and select run paragraph:
 ```python
 %python
 # Import Libraries
-import pandas as pd
 from fbprophet import Prophet
 ```
 
