@@ -44,13 +44,13 @@ Duration: 10
 1. Login to Snowflake > Open the Data Marketplace 
 2. Search for the 'US Stock Market Data for Data Science' 
 </br> <img src="./assets/zepl_marketplace_chicklet.png" width="200" height="400" />
-3. Select 'Get Data'. This user must have ACCOUNTADMIN privlages
+3. Select 'Get Data'. This user must have ACCOUNTADMIN privileges
 4. Assign a database name and roles for who should have access to this database
 5. Select Create Database > View Database
 </br> <img src="./assets/zepl_marketplace_get_data.png" />
 
 Positive
-: You must have ACCOUNTADMIN privlages to clone this data set
+: You must have ACCOUNTADMIN privileges to clone this data set
 
 #### *Troubleshooting* 
 Check if the database was created properly
@@ -58,10 +58,10 @@ Check if the database was created properly
 SELECT * FROM "ZEPL_US_STOCKS_DAILY"."PUBLIC"."STOCK_HISTORY" LIMIT 10
 ```
 
-Check if privlages are set correctly:
-This database needs to have `SELECT` privlages for a Role that your user has access to. Setting the `SELECT` privlage for the PUBLIC role will allow all users to read data from this database.
-* View Privlages: [Doc](https://docs.snowflake.com/en/sql-reference/sql/show-grants.html)
-* Assign Privlages: [Doc](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege.html)
+Check if privileges are set correctly:
+This database needs to have `SELECT` privileges for a Role that your user has access to. Setting the `SELECT` privlage for the PUBLIC role will allow all users to read data from this database.
+* View privilege: [Doc](https://docs.snowflake.com/en/sql-reference/sql/show-grants.html)
+* Assign privileges: [Doc](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege.html)
 
 <!-- ------------------------ -->
 ## Connect Zepl to Snowflake  
@@ -69,8 +69,6 @@ Duration: 5
 
 ### Create a Zepl Account:
 [Sign up for free using Partner Connect](https://new-docs.zepl.com/docs/getting-started/sign-up-for-zepl#snowflake-partner-connect)
-
-<!-- ### <video id="qDEHc2bhTek"></video> -->
 
 ### Connect to the US Stock Market Database
 [Zepl Documentation](https://new-docs.zepl.com/docs/connect-to-data/snowflake)
@@ -136,6 +134,8 @@ TODO: Insert Picture of final notebook...
 <!-- ------------------------ -->
 ## Query Snowflake
 Duration: 5
+#### Attach Snowflake Data Source
+
 
 
 <!-- ------------------------ -->
@@ -149,29 +149,41 @@ Zepl provides several options for loading libraries. The two most used are Custo
 Add this code to the first paragraph and select run paragraph:
 ```sh
 %python
-# Download requirements.txt from prophet git repo to ensure all dependencies are installed
-!wget https://raw.githubusercontent.com/facebook/prophet/master/python/requirements.txt
-
-# Install libraries
-!pip install -r requirements.txt
-!pip install fbprophet
+# Install fbprophet Deendencies
+!pip install pystan~=2.14 Cython>=0.22 cmdstanpy==0.9.68 numpy>=1.15.4 pandas>=1.0.4 matplotlib>=2.0.0 LunarCalendar>=0.0.9 convertdate>=2.1.2 holidays>=0.10.2 setuptools-git>=1.2 python-dateutil>=2.8.0 tqdm>=4.36.1
+# Install fbprophet Library
+!pip install fbprophet==0.7.1
 ```
+
 Positive
-: Startup time: This code may take several minutes to complete execution. The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
+: This code may take several minutes to complete execution. The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
 
-### Code Explained
-`!wget https://raw.githubusercontent.com/facebook/prophet/master/python/requirements.txt`</br>
-This statement uses the `!` to access the container cli and calls the `wget` linux command to download a text file containing all of the dependencies to the FBProphet library
+#### Code Explained
+`!pip install pystan~=2.14 Cython>=0.22 cmdstanpy==0.9.68 numpy>=1.15.4 pandas>=1.0.4 matplotlib>=2.0.0 LunarCalendar>=0.0.9 convertdate>=2.1.2 holidays>=0.10.2 setuptools-git>=1.2 python-dateutil>=2.8.0 tqdm>=4.36.1`</br>
+<p>This statement uses the `!` to access the container CLI and calls the `pip install` linux command to install the required libraries that support the facebook prophet library. Each version is specified to ensure the notebook runs consistently. </p>
 
-`!pip install -r requirements.txt`</br>
-This statement uses the `!` to access the container cli and calls the `pip install` linux command to install the packages provided by the _requirements.txt_ file
+`!pip install fbprophet==0.7.1`</br>
+<p>This statement installs the fbprophet library with a specific version.</p>
 
-`!pip install fbprophet`</br>
-This statement installs the fbprophet library
+#### Add new paragraph
+Add this code to the first paragraph and select run paragraph:
+```python
+%python
+# Import Libraries
+import pandas as pd
+from fbprophet import Prophet
+```
+
+#### Code Explained
+We must also import the libraries that were just installed in the previous paragraph.
+
+#### Full output of code:
+<img src="./assets/zepl_install_import_libraries.png" />
 
 ### Troubleshooting
 * Startup time: This code may take several minutes to complete execution. The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
-* Documentation on FBProphet: [Link](https://facebook.github.io/prophet/)
+* Documentation on Facebook Prophet: [Link](https://facebook.github.io/prophet/)
+* Known issue with the install documentation [here](https://facebook.github.io/prophet/docs/installation.html#python): A fix is outlined [here](ttps://github.com/facebook/prophet/issues/1856) and implemented in our code already
 
 <!-- ------------------------ -->
 ## Visualize Data
