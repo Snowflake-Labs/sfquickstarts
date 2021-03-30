@@ -54,7 +54,7 @@ With the growth of your data and business, so does the complexity involved in tr
 <!--- ![Change role - step 2](assets/vhol_fivetran/image22.png)  -->
 <img src="assets/vhol_fivetran/image22.png" width="400">
 
-5. Select ACCOUNTADMIN.  
+5. Select **ACCOUNTADMIN**.  
 <!--- ![Change role - step 3](assets/vhol_fivetran/image62.png)  -->
 <img src="assets/vhol_fivetran/image62.png" width="500">
 
@@ -66,23 +66,23 @@ With the growth of your data and business, so does the complexity involved in tr
 <!---![Preferences - step 1](assets/vhol_fivetran/image59.png)  -->
 <img src="assets/vhol_fivetran/image59.png" width="500">
 
-8. Click on Notifications.  
+8. Click on **Notifications**.  
 ![Preferences - step 2](assets/vhol_fivetran/image137.png)  
 
-9. Select All, which will send notifications to your email address and this UI (in the Notifications tile in the upper right).  
+9. Select **All**, which will send notifications to your email address and this UI (in the Notifications tile in the upper right).  
 ![Preferences - step 3](assets/vhol_fivetran/image100.png)  
 
-10. Now let’s create your Fivetran account.  Click on the Partner Connect tile at the top of the UI...
+10. Now let’s create your Fivetran account.  Click on the **Partner Connect** tile at the top of the UI...
 <!--- ![Create Fivetran Account - step 1](assets/vhol_fivetran/image89.png)  -->
 <img src="assets/vhol_fivetran/image89.png" width="500">
 
 11. ...and then click on the Fivetran tile inside Snowflake Partner Connect. (if you aren’t in the ACCOUNTADMIN role you’ll receive a warning.  Go back and complete steps 6-9.)  
 ![Create Fivetran Account - step 2](assets/vhol_fivetran/image134.png)  
 
-12. Click on Connect.  
+12. Click on **Connect**.  
 ![Create Fivetran Account - step 2](assets/vhol_fivetran/image122.png)  
 
-13.	Click on Activate in the pop-up that appears. This will open a new browser tab and take you to Fivetran where you will enter a password for the trial account. 
+13.	Click on **Activate** in the pop-up that appears. This will open a new browser tab and take you to Fivetran where you will enter a password for the trial account. 
 ![Create Fivetran Account - step 3](assets/vhol_fivetran/image61.png)  
 
 <!-- ------------------------ -->
@@ -209,7 +209,7 @@ This section assumes that you have created a Github account and are logged into 
 * Explore the files in the project.
 
 When you click [https://github.com/fivetran/snowflake_fivetran_vhol](https://github.com/fivetran/snowflake_fivetran_vhol) and you are logged in, you should see the following screen. Notice the user / owner is **fivetran** and the repository is named **snowflake_fivetran_vhol**.
-1. On the upper right (but below your user icon) is a Fork button. Click it!
+1. On the upper right (but below your user icon) is a **Fork** button. Click it!
 ![Fork repo - 1](assets/vhol_fivetran/image10.png)  
   
 2. If you have access to multiple github accounts, you will have the option to select into which account to fork this repository. Choose your personal user account.  
@@ -263,13 +263,13 @@ If you see this screen, please reach out to Fivetran sales -- we can enable dbt 
 First click on the **Transformations** section of your Fivetran interface. You should see the following interface. We will be clicking the button labeled **Try dbt Transformations**.
 ![Transformations - 2](assets/vhol_fivetran/image51.png)  
 
-2. Click Enable dbt Transformations
+2. Click **Enable dbt Transformations**
 ![Transformations - 3](assets/vhol_fivetran/image72.png)  
 
-3. Click I am ready to connect my Git repo.
+3. Click **I am ready to connect my Git repo**.
 ![Transformations - 4](assets/vhol_fivetran/image104.png)  
 
-4. Now we will configure the connection to Github. Next to Public Key, click Copy to Clipboard (the papers icon).
+4. Now we will configure the connection to Github. Next to **Public Key**, click **Copy to Clipboard** (the papers icon).
 ![Transformations - 5](assets/vhol_fivetran/image92.png)  
 
 5. On the Github repository we created above (your_username/snowflake_fivetran_vhol) click on **Settings** (farthest-right of the tabs under the repository name.)
@@ -296,7 +296,7 @@ Phew! Done! If at any time you want to revoke Fivetran’s access to this reposi
 **Note**: it is safe to ignore errors about not having an SSH key configured here. The Deploy Key we configured will give Fivetran access to this repository.
 ![Transformations - 10](assets/vhol_fivetran/image93.png)  
 
-11. Paste the value into the Repository URL field.
+11. Paste the value into the **Repository URL** field.
 ![Transformations - 10](assets/vhol_fivetran/image13.png)  
 
 12. For **Default Schema Name** field, enter **GOOGLE_ADS_DBT** 
@@ -307,10 +307,10 @@ Phew! Done! If at any time you want to revoke Fivetran’s access to this reposi
     **Note**: Github has changed their default branch name to “main”. This change was made very recently, and Fivetran has not yet caught up to the new naming convention. For the time being, for this guide, we will need to manually change the branch name.  
 <!--- FDP: Wish the above could be done as a positive box -->
 
-13. Click Show Advanced Options.
+13. Click **Show Advanced Options**.
 ![Transformations - 10](assets/vhol_fivetran/image67.png)  
 
-14. Change the Git branch field’s value to **main**.  
+14. Change the **Git branch** field’s value to **main**.  
 ![Transformations - 10](assets/vhol_fivetran/image133.png)  
 
 15. Click **SAVE**. Then when you see the green success message, click **TRANSFORMATIONS**.
@@ -319,7 +319,7 @@ Phew! Done! If at any time you want to revoke Fivetran’s access to this reposi
 16. That’s it! Your dbt project  is now configured to run and be orchestrated with Fivetran. In the upper right corner, there is a toggle switch, **Activate dbt Transformations**. Click this switch to start your transformations running.
 ![Transformations - 10](assets/vhol_fivetran/image33.png)  
 
-17. Now if left to their own devices, your transformations will run on the schedules listed below. As a reminder, these schedules are configured in the **deployment.yml** file, as discussed in the previous section. But let’s run one right away! Click on the **weekdays** line item.  
+17. Now if left to their own devices, your transformations will run on the schedules listed below. As a reminder, these schedules are configured in the [deployment.yml](https://github.com/crw/snowflake_fivetran_vhol/blob/main/deployment.yml) file, as discussed in the previous section. But let’s run one right away! Click on the **weekdays** line item.  
 ![Transformations - 10](assets/vhol_fivetran/image109.png)  
 
 18. In the upper right corner, click **Run now** (the circular arrow icon.)
@@ -356,14 +356,14 @@ The two packages we use in this lab are the Google Ads packages:
 You can save considerable development time by leveraging Fivetran’s open source dbt packages with data delivered by Fivetran. Now that you have a running dbt project, feel free to try including more packages!
 
 ***
-The Summary So Far: Maintenance-free data pipelines and powerful in-warehouse transformations
+The summary so far: Maintenance-free data pipelines and powerful in-warehouse transformations
 
 In the previous sections, we learned the following skills:
 * How to setup a Fivetran connector (in this case, a Google Sheets connector)
 * How to create a dbt project by forking the snowflake_fivetran_vhol sample repository
 * How to enable dbt Transformations in Fivetran by connecting our repository
 
-In doing so, we have set up a complete, end-to-end modern data pipeline focusing on the advantages of the Extract-Load-Transform (ELT) architectural approach. Data loading is extremely simple to configure and comes with the benefit of hands-free maintenance, forever. dbt is a powerful transformation tool that comes with many open source Fivetran modeling packages out-of-the-box. Moreover, Fivetran manages the execution of those transformation jobs, and the jobs run natively in the Snowflake warehouse, exposing all of the power of Snowflake’s query engine to your transformations.
+In doing so, we have set up a complete, end-to-end modern data pipeline focusing on the advantages of the Extract-Load-Transform (ELT) architectural approach. Data loading is extremely simple to configure and comes with the benefit of hands-free maintenance, forever. dbt is a powerful transformation tool that comes with many open source Fivetran modeling packages out-of-the-box. Moreover, Fivetran manages the execution of those transformation jobs, and the jobs run natively in the Snowflake warehouse, exposing all of the pßower of Snowflake’s query engine to your transformations.
 
 ## Snowflake - Part Two
 1. Back in the Snowflake UI, let’s take a quick look at the query history to see all the work that Fivetran/dbt performed.  
@@ -375,10 +375,10 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 3. Change the left box to User and select PC_FIVETRAN_USER in the right box.  All of the Fivetran/dbt queries executed as this user.  
 ![Snowflake Part 2 - 3](assets/vhol_fivetran/image69.png)  
 
-4. In the table below you can see all of these queries. Scroll down. Click on a SQL text value and you’ll see a pop-up of the specific SQL statement. You can read about this UI screen [here](https://docs.snowflake.com/en/user-guide/ui-history.html).  
+4. In the table below you can see all of these queries. Scroll down. Click on a SQL Text value and you’ll see a pop-up of the specific SQL statement. You can read about this UI screen [here](https://docs.snowflake.com/en/user-guide/ui-history.html).  
 ![Snowflake Part 2 - 4](assets/vhol_fivetran/image65.png)  
 
-5. Click on the Worksheets tile at the top.
+5. Click on the **Worksheets** tile at the top.
 ![Snowflake Part 2 - 5](assets/vhol_fivetran/image81.png)  
 
 6. Your screen will look like this.  This is where we will do most of our remaining work.
@@ -429,16 +429,16 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 16. These are interesting results, but you have a hypothesis:  clicks increase with snowy weather.  Let’s go to the Snowflake Data Marketplace and find what we need.  The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab).  Click on Preview App at the top of the UI.
 ![Snowflake Part 2 - 16](assets/vhol_fivetran/image11.png)  
 
-17. Click "Sign in to continue".  You will need to use the same user and pw that you used to login to your Snowflake account the first time.
+17. Click **Sign in to continue**.  You will need to use the same user and pw that you used to login to your Snowflake account the first time.
 ![Snowflake Part 2 - 17](assets/vhol_fivetran/image17.png)  
 
-18. You’re now in the new UI - Snowsight.  It’s pretty cool - with charting and dashboards and context-sensitivity - but today we’re just focused on getting to the Data Marketplace.  Click on Data…
+18. You’re now in the new UI - Snowsight.  It’s pretty cool - with charting and dashboards and context-sensitivity - but today we’re just focused on getting to the Data Marketplace.  Click on **Data**…
 ![Snowflake Part 2 - 18](assets/vhol_fivetran/image23.png)  
 
-19. ...and then Marketplace…  
+19. ...and then **Marketplace**…  
 ![Snowflake Part 2 - 19](assets/vhol_fivetran/image55.png)  
 
-20. ...and now you’re in!  Over 100 providers have made datasets available for you to enrich your data.  Today we’re going to grab a sample of weather data.  Click the "Ready to Query" checkbox…  
+20. ...and now you’re in!  Over 100 providers have made datasets available for you to enrich your data.  Today we’re going to grab a sample of weather data.  Click the **Ready to Query** checkbox…  
 ![Snowflake Part 2 - 20](assets/vhol_fivetran/image82.png)  
 
 21. And then find the **Weather Source** tile.  Once you find it, click on it.  
@@ -486,10 +486,10 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 ![Snowflake Part 2 - 33](assets/vhol_fivetran/image101.png)<!-- .element style="width: 25%; border: 0; background: None; box-shadow: None" -->
 <img src="assets/vhol_fivetran/image101.png" width="400">
 
-33. Now, click on the Account tile.  
+33. Now, click on the **Account** tile.  
 ![Snowflake Part 2 - 34](assets/vhol_fivetran/image16.png)  
 
-34. Then click on Usage.  
+34. Then click on **Usage**.  
 ![Snowflake Part 2 - 35](assets/vhol_fivetran/image91.png)  
 
 35. Here you can see monthly/daily credit usage…  
@@ -511,7 +511,7 @@ Solve the puzzle and continue!
 You can skip down to the bottom of this screen, or take the time to choose your interests.
 ![Appendix I - 3](assets/vhol_fivetran/image99.png)  
 
-Choose Complete setup.
+Choose **Complete setup**.
 ![Appendix I - 4](assets/vhol_fivetran/image8.png)  
 
 Head to your email application and verify your email address.
@@ -530,7 +530,7 @@ That’s it! You now have a Github account.
 3. When you sign up for Snowflake it auto-populates to **Enterprise**. This is the best choice for this lab. Choose the cloud/region closest to you and click the "GET STARTED" button. 
 ![Appendix II - 2](assets/vhol_fivetran/image115.png)  
 
-4. Your account will provision in 1-2 minutes and you will receive an email activation link like this to create a user.  Click on the ‘CLICK TO ACTIVATE’ link.  
+4. Your account will provision in 1-2 minutes and you will receive an email activation link like this to create a user.  Click on the **CLICK TO ACTIVATE** link.  
 ![Appendix II - 3](assets/vhol_fivetran/image76.png)  
 
 5. Next, you'll see this page your browser. Specify your username and password. Be sure to store your credentials in a safe location.  
@@ -552,13 +552,13 @@ The Fivetran Google Ads connector setup screen is shown below, before we begin t
 Obtain your customer ID per the instructions on the right.  
 ![Appendix III - 3](assets/vhol_fivetran/image54.png)  
 
-And enter it in the field on the left. Click AUTHORIZE to sign in to Google.  
+And enter it in the field on the left. Click **AUTHORIZE** to sign in to Google.  
 ![Appendix III - 4](assets/vhol_fivetran/image60.png)  
 
 Choose the account with which you wish to authenticate.  
 ![Appendix III - 5](assets/vhol_fivetran/image139.png)  
 
-Authorize Fivetran to access your Google Ads data by clicking Allow.  
+Authorize Fivetran to access your Google Ads data by clicking **Allow**.  
 ![Appendix III - 5](assets/vhol_fivetran/image96.png)  
 
 Now we need to configure three reports. These three reports will give us the raw data that we will use to generate our models later. Each report will require:
@@ -643,7 +643,7 @@ That’s it for setting up reports! To review, your connector configuration scre
 Great! Now click **SAVE & TEST** to save your configuration.  
 ![Appendix III - 11](assets/vhol_fivetran/image9.png)  
 
-Click CONTINUE to see the next screen, where you can **Start Initial Sync** to start the data flowing!  
+Click **CONTINUE** to see the next screen, where you can **Start Initial Sync** to start the data flowing!  
 ![Appendix III - 12](assets/vhol_fivetran/image113.png)  
 
 Positive
