@@ -55,7 +55,7 @@ Log in to the web interface on your browser. The URL contains your [account name
 
 The Snowflake web interface has a lot to offer, but for now, we’ll just switch the account role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow the user account to create objects.
 
-![account-role-change-image](assets/Snowflake_SwitchRole.png)
+![account-role-change-image](_shared_assets/Snowflake_SwitchRole.png)
 
 ### Download the SnowSQL Installer 
 

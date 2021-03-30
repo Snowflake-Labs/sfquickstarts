@@ -117,11 +117,31 @@ gulp.task('clean', gulp.parallel(
   'clean:dist',
 ));
 
-// build:codelabs copies the codelabs from the directory into build.
-gulp.task('build:codelabs', (done) => {
+// copy copies the built artifacts in build into dist/
+gulp.task('copy:codelabs', (done) => {
   copyFilteredCodelabs('build');
   done();
 });
+
+// export:codelabs exports the codelabs
+gulp.task('export:codelabs', (callback) => {
+  const source = args.source;
+
+  if (source !== undefined) {
+    const sources = Array.isArray(source) ? source : [source];
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+  } else {
+    const sources = ["[^_]*/*.md"]; //export all markdown files in the src directory
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+  }
+});
+
+
+// build:codelabs copies the codelabs from the directory into build.
+gulp.task('build:codelabs', gulp.series(
+  'export:codelabs',
+  'copy:codelabs',
+));
 
 // build:scss builds all the scss files into the dist dir
 gulp.task('build:scss', () => {
@@ -334,6 +354,11 @@ gulp.task('watch:images', () => {
   gulp.watch('app/images/**/*', gulp.series('build:images'));
 });
 
+// watch:codelabs watches image files for changes and updates them
+gulp.task('watch:codelabs', () => {
+  gulp.watch('sfguides/src/**/**', gulp.series('build:codelabs'));
+});
+
 gulp.task('watch:fonts', () => {
   gulp.watch('app/fonts/**/*', gulp.series('build:fonts'));
 });
@@ -376,24 +401,6 @@ gulp.task('serve:dist', gulp.series('dist', () => {
   return gulp.src('dist')
     .pipe(webserver(opts.webserver()));
 }));
-
-//
-// Codelabs
-//
-// codelabs:export exports the codelabs
-gulp.task('codelabs:export', (callback) => {
-  const source = args.source;
-
-  if (source !== undefined) {
-    const sources = Array.isArray(source) ? source : [source];
-    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
-  } else {
-    const sources = ["*/*.md"]; //export all markdown files in the src directory
-    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
-  }
-});
-
-
 
 //
 // Helpers

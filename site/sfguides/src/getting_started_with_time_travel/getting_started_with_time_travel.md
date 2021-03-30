@@ -1,7 +1,7 @@
 summary: Use Time Travel to query previous database states and undrop data.
 Id: getting_started_with_time_travel
-categories: Getting Started
-environments: web
+categories: Getting Started, hello test
+environments: test, web, hello
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, SQL, Data Engineering
@@ -54,7 +54,7 @@ Log in to the web interface on your browser. The URL contains your [account name
 
 Snowflake’s web interface has a lot to offer, but for now, switch the account role from the default `SYSADMIN` to `ACCOUNTADMIN`. You’ll need this increase in permissions later.
 
-![account-role-change-image](assets/Snowflake_SwitchRole.png)
+![account-role-change-image](_shared_assets/Snowflake_SwitchRole.png)
 
 Now that you have the account and user permissions needed, let’s create the required database objects to test drive Time Travel.
 

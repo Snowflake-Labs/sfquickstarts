@@ -2,7 +2,7 @@
 #
 # init.sh
 #
-# Automate these steps to get yourself up and running with SFGuide:
+# Automate these steps to get yourself up and running with SFGuides:
 # * Create boilerplate for SFGuide
 # * Configure a nodemon watch command to rebuild your sfguide on save
 # - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + -
@@ -29,13 +29,13 @@ SFGUIDE_NAME=$1
 AUTHOR_NAME=`git config user.name`
 
 # local variables
-sfguide_markdown_filename="markdown/$SFGUIDE_NAME/$SFGUIDE_NAME.md"
-sfguide_package_json_filename="markdown/$SFGUIDE_NAME/package.json"
-markdown_template="markdown/_template/markdown.template"
-package_json_template="markdown/_template/package.json"
+sfguide_markdown_filename="src/$SFGUIDE_NAME/$SFGUIDE_NAME.md"
+sfguide_package_json_filename="src/$SFGUIDE_NAME/package.json"
+markdown_template="src/_template/markdown.template"
+package_json_template="src/_template/package.json"
 #in MacOS sed creates a backup file if zero length extension is not specified e.g. ''
 backup_md="$sfguide_markdown_filename-e"
-backup_package_json="markdown/$SFGUIDE_NAME/package.json-e"
+backup_package_json="src/$SFGUIDE_NAME/package.json-e"
 
 # validate that markdown template and package.json exist
 if [ ! -f "$markdown_template" ] || [ ! -f "$package_json_template" ]; then
@@ -48,11 +48,11 @@ if [ ! -f "$markdown_template" ] || [ ! -f "$package_json_template" ]; then
 fi
 
 # Create a new directory for the sfguide 
-mkdir markdown/$SFGUIDE_NAME
-cp -r markdown/_template/* markdown/$SFGUIDE_NAME/
+mkdir src/$SFGUIDE_NAME
+cp -r src/_template/* src/$SFGUIDE_NAME/
 
 # rename markdown template file 
-mv markdown/$SFGUIDE_NAME/markdown.template $sfguide_markdown_filename
+mv src/$SFGUIDE_NAME/markdown.template $sfguide_markdown_filename
 
 # replace placeholder sfguide id in markdown template file with name provided by command line argument 
 sed -i \
@@ -77,7 +77,7 @@ if [ -f "$backup_package_json" ]; then
   rm $backup_package_json
 fi
 
-echo "Markdown file created! Find it at $PWD/markdown/$SFGUIDE_NAME"
+echo "Markdown file created! Find it at $PWD/src/$SFGUIDE_NAME"
 
 command_exists claat
 command_exists go

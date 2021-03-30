@@ -14,7 +14,7 @@ const spawn = childprocess.spawn;
 //
 exports.run = (cwd, cmd, env, fmt, ga, o, args, callback) => {
   args.unshift(cmd, '-e', env, '-f', fmt, '-ga', ga, '-o', o);
-  const proc = spawn('claat', ["export -ga=UA-41491190-9 -o ../dist/ */*.md"], { stdio: 'inherit', cwd: cwd, env: process.env, shell: true });
+  const proc = spawn('claat', args, { stdio: 'inherit', cwd: cwd, env: process.env, shell: true });
 
   proc.on('close', (e) => {
     if (e) {

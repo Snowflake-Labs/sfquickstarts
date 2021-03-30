@@ -165,6 +165,12 @@ Videos from youtube can be directly embedded:
 ![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
 
 <!-- ------------------------ -->
+## Importing markdown files
+Duration: 1
+<<_imports/sample_import.md>>
+
+
+<!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
