@@ -148,7 +148,7 @@ Then, click the **FIND SHEET** button. This step will take a few moments.
 9. Great! The Google Sheets connector is now syncing. Let’s setup the next table. Click the **Connectors** menu.  
 ![Fivetran - Google Sheet8](assets/vhol_fivetran/image86.png)  
 
-10. Click the **+Connector** button.  
+10. Click the **+ Connetor** button.  
 ![Fivetran - Google Sheet9](assets/vhol_fivetran/image36.png)  
 
 11. Please use the following values for the two fields:
@@ -169,7 +169,7 @@ Then, click the **FIND SHEET** button. This step will take a few moments.
 15. Click **Start Initial Sync**. Then click **Connectors** on the left-hand menu.
 ![Fivetran - Google Sheet14](assets/vhol_fivetran/image38.png)  
 
-16. Click **+Connector**.  
+16. Click **+ Connetor**.  
 ![Fivetran - Google Sheet15](assets/vhol_fivetran/image108.png)  
 
 17. Please use the following values for the two fields:
@@ -201,7 +201,7 @@ In Snowflake (optional): When the sync is complete, you can see your schema and 
 ## Fork Sample dbt Project on Github
 **Note**: The **Setup Fivetran dbt Transformations** section assumes you have uploaded the sample data as outlined in the previous section. If you use your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in this section.  
 
-For your convenience, we have created a sample dbt Github project that is already configured to work with Fivetran’s [dbt_google_ads_source](https://www.google.com/url?q=https://hub.getdbt.com/fivetran/google_ads_source/latest/&sa=D&source=editors&ust=1616123302483000&usg=AOvVaw2r7uAHS1Okl5knfS-lpr86) and [dbt_google_ads](https://www.google.com/url?q=https://hub.getdbt.com/fivetran/google_ads/latest/&sa=D&source=editors&ust=1616123302483000&usg=AOvVaw1OGB7IJl8EVHyaECoXvnzN) packages. You can find the sample repository at the following link:
+For your convenience, we have created a sample dbt Github project that is already configured to work with Fivetran’s [dbt_google_ads_source](https://hub.getdbt.com/fivetran/google_ads_source/latest/) and [dbt_google_ads](https://hub.getdbt.com/fivetran/google_ads/latest/) packages. You can find the sample repository at the following link:
 https://github.com/fivetran/snowflake_fivetran_vhol
 
 This section assumes that you have created a Github account and are logged into that account. In this section we are going to:
@@ -226,9 +226,9 @@ There are three very important configuration files to be aware, all at the top l
 * **packages.yml** - include packages that bring functionality to your dbt project, like those provided by Fivetran to enhance your data!
 * **deployment.yml** - a Fivetran-specific configuration file that controls how frequently the dbt jobs run.  
 
-[dbt_project.yml](https://www.google.com/url?q=https://docs.getdbt.com/reference/dbt_project.yml&sa=D&source=editors&ust=1616123302486000&usg=AOvVaw3tOoO16UMtb2dT-ldpUCLr):
+[dbt_project.yml](https://github.com/crw/snowflake_fivetran_vhol/blob/main/dbt_project.yml):
 ![Fork repo - 4](assets/vhol_fivetran/image24.png)  
-Various configuration settings are found in this file. Please see [dbt’s documentation](https://www.google.com/url?q=https://docs.getdbt.com/reference/dbt_project.yml&sa=D&source=editors&ust=1616123302487000&usg=AOvVaw12rRQqPxS0DgB5smw3o6Zj) for more information on these settings.
+Various configuration settings are found in this file. Please see [dbt’s documentation](https://docs.getdbt.com/reference/dbt_project.yml) for more information on these settings.
 
 Positive
 : **Did You Know?**  
@@ -243,12 +243,12 @@ That’s it! Remove those lines and you are good to go. This assumes, of course,
 
 
 
-[packages.yml](https://www.google.com/url?q=https://docs.getdbt.com/docs/building-a-dbt-project/package-management&sa=D&source=editors&ust=1616123302488000&usg=AOvVaw0mVWJwtkcUvOHE1PGohkBN):  
-This is where you can include outside packages to run! See [hub.getdbt.com](https://www.google.com/url?q=https://hub.getdbt.com/&sa=D&source=editors&ust=1616123302488000&usg=AOvVaw3vWJiGnPdXFOZEu0p6886O) for a complete list and installation instructions. As of this writing, Fivetran has created over 17 packages, including packages for Netsuite, Salesforce, Twitter Ads, Marketo, Zendesk, Mailchimp, and more!
+[packages.yml](https://github.com/crw/snowflake_fivetran_vhol/blob/main/packages.yml):  
+This is where you can include outside packages to run! See [hub.getdbt.com](https://hub.getdbt.com/) for a complete list and installation instructions. As of this writing, Fivetran has created over 17 packages, including packages for Netsuite, Salesforce, Twitter Ads, Marketo, Zendesk, Mailchimp, and more!
 ![Fork repo - 5](assets/vhol_fivetran/image32.png)  
 
-[deployment.yml](https://www.google.com/url?q=https://fivetran.com/docs/transformations/dbt/setup-guide&sa=D&source=editors&ust=1616123302488000&usg=AOvVaw1H4myfl4hw7MaHE-_zyakS):  
-This is a Fivetran-specific file that configures what jobs will run when, leveraging a [crontab-style syntax](https://www.google.com/url?q=https://crontab.guru/&sa=D&source=editors&ust=1616123302488000&usg=AOvVaw37ngUNRxeXmiuPSeCTB6O5) for scheduling. Documentation can be found in the file itself. Remember, as described above, you can edit files directly in Github!
+[deployment.yml](https://github.com/crw/snowflake_fivetran_vhol/blob/main/deployment.yml):  
+This is a Fivetran-specific file that configures what jobs will run when, leveraging a [crontab-style syntax](https://crontab.guru/) for scheduling. Documentation can be found in the file itself. Remember, as described above, you can edit files directly in Github!
 
 ## Set Up Fivetran dbt Transformations
 
@@ -272,13 +272,13 @@ First click on the **Transformations** section of your Fivetran interface. You s
 4. Now we will configure the connection to Github. Next to Public Key, click Copy to Clipboard (the papers icon).
 ![Transformations - 5](assets/vhol_fivetran/image92.png)  
 
-5. On the Github repository we created above (your_username/snowflake_fivetran_vhol) click on Settings (farthest-right of the tabs under the repository name.)
+5. On the Github repository we created above (your_username/snowflake_fivetran_vhol) click on **Settings** (farthest-right of the tabs under the repository name.)
 ![Transformations - 6](assets/vhol_fivetran/image49.png)  
 
 6. On the left-hand navigation, click on **Deploy Keys** (lower half, under Integrations, above Secrets).
 ![Transformations - 7](assets/vhol_fivetran/image102.png)  
 
-7. Click Add deploy key, on the mid-upper-right hand side of the screen.
+7. Click **Add deploy key**, on the mid-upper-right hand side of the screen.
 ![Transformations - 8](assets/vhol_fivetran/image98.png)  
 
 8. Give the deploy key a memorable, distinct title, like **Fivetran dbt access**.
@@ -288,7 +288,7 @@ Click **Add key**
 ![Transformations - 9](assets/vhol_fivetran/image128.png)  
 Phew! Done! If at any time you want to revoke Fivetran’s access to this repository, come back to this screen and delete the deploy key we just created.
 
-9. Before leaving Github, return to the Code tab.
+9. Before leaving Github, return to the **Code** tab.
 ![Transformations - 10](assets/vhol_fivetran/image111.png)  
 
 10. Now click the green **Code** button. Make sure the **SSH** tab is selected, and copy the:
@@ -310,7 +310,7 @@ Phew! Done! If at any time you want to revoke Fivetran’s access to this reposi
 13. Click Show Advanced Options.
 ![Transformations - 10](assets/vhol_fivetran/image67.png)  
 
-14. Change the Git branch field’s value to main.  
+14. Change the Git branch field’s value to **main**.  
 ![Transformations - 10](assets/vhol_fivetran/image133.png)  
 
 15. Click **SAVE**. Then when you see the green success message, click **TRANSFORMATIONS**.
@@ -347,11 +347,11 @@ The tables created by these models do the following:
     * Each record represents a click, with a corresponding Google click ID (gclid).
 
 **Did You Know?**
-All of the code that produces these models is open source! Fivetran officially supports over 20 open source dbt packages that model data delivered by Fivetran, typically to provide commonly required aggregations. You can see all of the available packages at [https://hub.getdbt.com/](https://www.google.com/url?q=https://hub.getdbt.com/&sa=D&source=editors&ust=1616123302497000&usg=AOvVaw0zEJ52E9YUtuKf1Gz4Rwes) - scroll down to the Fivetran section.
+All of the code that produces these models is open source! Fivetran officially supports over 20 open source dbt packages that model data delivered by Fivetran, typically to provide commonly required aggregations. You can see all of the available packages at [https://hub.getdbt.com/](https://hub.getdbt.com/) - scroll down to the Fivetran section.
 
 The two packages we use in this lab are the Google Ads packages:
-[google_ads_source](https://www.google.com/url?q=https://hub.getdbt.com/fivetran/google_ads_source/latest/&sa=D&source=editors&ust=1616123302497000&usg=AOvVaw19z1rjxBB-RXdPCtaeia62) [source code on github](https://www.google.com/url?q=https://github.com/fivetran/dbt_google_ads_source&sa=D&source=editors&ust=1616123302497000&usg=AOvVaw1L0tUGWWVSn9yNCJAAu51Y)
-[google_ads](https://www.google.com/url?q=https://hub.getdbt.com/fivetran/google_ads/latest/&sa=D&source=editors&ust=1616123302497000&usg=AOvVaw3holp_SRh0yky0EZNwKZH6) [source code on github](https://www.google.com/url?q=https://github.com/fivetran/dbt_google_ads&sa=D&source=editors&ust=1616123302498000&usg=AOvVaw1SFHDO9gMKFphvik037p4N)
+[google_ads_source](https://hub.getdbt.com/fivetran/google_ads_source/latest/) [source code on github](https://github.com/fivetran/dbt_google_ads_source)
+[google_ads](https://hub.getdbt.com/fivetran/google_ads/latest/) [source code on github](https://github.com/fivetran/dbt_google_ads)
 
 You can save considerable development time by leveraging Fivetran’s open source dbt packages with data delivered by Fivetran. Now that you have a running dbt project, feel free to try including more packages!
 
@@ -369,13 +369,13 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 1. Back in the Snowflake UI, let’s take a quick look at the query history to see all the work that Fivetran/dbt performed.  
 ![Snowflake Part 2 - 1](assets/vhol_fivetran/image53.png)  
 
-2. Click on Add a filter.  
+2. Click on **Add a filter**.  
 ![Snowflake Part 2 - 2](assets/vhol_fivetran/image20.png)  
 
-3. Change the left box to User and select PC_FIVETRAN_USER in the right box.  All of the Fivetran/ dbt queries executed as this user.  
+3. Change the left box to User and select PC_FIVETRAN_USER in the right box.  All of the Fivetran/dbt queries executed as this user.  
 ![Snowflake Part 2 - 3](assets/vhol_fivetran/image69.png)  
 
-4. In the table below you can see all of these queries. Scroll down. Click on a SQL text value and you’ll see a pop-up of the specific SQL statement. You can read about this UI screen here.  
+4. In the table below you can see all of these queries. Scroll down. Click on a SQL text value and you’ll see a pop-up of the specific SQL statement. You can read about this UI screen [here](https://docs.snowflake.com/en/user-guide/ui-history.html).  
 ![Snowflake Part 2 - 4](assets/vhol_fivetran/image65.png)  
 
 5. Click on the Worksheets tile at the top.
@@ -395,7 +395,7 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
  
 10. Let’s start our work performing DBA functions.   We need to set the context we want to use within the worksheet.  In each worksheet I can have a different role,  warehouse, database, and schema.  Each worksheet is independent of the others (like Snowflake compute!).  My worksheet role can also be different from the role I have in the upper right-hand corner under my name.  
 
-    Let’s execute the SQL in script section A to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the ![Run](assets/vhol_fivetran/image136.png) button.  
+    Let’s execute the SQL in script section A to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the <img src="assets/vhol_fivetran/image136.png" width="60"> button.  
 
     (You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.)  
 
@@ -405,33 +405,31 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
     ![Snowflake Part 2 - 11](assets/vhol_fivetran/image80.png)  
 
 11. Let’s pretend that the data we loaded and transformed with Fivetran is our production data.  We only want it to be changed by our Fivetran process.  Since our analysts will want to experiment with and change the data,  we’ll **CLONE** the entire PC_FIVETRAN_DB database so they can have their own sandbox.  This is a logical copy; it will consume no additional space unless the data in the clone starts to change.  This is a fantastic tool for creating as many sandboxes as you need.  It also works well for making time-specific snapshots.  
-
-    Positive
-    : Cloning reduces time to value  - full production clones are fast and support more accurate analytical results because they are rich and complete data sets.
-
+    
+    : _Cloning reduces time to value  - full production clones are fast and support more accurate analytical results because they are rich and complete data sets._  
+    
 12. Run the **Create Database** SQL and the **Use Schema** commands in section **B** to make a clone, then refresh the database browser with the (small) ![Refresh](assets/vhol_fivetran/image130.png)   button:
 ![Snowflake Part 2 - 12](assets/vhol_fivetran/image103.png)  
 
     Now your analysts have GOOGLE_ADS_DEV - a complete clone of PC_FIVETRAN_DB.  
 
-13. Next we need to create a warehouse (compute) for the analysts. For this workshop we’ll create an Extra Small - the smallest unit of Snowflake compute - with an auto suspend time of 2 minutes and auto resume enabled.  Auto resume means it will start up when a request is made.  Run the SQL in section C to create the warehouse.  Notice that this warehouse is now in your worksheet context.
+13. Next we need to create a warehouse (compute) for the analysts. For this workshop we’ll create an Extra Small - the smallest unit of Snowflake compute - with an auto suspend time of 2 minutes and auto resume enabled.  Auto resume means it will start up when a request is made.  Run the SQL in section **C** to create the warehouse.  Notice that this warehouse is now in your worksheet context.
  ![Snowflake Part 2 - 13](assets/vhol_fivetran/image97.png)  
-
-    Positive
-    : Snowflake compute is unique.  It’s (1) easy to define and manage; (2) fast to activate and suspend; (3) self-suspending; (4) self-healing; (5) isolated from the storage layer; (6) isolated  from other compute; (7) quick to scale up/down and out/in; (8) non-disruptive when any of this is happening.
-
+    
+    : _Snowflake compute is unique.  It’s (1) easy to define and manage; (2) fast to activate and suspend; (3) self-suspending; (4) self-healing; (5) isolated from the storage layer; (6) isolated  from other compute; (7) quick to scale up/down and out/in; (8) non-disruptive when any of this is happening._
+    
 14. For our last act as DBA we’ll create a **resource monitor** to track warehouse consumption.  Resource monitors are convenient tools for setting time-based consumption thresholds on compute at the warehouse or account level.  You can set alerts for various thresholds and even prevent a warehouse from running once it reaches a credit value that you set.
 ![Snowflake Part 2 - 14](assets/vhol_fivetran/image4.png)  
 
-    Run the two SQL statements in section D to create a resource monitor that has a daily 20 credit limit, sends an alert at 5%, 10%, 50%, and 99% thresholds, and suspends the warehouse at 100% (20 credits).  The second statement associates the resource monitor to the warehouse.   
+    Run the two SQL statements in section **D** to create a resource monitor that has a daily 20 credit limit, sends an alert at 5%, 10%, 50%, and 99% thresholds, and suspends the warehouse at 100% (20 credits).  The second statement associates the resource monitor to the warehouse.   
 
-15. Now we’ll switch to ‘Analyst mode’. In real life this would be a different person with a different userid and a different Role.  An analyst might write a query like the one in section E of the script to answer the question “What was the best performing cranberry sauce campaign?” Go ahead and run it.  We’re working with tiny data sets in the lab but in reality we might run over millions or billions of rows.
+15. Now we’ll switch to ‘Analyst mode’. In real life this would be a different person with a different userid and a different Role.  An analyst might write a query like the one in section **E** of the script to answer the question “What was the best performing cranberry sauce campaign?” Go ahead and run it.  We’re working with tiny data sets in the lab but in reality we might run over millions or billions of rows.
 ![Snowflake Part 2 - 15](assets/vhol_fivetran/image112.png)  
 
 16. These are interesting results, but you have a hypothesis:  clicks increase with snowy weather.  Let’s go to the Snowflake Data Marketplace and find what we need.  The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab).  Click on Preview App at the top of the UI.
 ![Snowflake Part 2 - 16](assets/vhol_fivetran/image11.png)  
 
-17. Click ‘Sign in to continue’.  You will need to use the same user and pw that you used to login to your Snowflake account the first time.
+17. Click "Sign in to continue".  You will need to use the same user and pw that you used to login to your Snowflake account the first time.
 ![Snowflake Part 2 - 17](assets/vhol_fivetran/image17.png)  
 
 18. You’re now in the new UI - Snowsight.  It’s pretty cool - with charting and dashboards and context-sensitivity - but today we’re just focused on getting to the Data Marketplace.  Click on Data…
@@ -440,16 +438,16 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 19. ...and then Marketplace…  
 ![Snowflake Part 2 - 19](assets/vhol_fivetran/image55.png)  
 
-20. ...and now you’re in!  Over 100 providers have made datasets available for you to enrich your data.  Today we’re going to grab a sample of weather data.  Click the Ready to Query checkbox…  
+20. ...and now you’re in!  Over 100 providers have made datasets available for you to enrich your data.  Today we’re going to grab a sample of weather data.  Click the "Ready to Query" checkbox…  
 ![Snowflake Part 2 - 20](assets/vhol_fivetran/image82.png)  
 
 21. And then find the **Weather Source** tile.  Once you find it, click on it.  
 ![Snowflake Part 2 - 21](assets/vhol_fivetran/image84.png)  
 
-22. Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click ![Get Data](assets/vhol_fivetran/image40.png).
+22. Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click <img src="assets/vhol_fivetran/image40.png" width="60">.
 ![Snowflake Part 2 - 22](assets/vhol_fivetran/image56.png)  
 
-23. In the pop-up, rename the database to WEATHERSOURCE (**important!**),  check the “I accept…” box and then ![Snowflake Part 2 - 23](assets/vhol_fivetran/image26.png).  No need to add additional roles (though you might in real-life).  
+23. In the pop-up, rename the database to WEATHERSOURCE (**important!**),  check the “I accept…” box and then <img src="assets/vhol_fivetran/image26.png" width="100">.  No need to add additional roles (though you might in real-life).  
 ![Snowflake Part 2 - 24](assets/vhol_fivetran/image28.png)  
 
     What is happening here?  Weather Source has granted access to this data from their Snowflake account to yours.  You’re creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts!  When you query you’ll really be querying the data that lives in the Weather Source account.  If they change the data you’ll automatically see those changes.  No need to define schemas, move data,  or create a data pipeline either. Isn’t that slick?
@@ -475,27 +473,26 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 29. Now that our heavy lifting is done, let’s scale down the warehouse size. No need to pay for more compute than we need. Run the SQL in section **J**.
 ![Snowflake Part 2 - 30](assets/vhol_fivetran/image87.png)  
 
-30. For our last trick let’s imagine we’ve accidentally dropped the table we’re working with.  No one has ever done that!  Run the DROP statement in section K and then refresh the database browser.  Notice the table is gone.  Now run the UNDROP and refresh.  It’s back! This is the power of time travel.  You can restore lost data for up to 90 days of history.  
+30. For our last trick let’s imagine we’ve accidentally dropped the table we’re working with.  No one has ever done that!  Run the DROP statement in section **K** and then refresh the database browser.  Notice the table is gone.  Now run the UNDROP and refresh.  It’s back! This is the power of time travel.  You can restore lost data for up to 90 days of history.  
 ![Snowflake Part 2 - 31](assets/vhol_fivetran/image127.png)  
-
-    Positive
-    : Time Travel also enables you to query and replace tables as of a particular point in time or prior to a specific SQL statement.
-
-31. One last thing. How is our Snowflake consumption looking?  It’s easy to understand.  We’ll look in two places. First, you might have a Notification, so click on that tile.  When you have notifications enabled and resource monitors built, you’ll get notifications.
+    
+    : _Time Travel also enables you to query and replace tables as of a particular point in time or prior to a specific SQL statement._  
+    
+31. One last thing. How is our Snowflake consumption looking?  It’s easy to understand.  We’ll look in two places. First, you might have a Notification, so click on that tile.  When you have notifications enabled and resource monitors built, you’ll get notifications.  
 ![Snowflake Part 2 - 32](assets/vhol_fivetran/image123.png)  
 
-32. See anything that looks like this?  These notifications come from the resource monitor we set up earlier in the lab.  You’ll also get emails with the same information.
+32. See anything that looks like this?  These notifications come from the resource monitor we set up earlier in the lab.  You’ll also get emails with the same information.  
 ![Snowflake Part 2 - 33](assets/vhol_fivetran/image101.png)  
 ![Snowflake Part 2 - 33](assets/vhol_fivetran/image101.png)<!-- .element style="width: 25%; border: 0; background: None; box-shadow: None" -->
 <img src="assets/vhol_fivetran/image101.png" width="400">
 
-33. Now, click on the Account tile.
+33. Now, click on the Account tile.  
 ![Snowflake Part 2 - 34](assets/vhol_fivetran/image16.png)  
 
-34. Then click on Usage.
+34. Then click on Usage.  
 ![Snowflake Part 2 - 35](assets/vhol_fivetran/image91.png)  
 
-35. Here you can see monthly/daily credit usage…
+35. Here you can see monthly/daily credit usage…  
 ![Snowflake Part 2 - 36](assets/vhol_fivetran/image19.png)  
 
 36. ...and monthly/daily storage usage (you won’t see much for storage yet since our data is small).  In addition to these screens you can query the Snowflake metadata layer for the same info and build reports in your favorite BI tool.  
