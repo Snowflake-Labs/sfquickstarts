@@ -148,7 +148,7 @@ Then, click the **FIND SHEET** button. This step will take a few moments.
 9. Great! The Google Sheets connector is now syncing. Let’s setup the next table. Click the **Connectors** menu.  
 ![Fivetran - Google Sheet8](assets/vhol_fivetran/image86.png)  
 
-10. Click the **+ Connetor** button.  
+10. Click the **+ Connector** button.  
 ![Fivetran - Google Sheet9](assets/vhol_fivetran/image36.png)  
 
 11. Please use the following values for the two fields:
