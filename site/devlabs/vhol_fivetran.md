@@ -10,14 +10,14 @@ authors: Snowflake
 # Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 5 minutes
+
+With the growth of your data and business, so does the complexity involved in traditional approaches and architecture. Snowflake and Fivetran have partnered to bring you the Data Cloud and the most automated data integration solution which helps customers simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance. In this virtual hands-on lab, you will follow a step-by-step guide to perform marketing analytics for Google Ads data by using Fivetran, Snowflake, and dbt. Let’s get started. 
 
 ### Prerequisites
 To participate in the virtual hands-on lab, attendees need the following:
 
-1. Prior to attending the lab
-
-    * Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: [link])(https://github.com/join).  See appendix 1 for step-by-step instructions. 
+    * Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: [link])(https://github.com/join/).  See appendix 1 for step-by-step instructions. 
 
     * Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
 
@@ -26,7 +26,7 @@ To participate in the virtual hands-on lab, attendees need the following:
     * OPTIONAL: Google Ads account credentials. 
 Sample Google Ads data will be provided if you do not have a Google Ads account.
 
-2. During the lab
+### What You'll Need During the Lab
  
     * [Sample Google Ads data](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md) - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links -- all of these sheets are copies of the same data, you can use any link on that page.
 
@@ -36,10 +36,23 @@ Sample Google Ads data will be provided if you do not have a Google Ads account.
 
         * [SQL Script file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) - Participants will load [this file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) into a Snowflake worksheet when prompted during the lab.  Save this file where you can easily find it during the lab.
 
-### Introduction
-With the growth of your data and business, so does the complexity involved in traditional approaches and architecture. Snowflake and Fivetran have partnered to bring you the Data Cloud and the most automated data integration solution which helps customers simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance. In this virtual hands-on lab, you will follow a step-by-step guide to perform marketing analytics for Google Ads data by using Fivetran, Snowflake, and dbt. Let’s get started. 
+### What You'll Learn
+
+    * How to begin a Fivetran trial through Snowflake's Partner Connect
+
+    * How to load Google Ads data into Snowflake using Fivetran
+
+    * How to run a dbt project via Fivetran to generate models
+
+    * How to create analyst sandboxes in Snowflake using clones
+
+    * How to leverage data in Snowflake's Data Marketplace 
+
+### What You'll Build
+    * A sophisticated marketing data analytics pipeline leveraging Fivetran, dbt, and Snowflake
 
 ## Snowflake Configuration 
+Duration: 10 minutes
 1. Login to your Snowflake trial account.  
 ![Snowflake Log In Screen](assets/vhol_fivetran/image124.png)  
 
@@ -88,6 +101,7 @@ With the growth of your data and business, so does the complexity involved in tr
 <!-- ------------------------ -->
 
 ## Fivetran - Configure Source  
+Duration: 5 minutes
 <!-- ![Fivetran](assets/vhol_fivetran/image79.png) --> 
 <img src="assets/vhol_fivetran/image79.png" width="500">
 
@@ -110,6 +124,7 @@ To log into Fivetran in the future, you can navigate to [https://fivetran.com/da
 ![Fivetran - Source](assets/vhol_fivetran/image3.png)  
 
 ## Upload Sample Adwords Data With Google Sheets
+Duration: 20 minutes
 **Note**: The **Setup Fivetran dbt Transformations** section assumes you have uploaded the sample data as outlined in this section. If you used your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in the next section.
 
 For your convenience we have included sample Google Adwords data in the form of a Google Sheets containing three workbooks. Each workbook corresponds to a table to be synced to the Snowflake warehouse. This gives us the opportunity to explore another Fivetran feature, the Google Sheets connector. Google Sheets is, in fact, the most popular connector used by Fivetran customers. In the next section, we will:
@@ -199,6 +214,7 @@ This view shows you all of your Google Sheets connectors. Some of your connector
 In Snowflake (optional): When the sync is complete, you can see your schema and tables in Snowflake’s Worksheet view. You should be able to see the data in the tables by clicking into the **PC_FIVETRAN_DB** database, into the **GOOGLE_ADS_DEMO** schema, then clicking on one of the tables and then clicking **Preview Data**.
 
 ## Fork Sample dbt Project on Github
+Duration: 15 minutes
 **Note**: The **Setup Fivetran dbt Transformations** section assumes you have uploaded the sample data as outlined in the previous section. If you use your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in this section.  
 
 For your convenience, we have created a sample dbt Github project that is already configured to work with Fivetran’s [dbt_google_ads_source](https://hub.getdbt.com/fivetran/google_ads_source/latest/) and [dbt_google_ads](https://hub.getdbt.com/fivetran/google_ads/latest/) packages. You can find the sample repository at the following link:
@@ -251,7 +267,7 @@ This is where you can include outside packages to run! See [hub.getdbt.com](http
 This is a Fivetran-specific file that configures what jobs will run when, leveraging a [crontab-style syntax](https://crontab.guru/) for scheduling. Documentation can be found in the file itself. Remember, as described above, you can edit files directly in Github!
 
 ## Set Up Fivetran dbt Transformations
-
+Duration: 20 minutes
 In this section we will take the dbt project we created in the previous section, and run it via Fivetran to generate models! We will be showing how Fivetran is used to orchestrate dbt jobs, and the first step is to connect to your dbt project in Github. There are a lot of steps in this section, but for the most part they are not too complicated. Let’s get started!
 
 **Note: dbt Transformations in Fivetran are in beta** as of this writing. Depending how you signed up for your Fivetran trial, you may or may not see the option to “Try dbt Transformations”. If you do not see this option, please reach out to us and we will try to get you enabled to try this feature.  
@@ -366,6 +382,7 @@ In the previous sections, we learned the following skills:
 In doing so, we have set up a complete, end-to-end modern data pipeline focusing on the advantages of the Extract-Load-Transform (ELT) architectural approach. Data loading is extremely simple to configure and comes with the benefit of hands-free maintenance, forever. dbt is a powerful transformation tool that comes with many open source Fivetran modeling packages out-of-the-box. Moreover, Fivetran manages the execution of those transformation jobs, and the jobs run natively in the Snowflake warehouse, exposing all of the pßower of Snowflake’s query engine to your transformations.
 
 ## Snowflake - Part Two
+Duration: 15 minutes
 1. Back in the Snowflake UI, let’s take a quick look at the query history to see all the work that Fivetran/dbt performed.  
 ![Snowflake Part 2 - 1](assets/vhol_fivetran/image53.png)  
 
@@ -395,12 +412,19 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
  
 10. Let’s start our work performing DBA functions.   We need to set the context we want to use within the worksheet.  In each worksheet I can have a different role,  warehouse, database, and schema.  Each worksheet is independent of the others (like Snowflake compute!).  My worksheet role can also be different from the role I have in the upper right-hand corner under my name.  
 
-    Let’s execute the SQL in script section A to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the <img src="assets/vhol_fivetran/image136.png" width="60"> button.  
+    Let’s execute the SQL in script section **A** to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the <img src="assets/vhol_fivetran/image136.png" width="60"> button.  
 
 Positive
 : ❗ **Pro Tip:** You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.
 
-    ![Snowflake Part 2 - 10](assets/vhol_fivetran/image45.png)  
+```
+-----
+--A--
+-----
+--Let's set our worksheet role and db/schema
+use role ACCOUNTADMIN;
+use schema PC_FIVETRAN_DB.GOOGLE_ADS_DBT;
+```
 
     Notice that your worksheet context now has a default role, database, and schema but no warehouse (yet).  
     ![Snowflake Part 2 - 11](assets/vhol_fivetran/image80.png)  
@@ -409,23 +433,77 @@ Positive
     
     : _Cloning reduces time to value  - full production clones are fast and support more accurate analytical results because they are rich and complete data sets._  
     
-12. Run the **Create Database** SQL and the **Use Schema** commands in section **B** to make a clone, then refresh the database browser with the (small) ![Refresh](assets/vhol_fivetran/image130.png)   button:
-![Snowflake Part 2 - 12](assets/vhol_fivetran/image103.png)  
+12. Run the **Create Database** SQL and the **Use Schema** commands in section **B** to make a clone, then refresh the database browser with the (small) ![Refresh](assets/vhol_fivetran/image130.png) button:  
+```
+-----
+--B--
+-----
+--Make a new DEV db and schema and then clone the 3 key tables for isolated analysis and experimentation
+create database GOOGLE_ADS_DEV clone PC_FIVETRAN_DB;
+use schema GOOGLE_ADS_DEV.GOOGLE_ADS_DBT;
+```
 
     Now your analysts have GOOGLE_ADS_DEV - a complete clone of PC_FIVETRAN_DB.  
 
-13. Next we need to create a warehouse (compute) for the analysts. For this workshop we’ll create an Extra Small - the smallest unit of Snowflake compute - with an auto suspend time of 2 minutes and auto resume enabled.  Auto resume means it will start up when a request is made.  Run the SQL in section **C** to create the warehouse.  Notice that this warehouse is now in your worksheet context.
- ![Snowflake Part 2 - 13](assets/vhol_fivetran/image97.png)  
+13. Next we need to create a warehouse (compute) for the analysts. For this workshop we’ll create an Extra Small - the smallest unit of Snowflake compute - with an auto suspend time of 2 minutes and auto resume enabled.  Auto resume means it will start up when a request is made.  Run the SQL in section **C** to create the warehouse.  Notice that this warehouse is now in your worksheet context.  
+```
+-----
+--C--
+-----
+--Create a virtual warehouse (compute) for the Marketing Analyst team to do their work
+create or replace warehouse MKT_ANALYSIS 
+with 
+warehouse_size = 'XSMALL' 
+auto_suspend = 120 --seconds
+auto_resume = TRUE;
+```
     
     : _Snowflake compute is unique.  It’s (1) easy to define and manage; (2) fast to activate and suspend; (3) self-suspending; (4) self-healing; (5) isolated from the storage layer; (6) isolated  from other compute; (7) quick to scale up/down and out/in; (8) non-disruptive when any of this is happening._
     
 14. For our last act as DBA we’ll create a **resource monitor** to track warehouse consumption.  Resource monitors are convenient tools for setting time-based consumption thresholds on compute at the warehouse or account level.  You can set alerts for various thresholds and even prevent a warehouse from running once it reaches a credit value that you set.
-![Snowflake Part 2 - 14](assets/vhol_fivetran/image4.png)  
+```
+-----
+--D--
+-----
+--Create a resource monitor to track credit usage of the marketing virtual warehouse
+create or replace RESOURCE MONITOR "MARKETING_ANALYSIS" 
+with 
+CREDIT_QUOTA = 20, 
+frequency = 'DAILY', 
+start_timestamp = 'IMMEDIATELY', 
+end_timestamp = null 
+ triggers 
+ ON 100 PERCENT DO SUSPEND
+ on 5 PERCENT do NOTIFY 
+ on 10 PERCENT do NOTIFY 
+ on 50 PERCENT do NOTIFY 
+ on 90 PERCENT do NOTIFY;
+ 
+alter WAREHOUSE "MKT_ANALYSIS" set RESOURCE_MONITOR = "MARKETING_ANALYSIS";
+```
 
     Run the two SQL statements in section **D** to create a resource monitor that has a daily 20 credit limit, sends an alert at 5%, 10%, 50%, and 99% thresholds, and suspends the warehouse at 100% (20 credits).  The second statement associates the resource monitor to the warehouse.   
 
 15. Now we’ll switch to ‘Analyst mode’. In real life this would be a different person with a different userid and a different Role.  An analyst might write a query like the one in section **E** of the script to answer the question “What was the best performing cranberry sauce campaign?” Go ahead and run it.  We’re working with tiny data sets in the lab but in reality we might run over millions or billions of rows.
-![Snowflake Part 2 - 15](assets/vhol_fivetran/image112.png)  
+```
+-----
+--E--
+-----
+--What was the best performing cranberry sauce campaign?
+select 
+ad_group_name, 
+campaign_name, 
+sum(spend) as TOT_SPEND, 
+sum(clicks) as TOT_CLICKS, 
+sum(impressions) as TOT_IMPRESSIONS,
+sum(impressions)/sum(spend) as IMPRESSIONS_PER_DOLLAR,
+sum(spend)/sum(clicks) as cost_per_click
+from 
+GOOGLE_ADS__URL_AD_ADAPTER
+where ad_group_name = 'cranberry sauce'
+group by ad_group_name, campaign_name
+order by 6 desc;
+```
 
 16. These are interesting results, but you have a hypothesis:  clicks increase with snowy weather.  Let’s go to the Snowflake Data Marketplace and find what we need.  The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab).  Click on Preview App at the top of the UI.
 ![Snowflake Part 2 - 16](assets/vhol_fivetran/image11.png)  
@@ -460,22 +538,84 @@ Positive
 ![Snowflake Part 2 - 26](assets/vhol_fivetran/image25.png)  
 
 26. With production-sized data sets we are likely to have very large tables and complex queries; therefore, we might want to increase the amount of compute we’re using to perform this analysis.  In Snowflake this is fast and easy.  Run the statement in section **G**.  Notice how fast it scales up. No disruption. No shuffling of data.  We’ve changed from an XS (one node cluster) to an XL (16 node cluster) in seconds.  Ready to go!
-![Snowflake Part 2 - 27](assets/vhol_fivetran/image110.png)  
+```
+-----
+--G--
+----- 
+--With production-sized data sets we might want to join and query tables with billions of rows
+--In these cases it's easy and productive to scale up our virtual warehouse so these queries run faster
+alter warehouse mkt_analysis set warehouse_size = 'XLARGE';
+```
 
 27. So, let’s join that weather data to our Google Ads data and see if there is a correlation between clicks and snowfall.  Run the correlation query in section **H**. Remember that we’re actually joining data across two accounts, but the experience and performance is seamless and fast.  
-![Snowflake Part 2 - 28](assets/vhol_fivetran/image88.png)  
+```
+-----
+--H--
+-----
+--Is there any correlation between clicks and snowfall for any ad group?
+select 
+ad_group_name,
+abs(corr(clicks,w.tot_snowfall_in)) as clicks_snow_corr
+from 
+GOOGLE_ADS__URL_AD_ADAPTER ga, 
+"WEATHERSOURCE"."PUBLIC"."HISTORY_DAY" w
+where ga.date_day = w.date_valid_std
+group by 1
+order by 2 desc;
+```
 
     It’s a weak correlation so maybe our hypothesis isn’t worth exploring further. But our ability to quickly source Marketplace data and mash it with our own data has saved us lots of time and we can iterate further.
     ![Snowflake Part 2 - 29](assets/vhol_fivetran/image125.png)  
 
 28. Because this combination may yet have value, let’s create a view that combines the correlations with the URL data so others can take a look more easily.  Run the SQL in section **I**.  One creates the view and the other queries it.
-![Snowflake Part 2 - 29](assets/vhol_fivetran/image34.png)  
+```
+-----
+--I--
+-----
+--Let's create new view with the correlations built in to the URL_AD_ADAPTER data
+create or replace view GOOGLE_ADS__URL_AD_ADAPTER_CORR
+as (
+with 
+corr as (
+select 
+ad_group_name,
+abs(corr(clicks,w.tot_snowfall_in)) as clicks_snow_corr
+from GOOGLE_ADS__URL_AD_ADAPTER ga, "WEATHERSOURCE"."PUBLIC"."HISTORY_DAY" w
+where ga.date_day = w.date_valid_std
+group by 1
+),
+base as (
+select * from GOOGLE_ADS__URL_AD_ADAPTER
+)
+select b.*,c.clicks_snow_corr 
+from base b, corr c
+where b.ad_group_name = c.ad_group_name
+);
+ 
+select * from GOOGLE_ADS__URL_AD_ADAPTER_CORR; 
+```
 
 29. Now that our heavy lifting is done, let’s scale down the warehouse size. No need to pay for more compute than we need. Run the SQL in section **J**.
-![Snowflake Part 2 - 30](assets/vhol_fivetran/image87.png)  
+```
+-----
+--J--
+-----
+--Once we're done with our complex queries we scale the warehouse back down
+alter warehouse mkt_analysis set warehouse_size = 'XSMALL';
+```
 
 30. For our last trick let’s imagine we’ve accidentally dropped the table we’re working with.  No one has ever done that!  Run the DROP statement in section **K** and then refresh the database browser.  Notice the table is gone.  Now run the UNDROP and refresh.  It’s back! This is the power of time travel.  You can restore lost data for up to 90 days of history.  
-![Snowflake Part 2 - 31](assets/vhol_fivetran/image127.png)  
+```
+-----
+--K--
+-----
+--Let's look at one last great feature of Snowflake.  Have you ever accidentally dropped a table?  Or a database?  
+--Let's 'accidentally' drop a table.
+drop table GOOGLE_ADS__URL_AD_ADAPTER; 
+
+--Fortunately, in Snowflake, this is an easy fix.
+undrop table GOOGLE_ADS__URL_AD_ADAPTER;
+```
     
     : _Time Travel also enables you to query and replace tables as of a particular point in time or prior to a specific SQL statement._  
     
@@ -501,6 +641,35 @@ Positive
 
 **This concludes the lab.  We hope you learned a lot and are interested in exploring Fivetran and Snowflake for your use cases.  Please feel free to ask questions.**
 
+<!-- ------------------------ -->
+
+## Conclusion & Next Steps
+
+Duration: 2
+
+Congratulations on completing this lab on automating data pipelines to drive marketing analytics! You’ve mastered the Fivetran and Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.
+
+We encourage you to continue with your free trials by loading your own sample or production data and by using some of the more advanced capabilities of Fivetran and Snowflake not covered in this lab. 
+### Additional Resources:
+
+- Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document
+- Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers
+- [Join the Snowflake community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
+- [Sign up for Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
+- [Contact our Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more
+
+### What we've covered:
+
+    * How to begin a Fivetran trial through Snowflake's Partner Connect
+
+    * How to load Google Ads data into Snowflake using Fivetran
+
+    * How to run a dbt project via Fivetran to generate models
+
+    * How to create analyst sandboxes in Snowflake using clones
+
+    * How to leverage data in Snowflake's Data Marketplace 
+
 ## Appendix I: Github Account Creation
 
 Enter a username, email address, and password.
@@ -522,6 +691,7 @@ That’s it! You now have a Github account.
 ![Appendix I - 6](assets/vhol_fivetran/image106.png)  
 
 ## Appendix II: Snowflake Account Creation
+Duration: 10 minutes
 
 1. Go to <https://signup.snowflake.com/>.  
 
@@ -543,6 +713,7 @@ That’s it! You now have a Github account.
 ### Congratulations, you are ready to work in Snowflake!
 
 ## Appendix III: Fivetran - Configure Google Adwords Connector
+Duration: 10 minutes
 
 Log into Fivetran and you should see the following screen, which shows our selection of source connectors. Use the type-down or the drop-down menu to find the [Google Ads](https://fivetran.com/docs/applications/google-ads) connector. If you have already setup your first connector, you may need to go to the Connectors tab in the Fivetran web application, and choose **+ Connector**.  
 ![Appendix III - 1](assets/vhol_fivetran/image44.png)  
