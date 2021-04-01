@@ -227,7 +227,7 @@ Here is an example command to `select` everything on the `emp_basic` table.
 ![Snowflake_SELECT_image](assets/Snowflake_SELECT.png)
 
 Sifting through everything on your table may not be the best use of your time. Getting specific
-results is simple, with a few functions and some query syntax.
+results are simple, with a few functions and some query syntax.
 
 - [WHERE​](https://docs.snowflake.com/en/sql-reference/constructs/where.html#where) is an additional clause you can add to your select query.
 
