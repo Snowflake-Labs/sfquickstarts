@@ -10,49 +10,49 @@ authors: Snowflake
 # Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5 minutes
+Duration: 5
 
 With the growth of your data and business, so does the complexity involved in traditional approaches and architecture. Snowflake and Fivetran have partnered to bring you the Data Cloud and the most automated data integration solution which helps customers simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance. In this virtual hands-on lab, you will follow a step-by-step guide to perform marketing analytics for Google Ads data by using Fivetran, Snowflake, and dbt. Let’s get started. 
 
 ### Prerequisites
 To participate in the virtual hands-on lab, attendees need the following:
 
-    * Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: [link])(https://github.com/join/).  See appendix 1 for step-by-step instructions. 
+- Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: [link])(https://github.com/join/).  See appendix 1 for step-by-step instructions. 
 
-    * Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
+- Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
 
-    * OPTIONAL: Log in to your Google account, if you have one.
+- OPTIONAL: Log in to your Google account, if you have one.
 
-    * OPTIONAL: Google Ads account credentials. 
+- OPTIONAL: Google Ads account credentials. 
 Sample Google Ads data will be provided if you do not have a Google Ads account.
 
 ### What You'll Need During the Lab
  
-    * [Sample Google Ads data](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md) - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links -- all of these sheets are copies of the same data, you can use any link on that page.
+- [Sample Google Ads data](https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md) - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links -- all of these sheets are copies of the same data, you can use any link on that page.
 
 
-    * [dbt Project Github Repository](https://github.com/fivetran/snowflake_fivetran_vhol)
+ - [dbt Project Github Repository](https://github.com/fivetran/snowflake_fivetran_vhol)
 
 
-        * [SQL Script file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) - Participants will load [this file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) into a Snowflake worksheet when prompted during the lab.  Save this file where you can easily find it during the lab.
+    - [SQL Script file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) - Participants will load [this file](https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip) into a Snowflake worksheet when prompted during the lab.  Save this file where you can easily find it during the lab.
 
 ### What You'll Learn
 
-    * How to begin a Fivetran trial through Snowflake's Partner Connect
+- How to begin a Fivetran trial through Snowflake's Partner Connect
 
-    * How to load Google Ads data into Snowflake using Fivetran
+- How to load Google Ads data into Snowflake using Fivetran
 
-    * How to run a dbt project via Fivetran to generate models
+- How to run a dbt project via Fivetran to generate models
 
-    * How to create analyst sandboxes in Snowflake using clones
+- How to create analyst sandboxes in Snowflake using clones
 
-    * How to leverage data in Snowflake's Data Marketplace 
+- How to leverage data in Snowflake's Data Marketplace 
 
 ### What You'll Build
-    * A sophisticated marketing data analytics pipeline leveraging Fivetran, dbt, and Snowflake
+- A sophisticated marketing data analytics pipeline leveraging Fivetran, dbt, and Snowflake
 
 ## Snowflake Configuration 
-Duration: 10 minutes
+Duration: 10
 1. Login to your Snowflake trial account.  
 ![Snowflake Log In Screen](assets/vhol_fivetran/image124.png)  
 
@@ -101,7 +101,7 @@ Duration: 10 minutes
 <!-- ------------------------ -->
 
 ## Fivetran - Configure Source  
-Duration: 5 minutes
+Duration: 5
 <!-- ![Fivetran](assets/vhol_fivetran/image79.png) --> 
 <img src="assets/vhol_fivetran/image79.png" width="500">
 
@@ -267,7 +267,7 @@ This is where you can include outside packages to run! See [hub.getdbt.com](http
 This is a Fivetran-specific file that configures what jobs will run when, leveraging a [crontab-style syntax](https://crontab.guru/) for scheduling. Documentation can be found in the file itself. Remember, as described above, you can edit files directly in Github!
 
 ## Set Up Fivetran dbt Transformations
-Duration: 20 minutes
+Duration: 20
 In this section we will take the dbt project we created in the previous section, and run it via Fivetran to generate models! We will be showing how Fivetran is used to orchestrate dbt jobs, and the first step is to connect to your dbt project in Github. There are a lot of steps in this section, but for the most part they are not too complicated. Let’s get started!
 
 **Note: dbt Transformations in Fivetran are in beta** as of this writing. Depending how you signed up for your Fivetran trial, you may or may not see the option to “Try dbt Transformations”. If you do not see this option, please reach out to us and we will try to get you enabled to try this feature.  
@@ -382,7 +382,7 @@ In the previous sections, we learned the following skills:
 In doing so, we have set up a complete, end-to-end modern data pipeline focusing on the advantages of the Extract-Load-Transform (ELT) architectural approach. Data loading is extremely simple to configure and comes with the benefit of hands-free maintenance, forever. dbt is a powerful transformation tool that comes with many open source Fivetran modeling packages out-of-the-box. Moreover, Fivetran manages the execution of those transformation jobs, and the jobs run natively in the Snowflake warehouse, exposing all of the pßower of Snowflake’s query engine to your transformations.
 
 ## Snowflake - Part Two
-Duration: 15 minutes
+Duration: 15
 1. Back in the Snowflake UI, let’s take a quick look at the query history to see all the work that Fivetran/dbt performed.  
 ![Snowflake Part 2 - 1](assets/vhol_fivetran/image53.png)  
 
@@ -417,21 +417,22 @@ Duration: 15 minutes
 Positive
 : ❗ **Pro Tip:** You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.
 
-```
------
---A--
------
---Let's set our worksheet role and db/schema
-use role ACCOUNTADMIN;
-use schema PC_FIVETRAN_DB.GOOGLE_ADS_DBT;
-```
+    ```
+    -----
+    --A--
+    -----
+    --Let's set our worksheet role and db/schema
+    use role ACCOUNTADMIN;
+    use schema PC_FIVETRAN_DB.GOOGLE_ADS_DBT;
+    ```
 
     Notice that your worksheet context now has a default role, database, and schema but no warehouse (yet).  
     ![Snowflake Part 2 - 11](assets/vhol_fivetran/image80.png)  
 
 11. Let’s pretend that the data we loaded and transformed with Fivetran is our production data.  We only want it to be changed by our Fivetran process.  Since our analysts will want to experiment with and change the data,  we’ll **CLONE** the entire PC_FIVETRAN_DB database so they can have their own sandbox.  This is a logical copy; it will consume no additional space unless the data in the clone starts to change.  This is a fantastic tool for creating as many sandboxes as you need.  It also works well for making time-specific snapshots.  
     
-    : _Cloning reduces time to value  - full production clones are fast and support more accurate analytical results because they are rich and complete data sets._  
+Positive
+: ❗ Cloning reduces time to value  - full production clones are fast and support more accurate analytical results because they are rich and complete data sets.  
     
 12. Run the **Create Database** SQL and the **Use Schema** commands in section **B** to make a clone, then refresh the database browser with the (small) ![Refresh](assets/vhol_fivetran/image130.png) button:  
 ```
@@ -458,7 +459,8 @@ auto_suspend = 120 --seconds
 auto_resume = TRUE;
 ```
     
-    : _Snowflake compute is unique.  It’s (1) easy to define and manage; (2) fast to activate and suspend; (3) self-suspending; (4) self-healing; (5) isolated from the storage layer; (6) isolated  from other compute; (7) quick to scale up/down and out/in; (8) non-disruptive when any of this is happening._
+Positive
+: ❗ Snowflake compute is unique.  It’s (1) easy to define and manage; (2) fast to activate and suspend; (3) self-suspending; (4) self-healing; (5) isolated from the storage layer; (6) isolated  from other compute; (7) quick to scale up/down and out/in; (8) non-disruptive when any of this is happening._
     
 14. For our last act as DBA we’ll create a **resource monitor** to track warehouse consumption.  Resource monitors are convenient tools for setting time-based consumption thresholds on compute at the warehouse or account level.  You can set alerts for various thresholds and even prevent a warehouse from running once it reaches a credit value that you set.
 ```
@@ -660,15 +662,15 @@ We encourage you to continue with your free trials by loading your own sample or
 
 ### What we've covered:
 
-    * How to begin a Fivetran trial through Snowflake's Partner Connect
+- How to begin a Fivetran trial through Snowflake's Partner Connect
 
-    * How to load Google Ads data into Snowflake using Fivetran
+- How to load Google Ads data into Snowflake using Fivetran
 
-    * How to run a dbt project via Fivetran to generate models
+- How to run a dbt project via Fivetran to generate models
 
-    * How to create analyst sandboxes in Snowflake using clones
+- How to create analyst sandboxes in Snowflake using clones
 
-    * How to leverage data in Snowflake's Data Marketplace 
+- How to leverage data in Snowflake's Data Marketplace 
 
 ## Appendix I: Github Account Creation
 
@@ -691,7 +693,7 @@ That’s it! You now have a Github account.
 ![Appendix I - 6](assets/vhol_fivetran/image106.png)  
 
 ## Appendix II: Snowflake Account Creation
-Duration: 10 minutes
+Duration: 10
 
 1. Go to <https://signup.snowflake.com/>.  
 
@@ -713,7 +715,7 @@ Duration: 10 minutes
 ### Congratulations, you are ready to work in Snowflake!
 
 ## Appendix III: Fivetran - Configure Google Adwords Connector
-Duration: 10 minutes
+Duration: 10
 
 Log into Fivetran and you should see the following screen, which shows our selection of source connectors. Use the type-down or the drop-down menu to find the [Google Ads](https://fivetran.com/docs/applications/google-ads) connector. If you have already setup your first connector, you may need to go to the Connectors tab in the Fivetran web application, and choose **+ Connector**.  
 ![Appendix III - 1](assets/vhol_fivetran/image44.png)  
