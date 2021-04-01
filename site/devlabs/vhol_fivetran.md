@@ -397,7 +397,8 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
 
     Let’s execute the SQL in script section A to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the <img src="assets/vhol_fivetran/image136.png" width="60"> button.  
 
-    (You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.)  
+Positive
+: ❗ **Pro Tip:** You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.
 
     ![Snowflake Part 2 - 10](assets/vhol_fivetran/image45.png)  
 
