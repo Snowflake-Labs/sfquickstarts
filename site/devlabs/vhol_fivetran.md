@@ -169,7 +169,7 @@ Then, click the **FIND SHEET** button. This step will take a few moments.
 15. Click **Start Initial Sync**. Then click **Connectors** on the left-hand menu.
 ![Fivetran - Google Sheet14](assets/vhol_fivetran/image38.png)  
 
-16. Click **+ Connetor**.  
+16. Click **+ Connector**.  
 ![Fivetran - Google Sheet15](assets/vhol_fivetran/image108.png)  
 
 17. Please use the following values for the two fields:
