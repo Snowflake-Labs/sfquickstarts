@@ -195,7 +195,7 @@ Resolution:
 Duration: 5
 
 ### Overview
-Zepl provides several options for loading libraries. The two most used are Custom Images ([Account Activation Required](https://new-docs.zepl.com/docs/getting-started/trial-and-billing#activate-your-organization)) and install during notebook run time. For this guide we will use the python package manager `pip` to install all of our required libraries
+Zepl provides several options for loading libraries. The two most used are Custom Images and install during notebook run time. For this guide we will use the python package manager `pip` to install all of our required libraries. Learn more about [Custom Images](https://new-docs.zepl.com/docs/configure-infrastructure/images) and how to get [activate your account](https://new-docs.zepl.com/docs/getting-started/trial-and-billing#activate-your-organization) to access this feature.
 
 ### In the Zepl Notebook:
 Add this code to the first paragraph and select run paragraph <img src="" />:
@@ -203,6 +203,7 @@ Add this code to the first paragraph and select run paragraph <img src="" />:
 %python
 # Install fbprophet Deendencies
 !pip install pystan~=2.14 Cython>=0.22 cmdstanpy==0.9.68 numpy>=1.15.4 pandas>=1.0.4 matplotlib>=2.0.0 LunarCalendar>=0.0.9 convertdate>=2.1.2 holidays>=0.10.2 setuptools-git>=1.2 python-dateutil>=2.8.0 tqdm>=4.36.1
+
 # Install fbprophet Library
 !pip install fbprophet==0.7.1
 ```
@@ -234,18 +235,203 @@ We must also import the libraries that were just installed in the previous parag
 ### Troubleshooting
 * Startup time: This code may take several minutes to complete execution. The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
 * Documentation on Facebook Prophet: [Link](https://facebook.github.io/prophet/)
-* Known issue with the install documentation [here](https://facebook.github.io/prophet/docs/installation.html#python): A fix is outlined [here](ttps://github.com/facebook/prophet/issues/1856) and implemented in our code already
+* Known issue with the install [documentation](https://facebook.github.io/prophet/docs/installation.html#python): A fix is outlined [here](https://github.com/facebook/prophet/issues/1856) and implemented in our code already
 
 <!-- ------------------------ -->
-## Visualize Data
-Duration 5
+## Building a Time Series Forecast
+Duration: 20
+
+### Overview
+In this section we will explore the data for a specific stock ticker, build a time series forecast, and visualize the results. The notebook for this code can be referenced here: [Full Notebook Code](TODO: Add link here)
+
+### Explore the data
+First let's retrieve data from Snowflake with all of the open, high, low, close values for one specific stock one stock. Add this code to a new paragraph in your notebook:
+```python
+%python
+# Set ticker value
+stock_ticker = 'NVDA'
+
+# Get a new DataFrame for a Specific Stock ticker
+cur = z.getDatasource("US_STOCKS_DAILY")
+
+# Retrieve data only for the specified stock ticker and order results by date
+cur = cur.execute("""
+            SELECT * FROM 
+            ZEPL_US_STOCKS_DAILY.PUBLIC.STOCK_HISTORY 
+            WHERE symbol='{}' 
+            ORDER BY date
+            """.format(stock_ticker))
+
+# Create Pandas DataFrame from query results            
+df_stock = cur.fetch_pandas_all()
+```
+#### Code Explained
+This is the same code as we used above with a different SQL statement. The SQL statement is going to return all rows and columns from the STOCK_HISTORY table WHERE the SYMBOL column is equal to the value of our `stock_ticker` python variable. In this case, that is 'NVDA'.
+
+### Create and Train a Prophet Model
+Add this code to the next paragraph to build a predictive model using the Prophet library:
+```python
+%python
+# Initialize Prophet object
+m = Prophet()
+
+# Drop unused columns
+ph_df = df_stock.drop(['OPEN', 'HIGH', 'LOW','VOLUME', 'SYMBOL','CLOSE'], axis=1)
+ph_df.rename(columns={'ADJCLOSE': 'y', 'DATE': 'ds'}, inplace=True)
+
+# Fit Model
+m.fit(ph_df)
+```
+#### Code Explained
+`m = Prophet()`</br> 
+First we must create python object from the Prophet library. This will be used to access all functions for forecasting
+
+`ph_df = df_stock.drop(['OPEN', 'HIGH', 'LOW','VOLUME', 'SYMBOL','CLOSE'], axis=1)`<br>
+`ph_df.rename(columns={'ADJCLOSE': 'y', 'DATE': 'ds'}, inplace=True)` </br>
+The Prophet library only takes in two column as inputs before training. Those inputs are a date column and a value to be predicted. In our case the date column in our dataset is labeled as 'DATE' and we would like to predict the close value of the stock which is labeled as, 'ADJCLOSE'. 
+
+`m.fit(ph_df)`</br>
+Lastly we train (fit) the model on the two input values above DATE and ADJCLOSE.
+
+### Make Future Predictions
+```python
+%python
+# Num days to predict
+period = 30
+
+# Create an empty DataFrame to store preditison for future dates
+future_prices = m.make_future_dataframe(periods=period)
+
+# Predict Prices
+forecast = m.predict(future_prices)
+
+# Inspect the forecast prices over the next 30 days. The yhat value is the predition value.
+z.show(forecast.tail(period))
+```
+#### Code Explained
+`future_prices = m.make_future_dataframe(periods=period)`</br>
+We must create a new dataframe that can store our future prediction values. `future_prices` will have 30 empty rows for storing 30 days of future predictions. The `period` value can be changed to generate greater or fewer predictions.
+
+`forecast = m.predict(future_prices)` </br>
+Create predictions and display the results. This function will generate a number of new columns. The important values are defined below:
+* `yhat`: Predicted value
+* `yhat_lower`: Lower bound of prediction. 95% confidence interval. 
+* `yhat_upper`: Upper bound of prediction. 95% confidence interval.
+
+
+### Visualize Predictions
+The code below will generate a chart to display our trend in relation to actual stock close values. The black dots represent the close values from our original dataset and the blue line represents the trend determined by our model predictions. The light blue shading represents the upper and lower bound of the trend.</br>
+
+```python
+%python
+m.plot(forecast);
+```
+<img src="./assets/zepl_plot_forecast.png" />
+
+### Visualize Seasonality
+The code below will generate a chart to display the impact of seasonality on the trend. This can be used to identify if certain times of the day, month, or year effects the final trend. <br/>
+
+If we look at the Yearly trend (final chart) it appears that stock prices tend to rise at the beginnning of the year and are at their peak between September and October.</br>
+
+```python
+%python
+m.plot_components(forecast);
+```
+<img src="./assets/zepl_plot_components_forecast.png"  />
+
+### Target Stock Price (30 day prediction)
+The code below will display the change in stock price between our forecast value and our last known stock value. It looks like our trend is predicting a drop in ~$80 in 30 days. While that might be interesting, we still will need to evaluate the confidence level of this model and see if tuning our inputs may lead to a more accurate prediction.<br>
+
+```python
+%python
+# Get the last known adjusted close value and date from our stock dataset
+num_rows_stock = df_stock.shape[0]
+last_close_date = df_stock.at[num_rows_stock-1, 'DATE']
+last_close_value = df_stock.at[num_rows_stock-1, 'ADJCLOSE']
+
+# Get the prediction value and date from our forecasted trend
+num_rows_forecast = forecast.shape[0]
+last_forecast_date = forecast.at[num_rows_forecast-1, 'ds'].strftime("%Y-%m-%d")
+last_forecast_value = forecast.at[num_rows_forecast-1, 'yhat']
+
+# Display those values using HTML and simple inline styling
+print('''%html <h4> Last Known Close Price    ({date}): <b><span style="color:red;">${value:.2f}</span></b></h4>'''.format(date=last_close_date, value=last_close_value))
+print('''%html <h4> Forecasted Target Price   ({date}): <b><span style="color:red;">${value:.2f}</span></b></h4>'''.format(date=last_forecast_date, value=last_forecast_value))
+print('''%html <h4> Projected Change:                   <b><span style="color:red;">${value:.2f}</span></b></h4>'''.format(value=last_forecast_value - last_close_value))
+```
+<img src="./assets/zepl_predicted_target.png" width="600"/>
+
+Positive
+: Note that you can display HTML directly from our Python interpreter! If you want to learn more, look here: [Link](https://new-docs.zepl.com/docs/using-the-zepl-notebook/develop/data-visualization#html-css-javascript)
+
+
+Finally, let's zoom in and visualize the forecasted values 30 days in the future. The price that our model predicted is displayed in blue and the final 365 days of adjusted close values are shown in black.
+
+```python
+%python
+import time
+# Set graph date range to 180 days + future prediction values
+graph_dates = 180 + period
+
+# Total number of days in forecast DataFrame
+len_forecast = len(forecast['ds'])
+
+# Set total number of stock values to display
+last_x_days = len_forecast - graph_dates
+
+# Display Graph and set the x limit to show last 180 days + 30 forecast period
+fig = m.plot(forecast);
+ax = fig.gca()
+ax.set_xlim([forecast.tail(graph_dates)['ds'][last_x_days], forecast.tail(graph_dates)['ds'][len_forecast-1]]) 
+```
+
+<img src="./assets/zepl_zoom_prediction_chart.png" />
+
+#### Code Explained
+`graph_dates = 180 + period`<br>
+`len_forecast = len(forecast['ds'])`<br>
+`last_x_days = len_forecast - graph_dates`<br>
+We want to display the last 180 days plus our future 30 day prediction period. These variables are used to determine the number of days to display.
+
+`fig = m.plot(forecast);`<br>
+`ax = fig.gca()`<br>
+Plot the forecast as we have done above and retrieve the matplotlib Axis value ([ref](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.gca.html)). The semicolon at the end of the first line ensures only one graph is displayed.
+
+`ax.set_xlim([forecast.tail(graph_dates)['ds'][last_x_days], forecast.tail(graph_dates)['ds'][len_forecast-1]])`<br>
+Limit the X-Axis range for our graph
+
+### Troubleshooting
+TODO: Troubleshooitng links here??
 
 <!-- ------------------------ -->
-## Create Time Series Model
-Duration 5
+## Validate Our Predictions 
+Duration: 15
 
-### Fit 
 
-### Train
+<!-- ------------------------ -->
+## References and Notes
+Duration: 0
 
-### Visualize
+### References:
+* [https://towardsdatascience.com/apple-stock-and-bitcoin-price-predictions-using-fbs-prophet-for-beginners-python-96d5ec404b77](https://towardsdatascience.com/apple-stock-and-bitcoin-price-predictions-using-fbs-prophet-for-beginners-python-96d5ec404b77)
+
+
+
+Considerations for why Stock Forecasting is very hard: </br>
+"Prophet is able to detect and fit these, but what trend changes should we expect moving forward? It’s impossible to know for sure, so we do the most reasonable thing we can, and we assume that the future will see similar trend changes as the history." [Ref](https://facebook.github.io/prophet/docs/uncertainty_intervals.html#uncertainty-in-the-trend)
+
+
+Cross Validation [Link](https://facebook.github.io/prophet/docs/diagnostics.html#cross-validation)
+Initial = Number of training (days) data points
+Horizon = Number of predictions (days) to make
+Period = Number of data points (days) before next prediction
+
+parallel="processing": <br/>
+"For problems that aren’t too big, we recommend using parallel="processes". It will achieve the highest performance when the parallel cross validation can be done on a single machine."
+
+"The Mean Absolute Percentage Error (MAPE) is an alternative method that reports out the error as a percentage. Instead of saying the forecast is off by ‘x units’ [(MAE)], we could say a forecast is off by 4%." [Link](https://stochasticcoder.com/2016/04/25/forecasting-and-python-part-1-moving-averages/)
+
+"Adding ChangePoints to Prophet
+Changepoints are the datetime points where the time series have abrupt changes in the trajectory.
+By default, Prophet adds 25 changepoints to the initial 80% of the data-set.
+Let’s plot the vertical lines where the potential changepoints occurred" [Link](https://towardsdatascience.com/time-series-prediction-using-prophet-in-python-35d65f626236)
