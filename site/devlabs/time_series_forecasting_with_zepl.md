@@ -339,7 +339,7 @@ m.plot(forecast);
 ### Visualize Seasonality
 The code below will generate a chart to display the impact of seasonality on the trend. This can be used to identify if certain times of the day, month, or year effects the final trend. <br/>
 
-If we look at the Yearly trend (final chart) it appears that stock prices tend to rise at the beginnning of the year and are at their peak between September and October.</br>
+If we look at the Yearly trend (final chart) it appears that stock prices tend to drop in march and rise towards the end of the year. These factors may lead us to re-fit the model based on specific holiday trends which can be done easily using prophet. Feel free to play around with adding holiday seasonality as well: [Examples](https://facebook.github.io/prophet/docs/seasonality,_holiday_effects,_and_regressors.html#built-in-country-holidays)</br>
 
 ```python
 %python
@@ -348,7 +348,7 @@ m.plot_components(forecast);
 <img src="./assets/zepl_plot_components_forecast.png"  />
 
 ### Target Stock Price (30 day prediction)
-The code below will display the change in stock price between our forecast value and our last known stock value. It looks like our trend is predicting a drop in ~$80 in 30 days. While that might be interesting, we still will need to evaluate the confidence level of this model and see if tuning our inputs may lead to a more accurate prediction.<br>
+The code below will display the change in stock price between our forecast value and our last known stock value. At the time of creating this guide, the last known stock price was $161.40 on March 26th 2021. Our predicted value for April 25th 2021 is set at $154.88. The difference is a drop in price by $6.52. While that might be interesting, we still need to evaluate the known error in this model and see if tuning our inputs may lead to a more accurate prediction.<br>
 
 ```python
 %python
@@ -408,9 +408,6 @@ Plot the forecast as we have done above and retrieve the matplotlib Axis value (
 `ax.set_xlim([forecast.tail(graph_dates)['ds'][last_x_days], forecast.tail(graph_dates)['ds'][len_forecast-1]])`<br>
 Limit the X-Axis range for our graph
 
-### Troubleshooting
-TODO: Troubleshooitng links here??
-
 <!-- ------------------------ -->
 ## Validate Our Predictions 
 Duration: 15
@@ -429,6 +426,9 @@ df_cv = cross_validation(m, initial='6570 days', period='90 days', horizon = '30
 # Display last 5 rows of results
 z.show(df_cv.tail())
 ```
+
+<img src="./assets/zepl_cross_validation_result.png" />
+
 ### Code Explained
 `df_cv = cross_validation(m, initial='6570 days', horizon = '30 days', period='90 days', parallel="processes")`<br>
 
@@ -452,14 +452,15 @@ df_p = performance_metrics(df_cv)
 z.show(df_p.tail())
 ```
 
+<img src="./assets/zepl_cross_validation_performance_metrics.png" />
+
 ### Code Explained
 `performance_metrics(df_cv)`<br>
 
-We will on the Mean Absolute Percentage Error (MAPE). This measurement focuses on the size of the error as a percentage. See this [Link](https://stochasticcoder.com/2016/04/25/forecasting-and-python-part-1-moving-averages/) for details. 
+We will focus on the Mean Absolute Percentage Error (MAPE). This measurement explains the size of the error in our predictions as a percentage ([Ref](https://stochasticcoder.com/2016/04/25/forecasting-and-python-part-1-moving-averages/)). Breaking down our result, the lowest MAPE value is around 0.11, which we can translate to say that our predictions differ from the actual value by 11% on average. Depending on your risk level, perhaps that is enough for you. But, we still have a few tools to try to reduce our error. 
 
-* MAPE: Breaking down our result, the lowest MAPE value is around .10, which we can translate to say that our predictions are off on average by 10%. We can use the code below to retrieve the exact minimum value.
+If you want to retrieve the exact minimum value, use this code below:
 
-If you want to isolate the lowest MAPE value run the code below:
 ```python
 %python
 # Get lowest MAPE value
@@ -467,19 +468,22 @@ mape_perf = df_p.min(level=np.argmin(df_p["mape"]))
 print('''%html <h4> Display Lowest MAPE value: <b><span style="color:red;">{value:.2f}</span></b></h4>'''.format(value=mape_perf['mape'][0]))
 ```
 
+<img src="./assets/zepl_lowest_mape_value.png" width="500"/>
+
 ### Visualize Error Results
+We can quickly visualize the MAPE value across the 30 day prediction window (horizon) used during cross-validation. The graph below shows how MAPE oscillates over the 30 day prediction. *If anyone knows why that oscillation occurs feel free to message me for a chat, I'd love to know :) [zack@zepl.com](mailto:zshainsky@zepl.com)
+
 ```python
 %python
 from fbprophet.plot import plot_cross_validation_metric
 fig = plot_cross_validation_metric(df_cv, metric='mape')
 ```
-### Code Explained
-`fig = plot_cross_validation_metric(df_cv, metric='mape')`
-TODO: text here
+
+<img src="./assets/zepl_visual_cross_validation_performance_metrics.png" />
 
 ### Troubleshooting: 
 * `BrokenProcessPool: A process in the process pool was terminated abruptly while the future was running or pending. prophet parallel` May occur due to lack of memory available in the running container. Please stop the container and select a larger container size. Typically 16GB and 32GB should be sufficient. [Doc](https://new-docs.zepl.com/docs/using-the-zepl-notebook/run/runtime-settings)
-*  `ImportError: FloatProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html`: TQDM not supported for Zepl notebooks. Must use parallel flag. This issue is tracked here and will be available in the next release of fbprophet [ref](https://github.com/facebook/prophet/issues/1825)
+*  `ImportError: FloatProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html`: TQDM not supported for Zepl notebooks. Must use parallel flag. This issue is tracked here and will be available in the next release of fbprophet ([ref](https://github.com/facebook/prophet/issues/1825)).
 
 <!-- ------------------------ -->
 ## (Bonus) Improving our model with Hyperparameter Tuning
@@ -496,6 +500,10 @@ In order to improve the accuracy of our forecasted predations, we will test out 
 import itertools
 import numpy as np
 import pandas as pd
+
+# Track original waits for comparison later:
+original_changepoint_prior_scale = m.changepoint_prior_scale
+original_seasonality_prior_scale = m.seasonality_prior_scale
 
 param_grid = {  
     'changepoint_prior_scale': [0.001, 0.01, 0.1, 0.5],
@@ -532,11 +540,11 @@ z.show(tuning_results)
 Positive
 : This may take some time to run. Again, try a larger container size (> 32GB) if you are running into any memory related errors. Go grab some coffee :)
 
-Lastly, display the parameters with the most optimal results:
+Lastly, display the parameters with the most optimal results and compare the new parameters with the original ones:
 ```python
 %python
 best_params = all_params[np.argmin(mape)]
-print(best_params)
+print(original_changepoint_prior_scale, original_seasonality_prior_scale, best_params)
 ```
 
 <!-- ------------------------ -->
@@ -544,26 +552,14 @@ print(best_params)
 Duration: 0
 
 ### References:
-* [https://towardsdatascience.com/apple-stock-and-bitcoin-price-predictions-using-fbs-prophet-for-beginners-python-96d5ec404b77](https://towardsdatascience.com/apple-stock-and-bitcoin-price-predictions-using-fbs-prophet-for-beginners-python-96d5ec404b77)
-
-
-
-Considerations for why Stock Forecasting is very hard: </br>
-"Prophet is able to detect and fit these, but what trend changes should we expect moving forward? It’s impossible to know for sure, so we do the most reasonable thing we can, and we assume that the future will see similar trend changes as the history." [Ref](https://facebook.github.io/prophet/docs/uncertainty_intervals.html#uncertainty-in-the-trend)
-
-
-Cross Validation [Link](https://facebook.github.io/prophet/docs/diagnostics.html#cross-validation)
-Initial = Number of training (days) data points
-Horizon = Number of predictions (days) to make
-Period = Number of data points (days) before next prediction
-
-parallel="processing": <br/>
-"For problems that aren’t too big, we recommend using parallel="processes". It will achieve the highest performance when the parallel cross validation can be done on a single machine."
-
-"The Mean Absolute Percentage Error (MAPE) is an alternative method that reports out the error as a percentage. Instead of saying the forecast is off by ‘x units’ [(MAE)], we could say a forecast is off by 4%." [Link](https://stochasticcoder.com/2016/04/25/forecasting-and-python-part-1-moving-averages/)
-
-"Adding ChangePoints to Prophet
-Changepoints are the datetime points where the time series have abrupt changes in the trajectory.
+* [Blog Post Referenced](https://towardsdatascience.com/apple-stock-and-bitcoin-price-predictions-using-fbs-prophet-for-beginners-python-96d5ec404b77)
+* Considerations for why Stock Forecasting is very hard: "Prophet is able to detect and fit these, but what trend changes should we expect moving forward? It’s impossible to know for sure, so we do the most reasonable thing we can, and we assume that the future will see similar trend changes as the history." [Ref](https://facebook.github.io/prophet/docs/uncertainty_intervals.html#uncertainty-in-the-trend)
+* Cross Validation 
+ * [Ref](https://facebook.github.io/prophet/docs/diagnostics.html#cross-validation)
+ * `parallel="processing"`: "For problems that aren’t too big, we recommend using parallel="processes". It will achieve the highest performance when the parallel cross validation can be done on a single machine."
+* How Prophet determines change points: Changepoints are the datetime points where the time series have abrupt changes in the trajectory.
 By default, Prophet adds 25 changepoints to the initial 80% of the data-set.
 Let’s plot the vertical lines where the potential changepoints occurred" [Link](https://towardsdatascience.com/time-series-prediction-using-prophet-in-python-35d65f626236)
+* Error Metrics: [Ref](https://stochasticcoder.com/2016/04/25/forecasting-and-python-part-1-moving-averages/)
+
 
