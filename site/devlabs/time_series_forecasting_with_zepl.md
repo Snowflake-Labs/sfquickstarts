@@ -219,7 +219,7 @@ Positive
 <p>This statement installs the fbprophet library with a specific version.</p>
 
 #### Add new paragraph
-Add this code to the first paragraph and select run paragraph:
+Add this code to next open paragraph in your notebook and select run paragraph:
 ```python
 %python
 # Import Libraries
@@ -241,22 +241,28 @@ We must also import the libraries that were just installed in the previous parag
 ## Building a Time Series Forecast
 Duration: 20
 
-### Overview
-In this section we will explore the data for a specific stock ticker, build a time series forecast, and visualize the results. The notebook for this code can be referenced here: [Full Notebook Code](TODO: Add link here)
 
-### Explore the data
+__TL;DR:__ Predicting the future based on past events, requires the past to have patterns that may repeat in the future. Future stock market prices are influenced by many external sources, thus solely relying on past events to pick stocks is not the best strategy. In this walk through, we are going to ignore that guidance and do ti anyway. This guide is not intended to influence your personal trading decisions.
+
+### Overview
+
+In this section we will explore the data for a specific stock ticker, build a time series forecast, and visualize the results. The notebook for this code can be referenced here: [Full Notebook Code](TODO: Add link here). We will be using the Facebook Prophet library with Python for our analysis. Zepl also supports R so feel free to use R as well. 
+
+We will be looking at stock prices for Johnson & Johnson (JNJ). Using the FBProphet model, we will look at all of the past Adjusted Close values for JNJ and determine if we can make stock trend predictions with a remotely accurate result. The Prophet library uses an additive model which is composed of 3 major components, trend, seasonality, and holidays ([Ref](https://towardsdatascience.com/a-quick-start-of-time-series-forecasting-with-a-practical-example-using-fb-prophet-31c4447a2274)). Prophet is robust to missing data and shifts in the trend, and typically handles outliers well ([Ref](https://github.com/facebook/prophet#prophet-automatic-forecasting-procedure)).
+
+### Retrieve Data for Specific Stock Ticker
 First let's retrieve data from Snowflake with all of the open, high, low, close values for one specific stock one stock. Add this code to a new paragraph in your notebook:
 ```python
 %python
 # Set ticker value
-stock_ticker = 'NVDA'
+stock_ticker = 'JNJ'
 
 # Get a new DataFrame for a Specific Stock ticker
 cur = z.getDatasource("US_STOCKS_DAILY")
 
-# Retrieve data only for the specified stock ticker and order results by date
+# Retrieve data only for the specified stock ticker and order results by date. Distinct will eliminate any duplicate values.
 cur = cur.execute("""
-            SELECT * FROM 
+            SELECT DISTINCT * FROM 
             ZEPL_US_STOCKS_DAILY.PUBLIC.STOCK_HISTORY 
             WHERE symbol='{}' 
             ORDER BY date
@@ -266,7 +272,7 @@ cur = cur.execute("""
 df_stock = cur.fetch_pandas_all()
 ```
 #### Code Explained
-This is the same code as we used above with a different SQL statement. The SQL statement is going to return all rows and columns from the STOCK_HISTORY table WHERE the SYMBOL column is equal to the value of our `stock_ticker` python variable. In this case, that is 'NVDA'.
+This is the same code we used above with a different SQL statement. The SQL statement is going to return all rows and columns from the STOCK_HISTORY table WHERE the SYMBOL column is equal to the value of our `stock_ticker` python variable. In this case, that is 'JNJ' (Johnson & Johnson).
 
 ### Create and Train a Prophet Model
 Add this code to the next paragraph to build a predictive model using the Prophet library:
@@ -277,6 +283,8 @@ m = Prophet()
 
 # Drop unused columns
 ph_df = df_stock.drop(['OPEN', 'HIGH', 'LOW','VOLUME', 'SYMBOL','CLOSE'], axis=1)
+
+# Rename values so Prophet knows what to predict (y) and when that event happened (ds)
 ph_df.rename(columns={'ADJCLOSE': 'y', 'DATE': 'ds'}, inplace=True)
 
 # Fit Model
@@ -320,7 +328,7 @@ Create predictions and display the results. This function will generate a number
 
 
 ### Visualize Predictions
-The code below will generate a chart to display our trend in relation to actual stock close values. The black dots represent the close values from our original dataset and the blue line represents the trend determined by our model predictions. The light blue shading represents the upper and lower bound of the trend.</br>
+The code below will generate a chart to display our trend in relation to actual stock close values. The black dots represent the close values from our original dataset (`df_stock['ADJCLOSE']`) and the blue line represents the trend determined by our model predictions (`forecast['yhat']`). The light blue shading represents the upper and lower bound of the trend (`forecast['yhat_lower']` or `forecast['yhat_upper']`).</br>
 
 ```python
 %python
@@ -407,6 +415,129 @@ TODO: Troubleshooitng links here??
 ## Validate Our Predictions 
 Duration: 15
 
+### Overview
+Now that we have created a prediction, we should validate the confidence level in our results. We will use cross-validation to make a series of predictions for a given a time window (horizon) and compare the predicted value to the actual value. In our case, we will compare predicted adjusted close values to actual close values.
+
+### Cross-Validation
+```python
+%python
+from fbprophet.diagnostics import cross_validation
+
+# Use built in cross_validation function with parallelization across multiple CPU processes
+df_cv = cross_validation(m, initial='6570 days', period='90 days', horizon = '30 days', parallel="processes")
+
+# Display last 5 rows of results
+z.show(df_cv.tail())
+```
+### Code Explained
+`df_cv = cross_validation(m, initial='6570 days', horizon = '30 days', period='90 days', parallel="processes")`<br>
+
+The fbprophet library has an easy to use `cross_validation()` function to automate the entire process. This may take several minutes to complete. 
+
+Here is what the input parameters mean:
+
+* `initial`: This is the time window to use for training. We are training on 6,570 days worth of data (18 years)
+* `horizon`: This is the time window to make predictions over. We will use 30 days worth of adjusted close values to predict and compare our results to the actual adjusted close values.
+* `period`: This is the time window to skip over between prediction windows (`horizon`). Setting this to 90 days allows us to make one set of prediction every quarter.
+* `parallel`: Cross-validation can be CPU intensive, so we will try to multiple CPUs to reduce overall run time.
+
+### Cross-Validation Results
+```python
+%python
+from fbprophet.diagnostics import performance_metrics
+
+# Use built in performance_metrics() function to retrieve performance metrics 
+df_p = performance_metrics(df_cv)
+
+z.show(df_p.tail())
+```
+
+### Code Explained
+`performance_metrics(df_cv)`<br>
+
+We will on the Mean Absolute Percentage Error (MAPE). This measurement focuses on the size of the error as a percentage. See this [Link](https://stochasticcoder.com/2016/04/25/forecasting-and-python-part-1-moving-averages/) for details. 
+
+* MAPE: Breaking down our result, the lowest MAPE value is around .10, which we can translate to say that our predictions are off on average by 10%. We can use the code below to retrieve the exact minimum value.
+
+If you want to isolate the lowest MAPE value run the code below:
+```python
+%python
+# Get lowest MAPE value
+mape_perf = df_p.min(level=np.argmin(df_p["mape"]))
+print('''%html <h4> Display Lowest MAPE value: <b><span style="color:red;">{value:.2f}</span></b></h4>'''.format(value=mape_perf['mape'][0]))
+```
+
+### Visualize Error Results
+```python
+%python
+from fbprophet.plot import plot_cross_validation_metric
+fig = plot_cross_validation_metric(df_cv, metric='mape')
+```
+### Code Explained
+`fig = plot_cross_validation_metric(df_cv, metric='mape')`
+TODO: text here
+
+### Troubleshooting: 
+* `BrokenProcessPool: A process in the process pool was terminated abruptly while the future was running or pending. prophet parallel` May occur due to lack of memory available in the running container. Please stop the container and select a larger container size. Typically 16GB and 32GB should be sufficient. [Doc](https://new-docs.zepl.com/docs/using-the-zepl-notebook/run/runtime-settings)
+*  `ImportError: FloatProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html`: TQDM not supported for Zepl notebooks. Must use parallel flag. This issue is tracked here and will be available in the next release of fbprophet [ref](https://github.com/facebook/prophet/issues/1825)
+
+<!-- ------------------------ -->
+## (Bonus) Improving our model with Hyperparameter Tuning
+Duration: 0
+
+### Overview
+In order to improve the accuracy of our forecasted predations, we will test out many different values for how sensitive the model is to changepoints and seasonality. Hyperparameter tuning is a fancy name for a very simple concept. In order to tun our model we will test out lots of different parameters and compare the accuracy of the results. The parameters that produce the most accurate prediction values (MAPE or other error values) is the winner. We will perform the same cross-validation as we have in the previous 2 steps, only this time, we will use 4 different values for `changepoint_prior_scale` and 4 different values for `seasonality_prior_scale`.
+
+### Implement Hyperparameter Tuning and Display Results
+```python
+%python
+# https://facebook.github.io/prophet/docs/diagnostics.html#hyperparameter-tuning
+
+import itertools
+import numpy as np
+import pandas as pd
+
+param_grid = {  
+    'changepoint_prior_scale': [0.001, 0.01, 0.1, 0.5],
+    'seasonality_prior_scale': [0.01, 0.1, 1.0, 10.0],
+}
+
+# Use cutoff values from initial cross-validation set
+cutoffs = pd.to_datetime(df_cv['cutoff'].unique())
+
+# Generate all combinations of parameters
+all_params = [dict(zip(param_grid.keys(), v)) for v in itertools.product(*param_grid.values())]
+rmses = []  # Store the RMSEs for each params here
+mae = []  # Store the MAE for each params here
+mape = []  # Store the MAPE for each params here
+
+# Use cross validation to evaluate all parameters
+for params in all_params:
+    m = Prophet(**params).fit(ph_df)  # Fit model with given params
+    df_cv = cross_validation(m, cutoffs=cutoffs, horizon='30 days', parallel="processes")
+    df_p = performance_metrics(df_cv, rolling_window=1)
+    rmses.append(df_p['rmse'].values[0])
+    mae.append(df_p['mae'].values[0])
+    mape.append(df_p['mape'].values[0])
+
+# Find the best parameters
+tuning_results = pd.DataFrame(all_params)
+tuning_results['rmse'] = rmses
+tuning_results['mae'] = mae
+tuning_results['mape'] = mape
+
+z.show(tuning_results)
+```
+
+Positive
+: This may take some time to run. Again, try a larger container size (> 32GB) if you are running into any memory related errors. Go grab some coffee :)
+
+Lastly, display the parameters with the most optimal results:
+```python
+%python
+best_params = all_params[np.argmin(mape)]
+print(best_params)
+```
 
 <!-- ------------------------ -->
 ## References and Notes
@@ -435,3 +566,4 @@ parallel="processing": <br/>
 Changepoints are the datetime points where the time series have abrupt changes in the trajectory.
 By default, Prophet adds 25 changepoints to the initial 80% of the data-set.
 Let’s plot the vertical lines where the potential changepoints occurred" [Link](https://towardsdatascience.com/time-series-prediction-using-prophet-in-python-35d65f626236)
+
