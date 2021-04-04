@@ -77,7 +77,7 @@ const CODELABS_FILTER = args.codelabsFilter || '*';
 const CODELABS_FORMAT = args.codelabsFormat || 'html';
 
 // CODELABS_NAMESPACE is the content namespace.
-const CODELABS_NAMESPACE = (args.codelabsNamespace || 'sfguides').replace(/^\/|\/$/g, '');
+const CODELABS_NAMESPACE = (args.codelabsNamespace || 'guide').replace(/^\/|\/$/g, '');
 
 // DELETE_MISSING controls whether missing files at the destination are deleted.
 // The default value is true.
@@ -118,10 +118,10 @@ gulp.task('clean', gulp.parallel(
 ));
 
 // copy copies the built artifacts in build into dist/
-gulp.task('copy:codelabs', (done) => {
-  copyFilteredCodelabs('build');
-  done();
-});
+gulp.task('copy:codelabs', () => {
+  return gulp.src(CODELABS_BUILD_DIR + '/**')
+    .pipe(gulp.dest('build/' + CODELABS_NAMESPACE));
+})
 
 // export:codelabs exports the codelabs
 gulp.task('export:codelabs', (callback) => {
@@ -131,7 +131,7 @@ gulp.task('export:codelabs', (callback) => {
     const sources = Array.isArray(source) ? source : [source];
     claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
   } else {
-    const sources = ["[^_]*/*.md"]; //export all markdown files in the src directory
+    const sources = ["[^_]*/*.md"]; //export all markdown files in the src directory, except _imports
     claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
   }
 });
@@ -356,7 +356,11 @@ gulp.task('watch:images', () => {
 
 // watch:codelabs watches image files for changes and updates them
 gulp.task('watch:codelabs', () => {
-  gulp.watch('sfguides/src/**/**', gulp.series('build:codelabs'));
+  const srcs = [
+    CODELABS_SRC_DIR + '/**/*.md',
+    CODELABS_SRC_DIR + '/**/assets/*',
+  ]
+  gulp.watch(srcs, gulp.series('build:codelabs'));
 });
 
 gulp.task('watch:fonts', () => {
@@ -375,6 +379,7 @@ gulp.task('watch:js', () => {
 
 // watch starts all watchers
 gulp.task('watch', gulp.parallel(
+  'watch:codelabs',
   'watch:css',
   'watch:html',
   'watch:images',

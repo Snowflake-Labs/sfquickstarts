@@ -1,5 +1,13 @@
 {
   "private": true,
+  "scripts": {
+    "serve": "gulp serve",
+    "prod": "gulp serve:dist",
+    "deploy": "gulp clean && gulp dist && rm .firebase/*.cache 2> /dev/null || true && firebase deploy --only hosting",
+    "export": "gulp build:codelabs",
+    "template": "./init.sh"
+  },
+
   "devDependencies": {
     "autoprefixer": "^9.3.1",
     "babel-core": "^6.26.3",
@@ -41,5 +49,9 @@
   },
   "engines": {
     "node": ">=0.10.0"
-  }
+  },
+  "browserslist": [
+    "defaults"
+  ],
+  "dependencies": {}
 }
