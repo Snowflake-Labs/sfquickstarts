@@ -19,6 +19,7 @@ const useref = require('gulp-useref');
 const vulcanize = require('gulp-vulcanize');
 const watch = require('gulp-watch');
 const webserver = require('gulp-webserver');
+const livereload = require('gulp-livereload');
 
 // Uglify ES6
 const uglifyes = require('uglify-es');
@@ -111,8 +112,13 @@ gulp.task('clean:js', (callback) => {
   return del('app/js/bundle')
 });
 
+gulp.task('clean:codelabs', (callback) => {
+  return del(CODELABS_BUILD_DIR)
+});
+
 // clean removes all built files
 gulp.task('clean', gulp.parallel(
+  'clean:codelabs',
   'clean:build',
   'clean:dist',
 ));
@@ -120,7 +126,8 @@ gulp.task('clean', gulp.parallel(
 // copy copies the built artifacts in build into dist/
 gulp.task('copy:codelabs', () => {
   return gulp.src(CODELABS_BUILD_DIR + '/**')
-    .pipe(gulp.dest('build/' + CODELABS_NAMESPACE));
+    .pipe(gulp.dest('build/' + CODELABS_NAMESPACE))
+    .pipe(livereload());
 })
 
 // export:codelabs exports the codelabs
@@ -147,7 +154,8 @@ gulp.task('build:codelabs', gulp.series(
 gulp.task('build:scss', () => {
   return gulp.src('app/**/*.scss')
     .pipe(sass(opts.sass()))
-    .pipe(gulp.dest('build'));
+    .pipe(gulp.dest('build'))
+    .pipe(livereload());;
 });
 
 // build:css builds all the css files into the dist dir
@@ -157,7 +165,8 @@ gulp.task('build:css', () => {
   ];
 
   return gulp.src(srcs, { base: 'app/' })
-    .pipe(gulp.dest('build'));
+    .pipe(gulp.dest('build'))
+    .pipe(livereload());
 });
 
 // build:html builds all the HTML files
@@ -170,10 +179,12 @@ gulp.task('build:html', () => {
     .pipe(gulpif('*.js', babel(opts.babel())))
     .pipe(gulp.dest('build'))
     .pipe(gulpif(['*.html', '!index.html'], generateDirectoryIndex()))
+    .pipe(livereload())
   );
 
   streams.push(gulp.src(`app/views/${VIEWS_FILTER}/*.{css,gif,jpeg,jpg,png,svg,tff}`, { base: 'app/views' })
-    .pipe(gulp.dest('build')));
+    .pipe(gulp.dest('build'))
+    .pipe(livereload()));
 
   const otherSrcs = [
     'app/404.html',
@@ -183,6 +194,7 @@ gulp.task('build:html', () => {
   ]
   streams.push(gulp.src(otherSrcs, { base: 'app/' })
     .pipe(gulp.dest('build'))
+    .pipe(livereload())
   );
 
   return merge(...streams);
@@ -379,13 +391,14 @@ gulp.task('watch:js', () => {
 
 // watch starts all watchers
 gulp.task('watch', gulp.parallel(
-  'watch:codelabs',
-  'watch:css',
-  'watch:html',
-  'watch:images',
-  'watch:fonts',
-  'watch:js',
-));
+    ()=>{livereload.listen();},
+    'watch:codelabs',
+    'watch:css',
+    'watch:html',
+    'watch:images',
+    'watch:fonts',
+    'watch:js',
+  ));
 
 // serve builds the website, starts the webserver, and watches for changes.
 gulp.task('serve', gulp.series(
