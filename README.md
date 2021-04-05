@@ -41,13 +41,13 @@ Congratulations! You now have the Snowflake Guides landing page running.
 
 ##### Common environment errors:
 1. You get a `claat not found` error
-   - Make sure Go is properly in your `PATH`. Add the following lines to your profile (`~/.profile`):
+   - Make sure Go is properly in your `PATH`. Add the following lines to your profile (`~/.profile`, or `~/.zshrc`):
 ````bash
 #adding Golang to path
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$HOME/go/bin
 ````
-  ***Note:** After adding Go to your `PATH`, be sure to apply your new profile:  `source ~/.profile`*
+  ***Note:** After adding Go to your `PATH`, be sure to apply your new profile: `source ~/.profile` or `source ~/.zshrc`*
 
 2. You get a `EACCES` error when installing gulp-cli
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
