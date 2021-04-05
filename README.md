@@ -1,4 +1,4 @@
-# Snowflake Guides
+# Snowflake Guides (Quickstarts)
 
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
@@ -28,6 +28,7 @@ You can submit your own SFGuide to be published on Snowflake's website by submit
      - Install gulp-cli `npm i -g gulp-cli`
   2. [Install Go](https://golang.org/doc/install); Homebrew installed? `brew install golang`
      - Install claat `go get github.com/googlecodelabs/tools/claat`
+  3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
 ## Run locally
 
