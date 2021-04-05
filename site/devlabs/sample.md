@@ -2,7 +2,7 @@ summary: This is a sample Snowflake Guide
 id: sample 
 categories: Getting Started
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 authors: Snowflake
