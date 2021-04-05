@@ -3,11 +3,13 @@
   "description": "Follow along with our tutorials and step-by-step walkthroughs to get you up and running with the Snowflake Data Cloud",
   "tags": [],
   "categories": [],
-  "exclude": [
-    "^lang-.*"
-  ],
+  "customStyle": "style.css",
+  "exclude": [],
   "logoUrl": "/images/og-image.png",
   "toolbarBgColor": "#37474F",
+  "catLevel": 0,
   "sort": "mainCategory",
-  "pins": []
+  "pins": [],
+  "ga": "",
+  "hidden": false
 }

@@ -2,7 +2,7 @@
 
 [![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
 
-## What are Snowflake Guides?
+## What are Snowflake Guides (Quickstarts)?
 Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](https://guides.snowflake.com/)
 
 You can submit your own SFGuide to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own SFGuide!
@@ -17,72 +17,56 @@ You can submit your own SFGuide to be published on Snowflake's website by submit
 * Support for multiple target environments or events (conferences, kiosk, web, offline, etc.)
 * Support for anonymous use - ideal for public computers at developer events
 * Looks great, with a responsive web implementation
-* Remembers where the student left off when returning to a codelab
+* Remembers where the student left off when returning to a sfguide
 * Mobile friendly user experience
 
-## How to get started
+## Getting Started
 
-  1. nodejs & npm ([Install NodeJS & npm](https://nodejs.org/en/download/))
-  2. install gulp-cli:
-   ````bash
-   npm install --global gulp-cli
-   ````
-  3. install Golang ([Install Go](https://golang.org/doc/install))
-  4. add `/usr/local/go/bin` to the `PATH` environment variable. You can do this by adding the following line to your profile (`.bashrc` or `.zshrc`):
+### Prerequisites
 
+  1. [Install Node](https://nodejs.org/en/download/); Homebrew installed? `brew install node`
+     - Install gulp-cli `npm i -g gulp-cli`
+  2. [Install Go](https://golang.org/doc/install); Homebrew installed? `brew install golang`
+     - Install claat `go get github.com/googlecodelabs/tools/claat`
+
+## Run locally
+
+  1. Fork this repository to your personal github account (top right of webpage, `fork` button)
+  2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfguides.git sfguides`
+  3. Navigate to the site directory `cd sfguides/site`
+  4. Install node dependencies `npm install`
+  5. Run the site `npm run serve`
+
+Congratulations! You now have the Snowflake Guides landing page running.
+
+##### Common environment errors:
+1. You get a `claat not found` error
+   - Make sure Go is properly in your `PATH`. Add the following lines to your profile (`~/.profile`):
 ````bash
 #adding Golang to path
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$HOME/go/bin
 ````
-***Note: Changes made to a profile file may not apply until the next time you log into your computer. To apply the changes immediately, just run the shell commands directly or execute them from the profile using a command such as `source $HOME/.zshrc`.***
+  ***Note:** After adding Go to your `PATH`, be sure to apply your new profile:  `source ~/.profile`*
 
-  5. install claat:
-   ````bash
-   go get github.com/googlecodelabs/tools/claat
-   ````
-  6. navigate to the site directory:
-   ````bash
-   cd site/
-   ````
-  7. install dependencies:
-   ````bash
-   npm install
-   ````
-  8. run the site locally
-   ````bash
-   gulp serve
-   ````
+2. You get a `EACCES` error when installing gulp-cli
+   - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
-Congratulations! You now have the Snowflake Guides landing page running.
+#### Write Your First SFGuide:
 
-#### Now lets add our first SFGuide:
+  1. Terminate the running server with `ctrl C` and and navigate to the `sfguides` source directory `cd sfguides/src`
+     - In this directory, you will see all existing guides and their markdown files.
+  2. Generate a new guide from the guide template `npm run template <GUIDE_NAME>` 
+      - Don't use spaces in the name of your guide, instead use underscores.
+  3. Navigate to the newly generated guide (`cd sfguides/src/<GUIDE_NAME>`) and edit your guide in a tool like vscode.
+  4. Run the website again `npm run serve`
+  5. As you edit and save changes, your changes will automatically load in the browser.
 
-  1. Terminate the running gulp server with `ctrl C` and navigate to the devlab directory
-  ````bash
-  cd site/devlabs
-  ````
-  The devlabs directory is where to store all SFGuide content, written in markdown.
-  
-  2. Use the claat tool to convert the markdown file to HTML
-  ````bash
-  claat export sample.md
-  ````
-
-  You should see `ok sample` as the response. This means claat has successfully converted your .md file to HTML and created a new directory named `sample`.
-   
-  3. Now lets run our server again, this time specifying our devlabs directory of content
-   ````bash
-   gulp serve --codelabs-dir=devlabs
-   ````
-You can now navigate to the landing page in your browser to see your new codelab!
-
-You can use the [sample SFGuide](site/devlabs/sample.md) as a template, just change the name of the file and the id listed in the header. 
+You can always read the [sample SFGuide](site/sfguides/sample.md) online.
 
 ### Tips
 
-- Review the [sample.md](site/devlabs/sample.md) file to learn more about to to structure your SFGuide for the claat tool. 
-- You can also see more formating information in the [claat documentation](claat/README.md), and use the command `claat -h`
+- Review the [sample.md](site/sfguides/sample.md) file to learn more about to to structure your SFGuide for the claat tool. 
 - You can see the supported SFGuide categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about SFGuides, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)

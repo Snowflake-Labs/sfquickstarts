@@ -1,5 +1,13 @@
 {
   "private": true,
+  "scripts": {
+    "serve": "gulp serve",
+    "prod": "gulp serve:dist",
+    "deploy": "gulp clean && gulp dist && rm .firebase/*.cache 2> /dev/null || true && firebase deploy --only hosting",
+    "export": "gulp build:codelabs",
+    "template": "./init.sh",
+    "clean": "gulp clean"
+  },
   "devDependencies": {
     "autoprefixer": "^9.3.1",
     "babel-core": "^6.26.3",
@@ -19,6 +27,7 @@
     "gulp-htmlmin": "^5.0.1",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
+    "gulp-livereload": "^4.0.2",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.2",
@@ -42,5 +51,8 @@
   "engines": {
     "node": ">=0.10.0"
   },
+  "browserslist": [
+    "defaults"
+  ],
   "dependencies": {}
 }
