@@ -422,10 +422,10 @@ Duration: 15
     _**Pro Tip: You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.**_
 
 ```
------
+/*-----
 --A--
 -----
---Let's set our worksheet role and db/schema
+--Let's set our worksheet role and db/schema*/
 use role ACCOUNTADMIN;
 use schema PC_FIVETRAN_DB.GOOGLE_ADS_DBT;
 ```
@@ -439,10 +439,10 @@ use schema PC_FIVETRAN_DB.GOOGLE_ADS_DBT;
     
 12. Run the **Create Database** SQL and the **Use Schema** commands in section **B** to make a clone, then refresh the database browser with the (small) ![Refresh](assets/image130.png) button:  
 ```
------
+/*-----
 --B--
 -----
---Make a new DEV db and schema and then clone the 3 key tables for isolated analysis and experimentation
+--Make a new DEV db and schema and then clone the 3 key tables for isolated analysis and experimentation*/
 create database GOOGLE_ADS_DEV clone PC_FIVETRAN_DB;
 use schema GOOGLE_ADS_DEV.GOOGLE_ADS_DBT;
 ```
@@ -451,61 +451,54 @@ use schema GOOGLE_ADS_DEV.GOOGLE_ADS_DBT;
 
 13. Next we need to create a warehouse (compute) for the analysts. For this workshop we’ll create an Extra Small - the smallest unit of Snowflake compute - with an auto suspend time of 2 minutes and auto resume enabled.  Auto resume means it will start up when a request is made.  Run the SQL in section **C** to create the warehouse.  Notice that this warehouse is now in your worksheet context.  
 ```
------
---C--
------
---Create a virtual warehouse (compute) for the Marketing Analyst team to do their work
-create or replace warehouse MKT_ANALYSIS 
-with 
-warehouse_size = 'XSMALL' 
-auto_suspend = 120 --seconds
-auto_resume = TRUE;
+/*-----
+ --C--
+ -----
+ --Create a virtual warehouse (compute) for the Marketing Analyst team to do their work*/
+create or replace warehouse MKT_ANALYSIS with warehouse_size = 'XSMALL' auto_suspend = 120 --seconds
+  auto_resume = TRUE;
 ```
     
     _**Snowflake compute is unique.  It’s (1) easy to define and manage; (2) fast to activate and suspend; (3) self-suspending; (4) self-healing; (5) isolated from the storage layer; (6) isolated  from other compute; (7) quick to scale up/down and out/in; (8) non-disruptive when any of this is happening.**_
     
 14. For our last act as DBA we’ll create a **resource monitor** to track warehouse consumption.  Resource monitors are convenient tools for setting time-based consumption thresholds on compute at the warehouse or account level.  You can set alerts for various thresholds and even prevent a warehouse from running once it reaches a credit value that you set.
 ```
------
---D--
------
---Create a resource monitor to track credit usage of the marketing virtual warehouse
-create or replace RESOURCE MONITOR "MARKETING_ANALYSIS" 
-with 
-CREDIT_QUOTA = 20, 
-frequency = 'DAILY', 
-start_timestamp = 'IMMEDIATELY', 
-end_timestamp = null 
- triggers 
- ON 100 PERCENT DO SUSPEND
- on 5 PERCENT do NOTIFY 
- on 10 PERCENT do NOTIFY 
- on 50 PERCENT do NOTIFY 
- on 90 PERCENT do NOTIFY;
- 
-alter WAREHOUSE "MKT_ANALYSIS" set RESOURCE_MONITOR = "MARKETING_ANALYSIS";
+/*-----
+ --D--
+ -----
+ --Create a resource monitor to track credit usage of the marketing virtual warehouse*/
+create or replace RESOURCE MONITOR "MARKETING_ANALYSIS" with CREDIT_QUOTA = 20,
+  frequency = 'DAILY',
+  start_timestamp = 'IMMEDIATELY',
+  end_timestamp = null triggers 
+  ON 100 PERCENT DO SUSPEND 
+  ON 5 PERCENT do NOTIFY 
+  ON 10 PERCENT do NOTIFY 
+  ON 50 PERCENT do NOTIFY 
+  ON 90 PERCENT do NOTIFY;
+alter WAREHOUSE "MKT_ANALYSIS"
+set RESOURCE_MONITOR = "MARKETING_ANALYSIS";
 ```
 
     Run the two SQL statements in section **D** to create a resource monitor that has a daily 20 credit limit, sends an alert at 5%, 10%, 50%, and 99% thresholds, and suspends the warehouse at 100% (20 credits).  The second statement associates the resource monitor to the warehouse.   
 
 15. Now we’ll switch to ‘Analyst mode’. In real life this would be a different person with a different userid and a different Role.  An analyst might write a query like the one in section **E** of the script to answer the question “What was the best performing cranberry sauce campaign?” Go ahead and run it.  We’re working with tiny data sets in the lab but in reality we might run over millions or billions of rows.
 ```
------
---E--
------
---What was the best performing cranberry sauce campaign?
-select 
-ad_group_name, 
-campaign_name, 
-sum(spend) as TOT_SPEND, 
-sum(clicks) as TOT_CLICKS, 
-sum(impressions) as TOT_IMPRESSIONS,
-sum(impressions)/sum(spend) as IMPRESSIONS_PER_DOLLAR,
-sum(spend)/sum(clicks) as cost_per_click
-from 
-GOOGLE_ADS__URL_AD_ADAPTER
+/*-----
+ --E--
+ -----
+ --What was the best performing cranberry sauce campaign?*/
+select ad_group_name,
+  campaign_name,
+  sum(spend) as TOT_SPEND,
+  sum(clicks) as TOT_CLICKS,
+  sum(impressions) as TOT_IMPRESSIONS,
+  sum(impressions) / sum(spend) as IMPRESSIONS_PER_DOLLAR,
+  sum(spend) / sum(clicks) as cost_per_click
+from GOOGLE_ADS__URL_AD_ADAPTER
 where ad_group_name = 'cranberry sauce'
-group by ad_group_name, campaign_name
+group by ad_group_name,
+  campaign_name
 order by 6 desc;
 ```
 
@@ -543,26 +536,24 @@ order by 6 desc;
 
 26. With production-sized data sets we are likely to have very large tables and complex queries; therefore, we might want to increase the amount of compute we’re using to perform this analysis.  In Snowflake this is fast and easy.  Run the statement in section **G**.  Notice how fast it scales up. No disruption. No shuffling of data.  We’ve changed from an XS (one node cluster) to an XL (16 node cluster) in seconds.  Ready to go!
 ```
------
+/*-----
 --G--
 ----- 
 --With production-sized data sets we might want to join and query tables with billions of rows
---In these cases it's easy and productive to scale up our virtual warehouse so these queries run faster
+--In these cases it's easy and productive to scale up our virtual warehouse so these queries run faster*/
 alter warehouse mkt_analysis set warehouse_size = 'XLARGE';
 ```
 
 27. So, let’s join that weather data to our Google Ads data and see if there is a correlation between clicks and snowfall.  Run the correlation query in section **H**. Remember that we’re actually joining data across two accounts, but the experience and performance is seamless and fast.  
 ```
------
---H--
------
---Is there any correlation between clicks and snowfall for any ad group?
-select 
-ad_group_name,
-abs(corr(clicks,w.tot_snowfall_in)) as clicks_snow_corr
-from 
-GOOGLE_ADS__URL_AD_ADAPTER ga, 
-"WEATHERSOURCE"."PUBLIC"."HISTORY_DAY" w
+/*-----
+ --H--
+ -----
+ --Is there any correlation between clicks and snowfall for any ad group?*/
+select ad_group_name,
+  abs(corr(clicks, w.tot_snowfall_in)) as clicks_snow_corr
+from GOOGLE_ADS__URL_AD_ADAPTER ga,
+  "WEATHERSOURCE"."PUBLIC"."HISTORY_DAY" w
 where ga.date_day = w.date_valid_std
 group by 1
 order by 2 desc;
@@ -573,51 +564,52 @@ order by 2 desc;
 
 28. Because this combination may yet have value, let’s create a view that combines the correlations with the URL data so others can take a look more easily.  Run the SQL in section **I**.  One creates the view and the other queries it.
 ```
------
---I--
------
---Let's create new view with the correlations built in to the URL_AD_ADAPTER data
-create or replace view GOOGLE_ADS__URL_AD_ADAPTER_CORR
-as (
-with 
-corr as (
-select 
-ad_group_name,
-abs(corr(clicks,w.tot_snowfall_in)) as clicks_snow_corr
-from GOOGLE_ADS__URL_AD_ADAPTER ga, "WEATHERSOURCE"."PUBLIC"."HISTORY_DAY" w
-where ga.date_day = w.date_valid_std
-group by 1
-),
-base as (
-select * from GOOGLE_ADS__URL_AD_ADAPTER
-)
-select b.*,c.clicks_snow_corr 
-from base b, corr c
-where b.ad_group_name = c.ad_group_name
-);
- 
-select * from GOOGLE_ADS__URL_AD_ADAPTER_CORR; 
+/*-----
+ --I--
+ -----
+ --Let's create new view with the correlations built in to the URL_AD_ADAPTER data*/
+create or replace view GOOGLE_ADS__URL_AD_ADAPTER_CORR as (
+    with corr as (
+      select ad_group_name,
+        abs(corr(clicks, w.tot_snowfall_in)) as clicks_snow_corr
+      from GOOGLE_ADS__URL_AD_ADAPTER ga,
+        "WEATHERSOURCE"."PUBLIC"."HISTORY_DAY" w
+      where ga.date_day = w.date_valid_std
+      group by 1
+    ),
+    base as (
+      select *
+      from GOOGLE_ADS__URL_AD_ADAPTER
+    )
+    select b.*,
+      c.clicks_snow_corr
+    from base b,
+      corr c
+    where b.ad_group_name = c.ad_group_name
+  );
+select *
+from GOOGLE_ADS__URL_AD_ADAPTER_CORR;
 ```
 
 29. Now that our heavy lifting is done, let’s scale down the warehouse size. No need to pay for more compute than we need. Run the SQL in section **J**.
 ```
------
+/*-----
 --J--
 -----
---Once we're done with our complex queries we scale the warehouse back down
+--Once we're done with our complex queries we scale the warehouse back down*/
 alter warehouse mkt_analysis set warehouse_size = 'XSMALL';
 ```
 
 30. For our last trick let’s imagine we’ve accidentally dropped the table we’re working with.  No one has ever done that!  Run the DROP statement in section **K** and then refresh the database browser.  Notice the table is gone.  Now run the UNDROP and refresh.  It’s back! This is the power of time travel.  You can restore lost data for up to 90 days of history.  
 ```
------
+/*-----
 --K--
 -----
 --Let's look at one last great feature of Snowflake.  Have you ever accidentally dropped a table?  Or a database?  
---Let's 'accidentally' drop a table.
+--Let's 'accidentally' drop a table.*/
 drop table GOOGLE_ADS__URL_AD_ADAPTER; 
 
---Fortunately, in Snowflake, this is an easy fix.
+/*--Fortunately, in Snowflake, this is an easy fix.*/
 undrop table GOOGLE_ADS__URL_AD_ADAPTER;
 ```
     
