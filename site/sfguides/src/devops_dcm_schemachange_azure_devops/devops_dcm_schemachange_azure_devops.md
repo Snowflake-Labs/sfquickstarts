@@ -12,7 +12,7 @@ tags: Getting Started, Data Engineering
 ## Overview 
 Duration: 2
 
-![Guide logo](assets/devops_dcm_schemachange_azure_devops-1.png)
+<img src="assets/devops_dcm_schemachange_azure_devops-1.png" width="600" />
 
 This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with Azure DevOps. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and Azure DevOps.
 
@@ -34,10 +34,11 @@ Let’s begin with a brief overview of Azure DevOps and schemachange.
 ## Azure DevOps Overview
 Duration: 2
 
-![Azure DevOps logo](assets/devops_dcm_schemachange_azure_devops-2.png)
+<img src="assets/devops_dcm_schemachange_azure_devops-2.png" width="300" />
 
 “Azure DevOps provides developer services for support teams to plan work, collaborate on code development, and build and deploy applications. Developers can work in the cloud using Azure DevOps Services or on-premises using Azure DevOps Server.” (from Microsoft’s [What is Azure DevOps?](https://docs.microsoft.com/en-us/azure/devops/user-guide/what-is-azure-devops?view=azure-devops))
 
+### Azure DevOps Services
 Azure DevOps provides a complete, end-to-end set of software development tools to manage the SDLC. In particular Azure DevOps provides the following services (from Microsoft’s [What is Azure DevOps?](https://docs.microsoft.com/en-us/azure/devops/user-guide/what-is-azure-devops?view=azure-devops)):
 
 - **Azure Repos** provides Git repositories or Team Foundation Version Control (TFVC) for source control of your code
@@ -46,6 +47,7 @@ Azure DevOps provides a complete, end-to-end set of software development tools t
 - **Azure Test** Plans provides several tools to test your apps, including manual/exploratory testing and continuous testing
 - **Azure Artifacts** allows teams to share packages such as Maven, npm, NuGet and more from public and private sources and integrate package sharing into your CI/CD pipelines
 
+### Azure DevOps History
 If you’ve worked with Microsoft products for a while you will know that over time product names evolve. The first version of what is today called Azure DevOps was released on March 17, 2006 as a component of the Visual Studio 2005 Team System under the name Team Foundation Server (TFS). Over the years it has been known by various names including Team Foundation Server (TFS), Visual Studio Online (VSO), Visual Studio Team Services (VSTS), and Azure DevOps. For fun, here is the history of product names from [Wikipedia’s Azure DevOps Server page](https://en.wikipedia.org/wiki/Azure_DevOps_Server#History):
 
 <table>
@@ -131,7 +133,7 @@ This guide will be focused on the Azure Pipelines service.
 ## schemachange Overview
 Duration: 2
 
-![schemachange logo](assets/devops_dcm_schemachange_azure_devops-3.png)
+<img src="assets/devops_dcm_schemachange_azure_devops-3.png" width="300" />
 
 Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this post to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
@@ -233,7 +235,8 @@ When you’re finished adding all the variables, don’t forget to click the “
 
 ![Azure DevOps variable group](assets/devops_dcm_schemachange_azure_devops-5.png)
 
-Note: For an even better solution to managing your secrets, you can leverage Azure Key Vault. See [Link secrets from an Azure key vault](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml#link-secrets-from-an-azure-key-vault) for the details.
+Positive
+: **Tip** - For an even better solution to managing your secrets, you can leverage Azure Key Vault. See [Link secrets from an Azure key vault](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml#link-secrets-from-an-azure-key-vault) for the details.
 
 <!-- ------------------------ -->
 ## Create and Run a Deployment Pipeline
@@ -288,7 +291,8 @@ A few things to point out from the YAML pipeline definition:
 - We’re using the default Microsoft-hosted Linux agent pool to execute the pipeline.
 - The “env” section of the Bash task allows us to set environment variables which will be available to the Bash script. In particular, this allows us to securely pass secret values (like the Snowflake password) to applications/scripts running in the pipeline like schemachange.
 
-Note: Under Pipelines in the left navigation bar you will see both “Pipelines” and “Releases”. In earlier versions of the service build and release pipelines were separate and were created graphically using a UI. While these [classic release pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops) can still be used, Azure DevOps is moving to a single pipeline definition using YAML.
+Negative
+: **Note** - Under Pipelines in the left navigation bar you will see both “Pipelines” and “Releases”. In earlier versions of the service build and release pipelines were separate and were created graphically using a UI. While these [classic release pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops) can still be used, Azure DevOps is moving to a single pipeline definition using YAML.
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
@@ -315,7 +319,7 @@ Branching strategies can be complex, but there are a few popular ones out there 
 ### Pipeline Stages
 In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. Your Azure Pipelines YAML definition file can be extended to include a stage for each of your environments. For more details around how to define stages, please refer to [Azure DevOp’s Add stages, dependencies, & conditions page](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&tabs=yaml).
 
-### Testing
+### Testing Strategy
 Testing is an important part of any software development process, and is absolutely critical when it comes to automated software delivery. But testing for databases and data pipelines is complicated and there are many approaches, frameworks, and tools out there. In my opinion, the simplest way to get started testing data pipelines is with [dbt](https://www.getdbt.com/) and the [dbt Test features](https://docs.getdbt.com/docs/building-a-dbt-project/tests/). Another popular Python-based testing tool to consider is [Great Expectations](https://greatexpectations.io/).
 
 With that you should now have a working CI/CD pipeline in Azure DevOps and some helpful ideas for next steps on your DevOps journey with Snowflake. Good luck!
