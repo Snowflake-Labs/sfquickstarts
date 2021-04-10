@@ -87,12 +87,12 @@ SELECT "name" AS WAREHOUSE_NAME
 ```
 
 
-## Warehouses with Long Timeouts (T1)
+## Warehouses with Long Suspension (T1)
 ###### Tier 1
 #### Description:
-Identifies warehouses that have the longest timeouts.  Timeout parameters are used to define how long a query may run for before timing out.  By default, statement lockout is set for two days.
+Identifies warehouses that have the longest setting for automatic suspension after a period of no activity on that warehouse.  
 #### How to Interpret Results:
-All warehouses should have an appropriate timeout for the workload.
+All warehouses should have an appropriate setting for automatic suspension for the workload.
 
 – For Tasks, Loading and ETL/ELT warehouses set to immediate suspension.
 
@@ -240,21 +240,20 @@ left join (select distinct WAREHOUSE_NAME from SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE
 where b.WAREHOUSE_NAME is null;
 ```
 
-## Set Account Statement Timeouts (T2)
+## Set Statement Timeouts (T2)
 ###### Tier 2
 #### Description:
 Statement timeouts provide additional controls around how long a query is able to run before cancelling it. Using this feature will ensure that any queries that get hung up for extended periods of time will not cause excessive consumption of credits.
 
-Show parameter settings at the Account, Warehouse, and User levels.
-#### How to Interpret Results:
-Should this be adjusted?
-
+Show parameter settings at the Account, Warehouse, and User Session levels.
 #### SQL
 ```sql
 SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN ACCOUNT;
 SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN WAREHOUSE <warehouse-name>;
 SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN USER <username>;
 ```
+#### How to Interpret Results:
+This parameter is set at the account level by default.  When the parameter is also set for both a warehouse and a user session, the lowest non-zero value is enforced.
 
 ## Stale Table Streams (T2)
 ###### Tier 2
