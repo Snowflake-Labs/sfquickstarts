@@ -158,3 +158,143 @@ When you’re finished adding all the secrets, the page should look like this:
 
 Positive
 : **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
+
+<!-- ------------------------ -->
+## Create an Actions Workflow
+Duration: 2
+
+Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run schemachange and deploy changes to our Snowflake database.
+
+Positive
+: **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page.
+
+- From the repository, click on the `Actions` tab near the top middle of the page.
+- Click on the `set up a workflow yourself ->` link (if you already have a workflow defined click on the `new workflow` button and then the `set up a workflow yourself ->` link)
+- On the new workflow page
+  - Name the workflow `snowflake-devops-demo.yml`
+  - In the `Edit new file` box, replace the contents with the the following:
+
+```yaml  
+name: snowflake-devops-demo
+
+# Controls when the action will run. 
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'migrations/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy-snowflake-changes-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Python 3.8.x
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.8.x
+
+      - name: Run schemachange
+        env:
+          SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_ROLE: ${{ secrets.SF_ROLE }}
+          SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
+          SF_DATABASE: ${{ secrets.SF_DATABASE }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
+        run: |
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          python --version
+          echo "Step 1: Installing schemachange"
+          pip install schemachange
+          
+          echo "Step 2: Running schemachange"
+          schemachange -f $GITHUB_WORKSPACE/migrations -a $SF_ACCOUNT -u $SF_USERNAME -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+```
+
+Finally, click on the green `Start commit` button near the top right of the page and then click on the green `Commit new file` in the pop up window (you can leave the default comments and commit settings). You'll now be taken to the workflow folder in your repository.
+
+A few things to point out from the YAML pipeline definition:
+
+- The `on:` definition configures the pipeline to automatically run when a change is committed anywhere in the `migrations` folder on the `main` branch of the repository. So any change committed outside of that folder or in a different branch will not automatically trigger the workflow to run.
+- Please note that if you are re-using an existing GitHub repository it might retain the old `master` branch naming. If so, please update the YAML above (see the `on:` section).
+- We’re using the default GitHub-hosted Linux agent to execute the pipeline.
+- The `env` section of the `Run schemachange` step allows us to set environment variables which will be available to the Bash script. In particular, this allows us to securely pass secret values (like the Snowflake password) to applications/scripts running in the workflow like schemachange.
+
+<!-- ------------------------ -->
+## Manually Run the Actions Workflow
+Duration: 2
+
+In this step we will manually run the new Actions workflow for the first time. This will deploy the first database migration script we created in step 5.
+
+- From the repository, click on the `Actions` tab near the top middle of the page
+- In the left navigation bar click on the name of the workflow `snowflake-devops-demo`
+- Click on the `Run workflow` button and then on the green `Run workflow` button in the pop up window (leaving the default branch selected)
+
+![GitHub Actions workflow run page](assets/devops_dcm_schemachange_github-7.png)
+
+To view the details of a run, click on the name of specific run (you may have to refresh the `Actions` page for it to show up in the list). From the run overview page click on the `deploy-snowflake-changes-job` job and then browse through the output from the various steps. In particular you might want to review the output from the `Run schemachange` step.
+
+![GitHub Actions workflow run output](assets/devops_dcm_schemachange_github-8.png)
+
+Negative
+: **Note** - You'll notice that GitHub will automatically redact any secret printed to the log. This is a bit unfortunate as the helpful output from schemachange will only show `***` instead of the actual values. I understand this for sensitive secrets, but for non-sensitive parameter values this is not ideal behaviour. For more details see [Encrypted secrets](https://docs.github.com/en/actions/reference/encrypted-secrets).
+
+<!-- ------------------------ -->
+## Confirm Changes Deployed to Snowflake
+Duration: 2
+
+Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.
+
+### Database Objects
+
+You should now see a few new objects in your `DEMO_DB` database:
+
+- A new schema `DEMO` and table `HELLO_WORLD` (created by the first migration script from step 5)
+- A new schema `SCHEMACHANGE` and table `CHAGE_HISTORY` (created by schemachange to track deployed changes)
+
+Take a look at the contents of the `CHANGE_HISTORY` table to see where/how schemachange keeps track of state. See the [schemachange README](https://github.com/Snowflake-Labs/schemachange) for more details.
+
+### Query History
+
+From your Snowflake account click on the `History` tab at the top of the window. From there review the queries that were executed by schemachange. In particular, look at the `Query Tag` column to see which queries were issued by schemachange. It even tracks which migration script was responsible for which queries.
+
+<!-- ------------------------ -->
+## Create Your Second Database Migration
+Duration: 2
+
+In this script you will create your second database migration and have GitHub Actions automatically deploy it to your Snowflake account (no need to manually run the workflow this time)!
+
+Open up your cloned repository in your favorite IDE and create a script named `V1.1.2__updated_objects.sql` (make sure there are two underscores after the version number) in the same `migrations` folder with the following contents:
+
+```sql
+USE SCHEMA DEMO;
+ALTER TABLE HELLO_WORLD ADD COLUMN AGE NUMBER;
+```
+
+Then commit the new script and push the changes to your GitHub repository. Because of the continuous integration trigger we created in the YAML definition, your workflow should have automatically started a new run. Open up the workflow, click on the newest run, then click on the `deploy-snowflake-changes-job` job and browse through the output from the various steps. In particular you might want to review the output from the `Run schemachange` step.
+
+<!-- ------------------------ -->
+## Conclusion
+Duration: 1
+
+So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include adopting a branching strategy, pushing changes through a series of environments, and incorporating a comprehensive testing strategy, to name a few.
+
+### Branching Strategy
+Branching strategies can be complex, but there are a few popular ones out there that can help get you started. To begin with I would recommend keeping it simple with [GitHub flow](https://guides.github.com/introduction/flow/) (and see also [an explanation of GitHub flow by Scott Chacon in 2011](http://scottchacon.com/2011/08/31/github-flow.html)). Another simple framework to consider is [GitLab flow](https://about.gitlab.com/blog/2014/09/29/gitlab-flow/).
+
+### Pipeline Stages
+In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. Your GitHub Actions workflow YAML file can be extended to include a stage for each of your environments. For more details around how to define stages, please refer to [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
+
+### Testing Strategy
+Testing is an important part of any software development process, and is absolutely critical when it comes to automated software delivery. But testing for databases and data pipelines is complicated and there are many approaches, frameworks, and tools out there. In my opinion, the simplest way to get started testing data pipelines is with [dbt](https://www.getdbt.com/) and the [dbt Test features](https://docs.getdbt.com/docs/building-a-dbt-project/tests/). Another popular Python-based testing tool to consider is [Great Expectations](https://greatexpectations.io/).
+
+With that you should now have a working CI/CD pipeline in GitHub Actions and some helpful ideas for next steps on your DevOps journey with Snowflake. Good luck!
