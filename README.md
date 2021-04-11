@@ -73,7 +73,7 @@ You can always read the [sample SFGuide](site/sfguides/sample.md) online.
 - If you want to learn more about SFGuides, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
 
-## How do I publish my Snowflake Guide to [guides.snowflake.com](https://guides.snowflake.com)?
+## How do I get my Snowflake Guide on [guides.snowflake.com](https://guides.snowflake.com)?
 
 1. You will need to sign Snowflake's CLA 
 2. Fork this repository
