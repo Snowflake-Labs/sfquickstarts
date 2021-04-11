@@ -7,7 +7,7 @@ tags: Snowpipe, Twitter, Auto Ingest, Cloud Storage
 
 # Auto-Ingest Twitter Data into Snowflake
 <!-- ------------------------ -->
-## Overview
+## Overview Daniel Demo
 Duration: 1
 
 In this guide, we’ll be walking you through how to auto-ingest streaming and event-driven data from Twitter into Snowflake using Snowpipe. While this guide is Twitter-specific, the lessons found within can be applied to any streaming or event-driven data source. All source code for this guide can be found on [GitHub](https://github.com/Snowflake-Labs/sfguide-twitter-auto-ingest). Let’s get going!
