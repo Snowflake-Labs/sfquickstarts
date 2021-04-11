@@ -53,7 +53,6 @@ GitHub provides a complete, end-to-end set of software development tools to mana
 
 This guide will be focused on the GitHub Actions service.
 
-
 <!-- ------------------------ -->
 ## schemachange Overview
 Duration: 2
@@ -68,3 +67,94 @@ For more information about schemachange please see [the schemachange project pag
 
 Negative
 : **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
+
+<!-- ------------------------ -->
+## Prerequisites
+Duration: 2
+
+This post assumes that you have a basic working knowledge of Git repositories. You will need the following things before beginning:
+
+### Snowflake
+1. **A Snowflake Account.**
+1. **A Snowflake Database named DEMO_DB.**
+1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
+
+### GitHub
+1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
+1. **A GitHub Repository.** If you don't already have a repository created, or would like to create a new one, then [Create a new respository](https://github.com/new). For the type, select `Public` (although you could use either). And you can skip adding the README, .gitignore and license for now.
+
+### Integrated Development Environment (IDE)
+1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
+1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
+
+<!-- ------------------------ -->
+## Create Your First Database Migration
+Duration: 2
+
+Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
+
+```sql
+CREATE SCHEMA DEMO;
+CREATE TABLE HELLO_WORLD
+(
+   FIRST_NAME VARCHAR
+  ,LAST_NAME VARCHAR
+);
+```
+
+Then commit the new script and push the changes to your GitHub repository. Assuming you started from an empty repository, your repository should look like this:
+
+![GitHub repository after first change script](assets/devops_dcm_schemachange_github-5.png)
+
+<!-- ------------------------ -->
+## Create Action Secrets
+Duration: 2
+
+Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by schemachange.
+
+From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
+
+<table>
+    <thead>
+        <tr>
+            <th>Secret name</th>
+            <th>Secret value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>SF_ACCOUNT</td>
+            <td>xy12345.east-us-2.azure</td>
+        </tr>
+        <tr>
+            <td>SF_USERNAME</td>
+            <td>DEMO_USER</td>
+        </tr>
+        <tr>
+            <td>SF_PASSWORD</td>
+            <td>*****</td>
+        </tr>
+        <tr>
+            <td>SF_ROLE</td>
+            <td>DEMO_ROLE</td>
+        </tr>
+        <tr>
+            <td>SF_WAREHOUSE</td>
+            <td>DEMO_WH</td>
+        </tr>
+        <tr>
+            <td>SF_DATABASE</td>
+            <td>DEMO_DB</td>
+        </tr>
+    </tbody>
+</table>
+
+Positive
+: **Tip** - For more details on how to structure the account name in SF_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
+
+When you’re finished adding all the secrets, the page should look like this:
+
+![GitHub Actions Secrets after setup](assets/devops_dcm_schemachange_github-6.png)
+
+Positive
+: **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
