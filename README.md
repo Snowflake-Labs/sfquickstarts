@@ -1,6 +1,6 @@
 # Snowflake Guides (Quickstarts)
 
-[![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
+[![Demo](https://drive.google.com/uc?export=view&id=1wPgQExjdIONOtYruMKyeknvMvTDlVJEY)](https://drive.google.com/uc?export=view&id=1Dg3s5-KK-TzFZti63XButyDaTzcuZFxE)
 
 ## What are Snowflake Guides (Quickstarts)?
 Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](https://guides.snowflake.com/)
