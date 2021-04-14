@@ -1,11 +1,11 @@
 author: Jeremiah Hansen
 id: devops_dcm_schemachange_azure_devops
 summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Azure DevOps
-categories: Getting Started
+categories: DevOps
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering 
+tags: DevOps, Data Engineering 
 
 # DevOps: Database Change Management with schemachange and Azure DevOps
 <!-- ------------------------ -->
@@ -166,7 +166,7 @@ This post assumes that you have a basic working knowledge of Git repositories. Y
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 2
+Duration: 4
 
 Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
 
@@ -185,7 +185,7 @@ Then commit the new script and push the changes to your Azure DevOps repository.
 
 <!-- ------------------------ -->
 ## Create a Library Variable Group
-Duration: 2
+Duration: 5
 
 Libraries in the Azure Pipelines service are used to securely store variables and files which will be used in your CI/CD pipelines. In this step we will create a variable group to store all the parameters used by schemachange.
 
@@ -250,7 +250,7 @@ Positive
 
 <!-- ------------------------ -->
 ## Create and Run a Deployment Pipeline
-Duration: 2
+Duration: 6
 
 Pipelines in the Azure Pipelines service represent any automated pipeline, which includes both build and release pipelines. In this step we will create a deployment pipeline which will run schemachange and deploy changes to our Snowflake database.
 
@@ -312,7 +312,7 @@ Negative
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 2
+Duration: 4
 
 Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.
 
@@ -344,7 +344,7 @@ Then commit the new script and push the changes to your Azure DevOps repository.
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
+Duration: 2
 
 So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include adopting a branching strategy, pushing changes through a series of environments, and incorporating a comprehensive testing strategy, to name a few.
 
