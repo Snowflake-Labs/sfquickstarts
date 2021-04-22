@@ -1,4 +1,4 @@
-summary: Time Series Forecasting with Zepl v3
+summary: Time Series Forecasting with Zepl
 id: time_series_forecasting_zepl 
 categories: Getting Started
 environments: web
@@ -107,11 +107,11 @@ Duration: 5
 ### Understanding Zepl's Notebook Options
 __Resource Type:__ [Doc](https://new-docs.zepl.com/docs/configure-infrastructure/container-resource)
 
-Zepl Containers are isolated environments that are used to execute code. Paired with an Image, these Containers provide a private runtime for a notebook when it spins up. Each of these Container has a single CPU core and varies in the memory allocated to the notebook session. These Containers can be quickly scaled up or down in the notebook settings for larger or smaller workloads. Each Container has a default time out period of 30 minutes.
+Zepl Containers are isolated environments that are used to execute code. Paired with an Image, these Containers provide a private runtime for a notebook when it spins up. Each of these Containers has a single CPU core and varies in the memory allocated to the notebook session. These Containers can be quickly scaled up or down in the notebook settings for larger or smaller workloads. Each Container has a default time out period of 30 minutes.
 
 __Image:__ [Doc](https://new-docs.zepl.com/docs/configure-infrastructure/images)
 
-Zepl Images can help you and your team save significant time by making creating reproducible environments for all notebooks to access. The Zepl Image builds all of the libraries required to run a notebook so your users don't have to worry about long wait times for installing libraries at the beginning of every notebook and hoping that each notebook environment is configured the same.
+Zepl Images can help you and your team save significant time by creating reproducible environments for all notebooks to access. The Zepl Image builds all of the libraries required to run a notebook so your users don't have to worry about long wait times for installing libraries at the beginning of every notebook and hoping that each notebook environment is configured the same.
 
 __Spaces:__ [Doc](https://new-docs.zepl.com/docs/manage-your-organization/spaces)
 
@@ -170,7 +170,7 @@ Second, select "Run Paragraph" <br/>
 
 #### Code Explained
 `import pandas as pd` <br/>
-Zepl's General Purpose Image pre-installs the pandas library so all you have to do is import.
+Zepl's General Purpose Image pre-installed the pandas library so all you have to do is import.
 
 `cur = z.getDatasource("US_STOCKS_DAILY")`<br/>
 This function is used to access any data source that is attached to the notebook. A [Cursor object](https://docs.snowflake.com/en/user-guide/python-connector-api.html#object-cursor) is returned to the `cur` variable. The specific data source is specified by setting the string input to the corresponding name of your data source. Lastly, the data source must be attached to the notebook before starting the container.
@@ -185,12 +185,12 @@ Return a Pandas DataFrame to the `df_100` variable using. See documentation for 
 * A data source must be attached to the notebook while the container is _Stopped_.
 * Stop the container anytime you make changes to the data source, such as updating Account Details or Credentials.
 * `ProgrammingError: 000606 (57P03): No active warehouse selected in the current session.  Select an active warehouse with the 'use warehouse' command.`
- * Resolution: Stop container > Un-comment code to set warehouse, `USE WAREHOUSE <warehouse name>`
+ * Resolution: Stop container > Uncomment code to set warehouse, `USE WAREHOUSE <warehouse name>`
 * `ProgrammingError: 251005: User is empty.`
  * Resolution: Stop container > Check to make sure the Username value was saved successfully in Step 3
 
 <!-- ------------------------ -->
-## Install and Import Python Libaries
+## Install and Import Python Libraries
 Duration: 5
 
 ### Overview
@@ -200,7 +200,7 @@ Zepl provides several options for loading libraries. The two most used are Custo
 Add this code to the first paragraph and select "Run Paragraph":
 ```sh
 %python
-# Install fbprophet Deendencies
+# Install fbprophet Dependencies
 !pip install pystan~=2.14 Cython>=0.22 cmdstanpy==0.9.68 numpy>=1.15.4 pandas>=1.0.4 matplotlib>=2.0.0 LunarCalendar>=0.0.9 convertdate>=2.1.2 holidays>=0.10.2 setuptools-git>=1.2 python-dateutil>=2.8.0 tqdm>=4.36.1
 
 # Install fbprophet Library
@@ -291,11 +291,11 @@ m.fit(ph_df)
 ```
 #### Code Explained
 `m = Prophet()`</br> 
-First we must create python object from the Prophet library. This will be used to access all functions for forecasting.
+First we must create a python object from the Prophet library. This will be used to access all functions for forecasting.
 
 `ph_df = df_stock.drop(['OPEN', 'HIGH', 'LOW','VOLUME', 'SYMBOL','CLOSE'], axis=1)`<br>
 `ph_df.rename(columns={'ADJCLOSE': 'y', 'DATE': 'ds'}, inplace=True)` </br>
-The Prophet library only takes in two column as inputs before training. Those inputs are a date column and a value to be predicted. In our case the date column in our dataset is labeled as 'DATE' and we would like to predict the close value of the stock which is labeled as, 'ADJCLOSE'. 
+The Prophet library only takes in two columns as inputs before training. Those inputs are a date column and a value to be predicted. In our case the date column in our dataset is labeled as 'DATE' and we would like to predict the close value of the stock which is labeled as, 'ADJCLOSE'. 
 
 `m.fit(ph_df)`</br>
 Lastly we train (fit) the model on the two input values above DATE and ADJCLOSE.
@@ -312,7 +312,7 @@ future_prices = m.make_future_dataframe(periods=period)
 # Predict Prices
 forecast = m.predict(future_prices)
 
-# Inspect the forecast prices over the next 30 days. The yhat value is the predition value.
+# Inspect the forecast prices over the next 30 days. The yhat value is the prediction value.
 z.show(forecast.tail(period))
 ```
 <img src="./assets/zepl_future_prediction_table.png" >
@@ -439,7 +439,7 @@ Here is what the input parameters mean:
 
 * `initial`: This is the time window to use for training. We are training on 6,570 days worth of data (18 years).
 * `horizon`: This is the time window to make predictions over. We will use 30 days worth of adjusted close values to predict and compare our results to the actual adjusted close values.
-* `period`: This is the time window to skip over between prediction windows (`horizon`). Setting this to 90 days allows us to make one set of prediction every quarter.
+* `period`: This is the time window to skip over between prediction windows (`horizon`). Setting this to 90 days allows us to make one set of predictions every quarter.
 * `parallel`: Cross-validation can be CPU intensive, so we will try to multiple CPUs to reduce overall run time.
 
 ### Cross-Validation Results
@@ -484,7 +484,7 @@ fig = plot_cross_validation_metric(df_cv, metric='mape')
 
 ### Troubleshooting: 
 * `BrokenProcessPool: A process in the process pool was terminated abruptly while the future was running or pending.` May occur due to lack of memory available in the running container. Stop the container and select a larger container size. Typically 16GB and 32GB should be sufficient. [Doc](https://new-docs.zepl.com/docs/using-the-zepl-notebook/run/runtime-settings)
-*  `ImportError: FloatProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html`: TQDM not supported for Zepl notebooks. Must use parallel flag. This issue is tracked here and will be available in the next release of fbprophet ([Ref](https://github.com/facebook/prophet/issues/1825)).
+*  `ImportError: FloatProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html`: TQDM not supported for Zepl notebooks. Must use a parallel flag. This issue is tracked here and will be available in the next release of fbprophet ([Ref](https://github.com/facebook/prophet/issues/1825)).
 
 <!-- ------------------------ -->
 ## Next Steps: Improving our model with Hyperparameter Tuning
