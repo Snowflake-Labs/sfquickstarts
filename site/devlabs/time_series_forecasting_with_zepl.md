@@ -101,7 +101,8 @@ Duration: 5
 
 1. From any screen, Select _Add New_ (upper left)
 2. Select _+ New Notebook_
-3. Enter Notebook Details
+3. Enter Notebook Details:
+ * Select a __Medium (16GB) or Large (32GB)__ Resource
 </br><img src="./assets/zepl_create_new_notebook.png" width="550" />
 
 ### Understanding Zepl's Notebook Options
