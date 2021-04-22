@@ -12,7 +12,7 @@ authors: Zepl
 ## Overview 
 Duration: 1
 
-In this guide, we'll be walking you through how to build a time series forecasting model using Zepl's data science notebook with data loaded from Snowflake's Data Marketplace!
+In this guide, we'll be walking you through how to build a time series forecasting model using Zepl's data science notebook with data loaded from Snowflake's Data Marketplace! We will be forecasting on stock market close values. _Please note:_ This walk through is not to be used for investing purposes. This is intended to be used as a guide to demonstrate an example of how to use Zepl and Snowflake.
 
 ### Prerequisites
 - Familiarity with Python
@@ -25,6 +25,8 @@ In this guide, we'll be walking you through how to build a time series forecasti
 - Introduction to [Facebook's Prophet library](https://facebook.github.io/prophet/docs/quick_start.html#python-api) for time series forecasting
 - Notebook style reporting with built in data visualizations
 - How to write forecasted results from Zepl to Snowflake
+
+<img src="./assets/zepl_overview_teaser.png" />
 
 ### What You’ll Need 
 - A cup of coffee and your brain
