@@ -1,13 +1,13 @@
 summary: Learn how to manage Snowflake using Terraform
 id: terraforming_snowflake
-categories: Getting Started
+categories: DevOps
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Data Applications, Terraform
 authors: Brad Culberson
 
-# Terraforming Snowflake
+# DevOps: Terraforming Snowflake
 
 ## Overview
 Duration: 5
