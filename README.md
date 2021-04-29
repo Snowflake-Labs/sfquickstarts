@@ -1,6 +1,6 @@
 # Snowflake Guides (Quickstarts)
 
-[![Demo](https://storage.googleapis.com/claat/demo.png)](https://storage.googleapis.com/claat/demo.mp4)
+[![Demo](https://drive.google.com/uc?export=view&id=1wPgQExjdIONOtYruMKyeknvMvTDlVJEY)](https://drive.google.com/uc?export=view&id=1Dg3s5-KK-TzFZti63XButyDaTzcuZFxE)
 
 ## What are Snowflake Guides (Quickstarts)?
 Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](https://guides.snowflake.com/)
@@ -73,7 +73,7 @@ You can always read the [sample SFGuide](site/sfguides/sample.md) online.
 - If you want to learn more about SFGuides, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
 
-## How do I publish my Snowflake Guide to [guides.snowflake.com](https://guides.snowflake.com)?
+## How do I get my Snowflake Guide on [guides.snowflake.com](https://guides.snowflake.com)?
 
 1. You will need to sign Snowflake's CLA 
 2. Fork this repository
