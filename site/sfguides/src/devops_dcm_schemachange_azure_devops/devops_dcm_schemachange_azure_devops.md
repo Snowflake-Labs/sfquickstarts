@@ -29,6 +29,42 @@ This guide will focus primarily on automated release management for Snowflake by
 
 Let’s begin with a brief overview of Azure DevOps and schemachange.
 
+### Prerequisites
+
+This guide assumes that you have a basic working knowledge of Git repositories.
+
+### What You'll Learn
+
+* A brief history and overview of Azure DevOps
+* A brief history and overview of schemachange
+* How database change management tools like schemachange work
+* How a simple release pipeline works
+* How to create CI/CD pipelines in Azure DevOps
+* Ideas for more advanced CI/CD pipelines with stages
+* How to get started with branching strategies
+* How to get started with testing strategies
+
+### What You'll Need
+
+You will need the following things before beginning:
+
+1. Snowflake
+  1. **A Snowflake Account.**
+  1. **A Snowflake Database named DEMO_DB.**
+  1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
+1. Azure DevOps
+  1. **An Azure DevOps Services Account.** If you don’t already have an Azure DevOps Services account you can create a Basic Plan for free. Click on the `Start free` button on [the Azure DevOps Overview page](https://azure.microsoft.com/en-us/services/devops/).
+  1. **An Azure DevOps Organization.** If you don’t already have an Organization created, log in to [Azure DevOps](https://dev.azure.com/) and click on the `New organization` link in the left navigation bar.
+  1. **An Azure DevOps Project.** If you don’t already have a Project created, log in to [Azure DevOps](https://dev.azure.com/), make sure the correct Organization is selected in the left navigation bar, and click on the `+ New project` button near the top right of the window. Keep the default setting for a Private project with Git version control.
+  1. **An Azure DevOps Git Repository.** A Git repository should have automatically been created in your Project when the Project was created (and by default has the same name as the Project). If you don’t have one, or would like to create a new one, open the Project, click on `Repos` in the left navigation bar, click on the drop down arrow next to the current repository name in the top navigation bar breadcrumbs and click on `+ New repository`.
+1. Integrated Development Environment (IDE)
+  1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
+  1. **Your project repository cloned to your computer.** For connection details about the Git repository in your project, open the Project and click on the `Repos` icon in the left navigation bar. If your repository is empty you will see the options for cloning to your computer. If your repository has files in it already you will see a `Clone` button near the top right of the window which will give you the options.
+
+### What You'll Build
+
+* A simple, working release pipeline for Snowflake in Azure DevOps
+
 <!-- ------------------------ -->
 ## Azure DevOps Overview
 Duration: 2
@@ -134,7 +170,7 @@ Duration: 2
 
 <img src="assets/devops_dcm_schemachange_azure_devops-3.png" width="300" />
 
-Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this post to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
+Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
 schemachange is a lightweight Python-based tool to manage all your Snowflake objects. It follows an imperative-style approach to database change management (DCM) and was inspired by [the Flyway database migration tool](https://flywaydb.org/). When schemachange is combined with a version control tool and a CI/CD tool, database changes can be approved and deployed through a pipeline using modern software delivery practices.
 
@@ -142,27 +178,6 @@ For more information about schemachange please see [the schemachange project pag
 
 Negative
 : **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
-
-<!-- ------------------------ -->
-## Prerequisites
-Duration: 2
-
-This post assumes that you have a basic working knowledge of Git repositories. You will need the following things before beginning:
-
-### Snowflake
-1. **A Snowflake Account.**
-1. **A Snowflake Database named DEMO_DB.**
-1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
-
-### Azure DevOps
-1. **An Azure DevOps Services Account.** If you don’t already have an Azure DevOps Services account you can create a Basic Plan for free. Click on the `Start free` button on [the Azure DevOps Overview page](https://azure.microsoft.com/en-us/services/devops/).
-1. **An Azure DevOps Organization.** If you don’t already have an Organization created, log in to [Azure DevOps](https://dev.azure.com/) and click on the `New organization` link in the left navigation bar.
-1. **An Azure DevOps Project.** If you don’t already have a Project created, log in to [Azure DevOps](https://dev.azure.com/), make sure the correct Organization is selected in the left navigation bar, and click on the `+ New project` button near the top right of the window. Keep the default setting for a Private project with Git version control.
-1. **An Azure DevOps Git Repository.** A Git repository should have automatically been created in your Project when the Project was created (and by default has the same name as the Project). If you don’t have one, or would like to create a new one, open the Project, click on `Repos` in the left navigation bar, click on the drop down arrow next to the current repository name in the top navigation bar breadcrumbs and click on `+ New repository`.
-
-### Integrated Development Environment (IDE)
-1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
-1. **Your project repository cloned to your computer.** For connection details about the Git repository in your project, open the Project and click on the `Repos` icon in the left navigation bar. If your repository is empty you will see the options for cloning to your computer. If your repository has files in it already you will see a `Clone` button near the top right of the window which will give you the options.
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
@@ -320,7 +335,7 @@ Now that your first database migration has been deployed to Snowflake, log into 
 
 You should now see a few new objects in your `DEMO_DB` database:
 
-- A new schema `DEMO` and table `HELLO_WORLD` (created by the first migration script from step 5)
+- A new schema `DEMO` and table `HELLO_WORLD` (created by the first migration script from step 4)
 - A new schema `SCHEMACHANGE` and table `CHAGE_HISTORY` (created by schemachange to track deployed changes)
 
 Take a look at the contents of the `CHANGE_HISTORY` table to see where/how schemachange keeps track of state. See the [schemachange README](https://github.com/Snowflake-Labs/schemachange) for more details.
@@ -343,18 +358,34 @@ ALTER TABLE HELLO_WORLD ADD COLUMN AGE NUMBER;
 Then commit the new script and push the changes to your Azure DevOps repository. Because of the continuous integration trigger we created in the YAML definition, your pipeline should have automatically started a new run. Open up the pipeline, click on the newest run, then click on the `Job` job to see the output.
 
 <!-- ------------------------ -->
-## Conclusion
-Duration: 2
+## Conclusion & Next Steps
+Duration: 4
 
-So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include adopting a branching strategy, pushing changes through a series of environments, and incorporating a comprehensive testing strategy, to name a few.
+So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 
-### Branching Strategy
-Branching strategies can be complex, but there are a few popular ones out there that can help get you started. To begin with I would recommend keeping it simple with [GitHub flow](https://guides.github.com/introduction/flow/) (and see also [an explanation of GitHub flow by Scott Chacon in 2011](http://scottchacon.com/2011/08/31/github-flow.html)). Another simple framework to consider is [GitLab flow](https://about.gitlab.com/blog/2014/09/29/gitlab-flow/).
-
-### Pipeline Stages
+#### Pipeline Stages
 In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. Your Azure Pipelines YAML definition file can be extended to include a stage for each of your environments. For more details around how to define stages, please refer to [Azure DevOp’s Add stages, dependencies, & conditions page](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&tabs=yaml).
 
-### Testing Strategy
+#### Branching Strategy
+Branching strategies can be complex, but there are a few popular ones out there that can help get you started. To begin with I would recommend keeping it simple with [GitHub flow](https://guides.github.com/introduction/flow/) (and see also [an explanation of GitHub flow by Scott Chacon in 2011](http://scottchacon.com/2011/08/31/github-flow.html)). Another simple framework to consider is [GitLab flow](https://about.gitlab.com/blog/2014/09/29/gitlab-flow/).
+
+#### Testing Strategy
 Testing is an important part of any software development process, and is absolutely critical when it comes to automated software delivery. But testing for databases and data pipelines is complicated and there are many approaches, frameworks, and tools out there. In my opinion, the simplest way to get started testing data pipelines is with [dbt](https://www.getdbt.com/) and the [dbt Test features](https://docs.getdbt.com/docs/building-a-dbt-project/tests/). Another popular Python-based testing tool to consider is [Great Expectations](https://greatexpectations.io/).
 
 With that you should now have a working CI/CD pipeline in Azure DevOps and some helpful ideas for next steps on your DevOps journey with Snowflake. Good luck!
+
+### What We've Covered
+
+* A brief history and overview of Azure DevOps
+* A brief history and overview of schemachange
+* How database change management tools like schemachange work
+* How a simple release pipeline works
+* How to create CI/CD pipelines in Azure DevOps
+* Ideas for more advanced CI/CD pipelines with stages
+* How to get started with branching strategies
+* How to get started with testing strategies
+
+### Related Resources
+
+* [schemachange](https://github.com/Snowflake-Labs/schemachange)
+* [Azure DevOps](https://azure.microsoft.com/en-us/services/devops/)
