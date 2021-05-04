@@ -1,0 +1,249 @@
+id: data_engineering_with_dbt
+summary: Build your data pipeline with Snowflake & dbt
+categories: data-engineering
+environments: web
+status: Published 
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Data Engineering, dbt, Data Sharing
+authors: Dmytro Yaroshenko
+
+# Accellerating Data Engineering with Snowflake & dbt
+<!-- ------------------------ -->
+## Overview 
+Duration: 5
+
+Modern Businesses need modern data strategy built on platforms that could support agility, growth and operational efficiency. Snowflake is Data Cloud, a future proof solution that can simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance.
+
+[dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by the [Fishtown Analytics](https://www.fishtownanalytics.com/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the open-source version of dbtCloud that is providing similar functionality, but as a SaaS.
+In this virtual hands-on lab, you will follow a step-by-step guide to Snowflake and dbt to see some of the benefits this tandem brings. 
+
+Let’s get started. 
+
+### Prerequisites
+To participate in the virtual hands-on lab, attendees need the following:
+
+* A [Snowflake account](https://trial.snowflake.com/) with `ACCOUNTADMIN` access
+
+* Familiarity with Snowflake, and Snowflake objects
+
+
+### What You'll Need During the Lab
+
+* [dbt CLI](https://docs.getdbt.com/dbt-cli/installation) installed 
+
+* Text editor of your choice
+
+
+### What You'll Learn
+
+* How to leverage data in Snowflake's Data Marketplace 
+
+* How to set up a dbt project for Snowflake
+
+* How to build scalable pipelines using dbt & Snowflake
+
+
+### What You'll Build
+* A set of data analytics pipeline leveraging dbt, and Snowflake
+
+* Implement data quality tests
+
+* Promote code between the environments
+
+<!-- ------------------------ -->
+## Snowflake Configuration 
+Duration: 5
+
+1. Login to your Snowflake trial account.  
+![Snowflake Log In Screen](assets/image124.png)  
+
+2. UI Tour (SE will walk through this live). For post-workshop participants, click [here](https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface) for a quick tour of the UI.  
+![Snowflake Worksheets](assets/image29.png)  
+
+3. Lets now create a database and a service accounts for dbt.
+
+```SQL
+-------------------------------------------
+-- dbt credentials
+-------------------------------------------
+USE ROLE securityadmin;
+-- dbt roles
+CREATE OR REPLACE ROLE dbt_dev_role;
+CREATE OR REPLACE ROLE dbt_prod_role;
+------------------------------------------- Please replace with your dbt user password
+CREATE OR REPLACE USER dbt_user PASSWORD = "<mysecretpassword>";
+
+GRANT ROLE dbt_dev_role,dbt_prod_role TO USER dbt_user;
+
+-------------------------------------------
+-- dbt objects
+-------------------------------------------
+USE ROLE sysadmin;
+
+CREATE OR REPLACE WAREHOUSE dbt_dev_wh  WITH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
+CREATE OR REPLACE WAREHOUSE dbt_prod_wh WITH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
+GRANT ALL ON WAREHOUSE dbt_dev_wh  TO ROLE dbt_dev_role;
+GRANT ALL ON WAREHOUSE dbt_prod_wh TO ROLE dbt_prod_role;
+
+CREATE OR REPLACE DATABASE dbt_hol_dev; 
+CREATE OR REPLACE DATABASE dbt_hol_prod; 
+GRANT ALL ON DATABASE dbt_hol_dev  TO ROLE dbt_dev_role;
+GRANT ALL ON DATABASE dbt_hol_prod TO ROLE dbt_prod_role;
+GRANT ALL ON ALL SCHEMAS IN DATABASE dbt_hol_dev   TO ROLE dbt_dev_role;
+GRANT ALL ON ALL SCHEMAS IN DATABASE dbt_hol_prod  TO ROLE dbt_prod_role;
+```
+
+As result of these steps, we should have:
+-  two empty databases: PROD, DEV
+-  two separate virtual warehouses: one for prod, one for dev workloads
+-  a pair of separate roles and one user
+
+Please note, this set up is simplified for the purpose of the lab. 
+There are many ways environments, roles, credentials could be modelled to fit your final requirements. 
+
+We would suggest having a look at these articles for inspiration: [How we configure Snowflake by Fishtown Team](https://blog.getdbt.com/how-we-configure-snowflake/), [Model Structure by GitLab team](https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure)
+
+<!-- ------------------------ -->
+## dbt Configuration 
+Duration: 10
+
+### Initialise dbt project
+
+Create a new dbt project in any local folder by running the following commands:
+
+```Shell
+$ dbt init dbt_hol
+$ cd dbt_hol
+```
+
+### Configure dbt/Snowflake profiles 
+
+1. Open  `~/.dbt/profiles.yml` in text editor and add the following section
+
+```yml
+dbt_hol:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      ######## Please replace with your Snowflake account name
+      account: <your_snowflake_trial_account>
+      
+      user: dbt_user
+      ######## Please replace with your Snowflake dbt user password
+      password: <mysecretpassword>
+      
+      role: dbt_dev_role
+      database: dbt_hol_dev
+      warehouse: dbt_dev_wh
+      schema: public
+      threads: 200
+    prod:
+      type: snowflake
+      ######## Please replace with your Snowflake account name
+      account: <your_snowflake_trial_account>
+      
+      user: dbt_user
+      ######## Please replace with your Snowflake dbt user password
+      password: <mysecretpassword>
+      
+      role: dbt_prod_role
+      database: dbt_hol_prod
+      warehouse: dbt_prod_wh
+      schema: public
+      threads: 200
+```
+
+2. Open `dbt_project.yml` (in dbt_hol folder) and update the following sections:
+
+![dbt_project.yml](assets/image3.png)  
+
+### Validate the configuration
+Run the following command (in dbt_hol folder): 
+
+```Shell
+$ dbt debug
+```
+The expected output should look like this, confirming that dbt was able to access the database: 
+![dbt debug output](assets/image4.png)  
+
+### Test run
+Finally, lets run the sample models that comes with dbt templates by default to validate everything is set up correctly. 
+For this, please run the following command (in dbt_hol folder):
+```Shell
+$ dbt debug
+```
+The expected output should look like this, confirming dbt was able to connect and successfully run sample models: 
+![dbt run output](assets/image5.png)  
+Please note, this operation is completely rerunable and does not provide any harm to our next steps in the lab.
+
+You can use Snowflake worksheets to validate that the sample view and the table are now availble in DEV database: 
+![Snowflake UI](assets/image6.png)  
+
+
+Congratulations! You just run your first dbt models on Snowflake! 
+
+<!-- ------------------------ -->
+## Architecture and Use Case Overview
+Duration: 10
+- dbt & Snowflake
+- generated data
+- dbt seed
+
+<!-- ------------------------ -->
+## Connect to Data Sources
+Duration: 10
+- Data Marketplace
+- generated data
+- dbt seed
+
+<!-- ------------------------ -->
+## Building dbt Data Pipelines
+Duration: 10
+- Data Marketplace
+- generated data
+- dbt seed
+
+<!-- ------------------------ -->
+## Establish Data Testing, Documentaion
+Duration: 10
+- dbt tests overview
+- basic tests
+- custom tests
+
+<!-- ------------------------ -->
+## Deploying models, materialization options
+Duration: 10
+- different targets
+- view, table, table incremental
+- hooks
+- snowflake scale up/out
+
+<!-- ------------------------ -->
+## Conclusion & Next Steps
+Duration: 2
+
+Congratulations on completing this lab using dbt and Snowflake for building data pipelines to drive analytics! You’ve mastered the dbt and Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.
+
+We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of dbt and Snowflake not covered in this lab. 
+### Additional Resources:
+
+- Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document
+- Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers
+- [Join the Snowflake community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
+- [Sign up for Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
+- [Contact our Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more
+- [Join dbt community slack](https://community.getdbt.com/) where thousands of dbt on Snowflake users discussing their best practices
+
+### What we've covered:
+
+- How to set up dbt & Snowflake
+
+- How to leverage data in Snowflake's Data Marketplace 
+
+- How to run a dbt project and develop pipelines
+
+- How to create data tests
+
+- How to leverage Snowflake elasticity and scalability to support dbt calculations at scale
+
