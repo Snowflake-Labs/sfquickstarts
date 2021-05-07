@@ -43,6 +43,7 @@ Duration: 1
 The application requires a warehouse to query the data and a database to store the data we will use for the dashboard. Connect to Snowflake and run these commands (snowsql or snowflake console):
 
 ```sql
+USE ROLE ACCOUNTADMIN;
 CREATE WAREHOUSE DATA_APPS_ADHOC WITH WAREHOUSE_SIZE='medium';
 USE WAREHOUSE DATA_APPS_ADHOC;
 CREATE DATABASE DATA_APPS_DEMO;
@@ -77,6 +78,7 @@ But first:
 Execute both of the following SQL statements to create the User and grant it access to the data needed for the application.
 
 ```SQL
+USE ROLE ACCOUNTADMIN;
 CREATE ROLE DATA_APPS_DEMO_APP;
 
 GRANT USAGE ON WAREHOUSE DATA_APPS_DEMO TO ROLE DATA_APPS_DEMO_APP;
@@ -98,6 +100,7 @@ All the data needed for this demo is in an S3 bucket which is now accessible via
 To import the base dataset for this demo run the following sql in snowsql or snowflake console.
 
 ```sql
+USE ROLE ACCOUNTADMIN;
 CREATE TEMPORARY TABLE TEMP_TRIPS (
 	TRIPDURATION NUMBER(38,0),
 	STARTTIME TIMESTAMP_NTZ(9),
@@ -210,6 +213,7 @@ In Snowflake we can scale out workloads both vertically (bigger clusters) and ho
 Increasing the size of a cluster in Snowflake is REALLY easy. Run the following sql from snowsql or the Snowflake console.
 
 ```sql
+USE ROLE ACCOUNTADMIN;
 ALTER WAREHOUSE DATA_APPS_DEMO SET WAREHOUSE_SIZE='medium';
 ```
 
@@ -231,6 +235,7 @@ After doing some usage analysis/projections/load tests, customers can pick minim
 Run the following sql from snowsql or the Snowflake console.
 
 ```sql
+USE ROLE ACCOUNTADMIN;
 ALTER WAREHOUSE DATA_APPS_DEMO SET MIN_CLUSTER_COUNT=1, MAX_CLUSTER_COUNT=5; 
 ```
 
@@ -252,6 +257,7 @@ Look at the file models/trips.js in VSCode. You will see the sql queries we are 
 Snowflake will automatically compute the entire materialized view when the view is created immediately. It is also updated atomically on every change of the source table. Run the following sql from snowsql or the Snowflake console.
 
 ```sql
+USE ROLE ACCOUNTADMIN;
 CREATE OR REPLACE MATERIALIZED VIEW COUNT_BY_DAY_MVW AS
 select COUNT(*) as trip_count, date_trunc('DAY', starttime) as starttime from demo.trips group by date_trunc('DAY', starttime);
 
@@ -279,6 +285,7 @@ Duration: 1
 To cleanup all the objects we created for this demo, run the following sql from snowsql or the Snowflake console.
 
 ```sql
+USE ROLE ACCOUNTADMIN;
 DROP DATABASE DATA_APPS_DEMO;
 DROP USER DATA_APPS_DEMO;
 DROP ROLE DATA_APPS_DEMO_APP;
