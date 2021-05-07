@@ -144,7 +144,7 @@ CREATE TABLE WEATHER AS
 ## Getting the source code for the project
 Duration: 3
 
-The application you will be running is written on node.js. It is a dashboard to view bike usage over time and differing weather conditions for Citi Bike. The source code for this application is available at [https://github.com/Snowflake-Labs/sfguide-data-apps-demo](GitHub).
+The application you will be running is written on node.js. It is a dashboard to view bike usage over time and differing weather conditions for Citi Bike. The source code for this application is available at [GitHub](https://github.com/Snowflake-Labs/sfguide-data-apps-demo).
 
 Download the code into a folder of your choice and open the project in VSCode. In VSCode go into the terminal and install the modules needed for this project.
 
