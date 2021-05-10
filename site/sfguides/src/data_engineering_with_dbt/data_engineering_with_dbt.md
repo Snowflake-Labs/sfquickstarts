@@ -470,6 +470,16 @@ dbt run --model +tfm_stock_history
 
 ![Query Tag](assets/image31.png) 
 
+Lets we go to Snowflake UI to check the results
+
+```sql
+SELECT * 
+  FROM dbt_hol_dev.l20_transform.tfm_stock_history
+ WHERE company_symbol = 'AAPL'
+   AND date = '2021-03-01'
+```
+![Query Tag](assets/image39.png) 
+
 
 <!-- ------------------------ -->
 
@@ -539,11 +549,148 @@ dbt docs serve
 
 ![Query Tag](assets/image34.png) 
 
+Lets we go to Snowflake UI to check the results
+
+```sql
+SELECT * 
+  FROM dbt_hol_dev.l20_transform.tfm_stock_history_major_currency
+ WHERE company_symbol = 'AAPL'
+   AND date = '2021-03-01'
+```
+![Query Tag](assets/image38.png) 
 
 <!-- ------------------------ -->
 
 ## dbt pipelines - Trading books
 Duration: 5
+
+Following our use case story, we are going to manually upload two small datasets using 
+[dbt seed](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) representing trading books of two desks. As you would notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP. 
+
+For this lets create two csv files with the following content:  
+
+- **data/manual_book1.csv**
+
+```csv
+Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
+B2020SW1,2021-03-03,Jeff A.,AAPL,BUY,-17420,GBP,200,87.1,NASDAQ
+B2020SW1,2021-03-03,Jeff A.,AAPL,BUY,-320050,GBP,3700,86.5,NASDAQ
+B2020SW1,2021-01-26,Jeff A.,AAPL,SELL,52500,GBP,-500,105,NASDAQ
+B2020SW1,2021-01-22,Jeff A.,AAPL,BUY,-100940,GBP,980,103,NASDAQ
+B2020SW1,2021-01-22,Nick Z.,AAPL,SELL,5150,GBP,-50,103,NASDAQ
+B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-9800,GBP,100,98,NASDAQ
+B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-1000,GBP,50,103,NASDAQ
+```
+
+- **data/manual_book2.csv**
+
+```csv
+Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
+B-EM1,2021-03-03,Tina M.,AAPL,BUY,-17420,EUR,200,87.1,NASDAQ
+B-EM1,2021-03-03,Tina M.,AAPL,BUY,-320050,EUR,3700,86.5,NASDAQ
+B-EM1,2021-01-22,Tina M.,AAPL,BUY,-100940,EUR,980,103,NASDAQ
+B-EM1,2021-01-22,Tina M.,AAPL,BUY,-100940,EUR,980,103,NASDAQ
+B-EM1,2019-08-31,Tina M.,AAPL,BUY,-9800,EUR,100,98,NASDAQ
+```
+
+Once created, lets run the following command to load the data into Snowflake. It is important to mention that whilst this approach is absolutely feasible to bring low hundred-thousands of rows it is suboptimal to integrate larger data and you should be using COPY/Snowpipe or other data integration options recommended for Snowflake. 
+
+```cmd
+dbt seeds
+```
+
+![Query Tag](assets/image35.png) 
+
+To simplify usage, lets create a model that would combine data from all desks. In this example we are going to see how **dbt_utils.union_relations** macro helps to automate code automation: 
+
+- **models/l20_transform/tfm_book.sql**
+
+```SQL
+{{ dbt_utils.union_relations(
+    relations=[ref('manual_book1'), ref('manual_book2')]
+) }}
+```
+
+Once we deploy this model, lets have a look what it is compiled into. For this, please open **target/run/l20_transform/tfm_book.sql**. As you can see dbt automatically scanned stuctures of the involved objects, aligned all possible attributes by name and type and combined all datasets via UNION ALL. Comparing this to the size of code we entered in the model itself, you can imagine the amount of time saved by such automation.
+
+```cmd
+dbt run -m tfm_book
+```
+
+![Query Tag](assets/image36.png) 
+
+Okay. Next challenge. We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis we need to have rows for the days shares were HOLD. For this lets introduce another models:
+
+- **models/l20_transform/tfm_daily_position.sql**
+
+```SQL
+WITH cst_market_days AS
+(
+    SELECT DISTINCT date
+    FROM {{ref('tfm_stock_history_major_currency')}} hist
+    WHERE hist.date >= ( SELECT min(date) AS min_dt FROM {{ref('tfm_book')}}  )
+)
+SELECT
+    cst_market_days.date,
+    trader,
+    stock_exchange_name,
+    instrument,
+    book,
+    currency,
+    sum(volume) AS total_shares
+FROM cst_market_days
+   , {{ref('tfm_book')}} book
+WHERE book.date <= cst_market_days.date
+GROUP BY 1, 2, 3, 4, 5, 6 
+```
+
+- **models/l20_transform/tfm_daily_position.sql**
+
+```SQL
+SELECT book
+     , date
+     , trader
+     , instrument
+     , action
+     , cost
+     , currency
+     , volume
+     , cost_per_share
+     , stock_exchange_name
+     , SUM(t.volume) OVER(partition BY t.instrument, t.stock_exchange_name, trader ORDER BY t.date rows UNBOUNDED PRECEDING ) total_shares
+  FROM {{ref('tfm_book')}}  t
+UNION ALL   
+SELECT book
+     , date
+     , trader
+     , instrument
+     , 'HOLD' as action
+     , 0 AS cost
+     , currency
+     , 0      as volume
+     , 0      as cost_per_share
+     , stock_exchange_name
+     , total_shares
+FROM {{ref('tfm_daily_position')}} 
+WHERE (date,trader,instrument,book,stock_exchange_name) 
+      NOT IN 
+      (SELECT date,trader,instrument,book,stock_exchange_name
+         FROM {{ref('tfm_book')}}
+      )
+```
+```cmd
+dbt run -m tfm_book+
+```
+
+Now lets go back to Snowflake worksheets and run a query to see the results:
+```sql
+SELECT * 
+  FROM dbt_hol_dev.l20_transform.tfm_daily_position_with_trades
+ WHERE trader = 'Jeff A.'
+ ORDER BY date
+```
+
+![Query Tag](assets/image37.png) 
 
 <!-- ------------------------ -->
 
