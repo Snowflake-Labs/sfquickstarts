@@ -322,10 +322,52 @@ So if you go in Snowflake UI and click 'History' icon on top, you are going to s
 
 ![Query Tag](assets/image24.png) 
 
-### Stock trading history
+4. **dbt plugings**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of github repository. In our lab, we are going to demonstrate how to use some automation that [dbt_utils](https://hub.getdbt.com/fishtown-analytics/dbt_utils/latest) package provides. 
+Lets install it. For that, lets create a file called ***packages.yml*** in the root of your dbt project folder and add the following lines: 
+
+```yml
+packages:
+  - package: fishtown-analytics/dbt_utils
+    version: 0.6.4
+```
+
+![Query Tag](assets/image25.png) 
+
+Once this done, lets open a command line and run 
+
+```cmd
+dbt deps
+```
+![Query Tag](assets/image26.png) 
+
+Now that we are fully armed. Lets start building data pipelines! 
+
+<!-- ------------------------ -->
+
+## dbt pipelines - Stock trading history
+Duration: 5
+
 1. 
 - generated data
 - dbt seed
+
+<!-- ------------------------ -->
+
+## dbt pipelines - Currency exchange rates
+Duration: 5
+
+- Trading books
+- Profit & Loss calculation
+
+<!-- ------------------------ -->
+
+## dbt pipelines - Trading books
+Duration: 5
+
+<!-- ------------------------ -->
+
+## dbt pipelines - PnL calculation
+Duration: 5
 
 <!-- ------------------------ -->
 ## Establish Data Testing, Documentaion
