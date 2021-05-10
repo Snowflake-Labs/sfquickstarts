@@ -697,6 +697,91 @@ SELECT *
 ## dbt pipelines - PnL calculation
 Duration: 5
 
+This section should bring the last models to complete the story. 
+Now we have trading history of our desks and stock price history. Lets create a model to show how Market Value and PnL were changing over time. For this we are going to start by creating a model:
+
+- **models/l20_transform/tfm_trading_pnl.sql**
+
+```sql
+SELECT t.instrument, t.stock_exchange_name, 
+       t.date, trader, t.volume,cost, cost_per_share,currency,
+       SUM(cost) OVER(partition BY t.instrument, t.stock_exchange_name, trader ORDER BY t.date rows UNBOUNDED PRECEDING ) cash_cumulative,
+       CASE WHEN t.currency = 'GBP' THEN gbp_close
+            WHEN t.currency = 'EUR' THEN eur_close
+            ELSE close
+       END                                                        AS close_price_matching_ccy,     
+       total_shares  * close_price_matching_ccy                   AS market_value, 
+       total_shares  * close_price_matching_ccy + cash_cumulative AS PnL
+   FROM       {{ref('tfm_daily_position_with_trades')}}    t
+   INNER JOIN {{ref('tfm_stock_history_major_currency')}}  s 
+      ON t.instrument = s.company_symbol 
+     AND s.date = t.date 
+     AND t.stock_exchange_name = s.stock_exchange_nam
+```
+
+- **models/l30_mart/fct_trading_pnl.sql**
+
+This model will be the one we created in the mart area, prepared to be used by many. With that in mind, it will be good idea to materialise this model as a table with incremental load mode. You can see that this materialization mode has a special macro that comes into action for the incremental runs (and ignored during initial run and full_refresh option). 
+
+```sql
+{{ 
+config(
+	  materialized='incremental'
+	  , tag=["Fact Data"]
+	  ) 
+}}
+SELECT src.*
+  FROM {{ref('tfm_trading_pnl')}} src
+
+{% if is_incremental() %}
+  -- this filter will only be applied on an incremental run
+ WHERE (trader, instrument, date, stock_exchange_name) NOT IN (select trader, instrument, date, stock_exchange_name from {{ this }})
+
+{% endif %}
+```
+
+Finally, for illustration purposes we are going to create a couple of views that could be extended further, represending different lense of interpreting PnL data between treasury, risk and finance departments.
+
+- **models/l30_mart/fct_trading_pnl_finance_view.sql**
+```sql
+SELECT * 
+-- this is a placeholder for illustration purposes
+  FROM {{ref('fct_trading_pnl')}} src
+```
+
+- **models/l30_mart/fct_trading_pnl_risk_view.sql**
+```sql
+SELECT * 
+-- this is a placeholder for illustration purposes
+  FROM {{ref('fct_trading_pnl')}} src
+```
+
+- **models/l30_mart/fct_trading_pnl_treasury_view.sql**
+```sql
+SELECT * 
+-- this is a placeholder for illustration purposes
+  FROM {{ref('fct_trading_pnl')}} src
+```
+Lets deploy all of these models and run a query to check the final results:
+
+```cmd
+dbt run -m l30_mart
+dbt docs serve
+```
+
+![Query Tag](assets/image40.png) 
+
+The final lineage tree: 
+![Query Tag](assets/image42.png) 
+
+```sql
+SELECT * 
+  FROM dbt_hol_dev.l30_mart.fct_trading_pnl
+ WHERE trader = 'Jeff A.'
+ ORDER by date
+```
+![Query Tag](assets/image41.png) 
+
 <!-- ------------------------ -->
 ## Establish Data Testing, Documentaion
 Duration: 10
