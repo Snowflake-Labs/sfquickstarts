@@ -44,7 +44,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 
 ### What You'll Build
-* A set of data analytics pipeline leveraging dbt, and Snowflake
+* A set of data analytics pipelines for Financial Services data leveraging dbt, and Snowflake
 
 * Implement data quality tests
 
@@ -83,7 +83,9 @@ USE ROLE sysadmin;
 CREATE OR REPLACE WAREHOUSE dbt_dev_wh  WITH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
 CREATE OR REPLACE WAREHOUSE dbt_prod_wh WITH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
 GRANT ALL ON WAREHOUSE dbt_dev_wh  TO ROLE dbt_dev_role;
+GRANT ALL ON WAREHOUSE dbt_dev_heavy_wh  TO ROLE dbt_dev_role;
 GRANT ALL ON WAREHOUSE dbt_prod_wh TO ROLE dbt_prod_role;
+GRANT ALL ON WAREHOUSE dbt_prod_heavy_wh  TO ROLE dbt_prod_role;
 
 CREATE OR REPLACE DATABASE dbt_hol_dev; 
 CREATE OR REPLACE DATABASE dbt_hol_prod; 
@@ -185,17 +187,75 @@ Congratulations! You just run your first dbt models on Snowflake!
 
 <!-- ------------------------ -->
 ## Architecture and Use Case Overview
-Duration: 10
-- dbt & Snowflake
-- generated data
-- dbt seed
+Duration: 2
+
+In this lab, we are going to analyse historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas that is available in Snowflake Data Marketplace, plus few manual uploads. 
+
+We are going to set up the environments from scratch, build scalable pipelines in dbt, establish data tests, and Snowflake and promote code to production.  Finally we will use Snowsight to build a simple dashboard to visualize the results. 
+
+![Architecture ](assets/image7.png)  
+
 
 <!-- ------------------------ -->
 ## Connect to Data Sources
 Duration: 10
-- Data Marketplace
-- generated data
-- dbt seed
+
+Let's go to the Snowflake Data Marketplace and find what we need. The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab). Click on Preview App at the top of the UI
+
+![Preview App](assets/image9.png)  
+
+Click Sign in to continue. You will need to use the same user and pw that you used to login to your Snowflake account the first time.
+
+![Preview App](assets/image11.png)  
+
+You're now in the new UI - Snowsight. It's pretty cool - with charting and dashboards and context-sensitivity - but today we're just focused on getting to the Data Marketplace. Click on Data...
+
+![Preview App](assets/image14.png)  
+
+...and then Marketplace...
+
+![Preview App](assets/image12.png)  
+
+..and now you're in! Hundreds of providers have made datasets available for you to enrich your data. Today we're going to grab a Knoema Economy Atlas Data. Click the Ready to Query checkbox and then find the Knoema Economy Atlas Data tile. Once you find it, click on it.
+
+![Preview App](assets/image13.png)  
+Here you'll find a description of the data, example queries, and other useful information. Let's get this data into our Snowflake account. You'll be amazed at how fast and easy this is. Click the "Get Data" button
+
+![Preview App](assets/image15.png)  
+
+In the pop-up, leave the database name as proposed by default (important!), check the "I accept..." box and then add PUBLIC role to the additional roles 
+
+![Preview App](assets/image16.png)  
+
+What is happening here? Knoema has granted access to this data from their Snowflake account to yours. You're creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts! When you query you'll really be querying the data that lives in the Knoema account. If they change the data you'll automatically see those changes. No need to define schemas, move data, or create a data pipeline either. Isn't that slick?
+
+![Preview App](assets/image17.png)  
+
+Now lets go back to worksheets and after refreshing the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you'll see views under the ECONOMY schema. We'll use one of these next.
+
+![Preview App](assets/image18.png) 
+
+As you would see, this Economy Atlas comes with more than 300 datasets. In order to improve navigation, provider kindly supplied a table called DATASETS. Lets find the ones related to the stock history and currency exchange rates that we are going to use in the next step.
+
+```SQL
+SELECT * 
+  FROM "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS"
+ WHERE "DatasetName" ILIKE 'US Stock%'
+    OR "DatasetName" ILIKE 'Exchange%Rates%';
+```
+
+![Preview App](assets/image19.png) 
+
+Finally, lets try to query one of the datasets: 
+```
+SELECT * 
+  FROM KNOEMA_ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
+ WHERE "Date" = current_date();
+```
+![Preview App](assets/image20.png) 
+
+Congratulations! You successfully tapped into live data feed of Trade and FX rates data with NO ETL involved. As we promissed. Isn't it cool? 
+Now lets start building our pipelines. 
 
 <!-- ------------------------ -->
 ## Building dbt Data Pipelines
