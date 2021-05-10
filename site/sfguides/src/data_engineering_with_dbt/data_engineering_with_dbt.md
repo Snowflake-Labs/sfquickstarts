@@ -195,6 +195,11 @@ We are going to set up the environments from scratch, build scalable pipelines i
 
 ![Architecture ](assets/image7.png)  
 
+Just to give you a sneak peek, this is where we are going to be in just 30 minutes.
+
+Stay tuned!
+
+![dbt target view ](assets/image21.png)  
 
 <!-- ------------------------ -->
 ## Connect to Data Sources
@@ -259,8 +264,66 @@ Now lets start building our pipelines.
 
 <!-- ------------------------ -->
 ## Building dbt Data Pipelines
-Duration: 10
-- Data Marketplace
+Duration: 30
+
+In this section, we are going to start building our dbt pipelines:
+
+- Stock trading history
+- Currency exchange rates
+- Trading books
+- Profit & Loss calculation
+
+### Configuration
+We are going to start by adding few more things to our dbt project configuration in order to improve maintainability. 
+1. **Model folders/layers**. From our dbt project folder location, lets run few command line commands to create separate folders for models, representing different logical levels in the pipeline: 
+
+```cmd
+mkdir models\l10_staging
+mkdir models\l20_transform
+mkdir models\l30_mart
+mkdir models\tests
+```
+
+Then lets open our dbt_profile.yml and modify the section below to reflect the model structure. As you can see, this is allowing you to set multiple parameters on the layer level (like materialization in this example). Also, you would notice that we added ***+enabled: false*** to the ***examples*** section as we won't need to run those sample models in the final state.
+
+![Preview App](assets/image22.png) 
+
+2. **Custom schema naming macros.**
+By default, dbt is [generating a schema name](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas) by appending it to the target schema environment name(dev, prod). In this lab we are going to show you a quick way to override this macro, making our schema names to look exactly the same between dev and prod databases. For this, lets create a file **macros\call_me_anything_you_want.sql** with the following content:
+
+```YAML
+{% macro generate_schema_name(custom_schema_name, node) -%}
+    {%- set default_schema = target.schema -%}
+    {%- if custom_schema_name is none -%}
+        {{ default_schema }}
+    {%- else -%}
+        {{ custom_schema_name | trim }}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro set_query_tag() -%}
+  {% set new_query_tag = model.name %} {# always use model name #}
+  {% if new_query_tag %}
+    {% set original_query_tag = get_current_query_tag() %}
+    {{ log("Setting query_tag to '" ~ new_query_tag ~ "'. Will reset to '" ~ original_query_tag ~ "' after materialization.") }}
+    {% do run_query("alter session set query_tag = '{}'".format(new_query_tag)) %}
+    {{ return(original_query_tag)}}
+  {% endif %}
+  {{ return(none)}}
+{% endmacro %}
+```
+
+![Preview App](assets/image23.png) 
+
+3. **Query Tag**. As you might notice, in the screenshot above there is another macro overriden in the file: **set_query_tag()**. This one provides the ability to add additional level of transparency by automatically setting Snowflake query_tag to the name of the model it associated with. 
+
+So if you go in Snowflake UI and click 'History' icon on top, you are going to see all SQL queries run on Snowflake account(successfull, failed, running etc) and clearly see what dbt model this particular query is related to: 
+
+![Query Tag](assets/image24.png) 
+
+### Stock trading history
+1. 
 - generated data
 - dbt seed
 
