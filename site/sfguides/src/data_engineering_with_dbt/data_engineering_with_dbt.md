@@ -727,7 +727,7 @@ This model will be the one we created in the mart area, prepared to be used by m
 {{ 
 config(
 	  materialized='incremental'
-	  , tag=["Fact Data"]
+	  , tags=["Fact Data"]
 	  ) 
 }}
 SELECT src.*
@@ -907,6 +907,71 @@ dbt run  --target=prod
 
 We can't check the UI that now we have data in **dbt_hol_prod** database:
 ![Query Tag](assets/image59.png) 
+
+### Materialization & Scaling
+
+As dbt tool provides the ability to easily change [materialization option](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations), taking away all the burden related to generating new version of DDL & DML. What it means for modern data engineering? That you no longer need to spend precious time performing upfront performance optimisation and rather focus on building models, bringing more insights to your business. And when it comes to understand the usage patterns, models that are heavy and/or accessed frequently could be selectively materilized. 
+
+During the lab you've probably seen how easily Snowflake could deal with many models materialised as views, provided the input data volume of stock history is >200Mn records alone. We also explicitly configured one model to be materialised as 'table'(CTAS) and another one as 'incremental'(MERGE). Once you move into persisted methods of materialization you will be using Snowflake virtual warehouses as compute power to perorm the materialization. 
+
+Let's have a look on a couple of ways to manage compute size Snowflake will dedicate to a specific model(s).
+
+1. Lets open **dbt_projects.yml** and add the additional line 
+
+```yml
+models:
+  dbt_hol:
+      # Applies to all files under models/example/
+      example:
+          materialized: view
+          +enabled: false
+      l10_staging:
+          schema: l10_staging
+          materialized: view
+      l20_transform:
+          schema: l20_transform
+          materialized: view
+          +snowflake_warehouse: dbt_dev_heavy_wh
+      l30_mart:
+          schema: l30_mart
+          materialized: view
+```
+![Query Tag](assets/image60.png) 
+
+2. Lets modify the content of **models/l30_mart/fct_trading_pnl.sql** changing config section to include pre and post run hooks: 
+
+```sql
+{{ 
+config(
+	  materialized='incremental'
+	  , tags=["Fact Data"]
+	  , pre_hook ="ALTER WAREHOUSE dbt_dev_wh SET WAREHOUSE_SIZE ='XXLARGE'" 
+      , post_hook="ALTER WAREHOUSE dbt_dev_wh SET WAREHOUSE_SIZE ='XSMALL'"
+	  ) 
+}}
+SELECT src.*
+  FROM {{ref('tfm_trading_pnl')}} src
+
+{% if is_incremental() %}
+  -- this filter will only be applied on an incremental run
+ WHERE (trader, instrument, date, stock_exchange_name) NOT IN (select trader, instrument, date, stock_exchange_name from {{ this }})
+
+{% endif %}
+```
+![Query Tag](assets/image62.png) 
+
+Now lets run the project again:
+
+```cmd
+dbt run
+```
+Once finished, lets go into Snowflake UI and look at the Query History page. As you can see, dbt automatically switched into a separate warehouse **dbt_dev_heavy_wh** (of a larger size) once it started working on the models in **l20_transform** folder. And once it reached **l30_mart/fct_trading_pnl** model, the pipeline increased the size of the **dbt_dev_wh** to 2XL..processed the model faster..and then decreased the size of compute back to XS to keep it economical. 
+
+![Query Tag](assets/image61.png) 
+
+These are just a couple of examples how you could leverage elasticity and workload isolation of Snowflake compute by switching between or resizing virtual warehouses as a simple DDL command, embedded in your pipelines. 
+
+With that, lets move to our final section for this lab! 
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
