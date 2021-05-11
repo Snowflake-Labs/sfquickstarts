@@ -62,7 +62,7 @@ Duration: 5
 
 3. Lets now create a database and a service accounts for dbt.
 
-```SQL
+```sql
 -------------------------------------------
 -- dbt credentials
 -------------------------------------------
@@ -107,7 +107,7 @@ We would suggest having a look at these articles for inspiration: [How we config
 
 <!-- ------------------------ -->
 ## dbt Configuration 
-Duration: 10
+Duration: 5
 
 ### Initialise dbt project
 
@@ -120,7 +120,7 @@ $ cd dbt_hol
 
 ### Configure dbt/Snowflake profiles 
 
-1. Open  `~/.dbt/profiles.yml` in text editor and add the following section
+1.. Open  `~/.dbt/profiles.yml` in text editor and add the following section
 
 ```yml
 dbt_hol:
@@ -156,7 +156,7 @@ dbt_hol:
       threads: 200
 ```
 
-2. Open `dbt_project.yml` (in dbt_hol folder) and update the following sections:
+ 2..  Open `dbt_project.yml` (in dbt_hol folder) and update the following sections:
 
 ![dbt_project.yml](assets/image3.png)  
 
@@ -203,7 +203,7 @@ Stay tuned!
 
 <!-- ------------------------ -->
 ## Connect to Data Sources
-Duration: 10
+Duration: 5
 
 Let's go to the Snowflake Data Marketplace and find what we need. The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab). Click on Preview App at the top of the UI
 
@@ -264,7 +264,7 @@ Now lets start building our pipelines.
 
 <!-- ------------------------ -->
 ## Building dbt Data Pipelines
-Duration: 30
+Duration: 15
 
 In this section, we are going to start building our dbt pipelines:
 
@@ -275,7 +275,7 @@ In this section, we are going to start building our dbt pipelines:
 
 ### Configuration
 We are going to start by adding few more things to our dbt project configuration in order to improve maintainability. 
-1. **Model folders/layers**. From our dbt project folder location, lets run few command line commands to create separate folders for models, representing different logical levels in the pipeline: 
+1.. **Model folders/layers**. From our dbt project folder location, lets run few command line commands to create separate folders for models, representing different logical levels in the pipeline: 
 
 ```cmd
 mkdir models\l10_staging
@@ -288,7 +288,7 @@ Then lets open our dbt_profile.yml and modify the section below to reflect the m
 
 ![Preview App](assets/image22.png) 
 
-2. **Custom schema naming macros.**
+2.. **Custom schema naming macros.**
 By default, dbt is [generating a schema name](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas) by appending it to the target schema environment name(dev, prod). In this lab we are going to show you a quick way to override this macro, making our schema names to look exactly the same between dev and prod databases. For this, lets create a file **macros\call_me_anything_you_want.sql** with the following content:
 
 ```YAML
@@ -316,13 +316,13 @@ By default, dbt is [generating a schema name](https://docs.getdbt.com/docs/build
 
 ![Preview App](assets/image23.png) 
 
-3. **Query Tag**. As you might notice, in the screenshot above there is another macro overriden in the file: **set_query_tag()**. This one provides the ability to add additional level of transparency by automatically setting Snowflake query_tag to the name of the model it associated with. 
+3.. **Query Tag**. As you might notice, in the screenshot above there is another macro overriden in the file: **set_query_tag()**. This one provides the ability to add additional level of transparency by automatically setting Snowflake query_tag to the name of the model it associated with. 
 
 So if you go in Snowflake UI and click 'History' icon on top, you are going to see all SQL queries run on Snowflake account(successfull, failed, running etc) and clearly see what dbt model this particular query is related to: 
 
 ![Query Tag](assets/image24.png) 
 
-4. **dbt plugings**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of github repository. In our lab, we are going to demonstrate how to use some automation that [dbt_utils](https://hub.getdbt.com/fishtown-analytics/dbt_utils/latest) package provides. 
+4.. **dbt plugings**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of github repository. In our lab, we are going to demonstrate how to use some automation that [dbt_utils](https://hub.getdbt.com/fishtown-analytics/dbt_utils/latest) package provides. 
 Lets install it. For that, lets create a file called ***packages.yml*** in the root of your dbt project folder and add the following lines: 
 
 ```yml
@@ -345,9 +345,9 @@ Now that we are fully armed. Lets start building data pipelines!
 <!-- ------------------------ -->
 
 ## dbt pipelines - Stock trading history
-Duration: 5
+Duration: 10
 
-1. We are going to start building our pipelines starts by declaring [dbt sources](https://docs.getdbt.com/docs/building-a-dbt-project/using-sources). 
+1.. We are going to start building our pipelines starts by declaring [dbt sources](https://docs.getdbt.com/docs/building-a-dbt-project/using-sources). 
 For this lets create a **models\l10_staging\sources.yml** file and add the following configuration:
 
 ```yml
@@ -363,7 +363,7 @@ sources:
 ```
 As you probably remember, these two objects were mentioned in Knoema Dataset Catalog table: daily exchange rates and daily US trading history accodringly. 
 
-2. **Base views** is the concept of models that act as a first-level transformation. Whilst not mandatory, these could act as a level of abstraction, separating ultimate source structure from the entry point of dbt pipeline. Providing your project more options to react to an upstream structure change. You can read more about arguments on benefits provided by the base view concept [here](https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355).
+2.. **Base views** is the concept of models that act as a first-level transformation. Whilst not mandatory, these could act as a level of abstraction, separating ultimate source structure from the entry point of dbt pipeline. Providing your project more options to react to an upstream structure change. You can read more about arguments on benefits provided by the base view concept [here](https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355).
 We are going to create a fairly simple pass-through pair of base views: 
 - **models/l10_staging/base_knoema_fx_rates.sql**
 
@@ -462,7 +462,7 @@ SELECT src.*
   FROM {{ref('tfm_knoema_stock_history')}} src
 ```
 
-3. **Deploy**. The hard work is done. Lets go and deploy these. In this case we will automatically deploy tfm_stock_history and all of its ancestors. 
+3.. **Deploy**. The hard work is done. Lets go and deploy these. In this case we will automatically deploy tfm_stock_history and all of its ancestors. 
 
 ```cmd
 dbt run --model +tfm_stock_history
@@ -484,8 +484,7 @@ SELECT *
 <!-- ------------------------ -->
 
 ## dbt pipelines - Currency exchange rates
-Duration: 5
-
+Duration: 10
 Our Stock history comes in USD. In this step, we are going to complement our landscape with additional models for currency exchange rates so we can see key measures in different currencies. 
 
 Lets start by creating new models:
@@ -562,7 +561,7 @@ SELECT *
 <!-- ------------------------ -->
 
 ## dbt pipelines - Trading books
-Duration: 5
+Duration: 10
 
 Following our use case story, we are going to manually upload two small datasets using 
 [dbt seed](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) representing trading books of two desks. As you would notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP. 
@@ -695,7 +694,7 @@ SELECT *
 <!-- ------------------------ -->
 
 ## dbt pipelines - PnL calculation
-Duration: 5
+Duration: 10
 
 This section should bring the last models to complete the story. 
 Now we have trading history of our desks and stock price history. Lets create a model to show how Market Value and PnL were changing over time. For this we are going to start by creating a model:
@@ -916,7 +915,7 @@ During the lab you've probably seen how easily Snowflake could deal with many mo
 
 Let's have a look on a couple of ways to manage compute size Snowflake will dedicate to a specific model(s).
 
-1. Lets open **dbt_projects.yml** and add the additional line 
+1.. Lets open **dbt_projects.yml** and add the additional line 
 
 ```yml
 models:
@@ -938,7 +937,7 @@ models:
 ```
 ![Query Tag](assets/image60.png) 
 
-2. Lets modify the content of **models/l30_mart/fct_trading_pnl.sql** changing config section to include pre and post run hooks: 
+2.. Lets modify the content of **models/l30_mart/fct_trading_pnl.sql** changing config section to include pre and post run hooks: 
 
 ```sql
 {{ 
