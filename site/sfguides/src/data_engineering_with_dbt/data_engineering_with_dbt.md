@@ -280,10 +280,10 @@ We are going to start by adding few more things to our dbt project configuration
 1.. **Model folders/layers**. From our dbt project folder location, lets run few command line commands to create separate folders for models, representing different logical levels in the pipeline: 
 
 ```cmd
-mkdir models\l10_staging
-mkdir models\l20_transform
-mkdir models\l30_mart
-mkdir models\tests
+mkdir models/l10_staging
+mkdir models/l20_transform
+mkdir models/l30_mart
+mkdir models/tests
 ```
 
 Then lets open our dbt_profile.yml and modify the section below to reflect the model structure. As you can see, this is allowing you to set multiple parameters on the layer level (like materialization in this example). Also, you would notice that we added ***+enabled: false*** to the ***examples*** section as we won't need to run those sample models in the final state.
