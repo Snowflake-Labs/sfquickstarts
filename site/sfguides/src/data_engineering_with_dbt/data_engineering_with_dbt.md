@@ -111,7 +111,7 @@ We would suggest having a look at these articles for inspiration: [How we config
 ## dbt Configuration 
 Duration: 5
 
-### Initialise dbt project
+### Initialize dbt project
 
 Create a new dbt project in any local folder by running the following commands:
 
