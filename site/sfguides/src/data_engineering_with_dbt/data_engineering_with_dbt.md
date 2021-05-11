@@ -72,6 +72,7 @@ CREATE OR REPLACE ROLE dbt_prod_role;
 CREATE OR REPLACE USER dbt_user PASSWORD = "<mysecretpassword>";
 
 GRANT ROLE dbt_dev_role,dbt_prod_role TO USER dbt_user;
+GRANT ROLE dbt_dev_role,dbt_prod_role TO ROLE sysadmin;
 
 -------------------------------------------
 -- dbt objects
