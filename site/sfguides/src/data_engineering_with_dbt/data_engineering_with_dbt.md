@@ -24,7 +24,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 * A [Snowflake account](https://trial.snowflake.com/) with `ACCOUNTADMIN` access
 
-* Familiarity with Snowflake, and Snowflake objects
+* Familiarity with Snowflake and Snowflake objects
 
 
 ### What You'll Need During the Lab
@@ -38,13 +38,11 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 * How to leverage data in Snowflake's Data Marketplace 
 
-* How to set up a dbt project for Snowflake
-
 * How to build scalable pipelines using dbt & Snowflake
 
 
 ### What You'll Build
-* A set of data analytics pipelines for Financial Services data leveraging dbt, and Snowflake
+* A set of data analytics pipelines for Financial Services data leveraging dbt and Snowflake
 
 * Implement data quality tests
 
