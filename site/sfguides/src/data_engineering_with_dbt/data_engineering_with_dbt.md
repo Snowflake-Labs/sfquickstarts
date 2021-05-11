@@ -555,7 +555,7 @@ SELECT tsh.*
 Now, let's deploy newly built models:
 
 ```cmd
-dbt run --model +tfm_stock_history
+dbt run --model +tfm_stock_history_major_currency
 ```
 
 ![Query Tag](assets/image32.png) 
