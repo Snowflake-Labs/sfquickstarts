@@ -782,20 +782,113 @@ SELECT *
 ```
 ![Query Tag](assets/image41.png) 
 
-<!-- ------------------------ -->
-## Establish Data Testing, Documentaion
-Duration: 10
-- dbt tests overview
-- basic tests
-- custom tests
+Now, lets create a simple data visualisation for this dataset. For that, lets click on the Preview App button once again: 
+
+![Query Tag](assets/image9.png) 
+
+Then **Worksheets -> + Worksheet**
+
+![Query Tag](assets/image49.png) 
+
+Then lets copy-paste the same query we run in classic Snowflake UI worksheets. Hit the run button and switch from a table view to chart: 
+
+![Query Tag](assets/image50.png) 
+
+By default it shows a breakdown by Volume. Lets click on the measure and switch it into **PNL**. Then lets add another measure to our chart for displaying Market value and PnL side by side. 
+
+![Query Tag](assets/image51.png) 
+
+![Query Tag](assets/image52.png) 
+
+And this is it! Now you have a worksheet that you can slice'n'dice, share with your colleagues or embed in the SnowSight dashboard as one of the tiles. As you can see, Snowsight offers a great capability to quickly visualise the insight and always there for you as a part of the Snowflake platform. For more details on SnowSight, please refer to the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/ui-web.html). 
+
+![Query Tag](assets/image53.png) 
 
 <!-- ------------------------ -->
-## Deploying models, materialization options
-Duration: 10
-- different targets
-- view, table, table incremental
-- hooks
-- snowflake scale up/out
+## Testing, Deployment, Materializations
+Duration: 5
+
+### Establishing Testing
+Building trust in your data solution, it is hard to underestimate the importance of testing. Whilst there are many ways to organise automated testing, but thankfully dbt tool comes with the great [data tests framework](https://docs.getdbt.com/docs/building-a-dbt-project/tests). Let's build an example.
+
+First, lets add the test configuration file and add the content below. dbt comes with a set of pre-defined data tests, such as uniqeness, not_null, check constraints, ref integrity etc. We are going to set up tests on the few models, however it is highly recommended to establish reasonable test coverage across the board. 
+- **models/tests/data_quality_tests.yml**
+
+```yml
+  - name: tfm_fx_rates
+    columns:
+      - name: currency||date
+        tests:
+          - unique
+          - not_null
+
+  - name: tfm_book
+    columns:
+      - name: instrument
+        tests:
+          - not_null
+          - relationships:
+              to: ref('tfm_stock_history')
+              field: company_symbol
+
+  - name: tfm_stock_history
+    columns:
+      - name: company_symbol||date
+        tests:
+          - not_null
+          - unique
+```
+Next, lets run these tests:
+
+```cmd
+dbt test
+```
+
+Boom! One of the tests failed! Lets try to understand why. dbt command line is kindly provided a link to the file with the SQL check that failed. Lets open it and copy-paste the content to Snowflake worksheet:  
+![Query Tag](assets/image54.png) 
+
+![Query Tag](assets/image55.png) 
+
+Lets quickly check the full row width for one of the records failed by extending this check towards something like this:
+
+```sql
+WITH cst AS
+(
+    select
+        company_symbol||date conctat
+
+    from dbt_hol_dev.l20_transform.tfm_stock_history
+    where company_symbol||date is not null
+    group by company_symbol||date
+    having count(*) > 1 
+    limit 1
+)
+SELECT * FROM dbt_hol_dev.l20_transform.tfm_stock_history
+ WHERE company_symbol||date IN (SELECT conctat FROM cst) 
+```
+
+![Query Tag](assets/image56.png) 
+
+Aha! There are shares which are traded on more than one stock exchanges. So we need to include **stock_exchange_name** attribute to your unique test key. Lets go back to **models/tests/data_quality_tests.yml** and update the test configuration for **tfm_stock_history** model :
+
+
+
+```yml
+  - name: tfm_stock_history
+    columns:
+      - name: company_symbol||date||stock_exchange_name
+        tests:
+          - not_null
+          - unique
+```
+And run the test again
+
+```cmd
+dbt test
+```
+![Query Tag](assets/image57.png) 
+
+Finishing testing note, it is also worth mentioning that alongside such tests, dbt framework also supports custom tests that are massively expanding scenarios(like regression testing) could be covered by data tests. And just to expand it even further, in dbt hub there is a package [dbt_expectations](https://hub.getdbt.com/calogica/dbt_expectations/latest/) that implements a lot of additional tests, inspired by popular[http://greatexpectations.io/](http://greatexpectations.io/) framework. 
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
