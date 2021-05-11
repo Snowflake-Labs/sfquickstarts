@@ -58,7 +58,7 @@ Duration: 5
 2. UI Tour (SE will walk through this live). For post-workshop participants, click [here](https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface) for a quick tour of the UI.  
 ![Snowflake Worksheets](assets/image29.png)  
 
-3. Lets now create a database and a service accounts for dbt.
+3. Let's now create a database and a service accounts for dbt.
 
 ```sql
 -------------------------------------------
@@ -172,7 +172,7 @@ The expected output should look like this, confirming that dbt was able to acces
 ![dbt debug output](assets/image4.png)  
 
 ### Test run
-Finally, lets run the sample models that comes with dbt templates by default to validate everything is set up correctly. 
+Finally, let's run the sample models that comes with dbt templates by default to validate everything is set up correctly. 
 For this, please run the following command (in dbt_hol folder):
 ```Shell
 $ dbt run
@@ -238,11 +238,11 @@ What is happening here? Knoema has granted access to this data from their Snowfl
 
 ![Preview App](assets/image17.png)  
 
-Now lets go back to worksheets and after refreshing the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you'll see views under the ECONOMY schema. We'll use one of these next.
+Now let's go back to worksheets and after refreshing the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you'll see views under the ECONOMY schema. We'll use one of these next.
 
 ![Preview App](assets/image18.png) 
 
-As you would see, this Economy Atlas comes with more than 300 datasets. In order to improve navigation, provider kindly supplied a table called DATASETS. Lets find the ones related to the stock history and currency exchange rates that we are going to use in the next step.
+As you would see, this Economy Atlas comes with more than 300 datasets. In order to improve navigation, provider kindly supplied a table called DATASETS. Let's find the ones related to the stock history and currency exchange rates that we are going to use in the next step.
 
 ```SQL
 SELECT * 
@@ -253,7 +253,7 @@ SELECT *
 
 ![Preview App](assets/image19.png) 
 
-Finally, lets try to query one of the datasets: 
+Finally, let's try to query one of the datasets: 
 ```
 SELECT * 
   FROM KNOEMA_ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
@@ -262,7 +262,7 @@ SELECT *
 ![Preview App](assets/image20.png) 
 
 Congratulations! You successfully tapped into live data feed of Trade and FX rates data with NO ETL involved. As we promissed. Isn't it cool? 
-Now lets start building our pipelines. 
+Now let's start building our pipelines. 
 
 <!-- ------------------------ -->
 ## Building dbt Data Pipelines
@@ -277,7 +277,7 @@ In this section, we are going to start building our dbt pipelines:
 
 ### Configuration
 We are going to start by adding few more things to our dbt project configuration in order to improve maintainability. 
-1.. **Model folders/layers**. From our dbt project folder location, lets run few command line commands to create separate folders for models, representing different logical levels in the pipeline: 
+1.. **Model folders/layers**. From our dbt project folder location, let's run few command line commands to create separate folders for models, representing different logical levels in the pipeline: 
 
 ```cmd
 mkdir models/l10_staging
@@ -286,7 +286,7 @@ mkdir models/l30_mart
 mkdir models/tests
 ```
 
-Then lets open our dbt_profile.yml and modify the section below to reflect the model structure. 
+Then let's open our dbt_profile.yml and modify the section below to reflect the model structure. 
 
 ```yml
 models:
@@ -311,7 +311,7 @@ As you can see, this is allowing you to set multiple parameters on the layer lev
 
 
 2.. **Custom schema naming macros.**
-By default, dbt is [generating a schema name](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas) by appending it to the target schema environment name(dev, prod). In this lab we are going to show you a quick way to override this macro, making our schema names to look exactly the same between dev and prod databases. For this, lets create a file **macros\call_me_anything_you_want.sql** with the following content:
+By default, dbt is [generating a schema name](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas) by appending it to the target schema environment name(dev, prod). In this lab we are going to show you a quick way to override this macro, making our schema names to look exactly the same between dev and prod databases. For this, let's create a file **macros\call_me_anything_you_want.sql** with the following content:
 
 ```YAML
 {% macro generate_schema_name(custom_schema_name, node) -%}
@@ -345,7 +345,7 @@ So if you go in Snowflake UI and click 'History' icon on top, you are going to s
 ![Query Tag](assets/image24.png) 
 
 4.. **dbt plugings**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of github repository. In our lab, we are going to demonstrate how to use some automation that [dbt_utils](https://hub.getdbt.com/fishtown-analytics/dbt_utils/latest) package provides. 
-Lets install it. For that, lets create a file called ***packages.yml*** in the root of your dbt project folder and add the following lines: 
+Let's install it. For that, let's create a file called ***packages.yml*** in the root of your dbt project folder and add the following lines: 
 
 ```yml
 packages:
@@ -355,14 +355,14 @@ packages:
 
 ![Query Tag](assets/image25.png) 
 
-Once this done, lets open a command line and run 
+Once this done, let's open a command line and run 
 
 ```cmd
 dbt deps
 ```
 ![Query Tag](assets/image26.png) 
 
-Now that we are fully armed. Lets start building data pipelines! 
+Now that we are fully armed. Let's start building data pipelines! 
 
 <!-- ------------------------ -->
 
@@ -370,7 +370,7 @@ Now that we are fully armed. Lets start building data pipelines!
 Duration: 10
 
 1.. We are going to start building our pipelines starts by declaring [dbt sources](https://docs.getdbt.com/docs/building-a-dbt-project/using-sources). 
-For this lets create a **models/l10_staging/sources.yml** file and add the following configuration:
+For this let's create a **models/l10_staging/sources.yml** file and add the following configuration:
 
 ```yml
 version: 2
@@ -420,7 +420,7 @@ SELECT "Company"                    Company
 ```
 As you can see we used the opportunity to change case-sensitive & quoted name of the attributes to case insensitive to improve readability. Also as I am sure you noticed, this looks like SQL with the exception of macro **{{source()}}** that is used in "FROM" part of the query instead of fully qualified path (database.schema.table). This is one of the key concepts that is allowing dbt during compilation to replace this with target-specific name. As result, you as a developer, can promote **same** pipeline code to DEV, PROD and any other environments without any changes. 
 
-Lets run it. Please notice how versatile **dbt run** parameters are. In this example we are going to run all models that are located in **models/l10_staging**. More details are in [documentation]((https://docs.getdbt.com/reference/node-selection/syntax)).
+Let's run it. Please notice how versatile **dbt run** parameters are. In this example we are going to run all models that are located in **models/l10_staging**. More details are in [documentation]((https://docs.getdbt.com/reference/node-selection/syntax)).
 
 ```cmd
 dbt run --model l10_staging 
@@ -441,7 +441,7 @@ In this dataset, different measures like Close, Open, High and Low price are rep
 
 ![Query Tag](assets/image30.png) 
 
-To achieve that, lets create few more models:
+To achieve that, let's create few more models:
 
 - **models/l20_transform/tfm_knoema_stock_history.sql**
 
@@ -484,7 +484,7 @@ SELECT src.*
   FROM {{ref('tfm_knoema_stock_history')}} src
 ```
 
-3.. **Deploy**. The hard work is done. Lets go and deploy these. In this case we will automatically deploy tfm_stock_history and all of its ancestors. 
+3.. **Deploy**. The hard work is done. Let's go and deploy these. In this case we will automatically deploy tfm_stock_history and all of its ancestors. 
 
 ```cmd
 dbt run --model +tfm_stock_history
@@ -492,7 +492,7 @@ dbt run --model +tfm_stock_history
 
 ![Query Tag](assets/image31.png) 
 
-Lets we go to Snowflake UI to check the results
+Let's we go to Snowflake UI to check the results
 
 ```sql
 SELECT * 
@@ -509,7 +509,7 @@ SELECT *
 Duration: 10
 Our Stock history comes in USD. In this step, we are going to complement our landscape with additional models for currency exchange rates so we can see key measures in different currencies. 
 
-Lets start by creating new models:
+Let's start by creating new models:
 
 - **models/l20_transform/tfm_fx_rates.sql**
 
@@ -552,7 +552,7 @@ SELECT tsh.*
    AND tsh.date                     = fx_eur.date
 ```
 
-Now, lets deploy newly built models:
+Now, let's deploy newly built models:
 
 ```cmd
 dbt run --model +tfm_stock_history
@@ -570,7 +570,7 @@ dbt docs serve
 
 ![Query Tag](assets/image34.png) 
 
-Lets we go to Snowflake UI to check the results
+Let's we go to Snowflake UI to check the results
 
 ```sql
 SELECT * 
@@ -588,7 +588,7 @@ Duration: 10
 Following our use case story, we are going to manually upload two small datasets using 
 [dbt seed](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) representing trading books of two desks. As you would notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP. 
 
-For this lets create two csv files with the following content:  
+For this let's create two csv files with the following content:  
 
 - **data/manual_book1.csv**
 
@@ -614,15 +614,15 @@ B-EM1,2021-01-22,Tina M.,AAPL,BUY,-100940,EUR,980,103,NASDAQ
 B-EM1,2019-08-31,Tina M.,AAPL,BUY,-9800,EUR,100,98,NASDAQ
 ```
 
-Once created, lets run the following command to load the data into Snowflake. It is important to mention that whilst this approach is absolutely feasible to bring low hundred-thousands of rows it is suboptimal to integrate larger data and you should be using COPY/Snowpipe or other data integration options recommended for Snowflake. 
+Once created, let's run the following command to load the data into Snowflake. It is important to mention that whilst this approach is absolutely feasible to bring low hundred-thousands of rows it is suboptimal to integrate larger data and you should be using COPY/Snowpipe or other data integration options recommended for Snowflake. 
 
 ```cmd
-dbt seeds
+dbt seed
 ```
 
 ![Query Tag](assets/image35.png) 
 
-To simplify usage, lets create a model that would combine data from all desks. In this example we are going to see how **dbt_utils.union_relations** macro helps to automate code automation: 
+To simplify usage, let's create a model that would combine data from all desks. In this example we are going to see how **dbt_utils.union_relations** macro helps to automate code automation: 
 
 - **models/l20_transform/tfm_book.sql**
 
@@ -632,7 +632,7 @@ To simplify usage, lets create a model that would combine data from all desks. I
 ) }}
 ```
 
-Once we deploy this model, lets have a look what it is compiled into. For this, please open **target/run/l20_transform/tfm_book.sql**. As you can see dbt automatically scanned stuctures of the involved objects, aligned all possible attributes by name and type and combined all datasets via UNION ALL. Comparing this to the size of code we entered in the model itself, you can imagine the amount of time saved by such automation.
+Once we deploy this model, let's have a look what it is compiled into. For this, please open **target/run/l20_transform/tfm_book.sql**. As you can see dbt automatically scanned stuctures of the involved objects, aligned all possible attributes by name and type and combined all datasets via UNION ALL. Comparing this to the size of code we entered in the model itself, you can imagine the amount of time saved by such automation.
 
 ```cmd
 dbt run -m tfm_book
@@ -640,7 +640,7 @@ dbt run -m tfm_book
 
 ![Query Tag](assets/image36.png) 
 
-Okay. Next challenge. We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis we need to have rows for the days shares were HOLD. For this lets introduce another models:
+Okay. Next challenge. We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis we need to have rows for the days shares were HOLD. For this let's introduce some more models:
 
 - **models/l20_transform/tfm_daily_position.sql**
 
@@ -703,7 +703,7 @@ WHERE (date,trader,instrument,book,stock_exchange_name)
 dbt run -m tfm_book+
 ```
 
-Now lets go back to Snowflake worksheets and run a query to see the results:
+Now let's go back to Snowflake worksheets and run a query to see the results:
 ```sql
 SELECT * 
   FROM dbt_hol_dev.l20_transform.tfm_daily_position_with_trades
@@ -719,7 +719,7 @@ SELECT *
 Duration: 10
 
 This section should bring the last models to complete the story. 
-Now we have trading history of our desks and stock price history. Lets create a model to show how Market Value and PnL were changing over time. For this we are going to start by creating a model:
+Now we have trading history of our desks and stock price history. Let's create a model to show how Market Value and PnL were changing over time. For this we are going to start by creating a model:
 
 - **models/l20_transform/tfm_trading_pnl.sql**
 
@@ -737,12 +737,12 @@ SELECT t.instrument, t.stock_exchange_name,
    INNER JOIN {{ref('tfm_stock_history_major_currency')}}  s 
       ON t.instrument = s.company_symbol 
      AND s.date = t.date 
-     AND t.stock_exchange_name = s.stock_exchange_nam
+     AND t.stock_exchange_name = s.stock_exchange_name
 ```
 
 - **models/l30_mart/fct_trading_pnl.sql**
 
-This model will be the one we created in the mart area, prepared to be used by many. With that in mind, it will be good idea to materialise this model as a table with incremental load mode. You can see that this materialization mode has a special macro that comes into action for the incremental runs (and ignored during initial run and full_refresh option). 
+This model will be the one we created in the mart area, prepared to be used by many. With that in mind, it will be good idea to materialize this model as a table with incremental load mode. You can see that this materialization mode has a special macro that comes into action for the incremental runs (and ignored during initial run and full_refresh option). 
 
 ```sql
 {{ 
@@ -783,10 +783,10 @@ SELECT *
 -- this is a placeholder for illustration purposes
   FROM {{ref('fct_trading_pnl')}} src
 ```
-Lets deploy all of these models and run a query to check the final results:
+Let's deploy all of these models and run a query to check the final results:
 
 ```cmd
-dbt run -m l30_mart
+dbt run 
 dbt docs serve
 ```
 
@@ -803,7 +803,7 @@ SELECT *
 ```
 ![Query Tag](assets/image41.png) 
 
-Now, lets create a simple data visualisation for this dataset. For that, lets click on the Preview App button once again: 
+Now, let's create a simple data visualisation for this dataset. For that, let's click on the Preview App button once again: 
 
 ![Query Tag](assets/image9.png) 
 
@@ -811,11 +811,11 @@ Then **Worksheets -> + Worksheet**
 
 ![Query Tag](assets/image49.png) 
 
-Then lets copy-paste the same query we run in classic Snowflake UI worksheets. Hit the run button and switch from a table view to chart: 
+Then let's copy-paste the same query we run in classic Snowflake UI worksheets. Hit the run button and switch from a table view to chart: 
 
 ![Query Tag](assets/image50.png) 
 
-By default it shows a breakdown by Volume. Lets click on the measure and switch it into **PNL**. Then lets add another measure to our chart for displaying Market value and PnL side by side. 
+By default it shows a breakdown by Volume. Let's click on the measure and switch it into **PNL**. Then let's add another measure to our chart for displaying Market value and PnL side by side. 
 
 ![Query Tag](assets/image51.png) 
 
@@ -830,12 +830,15 @@ And this is it! Now you have a worksheet that you can slice'n'dice, share with y
 Duration: 5
 
 ### Establishing Testing
-Building trust in your data solution, it is hard to underestimate the importance of testing. Whilst there are many ways to organise automated testing, but thankfully dbt tool comes with the great [data tests framework](https://docs.getdbt.com/docs/building-a-dbt-project/tests). Let's build an example.
+To build trust in your data solution, it is hard to underestimate the importance of testing. While there are many ways to organize automated testing, thankfully dbt tool comes with the great [data tests framework](https://docs.getdbt.com/docs/building-a-dbt-project/tests). Let's build an example.
 
-First, lets add the test configuration file and add the content below. dbt comes with a set of pre-defined data tests, such as uniqeness, not_null, check constraints, ref integrity etc. We are going to set up tests on the few models, however it is highly recommended to establish reasonable test coverage across the board. 
+First, let's add the test configuration file and add the content below. dbt comes with a set of pre-defined data tests, such as uniqeness, not_null, check constraints, ref integrity etc. We are going to set up tests on the few models, however it is highly recommended to establish reasonable test coverage across the board. 
 - **models/tests/data_quality_tests.yml**
 
 ```yml
+version: 2
+
+models:
   - name: tfm_fx_rates
     columns:
       - name: currency||date
@@ -859,18 +862,18 @@ First, lets add the test configuration file and add the content below. dbt comes
           - not_null
           - unique
 ```
-Next, lets run these tests:
+Next, let's run these tests:
 
 ```cmd
 dbt test
 ```
 
-Boom! One of the tests failed! Lets try to understand why. dbt command line is kindly provided a link to the file with the SQL check that failed. Lets open it and copy-paste the content to Snowflake worksheet:  
+Boom! One of the tests failed! Let's try to understand why. dbt command line is kindly provided a link to the file with the SQL check that failed. Let's open it and copy-paste the content to Snowflake worksheet:  
 ![Query Tag](assets/image54.png) 
 
 ![Query Tag](assets/image55.png) 
 
-Lets quickly check the full row width for one of the records failed by extending this check towards something like this:
+Let's quickly check the full row width for one of the records failed by extending this check towards something like this:
 
 ```sql
 WITH cst AS
@@ -890,7 +893,7 @@ SELECT * FROM dbt_hol_dev.l20_transform.tfm_stock_history
 
 ![Query Tag](assets/image56.png) 
 
-Aha! There are shares which are traded on more than one stock exchanges. So we need to include **stock_exchange_name** attribute to your unique test key. Lets go back to **models/tests/data_quality_tests.yml** and update the test configuration for **tfm_stock_history** model :
+Aha! There are shares which are traded on more than one stock exchanges. So we need to include **stock_exchange_name** attribute to your unique test key. Let's go back to **models/tests/data_quality_tests.yml** and update the test configuration for **tfm_stock_history** model :
 
 
 
@@ -926,18 +929,18 @@ dbt run  --target=prod
 
 ![Query Tag](assets/image58.png)
 
-We can't check the UI that now we have data in **dbt_hol_prod** database:
+We can check the UI that now we have data in **dbt_hol_prod** database:
 ![Query Tag](assets/image59.png) 
 
 ### Materialization & Scaling
 
-As dbt tool provides the ability to easily change [materialization option](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations), taking away all the burden related to generating new version of DDL & DML. What it means for modern data engineering? That you no longer need to spend precious time performing upfront performance optimisation and rather focus on building models, bringing more insights to your business. And when it comes to understand the usage patterns, models that are heavy and/or accessed frequently could be selectively materilized. 
+dbt provides the ability to easily change the [materialization option](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations), taking away all the burden related to generating new version of DDL & DML. What does it means for modern data engineering? You no longer need to spend precious time performing upfront performance optimization and rather focus on building models, bringing more insights to your business. And when it comes to understand the usage patterns, models that are heavy and/or accessed frequently could be selectively materialized. 
 
-During the lab you've probably seen how easily Snowflake could deal with many models materialised as views, provided the input data volume of stock history is >200Mn records alone. We also explicitly configured one model to be materialised as 'table'(CTAS) and another one as 'incremental'(MERGE). Once you move into persisted methods of materialization you will be using Snowflake virtual warehouses as compute power to perorm the materialization. 
+During the lab you've probably seen how easily Snowflake could deal with many models materialized as views, provided the input data volume of stock history is >200Mn records alone. We also explicitly configured one model to be materialized as 'table'(CTAS) and another one as 'incremental'(MERGE). Once you move into persisted methods of materialization you will be using Snowflake virtual warehouses as compute power to perform the materialization. 
 
 Let's have a look on a couple of ways to manage compute size Snowflake will dedicate to a specific model(s).
 
-1.. Lets open **dbt_projects.yml** and add the additional line 
+1.. Let's open **dbt_projects.yml** and add the additional line 
 
 ```yml
 models:
@@ -959,7 +962,7 @@ models:
 ```
 ![Query Tag](assets/image60.png) 
 
-2.. Lets modify the content of **models/l30_mart/fct_trading_pnl.sql** changing config section to include pre and post run hooks: 
+2.. Let's modify the content of **models/l30_mart/fct_trading_pnl.sql** changing config section to include pre and post run hooks: 
 
 ```sql
 {{ 
@@ -981,18 +984,18 @@ SELECT src.*
 ```
 ![Query Tag](assets/image62.png) 
 
-Now lets run the project again:
+Now let's run the project again:
 
 ```cmd
 dbt run
 ```
-Once finished, lets go into Snowflake UI and look at the Query History page. As you can see, dbt automatically switched into a separate warehouse **dbt_dev_heavy_wh** (of a larger size) once it started working on the models in **l20_transform** folder. And once it reached **l30_mart/fct_trading_pnl** model, the pipeline increased the size of the **dbt_dev_wh** to 2XL..processed the model faster..and then decreased the size of compute back to XS to keep it economical. 
+Once finished, lets' go into Snowflake UI and look at the Query History page. As you can see, dbt automatically switched into a separate warehouse **dbt_dev_heavy_wh** (of a larger size) once it started working on the models in **l20_transform** folder. Once it reached the **l30_mart/fct_trading_pnl** model, the pipeline increased the size of the **dbt_dev_wh** to 2XL, processed the model faster, and then decreased the size of compute back to XS to keep it economical. 
 
 ![Query Tag](assets/image61.png) 
 
 These are just a couple of examples how you could leverage elasticity and workload isolation of Snowflake compute by switching between or resizing virtual warehouses as a simple DDL command, embedded in your pipelines. 
 
-With that, lets move to our final section for this lab! 
+With that, let's move to our final section for this lab! 
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
