@@ -286,9 +286,29 @@ mkdir models/l30_mart
 mkdir models/tests
 ```
 
-Then lets open our dbt_profile.yml and modify the section below to reflect the model structure. As you can see, this is allowing you to set multiple parameters on the layer level (like materialization in this example). Also, you would notice that we added ***+enabled: false*** to the ***examples*** section as we won't need to run those sample models in the final state.
+Then lets open our dbt_profile.yml and modify the section below to reflect the model structure. 
 
+```yml
+models:
+  dbt_hol:
+      # Applies to all files under models/example/
+      example:
+          materialized: view
+          +enabled: false
+      l10_staging:
+          schema: l10_staging
+          materialized: view
+      l20_transform:
+          schema: l20_transform
+          materialized: view
+      l30_mart:
+          schema: l30_mart
+          materialized: view
+```
 ![Preview App](assets/image22.png) 
+
+As you can see, this is allowing you to set multiple parameters on the layer level (like materialization in this example). Also, you would notice that we added ***+enabled: false*** to the ***examples*** section as we won't need to run those sample models in the final state.
+
 
 2.. **Custom schema naming macros.**
 By default, dbt is [generating a schema name](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas) by appending it to the target schema environment name(dev, prod). In this lab we are going to show you a quick way to override this macro, making our schema names to look exactly the same between dev and prod databases. For this, lets create a file **macros\call_me_anything_you_want.sql** with the following content:
@@ -645,7 +665,7 @@ WHERE book.date <= cst_market_days.date
 GROUP BY 1, 2, 3, 4, 5, 6 
 ```
 
-- **models/l20_transform/tfm_daily_position.sql**
+- **models/l20_transform/tfm_daily_position_with_trades.sql**
 
 ```SQL
 SELECT book
