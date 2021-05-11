@@ -890,6 +890,24 @@ dbt test
 
 Finishing testing note, it is also worth mentioning that alongside such tests, dbt framework also supports custom tests that are massively expanding scenarios(like regression testing) could be covered by data tests. And just to expand it even further, in dbt hub there is a package [dbt_expectations](https://hub.getdbt.com/calogica/dbt_expectations/latest/) that implements a lot of additional tests, inspired by popular[http://greatexpectations.io/](http://greatexpectations.io/) framework. 
 
+### Deployment
+
+Okay, seems like we have everything in place: pipelines been developed and tested. The next step would be to promote this code up the chain through our SDLC environments(which in this lab is simplified to just DEV & PROD). 
+
+In real life, the project code we are working should be in source version control system like git and by now pushed into one of the feature branches and merged into dev/trunk branch. From there, typically users raise pull requests to master/release version and then perform a deployment in production environment. Thanks to the fact dbt pipelines are very readable it is possible to implement good code review practices as well as set up automatic testing with various stages as a part of CICD automation. 
+
+Working with git and branches is not in scope of this lab so we will just run the following command to deploy the very same codebase to PROD environment. 
+
+```cmd
+dbt seed --target=prod
+dbt run  --target=prod
+```
+
+![Query Tag](assets/image58.png)
+
+We can't check the UI that now we have data in **dbt_hol_prod** database:
+![Query Tag](assets/image59.png) 
+
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
 Duration: 2
