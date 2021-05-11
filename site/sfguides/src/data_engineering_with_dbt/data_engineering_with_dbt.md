@@ -370,7 +370,7 @@ Now that we are fully armed. Lets start building data pipelines!
 Duration: 10
 
 1.. We are going to start building our pipelines starts by declaring [dbt sources](https://docs.getdbt.com/docs/building-a-dbt-project/using-sources). 
-For this lets create a **models\l10_staging\sources.yml** file and add the following configuration:
+For this lets create a **models/l10_staging/sources.yml** file and add the following configuration:
 
 ```yml
 version: 2
@@ -385,7 +385,7 @@ sources:
 ```
 As you probably remember, these two objects were mentioned in Knoema Dataset Catalog table: daily exchange rates and daily US trading history accodringly. 
 
-2.. **Base views** is the concept of models that act as a first-level transformation. Whilst not mandatory, these could act as a level of abstraction, separating ultimate source structure from the entry point of dbt pipeline. Providing your project more options to react to an upstream structure change. You can read more about arguments on benefits provided by the base view concept [here](https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355).
+2.. **Base views** is the concept of models that act as a first-level transformation. While not mandatory, these could act as a level of abstraction, separating ultimate source structure from the entry point of dbt pipeline. Providing your project more options to react to an upstream structure change. You can read more about arguments on benefits provided by the base view concept [here](https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355).
 We are going to create a fairly simple pass-through pair of base views: 
 - **models/l10_staging/base_knoema_fx_rates.sql**
 
@@ -420,7 +420,7 @@ SELECT "Company"                    Company
 ```
 As you can see we used the opportunity to change case-sensitive & quoted name of the attributes to case insensitive to improve readability. Also as I am sure you noticed, this looks like SQL with the exception of macro **{{source()}}** that is used in "FROM" part of the query instead of fully qualified path (database.schema.table). This is one of the key concepts that is allowing dbt during compilation to replace this with target-specific name. As result, you as a developer, can promote **same** pipeline code to DEV, PROD and any other environments without any changes. 
 
-Lets run it. Please notice how versatile **dbt run** parameters are. In this example we are going to run all models that are located in **models\l10_staging**. More details are in [documentation]((https://docs.getdbt.com/reference/node-selection/syntax)).
+Lets run it. Please notice how versatile **dbt run** parameters are. In this example we are going to run all models that are located in **models/l10_staging**. More details are in [documentation]((https://docs.getdbt.com/reference/node-selection/syntax)).
 
 ```cmd
 dbt run --model l10_staging 
@@ -462,7 +462,7 @@ SELECT *
 
 - **models/l20_transform/tfm_knoema_stock_history_alt.sql**
 
-Whilst this model is more for illustration purposes on how similar could be achieved by leveraging **dbt_utils.pivot** 
+While this model is more for illustration purposes on how similar could be achieved by leveraging **dbt_utils.pivot** 
 ```SQL
 SELECT
   company_symbol, company_name, stock_exchange_name, date, data_source_name,
@@ -511,7 +511,7 @@ Our Stock history comes in USD. In this step, we are going to complement our lan
 
 Lets start by creating new models:
 
-- **models/tfm_fx_rates.sql**
+- **models/l20_transform/tfm_fx_rates.sql**
 
 Here we are doing something new. dbt offers various [materialization options](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations) and in our **dbt_project.yml** we identified **view** as default option. In this model we are going to explicitly override the materialization, turning it into a **table**. When we deploy this model, dbt would automatically generate a new table (CTAS) replacing old content. As an example, we also add a tag that could help identifying subsets of models for processing. 
 
@@ -529,7 +529,7 @@ SELECT src.*
    AND "Date"           > '2016-01-01'
 ```
 
-- **models/tfm_stock_history_major_currency.sql**
+- **models/l20_transform/tfm_stock_history_major_currency.sql**
 
 This model will start bringing FX and Trade history sets together. 
 
