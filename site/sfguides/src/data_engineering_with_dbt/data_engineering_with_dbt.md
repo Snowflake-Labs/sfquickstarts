@@ -174,7 +174,7 @@ The expected output should look like this, confirming that dbt was able to acces
 Finally, lets run the sample models that comes with dbt templates by default to validate everything is set up correctly. 
 For this, please run the following command (in dbt_hol folder):
 ```Shell
-$ dbt debug
+$ dbt run
 ```
 The expected output should look like this, confirming dbt was able to connect and successfully run sample models: 
 ![dbt run output](assets/image5.png)  
