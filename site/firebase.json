@@ -26,6 +26,11 @@
       "source": "/guide/Auto-Ingest_Twitter_Data_into_Snowflake{,/**}",
       "destination": "/guide/auto_ingest_twitter_data",
       "type": 301
+    }, 
+    {
+      "source": "/guide/getting_started_dbt{,/**}",
+      "destination": "/guide/data_engineering_with_dbt",
+      "type": 301
     } ]
   }
 }
