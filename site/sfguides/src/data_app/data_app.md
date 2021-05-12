@@ -17,7 +17,7 @@ the APIs by using a materialization. The example application you will be startin
 
 
 ### Prerequisites
-- Priviledges to Snowflake to create a user, database, and warehouse
+- Privileges to Snowflake to create a user, database, and warehouse
 - Ability to install and run software on your computer
 - Basic experience using git and editing json
 - Intermediate knowledge of SQL
@@ -168,7 +168,7 @@ Duration: 5
 
 Open a web browser on your computer and navigate to [http://localhost:3000](http://localhost:3000).
 
-If the page loads and renders graphs your application is working! You can choose other date ranges to test the inteactivity of the dashboard and also let the application pick random dates with the link on the upper right.
+If the page loads and renders graphs your application is working! You can choose other date ranges to test the interactivity of the dashboard and also let the application pick random dates with the link on the upper right.
 
 The application is going through gigabytes of data to aggregate counts over windows of time for the dashboard, and joining data from trips and weather, all real time. The data is return to the website via an API.
 
@@ -190,7 +190,7 @@ artillery run scripts/load_tests/all.yaml
 
 The queries coming in will be visible in terminal 1 and the results from the queries will be in the second terminal. The load test will run for 2 minutes.
 
-In Snowflake console, go to the history and see the query latencies and how those change from first query to those which were cached. These latencies will align to the load test min/max latencies. You should see cached queries returning the query result in under 100ms. Each test in artillery is hitting the 3 endpoints referenced earlier with the default date range (all). With a dashboard like this, the default set of queries when a user visits the application can all reuse the same cached query results. When more data is ingested, the cache will be updated on the next query. The time for the API responses will be longer than the query response time due to latency and bandwidth of client to Snowflake, and the processing time on your computer to retrieve, format, and return the resultset.
+In Snowflake console, go to the history and see the query latencies and how those change from first query to those which were cached. These latencies will align to the load test min/max latencies. You should see cached queries returning the query result in under 100ms. Each test in artillery is hitting the 3 endpoints referenced earlier with the default date range (all). With a dashboard like this, the default set of queries when a user visits the application can all reuse the same cached query results. When more data is ingested, the cache will be updated on the next query. The time for the API responses will be longer than the query response time due to latency and bandwidth of client to Snowflake, and the processing time on your computer to retrieve, format, and return the result set.
 
 ## Load Test for a Small Cluster
 Duration: 5
@@ -202,7 +202,7 @@ should be able to do 8 concurrency.
 artillery run scripts/load_tests/monthly_random.yaml
 ```
 
-In Snowflake console, go to the history again to see the queries which are being execued in your account. You will notice that queries start queuing as load increases in this scenario and in the load test you will begin to see timeouts. The goal we are trying to attain with this application is a p95 under 5 seconds. Control-C will stop the load test.
+In Snowflake console, go to the history again to see the queries which are being executed in your account. You will notice that queries start queuing as load increases in this scenario and in the load test you will begin to see timeouts. The goal we are trying to attain with this application is a p95 under 5 seconds. Control-C will stop the load test.
 
 
 ## Load Test for a Medium Cluster
@@ -298,7 +298,7 @@ Duration: 2
 
 In this guide you got a custom single-page application powered by a custom API powered by Snowflake. You also learned how Snowflake scales workloads vertically and horizontally.
 
-If you'd like to learn more, look through the code to see how we built the API endpoints. After you are comfortable on how the application works, you can modify the load tests and endpoints to see how changes affect performance and results. I would suggest you try to create materialized views for all the endpoints to get the maxiumum performance you can as well as edit the load tests for other customer scenarios.
+If you'd like to learn more, look through the code to see how we built the API endpoints. After you are comfortable on how the application works, you can modify the load tests and endpoints to see how changes affect performance and results. I would suggest you try to create materialized views for all the endpoints to get the maximum performance you can as well as edit the load tests for other customer scenarios.
 
 ### What We've Covered
 - Configure and Run a custom single-page application and API powered by Snowflake
