@@ -14,7 +14,8 @@ Duration: 1
 
 Snowflake Data Market Place can provide rapid results to external data which can be used as an overlay or enhancement of your existing data to monitor trends and perform compelling results. Building an application to distribute your results rapidly on a modern data platform are key to innovating faster and gaining a competitive advantage.
 Snowflake combined with Quasar, a modern Application framework together with AWS can help you achieve that competitive advantage. In this lab, we will show how to build a small web application we use the Quasar Application Framework and AWS Lambda Python Layer.  
-
+### Images
+![Architecture](DataMarketplace-App-Architecture.png)
 
 ### Prerequisites
 - We will be using Visual Studio Code in this lab but you are welcome to use your preference.
@@ -43,7 +44,7 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 - [Download](https://download) snowflake-connector-python, snowflake queries, quasar sample application code.
 - [Quasar CLI](https://quasar.dev/start/pick-quasar-flavour/) Installed
 - [Quasar Installation Video ](https://www.youtube.com/watch?v=BK66mQTSl7U) Installed
-- [Download Snowflake python folder and zip it...](https://drive.google.com/file/d/1Y9DFspvAEMFkWY-tcU2XCko-gUyy_2bS/view?usp=sharing)
+- [Download FIXXXSnowflake python folder and zip it...](https://drive.google.com/file/d/1Y9DFspvAEMFkWY-tcU2XCko-gUyy_2bS/view?usp=sharing)
 -  [Getting your AWS Lambda Functions to work with Snowflake -Connector Download ](https://medium.com/snowflake/getting-your-aws-lambda-functions-to-work-with-snowflake-a14b453bb5ee) 
 
 
