@@ -57,12 +57,12 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 
 <!-- ------------------------ -->
 
-## Working with Data Market Place 
+## Working with Data Marketplace 
 Duration: 2
 
-Snowflake’s Data Marketplace provides visibility to a wide variety of datasets from third party data stewards which broaden access to data points used to transform business process.  The Data Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider. Preview Levi's video in this VHOL to select the Knoema datasets from the Snowflake MarketPlace. 
+Snowflake’s Data Marketplace provides visibility to a wide variety of datasets from third party data stewards which broaden access to data points used to transform business process.  The Data Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider. 
 
-**Before we begin to review working with Data Market place data sets, STOP and verify you have installed a trial version of snowflake.  If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.** 
+**Before we begin to review working with Data Market place data sets, STOP and verify you have installed a trial version of Snowflake.  If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.** 
 
 * 	At the top right corner, make sure you are logged in as ACCOUNTADMIN
 * 	Click on Data Marketplace
@@ -70,7 +70,7 @@ Snowflake’s Data Marketplace provides visibility to a wide variety of datasets
 
 ![img1](assets/mp1.png)
 
-*	At the Search bar, type: Knoema Poverty then click on the Tile Box labeled: Economic Data Atlas.
+*	At the Search bar, type: Knoema Economic then click on the Tile Box labeled: Economic Data Atlas.
 ![img1](assets/mp2.png)
 *  At the top right corner, Select Get Data
 *	Select the appropriate roles to access the Database being created and accept the Snowflake consumer terms and Knoema’s terms of use.
@@ -90,10 +90,15 @@ Snowflake’s Data Marketplace provides visibility to a wide variety of datasets
 * Create Database
 
 ![img1](assets/mp3.png)
+
+
+
 *	View Database
+![img1](assets/mp3.1.png)
+
 * At the top left corner select Worksheets and select Enable Worksheets and Dashboards*
 ![img1](assets/mp7.png)
-* You will see a display “ Setting Up” and then select Import Worksheets if you have any. Otherwise, you will be taken directly into the worksheet counsel  click +Worksheets and past the following code into the display.
+* You will see a display “ Setting Up” and then select Import Worksheets if you have any. Otherwise, you will be taken directly into the worksheet counsel  click +Worksheets and paste the following code into the display.
 * At the top right corner, Select Account Admin Role and a Warehouse and select the Database: Knoema_Economy_Data Atlas  and run the query by pressing the circle with arrow button at the top right-hand corner for the counsel. Explore the data and familiar yourself with the following data sets: 
 
 
@@ -128,7 +133,7 @@ select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."WBPED2020"
 ## Create Snowflake Views
 Duration: 1
 
-Using Snowflake's Regression function returns the slope of the linear regression line for non-null pairs in a group. It is computed for non-null pairs, a powerful way to compare multiple variables in a set of data. It will help us evaluate in this case, Credit worthiness of Single Persons relative to poverty. We also look at Savings rate and average investment rates by geography and time.
+Using Snowflake's Regression function returns the slope of the linear regression line for non-null pairs in a group. It is computed for non-null pairs, a powerful way to compare multiple variables in a set of data. It will help us evaluate in this case, Credit worthiness of Single Persons relative to Poverty. We also look at Savings rate and average investment rates by geography and time.
 
 * Go to the home icon and switch to classic console
 
@@ -210,7 +215,7 @@ create view VHOLAPP3 as select
   ```markdown
   Select * from VHOLAPP3;
   ```
-  Make sure at the top of your worksheet, you are in running with the appropriate access privileges ( role, Warehouse, Selected database and schema) which has access to these views.  
+  Make sure at the top of your worksheet, you are in running with the appropriate access privileges ( Role, Warehouse, Selected database and Schema) which has access to these views.  
 
 
 <!-- ------------------------ -->
@@ -221,8 +226,8 @@ Duration: 1
 
 
 We are using the Quasar Application Framework with vue.js. 
-- [Quasar CLI](https://quasar.dev/start/pick-quasar-flavour/) Installed
-- [Quasar Installation Video ](https://www.youtube.com/watch?v=BK66mQTSl7U) Installed
+- [Quasar CLI](https://quasar.dev/start/pick-quasar-flavour/) ✅ Is Installed
+- [Quasar Installation Video ](https://www.youtube.com/watch?v=BK66mQTSl7U) ✅ Watch video if not Inatalled
 
 So, before we begin to review the index.vue code make sure you have successfully installed the quasar Application Framework.
 
@@ -232,7 +237,7 @@ So, before we begin to review the index.vue code make sure you have successfully
 
 [Download Quasar Folder from repository](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/quasar)
 
-Now let’s take a look at the application we are going to build. In the image displayed below you will  see a dropdown selection box for the Geography  which will pass the GeoRegionIdPth variable to the selection box, A slider bar to set the Time Period (start date, and end date) which will pass the Dateagi variable(s) to slider bar. The Refresh Button which will populate 3-line charts which represent the Poverty Threshold, Savings Rate and Avg Investment Rate relative to the Time Period  and Geography selected. If a Geography is not selected, an error message will display in red, “You Must select a Geography”
+Now let’s take a look at the application we are going to build. In the image displayed below, you will  see a dropdown selection box for the Geography  which will pass the GeoRegionIdPth variable to the selection box, A slider bar to set the Time Period (start date, and end date) which will pass the Dateagi variable(s) to slider bar. The Refresh Button which will populate 3-line charts which represent the Poverty Threshold, Savings Rate and Avg Investment Rate relative to the Time Period  and Geography selected. If a Geography is not selected, an error message will display in red, “You Must select a Geography”
 ![img1](assets/vue-final.png)
 
 Using your favoriate code editor, open the following file: /your project folder/src/pages/index.vue
@@ -428,11 +433,11 @@ export default {
 </script>
 
 ```
+* Open the quasar.config.js with your editor and add the folowing code snipit if it is missing.
 
 ### quasar.config.js
-Open the quasar.config.js with your editor and add the folowing code snipit if it is missing.
-```  
-// Quasar plugins
+```
+//Quasar plugins
       plugins: ['Notify']
     },
 ```
@@ -440,13 +445,15 @@ Open the quasar.config.js with your editor and add the folowing code snipit if i
 * You should see a non-responsive application.
 ![img1](assets/vue1.png)
 
-We will come back to this again in a later step. If you do not see the application from you local host, verify your installation and the download of repository folder/quasar.
+We will come back to this again in a later step. If you do not see the application from your local host, verify your installation and the download of repository folder/quasar.
 
 <!-- ------------------------ -->
 ## Building the Lambda
 Duration: 8
 
+
 Now let’s begin our work on in  AWS to create a serverless environment to run our application. For the purpose of the lab, we will create the application and host it from your local host. So, let’s begin.
+- [AWS] (https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all) Free trial Account ✅ Is Installed
 
 * Open up your AWS Console. Let's go to services and then we want to go straight into the Lambda.
 ![img1](assets/lambda1.png)
@@ -456,22 +463,24 @@ Now let’s begin our work on in  AWS to create a serverless environment to run 
 * Select, Create a layer
 ![img1](assets/lambda2.png)
 
-* And here we're going to name this: snowflake-connector
-* Go to your application project folder where you downloaded the project from GitHub and upload the  snowflake-connector-python.zip file  If you forgot to download the .zip file, follow the link below 
+* And here we're going to name this: **snowflake-connector**
+* Go to your application project folder where you downloaded the project from GitHub and upload the  snowflake-connector-python.zip file  **If you forgot to download the .zip file, follow the link below:** 
 - [Download snowflake-connector-python.zip](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/releases/tag/v1)
 * Under Runtimes, select Python 3.8
 * Select Create – It may take a while as the file it is uploading is quite large.  See Below..
 ![img1](assets/lambda3.png)
 
-* Once your Lambda layer is successfully created you can mov on to the next step.
+* Once your Lambda layer is successfully created, you can move on to the next step.
 * At the top left menu select Lambda and Select Functions, then at the top right corner select create function
 * Select the tile “Author from Scratch” add the function name “VHOL” and using the “Runtime pull down, select “Python 3.8”
-* at bottom corner, select create function and wait until your function is created.
+* At bottom corner, select create function and wait until your function is created.
 ![img1](assets/lambda4.png)
-* Under Environment, select lambda_Function.py, now select the default script and delete so you have a clear tab. Now using visual studio code open the file “lambda.py and paste into the lambda_function tab
+* Under Environment, select lambda_Function.py. 
+* Now select the default script and delete so you have a clear tab. Now using visual studio code open the file “lambda.py and paste into the lambda_function tab
 [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)
 ![img1](assets/lambda5.png)
-* Click on the “Test Tab” Now using visual studio code open the file [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name Hello
+* Click on the “Test Tab” 
+* Now using visual studio code, our your preffered code editor, open the file [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name "Hello"
 * Select Create
 ![img1](assets/lambda6.png)
 
@@ -558,7 +567,7 @@ def lambda_handler(event, context):
 
 ```
 <!-- ------------------------ -->
-* Now go to the Configuration and select, select then general configuration and select the edit icon and increase the memory to 3032 and select “save”
+* Now go to the Configuration and select, then select general configuration and select the edit icon and increase the memory to 3032 and select “save”
 ![img1](assets/lambda7.png)
 * Select +Add trigger  and select API Gateway  create and API, select REST and the security endpoint for this lab select “open” and finally select the Add button. 
 ![img1](assets/lambda8.png)
