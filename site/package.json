@@ -53,6 +53,5 @@
   },
   "browserslist": [
     "defaults"
-  ],
-  "dependencies": {}
+  ]
 }
