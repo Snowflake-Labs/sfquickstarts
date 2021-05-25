@@ -99,8 +99,8 @@ GRANT ALL ON ALL SCHEMAS IN DATABASE dbt_hol_prod  TO ROLE dbt_prod_role;
 
 As result of these steps, we should have:
 -  two empty databases: PROD, DEV
--  two separate virtual warehouses: one for prod, one for dev workloads
--  a pair of separate roles and one user
+-  two pair of virtual warehouses: two for prod, two for dev workloads
+-  a pair of roles and one user
 
 Please note, this set up is simplified for the purpose of the lab. 
 There are many ways environments, roles, credentials could be modeled to fit your final requirements. 
@@ -764,6 +764,7 @@ SELECT src.*
 Finally, for illustration purposes we are going to create a couple of views that could be extended further, representing different lens of interpreting PnL data between treasury, risk and finance departments.
 
 - **models/l30_mart/fct_trading_pnl_finance_view.sql**
+
 ```sql
 SELECT * 
 -- this is a placeholder for illustration purposes
@@ -771,6 +772,7 @@ SELECT *
 ```
 
 - **models/l30_mart/fct_trading_pnl_risk_view.sql**
+
 ```sql
 SELECT * 
 -- this is a placeholder for illustration purposes
@@ -778,11 +780,13 @@ SELECT *
 ```
 
 - **models/l30_mart/fct_trading_pnl_treasury_view.sql**
+
 ```sql
 SELECT * 
 -- this is a placeholder for illustration purposes
   FROM {{ref('fct_trading_pnl')}} src
 ```
+
 Let's deploy all of these models and run a query to check the final results:
 
 ```cmd
