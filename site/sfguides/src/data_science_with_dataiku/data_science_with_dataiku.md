@@ -14,13 +14,13 @@ tags: Data Science, Dataiku
 
 Duration: 1
 
-This virtual hands-on lab introduces you to the basics of using Snowflake together with Dataiku Cloud as part of a Data Science project. We’ll be highlighting some of the well-integrated functionalities between the two cloud-based technologies. It is designed specifically for use with the [Snowflake free 30-day trial](https://trial.snowflake.com), and the Dataiku Cloud trial version via Snowflake’s Partner Connect. In addition, we’ll also take a look at Snowflake’s Data Marketplace and how 3rd party data sets from there can enrich and support your Data Science projects.
+This Snowflake Quickstart introduces you to the basics of using Snowflake together with Dataiku Cloud as part of a Data Science project. We’ll be highlighting some of the well-integrated functionalities between the two cloud-based technologies. It is designed specifically for use with the [Snowflake free 30-day trial](https://trial.snowflake.com), and the Dataiku Cloud trial version via Snowflake’s Partner Connect. In addition, we’ll also take a look at Snowflake’s Data Marketplace and how 3rd party data sets from there can enrich and support your Data Science projects.
 
 This Snowflake lab will be done as part of a theoretical real-world “story” with COVID-19 data to help you better understand why we are performing the steps in this lab and in the order they appear.
 
 The story of this lab is examining incidents of COVID-19 in Europe along with changes in mobility. We would like to use historical data to predict mortality rates for COVID-19 and see if changes in mobility is a significant factor driving this.
 
-The source of data is the Starschema Covid-19 database from the Snowflake Data Marketplace. After analysing the data in Snowflake’s Snowsight, we will move over to Dataiku to perform some transformations (that are pushed down to Snowflake for computation) and then create a predictive model.
+The source of data is the Starschema Covid-19 database from the Snowflake Data Marketplace. After analyzing the data in Snowflake’s Snowsight, we will move over to Dataiku to perform some transformations (that are pushed down to Snowflake for computation) and then create a predictive model.
 
 The specific tables we’ll use are the JHU_COVID_19 dataset which reports case numbers by province and day as well as the GOOG_GLOBAL_MOBILITY_REPORT which reports the percent change in mobility across various areas (e.g., grocery stores, parks, etc.) by a state/region of a country and day.
 
@@ -33,7 +33,7 @@ Upon completion of the lab you should be able to grasp how to work a simple Data
 - Use of the Snowflake free 30-day trial environment
 - Basic knowledge of SQL, and database concepts and objects
 
-### What you'll learn
+### What You'll Learn
 
 The exercises in this lab will walk you through the steps to:  
 
@@ -44,6 +44,10 @@ The exercises in this lab will walk you through the steps to:
 - Create, run, and evaluate simple Machine Learning models in Dataiku
 - Write results back to Snowflake
 - Use cloning and time travel for test environment
+
+### What You'll Build
+
+- A Snowflake and Dataiku integration to create, run, and evaluate COVID-19 machine learning models. 
 
 <!-- ------------------------ -->
 
@@ -59,7 +63,11 @@ After registering, you will receive an email with an activation link and your Sn
 
 Resize your browser window, so that you can view this guide and your web browser side-by-side and follow the lab instructions. If possible, use a secondary display dedicated to the lab guide.
 
-Download [this SQL file](https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Snowflake_Dataiku/Snowflake_Dataiku_VHOL.sql) for use in Snowflake.
+#### Download lab resources:
+
+<button>
+[Download sample SQL](https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Snowflake_Dataiku/Snowflake_Dataiku_VHOL.sql) for use in Snowflake.
+</button>
 
 Negative
 : **About the screen captures, sample code, and environment** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
@@ -149,7 +157,7 @@ Duration: 10
 
 ### Create Dataiku trial via Partner Connect
 
-At the top right of the page, confirm that your current role is ACCOUNTADMIN, by clicking on your profile on the top right.
+At the top right of the page, confirm that your current role is `ACCOUNTADMIN`, by clicking on your profile on the top right.
 
 ![img](assets/dataiku12.png)
 
@@ -280,7 +288,7 @@ Today it contains data from over 100+ Data Providers with over 220+ data listing
 
 To access the Snowflake Data Marketplace, follow the below steps.
 
-Make sure that your current role is ACCOUNTADMIN (as shown in the top right). If not, update your role by clicking on your profile on the top right.
+Make sure that your current role is `ACCOUNTADMIN` (as shown in the top right). If not, update your role by clicking on your profile on the top right.
 
 ![img](assets/dataiku29.png)
 
@@ -308,7 +316,7 @@ A number of COVID-19 data sets are shown here - we will be using **Starschema’
 
 The Starschema dataset provides several tables, with daily COVID-19 incident data from the John Hopkins University, as well as local health authorities such as the European Centre for Disease Prevention and Control (ECDC), the German Robert-Koch-Institut (RKI) and American authorities. In addition, demographic data, mobility data and information about global government measures is made available in this dataset.
 
-Ensure you’re in the **ACCOUNTADMIN** role on the top right; if not, click on the person icon to change it. Then click **Get Data**.
+Ensure you’re in the `ACCOUNTADMIN` role on the top right; if not, click on the person icon to change it. Then click **Get Data**.
 
 ![img](assets/dataiku34.png)
 
@@ -326,7 +334,7 @@ If you enter JHU in the top right hand filter you will see all tables with data 
 
 ![img](assets/dataiku38.png)
 
-You will also see that All Types has been selected and you are using the **ACCOUNTADMIN** role by default.
+You will also see that All Types has been selected and you are using the `ACCOUNTADMIN` role by default.
 
 Further to the right you will see the Database Details including: the owner of the share, number of tables and views in this database, source, share name and which data provider shared the information with you.
 
@@ -1267,20 +1275,9 @@ Congratulations, you have now completed this lab! Let’s wrap things up in the 
 
 <!-- ------------------------ -->
 
-## Summary & Next Steps
 
-Duration: 1
 
-This tutorial was designed as a hands-on introduction to Snowflake and DataIku to simultaneously teach you how to use it, while showcasing some of its key capabilities.
-
-We encourage you to continue with your free trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
-
-- At the very top of the UI click on the “Partner Connect” icon to get access to trial/free ETL and BI tools to help you get more data into Snowflake and then analyze it
-- Read the “[Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-download-maximizing-your-free-trial-guide)”
-- Attend a Snowflake virtual or in-person [event](https://www.snowflake.com/about/webinars/) to learn more about our capabilities and how customers use us
-- Contact [Sales](https://www.snowflake.com/free-trial-contact-sales/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-contact-sales-from-lab-guide) to learn more
-
-### Resetting Your Snowflake Environment
+## (Optional) Resetting Your Snowflake Environment
 
 Lastly, if you would like to reset your environment by deleting all the objects created as part of this lab, run the SQL below in a worksheet.
 
@@ -1300,3 +1297,15 @@ drop database if exists dataiku_test_db;
 alter warehouse “PC_DATAIKU_WH” set warehouse_size = ‘XSMALL’;
 ```
 
+
+## Conclusion & Next Steps
+Duration: 1
+
+This tutorial was designed as a hands-on introduction to Snowflake and Dataiku to simultaneously teach you how to use it, while showcasing some of its key capabilities.
+
+We encourage you to continue with your free trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
+
+- At the very top of the UI click on the “Partner Connect” icon to get access to trial/free ETL and BI tools to help you get more data into Snowflake and then analyze it
+- Read the “[Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-download-maximizing-your-free-trial-guide)”
+- Attend a Snowflake virtual or in-person [event](https://www.snowflake.com/about/webinars/) to learn more about our capabilities and how customers use us
+- Contact [Sales](https://www.snowflake.com/free-trial-contact-sales/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-contact-sales-from-lab-guide) to learn more
