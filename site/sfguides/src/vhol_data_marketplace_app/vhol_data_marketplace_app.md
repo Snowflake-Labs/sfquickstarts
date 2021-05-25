@@ -30,9 +30,9 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 - How to review data marketplace data for insight development
 
 ### What You’ll Learn about Building an Application  
-- How simple it is to connect to Snowflake Datamarketplace Data
+- How simple it is to connect to Snowflake Data Marketplace Data
 - How simple it is to query the data from the Marketplace Datasets 
-- How to perform a quik regression analysis on the Datasets
+- How to perform a quick regression analysis on the Datasets
 - How to create a view of the Marketplace Datasets  
 - How to create a line chart using the Quasar application framework
 - How to attach the snow-flake connector in AWS 
@@ -64,7 +64,7 @@ Snowflake’s Data Marketplace provides visibility to a wide variety of datasets
 
 **Before we begin to review working with Data Market place data sets, STOP and verify you have installed a trial version of Snowflake.  If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.** 
 
-* 	At the top right corner, make sure you are logged in as ACCOUNTADMIN
+* 	At the top right corner, make sure you are logged in as `ACCOUNTADMIN`
 * 	Click on Data Marketplace
 * 	Click on  Explore the Snowflake Data Marketplace 
 
@@ -103,17 +103,16 @@ Snowflake’s Data Marketplace provides visibility to a wide variety of datasets
 
 
 
-```markdown
+```sql
 
 
 
-## Step 1  Review the available data tables
-Duration: 8
+--## Step 1  Review the available data tables
 --Review the datasets available
 select * from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."DATASETS";
 select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS";
 
-## Step 2 Identify the columns by which data sets can be joined by running simple select statements for a variety of different data views.  This will allow you to see patterns in data which join views to produce a combined view of many datasets.
+--## Step 2 Identify the columns by which data sets can be joined by running simple select statements for a variety of different data views.  This will allow you to see patterns in data which join views to produce a combined view of many datasets.
 
 select * from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."sdg_01_20" agi;
 --Poverty Thresholds -ilc_li01  geo, geoName, geoRegionid month start date
@@ -148,17 +147,16 @@ Using Snowflake's Regression function returns the slope of the linear regression
 * Select New Worksheet at the top of the Snowflake Console
 * Create a database to store your Application Views.
 
-```markdown
+```sql
 
-## Step 1 Create a database to store your views
+--# Step 1 Create a database to store your views
 Create database VHOL;
 ```
 <!-- ------------------------ -->
 
-```markdown
+```sql
 
-## Step 2 Create a View from the Regression query
-Duration: 1
+--## Step 2 Create a View from the Regression query
 
 create view VHOLAPP2 as select 
 agi."geo RegionId" as GeoRegionIdAgi
@@ -193,8 +191,7 @@ RegionId"=ir."geo RegionId" and agi."Date"=ir."Date" -- join investment rate
 inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."geo - RegionId"=sr."geo RegionId" and agi."Date"=sr."Date"  -- join saving rate
 
 
-## Step 3 Create a view to pair down the variables for the APP --
-Duration: 2
+--## Step 3 Create a view to pair down the variables for the APP --
 
 create view VHOLAPP3 as select 
  GeoRegionIdPth, dateagi
@@ -209,7 +206,7 @@ create view VHOLAPP3 as select
   order by dateagi,GeoRegionIdPth,hhtypNamePth--, ir_lin, sr_lin 
 
 ```
-  Limiting the variables that will be presented on the appliacation layer (in this case our chart) is an efficient use of data and compute resourses.Hence why we created the VHOLAPP3 view. 
+  Limiting the variables that will be presented on the application layer (in this case our chart) is an efficient use of data and compute resources. Hence why we created the VHOLAPP3 view. 
 
   Verify your view is created by running the following:
   ```markdown
@@ -227,11 +224,11 @@ Duration: 1
 
 We are using the Quasar Application Framework with vue.js. 
 - [Quasar CLI](https://quasar.dev/start/pick-quasar-flavour/) ✅ Is Installed
-- [Quasar Installation Video ](https://www.youtube.com/watch?v=BK66mQTSl7U) ✅ Watch video if not Inatalled
+- [Quasar Installation Video ](https://www.youtube.com/watch?v=BK66mQTSl7U) ✅ Watch video if not Installed
 
 So, before we begin to review the index.vue code make sure you have successfully installed the quasar Application Framework.
 
-**Please see the prerequisits for this lab**
+**Please see the prerequisite for this lab**
 
 **You will need to drop the quasar folder from the repository into your local quasar project folder** 
 
@@ -240,7 +237,7 @@ So, before we begin to review the index.vue code make sure you have successfully
 Now let’s take a look at the application we are going to build. In the image displayed below, you will  see a dropdown selection box for the Geography  which will pass the GeoRegionIdPth variable to the selection box, A slider bar to set the Time Period (start date, and end date) which will pass the Dateagi variable(s) to slider bar. The Refresh Button which will populate 3-line charts which represent the Poverty Threshold, Savings Rate and Avg Investment Rate relative to the Time Period  and Geography selected. If a Geography is not selected, an error message will display in red, “You Must select a Geography”
 ![img1](assets/vue-final.png)
 
-Using your favoriate code editor, open the following file: /your project folder/src/pages/index.vue
+Using your favorite code editor, open the following file: /your project folder/src/pages/index.vue
 ```markdown
 ## Create Index.vue
 Duration: 2
@@ -452,7 +449,7 @@ We will come back to this again in a later step. If you do not see the applicati
 Duration: 8
 
 
-Now let’s begin our work on in  AWS to create a serverless environment to run our application. For the purpose of the lab, we will create the application and host it from your local host. So, let’s begin.
+Now let’s begin our work on in  AWS to create a server-less environment to run our application. For the purpose of the lab, we will create the application and host it from your local host. So, let’s begin.
 - [AWS] (https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all) Free trial Account ✅ Is Installed
 
 * Open up your AWS Console. Let's go to services and then we want to go straight into the Lambda.
@@ -480,7 +477,7 @@ Now let’s begin our work on in  AWS to create a serverless environment to run 
 [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)
 ![img1](assets/lambda5.png)
 * Click on the “Test Tab” 
-* Now using visual studio code, our your preffered code editor, open the file [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name "Hello"
+* Now using visual studio code, our your preferred code editor, open the file [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name "Hello"
 * Select Create
 ![img1](assets/lambda6.png)
 
@@ -607,7 +604,7 @@ Duration: 1
 
 To learn more about Snowflake Data MarketPlace visit the official website here: [Snowflake Data MarketPlace](https://www.snowflake.com/data-marketplace/)
 
-To learn more about Building Data Aapplications isit the official  website here: ([Building Data Applications](https://www.snowflake.com/workloads/data-applications/)
+To learn more about Building Data Applications visit the official  website here: ([Building Data Applications](https://www.snowflake.com/workloads/data-applications/)
 
 
 
@@ -615,7 +612,7 @@ To learn more about Building Data Aapplications isit the official  website here:
 
 
 ### What we've covered
-- You were aquainted with Snowflake's Data Marketplace
+- You were acquainted with Snowflake's Data Marketplace
 - You became familiar with building an application using the Quasar Application Framework
 - We guided you through using the Snowflake-Connector for Python via AWS Lambda
-- We created the API Gateway and tested the functionaltiy of the application
+- We created the API Gateway and tested the functionality of the application
