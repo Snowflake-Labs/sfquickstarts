@@ -32,7 +32,7 @@ You can view all source code of this guide on [GitHub](https://github.com/Snowfl
 - A [Snowflake account](https://trial.snowflake.com/) with `ACCOUNTADMIN` access.
 - An AWS account with administrator access (or scoped IAM user with access to Lambda, API Gateway, SageMaker, AWS Systems Manager
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Serverless Framework](https://www.serverless.com/)
+- [Serverless Framework](https://www.serverless.com/) - Please note the Serverless version (2.43.0) does not satisfy the "frameworkVersion" (>=1.2.0 <2.0.0) in serverless.yml
 - Make sure you have the [AWS CLI version 2 installed](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) and [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) with credentials
 ### What You’ll Build
 - A custom training and inference docker image for SageMaker
@@ -50,12 +50,15 @@ The first thing you'll need to do is download a small version of the dataset. On
   [Download Dataset](http://files.grouplens.org/datasets/movielens/ml-latest-small.zip)
 </button>
 
-We're going to take that data and load it into some tables on Snowflake. First, you'll want to sign in to Snowflake. Then run the following block of code to create the tables:
+We're going to take that data and load it into some tables on Snowflake. First, you'll want to sign in to Snowflake. Then run the following block of code to set the context, create a compute warehouse, and create the tables:
 
 ```sql
 use role sysadmin;
 create database MOVIELENS;
 use schema movielens.public;
+
+CREATE OR REPLACE WAREHOUSE COMPUTE_WH WITH WAREHOUSE_SIZE = 'XSMALL' 
+AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
 
 create table movies  (
     movieid int,
@@ -71,9 +74,9 @@ create or replace table ratings (
 );
 ```
 
-Let's break down what this code is doing. Remember that data in Snowflake needs three things: a database, a schema, and a table. First, we `create` a database called "MOVIELENS"  using the public schema "movielens.”
+Let's break down what this code is doing. Remember that data in Snowflake needs three things: a database, a schema, and compute. First, we `create` a database called "MOVIELENS"  using the public schema "movielens.”
 
-Then, we `create` a table called "movies". The table has three columns: "movieid", "title", and "genres". We then `create` a second table called "ratings". This table has four columns: "userid", "movieid", "rating", and "timestamp_ntz".
+Then we `create` a warehouse called `COMPUTE_WH` and then, we `create` a table called "movies". The table has three columns: "movieid", "title", and "genres". We then `create` a second table called "ratings". This table has four columns: "userid", "movieid", "rating", and "timestamp_ntz".
 
 Next, using the Snowflake UI menu bar, switch over to the Databases tab and select the `MOVIELENS` database you've just created.
 
@@ -99,6 +102,7 @@ Duration: 5
 We've got both tables of data into Snowflake! Now we can view our data. While we're at it, we can create some small testing tables when we test our SageMaker algorithm on our local machine:
 
 ```sql
+use warehouse COMPUTE_WH;
 select * from ratings limit 10;
 
 -- INPUT TABLE: small dataset for local testing
@@ -162,7 +166,7 @@ aws ssm put-parameter \
     --type "String" \
     --value "<your_snowflake_password>" \
 ```
-If successful, you’ll get an output like so:
+If successful, you’ll get an output like this below, you could have versions greatere than 1 if you have used the ssm settings before:
 
 ```
 {
@@ -272,9 +276,9 @@ First, let's get some AWS settings squared away. We need to create an AWS IAM ro
 
 You can manage IAM roles by going to the AWS Management Console and opening the [IAM console](https://console.aws.amazon.com/iam/). From there, select `Roles` from the left navigation pane. Then click `Create role`. The role type is `AWS Service`. Then select `SageMaker`, which will allow you to select `SageMaker - Execution` under "Select your use case".
 
-Great! Now move on to the permissions page. You need to choose these managed policies: `AmazonSageMakerFullAccess` and `AmazonSSMReadOnlyAccess`.
+Great! Now move on to the permissions page. You need to choose these managed policies: `AmazonSageMakerFullAccess` and `AmazonSSMReadOnlyAccess`. NOTE: we will add `AmazonSageMakerFullAccess` policy first.
 
-Click through, give the role a specific name, and click create. After the role is created, find it and copy the `Role ARN value`. It's right at the top of the role's summary page. You'll need to copy it into `/sls/config.dev.yml`. Open the file in an IDE and set it as the `sagemaker_role_arn` variable.
+Click through, give the role a specific name, and click create. After the role is created, go to the permissions tab and click on Attach Policy, search for `ssm` and pick `AmazonSSMReadOnlyAccess` and click apply. While in that role, find it and copy the `Role ARN value`. It's right at the top of the role's summary page. You'll need to copy it into `/sls/config.dev.yml`. Open the file in an IDE and set it as the `sagemaker_role_arn` variable.
 
 Remember that value we told you to remember so you could set it `training_image_ecr_path` in a file? Well, this is also that file! Go ahead and do so now.
 
@@ -295,7 +299,7 @@ arn:aws:iam::<account_id>/role/SageMakerRoleTest
 
 Click on “Next: Permissions.” No permissions are needed right now, so just proceed to the next step. After you name and create the role, make note of the `Role ARN` once more. You'll place it in a file next.
 
-The file in question is once again the `config.dev.yml` file. Fill the value for the `snf_ef_role_arn` variable with the `Role ARN`.
+The file in question is once again the `config.dev.yml` file. Change the value for unique_id to your unique username. This is required to make sure the S3 bucket name is unique for your deployment.Fill the value for the `snf_ef_role_arn` variable with the `Role ARN`.
 
 Finally, fill out the `snf_ef_role_principal` with a value using this format:
 
@@ -306,6 +310,7 @@ arn:aws:sts::<account-number>:assumed-role/<external_function_role>/snowflake
 Your `config.dev.yml` file should now look something like this:
 
 ```
+unique_id: <username>
 region: us-east-1
 sagemaker_role_arn: arn:aws:iam::<account>:role/SageMakerRoleTest
 training_image_ecr_path: <account>.dkr.ecr.us-west-2.amazonaws.com/snf-recommender-lab
@@ -349,7 +354,7 @@ use role ACCOUNTADMIN;
 After setting your role, select a database and schema:
 
 ```sql
-use schema TEST.PUBLIC
+USE SCHEMA MOVIELENS.PUBLIC;
 ```
 
 Now that we're in the right spot, we need to `create` the API integration object within Snowflake to point to the external API Gateway resource. You'll need to go back into `config.dev.yml` to grab the value you set `snf_ef_role_arn` to and set it as `api_aws_role_arn`.  You also need to get the endpoint URL from the Serverless output screen to set as the value for the `api_allowed_prefixes` field as highlighted in the screenshot below:
@@ -466,6 +471,17 @@ Let's make sure the External Functions are correct and accessible:
 show external functions;
 ```
 
+Let's create training data sets with `ratings_train_data` similar to `ratings` table with sample values and an empty `user_movie_recommendations` table to store the predictions per user 
+
+```sql
+create or replace table ratings_train_data as 
+    (select USERID, MOVIEID, RATING 
+    from ratings limit 10000);
+
+create or replace table user_movie_recommendations 
+(USERID float, 
+TOP_10_RECOMMENDATIONS variant);
+```
 Now let's trigger SaegeMaker training! `select` the `train_and_get_recommendations` model to get the top 10 ratings for each user in our target table.
 
 You'll need to specify two parameters. First, `MOVIELENS.PUBLIC.ratings_train_data` is the *input* table containing the training data. Second, `MOVIELENS.PUBLIC.user_movie_recommendations`, is the *output* table where the top 10 predictions will be stored.
@@ -509,6 +525,7 @@ While the endpoint is deploying, let's create some dummy data to test out the in
 ```sql
 -- create a table to hold pairs of users and movies where we DO NOT have a rating
 create or replace table no_ratings (USERID float, MOVIEID float);
+
 insert into no_ratings (USERID, MOVIEID) values
     ('1', '610'),
     ('10', '313'),
