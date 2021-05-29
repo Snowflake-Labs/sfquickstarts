@@ -1,6 +1,6 @@
 id: data_engineering_with_dbt
 summary: Build your data pipeline with Snowflake & dbt
-categories: data-engineering
+categories: Getting Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
