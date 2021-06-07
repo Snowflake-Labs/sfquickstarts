@@ -1,46 +1,47 @@
-summary: Building a Single-Page Data Application on Snowflake
-id: data_app 
+dsummary: Building a Single-Page Data Application on Snowflake
+id: data_app
 categories: Getting Started
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Applications, Data Engineering, API
 authors: Brad Culberson
 
 # Building a Data Application
 
-## Overview 
+## Overview
 Duration: 1
 
-Snowflake powers a huge variety of applications across many industries and use-cases. In this tutorial you will get an API and web application running that uses Snowflake as it's analytical engine. You will run also load test against the custom API endpoints and scale the backend vertically and horizontally to see the impact. For the finale you will increase efficiency and performance of
-the APIs by using a materialization. The example application you will be starting from is based on [Express](https://expressjs.com/) and connects to Snowflake through our connector. The dataset we chose to use for this guide is a snapshot of [Citi Bike](https://www.citibikenyc.com/) ride data.
+Snowflake powers a huge variety of applications across many industries and use-cases. In this tutorial you will create a data application and API that uses Snowflake as its analytical engine. You will then load test against custom API endpoints and scale the backend both vertically and horizontally to see the impact. Finally, you will increase the APIs efficiency and performance using a materialization.
+
+The example application you start with is based on [Express](https://expressjs.com/) and connects to Snowflake through our connector. The dataset is a snapshot of [Citi Bike](https://www.citibikenyc.com/) ride data.
 
 
 ### Prerequisites
-- Privileges to Snowflake to create a user, database, and warehouse
+- Privileges necessary to create a user, database, and warehouse in Snowflake
 - Ability to install and run software on your computer
-- Basic experience using git and editing json
+- Basic experience using git and editing JSON
 - Intermediate knowledge of SQL
-- Access to run sql in Snowflake console or Snowsql
+- Access to run SQL in the Snowflake console or SnowSQL
 
-### What You’ll Learn 
+### What You’ll Learn
 - How applications can be built on Snowflake
 - Scaling workloads vertically for latency
 - Scaling workloads horizontally for concurrency
 - Optimizing applications through materialization
 
-### What You’ll Need 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
+### What You’ll Need
+- [VSCode](https://code.visualstudio.com/download) installed
+- [NodeJS](https://nodejs.org/en/download/) installed
 
-### What You’ll Build 
-- A Data Application
+### What You’ll Build
+- A data application
 
 
-## Setting up the Database, Warehouse
+## Setting up the Database and Warehouse
 Duration: 1
 
-The application requires a warehouse to query the data and a database to store the data we will use for the dashboard. Connect to Snowflake and run these commands (snowsql or snowflake console):
+The application needs a warehouse to query the data, and a database to store the data presented on the dashboard. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -54,12 +55,11 @@ CREATE STAGE "DATA_APPS_DEMO"."DEMO"."DEMOCITIBIKEDATA" ENCRYPTION=(TYPE='AWS_SS
 
 ## Create a Service User for the Application
 
-We will now create a user account separate from your own that uses key-pair authentication. The application will run as this user account in order to query Snowflake. The account will be setup with limited access.
+You will now create a user account separate from your own that the application will use to query Snowflake. In keeping with sound security practices, the account will use key-pair authentication and have limited access in Snowflake.
 
 ### Create an RSA key for Authentication
 
-This creates the private and public keys we use to authenticate the service account we will use
-for Terraform.
+Run the following commands to create a private and public key. These keys are necessary to authenticate the service account we will use for Terraform.
 
 ```Shell
 $ cd ~/.ssh
@@ -69,13 +69,13 @@ $ openssl rsa -in snowflake_demo_key -pubout -out snowflake_demo_key.pub
 
 ### Create the User and Role in Snowflake
 
-Log in to the Snowflake console and create the user account by running the following command as the `ACCOUNTADMIN` role.
+To create a user account, log in to the Snowflake console and run the following commands as the `ACCOUNTADMIN` role.
 
 But first:
-1. Copy the text contents of the `~/.ssh/snowflake_demo_key.pub` file, starting _after_ the `PUBLIC KEY` header, and stopping just _before_ the `PUBLIC KEY` footer.
-1. Paste over the `RSA_PUBLIC_KEY_HERE` label (shown below).
+1. Open the `~/.ssh/snowflake_demo_key.pub` file and copy the contents starting just _after_ the `PUBLIC KEY` header, and stopping just _before_ the `PUBLIC KEY` footer.
+1. Prior to running the `CREATE USER` command, paste over the `RSA_PUBLIC_KEY_HERE` label, which follows the `RSA_PUBLIC_KEY` attribute.
 
-Execute both of the following SQL statements to create the User and grant it access to the data needed for the application.
+Execute the following SQL statements to create the user account and grant it access to the data needed for the application.
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
@@ -95,9 +95,9 @@ GRANT ROLE DATA_APPS_DEMO_APP TO USER DATA_APPS_DEMO;
 ## Importing the data
 Duration: 10
 
-All the data needed for this demo is in an S3 bucket which is now accessible via an external stage which was added in a previous step. The following commands will load the data into a temporary table and persist into a table for use by the data application.
+The data for this demo is in an S3 bucket in the external stage that you added in step two. The following commands load the data into a temporary table for use by the data application.
 
-To import the base dataset for this demo run the following sql in snowsql or snowflake console.
+Import the base dataset for this demo by running the following SQL in SnowSQL or the Snowflake console:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -137,7 +137,7 @@ file_format=(type=csv skip_header=1) pattern='.*trips.*.csv.gz';
 CREATE TABLE TRIPS AS
 (Select * from TEMP_TRIPS order by STARTTIME);
 
-COPY INTO TEMP_WEATHER from @DEMOCITIBIKEDATA 
+COPY INTO TEMP_WEATHER from @DEMOCITIBIKEDATA
 file_format=(type=csv skip_header=1) pattern='.*weather.*.csv.gz';
 
 CREATE TABLE WEATHER AS
@@ -147,9 +147,9 @@ CREATE TABLE WEATHER AS
 ## Getting the source code for the project
 Duration: 3
 
-The application you will be running is written on node.js. It is a dashboard to view bike usage over time and differing weather conditions for Citi Bike. The source code for this application is available at [GitHub](https://github.com/Snowflake-Labs/sfguide-data-apps-demo).
+The application you will be running is written on node.js. It is a Citi Bike dashboard that lets users view bike usage over time and in differing weather conditions. The source code is available in [GitHub](https://github.com/Snowflake-Labs/sfguide-data-apps-demo).
 
-Download the code into a folder of your choice and open the project in VSCode. In VSCode go into the terminal and install the modules needed for this project.
+Download the code into a folder of your choice and open the project in VSCode. In VSCode, go into the terminal and install the modules needed for this project:
 
 ```bash
 npm install
@@ -159,102 +159,120 @@ npm install -g artillery
 ## Configure the Application
 Duration: 5
 
-Copy the config-template.js to config.js and edit the snowflake_account, snowflake_user, snowflake_private_key to be what you created in the previous steps. The Snowflake account (snowflake_account) can be retrieved from Snowflake running Select CURRENT_ACCOUNT(). The user will be DATA_APPS_DEMO, and the snowflake_private_key will be the full path to the private key you created in the earlier step.
+Copy the contents of `config-template.js` to `config.js` and change the following settings to match the values that you created in the previous steps:
+* `snowflake_account`
+* `snowflake_user`
+* `snowflake_private_key`    
 
-To start the application run ```npm start``` in a terminal. If you see any errors, check the configuration is correct.
+To get the `snowflake_account` value from Snowflake, run `Select CURRENT_ACCOUNT()`. The user is `DATA_APPS_DEMO`, and the `snowflake_private_key` will be the full path to the private key that you created previously.
+
+Run ```npm start``` in a terminal to start the application. If you see errors, check that the configuration is correct.
 
 ## Testing the Application
 Duration: 5
 
-Open a web browser on your computer and navigate to [http://localhost:3000](http://localhost:3000).
+Open a web browser and go to: [http://localhost:3000](http://localhost:3000)
 
-If the page loads and renders graphs your application is working! You can choose other date ranges to test the interactivity of the dashboard and also let the application pick random dates with the link on the upper right.
+If the page loads and renders graphs, your application works! Try choosing other date ranges to test the interactivity of the dashboard. Or let the application pick random dates by clicking the link in the upper right part of the page.
 
-The application is going through gigabytes of data to aggregate counts over windows of time for the dashboard, and joining data from trips and weather, all real time. The data is return to the website via an API.
+The application processes gigabytes of data for the dashboard, aggregates counts over time, and joins data from trips and weather—all in real time. The application then returns data to the website via an API.
 
-Open up these uris in a browser of your choice to see the APIs are exposed to the application.
+Open these URIs in a browser to see the APIs that control the application:
 - [Trips by Month](http://localhost:3000/trips/monthly?start=03/04/2017&end=01/25/2020)
 - [Trips by Day of Week](http://localhost:3000/trips/day_of_week?start=03/04/2017&end=01/25/2020)
 - [Trips by Temperature](http://localhost:3000/trips/temperature?start=03/04/2017&end=01/25/2020)
 
-You now have a fully working custom single-page application that's using a custom API powered by Snowflake!
+You now have a custom, single-page application that uses a custom API powered by Snowflake!
 
 ## Query Cache Performance
 Duration: 5
 
-One really powerful capability of Snowflake is the query cache. Snowflake can determine when no data has changed for a query and return previous results increasing the efficiency and decreasing latencies. To exercise the performance of Snowflake when hitting the cache, we have a load test that uses [artillery](https://artillery.io/). To run the load test you will need to open a new terminal session (leaving ```npn start``` in another session).
+If Snowflake determines that the data result for a query remains unchanged, it returns cached results, increasing efficiency and decreasing latencies. The query cache is a really powerful Snowflake capability.
+
+To exercise Snowflake's performance when hitting the cache, we will be running a load test that uses [artillery](https://artillery.io/). To run the test, open a new terminal session (leave ```npm start``` running in the original session), then run the following:
 
 ```Shell
 artillery run scripts/load_tests/all.yaml
 ```
 
-The queries coming in will be visible in terminal 1 and the results from the queries will be in the second terminal. The load test will run for 2 minutes.
+Next, monitor incoming queries in terminal 1, and view the query results in terminal 2. The load test will run for 2 minutes.
 
-In Snowflake console, go to the history and see the query latencies and how those change from first query to those which were cached. These latencies will align to the load test min/max latencies. You should see cached queries returning the query result in under 100ms. Each test in artillery is hitting the 3 endpoints referenced earlier with the default date range (all). With a dashboard like this, the default set of queries when a user visits the application can all reuse the same cached query results. When more data is ingested, the cache will be updated on the next query. The time for the API responses will be longer than the query response time due to latency and bandwidth of client to Snowflake, and the processing time on your computer to retrieve, format, and return the result set.
+Open **History** in the Snowflake console to review how query latencies changed between the initial query and the subsequent cached queries. Latencies align to the load test min/max latencies. Each test in artillery hits the three endpoints referenced earlier with the default date range (all). The results should show that cached queries returned query results in under 100ms.
+
+In a dashboard application such as this, default queries reuse cached results when users visit the application. If additional data is ingested, the cache updates during the next query.
+
+API response times typically exceed query response times. This is partly due to latency and bandwidth constraints between the client and Snowflake, and partly due to the processing time it takes your computer to retrieve, format, and return the result set.
 
 ## Load Test for a Small Cluster
 Duration: 5
 
-All clusters in Snowflake are restricted to 8 concurrent queries. In order to validate this concurrency from an application, we will perform another load test. To avoid the cached query results we saw in the previous step, there is another endpoint and load test which uses random dates. First you will run that load test against that endpoint to get a baseline for a Small Cluster which 
-should be able to do 8 concurrency.
+Clusters in Snowflake are restricted to eight concurrent queries. Let's perform another load test to validate the concurrency limit. To avoid the cached query results we saw in the previous step, we will use a different endpoint and run a different test that uses random dates. First, run the test against the endpoint to get a baseline result for a small cluster that should be able to do eight concurrency.
 
 ```Shell
 artillery run scripts/load_tests/monthly_random.yaml
 ```
 
-In Snowflake console, go to the history again to see the queries which are being executed in your account. You will notice that queries start queuing as load increases in this scenario and in the load test you will begin to see timeouts. The goal we are trying to attain with this application is a p95 under 5 seconds. Control-C will stop the load test.
+Open **History** in the Snowflake console to see the queries that executed in your account. You will notice that queries start queuing as load increases in this scenario, and in the load test, you will begin to see timeouts. The goal we are trying to attain with this application is a p95 under 5 seconds.
+
+Press Control-C to stop the test.
 
 
 ## Load Test for a Medium Cluster
 Duration: 5
 
-In Snowflake we can scale out workloads both vertically (bigger clusters) and horizontally (more clusters). The first instinct for customers is usually to increase the cluster size. Increasing the cluster size does not increase concurrency but can double the performance of complex/data intensive queries for every increase in size.
+In Snowflake we can scale out workloads both vertically (bigger clusters) and horizontally (more clusters). The first instinct for customers is usually to increase the cluster size. Increasing the cluster size does not increase concurrency but can double the performance of complex/data-intensive queries for every increase in size.
 
-Increasing the size of a cluster in Snowflake is REALLY easy. Run the following sql from snowsql or the Snowflake console.
+Increasing the size of a cluster in Snowflake is REALLY easy. Run the following SQL either from SnowSQL or the Snowflake console:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 ALTER WAREHOUSE DATA_APPS_DEMO SET WAREHOUSE_SIZE='medium';
 ```
 
-You can run the same load test again to look for improvement. Leave the node application running as before in another Terminal.
+Now run the same load test again to look for improvement. (Again, leave ```npm start``` running in the original session.)
 
 ```Shell
 artillery run scripts/load_tests/monthly_random.yaml
 ```
 
-Unfortunately these queries are not scanning enough data to distribute across a Medium sized cluster and you will still hit similar concurrency limits from the previous test. This would have decreased the query latency up to 2x if the query scanned more data. The amount of bytes scanned is available in the query history in the Snowflake console.
+Unfortunately, these queries are not scanning enough data to distribute across a Medium-sized cluster, and you will still hit similar concurrency limits from the previous test. This would have decreased the query latency up to 2x if the query scanned more data. The amount of bytes scanned is available in the query history in the Snowflake console.
 
 ## Load Test for a Multi-Cluster Warehouse
 Duration: 5
 
-In order to get more concurrency you need more clusters. Snowflake has a technology called multi-cluster warehouse which will automatically add clusters after queries are queued.
+To get more concurrency you need more clusters. Snowflake has a technology called multi-cluster warehouse that automatically adds clusters after queries are queued.
 
-After doing some usage analysis/projections/load tests, customers can pick minimum and maximum cluster sizes that can meet their performance goals. It is quite easy to change this in production as load changes. In this guide, we'll use a minimum of 1 cluster and allow up to 5 clusters for peak usage. This would allow for up to 40 concurrent queries during peak load. When altering the warehouse you will see 3 clusters come online and be ready for your load test within seconds.
+After doing some usage analysis/projections/load tests, you can pick minimum and maximum cluster sizes that can meet your performance goals. It is quite easy to change this in production as load changes. In this lab, we'll use a minimum of one cluster and allow up to five clusters for peak usage. These settings would allow for up to 40 concurrent queries during peak load. When altering the warehouse you will see three clusters come online and be ready for your load test within seconds.
 
-Run the following sql from snowsql or the Snowflake console.
+Run the following SQL either from SnowSQL or the Snowflake console.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-ALTER WAREHOUSE DATA_APPS_DEMO SET MIN_CLUSTER_COUNT=1, MAX_CLUSTER_COUNT=5; 
+ALTER WAREHOUSE DATA_APPS_DEMO SET MIN_CLUSTER_COUNT=1, MAX_CLUSTER_COUNT=5;
 ```
 
-You can run the same load test again to look for improvement. Leave the node application running as before.
+Run the same load test again to look for improvement. As before, leave ```npm start``` running in the original session.
 
 ```Shell
 artillery run scripts/load_tests/monthly_random.yaml
 ```
 
-In this load test you should no longer see timeouts because you have enough compute available to meet customer needs. Control-C will stop the load test. Log into the Snowflake console to view the query history again. You will now see which cluster a query was executed on as well as the timings of the query. As the load test ramped up more clusters were *automatically* added to support the influx of users.
+In this load test you should no longer see timeouts because you have enough compute available to meet customer needs.
+
+Press Control-C to stop the load test.
+
+Log in to the Snowflake console to view the query history again. You will now see which cluster a query was executed on, as well as the timings of the query. As the load test ramped up, more clusters were *automatically* added to support the influx of users.
 
 ## Materialization
 Duration: 5
 
-The SLO for this application was a 5 second p95 and we are approaching success. The best way at this point to decrease the latency is to simplify the amount of work needed to populate the dashboard.
+The SLO for this application is a five second p95. We are approaching success! The best way at this point to decrease latency is to simplify the amount of work needed to populate the dashboard.
 
-Look at the file models/trips.js in VSCode. You will see the sql queries we are running and there are some optional queries which are using materialized views when the environment variable MATERIALIZED is set. These new queries perform aggregation such that the UI can aggregate less rows ex: the API will aggregate the counts per day instead of aggregate every ride during query.
+Open the `models/trips.js` file in VSCode. You should see the SQL queries we are running, and some optional queries that use materialized views when the environment variable `MATERIALIZED` is set. These new queries perform aggregation such that the UI aggregates less rows. For example, the API aggregates the counts per day instead of aggregating every ride during the query.
 
-Snowflake will automatically compute the entire materialized view when the view is created immediately. It is also updated atomically on every change of the source table. Run the following sql from snowsql or the Snowflake console.
+Snowflake immediately and automatically computes the entire materialized view when the view is created. It also updates atomically on every change of the source table.
+
+Run the following SQL from SnowSQL or the Snowflake console:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -265,9 +283,9 @@ CREATE OR REPLACE MATERIALIZED VIEW COUNT_BY_MONTH_MVW AS
 select COUNT(*) as trip_count, MONTHNAME(starttime) as month, MIN(starttime) as starttime from demo.trips group by month;
 ```
 
-The results of the queries will be identical to before using the materialization but less compute will be needed during the query.
+The results of the queries are identical to the results you got before you used the materialization, but the queries required less compute resources.
 
-You will need to stop the Node.js application running in your terminal before starting the new instance with queries enabled.
+Stop the `Node.js` (```npm start```) application running in your terminal before starting the new instance with queries enabled.
 
 ```Shell
 export MATERIALIZED=true && npm start
@@ -277,12 +295,12 @@ export MATERIALIZED=true && npm start
 artillery run scripts/load_tests/monthly_random.yaml
 ```
 
-Your load tests will be faster than before now, you should be below the 5 second p95 desired by this application with no timeouts. You have now scaled out the API for higher performance and concurrency!
+Your load tests will be faster than before. You should now be below the five second p95 desired by this application with no timeouts. You have now scaled out the API for higher performance and concurrency!
 
 ## Cleanup
 Duration: 1
 
-To cleanup all the objects we created for this demo, run the following sql from snowsql or the Snowflake console.
+To clean up the objects we created for this demo, run the following SQL either from SnowSQL or the Snowflake console:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -296,22 +314,18 @@ DROP WAREHOUSE DATA_APPS_ADHOC;
 ## Conclusion & Next Steps
 Duration: 2
 
-In this guide you got a custom single-page application powered by a custom API powered by Snowflake. You also learned how Snowflake scales workloads vertically and horizontally.
+In this guide you created a custom, single-page, data application and custom API powered by Snowflake. You also learned how Snowflake scales workloads vertically and horizontally.
 
-If you'd like to learn more, look through the code to see how we built the API endpoints. After you are comfortable on how the application works, you can modify the load tests and endpoints to see how changes affect performance and results. I would suggest you try to create materialized views for all the endpoints to get the maximum performance you can as well as edit the load tests for other customer scenarios.
+To learn more, review the code to see how we built the API endpoints. When you are comfortable with how the application works, modify the load tests and endpoints to see how changes affect performance and results. Create materialized views for all of the endpoints to get the maximum performance, and edit the load tests for other scenarios.
 
-### What We've Covered
-- Configure and Run a custom single-page application and API powered by Snowflake
-- Scaling a Data Application Vertically
-- Scaling a Data Application Horizontally
-- Materialization for Performance
+### What We Covered
+- Configuring and running a custom, single-page application and API powered by Snowflake
+- Scaling a data application vertically and horizontally
+- Improving performance by using materialization
 
 ### Related Resources
 - [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
-- [Express](https://expressjs.com/en/starter/hello-world.html)
-- [Node.js Snowflake Driver](https://docs.snowflake.com/en/user-guide/nodejs-driver.html)
-- [Multi-cluster Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-multicluster.html)
-- [Materialized Views](https://docs.snowflake.com/en/user-guide/views-materialized.html)
-
-
-
+- [Express getting started example](https://expressjs.com/en/starter/hello-world.html)
+- [Node.js Snowflake Driver documentation](https://docs.snowflake.com/en/user-guide/nodejs-driver.html)
+- [Multi-cluster Warehouses documentation](https://docs.snowflake.com/en/user-guide/warehouses-multicluster.html)
+- [Materialized Views documentation](https://docs.snowflake.com/en/user-guide/views-materialized.html)
