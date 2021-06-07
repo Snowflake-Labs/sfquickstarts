@@ -101,6 +101,7 @@ To import the base dataset for this demo run the following sql in snowsql or sno
 
 ```sql
 USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE DATA_APPS_ADHOC;
 CREATE TEMPORARY TABLE TEMP_TRIPS (
 	TRIPDURATION NUMBER(38,0),
 	STARTTIME TIMESTAMP_NTZ(9),
