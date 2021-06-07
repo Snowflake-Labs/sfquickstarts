@@ -12,7 +12,7 @@ authors: Brad Culberson
 ## Overview
 Duration: 1
 
-Snowflake powers a huge variety of applications across many industries and use-cases. In this tutorial you will create a data application and API that uses Snowflake as its analytical engine. You will then load test against custom API endpoints and scale the backend both vertically and horizontally to see the impact. Finally, you will increase the APIs efficiency and performance using a materialization.
+Snowflake powers a huge variety of applications across many industries and use-cases. In this tutorial you will create a data application and API that uses Snowflake as its analytical engine. You will then load test against custom API endpoints and scale the backend both vertically and horizontally to see the impact. Finally, you will increase the API's efficiency and performance using a materialization.
 
 The example application you start with is based on [Express](https://expressjs.com/) and connects to Snowflake through our connector. The dataset is a snapshot of [Citi Bike](https://www.citibikenyc.com/) ride data.
 
