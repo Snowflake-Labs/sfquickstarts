@@ -1,4 +1,4 @@
-dsummary: Building a Single-Page Data Application on Snowflake
+summary: Building a Single-Page Data Application on Snowflake
 id: data_app
 categories: Getting Started
 environments: web
