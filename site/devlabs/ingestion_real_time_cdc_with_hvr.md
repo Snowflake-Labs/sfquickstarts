@@ -5,7 +5,7 @@ tags: patterns, ingestion, hvr
 status: Published
 # Architecture Pattern : Real-Time Data Capture with HVR
 
-## Introduction
+## Overview
 
 HVR provides log based change data capture (CDC) rich replication from many sources to Snowflake. This includes
 capturing inserts, updates, and deletes as well as bulk data loads, data
@@ -16,7 +16,19 @@ replication of data.
 This pattern provides advice on when HVR is an
 appropriate solution
 
-## When To Use This Pattern
+### What you'll learn
+
+- how to bring data into Snowflake using HVR's Change Data Capture 
+- how to setup data integration
+- how to transform SAP data for analysis
+
+### What you'll need
+
+- A Snowflake Account
+- HVR
+- A supported database source
+
+### When To Use This Pattern
 
 This pattern should be used when data needs to be
 extracted, in near real time, from its source in a traditional RDBMSs,
@@ -25,7 +37,7 @@ bseg, etc.) and loading into Snowflake.
 
 ![HVR_Hub_SourcesAndTargets-image](assets/HVR_Hub_SourcesAndTargets.png)
 
-## Pattern Details
+### Pattern Details
 
 To replicate data with HVR the following steps must be
 considered and implemented:
@@ -483,6 +495,11 @@ exactly what SQL needs to be run on the target to get it back in sync
 with the source.
 
 ## Conclusion
+
+### What we've covered
+- Configuring HVR replication
+- Transformations for SAP
+- Loading data into Snowflake
 
 ### Key Takeaways
 
