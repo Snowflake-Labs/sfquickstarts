@@ -286,7 +286,7 @@ mkdir models/l30_mart
 mkdir models/tests
 ```
 
-Then let's open our dbt_profile.yml and modify the section below to reflect the model structure. 
+Then let's open our dbt_project.yml and modify the section below to reflect the model structure. 
 
 ```yml
 models:
