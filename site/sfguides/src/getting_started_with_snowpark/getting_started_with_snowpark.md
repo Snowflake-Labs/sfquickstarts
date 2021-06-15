@@ -588,3 +588,17 @@ import com.snowflake.snowpark.SaveMode.Overwrite
 happyTweets.write.mode(Overwrite).saveAsTable("demo_happy_tweets")
 ```
 
+## Conclusion & Next Steps
+Duration: 1
+
+You've now used Snowpark to perform sentiment analysis on tweets. A sample dataset of tweets were provided for this guide. If you want to automatically ingest new tweets as they are written, follow the [Auto Ingest Twitter Data into Snowflake](/guide/auto_ingest_twitter_data/) guide.
+
+### What We've Covered
+- Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe
+- Semi-structured data: Querying semi-structured data (JSON) without needing transformations
+- Secure Views: Create a Secure View to allow data analysts to query the data
+- Snowpipe: Overview and configuration
+
+### Related Resources
+- [Snowpark Docs](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark.html)
+- [Source code example on Github](https://guides.github.com/introduction/flow/)
