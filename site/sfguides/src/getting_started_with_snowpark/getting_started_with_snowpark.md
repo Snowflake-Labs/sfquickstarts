@@ -395,7 +395,7 @@ This statement allows you to use shorthand to refer to columns (e.g. `'columnNam
 Duration: 5
 
 Next, the example creates a DataFrame that is set up to
-[read data from a file in a stage](developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages).
+[read data from a file in a stage](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages).
 To do this, the example uses a
 [DataFrameReader](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrameReader.html)
 object.
@@ -573,7 +573,7 @@ happyTweets.show()
 ```
 
 Finally, the example
-[saves the data in the DataFrame to a table](developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-save-table)
+[saves the data in the DataFrame to a table](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-save-table)
 named `demo_happy_tweets`.
 To do this, the example uses a
 [DataFrameWriter](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrameWriter.html) object,
