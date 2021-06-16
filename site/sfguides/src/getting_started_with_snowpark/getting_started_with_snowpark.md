@@ -233,7 +233,7 @@ slf4j-api.jar					training.1600000.processed.noemoticon.csv
 stanford-corenlp-3.6.0-models.jar
 ```
 
-Next, you'll run the `UDFDemoSetup.java` example to create the stages for these files and upload
+Next, you'll run the `UDFDemoSetup.scala` example to create the stages for these files and upload
 these files to those stages.
 
 <!-- ------------------------ -->
