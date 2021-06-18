@@ -360,7 +360,7 @@ Duration: 10
 Next, run the `UDFDemo.scala` example to create and call a UDF:
 
 ```console
-sbt "runMain UDFDemoSetup"
+sbt "runMain UDFDemo"
 ```
 
 This example:
