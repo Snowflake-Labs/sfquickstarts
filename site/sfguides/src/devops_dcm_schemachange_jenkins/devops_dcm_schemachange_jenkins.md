@@ -152,24 +152,34 @@ Then commit the new script and push the changes to your GitHub repository. Assum
 ## Deploying Jenkins
 Duration: 5
 
-To deploy Jenkins activate docker desktop on your laptop and run the below command. This will run a Jenkins container on your laptop.
+Create a docker file called ```Dockerfile``` and add in the contents below 
+
+```
+FROM jenkins/jenkins:lts
+
+# Install required applications
+USER root
+RUN apt-get update
+RUN apt-get install -y docker.io
+
+# Drop back to the regular jenkins user
+USER jenkins
+```
+After which do a ```docker build -t jenkins .```
+
+Next, let's deploy Jenkins container we just built. To do so, let us do a run Jenkins container on your laptop.
 
 ```
 docker run -p 8080:8080 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --name jenkins \
-  jenkins/jenkins:lts
-
+  jenkins
 ```
-After which, we will install docker onto the Jenkins container. The purpose of installing docker onto the Jenkins container is so that we can run the schemachange docker image thereafter. 
+Once Jenkins is up, we will now run give  Jenkins access to the docker engine by doing ```docker exec -it -u root jenkins bash -c 'chmod 666 /var/run/docker.sock'``` as shown below
 
-```
-docker exec -it -u root jenkins bash
-apt-get update && apt-get install -y docker.io
-chmod 666 /var/run/docker.sock
-```
+<img src="assets/devops_dcm_schemachange_jenkins-4.5.png" width="900" />
 
-Now browse to your url and enter in ```localhost:8080```. Click on the ```installed suggested plugins``` and after installing the plugins, create a user for yourself. In this case we name our user ```admin```. 
+Now browse to your browser and enter in ```localhost:8080```. Click on the ```installed suggested plugins``` and after installing the plugins, create a user for yourself. In this case we name our user ```admin```. 
 
 <img src="assets/devops_dcm_schemachange_jenkins-5.png" width="900" />
 <img src="assets/devops_dcm_schemachange_jenkins-6.png" width="900" />
