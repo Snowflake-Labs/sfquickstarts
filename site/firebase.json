@@ -36,6 +36,11 @@
       "source": "/guide/getting_started_snowpark{,/**}",
       "destination": "/guide/getting_started_with_snowpark",
       "type": 301
+    }, 
+    {
+      "source": "/guide/getting-started-snowpark{,/**}",
+      "destination": "/guide/getting_started_with_snowpark",
+      "type": 301
     }  ]
   }
 }
