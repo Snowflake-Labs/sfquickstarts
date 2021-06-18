@@ -12,23 +12,29 @@ tags: DevOps, Data Engineering
 ## Overview 
 Duration: 1
 
-This guide will provide a step-by-step instruction on how to use Jenkins, a very popular CI/CD pipeline tool among developers, for Snowflake in connection with schemachange, dockers and github.  
+<img src="assets/devops_dcm_schemachange_jenkins-1.png" width="600" />
 
-DevOps is concerned with automating release management as part of the Software Development Lifecycle (SDLC). This guide will be focused on doing automated release management for Snowflake by leveraging on 
+This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with Jenkins. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and Jenkins.
 
-- GitHub as our Source Version Control(SVN)
-- Jenkins for automating release management (CI/CD)
-- Docker to run our schemachange inside Jenkins
-- schemachange to perform the Database Change Management (DCM)
+DevOps is concerned with automating the development, release and maintenance of software applications. As such, DevOps is very broad and covers the entire Software Development Life Cycle (SDLC). The landscape of software tools used to manage the entire SDLC is complex since there are many different required capabilities/tools, including:
 
-Let's begin first with an overview of Jenkins, GitHub and schemachange. 
+- Requirements management
+- Project management (Waterfall, Agile/Scrum)
+- Source code management (Version Control)
+- Build management (CI/CD)
+- Test management (CI/CD)
+- Release management (CI/CD)
+
+This guide will focus primarily on automated release management for Snowflake by leveraging the open-source Jenkins tool. Additionally, in order to manage the database objects/changes in Snowflake I will use the schemachange Database Change Management (DCM) tool.
+
+Let’s begin with a brief overview of GitHub and Jenkins.
 
 ### Prerequisites
--  This guide assumes that you have an idea on what Jenkins is. If you do not know what Jenkins is, please refer [here](https://www.jenkins.io/)
+
+This guide assumes that you have a basic working knowledge of Git repositories.
 
 ### What You’ll Learn 
-- A brief idea and overview of GitHub
-- A brief idea and overview of Jenkins 
+- A brief overview of Jenkins 
 - A brief idea and overview of schemachange 
 - How does schemachange help in database change management
 - How does Jenkins help to create a pipeline for schemachange 
@@ -36,12 +42,12 @@ Let's begin first with an overview of Jenkins, GitHub and schemachange.
 - How do we have Jenkins serve as a "front-end" for on-demand requests
 
 ### What You’ll Need 
+
 You will need the following things before beginning:
 
 1. Snowflake
   1. **A Snowflake Account.**
   1. **A Snowflake Database named DEMO_DB.**
-  1. **A Change History table inside the SCHEMACHANGE schema.**
   1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
 1. GitHub
   1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
@@ -50,29 +56,11 @@ You will need the following things before beginning:
   1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
   1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
 1. Docker
-  1. **Docker Desktop on your laptop.**  We will be running Jenkins as a container. Please install docker Desktop on your desired OS by following [this](https://docs.docker.com/desktop/)
+  1. **Docker Desktop on your laptop.**  We will be running Jenkins as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
 
 ### What You’ll Build 
 
 - A simple, working Jenkins pipeline service for Snowflake
-
-<!-- ------------------------ -->
-## GitHub Overview
-Duration: 2
-
-<img src="assets/devops_dcm_schemachange_jenkins-1.png" width="250" />
-
-### GitHub
-GitHub provides a complete, end-to-end set of software development tools to manage the SDLC. In particular GitHub provides the following services (from GitHub's [Features](https://github.com/features)):
-
-- Collaborative Coding
-- Automation & CI/CD
-- Security
-- Client Apps
-- Project Management
-- Team Administration
-- Community
-
 
 <!-- ------------------------ -->
 ## Jenkins Overview
@@ -81,12 +69,12 @@ Duration: 2
 <img src="assets/devops_dcm_schemachange_jenkins-2.png" width="250" />
 
 ### Jenkins
-Jenkins is an open-source automation tool written in Java with plugins built for Continuous Integration purposes (from Jenkins's [Features](https://www.jenkins.io/doc/)):
+"Jenkins is a self-contained, open source automation server which can be used to automate all sorts of tasks related to building, testing, and delivering or deploying software" (from Jenkins' [Documentation](https://www.jenkins.io/doc/)).
 
-- Automation
-- Continuous Integration
-- Continuous Deployment
-- Security
+Unlike other complete SDLC tools, Jenkins does not include built-in support for version control repositories or project management. Instead Jenkins is focused on CI/CD pipelines.
+
+Negative
+: **Note** - For this guide we will use GitHub for our Git repo.
 
 <!-- ------------------------ -->
 ## schemachange Overview
