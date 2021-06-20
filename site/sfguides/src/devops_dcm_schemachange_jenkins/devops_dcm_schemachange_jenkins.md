@@ -96,34 +96,10 @@ Negative
 ## Create Your First Database Migration
 Duration: 4
 
-In the Snowflake console, run the below sql statements to create the database and the schema history table
-
-```sql
-USE DATABASE DEMO_DB;
-
-// create the schema.change_history
-CREATE TABLE IF NOT EXISTS SCHEMACHANGE.CHANGE_HISTORY
-(
-    VERSION VARCHAR
-   ,DESCRIPTION VARCHAR
-   ,SCRIPT VARCHAR
-   ,SCRIPT_TYPE VARCHAR
-   ,CHECKSUM VARCHAR
-   ,EXECUTION_TIME NUMBER
-   ,STATUS VARCHAR
-   ,INSTALLED_BY VARCHAR
-   ,INSTALLED_ON TIMESTAMP_LTZ
-)
-```
-
 Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
 
 ```sql
-USE DATABASE DEMO_DB;
-CREATE SCHEMA IF NOT EXISTS DEMO_DB.DEMO;
-USE SCHEMA DEMO_DB.DEMO;
-
-// create the table hello_world
+CREATE SCHEMA DEMO;
 CREATE TABLE HELLO_WORLD
 (
    FIRST_NAME VARCHAR
@@ -139,7 +115,9 @@ Then commit the new script and push the changes to your GitHub repository. Assum
 ## Deploying Jenkins
 Duration: 5
 
-Create a docker file called ```Dockerfile``` and add in the contents below 
+### Building and Running a Docker Image
+
+In order to deploy Jenkins we're going to create a Docker custom Docker image and then run it locally. So first, create a Docker file named ```Dockerfile``` in the root of your GitHub repository with the following contents: 
 
 ```
 FROM jenkins/jenkins:lts
@@ -152,9 +130,14 @@ RUN apt-get install -y docker.io
 # Drop back to the regular jenkins user
 USER jenkins
 ```
-After which do a ```docker build -t jenkins .```
 
-Next, let's deploy Jenkins container we just built. To do so, let us do a run Jenkins container on your laptop.
+Next, to create the custom Docker image run the following command from a shell:
+
+```
+docker build -t jenkins .
+```
+
+After the Docker image has been created we can then create and run a container based on that image. This will start up a Jenkins container locally:
 
 ```
 docker run -p 8080:8080 \
@@ -162,23 +145,45 @@ docker run -p 8080:8080 \
   --name jenkins \
   jenkins
 ```
-Once Jenkins is up, we will now run give  Jenkins access to the docker engine by doing ```docker exec -it -u root jenkins bash -c 'chmod 666 /var/run/docker.sock'``` as shown below
 
-<img src="assets/devops_dcm_schemachange_jenkins-4.5.png" width="900" />
+Positive
+: **Tip** - Please note that the initial admin password for your Jenkins installation will be printed out in the Docker output. So please copy it for use later in this step.
 
-Now browse to your browser and enter in ```localhost:8080```. Click on the ```installed suggested plugins``` and after installing the plugins, create a user for yourself. In this case we name our user ```admin```. 
+The last thing we need to do, once the Jenkins container is running, is to give Jenkins access to the Docker engine by running this command:
+
+```
+docker exec -it -u root jenkins bash -c 'chmod 666 /var/run/docker.sock'
+```
+
+### Configuring Jenkins
+
+To access the Jenkins UI, open ```localhost:8080``` in a new tab in your web browser of choice. The first getting started screen titled "Unlock Jenkins" will ask you to enter the admin passowrd. This is password mentioned above that you copied and saved. Enter the password and click ```Next```.
+
+Next you will see the "Customize Jenkins" set up screen. Click on the ```Install suggested plugins``` button as shown below and wait for all the suggested plugins to be installed.
 
 <img src="assets/devops_dcm_schemachange_jenkins-5.png" width="900" />
+
+After all the plugins have been installed you will be taken to the "Create First Admin User" page. Enter ```admin``` for the "Username" (and "Full name"), enter a password which will be used the Jenkins admin user, and enter a valid email address. Confirm that your screen looks like the image below (with the exception that you entered an email address) and then click on the ```Save and Continue``` button.
+
 <img src="assets/devops_dcm_schemachange_jenkins-6.png" width="900" />
 
-Leave the Instance configuration Jenkins URL as ```http://localhost:8080```. After which, you should now be presented with a Jenkins login page and you can login with the credentials that you had created earlier.
+On the final getting started set up screen, leave the "Instance Configuration" Jenkins URL as ```http://localhost:8080```. Then click on the ```Save and Finish``` button and then on the ```Start using Jenkins``` button.
+
+You should now be at the main Jenkins Dashobard page and ready to start using Jenkins. If you find yourself at a login page (like below) then enter the admin user credentials and click ```Sign in```.
 
 <img src="assets/devops_dcm_schemachange_jenkins-8.png" width="900" />
 
-Next we will install the Docker Pipeline plugin for Jenkins. This plugins allows Jenkins Pipeline Projects to build and test using Docker images. Head over to ```Manage Jenkins``` > ```Manage plugins``` and find the ```Docker plugin``` under the avialable plugin tabs as shown below. Click on ```install without restart```. 
+That last thing we need to do in order to set up Jenkins for this guide is to install the Docker Pipeline plugin in Jenkins. This plugin allows Jenkins Pipeline Projects to build and test using Docker images.
+
+Click on ```Manage Jenkins``` in the left navigation bar and then on the ```Manage Plugins``` under "System Configuration".
 
 <img src="assets/devops_dcm_schemachange_jenkins-9.png" width="900" />
+
+From the Plugin Manager click on the "Available" tab and enter ```docker pipeline``` in the search box. You should see one result called "Docker Pipeline". Check the box under this "Install" column next to this plugin and then click on the ```Install without restart``` button:
+
 <img src="assets/devops_dcm_schemachange_jenkins-10.png" width="900" />
+
+On the next results page you should see a bunch of green checkmarks each with a "Success" status. Click on the ```Go back to the top page``` link to return to the main Jenkins Dashboard page. And with that Jenkins is set up and ready to use!
 
 <!-- ------------------------ -->
 ## Configuring Jenkins pipeline
