@@ -211,21 +211,11 @@ pipeline {
         } 
 
     }
-    environment {
-       ROOT_FOLDER="${ROOT_FOLDER}"
-       SF_ACCOUNT="${SF_ACCOUNT}"
-       SF_USERNAME="${SF_USERNAME}"
-       SF_ROLE="${SF_ROLE}"
-       SF_WAREHOUSE="${SF_WAREHOUSE}"
-       SF_DATABASE="${SF_DATABASE}"
-       SNOWFLAKE_PASSWORD="${SF_PASSWORD}"
-   }
     stages {
-
         stage('Run schemachange') {
             steps {
                 sh "pip install schemachange --upgrade"
-                sh "schemachange -f ${ROOT_FOLDER} -a ${SF_ACCOUNT} -u ${SF_USERNAME} -r ${SF_ROLE} -w ${SF_WAREHOUSE} -d ${SF_DATABASE} -c ${SF_DATABASE}.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table"
+                sh "schemachange -f migrations -a ${SF_ACCOUNT} -u ${SF_USERNAME} -r ${SF_ROLE} -w ${SF_WAREHOUSE} -d ${SF_DATABASE} -c ${SF_DATABASE}.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table"
             }
         }
     }
@@ -266,13 +256,13 @@ Positive
 
 ### Adding Pipeline Parameters
 
-Pipeline parameters allow Jenkins to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by schemachange.
+Pipeline parameters allow Jenkins to securely store values/variables which will be used in your CI/CD pipelines. In addition to creating variables that you can access in your Jenkins Pipeline, Jenkins will also automatically create OS-level environment variables for each parameter. In this step we will create parameters for each of the arguments used by schemachange.
 
-If you don't still have it open, open up your ```snowflake-devops-demo``` job and click on ```Configure``` in the left navigation bar.  Under the "General" settings click the ```This project is parameterised``` option. For each parameter listed below click on the ```Add Parameter``` button and enter the name given below along with the appropriate value (adjusting as appropriate). The parameter entry screen (for each parameter) will look like this:
+If you don't still have it open, open up your ```snowflake-devops-demo``` job and click on ```Configure``` in the left navigation bar.  Under the "General" settings click the ```This project is parameterised``` option. For each parameter listed below click on the ```Add Parameter``` button and enter the name given below along with the appropriate value. The parameter entry screen (for each parameter) will look like this:
 
 <img src="assets/devops_dcm_schemachange_jenkins-16.png" width="900" />
 
-And here are the values to use for each parameter:
+And here are the values to use for each parameter (please adjust as appropriate):
 
 <table>
     <thead>
@@ -285,11 +275,6 @@ And here are the values to use for each parameter:
     <tbody>
         <tr>
             <td>String Parameter</td>
-            <td>ROOT_FOLDER</td>
-            <td>migrations</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
             <td>SF_ACCOUNT</td>
             <td>xy12345.east-us-2.azure</td>
         </tr>
@@ -300,7 +285,7 @@ And here are the values to use for each parameter:
         </tr>
         <tr>
             <td>Password Parameter</td>
-            <td>SF_PASSWORD</td>
+            <td>SNOWFLAKE_PASSWORD</td>
             <td>*****</td>
         </tr>
         <tr>
@@ -321,10 +306,12 @@ And here are the values to use for each parameter:
     </tbody>
 </table>
 
+Please note the slight difference in naming convention with the password parameter (it starts with "SNOWFLAKE\_" instead of "SF\_" like the others), that is intentional. schemachange expects to find the password in an OS-level environment variable named ```SNOWFLAKE_PASSWORD```.
+
 When you're finished don't forget to click on the blue ```Save``` button to save these changes.
 
 Positive
-: **Tip** - TODO: Add next steps for better managing passwords in Jenkins
+: **Tip** - While this simple getting started guide stores the parameters and passwords in Jenkins directly, please consider using an external vault like one of the following in a production scenario: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault. Each of these vaults (and others) are supported by Jenkins with a related plugin.
 
 <!-- ------------------------ -->
 ## Manually Run the Pipeline
