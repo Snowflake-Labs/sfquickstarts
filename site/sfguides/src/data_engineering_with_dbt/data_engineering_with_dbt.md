@@ -1,13 +1,13 @@
 id: data_engineering_with_dbt
 summary: Build your data pipeline with Snowflake & dbt
-categories: data-engineering
+categories: Getting Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, dbt, Data Sharing
 authors: Dmytro Yaroshenko
 
-# Accellerating Data Engineering with Snowflake & dbt
+# Accelerating Data Engineering with Snowflake & dbt
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -103,7 +103,7 @@ As result of these steps, we should have:
 -  a pair of roles and one user
 
 Please note, this set up is simplified for the purpose of the lab. 
-There are many ways environments, roles, credentials could be modelled to fit your final requirements. 
+There are many ways environments, roles, credentials could be modeled to fit your final requirements. 
 
 We would suggest having a look at these articles for inspiration: [How we configure Snowflake by Fishtown Team](https://blog.getdbt.com/how-we-configure-snowflake/), [Model Structure by GitLab team](https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure)
 
@@ -181,7 +181,7 @@ The expected output should look like this, confirming dbt was able to connect an
 ![dbt run output](assets/image5.png)  
 Please note, this operation is completely rerunable and does not provide any harm to our next steps in the lab.
 
-You can use Snowflake worksheets to validate that the sample view and the table are now availble in DEV database: 
+You can use Snowflake worksheets to validate that the sample view and the table are now available in DEV database: 
 ![Snowflake UI](assets/image6.png)  
 
 
@@ -191,7 +191,7 @@ Congratulations! You just run your first dbt models on Snowflake!
 ## Architecture and Use Case Overview
 Duration: 2
 
-In this lab, we are going to analyse historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas that is available in Snowflake Data Marketplace, plus few manual uploads. 
+In this lab, we are going to analyze historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas that is available in Snowflake Data Marketplace, plus few manual uploads. 
 
 We are going to set up the environments from scratch, build scalable pipelines in dbt, establish data tests, and Snowflake and promote code to production.  Finally we will use Snowsight to build a simple dashboard to visualize the results. 
 
@@ -211,7 +211,7 @@ Let's go to the Snowflake Data Marketplace and find what we need. The Data Marke
 
 ![Preview App](assets/image9.png)  
 
-Click Sign in to continue. You will need to use the same user and pw that you used to login to your Snowflake account the first time.
+Click Sign in to continue. You will need to use the same user and password that you used to login to your Snowflake account the first time.
 
 ![Preview App](assets/image11.png)  
 
@@ -261,7 +261,7 @@ SELECT *
 ```
 ![Preview App](assets/image20.png) 
 
-Congratulations! You successfully tapped into live data feed of Trade and FX rates data with NO ETL involved. As we promissed. Isn't it cool? 
+Congratulations! You successfully tapped into live data feed of Trade and FX rates data with NO ETL involved. As we promised. Isn't it cool? 
 Now let's start building our pipelines. 
 
 <!-- ------------------------ -->
@@ -338,13 +338,13 @@ By default, dbt is [generating a schema name](https://docs.getdbt.com/docs/build
 
 ![Preview App](assets/image23.png) 
 
-3.. **Query Tag**. As you might notice, in the screenshot above there is another macro overriden in the file: **set_query_tag()**. This one provides the ability to add additional level of transparency by automatically setting Snowflake query_tag to the name of the model it associated with. 
+3.. **Query Tag**. As you might notice, in the screenshot above there is another macro overridden in the file: **set_query_tag()**. This one provides the ability to add additional level of transparency by automatically setting Snowflake query_tag to the name of the model it associated with. 
 
-So if you go in Snowflake UI and click 'History' icon on top, you are going to see all SQL queries run on Snowflake account(successfull, failed, running etc) and clearly see what dbt model this particular query is related to: 
+So if you go in Snowflake UI and click 'History' icon on top, you are going to see all SQL queries run on Snowflake account(successful, failed, running etc) and clearly see what dbt model this particular query is related to: 
 
 ![Query Tag](assets/image24.png) 
 
-4.. **dbt plugings**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of github repository. In our lab, we are going to demonstrate how to use some automation that [dbt_utils](https://hub.getdbt.com/fishtown-analytics/dbt_utils/latest) package provides. 
+4.. **dbt plugins**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of GitHub repository. In our lab, we are going to demonstrate how to use some automation that [dbt_utils](https://hub.getdbt.com/fishtown-analytics/dbt_utils/latest) package provides. 
 Let's install it. For that, let's create a file called ***packages.yml*** in the root of your dbt project folder and add the following lines: 
 
 ```yml
@@ -383,7 +383,7 @@ sources:
       - name: exratescc2018
       - name: usindssp2020
 ```
-As you probably remember, these two objects were mentioned in Knoema Dataset Catalog table: daily exchange rates and daily US trading history accodringly. 
+As you probably remember, these two objects were mentioned in Knoema Dataset Catalog table: daily exchange rates and daily US trading history accordingly. 
 
 2.. **Base views** is the concept of models that act as a first-level transformation. While not mandatory, these could act as a level of abstraction, separating ultimate source structure from the entry point of dbt pipeline. Providing your project more options to react to an upstream structure change. You can read more about arguments on benefits provided by the base view concept [here](https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355).
 We are going to create a fairly simple pass-through pair of base views: 
@@ -560,7 +560,7 @@ dbt run --model +tfm_stock_history_major_currency
 
 ![Query Tag](assets/image32.png) 
 
-As we now have more models in play, it is a good moment to talk about [dbt documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation). By a run of new following commands dbt will analyse all models in our project and generate a static webpage with a data dictionary/documentation. This is a fantastic way of sharing information with your engeneeing & user community as it has all important information about columns, tags, free-form model description, tests as well as the source code that is always in line with the code. So regardless how big project grows, it is super easy to understand whats happening. And as cherry-on-pie there is also a possibility to see the full lineage of models in the visual DAG: 
+As we now have more models in play, it is a good moment to talk about [dbt documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation). By a run of new following commands dbt will analyze all models in our project and generate a static webpage with a data dictionary/documentation. This is a fantastic way of sharing information with your engineering & user community as it has all important information about columns, tags, free-form model description, tests as well as the source code that is always in line with the code. So regardless how big project grows, it is super easy to understand whats happening. And as cherry-on-pie there is also a possibility to see the full lineage of models in the visual DAG: 
 
 ```cmd
 dbt docs generate
@@ -761,7 +761,7 @@ SELECT src.*
 {% endif %}
 ```
 
-Finally, for illustration purposes we are going to create a couple of views that could be extended further, represending different lense of interpreting PnL data between treasury, risk and finance departments.
+Finally, for illustration purposes we are going to create a couple of views that could be extended further, representing different lens of interpreting PnL data between treasury, risk and finance departments.
 
 - **models/l30_mart/fct_trading_pnl_finance_view.sql**
 
@@ -807,7 +807,7 @@ SELECT *
 ```
 ![Query Tag](assets/image41.png) 
 
-Now, let's create a simple data visualisation for this dataset. For that, let's click on the Preview App button once again: 
+Now, let's create a simple data visualization for this dataset. For that, let's click on the Preview App button once again: 
 
 ![Query Tag](assets/image9.png) 
 
@@ -825,7 +825,7 @@ By default it shows a breakdown by Volume. Let's click on the measure and switch
 
 ![Query Tag](assets/image52.png) 
 
-And this is it! Now you have a worksheet that you can slice'n'dice, share with your colleagues or embed in the SnowSight dashboard as one of the tiles. As you can see, Snowsight offers a great capability to quickly visualise the insight and always there for you as a part of the Snowflake platform. For more details on SnowSight, please refer to the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/ui-web.html). 
+And this is it! Now you have a worksheet that you can slice'n'dice, share with your colleagues or embed in the SnowSight dashboard as one of the tiles. As you can see, Snowsight offers a great capability to quickly visualize the insight and always there for you as a part of the Snowflake platform. For more details on SnowSight, please refer to the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/ui-web.html). 
 
 ![Query Tag](assets/image53.png) 
 
@@ -836,7 +836,7 @@ Duration: 5
 ### Establishing Testing
 To build trust in your data solution, it is hard to underestimate the importance of testing. While there are many ways to organize automated testing, thankfully dbt tool comes with the great [data tests framework](https://docs.getdbt.com/docs/building-a-dbt-project/tests). Let's build an example.
 
-First, let's add the test configuration file and add the content below. dbt comes with a set of pre-defined data tests, such as uniqeness, not_null, check constraints, ref integrity etc. We are going to set up tests on the few models, however it is highly recommended to establish reasonable test coverage across the board. 
+First, let's add the test configuration file and add the content below. dbt comes with a set of pre-defined data tests, such as uniqueness, not_null, check constraints, ref integrity etc. We are going to set up tests on the few models, however it is highly recommended to establish reasonable test coverage across the board. 
 - **models/tests/data_quality_tests.yml**
 
 ```yml
