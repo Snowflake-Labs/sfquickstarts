@@ -151,7 +151,7 @@ copy the data onto your table.
 
 If you have not already done so, you can download the sample files here:
 
-<button>[Download Sample Data](https://docs.snowflake.com/en/_downloads/7f8af74a42c077b86e5bf12cf8ca3247/getting-started.zip)</button>
+<button>[Download Sample Data](https://docs.snowflake.com/en/_downloads/34f4a66f56d00340f8f7a92acaccd977/getting-started.zip)</button>
 
 ### Stage Files With PUT
 

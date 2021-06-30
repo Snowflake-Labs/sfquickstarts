@@ -632,7 +632,7 @@ To simplify usage, let's create a model that would combine data from all desks. 
 ) }}
 ```
 
-Once we deploy this model, let's have a look what it is compiled into. For this, please open **target/run/l20_transform/tfm_book.sql**. As you can see dbt automatically scanned stuctures of the involved objects, aligned all possible attributes by name and type and combined all datasets via UNION ALL. Comparing this to the size of code we entered in the model itself, you can imagine the amount of time saved by such automation.
+Once we deploy this model, let's have a look what it is compiled into. For this, please open **target/run/dbt_hol/models/l20_transform/tfm_book.sql**. As you can see dbt automatically scanned stuctures of the involved objects, aligned all possible attributes by name and type and combined all datasets via UNION ALL. Comparing this to the size of code we entered in the model itself, you can imagine the amount of time saved by such automation.
 
 ```cmd
 dbt run -m tfm_book
