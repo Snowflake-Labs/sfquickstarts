@@ -131,7 +131,7 @@ Duration: 1
 You can set session parameters to tweak your session and have it set up just the way you want it. There are two ways to accomplish this. First, you can set them when you initially connect, like so:
 
 ```
-con = snowflake.connector.connect(
+conn = snowflake.connector.connect(
     user='XXXX',
     password='XXXX',
     account='XXXX',
@@ -144,7 +144,7 @@ con = snowflake.connector.connect(
 Alternatively, you can set them after you connect by executing the SQL statement `ALTER SESSION SET`:
 
 ```
-con.cursor().execute("ALTER SESSION SET QUERY_TAG = 'EndOfMonthFinancials'")
+conn.cursor().execute("ALTER SESSION SET QUERY_TAG = 'EndOfMonthFinancials'")
 ```
 
 You may have taken advantage of Snowflake's ability to use robust security methods. If so, you'll want to take extra steps to configure the Snowflake Python Connector.
@@ -165,10 +165,10 @@ If you're familiar with the SQL commands to interact with Snowflake, then the co
 Remember that `conn` is the object that connects you to your Snowflake account. You can use that to execute SQL commands with the following format.
 
 ```
-conn.curser().execute("YOUR SQL COMMAND")
+conn.cursor().execute("YOUR SQL COMMAND")
 ```
 
-We first want to create a []virtual warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview.html). Virtual warehouses contain the servers that are required for you to perform queries and DML operations with Snowflake. Creating one can be done by incorporating the `CREATE WAREHOUSE` SQL command.
+We first want to create a [virtual warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview.html). Virtual warehouses contain the servers that are required for you to perform queries and DML operations with Snowflake. Creating one can be done by incorporating the `CREATE WAREHOUSE` SQL command.
 
 ```
 conn.cursor().execute("CREATE WAREHOUSE IF NOT EXISTS tiny_warehouse_mg")
@@ -231,7 +231,7 @@ Duration: 2
 Alright, with a warehouse, database, and schema created you have everything you need to begin manipulating data in tables. First, you'll need to create the table. That's done with the `CREATE TABLE` command.
 
 ```
-con.cursor().execute(
+conn.cursor().execute(
     "CREATE OR REPLACE TABLE "
     "test_table(col1 integer, col2 string)")
 ```
@@ -245,7 +245,7 @@ Duration: 2
 With the table `test_table` created, you can add data to it. You can do so with the command `INSERT`.
 
 ```
-con.cursor().execute(
+conn.cursor().execute(
     "INSERT INTO test_table(col1, col2) "
     "VALUES(123, 'test string1'),(456, 'test string2')")
 ```
@@ -255,8 +255,8 @@ This command inserts data into `test_table` row by row. The value found in the f
 If you don't want to manually insert data row by row, however, you can load data instead. This is done with a combination of the `PUT` and `COPY INTO` commands.
 
 ```
-con.cursor().execute("PUT file:///tmp/data/file* @%test_table")
-con.cursor().execute("COPY INTO test_table")
+conn.cursor().execute("PUT file:///tmp/data/file* @%test_table")
+conn.cursor().execute("COPY INTO test_table")
 ```
 
 The `PUT` command here is staging the file, and the `COPY INTO` command is copying that data from that file into the specified table. You can also use the `COPY INTO` command to copy data from an external location.
@@ -269,7 +269,7 @@ Of course, you'll want to query your data at some point. It's easy to do that wi
 
 
 ```
-col1, col2 = con.cursor().execute("SELECT col1, col2 FROM test_table").fetchone()
+col1, col2 = conn.cursor().execute("SELECT col1, col2 FROM test_table").fetchone()
 print('{0}, {1}'.format(col1, col2))
 ```
 
@@ -278,7 +278,7 @@ This code snippet is using the SQL command `SELECT col1, col2 FROM test_table` t
 If you'd like to print entire columns, you can do so in a similar manner.
 
 ```
-for (col1, col2) in con.cursor().execute("SELECT col1, col2 FROM test_table"):
+for (col1, col2) in conn.cursor().execute("SELECT col1, col2 FROM test_table"):
 	print('{0}, {1}'.format(col1, col2))
 ```
 
@@ -299,4 +299,4 @@ By now you have a grasp on the basics of using the Python Connector. As you may 
 * [Use Pandas Dataframes](https://docs.snowflake.com/en/user-guide/python-connector-pandas.html)
 * [Snowflake SQLAlchemy Toolkit](https://docs.snowflake.com/en/user-guide/sqlalchemy.html)
 
-This is just the surface of what you can do with Snowflake. For all your specific concerns, be sure to check out the [full documentation](https://docs.snowflake.com/en/).
+This is just the surface of what you can do with Snowflake. To learn more, see the [Snowflake documentation](https://docs.snowflake.com/en/).
