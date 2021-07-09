@@ -538,7 +538,7 @@ The endpoint will be fully deployed when its status is "In Service.” When that
 
 ```sql
 --real-time prediction for an individual movie for a particular user
-select nr.USERID, nr.MOVIEID, m.title, invoke_model('',nr.USERID,nr.MOVIEID) as rating_prediction
+select nr.USERID, nr.MOVIEID, m.title, invoke_model(nr.USERID,nr.MOVIEID) as rating_prediction
 from no_ratings nr, movies m
 where nr.movieid = m.movieid;
 ```
