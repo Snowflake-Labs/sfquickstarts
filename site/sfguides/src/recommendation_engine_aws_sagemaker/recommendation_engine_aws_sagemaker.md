@@ -436,7 +436,7 @@ as '<DEPLOY_ENDPOINT_URL>';
 Finally let's invoke that model. `Create` the `invoke_model` external function, replacing `<INVOKE_ENDPOINT_URL>` with, you guessed it, the `/invoke` URL from the serverleess output:
 
 ```sql
-create or replace external function invoke_model(user_id varchar, item_id varchar)
+create or replace external function invoke_model(model_name varchar, user_id varchar, item_id varchar)
 returns variant
 api_integration = snf_recommender_api_integration
 as '<INVOKE_ENDPOINT_URL>';
@@ -538,7 +538,7 @@ The endpoint will be fully deployed when its status is "In Service.” When that
 
 ```sql
 --real-time prediction for an individual movie for a particular user
-select nr.USERID, nr.MOVIEID, m.title, invoke_model(nr.USERID,nr.MOVIEID) as rating_prediction
+select nr.USERID, nr.MOVIEID, m.title, invoke_model('movielens-model-v1', nr.USERID, nr.MOVIEID) as rating_prediction 
 from no_ratings nr, movies m
 where nr.movieid = m.movieid;
 ```
