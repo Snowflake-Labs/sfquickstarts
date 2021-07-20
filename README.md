@@ -1,14 +1,14 @@
-# Snowflake Guides (Quickstarts)
+# Snowflake Quickstarts
 
 [![Demo](https://drive.google.com/uc?export=view&id=1wPgQExjdIONOtYruMKyeknvMvTDlVJEY)](https://drive.google.com/uc?export=view&id=1Dg3s5-KK-TzFZti63XButyDaTzcuZFxE)
 
-## What are Snowflake Guides (Quickstarts)?
-Snowflake Guides(SFGuides) are interactive tutorials and self-serve demos written in markdown syntax. SFGuides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [guides.snowflake.com](https://guides.snowflake.com/)
+## What are Snowflake Quickstarts?
+Snowflake Quickstarts are interactive tutorials and self-serve demos written in markdown syntax. Quickstarts provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [quickstarts.snowflake.com](https://guides.snowflake.com/)
 
-You can submit your own SFGuide to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own SFGuide!
+You can submit your own Quickstarts to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own Quickstart!
 
 
-## What's special about the SFGuide format?
+## What's special about the Quickstart format?
 
 * Powerful and flexible authoring flow in Markdown text
 * Ability to produce interactive web or markdown tutorials without writing any code
@@ -17,7 +17,7 @@ You can submit your own SFGuide to be published on Snowflake's website by submit
 * Support for multiple target environments or events (conferences, kiosk, web, offline, etc.)
 * Support for anonymous use - ideal for public computers at developer events
 * Looks great, with a responsive web implementation
-* Remembers where the student left off when returning to a sfguide
+* Remembers where the student left off when returning to a quickstarts
 * Mobile friendly user experience
 
 ## Getting Started
@@ -33,12 +33,12 @@ You can submit your own SFGuide to be published on Snowflake's website by submit
 ## Run locally
 
   1. Fork this repository to your personal github account (top right of webpage, `fork` button)
-  2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfguides.git sfguides`
-  3. Navigate to the site directory `cd sfguides/site`
+  2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
+  3. Navigate to the site directory `cd sfquickstarts/site`
   4. Install node dependencies `npm install`
   5. Run the site `npm run serve`
 
-Congratulations! You now have the Snowflake Guides landing page running.
+Congratulations! You now have the Snowflake Quickstarts landing page running.
 
 ##### Common environment errors:
 1. You get a `claat not found` error
@@ -53,7 +53,7 @@ export PATH=$PATH:$HOME/go/bin
 2. You get a `EACCES` error when installing gulp-cli
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
-#### Write Your First SFGuide:
+#### Write Your First Quickstart:
 
   1. Terminate the running server with `ctrl C` and and navigate to the `sfguides` source directory `cd sfguides/src`
      - In this directory, you will see all existing guides and their markdown files.
@@ -63,14 +63,14 @@ export PATH=$PATH:$HOME/go/bin
   4. Run the website again `npm run serve`
   5. As you edit and save changes, your changes will automatically load in the browser.
 
-You can always read the [sample SFGuide](site/sfguides/sample.md) online.
+You can always read the [sample Quickstart](site/sfguides/sample.md) online.
 
 ### Tips
 
-- Review the [sample.md](site/sfguides/sample.md) file to learn more about to to structure your SFGuide for the claat tool. 
-- You can see the supported SFGuide categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
+- Review the [sample.md](site/sfguides/sample.md) file to learn more about to to structure your Quickstart for the claat tool. 
+- You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
-- If you want to learn more about SFGuides, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
+- If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
 
 ## How do I get my Snowflake Guide on [guides.snowflake.com](https://guides.snowflake.com)?
