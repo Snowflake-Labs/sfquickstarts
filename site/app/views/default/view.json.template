@@ -1,7 +1,7 @@
 // app/views/my-event/view.json
 {
   // Required: page and view title.
-  "title": "Snowflake Guides",
+  "title": "Snowflake Quickstarts",
 
   // Required: Text description of the event. This will appear in the view
   // landing page.
