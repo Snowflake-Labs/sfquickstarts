@@ -146,6 +146,7 @@ CREATE OR REPLACE WAREHOUSE CRM_WH
 GRANT USAGE ON WAREHOUSE CRM_WH TO ROLE CRM_ANALYST_ROLE;
 ```
 
+The warehouse is now ready to use.
 
 <!-- ------------------------ -->
 ## Load Shipping data into Snowflake
@@ -196,6 +197,8 @@ You should now see the information in the `SHIPPING_INFO` table.
 
 ![](assets/p7.png)
 <br/><br/>
+
+This data will simulate data from various internal systems.
 
 <!-- ------------------------ -->
 ## Snowflake MarketPlace Data
@@ -332,6 +335,7 @@ CREATE OR REPLACE VIEW SHIP_WEATHER_HISTORY AS
     ON S.SHIPPING_STATE = WH.STATE AND TO_DATE(S.CREATED_DATE) = WH.DATE;
 ```        
 
+You can use this view for easier consumption of the data.
 
 <!-- ------------------------ -->
 ## Loading Data into Salesforce
@@ -398,6 +402,7 @@ We now have to assign permissions on the Custom object to allow Analytic Cloud I
 ![](assets/s6.png)
 <br/><br/> 
 
+The object will now be accessible for data integration. 
 
 <!-- ------------------------ -->
 ## Configure Tableau CRM and Sync Salesforce data with Snowflake
@@ -503,12 +508,12 @@ Enter the Snowflake connection information.
 - Role - CRM\_ANALYST_ROLE
 - Warehouse - CRM_WH
 - Username - CRM_ANALYST
-- Account - <Your Snowflake account name - see note below)
+- Account - \<Your Snowflake account name - see note below\>
 - Database - CRM_DB
 
 **NOTE:** The Snowflake account name can be found by looking at the URL in your browser tab logged into the Snowflake UI. Copy the characters after the https:// and before snowflakecomputing.com i.e. **https://abcd123.us-east-1.snowflakecomputing.com** the account name will be **abcd123.us-east-1**  
 
-In some case the region (us-east-1 or other region name) may not be present, in this case just copy the characters before snowflakecomputing.com i.e. **https://xyz1234.snowflakecomputing.com** the account name will be **xyz1234**  
+In some cases the region (us-east-1 or other region name) may not be present, in this case just copy the characters before snowflakecomputing.com i.e. **https://xyz1234.snowflakecomputing.com** the account name will be **xyz1234**  
 
 Click `Save & Test`. If the details are correct there will be a successful message. Click `Continue` and close the Connection Source window.
 
@@ -528,11 +533,12 @@ Check `Enable Sync Out` and select the Snowflake Output connection. Click Save.
 ![](assets/s20.png)
 <br/><br/>
 
-From the drop down select `Run Now`. You can go to the Monitor section to see when the sync is complete. The data will now be successfully written to a table in Snowflake.
+From the drop down select `Run Now`. You can go to the Monitor section to see when the sync is complete. 
 
 ![](assets/s21.png)
 <br/><br/>
 
+The data will now be successfully written to a table in Snowflake.
 
 <!-- ------------------------ -->
 ## Enrich the Salesforce data in Snowflake
@@ -565,6 +571,7 @@ We can now have a quick look at the combined data.
 ```sql
 SELECT * FROM CUSTOMER_CASE_SHIP_FULL_VW;
 ```
+This provides a consolidated view of all the data sources.
 
 <!-- ------------------------ -->
 ## Read live data from Snowflake in Salesforce
@@ -584,7 +591,7 @@ Provide the details for the connection, similar to the Output Connection for Sno
 - Role - CRM\_ANALYST_ROLE
 - Warehouse - CRM_WH
 - Username - CRM_ANALYST
-- Account - <Your Snowflake account name - see note from Output Connection setup)
+- Account - \<Your Snowflake account name - see note from Output Connection setup\>
 - Database - CRM_DB
 
 Click `Save & Create Dataset`. 
