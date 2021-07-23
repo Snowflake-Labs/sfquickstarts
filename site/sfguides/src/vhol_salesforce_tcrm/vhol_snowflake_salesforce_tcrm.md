@@ -146,6 +146,7 @@ CREATE OR REPLACE WAREHOUSE CRM_WH
 GRANT USAGE ON WAREHOUSE CRM_WH TO ROLE CRM_ANALYST_ROLE;
 ```
 
+The warehouse is now ready to use.
 
 <!-- ------------------------ -->
 ## Load Shipping data into Snowflake
@@ -197,7 +198,7 @@ You should now see the information in the `SHIPPING_INFO` table.
 ![](assets/p7.png)
 <br/><br/>
 
-This data will simulate dat from various internal systems.
+This data will simulate data from various internal systems.
 
 <!-- ------------------------ -->
 ## Snowflake MarketPlace Data
@@ -334,7 +335,7 @@ CREATE OR REPLACE VIEW SHIP_WEATHER_HISTORY AS
     ON S.SHIPPING_STATE = WH.STATE AND TO_DATE(S.CREATED_DATE) = WH.DATE;
 ```        
 
-You can use this view for simpler consumption of the data.
+You can use this view for easier consumption of the data.
 
 <!-- ------------------------ -->
 ## Loading Data into Salesforce
@@ -401,7 +402,7 @@ We now have to assign permissions on the Custom object to allow Analytic Cloud I
 ![](assets/s6.png)
 <br/><br/> 
 
-The object will now be accesible for data integration. 
+The object will now be accessible for data integration. 
 
 <!-- ------------------------ -->
 ## Configure Tableau CRM and Sync Salesforce data with Snowflake
