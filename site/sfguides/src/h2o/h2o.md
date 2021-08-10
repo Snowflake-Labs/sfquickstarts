@@ -7,49 +7,39 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: H2O, AutoML, Partner Connect, Databases, Tables, Stages, File Formats
 
-# Deploying Models in Snowflake with H2O
+# AutoML with Snowflake and H2O Driverless AI
 
 <!-- ------------------------ -->
 # AutoML with Snowflake and H2O Driverless AI
 Duration: 5
-## Introduction
+## Use Case Overview
 
 H2O Driverless AI is an artificial intelligence (AI) platform for automatic machine learning. Driverless AI automates the most difficult data science and machine learning workflows such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines (feature engineering and models) are exported as standalone scoring artifacts.
 
 This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Our goal is to build a classification model that predicts whether a Lending Club customer will default on their loan.
 
-
+[Enter more color about use case here, image would be gereat]
 
 We will use Snowflake and Driverless AI to:
 
-- **Import** the data from Snowflake,
-- **Explore** the data using summary descriptive statistics and automated visualizations (AutoViz),
-- **Build** a predictive model using an evolutionary algorithm for automatic feature engineering and model optimization,
-- **Measure** the model through diagnostics,
-- **Understand** the model through MLI (machine learning interpretability),
-- **Deploy** the model into production in a Snowflake system.
+- **Import** the data from Snowflake
+- **Explore** the data using summary descriptive statistics and automated visualizations (AutoViz)
+- **Build** a predictive model using an evolutionary algorithm for automatic feature engineering and model optimization
+- **Measure** the model through diagnostics
+- **Understand** the model through MLI (machine learning interpretability)
+- **Deploy** the model into production in a Snowflake system
 
 ### Prerequisites
 
-* A Snowflake account and access to Snowflake's _Partner Connect_.
-* Know how to load data into Snowflake (documentation [here](https://docs.snowflake.com/en/user-guide-data-load.html)).
+* A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
+* A [H2O](https://www.h2o.ai/try-driverless-ai/) Account
 * A basic understanding of data science and machine learning concepts.
-
 
 ### What You'll Learn
 
 * How to use Snowflake's "Partner Connect" to create a Driverless AI instance
 * How to use Driverless AI to build a supervised learning classification model.
-* How to deploy the finished model pipeline as a Snowflake JAVA UDF.
-
-### Assets
-
-The Lending Club Loans data file is available for download here:
-
-
-<button>
-  [Download loans.csv file](https://snowflake-workshop-lab.s3.amazonaws.com/h2o/loans.csv)
-</button>
+* How to deploy the finished model pipeline as a Snowflake Java UDF.
 
 <!-- ------------------------ -->
 ## Setting up Snowflake
@@ -58,20 +48,14 @@ Duration: 5
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
 <button>
-  [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/Snowflake_Datarobot_VHOL_guides.sql)
+  [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/h2o/Snowflake_H2o_VHOL_guides.sql)
 </button>
-<br/><br/>
 
 At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be need for this lab and most of the hints will be covered throughout the remainder of this exercise.
 
-<br/><br/>
-
 To ingest our script in the Snowflake UI, navigate to the ellipsis button on the top right hand side of a “New Worksheet” and load our script.
 
-<br/><br/>
-
 Snowflake provides "worksheets" as the spot for you to execute your code. For each worksheet you create, you will need to set the “context” so the worksheet knows how to behave. A “context” in Snowflake is made up of 4 distinctions that must be set before we can perform any work: the “role” we want to act as, the “database” and “schema” we want to work with, and the “warehouse” we want to perform the work. This can be found in the top right hand section of a new worksheet.
-
 
 Lets go ahead and set the role we want to act as, which will be `SYSADMIN` to begin with. We can either set this either manually (`SYSADMIN` is the default role for a first time user, so this already may be populated) by hovering over the people icon and choosing SYSADMIN from the “Role” dropdown, or we can run the following line of code in our worksheet. In addition to traditional SQL statements, Snowflake Data Definition ([DDL](https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html)) commands, such as setting the worksheet context, can also be written and executed within the worksheet.
 
@@ -85,7 +69,7 @@ Each step throughout the guide has an associated SQL command to perform the work
 
 <!-- ------------------------ -->
 ## Launching Driverless AI
-Duraton: 5
+Duration: 5
 ### Connecting from Snowflake
 
 We assume you are logged into your Snowflake account viewing the Snowflake Partner Connect screen. Connecting to H2O from here is quite simple. First select the H2O link and click `Connect`
@@ -237,7 +221,7 @@ Duration: 5
 
 We use the term _Experiment_ in Driverless AI to refer to the entire feature engineering and model evolution process. Instead of fitting one model, we are fitting many and using a "survival of the fittest" approach to optimize features and model hyperparameters. The result is a combination feature engineering-modeling _pipeline_, which can easily be investigated and promoted into production.
 
-### 6.1 Set up an Experiment
+### Set up an Experiment
 
 We start an experiment from the `Datasets` view by clicking on the line corresponding to the `train` dataset and selecting `PREDICT` from the dropdown menu
 
@@ -300,7 +284,7 @@ Clicking on `EXPERT SETTINGS` (#5) exposes an immense array of options and setti
 
 This gives the expert data scientist complete control over the Driverless AI experience, including the ability to customize models, feature transformers, scorers, and data using `CUSTOM RECIPES`. Select `CANCEL` to exit out of the expert settings screen.
 
-### 6.2 Run Experiment
+### Run Experiment
 
 Before launching the experiment, your settings should look like the following.
 
@@ -358,7 +342,7 @@ Nearing the conclusion of the experiment
 
 we see that the dial is at 100% complete, the elapsed time is approximately 6:30 (while results are reproducible, times are not themselves exactly reproducible), and the experiment is stopping early, needing only 33 of 56 iterations.
 
-### 6.3 Completed Experiment
+### Completed Experiment
 
 Upon completion, the `Experiment Baseline` view replaces the spinning dial in the center with a stack of clickable bars
 
@@ -415,7 +399,7 @@ Duration: 5
 
 Once an experiment is completed, it is important to understand the final model's predictive performance, its features, parameters, and how the features and model combine to make a pipeline.
 
-### 7.1 Diagnostics
+### Diagnostics
 
 The `DIAGNOSE MODEL ON NEW DATASET ...` button is used to create extensive diagnostics for a model built in Driverless AI. After clicking the button,
 
@@ -437,7 +421,7 @@ Likewise, the interactive ROC curve produces
 
 ![](images/07_diagnostics_4.png)
 
-### 7.2 AutoReport
+### AutoReport
 
 By default, an automated report is created for each experiment that is run. Download the `AutoReport` by
 
@@ -457,7 +441,7 @@ It also contains validation and test metrics and plots.
 
 For this particular experiment, the AutoReport is a 36-page technically detailed document.
 
-### 7.3 Pipeline Visualization
+### Pipeline Visualization
 
 Selecting the `VISUALIZE SCORING PIPELINE` button
 
