@@ -109,21 +109,24 @@ Duration: 1
 
 We need to pass provider information via environment variables and input variables so that Terraform can authenticate as the user.
 
-Run the following to find the `YOUR_SNOWFLAKE_ACCOUNT_HERE` and `YOUR_SNOWFLAKE_REGION_HERE` values needed by the Snowflake console:
+Run the following to find the `YOUR_ACCOUNT_LOCATOR` and your Snowflake Region ID values needed.
 
 ```SQL
-SELECT current_account(), current_region();
+SELECT current_account() as YOUR_ACCOUNT_LOCATOR, current_region() as YOUR_SNOWFLAKE_REGION_ID;
 ```
+
+You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#snowflake-region-ids). Example: aws_us_west_2 would have a us-west-2 value for `YOUR_REGION_HERE`.
+
 
 ### Add Account Information to Environment
 
-Run these commands in your shell. Be sure to replace the `YOUR_SNOWFLAKE_ACCOUNT_HERE` and `YOUR_SNOWFLAKE_REGION_HERE` placeholders with the correct values.
+Run these commands in your shell. Be sure to replace the `YOUR_ACCOUNT_LOCATOR` and `YOUR_REGION_HERE` placeholders with the correct values.
 
 ```Shell
 $ export SNOWFLAKE_USER="tf-snow"
 $ export SNOWFLAKE_PRIVATE_KEY_PATH="~/.ssh/snowflake_tf_snow_key"
-$ export SNOWFLAKE_ACCOUNT="YOUR_SNOWFLAKE_ACCOUNT_HERE"
-$ export SNOWFLAKE_REGION="YOUR_SNOWFLAKE_REGION_HERE"
+$ export SNOWFLAKE_ACCOUNT="YOUR_ACCOUNT_LOCATOR"
+$ export SNOWFLAKE_REGION="YOUR_REGION_HERE"
 ```
 
 If you plan on working on this or other projects in multiple shells, it may be convenient to put this in a `snow.env` file that you can source or put it in your `.bashrc` or `.zshrc` file. For this lab, we expect you to run future Terraform commands in a shell with those set.
