@@ -1,6 +1,6 @@
 author: miles.adkins@snowflake.com
 id: automl_with_snowflake_and_h2o
-summary: This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.
+summary: This lab will walk you through how to use Snowflake and H2O Driverless AI to perform supervised machine learning.
 categories: Getting Started
 environments: web
 status: Published
@@ -16,9 +16,15 @@ Duration: 5
 
 H2O Driverless AI is an artificial intelligence (AI) platform for automatic machine learning. Driverless AI automates the most difficult data science and machine learning workflows such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines (feature engineering and models) are exported as standalone scoring artifacts.
 
-This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Our goal is to build a classification model that predicts whether a Lending Club customer will default on their loan.
+This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Driverless AI is a tool for easily building predictive (supervised learning) models. Supervised learning methods take historic data where the response or **target** is known and build relationships between the input variables and the target variable. The result is a prediction when new input variables are known but the target is unknown.
 
-[Enter more color about use case here, image would be gereat]
+We will use a dataset from Lending Club to build a classification model that predicts whether a Lending Club customer defaults on their loan. Lending Club is an established online loan marketplace that funds personal loans, commercial loans, funding of medical procedures, and other financing needs. The data consist of 25 columns and approximately 39,000 rows, with each row corresponding to a customer. A preview of the data is shown below.
+
+![](images/00_intro_01.png)
+
+![](images/00_intro_02.png)
+
+Note that the dataset consist of numerical columns (`loan_amount`, `installment`, `emp_length`, `dti`, etc.), categorical columns (`term`, `home_ownership`, `verification_status`, `purpose`, etc.), and a text column (`desc`). Our target variable is `bad_loan` which is Boolean with values `True` and `False`.
 
 We will use Snowflake and Driverless AI to:
 
@@ -32,7 +38,7 @@ We will use Snowflake and Driverless AI to:
 ### Prerequisites
 
 * A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
-* A [H2O](https://www.h2o.ai/try-driverless-ai/) Account
+* An [H2O Driverless AI](https://www.h2o.ai/try-driverless-ai/) trial license.
 * A basic understanding of data science and machine learning concepts.
 
 ### What You'll Learn
@@ -120,7 +126,7 @@ Enter into the form
 
 * the Database `Lendingclub`,
 * the Schema as `public`,
-* the Warehouse as `demo_wh` (or whatever your Warehouse name is),
+* the Warehouse as `demo_wh`,
 * the Name as `loans.csv`,
 * the SQL Query `select * from loans`.
 
@@ -257,7 +263,7 @@ After selecting the target variable, Driverless AI analyzes the data and experim
 
 These include
 
-1. Target variable status
+1. Target variable status.
 2. The `ACCURACY/TIME/INTERPRETABILITY` dials which range from 1 to 10 and largely determine the recipe for the experiment.
 3. The `CLASSIFICATION/REPRODUCIBLE/GPUS DISABLED` clickable buttons.
 4. The `SCORER` used in model building and evaluation.
@@ -317,13 +323,13 @@ Note that
 
 #### Notifications
 
-Selecting `Notifications` in the `CPU/MEMORY` section (2) opens important information and discoveries from Driverless AI.
+Selecting `Notifications` in the `CPU/MEMORY` section (#2) opens important information and discoveries from Driverless AI.
 
 ![](images/06_run_16.png)
 
 Ours reports that
 
-* Reproducible mode was enabled, along with its implications.
+* Reproducible mode was enabled, along with all of its settings and implications.
 * Imbalanced data was detected but imbalanced settings were not enabled. Notifications then indicates the expert settings required to account for imbalance in the data.
 * An ID column was identified and automatically dropped from data.
 * Additional information on scoring during feature and model tuning.
@@ -344,7 +350,7 @@ we see that the dial is at 100% complete, the elapsed time is approximately 6:30
 
 ### Completed Experiment
 
-Upon completion, the `Experiment Baseline` view replaces the spinning dial in the center with a stack of clickable bars
+Upon completion, the `Experiment Baseline` view replaces the spinning dial in the center with a stack of clickable bars.
 
 ![](images/06_complete_01.png)
 
@@ -397,7 +403,7 @@ and Kolmogorov-Smirnov
 ## Experiment Inspection
 Duration: 5
 
-Once an experiment is completed, it is important to understand the final model's predictive performance, its features, parameters, and how the features and model combine to make a pipeline.
+Once an experiment is completed, it is important to understand the final model's predictive performance, its features, parameters, and how the features and model are combined to make a pipeline.
 
 ### Diagnostics
 
@@ -409,7 +415,7 @@ select the dataset used for diagnostics, we will use the `test` dataset.
 
 ![](images/07_diagnostics_7.png)
 
-The `Diagnostics` view that is returned is very complete. You can choose from a plethora of `Scores` on the left. And each of the `Metric Plots` on the right is interactive.
+The `Diagnostics` view that is returned is very complete. You can choose from a plethora of `Scores` on the left. Each of the `Metric Plots` on the right is interactive.
 
 ![](images/07_diagnostics_2.png)
 
@@ -462,7 +468,7 @@ This pipeline is also available in the AutoReport, along with explanatory notes 
 ## Machine Learning Interpretability (MLI)
 Duration: 5
 
-One of Driverless AI's most important features is the implementation of a host of cutting-edge techniques and methodologies for interpreting and explaining the results of black-box models. In this tutorial, we just highlight some of the MLI features available in Driverless AI without discussing their theoretical underpinnings.
+One of Driverless AI's most important features is the implementation of a host of cutting-edge techniques and methodologies for interpreting and explaining the results of black-box models. In this tutorial, we merely highlight some of the MLI features available in Driverless AI without discussing their theoretical underpinnings.
 
 
 To launch MLI from a completed experiment, select the `INTERPRET THIS MODEL` button
@@ -475,11 +481,13 @@ The MLI view allows easy navigation through the various interactive plots.
 
 ### Dashboard
 
-The `Dashboard` view displays four useful summary plots
+The `Dashboard` view displays four useful summary plots.
 
 ![](images/08_mli_02.png)
 
-1. A K-LIME (Local Interpretable Model-agnostic Explanations) surrogate model.
+These include
+
+1. A K-LIME (**L**ocal **I**nterpretable **M**odel-agnostic **E**xplanations) surrogate model.
 2. A Decision Tree surrogate model.
 3. A feature importance plot.
 4. A PDP (Partial Dependence Plot).
@@ -523,48 +531,27 @@ We need to collect the following components from Driverless AI:
 - `pipeline.mojo`
 - `mojo2-runtime.jar`
 - `H2oDaiScore.jar`
-- A valid Driverless AI license file
+- A valid Driverless AI license file.
 
-The first two files we will download from Driverless AI directly. Select `DOWNLOAD MOJO SCORING PIPELINE`
+The first two files we will download from Driverless AI directly. Select `DOWNLOAD MOJO SCORING PIPELINE` from the `STATUS: COMPLETE` buttons 
 
 ![](images/09_deploy_01.png)
 
-and then `DOWNLOAD MOJO SCORING PIPELINE` again from the Instructions screen
+and then `DOWNLOAD MOJO SCORING PIPELINE` again from the `MOJO Scoring Pipeline instructions` screen
 
 ![](images/09_deploy_02.png)
 
-This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files.  For convenience, we have also made the `pipeline.mojo` file available here:
-
-<button>
-  [Download pipeline.mojo file](https://snowflake-workshop-lab.s3.amazonaws.com/h2o/pipeline.mojo)
-</button>
-
+This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files, along with a number of other files we will not be needing.
 
 The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.3 at the time of this writing). Extract the downloaded `H2oScore-0.0.3.tgz` file to find `H2oDaiScore-0.0.3.jar`.
 
-Include your Driverless AI license file `license.sig` as well. **_{Instructions on getting Driverless AI license?}_**
-
+Last, you will need your Driverless AI license file `license.sig`.
 
 ### Setup Snowflake
-We start by creating a Snowflake stage and granting appropriate privileges  
 
-**[Snowflake to fill in here?]**
+The Snowflake system in this VHOL has already been set up for you. If you were to do it on your own system, follow the instructions found here: [https://docs.snowflake.com/en/user-guide/snowsql-install-config.html](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html).
 
-``` sql
-
-
-```
-
-Next we copy the artifacts to the Snowflake stage we just created
-
-``` sql
-put file://pipeline.mojo @java_udf_stage/h2oScorePackages/;
-put file://mojo2-runtime.jar @java_udf_stage/h2oScorePackages/;
-put file://H2oDaiScore-0.0.3.jar @java_udf_stage/h2oScorePackages/;
-put file://license.sig @java_udf_stage/h2oScorePackages/;
-```
-
-#### Create a Java UDF in Snowflake
+### Create a Java UDF in Snowflake
 
 Execute a `CREATE FUNCTION` statement and provide:
 
