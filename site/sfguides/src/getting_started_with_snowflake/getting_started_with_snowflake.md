@@ -47,13 +47,7 @@ If you haven’t already, register for a [Snowflake free 30-day trial](https://t
 
 The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.
 
-### Sample Code
 
-<button>
-  [Download Code](https://s3.amazonaws.com/snowflake-workshop-lab/lab_scripts_OnlineZTS.sql)
-</button>
-
-Download the source code that we will use for this guide. This file contains pre-written SQL commands to be used later in the lab.
 
 <!-- ------------------------ -->
 
