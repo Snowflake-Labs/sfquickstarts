@@ -16,7 +16,7 @@ Duration: 5
 
 H2O Driverless AI is an artificial intelligence (AI) platform for automatic machine learning. Driverless AI automates the most difficult data science and machine learning workflows such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines (feature engineering and models) are exported as standalone scoring artifacts.
 
-This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Driverless AI is a tool for easily building predictive (supervised learning) models. Supervised learning methods take historic data where the response or **target** is known and build relationships between the input variables and the target variable. The result is a prediction when new input variables are known but the target is unknown.
+This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Driverless AI is a tool for easily building predictive (supervised learning) models. Supervised learning methods take historic data where the response or **target** is known and build relationships between the input variables and the target variable. The result is a prediction where new input variables are known but the target is unknown.
 
 We will use a dataset from Lending Club to build a classification model that predicts whether a Lending Club customer defaults on their loan. Lending Club is an established online loan marketplace that funds personal loans, commercial loans, funding of medical procedures, and other financing needs. The data consist of 25 columns and approximately 39,000 rows, with each row corresponding to a customer. A preview of the data is shown below.
 
