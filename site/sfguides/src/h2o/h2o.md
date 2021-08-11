@@ -16,9 +16,7 @@ Duration: 5
 
 H2O Driverless AI is an artificial intelligence (AI) platform for automatic machine learning. Driverless AI automates the most difficult data science and machine learning workflows such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines (feature engineering and models) are exported as standalone scoring artifacts.
 
-This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Our goal is to build a classification model that predicts whether a Lending Club customer will default on their loan.
-
-[Enter more color about use case here, image would be gereat]
+This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Our goal is to build a classification model that predicts whether a LendingClub customer will default on their loan.
 
 We will use Snowflake and Driverless AI to:
 
@@ -33,6 +31,7 @@ We will use Snowflake and Driverless AI to:
 
 * A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
 * A [H2O](https://www.h2o.ai/try-driverless-ai/) Account
+* Past experience running and executing queries in Snowflake
 * A basic understanding of data science and machine learning concepts.
 
 ### What You'll Learn
@@ -51,28 +50,66 @@ The first thing you will need to do is download the following .sql file that con
   [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/h2o/Snowflake_H2o_VHOL_guides.sql)
 </button>
 
-At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be need for this lab and most of the hints will be covered throughout the remainder of this exercise.
+At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close any hint boxes that are looking to help guide you. These will not be needed for this lab as most of the hints will be covered throughout the remainder of this exercise.
+
+![](assets/p5.png)
+<br/><br/>
 
 To ingest our script in the Snowflake UI, navigate to the ellipsis button on the top right hand side of a “New Worksheet” and load our script.
 
-Snowflake provides "worksheets" as the spot for you to execute your code. For each worksheet you create, you will need to set the “context” so the worksheet knows how to behave. A “context” in Snowflake is made up of 4 distinctions that must be set before we can perform any work: the “role” we want to act as, the “database” and “schema” we want to work with, and the “warehouse” we want to perform the work. This can be found in the top right hand section of a new worksheet.
+![](assets/p2.png)
+<br/><br/>
 
-Lets go ahead and set the role we want to act as, which will be `SYSADMIN` to begin with. We can either set this either manually (`SYSADMIN` is the default role for a first time user, so this already may be populated) by hovering over the people icon and choosing SYSADMIN from the “Role” dropdown, or we can run the following line of code in our worksheet. In addition to traditional SQL statements, Snowflake Data Definition ([DDL](https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html)) commands, such as setting the worksheet context, can also be written and executed within the worksheet.
+Snowflake provides "worksheets" as the spot for you to execute your code. This lab assumes you have already run a few queries in Snowflake before. Therefore, we are going to execute a series of commands quickly, so we get the data in tables and continue to the more interesting part of the lab of building and deploying models. The .sql file that you upload should look like this:
 
 ```sql
 USE ROLE sysadmin;
+
+CREATE OR REPLACE DATABASE lendingclub;
+
+CREATE OR REPLACE WAREHOUSE demo_wh
+  WITH WAREHOUSE_SIZE = 'XSMALL';
+
+USE DATABASE h2o_vhol;
+USE SCHEMA public;
+USE WAREHOUSE compute_wh;
+
+CREATE OR REPLACE TABLE loans (
+    id INTEGER,
+    loan_amnt INTEGER,
+    term String(1024),
+    installment Real,
+    grade String(1024)
+    ...)
+
+...
 ```
 
-To execute this code, all we need to do is place our cursor on the line we wish to run and then either hit the "run" button at the top left of the worksheet or press `Cmd/Ctrl + Enter`.
-
-Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab. For the purposes of this demo, we will not be running multiple statements in a row.
+To execute the entire .sql code, which contains 11 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(11)", meaning it will execute all 11 commands in the uploaded file.
 
 <!-- ------------------------ -->
 ## Launching Driverless AI
 Duration: 5
-### Connecting from Snowflake
 
-We assume you are logged into your Snowflake account viewing the Snowflake Partner Connect screen. Connecting to H2O from here is quite simple. First select the H2O link and click `Connect`
+Snowflake's Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible.
+
+![](assets/p20.png)
+
+Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. You should see H2O near the bottom.
+
+![](assets/p21.png)
+
+To be able to continue test out partner applications, in our case H2O, we need to promote ourselves to the `ACCOUNTADMIN` role. This is an out of worksheet process, and therefore isn't a command for us to run. We need to do this one manually.
+
+![](assets/p22.png)
+
+Once you have completed this step, go ahead and click on the H2O application. This will present you with a screen to connect to H2O. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
+
+![](assets/p23.png)
+
+You then will be prompted to activate your account now, press the blue "activate" button to do so.
+
+![](assets/p24.png)
 
 ![](images/01_startup_01.png)
 
@@ -134,7 +171,7 @@ The dataset is now available for next steps in Driverless AI
 
 <!-- ------------------------ -->
 ## Dataset Details
-Duration: 5
+Duration: 10
 
 Right click the `loans` dataset to get details.
 
@@ -162,7 +199,7 @@ This is helpful in understanding the layout of the data. A quick inspection of y
 
 <!-- ------------------------ -->
 ## Automatically Visualizing Datasets
-Duration: 5
+Duration: 10
 
 `Autoviz` in Driverless AI automatically creates a variety of informative interactive graphs that are designed for understanding the data to be used in building a predictive model. `Autoviz` is unique in that it only shows the graphs that are applicable for your data based on the information in your data.
 
@@ -194,7 +231,7 @@ There are a number of additional useful graphs that can be navigated to fully un
 
 <!-- ------------------------ -->
 ## Split Data
-Duration: 5
+Duration: 10
 
 Splitting data into train and test sets allows models to be built with the train set and evaluated on the test data. This protects against overfit and yields more accurate error estimates. To use the Dataset Splitter utility, right click the dataset and select `SPLIT`
 
@@ -217,7 +254,7 @@ The `train` dataset has around 31,000 rows and the `test` dataset around 8000 ro
 
 <!-- ------------------------ -->
 ## Experiment
-Duration: 5
+Duration: 15
 
 We use the term _Experiment_ in Driverless AI to refer to the entire feature engineering and model evolution process. Instead of fitting one model, we are fitting many and using a "survival of the fittest" approach to optimize features and model hyperparameters. The result is a combination feature engineering-modeling _pipeline_, which can easily be investigated and promoted into production.
 
@@ -395,7 +432,7 @@ and Kolmogorov-Smirnov
 
 <!-- ------------------------ -->
 ## Experiment Inspection
-Duration: 5
+Duration: 10
 
 Once an experiment is completed, it is important to understand the final model's predictive performance, its features, parameters, and how the features and model combine to make a pipeline.
 
@@ -460,7 +497,7 @@ This pipeline is also available in the AutoReport, along with explanatory notes 
 
 <!-- ------------------------ -->
 ## Machine Learning Interpretability (MLI)
-Duration: 5
+Duration: 10
 
 One of Driverless AI's most important features is the implementation of a host of cutting-edge techniques and methodologies for interpreting and explaining the results of black-box models. In this tutorial, we just highlight some of the MLI features available in Driverless AI without discussing their theoretical underpinnings.
 
@@ -510,7 +547,7 @@ The MLI view provides tools for disparate impact analysis and sensitivity analys
 
 <!-- ------------------------ -->
 ## Deploy the model using Java UDFs
-Duration: 5
+Duration: 10
 
 ### Introduction
 
