@@ -105,10 +105,6 @@ At the top left of the default worksheet, to the right of the worksheet tab, cli
 
 ![worksheets tab navigation](assets/3UIStory_8.png)
 
-Negative
-: **Warning - Do Not Copy/Paste SQL From This Guide to a Worksheet**
-Copy-pasting the SQL code from this guide into a Snowflake worksheet will result in formatting errors and the code will not run correctly. Make sure to use the Load Script method just covered.
-On older or locked-down browsers, this Load Script step may not work if the browser prevents you from opening the .sql file. In this case, open the .sql file with a text editor and copy/paste all the text from the .sql file into Worksheet 1.
 
 Negative
 : **Worksheets vs the UI**
