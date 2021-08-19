@@ -14,9 +14,17 @@ tags: H2O, AutoML, Partner Connect, Databases, Tables, Stages, File Formats
 Duration: 5
 ## Use Case Overview
 
-H2O Driverless AI is an artificial intelligence (AI) platform for automatic machine learning. Driverless AI automates the most difficult data science and machine learning workflows such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines (feature engineering and models) are exported as standalone scoring artifacts.
+H2O Driverless AI is a supervised machine learning platform leveraging the concept of automated machine learning. Supervised machine learning is a method that takes historic data where the response or **target** is known and build relationships between the input variables and the target variable. Driverless AI automates most of difficult supervised machine learning workflow such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines, which are produced from H2O Driverless AI, can exported as standalone scoring artifacts to power your AI/ML use case.
 
-This tutorial presents a quick introduction to the Driverless AI platform on Snowflake. Our goal is to build a classification model that predicts whether a LendingClub customer will default on their loan.
+This tutorial presents a quick introduction to the Driverless AI platform via Snowflake Partner Connect.
+
+We will use a dataset from LendingClub.com to build a classification model to help us predict the likelihood a LendingClub.com borrower will default on their loan. LendingClub.com is an established online loan marketplace that funds personal loans, commercial loans, funding of medical procedures, and other financing needs. The data consist of 25 columns and approximately 39,000 rows, with each row corresponding to a customer. Here is preview of the data:
+
+![](assets/00_intro_01.png)
+
+![](assets/00_intro_02.png)
+
+Note that the dataset consist of numerical columns (`loan_amount`, `installment`, `emp_length`, `dti`, etc.), categorical columns (`term`, `home_ownership`, `verification_status`, `purpose`, etc.), and a text column (`desc`). Our target variable is `bad_loan` which is a Boolean with values `True` and `False`, thus this will be a binary classification problem.
 
 We will use Snowflake and Driverless AI to:
 
@@ -31,6 +39,7 @@ We will use Snowflake and Driverless AI to:
 
 * A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
 * A [H2O](https://www.h2o.ai/try-driverless-ai/) Account
+* [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) installed (Snowflake's CLI tool)
 * Past experience running and executing queries in Snowflake
 * A basic understanding of data science and machine learning concepts.
 
@@ -53,12 +62,10 @@ The first thing you will need to do is download the following .sql file that con
 At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close any hint boxes that are looking to help guide you. These will not be needed for this lab as most of the hints will be covered throughout the remainder of this exercise.
 
 ![](assets/p5.png)
-<br/><br/>
 
 To ingest our script in the Snowflake UI, navigate to the ellipsis button on the top right hand side of a “New Worksheet” and load our script.
 
 ![](assets/p2.png)
-<br/><br/>
 
 Snowflake provides "worksheets" as the spot for you to execute your code. This lab assumes you have already run a few queries in Snowflake before. Therefore, we are going to execute a series of commands quickly, so we get the data in tables and continue to the more interesting part of the lab of building and deploying models. The .sql file that you upload should look like this:
 
@@ -131,7 +138,7 @@ Your brand new Driverless AI instance looks like
 
 ![](images/01_intro_0.png)
 
-A summary of the information and views we cover in this tutorial include
+A summary of the information and views we will cover in this tutorial include:
 
 1. H2O.ai information: This displays the version (Driverless AI 1.9.0.2), the license owner and status, and the current user (H2OAI).
 2. `DATASETS`: A view for importing, listing, and operating on datasets.
@@ -151,15 +158,17 @@ From the empty Datasets view, click the `Add Dataset` button and select the `SNO
 
 This launches the `Make Snowflake Query` form.
 
-![](images/02_import_2.png)
+![](assets/02_import_2.png)
 
-Enter into the form
+Enter into the form:
 
-* the Database `Lendingclub`,
-* the Schema as `public`,
-* the Warehouse as `demo_wh` (or whatever your Warehouse name is),
-* the Name as `loans.csv`,
-* the SQL Query `select * from loans`.
+* **Database** `Lendingclub`,
+* **Warehouse** as `demo_wh`,
+* **Schema** as `public`,
+* **Name** as `loans.csv`,
+* **Username** and **Password** with the credentials you used at signup,
+* **File Formatting Parameters** as `FIELD_OPTIONALLY_ENCLOSED_BY="'"`,
+* **SQL Query** `select * from loans`.
 
 Then click the `CLICK TO MAKE QUERY` button. This imports the data into the Driverless AI system.
 
@@ -198,7 +207,7 @@ Clicking the `DATASET ROWS` button on the upper right yields a spreadsheet forma
 This is helpful in understanding the layout of the data. A quick inspection of your dataset using `Details` is a good practice that we always recommended.
 
 <!-- ------------------------ -->
-## Automatically Visualizing Datasets
+## Visualizing Datasets
 Duration: 10
 
 `Autoviz` in Driverless AI automatically creates a variety of informative interactive graphs that are designed for understanding the data to be used in building a predictive model. `Autoviz` is unique in that it only shows the graphs that are applicable for your data based on the information in your data.
@@ -496,7 +505,7 @@ This pipeline is also available in the AutoReport, along with explanatory notes 
 * The outputs are probabilities for `bad_loan = False` and `bad_loan = True`.
 
 <!-- ------------------------ -->
-## Machine Learning Interpretability (MLI)
+## Model Interpretability
 Duration: 10
 
 One of Driverless AI's most important features is the implementation of a host of cutting-edge techniques and methodologies for interpreting and explaining the results of black-box models. In this tutorial, we just highlight some of the MLI features available in Driverless AI without discussing their theoretical underpinnings.
@@ -547,7 +556,7 @@ The MLI view provides tools for disparate impact analysis and sensitivity analys
 
 <!-- ------------------------ -->
 ## Deploy the model using Java UDFs
-Duration: 10
+Duration: 5
 
 ### Introduction
 
@@ -560,69 +569,83 @@ We need to collect the following components from Driverless AI:
 - `pipeline.mojo`
 - `mojo2-runtime.jar`
 - `H2oDaiScore.jar`
-- A valid Driverless AI license file
+- A valid Driverless AI license file. `license.sig`
 
-The first two files we will download from Driverless AI directly. Select `DOWNLOAD MOJO SCORING PIPELINE`
+The first two files we will download from Driverless AI directly. Select `DOWNLOAD MOJO SCORING PIPELINE` from the `STATUS: COMPLETE` buttons
 
 ![](images/09_deploy_01.png)
 
-and then `DOWNLOAD MOJO SCORING PIPELINE` again from the Instructions screen
+and then `DOWNLOAD MOJO SCORING PIPELINE` again from the `MOJO Scoring Pipeline instructions` screen
 
 ![](images/09_deploy_02.png)
 
-This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files.  For convenience, we have also made the `pipeline.mojo` file available here:
-
-<button>
-  [Download pipeline.mojo file](https://snowflake-workshop-lab.s3.amazonaws.com/h2o/pipeline.mojo)
-</button>
-
+This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files, along with a number of other files we will not be needing.
 
 The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.3 at the time of this writing). Extract the downloaded `H2oScore-0.0.3.tgz` file to find `H2oDaiScore-0.0.3.jar`.
 
-Include your Driverless AI license file `license.sig` as well. **_{Instructions on getting Driverless AI license?}_**
-
+Last, you will need your Driverless AI license file `license.sig`.
 
 ### Setup Snowflake
-We start by creating a Snowflake stage and granting appropriate privileges  
 
-**[Snowflake to fill in here?]**
+The first step in creating a Java UDF in Snowflake is to put the 4 Driverless AI artifacts into the table stage, which was created when we created `loans` table and uploaded some data in the very beginning.
 
-``` sql
+In order to do that, we will need to leverage [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) (Snowflake's CLI tool), which will need to be installed locally so you can put the artifacts on your local compute into the table stage in your Snowflake Cloud.
 
+Travel to your command line and enter the follow:
 
 ```
+snowsql
+```
+You will be asked for your `Account`:
 
-Next we copy the artifacts to the Snowflake stage we just created
+This is a part of the unique URL you were given when creating a trial. Here is how the URL is defined (<Account>.snowflakecomputing.com). Enter only the Account portion.
 
-``` sql
-put file://pipeline.mojo @java_udf_stage/h2oScorePackages/;
-put file://mojo2-runtime.jar @java_udf_stage/h2oScorePackages/;
-put file://H2oDaiScore-0.0.3.jar @java_udf_stage/h2oScorePackages/;
-put file://license.sig @java_udf_stage/h2oScorePackages/;
+Next enter your `User`:
+and `Password`:
+
+These are the login name  and password you created after navigating to the unique URL of your Snowflake deployment.
+
+Once logged in, you can now execute the following:
+```
+USE DATABASE lendingclub;
+USE SCHEMA public;
+USE WAREHOUSE demo_wh;
+USE ROLE sysadmin;
 ```
 
-#### Create a Java UDF in Snowflake
+Finally, we can now upload the 4 artifacts:
 
-Execute a `CREATE FUNCTION` statement and provide:
+```
+put file://{path}/pipeline.mojo @%loans;
+put file://{path}/license.sig @%loans;
+put file://{path}/H2oDaiScore-0.0.3.jar @%loans;
+put file://{path}/mojo2-runtime.jar @%loans;
+```
+
+Note, you will need to change where it says `path` in the 'put' commands to path where the files you downloaded are located. This will take 1-2 mins to upload.
+
+### Create a Java UDF in Snowflake
+
+We are now ready to actually create the Java UDF via the `CREATE FUNCTION` statement. To do so, you must provide:
 
 - a name for the function and its parameters,
 - the location in the stage of `pipeline.mojo` and all other artifacts,
 - the Java method to be invoked when the Java UDF is called.
 
-For example,
+The code has been prepared for you. At this point, this can either be run in SnowSQL or back in your GUI session.
 
 ``` sql
 CREATE FUNCTION H2OScore_Java(params STRING, rowData ARRAY)
 
     returns variant language java
 
-    imports = ('@java_udf_stage/h2oScorePackages/pipeline.mojo',
-               '@java_udf_stage/h2oScorePackages/license.sig',
-               '@java_udf_stage/h2oScorePackages/mojo2-runtime.jar',
-               '@java_udf_stage/h2oScorePackages/H2oDaiScore-0.0.3.jar'
+    imports = ('@%loans/pipeline.mojo',
+               '@%loans/license.sig',
+               '@%loans/mojo2-runtime.jar',
+               '@%loans/H2oDaiScore-0.0.3.jar'
                )
 
-    handler = 'h2oScorePackages.H2oDaiScore.h2oDaiScore';
+    handler = 'H2oDaiScore.h2oDaiScore';
 ```
 
 
@@ -634,7 +657,7 @@ The syntax for calling a Java UDF in Snowflake is
 SELECT <JAVA_UDF_FUNCTION_NAME>(<JAVA_UDF_FUNCTION_PARAMS>) FROM <TABLE_NAME>;
 ```
 
-Using the `H2OScore_Java` UDF defined above, we score a table `loans` using `pipeline.mojo` as follows:
+Using the `H2OScore_Java` UDF defined above, we will now score our table `loans` using `pipeline.mojo` as follows:
 
 ``` sql
 SELECT
@@ -649,9 +672,7 @@ SELECT
 FROM loans;
 ```
 
-> Scored 38,980 rows in 7s
-
-The results should look like this
+It should take about 7 seconds to score and the results should look like this:
 
 **Results Preview** (first 3 rows)
 
@@ -661,8 +682,9 @@ The results should look like this
 | 2   | 1077430        |0.5798575133085251
 | 3   | 1077175        |0.5994115248322487
 
+And as they say, that is all folks! We have now scored a model inside Snowflake. What this does is gives you the flexibility of Snowflake's Scale Up and Scale Out capabilities to score as much data as you want.
 
-### Easy Deployment using AutoGen
+### (Extra) Easy Deployment using AutoGen
 
 A Snowflake Worksheet template to deploy and score DAI MOJOs using Java UDFs can be automatically generated using the H2O REST Server deployment:
 
