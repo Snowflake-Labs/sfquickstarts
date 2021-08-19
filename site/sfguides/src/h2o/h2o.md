@@ -616,10 +616,10 @@ USE ROLE sysadmin;
 Finally, we can now upload the 4 artifacts:
 
 ```
-put file://{path}/pipeline.mojo @%loans;
-put file://{path}/license.sig @%loans;
-put file://{path}/H2oDaiScore-0.0.3.jar @%loans;
-put file://{path}/mojo2-runtime.jar @%loans;
+put file://{path}/pipeline.mojo @%loans auto_compress=false;
+put file://{path}/license.sig @%loans auto_compress=false;
+put file://{path}/H2oDaiScore-0.0.3.jar @%loans auto_compress=false;
+put file://{path}/mojo2-runtime.jar @%loans auto_compress=false;
 ```
 
 Note, you will need to change where it says `path` in the 'put' commands to path where the files you downloaded are located. This will take 1-2 mins to upload.
