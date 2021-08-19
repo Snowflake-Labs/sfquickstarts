@@ -645,7 +645,7 @@ CREATE FUNCTION H2OScore_Java(params STRING, rowData ARRAY)
                '@%loans/H2oDaiScore-0.0.3.jar'
                )
 
-    handler = 'H2oDaiScore.h2oDaiScore';
+    handler = 'h2oDai.H2oDaiScore.h2oDaiScore';
 ```
 
 
