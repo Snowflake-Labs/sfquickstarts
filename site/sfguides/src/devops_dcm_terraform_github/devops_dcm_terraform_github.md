@@ -27,6 +27,9 @@ DevOps is concerned with automating the development, release and maintenance of 
 
 This guide will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
+Positive
+: **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related guide [Terraforming Snowflake](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0).
+
 Let’s begin with a brief overview of GitHub and Terraform.
 
 ### Prerequisites
@@ -90,12 +93,12 @@ This guide will be focused on the GitHub Actions service.
 
 <!-- ------------------------ -->
 ## Terraform Overview
-Duration: 2
+Duration: 7
 
 <img src="assets/devops_dcm_terraform_github-4.png" width="250" />
 
 ### Terraform
-[Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by [HashiCorp](https://www.hashicorp.com/) that "allows you to build, change, and version infrastructure safely and efficiently. This includes low-level components such as compute instances, storage, and networking, as well as high-level components such as DNS entries, SaaS features, etc. Terraform can manage both existing service providers and custom in-house solutions." (from [Introduction to Terraform](https://www.terraform.io/intro/index.html)). With Terraform the primary way to describe your infrastructure is by creating human-readble, declarative configuration files using the high-level [configuration language known as HashiCorp Configuration Language (HCL)](https://www.terraform.io/docs/language/index.html).
+[Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by [HashiCorp](https://www.hashicorp.com/) that "allows you to build, change, and version infrastructure safely and efficiently. This includes low-level components such as compute instances, storage, and networking, as well as high-level components such as DNS entries, SaaS features, etc. Terraform can manage both existing service providers and custom in-house solutions." (from [Introduction to Terraform](https://www.terraform.io/intro/index.html)). With Terraform the primary way to describe your infrastructure is by creating human-readble, declarative configuration files using the high-level configuration language known as [HashiCorp Configuration Language (HCL)](https://www.terraform.io/docs/language/index.html).
 
 ### Chan Zuckerberg Provider
 While Terraform began as an IaC tool it has expanded and taken on many additional use cases (some listed above). Terraform can be extended to support these different uses cases and systems through a [Terraform Provider](https://registry.terraform.io/browse/providers). There is no official, first-party Terraform-managed Provider for Snowflake, but the [Chan Zuckerberg Initiative (CZI)](https://chanzuckerberg.com/) has created a popular [Terraform Provider for Snowflake](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest).
@@ -103,18 +106,89 @@ While Terraform began as an IaC tool it has expanded and taken on many additiona
 Please note that this CZI Provider for Snowflake is a community-developed Provider, not an official Snowflake offering. It comes with no support or warranty.
 
 Negative
-: **REALLY IMPORTANT** - Do not use this provider to manage your Snowflake tables. Currently the CZI provider drops and re-creates a table each time you make changes to it. So when using Terraform with Snowflake use it to create/manage the account level objects (warehouses, roles, integrations, databases, schemas, etc.) and then use a separate DCM tool for most objects within the database schema (tables, views, stored procedures, etc.).
+: **REALLY IMPORTANT** - **Do not use this provider to manage your Snowflake tables.** Currently the CZI Snowflake Provider drops and re-creates a table each time you make changes to it. So when using Terraform with Snowflake use it to create/manage the account level objects (warehouses, roles, integrations, databases, schemas, etc.) and then use a separate DCM tool for most objects within the database schema (tables, views, stored procedures, etc.).
 
 ### State Files
-ddd
+Another really important thing to understand about Terraform is how it tracks the state of the resources/objects being managed. Many declarative style tools like this will do a real-time comparison between the objects defined in code and the deployed objects and then figure out what changes are required. But Terraform does not operate in this manner, instead it maintains a State file which keeps track of things. See Terraform's overview of [State](https://www.terraform.io/docs/language/state/index.html) and in particular their discussion of why they chose to require a State file in [Purpose of Terraform State](https://www.terraform.io/docs/language/state/purpose.html).
+
+State files in Terraform introduce a few challenges, the most significant that the State file can get out of sync with the actual deployed objects. This will happen if you use a different process/tool than Terraform to update the deployed object (including making manual changes to the deployed object). The State file can also get out of sync (or corrupted) when multiple developers/process are trying to access it at the same time. See Terraform's [Remote State](https://www.terraform.io/docs/language/state/remote.html) page for recommended solutions, including Terraform Cloud which will be discussed next.
 
 ### Terraform Cloud
+"Terraform Cloud is HashiCorp’s managed service offering that eliminates the need for unnecessary tooling and documentation to use Terraform in production. Provision infrastructure securely and reliably in the cloud with free remote state storage. As you scale, add workspaces for better collaboration with your team." (from [Why Terraform Cloud?](https://www.terraform.io/cloud))
+
+Some of the key features include (from [Why Terraform Cloud?](https://www.terraform.io/cloud)):
+* **Remote state storage**: Store your Terraform state file securely with encryption at rest. Track infrastructure changes over time, and restrict access to certain teams within your organization.
+* **Flexible Workflows**: Run Terraform the way your team prefers. Execute runs from the CLI or a UI, your version control system, or integrate them into your existing workflows with an API.
+* **Version Control (VCS) integration**: Use version control to store and collaborate on Terraform configurations. Terraform Cloud can automate a run as soon as a pull request is merged into a main branch.
+* **Collaborate on infrastructure changes**: Facilitate collaboration on your team. Review and comment on plans prior to executing any change to infrastructure.
+
+<!-- ------------------------ -->
+## Setup and Configure Terraform Cloud
+Duration: 7
+
+As discussed in the Overview section, you will need to have a Terraform Cloud Account for this guide. If you don't already have a Terraform Cloud account you can create on for free. Visit the [Create an account](https://app.terraform.io/signup/account) page to get started. After you create your account you'll be asked to provide an organization name.
+
+Begin by [logging in to your Terraform Cloud account](https://app.terraform.io/). Please note your organization name, we'll need it later. If you've forgotten, you can find your organization name in the top navigation bar and in the URL.
+
+### Create a new Workspace
+From the Workspaces page click on the "+ New workspace" button near the top right of the page. On the first page, where it asks you to choose the type of workflow, select "API-driven workflow".
+
+<img src="assets/devops_dcm_terraform_github-5.png" width="600" />
+
+On the second page, where it asks for the "Workspace Name" enter `gh-actions-demo` and then click the "Create workspace" button at the bottom of the page.
+
+### Setup Environment Variables
+In order for Terraform Cloud to be able to connect to your Snowflake account you'll need to store the settings in Environment variables. Fortunately, Terraform Cloud makes this easy. From your new workspace homepage click on the "Variables" tab. Then for each variable listed below click on "+ Add variable" button (under the "Environment Variables" section) and enter the name given below along with the appropriate value (adjusting as appropriate).
+
+<table>
+    <thead>
+        <tr>
+            <th>Variable key</th>
+            <th>Variable value</th>
+            <th>Sensitive?</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>SNOWFLAKE_ACCOUNT</td>
+            <td>xy12345</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>SNOWFLAKE_REGION</td>
+            <td>east-us-2.azure</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>SNOWFLAKE_USER</td>
+            <td>DEMO_USER</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>SNOWFLAKE_PASSWORD</td>
+            <td>*****</td>
+            <td>Yes</td>
+        </tr>
+    </tbody>
+</table>
+
+Positive
+: **Tip** - For more details on the supported arguments please check out the [CZI Terraform Provider for Snowflake documentation](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest/docs).
+
+When you’re finished adding all the secrets, the page should look like this:
+
+<img src="assets/devops_dcm_terraform_github-6.png" width="600" />
+
+### Create an API Token
+The final thing we need to do in Terraform Cloud is to create an API Token so that GitHub Actions can securely authenticate with Terraform Cloud. Click on your user icon near the top right of the screen and then click on "User settings". Then in the left navigation bar click on the user settings page click on the "Tokens" tab.
+
+Click on the "Create an API token" button, give your token a "Description" (like `GitHub Actions`) and then click on the "Create API token" button. Pay careful attention on the next screen. You need to save the API token because once you click on the "Done" button the token **will not be displayed again**. Once you've saved the token, click the "Done" button.
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
 Duration: 4
 
-Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
+Open up your cloned GitHub repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
 
 ```sql
 CREATE SCHEMA DEMO;
@@ -135,49 +209,7 @@ Duration: 5
 
 Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by schemachange.
 
-From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
-
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SF_ACCOUNT</td>
-            <td>xy12345.east-us-2.azure</td>
-        </tr>
-        <tr>
-            <td>SF_USERNAME</td>
-            <td>DEMO_USER</td>
-        </tr>
-        <tr>
-            <td>SF_PASSWORD</td>
-            <td>*****</td>
-        </tr>
-        <tr>
-            <td>SF_ROLE</td>
-            <td>DEMO_ROLE</td>
-        </tr>
-        <tr>
-            <td>SF_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-        </tr>
-        <tr>
-            <td>SF_DATABASE</td>
-            <td>DEMO_DB</td>
-        </tr>
-    </tbody>
-</table>
-
-Positive
-: **Tip** - For more details on how to structure the account name in SF_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
-
-When you’re finished adding all the secrets, the page should look like this:
-
-![GitHub Actions Secrets after setup](assets/devops_dcm_schemachange_github-6.png)
+From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets` tab in the left hand navigation. The `Actions` secrets should be selected.
 
 Positive
 : **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
