@@ -1,6 +1,6 @@
 author: Jeremiah Hansen
 id: devops_dcm_terraform_github
-summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging Terraform and GitHub
+summary: This quickstart will provide step-by-step details for getting started with DevOps on Snowflake by leveraging Terraform and GitHub
 categories: DevOps
 environments: web
 status: Published 
@@ -14,7 +14,7 @@ Duration: 2
 
 <img src="assets/devops_dcm_terraform_github-1.png" width="600" />
 
-This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions and Terraform. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake, GitHub Actions, and Terraform.
+This quickstart will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions and Terraform. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake, GitHub Actions, and Terraform.
 
 DevOps is concerned with automating the development, release and maintenance of software applications. As such, DevOps is very broad and covers the entire Software Development Life Cycle (SDLC). The landscape of software tools used to manage the entire SDLC is complex since there are many different required capabilities/tools, including:
 
@@ -25,16 +25,16 @@ DevOps is concerned with automating the development, release and maintenance of 
 - Test management (CI/CD)
 - Release management (CI/CD)
 
-This guide will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
+This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
 Positive
-: **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related guide [Terraforming Snowflake](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0).
+: **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0).
 
 Let’s begin with a brief overview of GitHub and Terraform.
 
 ### Prerequisites
 
-This guide assumes that you have a basic working knowledge of Git repositories.
+This quickstart assumes that you have a basic working knowledge of Git repositories.
 
 ### What You'll Learn
 
@@ -89,7 +89,7 @@ GitHub provides a complete, end-to-end set of software development tools to mana
 ### GitHub Actions
 "GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want" (from GitHub’s [GitHub Actions](https://github.com/features/actions)). GitHub Actions was [first announced in October 2018](https://github.blog/2018-10-16-future-of-software/) and has since become a popular CI/CD tool. To learn more about GitHub Actions, including migrating from other popular CI/CD tools to GitHub Actions check out [Learn GitHub Actions](https://docs.github.com/en/actions/learn-github-actions).
 
-This guide will be focused on the GitHub Actions service.
+This quickstart will be focused on the GitHub Actions service.
 
 <!-- ------------------------ -->
 ## Terraform Overview
@@ -126,7 +126,7 @@ Some of the key features include (from [Why Terraform Cloud?](https://www.terraf
 ## Setup and Configure Terraform Cloud
 Duration: 7
 
-As discussed in the Overview section, you will need to have a Terraform Cloud Account for this guide. If you don't already have a Terraform Cloud account you can create on for free. Visit the [Create an account](https://app.terraform.io/signup/account) page to get started. After you create your account you'll be asked to provide an organization name.
+As discussed in the Overview section, you will need to have a Terraform Cloud Account for this quickstart. If you don't already have a Terraform Cloud account you can create on for free. Visit the [Create an account](https://app.terraform.io/signup/account) page to get started. After you create your account you'll be asked to provide an organization name.
 
 Begin by [logging in to your Terraform Cloud account](https://app.terraform.io/). Please note your organization name, we'll need it later. If you've forgotten, you can find your organization name in the top navigation bar and in the URL.
 
@@ -184,158 +184,239 @@ The final thing we need to do in Terraform Cloud is to create an API Token so th
 
 Click on the "Create an API token" button, give your token a "Description" (like `GitHub Actions`) and then click on the "Create API token" button. Pay careful attention on the next screen. You need to save the API token because once you click on the "Done" button the token **will not be displayed again**. Once you've saved the token, click the "Done" button.
 
-<!-- ------------------------ -->
-## Create Your First Database Migration
-Duration: 4
-
-Open up your cloned GitHub repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
-
-```sql
-CREATE SCHEMA DEMO;
-CREATE TABLE HELLO_WORLD
-(
-   FIRST_NAME VARCHAR
-  ,LAST_NAME VARCHAR
-);
-```
-
-Then commit the new script and push the changes to your GitHub repository. Assuming you started from an empty repository, your repository should look like this:
-
-![GitHub repository after first change script](assets/devops_dcm_schemachange_github-5.png)
 
 <!-- ------------------------ -->
-## Create Action Secrets
-Duration: 5
+## Create the Actions Workflow
+Duration: 8
 
-Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by schemachange.
+### Create Actions Secrets
+Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets to store the API token to Terraform Cloud.
 
-From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets` tab in the left hand navigation. The `Actions` secrets should be selected.
+From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the "Secrets" tab in the left hand navigation. The "Actions" secrets should be selected.
+
+Click on the "New repository secret" button near the top right of the page. For the secret "Name" enter `TF_API_TOKEN` and for the "Value" enter the API token value you saved from the previous step.
 
 Positive
 : **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
-<!-- ------------------------ -->
-## Create an Actions Workflow
-Duration: 5
-
-Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run schemachange and deploy changes to our Snowflake database.
+### Action Workflows
+Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run Terraform and deploy changes to our Snowflake account.
 
 Positive
-: **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page.
+: **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page and the [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
 
-- From the repository, click on the `Actions` tab near the top middle of the page.
-- Click on the `set up a workflow yourself ->` link (if you already have a workflow defined click on the `new workflow` button and then the `set up a workflow yourself ->` link)
+- From the repository, click on the "Actions" tab near the top middle of the page.
+- Click on the "set up a workflow yourself ->" link (if you already have a workflow defined click on the "new workflow" button and then the "set up a workflow yourself ->" link)
 - On the new workflow page
-  - Name the workflow `snowflake-devops-demo.yml`
-  - In the `Edit new file` box, replace the contents with the the following:
+  - Name the workflow `snowflake-terraform-demo.yml`
+  - In the "Edit new file" box, replace the contents with the the following:
 
-```yaml  
-name: snowflake-devops-demo
+```yaml
+name: "Snowflake Terraform Demo Workflow"
 
-# Controls when the action will run. 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'migrations/**'
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
 jobs:
-  deploy-snowflake-changes-job:
+  snowflake-terraform-demo:
+    name: "Snowflake Terraform Demo Job"
     runs-on: ubuntu-latest
-
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Use Python 3.8.x
-        uses: actions/setup-python@v2.2.1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
         with:
-          python-version: 3.8.x
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      - name: Run schemachange
-        env:
-          SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SF_USERNAME: ${{ secrets.SF_USERNAME }}
-          SF_ROLE: ${{ secrets.SF_ROLE }}
-          SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
-          SF_DATABASE: ${{ secrets.SF_DATABASE }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
-        run: |
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          python --version
-          echo "Step 1: Installing schemachange"
-          pip install schemachange
-          
-          echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/migrations -a $SF_ACCOUNT -u $SF_USERNAME -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
 ```
 
-Finally, click on the green `Start commit` button near the top right of the page and then click on the green `Commit new file` in the pop up window (you can leave the default comments and commit settings). You'll now be taken to the workflow folder in your repository.
+Finally, click on the green "Start commit" button near the top right of the page and then click on the green "Commit new file" in the pop up window (you can leave the default comments and commit settings). You'll now be taken to the workflow folder in your repository.
 
 A few things to point out from the YAML pipeline definition:
 
-- The `on:` definition configures the pipeline to automatically run when a change is committed anywhere in the `migrations` folder on the `main` branch of the repository. So any change committed outside of that folder or in a different branch will not automatically trigger the workflow to run.
+- The `on:` definition configures the pipeline to automatically run when a change is pushed on the `main` branch of the repository. So any change committed in a different branch will not automatically trigger the workflow to run.
 - Please note that if you are re-using an existing GitHub repository it might retain the old `master` branch naming. If so, please update the YAML above (see the `on:` section).
 - We’re using the default GitHub-hosted Linux agent to execute the pipeline.
-- The `env` section of the `Run schemachange` step allows us to set environment variables which will be available to the Bash script. In particular, this allows us to securely pass secret values (like the Snowflake password) to applications/scripts running in the workflow like schemachange.
 
 <!-- ------------------------ -->
-## Manually Run the Actions Workflow
+## Create Your First Database Migration
 Duration: 4
 
-In this step we will manually run the new Actions workflow for the first time. This will deploy the first database migration script we created in step 4.
+Open up your cloned GitHub repository in your favorite IDE and create a new file in the root named `main.tf` with the following contents. *Please be sure to replace the organization name with your Terraform Cloud organization name.*
 
-- From the repository, click on the `Actions` tab near the top middle of the page
-- In the left navigation bar click on the name of the workflow `snowflake-devops-demo`
-- Click on the `Run workflow` button and then on the green `Run workflow` button in the pop up window (leaving the default branch selected)
+```terraform
+terraform {
+  required_providers {
+    snowflake = {
+      source  = "chanzuckerberg/snowflake"
+      version = "0.25.17"
+    }
+  }
 
-![GitHub Actions workflow run page](assets/devops_dcm_schemachange_github-7.png)
+  backend "remote" {
+    organization = "my-organization-name"
 
-To view the details of a run, click on the name of specific run (you may have to refresh the `Actions` page for it to show up in the list). From the run overview page click on the `deploy-snowflake-changes-job` job and then browse through the output from the various steps. In particular you might want to review the output from the `Run schemachange` step.
+    workspaces {
+      name = "gh-actions-demo"
+    }
+  }
+}
 
-![GitHub Actions workflow run output](assets/devops_dcm_schemachange_github-8.png)
+provider "snowflake" {
+}
 
-Negative
-: **Note** - You'll notice that GitHub will automatically redact any secret printed to the log. This is a bit unfortunate as the helpful output from schemachange will only show `***` instead of the actual values. I understand this for sensitive secrets, but for non-sensitive parameter values this is not ideal behaviour. For more details see [Encrypted secrets](https://docs.github.com/en/actions/reference/encrypted-secrets).
+resource "snowflake_database" "demo_db" {
+  name    = "DEMO_DB"
+  comment = "Database for Snowflake Terraform demo"
+}
+```
+
+Then commit the new script and push the changes to your GitHub repository. By pushing this commit to our GitHub repository the new workflow we created in the previous step will run automatically.
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 4
+Duration: 5
 
-Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.
+By now your first database migration should have been successfully deployed to Snowflake, and you should now have a `DEMO_DB` database available. There a few different places that should check to confirm that everything deployed successfully, or to help you debug in the event that an error happened.
 
-### Database Objects
+### GitHub Actions Log
 
-You should now see a few new objects in your `DEMO_DB` database:
+From your repository in GitHub, click on the "Actions" tab. If everything went well, you should see a successful workflow run listed. But either way you should see the run listed under the "All workflows". To see details about the run click on the run name. From the run overview page you can further click on the job name (it should be `Snowflake Terraform Demo Job`) in the left hand navigation bar or on the node in the yaml file viewer. Here you can browse through the output from the various steps. In particular you might want to review the output from the `Terraform Apply` step.
 
-- A new schema `DEMO` and table `HELLO_WORLD` (created by the first migration script from step 4)
-- A new schema `SCHEMACHANGE` and table `CHAGE_HISTORY` (created by schemachange to track deployed changes)
+<img src="assets/devops_dcm_terraform_github-7.png" width="600" />
 
-Take a look at the contents of the `CHANGE_HISTORY` table to see where/how schemachange keeps track of state. See the [schemachange README](https://github.com/Snowflake-Labs/schemachange) for more details.
+### Terraform Cloud Log
 
-### Query History
+While you'll generally be able to see all the Terraform output in the GitHub Actions logs, you may need to also view the logs on Terraform Cloud. From your Terraform Cloud Workspace, click on the "Runs" tab. Here you will see each run listed out, and for the purposes of this quickstart, each run here corresponds to a run in GitHub Actions. Click on the run to open it and view the output from the various steps.
 
-From your Snowflake account click on the `History` tab at the top of the window. From there review the queries that were executed by schemachange. In particular, look at the `Query Tag` column to see which queries were issued by schemachange. It even tracks which migration script was responsible for which queries.
+<img src="assets/devops_dcm_terraform_github-8.png" width="600" />
+
+### Snowflake Objects
+
+Log in to your Snowflake account and you should see your new `DEMO_DB` database! Additionaly you can review the queries that were executed by Terraform by clicking on the "History" tab at the top of the window.
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
 Duration: 2
 
-In this script you will create your second database migration and have GitHub Actions automatically deploy it to your Snowflake account (no need to manually run the workflow this time)!
+Now that we've successfully deployed our first change to Snowflake, it's time to make a second one. This time we will add a schema to the `DEMO_DB` and have it deployed through our automated pipeline.
 
-Open up your cloned repository in your favorite IDE and create a script named `V1.1.2__updated_objects.sql` (make sure there are two underscores after the version number) in the same `migrations` folder with the following contents:
+Open up your cloned repository in your favorite IDE and edit the `main.tf` file by appending the following lines to end of the file:
 
-```sql
-USE SCHEMA DEMO;
-ALTER TABLE HELLO_WORLD ADD COLUMN AGE NUMBER;
+```terraform
+resource "snowflake_schema" "demo_schema" {
+  database = "DEMO_DB"
+  name     = "DEMO_SCHEMA"
+  comment  = "Schema for Snowflake Terraform demo"
+}
 ```
 
-Then commit the new script and push the changes to your GitHub repository. Because of the continuous integration trigger we created in the YAML definition, your workflow should have automatically started a new run. Open up the workflow, click on the newest run, then click on the `deploy-snowflake-changes-job` job and browse through the output from the various steps. In particular you might want to review the output from the `Run schemachange` step.
+Then commit the changes and push them to your GitHub repository. Because of the continuous integration trigger we created in the YAML definition, your workflow should have automatically started a new run. Toggle back to your GitHub and open up the "Actions" page. From there open up the most recent workflow run and view the logs. Go through the same steps you did in the previous section to confirm that the new `DEMO_SCHEMA` has been deployed successfully.
+
+Congratulations, you now have a working CI/CD pipeline with Terraform and Snowflake!
+
+<!-- ------------------------ -->
+## Bonus: Advanced Actions Workflow
+Duration: 4
+
+In the previous sections we created and tested a simple GitHub Actions workflow with Terraform. This section provides a more advanced workflow that you can test out. This one adds the capability for having Terraform validate and plan a change before it's actually deployed. This pipeline adds CI triggers that cause it to run when a Pull Request (PR) is created/updated. During that process it will run a `terraform plan` and stick the results in the PR itself for easy review. Please give it a try!
+
+```terraform
+name: "Snowflake Terraform Demo Workflow"
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  snowflake-terraform-demo:
+    name: "Snowflake Terraform Demo Job"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color
+        continue-on-error: true
+
+      - uses: actions/github-script@0.9.0
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            
+            <details><summary>Show Plan</summary>
+            
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+            
+            </details>
+            
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+```
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
@@ -344,7 +425,7 @@ Duration: 4
 So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 
 #### Pipeline Stages
-In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. Your GitHub Actions workflow YAML file can be extended to include a stage for each of your environments. For more details around how to define stages, please refer to [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
+In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. Your GitHub Actions workflow can be extended to include a stage for each of your environments. For more details around how to work with environments, please refer to [Environments](https://docs.github.com/en/actions/reference/environments) in GitHub.
 
 #### Branching Strategy
 Branching strategies can be complex, but there are a few popular ones out there that can help get you started. To begin with I would recommend keeping it simple with [GitHub flow](https://guides.github.com/introduction/flow/) (and see also [an explanation of GitHub flow by Scott Chacon in 2011](http://scottchacon.com/2011/08/31/github-flow.html)). Another simple framework to consider is [GitLab flow](https://about.gitlab.com/blog/2014/09/29/gitlab-flow/).
@@ -357,8 +438,8 @@ With that you should now have a working CI/CD pipeline in GitHub Actions and som
 ### What We've Covered
 
 * A brief history and overview of GitHub Actions
-* A brief history and overview of schemachange
-* How database change management tools like schemachange work
+* A brief history and overview of Terraform and Terraform Cloud
+* How database change management tools like Terraform work
 * How a simple release pipeline works
 * How to create CI/CD pipelines in GitHub Actions
 * Ideas for more advanced CI/CD pipelines with stages
@@ -367,5 +448,7 @@ With that you should now have a working CI/CD pipeline in GitHub Actions and som
 
 ### Related Resources
 
-* [schemachange](https://github.com/Snowflake-Labs/schemachange)
+* [Terraform](https://www.terraform.io/)
+* [Chan Zuckerberg Terraform Provider for Snowflake](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest)
+* [Terraforming Snowflake Quickstart](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0)
 * [GitHub Actions](https://github.com/features/actions)
