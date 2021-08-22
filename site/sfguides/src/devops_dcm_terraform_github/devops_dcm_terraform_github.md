@@ -10,7 +10,7 @@ tags: DevOps, Data Engineering
 # DevOps: Database Change Management with Terraform and GitHub
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
+Duration: 5
 
 <img src="assets/devops_dcm_terraform_github-1.png" width="600" />
 
@@ -93,7 +93,7 @@ This quickstart will be focused on the GitHub Actions service.
 
 <!-- ------------------------ -->
 ## Terraform Overview
-Duration: 7
+Duration: 6
 
 <img src="assets/devops_dcm_terraform_github-4.png" width="250" />
 
@@ -124,7 +124,7 @@ Some of the key features include (from [Why Terraform Cloud?](https://www.terraf
 
 <!-- ------------------------ -->
 ## Setup and Configure Terraform Cloud
-Duration: 7
+Duration: 8
 
 As discussed in the Overview section, you will need to have a Terraform Cloud Account for this quickstart. If you don't already have a Terraform Cloud account you can create on for free. Visit the [Create an account](https://app.terraform.io/signup/account) page to get started. After you create your account you'll be asked to provide an organization name.
 
@@ -259,7 +259,7 @@ A few things to point out from the YAML pipeline definition:
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 4
+Duration: 5
 
 Open up your cloned GitHub repository in your favorite IDE and create a new file in the root named `main.tf` with the following contents. *Please be sure to replace the organization name with your Terraform Cloud organization name.*
 
@@ -294,7 +294,7 @@ Then commit the new script and push the changes to your GitHub repository. By pu
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 5
+Duration: 4
 
 By now your first database migration should have been successfully deployed to Snowflake, and you should now have a `DEMO_DB` database available. There a few different places that should check to confirm that everything deployed successfully, or to help you debug in the event that an error happened.
 
@@ -316,7 +316,7 @@ Log in to your Snowflake account and you should see your new `DEMO_DB` database!
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
-Duration: 2
+Duration: 4
 
 Now that we've successfully deployed our first change to Snowflake, it's time to make a second one. This time we will add a schema to the `DEMO_DB` and have it deployed through our automated pipeline.
 
@@ -336,7 +336,7 @@ Congratulations, you now have a working CI/CD pipeline with Terraform and Snowfl
 
 <!-- ------------------------ -->
 ## Bonus: Advanced Actions Workflow
-Duration: 4
+Duration: 10
 
 In the previous sections we created and tested a simple GitHub Actions workflow with Terraform. This section provides a more advanced workflow that you can test out. This one adds the capability for having Terraform validate and plan a change before it's actually deployed. This pipeline adds CI triggers that cause it to run when a Pull Request (PR) is created/updated. During that process it will run a `terraform plan` and stick the results in the PR itself for easy review. Please give it a try!
 
