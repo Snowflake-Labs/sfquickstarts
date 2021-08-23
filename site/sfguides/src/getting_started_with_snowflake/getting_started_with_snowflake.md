@@ -47,13 +47,7 @@ If you haven’t already, register for a [Snowflake free 30-day trial](https://t
 
 The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.
 
-### Sample Code
 
-<button>
-  [Download Code](https://s3.amazonaws.com/snowflake-workshop-lab/lab_scripts_OnlineZTS.sql)
-</button>
-
-Download the source code that we will use for this guide. This file contains pre-written SQL commands to be used later in the lab.
 
 <!-- ------------------------ -->
 
@@ -111,10 +105,6 @@ At the top left of the default worksheet, to the right of the worksheet tab, cli
 
 ![worksheets tab navigation](assets/3UIStory_8.png)
 
-Negative
-: **Warning - Do Not Copy/Paste SQL From This Guide to a Worksheet**
-Copy-pasting the SQL code from this guide into a Snowflake worksheet will result in formatting errors and the code will not run correctly. Make sure to use the Load Script method just covered.
-On older or locked-down browsers, this Load Script step may not work if the browser prevents you from opening the .sql file. In this case, open the .sql file with a text editor and copy/paste all the text from the .sql file into Worksheet 1.
 
 Negative
 : **Worksheets vs the UI**
