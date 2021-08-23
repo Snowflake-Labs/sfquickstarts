@@ -25,7 +25,7 @@ DevOps is concerned with automating the development, release and maintenance of 
 - Test management (CI/CD)
 - Release management (CI/CD)
 
-This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
+This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub for the CI/CD and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
 Positive
 : **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0).
@@ -65,7 +65,7 @@ You will need the following things before beginning:
 
 ### What You'll Build
 
-* A simple, working release pipeline for Snowflake in GitHub Actions
+* A simple, working release pipeline for Snowflake in GitHub Actions using Terraform
 
 <!-- ------------------------ -->
 ## GitHub Overview
@@ -111,7 +111,7 @@ Negative
 ### State Files
 Another really important thing to understand about Terraform is how it tracks the state of the resources/objects being managed. Many declarative style tools like this will do a real-time comparison between the objects defined in code and the deployed objects and then figure out what changes are required. But Terraform does not operate in this manner, instead it maintains a State file which keeps track of things. See Terraform's overview of [State](https://www.terraform.io/docs/language/state/index.html) and in particular their discussion of why they chose to require a State file in [Purpose of Terraform State](https://www.terraform.io/docs/language/state/purpose.html).
 
-State files in Terraform introduce a few challenges, the most significant that the State file can get out of sync with the actual deployed objects. This will happen if you use a different process/tool than Terraform to update the deployed object (including making manual changes to the deployed object). The State file can also get out of sync (or corrupted) when multiple developers/process are trying to access it at the same time. See Terraform's [Remote State](https://www.terraform.io/docs/language/state/remote.html) page for recommended solutions, including Terraform Cloud which will be discussed next.
+State files in Terraform introduce a few challenges, the most significant is that the State file can get out of sync with the actual deployed objects. This will happen if you use a different process/tool than Terraform to update any deployed object (including making manual changes to a deployed object). The State file can also get out of sync (or corrupted) when multiple developers/process are trying to access it at the same time. See Terraform's [Remote State](https://www.terraform.io/docs/language/state/remote.html) page for recommended solutions, including Terraform Cloud which will be discussed next.
 
 ### Terraform Cloud
 "Terraform Cloud is HashiCorp’s managed service offering that eliminates the need for unnecessary tooling and documentation to use Terraform in production. Provision infrastructure securely and reliably in the cloud with free remote state storage. As you scale, add workspaces for better collaboration with your team." (from [Why Terraform Cloud?](https://www.terraform.io/cloud))
@@ -190,7 +190,7 @@ Click on the "Create an API token" button, give your token a "Description" (like
 Duration: 8
 
 ### Create Actions Secrets
-Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets to store the API token to Terraform Cloud.
+Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create a secret to store the API token to Terraform Cloud.
 
 From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the "Secrets" tab in the left hand navigation. The "Actions" secrets should be selected.
 
@@ -201,9 +201,6 @@ Positive
 
 ### Action Workflows
 Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run Terraform and deploy changes to our Snowflake account.
-
-Positive
-: **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page and the [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
 
 - From the repository, click on the "Actions" tab near the top middle of the page.
 - Click on the "set up a workflow yourself ->" link (if you already have a workflow defined click on the "new workflow" button and then the "set up a workflow yourself ->" link)
@@ -257,6 +254,9 @@ A few things to point out from the YAML pipeline definition:
 - Please note that if you are re-using an existing GitHub repository it might retain the old `master` branch naming. If so, please update the YAML above (see the `on:` section).
 - We’re using the default GitHub-hosted Linux agent to execute the pipeline.
 
+Positive
+: **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page and the [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
+
 <!-- ------------------------ -->
 ## Create Your First Database Migration
 Duration: 5
@@ -296,7 +296,7 @@ Then commit the new script and push the changes to your GitHub repository. By pu
 ## Confirm Changes Deployed to Snowflake
 Duration: 4
 
-By now your first database migration should have been successfully deployed to Snowflake, and you should now have a `DEMO_DB` database available. There a few different places that should check to confirm that everything deployed successfully, or to help you debug in the event that an error happened.
+By now your first database migration should have been successfully deployed to Snowflake, and you should now have a `DEMO_DB` database available. There a few different places that you should check to confirm that everything deployed successfully, or to help you debug in the event that an error happened.
 
 ### GitHub Actions Log
 
@@ -417,6 +417,8 @@ jobs:
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform apply -auto-approve
 ```
+
+This worklow was adapted from [Automate Terraform with GitHub Actions](https://learn.hashicorp.com/tutorials/terraform/github-actions).
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
