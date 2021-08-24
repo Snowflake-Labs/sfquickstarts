@@ -1000,5 +1000,6 @@ DROP WAREHOUSE IF EXISTS POWERBI_WH;
 To avoid incurring charge for the Azure Blob Storage container that was deployed for the lab you will need to remove the services following these steps:
 Delete the resource group that was created for the lab
 Go to the Azure Portal and select “Resource Groups” from the menu.
+
 Click on the resource group you created for this lab - e.g. “snowflake\_powerbi\_lab\_rg”
 Click on “Delete resource group” and type the name in the confirmation box.
