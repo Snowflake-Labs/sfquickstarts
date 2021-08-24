@@ -217,7 +217,7 @@ Click “**Create storage**” ![Create Storage](assets/image21.png)
 Click “**Upload/Download files**” and upload a copy of the “lab-snowflake-powerbi-load-to-azure-blob.sh” file (found in the github repo) ![Upload](assets/image99.png)
 
 
-Type “**code lab-snowflake-powerbi-load-to-azure-blob.sh**” to open the file in Visual Studio Code, then replace the \<YOURACCOUNT\> with your blob container name from step 4.2 and replace \<YOURSASTOKEN\> with the SAS token created in step 4.3.  Once the values are updated, save the file and close the editor.  
+Type “**code lab-snowflake-powerbi-load-to-azure-blob.sh**” to open the file in Visual Studio Code, then replace the \<YOURACCOUNT\> with your blob container name from step 4.2 and replace  \<YOURSASTOKEN\> with the SAS token created in step 4.3.  Once the values are updated, save the file and close the editor.  
 
 
 ![Upload](assets/image63.png)
@@ -951,7 +951,7 @@ Locate the **Query** section and click the **Run** button.
 ![channelstable](assets/image43.png)
 
 
-Click the **Server Timings** tab located at the bottom of the windows. You will see the results of the query execution. Click the row that contains \<attemptFailed\> in the Query column. 
+Click the **Server Timings** tab located at the bottom of the windows. You will see the results of the query execution. Click the row that contains  \<attemptFailed\> in the Query column. 
 
 
 ![channelstable](assets/image5.png)
