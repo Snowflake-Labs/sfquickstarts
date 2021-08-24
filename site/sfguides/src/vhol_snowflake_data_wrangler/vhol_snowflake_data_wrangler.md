@@ -13,7 +13,7 @@ authors: Snowflake
 
 <span class="c0"></span>
 
-### <span class="c10">Overview</span>
+## <span class="c10">Overview</span>
 
 <span class="c25">Duration: 5</span>
 
@@ -39,6 +39,20 @@ authors: Snowflake
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 438.67px;">![](assets/image7.png)</span>
 
+### <span class="c22 c17">Prerequisites</span>
+
+*   <span class="c7">Familiarity with Snowflake, basic SQL knowledge and Snowflake objects</span>
+*   <span class="c7">Familiarity with AWS Service and Management Console</span>
+*   <span class="c7">Basic knowledge of Python, Jupyter notebook and Machine Learning</span>
+
+### <span class="c20 c17 c22">What You'll Need During the Lab</span>
+<span class="c7">To participate in the virtual hands-on lab, attendees need the following:</span>
+
+*   <span class="c13">A</span> <span class="c13 c31">[Snowflake account](https://www.google.com/url?q=https://trial.snowflake.com/&sa=D&source=editors&ust=1629836318995000&usg=AOvVaw1BAcbCMpz2B8aYBEj4ySYd)</span><span class="c13">with</span> <span class="c19">ACCOUNTADMIN</span><span class="c7"> access</span>
+*   <span class="c13">An</span> <span class="c14 c13">[AWS Account](https://www.google.com/url?q=https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/&sa=D&source=editors&ust=1629836318996000&usg=AOvVaw0gQInMhUphVTGzHr8oSvym)</span><span class="c7"> with admin access</span>
+*   <span class="c20 c15 c8">An AWS VPC and Subnet in your AWS where SageMaker studio can be deployed</span>
+
+
 ### <span class="c20 c17 c22">What You'll Learn</span>
 
 *   <span class="c7">Snowflake data management features for machine learning</span>
@@ -52,22 +66,9 @@ authors: Snowflake
 
 <span class="c7"></span>
 
-## <span class="c22 c17">Prerequisites</span>
-
-*   <span class="c7">Familiarity with Snowflake, basic SQL knowledge and Snowflake objects</span>
-*   <span class="c7">Familiarity with AWS Service and Management Console</span>
-*   <span class="c7">Basic knowledge of Python, Jupyter notebook and Machine Learning</span>
 
 
-<span class="c7">To participate in the virtual hands-on lab, attendees need the following:</span>
-
-*   <span class="c13">A</span> <span class="c13 c31">[Snowflake account](https://www.google.com/url?q=https://trial.snowflake.com/&sa=D&source=editors&ust=1629836318995000&usg=AOvVaw1BAcbCMpz2B8aYBEj4ySYd)</span><span class="c13">with</span> <span class="c19">ACCOUNTADMIN</span><span class="c7"> access</span>
-*   <span class="c13">An</span> <span class="c14 c13">[AWS Account](https://www.google.com/url?q=https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/&sa=D&source=editors&ust=1629836318996000&usg=AOvVaw0gQInMhUphVTGzHr8oSvym)</span><span class="c7"> with admin access</span>
-*   <span class="c20 c15 c8">An AWS VPC and Subnet in your AWS where SageMaker studio can be deployed</span>
-
-
-
-## <span class="c20 c22 c17">What You'll Build</span>
+### <span class="c20 c22 c17">What You'll Build</span>
 
 *   <span class="c7">A Snowflake database for machine learning and data enrichment using the Data Marketplace</span>
 *   <span class="c7">SageMaker Studio environment with integration to Snowflake</span>
@@ -134,27 +135,23 @@ authors: Snowflake
 
 ```
 
-<span class="c7">USE ROLE SECURITYADMIN;
+USE ROLE SECURITYADMIN;
 
-<span class="c7"></span>
+CREATE OR REPLACE ROLE ML_ROLE COMMENT='ML Role';
 
-<span class="c7">CREATE OR REPLACE ROLE ML_ROLE COMMENT='ML Role';
+GRANT ROLE ML_ROLE TO ROLE SYSADMIN;
 
-<span class="c7">GRANT ROLE ML_ROLE TO ROLE SYSADMIN;
+CREATE OR REPLACE USER ML_USER PASSWORD='AWSSF123'
 
-<span class="c7"></span>
+       DEFAULT_ROLE=ML_ROLE
 
-<span class="c7">CREATE OR REPLACE USER ML_USER PASSWORD='AWSSF123'</span>
+       DEFAULT_WAREHOUSE=ML_WH
 
-<span class="c7">        DEFAULT_ROLE=ML_ROLE</span>
+       DEFAULT_NAMESPACE=ML_WORKSHOP.PUBLIC
 
-<span class="c7">        DEFAULT_WAREHOUSE=ML_WH</span>
+        COMMENT='ML User';
 
-<span class="c7">        DEFAULT_NAMESPACE=ML_WORKSHOP.PUBLIC</span>
-
-<span class="c7">        COMMENT='ML User';
-
-<span class="c7">GRANT ROLE ML_ROLE TO USER ML_USER;
+GRANT ROLE ML_ROLE TO USER ML_USER;
 
 ```
 
@@ -170,15 +167,13 @@ authors: Snowflake
 
 ```
 
-<span class="c7">USE ROLE ACCOUNTADMIN;
+USE ROLE ACCOUNTADMIN;
 
-<span class="c7"></span>
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE ML_ROLE;
 
-<span class="c7">GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE ML_ROLE;
+GRANT IMPORT SHARE ON ACCOUNT TO ML_ROLE;
 
-<span class="c7">GRANT IMPORT SHARE ON ACCOUNT TO ML_ROLE;
-
-<span class="c7">GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 ```
 
@@ -287,8 +282,6 @@ CREATE OR REPLACE WAREHOUSE ML_WH</span>
 
   INITIALLY_SUSPENDED = TRUE;
 
-
-
 GRANT ALL ON WAREHOUSE ML_WH TO ROLE ML_ROLE;
 
 ```
@@ -318,8 +311,6 @@ USE WAREHOUSE ML_WH;
 ```
 
 CREATE DATABASE IF NOT EXISTS LOANS_V2;
-
-
 
 CREATE OR REPLACE TABLE LOAN_DATA (
 
@@ -351,9 +342,9 @@ CREATE OR REPLACE TABLE LOAN_DATA (
 
     PYMNT_PLAN VARCHAR(16777216),
 
-   URL VARCHAR(16777216),
+    URL VARCHAR(16777216),
 
-   DESCRIPTION VARCHAR(16777216),
+    DESCRIPTION VARCHAR(16777216),
 
     PURPOSE VARCHAR(16777216),
 
@@ -377,9 +368,9 @@ CREATE OR REPLACE TABLE LOAN_DATA (
 
     OPEN_ACC NUMBER(38,0),
 
-   PUB_REC NUMBER(38,0),
+    PUB_REC NUMBER(38,0),
 
-   REVOL_BAL NUMBER(38,0),
+    REVOL_BAL NUMBER(38,0),
 
     REVOL_UTIL FLOAT,
 
@@ -409,9 +400,9 @@ CREATE OR REPLACE TABLE LOAN_DATA (
 
 ```
 
-<span class="c0">CREATE OR REPLACE STAGE LOAN_DATA</span>
+CREATE OR REPLACE STAGE LOAN_DATA
 
-<span class="c0">  url='s3://snowflake-corp-se-workshop/VHOL_Snowflake_Data_Wrangler/V2/data/';
+  url='s3://snowflake-corp-se-workshop/VHOL_Snowflake_Data_Wrangler/V2/data/';
 
 ```
 
@@ -421,9 +412,9 @@ CREATE OR REPLACE TABLE LOAN_DATA (
 
 ```
 
-<span class="c0">COPY INTO LOAN_DATA FROM @LOAN_DATA/loan_data.csv</span>
+COPY INTO LOAN_DATA FROM @LOAN_DATA/loan_data.csv
 
-<span class="c0">    FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1);
+   FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1);
 
 ```
 
@@ -435,7 +426,7 @@ CREATE OR REPLACE TABLE LOAN_DATA (
 
 ```
 
-<span class="c0">SELECT * FROM LOAN_DATA LIMIT 100;
+SELECT * FROM LOAN_DATA LIMIT 100;
 
 ```
 
@@ -509,21 +500,10 @@ CREATE OR REPLACE TABLE LOAN_DATA (
 
 USE LOANS_V2.PUBLIC;
 
-<span class="c0"></span>
+CREATE OR REPLACE VIEW KNOEMA_EMPLOYMENT_DATA AS (
 
-<span class="c0">CREATE OR REPLACE VIEW KNOEMA_EMPLOYMENT_DATA AS (</span>
-
-<span class="c0">SELECT *</span>
-
-<span class="c0">  FROM (SELECT "Measure Name" MeasureName, "Date", "RegionId" State, AVG("Value") Value FROM "KNOEMA_LABOR_DATA_ATLAS"."LABOR"."BLSLA" WHERE "RegionId" is not null and "Date" >= '2018-01-01' AND "Date" < '2018-12-31' GROUP BY "RegionId", "Measure Name", "Date")</span>
-
-<span class="c0">        PIVOT(AVG(Value) FOR MeasureName IN ('civilian noninstitutional population', 'employment', 'employment-population ratio', 'labor force', 'labor force participation rate', 'unemployment', 'unemployment rate'))</span>
-
-<span class="c0">          AS p (Date, State, civilian_noninstitutional_population, employment, employment_population_ratio, labor_force, labor_force_participation_rate, unemployment, unemployment_rate)</span>
-
-<span class="c0">);
-
-<span class="c0"></span>
+SELECT *
+FROM (SELECT "Measure Name" MeasureName, "Date", "RegionId" State, AVG("Value") Value FROM "KNOEMA_LABOR_DATA_ATLAS"."LABOR"."BLSLA" WHERE "RegionId" is not null and "Date" >= '2018-01-01' AND "Date" < '2018-12-31' GROUP BY "RegionId", "Measure Name", "Date") PIVOT(AVG(Value) FOR MeasureName IN ('civilian noninstitutional population', 'employment', 'employment-population ratio', 'labor force', 'labor force participation rate', 'unemployment', 'unemployment rate')) AS p (Date, State, civilian_noninstitutional_population, employment, employment_population_ratio, labor_force, labor_force_participation_rate, unemployment, unemployment_rate);
 
 ```
 
@@ -618,7 +598,7 @@ CREATE TABLE UNEMPLOYMENT_DATA CLONE LOANS_V2.PUBLIC.UNEMPLOYMENT_DATA;
 
 ```
 
-<span class="c0">CREATE OR REPLACE TABLE ML_RESULTS (LABEL NUMBER, PREDICTIONS NUMBER, P_DEFAULT FLOAT);
+CREATE OR REPLACE TABLE ML_RESULTS (LABEL NUMBER, PREDICTIONS NUMBER, P_DEFAULT FLOAT);
 
 ```
 
@@ -632,7 +612,7 @@ CREATE TABLE UNEMPLOYMENT_DATA CLONE LOANS_V2.PUBLIC.UNEMPLOYMENT_DATA;
 
 USE ROLE ACCOUNTADMIN;
 
-<span class="c0">SHOW INTEGRATIONS;
+SHOW INTEGRATIONS;
 
 ```
 
@@ -925,7 +905,7 @@ USE ROLE ACCOUNTADMIN;
 
 ```
 
-<span class="c0">SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML</span>
+SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML;
 
 ```
 
@@ -945,35 +925,35 @@ USE ROLE ACCOUNTADMIN;
 
 ```
 
-<span class="c0">SELECT</span>
+SELECT
 
-<span class="c0">LOAN_ID, LOAN_AMNT, FUNDED_AMNT,</span>
+LOAN_ID, LOAN_AMNT, FUNDED_AMNT,
 
-<span class="c0">TERM, INT_RATE, INSTALLMENT,</span>
+TERM, INT_RATE, INSTALLMENT,
 
-<span class="c0">GRADE, SUB_GRADE, EMP_LENGTH,</span>
+GRADE, SUB_GRADE, EMP_LENGTH,
 
-<span class="c0">HOME_OWNERSHIP, ANNUAL_INC, VERIFICATION_STATUS,</span>
+HOME_OWNERSHIP, ANNUAL_INC, VERIFICATION_STATUS,
 
-<span class="c0">PYMNT_PLAN, PURPOSE, ZIP_SCODE,</span>
+PYMNT_PLAN, PURPOSE, ZIP_SCODE,
 
-<span class="c0">DTI, DELINQ_2YRS, EARLIEST_CR_LINE,</span>
+DTI, DELINQ_2YRS, EARLIEST_CR_LINE,
 
-<span class="c0">INQ_LAST_6MON, MNTHS_SINCE_LAST_DELINQ,</span>
+INQ_LAST_6MON, MNTHS_SINCE_LAST_DELINQ,
 
-<span class="c0">MNTHS_SINCE_LAST_RECORD, OPEN_ACC,</span>
+MNTHS_SINCE_LAST_RECORD, OPEN_ACC,
 
-<span class="c0">PUB_REC, REVOL_BAL, REVOL_UTIL,</span>
+PUB_REC, REVOL_BAL, REVOL_UTIL,
 
-<span class="c0">TOTAL_ACC, INITIAL_LIST_STATUS,</span>
+TOTAL_ACC, INITIAL_LIST_STATUS,
 
-<span class="c0">MTHS_SINCE_LAST_MAJOR_DEROG,</span>
+MTHS_SINCE_LAST_MAJOR_DEROG,
 
-<span class="c0">POLICY_CODE, LOAN_DEFAULT, ISSUE_MONTH</span>
+POLICY_CODE, LOAN_DEFAULT, ISSUE_MONTH
 
-<span class="c0">FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML</span>
+FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML
 
-<span class="c0">SAMPLE BLOCK (80) REPEATABLE(100)</span>
+SAMPLE BLOCK (80) REPEATABLE(100)
 
 ```
 
@@ -1071,41 +1051,40 @@ USE ROLE ACCOUNTADMIN;
 
 <span>Select</span> <span class="c8">Custom Transform</span> <span>then</span><span class="c8"> Python(Spark)</span><span class="c0">and copy the following code in the code box</span>
 
-<span class="c0">```Python</span>
+```
+Python
 
-<span class="c0">from pyspark.sql.functions import udf</span>
+from pyspark.sql.functions import udf
 
-<span class="c0">from pyspark.sql.types import LongType</span>
+from pyspark.sql.types import LongType
 
-<span class="c0"></span>
+def categories(status) :
 
-<span class="c0">def categories(status) :</span>
+  if not status :
 
-<span class="c0">  if not status :</span>
+    return None
 
-<span class="c0">    return None</span>
+  elif status == "not verified" :    
 
-<span class="c0">  elif status == "not verified" :    </span>
+    return 0
 
-<span class="c0">    return 0</span>
+  elif status == "VERIFIED - income":
 
-<span class="c0">  elif status == "VERIFIED - income":</span>
+    return 1
 
-<span class="c0">    return 1</span>
+  elif status == "VERIFIED - income source":
 
-<span class="c0">  elif status == "VERIFIED - income source":</span>
+    return 1
 
-<span class="c0">    return 1</span>
+  else :
 
-<span class="c0">  else :</span>
+    return None
 
-<span class="c0">    return None</span>
 
-<span class="c0"></span>
 
-<span class="c0">bucket_udf = udf(categories, LongType())</span>
+bucket_udf = udf(categories, LongType())
 
-<span class="c0">df = df.withColumn("VERFIED", bucket_udf("VERIFICATION_STATUS"))</span>
+df = df.withColumn("VERFIED", bucket_udf("VERIFICATION_STATUS"))
 
 ```
 
@@ -1295,11 +1274,11 @@ USE ROLE ACCOUNTADMIN;
 
 <span class="c0"></span>
 
-<span class="c0">```sql</span>
+```
 
-<span class="c0">SELECT LOAN_ID, UNEMPLOYMENT_RATE</span>
+SELECT LOAN_ID, UNEMPLOYMENT_RATE
 
-<span class="c0">FROM ML_LENDER_DATA.ML_DATA.UNEMPLOYMENT_DATA</span>
+FROM ML_LENDER_DATA.ML_DATA.UNEMPLOYMENT_DATA
 
 ```
 
