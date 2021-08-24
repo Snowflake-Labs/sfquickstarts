@@ -150,7 +150,7 @@ This module will walk you through the steps to:
 * Load the lab data files into the storage account from github - via azure shell
 * (optional) Connect Azure Storage Explorer to the storage account to browse files
 
-##Preparing to Load Data & Loading Data in Snowflake
+
 
 ### 4.1 Create a blob storage account
 
@@ -195,11 +195,11 @@ From the storage account containers page, click on the “**lab-data**” contai
 Then select “**Shared access tokens**”
 ![data snippet](assets/image74.png)
 
-Select **Read; Add; Create; Write; Delete; List** permissions for the SAS token:
+Select **Read; Add; Create; Write; Delete; List** permissions for the SAS token
 ![data snippet](assets/image50.png)
 ![data snippet](assets/image93.png)
 
-Set the “**Expiry**” date to something in the future - e.g. 1 month or 1 year and click “Generate SAS token and URL”
+Set the “**Expiry**” date to something in the future - e.g. 1 month or 1 year and click “**Generate SAS token and URL**”
 
 ![image53.png](assets/image53.png)
 
