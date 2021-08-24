@@ -585,21 +585,394 @@ During or after this lab you should *NOT* do the following without good reason o
 
 * * *
 
-
-
 ## Modeling Data for Power BI Reports and Dashboards
 
+For this module, we perform data analysis on the data that was loaded in module 4, and get the data in shape to be accessed in Power BI reports. 
+
+It is essential to model your data correctly to achieve the best performance from your Power BI Reports and Dashboards.  There are many choices that data professionals can make with respect to data modeling for business intelligence (3NF,  denormalized, snowflake schema, or star schema).  However the best practice for modeling your data for Power Bi is a Star Schema. Additionally, we want to ensure that we are not loading any unneeded data into Power BI to reduce the amount of data that Power BI needs to scan and scan.  
+
+### 6.1 Perform Data Profiling
+
+After loading data in Module 4 you should now have 6 dimension tables (Category, Channels, Department, Items, Locations, and States) and 2 fact tables (Items in Sales Orders and Sales Orders).  We see that in the Locations dimension table contains a column named GEO which has a Snowflake Geography data type.   Since, at the time of this lab, Power BI does not support this data type, we need an easy way to remove it before loading into Power BI.   We also notice two Latitude and two Longitude columns.  
+
+![count](assets/image82.png)
+
+While scanning the department table, we notice that there is a duplicate subordinate key value for the Frozen Dinner nd Disposable Cups departments
+```
+SELECT * FROM DEPARTMENT where department_id = 39;
+```
+We should check to see if there are other departments that are also duplicated by running a query that will allow us to clearly identify any duplicated department_id values.
+```
+SELECT 
+  DEPARTMENT_ID
+  ,COUNT(*) AS REC_COUNT
+FROM PUBLIC.DEPARTMENT
+GROUP BY 1
+ORDER BY 2 DESC;
+```
+Analyzing the structure of the tables and their relationships, we notice that if we were to load them into Power BI as-is, the model would be presented to Power BI as a Snowflake schema.  These are evident in the relationship between Items to the Category and Department tables and the Location to the States table.  
+
+![count](assets/image68.png)
+```
+SELECT REGION FROM STATES;
+
+SELECT REGION FROM LOCATIONS;
+```
+
+![count](assets/image33.png)
+
+Lastly we see that the Sales Orders and Items in Sales Orders tables can be consolidated into a single table.  If you consider these two tables as you would a sales receipt this makes sense.  For example, when you purchase items from your local grocery store, the cashier would probably never present you with two receipts (one for the order itself and the other for a detailed list of the items that you purchased).  Everything would appear on a single, consolidated receipt.  
+
+### 6.2 Create Views
+Since Power BI sees Snowflake Tables and Views the same way, we will use a view to accomplish the  task that we identified in through our data profiling exercise.  
+
+For the Locations table we need to execute the following query which merges the Locations and States tables and removes the unnecessarily duplicated Lat and Lon columns:
+```
+CREATE OR REPLACE VIEW PUBLIC.LOCATION_V AS
+SELECT
+  L.LOCATION_ID,
+  L.COUNTRY,
+  L.REGION,
+  L.MUNICIPALITY,
+  S.STATE_NAME,
+  S.STATE_GEO,
+  L.LONGITUDE,
+  L.LATITUDE
+FROM LOCATIONS L
+    INNER JOIN STATES S ON L.REGION = S.REGION;
+```
+For the Items table we add the related Department Name and Category Name from their respective tables, and remove Department ID 39 since we know through our data profiling exercise that the data for this specific Department ID is corrupted. 
+```
+CREATE OR REPLACE VIEW PUBLIC.ITEMS_V AS
+SELECT 
+  ITEM_ID,
+  ITEM_NAME,
+  ITEM_PRICE,
+  CATEGORY_NAME,
+  DEPARTMENT_NAME  
+FROM ITEMS I
+    INNER JOIN DEPARTMENT D ON I.DEPARTMENT_ID = D.DEPARTMENT_ID
+    INNER JOIN CATEGORY C ON I.CATEGORY_ID = C.CATEGORY_ID
+WHERE I.DEPARTMENT_ID != 39;
+```
+Lastly, we consolidate the Sales Orders and Items In Sales Orders tables (removing any unneeded columns)
+```
+CREATE OR REPLACE VIEW PUBLIC.SALES_ORDERS_V AS
+SELECT
+  S.ITEM_ID,
+  S.QUANTITY,
+  SO.CHANNEL_CODE,
+  SO.LOCATION_ID,
+  SO.SALES_DATE,
+  S.ORDER_ID
+FROM ITEMS_IN_SALES_ORDERS S
+    INNER JOIN SALES_ORDERS SO ON S.ORDER_ID = SO.SALES_ORDER_ID;
+```
+
+### 6.3 Create Aggrigations
+
+In then next module we will discuss aggregations and their purpose for facilitating big data business intelligence workloads in Power BI, but for now let’s create an additional view to summarize the quantity of items purchased from the SALES _ORDERS_V view that we created in the last step. 
+```
+CREATE OR REPLACE VIEW PUBLIC.SALES_ORDERS_V_AGG AS
+SELECT
+  ITEM_ID,
+  CHANNEL_CODE AS CHANNEL_ID,
+  LOCATION_ID,
+  SUM(QUANTITY) TOTAL_QUANTITY
+FROM PUBLIC.SALES_ORDERS_V
+GROUP BY
+  ITEM_ID,
+  CHANNEL_CODE,
+  LOCATION_ID;
+```
+
+## Developing, Optimizing, and Sharing Power BI Content
+
+To improve the performance of your Direct Query model we suggest that you build a composite model that includes Aggregations in Power BI. In this lesson we will walk you through these steps.  
+
+### 7.1 Creating the Direct Query Model in Power BI
+
+Open Power BI Desktop.
+Click Get data on the splash screen that appears. 
+
+![pbisplash](assets/image48.png)
+
+Type snowflake in the textbox located directly below Get Data when the window opens. 
 
 
+![pbigetdata](assets/image49.png)
 
 
+Select Snowflake and click the Connect button. 
+
+![pbigetdata](assets/image84.png)
+
+The **Snowflake** connector page will appear.  Enter your **Server, Warehouse** and click **OK**. 
+
+![pbigetdata](assets/image55.png)
+
+You must authenticate to your Snowflake server. Select Snowflake in the left navigation	and enter your **User name** and **Password** and click **OK**.
+
+![pbigetdata](assets/image7.png)
+
+The Navigator will open.  Expand your database. If you are following along the database name will be LAB_DB.  Then expand PUBLIC. Check the box next to the following items: 
+ 
+- ITEMS_V 
+- LOCATION_V 
+- SALES_ORDER 
+- CHANNELS 
+
+![pbigetdata](assets/image71.png)  
+
+Click **Load**
+
+On the **Connection settings** windows select the **Direct Query** radio button and click **OK**. 
+
+![pbigetdata](assets/image31.png) 
 
 
+The model will begin to load and the Fields list will appear populated with tables.  Similar to the image below: 
 
 
+![pbigetdata](assets/image1.png)
+
+1 Click on **View** in the ribbon and click the item labeled **Performance Analyzer**. 
+
+![pbigetdata](assets/image58.png)
+
+2 On the Performance Analyzer windows click Start Recording.
+
+![pbigetdata](assets/image78.png)  
+
+Expand SALES_ORDER_V and check the box next to QUANTITY. That will take several seconds. 
+
+![pbigetdata](assets/image60.png)
+
+Expand QUANTITY in the Performance Analyzer window. Note the times.
+
+![pbigetdata](assets/image14.png)
+
+**Open** the Power BI Desktop file named **DirectQuery.pbit**. 
+When prompted enter your **Server, Warehouse and Database**. Click **OK**. 
+
+![pbigetdata](assets/image28.png)
+
+Once the report loads, repeat steps 1-2. 
+Click on the page labeled **Overview** and note the timings. 
+
+![pbigetdata](assets/image47.png)
+
+This will be the baseline used in our model optimization steps.
+
+![pbigetdata](assets/image57.png)
+
+**Please keep this file open, as it will be used in the next module. **
+
+### 7.2 Creating and Configuring the Composite Model in Power BI
+
+In this module we will begin the optimization process by changing the storage model of several tables. This change will improve the performance of the report slightly. 
+ **Modifying Table Storage Modes** 
+- Open the Power BI Desktop file named DirectQuery.pbit if it is not already opened. 
+- Repeat step 7.1.16 if needed. 
+- Click on the Model icon located in the left navigation section of the report.
+
+![pbigetdata](assets/image16.png)  
+
+Select the CHANNELS table. 
+
+![channelstable](assets/image9.png) 
+
+Locate the **Properties** section, which is to the right of the window. 
+
+![channelstable](assets/image2.png)  
+
+Expand the **Advanced** section. 
+
+![channelstable](assets/image44.png)  
+
+Click the **Storage mode** drop down and select **Dual** from the list of available choices. 
+
+![channelstable](assets/image72.png)
+
+Repeat the 3 steps above for the **ITEMS_V** and **LOCATION_V** tables. 
+Click the **Report** icon located in the navigation section. 
+ 
+ 
+Click the **Refresh visuals** button. 
+
+![channelstable](assets/image62.png)
+
+Note the speed of the **Select State** and **Select Category** items. Much faster! 
+
+![channelstable](assets/image87.png)
+
+**Please keep this file open, as it will be used in the next module.** 
+
+### 7.3 Configuring Aggregation in Power BI
+
+In the final section, we will be adding an additional table to the model that will complete the optimization of the report. 
+- If you closed the file from the previous module, open the **Composite.pbit** file and enter the required information when you are prompted. Refer to step 7.1.16 for additional information. 
+- Click **Home** in the ribbon. 
+
+![channelstable](assets/image73.png)
+
+Click the drop-down arrow below the **Get data** icon located in the **Data** section of the home ribbon.
+
+![channelstable](assets/image80.png)
+
+Select **More** from the list of available choices. 
+
+![channelstable](assets/image40.png)
+
+Type **snowflake** in the textbox located directly below **Get Data** when the window opens. 
+
+![channelstable](assets/image49.png)
+
+Select **Snowflake** and click the **Connect** button.
+
+![channelstable](assets/image84.png)
+
+The **Snowflake** connector page will appear.  Enter your **Server, Warehouse** and click **OK**.
+
+![channelstable](assets/image55.png)
+
+**Note:**  This screen may not appear. You must authenticate to your Snowflake server. Select Snowflake in the left navigation	and enter your User name and Password and click OK. 
+
+![channelstable](assets/image7.png)
+
+The Navigator will open.  Expand your database. If you are following along the database name will be **LAB_DB**.  Then expand **PUBLIC**. Check he box next to **SALES_ORDERS_V_AGG** and click the Load button. 
+
+![channelstable](assets/image61.png)
+
+Select the **Import** radio button on the Connection settings window that appears.
+![channelstable](assets/image83.png)
+
+Click on the **Model** icon located in the left navigation section. 
+Ensure that **Home** is selected, locate the Relationships section, and click the Manage Relationships icon and the corresponding window will open. 
+Click the **New** button. 
+
+![channelstable](assets/image86.png)
+
+The **Create Relationship** window will open. Select **ITEMS_V** in the upper drop-down list and **SALES_ORDERS_V_AGG** in the lower. Power BI should automatically select the **ITEM_ID** column for both tables. If not, select both. Your window should resemble the following:
+
+![channelstable](assets/image17.png)
+
+Click **OK**.
+
+Repeat the two steps above this time selecting **CHANNELS** and **SALES_ORDERS_V_AGG**. Power BI should automatically select **CHANNEL_ID** for both tables. If not, do so and click OK and click Close.   
+
+Locate the **SALES_ORDERS_V_AGG** and click the **ellipses** that is in the top right corner. 
 
 
+![channelstable](assets/image15.png)  
 
+Click it and select **Manage aggregations** from menu that appears.  
+
+![channelstable](assets/image67.png)  
+
+Click the drop-down in the **TOTAL_QUANTITY** row and select **Sum** from the list of available choices. In the same row, move to the **DETAIL TABLE** column and select **SALES_ORDERS_V** from the drop-down. Finally, move to the **DETAIL COLUMN** column and select **QUANTITY** from the drop-down. 
+Your window should resemble the following: 
+
+![channelstable](assets/image52.png) 
+
+Click **Apply all**. 
+Go back to the report view, enable the **Performance Analyzer**, start recording and refresh the visuals.  
+
+**Note:** Most visuals render in less than a second beside the **Items Order by Location**.
+
+![channelstable](assets/image70.png) 
+
+Expand that item and inspect the results. There should be a **Direct query** item. This is an indication that the aggregation was not used.  
+![channelstable](assets/image95.png)  
+
+To solve this, we need to identify why the DAX query is not using the Aggregation. To do this, we are going to use DAX Studio. Ensure that you have this installed on your machine. 
+
+To launch **DAX Studio**, click **External Tools** in the ribbon and click **DAX Studio**.  
+
+
+![channelstable](assets/image56.png)  
+
+Once **DAX Studio** opens, click **Home** in the ribbon. Click **All Queries** located in the Traces section.  
+
+![channelstable](assets/image89.png)  
+
+Click the **All Queries** tab located at the bottom of the windows. 
+
+![channelstable](assets/image38.png)  
+
+Go back to Power BI and ensure that the **Performance Analyzer** is recording. Hover over the **Map** visual (**Items Order by Location**). Click the **Analyze this visual** icon. It will be the first in the list of icon in the top right corner.   
+
+![channelstable](assets/image24.png)  
+
+Back in **DAX Studio**, you will see a new row in the **All Queries** pane.   
+
+![channelstable](assets/image59.png)  
+
+Double-click the row and the full DAX Query will appear in the DAX window.  
+
+![channelstable](assets/image79.png)  
+
+Click the **All Queries** icon in the Traces section.  This will turn off the trace.  
+
+Click the **Server Timing** icon in the Traces section.  
+
+![channelstable](assets/image51.png)   
+
+Locate the **Query** section and click the **Run** button.  
+
+
+![channelstable](assets/image43.png)    
+  
+Click the **Server Timings** tab located at the bottom of the windows. You will see the results of the query execution. Click the row that contains **<attemptFailed>** in the Query column.  
+
+![channelstable](assets/image5.png)  
+
+With that item select a new window will appear to the right. Click the drop-down arrow located to the left of **Details**. You may need to resize the window to view all the details.  
+
+![channelstable](assets/image12.png)   
+
+From these details, we can identify why the query didn’t use the aggregation. According to the information provided, our model is missing a mapping to the **LOCATION_V[LONGITUDE]** column.  
+
+ There are a few options to fix this. Go to the Model view in Power BI and create a relationship between the **LOCATION_V** table and the **SALES_ORDER_V_AGG** table.  
+ 
+ Rerun the query and DAX studio with Server Timings on. Review, the finds when the execution completes. The results should resemble the following:  
+ 
+![channelstable](assets/image90.png)   
+
+If you rerun the report in Power BI, every visual should run quickly. Just like that your report it optimized!  
+
+
+## Summary & Next Steps  
+
+This lab was designed as a hands-on introduction to Snowflake and Power BI to simultaneously teach best practices on how to use them together in an effective manner. 
+
+We encourage you to continue with your free Snowflake trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
+
+
+- At the very top of the UI click on the “Partner Connect” icon to get access to trial/free ETL and BI tools to help you get more data into Snowflake and then analyze it
+- Read the “Definitive Guide to Maximizing Your Free Trial” document at:
+  [https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
+- Attend a Snowflake virtual or in-person event to learn more about our capabilities and how customers use us  [https://www.snowflake.com/about/events/](https://www.snowflake.com/about/events/)
+- Contact Sales to learn more [https://www.snowflake.com/free-trial-contact-sales/](https://www.snowflake.com/free-trial-contact-sales/)
+
+We also encourage you to continue to explore the capabilities of Power BI. For other Power BI examples visit: [https://docs.aws.amazon.com/sagemaker/latest/dg/howitworks-nbexamples.html](https://docs.aws.amazon.com/sagemaker/latest/dg/howitworks-nbexamples.html)  
+
+
+### Resetting Your Snowflake Environment
+- **Resetting your Snowflake environment by running the SQL commands in the Worksheet:**
+```
+USE ROLE SYSADMIN;
+DROP DATABASE IF EXISTS LAB_DB;
+USE ROLE ACCOUNTADMIN;
+DROP WAREHOUSE IF EXISTS ELT_WH;
+DROP WAREHOUSE IF EXISTS POWERBI_WH;
+```
+- **Resetting Your Azure Environment:**
+To avoid incurring charge for the Azure Blob Storage container that was deployed for the lab you will need to remove the services following these steps:  
+Delete the resource group that was created for the lab
+Go to the Azure Portal and select “Resource Groups” from the menu.
+Click on the resource group you created for this lab - e.g. “snowflake_powerbi_lab_rg”
+Click on “Delete resource group” and type the name in the confirmation box.
 
 
 
