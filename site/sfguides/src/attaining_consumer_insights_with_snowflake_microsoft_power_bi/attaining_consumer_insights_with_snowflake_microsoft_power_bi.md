@@ -1,10 +1,10 @@
-summary: In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration
-id: attaining\_consumer\_insights\_with\_snowflake\_and\_microsoft\_power\_bi
-categories: Getting Started
-environments: web
-status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
+summary: In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration  
+id: attaining\_consumer\_insights\_with\_snowflake\_and\_microsoft\_power\_bi  
+categories: Getting Started  
+environments: web  
+status: Published  
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
+tags: Getting Started, Data Science, Data Engineering  
 
 # Attaining Consumer Insights with Snowflake and Microsoft Power BI
 
@@ -50,7 +50,7 @@ Perform optimization techniques to speed report/dashboard responsiveness
 * The Snowflake Enterprise Edition on Azure West US 2, East US 2 (Washington or Virginia) regions recommended. Or we suggest you select the region which is physically closest to you.
 * After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy, future access. After activation, you will create a user name and password. Write down these credentials.
 
-#### If you do not already have a Azure account please create a new account using this link - [Create Your Azure Free Account](https://azure.microsoft.com/en-us/free/). Make sure you have the permissions to use an Azure Cloud Shell, create an Azure Storage Container and a Azure Shared Access Signature (SAS) Token. Once logged in to your account select an Azure region closest to your Snowflake account, Azure West US 2, East US 2 (Washington or Virginia) regions recommended for this lab.
+#### If you do not already have an Azure account please create a new account using this link - [Create Your Azure Free Account](https://azure.microsoft.com/en-us/free/). Make sure you have the permissions to use an Azure Cloud Shell, create an Azure Storage Container and a Azure Shared Access Signature (SAS) Token. Once logged in to your account select an Azure region closest to your Snowflake account, Azure West US 2, East US 2 (Washington or Virginia) regions recommended for this lab.
 
 #### If you don’t already have Power BI Desktop on your lab workstation, please download and install the latest version using the following link: [Power BI Desktop](https://www.microsoft.com/en-us/download/details.aspx?id=58494)
 
@@ -150,7 +150,6 @@ This module will walk you through the steps to:
 * Load the lab data files into the storage account from github - via azure shell
 * (optional) Connect Azure Storage Explorer to the storage account to browse files
 
-##Preparing to Load Data & Loading Data in Snowflake
 
 ### 4.1 Create a blob storage account
 
@@ -179,17 +178,20 @@ Click “Create” to complete the storage account creation.
 
 Click “Go to resource” once the storage account creation completes.
 
-### 4.2 Create blob container to house the lab files
+### 4.2 Create a blob container to house the lab files
 
 Navigate to “**Containers**” within the storage account
+
 ![data snippet](assets/image92.png)
 
 Select “+ Container” and create a new lab-data container:
+
 ![data snippet](assets/image36.png)
 
 ### 4.3 Generate a SAS token for accessing the blob container
 
 From the storage account containers page, click on the “**lab-data**” container
+
 ![data snippet](assets/image66.png)
 
 Then select “**Shared access tokens**”
@@ -811,7 +813,8 @@ Note the speed of the **Select State** and **Select Category** items. Much faste
 ### 7.3 Configuring Aggregation in Power BI
 
 In the final section, we will be adding an additional table to the model that will complete the optimization of the report. 
-- If you closed the file from the previous module, open the **Composite.pbit** file and enter the required information when you are prompted. Refer to step 7.1.16 for additional information. 
+- If you closed the file from the previous module, open the **Composite.pbit** file and enter the required information when you are prompted. Refer to earlier steps for additional information. 
+
 - Click **Home** in the ribbon. 
 
 ![channelstable](assets/image73.png)
@@ -836,7 +839,8 @@ The **Snowflake** connector page will appear.  Enter your **Server, Warehouse** 
 
 ![channelstable](assets/image55.png)
 
-**Note:**  This screen may not appear. You must authenticate to your Snowflake server. Select Snowflake in the left navigation	and enter your User name and Password and click OK. 
+**Note:**  This screen may not appear. You must authenticate to your Snowflake server. 
+Select Snowflake in the left navigation	and enter your User name and Password and click OK. 
 
 ![channelstable](assets/image7.png)
 
@@ -882,10 +886,12 @@ Go back to the report view, enable the **Performance Analyzer**, start recording
 
 ![channelstable](assets/image70.png) 
 
-Expand that item and inspect the results. There should be a **Direct query** item. This is an indication that the aggregation was not used.  
+Expand that item and inspect the results. There should be a **Direct query** item. This is an indication that the aggregation was not used.
+
 ![channelstable](assets/image95.png)  
 
-To solve this, we need to identify why the DAX query is not using the Aggregation. To do this, we are going to use DAX Studio. Ensure that you have this installed on your machine. 
+To solve this, we need to identify why the DAX query is not using the Aggregation. 
+To do this, we are going to use DAX Studio. Ensure that you have this installed on your machine. 
 
 To launch **DAX Studio**, click **External Tools** in the ribbon and click **DAX Studio**.  
 
@@ -946,7 +952,9 @@ If you rerun the report in Power BI, every visual should run quickly. Just like 
 
 This lab was designed as a hands-on introduction to Snowflake and Power BI to simultaneously teach best practices on how to use them together in an effective manner. 
 
-We encourage you to continue with your free Snowflake trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
+We encourage you to continue with your free Snowflake trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. 
+
+There are several ways Snowflake can help you with this:
 
 
 - At the very top of the UI click on the “Partner Connect” icon to get access to trial/free ETL and BI tools to help you get more data into Snowflake and then analyze it
@@ -955,11 +963,13 @@ We encourage you to continue with your free Snowflake trial by loading in your o
 - Attend a Snowflake virtual or in-person event to learn more about our capabilities and how customers use us  [https://www.snowflake.com/about/events/](https://www.snowflake.com/about/events/)
 - Contact Sales to learn more [https://www.snowflake.com/free-trial-contact-sales/](https://www.snowflake.com/free-trial-contact-sales/)
 
-We also encourage you to continue to explore the capabilities of Power BI. For other Power BI examples visit: [https://docs.aws.amazon.com/sagemaker/latest/dg/howitworks-nbexamples.html](https://docs.aws.amazon.com/sagemaker/latest/dg/howitworks-nbexamples.html)  
+We also encourage you to continue to explore the capabilities of Power BI. 
 
 
-### Resetting Your Snowflake Environment
-- **Resetting your Snowflake environment by running the SQL commands in the Worksheet:**
+
+### Resetting Your Environment
+
+#### **Resetting your Snowflake environment by running the SQL commands in the Worksheet:**
 ```
 USE ROLE SYSADMIN;
 DROP DATABASE IF EXISTS LAB_DB;
@@ -967,16 +977,17 @@ USE ROLE ACCOUNTADMIN;
 DROP WAREHOUSE IF EXISTS ELT_WH;
 DROP WAREHOUSE IF EXISTS POWERBI_WH;
 ```
-- **Resetting Your Azure Environment:**
-To avoid incurring charge for the Azure Blob Storage container that was deployed for the lab you will need to remove the services following these steps:  
-Delete the resource group that was created for the lab
-Go to the Azure Portal and select “Resource Groups” from the menu.
-Click on the resource group you created for this lab - e.g. “snowflake_powerbi_lab_rg”
-Click on “Delete resource group” and type the name in the confirmation box.
+#### **Resetting Your Azure Environment:**  
 
+To avoid incurring charges for the Azure Blob Storage container that was deployed for the lab you will need to remove the services following these steps:  
+ Delete the resource group that was created for the lab  
 
+ Go to the Azure Portal and select “Resource Groups” from the menu.  
 
+ Click on the resource group you created for this lab - e.g. “snowflake\_powerbi\_lab\_rg”  
 
+ Click on “Delete resource group” and type the name in the confirmation box.  
 
+![channelstable](assets/image6.png) 
 
 
