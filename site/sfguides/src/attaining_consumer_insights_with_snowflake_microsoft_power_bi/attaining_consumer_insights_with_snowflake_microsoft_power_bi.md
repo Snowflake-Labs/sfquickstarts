@@ -973,10 +973,3 @@ Delete the resource group that was created for the lab
 Go to the Azure Portal and select “Resource Groups” from the menu.
 Click on the resource group you created for this lab - e.g. “snowflake_powerbi_lab_rg”
 Click on “Delete resource group” and type the name in the confirmation box.
-
-
-
-
-
-
-
