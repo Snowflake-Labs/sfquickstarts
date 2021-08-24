@@ -1,8 +1,8 @@
 summary: In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration
-id: attaining\_cnsumer\_insights\_with\_snowflake\_and\_microsoft\_power\_bi
+id: attaining\_consumer\_insights\_with\_snowflake\_and\_microsoft\_power\_bi
 categories: Getting Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
