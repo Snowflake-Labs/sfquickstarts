@@ -54,7 +54,7 @@ The first thing you will need to do is download the following .sql file that con
 </button>
 <br/><br/>
 
-At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be need for this lab and most of the hints will be covered throughout the remainder of this exercise.
+At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close any hint boxes that are looking to help guide you. These will not be needed for this lab as most of the hints will be covered throughout the remainder of this exercise.
 
 ![](assets/p5.png)
 <br/><br/>
@@ -356,7 +356,7 @@ Snowflake's Partner Connect feature allows you to seamlessly get started with pa
 ![](assets/p20.png)
 <br/><br/>
 
-Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners that allow a simple method of setting up integrations with Snowflake. You should see DataRobot near the bottom.
+Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. You should see DataRobot near the bottom.
 
 ![](assets/p21.png)
 <br/><br/>
