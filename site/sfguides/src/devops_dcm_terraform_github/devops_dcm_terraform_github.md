@@ -324,7 +324,7 @@ Open up your cloned repository in your favorite IDE and edit the `main.tf` file 
 
 ```terraform
 resource "snowflake_schema" "demo_schema" {
-  database = "DEMO_DB"
+  database = snowflake_database.demo_db.name
   name     = "DEMO_SCHEMA"
   comment  = "Schema for Snowflake Terraform demo"
 }
@@ -346,7 +346,7 @@ name: "Snowflake Terraform Demo Workflow"
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -414,7 +414,7 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 ```
 
