@@ -27,6 +27,7 @@ Luckily, streaming data is one of the [use-cases](https://www.snowflake.com/clou
 
 ### Prerequisites
 * A Snowflake account. Existing or if you are not(yet) a Snowflake user, you can always get a [trial](https://trial.snowflake.com/) account
+
 * Familiarity with Snowflake and Snowflake objects
 
 ### What You’ll Learn 
@@ -40,6 +41,7 @@ Luckily, streaming data is one of the [use-cases](https://www.snowflake.com/clou
 
 ### What You’ll Build 
 * a Data Vault environment on Snowflake, based on sample dataset 
+
 * data pipelines, leveraging streams, tasks and Snowpipe
 
 <!-- ------------------------ -->
@@ -64,8 +66,35 @@ Architecturally, we will split the data lifecycle into following layers:
 
 
 <!-- ------------------------ -->
-## Environment setup & sample data
-Duration: 10
+## Environment setup 
+Duration: 5
+
+1. Login to your Snowflake trial account.  
+![Snowflake Log In Screen](assets/img4.png)  
+
+2. First page you are going to see would likely be [Snowflake Classic UI](https://docs.snowflake.com/en/user-guide/ui-using.html):
+![Snowflake Classic UI](assets/img7.png)   
+To keep things interesting, for the purpose of this lab let's use [Snowflake New Web Interface](https://docs.snowflake.com/en/user-guide/ui-web.html) also known as Snowsight. However, you absolutely can continue using Classic UI as all steps in this guide are expressed in SQL and will work regardless what interface is used.
+To switch into Snowsight, let's click the **Preview** button in the top-right corner:
+
+![Snowflake New UI](assets/img5.png)   
+
+Click Sign in to continue. You will need to use the same user and password that you used to login to your Snowflake account the first time.
+
+![Sign In](assets/img6.png)   
+
+You're now in the new UI - Snowsight. It's pretty cool - with charting, dashboards, autocompletion and new capabilities that our engineering team will continue to add on weekly. Now, let's click on Worksheets...
+
+3. Let's click on the worksheets -> **+ Worksheet** 
+![Sign In](assets/img8.png)   
+
+And without going into too much details, this is a fairly intuitive SQL workbench. It has a section for code we are going to be copy-pasting, object tree on the left, the 'run' button and of course the result panel at the bottom with the simple charting functionality. 
+![Worksheet](assets/img9.png)   
+
+4. We are going to start by setting up basics for the lab environment. Creating a clean database and logically dividing it into four different schemas, representing each functional area mentioned in the reference architecture. 
+
+To keep things simple, we are going to use the ACCOUNTADMIN role (thou, of course in the real life examples you would employ a proper RBAC model). We also going to create two [Snowflake virtual warehouses](https://docs.snowflake.com/en/user-guide/warehouses.html) to manage compute - one for generic use during the course of this lab and the other one (dv_rdv_wh) that is going to be used by our data pipelines. You might notice that the code for two more virtual warehouses (dv_bdv_wh, dv_id_wh) is commented - again, this is just to keep things simple for the guide but we wanted to illustrate the fact you can have as many of virtual warehouses of any size and configuration as you needed. For example having separate ones to deal with different layers in our Data Vault architecture.
+
 
 ```sql
 --------------------------------------------------------------------
@@ -89,7 +118,25 @@ CREATE OR REPLACE SCHEMA l00_stg COMMENT = 'Schema for Staging Area objects';
 CREATE OR REPLACE SCHEMA l10_rdv COMMENT = 'Schema for Raw Data Vault objects';
 CREATE OR REPLACE SCHEMA l20_bdv COMMENT = 'Schema for Business Data Vault objects';
 CREATE OR REPLACE SCHEMA l30_id  COMMENT = 'Schema for Information Delivery objects';
+```
 
+<!-- ------------------------ -->
+## Sample data & staging area
+Duration: 5
+
+Every Snowflake account provides access to [sample data sets](https://docs.snowflake.com/en/user-guide/sample-data.html). You can find corresponding schemas in SNOWFLAKE_SAMPLE_DATA database in your object explorer.
+For this guide we are going to use a subset of objects from [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html) set, representing **customers** and their **orders**. We also going to take some reference data about **nations** and **regions**. 
+
+| Dataset | Description | Source | Load Scenario | Mechanism
+| --- | ----------- |--- | --- | --- |--- |
+| Nation | Static ref data | snowflake.sample_data.tpch_sf10.nation | one-off CTAS | SQL
+| Region | Static ref data | snowflake.sample_data.tpch_sf10.region | one-off CTAS | SQL
+| Customer | Customer data | snowflake.sample_data.tpch_sf10.customer | incremental JSON files | Snowpipe
+| Orders | Orders data | snowflake.sample_data.tpch_sf10.orders | incremental CSV files | Snowpipe
+
+1. Let's start with the static reference data:
+
+```sql
 --------------------------------------------------------------------
 -- setting up staging area
 --------------------------------------------------------------------
@@ -109,7 +156,10 @@ SELECT src.*
      , CURRENT_TIMESTAMP()          ldts 
      , 'Static Reference Data'      rscr 
   FROM snowflake_sample_data.tpch_sf10.region src;
+```
 
+2. Next, let's create staging tables for our data loading 
+```sql
 CREATE OR REPLACE TABLE stg_customer
 (
   raw_json                VARIANT
