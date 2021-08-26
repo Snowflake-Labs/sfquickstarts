@@ -371,6 +371,10 @@ Well done! We build our staging/inbound pipeline, ready to accomodate streaming 
 ## Build: Raw Data Vault
 Duration: 10
 
+In this section, we will start building structures and pipelines for **Raw Data Vault** area. 
+
+1. We'll start by deploying DDL for the HUBs, LINKs and SATellite tables. As you can imagine, this guide has no chance to go in the detail on data vault modelling process. This is something we usually highly recommend to establish by working with experts & partners from Data Vault Alliance.  
+
 ```sql
 --------------------------------------------------------------------
 -- setting up RDV
@@ -471,8 +475,12 @@ CREATE OR REPLACE TABLE ref_nation
 , CONSTRAINT pk_ref_nation PRIMARY KEY (nationcode)                                                                             
 , CONSTRAINT fk_ref_region FOREIGN KEY (regioncode) REFERENCES ref_region(regioncode)  
 );         
+```
 
+2. Now we have source data waiting in our staging streams & views, we have target RDV tables. 
+Let's connect the dots. We are going to create tasks, one per each stream so whenever there is new records coming in a stream, that delta will be incrementally propagated to all dependent RDV models in one go. To achieve that, we are going to use multi-table insert functionality as described in design section before. As you can see, tasks can be set up to run on a pre-defined frequency (every 1 minute in our example) and use dedicated virtual warehouse as a compute power (in our guide we are going to use same warehouse for all tasks, thou this could be as granular as needed). Also, before waking up a compute resource, tasks are going to check that there is data in a corresponding stream to process. Again, you are paying only for the compute when you actually use it.  
 
+```sql
 CREATE OR REPLACE TASK customer_strm_tsk
   WAREHOUSE = dv_rdv_wh
   SCHEDULE = '1 minute'
@@ -625,6 +633,38 @@ ALTER TASK order_strm_tsk    RESUME;
 
 ```
 
+2. Once tasks are created and RESUMED (by default, they are initially suspended) lets have a look on the task execution history to see how the process will start. 
+
+```sql
+SELECT *
+  FROM table(information_schema.task_history())
+  ORDER BY scheduled_time DESC;
+```
+Notice how after successfull execution, next two tasks run were automatically SKIPPED as there were nothing in the stream and there nothing to do. 
+
+![staged data](assets/img13.png)
+
+3. We can also check content and stats of the objects involved. Please notice that views on streams in our staging area are no longer returning any rows. This is because that delta of changes was consumed by a successfully completed DML transaction (in our case, embedded in tasks). This way you don't need to spend any time implementing incremental detection/processing logic on the application side. 
+
+```sql
+SELECT 'hub_customer', count(1) FROM hub_customer
+UNION ALL
+SELECT 'hub_order', count(1) FROM hub_order
+UNION ALL
+SELECT 'sat_customer', count(1) FROM sat_customer
+UNION ALL
+SELECT 'sat_order', count(1) FROM sat_order
+UNION ALL
+SELECT 'lnk_customer_order', count(1) FROM lnk_customer_order
+UNION ALL
+SELECT 'l00_stg.stg_customer_strm_outbound', count(1) FROM l00_stg.stg_customer_strm_outbound
+UNION ALL
+SELECT 'l00_stg.stg_order_strm_outbound', count(1) FROM l00_stg.stg_order_strm_outbound;
+```
+![staged data](assets/img14.png)
+
+Great. We now have data in our **Raw Data Vault** core structures. Lets move on and talk about the concept of virtualization for building your near-real time Data Vault solution.
+
 <!-- ------------------------ -->
 ## Views for Agile Reporting
 Duration: 10
@@ -653,31 +693,36 @@ Duration: 10
 
 As a quick example of using views for transformations we just discussed, here is how enrichment of customer descriptive data could happen in Business Data Vault, connecting data received from source with some reference data.
 
+1. Let's create a view that will perform these additional derivations on the fly. Assuming non-functional capabilities are satisflying our requirements, deploying (and re-deploying a new version) transformations in this way is super easy. 
+
 ```SQL
+USE SCHEMA l20_bdv;
+
 CREATE OR REPLACE VIEW sat_customer_bv
 AS
-SELECT 
-  rsc.sha1_hub_customer  
-, rsc.ldts                   
-, rsc.c_name                 
-, rsc.c_address              
-, rsc.c_phone                 
-, rsc.c_acctbal              
-, rsc.c_mktsegment               
-, rsc.c_comment              
-, rsc.nationcode             
-, rsc.rscr 
--- derived 
-, rrn.n_name                 nation_name
-, rrr.r_name                 region_name
+SELECT rsc.sha1_hub_customer  
+     , rsc.ldts                   
+     , rsc.c_name                 
+     , rsc.c_address              
+     , rsc.c_phone                 
+     , rsc.c_acctbal              
+     , rsc.c_mktsegment               
+     , rsc.c_comment              
+     , rsc.nationcode             
+     , rsc.rscr 
+     -- derived 
+     , rrn.n_name                    nation_name
+     , rrr.r_name                    region_name
   FROM l10_rdv.sat_customer          rsc
   LEFT OUTER JOIN l10_rdv.ref_nation rrn
     ON (rsc.nationcode = rrn.nationcode)
   LEFT OUTER JOIN l10_rdv.ref_region rrr
     ON (rrn.regioncode = rrr.regioncode)
 ;
+```
+2. Now,lets imagine we have a heavier transformation to perform that it would make more sense to materialize it as a table. It could be more data volume, could be more complex logic, PITs, bridges or even an object that will be used frequently and by many users. For this case, lets first build a new business satellite that for illustration purposes will be deriving additional classification/tiering for orders based on the conditional logic. 
 
-
+```sql
 CREATE OR REPLACE TABLE sat_order_bv
 ( 
   sha1_hub_order         BINARY    NOT NULL   
@@ -695,11 +740,32 @@ CREATE OR REPLACE TABLE sat_order_bv
 , order_priority_bucket  STRING
 , CONSTRAINT pk_sat_order PRIMARY KEY(sha1_hub_order, ldts)
 , CONSTRAINT fk_sat_order FOREIGN KEY(sha1_hub_order) REFERENCES l10_rdv.hub_order
-);   
+)
+AS 
+SELECT sha1_hub_order 
+     , ldts           
+     , o_orderstatus  
+     , o_totalprice   
+     , o_orderdate    
+     , o_orderpriority
+     , o_clerk        
+     , o_shippriority 
+     , o_comment      
+     , hash_diff      
+     , rscr 
+     -- derived additional attributes
+     , CASE WHEN o_orderpriority IN ('2-HIGH', '1-URGENT')             AND o_totalprice >= 200000 THEN 'Tier-1'
+            WHEN o_orderpriority IN ('3-MEDIUM', '2-HIGH', '1-URGENT') AND o_totalprice BETWEEN 150000 AND 200000 THEN 'Tier-2'  
+            ELSE 'Tier-3'
+       END order_priority_bucket
+  FROM l10_rdv.sat_order;
+```
 
+3. What we are going to do from processing/orchestration perspective is extending our order processing pipeline so that when the task populates a **l10_rdv.sat_order** this will generate a new stream of changes and these changes are going to be propagated by a dependent task to **l20_bdv.sat_order_bv**.
+This is super easy to do as tasks in Snowflake can be not only schedule-based but also start automatically once the parent task is completed.
 
-CREATE OR REPLACE STREAM l10_rdv.sat_order_strm ON TABLE l10_rdv.sat_order;
- 
+```sql
+CREATE OR REPLACE STREAM l10_rdv.sat_order_strm ON TABLE l10_rdv.sat_order; 
 
 ALTER TASK l10_rdv.order_strm_tsk SUSPEND;
 
@@ -726,21 +792,50 @@ SELECT
        ELSE 'Tier-3'
   END order_priority_bucket
 FROM sat_order_strm;
---relying on immutability of RDV
 
-ALTER TASK l10_rdv.order_strm_tsk SUSPEND;
 ALTER TASK l10_rdv.hub_order_strm_sat_order_bv_tsk RESUME;
 ALTER TASK l10_rdv.order_strm_tsk RESUME;
-
 ```
 
+4. Now, lets go back to our staging area to process another slice of data to test the task. 
 
+```sql
+USE SCHEMA l00_stg;
+
+COPY INTO @orders_data 
+FROM
+(SELECT *
+  FROM snowflake_sample_data.tpch_sf10.orders limit 1000
+) 
+INCLUDE_QUERY_ID=TRUE;
+
+ALTER PIPE stg_orders_pp   REFRESH;
+```
+
+5. Data is not automatically flowing through all the layers via asyncronous tasks. With the results you can validate: 
+
+```sql
+SELECT 'l00_stg.stg_orders', count(1) FROM l00_stg.stg_orders
+UNION ALl
+SELECT 'l00_stg.stg_orders_strm', count(1) FROM l00_stg.stg_orders_strm
+UNION ALl
+SELECT 'l10_rdv.sat_order', count(1) FROM l10_rdv.sat_order
+UNION ALl
+SELECT 'l10_rdv.sat_order_strm', count(1) FROM l10_rdv.sat_order_strm
+UNION ALL
+SELECT 'l20_bdv.sat_order_bv', count(1) FROM l20_bdv.sat_order_bv;
+```
+
+![staged data](assets/img15.png)
+
+Great. Hope this example illustrated few ways of managing **Business Data Vault** objects in our pipeline.
+Lets finally move into the **Information Delivery** layer. 
 
 <!-- ------------------------ -->
 ## Build: Information Delivery
 Duration: 10
 
-```
+```sql
 --------------------------------------------------------------------
 -- RDV curr views
 --------------------------------------------------------------------
@@ -787,10 +882,15 @@ Simplicity of engineering, openness, scalable performance, enterprise-grade gove
 
 Delivering more usable data faster is no longer an option for today’s business environment. Using the Snowflake platform, combined with the Data Vault 2.0 architecture it is now possible to build a world class analytics platform that delivers data for all users in near real-time. 
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
-
 ### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- building Data Vault environment
+- unloading and loading back data using COPY and Snowpipe
+- engineering data pipelines using virtualization, streams and tasks
+
+### Call to action
+- seeing is believing. Try it! 
+- we made examples limited in size, but feel free to scale the data volumes and virtual warehouse size to see scalability in action
+- tap into numerous communities of practice for Data Engineering on Snowflake and Data Vault in particular
+- talk to us about modernizing your data landscape! Whether it is Data Vault or not you have on your mind, we have the top expertise and product to meet your demand
+- feedback is super welcome! 
+- Enjoy your journey! 
