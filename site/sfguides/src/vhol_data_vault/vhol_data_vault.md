@@ -158,7 +158,10 @@ SELECT src.*
   FROM snowflake_sample_data.tpch_sf10.region src;
 ```
 
-2. Next, let's create staging tables for our data loading 
+2. Next, let's create staging tables for our data loading. This syntax should be very familiar with anyone working with databases before. It is ANSI SQL compliant DDL, with probably one key exception - for stg_customer we are going to load the full payload of JSON into raw_json column. For this, Snowflake has a special data type [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured.html). 
+
+As we load data we also going to add some technical metadata, like load data timestamp, row number in a file. 
+
 ```sql
 CREATE OR REPLACE TABLE stg_customer
 (
@@ -185,12 +188,109 @@ CREATE OR REPLACE TABLE stg_orders
 , ldts                    STRING   NOT NULL
 , rscr                    STRING   NOT NULL
 );
+```
 
+3. Tables we just created are going to be used by Snowpipe to drip-feed the data as it is lands in the stage. 
+In order to easily detect and incrementally process the new portion of data we are going to create [streams](https://docs.snowflake.com/en/user-guide/streams.html) on these staging tables:
+
+```sql
 CREATE OR REPLACE STREAM stg_customer_strm ON TABLE stg_customer;
 CREATE OR REPLACE STREAM stg_orders_strm ON TABLE stg_orders;
+```
 
+4. Next we are going to produce some sample data. And for the sake of simplicity we are going to take a bit of a shortcut here. 
+We are going to generate data by unloading subset of data from our TPCH sample dataset into files and then use Snowpipe to load it back into our Data Vault lab, simulating the streaming feed. 
+Let's start by creating two stages for each data class type (orders, customers data). In real-life scenarios these could be internal or external stages as well as these feeds could be sourced via Kafka connector. The world is your oyster. 
 
+```sql
+CREATE OR REPLACE STAGE customer_data FILE_FORMAT = (TYPE = JSON);
+CREATE OR REPLACE STAGE orders_data   FILE_FORMAT = (TYPE = CSV) ;
+```
 
+5. Generate and unload sample data. There are couple of things going on. 
+First, we are using [object_construct](https://docs.snowflake.com/en/sql-reference/functions/object_construct.html) as a quick way to create a object/document from all columns and subset of rows for customer data and offload it into customer_data stage. Orders data would be extracted into compressed CSV files. There are many additonal options in [COPY INTO stage](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html) construct that would fit most requirements, but in this case we are using INCLUDE_QUERY_ID to make it easier to generate new incremental files as we are going to run these commands over and over again, without a need to deal with file overriding. 
+
+```sql
+
+COPY INTO @customer_data 
+FROM
+(SELECT object_construct(*)
+  FROM snowflake_sample_data.tpch_sf10.customer limit 10
+) 
+INCLUDE_QUERY_ID=TRUE;
+
+COPY INTO @orders_data 
+FROM
+(SELECT *
+  FROM snowflake_sample_data.tpch_sf10.orders limit 1000
+) 
+INCLUDE_QUERY_ID=TRUE;
+```
+
+You can now run the following to validate that the data is now stored in files:
+```sql
+list @customer_data;
+SELECT METADATA$FILENAME,$1 FROM @customer_data; 
+```
+![staged data](assets/img10.png)
+
+6. Next, we are going to setup Snowpipe to load data from files in a stage into staging tables. 
+In this guide, for better transparency we are going to trigger Snowpipe explicitly to scan for new files, but in real projects you will likely going to enable AUTO_INGEST, connecting it with your cloud storage events (like AWS SNS) and process new files automatically. 
+
+```sql
+CREATE OR REPLACE PIPE stg_orders_pp 
+--AUTO_INGEST = TRUE
+--aws_sns_topic = 'arn:aws:sns:mybucketdetails'
+AS 
+COPY INTO stg_orders 
+FROM
+(
+SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9 
+     , metadata$filename
+     , metadata$file_row_number
+     , CURRENT_TIMESTAMP()
+     , 'Orders System'
+  FROM @orders_data
+);
+
+CREATE OR REPLACE PIPE stg_customer_pp 
+--AUTO_INGEST = TRUE
+--aws_sns_topic = 'arn:aws:sns:mybucketdetails'
+AS 
+COPY INTO stg_customer
+FROM 
+(
+SELECT $1
+     , metadata$filename
+     , metadata$file_row_number
+     , CURRENT_TIMESTAMP()
+     , 'Customers System'
+  FROM @customer_data
+);
+
+ALTER PIPE stg_customer_pp REFRESH;
+
+ALTER PIPE stg_orders_pp   REFRESH;
+```
+
+Once this done, you should be able to see data appearling in the target tables and the stream on these tables.
+As you would notice, number of rows in a stream is exactly the same as in the base table. This is because we didn't process/consumed the delta of that stream yet. Stay tuned! 
+
+```sql
+SELECT 'stg_customer', count(1) FROM stg_customer
+UNION ALL
+SELECT 'stg_orders', count(1) FROM stg_orders
+UNION ALL
+SELECT 'stg_orders_strm', count(1) FROM stg_orders_strm
+UNION ALL
+SELECT 'stg_customer_strm', count(1) FROM stg_customer_strm
+;
+```
+![staged data](assets/img11.png)
+
+7. Finally, now that we established the basics and new data is knocking at our door (stream), lets see how we can derive some of the business keys for the Data Vault entites we are going to model. In this example, we will model it as a view on top of the stream that should allow us to perform data parsing (raw_json -> columns) and business_key, hash_diff derivation on the fly: 
+
+```sql
 CREATE OR REPLACE VIEW stg_customer_strm_outbound AS 
 SELECT src.*
      , raw_json:C_CUSTKEY::NUMBER           c_custkey
@@ -237,63 +337,8 @@ SELECT src.*
                                                         ), '^')))  AS order_hash_diff     
   FROM stg_orders_strm src
 ;
-
--- CREATE OR REPLACE STAGE my_ext_stage
---   url='s3://load/files/'
---   credentials=(aws_key_id='1a2b3c' aws_secret_key='4x5y6z');
-CREATE OR REPLACE STAGE customer_data FILE_FORMAT = (TYPE = JSON);
-CREATE OR REPLACE STAGE orders_data   FILE_FORMAT = (TYPE = CSV) ;
-
-COPY INTO @customer_data 
-FROM
-(SELECT object_construct(*)
-  FROM snowflake_sample_data.tpch_sf10.customer limit 10
-) 
-INCLUDE_QUERY_ID=TRUE;
-
-COPY INTO @orders_data 
-FROM
-(SELECT *
-  FROM snowflake_sample_data.tpch_sf10.orders limit 1000
-) 
-INCLUDE_QUERY_ID=TRUE;
-
-CREATE OR REPLACE PIPE stg_orders_pp 
---AUTO_INGEST = TRUE
---aws_sns_topic = 'arn:aws:sns:us-west-2:001234567890:s3_mybucket'
-AS 
-COPY INTO stg_orders 
-FROM
-(
-SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9 
-     , metadata$filename
-     , metadata$file_row_number
-     , CURRENT_TIMESTAMP()
-     , 'Orders System'
-  FROM @orders_data
-);
-
-CREATE OR REPLACE PIPE stg_customer_pp 
---AUTO_INGEST = TRUE
---aws_sns_topic = 'arn:aws:sns:us-west-2:001234567890:s3_mybucket'
-AS 
-COPY INTO stg_customer
-FROM 
-(
-SELECT $1
-     , metadata$filename
-     , metadata$file_row_number
-     , CURRENT_TIMESTAMP()
-     , 'Customers System'
-  FROM @customer_data
-);
-
-ALTER PIPE stg_customer_pp REFRESH;
-
-ALTER PIPE stg_orders_pp   REFRESH;
-
 ```
-
+Finally lets query thse 
 
 
 <!-- ------------------------ -->
