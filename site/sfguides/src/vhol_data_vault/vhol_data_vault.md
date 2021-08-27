@@ -310,7 +310,7 @@ SELECT 'stg_customer_strm', count(1) FROM stg_customer_strm
 ```
 ![staged data](assets/img11.png)
 
-7. Finally, now that we established the basics and new data is knocking at our door (stream), lets see how we can derive some of the business keys for the Data Vault entites we are going to model. In this example, we will model it as a view on top of the stream that should allow us to perform data parsing (raw_json -> columns) and business_key, hash_diff derivation on the fly.
+7. Finally, now that we established the basics and new data is knocking at our door (stream), let's see how we can derive some of the business keys for the Data Vault entites we are going to model. In this example, we will model it as a view on top of the stream that should allow us to perform data parsing (raw_json -> columns) and business_key, hash_diff derivation on the fly.
 Another thing to notice here is the use of SHA1_BINARY as hasing function. There are many articles on choosing between MD5/SHA1(2)/other hash functions, so we won't focus on this. For this lab, we are going to use fairly common SHA1 and its BINARY version from Snowflake arsenal of functions that use less bytes to encode value than STRING. 
 
 ```sql
@@ -361,7 +361,7 @@ SELECT src.*
   FROM stg_orders_strm src
 ;
 ```
-Finally lets query these views to validate the results:
+Finally let's query these views to validate the results:
 ![staged data](assets/img12.png)
 
 Well done! We build our staging/inbound pipeline, ready to accomodate streaming data and derived business keys that we are going to use in our Raw Data Vault. Let's move on to the next step!
@@ -373,7 +373,13 @@ Duration: 10
 
 In this section, we will start building structures and pipelines for **Raw Data Vault** area. 
 
+Here is the ER model of the objects we are going to deploy using the script below:
+![staged data](assets/img16.png)
+
+
 1. We'll start by deploying DDL for the HUBs, LINKs and SATellite tables. As you can imagine, this guide has no chance to go in the detail on data vault modelling process. This is something we usually highly recommend to establish by working with experts & partners from Data Vault Alliance.  
+
+
 
 ```sql
 --------------------------------------------------------------------
@@ -462,7 +468,14 @@ CREATE OR REPLACE TABLE ref_region
 , r_name                STRING
 , r_comment             STRING
 , CONSTRAINT PK_REF_REGION PRIMARY KEY (REGIONCODE)                                                                             
-);         
+)
+AS 
+SELECT r_regionkey
+     , ldts
+     , rscr
+     , r_name
+     , r_comment
+  FROM l00_stg.stg_region;
 
 CREATE OR REPLACE TABLE ref_nation 
 ( 
@@ -474,7 +487,15 @@ CREATE OR REPLACE TABLE ref_nation
 , n_comment             STRING
 , CONSTRAINT pk_ref_nation PRIMARY KEY (nationcode)                                                                             
 , CONSTRAINT fk_ref_region FOREIGN KEY (regioncode) REFERENCES ref_region(regioncode)  
-);         
+)
+AS 
+SELECT n_nationkey
+     , n_regionkey
+     , ldts
+     , rscr
+     , n_name
+     , n_comment
+  FROM l00_stg.stg_nation;           
 ```
 
 2. Now we have source data waiting in our staging streams & views, we have target RDV tables. 
@@ -633,7 +654,7 @@ ALTER TASK order_strm_tsk    RESUME;
 
 ```
 
-2. Once tasks are created and RESUMED (by default, they are initially suspended) lets have a look on the task execution history to see how the process will start. 
+2. Once tasks are created and RESUMED (by default, they are initially suspended) let's have a look on the task execution history to see how the process will start. 
 
 ```sql
 SELECT *
@@ -663,7 +684,7 @@ SELECT 'l00_stg.stg_order_strm_outbound', count(1) FROM l00_stg.stg_order_strm_o
 ```
 ![staged data](assets/img14.png)
 
-Great. We now have data in our **Raw Data Vault** core structures. Lets move on and talk about the concept of virtualization for building your near-real time Data Vault solution.
+Great. We now have data in our **Raw Data Vault** core structures. Let's move on and talk about the concept of virtualization for building your near-real time Data Vault solution.
 
 <!-- ------------------------ -->
 ## Views for Agile Reporting
@@ -720,7 +741,7 @@ SELECT rsc.sha1_hub_customer
     ON (rrn.regioncode = rrr.regioncode)
 ;
 ```
-2. Now,lets imagine we have a heavier transformation to perform that it would make more sense to materialize it as a table. It could be more data volume, could be more complex logic, PITs, bridges or even an object that will be used frequently and by many users. For this case, lets first build a new business satellite that for illustration purposes will be deriving additional classification/tiering for orders based on the conditional logic. 
+2. Now,let's imagine we have a heavier transformation to perform that it would make more sense to materialize it as a table. It could be more data volume, could be more complex logic, PITs, bridges or even an object that will be used frequently and by many users. For this case, let's first build a new business satellite that for illustration purposes will be deriving additional classification/tiering for orders based on the conditional logic. 
 
 ```sql
 CREATE OR REPLACE TABLE sat_order_bv
@@ -797,7 +818,7 @@ ALTER TASK l10_rdv.hub_order_strm_sat_order_bv_tsk RESUME;
 ALTER TASK l10_rdv.order_strm_tsk RESUME;
 ```
 
-4. Now, lets go back to our staging area to process another slice of data to test the task. 
+4. Now, let's go back to our staging area to process another slice of data to test the task. 
 
 ```sql
 USE SCHEMA l00_stg;
@@ -829,11 +850,15 @@ SELECT 'l20_bdv.sat_order_bv', count(1) FROM l20_bdv.sat_order_bv;
 ![staged data](assets/img15.png)
 
 Great. Hope this example illustrated few ways of managing **Business Data Vault** objects in our pipeline.
-Lets finally move into the **Information Delivery** layer. 
+Let's finally move into the **Information Delivery** layer. 
 
 <!-- ------------------------ -->
 ## Build: Information Delivery
 Duration: 10
+
+When it comes to Information Delivery area we are not changing the meaning of data, but we may change format to simplify users to access and work with the data products/output interfaces. Different consumers may have different needs and preferences, some would prefer star/snowflake dimensional schemas, some would adhere to use flattened objects or even transform data into JSON/parquet objects. 
+
+1. First things we would like to add to simplify working with satellites is creating views that shows latest version for each key. 
 
 ```sql
 --------------------------------------------------------------------
@@ -871,6 +896,12 @@ AS
 SELECT  *
 FROM    sat_customer_bv
 QUALIFY LEAD(ldts) OVER (PARTITION BY sha1_hub_customer ORDER BY ldts) IS NULL;
+```
+
+2. Let's create a simple dimensional structure. Again, we will keep it virtual(as views) to start with, but you already know that depending on access characteristics required any of these could be selectively materialized. 
+
+```sql
+
 
 ```
 
