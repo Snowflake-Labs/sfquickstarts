@@ -98,7 +98,7 @@ Each step throughout the guide has an associated SQL command to perform the work
 
 <!-- ------------------------ -->
 ## Creating Snowflake Role, User, Database & Warehouse
-Duration 5:
+Duration: 5
 
 To get started, we are going to create the Snowflake objects for this lab. You can create objects using the UI, but for the purposes of this lab we will use Snowflake DDL commands in the SQL script file that we downloaded in the previous step. 
 
@@ -107,7 +107,7 @@ We already switched our "role" to `SECURITYADMIN`, a role typically used to crea
 ```sql
 CREATE OR REPLACE ROLE CRM_ANALYST_ROLE COMMENT='CRM ANALYST ROLE';
 GRANT ROLE CRM_ANALYST_ROLE TO ROLE SYSADMIN;
-``` 
+```
 
 Next we will create the `CRM_ANALYST` user, and grant the `CRM_ANALYST_ROLE` role to this user. Please note the password that is set for the user, feel free to change the password to your preference, but **do note this password** as it will be used in future steps to configure the connections with Tableau CRM.
 
