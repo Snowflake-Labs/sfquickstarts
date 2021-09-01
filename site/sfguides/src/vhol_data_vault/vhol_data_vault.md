@@ -30,6 +30,8 @@ Luckily, streaming data is one of the [use-cases](https://www.snowflake.com/clou
 
 * Familiarity with Snowflake and Snowflake objects
 
+* Understanding of Data Vault concepts and modelling techniques
+
 ### What You’ll Learn 
 * how to use Data Vault on Snowflake
 
@@ -999,9 +1001,11 @@ Simplicity of engineering, openness, scalable performance, enterprise-grade gove
 Delivering more usable data faster is no longer an option for today’s business environment. Using the Snowflake platform, combined with the Data Vault 2.0 architecture it is now possible to build a world class analytics platform that delivers data for all users in near real-time. 
 
 ### What we've covered
-- building Data Vault environment
 - unloading and loading back data using COPY and Snowpipe
 - engineering data pipelines using virtualization, streams and tasks
+- building multi-layer Data Vault environment on Snowflake: 
+
+![dbt_project.yml](assets/img19.png)  
 
 ### Call to action
 - seeing is believing. Try it! 
