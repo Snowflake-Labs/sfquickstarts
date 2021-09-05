@@ -265,8 +265,6 @@ In this guide, for better transparency we are going to trigger Snowpipe explicit
 
 ```sql
 CREATE OR REPLACE PIPE stg_orders_pp 
---AUTO_INGEST = TRUE
---aws_sns_topic = 'arn:aws:sns:mybucketdetails'
 AS 
 COPY INTO stg_orders 
 FROM
