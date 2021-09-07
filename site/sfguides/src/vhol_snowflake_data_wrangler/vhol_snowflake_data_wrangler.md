@@ -2,7 +2,7 @@ summary: This lab will walk you through how to accelerate Feature Engineering fo
 id: vhol_snowflake_data_wrangler 
 categories: Getting Started
 environments: web
-status: Hidden 
+status: Public 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SageMaker, Data Wrangler, Feature Engineering, Data Marketplace, Machine Learning, Financial Services, Storage Integration  
 authors: andries.engelbrecht@snowflake.com
@@ -53,9 +53,9 @@ authors: andries.engelbrecht@snowflake.com
 
 <span class="c3">To participate in the virtual hands-on lab, attendees need the following:</span>
 
-*   <span class="c14">A</span> <span class="c14 c25">[Snowflake account](https://www.google.com/url?q=https://trial.snowflake.com/&sa=D&source=editors&ust=1630522484980000&usg=AOvVaw3_8ex5DsKw5tJ9I4Kxv6ZE)</span><span class="c14">with</span> <span class="c21">ACCOUNTADMIN</span><span class="c3"> access</span>
+*   <span class="c14">A</span> <span class="c14 c25">[Snowflake account](https://www.google.com/url?q=https://trial.snowflake.com/&sa=D&source=editors&ust=1630522484980000&usg=AOvVaw3_8ex5DsKw5tJ9I4Kxv6ZE) **ACCOUNTADMIN** access</span>
 *   <span class="c14">An</span> <span class="c16 c14">[AWS Account](https://www.google.com/url?q=https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/&sa=D&source=editors&ust=1630522484981000&usg=AOvVaw0y4llx0YsA9Sr0sqjWxJBt)</span><span class="c3"> with admin access</span>
-*   <span class="c28 c20 c15">An AWS VPC and Subnet in your AWS where SageMaker studio can be deployed</span>
+*   <span class="c28 c20 c15">**An AWS VPC and Subnet in your AWS where SageMaker studio can be deploye**d</span>
 
 ### <span class="c28 c26">What You'll Learn</span>
 
@@ -178,7 +178,6 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 <span class="c3"></span>
 
-* * *
 
 <span class="c3"></span>
 
@@ -190,35 +189,27 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 <span class="c3">To save some time we will configure the SageMaker environment and the Snowflake Storage Integration that will be used by Data Wrangler by using a CloudFormation Template. Open another tab in your browser and log into your AWS console.</span>
 
-<span class="c3"></span>
+Next we will go to a Github repo by clicking the link below. 
 
-<span class="c3">Next you will launch the CloudFormation Template by clicking on the button below, which will open another browser tab and launch AWS CloudFormation.</span>
+<button>[Github repo](https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops)</button>
+ 
 
-<span class="c3"></span>
+![](assets/imagea1.png)
 
-<span class="c20 c15">NOTE:</span> <span class="c3">This CloudFormation Template will create a SageMaker Studio environment</span>
+Click on the launch template button in the **Launch Template** column
 
-<span class="c3"></span>
+The top button will deploy SageMaker Studio in the AWS region.
 
-<button>[Download - workshop-setup-w-studio.yml](https://console.aws.amazon.com/cloudformation/home?region%3Dregion%23/stacks/new?stackName%3DVHOLSMSNOW%26templateURL%3Dhttps://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Data_Wrangler/V2/cft/workshop-setup-w-studio.yml)</button>
+The bottom button can be used if you already have SageMaker Studio deployed in the AWS region.
 
-<span class="c3"></span>
+We will use the top button to deploy SageMaker Studio in this example.
 
-<span class="c3"></span>
 
-<span class="c14">For environment with</span> <span class="c15 c20">an existing SageMaker Studio environment</span><span class="c3"> use the following CloudFormation Template</span>
-
-<span class="c3"></span>
-
-<button>[Download - workshop-setup-no-studio.yml](https://console.aws.amazon.com/cloudformation/home?region%3Dregion%23/stacks/new?stackName%3DVHOLSMSNOW%26templateURL%3Dhttps://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Data_Wrangler/V2/cft/workshop-setup-no-studio.yml)</button>
+<span class="c14">Select the</span> <span class="c20 c15">**AWS region**</span><span class="c14"> where you want to deploy the CloudFormation.</span> <span class="c20 c15">**It is recommended to use the same region as where you have your Snowflake account**</span><span class="c3">. For example we will use Oregon(us-west-2).</span>
 
 <span class="c3"></span>
 
-<span class="c14">Select the</span> <span class="c20 c15">AWS region</span><span class="c14">where you want to deploy the CloudFormation.</span> <span class="c20 c15">It is recommended to use the same region as where you have your Snowflake account</span><span class="c3">. For example we will use Oregon(us-west-2).</span>
-
-<span class="c3"></span>
-
-<span class="c14">On the Create Stack page select</span> <span class="c28 c20 c15">Next</span>
+<span class="c14">On the Create Stack page select</span> <span class="c28 c20 c15">**Next**</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 413.33px;">![](assets/image79.png)</span>
 
@@ -228,57 +219,58 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 <span class="c3"></span>
 
-*   <span class="c20 c15">Stack name</span><span class="c14">- use the default</span> <span class="c20 c15">VHOLSMSNOW</span><span class="c3"> or supply your own name with CAPITAL letters</span>
-*   <span class="c20 c15">Repository Configurations</span><span class="c3"> - Workshop Templates URL</span>
+*   <span class="c20 c15">**Stack name**</span><span class="c14">- use the default</span> <span class="c20 c15">**snowflake-sagemaker-credit-risk-workshop**</span><span class="c3"> </span>
+*   <span class="c20 c15">**Repository Configurations**</span><span class="c3"> - Workshop Templates URL</span>
 
-*   <span class="c3">Leave the URL as is</span>
+	*  	 <span class="c3">Leave the URL as is</span>
 
-*   <span class="c20 c15">Snowflake Configurations</span><span class="c3">:</span>
+*   <span class="c20 c15">**Snowflake Configurations**</span><span class="c3">:</span>
 
-*   <span class="c3">Snowflake External Stage S3 Bucket Name - This is a base name to which the region and account id will be added. Must be universally unique. Can add your initials if needed.</span>
-*   <span class="c3">Snowflake Storage Integration Name - Base name for what the storage integration will be called. Region and account ID will be added. Leave as is or if changed - only use CAPITAL LETTER, numbers and underscores</span>
-*   <span class="c3">Snowflake User Name - ML_USER</span>
-*   <span class="c3">Snowflake Password - The password you assigned to the ML_USER in the previous step - Required to enter.</span>
-*   <span class="c14">Snowflake Account - the Snowflake account name -</span> <span class="c28 c20 c15">see note below</span>
-*   <span class="c14">S</span><span class="c3">nowflake Role - ML_ROLE</span>
+	*   <span class="c3">Snowflake External Stage S3 Bucket Name - This is a base name to which the region and account id will be added. Must be universally unique.</span>
+	*   <span class="c3">Snowflake Storage Integration Name - Base name for what the storage integration will be called. Region and account ID will be added. Leave as is or if changed - only use CAPITAL LETTER, numbers and underscores</span>
+	*   <span class="c3">Snowflake User Name - ML_USER</span>
+	*   <span class="c3">Snowflake Password - The password you assigned to the ML_USER in the previous step - Required to enter.</span>
+	*   <span class="c14">Snowflake Account - the Snowflake account name -</span> <span class="c28 c20 c15">**see note below**</span>
+	*   <span class="c14">S</span><span class="c3">nowflake Role - ML_ROLE</span>
 
-*   <span class="c28 c20 c15">SageMaker Studio Configurations</span>
+*   <span class="c28 c20 c15">**SageMaker Studio Configurations**</span>
 
-*   <span class="c3">SageMaker Studio Domain Name</span>
-*   <span class="c3">SageMaker Studio User Profile Name</span>
+	*   <span class="c3">SageMaker Studio Domain Name</span>
+	*   <span class="c3">SageMaker Studio User Profile Name</span>
 
-*   <span class="c28 c20 c15">VPC Configurations</span>
+*   <span class="c28 c20 c15">**VPC Configurations**</span>
 
-*   <span class="c3">VPC - Choose existing VPC</span>
-*   <span class="c3">VPC Subnet - Choose existing VPC Subnet in availability zone supported by SageMaker</span>
+	*   <span class="c3">VPC - Choose existing VPC</span>
+	*   <span class="c3">VPC Subnet - Choose existing VPC Subnet in availability zone supported by SageMaker</span>
 
 <span class="c3"></span>
 
-<span class="c20 c15">NOTE:</span><span class="c14">The Snowflake account name can be found by looking at the URL in your browser tab logged into the Snowflake UI. Copy the characters after the https:// and before snowflakecomputing.com i.e.</span> <span class="c20 c15">https://abcd123.us-east-1.snowflakecomputing.com</span><span class="c14">the account name will be</span> <span class="c20 c15 c28">abcd123.us-east-1</span>
+<span class="c20 c15">**NOTE:**</span><span class="c14">The Snowflake account name can be found by looking at the URL in your browser tab logged into the Snowflake UI. Copy the characters after the https:// and before snowflakecomputing.com i.e.</span> <span class="c20 c15">**https://abcd123.us-east-1.snowflakecomputing.com**</span><span class="c14">the account name will be</span> <span class="c20 c15 c28">**abcd123.us-east-1**</span>
 
-<span class="c14">In some cases the region (us-east-1 or other region name) may not be present, in this case just copy the characters before snowflakecomputing.com i.e.</span><span class="c20 c15"> https://xyz1234.snowflakecomputing.com</span><span class="c14">the account name will be</span> <span class="c28 c20 c15">xyz1234</span>
+<span class="c14">In some cases the region (us-east-1 or other region name) may not be present, in this case just copy the characters before snowflakecomputing.com i.e.</span><span class="c20 c15"> **https://xyz1234.snowflakecomputing.com**</span><span class="c14">the account name will be</span> <span class="c28 c20 c15">**xyz1234**</span>
 
 * * *
 
 <span class="c3"></span>
 
-<span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 1014.67px;">![](assets/image74.png)</span>
+<span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 1014.67px;">![](assets/imagea2.png)</span>
 
 <span class="c3"></span>
 
-<span class="c14">Click</span> <span class="c20 c15">Next</span>
+<span class="c14">Click</span> <span class="c20 c15">**Next**</span>
 
 <span class="c3"></span>
 
-<span class="c14">On the next page -</span> <span class="c20 c15">Configure stack options</span><span class="c14">- click</span> <span class="c20 c15">Next</span> <span class="c3">(no need to change anything)</span>
+<span class="c14">On the next page - </span> <span class="c20 c15">**Configure stack options**</span><span class="c14"> - click </span> <span class="c20 c15">**Next**</span> <span class="c3">(no need to change anything)</span>
 
 <span class="c3"></span>
 
 <span class="c3">On the Review page -</span>
 
 *   <span class="c3">Review the parameters</span>
-*   <span class="c14">Check the</span> <span class="c20 c15 c35">I acknowledge that AWS CloudFormation might create IAM resources.</span> <span class="c14 c35 c40">Box</span>
-*   <span class="c14">Click on</span> <span class="c20 c15">Create Stack</span><span class="c3"> </span>
+*   <span class="c14">Check the</span> <span class="c20 c15 c35">**I acknowledge that AWS CloudFormation might create IAM resources with custom names.**</span> <span class="c14 c35 c40">Box</span>
+*   Check the **I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND** Box
+*   <span class="c14">Click on</span> <span class="c20 c15">**Create Stack**</span><span class="c3"> </span>
 
 <span class="c3"></span>
 
@@ -304,7 +296,7 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 <span class="c1"></span>
 
-<span>Next we will create a virtual warehouse that we will use to compute with the</span> <span class="c15">SYSADMIN</span><span>role, and then grant all privileges to the</span> <span class="c15">ML_ROLE</span><span class="c1">.</span>
+<span>Next we will create a virtual warehouse that we will use to compute with the</span> <span class="c15">**SYSADMIN**</span><span> role, and then grant all privileges to the</span> <span class="c15">**ML_ROLE**</span><span class="c1">.</span>
 
 <span class="c1"></span>
 
@@ -474,9 +466,11 @@ SELECT * FROM LOAN_DATA LIMIT 100;
 
 ```
 
-<span class="c1"></span>
 
-#### <span class="c15 c36">Snowflake Data Marketplace data</span>
+
+### <span class="c1"></span>
+
+### <span class="c15 c36">Snowflake Data Marketplace data</span>
 
 <span class="c1"> </span>
 
@@ -484,13 +478,13 @@ SELECT * FROM LOAN_DATA LIMIT 100;
 
 <span class="c1"></span>
 
-<span class="c14">To be able to add Marketplace data we will use the new Snowflake UI. Click on the</span> <span class="c21">Preview App</span><span class="c3"> button on the top right hand of the Snowflake console, next to the Partner Connect and Help buttons.</span>
+<span class="c14">To be able to add Marketplace data we will use the new Snowflake UI. Click on the</span> <span class="c21">**Preview App**</span><span class="c3"> button on the top right hand of the Snowflake console, next to the Partner Connect and Help buttons.</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 283.00px; height: 67.00px;">![](assets/image38.png)</span>
 
 <span class="c3"></span>
 
-<span class="c14">Once you click on the Preview App button a new browser tab will open with the new preview Snowflake UI. On the top left hand corner click on your username and then hover over the</span> <span class="c21">Switch Role</span><span class="c14">menu. Scroll and select the</span> <span class="c21">ML_ROLE</span><span class="c3"> from the list of roles.</span>
+<span class="c14">Once you click on the Preview App button a new browser tab will open with the new preview Snowflake UI. On the top left hand corner click on your username and then hover over the</span> <span class="c21">**Switch Role**</span><span class="c14"> menu. Scroll and select the</span> <span class="c21">**ML_ROLE**</span><span class="c3"> from the list of roles.</span>
 
 <span class="c3"></span>
 
@@ -498,13 +492,13 @@ SELECT * FROM LOAN_DATA LIMIT 100;
 
 <span class="c3"></span>
 
-<span class="c14">Now click on the</span> <span class="c21">Data</span><span class="c14">menu bar on the left side. Then select</span> <span class="c21">Marketplace</span><span class="c3">.</span>
+<span class="c14">Now click on the</span> <span class="c21">**Data**</span><span class="c14"> menu bar on the left side. Then select</span> <span class="c21">**Marketplace**</span><span class="c3">.</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 215.83px; height: 414.50px;">![](assets/image88.png)</span>
 
 <span class="c1"></span>
 
-<span>Once in the Marketplace type</span> <span class="c15">Unemployment</span><span>in the top</span> <span class="c21">Search Data Marketplace</span><span class="c14"> and hit Enter/Return. This will provide a list of Data Providers with employment data.</span>
+<span>Once in the Marketplace type</span> <span class="c15">**Unemployment**</span><span> in the top </span> <span class="c21">**Search Data Marketplace**</span><span class="c14"> and hit Enter/Return. This will provide a list of Data Providers with employment data.</span>
 
 <span class="c1"></span>
 
@@ -512,7 +506,7 @@ SELECT * FROM LOAN_DATA LIMIT 100;
 
 <span class="c1"></span>
 
-<span>Click on the tile with</span> <span class="c8">Knoema - Labor Data Atlas.</span>
+<span>Click on the tile with</span> <span class="c8">**Knoema - Labor Data Atlas.**</span>
 
 <span class="c1">This will show what data is available from the listing. We will notice indicators such as employment and unemployment rates.</span>
 
@@ -520,9 +514,9 @@ SELECT * FROM LOAN_DATA LIMIT 100;
 
 <span class="c1"></span>
 
-<span>Next click on the</span> <span class="c15">Get Data</span><span class="c1"> button. This will provide a pop up window in which you can create a database in your account that will provide the data from the data provider.</span>
+<span>Next click on the </span> <span class="c15">**Get Data**</span><span class="c1"> button. This will provide a pop up window in which you can create a database in your account that will provide the data from the data provider.</span>
 
-<span>Change the name of the database to</span> <span class="c15">KNOEMA_LABOR_DATA_ATLAS</span><span>and then click the</span> <span class="c15">Get Data</span><span> button.</span>
+<span>Change the name of the database to </span> <span class="c15">**KNOEMA_LABOR_DATA_ATLAS**</span><span> and then click the</span> <span class="c15">**Get Data**</span><span> button.</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 441.33px;">![](assets/image54.png)</span>
 
@@ -604,9 +598,9 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 
 <span class="c1"></span>
 
-#### <span class="c15">Database for Machine Learning</span>
+### <span class="c15">Database for Machine Learning</span>
 
-<span>The last step is to create a database that can be used by the data science team. This will allow them full access to the data without impacting any of the other analyst or production teams. Snowflake provides a very unique feature called</span> <span class="c16 c15">[Zero Copy Cloning](https://www.google.com/url?q=https://www.youtube.com/watch?v%3DyQIMmXg7Seg&sa=D&source=editors&ust=1630522485003000&usg=AOvVaw1EUvz2GIHttPRzutlqvlGJ)</span><span> that will create a new copy of the data by</span> <span class="c15">only making a copy of the metadata of the objects</span><span class="c1">. This drastically speeds up creation of copies and also drastically reduces the storage space needed for data copies.</span>
+<span>The last step is to create a database that can be used by the data science team. This will allow them full access to the data without impacting any of the other analyst or production teams. Snowflake provides a very unique feature called</span> <span class="c16 c15">[Zero Copy Cloning](https://www.google.com/url?q=https://www.youtube.com/watch?v%3DyQIMmXg7Seg&sa=D&source=editors&ust=1630522485003000&usg=AOvVaw1EUvz2GIHttPRzutlqvlGJ)</span><span> that will create a new copy of the data by</span> <span class="c15">**only making a copy of the metadata of the objects**</span><span class="c1">. This drastically speeds up creation of copies and also drastically reduces the storage space needed for data copies.</span>
 
 <span class="c1">This feature can be very handy for Machine Learning as it will allow for feature engineering in Snowflake and also the ability to save copies of the data used for the training of ML models for future reference.</span>
 
@@ -667,6 +661,9 @@ SHOW INTEGRATIONS;
 
 <span class="c1">Make sure to note the name of the storage integration that was created as it will be used with Data Wrangler configuration.</span>
 
+**Note:** We can also get the storage integration name from the CloudFormation stack. Click on the NESTED stack with a name like snowflake-sagemaker-credit-risk-workshop-StorageIntegrationStack and then the Outputs tab in the CloudFormation browser tab.
+You can also find Snowflake Secret ARN in the Output tab.
+
 <span class="c1"></span>
 
 <span class="c1"></span>
@@ -691,9 +688,9 @@ SHOW INTEGRATIONS;
 
 <span class="c14">Click on this link (</span><span class="c16 c38">[https://console.aws.amazon.com/sagemaker/home](https://www.google.com/url?q=https://console.aws.amazon.com/sagemaker/home&sa=D&source=editors&ust=1630522485007000&usg=AOvVaw1V0fUjd-E89KAgM4zG7FPl)</span><span class="c1">) and it will open a new browser tab with the SageMaker Console.</span>
 
-<span>Click on the</span> <span class="c15">Amazon SageMaker Studio</span><span class="c1"> menu on the left hand side.</span>
+<span>Click on the</span> <span class="c15">**Amazon SageMaker Studio**</span><span class="c1"> menu on the left hand side.</span>
 
-<span>Next to the</span> <span class="c15">User name - sagemaker-user</span><span>you will click on the link to</span> <span class="c15">Open Studio</span><span class="c1"> to open SageMaker Studio</span>
+<span>Next to the</span> <span class="c15">**User name - sagemaker-user**</span><span> you will click on the link to</span> <span class="c15">**Open Studio**</span><span class="c1"> to open SageMaker Studio</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 146.67px;">![](assets/image76.png)</span>
 
@@ -737,7 +734,7 @@ SHOW INTEGRATIONS;
 
 <span class="c1">Open the snowflake-loan-default-workshop.ipnyb notebook by double clicking on it.</span>
 
-<span class="c1">A window will pop up to select the Kernel you want to use. Select the Python 3 (snowflake-workshop/3) kernel and click Select.</span>
+<span class="c1">A window will pop up to select the Kernel you want to use. Select the Python 3 (snowflake-workshop/) kernel and click Select.</span>
 
 <span class="c1"></span>
 
@@ -755,17 +752,15 @@ SHOW INTEGRATIONS;
 
 <span class="c1">The notebook is very well documented with the steps needed for the workshop.</span>
 
-<span>You can execute the code sections by selecting them and hitting the</span> <span class="c15">run button</span><span>at the top or</span> <span class="c15">shift+return/enter</span><span class="c1">.</span>
+<span>You can execute the code sections by selecting them and hitting the</span> <span class="c15">**run button**</span><span> at the top or</span> <span class="c15">**shift+return/enter**</span><span class="c1">.</span>
 
 <span class="c1"></span>
 
-<span class="c15">If you changed the name of the S3 Bucket Name in the CloudFormation Template </span><span> you will need to change the first code block to enter</span><span class="c15"> the S3 bucket name</span><span>that was created by the CloudFormation template for the</span> <span class="c15">bucket variable</span><span class="c1">. It will look like snowflake-sagemaker-<region>-<accountid>.</span>
 
-<span class="c1">You can find the bucket name in the CloudFormation stack from the previous step.</span>
 
 <span class="c1"></span>
 
-<span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 221.33px;">![](assets/image22.png)</span>
+<span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 221.33px;">![](assets/imagea3.png)</span>
 
 <span class="c1"></span>
 
@@ -789,7 +784,7 @@ SHOW INTEGRATIONS;
 
 <span class="c1"></span>
 
-<span>Create a new Data Wrangler flow by selecting it from the top</span> <span class="c8">File Menu</span>
+<span>Create a new Data Wrangler flow by selecting it from the top</span> <span class="c8">**File Menu**</span>
 
 <span>File>New>Data Wrangler Flow</span>
 
@@ -815,13 +810,13 @@ SHOW INTEGRATIONS;
 
 <span class="c1"></span>
 
-<span>You can either use the username and password that was created in Snowflake earlier or the AWS Secret that was created in the CloudFormation template to connect to Snowflake. You can use AWS Secret Manager Console (</span><span class="c16">[https://console.aws.amazon.com/secretsmanager/home](https://www.google.com/url?q=https://console.aws.amazon.com/secretsmanager/home&sa=D&source=editors&ust=1630522485012000&usg=AOvVaw1kq5a5OMN5ahv0YZwkYaYp)</span><span class="c1"> ) to get the secret.</span>
+<span>You can either use the username and password that was created in Snowflake earlier or the AWS Secret that was created in the CloudFormation template to connect to Snowflake. You can use AWS Secret Manager Console (</span><span class="c16">[https://console.aws.amazon.com/secretsmanager/home](https://www.google.com/url?q=https://console.aws.amazon.com/secretsmanager/home&sa=D&source=editors&ust=1630522485012000&usg=AOvVaw1kq5a5OMN5ahv0YZwkYaYp)</span><span class="c1"> ) to get the secret **ARN**.</span>
 
 <span class="c1"></span>
 
 <span>Use the Snowflake account name from</span> <span class="c15">Step3</span> <span class="c1">if you don’t use the AWS Secrets Manager</span>
 
-<span class="c1">The Snowflake Storage Integration name from Step 4 will be used - <yourid>_STORAGE_INTEGRATION  </span>
+<span class="c1">The Snowflake Storage Integration name from Step 4 will be used - SMSNOW_\<region\>_\<accountid\>_STORAGE_INTEGRATION  </span>
 
 <span class="c1"></span>
 
@@ -853,7 +848,7 @@ SHOW INTEGRATIONS;
 
 ```
 
-SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML</span>
+SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML
 
 ```
 
@@ -901,11 +896,11 @@ POLICY_CODE, LOAN_DEFAULT, ISSUE_MONTH
 
 FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML
 
-SAMPLE BLOCK (80) REPEATABLE(100);
+SAMPLE BLOCK (80) REPEATABLE(100)
 
 ```
 
-<span>Click</span> <span class="c15">Run</span><span>and then click the</span> <span class="c15">Import</span><span class="c1"> button on the top right.</span>
+<span>Click</span> <span class="c15">**Run**</span><span> and then click the</span> <span class="c15">**Import**</span><span class="c1"> button on the top right.</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 139.00px; height: 47.00px;">![](assets/image4.png)</span>
 
@@ -913,7 +908,7 @@ SAMPLE BLOCK (80) REPEATABLE(100);
 
 <span class="c1">Enter a name for the Dataset - loan_data</span>
 
-<span>Then click</span> <span class="c8">Add</span>
+<span>Then click</span> <span class="c8">**Add**</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 500.88px; height: 170.17px;">![](assets/image1.png)</span>
 
@@ -925,9 +920,9 @@ SAMPLE BLOCK (80) REPEATABLE(100);
 
 ##### <span class="c19">Profile your data</span>
 
-<span>Profile the data by Clicking the</span> <span class="c15">+ sign</span><span class="c1"> next to the Data types block</span>
+<span>Profile the data by Clicking the</span> <span class="c15">**+ sign**</span><span class="c1"> next to the Data types block</span>
 
-<span>Select</span> <span class="c15">Add Analysis</span>
+<span>Select</span> <span class="c15">**Add Analysis**</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 317.33px;">![](assets/image32.png)</span>
 
@@ -943,7 +938,7 @@ SAMPLE BLOCK (80) REPEATABLE(100);
 
 <span class="c1"></span>
 
-<span>Then click</span> <span class="c15">Preview</span><span class="c1"> to get an analysis of the skew.</span>
+<span>Then click</span> <span class="c15">**Preview**</span><span class="c1"> to get an analysis of the skew.</span>
 
 <span class="c1"></span>
 
@@ -951,23 +946,23 @@ SAMPLE BLOCK (80) REPEATABLE(100);
 
 <span class="c1"></span>
 
-##### <span class="c19">Apply Feature Transformations</span>
+#### <span class="c19">Apply Feature Transformations</span>
 
 <span class="c1">Next we will use Data Wrangler to perform some feature transformations.</span>
 
-<span>In the Analysis window click</span> <span class="c15">Back to data flow</span><span class="c1"> at the top.</span>
+<span>In the Analysis window click</span> <span class="c15">**Back to data flow**</span><span class="c1"> at the top.</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 126.00px; height: 26.00px;">![](assets/image64.png)</span>
 
 <span class="c1"></span>
 
-<span>Click on the</span> <span class="c15">+</span><span>and select</span> <span class="c15">Add Transform</span><span class="c1"> by the Data types box.</span>
+<span>Click on the</span> <span class="c15">**+**</span><span> and select</span> <span class="c15">**Add Transform**</span><span class="c1"> by the Data types box.</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 245.50px; height: 287.11px;">![](assets/image42.png)</span>
 
 <span class="c1"></span>
 
-<span>Click on</span> <span class="c15">+ Add Step</span><span class="c1"> - To add a transform step</span>
+<span>Click on</span> <span class="c15">**+ Add Step**</span><span class="c1"> - To add a transform step</span>
 
 <span class="c1"></span>
 
@@ -975,12 +970,12 @@ SAMPLE BLOCK (80) REPEATABLE(100);
 
 <span class="c1"></span>
 
-<span>First we will fix the</span> <span class="c15">INT_RATE</span><span class="c1"> column from a string with a % sign to a numeric data type.</span>
+<span>First we will fix the</span> <span class="c15">**INT_RATE**</span><span class="c1"> column from a string with a % sign to a numeric data type.</span>
 
 *   <span>Click on</span> <span class="c8">Search and edit</span>
 *   <span>Select</span> <span class="c15">Input Column</span><span class="c1"> as INT_RATE</span>
 *   <span>Enter % in the</span> <span class="c15">Pattern</span><span class="c1"> field</span>
-*   <span>In the</span> <span class="c15">Replacement string</span><span> </span><span class="c13">type space and then delete it</span><span class="c1"> to have % replaced with an empty string</span>
+*   <span>In the</span> <span class="c15">**Replacement string**</span><span> </span><span class="c13">*type space and then delete it*</span><span class="c1"> to have % replaced with an empty string</span>
 *   <span>Click</span> <span class="c8">Preview</span>
 *   <span>Click</span> <span class="c8">Add</span>
 
@@ -1009,44 +1004,32 @@ SAMPLE BLOCK (80) REPEATABLE(100);
 
 <span class="c1"></span>
 
-<span>Select</span> <span class="c15">Custom Transform</span> <span>then</span><span class="c15"> Python(Spark)</span><span class="c1">and copy the following Python code in the code box</span>
+<span>Select</span> <span class="c15">**Custom Transform**</span> <span>then</span><span class="c15"> **Python(Spark)**</span><span class="c1"> and copy the following Python code in the code box</span>
 
 ```
 
 from pyspark.sql.functions import udf
-
 from pyspark.sql.types import LongType
 
 
 def categories(status) :
-
   if not status :
-
     return None
-
   elif status == "not verified" :    
-
     return 0
-
   elif status == "VERIFIED - income":
-
     return 1
-
   elif status == "VERIFIED - income source":
-
     return 1
-
   else :
-
     return None
-
 bucket_udf = udf(categories, LongType())
 
 df = df.withColumn("VERIFIED", bucket_udf("VERIFICATION_STATUS"))
 
 ```
 
-<span>Select</span> <span class="c15">Preview</span><span>and then</span> <span class="c8">Add</span>
+<span>Select</span> <span class="c15">Preview</span><span> and then</span> <span class="c8">Add</span>
 
 <span class="c1"></span>
 
@@ -1087,9 +1070,9 @@ df = df.withColumn("VERIFIED", bucket_udf("VERIFICATION_STATUS"))
 
 <span class="c1"></span>
 
-##### <span class="c19">Data Validation</span>
+#### <span class="c19">Data Validation</span>
 
-<span>Next we will check for</span> <span class="c15">Target Leakage</span><span>.</span>
+<span>Next we will check for</span> <span class="c15">**Target Leakage**</span><span>.</span>
 
 <span class="c1">Target leakage occurs when you accidently train a model with features that are not available in production. As a consequence, you end up with a deceptively effective model in development that causes problems in production. You can mitigate production issues by performing target leakage analysis.</span>
 
@@ -1122,7 +1105,7 @@ df = df.withColumn("VERIFIED", bucket_udf("VERIFICATION_STATUS"))
 
 <span class="c1"></span>
 
-<span class="c8">Next we will create a Bias Report</span>
+<span class="c8">**Next we will create a Bias Report**</span>
 
 <span class="c1">Our data does not have any obvious sensitive attributes like gender and race. However, it does contain zip codes. It's possible that we have a flawed dataset with an abnormal number of loan defaults in minority communities. This might not represent the actual distribution. Regardless, this situation could create a model that is biased against minorities resulting in legal risk.</span>
 
@@ -1140,7 +1123,7 @@ df = df.withColumn("VERIFIED", bucket_udf("VERIFICATION_STATUS"))
 
 <span class="c1"></span>
 
-<span>Click</span> <span class="c8">Check for bias</span>
+<span>Click</span> <span class="c8">**Check for bias**</span>
 
 <span class="c1"></span>
 
@@ -1166,9 +1149,9 @@ df = df.withColumn("VERIFIED", bucket_udf("VERIFICATION_STATUS"))
 
 <span class="c1"></span>
 
-##### <span class="c19">Prototype Model</span>
+#### <span class="c19">Prototype Model</span>
 
-<span class="c8">Create a Quick Model Report</span>
+<span class="c8">**Create a Quick Model Report**</span>
 
 <span class="c1"></span>
 
@@ -1242,7 +1225,7 @@ FROM ML_LENDER_DATA.ML_DATA.UNEMPLOYMENT_DATA
 
 <span class="c1"></span>
 
-<span>Click</span> <span class="c15">Run</span><span>and then the</span> <span class="c8">Import button</span>
+<span>Click</span> <span class="c15">Run</span><span> and then the</span> <span class="c8">Import button</span>
 
 <span>Name the dataset</span> <span class="c8">unemployment_data</span>
 
@@ -1256,9 +1239,9 @@ FROM ML_LENDER_DATA.ML_DATA.UNEMPLOYMENT_DATA
 
 <span class="c1"></span>
 
-<span>First delete the last transformation from the original flow, so that we have</span> <span class="c15">LOAN_ID</span><span class="c1"> available.</span>
+<span>First delete the last transformation from the original flow, so that we have</span> <span class="c15">**LOAN_ID**</span><span class="c1"> available.</span>
 
-<span>Click on the Steps and then on the ellipsis next to step 5 and select</span> <span class="c8">Delete Step</span>
+<span>Click on the Steps and then on the ellipsis next to step 5 and select</span> <span class="c8">**Delete Step**</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 256.00px;">![](assets/image69.png)</span>
 
@@ -1431,7 +1414,7 @@ SELECT LOAN_ID for both the Left and Right join keys.</span>
 
 <span class="c1"></span>
 
-<span class="c8">Export your Data Flow</span>
+<span class="c8">**Export your Data Flow**</span>
 
 <span class="c1">DataWrangler supports multiple ways to export the flow for execution.</span>
 
@@ -1439,15 +1422,15 @@ SELECT LOAN_ID for both the Left and Right join keys.</span>
 
 <span class="c1"></span>
 
-<span>Click on</span> <span class="c8">Back to data flow</span>
+<span>Click on</span> <span class="c8">**Back to data flow**</span>
 
-<span>Select the</span> <span class="c15">Export</span><span class="c1"> tab</span>
+<span>Select the</span> <span class="c15">**Export**</span><span class="c1"> tab</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 287.00px; height: 47.00px;">![](assets/image25.png)</span>
 
 <span class="c1"></span>
 
-<span>Select the</span> <span class="c15">last step</span><span>in the flow and the last</span> <span class="c15">Drop Column</span><span class="c1"> transformation</span>
+<span>Select the</span> <span class="c15">last step</span><span> in the flow and the last</span> <span class="c15">Drop Column</span><span class="c1"> transformation</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 484.00px; height: 287.00px;">![](assets/image16.png)</span>
 
@@ -1457,7 +1440,7 @@ SELECT LOAN_ID for both the Left and Right join keys.</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 93.00px; height: 42.00px;">![](assets/image36.png)</span>
 
-<span>Select</span> <span class="c8">Save to S3</span>
+<span>Select</span> <span class="c8">**Save to S3**</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 417.00px; height: 412.00px;">![](assets/image5.png)</span>
 
@@ -1487,7 +1470,7 @@ SELECT LOAN_ID for both the Left and Right join keys.</span>
 
 <span class="c1"></span>
 
-COPY the S3 URI to the PREP_DATA_S3 variable in your workshop notebook</span>
+COPY the S3 URI to the PREP_DATA_S3 variable in your initial workshop notebook</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 24.00px;">![](assets/image73.png)</span>
 
@@ -1585,7 +1568,7 @@ COPY the S3 URI to the PREP_DATA_S3 variable in your workshop notebook</span>
 
 <span class="c1"></span>
 
-<span class="c8">Modify your Data Preparation flow for Inference</span>
+<span class="c8">**Modify your Data Preparation flow for Inference**</span>
 
 <span class="c1"></span>
 
@@ -1596,11 +1579,11 @@ COPY the S3 URI to the PREP_DATA_S3 variable in your workshop notebook</span>
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 312.79px; height: 442.50px;">![](assets/image71.png)</span>
 
 *   <span>Right click on the duplicate copy -</span> <span class="c15">untitled-Copy1.flow</span> <span class="c1">and select Rename</span>
-*   <span>Use</span> <span class="c15">inference_flow_loan.flow</span><span class="c1"> as the new name</span>
+*   <span>Use</span> <span class="c15">**inference_flow_loan.flow**</span><span class="c1"> as the new name</span>
 
 <span class="c1"></span>
 
-<span class="c15">TIP:</span><span class="c1"> Click on the Folder icon on the left hand side of the screen to see the files</span>
+<span class="c15">**TIP:**</span><span class="c1"> Click on the Folder icon on the left hand side of the screen to see the files</span>
 
 <span class="c1"></span>
 
@@ -1610,7 +1593,7 @@ COPY the S3 URI to the PREP_DATA_S3 variable in your workshop notebook</span>
 
 <span class="c1"></span>
 
-<span class="c15">Next we will open the new flow file by double clicking on it</span><span class="c1">.</span>
+<span class="c15">**Next we will open the new flow file by double clicking on it**</span><span class="c1">.</span>
 
 <span class="c1">We can now change the data source for the flow:</span>
 
@@ -1658,7 +1641,7 @@ FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML AS L1
 
  ON L1.LOAN_ID = L2.LOAN_ID
 
-WHERE L2.LOAN_ID IS NULL;
+WHERE L2.LOAN_ID IS NULL
 
 ```
 
@@ -1667,7 +1650,7 @@ WHERE L2.LOAN_ID IS NULL;
 
 <span class="c1"></span>
 
-##### <span class="c19">Re-export and re-factor your flow as a Pipeline</span>
+#### <span class="c19">Re-export and re-factor your flow as a Pipeline</span>
 
 <span>First select the</span> <span class="c15">Export</span><span class="c1"> tab at the top.</span>
 
@@ -1703,7 +1686,7 @@ COPY the node ID form this cell.</span>
 
 <span class="c1"></span>
 
-##### <span>Go back to your</span> <span>workshop </span><span>notebook -</span> <span class="c15 c34">snowflake-loan-default-workshop.ipynb</span>
+#### <span>Go back to your</span> <span>workshop </span><span>notebook -</span> <span class="c15 c34">snowflake-loan-default-workshop.ipynb</span>
 
 <span class="c1"></span>
 
@@ -1723,7 +1706,7 @@ COPY the node ID to the FLOW_NODE_ID cell and run the cell</span>
 
 <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 580.00px; height: 473.00px;">![](assets/image85.png)</span>
 
-<span class="c1">This will process the data prep steps and then run batch inference using the model that was previously trained. This steps will take some time to complete.</span>
+<span class="c1">This will process the data prep steps and then run batch inference using the model that was previously trained. These steps will take some time to complete.</span>
 
 <span class="c1"></span>
 
@@ -1733,11 +1716,11 @@ COPY the node ID to the FLOW_NODE_ID cell and run the cell</span>
 *   <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 267.00px; height: 90.00px;">![](assets/image52.png)</span>
 *   SELECT Pipelines from the drop down menu</span>
 *   <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 462.00px; height: 416.00px;">![](assets/image53.png)</span>
-*   <span>Right click on your pipeline and select</span> <span class="c8">Open pipeline details</span>
+*   <span>Right click on your pipeline and select</span> <span class="c8">**Open pipeline details**</span>
 *   <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 491.00px; height: 248.00px;">![](assets/image15.png)</span>
-*   <span>This will open a pipeline tab. Right click on the status of the pipeline and select</span> <span class="c8">Open execution details</span>
+*   <span>This will open a pipeline tab. Right click on the status of the pipeline and select</span> <span class="c8">**Open execution details**</span>
 *   <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 546.00px; height: 448.00px;">![](assets/image48.png)</span>
-*   <span class="c1">This opens tab with the pipeline steps. You can click on each step to get more information.</span>
+*   <span class="c1">This opens a tab with the pipeline steps. You can click on each step to get more information.</span>
 *   <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 694.67px;">![](assets/image7.png)</span>
 *   <span class="c1"></span>
 
@@ -1787,7 +1770,7 @@ COPY the node ID to the FLOW_NODE_ID cell and run the cell</span>
 
 <span class="c1"></span>
 
-<span>First we will use the AWS Secret we create with the CloudFormation template. Go to the [</span><span class="c15">Secrets Manager Console</span><span>](https://console.aws.amazon.com/secretsmanager/home). Select the Snowflake Secret and copy the Secret Name i.e.</span> <span class="c13">SnowflakeSecret-P4qyGUyk67hj</span><span> in the cell below.  </span>
+<span>First we will use the AWS Secret we create with the CloudFormation template. Go to the [</span><span class="c15">Secrets Manager Console</span><span>](https://console.aws.amazon.com/secretsmanager/home). Select the Snowflake Secret and copy the Secret Name i.e.</span> <span class="c13">*SnowflakeSecret-P4qyGUyk67hj*</span><span> in the cell below.  </span>
 
 <span class="c1"></span>
 
