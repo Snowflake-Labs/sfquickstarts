@@ -242,8 +242,11 @@ You now have a new Job created in Jenkins. The first thing we need to do is tell
 1. Refspec: ```+refs/pull/*:refs/remotes/origin/pr/*```
 1. Branches to build: leave blank
 1. Repository browser: ```(Auto)```
+1. Additional Behaviours: ```Wipe out repository & force clone```
 1. Script Path: ```Jenkinsfile```
 1. Uncheck "Lightweight checkout"
+
+Make sure you don't miss step #5, you have to click on the "Add" button under "Additional Behaviours" and then select "Wipe out repository & force clone". This is an important step as it ensures that your Jenkins pipeline will always be working with the latest version of your repository.
 
 If all is good, it should look like this screenshot:
 

@@ -193,8 +193,6 @@ For this guide we are going to use a subset of objects from [TPC-H](https://docs
     </tbody>
 </table>
 
-
-
 1. Let's start with the static reference data:
 
 ```sql
