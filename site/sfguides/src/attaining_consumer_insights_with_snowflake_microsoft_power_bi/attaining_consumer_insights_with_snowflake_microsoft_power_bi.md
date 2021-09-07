@@ -786,6 +786,9 @@ Expand QUANTITY in the Performance Analyzer window. Note the times.
 
 ![pbigetdata](assets/image14.png)
 
+
+**Download** the Power BI Desktop file named **DirectQuery.pbit** from here: [GitHub Repo](https://github.com/sfc-gh-ccollier/sfquickstart-samples/tree/main/samples/snowflake-powerbi-retail-vhol/power_bi_files/templates)
+
 **Open** the Power BI Desktop file named **DirectQuery.pbit**.
 When prompted enter your **Server, Warehouse and Database**. Click **OK**.
 
