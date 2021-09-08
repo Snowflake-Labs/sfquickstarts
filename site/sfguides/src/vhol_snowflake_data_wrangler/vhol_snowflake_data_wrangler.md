@@ -75,7 +75,7 @@ Duration: 3
 
 
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
-
+<button>[Data_Wrangler_Snowflake_VHOL_V2.sql](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Data_Wrangler/V2/files/Data_Wrangler_Snowflake_VHOL_V2.sql)</button>
 
 At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
 
@@ -161,6 +161,8 @@ Duration: 2
 To save some time we will configure the SageMaker environment and the Snowflake Storage Integration that will be used by Data Wrangler by using a CloudFormation Template. Open another tab in your browser and log into your AWS console.
 
 Next we will go to a Github repo by clicking the link below.
+
+<button>[Github Repo](https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops)</button>
 
 ![](assets/imagea1.png)
 
@@ -526,7 +528,7 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 
 ### Database for Machine Learning
 
-The last step is to create a database that can be used by the data science team. This will allow them full access to the data without impacting any of the other analyst or production teams. Snowflake provides a very unique feature called [Zero Copy Cloning](https://www.youtube.com/watch?v%3DyQIMmXg7Seg) that will create a new copy of the data by **only making a copy of the metadata of the objects**. This drastically speeds up creation of copies and also drastically reduces the storage space needed for data copies.
+The last step is to create a database that can be used by the data science team. This will allow them full access to the data without impacting any of the other analyst or production teams. Snowflake provides a very unique feature called [Zero Copy Cloning](https://www.youtube.com/watch?v=yQIMmXg7Seg) that will create a new copy of the data by **only making a copy of the metadata of the objects**. This drastically speeds up creation of copies and also drastically reduces the storage space needed for data copies.
 
 This feature can be very handy for Machine Learning as it will allow for feature engineering in Snowflake and also the ability to save copies of the data used for the training of ML models for future reference.
 
