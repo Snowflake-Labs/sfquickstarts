@@ -37,17 +37,17 @@ We will use Snowflake and Driverless AI to:
 
 ### Prerequisites
 
-* A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
-* A [H2O](https://www.h2o.ai/try-driverless-ai/) Account
+* A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab)
+* A [H2O](https://www.h2o.ai/try-driverless-ai/) trial license key
 * [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) installed (Snowflake's CLI tool)
 * Past experience running and executing queries in Snowflake
-* A basic understanding of data science and machine learning concepts.
+* A basic understanding of data science and machine learning concepts
 
 ### What You'll Learn
 
 * How to use Snowflake's "Partner Connect" to create a Driverless AI instance
-* How to use Driverless AI to build a supervised learning classification model.
-* How to deploy the finished model pipeline as a Snowflake Java UDF.
+* How to use Driverless AI to build a supervised learning classification model
+* How to deploy the finished model pipeline as a Snowflake Java UDF
 
 <!-- ------------------------ -->
 ## Setting up Snowflake
@@ -70,29 +70,23 @@ To ingest our script in the Snowflake UI, navigate to the ellipsis button on the
 Snowflake provides "worksheets" as the spot for you to execute your code. This lab assumes you have already run a few queries in Snowflake before. Therefore, we are going to execute a series of commands quickly, so we get the data in tables and continue to the more interesting part of the lab of building and deploying models. The .sql file that you upload should look like this:
 
 ```sql
-USE ROLE sysadmin;
-
-CREATE OR REPLACE DATABASE lendingclub;
-
-CREATE OR REPLACE WAREHOUSE demo_wh
-  WITH WAREHOUSE_SIZE = 'XSMALL';
-
-USE DATABASE h2o_vhol;
+USE ROLE PC_H2O_ROLE;
+USE DATABASE PC_H2O_DB;
 USE SCHEMA public;
-USE WAREHOUSE compute_wh;
+USE WAREHOUSE PC_H2O_WH;
 
 CREATE OR REPLACE TABLE loans (
     id INTEGER,
     loan_amnt INTEGER,
     term String(1024),
     installment Real,
-    grade String(1024)
+    grade String(1024),
     ...)
 
 ...
 ```
 
-To execute the entire .sql code, which contains 11 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(11)", meaning it will execute all 11 commands in the uploaded file.
+To execute the entire .sql code, which contains 9 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(9)", meaning it will execute all 9 commands in the uploaded file.
 
 <!-- ------------------------ -->
 ## Launching Driverless AI
@@ -159,16 +153,15 @@ From the empty Datasets view, click the `Add Dataset` button and select the `SNO
 This launches the `Make Snowflake Query` form.
 
 ![](assets/02_import_2.png)
-
 Enter into the form:
 
-* **Database** `Lendingclub`,
-* **Warehouse** as `demo_wh`,
-* **Schema** as `public`,
+* **Database** `PC_H2O_DB`,
+* **Warehouse** as `PC_H2O_WH`,
+* **Schema** as `PUBLIC`,
 * **Name** as `loans.csv`,
 * **Username** and **Password** with the credentials you used at signup,
-* **File Formatting Parameters** as `FIELD_OPTIONALLY_ENCLOSED_BY="'"`,
-* **SQL Query** `select * from loans`.
+* **File Formatting Parameters** as `FIELD_OPTIONALLY_ENCLOSED_BY = '"'`,
+* **SQL Query** `SELECT * FROM LOANS`.
 
 Then click the `CLICK TO MAKE QUERY` button. This imports the data into the Driverless AI system.
 
@@ -297,7 +290,7 @@ Next select `bad_loan` as the `TARGET COLUMN` (#6). You will have to scroll down
 
 ![](images/06_setup_31.png)
 
-After selecting the target variable, Driverless AI analyzes the data and experimental settings and prefills additional options:  
+After selecting the target variable, Driverless AI analyzes the data and experimental settings and prefills additional options:
 
 ![](images/06_setup_32.png)
 
@@ -307,7 +300,7 @@ These include
 2. The `ACCURACY/TIME/INTERPRETABILITY` dials which range from 1 to 10 and largely determine the recipe for the experiment.
 3. The `CLASSIFICATION/REPRODUCIBLE/GPUS DISABLED` clickable buttons.
 4. The `SCORER` used in model building and evaluation.
-5. `EXPERT SETTINGS` for fine control over a vast number of system, model, feature, recipe, and specialty options.  
+5. `EXPERT SETTINGS` for fine control over a vast number of system, model, feature, recipe, and specialty options.
 6. A detailed settings description.
 7. `LAUNCH EXPERIMENT` to run the experiment defined by dial settings, scorer, and expert settings.
 
@@ -560,7 +553,7 @@ Duration: 5
 
 ### Introduction
 
-The final model from a Driverless AI experiment can be exported as either a **MOJO scoring pipeline** or a **Python scoring pipeline**. The MOJO scoring pipeline comes with a `pipeline.mojo` file that can be deployed in any environment that supports Java or C++. There are a myriad of different deployment scenarios for Real-time, Batch or Stream scoring with the `pipeline.mojo` file. In this tutorial, we deploy the final model as a Snowflake Java UDF.  
+The final model from a Driverless AI experiment can be exported as either a **MOJO scoring pipeline** or a **Python scoring pipeline**. The MOJO scoring pipeline comes with a `pipeline.mojo` file that can be deployed in any environment that supports Java or C++. There are a myriad of different deployment scenarios for Real-time, Batch or Stream scoring with the `pipeline.mojo` file. In this tutorial, we deploy the final model as a Snowflake Java UDF.
 
 ### Gather Driverless AI artifacts
 
@@ -589,7 +582,7 @@ Last, you will need your Driverless AI license file `license.sig`.
 
 The first step in creating a Java UDF in Snowflake is to put the 4 Driverless AI artifacts into the table stage, which was created when we created `loans` table and uploaded some data in the very beginning.
 
-In order to do that, we will need to leverage [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) (Snowflake's CLI tool), which will need to be installed locally so you can put the artifacts on your local compute into the table stage in your Snowflake Cloud.
+In order to do that, we will need to leverage [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) (Snowflake's CLI tool), which will need to be installed locally so you can put the artifacts on your local computer into the table stage in your Snowflake Cloud.
 
 Travel to your command line and enter the follow:
 
@@ -676,11 +669,11 @@ It should take about 7 seconds to score and the results should look like this:
 
 **Results Preview** (first 3 rows)
 
-| Row      | ID | H2OScore |
-| ----------- | ----------- | ----------- |
-| 1      | 1077501       |0.8469023406505585
-| 2   | 1077430        |0.5798575133085251
-| 3   | 1077175        |0.5994115248322487
+| Row | ID      | H2OScore           |
+| --- | ------- | ------------------ |
+| 1   | 1077501 | 0.8469023406505585 |
+| 2   | 1077430 | 0.5798575133085251 |
+| 3   | 1077175 | 0.5994115248322487 |
 
 And as they say, that is all folks! We have now scored a model inside Snowflake. What this does is gives you the flexibility of Snowflake's Scale Up and Scale Out capabilities to score as much data as you want.
 
