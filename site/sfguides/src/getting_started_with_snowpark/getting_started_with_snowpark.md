@@ -17,8 +17,7 @@ is designed to make building complex data pipelines easy, allowing developers to
 Snowflake directly without moving data. Snowpark uploads and runs your code in Snowflake so that
 you don't need to move the data to a separate system for processing.
 
-Snowpark is a [preview feature](https://docs.snowflake.com/en/release-notes/preview-features.html)
-and currently provides an API in Scala.
+Snowpark is a [preview feature](https://docs.snowflake.com/en/release-notes/preview-features.html) and currently provides an API in Scala.
 
 ### Prerequisites
 - Familiarity with Scala
@@ -30,7 +29,7 @@ and currently provides an API in Scala.
 
 You can also use a development tool or environment that supports SBT projects for Scala 2.12
 (specifically, version 2.12.9 or later 2.12.x versions). Snowpark does not yet support versions
-of Scala after 2.12 (e.g. Scala 2.13).
+of Scala after 2.12 (for example, Scala 2.13).
 
 ### What You’ll Learn
 - How to create a DataFrame that loads data from a stage
@@ -47,7 +46,7 @@ The demo can be found in a Snowflake GitHub repository. After installing git, yo
 repository using your terminal.
 
 Open a terminal window, and run the following commands to change to the directory where you want
-the repository cloned and clone the repository.
+the repository cloned, and then clone the repository.
 
 ```console
 cd {directory_where_you_want_the_repository}
@@ -64,12 +63,12 @@ The demo directory includes the following files:
 
 - `build.sbt`: This is the SBT build file for this demo project.
 
-- `snowflake_connection.properties`: The examples read the settings from this file to connect to
+- `snowflake_connection.properties`: Examples in this demo read settings from this file to connect to
   Snowflake. You will edit this file and specify the settings that you use to connect to a
   Snowflake database.
 
 - `src/main/scala/HelloWorld.scala`: This is a simple example that uses the Snowpark library to
-  connect to Snowflake, run the `SHOW TABLES` command, and print out the first 3 tables listed. You
+  connect to Snowflake, run the `SHOW TABLES` command, and print out the first three tables listed. You
   will run this example to verify that you can connect to Snowflake.
 
 - `src/main/scala/UDFDemoSetup.scala`: This sets up the data and libraries needed for the
@@ -77,15 +76,14 @@ The demo directory includes the following files:
   to be uploaded to internal named stages. After downloading and extracting the data and JAR files,
   you will run this example to create those stages and upload those files.
 
-- `src/main/scala/UDFDemo`: This is a simple example of code that creates and calls a UDF.
+- `src/main/scala/UDFDemo`: This is a simple code example that creates and calls a UDF.
 
 <!-- ------------------------ -->
 ##  Configure the settings for connecting to Snowflake
 Duration: 5
 
-The demo directory contains a `snowflake_connection.properties` file used by the examples to
-[create a session](https://docs.snowflake.com/en/developer-guide/snowpark/creating-session.html)
-to connect to Snowflake.
+The demo directory contains a `snowflake_connection.properties` file that the examples use to
+[create a session](https://docs.snowflake.com/en/developer-guide/snowpark/creating-session.html) to connect to Snowflake.
 
 Edit this file and replace the `<placeholder>` values with the values that you use to connect to
 Snowflake. For example:
@@ -104,26 +102,21 @@ SCHEMA = my_schema
 The role that you choose must have permissions to create stages and write tables in the specified
 database and schema.
 
-For the properties in this file, you can use any
-[connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-connection-parameters).
+For the properties in this file, you can use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-connection-parameters).
 
 <!-- ------------------------ -->
 ##  Connect to Snowflake
 Duration: 5
 
-Next, using the [SBT command-line tool](https://www.scala-sbt.org/1.x/docs/Running.html), build and
-run the `HelloWorld.scala` example to verify that you can connect to Snowflake:
+Next, using the [SBT command-line tool](https://www.scala-sbt.org/1.x/docs/Running.html), build and run the `HelloWorld.scala` example to verify that you can connect to Snowflake:
 
 ```console
 sbt "runMain HelloWorld"
 ```
 
-Let's walk through the output that the HelloWorld application prints output if the application runs
-successfully.
+Let's walk through the output that the HelloWorld application prints when it runs successfully.
 
-After creating a session, the application code
-[Session](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/Session.html)
-object with the settings specified in `snowflake_connection.properties`.
+After creating a session, the application code [Session](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/Session.html) object with the settings specified in `snowflake_connection.properties`.
 
 ```scala
 val session = Session.builder.configFile("snowflake_connection.properties").create
@@ -140,16 +133,13 @@ For this part of the example, you should just see the following output:
 [run-main-0]  INFO (Logging.scala:22) - Done closing stderr and redirecting to stdout
 ```
 
-Next, the application code
-[creates a DataFrame](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html)
-to hold the results from executing the `SHOW TABLES` command:
+Next, the application code [creates a DataFrame](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html) to hold the results from executing the `SHOW TABLES` command:
 
 ```scala
 val df = session.sql("show tables")
 ```
 
-Note that this does not execute the SQL statement. The output does not include any `INFO` messages
-that indicate that the Snowpark library executed an SQL statement:
+Note that this does not execute the SQL statement. The output does not include any `INFO` messages that indicate that the Snowpark library executed the SQL statement:
 
 ```console
 === Creating a DataFrame to execute a SQL statement ===
@@ -157,9 +147,7 @@ that indicate that the Snowpark library executed an SQL statement:
 [run-main-0]  INFO (Logging.scala:22) - Actively querying parameter snowpark_lazy_analysis from server.
 ```
 
-A
-[DataFrame](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrame.html)
-in Snowpark is lazily evaluated, which means that statements are not executed until you call a
+A [DataFrame](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrame.html) in Snowpark is lazily evaluated, which means that statements are not executed until you call a
 method that performs an action. One such method is `show`, which prints out the first 10 rows in
 the DataFrame.
 
@@ -192,8 +180,8 @@ Duration: 10
 The demo uses the [sentiment140](https://www.kaggle.com/kazanova/sentiment140) dataset and
 libraries from the [CoreNLP project](https://stanfordnlp.github.io/CoreNLP/).
 
-Since the user-defined functions in the demo execute in Snowflake, you'll need to upload the JAR
-files for these libraries to an internal stage to make them available to Snowflake. You'll also
+Since the user-defined functions in the demo execute in Snowflake, you will need to upload the JAR
+files for these libraries to an internal stage to make them available to Snowflake. You will also
 need to upload the dataset to a stage, where your demo will access the data.
 
 1. Go to the [sentiment140](https://www.kaggle.com/kazanova/sentiment140) page and click the
@@ -233,7 +221,7 @@ slf4j-api.jar					training.1600000.processed.noemoticon.csv
 stanford-corenlp-3.6.0-models.jar
 ```
 
-Next, you'll run the `UDFDemoSetup.scala` example to create the stages for these files and upload
+Next, run the `UDFDemoSetup.scala` example to create the stages for these files and upload
 these files to those stages.
 
 <!-- ------------------------ -->
@@ -247,7 +235,7 @@ and upload those files to the stages.
 sbt "runMain UDFDemoSetup"
 ```
 
-Let's walk through the output that the UDFDemoSetup application prints output if the application
+Let's review the output that the UDFDemoSetup application prints when the application
 runs successfully.
 
 After creating a session, the application code calls `uploadDemoFiles` (a utility function for the
@@ -275,7 +263,7 @@ val res = session.file.put(s"${uploadDirUrl}/$filePattern", stageName)
 ```
 
 The `put` method returns an Array of
-[PutResult](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/PutResult.html),
+[PutResult](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/PutResult.html)
 objects, each of which contains the results for a particular file.
 
 ```scala
@@ -490,8 +478,8 @@ Text of the first 10 tweets
 Duration: 5
 
 Next, the example defines a UDF that performs the sentiment analysis. The UDF relies on libraries
-that are packaged in separate JAR files, so you'll need to point the Snowpark library to those JAR
-files. You do this by calling the `Session.addDependency` method.
+that are packaged in separate JAR files, so you will need to point the Snowpark library to those JAR
+files. Do this by calling the `Session.addDependency` method.
 
 The example adds these JAR files as dependencies:
 
@@ -522,14 +510,14 @@ dependencies (like the dependencies that it specified earlier):
 [run-main-0]  INFO (Logging.scala:22) - Adding /<path>/snowparkdemo_2.12-0.1.jar to session dependencies
 ```
 
-Next, the Snowpark library creates a temporary stage for these JAR files:
+Next, the Snowpark library creates a temporary stage for the JAR files:
 
 ```console
 [run-main-0]  INFO (Logging.scala:22) - Execute query [queryID: {queryID}] create temporary stage if not exists "MY_DB"."MY_SCHEMA".snowSession_...
 ```
 
 and uploads the JAR files for Snowpark and for your application code to the stage. Snowpark also
-compiles your UDF and uploads the JAR file to the stage.:
+compiles your UDF and uploads the JAR file to the stage:
 
 ```console
 [snowpark-2]  INFO (Logging.scala:22) - Uploading file file:/.../snowparkdemo_2.12-0.1.jar to stage @"MY_DB"."MY_SCHEMA".snowSession_...
@@ -551,7 +539,7 @@ Finally, the library defines the UDF in your database:
 ```
 
 Next, the example creates a new DataFrame (`analyzed`) that transforms the `tweetData` DataFrame by
-adding a column named `sentiment`. `sentiment` contains the results from calling the UDF on the
+adding a column named `sentiment`. The `sentiment` column contains the results from calling the UDF on the
 corresponding value in the `text` column.
 
 ```scala
@@ -591,7 +579,7 @@ happyTweets.write.mode(Overwrite).saveAsTable("demo_happy_tweets")
 ## Conclusion & Next Steps
 Duration: 1
 
-You've now used Snowpark to perform sentiment analysis on tweets. A sample dataset of tweets were provided for this guide. If you want to automatically ingest new tweets as they are written, follow the [Auto Ingest Twitter Data into Snowflake](/guide/auto_ingest_twitter_data/) guide.
+You've now used Snowpark to perform sentiment analysis on tweets. We provided a sample dataset of tweets for this guide. If you want to automatically ingest new tweets as they are written, follow the [Auto Ingest Twitter Data into Snowflake](/guide/auto_ingest_twitter_data/) guide.
 
 ### What We've Covered
 - Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe
