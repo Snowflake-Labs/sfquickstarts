@@ -6,7 +6,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Getting Started Using Snowpark
+# Getting Started With Snowpark
 <!-- ------------------------ -->
 ## Overview
 Duration: 1
@@ -30,6 +30,9 @@ Snowpark is a [preview feature](https://docs.snowflake.com/en/release-notes/prev
 You can also use a development tool or environment that supports SBT projects for Scala 2.12
 (specifically, version 2.12.9 or later 2.12.x versions). Snowpark does not yet support versions
 of Scala after 2.12 (for example, Scala 2.13).
+
+To compile and run your Scala code, your development tool must use the JDK 8.x, 9.x, 10.x, or 11.x.
+Snowpark does not yet support other versions of the JDK.
 
 ### What You’ll Learn
 - How to create a DataFrame that loads data from a stage
