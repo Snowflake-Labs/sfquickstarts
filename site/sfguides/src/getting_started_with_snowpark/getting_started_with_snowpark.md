@@ -67,14 +67,13 @@ The demo directory includes the following files:
   Snowflake. You will edit this file and specify the settings that you use to connect to a
   Snowflake database.
 
-- `src/main/scala/HelloWorld.scala`: This is a simple example that uses the Snowpark library to
-  connect to Snowflake, run the `SHOW TABLES` command, and print out the first three tables listed. You
-  will run this example to verify that you can connect to Snowflake.
+- `src/main/scala/HelloWorld.scala`: This is a simple example that uses the Snowpark library. It
+  connects to Snowflake, runs the `SHOW TABLES` command, and prints out the first three tables listed. Run this example to verify that you can connect to Snowflake.
 
 - `src/main/scala/UDFDemoSetup.scala`: This sets up the data and libraries needed for the
   user-defined function (UDF) for the demo. The UDF relies on a data file and JAR files that need
   to be uploaded to internal named stages. After downloading and extracting the data and JAR files,
-  you will run this example to create those stages and upload those files.
+run this example to create those stages and upload those files.
 
 - `src/main/scala/UDFDemo`: This is a simple code example that creates and calls a UDF.
 
@@ -85,7 +84,7 @@ Duration: 5
 The demo directory contains a `snowflake_connection.properties` file that the examples use to
 [create a session](https://docs.snowflake.com/en/developer-guide/snowpark/creating-session.html) to connect to Snowflake.
 
-Edit this file and replace the `<placeholder>` values with the values that you use to connect to
+Edit this file and replace the `&lt;placeholder&gt;` values with the values that you use to connect to
 Snowflake. For example:
 
 ```console
@@ -102,7 +101,7 @@ SCHEMA = my_schema
 The role that you choose must have permissions to create stages and write tables in the specified
 database and schema.
 
-For the properties in this file, you can use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-connection-parameters).
+For the properties in this file, use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-connection-parameters).
 
 <!-- ------------------------ -->
 ##  Connect to Snowflake
@@ -116,7 +115,7 @@ sbt "runMain HelloWorld"
 
 Let's walk through the output that the HelloWorld application prints when it runs successfully.
 
-After creating a session, the application code [Session](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/Session.html) object with the settings specified in `snowflake_connection.properties`.
+After creating a session, the application code creates a [Session](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/Session.html) object with the settings specified in `snowflake_connection.properties`.
 
 ```scala
 val session = Session.builder.configFile("snowflake_connection.properties").create
@@ -177,31 +176,31 @@ demo.
 ## Download the data file and libraries for the demo
 Duration: 10
 
-The demo uses the [sentiment140](https://www.kaggle.com/kazanova/sentiment140) dataset and
+This demo uses the [sentiment140](https://www.kaggle.com/kazanova/sentiment140) dataset and
 libraries from the [CoreNLP project](https://stanfordnlp.github.io/CoreNLP/).
 
-Since the user-defined functions in the demo execute in Snowflake, you will need to upload the JAR
-files for these libraries to an internal stage to make them available to Snowflake. You will also
-need to upload the dataset to a stage, where your demo will access the data.
+Because the user-defined functions in the demo execute in Snowflake, you have to upload the JAR
+files for these libraries to an internal stage to make them available to Snowflake. You  also
+need to upload the dataset to a stage, where the demo will access the data.
 
-1. Go to the [sentiment140](https://www.kaggle.com/kazanova/sentiment140) page and click the
-   Download link to download the ZIP archive containing the dataset.
+1. Go to the [sentiment140](https://www.kaggle.com/kazanova/sentiment140) page and click
+   **Download** to download the ZIP archive containing the dataset.
 
-1. Unzip the `training.1600000.processed.noemoticon.csv` from the `archive.zip` file that you downloaded:
+1. Unzip `training.1600000.processed.noemoticon.csv` from the `archive.zip` file that you downloaded.
 
 1. [Download version 3.6.0 of the CoreNLP libraries](https://nlp.stanford.edu/software/stanford-corenlp-full-2015-12-09.zip).
 
 1. Unzip the libraries from the `stanford-corenlp-full-2015-12-09.zip` file that you downloaded.
 
 1. In your `sfguide-snowpark-demo` directory, create a `tempfiles` directory for the data and JAR
-   files (e.g. `mkdir files_to_upload`).
+   files (for example: `mkdir files_to_upload`).
 
 1. Copy the following file extracted from `archive.zip` to your
-   `sfguide-snowpark-demo/files_to_upload/` directory.
+   `sfguide-snowpark-demo/files_to_upload/` directory:
 
    - `training.1600000.processed.noemoticon.csv`
 
-1. Copy the following file extracted from `stanford-corenlp-full-2015-12-09.zip` to your
+1. Copy the following files extracted from `stanford-corenlp-full-2015-12-09.zip` to your
    `sfguide-snowpark-demo/files_to_upload/` directory.
 
    - `stanford-corenlp-3.6.0.jar`
@@ -221,14 +220,14 @@ slf4j-api.jar					training.1600000.processed.noemoticon.csv
 stanford-corenlp-3.6.0-models.jar
 ```
 
-Next, run the `UDFDemoSetup.scala` example to create the stages for these files and upload
-these files to those stages.
+Next, run the `UDFDemoSetup.scala` example to create the stages for these files, and upload
+the files to the stages.
 
 <!-- ------------------------ -->
 ## Upload the data file and libraries to internal stages
 Duration: 20
 
-Next, run the `UDFDemoSetup.scala` example to create the stages for the data file and libraries
+Next, run the `UDFDemoSetup.scala` example to create the stages for the data file and libraries,
 and upload those files to the stages.
 
 ```console
@@ -238,8 +237,7 @@ sbt "runMain UDFDemoSetup"
 Let's review the output that the UDFDemoSetup application prints when the application
 runs successfully.
 
-After creating a session, the application code calls `uploadDemoFiles` (a utility function for the
-purposes of setting up these demo files), which uses the Snowpark library to create the stage:
+After creating a session, the application code calls `uploadDemoFiles` (a utility function that sets up these demo files), which in turn uses the Snowpark library to create the stage.
 
 First, the example executes an SQL statement to create the stage:
 
@@ -353,13 +351,13 @@ sbt "runMain UDFDemo"
 
 This example:
 
-- loads the data from the demo file into a DataFrame
-- creates a user-defined function (UDF) that analyzes a string and determines the sentiment of the
+- Loads the data from the demo file into a DataFrame
+- Creates a user-defined function (UDF) that analyzes a string and determines the sentiment of the
   words in the string
-- calls the function on each value in a column in the DataFrame
-- creates a new DataFrame that contains the column with the original data and a new column with the
+- Calls the function on each value in a column in the DataFrame
+- Creates a new DataFrame that contains the column with the original data, and a new column with the
   return value of the UDF
-- creates a new DataFrame that just contains the rows where the function determined that the
+- Creates a new DataFrame that just contains the rows where the function determined that the
   sentiment was happy
 
 Let's take a closer look at the example and the output to see how the Snowpark library does this.
@@ -375,7 +373,7 @@ After creating the session, the example imports names from `implicits` in the `s
 import session.implicits._
 ```
 
-This statement allows you to use shorthand to refer to columns (e.g. `'columnName` and
+This statement allows you to use shorthand to refer to columns (*e.g.* `'columnName` and
 `$"columnName"`) when passing arguments to DataFrame methods.
 
 <!-- ------------------------ -->
@@ -433,7 +431,7 @@ The example returns the DataFrame `origData`.
 
 As explained earlier, DataFrames are lazily evaluated, which means that they don't load data until
 you call a method to retrieve the data. You can call additional methods to transform the DataFrame
-(as the next line of code does) before you can call the method to retrieve the data.
+(as the next line of code does) before you call the method to retrieve the data.
 
 Next, the example returns a new DataFrame (`tweetData`) that just contains the column with the
 tweets (the column named `text`) with the first 100 rows of data from the original DataFrame
@@ -510,13 +508,13 @@ dependencies (like the dependencies that it specified earlier):
 [run-main-0]  INFO (Logging.scala:22) - Adding /<path>/snowparkdemo_2.12-0.1.jar to session dependencies
 ```
 
-Next, the Snowpark library creates a temporary stage for the JAR files:
+Next, the Snowpark library creates a temporary stage for the JAR files...
 
 ```console
 [run-main-0]  INFO (Logging.scala:22) - Execute query [queryID: {queryID}] create temporary stage if not exists "MY_DB"."MY_SCHEMA".snowSession_...
 ```
 
-and uploads the JAR files for Snowpark and for your application code to the stage. Snowpark also
+and uploads to the stage the JAR files for Snowpark and for your application code. Snowpark also
 compiles your UDF and uploads the JAR file to the stage:
 
 ```console
@@ -579,13 +577,13 @@ happyTweets.write.mode(Overwrite).saveAsTable("demo_happy_tweets")
 ## Conclusion & Next Steps
 Duration: 1
 
-You've now used Snowpark to perform sentiment analysis on tweets. We provided a sample dataset of tweets for this guide. If you want to automatically ingest new tweets as they are written, follow the [Auto Ingest Twitter Data into Snowflake](/guide/auto_ingest_twitter_data/) guide.
+Congratulations! You used Snowpark to perform sentiment analysis on tweets. We provided a sample dataset of tweets for this guide. If you want to automatically ingest new tweets as they are written, follow the [Auto Ingest Twitter Data into Snowflake](/guide/auto_ingest_twitter_data/) guide.
 
-### What We've Covered
-- Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe
-- Semi-structured data: Querying semi-structured data (JSON) without needing transformations
-- Secure Views: Create a Secure View to allow data analysts to query the data
-- Snowpipe: Overview and configuration
+### What We Covered
+- **Data Loading** – Loading streaming Twitter data into Snowflake with Snowpipe in an event-driven, real-time fashion 
+- **Semi-structured data** – Querying semi-structured data (JSON) without needing transformations
+- **Secure Views** – Creating a Secure View to allow data analysts to query the data
+- **Snowpipe** – Overview and configuration
 
 ### Related Resources
 - [Snowpark Docs](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark.html)
