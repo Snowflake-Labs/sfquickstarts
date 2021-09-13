@@ -86,7 +86,8 @@ CREATE OR REPLACE TABLE loans (
 ...
 ```
 
-To execute the entire .sql code, which contains 9 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(9)", meaning it will execute all 9 commands in the uploaded file.
+**Note: before you execute the SQL statements, please proceed to the next section to connect to H2O and launch your Driverless AI instance.**
+
 
 <!-- ------------------------ -->
 ## Launching Driverless AI
@@ -96,7 +97,7 @@ Snowflake's Partner Connect feature allows you to seamlessly get started with pa
 
 ![](assets/p20.png)
 
-Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. You should see H2O near the bottom.
+Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool.
 
 ![](assets/p21.png)
 
@@ -106,11 +107,6 @@ To be able to continue test out partner applications, in our case H2O, we need t
 
 Once you have completed this step, go ahead and click on the H2O application. This will present you with a screen to connect to H2O. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
 
-![](assets/p23.png)
-
-You then will be prompted to activate your account now, press the blue "activate" button to do so.
-
-![](assets/p24.png)
 
 ![](images/01_startup_01.png)
 
@@ -125,6 +121,15 @@ You next need to accept the H2O Terms and Conditions for the Trial Agreement
 and wait while your H2O Driverless AI instance is configured and launched.
 
 ![](images/01_startup_04.png)
+
+
+## Loading dataset and creating a Snowflake table
+
+Now let's setup the database and warehouse in Snowflake, and create a table to use for the lab.
+
+In the Snowflake worksheet, you have previously loaded a `.sql` script. The SQL commands in this script will import the Lendingclub dataset and create a table called `loans`. This table will be used with H2O Driverless AI to train and deploy a machine learning model.
+
+To execute the entire .sql code, which contains 9 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(9)", meaning it will execute all 9 commands in the uploaded file.
 
 ### Driverless AI Interface
 
