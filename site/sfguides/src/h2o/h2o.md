@@ -574,7 +574,7 @@ and then `DOWNLOAD MOJO SCORING PIPELINE` again from the `MOJO Scoring Pipeline 
 
 This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files, along with a number of other files we will not be needing.
 
-The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.3 at the time of this writing). Extract the downloaded `H2oScore-0.0.3.tgz` file to find `H2oDaiScore-0.0.3.jar`.
+The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.4 at the time of this writing). Extract the downloaded `H2oScore-0.0.4.tgz` file to find `H2oDaiScore-0.0.4.jar`.
 
 Last, you will need your Driverless AI license file `license.sig`.
 
@@ -611,7 +611,7 @@ Finally, we can now upload the 4 artifacts:
 ```
 put file://{path}/pipeline.mojo @%loans auto_compress=false;
 put file://{path}/license.sig @%loans auto_compress=false;
-put file://{path}/H2oDaiScore-0.0.3.jar @%loans auto_compress=false;
+put file://{path}/H2oDaiScore-0.0.4.jar @%loans auto_compress=false;
 put file://{path}/mojo2-runtime.jar @%loans auto_compress=false;
 ```
 
@@ -635,7 +635,7 @@ CREATE FUNCTION H2OScore_Java(params STRING, rowData ARRAY)
     imports = ('@%loans/pipeline.mojo',
                '@%loans/license.sig',
                '@%loans/mojo2-runtime.jar',
-               '@%loans/H2oDaiScore-0.0.3.jar'
+               '@%loans/H2oDaiScore-0.0.4.jar'
                )
 
     handler = 'h2oDai.H2oDaiScore.h2oDaiScore';
