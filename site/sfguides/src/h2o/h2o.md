@@ -122,15 +122,6 @@ and wait while your H2O Driverless AI instance is configured and launched.
 
 ![](images/01_startup_04.png)
 
-
-## Loading dataset and creating a Snowflake table
-
-Now let's setup the database and warehouse in Snowflake, and create a table to use for the lab.
-
-In the Snowflake worksheet, you have previously loaded a `.sql` script. The SQL commands in this script will import the Lendingclub dataset and create a table called `loans`. This table will be used with H2O Driverless AI to train and deploy a machine learning model.
-
-To execute the entire .sql code, which contains 9 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(9)", meaning it will execute all 9 commands in the uploaded file.
-
 ### Driverless AI Interface
 
 Your brand new Driverless AI instance looks like
@@ -146,6 +137,15 @@ A summary of the information and views we will cover in this tutorial include:
 5. `DIAGNOSTICS`: Model diagnostics view.
 6. `MLI`: Machine learning interpretability view, information to help us understand our models.
 7. `RESOURCES`: A pull-down menu for accessing system information, clients, help, and other resources.
+
+## Loading dataset and creating a Snowflake table
+
+Now let's setup the database and warehouse in Snowflake, and create a table to use for the lab.
+
+In the Snowflake worksheet, you have previously loaded a `.sql` script. The SQL commands in this script will import the Lendingclub dataset and create a table called `loans`. This table will be used with H2O Driverless AI to train and deploy a machine learning model.
+
+To execute the entire .sql code, which contains 9 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(9)", meaning it will execute all 9 commands in the uploaded file.
+
 
 <!-- ------------------------ -->
 ## Import Data from Snowflake
