@@ -12,8 +12,10 @@ authors: Jason West
 <!-- ------------------------ -->
 ## Overview
 Duration: 3
-changeme 
-User-defined functions (UDFs) let you extend the system to perform operations that are not available through the built-in, system-defined functions provided by Snowflake. Snowflake currently supports the following languages for writing UDFs:
+
+### User-defined functions (UDFs) let you extend the system to perform operations that are not available through the built-in, system-defined functions provided by Snowflake. 
+
+#### Snowflake currently supports the following languages for writing UDFs:
 
 - **SQL**: A SQL UDF evaluates an arbitrary SQL expression and returns either scalar or tabular results.
 
@@ -22,7 +24,7 @@ User-defined functions (UDFs) let you extend the system to perform operations th
 - Java: A Java UDF lets you use the Java programming language to manipulate data and return scalar results.
 
 
-This guide will walk you through setting up Snowflake and getting familiar with 
+#### This guide will walk you through setting up Snowflake and getting familiar with 
 - Creating and executing **SQL** user-defined functions(UDFs) 
 - Creating and executing **SQL** user-defined table functions(UDTFs).
 
@@ -54,7 +56,7 @@ If you are not familiar with the Snowflake User Interface, then please watch the
 ## Begin With the Basics
 Duration: 3
 
-First, we'll go over how to create your Snowflake account and manage user permissions.
+#### First, we'll go over how to create your Snowflake account and manage user permissions.
 
 ### Create a Snowflake Account
 
@@ -142,7 +144,8 @@ Duration: 6
 
 With the database primed with sample sales data, we're _almost_ ready to try creating a scalar UDF. Before diving in, let’s first understand more about UDF naming conventions.
 
-If the function name doesn't specify the database and schema(e.x. `udf_db.udf_schema_public.udf_name`) then it defaults to the active session. Since UDFs are database objects, it's better to follow their [naming conventions](https://docs.snowflake.com/en/sql-reference/udf-overview.html#naming-conventions-for-udfs). For this quick practice, we'll rely on our active session.
+Negative
+: If the function name doesn't specify the database and schema(e.x. `udf_db.udf_schema_public.udf_name`) then it defaults to the active session. Since UDFs are database objects, it's better to follow their [naming conventions](https://docs.snowflake.com/en/sql-reference/udf-overview.html#naming-conventions-for-udfs). For this quick practice, we'll rely on our active session.
 
 ### 1. Create UDF
 
