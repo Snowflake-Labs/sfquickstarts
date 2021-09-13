@@ -160,13 +160,14 @@ This launches the `Make Snowflake Query` form.
 ![](assets/02_import_2.png)
 Enter into the form:
 
-* **Database** `PC_H2O_DB`,
-* **Warehouse** as `PC_H2O_WH`,
-* **Schema** as `PUBLIC`,
-* **Name** as `loans.csv`,
-* **Username** and **Password** with the credentials you used at signup,
-* **File Formatting Parameters** as `FIELD_OPTIONALLY_ENCLOSED_BY = '"'`,
-* **SQL Query** `SELECT * FROM LOANS`.
+* **Database** `PC_H2O_DB`
+* **Warehouse** as `PC_H2O_WH`
+* **Schema** as `PUBLIC`
+* **Name** as `loans.csv`
+* **Username** and **Password** with the credentials you used at signup
+* **File Formatting Parameters** as `FIELD_OPTIONALLY_ENCLOSED_BY = '"'`
+  > note: the quotation marks are **_single double single_**
+* **SQL Query** `SELECT * FROM LOANS`
 
 Then click the `CLICK TO MAKE QUERY` button. This imports the data into the Driverless AI system.
 
