@@ -1,83 +1,98 @@
-summary: Guide to getting started with user-defined functions
-Id: getting_started_with_user_defined_functions
-categories: Getting Started, UDF
+summary: Guide to getting started with user-defined SQL functions
+Id: getting_started_with_user_defined_sql_functions
+categories: Getting Started, UDF, UDTF
 environments: Web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: Getting Started, SQL
+tags: Getting Started, SQL, UDF, UDTF
+authors: Jason West
 
-# Getting Started With User-Defined Functions
+# Getting Started With User-Defined SQL Functions
 
+<!-- ------------------------ -->
 ## Overview
+Duration: 3
+changeme 
+User-defined functions (UDFs) let you extend the system to perform operations that are not available through the built-in, system-defined functions provided by Snowflake. Snowflake currently supports the following languages for writing UDFs:
 
-Duration: 0:03:00
+- **SQL**: A SQL UDF evaluates an arbitrary SQL expression and returns either scalar or tabular results.
 
-Sometimes the built-in system functions don't offer answers to the specific questions your organization has. Custom functions are necessary when managing and analyzing data. Snowflake provides a way to make diverse functions on the fly with user-defined functions.
+- JavaScript: A JavaScript UDF lets you use the JavaScript programming language to manipulate data and return either scalar or tabular results.
 
-This guide will walk you through getting set up with Snowflake and becoming familiar with creating and executing user-defined functions(UDFs) and user-defined table functions(UDTFs).
+- Java: A Java UDF lets you use the Java programming language to manipulate data and return scalar results.
 
-Review the material below and start with the essentials in the following section.
+
+This guide will walk you through setting up Snowflake and getting familiar with 
+- Creating and executing **SQL** user-defined functions(UDFs) 
+- Creating and executing **SQL** user-defined table functions(UDTFs).
+
 
 ### Prerequisites
+
+If you are not familiar with the Snowflake User Interface, then please watch the video below.
 
 - Quick Video [Introduction to Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc.)
 
 ### What You’ll Learn
 
 - Snowflake account and user permissions
-- Make database objects
-- Query with a user-defined scalar function
-- Query with a user-defined table function
+- Creating database objects
+- Query a user-defined scalar function
+- Query a user-defined table function
 - Delete database objects
-- Review secure user-defined function
+
 
 ### What You’ll Need
 
-- [Snowflake](https://signup.snowflake.com/) Account
+- A [Snowflake](https://signup.snowflake.com/) Trial Account
 
 ### What You’ll Build
 
 - Database objects and user-defined functions to query those objects.
 
 <!-- ------------------------ -->
-
 ## Begin With the Basics
-
-Duration: 0:03:00
+Duration: 3
 
 First, we'll go over how to create your Snowflake account and manage user permissions.
 
-1.  Create a Snowflake Account
+### Create a Snowflake Account
 
 Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/). Follow the prompts to activate your account via email.
 
-2.  Access Snowflake’s Web Console
+If you already have a Snowflake account, you can use it.  You just need a role with permission to create a database.
 
-`https://<account-name>.snowflakecomputing.com/console/login`
+### Access Snowflake’s Web Console
+
+```
+https://<your-account-name>.snowflakecomputing.com/console/login
+```
 
 Log in to the [web interface](https://docs.snowflake.com/en/user-guide/connecting.html#logging-in-using-the-web-interface) from your browser. The URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region.
 
-3.  Increase Your Account Permission
+### Changing your role
+
+Positive
+: If you already have a Snowflake account, you can use a role with privildges to create a database.
 
 ![Snowflake_SwitchRole_DemoUser-image](assets/Snowflake_SwitchRole_DemoUser.png)
 
 Switch the account role from the default <code>SYSADMIN</code> to <code>ACCOUNTADMIN</code>.
+This **is not required**, but will ensure your web UI aligns with the screen shots in this lab.
 
 With your new account created and the role configured, you're ready to begin creating database objects in the following section.
 
 <!-- ------------------------ -->
-
-## Generate Database Objects
-
-Duration: 0:05:00
+## Create Database Objects
+Duration: 5
 
 With your Snowflake account at your fingertips, it's time to create the database objects.
 
 Within the Snowflake web console, navigate to **Worksheets** and use a fresh worksheet to run the following commands.
 
-1. **Create Database**
+### 1. Create a new Database
 
-```SQL
+```sql
 create or replace database udf_db;
 ```
 
@@ -85,11 +100,12 @@ Build your new database named `udf_db` with the command above.
 
 ![Snowflake_udf_CreateDB-image](assets/Snowflake_udf_CreateDB.png)
 
-The **Results** displays a status message of `Database UDF_DB successfully created` if all went as planned.
+Positive
+: The **Results** should display a status message of **Database UDF_DB successfully created** .
 
-2. **Make Schema**
+### 2. Create a new Schema
 
-```SQL
+```sql
 create schema if not exists udf_schema_public;
 ```
 
@@ -97,37 +113,40 @@ Use the above command to whip up a schema called `udf_schema_public`.
 
 ![Snowflake_udf_CreateSchema-image](assets/Snowflake_udf_CreateSchema.png)
 
-The **Results** show a status message of `Schema UDF_SCHEMA_PUBLIC successfully created`.
+Positive
+: The **Results** should display a status message of **Schema UDF_SCHEMA_PUBLIC successfully created**.
 
-3. **Copy Sample Data Into New Table**
+### 3. Copy Sample Data Into New Table
 
-```SQL
-create or replace table udf_db.udf_schema_public.sales as
-(select * from snowflake_sample_data.TPCDS_SF10TCL.store_sales
- sample block (1));
+```sql
+create or replace table udf_db.udf_schema_public.sales 
+  as
+    (select * from snowflake_sample_data.tpcds_sf10tcl.store_sales sample block (1));
+
 ```
 
 Create a table named ‘sales’ and import the sales data with this command. Bear in mind, importing the sample data will take a longer time to execute than the previous steps.
 
 ![Snowflake_udf_CreateTable-image](assets/Snowflake_udf_CreateTable.png)
 
-The **Results** will display a status of `Table SALES successfully created` if the sample data and table made it.
+Positive
+: The **Results** should display a status of **Table SALES successfully created** .
+
+
 
 With the necessary database objects created, it’s time to move onto the main course of working with a UDF in the next section.
 
 <!-- ------------------------ -->
-
-## Execute Scalar User-Defined Function
-
-Duration: 0:06:00
+## Execute a Scalar User-Defined Function
+Duration: 6
 
 With the database primed with sample sales data, we're _almost_ ready to try creating a scalar UDF. Before diving in, let’s first understand more about UDF naming conventions.
 
 If the function name doesn't specify the database and schema(e.x. `udf_db.udf_schema_public.udf_name`) then it defaults to the active session. Since UDFs are database objects, it's better to follow their [naming conventions](https://docs.snowflake.com/en/sql-reference/udf-overview.html#naming-conventions-for-udfs). For this quick practice, we'll rely on our active session.
 
-1. **Create UDF**
+### 1. Create UDF
 
-```SQL
+```sql
 create function udf_max()
   returns NUMBER(7,2)
   as
@@ -143,9 +162,9 @@ The [SQL function](https://docs.snowflake.com/en/sql-reference/functions/min.htm
 
 The image shows the successful creation of the function `udf_max`.
 
-2. **Call the UDF**
+### 2. Call the UDF
 
-```SQL
+```sql
 select udf_max();
 ```
 
@@ -158,16 +177,14 @@ Pictured above is the returned **Results**.
 Now that you've practiced the basics of creating a UDF, we'll kick it up a notch in the next section by creating a UDF that returns a new table.
 
 <!-- ------------------------ -->
-
 ## Query With User-Defined Table Function
-
-Duration: 0:06:00
+Duration: 6
 
 After creating a successful scalar UDF, move onto making a function that returns a table with a UDTF(user-defined table function).
 
-1. **Create a UDTF**
+### 1. Create a UDTF
 
-```SQL
+```sql
 create or replace function
 udf_db.udf_schema_public.get_market_basket(input_item_sk number(38))
 returns table (input_item NUMBER(38,0), basket_item_sk NUMBER(38,0),
@@ -185,9 +202,9 @@ The code snippet above creates a function that returns a table with a market bas
 
 ![Snowflake_udtf-image](assets/Snowflake_udtf.png)
 
-2. **Run the UDTF**
+### 2. Run the UDTF
 
-```SQL
+```sql
 select * from table(udf_db.udf_schema_public.get_market_basket(6139));
 ```
 
@@ -200,64 +217,46 @@ Returned is the market basket analysis table based on the sample sales data.
 You've practiced making UDTFs and have become familiar with UDFs. In the last section, we'll delete our unneeded database objects.
 
 <!-- ------------------------ -->
-
 ## Cleanup
+Duration: 2
 
-Duration: 0:03:00
+We've covered a lot of ground! Before we wrap-up, drop the practice database you created in this guide.
+This will remove the database and all of the tables and functions that you created.
 
-We've covered a lot of ground! Before we wrap-up, drop the practice database objects created in this guide.
+### 1. Drop the Database
 
-1. **Drop Table**
 
-```SQL
-drop table if exists sales;
-```
+Drop the database: `udf_db`.
 
-Begin by dropping the child object before dropping parent database objects. Use the command above to start by removing the table.
-
-![Snowflake_udf_DropTable-image](assets/Snowflake_udf_DropTable.png)
-
-Ensure you've successfully dropped the table in the **Results** section.
-
-2. **Drop Schema**
-
-```SQL
-drop schema if exists udf_schema_public;
-```
-
-The command above drops the schema `udf_schema_public`.
-
-![Snowflake_udf_schema_public_drop-image](assets/Snowflake_udf_schema_public_drop.png)
-
-The **Results** return should display `UDF_SCHEMA_PUBLIC successfully dropped`.
-
-3. **Drop Database**
-
-```SQL
+```sql
 drop database if exists udf_db;
 ```
-
-Complete the process by dropping the parent object `udf_db`.
 
 ![Snowflake_udf_DropDB-image](assets/Snowflake_udf_DropDB.png)
 
 Verify the database is entirely gone by checking the **Results** for `UDF_DB successfully dropped`.
 
 <!-- ------------------------ -->
-
 ## Conclusion and Next Steps
+Duration: 2
 
-Duration: 0:02:00
+You should now have a good handle on SQL UDFs by practicing both scalar and table functions. With our database objects cleared, it's time to look ahead.
 
-You have a good handle on UDFs by practicing both scalar and table functions. With our database objects cleared, it's time to look ahead.
-
-Consider the potential in a sharable and [secure](https://docs.snowflake.com/en/sql-reference/udf-secure.html#secure-udfs) user-defined function. You can learn how to share user-defined functions, such as the market basket analysis table, following this post about [the power of secure UDFs](https://www.snowflake.com/blog/the-power-of-secure-user-defined-functions-for-protecting-shared-data/).
+Consider the potential of a sharable and [secure](https://docs.snowflake.com/en/sql-reference/udf-secure.html#secure-udfs) user-defined function. You can learn how to share user-defined functions, such as the market basket analysis table, following this post about [the power of secure UDFs](https://www.snowflake.com/blog/the-power-of-secure-user-defined-functions-for-protecting-shared-data/).
 
 ### What we've covered
 
 - Registered a Snowflake account
 - Configured role permissions
-- Produced database objects
-- Queried with a custom UDF
-- Composed a table to analyze data with a UDTF
-- Eliminated database objects
+- Created a database and other objects
+- Created a table to analyze data with a UDTF
+- Queried a custom UDF
+- Droping a database to clean up all objects
+
+### Related Resources
+
+For more information on UDF's:
+
+- [SQL UDF's](https://docs.snowflake.com/en/developer-guide/udf/sql/udf-sql.html#sql-udfs)
+- [JavaScript UDF's](https://docs.snowflake.com/en/developer-guide/udf/javascript/udf-javascript.html#javascript-udfs)
+- [Java UDF's](https://docs.snowflake.com/en/developer-guide/udf/java/udf-java.html#java-udfs)
