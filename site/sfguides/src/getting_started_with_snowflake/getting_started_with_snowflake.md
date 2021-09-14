@@ -101,9 +101,7 @@ The various sections of this page can be resized by adjusting their sliders. If 
 
 ![worksheets tab](assets/3UIStory_7.png)
 
-At the top left of the default worksheet, to the right of the worksheet tab, click on the downward facing arrow and select Load Script. Browse to the lab_scripts.sql file you downloaded in the previous section and select Open. All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. Do not run any of the SQL commands yet. We will come back to them later in the lab and execute them one at a time.
 
-![worksheets tab navigation](assets/3UIStory_8.png)
 
 
 Negative
@@ -164,7 +162,7 @@ Navigate to the Databases tab. Click Create, name the database `CITIBIKE`, then 
 
 ![worksheet creation](assets/4PreLoad_2.png)
 
-Now navigate to the Worksheets tab. You should see the worksheet with all the SQL we previously loaded.
+Now navigate to the Worksheets tab. You should see an empty worksheet. You can copy the SQL from each step below and paste it here to run.
 
 ![new worksheet](assets/4PreLoad_3.png)
 
@@ -182,7 +180,7 @@ Negative
 : **Data Definition Language (DDL) operations are free!**
 All the DDL operations we have done so far do not require compute resources, so we can create all our objects for free.
 
-Next we’ll create a table called TRIPS that will be used for loading the comma-delimited data. We will use the UI within the Worksheets tab to run the DDL that creates the table. The SQL text below is what we previously loaded into the worksheet:
+Next we’ll create a table called TRIPS that will be used for loading the comma-delimited data. We will use the UI within the Worksheets tab to run the DDL that creates the table. Copy the SQL text below into your worksheet:
 
 ```SQL
 create or replace table trips
