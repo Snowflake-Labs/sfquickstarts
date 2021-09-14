@@ -37,17 +37,17 @@ We will use Snowflake and Driverless AI to:
 
 ### Prerequisites
 
-* A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
-* A [H2O](https://www.h2o.ai/try-driverless-ai/) Account
+* A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab)
+* A [H2O](https://www.h2o.ai/try-driverless-ai/) trial license key
 * [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) installed (Snowflake's CLI tool)
 * Past experience running and executing queries in Snowflake
-* A basic understanding of data science and machine learning concepts.
+* A basic understanding of data science and machine learning concepts
 
 ### What You'll Learn
 
 * How to use Snowflake's "Partner Connect" to create a Driverless AI instance
-* How to use Driverless AI to build a supervised learning classification model.
-* How to deploy the finished model pipeline as a Snowflake Java UDF.
+* How to use Driverless AI to build a supervised learning classification model
+* How to deploy the finished model pipeline as a Snowflake Java UDF
 
 <!-- ------------------------ -->
 ## Setting up Snowflake
@@ -70,29 +70,24 @@ To ingest our script in the Snowflake UI, navigate to the ellipsis button on the
 Snowflake provides "worksheets" as the spot for you to execute your code. This lab assumes you have already run a few queries in Snowflake before. Therefore, we are going to execute a series of commands quickly, so we get the data in tables and continue to the more interesting part of the lab of building and deploying models. The .sql file that you upload should look like this:
 
 ```sql
-USE ROLE sysadmin;
-
-CREATE OR REPLACE DATABASE lendingclub;
-
-CREATE OR REPLACE WAREHOUSE demo_wh
-  WITH WAREHOUSE_SIZE = 'XSMALL';
-
-USE DATABASE h2o_vhol;
+USE ROLE PC_H2O_ROLE;
+USE DATABASE PC_H2O_DB;
 USE SCHEMA public;
-USE WAREHOUSE compute_wh;
+USE WAREHOUSE PC_H2O_WH;
 
 CREATE OR REPLACE TABLE loans (
     id INTEGER,
     loan_amnt INTEGER,
     term String(1024),
     installment Real,
-    grade String(1024)
+    grade String(1024),
     ...)
 
 ...
 ```
 
-To execute the entire .sql code, which contains 11 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(11)", meaning it will execute all 11 commands in the uploaded file.
+**Note: before you execute the SQL statements, please proceed to the next section to connect to H2O and launch your Driverless AI instance.**
+
 
 <!-- ------------------------ -->
 ## Launching Driverless AI
@@ -102,7 +97,7 @@ Snowflake's Partner Connect feature allows you to seamlessly get started with pa
 
 ![](assets/p20.png)
 
-Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. You should see H2O near the bottom.
+Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool.
 
 ![](assets/p21.png)
 
@@ -112,11 +107,6 @@ To be able to continue test out partner applications, in our case H2O, we need t
 
 Once you have completed this step, go ahead and click on the H2O application. This will present you with a screen to connect to H2O. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
 
-![](assets/p23.png)
-
-You then will be prompted to activate your account now, press the blue "activate" button to do so.
-
-![](assets/p24.png)
 
 ![](images/01_startup_01.png)
 
@@ -148,6 +138,15 @@ A summary of the information and views we will cover in this tutorial include:
 6. `MLI`: Machine learning interpretability view, information to help us understand our models.
 7. `RESOURCES`: A pull-down menu for accessing system information, clients, help, and other resources.
 
+## Loading dataset and creating a Snowflake table
+
+Now let's setup the database and warehouse in Snowflake, and create a table to use for the lab.
+
+In the Snowflake worksheet, you have previously loaded a `.sql` script. The SQL commands in this script will import the Lendingclub dataset and create a table called `loans`. This table will be used with H2O Driverless AI to train and deploy a machine learning model.
+
+To execute the entire .sql code, which contains 9 different statements, all we need to do is click on the "All Queries" button next to blue "run" button at the top left of the worksheet and then press "run". You should see the "run" button has a "(9)", meaning it will execute all 9 commands in the uploaded file.
+
+
 <!-- ------------------------ -->
 ## Import Data from Snowflake
 Duration: 5
@@ -159,16 +158,16 @@ From the empty Datasets view, click the `Add Dataset` button and select the `SNO
 This launches the `Make Snowflake Query` form.
 
 ![](assets/02_import_2.png)
-
 Enter into the form:
 
-* **Database** `Lendingclub`,
-* **Warehouse** as `demo_wh`,
-* **Schema** as `public`,
-* **Name** as `loans.csv`,
-* **Username** and **Password** with the credentials you used at signup,
-* **File Formatting Parameters** as `FIELD_OPTIONALLY_ENCLOSED_BY="'"`,
-* **SQL Query** `select * from loans`.
+* **Database** `PC_H2O_DB`
+* **Warehouse** as `PC_H2O_WH`
+* **Schema** as `PUBLIC`
+* **Name** as `loans.csv`
+* **Username** and **Password** with the credentials you used at signup
+* **File Formatting Parameters** as `FIELD_OPTIONALLY_ENCLOSED_BY = '"'`
+  > note: the quotation marks are **_single double single_**
+* **SQL Query** `SELECT * FROM LOANS`
 
 Then click the `CLICK TO MAKE QUERY` button. This imports the data into the Driverless AI system.
 
@@ -297,7 +296,7 @@ Next select `bad_loan` as the `TARGET COLUMN` (#6). You will have to scroll down
 
 ![](images/06_setup_31.png)
 
-After selecting the target variable, Driverless AI analyzes the data and experimental settings and prefills additional options:  
+After selecting the target variable, Driverless AI analyzes the data and experimental settings and prefills additional options:
 
 ![](images/06_setup_32.png)
 
@@ -307,7 +306,7 @@ These include
 2. The `ACCURACY/TIME/INTERPRETABILITY` dials which range from 1 to 10 and largely determine the recipe for the experiment.
 3. The `CLASSIFICATION/REPRODUCIBLE/GPUS DISABLED` clickable buttons.
 4. The `SCORER` used in model building and evaluation.
-5. `EXPERT SETTINGS` for fine control over a vast number of system, model, feature, recipe, and specialty options.  
+5. `EXPERT SETTINGS` for fine control over a vast number of system, model, feature, recipe, and specialty options.
 6. A detailed settings description.
 7. `LAUNCH EXPERIMENT` to run the experiment defined by dial settings, scorer, and expert settings.
 
@@ -560,7 +559,7 @@ Duration: 5
 
 ### Introduction
 
-The final model from a Driverless AI experiment can be exported as either a **MOJO scoring pipeline** or a **Python scoring pipeline**. The MOJO scoring pipeline comes with a `pipeline.mojo` file that can be deployed in any environment that supports Java or C++. There are a myriad of different deployment scenarios for Real-time, Batch or Stream scoring with the `pipeline.mojo` file. In this tutorial, we deploy the final model as a Snowflake Java UDF.  
+The final model from a Driverless AI experiment can be exported as either a **MOJO scoring pipeline** or a **Python scoring pipeline**. The MOJO scoring pipeline comes with a `pipeline.mojo` file that can be deployed in any environment that supports Java or C++. There are a myriad of different deployment scenarios for Real-time, Batch or Stream scoring with the `pipeline.mojo` file. In this tutorial, we deploy the final model as a Snowflake Java UDF.
 
 ### Gather Driverless AI artifacts
 
@@ -581,7 +580,7 @@ and then `DOWNLOAD MOJO SCORING PIPELINE` again from the `MOJO Scoring Pipeline 
 
 This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files, along with a number of other files we will not be needing.
 
-The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.3 at the time of this writing). Extract the downloaded `H2oScore-0.0.3.tgz` file to find `H2oDaiScore-0.0.3.jar`.
+The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.4 at the time of this writing). Extract the downloaded `H2oScore-0.0.4.tgz` file to find `H2oDaiScore-0.0.4.jar`.
 
 Last, you will need your Driverless AI license file `license.sig`.
 
@@ -589,7 +588,7 @@ Last, you will need your Driverless AI license file `license.sig`.
 
 The first step in creating a Java UDF in Snowflake is to put the 4 Driverless AI artifacts into the table stage, which was created when we created `loans` table and uploaded some data in the very beginning.
 
-In order to do that, we will need to leverage [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) (Snowflake's CLI tool), which will need to be installed locally so you can put the artifacts on your local compute into the table stage in your Snowflake Cloud.
+In order to do that, we will need to leverage [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) (Snowflake's CLI tool), which will need to be installed locally so you can put the artifacts on your local computer into the table stage in your Snowflake Cloud.
 
 Travel to your command line and enter the follow:
 
@@ -618,7 +617,7 @@ Finally, we can now upload the 4 artifacts:
 ```
 put file://{path}/pipeline.mojo @%loans auto_compress=false;
 put file://{path}/license.sig @%loans auto_compress=false;
-put file://{path}/H2oDaiScore-0.0.3.jar @%loans auto_compress=false;
+put file://{path}/H2oDaiScore-0.0.4.jar @%loans auto_compress=false;
 put file://{path}/mojo2-runtime.jar @%loans auto_compress=false;
 ```
 
@@ -642,7 +641,7 @@ CREATE FUNCTION H2OScore_Java(params STRING, rowData ARRAY)
     imports = ('@%loans/pipeline.mojo',
                '@%loans/license.sig',
                '@%loans/mojo2-runtime.jar',
-               '@%loans/H2oDaiScore-0.0.3.jar'
+               '@%loans/H2oDaiScore-0.0.4.jar'
                )
 
     handler = 'h2oDai.H2oDaiScore.h2oDaiScore';
@@ -676,11 +675,11 @@ It should take about 7 seconds to score and the results should look like this:
 
 **Results Preview** (first 3 rows)
 
-| Row      | ID | H2OScore |
-| ----------- | ----------- | ----------- |
-| 1      | 1077501       |0.8469023406505585
-| 2   | 1077430        |0.5798575133085251
-| 3   | 1077175        |0.5994115248322487
+| Row | ID      | H2OScore           |
+| --- | ------- | ------------------ |
+| 1   | 1077501 | 0.8469023406505585 |
+| 2   | 1077430 | 0.5798575133085251 |
+| 3   | 1077175 | 0.5994115248322487 |
 
 And as they say, that is all folks! We have now scored a model inside Snowflake. What this does is gives you the flexibility of Snowflake's Scale Up and Scale Out capabilities to score as much data as you want.
 
