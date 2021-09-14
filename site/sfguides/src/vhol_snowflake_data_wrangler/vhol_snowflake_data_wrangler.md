@@ -2,7 +2,7 @@ summary: This lab will walk you through how to accelerate Feature Engineering fo
 id: vhol_snowflake_data_wrangler
 categories: Getting Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SageMaker, Data Wrangler, Feature Engineering, Data Marketplace, Machine Learning, Financial Services, Storage Integration
 authors: andries.engelbrecht@snowflake.com
