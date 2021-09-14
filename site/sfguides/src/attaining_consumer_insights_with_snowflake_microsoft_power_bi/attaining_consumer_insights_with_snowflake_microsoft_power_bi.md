@@ -706,7 +706,7 @@ FROM ITEMS_IN_SALES_ORDERS S
     INNER JOIN SALES_ORDERS SO ON S.ORDER_ID = SO.SALES_ORDER_ID;
 ```
 
-### 6.3 Create Aggrigations
+### 6.3 Create Aggregations
 
 In then next module we will discuss aggregations and their purpose for facilitating big data business intelligence workloads in Power BI, but for now let’s create an additional view to summarize the quantity of items purchased from the SALES \_ORDERS\_V view that we created in the last step.
 
