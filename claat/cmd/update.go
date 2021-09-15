@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/googlecodelabs/tools/claat/fetch"
+	"github.com/googlecodelabs/tools/claat/parser"
 	"github.com/googlecodelabs/tools/claat/types"
 	"github.com/googlecodelabs/tools/claat/util"
 )
@@ -39,6 +40,8 @@ type CmdUpdateOptions struct {
 	ExtraVars map[string]string
 	// GlobalGA is the global Google Analytics account to use.
 	GlobalGA string
+	// MDParser is the underlying Markdown parser to use.
+	MDParser parser.MarkdownParser
 	// PassMetadata are the extra metadata fields to pass along.
 	PassMetadata map[string]bool
 	// Prefix is a URL prefix to prepend when using HTML format.
@@ -107,26 +110,20 @@ func updateCodelab(dir string, opts CmdUpdateOptions) (*types.Meta, error) {
 	}
 
 	// fetch and parse codelab source
-	f, err := fetch.NewFetcher(opts.AuthToken, opts.PassMetadata, nil)
+	f, err := fetch.NewFetcher(opts.AuthToken, opts.PassMetadata, nil, opts.MDParser)
 	if err != nil {
 		return nil, err
 	}
-	clab, err := f.SlurpCodelab(meta.Source)
+	basedir := filepath.Join(dir, "..")
+	clab, err := f.SlurpCodelab(meta.Source, basedir)
 	if err != nil {
 		return nil, err
 	}
 	updated := types.ContextTime(clab.Mod)
 	meta.Context.Updated = &updated
 
-	basedir := filepath.Join(dir, "..")
 	newdir := codelabDir(basedir, &clab.Meta)
 	imgdir := filepath.Join(newdir, util.ImgDirname)
-
-	// slurp codelab assets to disk and rewrite image URLs
-	imgmap, err := f.SlurpImages(meta.Source, imgdir, clab.Steps)
-	if err != nil {
-		return nil, err
-	}
 
 	// write codelab and its metadata
 	if err := writeCodelab(newdir, clab.Codelab, opts.ExtraVars, &meta.Context); err != nil {
@@ -147,7 +144,7 @@ func updateCodelab(dir string, opts CmdUpdateOptions) (*types.Meta, error) {
 		if fi.IsDir() {
 			return filepath.SkipDir
 		}
-		if _, ok := imgmap[filepath.Base(p)]; !ok {
+		if _, ok := clab.Imgs[filepath.Base(p)]; !ok {
 			return os.Remove(p)
 		}
 		return nil

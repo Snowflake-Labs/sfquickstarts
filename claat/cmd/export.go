@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/googlecodelabs/tools/claat/fetch"
+	"github.com/googlecodelabs/tools/claat/parser"
 	"github.com/googlecodelabs/tools/claat/render"
 	"github.com/googlecodelabs/tools/claat/types"
 	"github.com/googlecodelabs/tools/claat/util"
@@ -42,6 +43,8 @@ type CmdExportOptions struct {
 	ExtraVars map[string]string
 	// GlobalGA is the global Google Analytics account to use.
 	GlobalGA string
+	// MDParser is the underlying Markdown parser to use.
+	MDParser parser.MarkdownParser
 	// Output is the output directory, or "-" for stdout.
 	Output string
 	// PassMetadata are the extra metadata fields to pass along.
@@ -98,11 +101,11 @@ func CmdExport(opts CmdExportOptions) int {
 //
 // An alternate http.RoundTripper may be specified if desired. Leave null for default.
 func ExportCodelab(src string, rt http.RoundTripper, opts CmdExportOptions) (*types.Meta, error) {
-	f, err := fetch.NewFetcher(opts.AuthToken, opts.PassMetadata, rt)
+	f, err := fetch.NewFetcher(opts.AuthToken, opts.PassMetadata, rt, opts.MDParser)
 	if err != nil {
 		return nil, err
 	}
-	clab, err := f.SlurpCodelab(src)
+	clab, err := f.SlurpCodelab(src, opts.Output)
 	if err != nil {
 		return nil, err
 	}
@@ -122,18 +125,13 @@ func ExportCodelab(src string, rt http.RoundTripper, opts CmdExportOptions) (*ty
 	dir := opts.Output // output dir or stdout
 	if !isStdout(dir) {
 		dir = codelabDir(dir, meta)
-		// download or copy codelab assets to disk, and rewrite image URLs
-		mdir := filepath.Join(dir, util.ImgDirname)
-		if _, err := f.SlurpImages(src, mdir, clab.Steps); err != nil {
-			return nil, err
-		}
 	}
 	// write codelab and its metadata to disk
 	return meta, writeCodelab(dir, clab.Codelab, opts.ExtraVars, ctx)
 }
 
 func ExportCodelabMemory(src io.ReadCloser, w io.Writer, opts CmdExportOptions) (*types.Meta, error) {
-	m := fetch.NewMemoryFetcher(opts.PassMetadata)
+	m := fetch.NewMemoryFetcher(opts.PassMetadata, opts.MDParser)
 	clab, err := m.SlurpCodelab(src)
 	if err != nil {
 		return nil, err
@@ -164,6 +162,7 @@ func writeCodelabWriter(w io.Writer, clab *types.Codelab, extraVars map[string]s
 	}{Context: render.Context{
 		Env:      ctx.Env,
 		Prefix:   ctx.Prefix,
+		Format:   ctx.Format,
 		GlobalGA: ctx.MainGA,
 		Updated:  time.Time(*ctx.Updated).Format(time.RFC3339),
 		Meta:     &clab.Meta,
@@ -206,6 +205,7 @@ func writeCodelab(dir string, clab *types.Codelab, extraVars map[string]string, 
 	}{Context: render.Context{
 		Env:      ctx.Env,
 		Prefix:   ctx.Prefix,
+		Format:   ctx.Format,
 		GlobalGA: ctx.MainGA,
 		Updated:  time.Time(*ctx.Updated).Format(time.RFC3339),
 		Meta:     &clab.Meta,
@@ -265,10 +265,4 @@ func writeMeta(path string, cm *types.ContextMeta) error {
 	}
 	b = append(b, '\n')
 	return ioutil.WriteFile(path, b, 0644)
-}
-
-// codelabDir returns codelab root directory.
-// The base argument is codelab parent directory.
-func codelabDir(base string, m *types.Meta) string {
-	return filepath.Join(base, m.ID)
 }

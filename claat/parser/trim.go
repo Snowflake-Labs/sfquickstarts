@@ -151,6 +151,7 @@ func concatURL(a, b types.Node) bool {
 		return false
 	}
 	u1.Content.Append(u2.Content.Nodes...)
+	u1.Content.Nodes = CompactNodes(u1.Content.Nodes)
 	return true
 }
 
@@ -160,17 +161,28 @@ func splitSpaceLeft(s string) (v string, sp string) {
 			return s[i:], s[:i]
 		}
 	}
-	return s, ""
+	return "", s
 }
 
 func splitSpaceRight(s string) (v string, sp string) {
 	rs := []rune(s)
 	for i := len(rs) - 1; i >= 0; i-- {
 		if !unicode.IsSpace(rs[i]) {
-			return s[:i+1], s[i+1:]
+			return string(rs[:i+1]), string(rs[i+1:])
 		}
 	}
-	return s, ""
+	return "", string(rs)
+}
+
+func requiresSpacer(a, b types.Node) bool {
+	t1, ok1 := a.(*types.TextNode)
+	t2, ok2 := b.(*types.TextNode)
+
+	if !(ok1 && ok2) {
+		return false
+	}
+
+	return (t1.Bold && t2.Bold) || (t1.Italic && t2.Italic)
 }
 
 // nodeBlocks encapsulates all nodes of the same block into a new ListNode
@@ -205,13 +217,18 @@ func CompactNodes(nodes []types.Node) []types.Node {
 			}
 		}
 		if last == nil || !concatNodes(last, n) {
-			last = n
+			if requiresSpacer(last, n) {
+				// Append non-breaking zero-width space.
+				res = append(res, types.NewTextNode(string('\uFEFF')))
+			}
 			res = append(res, n)
 
 			if n.Type() == types.NodeCode {
 				c := n.(*types.CodeNode)
 				c.Value = strings.TrimLeft(c.Value, "\n")
 			}
+
+			last = n
 		}
 	}
 	return res

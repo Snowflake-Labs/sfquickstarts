@@ -19,6 +19,7 @@ const useref = require('gulp-useref');
 const vulcanize = require('gulp-vulcanize');
 const watch = require('gulp-watch');
 const webserver = require('gulp-webserver');
+const livereload = require('gulp-livereload');
 
 // Uglify ES6
 const uglifyes = require('uglify-es');
@@ -41,7 +42,7 @@ const swig = require('swig-templates');
 const url = require('url');
 
 // DEFAULT_GA is the default Google Analytics tracker ID
-const DEFAULT_GA = 'G-8F0LLPS2LV';
+const DEFAULT_GA = 'UA-41491190-9';
 
 // DEFAULT_VIEW_META_PATH is the default path to view metadata.
 const DEFAULT_VIEW_META_PATH = 'app/views/default/view.json';
@@ -55,12 +56,17 @@ const DEFAULT_CATEGORY = 'Default';
 // BASE_URL is the canonical base URL where the site will reside. This should
 // always include the protocol (http:// or https://) and NOT including a
 // trailing slash.
-const BASE_URL = args.baseUrl || 'https://example.com';
+const BASE_URL = args.baseUrl || 'https://guides.snowflake.com';
 
-// CODELABS_DIR is the directory where the actual codelabs exist on disk.
+// CODELABS_BUILD_DIR is the directory where the actual codelabs exist on disk.
 // Despite being a constant, this can be overridden with the --codelabs-dir
 // flag.
-const CODELABS_DIR = args.codelabsDir || '.';
+const CODELABS_BUILD_DIR = args.codelabsDir || 'sfguides/dist';
+
+// CODELABS_SRC_DIR is the directory where the actual codelabs exist on disk.
+// Despite being a constant, this can be overridden with the --codelabs-dir
+// flag.
+const CODELABS_SRC_DIR = args.codelabsSrcDir || 'sfguides/src';
 
 // CODELABS_ENVIRONMENT is the environment for which to build codelabs.
 const CODELABS_ENVIRONMENT = args.codelabsEnv || 'web';
@@ -72,7 +78,7 @@ const CODELABS_FILTER = args.codelabsFilter || '*';
 const CODELABS_FORMAT = args.codelabsFormat || 'html';
 
 // CODELABS_NAMESPACE is the content namespace.
-const CODELABS_NAMESPACE = (args.codelabsNamespace || 'codelabs').replace(/^\/|\/$/g, '');
+const CODELABS_NAMESPACE = (args.codelabsNamespace || 'guide').replace(/^\/|\/$/g, '');
 
 // DELETE_MISSING controls whether missing files at the destination are deleted.
 // The default value is true.
@@ -106,23 +112,50 @@ gulp.task('clean:js', (callback) => {
   return del('app/js/bundle')
 });
 
+gulp.task('clean:codelabs', (callback) => {
+  return del(CODELABS_BUILD_DIR)
+});
+
 // clean removes all built files
 gulp.task('clean', gulp.parallel(
+  'clean:codelabs',
   'clean:build',
   'clean:dist',
 ));
 
-// build:codelabs copies the codelabs from the directory into build.
-gulp.task('build:codelabs', (done) => {
-  copyFilteredCodelabs('build');
-  done();
+// copy copies the built artifacts in build into dist/
+gulp.task('copy:codelabs', () => {
+  return gulp.src(CODELABS_BUILD_DIR + '/**')
+    .pipe(gulp.dest('build/' + CODELABS_NAMESPACE))
+    .pipe(livereload());
+})
+
+// export:codelabs exports the codelabs
+gulp.task('export:codelabs', (callback) => {
+  const source = args.source;
+
+  if (source !== undefined) {
+    const sources = Array.isArray(source) ? source : [source];
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+  } else {
+    const sources = ["[^_]*/*.md"]; //export all markdown files in the src directory, except _imports
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+  }
 });
+
+
+// build:codelabs copies the codelabs from the directory into build.
+gulp.task('build:codelabs', gulp.series(
+  'export:codelabs',
+  'copy:codelabs',
+));
 
 // build:scss builds all the scss files into the dist dir
 gulp.task('build:scss', () => {
   return gulp.src('app/**/*.scss')
     .pipe(sass(opts.sass()))
-    .pipe(gulp.dest('build'));
+    .pipe(gulp.dest('build'))
+    .pipe(livereload());;
 });
 
 // build:css builds all the css files into the dist dir
@@ -132,7 +165,8 @@ gulp.task('build:css', () => {
   ];
 
   return gulp.src(srcs, { base: 'app/' })
-    .pipe(gulp.dest('build'));
+    .pipe(gulp.dest('build'))
+    .pipe(livereload());
 });
 
 // build:html builds all the HTML files
@@ -145,10 +179,12 @@ gulp.task('build:html', () => {
     .pipe(gulpif('*.js', babel(opts.babel())))
     .pipe(gulp.dest('build'))
     .pipe(gulpif(['*.html', '!index.html'], generateDirectoryIndex()))
+    .pipe(livereload())
   );
 
   streams.push(gulp.src(`app/views/${VIEWS_FILTER}/*.{css,gif,jpeg,jpg,png,svg,tff}`, { base: 'app/views' })
-    .pipe(gulp.dest('build')));
+    .pipe(gulp.dest('build'))
+    .pipe(livereload()));
 
   const otherSrcs = [
     'app/404.html',
@@ -158,6 +194,7 @@ gulp.task('build:html', () => {
   ]
   streams.push(gulp.src(otherSrcs, { base: 'app/' })
     .pipe(gulp.dest('build'))
+    .pipe(livereload())
   );
 
   return merge(...streams);
@@ -329,6 +366,15 @@ gulp.task('watch:images', () => {
   gulp.watch('app/images/**/*', gulp.series('build:images'));
 });
 
+// watch:codelabs watches image files for changes and updates them
+gulp.task('watch:codelabs', () => {
+  const srcs = [
+    CODELABS_SRC_DIR + '/**/*.md',
+    CODELABS_SRC_DIR + '/**/assets/*',
+  ]
+  gulp.watch(srcs, gulp.series('build:codelabs'));
+});
+
 gulp.task('watch:fonts', () => {
   gulp.watch('app/fonts/**/*', gulp.series('build:fonts'));
 });
@@ -345,12 +391,14 @@ gulp.task('watch:js', () => {
 
 // watch starts all watchers
 gulp.task('watch', gulp.parallel(
-  'watch:css',
-  'watch:html',
-  'watch:images',
-  'watch:fonts',
-  'watch:js',
-));
+    ()=>{livereload.listen();},
+    'watch:codelabs',
+    'watch:css',
+    'watch:html',
+    'watch:images',
+    'watch:fonts',
+    'watch:js',
+  ));
 
 // serve builds the website, starts the webserver, and watches for changes.
 gulp.task('serve', gulp.series(
@@ -371,24 +419,6 @@ gulp.task('serve:dist', gulp.series('dist', () => {
   return gulp.src('dist')
     .pipe(webserver(opts.webserver()));
 }));
-
-//
-// Codelabs
-//
-// codelabs:export exports the codelabs
-gulp.task('codelabs:export', (callback) => {
-  const source = args.source;
-
-  if (source !== undefined) {
-    const sources = Array.isArray(source) ? source : [source];
-    claat.run(CODELABS_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, sources, callback);
-  } else {
-    const codelabIds = collectCodelabs().map((c) => { return c.id });
-    claat.run(CODELABS_DIR, 'update', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, codelabIds, callback);
-  }
-});
-
-
 
 //
 // Helpers
@@ -495,7 +525,7 @@ const collectMetadata = () => {
       views[view.id] = view;
     }
 
-    const codelabFiles = glob.sync(`${CODELABS_DIR}/*/codelab.json`);
+    const codelabFiles = glob.sync(`${CODELABS_BUILD_DIR}/*/codelab.json`);
     for (let i = 0; i < codelabFiles.length; i++) {
       const codelab = parseCodelabMetadata(codelabFiles[i]);
       codelabs.push(codelab);
@@ -636,7 +666,7 @@ const viewFuncs = {
           return codelab.category.indexOf(category) !== -1;
         })
         .filter((codelab) => {
-          // Rilter hidden codelabs from the default view. All other views are
+          // Filter hidden codelabs from the default view. All other views are
           // explictly opt-in via metadata.
           return viewId !== 'default' || codelab.status.indexOf('hidden') === -1;
         });
@@ -862,7 +892,7 @@ const copyFilteredCodelabs = (dest) =>  {
   // No filters were specified, symlink the codelabs folder directly and save
   // processing.
   if (CODELABS_FILTER === '*' && VIEWS_FILTER === '*') {
-    const source = path.join(CODELABS_DIR);
+    const source = path.join(CODELABS_BUILD_DIR);
     const target = path.join(dest, CODELABS_NAMESPACE);
     fs.ensureSymlinkSync(source, target, 'dir');
     return
@@ -872,7 +902,7 @@ const copyFilteredCodelabs = (dest) =>  {
 
   for(let i = 0; i < codelabs.length; i++) {
     const codelab = codelabs[i];
-    const source = path.join(CODELABS_DIR, codelab.id);
+    const source = path.join(CODELABS_BUILD_DIR, codelab.id);
     const target = path.join(dest, CODELABS_NAMESPACE, codelab.id);
     fs.ensureSymlinkSync(source, target, 'dir');
   }
