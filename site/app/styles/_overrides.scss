@@ -1,5 +1,10 @@
 
 #filters {
+
+  .paper-item-0 {
+    text-transform: capitalize;
+  }
+
   #tabsContent {
     .paper-tab-0 {
       font-family: $lato-bold !important;
@@ -19,9 +24,18 @@
 
 /* Snowflake specific category classes */
 
-$color-data-applications: #475CA7;
+$color-resource-optimization: #134369;
+$color-getting-started: #5bc6d1;
+$color-demos: #c7477a;
+$color-devops: #347c3e;
+$color-architecture-patterns: #097e89;
+$color-data-applications: #282A72;
 $color-data-exchange: #282A72;
-@include codelab-card(['getting-started'], $color-data-exchange, '');
+@include codelab-card(['getting-started'], $color-getting-started, '');
+@include codelab-card(['resource-optimization'], $color-resource-optimization, '');
+@include codelab-card(['architecture-patterns'], $color-architecture-patterns, '');
+@include codelab-card(['demos'], $color-demos, '');
+@include codelab-card(['devops'], $color-devops, '');
 @include codelab-card(['data-engineering'], $snowflake-blue, 'data-engineering.svg');
 @include codelab-card(['data-lake'], $star-blue, 'data-lake.svg');
 @include codelab-card(['data-warehouse'], $mid-blue, 'data-warehouse.svg');
