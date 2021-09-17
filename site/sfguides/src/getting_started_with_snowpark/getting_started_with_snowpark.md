@@ -583,10 +583,10 @@ Duration: 1
 Congratulations! You used Snowpark to perform sentiment analysis on tweets. We provided a sample dataset of tweets for this guide. If you want to automatically ingest new tweets as they are written, follow the [Auto Ingest Twitter Data into Snowflake](/guide/auto_ingest_twitter_data/) guide.
 
 ### What We Covered
-- **Data Loading** – Loading streaming Twitter data into Snowflake with Snowpipe in an event-driven, real-time fashion 
-- **Semi-structured data** – Querying semi-structured data (JSON) without needing transformations
-- **Secure Views** – Creating a Secure View to allow data analysts to query the data
-- **Snowpipe** – Overview and configuration
+- **Data Loading** - Loading Twitter data into Snowflake with Snowpark (Scala)
+- **Data** - Creating Dataframes from the CSV file and remove unwanted columns
+- **Sentiment Analysis** - Showing how to use Scala to perform sentiment analysis on a Dataframe of tweets
+- **Snowpark** - Using Scala to write the data frame into a Snowflake table
 
 ### Related Resources
 - [Snowpark Docs](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark.html)
