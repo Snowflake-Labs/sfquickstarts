@@ -1,13 +1,13 @@
 author: sanderiam
-id: build_2021_journey_to_processing_pii
-summary: This is the code accompanying the "Journey to Processing PII in the Data Cloud" session at BUILD 2021
-categories: Data Governance, Security, Compliance, Getting Started
+id: getting_started_with_pii
+summary: Learn how to process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security
+categories: Getting Started
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Governance, Security, Compliance, PII, Sensitive Data, Masking, Row Level Security
 
-# BUILD 2021 - The Journey to Processing PII in the Data Cloud
+# Process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
