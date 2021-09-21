@@ -309,6 +309,7 @@ You'll see that most of this is what you would expect. The only complicated part
    }
 
    resource "snowflake_role_grants" "grants" {
+       provider = snowflake.security_admin
        role_name = snowflake_role.role.name
        users     = [snowflake_user.user.name]
    }
