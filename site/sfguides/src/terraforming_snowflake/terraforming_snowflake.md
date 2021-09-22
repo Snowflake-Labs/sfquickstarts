@@ -149,16 +149,19 @@ terraform {
 }
 
 provider "snowflake" {
-  role     = "SYSADMIN"
+  alias = "sys_admin"
+  role  = "SYSADMIN"
 }
 
 resource "snowflake_database" "db" {
-  name = "TF_DEMO"
+  provider = snowflake.sys_admin
+  name     = "TF_DEMO"
 }
 
 resource "snowflake_warehouse" "warehouse" {
+  provider       = snowflake.sys_admin
   name           = "TF_DEMO"
-  warehouse_size = "xsmall"
+  warehouse_size = "large"
 
   auto_suspend = 60
 }
@@ -247,73 +250,69 @@ You'll see that most of this is what you would expect. The only complicated part
 
 1. Add the following resources to your `main.tf` file:
 
-   ```
-   provider "snowflake" {
-       alias    = "security_admin"
-       role     = "SECURITYADMIN"
-   }
+    ```JSON
+        provider "snowflake" {
+            alias = "security_admin"
+            role  = "SECURITYADMIN"
+        }
 
-   resource "snowflake_role" "role" {
-       provider = snowflake.security_admin
-       name     = "TF_DEMO_SVC_ROLE"
-   }
+        resource "snowflake_role" "role" {
+            provider = snowflake.security_admin
+            name     = "TF_DEMO_SVC_ROLE"
+        }
 
-   resource "snowflake_database_grant" "grant" {
-       database_name = snowflake_database.db.name
+        resource "snowflake_database_grant" "grant" {
+            provider          = snowflake.security_admin
+            database_name     = snowflake_database.db.name
+            privilege         = "USAGE"
+            roles             = [snowflake_role.role.name]
+            with_grant_option = false
+        }
 
-       privilege = "USAGE"
-       roles     = [snowflake_role.role.name]
+        resource "snowflake_schema" "schema" {
+            provider   = snowflake.sys_admin
+            database   = snowflake_database.db.name
+            name       = "TF_DEMO"
+            is_managed = false
+        }
 
-       with_grant_option = false
-   }
+        resource "snowflake_schema_grant" "grant" {
+            provider          = snowflake.security_admin
+            database_name     = snowflake_database.db.name
+            schema_name       = snowflake_schema.schema.name
+            privilege         = "USAGE"
+            roles             = [snowflake_role.role.name]
+            with_grant_option = false
+        }
 
-   resource "snowflake_schema" "schema" {
-       database = snowflake_database.db.name
-       name     = "TF_DEMO"
+        resource "snowflake_warehouse_grant" "grant" {
+            provider          = snowflake.security_admin
+            warehouse_name    = snowflake_warehouse.warehouse.name
+            privilege         = "USAGE"
+            roles             = [snowflake_role.role.name]
+            with_grant_option = false
+        }
 
-       is_managed = false
-   }
+        resource "tls_private_key" "svc_key" {
+            algorithm = "RSA"
+            rsa_bits  = 2048
+        }
 
-   resource "snowflake_schema_grant" "grant" {
-       database_name = snowflake_database.db.name
-       schema_name   = snowflake_schema.schema.name
+        resource "snowflake_user" "user" {
+            provider          = snowflake.security_admin
+            name              = "tf_demo_user"
+            default_warehouse = snowflake_warehouse.warehouse.name
+            default_role      = snowflake_role.role.name
+            default_namespace = "${snowflake_database.db.name}.${snowflake_schema.schema.name}"
+            rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
+        }
 
-       privilege = "USAGE"
-       roles     = [snowflake_role.role.name]
-
-       with_grant_option = false
-   }
-
-   resource "snowflake_warehouse_grant" "grant" {
-       warehouse_name = snowflake_warehouse.warehouse.name
-       privilege      = "USAGE"
-
-       roles = [snowflake_role.role.name]
-
-       with_grant_option = false
-   }
-
-   resource "tls_private_key" "svc_key" {
-       algorithm = "RSA"
-       rsa_bits  = 2048
-   }
-
-   resource "snowflake_user" "user" {
-       provider = snowflake.security_admin
-       name     = "tf_demo_user"
-
-       default_warehouse = snowflake_warehouse.warehouse.name
-       default_role      = snowflake_role.role.name
-       default_namespace = "${snowflake_database.db.name}.${snowflake_schema.schema.name}"
-       rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
-   }
-
-   resource "snowflake_role_grants" "grants" {
-       provider = snowflake.security_admin
-       role_name = snowflake_role.role.name
-       users     = [snowflake_user.user.name]
-   }
-   ```
+        resource "snowflake_role_grants" "grants" {
+            provider  = snowflake.security_admin
+            role_name = snowflake_role.role.name
+            users     = [snowflake_user.user.name]
+        }
+    ```
 
 1. To get the public and private key information for the application, use Terraform [output variables](https://www.terraform.io/docs/language/values/outputs.html).
 
