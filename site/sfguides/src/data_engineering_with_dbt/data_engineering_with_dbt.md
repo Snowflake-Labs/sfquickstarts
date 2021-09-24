@@ -242,9 +242,6 @@ Copy code below and paste into line 34 to line 38. Remember to replace <your_nam
 ```yml 
 models:
   <your_name>_dbt_workshop:
-      # Applies to all files under models/example/
-      example:
-          materialized: view
       staging:
           schema: staging
           materialized: view
@@ -314,7 +311,7 @@ However, if a custom schema is provided as we did in our dbt_project.yml file, d
 All of this logic is defined in one place and will be applied on your project which makes it simple to scale up your project, especially as business needs arise. Later on, we will learn how to use macros from a package and see how those macros help us write SQL quickly. 
 
 
-25.  Now we need to apply another operational macro. This time, this macro will add a [query tag](https://docs.getdbt.com/reference/resource-configs/snowflake-configs#query-tags) for every dbt run in the Snowflake history.  To do this, we’ll create a file in the “macros” folder called query_tag.sql. 
+25.  Now we need to apply another operational macro. This time, this macro will add a [query tag](https://docs.getdbt.com/reference/resource-configs/snowflake-configs#query-tags) for every dbt run in the Snowflake history.  To do this, we’ll create a file in the “macros” folder called `query_tag.sql`. 
 
 26. Copy and paste the following code. This provides the ability to add an additional level of transparency by automatically setting Snowflake query_tag to the name of the model it is associated with. 
 
@@ -409,7 +406,7 @@ Now we have defined the sources that we will be building our dbt models on top o
 #### Setting up our Staging Models
 
 4. Now let’s create staging models to clean up our raw objects. Staging models bear a one-to-one relationship with the source data table they represent. They have the same granularity, but the columns have been renamed, recast, or reconsidered in some way to follow a consistent, useful format. By creating these as the first level transformation, you can create a consistent foundation to build more complex transformations upon. To learn more, check out our [discourse post](https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355#data-transformation-101-1).
-The first staging model we are going to make will be for exratescc2018. Create a new file in the staging/knoema folder named “stg_knoema_fx_rates.sql”. 
+The first staging model we are going to make will be for exratescc2018. Create a new file in the staging/knoema folder named `stg_knoema_fx_rates.sql`. 
 
 5. Paste the following select statement. 
 
@@ -459,7 +456,7 @@ Using the sources function allows you to:
 
 This allows you to promote the same code from dev to prod and any other environments without having to change the code. You can even use the [target jinja function](https://docs.getdbt.com/reference/dbt-jinja-functions/target#use-targetname-to-change-your-source-database) to conditionally point to different databases based on the declared target. 
 
-7. Now to make the other staging model. Create the file in the same folder and name it stg_knoema_stock_history.sql. 
+7. Now to make the other staging model. Create the file in the same folder and name it `stg_knoema_stock_history.sql`. 
 
 8. Paste in this code and save. 
 
@@ -534,9 +531,10 @@ models/marts/core/intermediate/int_knoema_stock_history.sql
 ![intermediate](assets/int_1.png)
 
 This will create the file as well as the intermediate folder in the core folder to organize the intermediate models. The reason why we create intermediate folders is to make it easier to find our end tables in the core folder. Usually intermediate tables are transformations to get to the end data product but won’t be queried in the downstream processes like in the BI layer. 
-Paste this code in the model and click “Save”. We are going to use the dbt_utils pivot macro  to transpose the dataset from rows to columns. We have also nested in another dbt_utils macro called get_columns to help us list the column values dynamically. 
 
-2. Paste this code in the model and click “Save”. We are going to use the [dbt_utils pivot macro](https://github.com/dbt-labs/dbt-utils/tree/0.7.1/#pivot-source) to transpose the dataset from rows to columns. We have also nested in another dbt_utils macro called [get_columns](https://github.com/dbt-labs/dbt-utils/tree/0.7.1/#get_column_values-source) to help us list the column values dynamically. 
+2. Paste this code in the model and click “Save”. We are going to use the dbt_utils pivot macro  to transpose the dataset from rows to columns. We have also nested in another dbt_utils macro called get_columns to help us list the column values dynamically. 
+
+3.  Paste this code in the model and click “Save”. We are going to use the [dbt_utils pivot macro](https://github.com/dbt-labs/dbt-utils/tree/0.7.1/#pivot-source) to transpose the dataset from rows to columns. We have also nested in another dbt_utils macro called [get_columns](https://github.com/dbt-labs/dbt-utils/tree/0.7.1/#get_column_values-source) to help us list the column values dynamically. 
 
 ```sql 
 
@@ -570,12 +568,12 @@ select * from pivoted
  
 ```
 
-3. Now let’s see what dbt_utils pivot macro compiles to by clicking on the compile button. 
+4. Now let’s see what dbt_utils pivot macro compiles to by clicking on the compile button. 
 ![intermediate](assets/int_2.png)
 
-4. Now let’s see what happens if you don’t have the dbt_utils macro to help you write the code. Create a new file in the same intermediate folder: int_knoema_stock_history_alt.sql
+5.  Now let’s see what happens if you don’t have the dbt_utils macro to help you write the code. Create a new file in the same intermediate folder: `int_knoema_stock_history_alt.sql`
 
-5. Paste below content into the new file and click “Save”. In this model, we will use Snowflake's [PIVOT](https://docs.snowflake.com/en/sql-reference/constructs/pivot.html) function.
+6.  Paste below content into the new file and click “Save”. In this model, we will use Snowflake's [PIVOT](https://docs.snowflake.com/en/sql-reference/constructs/pivot.html) function.
 
 ```sql 
 with stock_history as (
@@ -612,10 +610,10 @@ What did you think of the difference? While both models create the same end resu
 You might have also noticed that in these models we are using a function called [ref](https://docs.getdbt.com/reference/dbt-jinja-functions/ref). This ref function is very similar to sources function but rather than telling dbt how a model relates to a source declared in the sources.yml file, the ref function tells dbt how a model relates to another model. This is a useful idea for a couple of reasons:
 By using refs, you will be able to automatically generate a DAG and promote your code through environments without having to update the code to change the database object. 
 Refs also allow you to run based on dependencies as you will see below.  
+
 The main takeaway to remember is in a dbt project, you should never have to hardcode a database object. Always uses [sources()](https://docs.getdbt.com/docs/building-a-dbt-project/using-sources) and [refs()](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
 
-6.  
-Now let’s go ahead and create the new models in Snowflake. In this case, rather than running based on the model file, we will run based on dependencies. Run the following command to execute the int_knoema_stock_history model and its upstream dependencies/parent models. 
+7.  Now let’s go ahead and create the new models in Snowflake. In this case, rather than running based on the model file, we will run based on dependencies. Run the following command to execute the int_knoema_stock_history model and its upstream dependencies/parent models. 
 
 `dbt run -m +int_knoema_stock_history`
 
@@ -626,7 +624,7 @@ You should see that we have run all of the models (excluding sources) to the lef
 ![intermediate](assets/int_4.png)
 
 
-7. Execute the below code, either in the Snowflake UI or in the dbt Cloud IDE
+8.  Execute the below code, either in the Snowflake UI or in the dbt Cloud IDE
 ```sql 
 SELECT * 
   FROM pc_dbt_db.<dev_schema>_marts.int_knoema_stock_history
@@ -639,7 +637,7 @@ Looks like we have what we wanted!
 
 Now let’s take a look at our exchange rates and create some intermediate tables on top of them. 
 
-8. Create a file called int_fx_rates.sql in the intermediate folder (models/marts/core/intermediate/int_fx_rates.sql). 
+9.  Create a file called `int_fx_rates.sql` in the intermediate folder (models/marts/core/intermediate/int_fx_rates.sql). 
 
 ```sql 
 {{ 
@@ -658,7 +656,7 @@ select * from {{ ref('stg_knoema_fx_rates') }}
 You might have noticed we added a model configuration at the top of our model. dbt offers [various materialization options](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations). By default, if a materialization is not declared, the model will be created as a view. For this directory (marts) that the model is nested in, we have configured in our dbt_project.yml that the default materialization is `table`. We will override the project level materialization with our model configuration, declaring the model to be materialized as a view. 
 We also include a [tag](https://docs.getdbt.com/reference/resource-configs/tags). Tags can be used to run parts of your project or a good way to group your models based on content and intent. 
 
-9. Let’s try running this model based on a tag. In the command line, run :
+10. Let’s try running this model based on a tag. In the command line, run :
 
 `dbt run -m tag:hourly`
 
@@ -666,9 +664,9 @@ Being able to run models based on tags can be helpful for, say, an hourly job wh
 
 ![intermediate](assets/int_5.png)
 
-10. Now create int_stock_history_major_currency.sql in the intermediate folder. This model will start bringing FX and Trade history sets together.
+11.  Now create the file `int_stock_history_major_currency.sql` in the intermediate folder. This model will start bringing FX and Trade history sets together.
 
-11. Paste the below code into the file and save it.
+12.  Paste the below code into the file and save it.
 
 ```sql
 with
@@ -708,7 +706,7 @@ joined as (
  
 select * from joined
 ```
-12. Now, let's deploy newly built models by typing the following into the command line.
+13. Now, let's deploy newly built models by typing the following into the command line.
 `dbt run --model +int_stock_history_major_currency`
 
 ![intermediate](assets/int_6.png)
@@ -726,15 +724,20 @@ tests as well as the source code that is always in line with the code. So regard
 
 ![intermediate](assets/int_7.png)
 
-15.  Take a look around on the docs site. You can check out the project lineage by clicking on the DAG button on the bottom. Take a look at the documentation you can have on each model. 
+15.  Take a look around on the docs site. You can check out the project lineage by clicking on the DAG button on the bottom. Take a look at the documentation you can have on each model.
+
+![intermediate](assets/int_8.png) 
 
 <!-- ------------------------ -->
 
 ## dbt pipelines - Seeds
-Following our use case story, we are going to manually upload two small datasets using dbt seed representing trading books of two desks. As you might notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP.
-Create a new file in the data folder called “manual_book1.csv”.
+Following our use case story, we are going to manually upload two small datasets using [dbt seed](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) representing trading books of two desks. As you might notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP.
 
-1. Paste the following code in the file and save it.
+1. Create a new file in the data folder called `manual_book1.csv`.
+
+![seed](assets/seed_1.png) 
+
+2. Paste the following code in the file and save it.
 
 ```
 Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
@@ -747,10 +750,10 @@ B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-9800,GBP,100,98,NASDAQ
 B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-1000,GBP,50,103,NASDAQ
 ```
 
-2. Create another file “manual_book2.csv” in the data folder.
+3. Create another file `manual_book2.csv` in the data folder.
 
 
-Paste the following code in the file and save it.
+4. Paste the following code in the file and save it.
 
 ```
 Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
@@ -761,18 +764,19 @@ B-EM1,2021-01-22,Tina M.,AAPL,BUY,-100940,EUR,980,103,NASDAQ
 B-EM1,2019-08-31,Tina M.,AAPL,BUY,-9800,EUR,100,98,NASDAQ
 ```
 
-Now let's run the following command to load the data into Snowflake. It is important to mention that while it is absolutely possible with this approach to bring low hundred-thousands of rows, it was not created for larger datasets and you should be using COPY/Snowpipe or other data integration options recommended for Snowflake in such cases.
-dbt seed
+5. Now let's run the following command to load the data into Snowflake. It is important to mention that while it is absolutely possible with this approach to bring low hundred-thousands of rows, it was not created for larger datasets and you should be using COPY/Snowpipe or other data integration options recommended for Snowflake in such cases.
 
-You can see that it loaded the files in the default schema because we didn’t declare a schema for them. If we wanted to make sure the files were loaded into a specific file, we could go back to the dbt_project.yml and add that configuration. 
-Let’s commit those seeded files. 
+`dbt seed`
 
-<!-- ------------------------ -->
-## dbt pipelines - Intermediate Part 2
+You can see that it loaded the files in the default schema because we didn’t declare a schema for them. If we wanted to make sure the files were loaded into a specific file, we could go back to the dbt_project.yml and add that [schema configuration](https://docs.getdbt.com/reference/seed-configs). 
 
-1. Now let’s model the data by unioning them together. In this example we are going to see how dbt_utils.union_relations macro helps us write the necessary code. Create the file “int_unioned_book.sql” in the intermediate folder. 
+![seed](assets/seed_2.png) 
 
-2. Copy below into the new file and save it.
+6. Let’s commit those seeded files. 
+
+7. Now let’s model the seeded data by unioning them together. In this example we are going to see how [dbt_utils.union_relations](https://github.com/dbt-labs/dbt-utils#union_relations-source) macro helps us write the necessary code. Create the file `int_unioned_book.sql` in the intermediate folder. 
+
+8. Paste the code below into the new file and save it.
 
 ```sql 
 with 
@@ -801,21 +805,25 @@ renamed as (
 select * from renamed
 ```
 
+9. Before we deploy this model, let's have a look at what it is compiled into. You can do this by clicking on the compile button. 
 
-3. Before we deploy this model, let's have a look at what it is compiled into. You can do this by clicking on the compile button. 
+![seed](assets/seed_3.png) 
  
 As you can see,  the macro from the dbt_utils package wrote the code, aligned the attributes by name and type, and combined the datasets via a UNION ALL. The beauty of this is, we were able to write 46 lines of code with only 3. You can imagine the amount of time saved.  It’s also dynamic so if we were to add new columns to our referenced models, dbt would update the compile code with the new fields. 
 
-4. Now let’s create the object by running 
+10. Now let’s create the object by running 
 `dbt run -m int_unioned_book`
 
+11. If you want to see the actual code being executed, you can go into the ‘Details’ tab next to `Summary` and look through the logs. Here you can see that dbt is writing the DDL for you, allowing you to focus on just writing the SQL select statement. 
 
+![seed](assets/seed_4.png) 
 
-5. If you want to see the actual code being executed, you can go into the ‘Details’ tab next to `Summary` and look through the logs. Here you can see that dbt is writing the DDL for you, allowing you to focus on just writing the SQL select statement. 
+<!-- ------------------------ -->
+## dbt pipelines - Intermediate Part 2
  
-6. Next challenge! We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis more meaningful we should have rows for the days shares were held as well. To do this, let’s make this new file: int_daily_position.sql in the intermediate folder. 
+1. Next challenge! We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis more meaningful we should have rows for the days shares were held as well. To do this, let’s make this new file: `int_daily_position.sql` in the intermediate folder. 
 
-Paste below into the new file and save it.
+2. Paste below into the new file and save it.
 
 ```sql 
 with 
@@ -852,12 +860,12 @@ select * from joined
 
 ```
 
-You might have noticed we used another dbt_utils macro. Rather than having to manually list out all of the columns to group by, you can use the dbt_utils.group_by macro to write it for you. 
+You might have noticed we used another dbt_utils macro. Rather than having to manually list out all of the columns to group by, you can use the [dbt_utils.group_by macro](dbt_utils.group_by macro) to write it for you. 
 
-7. Now let’s group the daily position with trades. Create the file int_daily_position_with_trades.sql in the intermediate folder. 
+3. Now let’s group the daily position with trades. Create the file `int_daily_position_with_trades.sql` in the intermediate folder. 
 
 
-Paste the following code in the new file and save it.
+4. Paste the following code in the new file and save it.
 
 ```sql 
 
@@ -918,27 +926,41 @@ select * from unioned
 
 ```
 
-Execute the following code to build int_unioned_book and it’s child models.
+5. Execute the following code to build int_unioned_book and it’s child models.
 
-`dbt run --models int_unioned_book+``
+`dbt run --models int_unioned_book+`
 
 
 Now that we have created all of these models, we are able to attribute shares by trader.
-Commit the work. 
-Run the following code in either the dbt Cloud IDE or a Snowflake worksheet. 
+
+![int](assets/int_9.png) 
+
+
+6. Commit the work. 
+
+7. Run the following code in either the dbt Cloud IDE or a Snowflake worksheet. 
+
+```sql
 select * 
-from dbt_hol_dev.marts.int_daily_position_with_trades
+from pc_dbt_db.<dev_schema>_marts.int_daily_position_with_trades
 where trader = 'Tina M.'
 order by  book_date
+```
+
+![int](assets/int_10.png) 
+
  
 <!-- ------------------------ -->
 ## dbt pipelines - Facts
 
-dbt pipelines - PnL calculation
+#### dbt pipelines - PnL calculation
 This section should bring the last model to complete the story. Now we have the trading history of our desks and our stock price history. Let's create a model to show how Market Value and PnL changed over time. You might notice that this is going into our core folder. This is because this is a part of the core logic of our fictional company. This model will be a source of truth, to be used by many in downstream processes. 
-Create the file “fct_trading_pnl.sql” in the core folder. 
 
-Copy the following code to the new file and save it.
+1. Create the file `fct_trading_pnl.sql` in the core folder. 
+
+2. Copy the following code to the new file and save it.
+
+```sql 
 {{ 
 config(
       tags = 'core'
@@ -990,14 +1012,20 @@ joined as (
 )
 
 select * from joined 
-Run the model with `dbt run -m fct_trading_pnl.sql`
-You might have noticed that fct_trading_pnl takes a while to build when you do a dbt run. As we use larger and larger datasets, the run times are getting longer. We have already materialized our models as a table, meaning we are preemptively front loading our run times to save on the query times when the table is queried. We could always increase our warehouse size, but there’s another trick up our sleeve we won’t touch on just yet. 
-We can materialize the model as an incremental model, meaning that it will not be rebuilt each time, but rather only the latest rows transformed and added to the existing table. 
-All you have to do is update the model configuration and include the is_incremental macro which comes into action for the incremental runs (and is ignored during initial run and full_refresh option). You can learn more about this incremental materialization here.
-Let’s create the incremental model 
-Create a new file “fct_trading_pnl_incremental.sql” in the core folder. 
+```
 
-Copy the following code to the new file and save it.
+3. Run the model with `dbt run -m fct_trading_pnl.sql`
+
+You might have noticed that fct_trading_pnl takes some time to build when you do a dbt run. As we use larger and larger datasets, the run times are getting longer. We have already materialized our models as a table, meaning we are preemptively front loading our run times to save on the query times when the table is queried. We could always increase our warehouse size, but there’s another trick up our sleeve we won’t touch on just yet. 
+
+We can materialize the model as an incremental model, meaning that it will not be rebuilt each time, but rather only the latest rows transformed and added to the existing table. 
+All you have to do is update the model configuration and include the is_incremental macro which comes into action for the incremental runs (and is ignored during initial run and full_refresh option). You can learn more about this [incremental materialization here](http://greatexpectations.io/).
+
+4. Let’s create the incremental model. Create a new file `fct_trading_pnl_incremental.sql` in the core folder. 
+
+5. Copy the following code to the new file and save it.
+
+```sql
 {{ 
 config(
       materialized='incremental',
@@ -1073,33 +1101,41 @@ select * from primary_key
  
 {% endif %}
 
-Now let’s see how differently this model acts in the first run versus subsequent runs. 
-Run dbt run -m fct_trading_pnl_incremental.sql
-twice and compare the logs. You will see at the bottom the where clause is introduced in subsequent runs. 
+```
+
+6. Now let’s see how differently this model acts in the first run versus subsequent runs. 
+Run `dbt run -m fct_trading_pnl_incremental` twice and compare the logs. You will see at the bottom the where clause is introduced in subsequent runs. 
  
 For the first run, you will notice that the where clause does not come in into the sql and after the execution will be similar to if you had materialized the model as a table. 
 
 In subsequent runs, dbt is including the where clause to create a temporary table to then merge into the existing table. 
-The first run of an incremental model will always be building the table that will then be added to in subsequent runs. You will not see a performance improvement in this example because our data is not loading exponentially but in production applications, you would. 
- 
+The first run of an incremental model will always be building the table that will then be added to in subsequent runs. 
 
+First run: 
+![fct](assets/fct_1.png) 
 
+Second run:
+![fct](assets/fct_2.png) 
 
-
-
-
-
+You will not see a true performance improvement in this example because our data is not loading exponentially but in production applications, you would. 
 
 <!-- ------------------------ -->
 ## dbt pipelines - Tests & Docs
 
 ### Testing & Documentation 
-To build trust in data with your organization, it is impossible to overstate the importance of testing and documentation. While there are many ways to organize automated testing and documentation, dbt comes with an accessible data testing and documentation framework. Let's build an example.
-For tests, dbt comes with a set of 4 pre-defined data tests, such as uniqueness, not_null, check constraints, ref integrity etc. We are going to set up tests on a few models. However, we strongly recommend you establish reasonable test coverage across the board. Adding your own tests is easy; as long as it can be written as a select statement, you can use it as a test. And just like with macros, there are plenty of fantastic packages out there like the dbt_expectations package that provides tests similar to the Great Expectations open source project.
-For documentation, dbt takes model and column descriptions and will add them to the documentation site so that you have even more information about your models to share with your stakeholders via the site. 
-First, create this file: “models/marts/core/intermediate/intermediate.yml”.
 
-Copy the following code into the new file and save it.
+To build trust in data with your organization, it is impossible to overstate the importance of testing and documentation. While there are many ways to organize automated testing and documentation, dbt comes with an accessible [data testing](https://docs.getdbt.com/docs/building-a-dbt-project/tests) and [documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation) framework. Let's build an example.
+For tests, dbt comes with a set of 4 pre-defined data tests: `uniqueness, not_null, check constraints, and relationship integrity`. 
+
+We are going to set up tests on a few models for this workshop. However, we strongly recommend you establish reasonable test coverage across the board. Adding your own tests is easy; as long as it can be written as a select statement, you can use it as a test. 
+
+And just like with macros, there are plenty of fantastic packages out there like the [dbt_expectations](https://hub.getdbt.com/calogica/dbt_expectations/latest/) package that provides tests similar to the [Great Expectations](http://greatexpectations.io/) open source project.
+
+For documentation, dbt takes model and column descriptions and will add them to the documentation site so that you have even more information about your models to share with your stakeholders via the site. 
+
+1. First, create this file `intermediate.yml` in the intermediate folder. 
+
+2. Copy the following code into the new file and save it.
 
 ```yml
 version: 2
@@ -1132,17 +1168,21 @@ models:
           - unique
 ```
 
+![test](assets/test_1.png) 
  
-Execute the following code on the command line:  
+3. Execute the following code on the command line:  
 `dbt test`
- 
+
+![test](assets/test_2.png) 
 
 Oh no! One of our tests failed! Let's try to understand why. If you click into the details tab, dbt provides you with the SQL query that failed. 
+
+![test](assets/test_4.png) 
 
 Now let’s take that query and paste it either into the Snowflake UI or the IDE to debug it. 
  
 
-Execute the following code to check the full row width for one of the records failed: 
+4. Execute the following code to check the full row width for one of the records failed: 
 
 ```sql 
 with cst as
@@ -1160,9 +1200,13 @@ select * from <dev_schema>_marts.int_knoema_stock_history
 where company_symbol||stock_date IN (SELECT conctat FROM cst)
 
 ```
+
+![test](assets/test_3.png) 
  
 Aha! There are shares which are traded on more than one stock exchanges. 
-So we need to include the stock_exchange_name attribute to your unique test key. Let's go back to intemediate.yml file and update the test configuration for int_knoema_stock_history model :
+So we need to include the stock_exchange_name attribute to the unique test key. 
+
+4. Let's go back to intemediate.yml file and update the test configuration for int_knoema_stock_history model :
 
 ```yml
 version: 2
@@ -1194,14 +1238,24 @@ models:
           - not_null
           - unique
 ```
-Now let’s run only the previously failing test. 
+5. Now let’s run only the previously failing test. 
 `dbt test -m  int_knoema_stock_history`
 
+
+![test](assets/test_5.png) 
  
 Look at all that green! 
-Now the last thing to do is to generate the documentation and see how our description fields are populated. Run the command “dbt docs generate” and click on view docs. Search for one of the models that we applied descriptions to either via the file tree or the search bar. 
+Now the last thing to do is to generate the documentation and see how our description fields are populated. 
+
+6. Run the command `dbt docs generate` and click on view docs. 
+
+7. Search for one of the models that we applied descriptions to either via the file tree or the search bar. 
+
+![docs](assets/docs_1.png) 
 
 You should now see the description field populated. 
+
+![docs](assets/docs_2.png) 
  
 <!-- ------------------------ -->
 ## dbt pipelines - Deployment
@@ -1209,107 +1263,124 @@ You should now see the description field populated.
 Okay, it seems like we have everything in place: pipelines have been developed, tested and documented.  The next step would be to promote this code up the chain through our environments (which in this lab are simplified to just DEV & PROD).
 We’ll do this by  committing the work to our feature branch into the main branch and setting up a job to orchestrate the execution of the models in production. Generally it would be best for a pull request to be opened, so that your code is reviewed and tested via Slim CI prior to promotion to production, but in the interest of keeping things concise for this workshop, we are going to merge into production without review. 
  
-To do this, the first thing you are going to do is commit any remaining work you haven’t yet. 
-Now we are going to click merge to master
+1. To do this, the first thing you are going to do is commit any remaining work you haven’t yet. 
+
+![deploy](assets/deploy_1.png) 
+
+2. Now we are going to click merge to master
+![deploy](assets/deploy_2.png) 
 
 By merging into master, you should have reverted back to your master branch for you to start the cycle over again for development. 
+
+![deploy](assets/deploy_3.png) 
  
-Now we are going to deploy our code via dbt Cloud. Luckily for you, Partner Connection has already created your Production Environment for you. Now all we have to do is update some defaults. Click on the hamburger menu and click on Environments.  
+3. Now we are going to deploy our code via dbt Cloud. Luckily for you, Partner Connection has already created your Production Environment for you. Now all we have to do is update some defaults. Click on the hamburger menu and click on Environments.  
+
+![deploy](assets/deploy_4.png) 
+![deploy](assets/deploy_5.png) 
 
 You should see two different Environments, Development and Deployment. 
 
  
-Click on the Deployment environment and then click on Settings in the top right. 
+4. Click on the Deployment environment and then click on Settings in the top right. 
 
+![deploy](assets/deploy_6.png) 
+![deploy](assets/deploy_7.png) 
  
-We are going to update the schema name from your development schema to prod. To do this, click on Edit. 
+5. We are going to update the schema name from your development schema to `production`. To do this, click on Edit. 
 
-After you update the field, be sure to click on Save at the top.
-Now in doing this, dbt will default to building in a schema named prod in the declared default database PC_DBT_DB. This helps us separate out the objects we create in our production environment from our development sandbox. 
-After saving your environment, let’s update the default Partner Connect created job. To do this, click on the hamburger menu on the top left and click on Jobs. 
-Now select the pre-configured job named `Partner Connect Trial Job`. 
+![deploy](assets/deploy_8.png) 
 
-Now let’s edit it by first going to Settings. 
- 
 
-Click on Edit on the top right. 
- 
 
-And now we are going to update a few things. Change the name of the Job to `Production Job` to signify that this is going to be your production run. 
+6. After you update the field, be sure to click on Save at the top.
+Now in doing this, dbt will default to building in a schema named `production` in the declared default database pc_dbt_db. This helps us separate out the objects we create in our production environment from our development sandbox. 
+
+7. After saving your environment, let’s update the default Partner Connect created job. To do this, click on the hamburger menu on the top left and click on Jobs. 
+
+![deploy](assets/deploy_9.png) 
+
+8. Now select the pre-configured job named `Partner Connect Trial Job`. 
+
+9. Now let’s edit it by first going to Settings. 
+
+10. Click on Edit on the top right. 
+
+11. And now we are going to update a few things. Change the name of the Job to `Production Job` to signify that this is going to be your production run. 
 Update the number of threads to 8. This will allow dbt to run 8 dbt models in the DAG concurrently sans dependencies. 8 is the default we recommend for Snowflake. 
 
- 
-Because the dbt commands already include the sequence of commands that we need things to operate, we are going to keep it as is. We want to seed our manual uploads to our production schema first. Then we want to create our objects in our schema prior to running tests on them. 
+![deploy](assets/deploy_10.png) 
+
+12. Because the dbt commands already include the sequence of commands that we need things to operate, we are going to keep it as is. We want to seed our manual uploads to our production schema first. Then we want to create our objects in our schema prior to running tests on them. 
 We are also going to leave the scheduling on it’s default off configuration because we will be manually kicking off the job for this workshop. 
-Now go to the top and click “Save”. 
-Then click on the job name. This will return you to the job run history page, from where you can click on “Run now”. 
-Click into the run to check out how the run is going. Your run should be successful like this. 
+12. Now go to the top and click “Save”. 
+13. Then click on the job name. This will return you to the job run history page, from where you can click on “Run now”. 
+14. Click into the run to check out how the run is going. Your run should be successful like this. 
+![deploy](assets/deploy_11.png) 
 
  
-Take a look at the various run steps. You can validate that on the dbt run step, you are building into the prod schemas as noted in our environment configuration. 
+15. Take a look at the various run steps. You can validate that on the dbt run step, you are building into the prod schemas as noted in our environment configuration. 
  
-You can verify  in Snowflake UI that you now we have data in the prod database:
+16. You can verify  in Snowflake UI that you now we have data in the prod database:
  
- 
+ ![deploy](assets/deploy_12.png) 
 
  
-And this concludes our workshop. If you’re interested in exploring further, there are some additional “extra credit” tasks in the appendix of this workshop, in which you’ll cover things like how to visualize what you’ve created with Snowsight, and how to enhance performance with dbt.
+And this concludes our workshop. If you’re interested in exploring further, there are some additional “extra credit” tasks in the appendix of this workshop, in which you’ll cover things like how to visualize what you’ve created with Snowsight.
  
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
 
 Congratulations on completing the lab! Today, you learned how to use dbt Cloud and Snowflake to build data transformation pipelines for analytics. You’re now ready to apply these fundamentals to your own data. 
 We encourage you to continue with your free trial by loading your own sample or production data, and by continuing to dive into some of the more advanced functionality of dbt Cloud and Snowflake.
-Additional Resources:
-Join our dbt community Slack which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content. 
-To continue to learn to use dbt more effectively, check out the dbt Learn site.
-Contact the dbt Cloud Sales team if you’re interested in exploring dbt Cloud for your team or organization.
-What we've covered:
+
+#### Additional Resources:
+
+- Join our [dbt community Slack ](https://community.getdbt.com/) which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content. 
+- To continue to learn to use dbt more effectively, check out the [dbt Learn site](https://learn.getdbt.com/).
+- Contact the [dbt Cloud Sales team](https://www.getdbt.com/contact/) if you’re interested in exploring dbt Cloud for your team or organization.
+
+#### What we've covered:
 - How to set up dbt & Snowflake
 - How to leverage data in Snowflake's Data Marketplace
 - How to run a dbt project and develop pipelines
 - How to create data tests and documentation 
  
  
- 
- 
+
  
 <!-- ------------------------ -->
 ## Appendix
 
 ### Visualizations
 
-Now, let's create a simple data visualization for this dataset. To do that, let's click on the Preview App button once again:
+1. If you want to create a simple data visualization for this dataset, we can use Snowsight. To do that, let's click on the Preview App button once again:
 
-Enable the Dashboards and worksheets. 
+2. Enable the Dashboards and worksheets. 
 
-Then click Worksheets -> + Worksheet to add a new one.
+3. Then click Worksheets -> + Worksheet to add a new one.
 
-Copy and paste the following query in the worksheet. 
+4. Copy and paste the following query in the worksheet.
+ 
+```sql 
 select * 
-from dbt_hol_dev.marts.fct_trading_pnl
-where trader = 'Jeff A.'
-order by book_date
-Hit the run button and switch from a table view to chart.
+from pc_dbt_db.<dev_schema>_marts.int_daily_position_with_trades
+where trader = 'Tina M.'
+order by  book_date
+```
+5. Hit the run button and switch from a table view to chart.
 
  
-By default it shows a breakdown by Volume. Let's click on the measure and switch it into PNL. 
+6. By default it shows a breakdown by Volume. Let's click on the measure and switch it into PNL. 
 
  
-Click “+Add column” to add another measure and select “Market Value” to display Market value and PnL side by side.
+7. Click “+Add column” to add another measure and select “Market Value” to display Market value and PnL side by side.
  
 
 And that’s it! Now you have a worksheet that you can slice and dice, share with your colleagues or embed in the SnowSight dashboard as a tile. For more details on SnowSight, please refer to the Snowflake documentation.
 Quick tips 
 
-### Warehouse scaling
-During the lab you've probably seen how easily Snowflake could deal with many models materialized as views, provided the input data volume of stock history is >200MM records. We also explicitly configured one model to be materialized as ‘table' and another one as ‘incremental'. 
-Another performance enhancement you can consider is to dynamically change the warehouse size based on the model being executed, or even the type of run (i.e. based on whether it’s a full refresh or incremental). 
-Here are some of the ways to do this: 
-Specifying the warehouse on a particular model. Go back into the IDE and open up the dbt_project.yml file. 
-Create a ne
 
- 
 
 
 
