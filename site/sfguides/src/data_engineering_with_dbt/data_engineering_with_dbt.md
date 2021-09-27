@@ -18,7 +18,7 @@ Modern businesses need modern data strategies, built on platforms that support a
 
 [dbt](https://www.getdbt.com/) is a transformation workflow that lets teams quickly and collaboratively deploy analytics code following software engineering best practices like modularity, portability, CI/CD, and documentation. Now anyone who knows SQL can build production-grade data pipelines. It transforms data in the warehouse, leveraging cloud data platforms like Snowflake.
 
-In this virtual hands-on lab, you will follow a step-by-step guide to using dbt with Snowflake,  and  see some of the benefits this tandem brings.
+In this Quickstart, you will follow a step-by-step guide to using dbt with Snowflake, and see some of the benefits this tandem brings.
 
 Let's get started.
 
@@ -73,7 +73,7 @@ Now we need to obtain our raw data. We are going to the Snowflake Marketplace to
 
 2. You will need to log in again. Please use the same user and password that you used to login to your Snowflake account the first time. 
 
-3. Select your user on the top left and “Switch Role” from the top left corner of the UI to switch to ACCOUNTADMIN role if not already set. 
+3. Select your user on the top left and “Switch Role” from the top left corner of the UI to switch to `ACCOUNTADMIN` role if not already set. 
 4. Now we want to go into the Snowflake Marketplace to connect to the Knoema dataset. Click on Data on the left hand sidebar and then Marketplace.
 
 ![Click on Marketplace](assets/click_on_marketplace.png) 
