@@ -590,4 +590,4 @@ Congratulations! You used Snowpark to perform sentiment analysis on tweets. We p
 
 ### Related Resources
 - [Snowpark Docs](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark.html)
-- [Source code example on Github](https://guides.github.com/introduction/flow/)
+- [Source code example on Github](https://github.com/Snowflake-Labs/sfguide-snowpark-demo)
