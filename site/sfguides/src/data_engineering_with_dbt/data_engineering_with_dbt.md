@@ -646,6 +646,7 @@ You should see that we have run all of the nodes (excluding sources) to the left
 
 
 8.  Execute the below code, either in the Snowflake UI or in the dbt Cloud IDE
+
 ```sql 
 SELECT * 
   FROM pc_dbt_db.<dev_schema>_marts.int_knoema_stock_history
@@ -1190,7 +1191,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('int_stock_history')
+              to: ref('int_knoema_stock_history')
               field: company_symbol
  
   - name: int_knoema_stock_history
