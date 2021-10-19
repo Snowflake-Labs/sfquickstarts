@@ -706,7 +706,7 @@ FROM ITEMS_IN_SALES_ORDERS S
     INNER JOIN SALES_ORDERS SO ON S.ORDER_ID = SO.SALES_ORDER_ID;
 ```
 
-### 6.3 Create Aggrigations
+### 6.3 Create Aggregations
 
 In then next module we will discuss aggregations and their purpose for facilitating big data business intelligence workloads in Power BI, but for now let’s create an additional view to summarize the quantity of items purchased from the SALES \_ORDERS\_V view that we created in the last step.
 
@@ -785,6 +785,9 @@ Expand SALES\_ORDER\_V and check the box next to QUANTITY. That will take severa
 Expand QUANTITY in the Performance Analyzer window. Note the times.
 
 ![pbigetdata](assets/image14.png)
+
+
+**Download** the Power BI Desktop file named **DirectQuery.pbit** from here: [GitHub Repo](https://github.com/sfc-gh-ccollier/sfquickstart-samples/tree/main/samples/snowflake-powerbi-retail-vhol/power_bi_files/templates)
 
 **Open** the Power BI Desktop file named **DirectQuery.pbit**.
 When prompted enter your **Server, Warehouse and Database**. Click **OK**.

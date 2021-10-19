@@ -153,12 +153,45 @@ Duration: 5
 Every Snowflake account provides access to [sample data sets](https://docs.snowflake.com/en/user-guide/sample-data.html). You can find corresponding schemas in SNOWFLAKE_SAMPLE_DATA database in your object explorer.
 For this guide we are going to use a subset of objects from [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html) set, representing **customers** and their **orders**. We also going to take some reference data about **nations** and **regions**. 
 
-| Dataset | Description | Source | Load Scenario | Mechanism
-| --- | ----------- |--- | --- | --- |--- |
-| Nation | Static ref data | snowflake.sample_data.tpch_sf10.nation | one-off CTAS | SQL
-| Region | Static ref data | snowflake.sample_data.tpch_sf10.region | one-off CTAS | SQL
-| Customer | Customer data | snowflake.sample_data.tpch_sf10.customer | incremental JSON files | Snowpipe
-| Orders | Orders data | snowflake.sample_data.tpch_sf10.orders | incremental CSV files | Snowpipe
+<table>
+    <tbody>
+        <tr>
+            <td>Dataset</td>
+            <td>Description</td>
+            <td>Source</td>
+            <td>Load Scenario</td>
+            <td>Mechanism</td>            
+        </tr>
+        <tr>
+            <td>Nation</td>
+            <td>Static ref data</td>
+            <td>snowflake.sample_data.tpch_sf10.nation</td>
+            <td>one-off CTAS</td>
+            <td>SQL</td>            
+        </tr>        
+        <tr>
+            <td>Region</td>
+            <td>Static ref data</td>
+            <td>snowflake.sample_data.tpch_sf10.region</td>
+            <td>one-off CTAS</td>
+            <td>SQL</td>            
+        </tr>        
+        <tr>
+            <td>Customer</td>
+            <td>Customer data</td>
+            <td>snowflake.sample_data.tpch_sf10.customer</td>
+            <td>incremental JSON files</td>
+            <td>Snowpipe</td>            
+        </tr>        
+        <tr>
+            <td>Orders</td>
+            <td>Orders data</td>
+            <td>snowflake.sample_data.tpch_sf10.orders</td>
+            <td>incremental CSV files</td>
+            <td>Snowpipe</td>            
+        </tr>        
+    </tbody>
+</table>
 
 1. Let's start with the static reference data:
 

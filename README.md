@@ -27,7 +27,7 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
   1. [Install Node 14](https://nodejs.org/en/download/); Homebrew installed? `brew install node@14`
      - Install gulp-cli `npm i -g gulp-cli`
   2. [Install Go](https://golang.org/doc/install); Homebrew installed? `brew install golang`
-     - Install claat `go get github.com/googlecodelabs/tools/claat`
+     - Install claat `go install github.com/googlecodelabs/tools/claat@latest`
   3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
 ## Run locally
