@@ -184,11 +184,9 @@ agi."geo RegionId" as GeoRegionIdAgi
 "hhtyp Name" ) as sr_lin
 
 from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."sdg_01_20" agi  --pov atlas
-inner join "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01" pth on agi."geo 
-RegionId"=pth."geo RegionId" and agi."Date"=pth."Date"  -- join thresholds
-inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098" ir on agi."geo 
-RegionId"=ir."geo RegionId" and agi."Date"=ir."Date" -- join investment rate
-inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."geo - RegionId"=sr."geo RegionId" and agi."Date"=sr."Date"  -- join saving rate
+inner join "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01" pth on agi."geo RegionId"=pth."geo RegionId" and agi."Date"=pth."Date"  -- join thresholds
+inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098" ir on agi."geo RegionId"=ir."geo RegionId" and agi."Date"=ir."Date" -- join investment rate
+inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."geo RegionId"=sr."geo RegionId" and agi."Date"=sr."Date"  -- join saving rate
 
 
 --## Step 3 Create a view to pair down the variables for the APP --
