@@ -42,7 +42,6 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 ### What You’ll Need 
 - A [AWS] (https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all) free trial Account 
 - A [Snowflake](https://signup.snowflake.com/?_ga=2.216496658.583434456.1619544527-1296939414.1603389593) trial Account 
-- [Download](https://download) snowflake-connector-python, snowflake queries, quasar sample application code.
 - [Quasar CLI](https://quasar.dev/start/pick-quasar-flavour/) Installed
 - [Quasar Installation Video ](https://www.youtube.com/watch?v=BK66mQTSl7U) Installed
 - [Download snowflake-connector-python.zip](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/releases/tag/v1)
