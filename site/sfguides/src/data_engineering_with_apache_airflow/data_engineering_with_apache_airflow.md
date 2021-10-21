@@ -99,13 +99,13 @@ CREATE OR REPLACE USER DBT_USER PASSWORD='<PASSWORD>'
     
 GRANT ROLE DBT_DEV_ROLE TO USER DBT_USER;
 
--- Grant privliges to role
+-- Grant privileges to role
 USE ROLE ACCOUNTADMIN;
 
 GRANT CREATE DATABASE ON ACCOUNT TO ROLE DBT_DEV_ROLE;
 
 /*---------------------------------------------------------------------------
-Next we will create a virual warehouse that will be used
+Next we will create a virtual warehouse that will be used
 ---------------------------------------------------------------------------*/
 USE ROLE SYSADMIN;
 
@@ -211,7 +211,7 @@ We are done configuring DBT. Let us proceed on crafting our csv files and our da
 ## Creating our CSV data files in DBT
 Duration: 10
 
-In thie section, we will be prepping our sample csv data files alongside the associated sql models. 
+In this section, we will be prepping our sample csv data files alongside the associated sql models. 
 
 To start, let us first create 3 excel files under the folder ```data``` inside the dbt folder.
 
@@ -296,7 +296,7 @@ FROM {{ref('customer')}}  A
 JOIN {{ref('combined_bookings')}} B
 on A.ID = B.ID
 ```
-Now let's move on to the ```analysis``` folder. change to the ```analysis``` folder and create these 2 SQL files
+Now let's move on to the ```analysis``` folder. Change to the ```analysis``` folder and create these 2 SQL files
 
 1) ```hotel_count_by_day.sql```: This will create a hotel_count_by_day view in the ```ANALYSIS``` schema in which we will count the number of hotel bookings by day. 
 
@@ -367,8 +367,7 @@ task_1
 ```
 
 transform_and_analysis.py
-
-```
+```python
 from airflow import DAG
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash import BashOperator
