@@ -437,6 +437,28 @@ select country_region, sum(cases), case_type, date from public.jhu_covid_19 wher
 
 From here, we can easily deduce that the majority of countries were able to get infections “under control” after the end of April. During summertime, the active infection cases in most countries were relatively stable or had even decreased significantly. With the second wave underway, Europe is seeing exponential growth in active cases with the rise in confirmed cases.
 
+### Data Problem
+Sometimes you go through the entire process of building a predictive model and the predictions are quite poor and you trace the issue back to data problems.  In other cases, such as this one, the data changes with time and the models go bad.  After creating the lab we had to return and dig around in the data to see what the problem was.  In summary, we used the same Snowsight visualization capabilities as above to determine that for some reason around June 2 and June 3 2021, there were a massive number of “negative deaths” that were throwing off the models.  The count should only be a positive number.   After some further digging around using Snowsight, it was discovered that Peru reported problematic data that was causing the problems with the model accuracy.   
+As an optional step to discover this data problem, you can run the following SQL statement:
+
+```sql
+select DATE, province_state, SUM(CASES) 
+from public.jhu_covid_19 
+WHERE CASE_TYPE = 'Deaths'
+and DATE >='2021-05-25'
+and DATE <='2021-06-06'
+and country_region = 'Peru'
+group by province_state, DATE 
+order by province_state, date;
+```
+
+Then create a visualization like this:
+
+![img](assets/dataiku49a.png)
+
+You will notice that Peru normally states how many people have died to date from COVID broken out by State but on on June 2nd 2021, most of the deaths were assigned to a new “Unknown” State then reported correctly after that.  Later on when we find the difference in total deaths per State per day, this leads to some massive negative death counts all on two days in Peru.  There are better ways to fix this data problem but an easy for this lab is to simply filter Peru out of the solution.  We will do that in a future step.
+
+
 ### Preparing the Data for Further Data Analysis and Consumption
 
 Let’s now create views that reference the shared COVID19 tables we’ll be using. Switch back to the OLD UI and select the **Worksheets** tab.  
@@ -654,19 +676,20 @@ Your screen should now look like this:
 
 ![img](assets/dataiku84.jpg)
 
-We’re interested in the aggregations for particular **CASE_TYPE** so we will pre-filter the data accordingly.
+There are four case types in the John Hopkins data but we only want to use and predict using Deaths and Confirmed.  So, we will filter out Active and Recovered records.  We will also filter out the problematic Peru data as discovered in the previous section.  
+To do this: 
+- Select Pre-Filter on the left of your Group recipe screen. 
+- Toggle the Filter on and specify in the dropdown to Keep only rows that satisfy: ‘all the following conditions'
+- Select CASE_TYPE in the dropdown, then ‘is different from’ then enter Recovered
+- Click on the + Add A Condition button and select CASE_TYPE again in the dropdown, then  ‘is different from’ then enter Active
+- Click on the + Add A Condition button and select COUNTRY_REGION in the dropdown, then  ‘is different from’ then enter Peru
 
-Select **Pre-Filter** on the left of your Group recipe screen. Toggle the **Filter on** and specify in the dropdown to **Keep only rows that satisfy: ‘at least one of the following condition’**
-
-Select **CASE_TYPE** in the dropdown, then **contains** and enter **Death**
-
-Click on the **+ Add A Condition** button and select **CASE_TYPE** again in the dropdown, then **contains** and enter **Confirmed**.
-
-**Note:** These values are **case sensitive** so **death** or **confirmed** would not retrieve results.
+Positive
+:  Note: These values are case sensitive so ‘recovered’, ‘active’ and ‘PERU’ would not work correctly.  Also, in the step above be sure to select ‘all the following conditions’ rather than ‘all the following conditions column’
 
 Your screen should now look like this:
 
-![img](assets/dataiku85.jpg)
+![img](assets/dataiku85.png)
 
 Then click **RUN** on the bottom left to execute the recipe - make sure the compute engine is **In-database (SQL)** to push computation down to Snowflake (click the three cogs to change if required).
 
