@@ -18,11 +18,13 @@ Numerous business are looking at modern data strategy built on platforms that co
 
 Apache Airflow is an open-source workflow management platform that can be used to author and manage data pipelines. Airflow uses worklows made of directed acyclic graphs (DAGs) of tasks. 
 
-[dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by the [Fishtown Analytics](https://www.fishtownanalytics.com/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the open-source version of dbtCloud that is providing similar functionality, but as a SaaS.
+[dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by [dbt Labs](https://www.getdbt.com/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the command line interface for running dbt projects. The CLI is free to use and open source.
 
 In this virtual hands-on lab, you will follow a step-by-step guide to using Airflow with dbt to create data transformation job schedulers. 
 
 Let’s get started. 
+### Prerequisites
+This guide assumes you have a basic working knowledge of Python and dbt
 
 ### What You’ll Learn 
 - how to use an opensource tool like Airflow to create a data scheduler
@@ -30,9 +32,22 @@ Let’s get started.
 - how to build scalable pipelines using dbt, Airflow and Snowflake
 
 ### What You’ll Need 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) Installed
-- [dbt CLI](https://docs.getdbt.com/dbt-cli/installation) Installed 
+You will need the following things before beginning:
+
+1. Snowflake
+  1. **A Snowflake Account.**
+  1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
+1. GitHub
+  1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
+  1. **A GitHub Repository.** If you don't already have a repository created, or would like to create a new one, then [Create a new respository](https://github.com/new). For the type, select `Public` (although you could use either). And you can skip adding the README, .gitignore and license for now.
+1. Integrated Development Environment (IDE)
+  1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
+  1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
+1. Docker
+  1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
+
+### What You’ll Build 
+- A simple working Airflow pipeline with dbt and Snowflake 
 
 <!-- ------------------------ -->
 ## Set up of environment
@@ -72,7 +87,11 @@ We would now need to create a `dbt` project as well as an `dags` folder.
 
 For the dbt project, do a ```dbt init dbt``` - this is where we will configure our dbt later in step 4.
 
-For the dags folder, just create the folder by doing mkdir ```dags```
+For the dags folder, just create the folder by doing 
+
+```
+mkdir dags
+```
 
 Your tree repository should look like this
 
@@ -83,6 +102,20 @@ Your tree repository should look like this
 Duration: 6
 
 Now that we have gotten our repo up, it is time to configure and set up our dbt project. 
+
+Before we begin, let's take some time to understand what we are going to do for our dbt project.
+
+As can be seen in the diagram below, we have 3 csv files ```bookings_1```, ```bookings_2``` and ```customers ```. We are going to seed these csv files into Snowflake as tables. This will be covered in step 4 in detailed later.
+
+Following this, we are going to merge ```bookings_1``` and ```bookings_2``` tables into ```combined_bookings```. Next, we are going to join the ```combined_bookings``` and ```customer``` table on customer_id to form the ```prepped_data``` table. 
+
+Finally, we are going to perform our analysis and transformation on the ```prepped_data``` by creating 2 views.  
+
+1) ```hotel_count_by_day.sql```: This will create a hotel_count_by_day view in the ANALYSIS schema in which we will count the number of hotel bookings by day.
+
+2) ```thirty_day_avg_cost.sql```: This will create a thirty_day_avg_cost view in the ANALYSIS schema in which we will do a average cost of booking for the last 30 days.
+
+![dbt_structure](assets/data_engineering_with_apache_airflow_0_dbt_flow.png)
 
 First, let's go to the Snowflake console and run the script below. What this does is create a dbt_user and a dbt_dev_role and after which we set up a database for dbt_user.
 
@@ -132,7 +165,7 @@ CREATE OR REPLACE DATABASE DEMO_dbt
 
 Now, let's go back to our project ```dbt_airflow``` > ```dbt```that we set up previously in step 1.
 
-We will set up a few configurations for the respective files below
+We will set up a few configurations for the respective files below. Please note for the ```dbt_yml``` you just need to replace the models section
 
 profiles.yml
 ```yml
@@ -174,9 +207,9 @@ models:
           materialized: view
 ```
 
-Next, we will install the ```fishtown-analytics/dbt_utils``` that we had placed inside ```packages.yml```. This can be done by running the command ```dbt debs``` from the ```dbt``` folder. 
+Next, we will install the ```fishtown-analytics/dbt_utils``` that we had placed inside ```packages.yml```. This can be done by running the command ```dbt deps``` from the ```dbt``` folder. 
 
-We will now create a file called ```call_me_anything_you_want.sql``` under the ```macros``` folder and input the below sql 
+We will now create a file called ```custom_demo_macros.sql``` under the ```macros``` folder and input the below sql 
 
 ```sql
 {% macro generate_schema_name(custom_schema_name, node) -%}
@@ -264,7 +297,9 @@ Our folder structure should be like as below
 ## Creating our dbt models in models folder
 Duration: 2
 
-Create 2 folders ```analysis``` and ```transform``` in the models folder. 
+Create 2 folders ```analysis``` and ```transform``` in the models folder. Please follow the sections below for analysis and transform respectively. 
+
+### dbt models for transform folder
 
 Inside the ```transform``` folder, we will have 3 SQL files
 
@@ -304,6 +339,9 @@ FROM {{ref('customer')}}  A
 JOIN {{ref('combined_bookings')}} B
 on A.ID = B.ID
 ```
+
+### dbt models for analysis folder
+
 Now let's move on to the ```analysis``` folder. Change to the ```analysis``` folder and create these 2 SQL files
 
 1) ```hotel_count_by_day.sql```: This will create a hotel_count_by_day view in the ```ANALYSIS``` schema in which we will count the number of hotel bookings by day. 
@@ -435,7 +473,7 @@ x-airflow-common:
     - ./dags:/dags # add this in
 
 ```
-Let's run our ```docker-compose up``` and go to ```http://localhost:8080/```. The default username is ```airflow``` and password is ```airflow```
+Let's run our ```docker-compose up``` and go to [http://localhost:8080/](http://localhost:8080/). The default username is ```airflow``` and password is ```airflow```
 
 ![airflow](assets/data_engineering_with_apache_airflow_2_airflow_url.png)
 
@@ -443,18 +481,22 @@ Let's run our ```docker-compose up``` and go to ```http://localhost:8080/```. Th
 <!-- ------------------------ -->
 ## Activating and running our DAGs
 
+
 We will now activate our DAGs. Click on the blue buttons for ```1_init_once_seed_data``` and ```2_daily_transformation_analysis```
 
 ![airflow](assets/data_engineering_with_apache_airflow_6_runnig_our_dags.png)
 
-Now, lets run our ```1_init_once_seed_data```  to seed the data
+### Running our 1_init_once_seed_data
+Now, lets run our ```1_init_once_seed_data```  to seed the data. To run click the play icon under the ```Actions``` on the right of the DAG.
 
 ![airflow](assets/data_engineering_with_apache_airflow_7_dag_init_successful.png)
 
+### Viewing Seed data in tables created under public schema
 If all goes well when we go back to our Snowflake instance, we should see tree tables that have been successfully created in the ```PUBLIC``` schema. 
 
-![airflow](assets/data_engineering_with_apache_airflow_8_snowflake_successful.png)
+![airflow](assets/data_engineering_with_apache_airflow_8_snowflake_successful_seed.png)
 
+### Running our 2_daily_transformation_analysis
 We will now run our second DAG ```2_daily_transformation_analysis``` which will run our ```transform``` and ```analysis``` models
 
 ![airflow](assets/data_engineering_with_apache_airflow_9_dag_transform_analysis_successful.png)
@@ -470,11 +512,8 @@ Duration: 1
 Congratulation! You have created your first Apache Airflow with dbt and Snowflake! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
 
 ### Additional Resources:
-- Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document
-- Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers
-- [Join the Snowflake community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
-- [Sign up for Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
-- [Contact our Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more
+- Join our [dbt community Slack](https://www.getdbt.com/community/) which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
+- Quick tutorial on how to write a simple [Airflow DAG](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html)
 
 ### What we've covered:
 - How to set up Airflow, dbt & Snowflake
