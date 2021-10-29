@@ -481,7 +481,6 @@ Let's run our ```docker-compose up``` and go to [http://localhost:8080/](http://
 <!-- ------------------------ -->
 ## Activating and running our DAGs
 
-
 We will now activate our DAGs. Click on the blue buttons for ```1_init_once_seed_data``` and ```2_daily_transformation_analysis```
 
 ![airflow](assets/data_engineering_with_apache_airflow_6_runnig_our_dags.png)
