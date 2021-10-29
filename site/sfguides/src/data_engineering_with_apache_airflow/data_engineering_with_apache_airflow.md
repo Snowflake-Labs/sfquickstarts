@@ -79,52 +79,52 @@ Your tree repository should look like this
 ![Folderstructure](assets/data_engineering_with_apache_airflow_1_tree_structure.png)
 
 <!-- ------------------------ -->
-## Setting up our DBT Project
+## Setting up our dbt Project
 Duration: 6
 
-Now that we have gotten our repo up, it is time to configure and set up our DBT project. 
+Now that we have gotten our repo up, it is time to configure and set up our dbt project. 
 
 First, let's go to the Snowflake console and run the script below. What this does is create a dbt_user and a dbt_dev_role and after which we set up a database for dbt_user.
 
 ```sql
 USE ROLE SECURITYADMIN;
 
-CREATE OR REPLACE ROLE DBT_DEV_ROLE COMMENT='DBT_DEV_ROLE';
-GRANT ROLE DBT_DEV_ROLE TO ROLE SYSADMIN;
+CREATE OR REPLACE ROLE dbt_DEV_ROLE COMMENT='dbt_DEV_ROLE';
+GRANT ROLE dbt_DEV_ROLE TO ROLE SYSADMIN;
 
-CREATE OR REPLACE USER DBT_USER PASSWORD='<PASSWORD>'
-	DEFAULT_ROLE=DBT_DEV_ROLE
-	DEFAULT_WAREHOUSE=DBT_WH
-	COMMENT='DBT User';
+CREATE OR REPLACE USER dbt_USER PASSWORD='<PASSWORD>'
+	DEFAULT_ROLE=dbt_DEV_ROLE
+	DEFAULT_WAREHOUSE=dbt_WH
+	COMMENT='dbt User';
     
-GRANT ROLE DBT_DEV_ROLE TO USER DBT_USER;
+GRANT ROLE dbt_DEV_ROLE TO USER dbt_USER;
 
 -- Grant privileges to role
 USE ROLE ACCOUNTADMIN;
 
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE DBT_DEV_ROLE;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE dbt_DEV_ROLE;
 
 /*---------------------------------------------------------------------------
 Next we will create a virtual warehouse that will be used
 ---------------------------------------------------------------------------*/
 USE ROLE SYSADMIN;
 
---Create Warehouse for DBT work
-CREATE OR REPLACE WAREHOUSE DBT_DEV_WH
+--Create Warehouse for dbt work
+CREATE OR REPLACE WAREHOUSE dbt_DEV_WH
   WITH WAREHOUSE_SIZE = 'XSMALL'
   AUTO_SUSPEND = 120
   AUTO_RESUME = true
   INITIALLY_SUSPENDED = TRUE;
 
-GRANT ALL ON WAREHOUSE DBT_DEV_WH TO ROLE DBT_DEV_ROLE;
+GRANT ALL ON WAREHOUSE dbt_DEV_WH TO ROLE dbt_DEV_ROLE;
 
 ```
 
-Let's login with the ```dbt_user``` and create the database ```DEMO_DBT``` by running the command
+Let's login with the ```dbt_user``` and create the database ```DEMO_dbt``` by running the command
 
 ```sql
 
-CREATE OR REPLACE DATABASE DEMO_DBT
+CREATE OR REPLACE DATABASE DEMO_dbt
 
 ```
 ![airflow](assets/data_engineering_with_apache_airflow_2_snowflake_console.png)
@@ -203,12 +203,20 @@ We will now create a file called ```call_me_anything_you_want.sql``` under the `
 
 If everything is done correctly, your folder should look like below. The annotated boxes are what we just went through above. 
 
+Our final step here is to install our dbt module for ```db_utils```. From the dbt directory run
+``` 
+dbt deps
+```
+and you would see the assoicated modules being installed in the ```dbt_modules``` folder
+
+By now, you should see the folder structure as below: 
+
 ![airflow](assets/data_engineering_with_apache_airflow_3_dbt_structure.png)
 
-We are done configuring DBT. Let us proceed on crafting our csv files and our dags in the next section.
+We are done configuring dbt. Let us proceed on crafting our csv files and our dags in the next section.
 
 <!-- ------------------------ -->
-## Creating our CSV data files in DBT
+## Creating our CSV data files in dbt
 Duration: 10
 
 In this section, we will be prepping our sample csv data files alongside the associated sql models. 
@@ -253,7 +261,7 @@ Our folder structure should be like as below
 ![airflow](assets/data_engineering_with_apache_airflow_4_csv_files.png)
 
 <!-- ------------------------ -->
-## Creating our DBT models in models folder
+## Creating our dbt models in models folder
 Duration: 2
 
 Create 2 folders ```analysis``` and ```transform``` in the models folder. 
@@ -327,7 +335,7 @@ SELECT
 FROM {{ ref('prepped_data') }}
 ```
 
-Your file structure should be as below. We have already finished our DBT models and can proceed onto working on Airflow. 
+Your file structure should be as below. We have already finished our dbt models and can proceed onto working on Airflow. 
 
 ![airflow](assets/data_engineering_with_apache_airflow_5_dbt_models.png)
 
@@ -416,7 +424,7 @@ x-airflow-common:
   #image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.1.2}
   environment:
 ```
-- We will be add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our DBT models and our CSV files. 
+- We will be add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our dbt models and our CSV files. 
 
 ```bash
   volumes:
