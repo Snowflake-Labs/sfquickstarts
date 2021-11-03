@@ -85,7 +85,7 @@ The following instructions show how to build a Notebook server using a Docker co
         mkdir DockerImages
 
         cd DockerImages
-        git clone git@github.com:Snowflake-Labs/sfguide_snowpark_on_jupyter.git
+        git clone https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter.git
 
 6. Build the Docker container (this may take a minute or two, depending on your network connection speed)
 
