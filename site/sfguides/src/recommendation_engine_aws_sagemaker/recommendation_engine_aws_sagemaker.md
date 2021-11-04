@@ -447,7 +447,7 @@ Great! Now that we’ve created all the functions, we need to grant the ability 
 ```sql
 grant usage on function train_and_get_recommendations(varchar, varchar) to role sysadmin;
 grant usage on function deploy_model(varchar, varchar) to role sysadmin;
-grant usage on function invoke_model(varchar, varchar) to role sysadmin;
+grant usage on function invoke_model(varchar, varchar, varchar) to role sysadmin;
 ```
 
 And with usage granted, we can now test the functions out!
