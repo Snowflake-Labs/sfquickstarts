@@ -12,3 +12,5 @@ While you can embed things like images, videos, and surveys inside a fragment; y
   <input type="radio" value="Blue">
   <input type="radio" value="Green">
 </form>
+
+![Puppy](assets/puppy.jpg)
