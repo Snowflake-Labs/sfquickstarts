@@ -174,12 +174,14 @@ default:
   outputs:
     dev:
       type: snowflake
-      ######## Please replace with your Snowflake account name
-      account: <account_name>.<regions>
+      ######## Please replace with your Snowflake account name 
+      ######## for example sg_demo.ap-southeast-1
+      account: <ACCOUNT_URL>.<REGION> 
 
-      user: dbt_user
-      ######## Please replace with your Snowflake dbt user password
-      password: <Password>
+      user: "{{ env_var('dbt_user') }}"
+      ######## These environment variables dbt_user and dbt_password 
+      ######## are read from the variabls in Airflow which we will set later
+      password: "{{ env_var('dbt_password') }}"
 
       role: dbt_dev_role
       database: demo_dbt
@@ -406,6 +408,11 @@ with DAG('1_init_once_seed_data', default_args=default_args, schedule_interval='
     task_1 = BashOperator(
         task_id='load_seed_data_once',
         bash_command='cd /dbt && dbt seed --profiles-dir .',
+        env={
+            'dbt_user': '{{ var.value.dbt_user }}',
+            'dbt_password': '{{ var.value.dbt_password }}',
+            **os.environ
+        },
         dag=dag
     )
 
@@ -432,12 +439,22 @@ with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_
     task_1 = BashOperator(
         task_id='daily_transform',
         bash_command='cd /dbt && dbt run --models transform --profiles-dir .',
+        env={
+            'dbt_user': '{{ var.value.dbt_user }}',
+            'dbt_password': '{{ var.value.dbt_password }}',
+            **os.environ
+        },
         dag=dag
     )
 
     task_2 = BashOperator(
         task_id='daily_analysis',
         bash_command='cd /dbt && dbt run --models analysis --profiles-dir .',
+        env={
+            'dbt_user': '{{ var.value.dbt_user }}',
+            'dbt_password': '{{ var.value.dbt_password }}',
+            **os.environ
+        },
         dag=dag
     )
 
@@ -477,6 +494,17 @@ Let's run our ```docker-compose up``` and go to [http://localhost:8080/](http://
 
 ![airflow](assets/data_engineering_with_apache_airflow_2_airflow_url.png)
 
+We are now going to create 2 variables. Go to ```admin > Variables``` and click on the ```+``` icon. 
+
+![airflow](assets/data_engineering_with_apache_airflow_5_airflow_variables.png)
+
+Let us first create key of ```dbt_user``` and value ```dbt_user```. 
+
+![airflow](assets/data_engineering_with_apache_airflow_5_airflow_username.png)
+
+Now let us create our second key of ```dbt_password``` and value ```<ADD IN YOUR PASSWORD>```
+
+![airflow](assets/data_engineering_with_apache_airflow_5_airflow_password.png)
 
 <!-- ------------------------ -->
 ## Activating and running our DAGs
