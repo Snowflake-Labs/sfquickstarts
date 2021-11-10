@@ -165,7 +165,7 @@ CREATE OR REPLACE DATABASE DEMO_dbt
 
 Now, let's go back to our project ```dbt_airflow``` > ```dbt```that we set up previously in step 1.
 
-We will set up a few configurations for the respective files below. Please note for the ```dbt_yml``` you just need to replace the models section
+We will set up a few configurations for the respective files below. Please note for the ```dbt_project.yml``` you just need to replace the models section
 
 profiles.yml
 ```yml
@@ -536,7 +536,7 @@ Our ```Transform``` and ```Analysis``` views have been created successfully!
 ## Conclusion
 Duration: 1
 
-Congratulation! You have created your first Apache Airflow with dbt and Snowflake! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
+Congratulations! You have created your first Apache Airflow with dbt and Snowflake! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
 
 ### Additional Resources:
 - Join our [dbt community Slack](https://www.getdbt.com/community/) which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
