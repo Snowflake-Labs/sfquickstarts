@@ -279,12 +279,16 @@ From the Databases tab, click on the `CITIBIKE` database hyperlink. Select File 
 
 On the resulting page we create a file format. In the box that appears, leave all the default settings as-is but make the changes below:
 
-Name: `CSV`
-Field optionally enclosed by: Double Quote
-Null string: <Delete the existing text in this field so it is empty>
-[ ] Error on Column Count Mismatch: <uncheck this box>
+Name: **CSV**
 
-If you do not see the “Error on Column Count Mismatch” box, scroll down in the dialogue box.
+Field optionally enclosed by: **Double Quote**
+
+Null string: **Delete the existing text in this field so it is empty**
+
+[ ] Error on Column Count Mismatch: **uncheck this box**
+
+Negative
+:  If you do not see the “Error on Column Count Mismatch” box, **scroll down in the dialogue box**.
 
 When you are done, the box should look like:
 
