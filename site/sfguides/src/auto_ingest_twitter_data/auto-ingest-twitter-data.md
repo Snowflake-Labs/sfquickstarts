@@ -55,13 +55,13 @@ Duration: 5
 The demo can be found as a repository on Snowflake's GitHub. After installing git, you can clone the repository using your terminal. Open a terminal and run the following line to clone the repository to your local system. It'll download the repository in your home folder by default, so you may want to navigate to another folder if that's where you want the demo to be located.
 
 ```bash
-git clone https://github.com/Snowflake-Labs/demo-twitter-auto-ingest
+git clone https://github.com/Snowflake-Labs/sfguide-twitter-auto-ingest
 ```
 
 Great! You now have the demo on your computer. You'll need to be in the repository to be able to modify it. Navigate to the repository using the following command:
 
 ```bash
-cd demo-twitter-auto-ingest
+cd sfguide-twitter-auto-ingest
 ```
 
 Now that you’re in the correct folder let’s begin adding the correct information for you.

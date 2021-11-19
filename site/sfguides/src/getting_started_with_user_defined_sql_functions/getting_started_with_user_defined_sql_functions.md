@@ -13,15 +13,15 @@ authors: Jason West
 ## Overview
 Duration: 3
 
-### User-defined functions (UDFs) let you extend the system to perform operations that are not available through the built-in, system-defined functions provided by Snowflake. 
+User-defined functions (UDFs) let you extend the system to perform operations that are not available through the built-in, system-defined functions provided by Snowflake. 
 
 #### Snowflake currently supports the following languages for writing UDFs:
 
 - **SQL**: A SQL UDF evaluates an arbitrary SQL expression and returns either scalar or tabular results.
 
-- JavaScript: A JavaScript UDF lets you use the JavaScript programming language to manipulate data and return either scalar or tabular results.
+- **JavaScript**: A JavaScript UDF lets you use the JavaScript programming language to manipulate data and return either scalar or tabular results.
 
-- Java: A Java UDF lets you use the Java programming language to manipulate data and return scalar results.
+- **Java**: A Java UDF lets you use the Java programming language to manipulate data and return scalar results.
 
 
 #### This guide will walk you through setting up Snowflake and getting familiar with 

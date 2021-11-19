@@ -41,6 +41,11 @@
       "source": "/guide/getting-started-snowpark{,/**}",
       "destination": "/guide/getting_started_with_snowpark",
       "type": 301
+    }, 
+    {
+      "source": "/guide/getting_started_with_user_defined_functions{,/**}",
+      "destination": "/guide/getting_started_with_user_defined_sql_functions",
+      "type": 301
     }  ]
   }
 }

@@ -279,12 +279,16 @@ From the Databases tab, click on the `CITIBIKE` database hyperlink. Select File 
 
 On the resulting page we create a file format. In the box that appears, leave all the default settings as-is but make the changes below:
 
-Name: `CSV`
-Field optionally enclosed by: Double Quote
-Null string: <Delete the existing text in this field so it is empty>
-[ ] Error on Column Count Mismatch: <uncheck this box>
+Name: **CSV**
 
-If you do not see the “Error on Column Count Mismatch” box, scroll down in the dialogue box.
+Field optionally enclosed by: **Double Quote**
+
+Null string: **Delete the existing text in this field so it is empty**
+
+[ ] Error on Column Count Mismatch: **uncheck this box**
+
+Negative
+:  If you do not see the “Error on Column Count Mismatch” box, **scroll down in the dialogue box**.
 
 When you are done, the box should look like:
 
@@ -875,9 +879,7 @@ To the right of Usage is Billing where you can add a credit card and continue be
 Stay in the `ACCOUNTADMIN` role for the next section.
 
 <!-- ------------------------ -->
-
 ## Secure Data Sharing & Data Marketplace
-
 Duration:12
 
 Snowflake enables data access between accounts through shares. Shares are created by data providers and imported by data consumers, either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer could be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
@@ -940,7 +942,7 @@ Snowflake provides several ways to securely share data without compromising conf
 
 ### Snowflake Data Marketplace
 
-Navigate to the Data Marketplace tab.
+#### Navigate to the Data Marketplace tab.
 
 ![data marketplace tab](assets/10Share_7.png)
 
@@ -950,49 +952,55 @@ Select “Explore the Snowflake Data Marketplace.” If it’s your first time u
 
 Enter your credentials to access the Snowflake Data Marketplace.
 
+Positive
+:  Make sure you are in the `ACCOUNTADMIN` role. 
+
 ![Snowflake data marketplace](assets/10Share_9.png)
 
-The search bar in the top right allows you to query for a listing or data provider. The left hand side menu shows the categories of data available in the Data Marketplace. Select the Health category.
+To change your role, follow the steps below:
 
-![health tab](assets/10Share_10.png)
-
-Today we will use Starschema’s COVID-19 Epidemiological Data. Make sure you are in the `ACCOUNTADMIN` role.
 
 ![check context](assets/10Share_11.png)
 
-Here you can select the data and click on the Get Data button to access this information within your Snowflake Account.
+#### Find a listing
+The search bar at the top center allows you to search for a listings. The menu below the search box lets you filter data listings by Provider, Business Needs, and Category.  Type **COVID** into the search box, then select the Starschema COVID-19 Epidemiological Data tile.
 
-![get data fields](assets/10Share_12.png)
+![health tab](assets/10Share_10.png)  
 
-Select all the roles, accept the terms of use, then click Create Database.
 
-![create database](assets/10Share_13.png)
+Here you can learn more about the data set and see some usage example querires.  Now click on the Get Data button to access this information within your Snowflake Account.
 
-Now click View Database.
+![get data fields](assets/10Share_starschema_get_data.png)
 
-![covid19 databases](assets/10Share_14.png)
+![get data fields](assets/10Share_starschema_get_data2.png)
 
-Two schemas are available - `INFORMATION_SCHEMA` and `PUBLIC`. Click `PUBLIC` to see the available tables.
+![get data fields](assets/10Share_starschema_query_data.png)
 
-![covid19 tables](assets/10Share_15.png)
 
-Type JHU in the search bar to view all tables with data sourced from [John Hopkins University](https://www.jhu.edu/)
 
-![search bar](assets/10Share_16.png)
+Positive
+:  You are now using the new Snowsight user interface.  To learn more about how to use this new user interface go here:  [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight)
 
-The refresh button on the right will refresh all the objects in the schema.
+Now you can run any of the sample queries provided by Star Schema.
+Just select the query you want to run, and click the run button in the upper right corner. You can view the data results in the bottom pane.  Once you are done running the sample queries, click on the **Home icon** in the upper left corner.
 
-Further to the right you will see the Database Details including the owner of the share, number of tables and views in this database, source, share name, and data provider.
+![get data fields](assets/10Share_starschema_query_data2.png)
 
-![database details](assets/10Share_17.png)
+
+
+Now navigate to the Databases view in the navigation panel on the left. Click on Data, then Databases, then click on the COVID19_BY_STARSCHEMA_DM Database.  Now you can see the schemas, tables, and views that are available to query.
+
+![covid19 databases](assets/10Share_starschema_db_info.png)
+
 
 You have now successfully subscribed to the COVID-19 dataset from StarSchema which is updated daily with global COVID data. Note that we didn’t have to create databases, tables, views, or an ETL process. We simply can search for and access shared data from the Snowflake Data Marketplace.
 
+Positive
+:  We highly encourage you to begin using the Snowsight user interface to run all of your queries.  To learn more about how to use this new user interface go here:  [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight)
+
 
 <!-- ------------------------ -->
-
 ## Resetting Your Snowflake Environment
-
 Duration: 2
 
 If you would like to reset your environment by deleting all the objects created as part of this lab, run the SQL below in a worksheet.
@@ -1027,6 +1035,7 @@ Congratulations on completing this introductory lab exercise! You’ve mastered 
 We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. 
 ### Additional Resources:
 
+- Learn more about the new Snowsight user interface [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight)
 - Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document
 - Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers
 - [Join the Snowflake community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
