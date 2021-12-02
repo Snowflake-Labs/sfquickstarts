@@ -17,9 +17,7 @@ Duration: 1
 
 ![](assets/asset_abstract_9.jpg)
 
-Taking advantage of ML technology usually requires a lot of infrastructure, a multitude of software packages and a small army of highly-skilled engineers building, configuring, and maintaining the complex environment. But what if you could take advantage of machine learning capabilities using SQL from end to end? Imagine if you or your analysts could build models and score datasets at scale without having to learn a new language (such as scala or python), without having to provision and manage infrastructure on prem or in a public cloud, and without the overhead of maintaining additional software packages (such as [scikit-learn](https://scikit-learn.org/), [TensorFlow](https://www.tensorflow.org/), [PyTorch](https://pytorch.org/), …). How could that impact the bottom line of your business? 
-
-The Snowflake/AWS Autopilot integration is exactly that. It combines the power of Snowflake to process data at scale with the managed AutoML feature in AWS called Autopilot.
+Taking advantage of ML technology usually requires a lot of infrastructure, a multitude of software packages and a small army of highly-skilled engineers building, configuring, and maintaining the complex environment. But what if you could take advantage of machine learning capabilities using SQL from end-to-end? Building a model and scoring datasets at scale without having to learn a new language, without having to provision and manage infrastructure, and without the overhead of maintaining additional software packages. How could that impact the bottom line of your business? The Snowflake/AWS Autopilot integration is exactly that. It combines the power of Snowflake to process data at near infinite scalability with the managed AutoML feature in AWS called Autopilot.
 
 In this blog post we will explore an end-to-end example of building a scalable process from data ingestion to scoring millions of data points in seconds using nothing but SQL. And even though the setup might look a bit complicated, it is completely script driven and only takes 3 simple steps. If you are only interested in the ML part of the post, just skip over the setup steps and start with section “Snowflake/Autopilot Integration”.
 
@@ -33,13 +31,10 @@ You need access to an AWS and a Snowflake account. If you do not already have ac
 Next, clone the project's github repo. It includes all artifacts needed to create the AWS and Snowflake resources as well as the dataset we are going to analyze.
 
 ```
-cd ~
-mkdir github
-cd ~/github 
 git clone https://github.com/Snowflake-Labs/sfguide-aws-autopilot-integration.git
 ```
 
-You also need Snowflake's command line interface (CLI). If Snowsql isn't already installed on your machine, please follow these [instructions](https://docs.snowflake.com/en/user-guide/snowsql.html).
+You also need Snowflakes command line interface (CLI). If Snowsql isn't already installed on your machine, please follow these [instructions](https://docs.snowflake.com/en/user-guide/snowsql.html).
 
 <!-- ------------------------ -->
 ## Use Case
@@ -128,15 +123,15 @@ In the Secrets Manager UI, create the three key/value pairs below. Be sure to co
 
 <p align="center"><img src="assets/secrets_conf.png" width="400" height="300" /></p>
 
-Give your **secret** configuration a name and save it.
+Give your secrets configuration a name and save it.
 
-Next, find your **secrets** configuration again (the easiest way is to search for it via the Search input field), and copy the Secret ARN. We will need it in the next step when configuring the CloudFormation script.
+Next, find your secrets configuration again (the easiest way is to search for it via the Search input field), and copy the Secret ARN. We will need it in the next step when configuring the CloudFormation script.
 
 ### Integration Configuration (CloudFormation)
 
-The last step is to configure the Snowflake/Autopilot Integration. This used to be a very time-consuming and error-prone process but with AWS CloudFormation it's a piece of cake.
+The last step is to configure the Snowflake/Autopilot Integration. This used to be a very time-consuming and error-prone process but with AWS CloudFormation it's a "piece of cake".
 
-Start with downloading the [CloudFormation script](https://github.com/aws-samples/amazon-sagemaker-integration-with-snowflake/blob/main/customer-stack/customer-stack.yml).
+Start with downloading the [CloudFormation script](https://github.com/Snowflake-Labs/sfguide-aws-autopilot-integration/blob/main/customer-stack/customer-stack.yml).
 
 Click the "Raw" button. This opens a new browser window. "Double click" and click "Save As".
 
@@ -169,7 +164,6 @@ You can follow the “stack creation” by clicking the “Refresh” button. Ev
 
 Creating the stack should take about one minute. At this point, the integration has been completely set up and we can head over to Snowflake to start with the data engineering steps.
 
-
 <!-- ------------------------ -->
 ## Snowflake/Autotpilot Integration
 Duration: 20
@@ -177,14 +171,14 @@ Duration: 20
 To follow best practices, we will not use the ACCOUNTADMIN role to run the steps for this demo. Therefore, log in into Snowflake with user “autopilot_user”. The password should be in your setup scripts.
 
 
-The demo consists of 4 major steps:
+The demo consists of 4 major steps and all steps will be initiated via [SQL commands](https://github.com/Snowflake-Labs/sfguide-aws-autopilot-integration/tree/main/scripts/demo.sql).
 
 1. Data engineering (import dataset and simple data prep)
 2. Build initial model
 3. Score test dataset and evaluate model
 4. Optimize model (including hyperparameter tuning)
 
-All SQL statements for this demo are included in [demo.sql](https://github.com/Snowflake-Labs/sfguide-aws-autopilot-integration/blob/main/scripts/demo.sql). Open another Worksheet and copy and paste the content or import the file from your local repo.
+All SQL statements for this demo are included in scripts/demo.sql. Open another Worksheet and Import the file.
 
 ### Data Engineering
 
@@ -211,14 +205,13 @@ create or replace table cc_dataset (
 create file format cc_file_format type=csv  skip_header=1;
 ```
 
-Next, head over to to a terminal session and use snowsql to upload the data files to an internal stage.
+Next, head over to to a terminal session and use snowsql to upload the datafiles to an internal stage.
 
 ```
-cd ~/github/sfguide-aws-autopilot-integration/data
 snowsql -a <accountid> -u autopilot_user -s demo -q "put file://*.gz @~/autopilot/"
 ```
 
-Then come back to you Snowflake session and run the copy command to copy the staged data files into the table you had created above.
+Then come back to you Snowflake session and run copy the staged data files into the table you had created above.
 
 ```
 copy into cc_dataset from @~/autopilot file_format=cc_file_format;
@@ -285,7 +278,7 @@ select aws_autopilot_create_model (
 
 Let’s review the SQL statement above. It calls a function that accepts a few parameters. Without going into too much detail (most parameters are pretty self-explanatory), here are the important ones to note:
 
-- Model Name: This is the name of the model to be created. The name must be unique. There is no programmatic way to delete a model.ng If you want to rebuild a model, append a sequential number to the base name to keep the name unique.
+- Model Name: This is the name of the model to be created. The name must be unique. Models are read-only and they can not be updated. There is no programmatic way to delete a model If you want to rebuild a model, append a sequential number to the base name to keep the name unique.
 - Training Data Location: This is the name of the table storing the data used to train the model.
 - Target Column: This is the name of the column in the training table we want to predict.
 
@@ -300,7 +293,7 @@ When you call the aws_autopilot_describe_model() function repeatedly you will fi
 
 Building the model should take about 1 hour and eventually you should see “JobStatus=Completed” when you call the aws_autopilot_describe_model() function.
 
-And that’s it. That’s all we had to do to build a model from an arbitrary dataset. Just pick your dataset to train the model with, the attribute you want to predict, and start the process. Everything else, from building the infrastructure needed to train the model, to picking the right algorithm for training the model, and tuning hyperparameters for optimizing the accuracy, is all done automatically.
+And that’s it. That’s all we had to do to build a model from an arbitrary dataset. Just pick your dataset to train the model with, the attribute you want to predict, and start the process. Everything else, like building the infrastructure needed to train the model, picking the right algorithm for training the model, and tuning hyperparameters for optimizing the accuracy are all done automatically.
 
 ### Testing the Model
 
@@ -329,7 +322,7 @@ To check the endpoint, call aws_autopilot_describe_endpoint(). You will get an e
 select aws_autopilot_describe_endpoint('cc-fraud-prediction-dev');
 ```
 
-To restart the endpoint call the function aws_autopilot_create_endpoint() which takes 3 parameters.
+To restart the endpoint call the function aws_autopilot_create_endpoint(), which takes 3 parameters.
 
 - Endpoint Name: By default, the function aws_autopilot_create_endpoint() creates an endpoint with the same name as the model name. But you can use any name you like, for instance to create a different endpoint for a different purpose, like development or production.
 - Endpoint configuration name: By default, the function aws_autopilot_create_endpoint() creates an endpoint configuration named "model_name"-m5–4xl-2. This name follows a naming convention like "model name"-"instance type"-"number of instances". This means that the default endpoint is made up of two m5.4xlarge EC2 instances.
@@ -354,7 +347,7 @@ group by isfraud, predicted_label
 order by isfraud, predicted_label;
 ```
 
-To compute the overall accuracy, we then add up the correctly predicted values and divide by the total number of observations. Your numbers might be slightly different but the overall accuracy will be in the 99% range.
+To compute the overall accuracy, we then add up the correctly predicted values and divide by the total number of observations. Your numbers might be slightly different but it will be in the 99% range.
 
 ```
 select 'overall' predicted_label
@@ -453,10 +446,10 @@ group by predicted_label;
 
 <p align="center"><img src="assets/prd_detail.png" width="800" height="300" /></p>
 
-With these results, there is just one obvious question left to answer. Why wouldn’t we always let the Snowflake integration pick all parameters? The main reason is the time it takes to create the model with default parameters. In this particular example it takes 9 hours to produce an optimal model. So if you just want to test the end-to-end process, you may want to ask Autopilot to evaluate only a handful of candidate models. However, when you want to get a model with the best accuracy, go with the defaults. Autopilot will then evaluate 250 candidates.
+With these results, there is just one obvious question left to answer. Why wouldn’t we always let the Snowflake integration pick all parameters? The main reason is the time it takes to create the model with default parameters. In this particular example it takes 9 hours to produce an optimal model. So if you just want to test the end-to-end process, you may want to test by asking Autopilot to create only 1 model. However, when you want to get a model with the best accuracy, go with the defaults.
 
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-Having managed ML capabilities directly in the Data Cloud opens up the world of machine learning for data engineers, data analysts, and data scientists who are primarily working in a more SQL-centric environment. Not only can you take advantage of all the benefits of the Snowflake Data Cloud but now you can add full ML capabilities (model building and scoring) from the same interface. As you have seen in this article, AutoML makes ML via SQL extremely powerful and easy to use.
+Having managed ML capabilities directly in the data cloud provides incredibly exciting new capabilities. It opens up the world of machine learning for data engineers, data analysts, and data scientists who are primarily working in a more SQL-centric environment. Not only can you take advantage of all the benefits of the Snowflake Data Cloud but now you can add full ML capabilities (model building and scoring) from the same interface. As you have seen in this article, AutoML makes ML via SQL extremely powerful and easy to use.
