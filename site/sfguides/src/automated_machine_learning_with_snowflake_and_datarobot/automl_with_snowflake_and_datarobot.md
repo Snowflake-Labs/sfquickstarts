@@ -597,12 +597,12 @@ Lastly, DataRobot’s "Insights" tab at the top provides more graphical represen
 
 
 <!-- ------------------------ -->
-## Deploying our model and using the Snowflake Prediction Application
+## Deploying our model and using Job Defintions with Snowflake
 Duration: 10		
 
 Every model built in DataRobot is immediately ready for deployment. And there a several methods of scoring new data against this Deployment
 
-You can: upload a new dataset to be scored in batch, create a REST API endpoint to score data directly from applications, export the model for in-place database scoring, or use a partner integration. Today we will use the Snowflake Prediction application.
+You can: upload a new dataset to be scored in batch, create a REST API endpoint to score data directly from applications, export the model for in-place database scoring, or use a partner integration. Today we will use the Job Definitions feature.
 
 If you click the number in the "Prediction Threshold" box, you can see a few different easy options to set your threshold. Again, at what probability do we say, "Yes this person is going to churn." Choose "Maximize F1". Then click on the “Deploy Model” button.
 
@@ -616,7 +616,7 @@ Then go ahead and toggle the "Require association ID in prediction requests" and
 ![](assets/dr16.png)
 <br/><br/>
 
-Scroll back up. We will see all of our boxes are green. Click " Create Deployment"
+Scroll back up. We will see all of our boxes are green. Click "Create Deployment"
 
 ![](assets/dr17.png)
 <br/><br/>
@@ -631,43 +631,54 @@ And now we have one active deployment. Go ahead and click on it again.
 ![](assets/dr19.png)
 <br/><br/>
 
-Go to the "Predictions" tab then "Intgrations" tab and click on "Snowflake"
+Go to the "Predictions" tab then "Job Definitions" tab and click on "+Add job definition".
 
 ![](assets/dr20.png)
 <br/><br/>
 
-We will start setting up our integration. You should see the two tables we uploaded to the "AI Catalog." Go ahead and choose the dataset that has "SCORING_DATA" in the name. The "User name" and "Password," again, are the same credentials you used to log into snowflake originally. Hit "Next."
+We will start setting up our job definition. Click on "Prediction Source" dropdown and select "AI Catalog" under "Other Connections". You should see the two tables we uploaded to the "AI Catalog." Go ahead and choose the dataset that has "SCORING_DATA" in the name. Hit "Use this dataset".
 
 ![](assets/dr21.png)
 <br/><br/>
 
-On this page, lets "Select all" and move the feature over by click the right arrow. Your screen should look like this. then hit "Next."
+The "Prediction Source" is now complete. You can adjust the prediction options if needed, for this walkthrough we're going to stick with the defaults.
 
 ![](assets/dr22.png)
 <br/><br/>
 
-We need to tell DataRobot to create a new table in Snowflake with the outputs we get when we score our new model. Lets use "Create new destination." Check "Use same credentials as source."
-
-For the "JDBC URL," all you need to do is replace where you see `{your_snowflake_url}` with our actual snowflake URL. You can see this on your Snowflake tab that you have open. `https://foa82743.us-east-1.snowflakecomputing.com/` is an example of what the URL should look like.
-
-```
-jdbc:snowflake://{your_snowflake_url}?CLIENT_TIMESTAMP_TYPE_MAPPING=TIMESTAMP_NTZ&db=CUSTOMER_DATA&warehouse=COMPUTE_WH&application=DATAROBOT&CLIENT_METADATA_REQUEST_USE_CONNECTION_CTX=true&role=SYSADMIN&schema=PUBLIC
-```
-
-Then lastly, for "Schema" put `PUBLIC` and "Destination table name" put `SCORED_DATA`. Hit "Next."
+The last section to complete is the "Prediction Destination". Go ahead and leave the Destination Type as "JDBC", and click "+ Define Connection".
 
 ![](assets/dr23.png)
 <br/><br/>
 
-
-Give the job a name and turn off "Run integration automatically." YOU MIGHT BE CHARGED IF YOU LEAVE THIS RUNNING!
+You can choose the same connection that we created in [Creating a DataRobot Data Connection](#9) or add a new connection in the modal that appears. Once you've done that, select the Schema that you want to write the predictions to.
 
 ![](assets/dr24.png)
 <br/><br/>
 
-This will take you to the prediction summary page. You can go ahead and click the orange "Run Now" button on the left. This will kick off the prediction job. This will take a few minutes.
+You can now select an existing table, or you can create a new table. We recommend creating a new table, as this will let DataRobot create the table with the proper features, and assign the correct data type to each feature.
 
 ![](assets/dr26.png)
+<br/><br/>
+
+Go ahead and click “Create a table” and select the Schema where you want your table, then enter a table name to write your predictions to. 
+
+![](assets/dr27.png)
+<br/><br/>
+
+Click “Save Connection”. Your Job Definition should look similar to the image below.
+
+![](assets/dr28.png)
+<br/><br/>
+
+At the bottom you can schedule this job to run on a Schedule, or just run it manually. Go ahead and click "Save Prediction job definition" in the bottom left, then click on "View all Job Definitions" in the upper left. Click the hamburger icon on the right side of the job definition you just made, and click "Run now". 
+
+![](assets/dr29.png)
+<br/><br/>
+
+If you click the hamburger icon again and go to “View job history” you can see its status. Once it's finished you should see the green “Succeeded” message under status.
+
+![](assets/dr30.png)
 <br/><br/>
 
 We can now finally head back to our Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the `SCORED_DATA` table that was created once we kicked off our prediction job. If you click "Preview Data," you will see our data with two new columns showing the likelihood that each person is likely to churn or stay.

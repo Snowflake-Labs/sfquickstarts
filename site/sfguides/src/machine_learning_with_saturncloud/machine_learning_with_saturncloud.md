@@ -76,7 +76,7 @@ Snowflake lets you try out their services for free with a [trial account](https:
 
 ### 2. Create a Free Saturn Cloud Account
 
-Saturn Cloud offers [Hosted Free accounts](https://accounts.community.saturnenterprise.io/auth/signup) that allow you to use 10 hours of Jupyter and 3 hours of Dask every month, including GPUs. Follow the prompts to sign up with Google, Github, or your email. 
+Saturn Cloud offers [Hosted Free accounts](https://accounts.community.saturnenterprise.io/auth/signup) that allow you to use 30 hours of compute time, including machines with GPUs or 64GB of RAM as well as Dask clusters. 
 
 If you need more resources, [upgrade to pay-per-use with our Hosted Pro accounts](https://saturncloud.io/plans/saturn_cloud_plans/).
 <!-- ------------------------ -->
@@ -111,6 +111,43 @@ Duration: 0:04:00
 
 Next, we need to [go in to Saturn Cloud](https://app.community.saturnenterprise.io/) and set up our working environment. Visit Saturn Cloud and log in with your account created previously. You'll start on the Resources page.
 
+### Create Saturn Cloud Resources
+
+Inside Saturn Cloud, you can choose from several templates for resources, which can include Jupyter servers for machine learning development as well as scheduled tasks or deployments like APIs. For this guide, we'll use a premade resource that's configured specifically for this guide. It includes the right settings for the resource size and loads the code for you from a public Git repository. Click the button below to create the resource:
+
+<div style="margin-top:20px;margin-bottom:20px;">
+    <a href="https://app.community.saturnenterprise.io/dash/resources?recipeUrl=https://raw.githubusercontent.com/saturncloud/examples/main/examples/snowflake-ml/.saturn/saturn.json" target="_blank" rel="noopener noreferrer"
+    style="all: unset; border-radius:32px;display:inline-flex;align-items: center;
+    background-color:#FF6721;font-family:sans-serif;font-size:20px;font-weight:700;
+    color:#FFF;padding:8px 16px 8px 16px;cursor:pointer;">
+        <svg style="margin-left: -7px; margin-right: 12px; height: 32px; width: 32px;"
+        viewBox="0 0 5.2916669 5.291667" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(73.700986,85.553359)">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="m -68.409319,-82.907521 c 0,1.461253 -1.18457,2.645829 
+                    -2.645829,2.645829 -0.592913,0 -1.140282,-0.195033 -1.581445,
+                    -0.524429 l 0.93568,-0.935674 c 0.19182,0.104687 0.411846,
+                    0.164186 0.645765,0.164186 0.745541,0 1.34992,-0.604376 1.34992,
+                    -1.349912 0,-0.233922 -0.0595,-0.453951 -0.16419,-0.645772 l 
+                    0.935675,-0.935674 c 0.329386,0.441166 0.524424,
+                    0.98853 0.524424,1.581446 z m -1.065968,-2.122584 c -0.44089,
+                    -0.328692 -0.987654,-0.523254 -1.579861,-0.523254 -1.461254,0
+                    -2.645838,1.184581 -2.645838,2.645838 0,0.585025 0.189875,
+                    1.125705 0.511359,1.563776 l 0.940482,-0.933398 c -0.09955,
+                    -0.188164 -0.155918,-0.40269 -0.155918,-0.630378 0,-0.74554 
+                    0.604379,-1.349917 1.349915,-1.349917 0.231331,0 0.44907,
+                    0.05819 0.639384,0.160725 z"
+                    fill="#ffffff" id="path2" style="fill:#ffffff;stroke-width:0.00487466" />
+            </g>
+        </svg>
+        Run in Saturn Cloud
+    </a>
+</div>
+
+Once the resource is created, click the green arrow buttons to start your Jupyter server and your Dask cluster. These may take a moment to start running, so feel free to read on.
+
+<img src="assets/jupyter.png" alt="Jupyter Cards" width="700"/>
+
 ### Add Snowflake Credentials to Saturn Cloud
 
 On the menu at the left, click the **Credentials** button. We need to make sure Saturn Cloud has our Snowflake credentials securely stored, so that when you make queries in python in Saturn Cloud, Snowflake can authenticate you. *Do this before you turn on any resources.*
@@ -119,19 +156,11 @@ Take your Snowflake account username and password, and create two entries here: 
 
 <img src="assets/add_snowflake_cred.png" alt="Snowflake credentials" width="700"/>
 
+### Open JupyterLab
 
-### Create Saturn Cloud Resources
+Once the resource is created and started, and your credentials are loaded into Saturn Cloud, you are ready to open the JupyterLab of the resource and look at the code. On the resource page click the **JupyterLab** button
 
-Inside Saturn Cloud, you can choose from several templates for resources, which can include Jupyter servers for machine learning development as well as scheduled tasks or deployments like APIs. For this guide, we'll use one of these for a Jupyter server. It will clone the correct GitHub repository for you, set up your environment libraries, and assign the correct settings for your workspace.
-
-Click the Resources button in the left hand menu, and select the Resources card named **"Machine Learning with Snowflake**". It might be below the fold, so click the down arrow to see all available cards.
-
-<img src="assets/cards.png" alt="Resource cards" width="700"/>
-
-
-Click the green arrow buttons to start your Jupyter server and your Dask cluster. These may take a moment to start running, so feel free to read on.
-
-<img src="assets/jupyter.png" alt="Jupyter Cards" width="700"/>
+<img src="assets/jupyterlab.png" alt="Start JupyterLab button" width="700"/>
 
 <!-- ------------------------ -->
 
