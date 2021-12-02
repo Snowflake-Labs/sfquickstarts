@@ -37,6 +37,7 @@ cd ~
 mkdir github
 cd ~/github 
 git clone https://github.com/Snowflake-Labs/sfguide-aws-autopilot-integration.git
+
 ```
 
 You also need Snowflake's command line interface (CLI). If Snowsql isn't already installed on your machine, please follow these [instructions](https://docs.snowflake.com/en/user-guide/snowsql.html).
@@ -174,7 +175,7 @@ Creating the stack should take about one minute. At this point, the integration 
 ## Snowflake/Autotpilot Integration
 Duration: 20
 
-To follow best practices, we will not use the ACCOUNTADMIN role to run the steps for this demo. Therefore, log in into Snowflake with user “autopilot_user”. The password should be in your setup scripts.
+To follow best practices, we will not use the ACCOUNTADMIN role to run the steps for this demo. Therefore, log in into Snowflake with user autopilot_user. The password should be in your setup scripts.
 
 
 The demo consists of 4 major steps:
@@ -307,26 +308,29 @@ And that’s it. That’s all we had to do to build a model from an arbitrary da
 Now, let’s check how well our model achieves the goal of predicting fraud. For that, we need to score the test dataset. The scoring function takes 2 parameters:
 
 - Endpoint Name: This is the name of the API endpoint. The model training process has a parameter controlling whether or not an endpoint is created and if so, what its TTL (time to live) is. By default the endpoint name is the same name as the model name.
-- Attributes: This is an array of all attributes used during the model training process.
+- Attributes: This is an array of all attributes used during the model training process. 
 
-```
-create or replace table cc_dataset_prediction_result as 
-  select isfraud,(parse_json(
-      aws_autopilot_predict_outcome(
-        'cc-fraud-prediction-dev'
-        ,array_construct(
-           step,type,amount,nameorig,oldbalanceorg,newbalanceorig
-           ,namedest,oldbalancedest,newbalancedest,isflaggedfraud))
-    ):"predicted_label")::varchar predicted_label
-  from cc_dataset_train;
-```
+        create or replace table cc_dataset_prediction_result as 
+          select isfraud,(parse_json(
+              aws_autopilot_predict_outcome(
+                'cc-fraud-prediction-dev'
+                ,array_construct(
+                   step,type,amount,nameorig,oldbalanceorg,newbalanceorig
+                   ,namedest,oldbalancedest,newbalancedest,isflaggedfraud))
+            ):"predicted_label")::varchar predicted_label
+          from cc_dataset_train;
+
+ 
+
 
 If you get an error message saying “Could not find endpoint” when calling the aws_autopilot_predict_outcome() function, it might mean that even though the endpoint had been created during the model training process, it has expired.
 
 To check the endpoint, call aws_autopilot_describe_endpoint(). You will get an error message if the endpoint doesn’t exist.
 
 ```
+
 select aws_autopilot_describe_endpoint('cc-fraud-prediction-dev');
+
 ```
 
 To restart the endpoint call the function aws_autopilot_create_endpoint() which takes 3 parameters.
@@ -336,12 +340,12 @@ To restart the endpoint call the function aws_autopilot_create_endpoint() which 
 - TTL: TTL means “time to live”. This is the amount of time the endpoint will be active. For TTL, it does not matter whether or not the endpoint is used. If you know that you no longer need the endpoint, it is cost effective to delete the endpoint by calling aws_autopilot_delete_endpoint(). Remember, if necessary, you can always re-create the endpoint by calling aws_autopilot_create_endpoint().
 
 
-```
-select aws_autopilot_create_endpoint (
-    'cc-fraud-prediction-dev' 
-    ,'cc-fraud-prediction-dev-m5-4xl-2' 
-    ,1*60*60);
-```
+
+        select aws_autopilot_create_endpoint (
+            'cc-fraud-prediction-dev' 
+            ,'cc-fraud-prediction-dev-m5-4xl-2' 
+            ,1*60*60);
+
 
 This is an asynchronous function, meaning it completes immediately but we have to check with function aws_autopilot_descrive_endpoint() until the endpoint is ready.
 
