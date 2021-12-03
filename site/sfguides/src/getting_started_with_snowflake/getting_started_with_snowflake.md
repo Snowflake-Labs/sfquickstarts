@@ -640,7 +640,7 @@ from json_weather_data
 where city_id = 5128638;
 ```
 
-SQL dot notation `v.city.coord.lat` is used in this command to pull out values at lower levels within the JSON hierarchy. This allows us to treat each field as if it were a column in a relational table.
+SQL dot notation `v:city.coord.lat` is used in this command to pull out values at lower levels within the JSON hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
 The new view should appear just under the table `json_weather_data` at the top left of the UI. You may need to expand or refresh the database objects browser in order to see it.
 

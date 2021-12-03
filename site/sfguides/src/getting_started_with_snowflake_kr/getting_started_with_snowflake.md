@@ -2,11 +2,11 @@ summary: This is a broad introduction of Snowflake and covers how to login, run 
 id: getting_started_with_snowflake_kr
 categories: Getting Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
-# Getting Started with Snowflake - Zero to Snowflake
+# Snowflake 시작하기 - 제로부터 Snowflake까지
 
 <!-- ------------------------ -->
 
@@ -88,7 +88,7 @@ Snowflake에 대해 알아봅시다! 이 섹션은 사용자 인터페이스의 
 
 ![Shares 탭](assets/3UIStory_5.png)
 
-**Warehouses** 탭은 Snowflake에서 데이터를 로드하거나 쿼리하기 위해 가상 웨어하우스라는 컴퓨팅 리소스를 설정하고 관리하는 곳입니다. COMPUTE_WH (XL)이라는 웨어하우스가 사용자 환경에 이미 존재합니다.
+**Warehouses** 탭은 Snowflake에서 데이터를 로드하거나 쿼리하기 위해 가상 웨어하우스라는 컴퓨팅 리소스를 설정하고 관리하는 곳입니다. COMPUTE_WH (X-Small)이라는 웨어하우스가 사용자 환경에 이미 존재합니다.
 
 ![Warehouses 탭](assets/3UIStory_6.png)
 
@@ -167,7 +167,7 @@ Databases 탭으로 이동합니다. 만들기를 클릭하고, 데이터베이�
 
 다음과 같이 컨텍스트 설정을 선택합니다. 
 Role: `SYSADMIN`
-Warehouse: `COMPUTE_WH (XL)`
+Warehouse: `COMPUTE_WH (XS)`
 Database: `CITIBIKE`
 Schema = `PUBLIC`
 
@@ -271,9 +271,16 @@ Databases 탭에서,  `CITIBIKE`  데이터베이스 하이퍼링크를 클릭�
 
 결과 페이지에서 파일 형식을 생성합니다. 표시된 상자에서, 모두 기본 설정 그대로 두고 아래와 같은 부분만 변경합니다.
 
-이름:  `CSV`  옵션으로 다음으로 둘러싸인 필드: 큰따옴표 Null string: [ ] 열 개수 불일치 오류:
+Name: CSV
 
-“열 개수 불일치 오류” 상자가 보이지 않는다면, 대화 상자에서 아래로 스크롤 하십시오.
+Field optionally enclosed by: Double Quote
+
+Null string: 이 필드의 기존 텍스트를 삭제합니다
+
+[] Error on Column Count Mismatch: 이 상자의 선택을 취소합니다
+
+Negative
+: “Error on Column Count Mismatch” 상자가 보이지 않는다면, 대화 상자에서 아래로 스크롤 하십시오.
 
 작업을 완료하면, 상자는 다음과 같이 보여야 합니다.
 
@@ -291,7 +298,7 @@ Duration: 10
 
 ### 데이터 로드를 위한 웨어하우스 크기 조정 및 사용
 
-데이터를 로드하려면 컴퓨팅 파워가 필요합니다. Snowflake의 컴퓨팅 노드는 가상 웨어하우스라고 하며 워크로드가 데이터 로드, 쿼리 실행 또는 DML 작업을 수행하는지 여부에 따라 워크로드에 맞춰 동적으로 크기를 늘리거나 줄일 수 있습니다. 각 워크로드는 자체 데이터 웨어하우스를 보유할 수 있으므로 리소스 경합이 없습니다.
+데이터를 로드하려면 컴퓨팅 파워가 필요합니다. Snowflake의 컴퓨팅 노드는 가상 웨어하우스 (Virtual Warehouse)라고 하며 워크로드가 데이터 로드, 쿼리 실행 또는 DML 작업을 수행하는지 여부에 따라 워크로드에 맞춰 동적으로 크기를 늘리거나 줄일 수 있습니다. 각 워크로드는 자체 데이터 웨어하우스를 보유할 수 있으므로 리소스 경합이 없습니다.
 
 Warehouses 탭으로 이동합니다. 이 곳에서 기존의 모든 웨어하우스를 보고 그 사용 추세를 분석할 수 있습니다.
 
@@ -320,7 +327,7 @@ Negative
 -   자동 일시 중단을 비활성화합니다. 자동 일시 중단이 비활성화되면, 웨어하우스가 계속 실행되어 사용하지 않을 때도 크레딧을 소모합니다.
 -   워크로드에 비해 과도하게 큰 웨어하우스를 사용합니다. 웨어하우스가 커질수록 더 많은 크레딧이 소모됩니다.
 
-이 데이터 웨어하우스를 사용하여 정형 데이터를 Snowflake로 로드할 것입니다. 하지만 먼저 웨어하우스 크기를 줄여서 거기에 포함되는 컴퓨팅 파워를 줄일 것입니다. 그 다음 단계에서는 이 로드에 소요되는 시간을 기록하고 더 큰 웨어하우스에서 동일한 로드 작업을 다시 수행하면서 로드 시간이 더 빨라지는 것을 관찰할 것입니다.
+이 데이터 웨어하우스를 사용하여 정형 데이터를 Snowflake로 로드할 것입니다. 하지만 먼저 웨어하우스 크기를 SMALL로 설정해 거기에 포함되는 컴퓨팅 파워를 줄일 것입니다. 그 다음 단계에서는 이 로드에 소요되는 시간을 기록하고 더 큰 웨어하우스에서 동일한 로드 작업을 다시 수행하면서 로드 시간이 더 빨라지는 것을 관찰할 것입니다.
 
 이 데이터 웨어하우스 크기를 엑스 라지에서 스몰로 변경하십시오. 그 다음 마침 버튼을 클릭합니다.
 
@@ -339,7 +346,7 @@ Schema = `PUBLIC`
 
 ![워크시트 컨텍스트](assets/5Load_4.png)
 
-워크시트에서 다음의 문을 실행하여 구성한 데이터를 테이블로 로드합니다. 이는 최대 30초까지 소요됩니다.
+워크시트에서 다음의 문을 실행하여 구성한 데이터를 테이블로 로드합니다. 이는 50초 정도 소요됩니다.
 
 ```SQL
 copy into trips from @citibike_trips
@@ -364,7 +371,7 @@ file_format=CSV;
 truncate table trips;
 ```
 
-워크시트 컨텍스트 메뉴를 열고 크기 조정을 클릭하여 웨어하우스를 라지 사이즈로 늘린 뒤 마침을 클릭합니다. 이 웨어하우스는 스몰 사이즈보다 네 배 더 큽니다.
+워크시트 컨텍스트 메뉴를 열고 크기 조정 (Resize)을 클릭하여 웨어하우스를 Medium 사이즈로 늘린 뒤 마침을 클릭합니다. 이 웨어하우스는 스몰 사이즈보다 두 배 더 큽니다.
 
 ![컨텍스트를 라지로 크기 조정](assets/5Load_8.png)
 
@@ -375,7 +382,7 @@ copy into trips from @citibike_trips
 file_format=CSV;
 ```
 
-로드가 완료되면, 이력 창의 워크시트 하단에서 두 로드 간 시간을 비교합니다. 라지 웨어하우스를 사용한 로드가 훨씬 더 빨랐습니다.
+로드가 완료되면, 이력 창의 워크시트 하단에서 두 로드 간 시간을 비교합니다. Medium 웨어하우스를 사용한 로드가 훨씬 더 빨랐습니다.
 
 
 ![로드 기간을 비교](assets/5Load_9.png)
@@ -384,7 +391,7 @@ file_format=CSV;
 
 랩 스토리로 돌아가서 Citi Bike 팀이 데이터 로드/ETL 워크로드와 BI 도구를 사용하여 Snowflake를 쿼리하는 분석 최종 사용자 간의 리소스 경합을 제거하고자 한다고 가정해 보겠습니다. 앞서 언급했듯이, Snowflake는 다양한 워크로드에 서로 다른 알맞은 크기의 웨어하우스를 할당하여 이를 쉽게 수행할 수 있습니다. Citi Bike는 이미 데이터 로드를 위한 웨어하우스를 보유하고 있기 때문에, 최종 사용자가 분석을 실행하기 위한 새로운 웨어하우스를 생성해 보겠습니다. 다음 섹션에서 이 웨어하우스를 이용하여 분석을 수행할 것입니다.
 
-Warehouses 탭으로 이동하여 만들기...를 클릭하고, 새로운 웨어하우스의 이름을  `ANALYTICS_WH`로 하고 크기는 라지로 지정합니다. Snowflake 엔터프라이즈 에디션 이상을 보유하고 있다면 최대 클러스터에 대한 설정이 나타납니다. 이를 1로 설정하십시오.
+Warehouses 탭으로 이동하여 만들기...를 클릭하고, 새로운 웨어하우스의 이름을 `ANALYTICS_WH` 로 하고 크기는 Medium으로 지정합니다. Snowflake 엔터프라이즈 에디션 이상을 보유하고 있다면 최대 클러스터에 대한 설정이 나타납니다. 이를 1로 설정하십시오.
 
 다른 설정은 기본 설정으로 남겨 두십시오. 다음과 같이 나타나야 합니다.
 
@@ -408,7 +415,7 @@ Negative
 Worksheets 탭으로 가십시오. 워크시트에서 컨텍스트가 다음과 같은지 확인합니다.
 
 Role: `SYSADMIN`
-Warehouse: `ANALYTICS_WH (L)`
+Warehouse: `ANALYTICS_WH (M)`
 Database: `CITIBIKE`
 Schema = `PUBLIC`
 
@@ -618,7 +625,7 @@ from json_weather_data
 where city_id = 5128638;
 ```
 
-SQL dot notation (점 표기법)  `v.city.coord.lat`은 이 명령에서 JSON 계층 구조 내 더 낮은 수준의 값을 가져오는 데 사용됩니다. 이는 각 필드를 관계형 테이블의 열인 것처럼 취급할 수 있도록 합니다.
+SQL dot notation (점 표기법)  `v:city.coord.lat`은 이 명령에서 JSON 계층 구조 내 더 낮은 수준의 값을 가져오는 데 사용됩니다. 이는 각 필드를 관계형 테이블의 열인 것처럼 취급할 수 있도록 합니다.
 
 새로운 뷰가 UI 왼쪽 상단의 테이블  `json_weather_data`  아래에 나타나야 합니다. 이를 보기 위해 데이터베이스 객체 브라우저를 확장 또는 새로 고침해야 할 수도 있습니다.
 
@@ -777,7 +784,7 @@ Negative
 
 ### 새로운 역할 생성 및 사용자 추가
 
-워크시트에서  `ACCOUNTADMIN`  역할을 새로운 역할로 전환합니다.  `ACCOUNTADMIN`  `ACCOUNTADMIN`  은  `SYSADMIN`  및  `SECURITYADMIN`  시스템 정의 역할을 캡슐화합니다. 이는 시스템의 최상위 역할이며 계정에서 제한된 수의 사용자에게만 부여되어야 합니다. 워크시트에서 다음을 실행합니다.
+워크시트에서  `ACCOUNTADMIN`  역할을 새로운 역할로 전환합니다.  `ACCOUNTADMIN` 은  `SYSADMIN`  및  `SECURITYADMIN`  시스템 정의 역할을 캡슐화합니다. 이는 시스템의 최상위 역할이며 계정에서 제한된 수의 사용자에게만 부여되어야 합니다. 워크시트에서 다음을 실행합니다.
 
 ```SQL
 use role accountadmin;
@@ -795,7 +802,7 @@ use role accountadmin;
 
 ```SQL
 create role junior_dba;
-grant role junior_dba to user YOUR_USER_NAME_GOES HERE;
+grant role junior_dba to user 유저 이름을 여기에 기입하세요;
 ```
 
 Positive
