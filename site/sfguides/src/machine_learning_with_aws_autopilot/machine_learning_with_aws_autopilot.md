@@ -1,4 +1,4 @@
-summary: The Snowflake/AWS Autopilot Integration: Machine Learning in SQL
+summary: Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning with SQL
 id: machine_learning_with_aws_autopilot 
 categories: Getting Started
 environments: web
@@ -19,9 +19,9 @@ Duration: 1
 
 Taking advantage of ML technology usually requires a lot of infrastructure, a multitude of software packages and a small army of highly-skilled engineers building, configuring, and maintaining the complex environment. But what if you could take advantage of machine learning capabilities using SQL from end to end? Imagine if you or your analysts could build models and score datasets at scale without having to learn a new language (such as scala or python), without having to provision and manage infrastructure on prem or in a public cloud, and without the overhead of maintaining additional software packages (such as [scikit-learn](https://scikit-learn.org/), [TensorFlow](https://www.tensorflow.org/), [PyTorch](https://pytorch.org/), …). How could that impact the bottom line of your business? 
 
-The Snowflake/AWS Autopilot integration is exactly that. It combines the power of Snowflake to process data at scale with the managed AutoML feature in AWS called Autopilot.
+The Snowflake and Amazon SageMaker Autopilot integration is exactly that. It combines the power of Snowflake to process data at scale with the managed AutoML features in SageMaker Autopilot.
 
-In this blog post we will explore an end-to-end example of building a scalable process from data ingestion to scoring millions of data points in seconds using nothing but SQL. And even though the setup might look a bit complicated, it is completely script driven and only takes 3 simple steps. If you are only interested in the ML part of the post, just skip over the setup steps and start with section “Snowflake/Autopilot Integration”.
+In this quickstart we will explore an end-to-end example of building a scalable process from data ingestion to scoring millions of data points in seconds using nothing but SQL. Before we get started, we will perform a onetime setup that is completely script driven and only takes 3 simple steps. If you have already completed the setup and are for the ML part of this guide, just skip over the setup steps and start with section “Snowflake/Autopilot Integration”.
 
 
 <!-- ------------------------ -->
@@ -172,7 +172,7 @@ Creating the stack should take about one minute. At this point, the integration 
 
 
 <!-- ------------------------ -->
-## Snowflake/Autotpilot Integration
+## Snowflake/Autopilot Integration
 Duration: 20
 
 To follow best practices, we will not use the ACCOUNTADMIN role to run the steps for this demo. Therefore, log in into Snowflake with user autopilot_user. The password should be in your setup scripts.
@@ -463,4 +463,4 @@ With these results, there is just one obvious question left to answer. Why would
 ## Conclusion
 Duration: 1
 
-Having managed ML capabilities directly in the Data Cloud opens up the world of machine learning for data engineers, data analysts, and data scientists who are primarily working in a more SQL-centric environment. Not only can you take advantage of all the benefits of the Snowflake Data Cloud but now you can add full ML capabilities (model building and scoring) from the same interface. As you have seen in this article, AutoML makes ML via SQL extremely powerful and easy to use.
+Having managed ML capabilities directly in the Snowflake Data Cloud opens up the world of machine learning for data engineers, data analysts, and data scientists who are primarily working in a more SQL-centric environment. Not only can you take advantage of all the benefits of the Snowflake Data Cloud but now you can add full ML capabilities (model building and scoring) from the same interface. As you have seen in this article, AutoML makes ML via SQL extremely powerful and easy to use.
