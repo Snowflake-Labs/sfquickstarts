@@ -3,7 +3,7 @@
   "scripts": {
     "serve": "gulp serve",
     "prod": "gulp serve:dist",
-    "deploy": "gulp clean && gulp dist && rm .firebase/*.cache 2> /dev/null || true && firebase deploy --only hosting ",
+    "deploy": "gulp clean && gulp dist && rm .firebase/*.cache 2> /dev/null || true && firebase deploy --only hosting",
     "export": "gulp build:codelabs",
     "template": "./init.sh",
     "clean": "gulp clean"
