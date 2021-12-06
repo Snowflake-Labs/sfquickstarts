@@ -7,8 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning 
 authors: Snowflake
 
-# The Snowflake/AWS Autopilot Integration: Machine Learning in SQL
-
+# Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning with SQL
 
 
 <!-- ------------------------ -->
