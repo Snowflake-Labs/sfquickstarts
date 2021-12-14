@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Build interactive insights with ThoughtSpot and Snowflake
+# Build a ReactJS app with ThoughtSpot and Snowflake
 
 ## Overview
 
