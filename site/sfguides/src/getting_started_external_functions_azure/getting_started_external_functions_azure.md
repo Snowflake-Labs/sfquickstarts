@@ -337,13 +337,13 @@ create or replace api integration <integration_name>
 
 In the statement:
 
-* Replace `< integration_name >` with a unique integration name (e.g. `my_api_integration_name`). The name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Record this name in your tracking worksheet's "API Integration Name" field.
+* Replace `&lt; integration_name >` with a unique integration name (e.g. `my_api_integration_name`). The name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Record this name in your tracking worksheet's "API Integration Name" field.
 
-* Replace `< tenant_id >` with your Azure AD Tenant ID. As an alternative, you can use your domain (e.g. `my_company.onmicrosoft.com`). You can find your Tenant ID on the "Azure Active Directory" page.
+* Replace `&lt; tenant_id >` with your Azure AD Tenant ID. As an alternative, you can use your domain (e.g. `my_company.onmicrosoft.com`). You can find your Tenant ID on the "Azure Active Directory" page.
 
-* Replace `< azure_application_id >` with the value from your tracking worksheet's “Azure Function App AD Application ID” field.
+* Replace `&lt; azure_application_id >` with the value from your tracking worksheet's “Azure Function App AD Application ID” field.
 
-* Replace `< url >` with the appropriate URL. Use the value in your tracking worksheet's "API Management service name" field in the following format:
+* Replace `&lt; url >` with the appropriate URL. Use the value in your tracking worksheet's "API Management service name" field in the following format:
 
 ```
 https://<api_management_service_name>.azure-api.net
@@ -418,16 +418,16 @@ create or replace external function <external_function_name>(<parameters>)
 
 In the statement:
 
-* Replace `< external_function_name >` with a unique function name (e.g. `echo`). This name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Record the function name in the “External Function Name” field in your tracking worksheet.
-* Replace `< parameters >` with the names and SQL data types of the parameters for the function. In our example, this is `a integer, b varchar`. Record the parameter names and data types in your tracking worksheet’s “External Function Name” field.
+* Replace `&lt; external_function_name >` with a unique function name (e.g. `echo`). This name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Record the function name in the “External Function Name” field in your tracking worksheet.
+* Replace `&lt; parameters >` with the names and SQL data types of the parameters for the function. In our example, this is `a integer, b varchar`. Record the parameter names and data types in your tracking worksheet’s “External Function Name” field.
 
 Negative
 
 : The parameters must correspond to the parameters expected by the remote service. The parameter names do not need to match, but the data types need to be compatible.
 
-* Replace `< api_integration_name >` with the value from the “API Integration Name” field in your tracking worksheet.
+* Replace `&lt; api_integration_name >` with the value from the “API Integration Name” field in your tracking worksheet.
 
-* Replace `< invocation_url >` with the appropriate URL. This is the URL to which Snowflake sends the HTTP POST command in order to call the remote service. Use the values from the “API Management service name”, “API Management API URL suffix”, and “HTTP-Triggered Function name” fields in your tracking worksheet. It should take this form:
+* Replace `&lt; invocation_url >` with the appropriate URL. This is the URL to which Snowflake sends the HTTP POST command in order to call the remote service. Use the values from the “API Management service name”, “API Management API URL suffix”, and “HTTP-Triggered Function name” fields in your tracking worksheet. It should take this form:
 
 ```
 https://<api_management_service_name>.azure-api.net/<api_url_suffix>/<http_triggered_function_name>

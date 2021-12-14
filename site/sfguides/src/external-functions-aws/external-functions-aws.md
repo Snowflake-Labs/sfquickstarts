@@ -327,8 +327,8 @@ Next, go to "Resource Policy" from the right panel. You'll be setting the resour
 ```
 You'll need to customize a few of the parameters, however:
 
-* Replace the `< 12-digit-number >` with your 12-digit number, "Cloud Platform (IAM) Account ID."
-* Replace the `< external_function_role > `with the role name for the Cloud Platform (IAM) Role you created, which you recorded as "New IAM Role Nam.".
+* Replace the `&lt; 12-digit-number >` with your 12-digit number, "Cloud Platform (IAM) Account ID."
+* Replace the `&lt; external_function_role > `with the role name for the Cloud Platform (IAM) Role you created, which you recorded as "New IAM Role Nam.".
 * In the `Resource` field, replace the resource with your "Method Request ARN."
 
 Once you're done, click "Save."
@@ -354,7 +354,7 @@ Now that you have the proper privileges, type the `CREATE API INTEGRATION` comma
 ```sql
 create or replace api integration my_aws_api_integration
   api_provider = aws_api_gateway
-  api_aws_role_arn = '< new_IAM_role_ARN >'
+  api_aws_role_arn = '&lt; new_IAM_role_ARN >'
   api_allowed_prefixes = ('https://')
   enabled = true
 ;
@@ -362,7 +362,7 @@ create or replace api integration my_aws_api_integration
 
 Edit the command above like so:
 
-* Replace the`< cloud_platform_role_ARN >` with your Cloud Platform (IAM) Role ARN.
+* Replace the`&lt; cloud_platform_role_ARN >` with your Cloud Platform (IAM) Role ARN.
 * Replace the `api_allowed_prefixes` field with your resource invocation URL.
 
 If you've been keeping track of your values properly, it should look something like this:
@@ -446,14 +446,14 @@ Now go back to the Snowflake console for creating an external function in Snowfl
 create external function translate_eng_italian(message string)
     returns variant
     api_integration = <api_integration_name>
-    as '< invocation_url >'
+    as '&lt; invocation_url >'
     ;
 ```
 
 The parameters adjustments you need to make are:
 
-* Replace the `< api_integration_name >` with the name of your API integration
-* Replace the `< invocation_url >` value with your resource invocation URL.
+* Replace the `&lt; api_integration_name >` with the name of your API integration
+* Replace the `&lt; invocation_url >` value with your resource invocation URL.
 
 Once you do so, execute the `CREATE EXTERNAL FUNCTION` command.
 
