@@ -237,9 +237,9 @@ paths:
 
 There are a few fields that you need to fill in or update. Let's go through those now.
 
-First, replace `<PATH>` with a unique name. This will be incorporated into URLs, so use only characters that are valid in URLs. For our example, you can enter `demo-func-resource`.
+First, replace `< PATH >` with a unique name. This will be incorporated into URLs, so use only characters that are valid in URLs. For our example, you can enter `demo-func-resource`.
 
-Unlike the other fields in this configuration file, the `<PATH>` value is entered *before* the colon. This the correct format:
+Unlike the other fields in this configuration file, the `< PATH >` value is entered *before* the colon. This the correct format:
 
 ```
 paths:
@@ -399,15 +399,15 @@ create or replace api integration <integration_name>
 
 In the statement:
 
-* Replace `<integration_name>` with a unique integration name (e.g. `my_api_integration_name`). The name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Be sure to record the integration name in your tracking worksheet’s “API Integration Name” field.
+* Replace `< integration_name >` with a unique integration name (e.g. `my_api_integration_name`). The name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Be sure to record the integration name in your tracking worksheet’s “API Integration Name” field.
 
-* For `google_audience`, replace `<google_audience_claim>` with the value from the “Managed Service Identifier” field in your tracking worksheet.
+* For `google_audience`, replace `< google_audience_claim >` with the value from the “Managed Service Identifier” field in your tracking worksheet.
 
 Positive
 
 : During authentication, Snowflake passes a JWT (JSON Web Token) to Google. The JWT contains an “aud” (“audience”) claim, which Snowflake sets to the value for `google_audience`. For more information about authenticating with Google, see the Google service account [authentication documentation](https://cloud.google.com/api-gateway/docs/authenticate-service-account#configure_auth).
 
-* For `api_allowed_prefixes`, replace `<url>` with the value from the “Gateway Base URL” field in your tracking worksheet. This field allows you to restrict the URLs to which this API integration can be applied.
+* For `api_allowed_prefixes`, replace `< url >` with the value from the “Gateway Base URL” field in your tracking worksheet. This field allows you to restrict the URLs to which this API integration can be applied.
 
 Once you've made the necessary adjustments to the statement, execute the CREATE API INTEGRATION statement.
 
@@ -444,9 +444,9 @@ create or replace external function <external_function_name>(<parameters>)
 
 Again, you'll need to modify the function to have your own specific parameters:
 
-* Replace `<external_function_name>` with a unique function name (e.g. `echo`). This name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Record this name in the “External Function Name” field in your tracking worksheet.
+* Replace `< external_function_name >` with a unique function name (e.g. `echo`). This name must follow the rules for [Object Identifiers](https://docs.snowflake.com/en/sql-reference/identifiers.html). Record this name in the “External Function Name” field in your tracking worksheet.
 
-* Replace `<parameters>` with the names and SQL data types of the parameters for the function, if any. Record the parameter names and data types in your tracking worksheet’s “External Function Name” field. For our example:
+* Replace `< parameters >` with the names and SQL data types of the parameters for the function, if any. Record the parameter names and data types in your tracking worksheet’s “External Function Name” field. For our example:
 
 ```
 a integer, b varchar
@@ -456,9 +456,9 @@ Negative
 
 : The parameters must correspond to the parameters expected by the remote service. The parameter names do not need to match, but the data types need to be compatible. 
 
-* Replace `<api_integration_name>` with the value from the “API Integration Name” field in your tracking worksheet.
+* Replace `< api_integration_name >` with the value from the “API Integration Name” field in your tracking worksheet.
 
-* Replace `<function_URL>` with the values from the “Gateway Base URL” and “Path Suffix” fields, separated by a forward slash (`/`). The URL should look similar to:
+* Replace `< function_URL >` with the values from the “Gateway Base URL” and “Path Suffix” fields, separated by a forward slash (`/`). The URL should look similar to:
 
 ```
 https://<gateway-base-url>/<path-suffix>
