@@ -1,7 +1,7 @@
 summary: Getting Started With External Functions on AWS
 id: getting_started_external_functions_aws
 categories: Getting Started
-status: Draft
+status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, SQL, Data Engineering, AWS, External Functions
 
@@ -10,59 +10,38 @@ tags: Getting Started, SQL, Data Engineering, AWS, External Functions
 ## Overview
 Duration: 1
 
-Snowflake's external functions feature allows you to create SQL functions that securely invoke externally implemented HTTPS endpoints. This means your functions can be implemented in any language and use any libraries. Using your functions with your data in Snowflake gives you quite a few options for processing your data. Using external functions, you can easily extend your data pipelines by calling out to external services, third-party libraries, or even your own custom logic, enabling exciting new use cases. Here are just a few of the examples you can use external functions for;
+Snowflake's external functions feature enables you to create SQL functions that securely invoke externally implemented HTTPS endpoints. This means your functions can be implemented in any language and use any libraries. Using your functions with your data in Snowflake gives you quite a few options for processing your data. Using external functions, you can easily extend your data pipelines by calling out to external services, third-party libraries, or even your own custom logic, enabling exciting new use cases. 
 
-* external tokenization,
-* geocoding,
-* scoring data using pre-trained machine learning models,
-* and much more!
-
-This tutorial will walk you through the process of translating messages in a Snowflake table from English to Italian. You'll do so by using external functions to call an external library through AWS API Gateway.
+This tutorial will walk you through a use-case of translating messages in a Snowflake table from English to Italian using a Snowflake External Function on AWS.
 
 ### Prerequisites
 
-- Some familiarity with AWS.
+- Some familiarity with AWS
 
 ### What You'll Learn
 
 - how to create a Lambda Function on AWS
 - how to create an IAM role for Snowflake use
-- how to create an AWS API Gateway
-- how to secure an AWS API Gateway
+- how to create and secure an AWS API Gateway
 - how to create an API Integration in Snowflake
-- how to set up a trust relationship between Snowflake and IAM role
-- how to create an external function in Snowflake
-- how to call an external function
+- how to create and call an external function in Snowflake
 
 ### What You'll Need
 
-- An account with AWS, including privileges to:
-
-- - Create AWS roles via IAM (identity and access management).
-  - Create AWS Lambda functions.
-  - Create an API Gateway endpoint.
-
+- An account with AWS with the ability to create roles via IAM, Lambda functions, and an API Gateway endpoint.
 - A Snowflake account in which you have `ACCOUNTADMIN` privileges or a role with the `CREATE INTEGRATION` privilege.
 
 As you progress through the tutorial, you'll want to record the following information as you acquire them, so copy this list to a text editor:
 
-Cloud Platform (IAM) Account Id:
-
-Lambda Function Name:
-
-New IAM Role Name:
-
-Cloud Platform (IAM) Role ARN:
-
-Proxy Service Resource Name:
-
-Resource Invocation URL:
-
-Method Request ARN:
-
-API_AWS_IAM_USER_ARN:
-
-API_AWS_EXTERNAL_ID:
+- Cloud Platform (IAM) Account Id:
+- Lambda Function Name:
+- New IAM Role Name:
+- Cloud Platform (IAM) Role ARN:
+- Proxy Service Resource Name:
+- Resource Invocation URL:
+- Method Request ARN:
+- API_AWS_IAM_USER_ARN:
+- API_AWS_EXTERNAL_ID:
 
 ### What You'll Build
 
@@ -100,7 +79,8 @@ You should create the function with the following selected parameters:
 * Select the language to use. For this example, choose Python 3.8.
 * Expand "Choose or create an execution role" and select "Create a new role with basic Lambda permissions."
 
-*Note that the role you are creating here is separate from both your cloud account role and your Snowflake role(s).*
+Negative
+: Note that the role you are creating here is separate from both your cloud account role and your Snowflake role(s).
 
 ![Snowflake_Create_Function.png](assets/Snowflake_Create_Function.png)
 
@@ -301,7 +281,8 @@ You will now be on the page "<your-stage-name> Stage editor." Under "Stages," ex
 
 Click on "POST" and record the "Invoke URL" for the POST request as the "Resource Invocation URL" field in the template.
 
-*Note: Make sure that the invocation URL includes the name of the resource; if it doesn't, you might have clicked on the invocation URL for the stage rather than the resource.*
+Negative
+: Make sure that the invocation URL includes the name of the resource; if it doesn't, you might have clicked on the invocation URL for the stage rather than the resource.
 
 ![Snowflake_Resource_Invocation_URL.png](assets/Snowflake_Resource_Invocation_URL.png)
 
@@ -404,7 +385,8 @@ You'll need to jot down a few more pieces of information in your template:
 * Look for the property named "API_AWS_IAM_USER_ARN" and then record that property's "property_value."
 * Find the property named "API_AWS_EXTERNAL_ID" and record that property's "property_value."
 
-*Note that the "property_value" of the "API_AWS_EXTERNAL_ID" often ends with an equal sign ("="). That equals sign is part of the value; make sure that you cut and paste it along with the rest of the "property_value."*
+Negative
+: Note that the "property_value" of the "API_AWS_EXTERNAL_ID" often ends with an equal sign ("="). That equals sign is part of the value; make sure that you cut and paste it along with the rest of the "property_value."
 
 <!-- ------------------------ -->
 ## Setting up a trust relationship between Snowflake and IAM role.
@@ -458,7 +440,7 @@ Click on "Update Trust Policy" to finish setting up the trust relationship betwe
 ## Creating an external function in Snowflake.
 Duration: 5
 
-Now go back to the Snowflake console for creating an external function in Snowflake. Type the CREATE EXTERNAL FUNCTION command as shown, with a few customized parameters:
+Now go back to the Snowflake console for creating an external function in Snowflake. Type the `CREATE EXTERNAL FUNCTION` command as shown, with a few customized parameters:
 
 ```sql
 create external function translate_eng_italian(message string)
@@ -470,10 +452,10 @@ create external function translate_eng_italian(message string)
 
 The parameters adjustments you need to make are:
 
-* Replace the "<api_integration_name>" with the name of your API integration
-* Replace the "<invocation_url>" value with your resource invocation URL.
+* Replace the `< api_integration_name >` with the name of your API integration
+* Replace the `< invocation_url >` value with your resource invocation URL.
 
-Once you do so, execute the "CREATE EXTERNAL FUNCTION" command.
+Once you do so, execute the `CREATE EXTERNAL FUNCTION` command.
 
 <!-- ------------------------ -->
 ## Calling the external function

@@ -2,7 +2,7 @@ id: getting_started_external_functions_azure
 summary: Getting Started With External Functions on Azure
 categories: Getting Started
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Azure
 
