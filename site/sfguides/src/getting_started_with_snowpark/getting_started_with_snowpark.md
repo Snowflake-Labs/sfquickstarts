@@ -23,7 +23,7 @@ Snowpark is a [preview feature](https://docs.snowflake.com/en/release-notes/prev
 - Familiarity with Scala
 
 ### What You’ll Need
-- A [Snowflake](https://www.snowflake.com/) account hosted on Amazon Web Services (AWS)
+- A [Snowflake](https://www.snowflake.com/) account hosted on Amazon Web Services (AWS) or Microsoft Azure. 
 - [git](https://git-scm.com/downloads)
 - [SBT](https://www.scala-sbt.org/)
 
