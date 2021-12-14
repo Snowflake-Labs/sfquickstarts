@@ -229,7 +229,7 @@ So, before we begin to review the index.vue code make sure you have successfully
 
 **You will need to drop the quasar folder from the repository into your local quasar project folder** 
 
-[Download Quasar Folder from repository](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/quasar)
+[Download Quasar Folder from repository](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/tree/main/quasar)
 
 Now let’s take a look at the application we are going to build. In the image displayed below, you will  see a dropdown selection box for the Geography  which will pass the GeoRegionIdPth variable to the selection box, A slider bar to set the Time Period (start date, and end date) which will pass the Dateagi variable(s) to slider bar. The Refresh Button which will populate 3-line charts which represent the Poverty Threshold, Savings Rate and Avg Investment Rate relative to the Time Period  and Geography selected. If a Geography is not selected, an error message will display in red, “You Must select a Geography”
 ![img1](assets/vue-final.png)
@@ -471,10 +471,10 @@ Now let’s begin our work on in  AWS to create a server-less environment to run
 ![img1](assets/lambda4.png)
 * Under Environment, select lambda_Function.py. 
 * Now select the default script and delete so you have a clear tab. Now using visual studio code open the file “lambda.py and paste into the lambda_function tab
-[Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)
+[Download Lambda](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/tree/main/Lambda-src)
 ![img1](assets/lambda5.png)
 * Click on the “Test Tab” 
-* Now using visual studio code, our your preferred code editor, open the file [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name "Hello"
+* Now using visual studio code, our your preferred code editor, open the file [Download Lambda](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name "Hello"
 * Select Create
 ![img1](assets/lambda6.png)
 
