@@ -128,7 +128,7 @@ That’s it. You’ve set up your Snowflake instance. Throughout the tutorial we
 
 ### Sign up for a ThoughtSpot Free Trial
 
-Next, let’s sign-up for a ThoughtSpot Free Trial. Head over to the [sign-up page](https://www.thoughtspot.com/trial?utm=snowtstutorial) and complete the required fields. Select Snowflake as your Cloud Data Warehouse provider. This is not necessary, but does help us better understand trends in customer data usage. If you have already signed up with ThoughtSpot previously, but want to use the same email address, you can add a +1 to your email name, and still have it registered to your existing email. For example, let’s say I previously signed up with my work email address of [quinton.wall@acmecorp.com](mailto:quinton.wall@acmecorp.com). I could use [quinton.wall+1@acmecorp.com](mailto:quinton.wall+1@acmecorp.com) to satisfy the sign-up requirements and receive activation emails to my original email address. 
+Next, let’s sign-up for a ThoughtSpot Free Trial. Head over to the [sign-up page](https://www.thoughtspot.com/trial?utm=snowtstutorial) and complete the required fields. Select Snowflake as your Cloud Data Warehouse provider. This is not necessary, but does help us better understand trends in customer data usage. 
 
 In a few minutes you should receive an activation email. Follow the instructions included to finish creating your Trial account. 
 
