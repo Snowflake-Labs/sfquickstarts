@@ -10,7 +10,7 @@ authors: Amy Chen, Dmytro Yaroshenko
 # Accelerating Data Teams with dbt & Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
+Duration: 1
 
 Modern businesses need modern data strategies, built on platforms that support agility, growth and operational efficiency. 
 
@@ -131,7 +131,7 @@ Congratulations! You successfully tapped into a live data feed of Trade and FX r
 
 <!-- ------------------------ -->
 ## dbt Configuration 
-Duration: 5
+Duration: 1
 
 Now it's time to set up dbt. We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials in minutes.
 
@@ -167,7 +167,7 @@ To help you version control your dbt project, we have connected it to a [managed
 
 <!-- ------------------------ -->
 ## dbt Project Configuration
-Duration: 10
+Duration: 5
 
 1. Now let’s set up our dbt project. Click on the hamburger menu on the top left side and click on `Develop`.  This will spin up your IDE (Integrated Development Environment) where you will be developing your dbt Project. 
 
@@ -737,7 +737,7 @@ select * from joined
 
  
 #### Generate Documentation Site
-Duration: 5 
+Duration: 1
 
 Now that we have created a few models, let’s talk about [dbt documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation). 
 dbt is able to generate a static webpage with a data dictionary by pulling in information from your dbt project as well as your Snowflake information_schema. It also provides an interactive DAG so you can see the full lineage of your models; this is something you might have also noticed  in the lineage tab of the IDE. This is a fantastic way to share  information with your internal teams, as it contains all-important information about columns, tags, free-form model description, tests as well as the source code that is always in line with the code. So regardless of how big your project grows, it is super easy to understand what's happening with the help of dbt’s documentation. 
