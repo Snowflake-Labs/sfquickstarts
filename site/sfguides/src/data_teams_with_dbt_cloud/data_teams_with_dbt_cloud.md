@@ -1,5 +1,5 @@
-id: data_engineering_with_dbt
-summary: Build your data pipeline with dbt & Snowflake
+id: data_teams_with_dbt_cloud
+summary: Build your data pipeline with dbt Cloud & Snowflake
 categories: Getting Started
 environments: web
 status: Published 
@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, dbt, Data Sharing
 authors: Amy Chen, Dmytro Yaroshenko
 
-# Accelerating Data Teams with dbt & Snowflake
+# Accelerating Data Teams with dbt Cloud & Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -39,9 +39,11 @@ Let's get started.
 * A set of data analytics pipelines for Financial Services data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments
 
 <!-- ------------------------ -->
-Duration: 1
+
 
 ## Architecture and Use Case Overview
+Duration: 1
+
 In this lab, we are going to analyze the historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas, which is available in Snowflake Data Marketplace. We’ll also make use of a few manual uploads.
 To do this, we are going to set up the environments, build scalable pipelines in dbt, establish data tests , and promote code to production. 
 
@@ -131,7 +133,7 @@ Congratulations! You successfully tapped into a live data feed of Trade and FX r
 
 <!-- ------------------------ -->
 ## dbt Configuration 
-Duration: 5
+Duration: 2
 
 Now it's time to set up dbt. We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials in minutes.
 
@@ -167,7 +169,7 @@ To help you version control your dbt project, we have connected it to a [managed
 
 <!-- ------------------------ -->
 ## dbt Project Configuration
-Duration: 10
+Duration: 5
 
 1. Now let’s set up our dbt project. Click on the hamburger menu on the top left side and click on `Develop`.  This will spin up your IDE (Integrated Development Environment) where you will be developing your dbt Project. 
 
@@ -384,7 +386,7 @@ packages:
 <!-- ------------------------ -->
 
 ## Building dbt Data Pipelines
-Duration: 0
+Duration: 1
 
 Now we start to get into the fun stuff. In the next few sections, we are going to build our dbt pipelines. This will include transformations that define these these areas of interest: 
 - Stock trading history
@@ -537,9 +539,10 @@ In this dataset, different measures like Close, Open, High and Low price are rep
 So let’s do that!
 
 ## dbt pipelines - Intermediate 
+Duration: 10
 
 ### Setting up our intermediate models
-Duration: 10
+
 
 To achieve this, we are going to have to create a few more models:
 
@@ -737,12 +740,12 @@ select * from joined
 
  
 #### Generate Documentation Site
-Duration: 5 
+
 
 Now that we have created a few models, let’s talk about [dbt documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation). 
 dbt is able to generate a static webpage with a data dictionary by pulling in information from your dbt project as well as your Snowflake information_schema. It also provides an interactive DAG so you can see the full lineage of your models; this is something you might have also noticed  in the lineage tab of the IDE. This is a fantastic way to share  information with your internal teams, as it contains all-important information about columns, tags, free-form model description, tests as well as the source code that is always in line with the code. So regardless of how big your project grows, it is super easy to understand what's happening with the help of dbt’s documentation. 
 
-13. To generate your documentation site, execute “dbt docs generate” on the command line:
+1.  To generate your documentation site, execute “dbt docs generate” on the command line:
 
 `dbt docs generate`
 
@@ -1152,9 +1155,10 @@ You will not see a true performance improvement in this example because our data
 
 <!-- ------------------------ -->
 ## dbt pipelines - Tests & Docs
+Duration: 10
 
 ### Testing & Documentation 
-Duration: 10
+
 
 To build trust in data with your organization, it is impossible to overstate the importance of testing and documentation. While there are many ways to organize automated testing and documentation, dbt comes with an accessible [data testing](https://docs.getdbt.com/docs/building-a-dbt-project/tests) and [documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation) framework. 
 
