@@ -33,6 +33,11 @@
       "type": 301
     }, 
     {
+      "source": "/guide/data_engineering_with_dbt{,/**}",
+      "destination": "/guide/data_teams_with_dbt_cloud",
+      "type": 301
+    }, 
+    {
       "source": "/guide/getting_started_snowpark{,/**}",
       "destination": "/guide/getting_started_with_snowpark",
       "type": 301
