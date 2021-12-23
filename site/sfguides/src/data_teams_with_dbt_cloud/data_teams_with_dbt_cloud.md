@@ -39,9 +39,11 @@ Let's get started.
 * A set of data analytics pipelines for Financial Services data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments
 
 <!-- ------------------------ -->
-Duration: 1
+
 
 ## Architecture and Use Case Overview
+Duration: 1
+
 In this lab, we are going to analyze the historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas, which is available in Snowflake Data Marketplace. We’ll also make use of a few manual uploads.
 To do this, we are going to set up the environments, build scalable pipelines in dbt, establish data tests , and promote code to production. 
 
@@ -384,7 +386,7 @@ packages:
 <!-- ------------------------ -->
 
 ## Building dbt Data Pipelines
-Duration: 0
+Duration: 1
 
 Now we start to get into the fun stuff. In the next few sections, we are going to build our dbt pipelines. This will include transformations that define these these areas of interest: 
 - Stock trading history
@@ -537,9 +539,10 @@ In this dataset, different measures like Close, Open, High and Low price are rep
 So let’s do that!
 
 ## dbt pipelines - Intermediate 
+Duration: 10
 
 ### Setting up our intermediate models
-Duration: 10
+
 
 To achieve this, we are going to have to create a few more models:
 
@@ -737,12 +740,12 @@ select * from joined
 
  
 #### Generate Documentation Site
-Duration: 1 
+
 
 Now that we have created a few models, let’s talk about [dbt documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation). 
 dbt is able to generate a static webpage with a data dictionary by pulling in information from your dbt project as well as your Snowflake information_schema. It also provides an interactive DAG so you can see the full lineage of your models; this is something you might have also noticed  in the lineage tab of the IDE. This is a fantastic way to share  information with your internal teams, as it contains all-important information about columns, tags, free-form model description, tests as well as the source code that is always in line with the code. So regardless of how big your project grows, it is super easy to understand what's happening with the help of dbt’s documentation. 
 
-13. To generate your documentation site, execute “dbt docs generate” on the command line:
+1.  To generate your documentation site, execute “dbt docs generate” on the command line:
 
 `dbt docs generate`
 
@@ -1152,9 +1155,10 @@ You will not see a true performance improvement in this example because our data
 
 <!-- ------------------------ -->
 ## dbt pipelines - Tests & Docs
+Duration: 10
 
 ### Testing & Documentation 
-Duration: 10
+
 
 To build trust in data with your organization, it is impossible to overstate the importance of testing and documentation. While there are many ways to organize automated testing and documentation, dbt comes with an accessible [data testing](https://docs.getdbt.com/docs/building-a-dbt-project/tests) and [documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation) framework. 
 
