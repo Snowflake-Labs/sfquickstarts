@@ -8,12 +8,37 @@ tags: Getting Started, Data Modeling, Data Engineering, CICD
 authors: Sergey Gershkovich
 
 
-# Database Modeling in the Cloud with SqlDBM 
+# Cloud-native Database Modeling with SqlDBM 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
+Duration: 2
 
-Modern businesses need modern data strategies, built on platforms that support agility, growth and operational efficiency.
+Relational database modeling enables instant visual review of a database landscape and the relationships between its entities - like a map for your data. 
+
+[SqlDBM](https://www.SqlDBM.com) is an online database modeling tool that works with leading cloud platforms such as Snowflake, and requires absolutely no coding to get started. In this Quickstart, you will see how you can model your entire Snowflake database in just a few clicks and begin taking advantage of all the time-saving features that SqlDBM delivers. 
+
+### What you’ll learn 
+* How to quickly diagram an existing schema through reverse engineering
+* Create and manipulate database objects using time-saving features like copying and cloning
+* The importance of primary and foreign key relationships and how to declare them 
+* Inheritance for parent/child objects 
+* Forward engineering & deployment of changes to Snowflake
+
+### What You'll Use During the Lab
+
+* An existing or trial [Snowflake account](https://trial.snowflake.com/) with `ACCOUNTADMIN` access
+
+* An existing or trial [SqlDBM account](https://sqldbm.com/Home/)  
+
+
+### What You'll Build
+* A relational model of an entire database schema
+* Add new tables with no coding required
+* Relate the tables through primary and foreign key constraints
+* A data catalog with column-level descriptions
+  
+<!-- ------------------------ -->
+
 
 
 
