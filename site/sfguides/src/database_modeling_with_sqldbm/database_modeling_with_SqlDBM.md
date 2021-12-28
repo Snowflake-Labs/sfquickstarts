@@ -37,10 +37,12 @@ Relational database modeling enables instant visual review of a database landsca
 * Relate the tables through primary and foreign key constraints
 * A data catalog with column-level descriptions
 
+A sample schema diagram like the one we will create: 
+![diagram sample](assets/diagram_sample.jpg)
 
 <!-- ------------------------ -->
 ## Use Case Overview 
-Duration: 2
+Duration: 3
 
 ### What is Database Modeling?
 An entity-relationship (ER) diagram is the traditional way of visualizing the tables and their relationships in a relational database. Having a diagram not only makes it easier to find relevant tables, but also gives the user an instantaneous idea of how tables can be joined to one another for analytics purposes. 
@@ -51,8 +53,7 @@ With SqlDBM, changes made on a diagram can be forward-engineered into neat, Snow
 
 We'll go through all these features in detail as part of this quickstart, so let's get started by setting up our account. 
 
-A sample schema diagram like the one we will create: 
-![diagram sample](assets/diagram_sample.jpg)
+![SqlDBM Architecture](assets/SqlDBM_architecture.png)   
 
 <!-- ------------------------ -->
 ## Snowflake Configuration 
