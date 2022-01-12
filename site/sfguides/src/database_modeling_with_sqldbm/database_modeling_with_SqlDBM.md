@@ -81,3 +81,45 @@ After logging in to SqlDBM, you will be taken to the Projects Dashboard. Otherwi
 
 ![Dashboard](assets/dashboard.jpg)  
 
+Follow the steps to create a Snowflake project and bring your schema: 
+
+1. Click the "New Project" button at the top to get started.
+
+2. Select "Snowflake" as the database type and click "Bring your database".
+
+![Creating a new project](assets/bring_your_db.jpg)
+
+3. Click the "Connect to DW" to create a live connection to Snowflake
+
+* Alternatively, run the GET_DDL command by hand and copy and paste the output onto the text area on the screen, or save it in a file and upload via the "Drop your File" button. 
+
+```sql
+SELECT GET_DDL('schema','"DATABASE_NAME"."SCHEMA_NAME"', true);
+```
+
+* Or use our [example DDL](assets/sample_schema.sql ) and paste it into the text area on the screen.
+
+4. Enter your Snowflake server instance and log in with a user which has usage privileges on the schema you wish to import.
+
+![Direct Connect ](assets/direct_connect.jpg)
+
+5. Select the Database and Schema you wish to import and press the "Apply" button below. 
+
+6. Press the up arrow icon / "Upload SQL Script" button at the top to parse the DDL provided.
+
+![Upload SQL script](assets/upload_sql.jpg)
+
+7. Review the objects that are being imported on the left panel. Optionally, you can exclude individual items from being imported by de-selecting the check-box next to them. 
+
+8. Press the "Import" button to create a project with the selected objects. 
+
+
+<!-- ------------------------ -->
+## Configure project defaults
+Save first revision and rename
+Rename revision title
+Diagram properties
+Set Dark theme
+Notation
+Set naming conventions for project
+
