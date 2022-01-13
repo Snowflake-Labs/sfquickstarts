@@ -116,10 +116,55 @@ SELECT GET_DDL('schema','"DATABASE_NAME"."SCHEMA_NAME"', true);
 
 <!-- ------------------------ -->
 ## Configure project defaults
-Save first revision and rename
-Rename revision title
-Diagram properties
-Set Dark theme
-Notation
-Set naming conventions for project
+Duration: 5
 
+Let's configure some initial time-saving defaults for our project as well as set the visual level of detail and look-and-feel for our diagrams.
+
+### Project-level properties
+
+![project settings](assets/project_settings.jpg)
+
+1. Save first revision and name your project
+
+* Click the save button at the top right and name your project with something descriptive. [1]
+
+
+2. Rename revision title
+
+* Let's rename "Initial Revision" to something that fits with your way of working. Name your revisions based the Agile Sprint, current project phase, or even calendar month. Something to allow for a meaningful grouping of changes. 
+
+* Click on the text "Initial Revision" to modify it. [2]
+
+3. Enable dark theme
+
+* Click on the blue SqlDBM logo at the top left to bring up the project menu. Click "Dark Theme" to enable it, if that's your thing. 
+
+4. Set naming conventions for the project
+
+* Click on the blue SqlDBM logo at the top left to bring up the project menu and select "Naming Conventions"
+
+* Any changes made here can be "[applied] to all existing objects" and validated going forward by ticking the "Validate on project save" using the buttons at the bottom of the menu.
+
+* Case standards - set the standard naming style for the entire project (e.g., UPPER_CASE, Title_Case, PascalCase, etc.). 
+
+* Name mapping - here we can set the default names for the objects in our project. Tick the checkbox next to any object to override the default naming. Click the pencil icon to enter the expression editor. Here you can edit both the static part of the default naming, as well as use the context variables available to make the name dynamic.
+
+![PK expression](assets/PK_expression.jpg)
+
+### Diagram look and feel 
+
+![diagram properties](assets/diagram_properties2.jpg)
+
+
+5. Set diagram properties
+
+* In the Diagram Explorer screen, open a diagram and expand the various options on the right-screen properties menu. 
+
+In the view mode options [6], configure the preferred look and feel of the diagram.
+
+
+
+6. Set relational notation
+
+
+7. Switch view modes
