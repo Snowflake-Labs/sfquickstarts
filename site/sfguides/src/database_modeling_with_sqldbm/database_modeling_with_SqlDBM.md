@@ -137,11 +137,11 @@ Let's configure some initial time-saving defaults for our project as well as set
 
 3. Enable dark theme
 
-* Click on the blue SqlDBM logo at the top left to bring up the project menu. Click "Dark Theme" to enable it, if that's your thing. 
+* Click on the blue SqlDBM logo at the top left to bring up the project menu. Click "Dark Theme" to enable it, if that's your thing. [3]
 
 4. Set naming conventions for the project
 
-* Click on the blue SqlDBM logo at the top left to bring up the project menu and select "Naming Conventions"
+* Click on the blue SqlDBM logo at the top left to bring up the project menu and select "Naming Conventions". [4]
 
 * Any changes made here can be "[applied] to all existing objects" and validated going forward by ticking the "Validate on project save" using the buttons at the bottom of the menu.
 
@@ -153,18 +153,33 @@ Let's configure some initial time-saving defaults for our project as well as set
 
 ### Diagram look and feel 
 
+Get familiar with the look-and-feel configuration for diagrams and learn to view them at varying levels of detail. 
+
 ![diagram properties](assets/diagram_properties2.jpg)
 
 
-5. Set diagram properties
+1. Set diagram properties
 
 * In the Diagram Explorer screen, open a diagram and expand the various options on the right-screen properties menu. 
 
-In the view mode options [6], configure the preferred look and feel of the diagram.
+* In the view mode options [1], configure the preferred look and feel of the diagram. Here you can select which object properties will be displayed and color-coded on the diagrams. 
+
+2. Set relational notation
+
+* Toggle between IDEF1X and Crow's Foot relationship notations in the "Notation" options [2]. Note that relationship properties such as Identifying/Non-identifying (IDEF1X) and cardinality (Crow's Foot) will change accordingly. These properties are orientative and do not impact the generated DDL.
+
+3. Change view modes (level of detail)
+
+* Once defined, database objects in SqlDBM diagrams can be viewed at varying levels of detail. This allows a single diagram to serve various business functions: from general planning to column-level auditing. 
+
+* You can get a feel for the different view modes by clicking on the "View Mode" selector on the top of the screen [3]
 
 
-
-6. Set relational notation
-
-
-7. Switch view modes
+View Mode | Description
+---------|----------
+ Table | B1 
+ PK/AK | B2 
+ Keys | B3 
+ Columns |
+ Descriptions |
+ Logical |
