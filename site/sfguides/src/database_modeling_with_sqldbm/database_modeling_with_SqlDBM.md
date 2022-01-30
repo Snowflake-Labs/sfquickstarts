@@ -120,38 +120,39 @@ Duration: 5
 
 Let's configure some initial time-saving defaults for our project as well as set the visual level of detail and look-and-feel for our diagrams.
 
-### Project-level properties
-
 ![project settings](assets/project_settings.jpg)
 
 1. Save first revision and name your project
 
-* Click the save button at the top right and name your project with something descriptive. [1]
+    * Click the save button at the top right and name your project with something descriptive. [1]
 
 
 2. Rename revision title
 
-* Let's rename "Initial Revision" to something that fits with your way of working. Name your revisions based the Agile Sprint, current project phase, or even calendar month. Something to allow for a meaningful grouping of changes. 
+    * Let's rename "Initial Revision" to something that fits with your way of working. Name your revisions based the Agile Sprint, current project phase, or even calendar month. Something to allow for a meaningful grouping of changes. 
 
-* Click on the text "Initial Revision" to modify it. [2]
+    * Click on the text "Initial Revision" to modify it. [2]
 
 3. Enable dark theme
 
-* Click on the blue SqlDBM logo at the top left to bring up the project menu. Click "Dark Theme" to enable it, if that's your thing. [3]
+    * Click on the blue SqlDBM logo at the top left to bring up the project menu. Click "Dark Theme" to enable it, if that's your thing. [3]
 
 4. Set naming conventions for the project
 
-* Click on the blue SqlDBM logo at the top left to bring up the project menu and select "Naming Conventions". [4]
+    * Click on the blue SqlDBM logo at the top left to bring up the project menu and select "Naming Conventions". [4]
 
-* Any changes made here can be "[applied] to all existing objects" and validated going forward by ticking the "Validate on project save" using the buttons at the bottom of the menu.
+    * Any changes made here can be "[applied] to all existing objects" and validated going forward by ticking the "Validate on project save" using the buttons at the bottom of the menu.
 
-* Case standards - set the standard naming style for the entire project (e.g., UPPER_CASE, Title_Case, PascalCase, etc.). 
+    * Case standards - set the standard naming style for the entire project (e.g., UPPER_CASE, Title_Case, PascalCase, etc.). 
 
-* Name mapping - here we can set the default names for the objects in our project. Tick the checkbox next to any object to override the default naming. Click the pencil icon to enter the expression editor. Here you can edit both the static part of the default naming, as well as use the context variables available to make the name dynamic.
+    * Name mapping - here we can set the default names for the objects in our project. Tick the checkbox next to any object to override the default naming. Click the pencil icon to enter the expression editor. Here you can edit both the static part of the default naming, as well as use the context variables available to make the name dynamic.
 
 ![PK expression](assets/PK_expression.jpg)
 
-### Diagram look and feel 
+
+## Diagram look and feel 
+Duration: 3
+
 
 Get familiar with the look-and-feel configuration for diagrams and learn to view them at varying levels of detail. 
 
@@ -160,26 +161,97 @@ Get familiar with the look-and-feel configuration for diagrams and learn to view
 
 1. Set diagram properties
 
-* In the Diagram Explorer screen, open a diagram and expand the various options on the right-screen properties menu. 
+    * In the Diagram Explorer screen, open a diagram and expand the various options on the right-screen properties menu. 
 
-* In the view mode options [1], configure the preferred look and feel of the diagram. Here you can select which object properties will be displayed and color-coded on the diagrams. 
+    * In the view mode options [1], configure the preferred look and feel of the diagram. Here you can select which object properties will be displayed and color-coded on the diagrams. 
 
 2. Set relational notation
 
-* Toggle between IDEF1X and Crow's Foot relationship notations in the "Notation" options [2]. Note that relationship properties such as Identifying/Non-identifying (IDEF1X) and cardinality (Crow's Foot) will change accordingly. These properties are orientative and do not impact the generated DDL.
+    * Toggle between IDEF1X and Crow's Foot relationship notations in the "Notation" options [2]. Note that relationship properties such as Identifying/Non-identifying (IDEF1X) and cardinality (Crow's Foot) will change accordingly. These properties are orientative and do not impact the generated DDL.
 
 3. Change view modes (level of detail)
 
-* Once defined, database objects in SqlDBM diagrams can be viewed at varying levels of detail. This allows a single diagram to serve various business functions: from general planning to column-level auditing. 
+    * Once defined, database objects in SqlDBM diagrams can be viewed at varying levels of detail. This allows a single diagram to serve various business functions: from general planning to column-level auditing. 
 
-* You can get a feel for the different view modes by clicking on the "View Mode" selector on the top of the screen [3]
+    * You can get a feel for the different view modes by clicking on the "View Mode" selector on the top of the screen [3]
 
 
 View Mode | Description
 ---------|----------
- Table | B1 
- PK/AK | B2 
- Keys | B3 
- Columns |
- Descriptions |
- Logical |
+ Table | Simplified view showing tables as boxes, providing a bird's-eye view.
+ PK/AK | Shows only the primary and alternate key columns.
+ Keys | Shows the primary, alternate, and foreign key columns. 
+ Columns | Default view. All columns and properties are displayed.
+ Descriptions | Simplified view showing tables as boxes with descriptions.
+ Logical | Displays all columns, hides physical names and database-specific properties.
+
+
+
+## Editing objects
+Duration: 6 
+
+Let's organize our project by creating some subject areas. These serve as folders for keeping your diagrams organized. Then we'll learn to create and edit its properties, as well as add/copy fields. 
+
+
+![create a subject area and add tables](assets/new_diagram.gif)
+
+### Create a Subject Area
+Subject areas serve as folders for keeping diagrams organized by categories such as department or project. In the Diagrams screen, right-click on "Subject Areas" and select "Add a Subject Area". 
+
+### Add a table to a diagram
+Click on the "Diagram Explorer" button on the left-menu. Add a table to a diagram from the catalog of object by searching for part of the table name, then clicking the "Add to Diagram" button next to it. 
+
+![name table, add pk, copy columns](assets/create_table.gif)
+
+### Create a new table
+Right-click anywhere on the canvas to and select "Add Table." Double-click on the new table to edit it. Give the table a name and add some columns with corresponding data types. 
+
+### Copy columns from an existing table
+Select a column (or shift-click to select multiple) from an existing table and drag them to another table to move them. Perform the drag operation holding the Ctrl key (Command on Mac) to copy. 
+
+### Add a primary key (PK) to a table
+Double click on a table to enter edit mode. Create a new column at the topmost section to designate it as a primary key (replacing "\<pk column name\>"). 
+
+Alternatively, drag any existing column to the top of the table to designate it as a PK.
+
+### Add a foreign key (FK) to a table
+Click on a table which has a PK defined. Drag the bottom-right connector to another table to add it there as a FK.
+
+![add primary and foreign keys](assets/child_parent.png)
+
+### Create a child or parent table
+Select a table in the diagram. Use the top-left or bottom-right connectors to create a parent or child table, respectively. 
+
+Parent tables PKs will cascade to the child tables.
+
+### Create a template
+Templates save time by allowing you to define and reuse columns at your convenience. 
+
+![template](assets/template.png)
+
+Find "Templates" in the "Database Explorer" screen (third option from the top in the left-hand menu) and click to "Create New."
+
+Click on the newly created template to select it and set the Template Properties on the right-hand menu.
+
+* Template name: give the template a descriptive name, like "MetadataColumns" for example.
+* Apply to new tables: tick this option if you want this template to apply automatically to all newly created tables.
+* Columns: add the columns that you would like to be part of the template. In this example, let's add EtlId as date and EtlName as varchar. Be sure to provide a description.
+* Description: provide a general description for the template
+* Related tables: metadata showing which tables are currently associated with the existing template 
+
+### Assign a template to a table 
+Let's assign the metadata columns from the template that we just created to a table. Select a table to bring up its properties in the right-hand menu. Expand the "Options" menu and scroll down to the "Templates" text-area. 
+
+Begin typing the template name and select it from the auto-suggestion. Hit "Add" to associate it with the table. 
+
+Keep in mind that while the association exists, changes to the template will be reflected in the associated tables as well. To break the association, click the "X" next to the template name in the table options; you will be given a choice to keep or delete the template columns in the process. 
+
+
+## Set Snowflake table properties
+Duration: 4
+
+
+Transient
+Clustering key
+Data retention
+Post script
