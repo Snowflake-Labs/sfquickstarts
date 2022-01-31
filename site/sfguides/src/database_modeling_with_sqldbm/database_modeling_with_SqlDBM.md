@@ -249,9 +249,43 @@ Keep in mind that while the association exists, changes to the template will be 
 
 ## Set Snowflake table properties
 Duration: 4
+SqlDBM's no-code interface is intended to minimize syntax errors associated with manually keying DDL. By using a GUI to manipulate database objects, SqlDBM generates neat, error-free, database-specific DDL behind the scenes. 
 
 
-Transient
-Clustering key
-Data retention
-Post script
+### Column-level properties 
+Select a table from your diagram and highlight column to bring up its properties in the right-hand menu. 
+
+* The available properties vary depending on the column data type. Set general properties like "Default Value" or data-type-specific setting like sequences accordingly.
+
+![column properties](assets/column_prop.png)
+
+### Table-level properties
+Select a table on the diagram (or from the list on Database/Diagram Explorer) to bring up its properties in the right-hand menu. 
+
+Review and set the following options as needed: 
+
+![table properties](assets/table_prop.png)
+
+
+1. Clusters and Keys - use the available options in this menu to view, modify, and create primary, alternate, and clustering keys. 
+
+1. Options - Specify transient and data retention properties as well as setting file format
+    * Transient: mark this flag to designate a table as transient (no Fail-safe)
+    * Data Retention Time (Days): specify 0 or 1 days for Snowflake time travel function
+    * File Format: select a file format for use with loading and unloading data
+
+1. Copy Options - specify the copy options for loading and unloading operations such as on-error and purge
+
+1. Post script - Specify manual post-script commands to be injected into the create statement (such as grants).
+
+
+
+## Add functional information and comments
+Duration: 5 
+
+
+Notes on diagram
+Data dictionary
+Entry via interface
+
+
