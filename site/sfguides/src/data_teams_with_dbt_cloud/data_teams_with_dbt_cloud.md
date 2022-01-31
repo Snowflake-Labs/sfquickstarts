@@ -72,6 +72,8 @@ New UI:
 Classic UI:
 
 ![Snowflake Worksheets](assets/snowflake_worksheets.png)  
+If you ever want to change from the new UI to the classic one, click on the home button and then `Classic Console`
+
 
 <!-- ------------------------ -->
 ## Connect to Data Source
