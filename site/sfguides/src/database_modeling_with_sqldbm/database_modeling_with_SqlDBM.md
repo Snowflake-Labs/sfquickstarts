@@ -283,9 +283,35 @@ Review and set the following options as needed:
 ## Add functional information and comments
 Duration: 5 
 
+Add some functional details to your project to give it some context and make it easier for team members to navigate. 
 
-Notes on diagram
-Data dictionary
-Entry via interface
+### Notes on diagram
+Add descriptive notes anywhere on the diagram by using the "Add Note" (Ctrl+Insert) feature. 
 
 
+![notes](assets/notes.png)
+
+### Data dictionary
+SqlDBM's Data Dictionary allows users to review and edit object-level comments in one centralized and searchable screen. The descriptions provided here are intended to help the team go beyond object definitions and provide meaningful details about the data contained in the tables. 
+
+The descriptions provided here will become part of the object DDL and can be deployed back to the database (see Reverse Engineering topic ahead) - they are not meant to serve merely as project metadata.
+
+
+1. Access the Data Dictionary screen by selecting the book icon on the left-hand menu. 
+
+2. Use the search-box to perform a wildcard lookup for objects, columns, and descriptions matching a given term. 
+
+3. Enter object-level or column-level descriptions in the description fields. By design, other DDL details such as object names, datatypes, and properties can not be changed on this screen. This allows users from any level of technical experience to contribute to a project without the possibility of changing any structural details.
+
+4. Template descriptions - located at the bottom of the screen - can also be maintained here. Note that the description is displayed in related tables but can only be edited in the template itself.
+
+5. The Import/Export to Excel buttons are located at the top-right of the screen. This allows users to contribute to a project by maintaining descriptions in a familiar Excel format, also without the possibility of modifying the object structure. 
+
+    * Click the "Export to Excel" button to generate and download the data dictionary in Excel format. 
+    * The Excel follows a similar format as the Data Dictionary screen: only the descriptions are editable (highlighted in orange). Modifying any other field (not highlighted in orange) will have not effect on the project, but will result in a failure to update the related description.
+    * Once you have added some descriptions to the file, save it, and press the "Upload" button to incorporate the changes into the project. 
+    * Search for all or part of a description entered in the previous step to navigate directly to it. 
+    * Save the project to complete the process
+
+
+![documentation](assets/documentation.png)
