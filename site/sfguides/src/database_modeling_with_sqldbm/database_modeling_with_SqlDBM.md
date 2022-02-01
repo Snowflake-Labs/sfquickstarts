@@ -87,9 +87,10 @@ Follow the steps to create a Snowflake project and bring your schema:
 
 2. Select "Snowflake" as the database type and click "Bring your database".
 
+
 ![Creating a new project](assets/bring_your_db.jpg)
 
-3. Click the "Connect to DW" to create a live connection to Snowflake
+3. Click the "Connect to DW" to create a live connection to Snowflake.
 
 * Alternatively, run the GET_DDL command by hand and copy and paste the output onto the text area on the screen, or save it in a file and upload via the "Drop your File" button. 
 
@@ -113,6 +114,11 @@ SELECT GET_DDL('schema','"DATABASE_NAME"."SCHEMA_NAME"', true);
 
 8. Press the "Import" button to create a project with the selected objects. 
 
+    * Parsing and importing DDL into a project is called **Reverse Engineering** in SqlDBM and is not limited to new projects. This can be done at any point to retrieve changes to the database made outside of SqlDBM from the Reverse Engineering screen. 
+    * Note, this will not re-initiate the entire project. Users will be able to choose which objects are added, updated, or deleted from a project depending on whether or not they currently exist. 
+
+    
+![Reverse Engineering ](assets/RE.png)
 
 <!-- ------------------------ -->
 ## Configure project defaults
@@ -163,17 +169,17 @@ Get familiar with the look-and-feel configuration for diagrams and learn to view
 
     * In the Diagram Explorer screen, open a diagram and expand the various options on the right-screen properties menu. 
 
-    * In the view mode options [1], configure the preferred look and feel of the diagram. Here you can select which object properties will be displayed and color-coded on the diagrams. 
+    * In the view mode options, configure the preferred look and feel of the diagram. Here you can select which object properties will be displayed and color-coded on the diagrams. 
 
 2. Set relational notation
 
-    * Toggle between IDEF1X and Crow's Foot relationship notations in the "Notation" options [2]. Note that relationship properties such as Identifying/Non-identifying (IDEF1X) and cardinality (Crow's Foot) will change accordingly. These properties are orientative and do not impact the generated DDL.
+    * Toggle between IDEF1X and Crow's Foot relationship notations in the "Notation" options. Note that relationship properties such as Identifying/Non-identifying (IDEF1X) and cardinality (Crow's Foot) will change accordingly. These properties are orientative and do not impact the generated DDL.
 
 3. Change view modes (level of detail)
 
     * Once defined, database objects in SqlDBM diagrams can be viewed at varying levels of detail. This allows a single diagram to serve various business functions: from general planning to column-level auditing. 
 
-    * You can get a feel for the different view modes by clicking on the "View Mode" selector on the top of the screen [3]
+    * You can get a feel for the different view modes by clicking on the "View Mode" selector on the top of the screen
 
 
 View Mode | Description
@@ -292,9 +298,9 @@ Add descriptive notes anywhere on the diagram by using the "Add Note" (Ctrl+Inse
 ![notes](assets/notes.png)
 
 ### Data dictionary
-SqlDBM's Data Dictionary allows users to review and edit object-level comments in one centralized and searchable screen. The descriptions provided here are intended to help the team go beyond object definitions and provide meaningful details about the data contained in the tables. 
+SqlDBM's **Data Dictionary** allows users to review and edit object-level comments in one centralized and searchable screen. The descriptions provided here are intended to help the team go beyond object definitions and provide meaningful details about the data contained in the tables. 
 
-The descriptions provided here will become part of the object DDL and can be deployed back to the database (see Reverse Engineering topic ahead) - they are not meant to serve merely as project metadata.
+The descriptions provided here will become part of the object DDL and can be deployed back to the database (see Forward Engineering topic ahead) - they are not meant to serve merely as project metadata.
 
 
 1. Access the Data Dictionary screen by selecting the book icon on the left-hand menu. 
@@ -313,5 +319,46 @@ The descriptions provided here will become part of the object DDL and can be dep
     * Search for all or part of a description entered in the previous step to navigate directly to it. 
     * Save the project to complete the process
 
-
 ![documentation](assets/documentation.png)
+
+## Change tracking
+Duration: 2
+
+Every save in SqlDBM generates a versioned _revision_ which allows for change tracking and version control. SqlDBM projects store an infinite revision history and any two revisions can be compared to track changes. The latest revision is indicated next to the project name at the top of the screen (v12 in the example below). 
+
+![documentation](assets/revisions.png)
+
+### Review the latest changes
+The next section will cover deployment. To review the changes that were made as part of this exercise, we will use the **Compare Revisions** feature of SqlDBM. 
+
+1. Click on the "Compare Revisions" icon on the left-hand menu.
+
+2. The latest two revisions are selected by default. Select any two revisions to see the cumulative changes between them. Changes are highlighted based on the following color scheme:
+
+
+Color | Description
+---------|----------
+ Green | New object / addition
+ Yellow | Modification 
+ Red | Deletion
+
+3. Click on any object on the top half of the screen to see the details of the change. 
+
+## Deployment
+Duration: 5
+
+The time has come to deploy all of the changes made during this exercise to a Snowflake environnement. 
+
+In SqlDBM, DDL is generated through a function known as **Forward Engineering**. There are two options: create SQL and alter SQL. The first (create) generates a create statement for selected objects as of the latest revision. The second (alter), creates an alter script from a previous revision. 
+
+![forward engineer](assets/create_sql.png)
+
+1. Access the Forward Engineering screen by clicking on the scroll icon on the left-hand menu.
+
+### Generate create script
+This option will generate a "create" script for deploying new objects (or overwriting existing depending on the options).
+
+
+
+Generate alter script from project import
+Deploy changes
