@@ -5,7 +5,7 @@ environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Modeling, Data Engineering, CICD 
-authors: Sergey Gershkovich
+authors: Serge Gershkovich
 
 
 # Cloud-native Database Modeling with SqlDBM 
@@ -20,8 +20,9 @@ Relational database modeling enables instant visual review of a database landsca
 ### What you’ll learn 
 * How to quickly diagram an existing schema through reverse engineering
 * Create and manipulate database objects using time-saving features like copying and cloning
-* The importance of primary and foreign key relationships and how to declare them 
+* The relevance of primary and foreign key relationships and how to declare them 
 * Inheritance for parent/child objects 
+* Track change history using Revisions
 * Forward engineering & deployment of changes to Snowflake
 
 ### What You'll Use During the Lab
@@ -33,7 +34,7 @@ Relational database modeling enables instant visual review of a database landsca
 
 ### What You'll Build
 * A relational model of an entire database schema
-* Add new tables with no coding required
+* New tables with no coding involved
 * Relate the tables through primary and foreign key constraints
 * A data catalog with column-level descriptions
 
@@ -253,6 +254,30 @@ Begin typing the template name and select it from the auto-suggestion. Hit "Add"
 Keep in mind that while the association exists, changes to the template will be reflected in the associated tables as well. To break the association, click the "X" next to the template name in the table options; you will be given a choice to keep or delete the template columns in the process. 
 
 
+## Working with primary and foreign keys
+Duration: 2
+
+Although we covered the technical aspect of creating and assigning PK and FK constraints, their importance in a relational database deserves its own section. But first, a refresher: 
+
+* A primary key constraint uniquely identifies each record in a table.
+* Primary keys must contain UNIQUE values, and cannot contain NULL values.
+* A foreign key is a field (or collection of fields) in one table, that refers to the PRIMARY KEY in another table.
+* The table with the foreign key is called the child table, and the table with the primary key is called the referenced or parent table.
+
+Although Snowflake does not enforce PK and FK constraints (only NOT NULL) - meaning, Snowflake will not throw an error when duplicate records are inserted, thereby violating a PK - maintaining these as part of a schema helps understand the tables and their relationships.
+
+Being able to quickly and visually identify PK/FK constraints helps make sense of the data as well as facilitates joins and logical operations where uniqueness needs to be taken into account. SqlDBM uses PK/FK constraints in order to link and draw table relationships on a diagram, as do many BI tools when suggesting joins. 
+
+Observe the below tables, which have no constraints defined. Without probing the data, there is no way to determine the uniqueness of individual records or if common columns (i.e., Hotel_ID) hold the same data or use different formats.
+
+![no constraints](assets/noConst.png)
+
+Now observe the same tables with corresponding PK/FK constraints declared. Instantly we know that a BOOKING_ID hols unique information about a booking in the bookings table and that the same is true of Hotel_ID in the hotels table. 
+
+We also know that we can join hotels to bookings using the Hotel_ID to perform an analysis.
+
+![constraints defined ](assets/const.png)
+
 ## Set Snowflake table properties
 Duration: 4
 SqlDBM's no-code interface is intended to minimize syntax errors associated with manually keying DDL. By using a GUI to manipulate database objects, SqlDBM generates neat, error-free, database-specific DDL behind the scenes. 
@@ -322,7 +347,7 @@ The descriptions provided here will become part of the object DDL and can be dep
 ![documentation](assets/documentation.png)
 
 ## Change tracking
-Duration: 2
+Duration: 3
 
 Every save in SqlDBM generates a versioned _revision_ which allows for change tracking and version control. SqlDBM projects store an infinite revision history and any two revisions can be compared to track changes. The latest revision is indicated next to the project name at the top of the screen (v12 in the example below). 
 
@@ -342,12 +367,15 @@ Color | Description
  Yellow | Modification 
  Red | Deletion
 
-3. Click on any object on the top half of the screen to see the details of the change. 
+3. Click on any object on the top half of the screen to see the details of the change.
+
 
 ## Deployment
 Duration: 5
 
 The time has come to deploy all of the changes made during this exercise to a Snowflake environnement. 
+
+
 
 In SqlDBM, DDL is generated through a function known as **Forward Engineering**. There are two options: create SQL and alter SQL. The first (create) generates a create statement for selected objects as of the latest revision. The second (alter), creates an alter script from a previous revision. 
 
@@ -355,10 +383,70 @@ In SqlDBM, DDL is generated through a function known as **Forward Engineering**.
 
 1. Access the Forward Engineering screen by clicking on the scroll icon on the left-hand menu.
 
-### Generate create script
-This option will generate a "create" script for deploying new objects (or overwriting existing depending on the options).
+### Review Errors and Warnings
+While SqlDBM allows users to model and brainstorm at any level of detail (or lack thereof) with no impediment, it also offers non-intrusive "Errors and Warnings" alerts. While these notifications are available on the diagram and in Database Documentation, they are most relevant on the Forward Engineering screen. 
 
 
+* Click on the colored dot next to a table name to review any possible problems which may cause a deployment errors (e.g., columns without a datatype or duplicate tables or column names).
 
-Generate alter script from project import
-Deploy changes
+![Errors and Warnings](assets/eandw.png)
+
+
+### Generate CREATE script
+This option will generate a "create" script for deploying new objects (or overwriting existing depending on the generation options).
+
+2. Mark the checkbox for the objects that you wish to create or use the search to find the desired ones. 
+
+3. Set the _Generation Options_ in the right-hand panel according to what you wish to deploy. Here you can mark options such as create, drop (or both, which results in `CREATE OR REPLACE`) for individual object types, as well as set general properties like Safe Scripts or quote options (i.e., double or empty). 
+
+4. Hit the _Generate SQL_ button in the middle of the screen, or the _triangle_ icon up top to generate the script. 
+
+
+### Generate ALTER script
+An Alter script will generate only the changes between the latest revision, and a previous one. Create, drop, or alter statements will be generated automatically, based on which changes took place between the selected revisions. As such, onl the Safe Scripts and quoting options are applicable. 
+
+* Press the Generate Alter SQL button or the triangle+A icon as described in step [4]. 
+
+* Select the revision you wish to alter from. Typically, you would chose to alter from the last revision which was deployed to the database. If this is your first deployment, choose "Revision 1".
+
+![Alter Script](assets/alterScript.png)
+
+
+### Deploy changes
+Whether you are looking to perform a fresh deployment using a Create Script, or just the latest changes from an Alter Script, the final step is to review the changes prior to deployment. 
+
+![Review Script](assets/reviewScript.png)
+
+* Make sure to thoroughly review the generated script before deploying to a database. While SqlDBm guarantees precise and well-formatted code, you should always review the final output to make sure you have selected the right objects and set the _Generation Options_ accordingly. 
+
+* Pay special attention to the objects with _Errors and Warnings_ indicators and correct the issue where possible, as these are the most likely to cause deployment issues. 
+
+* Once you've verified your code, take the script back into Snowflake and paste it into a worksheet. 
+
+![deploy](assets/snowflakeDeploy.png)
+
+* Make sure to set the active database and schema unless specified as part of the script. 
+
+![Snowflake Settings](assets/snowflakeParam.png)
+
+* Run the script, and enjoy a job well-done. 
+
+## Conclusion & Next Steps
+Duration: 4
+
+Visually-guided database modeling can help an enterprise data team make sense of, and accelerate database development. In this quickstart we followed a simple development workflow: from creating and instantiating a new Snowflake project and schema, to making changes, all the way to deployment. However, the benefits of a centralized modeling tool extend well beyond the role of a developer. 
+
+Whether it's a project manager using **Compare Revisions** to track changes, a business user familiarizing themseselves with a previously-unknown datamart through a relational diagram, or a new team-member becoming appraised of an organization through the **Database Documentation** - doing this in a single tool and in a coordinated fashion makes everyone's job easier and ensures consistency throughout. 
+
+### What we've covered
+* Creating a project
+* Reverse engineering from a Snowflake database
+* Configuring project defaults and the look and feel
+* GUI-based no-code editing
+* Setting Snowflake object properties
+* Change tracking
+* Deployment
+
+### Additional resources 
+* If you have questions about any of the topics descried in this Quickstart or additional functionality, please request a guided demo through our website: [SqlDBM](https://www.SqlDBM.com).
+* To learn more about database modeling best-practices, find out about upcoming features, and stay connected to our growing data community, be sure to follow us on [LinkedIn](https://www.linkedin.com/company/sqldbm).
