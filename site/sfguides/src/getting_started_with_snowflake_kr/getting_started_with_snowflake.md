@@ -242,7 +242,7 @@ Databases 탭에서,  `CITIBIKE`  데이터베이스를 클릭하고 단계를 �
 
 이름: `citibike_trips`
 스키마 이름: `PUBLIC`
-URL: `s3://snowflake-workshop-lab/citibike-trips`
+URL: `s3://snowflake-workshop-lab/citibike-trips/`
 
 Positive
 : 이 랩의 S3 버킷은 공개되어 있으므로 키 필드를 비운 채로 두셔도 됩니다. 이러한 버킷에는 향후 주요 정보가 필요할 수 있습니다.
