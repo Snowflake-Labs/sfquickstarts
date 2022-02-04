@@ -250,7 +250,7 @@ On the Create Stage box, enter the following settings, then click Finish.
 
 Name: `citibike_trips`
 Schema Name: `PUBLIC`
-URL: `s3://snowflake-workshop-lab/citibike-trips`
+URL: `s3://snowflake-workshop-lab/citibike-trips/`
 
 Positive
 : The S3 bucket for this lab is public so you can leave the key fields empty. Such buckets will likely require key information in the future.
