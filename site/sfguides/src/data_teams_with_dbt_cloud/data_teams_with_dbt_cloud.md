@@ -373,7 +373,7 @@ to see the same view as the screenshot above, you can also remove extra columns 
 ```yml
 packages:
   - package: dbt-labs/dbt_utils
-    version: 0.7.1
+    version: 0.8.0
 ```
 
 ![packages](assets/packages_2.png)
