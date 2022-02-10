@@ -9,12 +9,12 @@
     "clean": "gulp clean"
   },
   "devDependencies": {
-    "autoprefixer": "^9.3.1",
+    "autoprefixer": "^10.4.2",
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "bower": "^1.8.4",
     "css-declaration-sorter": "^4.0.1",
-    "cssnano": "^4.1.7",
+    "cssnano": "^5.0.16",
     "del": "^3.0.0",
     "fs-extra": "^7.0.1",
     "glob": "^7.1.3",
@@ -30,14 +30,14 @@
     "gulp-livereload": "^4.0.2",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
-    "gulp-sass": "^4.0.2",
+    "gulp-sass": "^5.1.0",
     "gulp-uglify": "^3.0.1",
     "gulp-useref": "^3.1.6",
     "gulp-vulcanize": "^7.0.0",
     "gulp-watch": "^5.0.1",
     "gulp-webserver": "^0.9.1",
     "jscs": "^3.0.7",
-    "jshint": "^2.9.6",
+    "jshint": "^2.13.4",
     "jshint-stylish": "^2.2.1",
     "merge-stream": "^1.0.1",
     "path": "^0.12.7",
@@ -46,7 +46,7 @@
     "through2": "^3.0.0",
     "uglify-es": "^3.3.9",
     "vulcanize": "^1.16.0",
-    "yargs": "^12.0.4"
+    "yargs": "^17.3.1"
   },
   "engines": {
     "node": ">=0.10.0"

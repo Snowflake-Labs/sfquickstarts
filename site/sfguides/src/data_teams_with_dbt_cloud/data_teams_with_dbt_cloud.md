@@ -10,7 +10,7 @@ authors: Amy Chen, Dmytro Yaroshenko
 # Accelerating Data Teams with dbt Cloud & Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
+Duration: 1
 
 Modern businesses need modern data strategies, built on platforms that support agility, growth and operational efficiency. 
 
@@ -63,7 +63,17 @@ Duration: 1
 ![Snowflake Log In Screen](assets/snowflake_login.png)  
 
 2. UI Tour (SE will walk through this live). For post-workshop participants, click [here](https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface) for a quick tour of the UI.  
+
+We will be using the new UI to getting started but you can also switch over to the Classic Console if you would like. It will not affect your dbt experience but may change where the buttons are in the Snowflake UI. 
+
+New UI:
+![New Snowflake UI](assets/new_snowflake_ui.png)  
+
+Classic UI:
+
 ![Snowflake Worksheets](assets/snowflake_worksheets.png)  
+If you ever want to change from the new UI to the classic one, click on the home button and then `Classic Console`
+
 
 <!-- ------------------------ -->
 ## Connect to Data Source
@@ -71,18 +81,11 @@ Duration: 5
 
 Now we need to obtain our raw data. We are going to the Snowflake Marketplace to connect to the Knoema dataset. 
 
-1. Click on the Preview App on the top right side of the UI. 
-![Click on Preview](assets/preview_app.png) 
-
-2. You will need to log in again. Please use the same user and password that you used to login to your Snowflake account the first time. 
-
-3. Select your user on the top left and “Switch Role” from the top left corner of the UI to switch to `ACCOUNTADMIN` role if not already set. 
-
-4. Now we want to go into the Snowflake Marketplace to connect to the Knoema dataset. Click on Data on the left hand sidebar and then Marketplace.
+1. We want to go into the Snowflake Marketplace to connect to the Knoema dataset. Click on Data on the left hand sidebar and then Marketplace.
 
 ![Click on Marketplace](assets/click_on_marketplace.png) 
 
-5. Now let’s look for Knoema Economy Atlas Data. Type into the “Search Data Marketplace” search bar “Knoema Economy Atlas Data”.  Find the Knoema Economy Atlas Data tile in the results. Once you find it, click on it.
+2. Now let’s look for Knoema Economy Atlas Data. Type into the “Search Data Marketplace” search bar “Knoema Economy Atlas Data”.  Find the Knoema Economy Atlas Data tile in the results. Once you find it, click on it.
 
 ![Click on Knoema Tile](assets/click_on_knoema_tile.png) 
 
@@ -93,6 +96,7 @@ Now we need to obtain our raw data. We are going to the Snowflake Marketplace to
 7. In the pop-up, enter “KNOEMA_ECONOMY_DATA_ATLAS” as the database name and click “Get Data”. Do not forget to update the name of the database or you will have update some code down the line.
 
 ![Rename Database](assets/rename_database.png) 
+
 
 So what is happening here? Knoema has granted access to this data from their Snowflake account to yours. You're creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts! When you query, you'll really be querying the data that lives in the Knoema account. If they change the data, you'll automatically see those changes. No need to define schemas, move data, or create a data pipeline either.
 
@@ -136,13 +140,13 @@ Congratulations! You successfully tapped into a live data feed of Trade and FX r
 Duration: 2
 
 Now it's time to set up dbt. We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials in minutes.
-
  
-1. In the Snowflake Preview UI, click on the home icon. Then click on your username 
-and in the drop down, click on "Partner Connect"
+1. In the Snowflake UI, click on the home icon on the top left side. To access Partner Connect, click on your user and then Partner Connect. Make sure you're still set as the ACCOUNTADMIN role. 
 
-![Click on home](assets/click_on_home.png)
-![Click on Partner Connect](assets/click_on_Partner_Connect.png)
+![Click on Partner Connect](assets/click_on_Partner_Connect_1.png)
+
+If you're using the classic console, it will be on the top right. 
+![Click on Partner Connect](assets/click_on_Partner_Connect_2.png)
 
 2. Find the dbt Tile by typing into the "Search Partner Connect" search bar. Click on the dbt tile. 
 
@@ -215,7 +219,7 @@ If you want to see the actual code being executed, you can go into the ‘Detail
 ![successful run](assets/successful_run_2.png)
 
 
-13. Now let’s visually confirm the objects in Snowflake. Switch to the Snowflake UI and refresh database objects. Expand the database `PC_DBT_WH`. Then the development schema with your first initial and last name. And lastly Tables and Views. You should see the table `MY_FIRST_DBT_MODEL`  and the view `MY_SECOND_DBT_MODEL`. 
+13. Now let’s visually confirm the objects in Snowflake. Switch to the Snowflake UI (classic console) and refresh database objects. Expand the database `PC_DBT_WH`. Then the development schema with your first initial and last name. And lastly Tables and Views. You should see the table `MY_FIRST_DBT_MODEL`  and the view `MY_SECOND_DBT_MODEL`. 
 
 ![successful run](assets/successful_run_3.png)
 
@@ -369,7 +373,7 @@ to see the same view as the screenshot above, you can also remove extra columns 
 ```yml
 packages:
   - package: dbt-labs/dbt_utils
-    version: 0.7.1
+    version: 0.8.0
 ```
 
 ![packages](assets/packages_2.png)
@@ -386,7 +390,7 @@ packages:
 <!-- ------------------------ -->
 
 ## Building dbt Data Pipelines
-Duration: 1
+Duration: 0
 
 Now we start to get into the fun stuff. In the next few sections, we are going to build our dbt pipelines. This will include transformations that define these these areas of interest: 
 - Stock trading history
@@ -850,7 +854,7 @@ As you can see,  the macro from the dbt_utils package wrote the code, aligned th
 
 <!-- ------------------------ -->
 ## dbt pipelines - Intermediate Part 2
-Duration: 10
+Duration: 5
  
 1. Next challenge! We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis more meaningful, we should have rows for the days shares were held as well. To do this, let’s make this new file: `int_daily_position.sql` in the intermediate folder. 
 
@@ -983,7 +987,7 @@ order by  book_date
  
 <!-- ------------------------ -->
 ## dbt pipelines - Facts
-Duration: 10
+Duration: 5
 
 #### dbt pipelines - PnL calculation
 Now for the last models in our tale. We have the trading history of our desks and our stock price history. 
@@ -1155,7 +1159,7 @@ You will not see a true performance improvement in this example because our data
 
 <!-- ------------------------ -->
 ## dbt pipelines - Tests & Docs
-Duration: 10
+Duration: 5
 
 ### Testing & Documentation 
 
@@ -1301,7 +1305,7 @@ You should now see the description field populated.
  
 <!-- ------------------------ -->
 ## dbt pipelines - Deployment
-Duration: 10 
+Duration: 5 
 
 Okay, it seems like we have everything in place: pipelines have been developed, tested and documented.  
 
