@@ -150,8 +150,6 @@ If you're using the classic console, it will be on the top right.
 
 2. Find the dbt Tile by typing into the "Search Partner Connect" search bar. Click on the dbt tile. 
 
-![Click on dbt Partner Connect](assets/click_on_dbt_Partner_Connect.png)
-
 3. You should now see a popup that says `Connect to dbt`. Click on `Optional Grant` and you are going to add in the KNOEMA_ECONOMY_DATA_ATLAS database. This will grant access for your new dbt user role to the database. 
 
 4. Click on `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.  
