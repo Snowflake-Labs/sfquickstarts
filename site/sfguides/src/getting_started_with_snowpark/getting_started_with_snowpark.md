@@ -11,16 +11,15 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview
 Duration: 1
 
-Using the Snowpark API, you can query and manipulate data by writing code that uses
+Using the [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index.html),
+you can query and manipulate data by writing code that uses
 objects (like a [DataFrame](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrame.html)) rather than SQL statements. Snowpark is designed to make
 building complex data pipelines easy, allowing you to interact with
 Snowflake directly without moving data. When you use the
-[Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index.html),
-the library uploads and runs your code in Snowflake so that you don't need to
-move the data to a separate system for processing.
+Snowpark API, the library uploads and runs your code in Snowflake so that you
+don't need to move the data to a separate system for processing.
 
-Snowpark is a [preview feature](https://docs.snowflake.com/en/release-notes/preview-features.html)
-and currently provides an API in Scala.
+Currently, Snowpark is generally available on AWS and is a preview feature on Azure and GCP.
 
 ### What You’ll Build
 - A Scala application that uses the Snowpark library to process data in a stage
@@ -80,7 +79,7 @@ The repository's demo directory includes the following files:
   to be uploaded to internal named stages. After downloading and extracting the data and JAR files,
 run this example to create those stages and upload those files.
 
-- `src/main/scala/UDFDemo`: This is a simple code example that creates and calls a UDF.
+- `src/main/scala/UDFDemo.scala`: This is a simple code example that creates and calls a UDF.
 
 <!-- ------------------------ -->
 ##  Configure the settings for connecting to Snowflake
@@ -108,12 +107,11 @@ DB = my_db
 SCHEMA = my_schema
 ```
 
-- For the `URL`, the value should include an identifier in the account locator
-  format, as described in [Account Identifiers](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html).
-  You might also find [Using Account Identifiers for Connecting to Your Accounts](https://docs.snowflake.com/en/user-guide/organizations-connect.html) useful.
+- Use a [URL that includes your account identifier](https://docs.snowflake.com/en/user-guide/organizations-connect.html). For more information about the format of the URL,
+  see [Account Identifiers](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html).
 - The `ROLE` that you choose must have permissions to create stages and write
   tables in the specified database and schema.
-- For the other properties, use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-connection-parameters).
+- For the other properties, use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-parameters.html).
 
 <!-- ------------------------ -->
 ##  Connect to Snowflake
@@ -405,8 +403,8 @@ This example does the following:
 - Creates a new DataFrame that contains:
     - The column with the original data
     - A new column with the return value of the UDF
-- Creates a new DataFrame that just contains the rows where the function
-  determined that the sentiment was happy.
+- Creates a new DataFrame that just contains the rows where the UDF determined
+  that the sentiment was happy.
 
 See the topics that follow for more on how this works.
 
@@ -474,7 +472,7 @@ The `collectTweetData` method creates a `DataFrame` to [read CSV data from a fil
   line of code does) before you call the method to retrieve the data.
 
 - Next, the example returns a new DataFrame (`tweetData`) that just contains the
-  column with the tweets (the column named `text`). The Dataframe contain the
+  column with the tweets (the column named `text`). The Dataframe contains the
   first 100 rows of data from the original DataFrame `origData`. The `drop` and
   `limit` methods in the example each return a new DataFrame that has been
   transformed by these methods. Because each method returns a new DataFrame that
@@ -484,8 +482,9 @@ The `collectTweetData` method creates a `DataFrame` to [read CSV data from a fil
   val tweetData = origData.drop('target, 'ids, 'date, 'flag, 'user).limit(100)
   ```
 
-- At this point, the DataFrame `tweetData` does not contain the actual data. In order to load the
-data, you must call a method that performs an action (`show`, in this case).
+- At this point, the DataFrame `tweetData` does not contain the actual data. In
+  order to load the data, you must call a method that performs an action (`show`,
+  in this case).
 
   The example returns the DataFrame `tweetData`.
 
@@ -666,8 +665,8 @@ which tweets are happy.
   ```scala
   happyTweets.write.mode(Overwrite).saveAsTable("demo_happy_tweets")
   ```
-  From calling writing happy tweets to the `demo_happy_tweets` table, you'll
-  see output such as the following.
+  
+  When the `saveAsTable` method executes, you'll see output such as the following.
 
   ```console
   === Saving the data to the table demo_happy_tweets ===
@@ -763,7 +762,7 @@ For related documentation, be sure to read
   just executes the method or function associated with that stored procedure.
   The execution happens with that JAR file in the classpath.
 
-That's how easy it is to created a stored procedure. For bonus points, you could
+That's how easy it is to create a stored procedure. For bonus points, you could
 call the new stored procedure with a nightly task.
 
 ```sql
