@@ -11,13 +11,16 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview
 Duration: 1
 
-Using Snowpark, you can query and manipulate data by writing code that uses
+Using the Snowpark API, you can query and manipulate data by writing code that uses
 objects (like a [DataFrame](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrame.html)) rather than SQL statements. Snowpark is designed to make
 building complex data pipelines easy, allowing you to interact with
-Snowflake directly without moving data. Using the [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/index.html), you upload and run your code in
-Snowflake so that you don't need to move the data to a separate system for processing.
+Snowflake directly without moving data. When you use the
+[Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index.html),
+the library uploads and runs your code in Snowflake so that you don't need to
+move the data to a separate system for processing.
 
-Snowpark is a [preview feature](https://docs.snowflake.com/en/release-notes/preview-features.html) and currently provides an API in Scala.
+Snowpark is a [preview feature](https://docs.snowflake.com/en/release-notes/preview-features.html)
+and currently provides an API in Scala.
 
 ### What You’ll Build
 - A Scala application that uses the Snowpark library to process data in a stage
@@ -38,8 +41,7 @@ You can also use a development tool or environment that supports SBT projects
 for Scala 2.12 (specifically, version 2.12.9 or later 2.12.x versions). Snowpark
 does not yet support versions of Scala after 2.12 (for example, Scala 2.13).
 
-To compile and run your Scala code, your development tool must use the JDK 8.x,
-9.x, 10.x, or 11.x. Snowpark does not yet support other versions of the JDK.
+Snowpark supports code compiled to run on Java 11.
 
 <!-- ------------------------ -->
 ## Download the repository
@@ -90,24 +92,28 @@ example code uses to
 to connect to Snowflake. You'll need to edit these properties so the code
 connects to your Snowflake account.
 
-- Edit this file and replace the `&lt;placeholder&gt;` values with the values
-  that you use to connect to Snowflake. For example:
+### Configuring the connection settings
 
-  ```console
-  URL = https://myaccount.snowflakecomputing.com
-  USER = myusername
-  PRIVATE_KEY_FILE = /home/username/rsa_key.p8
-  PRIVATE_KEY_FILE_PWD = my_passphrase_for_my_encrypted_private_key_file
-  ROLE = my_role
-  WAREHOUSE = my_warehouse
-  DB = my_db
-  SCHEMA = my_schema
-  ```
+Edit this file and replace the `&lt;placeholder&gt;` values with the values
+that you use to connect to Snowflake. For example:
 
-The role that you choose must have permissions to create stages and write tables
-in the specified database and schema.
+```console
+URL = https://myaccount.snowflakecomputing.com
+USER = myusername
+PRIVATE_KEY_FILE = /home/username/rsa_key.p8
+PRIVATE_KEY_FILE_PWD = my_passphrase_for_my_encrypted_private_key_file
+ROLE = my_role
+WAREHOUSE = my_warehouse
+DB = my_db
+SCHEMA = my_schema
+```
 
-For the properties in this file, use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-connection-parameters).
+- For the `URL`, the value should include an identifier in the account locator
+  format, as described in [Account Identifiers](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html).
+  You might also find [Using Account Identifiers for Connecting to Your Accounts](https://docs.snowflake.com/en/user-guide/organizations-connect.html) useful.
+- The `ROLE` that you choose must have permissions to create stages and write
+  tables in the specified database and schema.
+- For the other properties, use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-connection-parameters).
 
 <!-- ------------------------ -->
 ##  Connect to Snowflake
@@ -129,23 +135,12 @@ code and your connection properties.
 When the HelloWorld application runs successfully, take a look at the following
 walkthrough of its code and output.
 
-- After creating a session, the application code creates a
+- To establish a session, the application code creates a
   [Session](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/Session.html)
   object with the settings specified in `snowflake_connection.properties`.
 
     ```scala
     val session = Session.builder.configFile("snowflake_connection.properties").create
-    ```
-
-    For this part of the example, you should just see the following output:
-
-    ```console
-    [info] running HelloWorld
-
-    === Creating the session ===
-
-    [sbt-bg-threads-1]  INFO (Logging.scala:22) - Closing stderr and redirecting to stdout
-    [sbt-bg-threads-1]  INFO (Logging.scala:22) - Done closing stderr and redirecting to stdout
     ```
 
 - Next, the application code [creates a DataFrame](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html) to hold the results from executing the `SHOW TABLES` command:
@@ -185,7 +180,7 @@ walkthrough of its code and output.
     ```
 
 Now that you have verified that you can connect to Snowflake, you need to get
-the data and libraries you'll need to make the UDF work.
+the data and libraries to make the UDF work. 
 
 <!-- ------------------------ -->
 ## Download the data file and libraries for the demo
@@ -262,11 +257,11 @@ understand what it does.
 
 After creating a session, the application code calls `uploadDemoFiles` twice --
 once to upload the sample data CSV file, then again to upload the JAR files that
-will be dependencies of the UDF you'll create. The function uses the Snowpark
+will be dependencies of the UDF you'll create. The method uses the Snowpark
 library to create a stage for the uploaded files.
 
-- The `uploadDemoFiles` function takes the name of the stage to which the files
-  should be uploaded, along with a file pattern for passing the names of files
+- The `uploadDemoFiles` method takes the name of the stage to which the files
+  should be uploaded, along with a file pattern that matches the names of files
   to upload.
 
   ```scala
@@ -283,7 +278,7 @@ library to create a stage for the uploaded files.
   ```
 
   For this part of the example, you should see the following output when the
-  function is preparing to upload the data.
+  method is creating the stage for the data files.
 
   ```console
   === Creating the stage @snowpark_demo_data ===
@@ -296,7 +291,8 @@ library to create a stage for the uploaded files.
   [sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25576-0504-b1f7-0000-438301d9f322] alter session unset query_tag
   ```
 
-  You should output when the function is preparing to upload the JAR files.
+  Later, when this method is called again to create the stage for the JAR
+  files, you should see the following output.
 
   ```console
   === Creating the stage @snowpark_demo_udf_dependency_jars ===
@@ -320,7 +316,7 @@ library to create a stage for the uploaded files.
   res.foreach(r => Console.println(s"  ${r.sourceFileName}: ${r.status}"))
   ```
 
-  You should see the following when the function is uploading the data file.
+  You should see the following when the method is uploading the data file.
 
   ```console
   === Uploading files matching training.1600000.processed.noemoticon.csv to @snowpark_demo_data ===
@@ -332,7 +328,7 @@ library to create a stage for the uploaded files.
     training.1600000.processed.noemoticon.csv: UPLOADED
   ```
 
-  You should see the following when the function is uploading the JAR files.
+  You should see the following when the method is uploading the JAR files.
 
   ```console
   === Uploading files matching *.jar to @snowpark_demo_udf_dependency_jars ===
@@ -354,7 +350,7 @@ library to create a stage for the uploaded files.
   session.sql(s"ls @$stageName").show()
   ```
 
-  You should see the following when the function has uploaded the CSV file.
+  You should see the following when the method has uploaded the CSV file.
 
   ```console
   === Files in @snowpark_demo_data ===
@@ -367,7 +363,7 @@ library to create a stage for the uploaded files.
   ---------------------------------------------------------------------------------------------------------------------------------------
   ```
 
-  You should see the following when the function has uploaded the JAR files.
+  You should see the following when the method has uploaded the JAR files.
 
 
   ```console
@@ -400,14 +396,15 @@ look at the example and the output to see how the Snowpark library does this.
   sbt "runMain UDFDemo"
   ```
 
-This example performs the following actions:
+This example does the following:
 
 - Loads the data from the demo file into a DataFrame.
 - Creates a user-defined function (UDF) that analyzes a string and determines
   the sentiment of the words in the string.
-- Calls the analysis function on each value in a column in the DataFrame.
-- Creates a new DataFrame that contains the column with the original data, and
-  a new column with the return value of the UDF.
+- Calls the UDF on each value in a column in the DataFrame.
+- Creates a new DataFrame that contains:
+    - The column with the original data
+    - A new column with the return value of the UDF
 - Creates a new DataFrame that just contains the rows where the function
   determined that the sentiment was happy.
 
@@ -417,12 +414,12 @@ See the topics that follow for more on how this works.
 ##  Load data from a stage and create a DataFrame
 Duration: 5
 
-The `collectTweetData` function creates a `DataFrame` to [read CSV data from a file in a stage](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages). It does this with a
+The `collectTweetData` method creates a `DataFrame` to [read CSV data from a file in a stage](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages). It does this with a
 [DataFrameReader](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrameReader.html) object.
 
 ### Code walkthrough
 
-- The function recieves a Session object to use for connecting to Snowflake.
+- The method receives a Session object to use for connecting to Snowflake.
 
   ```scala
   def collectTweetData(session: Session): DataFrame = {
@@ -477,11 +474,11 @@ The `collectTweetData` function creates a `DataFrame` to [read CSV data from a f
   line of code does) before you call the method to retrieve the data.
 
 - Next, the example returns a new DataFrame (`tweetData`) that just contains the
-  column with the tweets (the column named `text`) with the first 100 rows of
-  data from the original DataFrame `origData`. The `drop` and `limit` methods in
-  the example each return a new DataFrame that has been transformed by this
-  method. Because each method returns a new DataFrame that has been transformed
-  by the method, you can chain the method calls, as shown below:
+  column with the tweets (the column named `text`). The Dataframe contain the
+  first 100 rows of data from the original DataFrame `origData`. The `drop` and
+  `limit` methods in the example each return a new DataFrame that has been
+  transformed by these methods. Because each method returns a new DataFrame that
+  has been transformed by the method, you can chain the method calls, as shown below:
 
   ```scala
   val tweetData = origData.drop('target, 'ids, 'date, 'flag, 'user).limit(100)
@@ -519,13 +516,13 @@ For `collectTweetData`, you'll see output such as the following.
 ##  Define a UDF
 Duration: 5
 
-The `createUDF` function sets up dependencies for a UDF that analyzes tweets
-for sentiment, then it creates the function itself on Snowflake.
+The `createUDF` method sets up dependencies for a UDF that analyzes tweets
+for sentiment, then it creates the UDF in Snowflake.
 
 ### Code walkthrough
 
-- The function takes a session for connecting to Snowflake when adding
-  dependencies.
+- The method takes a `Session` object that is used to specify the dependencies
+  of the UDF.
 
   ```scala
   def createUDF(session: Session): UserDefinedFunction = {
@@ -577,7 +574,7 @@ dependencies (like the dependencies that it specified earlier):
   [sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b311-0000-438301da501a] alter session unset query_tag
   ```
 
-  ...and uploads to the stage the JAR files for Snowpark and for your application code. Snowpark also
+  ... and uploads to the stage the JAR files for Snowpark and for your application code. Snowpark also
 compiles your UDF and uploads the JAR file to the stage:
 
   ```console
@@ -601,20 +598,21 @@ compiles your UDF and uploads the JAR file to the stage:
 ##  Use the UDF to process the tweets
 Duration: 5
 
-The `processHappyTweets` uses the UDF to analyze tweet text to discover which
-tweets are happy. 
+The `processHappyTweets` method uses the UDF to analyze tweet text to discover
+which tweets are happy. 
 
 ### Code walkthrough 
 
-- The function receives a session for connecting to Snowflake, as well as the
-  UDF you created and a DataFrame representing the tweets.
+- The method receives:
+  - A `Session` for connecting to Snowflake.
+  - The UDF you created.
+  - A DataFrame representing the tweets.
 
   ```scala
   def processHappyTweets(session: Session, sentimentFunc: UserDefinedFunction, tweetData: DataFrame): Unit = {
   ```
 
-- Import names from `implicits` in the `session` variable (which were
-  defined when the session was created):
+- Import names from `implicits` in the `session` variable:
 
   ```scala
   import session.implicits._
@@ -645,7 +643,7 @@ tweets are happy.
   happyTweets.show()
   ```
 
-  From calling `show`, you'll see output such as the following.
+  When the `show` method executes, you'll see output such as the following.
 
   ```console
   === Retrieving the data and printing the first 10 tweets ===
@@ -682,7 +680,7 @@ That's it for this part! So far, you've uploaded Scala code as a user-defined
 function, then run the UDF to analyze tweet data for happy tweets.
 
 In the last step, you'll take the code you've got already and turn it into
-a stored procedure on Snowflake.
+a stored procedure in Snowflake.
 
 <!-- ------------------------ -->
 ##  Create a stored procedure from the Scala code
@@ -693,10 +691,12 @@ procedure from it. To do that, you'll copy the Scala code into a Snowflake
 worksheet, wrap the code in an SQL statement, and run it to create the
 stored procedure.
 
-For related documentation, be sure to see
+The following steps use the [new web interface](https://docs.snowflake.com/en/user-guide/ui-web.html).
+
+For related documentation, be sure to read
 [Writing Stored Procedures in Snowpark (Scala)](https://docs.snowflake.com/en/sql-reference/stored-procedures-scala.html).
 
-1. In Snowflake, create a new worksheet and call it `discoverHappyTweets`.
+1. In the new web interface, create a new worksheet and call it `discoverHappyTweets`.
 
 1. In the worksheet editor, ensure that the session context matches the settings
   you specified in the snowflake_connection.properties file you edited earlier.
@@ -735,14 +735,17 @@ For related documentation, be sure to see
       - The `handler` parameter specifies the function Snowflake should call
         when executing the stored procedure.
       - The `target_path` parameter specifies the name and location of the JAR
-        to create when you run this code. Snowflake compiles the code and puts
-        the result in this JAR file.
+        to create when you run this code. Snowflake compiles the code and packages
+        the compiled classes.
 
 1. Into the section between the `$$` delimiters, paste the Scala code from
     `UDFDemo`. Be sure to include the `import` statements. Don't include the
     `main` function; you don't need it. In particular, Snowflake will inject a
     Session object in place of the one you were creating there. Snowflake will
-    instead call the function you specified with the `handler` parameter.
+    instead call the method you specified with the `handler` parameter.
+
+1. Run the code in the worksheet. Snowflake compiles the code in the body of
+  `CREATE PROCEDURE` and packages it into a JAR file.
 
 1. Create a new worksheet and call it `call discoverHappyTweets`.
 
