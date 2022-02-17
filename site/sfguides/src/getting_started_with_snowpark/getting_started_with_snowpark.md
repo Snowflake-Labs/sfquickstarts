@@ -49,6 +49,8 @@ Duration: 5
 You'll find the demo in a Snowflake GitHub repository. After installing git, you can clone the
 repository using your terminal.
 
+### Clone the repository
+
 1. Open a terminal window and run the following commands to change to the directory where you want
    the repository cloned, and then clone the repository.
 
@@ -91,7 +93,7 @@ example code uses to
 to connect to Snowflake. You'll need to edit these properties so the code
 connects to your Snowflake account.
 
-### Configuring the connection settings
+### Configure the connection settings
 
 Edit this file and replace the `&lt;placeholder&gt;` values with the values
 that you use to connect to Snowflake. For example:
@@ -120,13 +122,15 @@ Duration: 5
 In this step, you'll confirm that you can connect to Snowflake with the demo
 code and your connection properties.
 
-- Using the [SBT command-line tool](https://www.scala-sbt.org/1.x/docs/Running.html),
-  run the following command to build and run the `HelloWorld.scala` example to
-  verify that you can connect to Snowflake:
+### Confirm a connection to Snowflake
 
-    ```console
-    sbt "runMain HelloWorld"
-    ```
+Using the [SBT command-line tool](https://www.scala-sbt.org/1.x/docs/Running.html),
+run the following command to build and run the `HelloWorld.scala` example to
+verify that you can connect to Snowflake:
+
+```console
+sbt "runMain HelloWorld"
+```
 
 ### Code walkthrough
 
@@ -189,6 +193,8 @@ run the user-defined function you're going to create. This demo uses the
 [sentiment140](https://www.kaggle.com/kazanova/sentiment140) dataset and
 libraries from the [CoreNLP project](https://stanfordnlp.github.io/CoreNLP/).
 
+### Download dependency JARs and sample data file
+
 1. Go to the [sentiment140](https://www.kaggle.com/kazanova/sentiment140) page
   and click **Download** to download the ZIP archive containing the dataset.
 
@@ -242,11 +248,13 @@ upload the JAR files for these libraries to an internal stage to make them
 available to Snowflake. You also need to upload the dataset to a stage, where
 the demo will access the data.
 
-- Run the following command to run the code.
+### Upload data file and dependencies
 
-    ```console
-    sbt "runMain UDFDemoSetup"
-    ```
+Run the following command to run the code.
+
+```console
+sbt "runMain UDFDemoSetup"
+```
 
 ### Code walkthrough
 
@@ -388,11 +396,13 @@ In this step, you'll run the `UDFDemo.scala` demo application to create and call
 a user-defined function (UDF). Read the topics that follow to take a closer
 look at the example and the output to see how the Snowpark library does this.
 
-- Run the following command to run the code:
+### Create and call the UDF
 
-  ```console
-  sbt "runMain UDFDemo"
-  ```
+Run the following command to run the code:
+
+```console
+sbt "runMain UDFDemo"
+```
 
 This example does the following:
 
@@ -694,6 +704,8 @@ The following steps use the [new web interface](https://docs.snowflake.com/en/us
 
 For related documentation, be sure to read
 [Writing Stored Procedures in Snowpark (Scala)](https://docs.snowflake.com/en/sql-reference/stored-procedures-scala.html).
+
+### Create and run the stored procedure
 
 1. In the new web interface, create a new worksheet and call it `discoverHappyTweets`.
 
