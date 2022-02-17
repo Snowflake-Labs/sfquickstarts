@@ -17,7 +17,7 @@ Welcome! The Snowflake SQL API is a [REST API](https://en.wikipedia.org/wiki/Rep
 This getting started guide will walk you through executing a SQL statement with the API and retrieving the results. 
 
 Negative
-: Support for the Snowflake SQL API is currently not in production and is available only to selected accounts.
+: Support for the Snowflake SQL API is currently not in production.
 
 
 ### Prerequisites
@@ -36,7 +36,8 @@ Negative
 ### What You'll Need
 
 - A Snowflake Account with an accessible warehouse, database, schema, and role
-- A Snowflake [OAuth](https://docs.snowflake.com/en/user-guide/oauth.html) token
+- SnowSQL 1.2.17 or higher
+- Working [Key-Pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication)
 
 ### What You'll Build
 
@@ -49,17 +50,17 @@ Duration: 3
 Head to the SQL API by navigating to your version of the following URL, replacing  `*account_locator*` with the account locator for your own Snowflake account: 
 
 ```
-https://*account_locator*.snowflakecomputing.com/api
+https://*account_locator*.snowflakecomputing.com/api/v2
 ```
 
 Negative
 : Note that the account locator might include additional segments for your region and cloud provider. See [Specifying Region Information in Your Account Hostname](https://docs.snowflake.com/en/user-guide/intro-regions.html#label-region-ids) for details.
 
-Now let's break down the parts of the API before we begin using it. The API consists of the `/api/statements/` resource and provides the following endpoints:
+Now let's break down the parts of the API before we begin using it. The API consists of the `/api/v2/statements/` resource and provides the following endpoints:
 
-* `/api/statements`: You'll use this endpoint to [submit a SQL statement for execution](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#label-sql-api-executing-statement).
-* `/api/statements/*statementHandle*`: You'll use this endpoint to [check the status of the execution of a statement](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#label-sql-api-checking-statement-status).
-* `/api/statements/*statementHandle*/cancel`: You'll use this endpoint to [cancel the execution of a statement](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#label-sql-api-cancelling-statement).
+* `/api/v2/statements`: You'll use this endpoint to [submit a SQL statement for execution](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements).
+* `/api/v2/statements/*statementHandle*`: You'll use this endpoint to [check the status of the execution of a statement](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#get-api-v2-statements-statementhandle).
+* `/api/v2/statements/*statementHandle*/cancel`: You'll use this endpoint to [cancel the execution of a statement](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements-statementhandle-cancel).
 
 In the steps to come, you shall use all these endpoints to familiarize yourself with the API. 
 
@@ -68,22 +69,8 @@ Positive
 
 ### Limitations of the SQL API
 
-It's important to be aware of the limitations that the SQL API currently has:
+It's important to be aware of the [limitations that the SQL API] (https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#limitations-of-the-sql-api) currently has.  In particular noting that `GET` and `PUT` are not supported.  
 
-- The maximum size of a page of results is approximately 10 MB.
-- The maximum number of rows returned in a page of results is 10,000.
-
-The following statements are also not supported:
-- PUT
-- GET
-- USE
-- ALTER SESSION
-- BEGIN
-- COMMIT
-- ROLLBACK
-- CALL
-- statements that set session variables
-- statements that create temporary tables and stages
 
 <!-- ------------------------ -->
 ## Assigning a Unique Request ID for Resubmitting Requests
@@ -98,7 +85,7 @@ To prevent Snowflake from executing the same statement twice when you resubmit a
 To specify a request ID, generate a [universally unique identifier (UUID)](https://en.wikipedia.org/wiki/Universally_unique_identifier) and include this identifier in the `requestId` query parameter:
 
 ```
-POST /api/statements?requestId=<UUID> HTTP/1.1
+POST /api/v2/statements?requestId=<UUID> HTTP/1.1
 ```
 
 If Snowflake fails to process a request, you can submit the same request again with the same request ID. Using the same request ID indicates to the server that you are submitting the same request again.
@@ -109,36 +96,41 @@ Now let's move on to additional information you need to include in requests: aut
 ## Authenticating to the Server
 Duration: 3
 
-When you send a request, the request must include authentication information. There are two options for providing authentication: OAuth and key pair authentication. You can use whichever one you have previously implemented or whichever one you are most comfortable with. This example will be detailing authentication with [OAuth](https://oauth.net/). 
+When you send a request, the request must include authentication information. There are two options for providing authentication: OAuth and JWT key pair authentication. You can use whichever one you have previously implemented or whichever one you are most comfortable with. This example will be detailing authentication with [JWT](https://jwt.io/). 
 
-If you haven't already done so, set up [OAuth](https://docs.snowflake.com/en/user-guide/oauth.html) for authentication and get an OAuth token.
+If you haven't done so already, make sure you have [key pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication) working with Snowflake already.
+
+You can test to make sure you can successfully connect to Snowflake Key Pairs using the following command:
+
+```
+$ snowsql -a <account> -u <user> --private-key-path <path to private key>
+```
 
 Negative
-: If you'd rather authenticate with key pair authentication, please visit our documentation on authenticating with [key pair authentication](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#using-key-pair-authentication). 
+: If you'd rather authenticate with OAuth, please visit our documentation on authenticating with [OAuth](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#using-oauth). 
 
-Once you have a token, you can use SnowSQL to verify that you can use a generated OAuth token to connect to Snowflake:
+After you've verified you can connect to Snowflake using key-pair authentication, you'll need to generate a JWT token.  This JWT token is time limited token which has been signed with your key and Snowflake will know that you authorized this token to be used to authenticate as you for the SQL API.
 
 ```
-$ snowsql -a <account> -u <user> --authenticator=oauth --token=<oauth_token>
+$ snowsql -a <account> -u <user> --private-key-path <path to private key> --generate-jwt
+<returns JWT token>
 ```
 
-After you've verified you can connect to Snowflake with the token, you'll need to set the following headers in each API request that you send within your application code:
+You'll need the JWT token generated to be used for using the SQL API. The following headers need be set in each API request that you send within your application code:
 
-- `Authorization: Bearer *oauth_token*` where `*oauth_token*` is the generated OAuth token.
+- `Authorization: Bearer *jwt_token*` where `*jwt_token*` is the generated JWT token from SnowSQL
 
-- `X-Snowflake-Authorization-Token-Type: OAUTH`
-
-Positive
-: Note that you can also choose to omit the `X-Snowflake-Authorization-Token-Type` header. Snowflake assumes that the token in the `Authorization` header is an OAuth token if this header is not present.
+- `X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT`
 
 Altogether, your request query and header will take the following form:
 
 ```
-POST /api/statements?requestId=<UUID> HTTP/1.1
-Authorization: Bearer <oauth_token>
+POST /api/v2/statements?requestId=<UUID> HTTP/1.1
+Authorization: Bearer <jwt_token>
 Content-Type: application/json
 Accept: application/json
 User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
 ```
 
 Now that you have been introduced to authentication and unique request IDs, you can now move to actually making a request to execute a SQL statement. 
@@ -147,14 +139,15 @@ Now that you have been introduced to authentication and unique request IDs, you 
 ## Submitting a Request to Execute a SQL Statement
 Duration: 3
 
-To submit a SQL statement for execution, send a [POST request to the /statements/ endpoint](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-post-statements):
+To submit a SQL statement for execution, send a [POST request to the /api/v2/statements/ endpoint](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements):
 
 ```
-POST /api/statements?requestId=<UUID> HTTP/1.1
-Authorization: Bearer <oauth_token>
+POST /api/v2/statements?requestId=<UUID> HTTP/1.1
+Authorization: Bearer <jwt_token>
 Content-Type: application/json
 Accept: application/json
 User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
 
 (request body)
 ```
@@ -162,9 +155,8 @@ User-Agent: myApplication/1.0
 In the request URL, you can also set query parameters to:
 
 - Execute the statement asynchronously: `async=true`
-- Paginate the results: `?pageSize=10`
 
-For the [body of the request](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-post-statements-request-body), set the following fields:
+For the [body of the request](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#body-of-the-post-request-to-api-v2-statements), set the following fields:
 
 - Set the `statement` field to the SQL statement that you want to execute.
 
@@ -175,21 +167,18 @@ Negative
 
 - To set a timeout for the statement execution, set the `timeout` field to the maximum number of seconds to wait. If the `timeout` field is not set, the timeout specified by the [STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters.html#label-statement-timeout-in-seconds) parameter is used.
 
-For example, the following request sends a SQL statement for execution. The request specifies that the results should be paginated (10 results per page).
 
 ```
-POST /api/statements?pageSize=10 HTTP/1.1
-Authorization: Bearer <oauth_token>
+POST /api/statements HTTP/1.1
+Authorization: Bearer <jwt_token>
 Content-Type: application/json
 Accept: application/json
 User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
 
 {
 "statement": "select * from T",
 "timeout": 60,
-"resultSetMetaData": {
-"format": "json"
-},
 "database": "<your_database>",
 "schema": "<your_schema>",
 "warehouse": "<your_warehouse>",
@@ -203,7 +192,7 @@ Let's go over some specific fields in this request:
 
 - The `timeout` field specifies that the server allows 60 seconds for the statement to be executed.
 
-If the statement was executed successfully, Snowflake returns the HTTP response code 200 and the first results in a [ResultSet](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-resultset) object. We'll go over how to check the status and retrieve the results after we look at including bind variables.
+If the statement was executed successfully, Snowflake returns the HTTP response code 200 and the first results in a [ResultSet](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset) object. We'll go over how to check the status and retrieve the results after we look at including bind variables.
 
 Now we'll look at how you can include bind variables (`?` placeholders) in the statement and set the `bindings` field to an object that specifies the corresponding Snowflake data types and values for each variable.
 
@@ -243,7 +232,7 @@ Negative
 
 ![binding types](assets/binding-types.png)
 
-For additional information on binding specific data types, see the documentation's section on [Using Bind Variables in a Statement](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#using-bind-variables-in-a-statement)
+For additional information on binding specific data types, see the documentation's section on [Using Bind Variables in a Statement](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset)
 
 If the value is in a format not supported by Snowflake, the API returns an error:
 
@@ -264,7 +253,7 @@ Duration: 1
 
 When you submit a SQL statement for execution, Snowflake returns a 202 response code if the execution of the statement has not yet been completed or if you submitted an asynchronous query.
 
-In the body of the response, Snowflake includes a [QueryStatus](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-querystatus) object. The `statementStatusUrl` field in this object specifies the URL to the [/statements/ endpoint](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-get-statements) that you can use to check the execution status:
+In the body of the response, Snowflake includes a [QueryStatus](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#querystatus) object. The `statementStatusUrl` field in this object specifies the URL to the [/api/v2/statements/<statementHandle> endpoint](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#get-api-v2-statements-statementhandle) that you can use to check the execution status:
 
 ```
 {
@@ -283,20 +272,21 @@ Note that the `QueryStatus` object also provides the statement handle as a separ
 To check the status of the execution of the statement, send a GET request using this URL:
 
 ```
-GET /api/statements/{statementHandle}
+GET /api/v2/statements/{statementHandle}
 ```
 
 For example, the following request checks the execution status of the statement with the handle `e4ce975e-f7ff-4b5e-b15e-bf25f59371ae`:
 
 ```
-GET /api/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae HTTP/1.1
-Authorization: Bearer <oauth_token>
+GET /api/v2/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae HTTP/1.1
+Authorization: Bearer <jwt_token>
 Content-Type: application/json
 Accept: application/json
 User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
 ```
 
-If the statement has finished executing successfully, Snowflake returns the HTTP response code 200 and the first results in a [ResultSet](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-resultset) object. However, if an error occurred when executing the statement, Snowflake returns the HTTP response code 422 with a [QueryFailureStatus](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-queryfailurestatus) object.
+If the statement has finished executing successfully, Snowflake returns the HTTP response code 200 and the first results in a [ResultSet](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset) object. However, if an error occurred when executing the statement, Snowflake returns the HTTP response code 422 with a [QueryFailureStatus](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#queryfailurestatus) object.
 
 Once the statement has executed successfully, you can then retrieve the results, detailed in the next step.
 
@@ -305,14 +295,14 @@ Once the statement has executed successfully, you can then retrieve the results,
 To cancel the execution of a statement, send a POST request to the [cancel endpoint](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-post-statements-cancel).
 
 ```
-POST /api/statements/{statementHandle}/cancel
+POST /api/v2/statements/{statementHandle}/cancel
 ```
 
 <!-- ------------------------ -->
 ## Retrieving the Results
 Duration: 1
 
-If you [submit a SQL statement for execution](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#label-sql-api-executing-statement) or [check the status of statement execution](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#label-sql-api-checking-statement-status), Snowflake returns a [ResultSet](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-resultset) object in the body of the response if the statement was executed successfully.
+If you [submit a SQL statement for execution](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#label-sql-api-executing-multiple-statements) or [check the status of statement execution](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data), Snowflake returns a [ResultSet](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data) object in the body of the response if the statement was executed successfully.
 
 The following is an example of a `ResultSet` object that is returned for a query. The query specifies that the results should be paginated with 10 results per page. The `numPages` field in the `resultSetMetaData` object indicates that there are 10 pages of results, and the `numRows` field indicates that the query finds a total of 100 rows.
 
