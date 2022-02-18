@@ -122,7 +122,7 @@ Duration: 5
 In this step, you'll confirm that you can connect to Snowflake with the demo
 code and your connection properties.
 
-### Confirm a connection to Snowflake
+### Confirm that you can connect to Snowflake
 
 Using the [SBT command-line tool](https://www.scala-sbt.org/1.x/docs/Running.html),
 run the following command to build and run the `HelloWorld.scala` example to
@@ -248,7 +248,7 @@ upload the JAR files for these libraries to an internal stage to make them
 available to Snowflake. You also need to upload the dataset to a stage, where
 the demo will access the data.
 
-### Upload data file and dependencies
+### Upload dependency JARs and sample data file
 
 Run the following command to run the code.
 
