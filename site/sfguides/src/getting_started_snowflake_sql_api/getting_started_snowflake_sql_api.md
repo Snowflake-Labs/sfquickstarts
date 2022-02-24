@@ -169,7 +169,7 @@ Negative
 
 
 ```
-POST /api/statements HTTP/1.1
+POST /api/v2/statements HTTP/1.1
 Authorization: Bearer <jwt_token>
 Content-Type: application/json
 Accept: application/json
@@ -261,7 +261,7 @@ In the body of the response, Snowflake includes a [QueryStatus](https://docs.sno
 "sqlState": "00000",
 "message": "successfully executed",
 "statementHandle": "e4ce975e-f7ff-4b5e-b15e-bf25f59371ae",
-"statementStatusUrl": "/api/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae"
+"statementStatusUrl": "/api/v2/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae"
 }
 ```
 
@@ -304,95 +304,81 @@ Duration: 1
 
 If you [submit a SQL statement for execution](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#label-sql-api-executing-multiple-statements) or [check the status of statement execution](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data), Snowflake returns a [ResultSet](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data) object in the body of the response if the statement was executed successfully.
 
-The following is an example of a `ResultSet` object that is returned for a query. The query specifies that the results should be paginated with 10 results per page. The `numPages` field in the `resultSetMetaData` object indicates that there are 10 pages of results, and the `numRows` field indicates that the query finds a total of 100 rows.
+The following is an example of a `ResultSet` object that is returned for a query, truncated for brevity.
 
 ```
 {
-"code": "090001",
-"statementHandle": "536fad38-b564-4dc5-9892-a4543504df6c",
-"sqlState": "00000",
-"message": "successfully executed",
-"createdOn": 1597090533987,
-"statementStatusUrl": "/api/statements/536fad38-b564-4dc5-9892-a4543504df6c",
-"resultSetMetaData": {
-"page": 1,
-"pageSize": 10,
-"numPages": 10,
-"numRows": 100,
-"format": "json",
-"rowType": [
-{
-"name":"ROWNUM",
-"type":"FIXED",
-"length":0,
-"precision":38,
-"scale":0,
-"nullable":false
-}, {
-"name":"ACCOUNT_NAME",
-"type":"TEXT",
-"length":1024,
-"precision":0,
-"scale":0,
-"nullable":false
-}, {
-"name":"ADDRESS",
-"type":"TEXT",
-"length":16777216,
-"precision":0,
-"scale":0,
-"nullable":true
-}, {
-"name":"ZIP",
-"type":"TEXT",
-"length":100,
-"precision":0,
-"scale":0,
-"nullable":true
-}, {
-"name":"CREATED_ON",
-"type":"TIMESTAMP_NTZ",
-"length":0,
-"precision":0,
-"scale":3,
-"nullable":false
-}
-]
-},
-"data": [
-["0","customer1","1234 A Avenue","98765","1565481394123000000"],
-["1","customer2","987 B Street","98765","1565516712912012345"],
-["2","customer3","8777 C Blvd","98765","1565605431999999999"],
-["3","customer4","64646 D Circle","98765","1565661272000000000"]
-...
-]
-}
+  "code" : "090001",
+  "statementStatusUrl" : "/api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=f8ccd534-7cd5-4c06-b673-f25361e96d7f",
+  "requestId" : "f8ccd534-7cd5-4c06-b673-f25361e96d7f",
+  "sqlState" : "00000",
+  "statementHandle" : "01a288b9-0603-af68-0000-328502422e7e",
+  "message" : "Statement executed successfully.",
+  "createdOn" : 1645742998434,
+  "resultSetMetaData" : {
+    "rowType" : [ {
+      "name" : "HIGH_NDV_COLUMN",
+      "database" : "",
+      "schema" : "",
+      "table" : "",
+      "type" : "fixed",
+      "scale" : 0,
+      "precision" : 19,
+      "byteLength" : null,
+      "nullable" : false,
+      "collation" : null,
+      "length" : null
+    }, {
+      "name" : "LOW_NDV_COLUMN",
+      "database" : "",
+      "schema" : "",
+      "table" : "",
+      "type" : "fixed",
+      "scale" : 0,
+      "precision" : 2,
+      "byteLength" : null,
+      "nullable" : false,
+      "collation" : null,
+      "length" : null
+    }, {
+      "name" : "CONSTANT_COLUM",
+      "database" : "",
+      "schema" : "",
+      "table" : "",
+      "type" : "fixed",
+      "scale" : 0,
+      "precision" : 1,
+      "byteLength" : null,
+      "nullable" : false,
+      "collation" : null,
+      "length" : null
+    } ],
+    "numRows" : 100000000,
+    "format" : "jsonv2",
+    "partitionInfo" : [ {
+      "rowCount" : 8192,
+      "uncompressedSize" : 152879,
+      "compressedSize" : 22412
+    }, {
+      "rowCount" : 53248,
+      "uncompressedSize" : 1048161,
+      "compressedSize" : 151251
+    }, {
+      "rowCount" : 86016,
+      "uncompressedSize" : 1720329,
+      "compressedSize" : 249447
+    }, {
 ```
 
-### Determining If the Result Set Page Size Exceeds the Limit
+Notice that there is an `ARRAY` of `partitionInfo` objects.  These partitions objects give you some information, such as rowCount and size, about the partitions that are available for retrieval.  The API returns the data data inline in JSON of the first partition, or partition `0` with the response and we'll cover how to retrieve subsequent partitions in a later section.
 
-The SQL API can return a result set page that has [a maximum size of approximately 10 MB](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api.html#label-sql-api-limitations). If the result set page exceeds this size, the endpoint returns an HTTP response with a truncated result set in the body and the `code` field set to `391908`:
+### Getting Metadata About the Result
 
-```
-HTTP/1.1 200 OK
-...
-{
-"code": "391908",
-...
-```
+It also includes, in the response the `rowType` which gives additional metadata about the datatypes and names of data returned from the query.  This metadata is only included in the initial response, and no metadata is returned when retrieving subsequent partitions.
 
-If this occurs, send the request again with the `pageSize` parameter set to a smaller value that fits within the maximum size of a page.
+In the `ResultSet` object returned in the response, the `resultSetMetaData` field contains a [`ResultSet_resultSetMetaData`](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#getting-metadata-about-the-results) object that describes the result set (for example, the format of the results, etc.).
 
-Negative
-: Currently, Snowflake returns an HTTP 200 response code when this occurs, but this is subject to change.
-
-
-
-### Getting Metadata About the Results
-
-In the `ResultSet` object returned in the response, the `resultSetMetaData` field contains a [`ResultSet_resultSetMetaData`](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-resultset-resultsetmetadata) object that describes the result set (for example, the format of the results, the number of pages of results, etc.).
-
-In this object, the `rowType` field contains an array of [ResultSet_resultSetMetaData_rowType](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-resultset-resultsetmetadata-rowtype) objects. Each object describes a column in the results. The `type` field specifies the Snowflake data type of the column.
+In this object, the `rowType` field contains an array of [ResultSet_resultSetMetaData_rowType](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#label-sql-api-reference-resultset-resultsetmetadata-rowtype) objects. Each object describes a column in the results. The `type` field specifies the Snowflake data type of the column.
 
 ```
 {
@@ -439,21 +425,30 @@ In this object, the `rowType` field contains an array of [ResultSet_resultSetMet
 }
 ```
 
+### Retrieving Result Partitions
 
-
-### Getting the Data From the Results
-
-In the `ResultSet` object in the response, the results are in the `data` field. The `data` field contains an array of arrays in JSON. For example:
+Partitions are [retrieved](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#retrieving-additional-partitions) using the `partition=n` query parameter at `/api/v2/statements/<handle>?partition=<partition_number>` endpoint.  This can be used to iterate, or even retrieve in parallel, the results from the SQL API call.
 
 ```
-{
-"data": [
-["0","customer1","1234 A Avenue","98765","1565481394123000000"],
-["1","customer2","987 B Street","98765","1565516712912012345"],
-["2","customer3","8777 C Blvd","98765","1565605431999999999"],
-["3","customer4","64646 D Circle","98765","1565661272000000000"]
-],
-}
+GET /api/v2/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae?partition=1 HTTP/1.1
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+Accept: application/json
+User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
+```
+
+The above query call, with `partition=1` returns just the data below.  Notice that the `data` object does not contain any of the additional metadata about the result.  Only the data, in gzipped format that needs to be uncompressed.
+
+```
+{"data": [
+["32768","3","5"],
+["32772","4","5"],
+["32776","3","5"],
+["32780","3","5"],
+["32784","2","5"],
+....
+]}
 ```
 
 Each array within the array contains the data for a row:
@@ -467,28 +462,6 @@ For example, the value `1.0` in a `NUMBER` column is returned as the string `" 1
 
 You are responsible for converting the strings to the appropriate data types.
 
-### Retrieving Additional Pages of Results
-
-If you set the `pageSize` request parameter to paginate the results, Snowflake returns the first page of results in the response. You can use the `numPages` field in the [ResultSet_resultSetMetaData](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-resultset-resultsetmetadata) object in the `ResultSet` object to determine the total number of pages of results.
-
-To get the next page of results or other pages of results, use the URLs provided in the [Link header](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-response-headers) in the HTTP response. The `Link` header specifies the URLs for retrieving the first, next, previous, and last page of the results:
-
-```
-HTTP/1.1 200 OK
-Link: </api/statements/e127cc7c-7812-4e72-9a55-3b4d4f969840?page=1>;rel="last",
-</api/statements/e127cc7c-7812-4e72-9a55-3b4d4f969840?page=1>;rel="next",
-</api/statements/e127cc7c-7812-4e72-9a55-3b4d4f969840512c?page=0>;rel="first"
-...
-```
-
-Each URL in the header has a `rel` attribute with one of the following values:
-
-- `first`: The first page of results.
-- `next`: The next page of results.
-- `prev`: The previous page of results.
-- `last`: The last page of results.
-
-With the knowledge of retrieving results, you can now begin to use the SQL API for your own use cases. 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
 
