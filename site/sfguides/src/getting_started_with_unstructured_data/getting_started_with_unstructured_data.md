@@ -67,7 +67,7 @@ Before creating any stages, let’s create a database and a schema that will be 
 ```sql
 use role sysadmin;
 
-create or replace database emaildb;
+create or replace database emaildb comment = 'Enron Email Corpus Database';
 create or replace schema raw;
 create or replace warehouse quickstart;
 
@@ -89,6 +89,7 @@ You are working with unstructured PDFs that have already been staged in a public
 Grant the `PUBLIC` schema access to the database, schema, and warehouse just created (This will be relevant in the next section).
 
 ```sql
+use role sysadmin;
 grant usage on database emaildb to public;
 grant usage on schema emaildb.raw to public;
 grant usage on warehouse quickstart to public;
@@ -126,6 +127,7 @@ Alternatively, you can store data direcctly in Snowflake with internal stages. N
 Run this command to create an internal stage called `email_stage_internal` as follows.
 
 ```sql
+use schema emaildb.raw;
 create or replace stage email_stage_internal
 directory = (enable = TRUE)
 encryption = (type = 'SNOWFLAKE_SSE');
@@ -319,11 +321,15 @@ The URL format for files is https://&lt;account&gt;.snowflakecomputing.com/api/f
 ### Scoped URL
 Scoped URLs are encoded URLs that permit temporary access to a staged file without granting privileges to the stage. The URL expires when the persisted query result period ends (i.e. the results cache expires), which is currently 24 hours.
 
-We can generate a scoped URL of any file using the function `build_scoped_url()`. For example, let’s try with the file `arnold-j/inbox/94.`
+We can generate a scoped URL of any file using the function `build_scoped_url()`. For example, let’s create a view which provides the scoped URL for files in the stage `email_stage_internal`.
 
 ```sql
-select build_scoped_file_url(@email_stage_internal,'arnold-j/inbox/94.')
-as SCOPED_URL;
+create or replace view email_scoped_url_v
+as
+select
+	relative_path
+	, build_scoped_file_url(@email_stage_internal,relative_path) as scoped_url
+from directory(@email_stage_internal);
 ```
 ![Scoped URL](assets/7_1.png)
 
@@ -631,8 +637,10 @@ We have now extracted the named entities the analysts are interested in seeing t
 We will first create a view to parse the `NAMED_ENTITIES` JSON string and extract separately the persons and the locations entities, as well as count the number of entities identified in each email:
 
 ```sql
-create or replace view email_info_v as
-with named_entities as (
+create or replace view email_info_v
+as
+with named_entities
+as (
     select
 	    relative_path
 	    , mailbox
@@ -647,8 +655,15 @@ select
     , named_entities:Locations::variant				as locations
     , array_size(locations)							as num_location_entities
     , array_size(persons) + array_size(locations)	as total_entities
+    , build_scoped_file_url(@email_stage_internal, relative_path)	as scoped_email_url
 from named_entities;
 ```
+We can query the view and examine the output. Notice that we now have JSON arrays in separate columns for name and location entities, count of entities, and a scoped URL to access the file if we need to further examine its contents.
+
+```sql
+select * from email_info_v limit 10;
+```
+![Examine view output](assets/8_3_2.png)
 
 We can now query the view to retrieve various entity metrics. For example, the following query identifies the top 5 emails in terms of total number of entities.
 
@@ -661,9 +676,10 @@ select
 	, num_location_entities
 	, persons
 	, locations
+	, scoped_email_url
 from email_info_v
 order by total_entities desc
-limit 5;
+limit 10;
 ```
 ![Number of entities view](assets/8_4.png)
 
@@ -717,7 +733,7 @@ select
     relative_path
     , mailbox
     , person_entity
-    , build_scoped_file_url(@email_stage_internal,relative_path) as email_url
+    , build_scoped_file_url(@email_stage_internal,relative_path) as scoped_email_url
 from persons_flattened
 where person_entity like '%Willmann%';
 ```
