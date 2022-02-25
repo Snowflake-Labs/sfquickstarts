@@ -1,4 +1,4 @@
-author: Scott Teal
+author: Scott Teal, Saurin Shah
 id: analyze_pdf_invoices_java_udf_snowsight
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: Demos
