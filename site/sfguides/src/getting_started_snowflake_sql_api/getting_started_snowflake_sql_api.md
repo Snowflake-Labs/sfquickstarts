@@ -69,7 +69,7 @@ Positive
 
 ### Limitations of the SQL API
 
-It's important to be aware of the [limitations that the SQL API] (https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#limitations-of-the-sql-api) currently has.  In particular noting that `GET` and `PUT` are not supported.  
+It's important to be aware of the [limitations that the SQL API](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#limitations-of-the-sql-api) currently has.  In particular noting that `GET` and `PUT` are not supported.  
 
 
 <!-- ------------------------ -->
@@ -292,7 +292,7 @@ Once the statement has executed successfully, you can then retrieve the results,
 
 ### Cancelling the Execution of a SQL Statement
 
-To cancel the execution of a statement, send a POST request to the [cancel endpoint](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html#label-sql-api-reference-post-statements-cancel).
+To cancel the execution of a statement, send a POST request to the [cancel endpoint](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#cancelling-the-execution-of-a-sql-statement).
 
 ```
 POST /api/v2/statements/{statementHandle}/cancel
@@ -462,12 +462,28 @@ For example, the value `1.0` in a `NUMBER` column is returned as the string `" 1
 
 You are responsible for converting the strings to the appropriate data types.
 
+### Helpful URLs to iterate and retrieve partitions
+
+Since your results may contain significant number of partitions, the Snowflake SQL API provides a special header, `Link`, which assists in helping clients traverse and retrieve those results.  
+
+To get the next parition of results or other partitions, use the URLs provided in the [Link header](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#response-headers-for-all-operations) in the HTTP response. The `Link` header specifies the URLs for retrieving the first, next, previous, and last partitions of results:
+
+```
+HTTP/1.1 200 OK
+Link: </api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=918e2211-d1d6-4c53-bec3-457d047651f7&partition=0>; rel="first"
+,</api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=51ad0c0a-e514-4d8a-9cf2-cf537d439e39&partition=1>; rel="next"
+,</api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=c6a17bb3-7593-489d-bbac-5e3b268bc6da&partition=47>; rel="last"
+...
+```
+
+
+
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
 
 Duration: 1
 
-This tutorial was designed as a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the [Snowflake SQL API Reference](https://docs.snowflake.com/en/LIMITEDACCESS/sql-api-reference.html).
+This tutorial was designed as a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the [Snowflake SQL API Reference](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html).
 
 If you've completed this lab using the Snowflake free trial, we encourage you to continue exploring what Snowflake can help you accomplish. There are several ways Snowflake can help you with this:
 
