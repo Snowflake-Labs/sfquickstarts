@@ -515,7 +515,7 @@ select * from renamed
 
 9. Now let’s create these views in Snowflake. Since we only want to run the models in the staging folder, we are going to use the following command on the command line: 
 
-`dbt run -m staging.*`
+`dbt run --select staging.*`
 
 This allows us to be selective and only run the models in the staging folder. [Node selectors](https://docs.getdbt.com/reference/node-selection/syntax) are very helpful in refining what we actually want to run and test. 
 
@@ -642,7 +642,7 @@ The main takeaway to remember is in a dbt project, you should never have to hard
 
 7.  Now let’s go ahead and create the new models in Snowflake. In this case, rather than running based on the model file, we will run based on dependencies. Run the following command to execute the int_knoema_stock_history model and its parent models. 
 
-`dbt run -m +int_knoema_stock_history`
+`dbt run --select +int_knoema_stock_history`
 
 You should see that we have run all of the nodes (excluding sources) to the left of this lineage. 
 
@@ -687,7 +687,7 @@ We also include a [tag](https://docs.getdbt.com/reference/resource-configs/tags)
 
 10. Let’s try running this model based on a tag. In the command line, run :
 
-`dbt run -m tag:hourly`
+`dbt run --select tag:hourly`
 
 Being able to run models based on tags can be helpful for, say, an hourly job where you are selectively running specific models. 
 
@@ -736,7 +736,7 @@ joined as (
 select * from joined
 ```
 13. Now, let's deploy newly built models by typing the following into the command line.
-`dbt run --model +int_stock_history_major_currency`
+`dbt run --select +int_stock_history_major_currency`
 
 ![intermediate](assets/int_6.png)
 
@@ -848,7 +848,7 @@ As you can see,  the macro from the dbt_utils package wrote the code, aligned th
 
 10. Now let’s create the object by running:
  
-`dbt run -m int_unioned_book`
+`dbt run --select int_unioned_book`
 
 <!-- ------------------------ -->
 ## dbt pipelines - Intermediate Part 2
@@ -961,7 +961,7 @@ select * from unioned
 
 5. Execute the following code to build int_unioned_book and it’s child models.
 
-`dbt run --models int_unioned_book+`
+`dbt run --select int_unioned_book+`
 
 
 Now that we have created all of these models, we are able to attribute shares by trader.
@@ -1050,7 +1050,7 @@ joined as (
 select * from joined 
 ```
 
-3. Run the model with `dbt run -m fct_trading_pnl.sql`
+3. Run the model with `dbt run --select fct_trading_pnl.sql`
 
 You might have noticed that fct_trading_pnl takes some time to build when you do a dbt run. As we use larger and larger datasets, the run times are getting longer. We have already materialized our models as a table, meaning we are preemptively front loading our run times to save on the query times when the table is queried. We could always increase our warehouse size, but there’s another trick up our sleeve we won’t touch on just yet. 
 
@@ -1140,7 +1140,7 @@ select * from primary_key
 ```
 
 6. Now let’s see how differently this model acts in the first run versus subsequent runs. 
-Run `dbt run -m fct_trading_pnl_incremental` twice and compare the logs. 
+Run `dbt run --select fct_trading_pnl_incremental` twice and compare the logs. 
  
 For the first run, you will notice that the where clause does not come in into the sql statement.
 
