@@ -388,7 +388,7 @@ packages:
 <!-- ------------------------ -->
 
 ## Building dbt Data Pipelines
-Duration: 0
+Duration: 1
 
 Now we start to get into the fun stuff. In the next few sections, we are going to build our dbt pipelines. This will include transformations that define these these areas of interest: 
 - Stock trading history
@@ -494,7 +494,7 @@ renamed as (
 
         "Company" as company,
         "Company Name" as company_name,
-        "Company Symbol" as company_symbol,
+        "Company Ticker" as company_symbol,
         "Stock Exchange" as stock_exchange,
         "Stock Exchange Name" as stock_exchange_name,
         "Indicator" as indicator,
