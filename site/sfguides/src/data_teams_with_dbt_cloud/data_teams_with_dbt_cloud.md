@@ -129,7 +129,7 @@ select *
 ```sql
 select * 
   from KNOEMA_ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
- where "Date" = current_date();
+ where "Date" = '2020-02-03';
 ```
 ![Query Knoema](assets/query_knoema_2.png)
  
