@@ -117,7 +117,6 @@ We can see that the stage contains various mailboxes from Enron users containing
 ![External Stage Query Details](assets/4_2.png)
 
 __The size of the files__: We can see that the file size ranges from 666 bytes to 1023 bytes, with the majority of the files closer to 1023 bytes. If we click on the size metric, we can get more detailed information. The total corpus size is 208,414 bytes, with an average size of 922 bytes. If we hover over the histogram, we can filter results based on file size.
-GIF GOES HERE
 
 ### Store Unstructured Data in an Internal Stage
 Alternatively, you can store data direcctly in Snowflake with internal stages. Now, we want to create an internal stage and upload the same files while maintaining the directory structure of the various individual mailboxes on an internal stage.
