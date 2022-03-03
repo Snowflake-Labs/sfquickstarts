@@ -331,8 +331,6 @@ from directory(@email_stage_internal);
 ```
 ![Scoped URL](assets/7_1.png)
 
-Click on the URL. This should download the file to your workstation. Please review the contents of the file to make sure you have a valid text file.
-
 As explained previously, this URL will be valid for 24 hours. Snowsight retrieves the file only for the user who generated the scoped URL.
 
 Scoped URLs enable access to the files via a view that retrieves scoped URLs. Only roles that have privileges on the view can access the files. The scoped URL contents are all encrypted and doesn't give any information about the bucket, database or schema.
