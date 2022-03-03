@@ -112,8 +112,7 @@ ls @email_stage;
 ```
 ![List External Stage](assets/4_1.png)
 
-We can see that the stage contains various mailboxes from Enron users containing some files (which are text files) of various sizes. We can get a summary of the file corpus in the query results on the right-hand side.
-__The number of rows (files)__: For the purpose of this quickstart, just a sample of 226 files out of 517,551 files has been extracted.
+We can see that the stage contains various mailboxes from Enron users containing some files (which are text files) of various sizes. We can get a summary of the file corpus in the query results on the right-hand side. For the purpose of this quickstart, just a sample of 226 files out of 517,551 files has been extracted.
 
 ![External Stage Query Details](assets/4_2.png)
 
@@ -151,7 +150,7 @@ tar xzvf mailbox.tar.gz
 ```
 
 #### Upload Files using SnowSQL
-Before opening terminal, find out your account identifier which for the trial account will be `&lt;account-locator&gt;.&lt;region-id&gt;.&lt;cloud&gt;`. These fields can be retrieved from the URL of your Snowflake account.
+Before opening terminal, find out your account identifier which for the trial account will be `<account-locator>.<region-id>.<cloud>`. These fields can be retrieved from the URL of your Snowflake account.
 
 For example, the URL to access the trial account is `https://xx74264.ca-central-1.aws.snowflakecomputing.com/`. These are the values for the account identifier:
 
@@ -171,7 +170,7 @@ snowsql -a <account-identifier> \
 -o variable_substitution=true -f upload.snf
 ```
 
-Using the examples above for the path and the account identifier, and the userid myuser, the command would be:
+Using the examples above for the path and the account identifier, and the userid `myuser`, the command would be:
 
 ```
 snowsql -a xx74264 \
@@ -212,7 +211,7 @@ create or replace role analyst;
 grant role analyst to role sysadmin;
 ```
 
-Then, switch back to `sysadmin` role, and `grant` the role `analyst` the rights to use the database `emaildb`, and the schema `raw` we just created earlier, as well as the ability to `read` from the stage
+Then, switch back to `sysadmin` role, and `grant` the role `analyst` the rights to use the database `emaildb`, and the schema `raw` we just created earlier, as well as the ability to `read` from the stage.
 
 ```sql
 grant usage on database emaildb to role analyst;
@@ -555,7 +554,7 @@ handler = 'NamedEntityExtraction.ParseText'
 ;
 ```
 	
-Notice staged file in `imports` parameter is the JAR that we just uploaded to the internal stage and containing the UDF. As well, in the `handler` parameter, we have the class and the method to be invoked in the jar file to parse a file described in the previous section.
+Notice staged file in `imports` parameter is the JAR that we just uploaded to the internal stage and contains the UDF. As well, in the `handler` parameter, we have the class and the method to be invoked in the jar file to parse a file described in the previous section.
 
 ### Invoking the Java UDF
 The UDF can be invoked on any text file containing readable english. From the email corpus stored on the internal stage, we can invoke the UDF as follows.
