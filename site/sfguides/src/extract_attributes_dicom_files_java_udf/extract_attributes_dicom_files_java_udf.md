@@ -83,7 +83,7 @@ You should now see an identical list of files from the S3 bucket. Make sure you 
 ## Extract Attributes from DICOM Files
 Duration: 10
 
-In this section, we want to extract attributes from the DICOM files. The entities extracted are going to be fields like X, Y, Z, as well as A. The goal is to have these fields to enrich the file-level metadata for analytics.
+In this section, we want to extract attributes from the DICOM files. The entities extracted are going to be fields like manufacturer, patient position, and study date. The goal is to have these fields to enrich the file-level metadata for analytics.
 
 ### Creating a Java UDF in Snowflake
 The Java code to parse DICOM files requires some dependencies. Instead of downloading those jar files and uploading to an internal stage, you can create an external stage and reference them when creating a UDF inline.
@@ -204,7 +204,7 @@ The output is key-value pairs extracted from `ID_0067_AGE_0060_CONTRAST_0_CT.dcm
 UDFs are account-level objects. So if a developer familiar with Java creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
 
 ### Extracting and Storing Attributes
-We want to store the extracted attributes as columns in a table for analysts to be able to query, analyze, and retrieve files. This can be done easily with Snowflake's semi-structured .
+We want to store the extracted attributes as columns in a table for analysts to be able to query, analyze, and retrieve files. This can be done easily with Snowflake's native support for semi-structured data.
 
 ```sql
 create or replace table dicom_attributes as
@@ -228,7 +228,7 @@ select
 from directory(@dicom_external);
 ```
 
-If you collapse and expand the `DICOM` database in the Objects pane on the left, you should now see a table named `DICOM_ATTRIBUTES`. Click on that table, and below you should see a preview of the fields you have created along with icons to indicate the data type. You can also see a preview of the view by clicking on the button that looks like a magnifyer glass.
+If you collapse and expand the `DICOM` database in the Objects pane on the left, you should now see a table named `DICOM_ATTRIBUTES`. Click on that table, and below you should see a preview of the fields you have created along with icons to indicate the data type. You can also see a preview of the view by clicking on the button that looks like a magnifier glass.
 
 ![Create and preview table](assets/4_2.gif)
 
