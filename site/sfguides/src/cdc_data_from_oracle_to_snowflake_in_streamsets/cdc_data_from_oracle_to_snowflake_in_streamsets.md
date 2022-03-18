@@ -4,7 +4,7 @@ summary: CDC Data from Oracle to Snowflake in StreamSets
 categories: data-engineering
 environments: web
 status: Published 
-feedback link: community@streamsets.com
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Oracle CDC
 
 # Process Change Data Capture (CDC) data from Oracle to Snowflake Using StreamSets
