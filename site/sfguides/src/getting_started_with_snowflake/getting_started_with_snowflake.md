@@ -429,8 +429,7 @@ Schema = `PUBLIC`
 Execute the following statements in the worksheet to load the staged data into the table. This may take up to 30 seconds.
 
 ```SQL
-copy into trips from @citibike_trips
-file_format=CSV;
+copy into trips from @citibike_trips file_format=csv PATTERN = '.*csv.*' ;
 ```
 
 In the result pane, you should see the status of each file that was loaded. Once the load is done, in the **Query Details** pane on the bottom right, you can scroll through the various statuses, error statistics, and visualizations for the last statement executed:
