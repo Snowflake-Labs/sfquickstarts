@@ -28,6 +28,7 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
      - Install gulp-cli `npm i -g gulp-cli`
   2. [Install Go](https://golang.org/doc/install); Homebrew installed? `brew install golang`
      - Install claat `go install github.com/googlecodelabs/tools/claat@latest`
+     - Ensure go and claat is in your `PATH` [claat path setup](#claat-related-errors)
   3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
 ## Run locally
@@ -40,8 +41,8 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
-##### Common environment errors:
-1. You get a `claat not found` error
+#### Common environment errors:
+#### Claat related errors
    - Make sure Go is properly in your `PATH`. Add the following lines to your profile (`~/.profile`, or `~/.zshrc`):
 ````bash
 #adding Golang to path
@@ -50,7 +51,7 @@ export PATH=$PATH:$HOME/go/bin
 ````
   ***Note:** After adding Go to your `PATH`, be sure to apply your new profile: `source ~/.profile` or `source ~/.zshrc`*
 
-2. You get a `EACCES` error when installing gulp-cli
+#### You get a `EACCES` error when installing gulp-cli
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
 #### Write Your First Quickstart:

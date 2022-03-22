@@ -29,7 +29,12 @@
     }, 
     {
       "source": "/guide/getting_started_dbt{,/**}",
-      "destination": "/guide/data_engineering_with_dbt",
+      "destination": "/guide/data_teams_with_dbt_cloud",
+      "type": 301
+    }, 
+    {
+      "source": "/guide/data_engineering_with_dbt{,/**}",
+      "destination": "/guide/data_teams_with_dbt_cloud",
       "type": 301
     }, 
     {

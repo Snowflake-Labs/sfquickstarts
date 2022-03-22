@@ -13,7 +13,7 @@ const htmlmin = require('gulp-htmlmin');
 const merge = require('merge-stream');
 const postcss = require('gulp-html-postcss');
 const rename = require('gulp-rename');
-const sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('sass'));
 const through = require('through2');
 const useref = require('gulp-useref');
 const vulcanize = require('gulp-vulcanize');
@@ -56,7 +56,7 @@ const DEFAULT_CATEGORY = 'Default';
 // BASE_URL is the canonical base URL where the site will reside. This should
 // always include the protocol (http:// or https://) and NOT including a
 // trailing slash.
-const BASE_URL = args.baseUrl || 'https://guides.snowflake.com';
+const BASE_URL = args.baseUrl || 'https://quickstarts.snowflake.com';
 
 // CODELABS_BUILD_DIR is the directory where the actual codelabs exist on disk.
 // Despite being a constant, this can be overridden with the --codelabs-dir
@@ -333,7 +333,7 @@ gulp.task('minify:js', () => {
 // minify minifies all minifiable things in dist
 gulp.task('minify', gulp.parallel(
   'minify:css',
-  'minify:html',
+  //'minify:html', //updating to 'const sass = require('gulp-sass')(require('sass'));' breaks html minify
   'minify:js',
 ));
 
