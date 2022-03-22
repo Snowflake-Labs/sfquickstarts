@@ -1,8 +1,8 @@
 summary: Begin modeling your Snowflake database online with SqlDBM 
-id: database_modeling_with_SqlDBM 
+id: database_modeling_with_sqldbm
 categories: Getting Started
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Modeling, Data Engineering, CICD 
 authors: Serge Gershkovich
@@ -58,36 +58,45 @@ We’ll go through all these features in detail as part of this Quickstart, so l
 ## Snowflake Configuration 
 Duration: 3
 
-1. Log in to your Snowflake trial account.  
+
+* Log in to your Snowflake using an existing or trial account.  
 ![Snowflake Log In Screen](assets/snowflake_login.png)  
 
-2. Familiarize yourself with the UI if logging in for the first time in the [Snowflake UI Tour](https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface).  
+* Familiarize yourself with the UI if logging in for the first time in the [Snowflake UI Tour](https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface).  
 ![Snowflake Worksheets](assets/snowflake_worksheets.png)  
 
-3. Ensure that your user has the following grants assigned to follow the Quickstart. If not, we will provide sample DDL where needed. 
+* Ensure you are using the ACCOUNTADMIN role or that your role has the following grants assigned to follow the Quickstart. If not, we will provide sample DDL where needed. 
 
 Privilege | Required for | Alternative
 ---------|----------|---------
  USAGE on SCHEMA | Bringing existing database into a SqlDBM project | Use sample DDL provided
  ALL on schema | Deploying changes back into Snowflake | N/A
 
+_If you wish to use an existing schema, skip this step._
+
+* create a database in Snowflake for deploying the SqlDBM sample project at the end of this quickstart. 
+
+`create database ADVENTUREWORKSDW`
+
 <!-- ------------------------ -->
-## Create a New Project and Bring your Schema
+## Create a New SqlDBM Project 
 Duration: 5
 
-After logging in to SqlDBM, you will be taken to the Projects Dashboard. Otherwise, select “Dashboard” from the top-right dropdown.
+After logging in to [SqlDBM](https://www.SqlDBM.com), you will be taken to the Projects Dashboard. Otherwise, select “Dashboard” from the top-right dropdown.
 
 ![Dashboard](assets/dashboard.jpg)  
 
+
+### Option 1) Bring your existing Schema
 Follow the steps to create a Snowflake project and bring your schema: 
 
-1. Click the “New Project” button at the top to get started.
+* Click the “New Project” button at the top to get started.
 
-2. Select “Snowflake” as the database type and click “Bring your database.”
+* Select “Snowflake” as the database type and click “Bring your database.”
 
 ![Creating a new project](assets/bring_your_db.jpg)
 
-3. Click the “Connect to DW” to create a live connection to Snowflake.
+* Click the “Connect to DW” to create a live connection to Snowflake.
 
 * Alternatively, run the GET_DDL command by hand and copy and paste the output onto the text area on the screen or save it in a file and upload via the “Drop your File” button. 
 
@@ -95,15 +104,23 @@ Follow the steps to create a Snowflake project and bring your schema:
 SELECT GET_DDL('schema','"DATABASE_NAME"."SCHEMA_NAME"', true);
 ```
 
-* Or use our [example DDL](assets/sample_schema.sql ) and paste it into the text area on the screen.
-
-4. Enter your Snowflake server instance and log in with a user with `USAGE` privileges on the schema you wish to import.
+* Enter your Snowflake server instance and log in with a user and role with `USAGE` privileges on the schema you wish to import.
 
 ![Direct Connect ](assets/direct_connect.jpg)
 
-5. Select the Database and Schema you wish to import and press the “Apply” button below. 
+* Select the Database and Schema you wish to import and press the “Apply” button below. 
 
-6. Press the up arrow icon / “Upload SQL Script” button at the top to parse the DDL provided.
+
+### Option 2) Use the example schema 
+Download our [example DDL](assets/sample_schema.sql ) 
+
+* you can paste the contents directly into the text area on the screen.
+
+* or upload the file by pressing the "Drop your file" button
+
+### Parse the script to create a project
+
+* Press the up arrow icon / “Upload SQL Script” button at the top to parse the DDL provided.
 
 ![Upload SQL script](assets/upload_sql.jpg)
 
@@ -197,18 +214,26 @@ Subject areas serve as folders for keeping diagrams organized by categories such
 ### Add a table to a diagram
 Click on the “Diagram Explorer” button on the left-hand menu. Add a table to a diagram from the object catalog by searching for a part of its name, then click the “Add to Diagram” button next to it. 
 
+Type "product" into the search box to filter the list of tables and bring "DimProduct" onto the diagram.
+
 ![name table, add pk, copy columns](assets/create_table.gif)
 
 ### Create a new table
 Right-click anywhere on the canvas and select “Add Table.” Double-click on the new table to edit it. Give the table a name and add some columns with corresponding data types. 
 
+Table name: DimProductPrototype
+
 ### Copy columns from an existing table
 Select a column (or shift-click to select multiple) from an existing table and drag them to another table to move them. Perform the drag operation holding the Ctrl key (Command on Mac) to copy. 
+
+Highlight and drag several columns from DimProduct to DimProductPrototype
 
 ### Add a primary key (PK) to a table
 Double click on a table to enter edit mode. Create a new column at the topmost section to designate it as a primary key (replacing “\<pk column name\>”). 
 
 Alternatively, drag any existing column to the top of the table to designate it as a PK.
+
+create a PK column for DimProductPrototype called ProductPrototypeKey of type Integer.
 
 ### Add a foreign key (FK) to a table
 Click on a table that has a PK defined. Drag the bottom-right connector to another table to add it as an FK.
@@ -373,7 +398,7 @@ While SqlDBM allows users to model and brainstorm at any level of detail (or lac
 ### Generate CREATE script
 This option will generate a “create” script for deploying new objects (or overwriting existing ones depending on the generation options).
 
-2. Mark the check-box for the objects that you wish to create or use the search to find the desired ones. 
+2. Mark the check-box for the objects that you wish to create or use the search to find the desired ones. Ensure that the "Create" option is selected for "Schema" if this is your first time deploying the project. 
 
 3. Set the _Generation Options_ in the right-hand panel according to what you wish to deploy. Here you can mark options such as create, drop (or both, which results in `CREATE OR REPLACE`) for individual object types and set general properties like Safe Scripts or quote options (i.e., double or empty). 
 
