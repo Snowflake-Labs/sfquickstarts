@@ -581,6 +581,7 @@ def lambda_handler(event, context):
 ## Additional References
 Duration: 2
 
+
 A fantastic reference for downloading the snowflake-python connector .zip file  [Getting your AWS Lambda Functions to work with Snowflake](https://medium.com/snowflake/getting-your-aws-lambda-functions-to-work-with-snowflake-a14b453bb5ee) to see how to use markdown to generate these elements. 
 
 
