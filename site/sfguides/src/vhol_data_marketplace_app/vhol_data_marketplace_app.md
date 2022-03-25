@@ -584,15 +584,6 @@ Duration: 2
 A fantastic reference for downloading the snowflake-python connector .zip file  [Getting your AWS Lambda Functions to work with Snowflake](https://medium.com/snowflake/getting-your-aws-lambda-functions-to-work-with-snowflake-a14b453bb5ee) to see how to use markdown to generate these elements. 
 
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
@@ -603,9 +594,6 @@ To learn more about Snowflake Data MarketPlace visit the official website here: 
 
 To learn more about Building Data Applications visit the official  website here: ([Building Data Applications](https://www.snowflake.com/workloads/data-applications/)
 
-
-
- [Register for Snowflake Summit 2021](https://www.snowflake.com/summit/?utm_source=paidsearch&utm_medium=ppc&utm_campaign=NA-Branded&_bt=513345067347&_bk=%2Bsnowflake%20%2Bsummit&_bm=b&_bn=g&_bg=111755576146&gclid=CjwKCAjw7J6EBhBDEiwA5UUM2iW-7BWtxKYf9hV5qno24Wvie0GWuaqoHyToZvEC0xRjga0Z5N_Y0BoCr9MQAvD_BwE&gclsrc=aw.ds) 
 
 
 ### What we've covered
