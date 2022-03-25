@@ -18,7 +18,7 @@ This guide is designed to help you understand the capabilities included in Snowf
 - Completion of [Getting Started with Unstructured Data](http://quickstarts.snowflake.com/guide/getting_started_with_unstructured_data/index.html?index=..%2F..index)
 
 ### What You'll Need
-- Snowflake account, or [free 30-day trial](https://trial.snowflake.com/)
+- Snowflake account
 - [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) installed
 
 ### What You’ll Learn 
