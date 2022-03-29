@@ -3,7 +3,7 @@ id: getting_started_with_unstructured_data
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: Getting Started
 environments: web
-status: Published 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Data Lake, Unstructured Data 
 
@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Data Lake, Unstructured D
 ## Overview 
 Duration: 1
 
-This guide is designed to help you understand the capabilities included in Snowflake’s support for unstructured data. Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing this lab, you’ll be ready to start storing and managing your own unstructured data in Snowflake. 
+This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for unstructured data. Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing this lab, you’ll be ready to start storing and managing your own unstructured data in Snowflake. 
 
 ### Prerequisites
 - Use of the [Snowflake free 30-day trial environment](https://trial.snowflake.com/)
@@ -25,6 +25,11 @@ This guide is designed to help you understand the capabilities included in Snowf
 - How to search for unstructured data using directory tables
 - How to securely share unstructured data
 - How to process unstructured data
+
+### What You'll Build
+- A stage for storing and accessing files in Snowflake
+- A user-defined function using Snowflake's engine to process files
+- A secure view to share in the Snowflake Marketplace
 
 <!-- ------------------------ -->
 ## Notice and Terms of Use
@@ -433,7 +438,7 @@ We have so far reviewed how to store unstructured data files, retrieve them, pro
 The entities extracted are going to be person names mentioned in the emails, as well as locations. The goal is to have these additional attributes used to enrich the file-level metadata for analytics.
 
 ### The Java Code
-The Java for the user-defined function (UDF) has already been written and provided below. This code leverages the open source [Apache OpenNLP](https://opennlp.apache.org/) project to perform natural language processing on English text in this occurrence.
+The Java for the user-defined function (UDF) has already been written and provided below. This code uses the open source [Apache OpenNLP](https://opennlp.apache.org/) library to perform natural language processing on English text in this occurrence.
 
 The Java code leverages pre-built [machine learning models](http://opennlp.sourceforge.net/models-1.5/) to perform named entity extraction for persons and locations. These models are packaged manually post-build in a Fat JAR.
 
@@ -914,7 +919,7 @@ You have now completed this demonstration of how unstructured data can be secure
 ## Conclusion
 Duration: 1
 
-Congratulations! You used Snowflake to peform natural language processing on email files. 
+Congratulations! You used Snowflake to perform natural language processing on email files. 
 
 ### What we've covered
 - Accessing external data with an __External Stage__
