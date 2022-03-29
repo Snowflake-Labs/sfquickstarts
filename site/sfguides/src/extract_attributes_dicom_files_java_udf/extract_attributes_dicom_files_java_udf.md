@@ -3,7 +3,7 @@ id: extract_attributes_dicom_files_java_udf
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: Demos
 environments: web
-status: Published 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Data Engineering, Unstructured Data
 
@@ -12,7 +12,7 @@ tags: Data Science, Data Engineering, Unstructured Data
 ## Overview 
 Duration: 1
 
-This guide is designed to help you understand the capabilities included in Snowflake’s support for unstructured data and Snowpark. Although this guide is specific to processing DICOM files, you can apply this pattern of processing natively in Snowflake to many types of unstructured data. All source code for this guide can be found on [Github](https://github.com/Snowflake-Labs/sfquickstarts).
+This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for unstructured data and Snowpark. Although this guide is specific to processing DICOM files, you can apply this pattern of processing natively in Snowflake to many types of unstructured data. All source code for this guide can be found on [Github](https://github.com/Snowflake-Labs/sfquickstarts).
 
 ### Prerequisites
 - Completion of [Getting Started with Unstructured Data](http://quickstarts.snowflake.com/guide/getting_started_with_unstructured_data/index.html?index=..%2F..index)
@@ -24,6 +24,10 @@ This guide is designed to help you understand the capabilities included in Snowf
 ### What You’ll Learn 
 - How to access DICOM files in cloud storage from Snowflake
 - How to extract attributes from DICOM files natively using a Java User-Defined Function (UDF)
+
+### What You'll Build
+- An external stage to access files in S3 from Snowflake
+- A user-defined function using Snowflake's engine to process files
 
 <!-- ------------------------ -->
 ## Prepare Your Environment
