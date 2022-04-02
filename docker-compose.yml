@@ -1,0 +1,30 @@
+---
+version: '3'
+
+x-sfquickstarts-common:
+  &sfquickstarts-common
+  build:
+    context: .
+  image: sfquickstarts:latest
+  working_dir: /app/
+  volumes:
+    - .:/app/
+
+
+services: 
+  site-install:
+    <<: *sfquickstarts-common
+    working_dir: /app/site/
+    restart: "no"
+    command: npm install
+
+  site-serve:
+    <<: *sfquickstarts-common
+    depends_on:
+      site-install:
+        condition: service_completed_successfully
+    working_dir: /app/site/
+    command: npm run serve
+    ports:
+      - "8000:8000"
+    restart: always

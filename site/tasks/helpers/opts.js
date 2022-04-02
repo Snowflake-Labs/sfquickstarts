@@ -80,7 +80,19 @@ exports.vulcanize = () => {
 };
 
 exports.webserver = () => {
-  return {
+  const fs = require('fs')
+
+const path = './file.txt'
+
+  const webserverOpts = {
     livereload: false,
-  };
+  }
+  // If docker,
+  try {
+    if (fs.existsSync('/.dockerenv')) {
+      // then export server to host
+      webserverOpts.host = '0.0.0.0';
+    }
+  } catch(err) {}
+  return webserverOpts;
 };
