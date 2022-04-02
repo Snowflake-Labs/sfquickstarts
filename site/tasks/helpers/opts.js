@@ -4,6 +4,7 @@ const autoprefixer = require('autoprefixer');
 const closureCompilerPackage = require('google-closure-compiler');
 const cssdeclarationsorter = require('css-declaration-sorter');
 const cssnano = require('cssnano');
+const fs = require('fs')
 
 exports.babel = () => {
   return {
@@ -80,10 +81,6 @@ exports.vulcanize = () => {
 };
 
 exports.webserver = () => {
-  const fs = require('fs')
-
-const path = './file.txt'
-
   const webserverOpts = {
     livereload: false,
   }
