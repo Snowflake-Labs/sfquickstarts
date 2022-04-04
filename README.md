@@ -24,7 +24,7 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 ### Prerequisites
 
-  1. [Install Node 14](https://nodejs.org/en/download/); Homebrew installed? `brew install node@14`
+  1. [Install Node 14](https://nodejs.org/en/download/); Homebrew installed? `brew install node`
      - Install gulp-cli `npm i -g gulp-cli`
   2. [Install Go](https://golang.org/doc/install); Homebrew installed? `brew install golang`
      - Install claat `go install github.com/googlecodelabs/tools/claat@latest`
