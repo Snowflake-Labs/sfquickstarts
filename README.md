@@ -56,7 +56,7 @@ export PATH=$PATH:$HOME/go/bin
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
 #### 3. You get `Error: Cannot find module 'postcss'` when running `npm run serve` 
-   - The module may not have been installed for soe reason so run `npm install --save-dev postcss gulp-postcss` and then rerun `npm run serve` 
+   - The module may not have been installed for some reason so run `npm install --save-dev postcss gulp-postcss` and then rerun `npm run serve` 
 
 ## Write Your First Quickstart
 
