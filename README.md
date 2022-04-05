@@ -41,7 +41,8 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
-#### Common environment errors:
+## Common Errors
+
 #### Claat related errors
    - Make sure Go is properly in your `PATH`. Add the following lines to your profile (`~/.profile`, or `~/.zshrc`):
 ````bash
@@ -51,13 +52,13 @@ export PATH=$PATH:$HOME/go/bin
 ````
   ***Note:** After adding Go to your `PATH`, be sure to apply your new profile: `source ~/.profile` or `source ~/.zshrc`*
 
-#### You get a `EACCES` error when installing gulp-cli
+#### You get a `EACCES` error when installing `gulp-cli`
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
-#### You get `Error: Cannot find module 'postcss'`
-   - It may not have been installed so run `npm install --save-dev postcss gulp-postcss` and then rerun `npm run serve` 
+#### You get `Error: Cannot find module 'postcss'` when running `npm run serve` 
+   - The module may not have been installed for soe reason so run `npm install --save-dev postcss gulp-postcss` and then rerun `npm run serve` 
 
-#### Write Your First Quickstart:
+## Write Your First Quickstart
 
   1. Terminate the running server with `ctrl C` and and navigate to the `sfguides` source directory `cd sfguides/src`
      - In this directory, you will see all existing guides and their markdown files.
@@ -75,7 +76,6 @@ You can always read the [sample Quickstart](site/sfguides/sample.md) online.
 - You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
-
 
 ## How do I get my Snowflake Quickstart on [quickstarts.snowflake.com](https://quickstarts.snowflake.com)?
 
