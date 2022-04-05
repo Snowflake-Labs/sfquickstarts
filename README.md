@@ -31,7 +31,7 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
      - Ensure go and claat is in your `PATH` [claat path setup](#claat-related-errors)
   3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
-## Run locally
+### Run locally
 
   1. Fork this repository to your personal github account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
@@ -41,9 +41,9 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
-## Common Errors
+### Common Errors
 
-#### Claat related errors
+#### 1. Claat related errors
    - Make sure Go is properly in your `PATH`. Add the following lines to your profile (`~/.profile`, or `~/.zshrc`):
 ````bash
 #adding Golang to path
@@ -52,10 +52,10 @@ export PATH=$PATH:$HOME/go/bin
 ````
   ***Note:** After adding Go to your `PATH`, be sure to apply your new profile: `source ~/.profile` or `source ~/.zshrc`*
 
-#### You get a `EACCES` error when installing `gulp-cli`
+#### 2. You get a `EACCES` error when installing `gulp-cli`
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
-#### You get `Error: Cannot find module 'postcss'` when running `npm run serve` 
+#### 3. You get `Error: Cannot find module 'postcss'` when running `npm run serve` 
    - The module may not have been installed for soe reason so run `npm install --save-dev postcss gulp-postcss` and then rerun `npm run serve` 
 
 ## Write Your First Quickstart
