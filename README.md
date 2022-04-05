@@ -54,6 +54,9 @@ export PATH=$PATH:$HOME/go/bin
 #### You get a `EACCES` error when installing gulp-cli
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
+#### You get `Error: Cannot find module 'postcss'`
+   - It may not have been installed so run `npm install --save-dev postcss gulp-postcss` and then rerun `npm run serve` 
+
 #### Write Your First Quickstart:
 
   1. Terminate the running server with `ctrl C` and and navigate to the `sfguides` source directory `cd sfguides/src`
