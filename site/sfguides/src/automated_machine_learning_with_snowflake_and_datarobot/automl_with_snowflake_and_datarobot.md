@@ -25,6 +25,7 @@ Throughout this process, you will discover the ease at which it is possible to b
 
 To showcase the full lifecycle of a deploying machine learning model, we will first load in Snowflake, our data cloud where all of our data lives. Then, we will leverage the DataRobot auto-pilot process to perform exploratory data analysis, and then train, evaluate, and interpret a slew of potential machine learning models. And finally, use the Snowflake-DataRobot prediction integration to score our model against new data, as if the model was in production.
 ### Prerequisites
+- A Business email
 - Basic knowledge of SQL, and database concepts and objects
 - Basic understanding of data science and machine learning
 
@@ -54,21 +55,19 @@ The first thing you will need to do is download the following .sql file that con
 </button>
 <br/><br/>
 
-At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close any hint boxes that are looking to help guide you. These will not be needed for this lab as most of the hints will be covered throughout the remainder of this exercise.
+At this point, log into your Snowflake account and open a new `Worksheet`. If you have just created a free trial account, you will land in the `Learn` section. Simply navaigate to the `Worksheets` tab on the left and click `+ Worksheet` in the top right hand corner.
 
-![](assets/p5.png)
+![](assets/p51.png)
 <br/><br/>
 
-To ingest our script in the Snowflake UI, navigate to the ellipsis button on the top right hand side of a “New Worksheet” and load our script.
+To ingest our script in the Snowflake UI, click the down arrow next to the time your notebook was created in the top left hand side of your screen and load our `Snowflake_Datarobot_VHOL_guies.sql` script using the `Import SQL from File` button. You can also change the name of this worksheet to "Snowflake-DataRobot VHOL Summit 2022"
 
-![](assets/p2.png)
+![](assets/p53.png)
 <br/><br/>
 
-Snowflake provides "worksheets" as the spot for you to execute your code. For each worksheet you create, you will need to set the “context” so the worksheet knows how to behave. A “context” in Snowflake is made up of 4 distinctions that must be set before we can perform any work: the “role” we want to act as, the “database” and “schema” we want to work with, and the “warehouse” we want to perform the work. This can be found in the top right hand section of a new worksheet.
+Snowflake provides "worksheets" as the spot for you to execute your code. For each worksheet you create, you will need to set the “context” so the worksheet knows how to behave. A “context” in Snowflake is made up of 4 distinctions that must be set before we can perform any work: the “role” we want to act as, the “database” and “schema” we want to work with, and the “warehouse” we want to perform the work.
 
-![](assets/p3.png)
-
-Lets go ahead and set the role we want to act as, which will be `SYSADMIN` to begin with. We can either set this either manually (`SYSADMIN` is the default role for a first time user, so this already may be populated) by hovering over the people icon and choosing SYSADMIN from the “Role” dropdown, or we can run the following line of code in our worksheet. In addition to traditional SQL statements, Snowflake Data Definition ([DDL](https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html)) commands, such as setting the worksheet context, can also be written and executed within the worksheet.
+Lets go ahead and set the role we want to act as, which will be `ACCOUNTADMIN` to begin with. This can either be done manually in the UI or programmatically in a worksheet (`ACCOUNTADMIN` is the default role for a first time user). Lets do so programmatically in our worksheet by executing our first line of code:
 
 ```sql
 USE ROLE sysadmin;
@@ -76,33 +75,33 @@ USE ROLE sysadmin;
 
 To execute this code, all we need to do is place our cursor on the line we wish to run and then either hit the "run" button at the top left of the worksheet or press `Cmd/Ctrl + Enter`.
 
-Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab. For the purposes of this demo, we will not be running multiple statements in a row.
+ In addition to traditional SQL statements, Snowflake Data Definition ([DDL](https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html)) commands, such as setting the worksheet context, can also be written and executed within the worksheet.
+
+Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab.
 
 <!-- ------------------------ -->
 ## Creating a Snowflake Database
 Duration 10:
 
-To get started, we are going to create our first Snowflake object and `CREATE` a database called `CUSTOMER_DATA` that will be used for loading the structured data.
+To get started, we are going to create our first Snowflake object and `CREATE` a database called `CUSTOMER_DATA` that will be used for loading the structured data for our current example. To get back to our main navigation menu, simply click on the `HOME` button at the top left hand side of the worksheet.
 
-At the top of the UI, select the “Databases” tab. Then click on “Create” on the top left hand side and name the database “CUSTOMER_DATA” and click “Finish”.
+From here, click on the "Data" tab and click `+ Database`, to create a new database object. Every Snowflake trial provides you with two default databases, which is why you already see database objects on your list.
 
-![](assets/p6.png)
+![](assets/p54.png)
 <br/><br/>
 
-Lets navigate back to our worksheets, by clicking on the “Worksheets” icon. You should see our worksheet with all of the SQL we loaded in the prior step.
+Enter `CUSTOMER_DATA` in the "Name" section, and click "Create".
 
-![](assets/p7.png)
+![](assets/p55.png)
 <br/><br/>
 
-In the future you can skip this step by executing the following line of code.
+You should now see your new databases add to the list. Lets navigate back to our `Snowflake-DataRobot VHOL Summit 2022` worksheet. You should see our worksheet with all of the SQL we loaded in the prior step. In the future you can skip this step by executing the following line of code:
 
 ```sql
 CREATE OR REPLACE DATABASE customer_data;
 ```
 
-We will continue to set the context for our worksheet. The Role: `SYSADMIN`, we already set earlier. Lets navigate back to the top right of the worksheet and select our Database: `CUSTOMER_DATA` and Schema: `PUBLIC`. When you create your trial account, a warehouse is automatically created for you to begin using. We can set the last context requirement, Warehouse: `COMPUTE_WH`. The main thing to note is, you might have already executed some SQL commands without a warehouse attached. So why did they work then? Because the only commands executed so far are DDL commands. These commands are free in Snowflake. Only when you start working with data does a warehouse turn on.
-
-This lab assumes you created a trial account which automatically creates `compute_wh` for you, if you already had an account, you will need to create this warehouse to proceed with the lab. Whether you did or you didn't, feel free to run this command anyways. The `OR REPLACE` part of the command will simply replace the old warehouse object if it already existed.
+We will continue to set the context for our worksheet. The "role": `SYSADMIN`, we already set earlier. To set our "database", "schema", and "warehouse", execute the following code:
 
 ```sql
 CREATE OR REPLACE WAREHOUSE compute_wh WITH
@@ -110,26 +109,16 @@ CREATE OR REPLACE WAREHOUSE compute_wh WITH
   AUTO_SUSPEND = 60
   AUTO_RESUME = TRUE
   INITIALLY_SUSPENDED = TRUE;
-```
 
-Once you have re/created your warehouse, execute the following to set the rest of the worksheet context:
 
-```sql
 USE DATABASE customer_data;
 USE SCHEMA public;
 USE WAREHOUSE compute_wh;
 ```
 
-Your full context should look as follows:
+One thing to note is, we already have already executed some SQL commands without a warehouse attached. So why did they work then? Because the only commands executed so far are DDL commands. These commands are free in Snowflake. Only when you start working with data does a warehouse turn on.
 
-- Role: `SYSADMIN`
-- Warehouse: `COMPUTE_WH(XS)`
-- Database: `CUSTOMERDATA`
-- Schema: `PUBLIC`
-
-
-
-![](assets/p8.png)
+Continuing, trial accounts automatically come with `COMPUTE_WH` created for you. If you already had an account that you are using for this lab, you probably didn't have this warehouse anymore. Whether you did or you didn't have this warehouse, the `OR REPLACE` part of the `CREATE OR REPLACE WAREHOUSE compute_wh` command will simply replace the old warehouse object if it already existed.
 
 <!-- ------------------------ -->
 ## Creating a Snowflake Table
@@ -139,7 +128,7 @@ As part of the lab, we are going to create 2 tables:
  - `TRAIN_DATA` -- The dataset that we will use to train our machine learning model
  - `SCORING_DATA` -- Out of sample data that we will use to score and validate our model
 
-We will be using our worksheet in the "Worksheets" tab in the Snowflake UI exclusively to create the table. You should see the following block of code in your worksheet. Execute the code by highlighting or putting your cursor on the following block of code and press `Cmd/Ctrl + Enter`.
+We will be using our worksheet exclusively to create the table. You should see the following block of code in your worksheet. Execute the code by highlighting or putting your cursor on the following block of code and press `Cmd/Ctrl + Enter`.
 
 ```sql
 CREATE OR REPLACE TABLE train_data (
@@ -198,12 +187,12 @@ CREATE OR REPLACE TABLE scoring_data (
     "TARRIF_PLAN_CONDS" VARCHAR(16777216)
 );
 ```
-At the top of the page, go to the “Databases” tab and then click on the `CUSTOMER_DATA` database link. You should see your newly created `TRAIN_DATA` and `SCORING_DATA` tables.
+At the top of the worksheet, go click on the "home" tab, click on the "data" tab, click on the  `CUSTOMER_DATA` database, click on the `PUBLIC` schema, and click on "Tables". You should see your newly created `TRAIN_DATA` and `SCORING_DATA` tables.
 
-![](assets/p9.png)
+![](assets/p57.png)
 <br/><br/>
 
-You can go one level deeper here and look at the column definitions for each table by clicking on the table names.
+You can go one level deeper here and look at the column definitions for each table by clicking on the table name and then "Columns".
 
 <!-- ------------------------ -->
 ## Creating a Snowflake External Stage
@@ -211,34 +200,16 @@ Duration: 5
 
 [Stages](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html) in snowflake are places that you can land your data before it is uploaded to a Snowflake table. You might have a batch of CSV files living on a disk driver somewhere, and, in order to start querying the data via a table, the data must be landed within the Snowflake environment for a data upload to be possible.
 
-In the exercise, we will be working with structured, comma-delimited data that has already been staged in a public, external AWS bucket. Before we can use this data, we first need to create a "Storage Integration" that specifies the location of our external bucket.
+In the exercise, we will be working with structured, comma-delimited data that has already been staged in a public, external AWS bucket. Before we can use this data, we first need to create a `Stage` that specifies the location of our external bucket.
 
-Let’s create the storage integration object. Storage integrations are typically created by Storage Administrators, but for the purposes of this lab, YOU will be creating this object.
+Let’s create the "stage" object. "Stages" are typically created by Storage Administrators, but for the purposes of this lab, YOU will be creating this object. Again, lets click back on "Worksheets" tab  on the left hand side and find our way back to our `Snowflake-DataRobot VHOL Summit 2022` worksheet, and excute the next following lines of code:
 
 ```sql
 CREATE OR REPLACE STAGE sf_dr_stage
   URL = 's3://snowflake-workshop-lab/telecoms';
 ```
 
-From the Databases tab, click on the `CUSTOMER_DATA` database, then click on “Stages” and click “Create…”
-
-![](assets/p10.png)
-<br/><br/>
-
-Select the option for “Existing Amazon S3 Location” and click “Next”:
-
-![](assets/p11.png)
-<br/><br/>
-
-On the “Create Stage” box that appears, enter/select the following settings, then click “Finish”.
- - Name: `SF_DR_STAGE`
- - Schema Name:	`PUBLIC`
- - URL: `s3://snowflake-workshop-lab/telecoms`
-
-![](assets/p12.png)
-<br/><br/>
-
-Now let’s take a look at the contents of the `sf_dr_stage`. At the top of the page, click on the “Worksheet” tab. Then execute the following statement:
+We also can take a look at the contents of the `sf_dr_stage` by executing the follow:
 
 ```bash
 ls @sf_dr_stage;
@@ -246,14 +217,17 @@ ls @sf_dr_stage;
 
 You should see the output in the “Results” window in the bottom pane:
 
+![](assets/p58.png)
 
-![](assets/p13.png)
+Here is the two csv files we will be using for our example project today.
 
 <!-- ------------------------ -->
 ## Creating a Snowflake File Format
 Duration: 5
 
-Before we can load the data into Snowflake, we have to create a "File Format" that matches the data structure.
+[File Formats](https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html) tell Snowflake the structure of the data coming in. The last thing that we need to do before we can load the data into our Snowflake tables is: we have to create a `File Format` that matches the data structure of the local files we want to upload. As smart as Snowflake is, its not THAT smart.
+
+For our example, our data has header columns in the CSV, so we want to skip those. A comma delimiter is the default way to delimit CSV files (hence the name), but sometimes you can choose another character. We need to give Snowflake all the details on how we have organized our data in the files we want to load in. Please execute the following code:
 
 ```sql
 CREATE OR REPLACE FILE FORMAT churndata_ff
@@ -271,30 +245,8 @@ CREATE OR REPLACE FILE FORMAT churndata_ff
   TIMESTAMP_FORMAT = 'AUTO'
   NULL_IF = ('\\N');
 ```
-From the “Databases tab”, click on the `CUSTOMER_DATA` database hyperlink. Then click on “File Formats”. Then click “Create”.
 
-![](assets/p14.png)
-<br/><br/>
-
-On the resulting page, we then create a file format. In the box that appears, leave all the default settings as-is but make the changes below:
- - Name: `ChurnData_ff`
- - Header lines to skip: `1`
- - Field optionally enclosed by: `Double Quote`
- - Null string: `Leave as is`
-
-IMPORTANT: If you do not see the “Error on Column Count Mismatch” box, scroll down in the dialogue box
-
-When you are done, the box should look like this:
-
-![](assets/p15.png)
-<br/><br/>
-
-Note that you can scroll down the settings to review some more parameters:
-
-![](assets/p16.png)
-<br/><br/>
-
-Click on the “Finish” button to create the file format.
+![](assets/p59.png)
 
 <!-- ------------------------ -->
 ## Loading Data into Snowflake
@@ -311,7 +263,7 @@ Common workloads are data loading, running a query, or performing a Data Manipul
 
 In section 3, when we were setting up our context, we used the default warehouse `COMPUTE_WH(XS)` that came with a trial account (or created it if we were using a different account)
 
-Lets go ahead and instantaneously scale up the size of our warehouse to better match the size of our data. We can go from an `XSMALL` warehouse and double our available compute to a `SMALL` warehouse by running the following command.
+Lets go ahead and instantaneously scale up the size of our warehouse to better match the size of our data. We can go from an `XSMALL` warehouse and double our available compute to a `SMALL` warehouse by running the following command:
 
 ```sql
 ALTER WAREHOUSE compute_wh SET
@@ -320,7 +272,7 @@ ALTER WAREHOUSE compute_wh SET
 
 Early when we created our warehouse, we gave it some additional parameters to consider. `AUTO_SUSPEND = 60` tells the warehouse that after a query has finished running, stay alive for exactly 1 more minute in case new queries are going to come and take advantage Snowflake's data caching abilities. 60 seconds is the MIN and can be adjusted upwards. `AUTO_RESUME = TRUE` tells the warehouse to turn back on once the user begins submitting queries to the warehouse. And lastly, `INITIALLY_SUSPENDED = TRUE` tells the warehouse to initially not turn on when the warehouse is completed. What these parameters enable is a true pay for what you consume billing pattern. With that, we can be assured that even if we walk away from the computer, we have peace of mind we aren't accruing idle compute costs.
 
-Now we can run a COPY command to load the data into the `CUSTOMER_DATA` table we created earlier. Go ahead and execute the next set of statements in the worksheet to load the staged data into the table.
+Now we can run a COPY command to load the data into the `CUSTOMER_DATA` table we created earlier. Go ahead and execute the next set of statements in the worksheet to load the staged data into the table:
 
 ```sql
 COPY INTO train_data FROM @sf_dr_stage/Churn_Telecomms_training.csv
@@ -332,7 +284,7 @@ COPY INTO scoring_data FROM @sf_dr_stage/Churn_Telecomms_scoring.csv
 
 In the Results window, you should see the status of the load:
 
-![](assets/p18.png)
+![](assets/p60.png)
 <br/><br/>
 
 We now finally have data inside a Snowflake table that is ready to be queried on demand. We can see a sample of what data lies within our table by execute the following:
@@ -341,9 +293,9 @@ We now finally have data inside a Snowflake table that is ready to be queried on
 SELECT * FROM train_data LIMIT 10;
 ```
 
-You should see something like this. Note we have our "CHURN" column. This will be the key column that we will go and build a supervised machine learning model on.
+You should see something like this. Note we have our `HURN` column. This will be the key column that we will go and build a supervised machine learning model on.
 
-![](assets/p19.png)
+![](assets/p61.png)
 
 <!-- ------------------------ -->
 ## Connecting Snowflake with DataRobot
@@ -351,29 +303,25 @@ Duration: 10
 
 At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer machine learning capabilities, and therefore, happily partners with the leading data science and machine learning partners in the industry. We are on a mission to help us figure out which of our customers are most likely to churn and DataRobot can help us build a machine learning model to answer that question.
 
-Snowflake's Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible.
+Snowflake's Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible. To get here, click our "Home" button and then navigate to "Admin" and then "Partner Connect". This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. Click the "Data Science & ML" category to see the two tools we will be using for this hands on lab: Zepl & DataRobot.
 
-![](assets/p20.png)
+![](assets/p62.png)
 <br/><br/>
 
-Go ahead and click on the "Partner Connect" application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. You should see DataRobot near the bottom.
+To get started, go ahead and click on the Zepl application. This will present you with a screen to connect to Zepl. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
 
-![](assets/p21.png)
+![](assets/p63.png)
 <br/><br/>
 
-To be able to continue test out partner applications, in our case DataRobot, we need to promote ourselves to the `ACCOUNTADMIN` role. This is an out of worksheet process, and therefore isn't a command for us to run. We need to do this one manually.
+You then will be prompted to activate your account now, press the blue "Activate" button to do so.
 
-![](assets/p22.png)
-<br/><br/>
+![](assets/p64.png)
 
-Once you have completed this step, go ahead and click on the DataRobot application. This will present you with a screen to connect to DataRobot. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
+This will launch a new tab to the Zepl platform. Of course, in this lab, we will be using both Zepl & DataRobot, so we will need to rinse and repeat. Again, find you way back to the Snowflake tab you have open and click "DataRobot". Again, we have all the Snowflake objects we need created already, so press "Connect".
 
-![](assets/p23.png)
-<br/><br/>
+![](assets/p65.png)
 
-You then will be prompted to activate your account now, press the blue "activate" button to do so.
-
-![](assets/p24.png)
+You then will be prompted to activate your account for DataRobot now, press the blue "Activate" button to do so. You will now have two new tabs open, one for Zepl and one for DataRobot.
 
 <!-- ------------------------ -->
 ## Getting Started with DataRobot
@@ -661,7 +609,7 @@ You can now select an existing table, or you can create a new table. We recommen
 ![](assets/dr26.png)
 <br/><br/>
 
-Go ahead and click “Create a table” and select the Schema where you want your table, then enter a table name to write your predictions to. 
+Go ahead and click “Create a table” and select the Schema where you want your table, then enter a table name to write your predictions to.
 
 ![](assets/dr27.png)
 <br/><br/>
@@ -671,7 +619,7 @@ Click “Save Connection”. Your Job Definition should look similar to the imag
 ![](assets/dr28.png)
 <br/><br/>
 
-At the bottom you can schedule this job to run on a Schedule, or just run it manually. Go ahead and click "Save Prediction job definition" in the bottom left, then click on "View all Job Definitions" in the upper left. Click the hamburger icon on the right side of the job definition you just made, and click "Run now". 
+At the bottom you can schedule this job to run on a Schedule, or just run it manually. Go ahead and click "Save Prediction job definition" in the bottom left, then click on "View all Job Definitions" in the upper left. Click the hamburger icon on the right side of the job definition you just made, and click "Run now".
 
 ![](assets/dr29.png)
 <br/><br/>
