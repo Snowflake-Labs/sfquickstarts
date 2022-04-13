@@ -24,14 +24,14 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 ### Prerequisites
 
-  1. [Install Node 14](https://nodejs.org/en/download/); Homebrew installed? `brew install node`
+  1. [Install Node 14](https://nodejs.org/en/download/); Homebrew installed? `brew install node@14`
      - Install gulp-cli `npm i -g gulp-cli`
   2. [Install Go](https://golang.org/doc/install); Homebrew installed? `brew install golang`
      - Install claat `go install github.com/googlecodelabs/tools/claat@latest`
      - Ensure go and claat is in your `PATH` [claat path setup](#claat-related-errors)
   3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
-## Run locally
+### Run locally
 
   1. Fork this repository to your personal github account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
@@ -41,8 +41,9 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
-#### Common environment errors:
-#### Claat related errors
+### Common Errors
+
+#### 1. Claat related errors
    - Make sure Go is properly in your `PATH`. Add the following lines to your profile (`~/.profile`, or `~/.zshrc`):
 ````bash
 #adding Golang to path
@@ -51,10 +52,13 @@ export PATH=$PATH:$HOME/go/bin
 ````
   ***Note:** After adding Go to your `PATH`, be sure to apply your new profile: `source ~/.profile` or `source ~/.zshrc`*
 
-#### You get a `EACCES` error when installing gulp-cli
+#### 2. You get a `EACCES` error when installing `gulp-cli`
    - This means that your npm location needs to be updated. Follow the steps here: [Resolve EACCESS permissions](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally#manually-change-npms-default-directory)
 
-#### Write Your First Quickstart:
+#### 3. You get `Error: Cannot find module 'postcss'` when running `npm run serve` 
+   - The module may not have been installed for some reason so run `npm install --save-dev postcss gulp-postcss` and then rerun `npm run serve` 
+
+## Write Your First Quickstart
 
   1. Terminate the running server with `ctrl C` and and navigate to the `sfguides` source directory `cd sfguides/src`
      - In this directory, you will see all existing guides and their markdown files.
@@ -72,7 +76,6 @@ You can always read the [sample Quickstart](site/sfguides/sample.md) online.
 - You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
-
 
 ## How do I get my Snowflake Quickstart on [quickstarts.snowflake.com](https://quickstarts.snowflake.com)?
 
