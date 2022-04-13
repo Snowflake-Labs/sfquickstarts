@@ -15,7 +15,7 @@ Duration: 1
 This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for unstructured data. Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing this lab, you’ll be ready to start storing and managing your own unstructured data in Snowflake. 
 
 ### Prerequisites
-- Use of the [Snowflake free 30-day trial environment](https://trial.snowflake.com/)
+- Snowflake account
 - Basic knowledge of SQL, database concepts, and objects
 - Recommended to first complete [Getting Started with SnowSQL](https://quickstarts.snowflake.com/guide/getting_started_with_snowsql/index.html?index=..%2F..index)
 
@@ -124,7 +124,7 @@ We can see that the stage contains various mailboxes from Enron users containing
 __The size of the files__: We can see that the file size ranges from 666 bytes to 1023 bytes, with the majority of the files closer to 1023 bytes. If we click on the size metric, we can get more detailed information. The total corpus size is 208,414 bytes, with an average size of 922 bytes. If we hover over the histogram, we can filter results based on file size.
 
 ### Store Unstructured Data in an Internal Stage
-Alternatively, you can store data direcctly in Snowflake with internal stages. Now, we want to create an internal stage and upload the same files while maintaining the directory structure of the various individual mailboxes on an internal stage.
+Alternatively, you can store data directly in Snowflake with internal stages. Now, we want to create an internal stage and upload the same files while maintaining the directory structure of the various individual mailboxes on an internal stage.
 
 #### Create an Internal Stage
 Run this command to create an internal stage called `email_stage_internal` as follows.
