@@ -88,7 +88,7 @@ The data we will be using in this lab is stored in an S3 bucket.
 You are working with unstructured PDFs that have already been staged in a public, external S3 bucket. Before you can use this data, you first need to create a Stage that specifies the location of our external bucket.
 
 <aside class="warning">
-  For this lab we are using an AWS S3 bucket in us-east-1. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake environment.
+  For this lab we are using an AWS S3 bucket in us-east-1. To minimize data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake environment.
 </aside>
 
 Grant the `PUBLIC` schema access to the database, schema, and warehouse just created (This will be relevant in the next section).
@@ -177,7 +177,7 @@ snowsql -a <account-identifier> \
 Using the examples above for the path and the account identifier, and the userid `myuser`, the command would be:
 
 ```
-snowsql -a xx74264 \
+snowsql -a xx74264.ca-central1-1.aws \
 -u myuser -d emaildb -r accountadmin -s raw \
 -D srcpath=/Users/znh/Downloads/quickstart/mailbox/ \
 -D stagename=@email_stage_internal \
@@ -450,113 +450,88 @@ At a high level, the code does the following:
 - Serialize the results in a JSON string returned as an output.
  
 ```java
-public class NamedEntityExtraction {
-		
-	public String ParseText(InputStream inputStream) throws IOException, SAXException, TikaException {
+public String ParseText(String filePath) throws IOException, SAXException, TikaException {
 			
-	     // Configure gson
-	      GsonBuilder gsonBuilder = new GsonBuilder();
-	      Gson gson = gsonBuilder.create();
+// Configure gson	      
+GsonBuilder gsonBuilder = new GsonBuilder()
+Gson gson = gsonBuilder.create();
 		
-	    //detecting the file type
-	      BodyContentHandler handler = new BodyContentHandler();
-	      Metadata metadata = new Metadata();
-	      ParseContext pcontext=new ParseContext();
+//detecting the file type
+BodyContentHandler handler = new BodyContentHandler();
+Metadata metadata = new Metadata();
+ParseContext pcontext=new ParseContext();
+	     
+SnowflakeFile file = SnowflakeFile.newInstance(filePath);
+InputStream ins = file.getInputStream();
 	      
-	      //Text document parser
-	      TXTParser  TexTParser = new TXTParser();
-	      TexTParser.parse(inputStream, handler, metadata, pcontext);
+//Text document parser
+TXTParser  TexTParser = new TXTParser();
+TexTParser.parse(ins, handler, metadata, pcontext);
 	      
-	      String Contents = handler.toString();
+String Contents = handler.toString();
 	      
-          	      String[] AllPersonEntities = null;
-          	      String[] AllLocationEntities = null;
-          	      String JsonResult = null;
+String[] AllPersonEntities = null;
+String[] AllLocationEntities = null;
+String JsonResult = null;
 	      
-          	      NamedEntities NE = new NamedEntities(AllPersonEntities, AllLocationEntities);
+NamedEntities NE = new NamedEntities(AllPersonEntities, AllLocationEntities);
 			
-	try {
-	        
-	        	 
-	              String Tokens[] = new NamedEntityExtraction().ParseTokens(Contents);
-	              String PersonEntities[] = new NamedEntityExtraction().findName(Tokens);
-	              String LocationEntities[] = new NamedEntityExtraction().findLocation(Tokens);
+ try {
+         for(int i=0;i<sentences.length;i++){
+	          String Tokens[] = new NamedEntityExtraction().ParseTokens(Contents);
+	          String PersonEntities[] = new NamedEntityExtraction().findName(Tokens);
+	          String LocationEntities[] = new NamedEntityExtraction().findLocation(Tokens);
 	           
-	              AllPersonEntities = ArrayUtils.addAll(AllPersonEntities, PersonEntities);
-	              AllLocationEntities = ArrayUtils.addAll(AllLocationEntities, LocationEntities)
+	          AllPersonEntities = ArrayUtils.addAll(AllPersonEntities, PersonEntities);
+	          AllLocationEntities = ArrayUtils.addAll(AllLocationEntities, LocationEntities);
 	           
-	              NE.setPersons(AllPersonEntities);
-	              NE.setLocations(AllLocationEntities);
+	          NE.setPersons(AllPersonEntities);
+	          NE.setLocations(AllLocationEntities);
 	           
-	              JsonResult = gson.toJson(NE).toString();	
+	          JsonResult = gson.toJson(NE).toString();	
                		
 		
-	      } catch (IOException e) {
+			} catch (IOException e) {
 	            e.printStackTrace();
 	        }
-		return(JsonResult);
-	}
+		     return(JsonResult);
+}
 ```
 
 A few elements relevant for this code:
 
 - Notice the main class is __NamedEntityExtraction__.
 - The method __ParseText__ will be invoked by the UDF in the next section.
-- The file to be read is passed as an __InputStream__ when Snowflake will invoke the UDF on a file.
+- The file path is passed as a parameter. It can be a URL to the file, or the path on the stage.
 
 ### Creating a UDF in Snowflake
-Creating the UDF involves a few steps in Snowflake.
+The precompiled jar file including all the dependencies has been uploaded and available on a Snowflake s3 public bucket. Creating the UDF involves a few steps in Snowflake.
 
-1. Download the EmailNLPv2-2.0.jar file to your workstation.
-2. Create an internal stage to upload the jar dependency. From the Snowflake worksheet WS1, enter the following command:
-
+1. Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:
 ```sql
-Use role sysadmin;
-Use schema emaildb.raw;
-create or replace stage jars_stage_internal
-encryption = (type = 'SNOWFLAKE_SSE');
+use role sysadmin;
+use schema emaildb.raw;
+
+create or replace stage jars_stage_external
+url = 's3://sfquickstarts/email/jars/'
+directory = (enable = true auto_refresh = true);
 ```
-
-3. Note down the absolute path on your workstation to access the jar file. Open a snowsql session as follows. For further info, refer to previous section 1.2:
-
-```
-snowsql -a <account-id> -u <user-id> -d emaildb -r sysadmin -s raw
-```
-
-After entering the password, enter the following command.
-
-```
-put file://<jar-path> @jars_stage_internal auto_compress=false;
-```
-
-For example, the command will be:
-
-```
-put file:///Users/znh/Downloads/EmailNLPv2-2.0.jar @jars_stage_internal auto_compress=false;
-```
-
-From the Snowflake worksheet on Snowsight, you can enter the following command to confirm the file successfully uploaded
-
+From the Snowflake worksheet, you can run the following command to confirm the jar file is listed in the external stage.
 ```sql
-ls @jars_stage_internal;
+ls @jars_stage_external;
 ```
 
-![List Jars Internal Stage](assets/8_1.png)
+![List jar external stage](assets/8_1.png)
 
-Once confirmed, you can quit the console.
-
-With the jar file uploaded to the stage, we can now create the UDF in Snowflake.
-
+2. We can now create the UDF in Snowflake as the following.
 ```sql
 create or replace function  parseText(file string)
 returns string
 language java
-imports = ('@jars_stage_internal/EmailNLPv2-2.0.jar')
+imports = ('@jars_stage_external/EmailNLPv3-3.0.jar')
 handler = 'NamedEntityExtraction.ParseText'
 ;
 ```
-	
-Notice staged file in `imports` parameter is the JAR that we just uploaded to the internal stage and contains the UDF. As well, in the `handler` parameter, we have the class and the method to be invoked in the jar file to parse a file described in the previous section.
 
 ### Invoking the Java UDF
 The UDF can be invoked on any text file containing readable english. From the email corpus stored on the internal stage, we can invoke the UDF as follows.
