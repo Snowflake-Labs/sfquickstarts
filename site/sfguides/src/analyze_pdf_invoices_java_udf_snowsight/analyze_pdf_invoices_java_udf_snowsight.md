@@ -103,7 +103,7 @@ create or replace stage jars_stage
 
 -- Create a java function to parse PDF files
 create or replace function read_pdf(file string)
-returns string
+returns String
 language java
 imports = ('@jars_stage/pdfbox-app-2.0.24.jar')
 HANDLER = 'PdfParser.ReadFile'
@@ -118,10 +118,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.snowflake.snowpark_java.types.SnowflakeFile;
+
 public class PdfParser {
 
-    public static String ReadFile(InputStream stream) throws IOException {
-        try (PDDocument document = PDDocument.load(stream)) {
+    public static String ReadFile(String file_url) throws IOException {
+SnowflakeFile file = SnowflakeFile.newInstance(file_url);
+        try (PDDocument document = PDDocument.load(file.getInputStream())) {
 
             document.getClass();
 
