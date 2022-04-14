@@ -103,7 +103,7 @@ create or replace stage jars_stage
 
 -- Create a java function to parse DICOM files
 create or replace function read_dicom(file string)
-returns string
+returns String
 language java
 imports = ('@jars_stage/dcm4che-core-5.24.2.jar', '@jars_stage/log4j-1.2.17.jar', 
            '@jars_stage/slf4j-api-1.7.30.jar', '@jars_stage/slf4j-log4j12-1.7.30.jar',
@@ -122,12 +122,15 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+import com.snowflake.snowpark_java.types.SnowflakeFile;
+
 public class DicomParser {
-    public static String Parse(InputStream stream) throws IOException {
-        String jsonStr = null;
+    public static String Parse(String file_url) throws IOException {
+     SnowflakeFile file = SnowflakeFile.newInstance(file_url);   
+String jsonStr = null;
 
         try {
-            DicomInputStream dis = new DicomInputStream(stream);
+            DicomInputStream dis = new DicomInputStream(file.getInputStream());
             DicomInputStream.IncludeBulkData includeBulkData = DicomInputStream.IncludeBulkData.URI;
             dis.setIncludeBulkData(includeBulkData);
             Attributes attrs = dis.readDataset(-1, -1);
