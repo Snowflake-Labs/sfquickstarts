@@ -69,7 +69,7 @@ use schema public;
 use warehouse quickstart;
 
 create or replace stage pdf_external
-url='s3://sfquickstarts/invoice/'
+url='s3://sfquickstarts/invoice/dataset/'
 directory = (enable = TRUE);
 ```
 
@@ -98,7 +98,7 @@ create or replace stage jars_stage_internal;
 
 -- Create external stage to import PDFBox from S3
 create or replace stage jars_stage
- url = 's3://sfquickstarts/jars/'
+ url = 's3://sfquickstarts/invoice/jars/'
  directory = (enable = true auto_refresh = false);
 
 -- Create a java function to parse PDF files
