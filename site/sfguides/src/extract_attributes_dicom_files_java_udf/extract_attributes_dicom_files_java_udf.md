@@ -242,7 +242,7 @@ If you collapse and expand the `DICOM` database in the Objects pane on the left,
 One of the many new things you can do with Snowsight is quickly see summary statistics and distributions of field values in query results. For example, select the entire table `EXTRACTED_DICOM_ATTRIBUTES`. Then in the query results, click on the columns such as `MANUFACTURER`, `PATIENTPOSITION`, and `PATIENTSEX` to see the distribution of values in each column.
 
 ```sql
-select * from extracted_dicom_attributes;
+select * from dicom_attributes;
 ```
 
 ![Snowsight column distributions](assets/4_3.png)
