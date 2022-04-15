@@ -146,10 +146,10 @@ We need to first download the following files to the local workstation by clicki
 - [upload.snf](<https://sfquickstarts.s3.amazonaws.com/Getting Started Unstructured Data/Files/upload.snf>): SnowSQL Script which will upload the files to the internal stage just created.
 - [mailbox.tar.gz](<https://sfquickstarts.s3.amazonaws.com/Getting Started Unstructured Data/Files/mailbox.tar.gz>): The actual email data.
 
-Once downloaded, untar the contents of the files on your local workstation and note the full path including the mailbox parent directory of the tar archive. In the example below, this path is `/Users/znh/Downloads/quickstart/mailbox/`. The file can be untarred as follows.
+Once downloaded, untar the contents of the files on your local workstation and note the full path including the mailbox parent directory of the tar archive. In the example below, this path is `/Users/znh/Downloads/quickstart/`. The file can be untarred as follows.
 
 ```bash
-cd /Users/znh/Downloads/quickstart/mailbox/
+cd /Users/znh/Downloads/quickstart/
 tar xzvf mailbox.tar.gz
 ```
 
@@ -179,7 +179,7 @@ Using the examples above for the path and the account identifier, and the userid
 ```
 snowsql -a xx74264.ca-central1-1.aws \
 -u myuser -d emaildb -r sysadmin -s raw \
--D srcpath=/Users/znh/Downloads/quickstart/mailbox/ \
+-D srcpath=/Users/znh/Downloads/quickstart/mailbox \
 -D stagename=@email_stage_internal \
 -o variable_substitution=true -f /Users/znh/Downloads/quickstart/upload.snf
 ```
