@@ -143,8 +143,8 @@ encryption = (type = 'SNOWFLAKE_SSE');
 #### Download Data and Scripts
 We need to first download the following files to the local workstation by clicking on the hyperlinks below. The subsequent steps require [SnowSQL CLI](https://docs.snowflake.com/en/user-guide/snowsql.html) installed on the local workstation where the lab is ran:
 
-- [upload.snf](https://sfquickstarts.s3.amazonaws.com/email/scripts/upload.snf): SnowSQL Script which will upload the files to the internal stage just created.
-- [mailbox.tar.gz](https://sfquickstarts.s3.amazonaws.com/email/scripts/mailbox.tar.gz): The actual email data.
+- [upload.snf](<https://sfquickstarts.s3.amazonaws.com/Getting Started Unstructured Data/Files/upload.snf>): SnowSQL Script which will upload the files to the internal stage just created.
+- [mailbox.tar.gz](<https://sfquickstarts.s3.amazonaws.com/Getting Started Unstructured Data/Files/mailbox.tar.gz>): The actual email data.
 
 Once downloaded, untar the contents of the files on your local workstation and note the full path including the mailbox parent directory of the tar archive. In the example below, this path is `/Users/znh/Downloads/quickstart/mailbox/`. The file can be untarred as follows.
 
@@ -154,7 +154,7 @@ tar xzvf mailbox.tar.gz
 ```
 
 #### Upload Files using SnowSQL
-Before opening terminal, find out your account identifier which for the trial account will be `<account-locator>.<region-id>.<cloud>`. These fields can be retrieved from the URL of your Snowflake account.
+Before opening terminal, find out your account identifier which for the trial account will be `&lt;account-locator&gt;.&lt;region-id&gt;.&lt;cloud&gt;`. These fields can be retrieved from the URL of your Snowflake account.
 
 For example, the URL to access the trial account is `https://xx74264.ca-central-1.aws.snowflakecomputing.com/`. These are the values for the account identifier:
 
@@ -164,7 +164,7 @@ For example, the URL to access the trial account is `https://xx74264.ca-central-
 
 There may be additional segments if you are using your own account part of an organization. You can find those from the URL of your Snowflake account. Please check the [Snowflake Documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#account-identifiers) for additional details on this topic.
 
-Now open a terminal on your workstation and run the following snowsql command. You will be prompted for the password for the Snowflake user passed as a parameter.
+Now open a terminal on your workstation and run the following SnowSQL command. You will be prompted for the password for the Snowflake user passed as a parameter.
 
 ```
 snowsql -a <account-identifier> \
@@ -178,7 +178,7 @@ Using the examples above for the path and the account identifier, and the userid
 
 ```
 snowsql -a xx74264.ca-central1-1.aws \
--u myuser -d emaildb -r accountadmin -s raw \
+-u myuser -d emaildb -r sysadmin -s raw \
 -D srcpath=/Users/znh/Downloads/quickstart/mailbox/ \
 -D stagename=@email_stage_internal \
 -o variable_substitution=true -f /Users/znh/Downloads/quickstart/upload.snf
