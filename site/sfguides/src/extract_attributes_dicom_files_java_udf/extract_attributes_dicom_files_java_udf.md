@@ -3,7 +3,7 @@ id: extract_attributes_dicom_files_java_udf
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: Demos
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Data Engineering, Unstructured Data
 
@@ -258,7 +258,7 @@ Congratulations! You used Snowflake to extract attributes from DICOM files.
 - Processing unstructured data with a __Java UDF__
 
 ### Related Resources
-- [Quickstart: Analyze PDF Invoices using Java UDF and Snowsight](http://https://quickstarts.snowflake.com/guide/analyze_pdf_invoices_java_udf_snowsight/index.html?index=..%2F..index#0)
+- [Quickstart: Analyze PDF Invoices using Java UDF and Snowsight](https://quickstarts.snowflake.com/guide/analyze_pdf_invoices_java_udf_snowsight/index.html?index=..%2F..index#0)
 - [Unstructured Data Docs](https://docs.snowflake.com/en/user-guide/unstructured.html)
 - [Java UDF Docs](https://docs.snowflake.com/en/developer-guide/udf/java/udf-java.html)
 - [Snowpark Docs](https://docs.snowflake.com/en/developer-guide/snowpark/index.html)

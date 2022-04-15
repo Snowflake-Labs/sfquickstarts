@@ -3,7 +3,7 @@ id: getting_started_with_unstructured_data
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: Getting Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Data Lake, Unstructured Data 
 
