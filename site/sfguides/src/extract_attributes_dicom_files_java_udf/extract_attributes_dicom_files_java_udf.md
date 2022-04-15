@@ -69,7 +69,7 @@ use schema public;
 use warehouse quickstart;
 
 create or replace stage dicom_external
-url='s3://sfquickstarts/dicom/dataset/'
+url="s3://sfquickstarts/Extract DICOM Attributes/DICOM/"
 directory = (enable = TRUE);
 ```
 
@@ -98,7 +98,7 @@ create or replace stage jars_stage_internal;
 
 -- Create external stage to import jars from S3
 create or replace stage jars_stage
- url = 's3://sfquickstarts/dicom/jars/'
+ url = "s3://sfquickstarts/Common JARs/"
  directory = (enable = true auto_refresh = false);
 
 -- Create a java function to parse DICOM files
