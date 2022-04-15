@@ -333,6 +333,8 @@ select
 	relative_path
 	, build_scoped_file_url(@email_stage_internal,relative_path) as scoped_url
 from directory(@email_stage_internal);
+
+select * from email_scoped_url_v limit 5;
 ```
 ![Scoped URL](assets/7_1.png)
 
@@ -348,8 +350,8 @@ First let’s build an assignment table where various roles (or even users) can 
 ```sql
 create or replace table assignment (mailbox string, role string, filter string);
 
-insert into assignment values ('NEMEC-G','analyst','%nemec-g%');
-insert into assignment values ('*','accountadmin','%');
+insert into assignment values ('NEMEC-G','ANALYST','%nemec-g%');
+insert into assignment values ('*','SYSADMIN','%');
 
 select * from assignment;
 ```
@@ -376,6 +378,7 @@ Let’s switch to role `analyst` and query the view.
 ```sql
 use role analyst;
 use warehouse quickstart;
+use schema raw;
 select * from analyst_file_access_v;
 ```
 ![Secure View Scoped URL](assets/7_2.png)
@@ -386,6 +389,8 @@ If we switch the role to `sysadmin` and run the same query:
 
 ```sql
 use role sysadmin;
+use warehouse quickstart;
+use schema raw;
 select * from analyst_file_access_v;
 ```
 
@@ -820,7 +825,7 @@ grant usage on schema emaildb.raw to share email_corpus;
 grant select on view emaildb.raw.email_corpus_willman_v to share email_corpus;
 
 -- whom are we sharing with?
-alter share email_corpus add accounts = <reader-account-name>;
+alter share email_corpus add accounts = <reader-account-locator>;
 ```
 
 We can review the share we have just created. The following command provides all the shares in the account.
@@ -860,7 +865,7 @@ grant usage on warehouse compute_wh to public;
 First, let's switch back to the `ACCOUNTADMIN` role. Click on the __Home__ button in the top-left. Then in the top-left, click on __ADMIN__, then hover over __Switch Role__, and click on __ACCOUNTADMIN__.
 ![Switch to ACCOUNTADMIN role](assets/9_2.png)
 
-Now let's view the shared data. In the pane on the left, click on on __Data__, then __Shared Data__. You will see the `EMAIL_CORPUS` database listed under __Ready to Get__. Select it and give the database name `EMAIL_CORPUS` and make it available to `PUBLIC`, then click the __Get Data__ button.
+Now let's view the shared data. In the pane on the left, click on on __Data__, then __Private Sharing__. You will see the `EMAIL_CORPUS` database listed under __Ready to Get__. Select it and give the database name `EMAIL_CORPUS` and make it available to `PUBLIC`, then click the __Get Data__ button.
 ![Get Data dialogue box](assets/9_3.png)
 
 Click on __Databases__, then click on the __Refresh__ button (round arrow button on the right side above the database list). You will now see the database `EMAIL_CORPUS`.
@@ -870,7 +875,7 @@ Select the worksheet created in this reader account. Add the following commands 
 
 ```sql
 use role sysadmin;
-use schema email_corpus.raw;
+use schema <account-locator>_email_corpus.raw;
 use warehouse compute_wh;
 
 show views;
