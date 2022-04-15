@@ -106,7 +106,7 @@ From the same worksheet you’ve been using, run this command to create an exter
 use schema emaildb.raw;
 -- Create an external stage where files are stored.
 create or replace stage email_stage
- url = 's3://sfquickstarts/email/mailbox/'
+ url = "s3://sfquickstarts/Getting Started Unstructured Data/Emails/mailbox/"
  directory = (enable = true auto_refresh = true);
 ```
 
@@ -513,7 +513,7 @@ use role sysadmin;
 use schema emaildb.raw;
 
 create or replace stage jars_stage_external
-url = 's3://sfquickstarts/email/jars/'
+url = "s3://sfquickstarts/Common JARs/"
 directory = (enable = true auto_refresh = true);
 ```
 From the Snowflake worksheet, you can run the following command to confirm the jar file is listed in the external stage.
