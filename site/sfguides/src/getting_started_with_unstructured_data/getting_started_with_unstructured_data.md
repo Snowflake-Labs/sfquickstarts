@@ -154,7 +154,7 @@ tar xzvf mailbox.tar.gz
 ```
 
 #### Upload Files using SnowSQL
-Before opening terminal, find out your account identifier which for the trial account will be `&lt;account-locator&gt;.&lt;region-id&gt;.&lt;cloud&gt;`. These fields can be retrieved from the URL of your Snowflake account.
+Before opening terminal, find out your account identifier which for the trial account will be `<account-locator>.<region-id>.<cloud>`. These fields can be retrieved from the URL of your Snowflake account.
 
 For example, the URL to access the trial account is `https://xx74264.ca-central-1.aws.snowflakecomputing.com/`. These are the values for the account identifier:
 
