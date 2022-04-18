@@ -137,7 +137,7 @@ encryption = (type = 'SNOWFLAKE_SSE');
 ```
 
 <aside class="warning">
-    Note that we have to specify a server-side encryption on the internal stage. When using the default client side encryption, the files will be returned encrypted and not readable when accessed through URLs (in Section 6).
+    Note that we have to specify a server-side encryption on the internal stage. When using the default client-side encryption, the files will be returned encrypted and not readable when accessed through URLs (in Section 6).
 </aside>
 
 #### Download Data and Scripts
@@ -177,7 +177,7 @@ snowsql -a <account-identifier> \
 Using the examples above for the path and the account identifier, and the userid `myuser`, the command would be:
 
 ```
-snowsql -a xx74264.ca-central1-1.aws \
+snowsql -a xx74264.ca-central-1.aws \
 -u myuser -d emaildb -r sysadmin -s raw \
 -D srcpath=/Users/znh/Downloads/quickstart/mailbox \
 -D stagename=@email_stage_internal \
@@ -513,6 +513,7 @@ A few elements relevant for this code:
 The precompiled jar file including all the dependencies has been uploaded and available on a Snowflake s3 public bucket. Creating the UDF involves a few steps in Snowflake.
 
 1. Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:
+
 ```sql
 use role sysadmin;
 use schema emaildb.raw;
@@ -521,6 +522,7 @@ create or replace stage jars_stage_external
 url = "s3://sfquickstarts/Common JARs/"
 directory = (enable = true auto_refresh = true);
 ```
+
 From the Snowflake worksheet, you can run the following command to confirm the jar file is listed in the external stage.
 ```sql
 ls @jars_stage_external;
