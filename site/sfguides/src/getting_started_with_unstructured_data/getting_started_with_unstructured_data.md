@@ -319,7 +319,7 @@ There are three different types of URLs that you can use to access unstructured 
 - [__Pre-signed URL__](https://docs.snowflake.com/en/sql-reference/functions/get_presigned_url.html): As the name suggests, pre-signed URLs are already authenticated. Users can simply download the files using pre-signed URLs.
 
 
-The URL format for files is https://&lt;account&gt;.snowflakecomputing.com/api/files/&lt;db_name&gt;/&lt;schema_name&gt;/&lt;stage_name&gt;/&lt;file_path&gt;. 
+The URL format for files is https://<account>.snowflakecomputing.com/api/files/<db_name>/<schema_name>/<stage_name>/<file_path>. 
 
 ### Scoped URL
 Scoped URLs are encoded URLs that permit temporary access to a staged file without granting privileges to the stage. The URL expires when the persisted query result period ends (i.e. the results cache expires), which is currently 24 hours.
