@@ -16,9 +16,6 @@ Modern businesses need modern analytics. Businesses that fail to capture data an
 Let's get started.
 
 
-### Prerequisites
-- Familiarity with Markdown syntax
-
 ### What You’ll Use
 - A [trial Snowflake Account](https://trial.snowflake.com/) with `ACCOUNTADMIN` access
 - A Matillion account, provisioned through snowflake’s [partner connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html)
@@ -690,7 +687,7 @@ Right click anywhere on the workspace click **Run Job** to run the job and enjoy
 ## Conclusion
 Duration: 1  
 
-Congrats ! You have successfully developed a well-orchestrated pipeline!  
+Congrats! You have successfully developed a well-orchestrated data engineering pipeline!  
 
 ### What we have covered
 - Source 3rd party data from Snowflake data marketplace  
