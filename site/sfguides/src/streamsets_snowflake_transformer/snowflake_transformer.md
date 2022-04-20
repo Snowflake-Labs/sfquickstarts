@@ -1,13 +1,13 @@
-summary: Getting Started with StreamSets Transformer for Snowflake
+summary: A Dive into Slowly Changing Dimensions with Snowpark
 id: snowflake_transformer
-categories: Data Engineering
+categories: data-engineering
 environments: web
 status: Published 
 feedback link: 
 tags: Data Engineering
 authors: StreamSets
 
-# Getting Started with StreamSets Transformer for Snowflake
+# A Dive into Slowly Changing Dimensions with Snowpark
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -19,7 +19,7 @@ Let’s explore how to get started using Transformer for Snowflake and some of t
 ### Prerequisites
 - Access to [StreamSets DataOps Platform account](https://cloud.login.streamsets.com/login)
 - a [Snowflake](https://signup.snowflake.com/) account and a schema that your user has CREATE TABLE privileges on
-- SQL Script located [here](https://drive.google.com/file/d/15ieacRaszkBX4gZjMy9ireufzVyllGoW/view)
+- SQL Script located [here](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/SCD_Snowpark.sql)
 
 ### What You’ll Learn 
 In this guide, you will learn how to build pipelines using Transformer for Snowflake that are executed directly in your Snowflake Data Cloud, including:
@@ -29,7 +29,7 @@ In this guide, you will learn how to build pipelines using Transformer for Snowf
 - How to create and execute a job
 
 ### What You’ll Build
-- A pipeline in StreamSets using Transformer for Snowflake to process a Slowly Changing Dimension. You can import the final product to compare against [here](https://github.com/streamsets/Pipeline-Examples/blob/main/Snowflake_Transformer.zip).
+- A pipeline in StreamSets using Snowpark to process a Slowly Changing Dimension. You can import the final product to compare against [here](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/Snowpark_Snowflake_Transformer.zip).
 
 <!-- ------------------------ -->
 ## Configure your Snowflake Credentials and Connection Defaults
@@ -219,7 +219,7 @@ While in Snowflake, check out the Query History to see the Merge record that the
 ## Conclusion
 Duration: 2
 
-You've learned how to process a Slowly Changing Dimension using Transformer for Snowflake in the StreamSets DataOps Platform.
+You've learned how to process a Slowly Changing Dimension using Snowpark in the StreamSets DataOps Platform.
 
 Get up and running with StreamSets in minutes - free. [Start Now](https://cloud.login.streamsets.com/signup).
 
