@@ -3,9 +3,9 @@ id: snowflake_transformer
 categories: data-engineering
 environments: web
 status: Published 
-feedback link: community@streamsets.com
-tags: Snowpark, Slowly Changing Dimension
-authors: Brenna Buuck
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Data Engineering, Snowpark
+authors: Brenna Buuck, StreamSets
 
 # A Dive into Slowly Changing Dimensions with Snowpark
 <!-- ------------------------ -->
@@ -18,7 +18,7 @@ Let’s explore how to get started using Transformer for Snowflake and some of t
 
 ### Prerequisites
 - Access to [StreamSets DataOps Platform account](https://cloud.login.streamsets.com/login)
-- a [Snowflake](https://signup.snowflake.com/) account and a schema that your user has CREATE TABLE privileges on
+- A [Snowflake](https://signup.snowflake.com/) account and a schema that your user has CREATE TABLE privileges on
 - SQL Script located [here](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/SCD_Snowpark.sql)
 
 ### What You’ll Learn 
@@ -219,8 +219,11 @@ While in Snowflake, check out the Query History to see the Merge record that the
 ## Conclusion
 Duration: 2
 
-You've learned how to process a Slowly Changing Dimension using Snowpark in the StreamSets DataOps Platform.
+Congratulations on completing this lab!
 
-Get up and running with StreamSets in minutes - free. [Start Now](https://cloud.login.streamsets.com/signup).
+### What we've covered
+- How to process a Slowly Changing Dimension using Snowpark in the StreamSets DataOps Platform
 
-Join our conversation at the [StreamSets Community](https://community.streamsets.com/).
+### Resources
+- Get up and running with StreamSets in minutes - free. [Start Now](https://cloud.login.streamsets.com/signup).
+- Join our conversation at the [StreamSets Community](https://community.streamsets.com/).
