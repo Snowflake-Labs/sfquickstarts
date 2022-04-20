@@ -3,9 +3,9 @@ id: snowflake_transformer
 categories: data-engineering
 environments: web
 status: Published 
-feedback link: 
-tags: Data Engineering
-authors: StreamSets
+feedback link: community@streamsets.com
+tags: Snowpark, Slowly Changing Dimension
+authors: Brenna Buuck
 
 # A Dive into Slowly Changing Dimensions with Snowpark
 <!-- ------------------------ -->
