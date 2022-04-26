@@ -158,7 +158,7 @@ Before opening terminal, find out your account identifier which for the trial ac
 
 For example, the URL to access the trial account is `https://xx74264.ca-central-1.aws.snowflakecomputing.com/`. These are the values for the account identifier:
 
-- Account Identifier: `xx74264`
+- Account Locator: `xx74264`
 - Region ID: `ca-central-1`
 - Cloud: `aws`
 
