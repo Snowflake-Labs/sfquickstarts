@@ -224,7 +224,7 @@ grant usage on warehouse quickstart to role analyst;
 grant read on stage email_stage_internal to role analyst;
 ```
 
-You can verify the `analyst` role only has access to read by listing the files in the external stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message.
+You can verify the `analyst` role only has access to read by listing the files in the internal stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message.
 
 ```sql
 use role analyst;
@@ -302,7 +302,7 @@ In this quickstart, we won’t setup notifications in S3, but the command below 
 
 ```sql
 -- Create a table stream on directory table
-create stream documents_stream on directory(@documents);
+create stream documents_stream on directory(<stage_name>);
 ```
 
 <!-- ------------------------ -->
