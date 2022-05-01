@@ -65,12 +65,8 @@ Duration: 2
 ## Managing Unstructured Data
 Duration: 2
 
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### Download Workload.sql 
-<button>
-  
-</button>
+### Download Demo SQL Script  
+Look at the [Download workload.sql & add to Snowflake worksheet](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/MakeFinal_Workshop.sql) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 
 ### Create Snowflake Objects
 
@@ -163,8 +159,6 @@ create or replace view vhol_trips_vw
       v:RIDER.PAYMENT.CC_NUM::string) payment_num
   from vhol_trips;
 
-select * from vhol_trips_vw limit 20;
-
 -- avg trip duration 
 select date_trunc('hour', starttime) as "date",
 count(*) as "num trips",
@@ -197,18 +191,19 @@ drop table vhol_trips_dev;
 
 select count(*) from vhol_trips_dev limit 1;
 
---thank you!
+--thank god for resurrection
 undrop table vhol_trips_dev;
 
 select count(*) from vhol_trips_dev limit 1;
 
 ```
 <!-- ------------------------ -->
+
 <!-- ------------------------ -->
 ## Bring Weather Data from Snowflake Marketplace
 
 Weather Dataset: 
-Set database name to Weather, grant access to PUBLIC role
+Set database name to WEATHER, grant access to PUBLIC role
 
 ### Convert Kelvin to Celcius
 ``` sql
@@ -227,7 +222,7 @@ $$;
 ``` sql
 desc view weather.standard_tile.history_day;
 
--- Is there rain in the forecast that impact cycling in a specific area 
+-- Is there rain in the forecast that may impact cycling in a specific area 
 SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL,  POSTAL_CODE, DATEDIFF(day,current_date(),DATE_VALID_STD) AS DAY, HOUR(TIME_INIT_UTC) AS HOUR  FROM WEATHER.STANDARD_TILE.FORECAST_DAY WHERE POSTAL_CODE='32333' AND DAY=7;
 ```
 ### Is there precipitation or snowfall in NY zipcodes
@@ -262,7 +257,7 @@ select * from vhol_weather_vw limit 10;
 
 <!-- ------------------------ -->
 ## Get Geospatial Station Data 
-Let's get geospatial data for stations where cycles are available 
+We just have station_id, so let's get geospatial data to locate those stations on map
 
 ###  Access data from AWS API Gateway
 ``` sql  
@@ -276,7 +271,7 @@ create or replace api integration fetch_http_data
 ```
 
 ``` sql 
--- External Functions call to Lambda to download data 
+-- External Function call to Lambda to download data 
 
 create or replace external function fetch_http_data(v varchar)
     returns variant
@@ -286,7 +281,7 @@ create or replace external function fetch_http_data(v varchar)
 ```
 ###
 
-### Flatten JSON data from API's
+### Flatten JSON data received from API's
 
 Geospatial data is available in a nested json array, let's flatten that 
 
@@ -360,7 +355,7 @@ select station_id, station_name, station_lat, station_lon, station_geo,
 from s inner join r on s.region_id = r.region_id
        left outer join n on st_contains(n.nhood_geo, s.station_geo);
 
-
+-- query station data 
 select * from vhol_stations;
 ``` 
 
@@ -632,6 +627,24 @@ SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
 
 <!-- ------------------------ -->
 
+<!-- ------------------------ -->
+## Conclusion
+Congratulations! you have completed the lab.
+
+In this lab we captured semi-structured data coming from NewYork Citibikes, enriched that data with geospatial data, and weather data from  Snowflake Data marketplace data to find correlation between demand for bicycles and weather. We visualized the data using Tableau to quickly arrive at relevant insights. 
+
+### Video on the Demo
+[Youtube - Video on the Demo](https://www.youtube.com/watch?v=9zMtimcooxo)
+
+
+### Inline Surveys
+<form>
+  <name>How do you rate yourself as a user of Snowflake?</name>
+  <input type="radio" value="Beginner">
+  <input type="radio" value="Intermediate">
+  <input type="radio" value="Advanced">
+</form>
+
 ### 
 <button>
   [This is a download button](link.com)
@@ -653,42 +666,5 @@ SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
 </table>
 
 ### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+[Youtube - Video on the Demo](https://www.youtube.com/watch?v=9zMtimcooxo)
 
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Snowflake Login](assets/new_snowflake_ui.png)
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
-
-<!-- ------------------------ -->
-## Conclusion
-Duration: 1
-
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
-
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
