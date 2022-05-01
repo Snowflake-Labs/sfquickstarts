@@ -256,7 +256,7 @@ select * from vhol_weather_vw limit 10;
 <!-- ------------------------ -->
 
 <!-- ------------------------ -->
-## Get Geospatial Station Data 
+## Enrich with Geospatial Station Data 
 We just have station_id, so let's get geospatial data to locate those stations on map
 
 ###  Access data from AWS API Gateway
@@ -317,7 +317,7 @@ with gbfs as (
 <!-- ------------------------ -->
 
 <!-- ------------------------ -->
-## Join Trips, Weather and Geospatial Data
+## Correlate Trips, Weather and Geospatial Data
 
 ### Combine station data with geospatial data
 ``` sql 
