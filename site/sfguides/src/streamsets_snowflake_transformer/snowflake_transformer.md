@@ -103,7 +103,7 @@ In the settings for the Slowly Changing Dimension, add the following configurati
 - Specify Active Flag: **Checked**
 - Active Flag Field: **Checked**
 - Active Field Type: **True-False**
-- Specify Timestamp Fields: **8Checked**
+- Specify Timestamp Fields: **Checked**
 - Start Timestamp Field: **START_TIMESTAMP**
 - End Timestamp Field: **END_TIMESTAMP**
 - Timestamp Expression: **CURRENT_TIMESTAMP** (Default Value)
