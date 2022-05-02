@@ -66,7 +66,9 @@ Duration: 2
 Duration: 2
 
 ### Download Demo SQL Script  
-Look at the [Download workload.sql & add to Snowflake worksheet](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/MakeFinal_Workshop.sql) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+Look at the [Download workload.sql & add to Snowflake worksheet](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/MakeFinal_Workshop.sql).
+
+![Snowflake Login](assets/Worksheet_1.png)
 
 ### Create Snowflake Objects
 
