@@ -609,8 +609,11 @@ SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP
 --Replace with your locator for 'IMP_CLIENT' from above step
 set account_locator='JPA70732'; 
 ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
-
 SHOW SHARES LIKE 'VHOL_SHARE';
+
+-- take note of reader account url with credentials from CREATE MANAGED account statement
+show managed accounts;
+select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
 
 ```
 
@@ -622,7 +625,7 @@ SHOW SHARES LIKE 'VHOL_SHARE';
 ## Data Consumer Access 
 
 ``` sql
--- create database from share in the reader account 
+-- create database from share in the reader account  
 CREATE DATABASE TRIPSDB FROM SHARE 
 create or replace warehouse VHOL_READER WITH 
     WAREHOUSE_SIZE = 'XSMALL' 
