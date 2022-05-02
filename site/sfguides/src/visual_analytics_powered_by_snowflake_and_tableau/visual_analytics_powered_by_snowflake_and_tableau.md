@@ -66,7 +66,7 @@ Duration: 2
 Duration: 2
 
 ### Download Demo SQL Script  
-Look at the [Download workload.sql & Create Worksheet from SQL File](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/MakeFinal_Workshop.sql).
+[Download workload.sql & Create Worksheet from SQL File](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/MakeFinal_Workshop.sql).
 
 ![Snowflake Login](assets/Worksheet_1.png)
 
@@ -623,7 +623,7 @@ select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_
 
 <!-- ------------------------ -->
 ## Data Consumer Access 
-
+[Download reader_query.sql & Create Worksheet from SQL File](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/reader_query.sql)
 ``` sql
 -- create database from share in the reader account  
 CREATE DATABASE TRIPSDB FROM SHARE 
@@ -660,34 +660,5 @@ In this lab we captured semi-structured data coming from NewYork Citibikes, enri
 [Youtube - Video on the Demo](https://www.youtube.com/watch?v=9zMtimcooxo)
 
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
 
-### 
-<button>
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Video on the Demo](https://www.youtube.com/watch?v=9zMtimcooxo)
 
