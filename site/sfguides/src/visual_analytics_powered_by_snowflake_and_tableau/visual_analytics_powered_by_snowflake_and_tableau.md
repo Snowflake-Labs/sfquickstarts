@@ -423,7 +423,7 @@ select * from vhol_trips_stations_weather_vw limit 200;
 
 <!-- ------------------------ -->
 ## Secure Data Sharing
-```  
+```  sql
 create or replace table tenant (
     tenant_id number,
     tenant_description string,
@@ -513,7 +513,7 @@ insert into tenant_stations values
 ```
 
 ### Enabling Row Level Access Policy 
-```
+``` sql
 --select *
 select * from tenant_stations;
 
@@ -544,7 +544,7 @@ limit 100;
 ```
 
 ### Create Secure Objects to Share 
-```
+``` sql 
 --secure view
 create or replace secure view  vhol_trips_secure as
 (select --tripduration, 
@@ -566,16 +566,15 @@ select * from vhol_trips_secure limit 100;
 ```
 
 ### Create Reader Account 
-```
+``` sql
 --create a reader account for your tenant
-show managed accounts;
-DROP MANAGED ACCOUNT IMP_CLIENT;
+
+
 CREATE MANAGED ACCOUNT IMP_CLIENT
     admin_name='USER',
     admin_password='P@ssword123',
     type=reader,
-    COMMENT='Testing';
--- Take a note of the Account Name and the URL 
+    COMMENT='Testing'; -- Take a note of the Account Name and the URL 
 
 --add tenant for your big important client via a reader account
 insert into tenant values (
@@ -596,7 +595,7 @@ select count(*) from vhol_trips_secure;
 ```
 
 ### Grant Share Access to Reader 
-```
+``` sql 
 --create share and share to reader account
 CREATE OR REPLACE SHARE VHOL_SHARE COMMENT='Creating my Share to Share with my Reader';
 GRANT USAGE ON DATABASE VHOL_DATABASE TO SHARE VHOL_SHARE;
@@ -604,11 +603,14 @@ GRANT USAGE ON SCHEMA VHOL_SCHEMA TO SHARE VHOL_SHARE;
 GRANT SELECT ON VIEW VHOL_TRIPS_SECURE TO SHARE VHOL_SHARE;
 DESC SHARE VHOL_SHARE;
 
-ALTER SHARE VHOL_SHARE ADD ACCOUNTS = PGA86878;
+show managed accounts; 
+--take note of account_locator
+SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
+--Replace with your locator for 'IMP_CLIENT' from above step
+set account_locator='JPA70732'; 
+ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
 
 SHOW SHARES LIKE 'VHOL_SHARE';
-show managed accounts;
-select  $1 as NAME ,$4 AS LOCATOR,$6 as URL FROM table (result_scan(last_query_id()));
 
 ```
 
@@ -617,7 +619,10 @@ select  $1 as NAME ,$4 AS LOCATOR,$6 as URL FROM table (result_scan(last_query_i
 <!-- ------------------------ -->
 
 <!-- ------------------------ -->
-## Data Consumer Access
+## Data Consumer Access 
+
+``` sql
+-- create database from share in the reader account 
 CREATE DATABASE TRIPSDB FROM SHARE 
 create or replace warehouse VHOL_READER WITH 
     WAREHOUSE_SIZE = 'XSMALL' 
@@ -643,6 +648,10 @@ SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
 Congratulations! you have completed the lab.
 
 In this lab we captured semi-structured data coming from NewYork Citibikes, enriched that data with geospatial data, and weather data from  Snowflake Data marketplace data to find correlation between demand for bicycles and weather. We visualized the data using Tableau to quickly arrive at relevant insights. 
+
+[Semi-structured Data] (https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
+[Secure Data Sharing] (https://docs.snowflake.com/en/user-guide/data-sharing-intro.html)
+[Snowflake Data Marketplace] (https://other-docs.snowflake.com/en/data-marketplace.html)
 
 ### Video on the Demo
 [Youtube - Video on the Demo](https://www.youtube.com/watch?v=9zMtimcooxo)
