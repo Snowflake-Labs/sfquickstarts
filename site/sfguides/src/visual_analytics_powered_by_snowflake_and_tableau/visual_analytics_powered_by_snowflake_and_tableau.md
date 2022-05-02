@@ -51,7 +51,7 @@ Classic UI:
 If you ever want to change from the new UI to the classic one, click on the home button and then Classic Console.
 
 
-### Images
+### New Login UI
 ![Snowflake Login](assets/new_snowflake_ui.png)
 
 <!-- ------------------------ -->
@@ -200,10 +200,19 @@ select count(*) from vhol_trips_dev limit 1;
 <!-- ------------------------ -->
 
 <!-- ------------------------ -->
-## Bring Weather Data from Snowflake Marketplace
+## Add Weather Data from Snowflake Marketplace
 
-Weather Dataset: 
-Set database name to WEATHER, grant access to PUBLIC role
+### Click on Data Marketplace and type WEATHER in Search Snowflake Marketplace toolbar
+
+![Search Dataset](assets/Weather_DM_1.png)
+
+### Set database name to WEATHER, grant access to PUBLIC role
+
+![Add Database and Role](assets/Weather_DM_2.png)
+
+### Data Ready to Query 
+
+![Click Done](assets/Weather_DM_3.png)
 
 ### Convert Kelvin to Celcius
 ``` sql
