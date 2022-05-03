@@ -468,31 +468,5 @@ ALTER SHARE VHOL_SHARE ADD ACCOUNTS = PGA86878;
 
 SHOW SHARES LIKE 'VHOL_SHARE';
 show managed accounts;
-select  $1 as NAME ,$4 AS LOCATOR,$6 as URL FROM table (result_scan(last_query_id()));
+select  $1 as NAME ,$4 AS LOCATOR,$6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
 
-/*-------------------------------------------------------------------------------------------------------------------
--- </VHOL SQL>
--------------------------------------------------------------------------------------------------------------------*/
-
-CREATE DATABASE TRIPSDB FROM SHARE 
-create or replace warehouse VHOL_READER WITH 
-    WAREHOUSE_SIZE = 'XSMALL' 
-    WAREHOUSE_TYPE = 'STANDARD' 
-    AUTO_SUSPEND = 60 
-    AUTO_RESUME = TRUE 
-    MIN_CLUSTER_COUNT = 1 
-    MAX_CLUSTER_COUNT = 1 
-    SCALING_POLICY = 'STANDARD';
-    
-
-    
-
-USE DB TRIPSDB
-USE SCHEMA VHOL_SCHEMA; 
-
-SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
-
----- Test User -- 
---https://app.snowflake.com/us-west-2/vka53369
---user: testvhol
---pwd: Welcome@4533 
