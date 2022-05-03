@@ -468,5 +468,5 @@ ALTER SHARE VHOL_SHARE ADD ACCOUNTS = PGA86878;
 
 SHOW SHARES LIKE 'VHOL_SHARE';
 show managed accounts;
-select  $1 as NAME ,$4 AS LOCATOR,$6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
+select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
 
