@@ -65,7 +65,7 @@ Next, we will get our docker-compose file of our Airflow. To do so lets do a cur
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.yaml'
 ```
 
-We will be now adjusting our docker-compose file. We will be add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our dbt models and our CSV files. 
+We will be now adjusting our docker-compose file - add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our dbt models and our CSV files. 
 
 ```bash
   volumes:
