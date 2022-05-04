@@ -84,7 +84,6 @@ We would now need to create additional file with additional docker-compose param
 _PIP_ADDITIONAL_REQUIREMENTS=dbt==0.19.0
 ```
 
-
 ---
 We would now need to create a `dbt` project as well as an `dags` folder. 
 
