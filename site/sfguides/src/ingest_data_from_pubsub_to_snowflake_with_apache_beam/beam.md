@@ -14,11 +14,11 @@ tags: Apache Beam, Data Engineering
 Duration: 30
 
 
-This guide shows you how to set up your Google Cloud project, Snowflake account, create a Maven project by using the Apache Beam SDK for Java, and run a streaming pipeline locally and on the Dataflow service. Each step is presented as a console command or an SQL command to reduce the possibility of incorrect execution of a step.
+This guide shows you how to set up your Google Cloud project, Snowflake account, create a Java project with Maven by using the Apache Beam SDK and run a streaming pipeline locally and on the Dataflow service. Each step is presented as a console command or an SQL command to reduce the possibility of incorrect execution of a step.
 
 ### Prerequisites
 
-This guide assumes you have a basic working knowledge of Java and Google Dataflow
+This guide assumes you have a basic working knowledge of Java and Google Dataflow.
 
 ### What You'll Learn
 
@@ -101,10 +101,10 @@ snowsql -c "${SNOWSQL_CONN}" -q "SELECT 1"
 ```
 <!-- END -->
 
-You will now create a user account separate from your own that the application will use to query Snowflake. In keeping with sound security practices, the account will use key-pair authentication and have limited access in Snowflake.
+You will now create a user account separate from your own that the application will use to query data in Snowflake database. In keeping with sound security practices, the account will use key-pair authentication and have limited access in Snowflake.
 
 *Note:* Snowflake has a few limitations that you need to know if you are going to configure it yourself:
-- The Snowflake Ingest Service only supports private key authentication, so you have to use this authentication method if you are building streaming pipelines.
+- The Snowflake Ingest Service only supports a private key authentication, so you have to use this authentication method if you are building streaming pipelines.
 - `SnowflakeIO` only supports encrypted private keys, so your private key must have passphrase set.
 - Snowflake Ingest Service always uses the default account role. The role passed to Apache Beam is ignored.
 
@@ -457,7 +457,7 @@ topic="${PIPELINE_PUBSUB_TOPIC_FQN}"
 <!-- ------------------------ -->
 ## Getting the source code for the project
 
-The pipelines you will be running is written on Java. The source code is available in [GitHub](https://github.com/Snowflake-Labs/sfguide-beam-examples). To checkout repository, run:
+Pipelines you will be running are written on Java. The source code is available in [GitHub](https://github.com/Snowflake-Labs/sfguide-beam-examples). To checkout repository, run:
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-beam-examples.git
 ```
