@@ -30,8 +30,8 @@ create or replace warehouse VHOL_WH WITH
     SCALING_POLICY = 'STANDARD';
     
 alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'LARGE';
-
-alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'MEDIUM';
+alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'SMALL';
+use warehouse VHOL_WH;
 
 --Internal Stage
 create or replace STAGE VHOL_STAGE;
@@ -52,8 +52,8 @@ show File Formats;
 
 /*--------------------------------------------------------Trips Data---------------------------------------------------------*/
 --select over stage
-select $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
-from @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz limit 100;
+--select $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
+--from @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz limit 100;
 
 
 SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON)  limit 1;
@@ -120,8 +120,6 @@ create table vhol_trips_dev clone vhol_trips;
 select * from vhol_trips_dev limit 1;
 
 drop table vhol_trips_dev; 
-
-select count(*) from vhol_trips_dev limit 1;
 
 --thank you!
 undrop table vhol_trips_dev;
