@@ -89,7 +89,8 @@ create or replace warehouse VHOL_WH WITH
 -- Change Compute Size Instantly 
 alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'LARGE';
 
-alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'MEDIUM';
+alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'SMALL';
+use warehouse VHOL_WH;
 
 ```
 
@@ -114,8 +115,8 @@ show File Formats;
 ### Query JSON Data
 ``` sql
 -- Query individual columns from first 100 rows 
-select $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
-from @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz limit 100;
+--select $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
+--from @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz limit 100;
 
 -- Query all columns from a single row
 SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON)  limit 1;
@@ -137,8 +138,6 @@ copy into vhol_trips (v) from
 create or replace view vhol_trips_vw 
   as select 
     tripid,
-    v:STARTTIME::timestamp_ntz starttime,
-    v:ENDTIME::timestamp_ntz endtime,
     dateadd(year,4,v:STARTTIME::timestamp_ntz) starttime,
     dateadd(year,4,v:ENDTIME::timestamp_ntz) endtime,
     datediff('minute', starttime, endtime) duration,
@@ -185,14 +184,16 @@ select * from vhol_trips_dev limit 1;
 ```
 ### Drop and Undrop Table
 ``` sql
+
 drop table vhol_trips_dev; 
 
-select count(*) from vhol_trips_dev limit 1;
+-- statement will fail because the object is dropped
+select * from vhol_trips_dev limit 1; 
 
--- Thank God for resurrection
+--thank to Snowflake! we can bring it back to life
 undrop table vhol_trips_dev;
 
-select count(*) from vhol_trips_dev limit 1;
+select * from vhol_trips_dev limit 1;
 ```
 <!-- ------------------------ -->
 
@@ -211,6 +212,15 @@ select count(*) from vhol_trips_dev limit 1;
 
 ![Click Done](assets/Weather_DM_3.png)
 
+
+
+### Query Weather data
+``` sql
+
+-- Is there rain in the forecast that may impact cycling in a specific area 
+SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL,  POSTAL_CODE, DATEDIFF(day,current_date(),DATE_VALID_STD) AS DAY, HOUR(TIME_INIT_UTC) AS HOUR  FROM WEATHER.STANDARD_TILE.FORECAST_DAY WHERE POSTAL_CODE='32333' AND DAY=7;
+
+```
 ### Convert Kelvin to Celcius
 ``` sql
 -- UDF to convert Kelvin to Celcius
@@ -226,13 +236,6 @@ $$;
 ```
 ###
 
-### Query Weather data
-``` sql
-desc view weather.standard_tile.history_day;
-
--- Is there rain in the forecast that may impact cycling in a specific area 
-SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL,  POSTAL_CODE, DATEDIFF(day,current_date(),DATE_VALID_STD) AS DAY, HOUR(TIME_INIT_UTC) AS HOUR  FROM WEATHER.STANDARD_TILE.FORECAST_DAY WHERE POSTAL_CODE='32333' AND DAY=7;
-```
 ### Is there precipitation or snowfall in NY zipcodes
 ``` sql
 create or replace view vhol_weather_vw as
@@ -389,6 +392,9 @@ create or replace view vhol_trips_stations_vw as (
   from t 
     left outer join ss on start_station_id = ss.station_id
     left outer join es on end_station_id = es.station_id); 
+
+
+select * from vhol_trips_stations_vw limit 200;
 ```
 
 ###  
@@ -401,9 +407,7 @@ create or replace view vhol_trips_stations_weather_vw as (
   from vhol_trips_stations_vw t 
        left outer join vhol_weather_vw w on date_trunc('day', starttime) = observation_date);
 
-
--- Let's query the integrated data view
-select * from vhol_trips_stations_vw limit 200;
+-- Combine aggregated data 
 select * from vhol_trips_stations_weather_vw limit 200;
 ```
 
@@ -1056,7 +1060,7 @@ insert into tenant_stations values
 ;
 ```
 
-### Optional: Enabling Row Level Access Policy 
+### : Enabling Row Level Access Policy 
 ``` sql
 --select *
 select * from tenant_stations;
@@ -1086,7 +1090,7 @@ where
 limit 100;
 ```
 
-### Optional: Create Secure Objects to Share 
+### : Create Secure Objects to Share 
 ``` sql 
 --secure view
 create or replace secure view  vhol_trips_secure as
@@ -1107,24 +1111,29 @@ select current_account();
 select * from vhol_trips_secure limit 100;
 ```
 
-### Optional: Create Reader Account 
+### : Create Reader Account 
 ``` sql
 --create a reader account for your tenant
 
-
+DROP MANAGED ACCOUNT IMP_CLIENT;
 CREATE MANAGED ACCOUNT IMP_CLIENT
     admin_name='USER',
     admin_password='P@ssword123',
     type=reader,
     COMMENT='Testing'; -- Take a note of the Account Name and the URL 
 
+show managed accounts; 
+--take note of account_locator
+SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
+--Replace with your locator for 'IMP_CLIENT' from above step
+set account_locator='GOA63594'; 
 --add tenant for your big important client via a reader account
 insert into tenant values (
-    1, 'Big Important Client, Wink Wink', 'IMP_CLIENT'
+    1, 'Big Important Client, Wink Wink', $account_locator
 );
 
 --simulate your tenant
-alter session set simulated_data_sharing_consumer = 'IMP_CLIENT';
+alter session set simulated_data_sharing_consumer = $account_locator;
 
 --select secure view as your tenant
 select * from vhol_trips_secure limit 100;
@@ -1132,8 +1141,6 @@ select * from vhol_trips_secure limit 100;
 --unsimulate your tenant
 alter session unset simulated_data_sharing_consumer;
 
---are you sure?
-select count(*) from vhol_trips_secure;
 ```
 
 ### Grant Share Access to Reader 
@@ -1145,17 +1152,14 @@ GRANT USAGE ON SCHEMA VHOL_SCHEMA TO SHARE VHOL_SHARE;
 GRANT SELECT ON VIEW VHOL_TRIPS_SECURE TO SHARE VHOL_SHARE;
 DESC SHARE VHOL_SHARE;
 
-show managed accounts; 
---take note of account_locator
-SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
---Replace with your locator for 'IMP_CLIENT' from above step
-set account_locator='JPA70732'; 
 ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
 SHOW SHARES LIKE 'VHOL_SHARE';
 
--- take note of reader account url with credentials from CREATE MANAGED account statement
+-- Click on reader account url below and login with credentials from CREATE MANAGED account statement above (USER,P@ssword123)
 show managed accounts;
 select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
+
+ 
 ```
 
 ###
@@ -1169,7 +1173,6 @@ select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_
 [Download reader_query.sql & Create Worksheet from SQL File](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/reader_query.sql)
 ``` sql
 -- create database from share in the reader account  
-CREATE DATABASE TRIPSDB FROM SHARE 
 create or replace warehouse VHOL_READER WITH 
     WAREHOUSE_SIZE = 'XSMALL' 
     WAREHOUSE_TYPE = 'STANDARD' 
@@ -1178,34 +1181,20 @@ create or replace warehouse VHOL_READER WITH
     MIN_CLUSTER_COUNT = 1 
     MAX_CLUSTER_COUNT = 1 
     SCALING_POLICY = 'STANDARD';
+show shares like 'VHOL_SHARE%';
+select  "name" FROM table (result_scan(last_query_id()));
 
-USE DB TRIPSDB
+-- replace the share name with the name from above query
+CREATE OR REPLACE DATABASE TRIPSDB FROM SHARE LKA85298.VHOL_SHARE;
+
+
+USE DATABASE TRIPSDB;
 USE SCHEMA VHOL_SCHEMA; 
 
 SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
 ```
 
 
-[Download reader_query.sql & Create Worksheet from SQL File](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/reader_query.sql)
-``` sql
--- create database from share in the reader account  
-CREATE DATABASE TRIPSDB FROM SHARE 
-create or replace warehouse VHOL_READER WITH 
-    WAREHOUSE_SIZE = 'XSMALL' 
-    WAREHOUSE_TYPE = 'STANDARD' 
-    AUTO_SUSPEND = 60 
-    AUTO_RESUME = TRUE 
-    MIN_CLUSTER_COUNT = 1 
-    MAX_CLUSTER_COUNT = 1 
-    SCALING_POLICY = 'STANDARD';
-    
-    
-
-USE DB TRIPSDB
-USE SCHEMA VHOL_SCHEMA; 
-
-SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
-```
 <br>
 
 <!-- ------------------------ -->

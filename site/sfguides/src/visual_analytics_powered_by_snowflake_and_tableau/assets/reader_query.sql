@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- </VHOL SQL - this is to be run in the Reader Account>
 -------------------------------------------------------------------------------------------------------------------*/
-CREATE DATABASE TRIPSDB FROM SHARE 
+-- create database from share in the reader account  
 create or replace warehouse VHOL_READER WITH 
     WAREHOUSE_SIZE = 'XSMALL' 
     WAREHOUSE_TYPE = 'STANDARD' 
@@ -10,11 +10,15 @@ create or replace warehouse VHOL_READER WITH
     MIN_CLUSTER_COUNT = 1 
     MAX_CLUSTER_COUNT = 1 
     SCALING_POLICY = 'STANDARD';
-    
+show shares like 'VHOL_SHARE%';
+select  "name" FROM table (result_scan(last_query_id()));
 
-    
 
-USE DB TRIPSDB
+-- replace the share name with the name from above query
+CREATE OR REPLACE DATABASE TRIPSDB FROM SHARE LKA85298.VHOL_SHARE;
+
+
+USE DATABASE TRIPSDB;
 USE SCHEMA VHOL_SCHEMA; 
 
 SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;

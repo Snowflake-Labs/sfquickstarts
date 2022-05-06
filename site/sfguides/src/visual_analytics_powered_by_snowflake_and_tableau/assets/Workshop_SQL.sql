@@ -1,11 +1,10 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- <VHOL SQL>
--- <Embedded Analytics Applications Powered by Snowflake and Tableau>
--- <October 14, 2020 | 11:00am PST>
+-- <Visual Analytics  Powered by Snowflake and Tableau>
+-- <May 5, 2022 | 11:00am PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
---  PDF: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Embedded/Tableau_VHOL_IOT_Embedded.pdf
---  SQL: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Embedded/Sanitized_Workshop_SQL.sql
+--  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/Workshop_SQL.sql
 -------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------Set Up---------------------------------------------------------*/
@@ -120,17 +119,24 @@ select * from vhol_trips_dev limit 1;
 
 drop table vhol_trips_dev; 
 
---thank you!
+-- Below statement will fail because the object is now dropped
+select * from vhol_trips_dev limit 1;
+
+--thank god we can resuurect the same!
 undrop table vhol_trips_dev;
 
 select * from vhol_trips_dev limit 1;
+
 /*--------------------------------------------------------Get Marketplace Weather Data---------------------------------------------------------*/
+
 
 -- Is there rain in the forecast that impact cycling
 SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL,  POSTAL_CODE, DATEDIFF(day,current_date(),DATE_VALID_STD) AS DAY, HOUR(TIME_INIT_UTC) AS HOUR  FROM WEATHER.STANDARD_TILE.FORECAST_DAY WHERE POSTAL_CODE='32333' AND DAY=7;
-
+--select
 
 -- UDF to convert Kelvin to Celcius
+use database vhol_database;
+use schema vhol_schema;
 create or replace function degFtoC(k float)
 returns float
 as
@@ -140,11 +146,7 @@ $$;
 
 
 
-
-
-
-
---create view
+--create view for New York Data
 create or replace view vhol_weather_vw as
   select 'New York'                                   state,
     date_valid_std                                    observation_date,
@@ -172,7 +174,7 @@ create or replace view vhol_weather_vw as
 
 
 
---select *
+--Let's check NewYork Weather
 select * from vhol_weather_vw limit 10;
 
 
@@ -278,6 +280,8 @@ create or replace view vhol_trips_stations_vw as (
     left outer join ss on start_station_id = ss.station_id
     left outer join es on end_station_id = es.station_id); 
     
+    select * from vhol_trips_stations_vw limit 200;    
+    
 -- add the weather
 create or replace view vhol_trips_stations_weather_vw as (
   select t.*, temp_avg_c, temp_avg_f,
@@ -287,7 +291,6 @@ create or replace view vhol_trips_stations_weather_vw as (
 
 
 -- let's review the integrated data view
-select * from vhol_trips_stations_vw limit 200;
 select * from vhol_trips_stations_weather_vw limit 200;
 
 
@@ -419,14 +422,14 @@ where
     tenant.tenant_account = current_account());
 
 --current account?
-select current_account();
+--select current_account();
 
 --select secure view
 
 select * from vhol_trips_secure limit 100;
 
 --create a reader account for your tenant
-show managed accounts;
+
 DROP MANAGED ACCOUNT IMP_CLIENT;
 CREATE MANAGED ACCOUNT IMP_CLIENT
     admin_name='USER',
@@ -434,14 +437,18 @@ CREATE MANAGED ACCOUNT IMP_CLIENT
     type=reader,
     COMMENT='Testing';
 -- Take a note of the Account Name and the URL 
-
+show managed accounts; 
+--take note of account_locator
+SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
+--Replace with your locator for 'IMP_CLIENT' from above step
+set account_locator='CGA92200'; 
 --add tenant for your big important client via a reader account
 insert into tenant values (
-    1, 'Big Important Client, Wink Wink', 'IMP_CLIENT'
+    1, 'Big Important Client, Wink Wink', $account_locator
 );
 
 --simulate your tenant
-alter session set simulated_data_sharing_consumer = 'IMP_CLIENT';
+alter session set simulated_data_sharing_consumer = $account_locator;
 
 --select secure view as your tenant
 select * from vhol_trips_secure limit 100;
@@ -456,15 +463,14 @@ GRANT USAGE ON SCHEMA VHOL_SCHEMA TO SHARE VHOL_SHARE;
 GRANT SELECT ON VIEW VHOL_TRIPS_SECURE TO SHARE VHOL_SHARE;
 DESC SHARE VHOL_SHARE;
 
-show managed accounts; 
+--show managed accounts; 
 --take note of account_locator
-SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
+--SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
 --Replace with your locator for 'IMP_CLIENT' from above step
-set account_locator='YFA31705'; 
+--set account_locator='TAA45269'; 
 ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
+
 SHOW SHARES LIKE 'VHOL_SHARE';
 
 show managed accounts;
 select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
-
--- Click on the URL and login to the reader Account, see credentials in the CREATE MANAGED Command above
