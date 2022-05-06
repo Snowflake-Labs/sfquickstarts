@@ -21,9 +21,8 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 - Familarity with using an IDE
 
 ### What You’ll Learn 
-- Load unstructured data from IoT enabled bikes into Snowflake.
+- Load semi-structured data from IoT enabled bikes, geospatial and weather data into Snowflake.
 - Integrate and deliver multi-tenant tables and views in Snowflake to Tableau for real-time dashboarding.
-- Use API integration to load geospatial data into Snowflake.
 - Build visual, intuitive, and interactive data visualizations powered by live data in Snowflake.
 - Share production-ready Tableau dashboards by embedding the visualizations into your custom application.
 - Showcase your data in the Snowflake Data Marketplace.
@@ -42,7 +41,7 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 <!-- ------------------------ -->
 ## Snowflake Configuration
-Duration: 5
+Duration: 2
 1. Create a Snowflake enterprise trial account 
 
 2. Login to your Snowflake account
@@ -58,11 +57,11 @@ If you ever want to change from the new UI to the classic one, click on the home
 
 <!-- ------------------------ -->
 
-## Managing Unstructured Data
-Duration: 2
+## Managing Semi-Structured Data
+Duration: 5
 
 ### Download Demo SQL Script  
-[Download workload.sql & Create Worksheet from SQL File](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/MakeFinal_Workshop.sql).
+[Download workload.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/Workshop_SQL.sql).
 
 ![Snowflake Login](assets/Worksheet_1.png)
 
@@ -88,7 +87,6 @@ create or replace warehouse VHOL_WH WITH
   
 -- Change Compute Size Instantly 
 alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'LARGE';
-
 alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'SMALL';
 use warehouse VHOL_WH;
 
@@ -114,9 +112,6 @@ show File Formats;
 
 ### Query JSON Data
 ``` sql
--- Query individual columns from first 100 rows 
---select $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
---from @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz limit 100;
 
 -- Query all columns from a single row
 SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON)  limit 1;
@@ -172,33 +167,9 @@ from vhol_trips_vw
 group by 1 order by 2 desc;
 ``` 
 
-### 
-<!-- ------------------------ -->
-## DevOps in Snowflake
-
-### Clone Table
-``` sql 
-create table vhol_trips_dev clone vhol_trips;
-
-select * from vhol_trips_dev limit 1;
-```
-### Drop and Undrop Table
-``` sql
-
-drop table vhol_trips_dev; 
-
--- statement will fail because the object is dropped
-select * from vhol_trips_dev limit 1; 
-
---thank to Snowflake! we can bring it back to life
-undrop table vhol_trips_dev;
-
-select * from vhol_trips_dev limit 1;
-```
-<!-- ------------------------ -->
-
 <!-- ------------------------ -->
 ## Add Weather Data from Snowflake Marketplace
+Duration: 5
 
 ### Click on Data Marketplace and type WEATHER in Search Snowflake Marketplace toolbar
 
@@ -267,6 +238,7 @@ select * from vhol_weather_vw limit 10;
 
 <!-- ------------------------ -->
 ## Enrich with Geospatial Station Data 
+Duration: 2
 We just have station_id, so let's get geospatial data to locate those stations on map
 
 ###  Access data from AWS API Gateway
@@ -326,7 +298,7 @@ with gbfs as (
 
 <!-- ------------------------ -->
 ## Correlate Trips, Weather and Geospatial Data
-
+Duration: 5
 ### Combine station data with geospatial data
 ``` sql 
 create or replace table vhol_stations as with 
@@ -420,6 +392,7 @@ select * from vhol_trips_stations_weather_vw limit 200;
 <!-- ------------------------ -->
 
 ## Login to Tableau Online & Connect to Snowflake
+Duration: 20
 
 Navigate to https://online.tableau.com/ and login to Tableau Cloud (Online) using your login credentials.
 
@@ -661,7 +634,7 @@ Make sure to bold all of the field names before hitting the blue “OK” button
 
 <br>
 
-## Add Map Layers
+## Handle Map Layers
 
 Now, we can add Map Layers. 
 
@@ -689,15 +662,8 @@ We can reorder these layers via simple drag and drop.  Let’s move ”Start Geo
 
 ![A](assets/Tab_5.4.png)
 
-<br>
 
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
-
-<br>
-
-## Format Map Layers
+### Format Map Layers
 
 Select the “Start Geo” section of the Marks card, then click the “Color” button within the “Start Geo” Marks card.
 
@@ -729,15 +695,8 @@ Now, click the “Size” icon directly to the right of the “Color” icon. Dr
 
 ![A](assets/Tab_6.5.png)
 
-<br>
 
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
-
-<br>
-
-## Enhance the Map with Custom Backgrounds
+### Enhance the Map with Custom Backgrounds
 
 Within the top toolbar directly to the right of “Analysis”, click into the “Map” tab. 
 
@@ -841,7 +800,7 @@ On the bottom left of the screen, right click where it says “Sheet 1” and se
 
 <br>
 
-## Create and Publish a Simple Dashboard
+## Publish a Simple Dashboard 
 Click the middle icon on the bottom banner.
 
 The first thing we are going to do adjust our dashboard size. On the far left of the screen, you’ll notice that the *Data* pane has been replaced with the *Dashboard* pane — that’s how you can confirm you are authoring a dashboard, not a worksheet.
@@ -884,7 +843,7 @@ Select “CitiBike” to load the dashboard.
 
 <br>
 
-## Embed the Dashboard into a Web Page
+### Embed the Dashboard into a Web Page
 Click the white “Share” button at the top right of the screen. 
 
 ![A](assets/Tab_10.1.png)
@@ -959,19 +918,11 @@ The dashboard will zoom and filter, showing us only trips that started in Brookl
 
 <br>
 
-## Conclusion
-Congratulations! you have completed the lab.
 
-In this lab we captured semi-structured data coming from NewYork Citibikes, enriched that data with geospatial data, and weather data from  Snowflake Data marketplace data to find correlation between demand for bicycles and weather. We visualized the data using Tableau to quickly arrive at relevant insights. 
 
-[Semi-structured Data] (https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
-[Secure Data Sharing] (https://docs.snowflake.com/en/user-guide/data-sharing-intro.html)
-[Snowflake Data Marketplace] (https://other-docs.snowflake.com/en/data-marketplace.html)
 
-### Video on the Demo
-[Youtube - Video on the Demo](https://www.youtube.com/watch?v=9zMtimcooxo)
 
-## Optional: Secure Data Sharing
+## Secure Data Sharing
 ```  sql
 create or replace table tenant (
     tenant_id number,
@@ -1060,7 +1011,7 @@ insert into tenant_stations values
 ;
 ```
 
-### : Enabling Row Level Access Policy 
+### Optional : Enabling Row Level Access Policy 
 ``` sql
 --select *
 select * from tenant_stations;
@@ -1090,7 +1041,7 @@ where
 limit 100;
 ```
 
-### : Create Secure Objects to Share 
+### Create Secure Objects to Share 
 ``` sql 
 --secure view
 create or replace secure view  vhol_trips_secure as
@@ -1111,7 +1062,7 @@ select current_account();
 select * from vhol_trips_secure limit 100;
 ```
 
-### : Create Reader Account 
+### Create Reader Account 
 ``` sql
 --create a reader account for your tenant
 
@@ -1155,7 +1106,7 @@ DESC SHARE VHOL_SHARE;
 ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
 SHOW SHARES LIKE 'VHOL_SHARE';
 
--- Click on reader account url below and login with credentials from CREATE MANAGED account statement above (USER,P@ssword123)
+-- Click on reader account url below and login with credentials from CREATE MANAGED account statement above (USER,P@ssword123) May take couple of mins. 
 show managed accounts;
 select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
 
@@ -1167,10 +1118,44 @@ select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_
 <!-- ------------------------ -->
 
 <!-- ------------------------ -->
+<!-- ------------------------ -->
+## Optional: DevOps in Snowflake
+Duration: 2
+### Clone Table
+``` sql 
+create table vhol_trips_dev clone vhol_trips;
+
+select * from vhol_trips_dev limit 1;
+```
+### Drop and Undrop Table
+``` sql
+
+drop table vhol_trips_dev; 
+
+-- statement will fail because the object is dropped
+select * from vhol_trips_dev limit 1; 
+
+--thank to Snowflake! we can bring it back to life
+undrop table vhol_trips_dev;
+
+select * from vhol_trips_dev limit 1;
+```
+<!-- ------------------------ -->
 
 ## Optional: Consumer Access Data
 
-[Download reader_query.sql & Create Worksheet from SQL File](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/reader_query.sql)
+[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)
+
+### Login to Reader Account 
+![Reader Account Login](assets/Reader_Account_1.png)
+
+### Connect to Snowsight
+![Click Snowsight](assets/Reader_Account_2.png)
+
+
+### Change Role & Add Worksheet 
+![Change Role to Accountadmin](assets/Reader_Account_3.png)
+
 ``` sql
 -- create database from share in the reader account  
 create or replace warehouse VHOL_READER WITH 
@@ -1198,7 +1183,21 @@ SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
 <br>
 
 <!-- ------------------------ -->
+## Conclusion
+Congratulations! you have completed the lab.
 
+In this lab we captured semi-structured data coming from NewYork Citibikes, enriched that data with geospatial data, and weather data from  Snowflake Data marketplace data to find correlation between demand for bicycles and weather. We visualized the data using Tableau to quickly arrive at relevant insights. 
+
+[Semi-structured Data](https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
+<br>
+</br>
+[Secure Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro.html)
+<br>
+</br>
+[Snowflake Data Marketplace](https://other-docs.snowflake.com/en/data-marketplace.html)
+<br></br>
+### Video on the Demo
+[Youtube - Video on the Demo](https://www.youtube.com/watch?v=9zMtimcooxo)
 <!-- ------------------------ -->
 
 <br>
