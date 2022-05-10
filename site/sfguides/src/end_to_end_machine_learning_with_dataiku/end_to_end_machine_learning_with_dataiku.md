@@ -864,7 +864,7 @@ Now lets handle those missing values. There are a number of ways Dataiku DSS can
 Select the **Remove rows with no values** processor either by clicking the **INT_RATE** column and picking from the suggested options or through the **+ADD NEW STEP** menu.
 
 
-![50](assets/dk-24_800_remove_rows.jpg)
+![51](assets/dk-24_800_remove_rows.jpg)
 
 Handle Outliers
 
@@ -873,7 +873,7 @@ Our **INT_RATE** column has some suspiciously high values. Let’s use the Analy
 * From the **INT_RATE** column header dropdown, select **Analyze**.
 * In the Outliers section, choose **Remove rows outside 1.5 IQR** from the menu.
 
-![51](assets/dk-25_800_outliers.jpg)
+![52](assets/dk-25_800_outliers.jpg)
 
 As before you can optionally group and comment on these int_rate transformation steps. When you are finished ensure that the **In-database (SQL)** engine is selected and then click **RUN**
 
@@ -882,29 +882,153 @@ In addition to the suggested actions for each column, you can also directly sear
 
 <!-- ------------------------ -->
 ## Feature Engineering
-Duration: 2
+Duration: 5
+
+
+Let’s perform some statistical analysis on the customers_web_joined dataset by using a predefined Python notebook.
+
+* Return to the Flow.
+
+* Click on the output dataset of the prepare recipe (in this case **LOANS_ENRICHED_prepared** but you may have renamed your output)
+* Once selected click on the Python Code recipe from the Actions panel, add an output dataset and click **CREATE RECIPE**
+
+Dataiku DSS generates some starter code for us, we can also use code samples our colleagues have created and tagged and, if we prefer, work from Jupyter notebooks or a range of IDE’s. For this lab we will stick with the standard code editor.
+
+* To save some typing lets change our dataframe name to df on line 8
+* Remove lines 11 - 15
+* Add the following lines to generate features
+
+```
+df['DEBT_AMNT'] = [d*df.INSTALLMENT.values[idx]/100.0 for idx,d in enumerate(df.DTI.values)]
+
+
+df["DEBT_AMNT_NORM"] = (df.DEBT_AMNT.values - np.mean(df.DEBT_AMNT.values))/np.std(df.DEBT_AMNT.values)
+
+df["INSTALL_NORM"] = (df.INSTALLMENT.values - np.mean(df.INSTALLMENT.values))/np.std(df.INSTALLMENT.values)
+
+```
+
+Ensure you replace the name of the dataframe in the final line (.write_with_schema(your_dataframe_name) with df and then click RUN
+
+![53](assets/dk-26-900_Python_Code_highlighted.jpg)
+
+Note !
+Dataiku DSS allows you to create an arbitrary number of **Code environments** to address managing dependencies and versions when writing code in R and Python. Code environments in Dataiku DSS are similar to the Python virtual environments. In each location where you can run Python or R code (e.g., code recipes, notebooks, and when performing visual machine learning/deep learning) in your project, you can select which code environment to use.
 
 
 <!-- ------------------------ -->
 ## Training 
 Duration: 2
 
+Having sufficiently explored and prepared the loans and employment data, the next stage of the AI lifecycle is to experiment with machine learning models.
+
+This experimentation stage encompasses two key phases: model building and model assessment.
+
+**Model building**: Users have full control over the choice and design of a model — its features, algorithms, hyperparameters and more.
+
+**Model assessment**: Tools such as visualizations and statistical summaries allow users to compare model performance.
+
+These two phases work in tandem to realize the idea of Responsible AI. Either through a visual interface or code, building models with DSS can be transparently done in an automated fashion. At the same time, the model assessment tools provide a window into ensuring the model is not a black box.
+
+Before building our model first we will split our output dataset from our python step.
+
+This is how your flow should look like before splitting
+![54](assets/dk-27_900_finish_flow_before_split.jpg)
+
+
+* Return to the flow and select the output dataset of the python recipe and the **Split** recipe from the **Actions** menu.
+* Add two datasets named **Test** and **Train** and click **CREATE RECIPE**
+* Choose **Dispatch Percentiles** as the splitting strategy and have 80% go to Train and 20% to Test. 
+* Choose **ISSSUE_DATE_PARSED** to sort by and then click **RUN**
+
+
+![55](assets/dk-28-1000_split_tables.jpg)
+
+
+![56](assets/dk-29-1000_percentiles.jpg)
+
+* Return to the flow and select the **Train** dataset and click the **LAB** button in the Actions menu
+* Select **AutoML Prediction** and set **LOAN_STATUS** as the target and leave the default template of **Quick Prototypes** then click **CREATE**
+
+![57](assets/dk-30_1100_Lab_button.jpg)
+
+
+![58](assets/dk-31_1100_lab_options.jpg)
+
+
+When building a visual model, users can choose a template instructing DSS to prioritize considerations like speed, performance, and interpretability. Having decided on the basic type of machine learning task, you retain full freedom to adjust the default settings chosen by DSS before training any models. These options include the metric for which to optimize, what features to include, and what algorithms should be tested.
+
+Feel free to try some experiments of your own in the **Design** tab. Suggestions include:
+* Run with the employment features off/on to see if the Marketplace enrichment data makes a difference to our medals accuracy
+* Try different **Algorithms** 
+* In **Runtime Environment** choose Select a **container configuration** from the drop down for **Containerized execution** and run with a larger container
+
+After having trained as many models as desired, DSS offers tools for full training management to track and compare model performance across different algorithms. DSS also makes it easy to update models as new data becomes available and to monitor performance across sessions over time.
+
+In the **Result** pane of any machine learning task, DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model in terms of the chosen metric.
+
+In the example below we see an improvement between session 4 and 5 when the employment data is added and then a further minor improvement when using the LightGBM algo
+
+![59](assets/dk-32_1100_model_comparisons.jpg)
+
+Clicking on any model produces a full report of tables and visualizations of performance against a range of different possible metrics.
+
+* Click on your best performing model
+* Step through the various graphs and interactive charts to better understand your model. 
+* For example Subpopulations Analysis allows you to identify potential bias in your model by seeing how it performs across different sub-groups
+* Interactive Scoring allows you to run real time “what-if” analysis to understand the impact of given features
+
+![60](assets/dk-33_1100_subpop.jpg)
+
+
+Lets see what **Variables are important** 
+
+
+![61](assets/dk-35-1100_variable_imp.jpg)
+
+
 <!-- ------------------------ -->
 ## Deployment  
 Duration: 2
+
+After experimenting with a range of models built on historic training data, the next stage is to deploy our chosen model to score new, unseen records. 
+
+For many AI applications, batch scoring, where new data is collected over some period of time before being passed to the model, is the most effective scoring pattern. 
+Deploying a model creates a “saved” model in the Flow, together with its lineage. A saved model is the output of a Training recipe which takes as input the original training data used while designing the model.
+
+Click on **DEPLOY**, accept the default model name and click **CREATE**
+
+Your flow should now look like this:
+
+![61](assets/dk-34-1200_flow_pre_score.jpg)
+
 
 <!-- ------------------------ -->
 ## Scoring and Evaluation  
 Duration: 2
 
+
+* Select the LOANS_TEST dataset and the Score recipe from the actions menu
+* Select your model
+* Ensure In-Database (Snowflake native) is selected as the engine in order to use the Java UDF capability
+
+![62](assets/dk-36-1200_score_tables.jpg)
+
+
+![62](assets/dk-37-1200_score.jpg)
+
+
 <!-- ------------------------ -->
 ## Conclusion  and Next Steps  
 Duration: 2
 
+Congratulations you have now successfully built, deployed and scored your model results back to Snowflake. Your final flow should look like this.
+
+![63](assets/dk-38-1400_complete_flow.jpg)
+
+
 ## Bonus Material - Snowpark -Python  
 Duration: 2
-
-
 
 
 <!-- ------------------------ -->
