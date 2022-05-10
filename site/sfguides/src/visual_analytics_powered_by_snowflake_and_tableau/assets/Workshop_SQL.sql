@@ -94,7 +94,7 @@ create or replace view vhol_trips_vw
   from vhol_trips;
 
 
---select data from 
+--select data from the view
 select * from vhol_trips_vw limit 20;
 
 --- fancy query -----
@@ -112,20 +112,6 @@ select
 from vhol_trips_vw
 group by 1 order by 2 desc;
 
---clone
-create table vhol_trips_dev clone vhol_trips;
-
-select * from vhol_trips_dev limit 1;
-
-drop table vhol_trips_dev; 
-
--- Below statement will fail because the object is now dropped
-select * from vhol_trips_dev limit 1;
-
---thank god we can resuurect the same!
-undrop table vhol_trips_dev;
-
-select * from vhol_trips_dev limit 1;
 
 /*--------------------------------------------------------Get Marketplace Weather Data---------------------------------------------------------*/
 
@@ -474,3 +460,18 @@ SHOW SHARES LIKE 'VHOL_SHARE';
 
 show managed accounts;
 select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
+
+--DevOps steps clone
+create table vhol_trips_dev clone vhol_trips;
+
+select * from vhol_trips_dev limit 1;
+
+drop table vhol_trips_dev; 
+
+-- Below statement will fail because the object is now dropped
+select * from vhol_trips_dev limit 1;
+
+--thank god we can resuurect the same!
+undrop table vhol_trips_dev;
+
+select * from vhol_trips_dev limit 1;

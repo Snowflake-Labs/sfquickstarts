@@ -113,10 +113,10 @@ show File Formats;
 ### Query JSON Data
 ``` sql
 
--- Query all columns from a single row
+-- Query all columns from a single row from the Stage
 SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON)  limit 1;
 
--- Create a table with Variant column
+-- Create a table with Variant column in Snowflake to load JSON data
 create or replace table vhol_trips
   (tripid number autoincrement, 
    v variant)
@@ -129,7 +129,7 @@ copy into vhol_trips (v) from
 
 ### Build Relational Views on JSON
 ``` sql 
---- Extract JSON data as relational columns
+--- Not easy to read JSON, so let's extract JSON data as relational columns
 create or replace view vhol_trips_vw 
   as select 
     tripid,
@@ -173,7 +173,7 @@ Duration: 5
 
 ### Click on Data Marketplace and type WEATHER in Search Snowflake Marketplace toolbar
 
-![Search Dataset](assets/Weather_DM_1.png)
+![Search Dataset](assets/Climate_and_Weather.png)
 
 ### Set database name to WEATHER, grant access to PUBLIC role
 
@@ -185,7 +185,7 @@ Duration: 5
 
 
 
-### Query Weather data
+### Let's just query Weather data in a specific zipcode
 ``` sql
 
 -- Is there rain in the forecast that may impact cycling in a specific area 
