@@ -672,6 +672,10 @@ The final Flow will contain datasets, recipes, and machine learning processes.
 * Finally, the **Machine learning processes** are represented by green icons.
 
 
+Input dataset
+In the interests of time we have performed some initial steps of the data pipeline such as cleansing and transformations on the loans dataset. These steps can be created in Dataiku from the raw datasets from the Lending Club to form a complete pipeline with the data and execution happening in Snowflake
+
+
 ### How We’ll Build The Project
 
 Our goal is to build an optimized machine learning model that can be used to predict the risk of default on loans for customers and advise them on how to reduce their risk.
@@ -700,38 +704,38 @@ After creating our project, you’ll find the project homepage. It is a convenie
 Let’s add a new dataset to the Flow, in addition to the existing four present in the initial starting project.
 
 Note ! 
-The Flow is the visual representation of how data, recipes (steps for data transformation), and models work together to move data through an analytics pipeline.
-
-A blue square in the Flow represents a dataset. The icon on the square represents the type of dataset, such as an uploaded file, or its underlying storage connection, such as a SQL database or cloud storage
-
-
+The Flow is the visual representation of how data, recipes (steps for data transformation), and models work together to move data through an analytics pipeline. A blue square in the Flow represents a dataset. The icon on the square represents the type of dataset, such as an uploaded file, or its underlying storage connection, such as a SQL database or cloud storage
 
 * From the Flow click **+ Import Your First Dataset** in the centre of the Flow.
 
 * Click Upload your files.
 
-insert picture 
 
-Select the **Search and import option**
+![37](assets/dk-7_300_Empty_flow_on_new_project.png)
 
-click Next, and observe a preview of the settings used to read the file.
 
-insert picture 
+Select the **Search and import option** click Next, and observe a preview of the settings used to read the file.
+
+![38](assets/dk-8_400_Search&Import_option_closeup.png)
 
 Select the **PC_DATAIKU_DB** connection from the dropdown then click (insert picture) and populate the database and schema as below and click on **LIST TABLES**
 
 
-**insert picture**
+![39](assets/dk-9_400_Connection_explorer_with_filled_out_values.png)
+
 
 Select the Loans_Enriched and Unemployment_Data datasets and click **CREATE 2 DATASETS**
 
-**insert picture**
-**insert picture**
 
+![40](assets/dk-10_400_Renamed_tables.png)
+
+
+![41](assets/dk-11_400_Datasets_imported_screen.png)
 
 Navigate back to the Flow from the left-most menu in the top navigation bar (or use the keyboard shortcut G+F).
 
-**insert picture**
+![42](assets/dk-12_500_Two_datasets_in_flow.png)
+
 
 ! Tip
 No matter what kind of dataset the blue square represents, the methods and interface in Dataiku DSS for exploring, visualizing, and analyzing it are the same.
@@ -739,72 +743,142 @@ No matter what kind of dataset the blue square represents, the methods and inter
 
 ### Explore and Join Data
 
-Now we have all of the raw data needed for this lab. Let’s explore what’s inside these datasets.
-
-From the Flow, double click on the loans_enriched dataset to open it.
+Now we have all of the raw data needed for this lab. Let’s explore what’s inside these datasets.From the Flow, double click on the loans_enriched dataset to open it.
 
 On opening a dataset, you’ll find the Explore tab. It looks similar to a spreadsheet, but with a few key differences. For starters, you are viewing only a sample of the dataset.
 Note !
 
 By default, the Explore tab shows the first 10,000 rows of our dataset in Snowflake, but many other configurations are possible. Working with a sample makes it easy to work interactively (filtering, sorting, etc.) on even very large datasets.
 
-
 Look closer at the header of the table. At the top of each column is the column name, its storage type, and its meaning.
 
 Note !
-
-Datasets in Dataiku DSS have a schema. The schema of a dataset is the list of columns, with their names and types.
-
-A column in Dataiku DSS has two kinds of “types”:
-
-The storage type indicates how the dataset backend should store the column data, such as “string”, “boolean”, or “date”.
-
+Datasets in Dataiku DSS have a schema. The schema of a dataset is the list of columns, with their names and types.A column in Dataiku DSS has two kinds of “types”: The storage type indicates how the dataset backend should store the column data, such as “string”, “boolean”, or “date”.
 The meaning is a rich semantic type automatically detected from the sample contents of the columns, such as URL, IP address, or sex.
 
 Note how the storage type of the ADDR_STATE column is a string, but Dataiku DSS has inferred the meaning to be “US State”.
 
-**insert picture**
 
-You can analyze column metrics either by right clicking on the column name and selecting or, if you wish for a quick overview of columns key statistics then select Quick Column Stats button 
-**insert picture**  on the top-right.
+![42](assets/dk13-500_inferred_meaning.png)
 
-**insert picture** 
+You can analyze column metrics either by right clicking on the column name and selecting or, if you wish for a quick overview of columns key statistics then select Quick Column Stats button  **insert logo**  on the top-right.
 
+
+![43](assets/dk-14_500_Columns_view_expanded.png)
 
 ### Join the Data
-So far, your Flow only contains datasets. To take action on datasets, you need to apply recipes.
-
-The LOANS_ENRICHED and UNEMPLOYMENT_DATA datasets both contain a column of Loan IDs. Let’s join these two datasets together using a visual recipe.
+So far, your Flow only contains datasets. To take action on datasets, you need to apply recipes. The **LOANS_ENRICHED** and **UNEMPLOYMENT_DATA** datasets both contain a column of Loan IDs. Let’s join these two datasets together using a visual recipe.
 
 Note !
 Recipes in Dataiku DSS contain the transformation steps, or processing logic, that act upon datasets. In the Flow, they are represented by circles connecting the input and output datasets.
 
-Visual recipes (yellow circles) accomplish the most common data transformation operations, such as cleaning, grouping, and filtering, through a point-and-click interface.
+**Visual recipes** (yellow circles) accomplish the most common data transformation operations, such as cleaning, grouping, and filtering, through a point-and-click interface.
 
 You are also free to define your own processing logic in a code recipe (orange circle), using a language such as Python, R, or SQL.
 
-A plugin recipe allows coders to wrap custom code behind a visual interface, thereby extending the native capabilities of Dataiku DSS.
+A **plugin recipe** allows coders to wrap custom code behind a visual interface, thereby extending the native capabilities of Dataiku DSS.
 
 * Select the LOANS_ENRICHED dataset from the Flow by single clicking on it.
-
-* Choose Join With… from the “Visual recipes” section of the Actions sidebar near the top right of the screen (note: click the Open Panel arrow if it is minimized and notice there are three different types of join recipe, we want Join With…).
-
+* Choose **Join With…** **insert logo** from the “Visual recipes” section of the Actions sidebar near the top right of the screen (note: click the **Open Panel** arrow if it is minimized and notice there are three different types of join recipe, we want **Join With…**).
 * Choose UNEMPLOYMENT_DATA as the second input dataset.
 
-**insert picture** 
+ 
 
-* Leave the default option of PC_DATAIKU_DB for “Store into” and **Create** the recipe
-Once the recipe is initiated, you can adjust the settings.
+![44](assets/dk-15_700_join_tables.png)
 
+* Leave the default option of PC_DATAIKU_DB for “Store into” and **Create** the recipe. Once the recipe is initiated, you can adjust the settings.
 * On the Join step you can click on Left Join to observe the selected join type and conditions.
 
-**insert picture** 
+![45](assets/dk-16_700_join_conditions.png)
+
 
 
 * On the Selected columns step you can leave the defaults
 * On the Output step, note the output column names.
 * Before running it, Save the recipe.
-* Click RUN Update Schema, and return to the Flow.
+* Click RUN **insert logo** Update Schema, and return to the Flow.
+
+!Tip
+
+You can view the SQL query as well as the execution plan generated by selecting **VIEW QUERY** on the **Output** screen.
+
+Your flow should now look like this
+![45](assets/dk-17_700_Flow_join.png)
+
+Note !
+By default, Dataiku DSS will select the available execution engine that it detects to be the most optimal. For this lab, that is the **in-database engine**. In other words we are utilizing the warehouse in Snowflake that was created and associated with our connection when we created our Dataiku instance from Partner Connect
+This is not just for Joins or SQL code recipes. Many visual recipes and processors in the Prepare recipe can be translated to SQL queries.
+In other situations, such as when working with HDFS or S3 datasets, the Spark engine would be available if it is installed.
+
+
+### Prepare Data
+Data cleaning and preparation is typically one of the most time-consuming tasks for anyone working with data. In our lab, in order to save some of that time, our main lending dataset has already been largely cleaned. In the real world this would be done by other colleagues, say, from the data analytics team collaborating on this project and you would see their work as steps in our projects flow. 
+
+Let’s take a brief look at the **Prepare** recipe, the workhorse of the visual recipes in Dataiku, and perform some final investigations and transformations. 
+
+**Single click** on the output dataset of our join from the flow and select **PREPARE** from the visual recipes in the **Actions Panel**. (If the automatically generated output dataset name is starting to get unwieldy feel free to change it)
+
+In a Prepare recipe you have ~100 processors to perform all kinds of data transformation tasks. You can select these processors directly by using the **+ADD A NEW STEP** button on the left also, because Dataiku DSS inferrs meanings for each column, it suggests relevant actions in many cases. Let’s see how this works for a date column.
+
+
+* From the EARLIEST_CR_LINE column header dropdown, select **Parse date**
+* In **Add a custom format** set the format to **d-MMM-yyyy** and click on **USE DATE FORMAT**
+* A step is generated on the left. Change the **Locale** to **en_US**
+
+
+
+![46](assets/dk-18_800_parse_date.jpg)
+
+![47](assets/dk-19_800_date_format.jpg)
+
+![48](assets/dk-20_800_parse_en.jpg)
+
+
+* Click on the newly created column (click outside the step to action the change) and select **Compute time difference**
+
+* Change **Until** to **Another Date Column** and add **ISSUE_DATE_PARSED** as that column.
+* Change the unit to **Years** and name the new column **since_Earliest_CR_LINE_years**
+
+
+![48](assets/dk-21_800_compute_time_since.jpg)
+
+Now we have our desired feature we can remove the two date columns.
+
+Click on **EARLIEST_CR_LINE** and select **delete**, do the same for **EARLIEST_CR_LINE_parsed**
+
+Your script steps should now look like this:
+
+![49](assets/dk-22_800_final_steps_dates.jpg)
+
+
+Optionally you can place the three date transformation script steps into their own group with comments to make it easier for a colleague to follow everything you have done
+Let’s turn our attention to the INT_RATE column. The interest rate is likely to be a powerful predictive feature when modeling credit defaults but currently its store and as a string and seems to be missing values:
+
+* Click on the **+ADD A NEW STEP** button at the bottom of your script steps.
+* Select the **Find and Replace** processor either by looking in the **Strings** menu or using the handy search function.
+* Select **INT_RATE** as the column then click **+ADD REPLACEMENT** and replace % with a blank value. Ensure the **Matching Mode** dropdown is set to **Substring**
+
+![50](assets/dk-23_800_replace.jpg)
+
+Now lets handle those missing values. There are a number of ways Dataiku DSS can help you deal with missing data. In our case we are simply going to remove the rows. 
+Select the **Remove rows with no values** processor either by clicking the **INT_RATE** column and picking from the suggested options or through the **+ADD NEW STEP** menu.
+
+
+![50](assets/dk-24_800_remove_rows.jpg)
+
+Handle Outliers
+
+Our **INT_RATE** column has some suspiciously high values. Let’s use the Analyze tool and see how it can be used to take certain actions in a Prepare recipe
+
+* From the **INT_RATE** column header dropdown, select **Analyze**.
+* In the Outliers section, choose **Remove rows outside 1.5 IQR** from the menu.
+
+![51](assets/dk-25_800_outliers.jpg)
+
+As before you can optionally group and comment on these int_rate transformation steps. When you are finished ensure that the **In-database (SQL)** engine is selected and then click **RUN**
+
+! Tip
+In addition to the suggested actions for each column, you can also directly search the processors library of almost 100 different transformations commonly needed in data wrangling by clicking **+Add New Step** at the bottom of the script.
 
 <!-- ------------------------ -->
 ## Feature Engineering
