@@ -123,6 +123,7 @@ SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL, 
 -- UDF to convert Kelvin to Celcius
 use database vhol_database;
 use schema vhol_schema;
+use warehouse VHOL_WH;
 create or replace function degFtoC(k float)
 returns float
 as
@@ -160,10 +161,8 @@ create or replace view vhol_weather_vw as
 
 
 
---Let's check NewYork Weather
-select * from vhol_weather_vw limit 10;
-
-
+-- Is it clear to cycle today 
+select observation_date, tot_precip_in,  tot_snowfall_in from vhol_weather_vw order by observation_date desc limit 10;
 
 
 
@@ -183,6 +182,7 @@ create or replace external function fetch_http_data(v varchar)
     as 'https://dr14z5kz5d.execute-api.us-east-1.amazonaws.com/prod/fetchhttpdata';
 
 
+-- create a Snowflake table and load the data from the data from API's
 create or replace table vhol_spatial_data as
 with gbfs as (
   select $1 type, 
@@ -207,6 +207,7 @@ with gbfs as (
     
     select * from vhol_spatial_data;
     
+    -- Combine station data with geospatial data
     create or replace table vhol_stations as with 
   -- extract the station data
     s as (select 
@@ -244,6 +245,8 @@ from s inner join r on s.region_id = r.region_id
 
 select * from vhol_stations;
 
+
+-- Now let's combine trip data with Geospatial and Stations Data
 create or replace view vhol_trips_stations_vw as (
   with
     t as (select * from vhol_trips_vw),
@@ -276,8 +279,9 @@ create or replace view vhol_trips_stations_weather_vw as (
        left outer join vhol_weather_vw w on date_trunc('day', starttime) = observation_date);
 
 
+
 -- let's review the integrated data view
-select * from vhol_trips_stations_weather_vw limit 200;
+select START_STATION,END_STATION,TEMP_AVG_C,WIND_SPEED_KPH from vhol_trips_stations_weather_vw limit 10;
 
 
 
@@ -288,13 +292,15 @@ create or replace table tenant (
     tenant_account string
 );
 
+--Let's get your Snowflake Account 
+select current_account();
+
 --add tenant for your account
 insert into tenant values (
     1, 'My Account', current_account()
 );
 
---select
-select * from tenant;
+
 
 --map tenant to subscribed station beacons
 create or replace table tenant_stations (
@@ -302,7 +308,7 @@ create or replace table tenant_stations (
     station_id number
 );
 
---values
+-- Add start_stations in 200 range for Tenant 1
 insert into tenant_stations values
     (1, 212),
   (1, 216),
@@ -407,15 +413,12 @@ join tenant
 where
     tenant.tenant_account = current_account());
 
---current account?
---select current_account();
 
---select secure view
+--select secure view 
 
 select * from vhol_trips_secure limit 100;
 
 --create a reader account for your tenant
-
 DROP MANAGED ACCOUNT IMP_CLIENT;
 CREATE MANAGED ACCOUNT IMP_CLIENT
     admin_name='USER',
@@ -449,11 +452,6 @@ GRANT USAGE ON SCHEMA VHOL_SCHEMA TO SHARE VHOL_SHARE;
 GRANT SELECT ON VIEW VHOL_TRIPS_SECURE TO SHARE VHOL_SHARE;
 DESC SHARE VHOL_SHARE;
 
---show managed accounts; 
---take note of account_locator
---SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
---Replace with your locator for 'IMP_CLIENT' from above step
---set account_locator='TAA45269'; 
 ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
 
 SHOW SHARES LIKE 'VHOL_SHARE';

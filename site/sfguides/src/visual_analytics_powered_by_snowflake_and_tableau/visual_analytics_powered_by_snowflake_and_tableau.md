@@ -197,6 +197,7 @@ SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL, 
 -- UDF to convert Kelvin to Celcius
 use database vhol_database;
 use schema vhol_schema;
+use warehouse vhol_wh;
 create or replace function degFtoC(k float)
 returns float
 as
@@ -231,8 +232,10 @@ create or replace view vhol_weather_vw as
   from weather.standard_tile.history_day
   where postal_code in ('10257', '10060', '10128', '07307', '10456')
   group by 1, 2, 3;
-  
-select * from vhol_weather_vw limit 10;
+
+-- Is it clear to cycle today 
+select observation_date, tot_precip_in,  tot_snowfall_in from vhol_weather_vw order by observation_date desc limit 10;
+
 ```
 <!-- ------------------------ -->
 
@@ -266,7 +269,7 @@ create or replace external function fetch_http_data(v varchar)
 Geospatial data is available in a nested json array, let's flatten that 
 
 ``` sql 
--- use lateral flatten function to flatten nested JSON
+-- use lateral flatten function to flatten nested JSON and load in Snowflake tables
 create or replace table vhol_spatial_data as
 with gbfs as (
   select $1 type, 
@@ -379,8 +382,8 @@ create or replace view vhol_trips_stations_weather_vw as (
   from vhol_trips_stations_vw t 
        left outer join vhol_weather_vw w on date_trunc('day', starttime) = observation_date);
 
--- Combine aggregated data 
-select * from vhol_trips_stations_weather_vw limit 200;
+-- let's review the integrated data view
+select START_STATION,END_STATION,TEMP_AVG_C,WIND_SPEED_KPH from vhol_trips_stations_weather_vw limit 10;
 ```
 
 ###
@@ -930,13 +933,14 @@ create or replace table tenant (
     tenant_account string
 );
 
+--Let's get your Snowflake Account 
+select current_account(); 
+
 --add tenant for your account
 insert into tenant values (
     1, 'My Account', current_account()
 );
 
---select
-select * from tenant;
 
 --map tenant to subscribed station beacons
 create or replace table tenant_stations (
@@ -944,7 +948,7 @@ create or replace table tenant_stations (
     station_id number
 );
 
---values
+-- Add start_stations in 200 range for Tenant 1
 insert into tenant_stations values
     (1, 212),
   (1, 216),
@@ -1011,7 +1015,7 @@ insert into tenant_stations values
 ;
 ```
 
-### Optional : Enabling Row Level Access Policy 
+### Optional : Control data access based on context
 ``` sql
 --select *
 select * from tenant_stations;
@@ -1071,7 +1075,7 @@ CREATE MANAGED ACCOUNT IMP_CLIENT
     admin_name='USER',
     admin_password='P@ssword123',
     type=reader,
-    COMMENT='Testing'; -- Take a note of the Account Name and the URL 
+    COMMENT='Testing'; -- Take a note of the Account Name and the URL .. give it a minute before you test url
 
 show managed accounts; 
 --take note of account_locator
@@ -1104,9 +1108,9 @@ GRANT SELECT ON VIEW VHOL_TRIPS_SECURE TO SHARE VHOL_SHARE;
 DESC SHARE VHOL_SHARE;
 
 ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
-SHOW SHARES LIKE 'VHOL_SHARE';
 
--- Click on reader account url below and login with credentials from CREATE MANAGED account statement above (USER,P@ssword123) May take couple of mins. 
+-- Click on reader account url below and login with credentials from 
+-- CREATE MANAGED account statement above (USER,P@ssword123) . 
 show managed accounts;
 select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
 
@@ -1118,33 +1122,8 @@ select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_
 <!-- ------------------------ -->
 
 <!-- ------------------------ -->
-<!-- ------------------------ -->
-## Optional: DevOps in Snowflake
-Duration: 2
-### Clone Table
-``` sql 
-create table vhol_trips_dev clone vhol_trips;
-
-select * from vhol_trips_dev limit 1;
-```
-### Drop and Undrop Table
-``` sql
-
-drop table vhol_trips_dev; 
-
--- statement will fail because the object is dropped
-select * from vhol_trips_dev limit 1; 
-
---thank to Snowflake! we can bring it back to life
-undrop table vhol_trips_dev;
-
-select * from vhol_trips_dev limit 1;
-```
-<!-- ------------------------ -->
 
 ## Optional: Consumer Access Data
-
-[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)
 
 ### Login to Reader Account 
 ![Reader Account Login](assets/Reader_Account_1.png)
@@ -1153,8 +1132,10 @@ select * from vhol_trips_dev limit 1;
 ![Click Snowsight](assets/Reader_Account_2.png)
 
 
-### Change Role & Add Worksheet 
+### Set Role ACCOUNTADMIN & Add Worksheet 
+[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)
 ![Change Role to Accountadmin](assets/Reader_Account_3.png)
+
 
 ``` sql
 -- create database from share in the reader account  
@@ -1183,6 +1164,30 @@ SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
 <br>
 
 <!-- ------------------------ -->
+<!-- ------------------------ -->
+## Optional: DevOps in Snowflake
+Duration: 2
+### Clone Table
+``` sql 
+create table vhol_trips_dev clone vhol_trips;
+
+select * from vhol_trips_dev limit 1;
+```
+### Drop and Undrop Table
+``` sql
+
+drop table vhol_trips_dev; 
+
+-- statement will fail because the object is dropped
+select * from vhol_trips_dev limit 1; 
+
+--thank to Snowflake! we can bring it back to life
+undrop table vhol_trips_dev;
+
+select * from vhol_trips_dev limit 1;
+```
+<!-- ------------------------ -->
+
 ## Conclusion
 Congratulations! you have completed the lab.
 
