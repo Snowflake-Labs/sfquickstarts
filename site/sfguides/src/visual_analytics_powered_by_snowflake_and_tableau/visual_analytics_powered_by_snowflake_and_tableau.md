@@ -1070,7 +1070,7 @@ select * from vhol_trips_secure limit 100;
 ``` sql
 --create a reader account for your tenant
 
-DROP MANAGED ACCOUNT IMP_CLIENT;
+DROP MANAGED ACCOUNT IF EXISTS IMP_CLIENT;
 CREATE MANAGED ACCOUNT IMP_CLIENT
     admin_name='USER',
     admin_password='P@ssword123',
@@ -1080,21 +1080,15 @@ CREATE MANAGED ACCOUNT IMP_CLIENT
 show managed accounts; 
 --take note of account_locator
 SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
+
 --Replace with your locator for 'IMP_CLIENT' from above step
-set account_locator='GOA63594'; 
+set account_locator='GOA63594';
+
 --add tenant for your big important client via a reader account
 insert into tenant values (
     1, 'Big Important Client, Wink Wink', $account_locator
 );
 
---simulate your tenant
-alter session set simulated_data_sharing_consumer = $account_locator;
-
---select secure view as your tenant
-select * from vhol_trips_secure limit 100;
-
---unsimulate your tenant
-alter session unset simulated_data_sharing_consumer;
 
 ```
 
@@ -1109,9 +1103,8 @@ DESC SHARE VHOL_SHARE;
 
 ALTER SHARE VHOL_SHARE ADD ACCOUNT = $account_locator;
 
--- Click on reader account url below and login with credentials from 
--- CREATE MANAGED account statement above (USER,P@ssword123) . 
 show managed accounts;
+-- Click on reader account url below and login with credentials (USER,P@ssword123) 
 select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_CLIENT';
 
  
@@ -1139,6 +1132,7 @@ select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_
 
 ``` sql
 -- create database from share in the reader account  
+use role accountadmin;
 create or replace warehouse VHOL_READER WITH 
     WAREHOUSE_SIZE = 'XSMALL' 
     WAREHOUSE_TYPE = 'STANDARD' 
@@ -1186,7 +1180,17 @@ undrop table vhol_trips_dev;
 
 select * from vhol_trips_dev limit 1;
 ```
+
+### Cleanup the Demo Account
+``` sql 
+alter share VHOL_SHARE remove account = $account_locator;
+drop schema vhol_schema;
+drop database vhol_database;
+drop warehouse VHOL_WH;
+```
+
 <!-- ------------------------ -->
+
 
 ## Conclusion
 Congratulations! you have completed the lab.

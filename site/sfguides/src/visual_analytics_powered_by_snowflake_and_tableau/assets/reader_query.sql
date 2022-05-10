@@ -7,6 +7,7 @@
 --  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql
 -------------------------------------------------------------------------------------------------------------------*/
 -- create database from share in the reader account  
+use role accountadmin;
 create or replace warehouse VHOL_READER WITH 
     WAREHOUSE_SIZE = 'XSMALL' 
     WAREHOUSE_TYPE = 'STANDARD' 
@@ -27,3 +28,8 @@ USE DATABASE TRIPSDB;
 USE SCHEMA VHOL_SCHEMA; 
 
 SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
+
+-- Drop the Database
+DROP SCHEMA VHOL_SCHEMA;
+DROP DATABASE TRIPSDB;
+DROP WAREHOUSE VHOL_READER;
