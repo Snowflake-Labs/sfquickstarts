@@ -30,9 +30,9 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 ### What You’ll Need 
 - A [Snowflake](https://trial.snowflake.com/) account or free trial
 - A [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
-- [Visual Studio Code](https://code.visualstudio.com/download) code editor
+- [Visual Studio Code](https://code.visualstudio.com/download) editor
 - The ["open in browser"](https://marketplace.visualstudio.com/items?itemName=techer.open-in-browser) VS code extension from Visual Studio Marketplace
-- Download [Tableau Embedded Portal] (https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/Tableau+Embedded+Portal.zip) folder provided 
+- Get [Tableau Embedded Script](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/Tableau+Embedded+Portal.zip) 
 
 ### What You’ll Build 
 - Snowflake objects and data share
