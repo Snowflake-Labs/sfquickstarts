@@ -171,42 +171,11 @@ Import the **SQL** file on the worksheet for your reference
 
 #### Data Loading : Steps
 
-**Step 1** -User & Role creation 
-
-1. Configure User and role 
-2. Assign all privileges
-
-First we will switch to the SECURITYADMIN role and create a role (ML\_ROLE), that we will used in the lab.
-
-```
-
-USE ROLE SECURITYADMIN;
-
-CREATE OR REPLACE ROLE ML_ROLE COMMENT='ML Role for Dataiku lab data loading';
-
-GRANT ROLE ML_ROLE TO ROLE SYSADMIN;
-
-
-USE ROLE ACCOUNTADMIN;
-
-GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE ML_ROLE;
-
-GRANT IMPORT SHARE ON ACCOUNT TO ML_ROLE;
-
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
-
-```
-
-
 
 **Imp tip : To run the complete code block highlight and  Select >  Ctrl + A - Windows or Command + A - Mac then play**
 
-![14](assets/sf-14-dataloading1.png)
 
-
-
-
-**Step 2** : Virtual warehouse that we will use to compute with the **SYSADMIN** role, and then grant all privileges to the **ML\_ROLE**.
+**Step 1** : Virtual warehouse that we will use to compute with the **SYSADMIN** role, and then grant all privileges to the **ML\_ROLE**.
 
 
 ```
@@ -223,25 +192,20 @@ CREATE OR REPLACE WAREHOUSE ML_WH
 
   INITIALLY_SUSPENDED = TRUE;
 
-GRANT ALL ON WAREHOUSE ML_WH TO ROLE ML_ROLE;
-
 ```
 
 
-**Step 3** : Setting up environment to copy, creating the database
+**Step 2** : Create **Loan_data** table in the database
 
 ```
-
-USE ROLE ML_ROLE;
 
 USE WAREHOUSE ML_WH;
 
 CREATE DATABASE IF NOT EXISTS ML_DB;
-```
 
-**Step 4** : Create **Loan_data** table in the database
+USE DATABASE ML_DB;
 
-```
+
 CREATE OR REPLACE TABLE loan_data (
   
         LOAN_ID NUMBER(38,0),
@@ -323,7 +287,7 @@ After running the cell above, we have successfully created a **loan data** table
 ![15](assets/sf-15-dataloading2.png)
 
 
-**Step 5** :Creating a external stage to load the lab data into the table. This is done from a public S3 bucket to simplify the workshop. Typically an external stage will be using various secure integrations as described in this [link](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html). 
+**Step 3** :Creating a external stage to load the lab data into the table. This is done from a public S3 bucket to simplify the workshop. Typically an external stage will be using various secure integrations as described in this [link](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html). 
 
 ```
 CREATE OR REPLACE STAGE LOAN_DATA
@@ -339,7 +303,7 @@ CREATE OR REPLACE STAGE LOAN_DATA
 ![16](assets/sf-16-dataloading3.png)
 
 
-**Step 6** :Copying the data in the database
+**Step 4** :Copying the data in the database
 
 ```
 
@@ -486,7 +450,7 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 ![26](assets/sf-26-marketplace8.png)
 
 
-##### IMPORTANT: Database for Machine learning consumption will be created after connecting Snowflake with Dataiku using partner connect. 
+#### IMPORTANT: Database for Machine learning consumption will be created after connecting Snowflake with Dataiku using partner connect. 
 
 
 
@@ -620,14 +584,12 @@ grant select on all tables in schema ML_DB.public to role PC_Dataiku_role;
 
 #### Cloning tables to DATAIKU Database before consuming it for Dataiku DSS 
 ```
-USE ROLE ACCOUNTADMIN;
-use warehouse PC_DATAIKU_WH;
-alter warehouse PC_DATAIKU_WH set warehouse_size=medium;
-use role PC_DATAIKU_ROLE;
-use database PC_DATAIKU_DB;
-use warehouse PC_DATAIKU_WH;
-CREATE TABLE IF NOT EXISTS LOANS_ENRICHED CLONE ML_DB.PUBLIC.LOAN_DATA;
-CREATE TABLE IF NOT EXISTS UNEMPLOYMENT_DATA CLONE ML_DB.PUBLIC.UNEMPLOYMENT_DATA;
+USE ROLE PC_DATAIKU_ROLE;
+USE DATABASE PC_DATAIKU_DB;
+USE WAREHOUSE PC_DATAIKU_WH;
+ALTER WAREHOUSE PC_DATAIKU_WH SET WAREHOUSE_SIZE=MEDIUM;
+CREATE OR REPLACE TABLE LOANS_ENRICHED CLONE ML_DB.PUBLIC.LOAN_DATA;
+CREATE OR REPLACE TABLE UNEMPLOYMENT_DATA CLONE ML_DB.PUBLIC.UNEMPLOYMENT_DATA;
 
 SELECT * FROM LOANS_ENRICHED LIMIT 10;
 ```
@@ -1028,9 +990,6 @@ Congratulations you have now successfully built, deployed and scored your model 
 
 
 ## Bonus Material - Snowpark -Python  
-Duration: 2
-
-
-<!-- ------------------------ -->
-## Snowsight - Initial Analysis 
 Duration: 4
+
+
