@@ -587,7 +587,6 @@ grant select on all tables in schema ML_DB.public to role PC_Dataiku_role;
 USE ROLE PC_DATAIKU_ROLE;
 USE DATABASE PC_DATAIKU_DB;
 USE WAREHOUSE PC_DATAIKU_WH;
-ALTER WAREHOUSE PC_DATAIKU_WH SET WAREHOUSE_SIZE=MEDIUM;
 CREATE OR REPLACE TABLE LOANS_ENRICHED CLONE ML_DB.PUBLIC.LOAN_DATA;
 CREATE OR REPLACE TABLE UNEMPLOYMENT_DATA CLONE ML_DB.PUBLIC.UNEMPLOYMENT_DATA;
 
@@ -596,7 +595,7 @@ SELECT * FROM LOANS_ENRICHED LIMIT 10;
 
 After running above commands, we have created clones for the tables to be used for analysis. Kindly check **PC_DATAIKU_DB** you should have two datasets **LOANS_ENRICHED** and **UNEMPLOYMENT_DATA**
 
-![37](assets/sf-29-partnerconnect3.png)
+![37](assets/sf-29-partnerconnect4.png)
 
 
 #### Now lets move to Dataiku console for feature engineering, model building, Scoring and deployment. 
