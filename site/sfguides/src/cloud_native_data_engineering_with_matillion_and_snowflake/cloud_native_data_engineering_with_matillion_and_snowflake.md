@@ -94,7 +94,7 @@ In the screenshot below, the account text we are look for is: `bjjihzu-ji91805`
 ## Launching Matillion ETL from Partner Connect
 Duration: 5
 
-1. Navigate to Admin --> Partner Connect, then click on the "Matillion ETL" tile
+1. Navigate to Admin --> Partner Connect, then click on the **"Matillion ETL"** tile
 
 ![4_pc_metl](assets/4_pc_metl.png)
 
@@ -142,7 +142,7 @@ Click **Test**, to test and verify the connection. Once you receive **success** 
 
 <!-- ------------------------ -->
 
-## Creating an ORCHESTRATION job
+## Creating an Orchestration Job
 Duration: 20
 
 We will now create our first orchestration job. The job will consist of first loading the trading history from AWS S3 to a single Snowflake table. To efficiently work with the data, we will modify the warehouse to the appropriate size using the Alter Warehouse component. We will then create two separate transformation jobs to perform complex calculations and joins and create new tables back in Snowflake. Finally, we will scale down our warehouse when job completes. By the end of it, the orchestration job should look like this:
@@ -171,14 +171,15 @@ The following steps will walk through adding different components to the workspa
 
 3. A S3 Load Generator menu will automatically pop up. Click the ... button to explore S3 bucket
 
-4. Copy and paste this value into the wizard: `mtln-techworkshops/VHOL_Trades/`  
-Click **Go** to explore the contents of the bucket, you should see several CSV files - these are trade history data of 10 traders, trading in 10 different industries. Highlight the file name `ARYA_SWINFRA.csv` and click Ok.
+4. Copy and paste the S3 bucket into the wizard: `s3://mtln-techworkshops/VHOL_Trades/`
+
+Click **Go** to explore the contents of the bucket, you should see several CSV files - these are trade history data of 10 traders, trading in 10 different industries. Highlight the file name `ARYA_SWINFRA.csv` and click **Ok**.
 
 ![6_s3_files](assets/6_s3_files.png)
 
 5. You can now sample the dataset by clicking **Get Sample**, it will return a 50 row sample of the dataset. Click **Next**.
 
-6. Matillion will guess the schema on the dataset, you can make any modifications to the configuration. For the purpose of this lab, we will keep the configuration settings as **Default**. Click Next
+6. Matillion will guess the schema on the dataset, you can make any modifications to the configuration. For the purpose of this lab, we will keep the configuration settings as **Default**. Click **Next**
 
 ![6_file_schema](assets/6_file_schema.png)
 
@@ -246,7 +247,7 @@ The next step of the orchestration is to scale up Snowflake’s Virtual Warehous
 
 <!-- ------------------------ -->
 
-## Creating a TRANSFORMATION job: CURRENT_POSITION
+## Creating a Transformation Job to determine the Current Position
 Duration: 30
 
 The trading history data from S3 gives a listing of ten traders with both BUY and SELL actions.  In this transformation job, the transactions will be aggregated to find out the number of shares bought/sold and for how much. With those figures, the net # of shares and value will be calculated, and a table will be created, enriched with each traders’ average price for each stock. The below figure shows the end product of the transformation pipeline we will create in this section:
@@ -446,7 +447,7 @@ Congratulations, you’re done with building and running the first transformatio
 
 <!-- ------------------------ -->
 
-## Creating a TRANSFORMATION job: Profit & Loss Calculation
+## Creating a Transformation Job: Profit & Loss Calculation
 Duration: 41
 
 The previous Transformation job provided a snapshot of every trader, based on the BUY and SELL transactions which took place. This job will take it a step further by calculating the profit or loss each trader is experiencing by stock, as well as the cumulative profit or loss, based on their entire portfolio. The below figure shows the end product of the transformation pipeline we will create in this section.
@@ -669,9 +670,11 @@ Return back to the VHOL_orchestration job, and drag and drop an **Alter Warehous
 
 Edit the component to reflect as follows:  
 
-Name:               `Size Down Warehouse to XS`  
-CommandType:        `Set`  
-Properties:         `WAREHOUSE_SIZE XSMALL`  
+| Name:      | `Size Down Warehouse to XS` |
+| ----------- | ----------- |
+| CommandType:      | `Set`       |
+| Properties:   | `WAREHOUSE_SIZE XSMALL`        |
+
 
 This will scale down your Virtual Warehouse after the orchestration job is completed.  
 
@@ -684,6 +687,261 @@ Your final pipeline result should now look like this:
 Right click anywhere on the workspace click **Run Job** to run the job and enjoy seeing the data being loaded, transformed, while scaling up and down Snowflake warehouse dynamically!
 
 <!-- ------------------------ -->
+
+## BONUS - Daily Updates from Yahoo! Finance
+Duration: 20
+
+The portfolio manager wants up-to-date stock information to know exactly where their realized and unrealized gains stand. Utilizing Matillion’s Universal Connectivity feature they can pull real-time market prices and make the calculation.
+
+1. Begin by right-clicking in the Project Explorer and select Add Orchestration job to create a new Orchestration job. Name it Yahoo_Orch.
+
+2. Righ click on the canvas, and click Manage Grid Variables. 
+
+![9_1](assets/9_1.png)
+
+3. Create a [Grid Variable](https://documentation.matillion.com/docs/2917841) called `gv_tickers`, with a single column (`gvc_tickers`) populated with: AAPL and SBUX.
+
+![9_2](assets/9_2.png)
+
+4. Click **Next** to add the columns AAPL and SBUX.
+
+![9_3](assets/9_3.png)
+
+5. Click on **Project** dropdown and select **Manage Environment Variables**
+
+![9-4](assets/9-4.png)
+
+6. Create a [Environment Variable](https://documentation.matillion.com/docs/2943424) called `ev_tickerlist` using the following properties:
+
+| Name:  |  `ev_tickerlist` |
+|---|---|
+| Type:  | `text`  |
+| Behavior:  | `Copied`  |
+|  Value: |  `AAPL%2CGOOG` |
+
+![9-5](assets/9-5.png)
+
+6. Drag and drop the **Query Result to Grid** component as the first  step in the flow. Fill out the component as follows:
+
+|  Name:  | `Tickers to Grid`  |
+|---|---|
+| Basic/Advanced  | `Advanced` |
+| SQL Query | `SELECT DISTINCT("SYMBOL") FROM "TRADES_HISTORY" WHERE "TRADER" = 'CERSEI' LIMIT 10` |
+| Grid Variable  |  `gv_tickers` |
+|  Grid Variable Mapping | `gvc_tickers: SYMBOL`  |
+
+![9-6](assets/9-6.png)
+
+![9-7](assets/9-7.png)
+
+### [Python Script](https://documentation.matillion.com/docs/2234735)
+
+We will incorporate a Python script to “unpack” the Grid Variable set in the next step. With the stock symbols saved to a variable called loc_TICKERS, a loop will be performed to reformat a query parameter needed for a call to the [Yahoo! Finance quote endpoint](https://www.yahoofinanceapi.com/). 
+
+1. Locate the **Python Script** component and drop as the last step in the flow:
+
+![9-8](assets/9-8.png)
+
+2. Update the Python Script component with the following:
+
+**Script**:
+
+```
+print (context.getGridVariable('gv_tickers'))
+loc_TICKERS = context.getGridVariable('gv_tickers')
+
+api_param = ''
+
+for layer1 in loc_TICKERS:
+  for each in layer1:
+    api_param = api_param + each + '%2C'
+    #print(each) validate unpackaging of array
+    
+api_param = api_param[:-3]
+print(api_param)
+
+context.updateVariable('ev_tickerlist', api_param)
+
+print(ev_tickerlist)
+
+```
+**Interpeter:** `Python 3`
+
+### [API-Extract](https://documentation.matillion.com/docs/1959484) - Pull Current Stock Price Data
+
+1. From the Projects drop down in the top left, select **Manage API Profiles** > **Manage Extract Profiles**.
+
+![9-9](assets/9-9.png)
+
+2. Add a new **Extract Profile** using the information below:
+
+**Profile Name:** `YahooFinance`
+
+![9-10](assets/9-10.png)
+
+3. Click **Ok** and select **New Endpoint**, and update with the following information:
+
+**Endpoint Name:** `QuotesByTicker`
+
+4. Click **Next**. 
+
+5. Set the Endpoint Configuration GET to the following URI: `https://yfapi.net/v6/finance/quote`
+
+6. Select the **Params** tab and update with the following:
+
+**Params:**
+
+|   |   |   |
+|---|---|---|
+|  `lang` |  `en` | `Query`  |
+|  `region` |  `US` | `Query`  |
+|  `symbols` |  `AAPL,BTC-USD,EURUSD=X` | `Query`  |
+|  `X-API-KEY` |  **`SEE NOTE BELOW`** | `Header`  |
+
+
+**NOTE:** Your X-API-KEY must be obtained from Yahoo Finance API (This can be retrieved by following the instructions [HERE](https://www.yahoofinanceapi.com/tutorial))
+
+7. Click **Next** and **Finish** to complete creating the Endpoint.
+
+8. Locate the **API Extract** component and place is after the **Python Script** component. 
+
+![9-11](assets/9-11.png)
+
+9. Update the component as follows:
+
+|   |   |
+|---|---|
+| Profile  | `YahooFinance`  |
+| Data Source  | `QuotesByTicker`  |
+|  Query Params |  `lang - en`  |
+|   |  `region - US`  |
+|   |  `symbols - ${ev_tickerlist}`  |
+|  Header Params |  **`YOUR API KEY`** |
+| Location |  `Select the default S3 bucket provided by Partner Connect` |
+| Table  | `VHOL_YAHOORAW`  |
+
+10. Now we will create a new Transformation Job - Yahoo Transform - which will sit as the next step after the Yahoo Orchestration job just worked on.
+
+### Transformation - Yahoo Transform
+
+1. Within the Projects Explorer, right click and select **Add Transformation Job**.
+Name it Yahoo_transform.
+
+2. Create a new Table Input component and update as follows:
+
+|   |   |   |
+|---|---|---|
+| Name  | `VHOL_YAHOORAW`  |
+|  Target Table |  `VHOL_YAHOORAW` |
+|  Column Names |  `Data Value` | 
+
+![9-12](assets/9-12.png)
+
+### [Extract Nested Data](https://documentation.matillion.com/docs/2978311) - We will flatten the semi structured format & extract the values needed
+
+1. Find the **Extract Nested Data** Component and drag and drop it after the Table Input.
+
+2. Update the component as follows:
+
+|   |   |   |
+|---|---|---|
+| Name  |  `Extract Nested Data` |
+| Include Input Column  | `No`  |
+
+Columns: Select **Autofill**, to populate all the available columns and select the following values:
+
+`displayName, regularMarketPrice, symbol`
+
+![9-13](assets/9-13.png)
+
+### We will now read TRADER_PNL_TODAY from our previous transformation job.
+
+1. Locate the **Table Input** component and place is underneath the previous Table Input. And update the properties as follows:
+
+|   |   |   |
+|---|---|---|
+| Name:  |  `TRADER_PNL_TODAY` |
+| Target Table:  |  `TRADER_PNL_TODAY` |
+|  Column Names: | Select all columns  |
+
+![9-14](assets/9-14.png)
+
+### Now we will only filter for Cersei’s trades by using the Filter component. 
+
+1. Locate the **Filter** component and connect it to the table input from the previous step. And update the properties as follows:
+
+|   |   |   |
+|---|---|---|
+|  Name:  |  `Cersei's Trades`  |
+| Input Column:  | `Trader`  |
+|  Qualifier: | `Is`  |   |
+|  Comparator: |  `Value` |
+|  Value:  |  `CERSEI`  |
+
+![9-15](assets/9-15.png)
+
+### Now we will join Cersei’s trades with the Yahoo API data using the Join component. 
+
+1. Locate the **Join** component and connect to the Extract Nested Data and Cersei’s Trades, and update the properties as follows:
+
+|   |   |   |
+|---|---|---|
+|  Name: | Join  |
+| Main Table:  |  `Cersei's Trades` |
+| Main Table Alias:  | `cersei`  |
+| Joins: | `Joins Table - Extract Nested Data` |
+|   |  `Join Alias - trades`  |
+|   |  `Join Type - Inner`  |
+
+**Join Expressions:**
+|   |   |   |
+|---|---|---|
+|  cersei_inner_trades | `"cersei"."SYMBOL" = "trades"."symbol"`  |
+
+**Output Columns:**
+|   |   |   |
+|---|---|---|
+| `cersei.TRADER`  |  `TRADER` |
+|  `cersei.SYMBOL` |  `SYMBOL` |
+| `trades.regularMarketPrice`  |  `MARKETPRICE` |
+|  `cersei.AVG_PRICE`  |  `AVG_PRICE`  |
+|  `cersei.NET_SHAERES`  |  `# SHARES`  |
+
+![9-16](assets/9-16.png)
+
+### Calculate the Win / Loss Logic
+
+1. Drag and drop the Calculator component as the last step of the flow and update as follows:
+
+
+|   |   |   |
+|---|---|---|
+|  Name: | `Calculator`  |
+
+|  Expressions: |   |
+|---|---|
+| `MARKET_VALUE`  |  `"# SHARES" * "MARKETPLACE"` |
+| `PORTFOLIO_VALUE`  |  `"AVG_PRICE" * "# SHARES"` |
+|  `UNREALIZED_GAINS` |  `("AVG_PRICE" * "# SHARES") - ("# SHARES" * "MARKETPLACE")` |
+
+![9-17](assets/9-17.png)
+
+Finally, we will write Cersei’s profits back to Snowflake using the **Rewrite** component, and update as follows:
+
+|   |   |
+|---|---|
+|  Name: | `CERSEI PROFITS`  |
+| Target Table: |  `CERSEI PROFITS` |
+
+Your final flow should now look like this:
+
+![9-18](assets/9-18.png)
+
+What this shows is the stock, quantity, and the real time average price of each stock. The resulting table is how much realized gains Cersei can expect based on the quantity of shares she owns. You can check the data in Snowflake to see that it was written correctly:
+
+![9-19](assets/9-19.png)
+
+<!-- ------------------------ -->
 ## Conclusion
 Duration: 1  
 
@@ -694,10 +952,10 @@ Congrats! You have successfully developed a well-orchestrated data engineering p
 - Use Matillion’s GUI to build end-to-end transformation pipeline
 - Leverage Matillion scale up/down Snowflake’s virtual warehouses  
 
-### Related Resources
-- [Snowflake Docs](https://docs.snowflake.com/)
-- [Matillion Docs](https://documentation.matillion.com/)
-
 Using Matillion ETL for Snowflake we were able to easily extract data from S3, perform complex joins, filter and aggregate through an intuitive, browser based, easy to use UI.  If we were to have used traditional ETL tools, it would have required a lot code, resources, and time to complete.   
 
 Matillion ETL makes data engineering easier by allowing you to build your data pipelines more efficiently with a low-code/no-code platform built for the Data Cloud. We can build complex data pipelines to scale up and down within Snowflake based on your workload profile.
+
+### Related Resources
+- [Snowflake Docs](https://docs.snowflake.com/)
+- [Matillion Docs](https://documentation.matillion.com/)
