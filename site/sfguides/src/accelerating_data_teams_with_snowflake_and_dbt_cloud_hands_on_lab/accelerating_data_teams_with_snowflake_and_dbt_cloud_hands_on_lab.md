@@ -834,9 +834,8 @@ When it comes to documentation, dbt brings together both column and model level 
 
 2. Next we’ll copy and paste the following code block into the new file and click save:
 
-<table>
-  <tr>
-    <td>version: 2
+```sql
+version: 2
 
 models:
   - name: fct_orders
@@ -875,10 +874,8 @@ models:
       - name: item_tax_amount
         description: item level tax total
       - name: net_item_sales_amount
-        description: the net total which factors in discount and tax</td>
-  </tr>
-</table>
-
+        description: the net total which factors in discount and tax
+```
 
 Let’s take a moment to describe what’s happening in this file and how we’re defining everything. This file is in the `models/marts/core` directory and contains tests and descriptions specifically for the models in this directory, in this case for `fct_orders`. This is an organizational step and at the end of the day it is up to you and your team how you’d like to organize your YAML files and the models they test and define. As a best practice, we do recommend having at least one YAML file for testing and documentation per directory.
 
@@ -892,15 +889,11 @@ When we take a look at the descriptions, we’re able to see that they are split
 
 Then copy and paste the following code into it before saving:
 
-<table>
-  <tr>
-    <td># the below are descriptions from fct_orders
+```markdown
+# the below are descriptions from fct_orders
 
 {% docs gross_item_sales_amount %} same as extended_price {% enddocs %}
-</td>
-  </tr>
-</table>
-
+```
 
 This markdown file has one doc block corresponding to the one column with a doc block description in our YAML file (note that a markdown file can have multiple doc blocks). The name within quotes in the YAML doc block description connects with the name in the opening doc block in our markdown file. In this case, `'{{doc("gross_item_sales_amount") }}'` in the YAML description matches `{% docs gross_item_sales_amount %}` in our markdown file. 
 
@@ -914,18 +907,14 @@ For this we’ll need a custom data test, so we’ll start by creating a new fil
 
 Copy and paste the following code into the new file before saving:
 
-<table>
-  <tr>
-    <td>--If no discount is given it should be equal to zero 
+```sql
+--If no discount is given it should be equal to zero 
 --Otherwise it will be negative
 
 select *
   from {{ ref('fct_orders') }}  
- where item_discount_amount > 0</td>
-  </tr>
-</table>
-
-
+ where item_discount_amount > 0
+```
 
 Custom tests are written as SQL select statements where a failing test will return the failing records as the output. This means that in order for the test to pass the result will return no rows and we will need to write the test with this expectation in mind. Given that our assumption about the `item_discount_amount` is that it will always be less than or equal to zero, we then want to write the test to look for when the amount is greater than zero. The where clause in the select statement is written for this and will return failing records if there are any.
 
@@ -935,53 +924,166 @@ You may be wondering, if we aren’t listing this test in the YAML file, how doe
 
 Similar to our model runs, the compiled code that is passed to Snowflake for each test is visible within the `Details` section of the test results. And from the looks of it, all of our tests passed! 
 
-![image alt text](image_47.png)
+![Test Results](assets/dbt_Cloud_test_results.png)
 
 6. Let’s switch gears to take a look at the documentation that we created. The command to tell dbt to create our docs is `dbt docs generate`. Run that command and when it completes you should see an icon pop up in the upper left hand corner of the IDE above the green git workflow button to notify you that your docs are ready. 
 
-![image alt text](image_48.png)
+![Docs Ready](assets/dbt_Cloud_dbt_docs_ready.png)
 
 Clicking on `view docs` will launch the documentation site in a new tab. After that loads enter `fct_orders` into the top search bar and click on the top result to take you the documentation for that model. 
 
 When that loads you should be able to see our model level description, the column level descriptions we wrote in the YAML file, and the description that came from doc blocks. You should also be able to see references to the tests being run for the two columns with tests.
 
-![image alt text](image_49.png)
+![Docs Descriptions](assets/dbt_Cloud_docs_descriptions.png)
 
 If you scroll down a bit farther you’ll be able to see information about the relationships this model has with other models as well. Clicking on the bubble in the bottom right hand corner opens up a preview of the lineage graph and clicking on the expand button in the upper right hand corner takes you to the full view. 
 
-![image alt text](image_50.png)
+![Docs Lineage Bubble](assets/dbt_Cloud_docs_lineage_bubble.png)
 
-![image alt text](image_51.png)
+![Docs Expand Lineage](assets/dbt_Cloud_docs_expand_lineage.png)
 
-![image alt text](image_52.png)
+![Docs Full Lineage](assets/dbt_Cloud_docs_full_lineage.png)
 
 This is the end result of using the `ref` function throughout your project to reference your models as it allows dbt to build dependencies and lineage. The lineage graph is a powerful feature that gets more powerful as your project gets bigger and allows you to have much more informed architecture discussions as your project continues to grow.
 
 7. Let’s commit our work for the section. Click the `commit` button and provide a message like `tests and docs` to save your most recent changes. 
 
+<!-- ------------------------ -->
 
+## Deployment
+
+Before we jump into deploying our code, let’s have a quick primer on environments. Up to this point all of the work we’ve done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we’ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch allows us to separate our code from what other coworkers are building, as well as code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of git branch and Snowflake database objects form our environment. 
+
+Now that we’ve completed testing and documenting our work, we’re ready to deploy our code from our development environment to our production environment and this involves two steps: 
+
+1. Promoting code from our feature branch to the production branch in our repository. Generally the production branch is going to be named your main branch and there’s a review process to go through before merging code to the main branch of a repository, but here we are going to merge without review for ease of this workshop.
+
+2. Deploying code to our production environment. Once our code is merged to the main branch, we’ll need to run dbt in our production environment to build all of our models and run all of our tests. This will allow us to build production ready objects into our production environment in Snowflake. Luckily for us, the partner connect flow has already created our deployment environment and job to facilitate this step.
+
+1. Before getting started, let’s make sure that we’ve committed all of our work to our feature branch. If you still have work to commit you’ll be able to click the `commit` button, provide a message, and then click `Commit` again. 
+
+2. Once all of your work is committed, the green git workflow button will now appear as `merge to main`. Click `merge to main` and the merge process will automatically run in the background. 
+
+![Merge to Main](assets/dbt_Cloud_merge_to_main.png)
+
+When it’s completed you should see the button read `create new branch` and the branch you’re currently looking at will become `main`. 
+
+3. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
+
+4. Click on the hamburger menu in the upper left hand corner of the screen and then click `Environments`. 
+
+You should see two environments listed and you’ll want to click on the `Deployment` environment to open it up and then `Settings` in the upper right hand corner to modify it.
+
+![Choose Deployment Environment](assets/dbt_Cloud_choose_deployment_environment.png)
+
+![Deployment Settings](assets/dbt_Cloud_deployment_settings.png)
+
+Before making any changes, let’s touch on what is defined within this environment.
+
+The Snowflake connection shows the credentials that dbt Cloud is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so.
+
+The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we’ve been using as the schema for our development environment. Let’s update the schema to create a new schema specifically for our production environment. 
+
+Click `Edit` in the upper right hand corner to allow you to modify the existing field values. Scroll down to the `schema` field in the `Deployment Credentials` section and update the schema name to `production`. Be sure to click `Save` in the upper right hand corner after you’ve made the change.
+
+![Deployment Schema Update](assets/dbt_Cloud_deployment_schema_update.png)
+
+By updating the schema for our production environment to `production`, it ensures that our deployment job for this environment will build our dbt models in the `production` schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
+
+5. Now let’s switch over to our production job. Click on the hamburger menu again and then select `Jobs`. You should see an existing and pre-configured `Partner Connect Trial Job`. Similar to the environment, click on the job, then select `Settings` to modify it. Let’s take a look at the job to understand it before making changes. 
+
+![Job Settings](assets/dbt_Cloud_job_settings.png)
+
+The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
+
+The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we’re going to keep these settings as is as well and stick with just generating docs deployment.
+
+The Commands section is where we specify exactly which commands we want to run during this job, and we also want to keep this as is. We want our seed to be uploaded first, then run our models, and finally test them. The order of this is important as well, considering that we need our seed to be created before we can run our incremental model, and we need our models to be created before we can test them. 
+
+Finally we have the Triggers section, where we have a number of different options for scheduling our job. Given that our data isn’t updating regularly here and we’re running this job manually for now, we’re also going to leave this section alone. 
+
+So, what are we changing then? Just the name! Click `Edit` in the upper right hand corner of the job to allow you to make changes. Then update the name of the job to `Production Job` to denote this as our production deployment job. After that’s done click `save` at the top of the screen.
+
+![Job Name Update](assets/dbt_Cloud_job_name_update.png)
+
+6. Now let’s go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you’ll be able to click `Run now` to kick off the job. 
+
+![Job Run](assets/dbt_Cloud_job_run.png)
+
+Once the run starts you’ll be able to click on the run itself and see all of the details about the run, including all of the commands that dbt runs and all of the models and tests run within each step. And if you click into the details of the `dbt run` step, you’ll see that the DDL has been updated to create your models in the `production` schema. 
+
+When it finishes you’ll notice that the job experienced an error, which is weird considering that there weren’t any issues when we ran our jobs and tests earlier. Looking more closely we can see there’s an issue in the test step and we want to click into that step to expand the logs and see what’s going on.
+
+![Example Test Failure](assets/dbt_Cloud_example_test_failure.png)
+
+One of the tests from our example models failed! That was a bit unexpected, but in looking at all of the logs again we can see that the models we created were built successfully in Snowflake and the tests for those models passed. At this point, we can move forward and fix the failing example test another day. 
+
+While this process is great for your scheduling and running your dbt jobs, we recognize that transformation jobs don’t live in a silo for many data teams. It’s not uncommon for a data team to have a data process occurring outside of dbt that has to happen prior to a dbt job running, or for there to be a data process that needs to be triggered after a dbt job finishes. In these sorts of cases, we recommend using our [API](https://docs.getdbt.com/dbt-cloud/api-v2) with a third party orchestration tool to orchestrate and manage these situations. There are also a number of blog posts and articles, including this [one](https://docs.getdbt.com/blog/dbt-airflow-spiritual-alignment), to help you think about the best way to manage this alongside dbt Cloud.
+
+7. Let’s go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the `production` schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed there. 
 
 <!-- ------------------------ -->
 
+## Visualizing Your Data
 
+With all of our data now live in our production environment courtesy of our production job, we’re ready to visualize our data! We’re going to take our `fct_orders` model and create a bar chart of our all time quarterly sales. Before we jump in, take a second to make sure that you’re in the new Snowflake UI so that you’ll be able to access the dashboard feature.
+
+1. On the left hand side of the screen click `Dashboards` and then click the blue `+ Dashboard` button in the upper right hand corner to create a new dashboard. Create a name for your dashboard in the popup window and then click `Create Dashboard`.
+
+![Create Dashboard](assets/Snowflake_dashboard_create.png)
+
+2. In the new window, go to the upper right hand corner of the screen and click on the box with the role and warehouse options. Be sure to select the `PC_DBT_ROLE` and the `PC_DBT_WH` warehouse. 
+
+![Dashboard Role and Warehouse](assets/Snowflake_dashboard_role_warehouse.png)
+
+Next, click `New Tile` in the center of the screen. Within the new tile screen, click the timestamp at the top-center of the screen and update the tile name to `Quarterly Sales`.  
+
+![Rename Tile](assets/Snowflake_tile_rename.png)
+
+At the top of the editor, be sure that the database and schema is set to `PC_DBT_DB` and `PRODUCTION`.
+
+![Database Schema](assets/Snowflake_database_schema.png)
+
+Then copy and paste the following code into the editor: 
+
+```sql
+select order_date
+     , sum(net_item_sales_amount) as sum_net_sales
+  from pc_dbt_db.production.fct_orders
+ where order_date = :daterange
+ group by :datebucket(order_date), order_date
+```
+
+Next, in the top left hand corner of the screen update the time period from `Last Day` to `All Time`. Finally, use the corresponding run query shortcut on your keyboard to run the code. The final output should look like this:
+
+![Completed Query](assets/Snowflake_completed_query.png)
+
+3. Now let’s transform our results into a chart. Click the `chart` button in the middle of the screen to bring up the initial chart and options sidebar. 
+
+![Initial Chart](assets/Snowflake_initial_chart.png)
+
+Our query is aggregating the `net_item_sales_amount` and grouping by `order_date`, but at the moment we’re seeing every date in what has become a very busy line chart. Let’s transform this into a bar chart where the date is grouped by quarter.
+
+Start by clicking on the chart type and updating it to `Bar`. Then click `order_date` and select `quarter` as the bucketing. Finally, change the order direction from `descending` to `ascending`. 
+
+![Change to Bar Chart](assets/Snowflake_change_to_bar_chart.png)
+
+![Change Bucketing](assets/Snowflake_change_bucketing.png)
+
+![Change Order Direction](assets/Snowflake_change_order_direction.png)
+
+4. With the tile completed, all you have to do now is click the `Return` button in the upper left hand corner of the tile and you’ll be taken to the dashboard with our tile at the top. 
+
+![Final Dashboard](assets/Snowflake_final_dashboard.png)
+
+Congrats! You have built your visualization and officially reached the end of the lab!!
 
 <!-- ------------------------ -->
 
+## More Resources
 
+* Join our [dbt community Slack ](https://community.getdbt.com/)which contains more than 29,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
 
-<!-- ------------------------ -->
+* To continue your dbt education, check out the [dbt Learn site](https://learn.getdbt.com/).
 
-
-<!-- ------------------------ -->
-
-
-
-
-
-
-
-
-
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
+* Contact the [dbt Cloud Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt Cloud for your team or organization.
