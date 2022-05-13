@@ -927,14 +927,16 @@ Duration: 2
 ## Conclusion  and Next Steps  
 Duration: 2
 
-Congratulations you have now successfully built, deployed and scored your model results back to Snowflake. Your final flow should look like this.
+Congratulations  you have now successfully built,  deployed and scored your model results back to Snowflake. Your final flow should look like this.
 
 ![63](assets/dk-38-1400_complete_flow.jpg)
 
 
 ## Bonus Material - Snowpark -Python  
 Duration: 4
-
+`test123`
+extra material here
+![62a](assets/dk-37-1200_score.jpg)
 
 
 
