@@ -30,7 +30,6 @@ Let's get started.
 
 ### What You'll Learn
 
-
 * How to build scalable data transformation pipelines using dbt & Snowflake
 
 * How to establish data trust with stakeholders by incorporating key dbt testing capabilities
@@ -365,7 +364,6 @@ In the file you can see that we’ve defined the database where the data is comi
 2. The next step is to set up the staging models for the two data sources. Given the one to one relationship between staging models and their corresponding source tables, we’ll build two staging models here. 
 
 Let’s start with the orders table. Create a new file called `stg_tpch_orders.sql` with the following file path: `models/staging/tpch/stg_tpch_orders.sql` 
-
 Then paste the following code into the file before saving it:
 
 ```sql
