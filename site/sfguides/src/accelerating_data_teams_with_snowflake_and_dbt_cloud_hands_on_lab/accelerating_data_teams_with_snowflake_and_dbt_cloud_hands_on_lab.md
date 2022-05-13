@@ -1,91 +1,167 @@
-author: 
+authors: Bobby Birstock, Amy Chen
 id: accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab
-summary: This is a sample Snowflake Guide
+summary: Build a dbt project and data pipeline with dbt Cloud and Snowflake
 categories: Getting Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Engineering, dbt, Data
 
-# Snowflake Guide Template
+# Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Modern businesses need modern data strategies built on platforms that support agility, growth, and operational efficiency.
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
+[Snowflake](https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_content=go-eta-ld-free-trial&utm_term=c-g-snowflake-e&utm_campaign=na-en-Branded&_bt=470247374327&_bk=snowflake&_bm=e&_bn=g&_bg=64805047909&gclid=Cj0KCQjw18WKBhCUARIsAFiW7JwA-C_HmNQzG_OFKhM1Hn9vlW6EAs-9mveiMXychVbbK34lh4vGfHsaAv4NEALw_wcB&gclsrc=aw.ds) is the Data Cloud that enables you to build data-intensive applications without operational burden, so you can focus on data and analytics instead of infrastructure management.
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+[dbt](https://www.getdbt.com/) is a transformation workflow that lets teams quickly and collaboratively deploy analytics code following software engineering best practices like modularity, portability, CI/CD, and documentation. Now anyone who knows SQL can build production-grade data pipelines. It transforms data in the warehouse leveraging cloud data platforms like Snowflake.
 
-### Prerequisites
-- Familiarity with Markdown syntax
+In this Hands On Lab you will follow a step-by-step guide to using dbt with Snowflake, and see some of the benefits this tandem brings.
 
-### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+Let's get started.
 
-### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
+### What You'll Use During the Lab
 
-### What You’ll Build 
-- A Snowflake Guide
+* A trial [Snowflake](https://signup.snowflake.com/) account with ACCOUNTADMIN access
 
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
+* A [dbt Cloud](https://www.getdbt.com/signup/) account
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+### What You'll Learn
 
+* How to build scalable data transformation pipelines using dbt & Snowflake
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
+* How to establish data trust with stakeholders by incorporating key dbt testing capabilities
 
----
+* How to scale Snowflake compute capabilities with the dbt workflow
 
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
+* How to build lightweight charts and visualizations in Snowflake
 
+### What You'll Build
+
+* A set of data analytics pipelines for retail data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments
 
 <!-- ------------------------ -->
-## Creating a Step
-Duration: 2
+## Architecture and Use Case Overview
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+In this lab we’ll be transforming raw retail data into a consumable orders model that’s ready for visualization. We’ll be utilizing the TPC-H dataset that comes out of the box with your Snowflake account and transform it using some of dbt’s most powerful features. By the time we’re done you’ll have a fully functional dbt project with testing and documentation, dedicated development and production environments, and experience with the dbt git workflow.
 
-```markdown
-## Step 1 Title
-Duration: 3
+![Architecture Overview](assets/architecture_diagram.png)
 
-All the content for the step goes here.
+<!-- ------------------------ -->
 
-## Step 2 Title
-Duration: 1
+## Snowflake Configuration
 
-All the content for the step goes here.
+1. To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. 
+
+Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
+
+2. For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
+
+3. The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `Worksheets` click the blue `Worksheet` button in the upper right hand corner of the page to create a new worksheet. 
+
+![Snowflake Create Worksheet](Snowflake_create_worksheet.png)
+
+4. Once there, click `Databases` and you should see a database called `Snowflake_Sample_Data` in the list of objects.
+
+![Snowflake Sample Data Database](Snowflake_sample_data_database.png)
+
+If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
+
+create database snowflake_sample_data from share sfc_samples.sample_data;
+
+You should now see the database as one of your database objects, with associated schemas within it. 
+
+5. Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, `TPCH_SF1`. 
+
+![Snowflake TPCH SF1](Snowflake_tpch_sf1.png)
+
+6. Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
+
+```
+select *
+
+  from snowflake_sample_data.tpch_sf1.orders
+
+ limit 100
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+7. Great! Now it’s time to set up dbt Cloud.
+
+<!-- ------------------------ -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
@@ -165,15 +241,3 @@ Videos from youtube can be directly embedded:
 ![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
 
 <!-- ------------------------ -->
-## Conclusion
-Duration: 1
-
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
-
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
