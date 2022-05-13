@@ -216,7 +216,7 @@ CREATE OR REPLACE TABLE loan_data (
 
         TERM VARCHAR(4194304),
 
-        INT_RATE FLOAT,
+        INT_RATE VARCHAR(4194304),
 
         INSTALLMENT FLOAT,
 
@@ -252,7 +252,7 @@ CREATE OR REPLACE TABLE loan_data (
 
         DELINQ_2YRS FLOAT,
 
-        EARLIEST_CR_LINE TIMESTAMP_TZ(9),
+        EARLIEST_CR_LINE VARCHAR(4194304),
 
         INQ_LAST_6MTHS FLOAT,
 
@@ -598,10 +598,10 @@ Return to Dataiku Online and if you haven't already click on **OPEN DATAIKU DSS*
 
 At the end of the lab, the project Flow will look like this:
 
-<!--![35](assets/dk-6a_100_finished_flow.png)-->
+![35a](assets/dk-6c-flow.png)
 
 
-* A **dataset** is represented by a blue square with a symbol that depicts the dataset type or connection. The initial datasets (also known as input datasets) are found on the left of the Flow. In this project, the input dataset will be the one we just created in Snowflake.
+* A **dataset** is represented by a blue square with a symbol that depicts the dataset type or connection. The initial datasets (also known as input datasets) are found on the left of the Flow. In this project, the input datasets will be the ones we just created in Snowflake.
 
 * A **recipe** in Dataiku DSS (represented by a circle icon with a symbol that depicts its function) can be either visual or code-based, and it contains the processing logic for transforming datasets.
 
@@ -627,7 +627,7 @@ To do this, we’ll join the input datasets, perform transformations & feature e
 
 Once you’ve logged in, `click` on `+NEW PROJECT` and `select Blank project` to create a new project.
 
-<!--![35](assets/dk-6b_100_New_Project.png)-->
+![35d](assets/dk6d-new_project.png)
 
 
 <!-- ------------------------ -->
@@ -640,7 +640,7 @@ After creating our project let’s add our datasets from Snowflake to the Flow.
 * From the Flow click `+ Import Your First Dataset` in the centre of the screen.
 
 
-![37](assets/dk-7_300_Empty_flow_on_new_project.png)
+![37](assets/dk7b-first_import.png)
 
 
 * Select the `Search and import option` 
@@ -674,7 +674,7 @@ Now we have all of the raw data needed for this lab. Let’s explore what’s in
 * You can analyze column metrics to better understand your data: Either click on the column name and `select Analyze` or, if you wish for a quick overview of columns key statistics, `select Quick Column Stats` button on the top-right.
 
 
-![43](assets/dk-14_500_Columns_view_expanded.png)
+![43](assets/dk-13_analyze.png)
 
 ### Join the Data 
 
@@ -749,16 +749,19 @@ Your script steps should now look like this:
 ![49](assets/dk-22_800_final_steps_dates.jpg)
 
 
-Optionally you can place the three date transformation script steps into their own group with comments to make it easier for a colleague to follow everything you have done
+Optionally you can place the three date transformation script steps into their own group with comments to make it simple for a colleague to follow everything you have done
 Let’s turn our attention to the `INT_RATE` column. The interest rate is likely to be a powerful predictive feature when modeling credit defaults but currently its store and as a string and seems to be missing values:
 
 * Click on the `+ADD A NEW STEP` button at the bottom of your script steps.
 * Select the `Find and Replace` processor either by looking in the `Strings` menu or using the search function.
+
+![50](assets/dk-23b_replace.png)
+
 * Select `INT_RATE` as the column then click `+ADD REPLACEMENT` and `replace % with a blank value`. Ensure the `Matching Mode` dropdown is set to `Substring`
 
-![50](assets/dk-23_800_replace.jpg)
+![50a](assets/dk-23c_replace_sub.png)
 
-Now lets handle those missing values. There are a number of ways Dataiku DSS can help you deal with missing data. In our case we are simply going to remove the rows. 
+Now lets handle those missing values. There are a number of ways Dataiku DSS can help you deal with missing data. In our case we are going to take the simplest approach and remove the rows. 
 * Select the `Remove rows with no values` processor either by clicking the `INT_RATE` column and picking from the suggested options or through the `+ADD NEW STEP` menu.
 
 
@@ -785,13 +788,16 @@ Till now we've used visual tools but lets see how users who prefer to code can c
 * Return to the Flow.
 * `Click on the output dataset` of the prepare recipe (in this case `LOANS_ENRICHED_prepared` but you may have renamed your output)
 * Once selected `click on the Python Code recipe` from the `Actions panel`
-* Now `add an output dataset and click CREATE RECIPE`
+
+![53a](assets/dk-26a_python.png)
+
+* Now `Add a new output dataset and click CREATE RECIPE`
 
 Dataiku DSS generates some starter code for us, we can also use code samples our colleagues have created and tagged and, if we prefer, work from Jupyter notebooks or a range of IDE’s. For this lab we will stick with the standard code editor.
 
-* To save some typing lets `change our dataframe name to df` on line 8
-* Remove lines `11 - 15`
-* Add the following lines to generate new features
+* To save some typing let's `change our dataframe name to df` on line 8
+* Remove the to-do starter code on lines `11 - 15`
+* Replace with the following lines to generate new features
 
 ```
 df['DEBT_AMNT'] = [d*df.INSTALLMENT.values[idx]/100.0 for idx,d in enumerate(df.DTI.values)]
@@ -803,9 +809,13 @@ df["INSTALL_NORM"] = (df.INSTALLMENT.values - np.mean(df.INSTALLMENT.values))/np
 
 ```
 
-* Ensure you replace the name of the dataframe in the final line (.write_with_schema(your_dataframe_name) with df and then click RUN
+* Ensure you replace the name of the dataframe in the final line (.write_with_schema(your_dataframe_name) with df.
+
+Your code should now look like this
 
 ![53](assets/dk-26-900_Python_Code_highlighted.jpg)
+
+*  `click RUN`
 
 
 Dataiku DSS allows you to create an arbitrary number of `Code environments` to address managing dependencies and versions when writing code in R and Python. Code environments in Dataiku DSS are similar to the Python virtual environments. In each location where you can run Python or R code (e.g., code recipes, notebooks, and when performing visual machine learning/deep learning) in your project, you can select which code environment to use.
