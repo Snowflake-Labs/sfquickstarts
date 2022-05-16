@@ -9,11 +9,11 @@ tags: Data Visualization, Data Engineering, Embedded Analytics, Data Sharing
 
 # Visual Analytics powered by Snowflake and Tableau
 
+Duration: 30
+
 <!-- ------------------------ -->
 
 ## Overview
-
-Duration: 90
 
 Join Snowflake and Tableau for an instructor-led hands-on lab to build governed, visual, and interactive analytics quickly and easily.
 
@@ -53,6 +53,8 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 Duration: 2
 
 
+
+
 1. Create a Snowflake enterprise trial account
 2. Login to your Snowflake account
 3. We will be using the new UI to get started but you can also switch over to the Classic Console if you would like.
@@ -79,14 +81,13 @@ Duration: 5
 
 ### Create Snowflake Objects
 
-``` sql 
+```sql
 -- Create Database, Schema and Warehouse
 create or replace database VHOL_DATABASE;
 use database VHOL_DATABASE;
 
 create or replace schema  VHOL_DATABASE.VHOL_SCHEMA;
 use schema  VHOL_SCHEMA;
-
 
 create or replace warehouse VHOL_WH WITH 
     WAREHOUSE_SIZE = 'MEDIUM' 
@@ -124,7 +125,7 @@ show File Formats;
 
 ### Query JSON Data
 
-``` sql
+```sql
 
 -- Query all columns from a single row from the Stage
 SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON)  limit 1;
@@ -142,7 +143,7 @@ copy into vhol_trips (v) from
 
 ### Build Relational Views on JSON
 
-``` sql 
+```sql
 --- Not easy to read JSON, so let's extract JSON data as relational columns
 create or replace view vhol_trips_vw 
   as select 
@@ -203,7 +204,7 @@ Duration: 5
 
 ### Let's just query Weather data in a specific zipcode
 
-``` sql
+```sql
 
 -- Is there rain in the forecast that may impact cycling in a specific area 
 SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL,  POSTAL_CODE, DATEDIFF(day,current_date(),DATE_VALID_STD) AS DAY, HOUR(TIME_INIT_UTC) AS HOUR  FROM WEATHER.STANDARD_TILE.FORECAST_DAY WHERE POSTAL_CODE='32333' AND DAY=7;
@@ -211,7 +212,7 @@ SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL, 
 
 ### Convert Kelvin to Celcius
 
-``` sql
+```sql
 -- UDF to convert Kelvin to Celcius
 use database vhol_database;
 use schema vhol_schema;
@@ -224,11 +225,9 @@ $$
 $$; 
 ```
 
-### 
-
 ### Is there precipitation or snowfall in NY zipcodes
 
-``` sql
+```sql
 create or replace view vhol_weather_vw as
   select 'New York'                                   state,
     date_valid_std                                    observation_date,
@@ -262,12 +261,13 @@ select observation_date, tot_precip_in,  tot_snowfall_in from vhol_weather_vw or
 
 ## Enrich with Geospatial Station Data
 
-Duration: 2
+Duration: 5
+
 We just have station_id, so let's get geospatial data to locate those stations on map
 
 ### Access data from AWS API Gateway
 
-``` sql  
+```sql
 -- Integration to AWS API Gateway 
 create or replace api integration fetch_http_data
   api_provider = aws_api_gateway
@@ -276,7 +276,7 @@ create or replace api integration fetch_http_data
   api_allowed_prefixes = ('https://dr14z5kz5d.execute-api.us-east-1.amazonaws.com/prod/fetchhttpdata');
 ```
 
-``` sql 
+```sql
 -- External Function call to Lambda to download data 
 
 create or replace external function fetch_http_data(v varchar)
@@ -285,13 +285,12 @@ create or replace external function fetch_http_data(v varchar)
     as 'https://dr14z5kz5d.execute-api.us-east-1.amazonaws.com/prod/fetchhttpdata';
 ```
 
-### 
 
 ### Flatten JSON data received from API's
 
 Geospatial data is available in a nested json array, let's flatten that
 
-``` sql 
+```sql
 -- use lateral flatten function to flatten nested JSON and load in Snowflake tables
 create or replace table vhol_spatial_data as
 with gbfs as (
@@ -318,19 +317,13 @@ with gbfs as (
     select * from vhol_spatial_data;
 ```
 
-### 
-
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
-
 ## Correlate Trips, Weather and Geospatial Data
 
 Duration: 5
 
 ### Combine station data with geospatial data
 
-``` sql 
+```sql
 create or replace table vhol_stations as with 
   -- Extract the station data
     s as (select 
@@ -404,7 +397,7 @@ select * from vhol_trips_stations_vw limit 200;
 
 ### Combine Trip, Geospatial, Stations and Weather data
 
-```sql 
+```sql
 create or replace view vhol_trips_stations_weather_vw as (
   select t.*, temp_avg_c, temp_avg_f,
          wind_dir, wind_speed_mph, wind_speed_kph
@@ -417,15 +410,9 @@ select START_STATION,END_STATION,TEMP_AVG_C,WIND_SPEED_KPH from vhol_trips_stati
 
 ### 
 
-### 
-
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
-
 ## Login to Tableau Online & Connect to Snowflake
 
-Duration: 20
+Duration: 30
 
 Navigate to https://online.tableau.com/ and login to Tableau Cloud (Online) using your login credentials.
 
@@ -962,7 +949,9 @@ The dashboard will zoom and filter, showing us only trips that started in Brookl
 
 ## Secure Data Sharing
 
-```  sql
+Duration: 5
+
+```sql
 create or replace table tenant (
     tenant_id number,
     tenant_description string,
@@ -1053,7 +1042,7 @@ insert into tenant_stations values
 
 ### Optional : Control data access based on context
 
-``` sql
+```sql
 --select *
 select * from tenant_stations;
 
@@ -1084,7 +1073,7 @@ limit 100;
 
 ### Create Secure Objects to Share
 
-``` sql 
+```sql
 --secure view
 create or replace secure view  vhol_trips_secure as
 (select --tripduration, 
@@ -1106,7 +1095,7 @@ select * from vhol_trips_secure limit 100;
 
 ### Create Reader Account
 
-``` sql
+```sql
 --create a reader account for your tenant
 
 DROP MANAGED ACCOUNT IF EXISTS IMP_CLIENT;
@@ -1119,7 +1108,20 @@ CREATE MANAGED ACCOUNT IMP_CLIENT
 show managed accounts; 
 --take note of account_locator
 SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
+```
 
+
+
+
+
+
+
+:::info
+\*\*Replace *GOA63594 with your locato*\*\**r*
+
+:::
+
+```sql
 --Replace ***'GOA63594'*** with your locator for 'IMP_CLIENT' from above step
 set account_locator='GOA63594';
 
@@ -1127,13 +1129,12 @@ set account_locator='GOA63594';
 insert into tenant values (
     1, 'Big Important Client, Wink Wink', $account_locator
 );
-
-
 ```
 
-### Grant Share Access to Reader
 
-``` sql 
+### Share Access to Reader
+
+```sql
 --create share and share to reader account
 CREATE OR REPLACE SHARE VHOL_SHARE COMMENT='Creating my Share to Share with my Reader';
 GRANT USAGE ON DATABASE VHOL_DATABASE TO SHARE VHOL_SHARE;
@@ -1158,6 +1159,8 @@ select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_
 
 ## Optional: Consumer Access Data
 
+Duration: 5
+
 ### Login to Reader Account
 
  ![Reader Account Login](assets/Reader_Account_1.png)
@@ -1173,7 +1176,7 @@ select  $6 as URL FROM table (result_scan(last_query_id())) WHERE "name" = 'IMP_
  ![Change Role to Accountadmin](assets/Reader_Account_3.png)
 
 
-``` sql
+```sql
 -- create database from share in the reader account  
 use role accountadmin;
 create or replace warehouse VHOL_READER WITH 
@@ -1186,30 +1189,39 @@ create or replace warehouse VHOL_READER WITH
     SCALING_POLICY = 'STANDARD';
 show shares like 'VHOL_SHARE%';
 select  "name" FROM table (result_scan(last_query_id()));
+```
 
--- replace your share name *** LKA85298.VHOL_SHARE *** from above query
+
+
+
+
+
+:::info
+**Replace LKA85298.VHOL_SHARE with your share**
+
+:::
+
+```sql
+<!-- ------------------------ -->
+-- replace your share name ***LKA85298.VHOL_SHARE*** from above query
 CREATE OR REPLACE DATABASE TRIPSDB FROM SHARE LKA85298.VHOL_SHARE;
-
-
+USE WAREHOUSE VHOL_READER;
 USE DATABASE TRIPSDB;
 USE SCHEMA VHOL_SCHEMA; 
 
 SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
+
+
+<!-- ------------------------ -->
 ```
-
-
-<br>
-
-<!-- ------------------------ -->
-<!-- ------------------------ -->
 
 ## Optional: DevOps in Snowflake
 
-Duration: 2
+Duration: 5
 
 ### Clone Table
 
-``` sql 
+```sql
 create table vhol_trips_dev clone vhol_trips;
 
 select * from vhol_trips_dev limit 1;
@@ -1217,7 +1229,7 @@ select * from vhol_trips_dev limit 1;
 
 ### Drop and Undrop Table
 
-``` sql
+```sql
 
 drop table vhol_trips_dev; 
 
@@ -1232,7 +1244,7 @@ select * from vhol_trips_dev limit 1;
 
 ### Cleanup the Demo Account
 
-``` sql 
+```sql
 alter share VHOL_SHARE remove account = $account_locator;
 drop schema vhol_schema;
 drop database vhol_database;
