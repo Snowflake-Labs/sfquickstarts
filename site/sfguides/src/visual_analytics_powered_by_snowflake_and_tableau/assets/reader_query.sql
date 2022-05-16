@@ -20,7 +20,7 @@ show shares like 'VHOL_SHARE%';
 select  "name" FROM table (result_scan(last_query_id()));
 
 
--- replace the share name with the name from above query
+-- replace ***LKA85298.VHOL_SHARE*** the share name with the name from above query
 CREATE OR REPLACE DATABASE TRIPSDB FROM SHARE LKA85298.VHOL_SHARE;
 
 

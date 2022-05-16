@@ -430,7 +430,7 @@ CREATE MANAGED ACCOUNT IMP_CLIENT
 show managed accounts; 
 --take note of account_locator
 SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
---Replace with your locator for 'IMP_CLIENT' from above step
+--Replace ***'CGA92200'*** with your locator for 'IMP_CLIENT' from above step
 set account_locator='CGA92200'; 
 --add tenant for your big important client via a reader account
 insert into tenant values (
