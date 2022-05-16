@@ -716,10 +716,14 @@ Let’s take a brief look at the `Prepare recipe`, the workhorse of the visual r
 
 * `Single click` on the output dataset of our join from the flow and `select Prepare` from the visual recipes in the `Actions Panel`. (If the automatically generated output dataset name is starting to get unwieldy feel free to change it)
 
-In a Prepare recipe you have ~100 processors to perform all kinds of data transformation tasks. You can select these processors directly by using the `+ADD A NEW STEP` button on the left also, because Dataiku DSS infers meanings for each column, it suggests relevant actions in many cases. Let’s see how this works for a date column.
+In a Prepare recipe you assemble a series of steps to transform your data from a library of ~100 processors. There are a couple of ways you can select these processors to build your script. Firstly you can select these processors directly by using the `+ADD A NEW STEP` button on the left.
+Secondly because Dataiku DSS infers meanings for each column, it suggests relevant actions in many cases. In the example below although the column is stored in Snowflake as a String Dataiku DSS recognises it as a date format so infers a `Date(unparsed)` meaning and suggests the `Parse Date` processor, by selecting the `More actions` menu item further suggestions are made.
+
+![46](assets/dk-prepare_overview.png)
 
 
-* From the `EARLIEST_CR_LINE` column header dropdown, `select Parse date`
+Let's try using processors with both methods, firstly via the suggested actions:
+* Click on the `EARLIEST_CR_LINE` column header and from the dropdown, `select Parse date`
 * In `Add a custom format` set the format to `d-MMM-yyyy` and click on `USE DATE FORMAT`
 * A step is generated on the left. Change the `Locale` to `en_US`
 
@@ -750,7 +754,7 @@ Your script steps should now look like this:
 
 
 Optionally you can place the three date transformation script steps into their own group with comments to make it simple for a colleague to follow everything you have done
-Let’s turn our attention to the `INT_RATE` column. The interest rate is likely to be a powerful predictive feature when modeling credit defaults but currently its store and as a string and seems to be missing values:
+Let’s turn our attention to the `INT_RATE` column. The interest rate is likely to be a powerful predictive feature when modeling credit defaults but currently its stored as a string:
 
 * Click on the `+ADD A NEW STEP` button at the bottom of your script steps.
 * Select the `Find and Replace` processor either by looking in the `Strings` menu or using the search function.
@@ -761,11 +765,6 @@ Let’s turn our attention to the `INT_RATE` column. The interest rate is likely
 
 ![50a](assets/dk-23c_replace_sub.png)
 
-Now lets handle those missing values. There are a number of ways Dataiku DSS can help you deal with missing data. In our case we are going to take the simplest approach and remove the rows. 
-* Select the `Remove rows with no values` processor either by clicking the `INT_RATE` column and picking from the suggested options or through the `+ADD NEW STEP` menu.
-
-
-![51](assets/dk-24_800_remove_rows.jpg)
 
 
 Our `INT_RATE` column has some suspiciously high values. Let’s use the Analyze tool again and see how it can be used to take certain actions in a Prepare recipe
@@ -863,10 +862,37 @@ This is how your flow should look like before splitting
 
 When building a visual model, users can choose a template instructing DSS to prioritize considerations like speed, performance, and interpretability. Having decided on the basic type of machine learning task, you retain full freedom to adjust the default settings chosen by DSS before training any models. These options include the metric for which to optimize, what features to include, and what algorithms should be tested.
 
-Feel free to try some experiments of your own in the `Design` tab. Suggestions include:
-* Run with the employment features off/on to see if the Marketplace enrichment data makes a difference to our models accuracy
+Feel free to try some experiments of your own in the `Design` tab. Here are some suggestions to try. Don't forget to click :
+* Run with the employment features `off/on` to see if the Marketplace enrichment data makes a difference to our models accuracy. Click `SAVE` and then `TRAIN` in the top right after you've made your changes in `DESIGN`
+
+![58](assets/dk-features_emp_off.png)
+
+* While in the `Features handling` menu look at **MTHS_SINCE_LAST_DELINQ**, **MTHS_SINCE_LAST_RECORD** and **MTHS_SINCE_LAST_MAJOR_DEROG**. In the Distribution table we can see most cells are empty. We have various techniques available to us in the `Missing Values` dropdown but given that there are so few values in these columns lets just turn reject the features.
+
+![58](assets/dk-model_features_months.png)
+
+* You may notice on the `RESULT` screen that ML Diagnostics are flagged against a model. These identify and help troubleshoot potential problems and suggest possible improvements at different stages of training and building machine learning models. 
+
+* Hover your cursor over `Diagnostics` to see the potential issues 
+
+![58](assets/dk-model_rebalance1.png)
+
+In this example I can see we have an imbalanced dataset, let's fix that.
+
+* Go to the `DESIGN` page and the `TRAIN/TEST SET` menu. Here you can rebablance your dataset.
+
+![58](assets/dk-model_rebalance.png)
+
 * Try different `Algorithms` 
 * In `Runtime Environment` choose Select a `container configuration` from the drop down for `Containerized execution` and run with a larger container
+
+* You can directly compare models from different experiments by selecting them via the `checkbox` and then selecting `Compare` from the `ACTIONS` menu.
+
+![58](assets/dk-model_compare1.png)
+
+* Select `Create a new comparison` and then click `compare`
+
+![58](assets/dk-model_compare.png)
 
 After having trained as many models as desired, DSS offers tools for full training management to track and compare model performance across different algorithms. DSS also makes it easy to update models as new data becomes available and to monitor performance across sessions over time.
 
@@ -933,14 +959,5 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 
 
 ## Bonus Material - Snowpark -Python  
-Duration: 4
-`test123`
-extra material here
-![62a](assets/dk-37-1200_score.jpg)
-
-extra material here
-![62a](assets/dk-37-1200_score.jpg)
-
-
-
-
+Duration: 5
+To be added soon
