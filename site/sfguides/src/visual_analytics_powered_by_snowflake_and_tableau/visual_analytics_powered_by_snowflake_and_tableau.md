@@ -1117,7 +1117,7 @@ SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP
 
 
 :::info
-\*\*Replace *GOA63594 with your locato*\*\**r*
+**Replace *GOA63594 with your locator***
 
 :::
 
@@ -1172,8 +1172,7 @@ Duration: 5
 
 ### Set Role ACCOUNTADMIN & Add Worksheet
 
-[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)
- ![Change Role to Accountadmin](assets/Reader_Account_3.png)
+[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)  ![Change Role to Accountadmin](assets/Reader_Account_3.png)
 
 
 ```sql
