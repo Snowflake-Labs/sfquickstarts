@@ -55,6 +55,7 @@ Duration: 2
 
 
 
+
 1. Create a Snowflake enterprise trial account
 2. Login to your Snowflake account
 3. We will be using the new UI to get started but you can also switch over to the Classic Console if you would like.
@@ -1116,6 +1117,7 @@ SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP
 
 
 
+
 :::info
 **Replace *GOA63594 with your locator***
 
@@ -1172,7 +1174,7 @@ Duration: 5
 
 ### Set Role ACCOUNTADMIN & Add Worksheet
 
-[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)  ![Change Role to Accountadmin](assets/Reader_Account_3.png)
+[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)    ![Change Role to Accountadmin](assets/Reader_Account_3.png)
 
 
 ```sql
@@ -1195,6 +1197,7 @@ select  "name" FROM table (result_scan(last_query_id()));
 
 
 
+
 :::info
 **Replace LKA85298.VHOL_SHARE with your share**
 
@@ -1209,7 +1212,6 @@ USE DATABASE TRIPSDB;
 USE SCHEMA VHOL_SCHEMA; 
 
 SELECT * FROM VHOL_SCHEMA.VHOL_TRIPS_SECURE;
-
 
 <!-- ------------------------ -->
 ```
@@ -1243,7 +1245,14 @@ select * from vhol_trips_dev limit 1;
 
 ### Cleanup the Demo Account
 
+
+:::info
+**Replace AOA45492 with your account**
+
+:::
+
 ```sql
+set account_locator = 'aoa45492';
 alter share VHOL_SHARE remove account = $account_locator;
 drop schema vhol_schema;
 drop database vhol_database;
