@@ -466,8 +466,11 @@ undrop table vhol_trips_dev;
 
 select * from vhol_trips_dev limit 1;
 
--- Cleanup Demo Account 
+-- Cleanup Demo Account; Set your account_locator 
+
+set account_locator='AOA45492'; 
 alter share VHOL_SHARE remove account = $account_locator;
 drop schema vhol_schema;
+drop share VHOL_SHARE;
 drop database vhol_database;
 drop warehouse VHOL_WH;
