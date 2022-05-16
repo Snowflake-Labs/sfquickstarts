@@ -10,7 +10,7 @@ tags: Getting Started, Data Engineering, dbt, Data
 # Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 2
 
 Modern businesses need modern data strategies built on platforms that support agility, growth, and operational efficiency.
 
@@ -44,6 +44,7 @@ Let's get started.
 
 <!-- ------------------------ -->
 ## Architecture and Use Case Overview
+Duration: 1
 
 In this lab we’ll be transforming raw retail data into a consumable orders model that’s ready for visualization. We’ll be utilizing the TPC-H dataset that comes out of the box with your Snowflake account and transform it using some of dbt’s most powerful features. By the time we’re done you’ll have a fully functional dbt project with testing and documentation, dedicated development and production environments, and experience with the dbt git workflow.
 
@@ -52,6 +53,7 @@ In this lab we’ll be transforming raw retail data into a consumable orders mod
 <!-- ------------------------ -->
 
 ## Snowflake Configuration
+Duration: 5
 
 1. To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
 Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
@@ -59,41 +61,44 @@ Once your account is created you’ll receive an email confirmation. Within that
 
 2. For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
 
-3. The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `Worksheets` click the blue `Worksheet` button in the upper right hand corner of the page to create a new worksheet. 
+3. The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `Worksheets` tab click the blue `Worksheet` button in the upper right hand corner of the page to create a new worksheet. 
 
-![Snowflake Create Worksheet](assets/Snowflake_create_worksheet.png)
+    ![Snowflake Create Worksheet](assets/Snowflake_create_worksheet.png)
 
-4. Once there, click `Databases` and you should see a database called `Snowflake_Sample_Data` in the list of objects.
+4. Once there, click `Databases` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
 
-![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)
 
-If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
+    ![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
 
-```sql
-create database snowflake_sample_data from share sfc_samples.sample_data;
-```
+    If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
 
-You should now see the database as one of your database objects, with associated schemas within it. 
+    ```sql
+    create database snowflake_sample_data from share sfc_samples.sample_data;
+    ```
 
-5. Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, `TPCH_SF1`. 
+    You should now see the database as one of your database objects, with associated schemas within it. 
 
-![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
+5. Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, `TPCH_SF1`. <br>
+
+    ![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
 
 6. Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
 
-```sql
-select *
-  from snowflake_sample_data.tpch_sf1.orders
- limit 100
-```
+    ```sql
+    select *
+      from snowflake_sample_data.tpch_sf1.orders
+     limit 100
+    ```
 
-<br> You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
+
+    You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
 
 7. Great! Now it’s time to set up dbt Cloud.
 
 <!-- ------------------------ -->
 
 ## dbt Configuration
+Duration: 5
 
 1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
@@ -125,6 +130,7 @@ Check to make sure your role is set as the ACCOUNTADMIN role. If you're using th
 <!-- ------------------------ -->
 
 ## IDE Walkthrough
+Duration: 7
 
 1. Now that our dbt Cloud account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the hamburger menu in the upper left hand corner of the screen and then click `Develop`. 
 
@@ -185,6 +191,8 @@ grant all on warehouse pc_dbt_wh_large to role pc_dbt_role;
 <!-- ------------------------ -->
 
 ## Foundational Structure
+Duration: 12
+
 
 ### Configuring the dbt_project.yml 
 
@@ -258,7 +266,7 @@ By having a defined project structure (even if it’s not this exact one), you c
 
 3. Because we have quite a few folders to create, we’re going to fast track this by using a shortcut to build multiple folders at the same time. 
 
-    1. In your file tree take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `new folder`. We’re going to add two new folders to the file path, `staging` and `tpch` (in that order) by typing `models/staging/tpch` into the file path. Make sure you’re not including additional folder names and click `Create`. 
+* In your file tree take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `new folder`. We’re going to add two new folders to the file path, `staging` and `tpch` (in that order) by typing `models/staging/tpch` into the file path. Make sure you’re not including additional folder names and click `Create`. 
 
 ![Models Folder](assets/dbt_Cloud_three_dots_models.png)
 
@@ -266,7 +274,7 @@ By having a defined project structure (even if it’s not this exact one), you c
 
 ![Staging TPCH Create Folder](assets/dbt_Cloud_models_staging_tpch_folder_create.png)
 
-    2. If you click into your `models` directory now, you should see the new `staging` folder nested within `models` and the `tpch` folder nested within `staging`.
+* If you click into your `models` directory now, you should see the new `staging` folder nested within `models` and the `tpch` folder nested within `staging`.
 
 4. We are going to create our final two folders the same way. Take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `new folder`. This time in the popup window you’re going to enter in the following full file path: `models/marts/core`. Here we’re creating a `marts` folder within `models` and then a `core` folder within `marts`. Your folder tree should look like this when it’s all said and done:
 
@@ -310,6 +318,7 @@ packages:
 <!-- ------------------------ -->
 
 ## Sources and Staging
+Duration: 8
 
 In this section, we are going to learn about sources and staging models. 
 
@@ -457,6 +466,7 @@ An important concept to note here is that when you rerun the example models the 
 <!-- ------------------------ -->
 
 ## Seeds and Incremental Materialization
+Duration: 15
 
 Seeds and incremental models are both key dbt features that we’re going to bring together to create an incremental staging model. 
 
@@ -660,6 +670,7 @@ Last thing before we move on is to commit our work. Click the green `commit` but
 <!-- ------------------------ -->
 
 ## Transformed Models
+Duration: 8
 
 Now that we have our staging models built we’re able to start transforming our data to meet our modeling needs. The plan here is to build two transformed models: one is an intermediate model that performs new line items calculations and the other is a fact model that aggregates the new line items calculations back at the order level. The final fact model is what we will use to [build a chart ](https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards.html)[in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards.html).
 
@@ -726,7 +737,7 @@ order by
 
 Let’s break down what’s happening in this model. At the top we’re selecting all of the data from our staging models in two cte’s using the `ref` function, which we’ll touch on shortly. The main select statement is joining the two staging models together, pulling through a chunk of existing columns and then performing a number of different calculations on the line items data. All of the calculations are data points that we’re interested in and were not calculated in our raw data source, such as individual item prices with discounts and total sales amounts with tax.
 
-The [`ref`](https://docs.getdbt.com/reference/dbt-jinja-functions/ref/)function is the most important function in dbt and is similar to the source function we used earlier. In this case it is referencing our staging models. As a rule, you should always use the `ref` function to refer to any existing dbt model when building models. This is important for creating dependencies between dbt models as well as allowing you to seamlessly promote code between different environments. When we promote our code from our development environment to our production environment later on in the lab, the ref function will compile the correct database object associated with the production environment based on our configurations (both in the connection and in the project). We’ll touch more on environments in more detail in the deployment section of the lab. 
+The [`ref`](https://docs.getdbt.com/reference/dbt-jinja-functions/ref/)function is the most important function in dbt and is similar to the source function we used earlier. In this case it is referencing our staging models. As a rule, you should always use the `ref` function to refer to any existing dbt model when building models. This is important for creating dependencies between dbt models as well as allowing you to seamlessly promote code between different environments. When we promote our code from our development environment to our production environment later on in the lab, the `ref` function will compile the correct database object associated with the production environment based on our configurations (both in the connection and in the project). We’ll touch more on environments in more detail in the deployment section of the lab. 
   
 2. Now let’s create our final transformed fact model. Start by creating a new file called `fct_orders.sql` with the following file path: `models/marts/core/fct_orders.sql`
 
@@ -792,9 +803,9 @@ This model starts by bringing in our staging orders data and our transformed ord
 
 There are a couple of concepts to talk about with this command so let’s dive into them:
 
-    1. We’ve already used the `--select` argument to tell dbt to specifically run the model or path that we provide after the argument, in this case our `int_order_items` model.
+* We’ve already used the `--select` argument to tell dbt to specifically run the model or path that we provide after the argument, in this case our `int_order_items` model.
 
-    2. The plus sign appended to the end of `int_order_items` is a graph operator that uses dbt’s dependency graph to run all of the models downstream of the selected model. So in this case dbt will run `int_order_items` and all downstream dependencies of that model as well, which is how this command runs both our intermediate and fact model. You can read more about graph operators [here](https://docs.getdbt.com/reference/node-selection/graph-operators).
+* The plus sign appended to the end of `int_order_items` is a graph operator that uses dbt’s dependency graph to run all of the models downstream of the selected model. So in this case dbt will run `int_order_items` and all downstream dependencies of that model as well, which is how this command runs both our intermediate and fact model. You can read more about graph operators [here](https://docs.getdbt.com/reference/node-selection/graph-operators).
 
 4. Now let’s take a look at the detailed results of our `fct_orders` model so we can understand what is happening in the compiled code. 
 
@@ -821,6 +832,7 @@ From left to right we have our sources (green nodes) leading into our staging mo
 <!-- ------------------------ -->
 
 ## Tests and Docs
+Duration: 12
 
 Now that we’ve built out our models and transformations, it’s really important to document and test them. This ensures we catch any errors that violate our assumptions about our data models and provides a guide to anyone else that comes across our work and wants to understand what we built. dbt’s native features include both a data testing and documentation framework to help us accomplish all of our documentation and testing needs.
 
@@ -951,14 +963,15 @@ This is the end result of using the `ref` function throughout your project to re
 <!-- ------------------------ -->
 
 ## Deployment
+Duration: 12
 
 Before we jump into deploying our code, let’s have a quick primer on environments. Up to this point all of the work we’ve done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we’ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch allows us to separate our code from what other coworkers are building, as well as code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of git branch and Snowflake database objects form our environment. 
 
 Now that we’ve completed testing and documenting our work, we’re ready to deploy our code from our development environment to our production environment and this involves two steps: 
 
-1. Promoting code from our feature branch to the production branch in our repository. Generally the production branch is going to be named your main branch and there’s a review process to go through before merging code to the main branch of a repository, but here we are going to merge without review for ease of this workshop.
+* Promoting code from our feature branch to the production branch in our repository. Generally the production branch is going to be named your main branch and there’s a review process to go through before merging code to the main branch of a repository, but here we are going to merge without review for ease of this workshop.
 
-2. Deploying code to our production environment. Once our code is merged to the main branch, we’ll need to run dbt in our production environment to build all of our models and run all of our tests. This will allow us to build production ready objects into our production environment in Snowflake. Luckily for us, the partner connect flow has already created our deployment environment and job to facilitate this step.
+* Deploying code to our production environment. Once our code is merged to the main branch, we’ll need to run dbt in our production environment to build all of our models and run all of our tests. This will allow us to build production ready objects into our production environment in Snowflake. Luckily for us, the Partner Connect flow has already created our deployment environment and job to facilitate this step.
 
 1. Before getting started, let’s make sure that we’ve committed all of our work to our feature branch. If you still have work to commit you’ll be able to click the `commit` button, provide a message, and then click `Commit` again. 
 
@@ -996,7 +1009,7 @@ By updating the schema for our production environment to `production`, it ensure
 
 The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
 
-The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we’re going to keep these settings as is as well and stick with just generating docs deployment.
+The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we’re going to keep these settings as is as well and stick with just generating docs.
 
 The Commands section is where we specify exactly which commands we want to run during this job, and we also want to keep this as is. We want our seed to be uploaded first, then run our models, and finally test them. The order of this is important as well, considering that we need our seed to be created before we can run our incremental model, and we need our models to be created before we can test them. 
 
@@ -1025,6 +1038,7 @@ While this process is great for your scheduling and running your dbt jobs, we re
 <!-- ------------------------ -->
 
 ## Visualizing Your Data
+Duration: 5
 
 With all of our data now live in our production environment courtesy of our production job, we’re ready to visualize our data! We’re going to take our `fct_orders` model and create a bar chart of our all time quarterly sales. Before we jump in, take a second to make sure that you’re in the new Snowflake UI so that you’ll be able to access the dashboard feature.
 
