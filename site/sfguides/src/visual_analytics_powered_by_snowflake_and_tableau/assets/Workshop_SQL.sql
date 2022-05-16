@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- <VHOL SQL>
 -- <Visual Analytics  Powered by Snowflake and Tableau>
--- <May 5, 2022 | 11:00am PST>
+-- <May 16, 2022 | 11:00am PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
 --  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/workshop.sql
