@@ -147,10 +147,7 @@ Adding a **Worksheet**
 
 
 
-After creating the worksheet we are ready to load the data. 
 
-
-![13](assets/SF-13.jpg)
 
 
 
@@ -161,18 +158,35 @@ Download the following .sql file that contains a series of SQL commands we will 
 
  <button>[Snowflake_Dataiku_ML.sql](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Summit_Snowflake_Dataiku/src/Snowflake_Dataiku_ML.sql)</button>
 
-Importing  **Sql** to **Worksheet** 
+ **Part 1** : ```Step 1 - Step 4``` 
+ 
+ Creating database, Warehouse, loading dataset
+          
+
+ **Part 2** : ```Step 5 - Step 8```
+
+  Tapping Snowflake Marketplace dataset
+
+
+
+After creating the worksheet in the last step we can import the sql file provided . 
+![13](assets/SF-13.jpg)
+
+
+
+ Importing  **Sql** to **Worksheet** 
 To ingest our script in the Snowflake UI, Import SQL from File.
 
 ![13](assets/SF-12.jpg)
-
-Import the **SQL** file on the worksheet for your reference
 
 
 #### Data Loading : Steps
 
 
-**Imp tip : To run the complete code block highlight and  Select >  Ctrl + A - Windows or Command + A - Mac then play**
+
+Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab. If you wish to run the code at once **Part 1** : ```Step 1 - Step 4```  need to run first and then additional ```Steps``` are required before executing  **Part 2** : ```Step 5 - Step 8``` can be executed.
+
+To execute this code, all we need to do is place our cursor on the line we wish to run and then either hit the "run" button at the top left of the worksheet or press ```Cmd/Ctrl + Enter```
 
 
 **Step 1** : Virtual warehouse that we will use to compute with the **SYSADMIN** role, and then grant all privileges to the **ML\_ROLE**.
@@ -204,7 +218,6 @@ USE WAREHOUSE ML_WH;
 CREATE DATABASE IF NOT EXISTS ML_DB;
 
 USE DATABASE ML_DB;
-
 
 CREATE OR REPLACE TABLE loan_data (
   
@@ -277,7 +290,9 @@ CREATE OR REPLACE TABLE loan_data (
         ISSUE_MONTH NUMBER(38,0),
 
         ISSUE_YEAR NUMBER(38,0)
+  
 );
+
 
 ```
 
@@ -303,13 +318,12 @@ CREATE OR REPLACE STAGE LOAN_DATA
 ![16](assets/sf-16-dataloading3.png)
 
 
-**Step 4** :Copying the data in the database
+**Step 4** :Cloning  the data in the database
 
 ```
 
-alter warehouse ML_WH set warehouse_size=medium;
-COPY INTO loan_data FROM @LOAN_DATA/loans_history_enriched.csv
-FILE_FORMAT = (TYPE = 'CSV' field_optionally_enclosed_by='"',SKIP_HEADER = 1); 
+COPY INTO loan_data FROM @LOAN_DATA/loans_data.csv
+FILE_FORMAT = (TYPE = 'CSV' field_optionally_enclosed_by='"',SKIP_HEADER = 1);  
 
 SELECT * FROM loan_data LIMIT 100;
 
@@ -324,11 +338,14 @@ Below is the snapshot of the data and it represents aggregation from various int
 
 
 
-We have succfully loaded the data from **external stage** to snowflake.
+We have successfully loaded the data from **external stage** to snowflake.
+
+
+                              ------- End of Part 1 ---------
 
 
 
-**Step 7** : **Time to switch to get Konema Employement Data from Snowflake Market place**
+**Step 5** : Time to switch to get **Konema Employement Data** from Snowflake Market place
 
 We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Data Marketplace and see what external data is available from the data providers.
 
@@ -339,7 +356,7 @@ Lets go to home screen
 
 
 
-#### Steps 
+#### Imp Note
 
 1. **Click Market place tab** 
 
@@ -376,12 +393,13 @@ Next click on the **Get Data** button. This will provide a pop up window in whic
 ![21](assets/sf-21-marketplace3.png)
 
 
+When the confirmation is provided click on done and then you can close the browser tab with the Preview App.
 
 
 ![22](assets/sf-22-marketplace4.png)
 
 
-When the confirmation is provided click on done and then you can close the browser tab with the Preview App.  Other advantage of using Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.After done just to confirm the datasets are properly configured.
+  Other advantage of using Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.After done just to confirm the datasets are properly configured.
 
 
  Click on Data tab **Database**
@@ -399,9 +417,47 @@ After confirming **Databases**.  Lets go to **Worksheets tab** and **open** the 
 ![24](assets/sf-24-marketplace6.png)
 
 
+**Step 6** :Querying the **Market Place dataset** for some basic analysis 
 
 
-Creating a **KNOEMA_EMPLOYMENT_DATA** marketplace data view to pivot the data for the different employment metrics to columns for easier consumption. 
+There are multiple datasets in **Labor Atlas dataset**. Lets try to find unemployment dataset in US to narrow down our search. 
+
+```
+USE WAREHOUSE ML_WH;
+
+USE DATABASE KNOEMA_LABOR_DATA_ATLAS;
+
+SELECT * 
+FROM "LABOR"."DATASETS"
+WHERE "DatasetName" ILIKE '%unemployment%' 
+AND "DatasetName" ILIKE '%U.S%';
+
+```
+
+
+![22](assets/sf-22-marketplace4a.png)
+
+Amazing! isn't  we have successfully tapped into live data collection of the most important, used, and high-quality datasets on the labor market and human resources on national and sub-national levels from a dozen of sources.
+
+
+We can find answers such as what is the number of initial claims for unemployment insurance in the US over time?
+
+```
+SELECT * FROM "LABOR"."USUID2017Sep" WHERE "Region Name" = 'United States' AND 
+      "Indicator Name" = 'Initial Claims' AND "Measure Name" = 'Value' AND 
+       "Seasonal Adjustment Name" = 'Seasonally Adjusted' ORDER BY "Date";
+
+```
+
+
+![22](assets/sf-22-marketplace4b.png)
+
+
+
+ Now for this exercise we are going to **Enrich** the **Loan dataset** we created earlier using ```BLSLA``` dataset
+
+
+**Step 7** :Creating a **KNOEMA_EMPLOYMENT_DATA** marketplace data view to pivot the data for the different employment metrics to columns for easier consumption. 
 
 ```
 USE DATABASE ML_DB;
@@ -427,9 +483,8 @@ SELECT * FROM KNOEMA_EMPLOYMENT_DATA LIMIT 100;
 ```
 
 ![25](assets/sf-25-marketplace7.png)
-
-
-Create a new table **UNEMPLOYMENT DATA** using the geography and time periods. This will provide us with unemployment data in the region associated with the specific loan.
+ 
+**Step 8** : Create a new table **UNEMPLOYMENT DATA** using the geography and time periods. This will provide us with unemployment data in the region associated with the specific loan.
 
 
 ```
@@ -449,6 +504,7 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 ```
 ![26](assets/sf-26-marketplace8.png)
 
+                           ------- End of Part 2 ---------
 
 #### IMPORTANT: Database for Machine learning consumption will be created after connecting Snowflake with Dataiku using partner connect. 
 
@@ -562,9 +618,11 @@ You should see three database now  **PC_DATAIKU_DB** is the system generated dat
 #### Granting Previlages of ML_DB to PC_Dataiku_role
 
 ```
+
 grant all privileges on database ML_DB to role PC_Dataiku_role;
 grant usage on all schemas in database ML_DB to role PC_Dataiku_role;
 grant select on all tables in schema ML_DB.public to role PC_Dataiku_role;
+grant select on all views in schema ML_DB.public to role PC_Dataiku_role;
 
 ```
 
@@ -574,8 +632,12 @@ grant select on all tables in schema ML_DB.public to role PC_Dataiku_role;
 USE ROLE PC_DATAIKU_ROLE;
 USE DATABASE PC_DATAIKU_DB;
 USE WAREHOUSE PC_DATAIKU_WH;
+
+--- cloning 
+
 CREATE OR REPLACE TABLE LOANS_ENRICHED CLONE ML_DB.PUBLIC.LOAN_DATA;
 CREATE OR REPLACE TABLE UNEMPLOYMENT_DATA CLONE ML_DB.PUBLIC.UNEMPLOYMENT_DATA;
+
 
 SELECT * FROM LOANS_ENRICHED LIMIT 10;
 ```
@@ -947,6 +1009,38 @@ Duration: 2
 
 
 ![62](assets/dk-37-1200_score.jpg)
+
+
+
+We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the ```CREDIT_SCORING_LOANS_TEST_SCORED``` table that was created once we kicked off our prediction job. 
+
+```Preview Data``` will give you glimplse of additional column added to the list.
+
+
+```
+USE ROLE SYSADMIN;
+USE DATABASE PC_DATAIKU_DB;
+USE WAREHOUSE PC_DATAIKU_WH;
+
+SELECT * 
+FROM CREDIT_SCORING_LOANS_TEST_SCORED 
+LIMIT 10;
+
+```
+
+Additional info, 
+
+```
+SELECT 
+	EMP_TITLE ,
+	SUM(CASE WHEN "prediction" = 'ok' THEN 1 ELSE 0 END) AS prediction_yes,
+	SUM(CASE WHEN "prediction" = 'incident' THEN 1 ELSE 0 END) AS prediction_no
+	FROM CREDIT_SCORING_LOANS_TEST_SCORED 
+GROUP BY 
+	EMP_TITLE 
+order by prediction_yes DESC;
+
+```
 
 
 <!-- ------------------------ -->
