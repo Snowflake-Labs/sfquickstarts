@@ -321,7 +321,7 @@ This will launch a new tab to the Zepl platform. Of course, in this lab, we will
 
 ![](assets/p65.png)
 
-You then will be prompted to activate your account for DataRobot now, press the blue "Activate" button to do so. You will now have two new tabs open, one for Zepl and one for DataRobot.
+You will get an email to verify your account which will lead you to the create account page, don't verify it yet, let's wait until after the next activity.
 
 <!-- ------------------------ -->
 ## Getting Started with Zepl - DataRobot notebooks in the cloud
@@ -422,7 +422,7 @@ LIMIT 10;'
 ## Getting Started with DataRobot
 Duration: 10
 
-Once you clicked the blue "activate" button, you will be redirected to the DataRobot account registration page. DataRobot is software-as-a-service (SaaS) application deployed on the cloud for your convenience, allowing you to build machine learning models without having to provision and manage any compute infrastructure. Go ahead and enter your name and password, and then click "Sign Up" for us to proceed.
+Go to your email, and verify your account, you will be redirected to the DataRobot account registration page. DataRobot is software-as-a-service (SaaS) application deployed on the cloud for your convenience, allowing you to build machine learning models without having to provision and manage any compute infrastructure. Go ahead and enter your name and password, and then click "Sign Up" for us to proceed.
 
 ![](assets/p25.png)
 <br/><br/>
@@ -443,17 +443,14 @@ We will now land on the DataRobot main home page. Feel free to take a peak aroun
 ## Creating a DataRobot Data Connection
 Duration: 15
 
+To start a new ML project - on the top right click on the button '+ Create new project' 
+
 ![](assets/p28.png)
 <br/><br/>
 
-Here we can see that a connection has already been connected that links our Snowflake account to our DataRobot account. We will be pulling data in from Snowflake to DataRobot via a JDBC connector. Snowflake Partner Connect enables a seamless setup, and preloads all of the parameters for data to flow smoothly. We will be creating a second connection that maps to the context we were using when in the Snowflake platform.
+To import the data for the ML project press the button 'Data Source' - We will be creating the connection that maps to the context we were using when in the Snowflake platform.
 
 ![](assets/p29.png)
-<br/><br/>
-
-While we are on this screen, lets go ahead and copy the parameter in the "address" box under "Configuration." This URL should look familiar to you as it is the URL you use to navigate to your Snowflake page.
-
-![](assets/p32.png)
 <br/><br/>
 
 Next we can go ahead and click "Add new data connection" on the near top left hand side of the screen. Right above where you see your pre-configured data connection.
@@ -466,81 +463,28 @@ You'll then be asked to choose what type of connection you want to create. DataR
 ![](assets/p34.png)
 <br/><br/>
 
-We now will have a bunch of fields to fill in. The first is "Data connection name." I just called mine `dr_vhol` given this is a "DataRobot Virtual Hands On Lab." For the driver dropdown, go ahead and choose the latest driver currently available, 3.12.10. Next, paste the url we just copied into the "address" box. Our "db" will be `CUSTOMER_DATA` and the "warehouse" is `COMPUTE_WH`. Finally, lets go ahead and add two more parameters. By clicking the "Add parameter box," let search for the "role" parameter and set it to `SYSADMIN` and then "schema" and set it to `PUBLIC`. Click "Add data connection"
+We now will have a bunch of fields to fill in. The first is "Data connection name." I just called mine `Snowflake HOL` given this is a "Snowflake DataRobot Hands On Lab." For the driver dropdown, go ahead and choose the recommanded one Next, paste the url we just copied into the "address" box. Our "db" will be `CUSTOMER_DATA` and the "warehouse" is `COMPUTE_WH`. Finally, lets go ahead and add two more parameters. By clicking the "Add parameter box," let search for the "role" parameter and set it to `SYSADMIN` and then "schema" and set it to `PUBLIC`. Click "Add data connection"
 
 ![](assets/p35.png)
 <br/><br/>
 
-From here you will now see your new data connection. We now need to associate our Snowflake login to this connection. If we didnt, anyone with the deployment URL could use the connection string! Navigate to the "Credentials" tab at the top center of the screen.
+From here you will now see your new data connection. We now need to associate our Snowflake login to this connection. If we didnt, anyone with the deployment URL could use the connection string! 
+
+Enter your credentials - user name and password and press 'Save and sign in'
+
+Once the connection succeeded press on 'Add new data source'
 
 ![](assets/p36.png)
 <br/><br/>
 
-Click "Add Credentials."
+Once the connection succeeded press on 'Add new data source'
 
 ![](assets/p37.png)
 <br/><br/>
 
-Click "Create new."
+On the Search by: choose Tables and type 'train' - you will see the table 'TRAIN_DATA', select this table and press 'Create project'
 
 ![](assets/p38.png)
-<br/><br/>
-
-Here we will enter the "Username" and "Password" associated with our Snowflake user login that we created when we first logged into the Snowflake platform after creating a trial account. If you navigate back to your welcome email, you should be able to see the username you created in case you forgot.
-
-![](assets/p39.png)
-<br/><br/>
-
-![](assets/p41.png)
-<br/><br/>
-
-<!-- ------------------------ -->
-## Registering our tables in DataRobot's AI Catalog
-Duration: 15
-
-In this lab, we are going to make use of DataRobot's "AI Catalog" feature. DataRobot gives you a mechanism to keep track of all the different datasets you want to build and score models on. In order to use the Snowflake prediction application later in the walkthrough, we will need to add our data to the "AI Catalog." Found on the top left main bar, click to navigate.
-
-![](assets/p42.png)
-<br/><br/>
-
-We then can click the big "Add to catalog" or smaller "Add new data" button.
-
-![](assets/p43.png)
-<br/><br/>
-
-Given we already created our connection, we then can select "Existing Data Connection."
-
-![](assets/p44.png)
-<br/><br/>
-
-From here select our connection we want to use. I named my connection `dr_vhol`.
-
-![](assets/p45.png)
-<br/><br/>
-
-We then must choose the credentials associated with our connection, which was `drvhol` for my login.
-
-![](assets/p46.png)
-<br/><br/>
-
-This will present use with a screen that allows us to browse our "Schemas." We already defined the schema that our connector is allowed to use: `PUBLIC`. Go ahead and click.
-
-![](assets/p47.png)
-<br/><br/>
-
-Here we will see the two tables that we have in our `CUSTOMER_DATA` database. There they are, our `TRAIN_DATA` and `SCORING_DATA` tables. Go ahead and "Select" both to prepare them for import into our catalog. Then click "Proceed with registration."
-
-![](assets/p48.png)
-<br/><br/>
-
-On the next page, you will see both datasets are "Registering." This is DataRobot physically retrieving the data in our tables and bringing it over to the DataRobot platform.
-
-![](assets/p49.png)
-<br/><br/>
-
-The dataset that we will want to use for modeling purposes will be the table that has "TRAIN_DATA" in the title. We can see DataRobot did a quick scan of the dataset identifying 22 features and 2,462 rows. Go ahead and click the orange "Create Project" button.
-
-![](assets/p50.png)
 <br/><br/>
 
 <!-- ------------------------ -->
@@ -569,7 +513,7 @@ If you want to customize the model building process, you can modify a variety of
 
 
 <!-- ------------------------ -->
-## Starting DataRobot Autopilot
+## Starting DataRobot Quick Autopilot
 Duration: 10
 
 Lets get to building models automatically. Go ahead and click the “Start​” button to kick off DataRobots Autopilot process. DataRobot will continue to compute a variety of different statistics to help aid our machine learning problem. One of these steps is computing a feature's "Alternating Conditional Expectation." This is in essence an “Importance” grade that  tells you how much a given feature helps predict what you are looking to predict in an isolated fashion.
@@ -593,11 +537,21 @@ And of course, recommends a model for deployment.
 ![](assets/dr4.png)
 <br/><br/>
 
+Let's take a 5 min break, and when we come back, we will analyze the results. 
 <!-- ------------------------ -->
 ## Evaluating the "Recommended For Deployment" Model
 Duration: 10
 
-To start evaluating our model that was the most optimal given our chosen optimization metric, we can click on the model which will present use with the following options: Evaluate, Understand, Describe, and Predict (​additional tabs may be present based on extra features that are enabled).
+Let's 'star' the first model in the leadeboard. This is the model that was the most optimal given our chosen optimization metric. To start evaluating it, we can click on the model which will present use with the following options: Evaluate, Understand, Describe, and Predict (​additional tabs may be present based on extra features that are enabled).
+
+Before we deep dive on each tab let's go to the Understand tab > Feature Effects and press 'compute feature effect'
+
+DataRobot offers superior transparency, interpretability, and explainability to help you better understand how models were built and give you the confidence to explain to others why a model made the predictions it did. If we go back and click the “D​escribe”​ tab, you can view the end-to-end model blueprint containing details of the specific feature engineering tasks and algorithms DataRobot used to run the model. In addition to an automated compliance report (In non trial accounts)
+
+In non trial accounts this flow can be customized - Composable ML provides a full-flexibility approach to model building, allowing you to direct your data science and subject matter expertise to the models you build. With Composable ML, you build blueprints that best suit your needs using built-in tasks and custom Python/R code. 
+
+![](assets/dr9.png)
+<br/><br/>
 
 Click on "Evaluate". The “Evaluate” option includes: Lift Chart, ROC Curve (for classification models), Confusion Matrix, Feature Fit, and Advanced Tuning.
 
@@ -611,10 +565,6 @@ The ROC Curve tab helps to explore classification, performance, and statistics r
 ![](assets/dr8.png)
 <br/><br/>
 
-DataRobot offers superior transparency, interpretability, and explainability to help you better understand how models were built and give you the confidence to explain to others why a model made the predictions it did. If we go back and click the “D​escribe”​ tab, you can view the end-to-end model blueprint containing details of the specific feature engineering tasks and algorithms DataRobot used to run the model.
-
-![](assets/dr9.png)
-<br/><br/>
 
 In the “U​nderstand”​ tab, popular exploratory capabilities include Feature Impact, Feature Effects, Prediction Explanations, and Word Cloud (depending on the features in the dataset). These all help enlighten you on what drives a model’s predictions.
 
@@ -652,22 +602,36 @@ If you click the number in the "Prediction Threshold" box, you can see a few dif
 ![](assets/dr15.png)
 <br/><br/>
 
-Here we are presented with a bunch of options to tweak our deployment. Scroll down to the main section "Association ID." Here we want to type in `CUST_ID`. This is going to allow use to track predictions by customer when we go to monitor our model.
+Here we are presented with a bunch of options to tweak our deployment. 
+The model can be deploy to any prediction server - even deploy to Snowflake 
+
+Scroll down to the main section "Association ID." Here we want to type in `CUST_ID`. This is going to allow use to track predictions by customer when we go to monitor our model.
 
 Then go ahead and toggle the "Require association ID in prediction requests" and the 4 other option all under "Data Drift.""
 
 ![](assets/dr16.png)
 <br/><br/>
 
-Scroll back up. We will see all of our boxes are green. Click "Create Deployment"
+All our options are enabled except for 'Continuous AI'
 
 ![](assets/dr17.png)
 <br/><br/>
+
+To maintain model performance after deployment without extensive manual work, DataRobot provides an automatic retraining capability for deployments.
+
+Scroll back up. We will see all of our boxes are green. Click "Create Deployment"
 
 This will present us with a screen to give a priority setting to this deployment. We can skip and click "Create deployment." This may take a couple of minutes to create the deployment.
 
 ![](assets/dr18.png)
 <br/><br/>
+
+After creating the new deployment - press on 'return to deployments'
+
+![](assets/p39.png)
+<br/><br/>
+
+The Deployments Inventory shows the real-time status of all deployed models, regardless of where they have been trained or deployed. Here you can manage, monitor, and govern your deployed models and seeing at a glance which models are stale, preventing risk to your business.
 
 And now we have one active deployment. Go ahead and click on it again.
 
@@ -679,7 +643,10 @@ Go to the "Predictions" tab then "Job Definitions" tab and click on "+Add job de
 ![](assets/dr20.png)
 <br/><br/>
 
-We will start setting up our job definition. Click on "Prediction Source" dropdown and select "AI Catalog" under "Other Connections". You should see the two tables we uploaded to the "AI Catalog." Go ahead and choose the dataset that has "SCORING_DATA" in the name. Hit "Use this dataset".
+We will start setting up our job definition. 
+
+Press on '+ Define connection' next to the Prediction source and choose the 'Snowflake HOL' connection and your user.
+On the Search by: choose Tables and type 'scoring' - you will see the table 'SCORING_DATA', select this table and press 'Save connection'
 
 ![](assets/dr21.png)
 <br/><br/>
@@ -694,25 +661,19 @@ The last section to complete is the "Prediction Destination". Go ahead and leave
 ![](assets/dr23.png)
 <br/><br/>
 
-You can choose the same connection that we created in [Creating a DataRobot Data Connection](#9) or add a new connection in the modal that appears. Once you've done that, select the Schema that you want to write the predictions to.
-
-![](assets/dr24.png)
-<br/><br/>
-
-You can now select an existing table, or you can create a new table. We recommend creating a new table, as this will let DataRobot create the table with the proper features, and assign the correct data type to each feature.
+Repeat the process as before in the "Prediction Source"  and on tables create a new table
 
 ![](assets/dr26.png)
 <br/><br/>
 
-Go ahead and click “Create a table” and select the Schema where you want your table, then enter a table name to write your predictions to.
+Go ahead and click “Create a table” 
+Schema: 'CUSTOMER_DATA.PUBLIC' 
+name: SCORED_DATA' and press 'Save connection'
 
 ![](assets/dr27.png)
 <br/><br/>
 
-Click “Save Connection”. Your Job Definition should look similar to the image below.
-
-![](assets/dr28.png)
-<br/><br/>
+Change the write strategy to 'Insert' and Click “Save Connection”.
 
 At the bottom you can schedule this job to run on a Schedule, or just run it manually. Go ahead and click "Save Prediction job definition" in the bottom left, then click on "View all Job Definitions" in the upper left. Click the hamburger icon on the right side of the job definition you just made, and click "Run now".
 
