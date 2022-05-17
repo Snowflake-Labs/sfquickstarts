@@ -58,6 +58,7 @@ Duration: 2
 
 
 
+
 1. Create a Snowflake enterprise trial account
 2. Login to your Snowflake account
 3. We will be using the new UI to get started but you can also switch over to the Classic Console if you would like.
@@ -191,7 +192,7 @@ group by 1 order by 2 desc;
 
 Duration: 5
 
-### Click on Data Marketplace and type **Global Weather & Climate Data for BI** in Search Snowflake Marketplace toolbar
+### Click on data marketplace and type **Global Weather & Climate Data for BI** in search Snowflake  toolbar
 
  ![Search Dataset](assets/Climate_and_Weather.png)
 
@@ -1122,6 +1123,7 @@ SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP
 
 
 
+
 :::info
 **Replace *GOA63594 with your locator***
 
@@ -1178,7 +1180,7 @@ Duration: 5
 
 ### Set Role ACCOUNTADMIN & Add Worksheet
 
-[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)       ![Change Role to Accountadmin](assets/Reader_Account_3.png)
+[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)        ![Change Role to Accountadmin](assets/Reader_Account_3.png)
 
 
 ```sql
@@ -1195,6 +1197,7 @@ create or replace warehouse VHOL_READER WITH
 show shares like 'VHOL_SHARE%';
 select  "name" FROM table (result_scan(last_query_id()));
 ```
+
 
 
 
@@ -1250,6 +1253,7 @@ select * from vhol_trips_dev limit 1;
 ```
 
 ### Cleanup the Demo Account
+
 
 
 
