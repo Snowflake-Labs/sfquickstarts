@@ -60,6 +60,7 @@ Duration: 2
 
 
 
+
 1. Create a Snowflake enterprise trial account
 2. Login to your Snowflake account
 3. We will be using the new UI to get started but you can also switch over to the Classic Console if you would like.
@@ -438,7 +439,7 @@ Note: you may need to use the horizontal bottom scrollbar at the bottom of the w
 
 <br>
 
-Enter the Server name. Change Authentication to “Username and Password”, enter your login credentials, then click the blue “Sign in” button.
+Enter the Server name. Change Authentication to “Username and Password”, enter your login credentials, select role ACCOUNTADMIN & then click the blue “Sign in” button.
 
  ![A](assets/Tab_1.4.png)
 
@@ -1126,6 +1127,7 @@ SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP
 
 
 
+
 :::info
 **Replace *GOA63594 with your locator***
 
@@ -1182,7 +1184,7 @@ Duration: 5
 
 ### Set Role ACCOUNTADMIN & Add Worksheet
 
-[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)         ![Change Role to Accountadmin](assets/Reader_Account_3.png)
+[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)          ![Change Role to Accountadmin](assets/Reader_Account_3.png)
 
 
 ```sql
@@ -1199,6 +1201,7 @@ create or replace warehouse VHOL_READER WITH
 show shares like 'VHOL_SHARE%';
 select  "name" FROM table (result_scan(last_query_id()));
 ```
+
 
 
 
@@ -1256,6 +1259,7 @@ select * from vhol_trips_dev limit 1;
 ```
 
 ### Cleanup the Demo Account
+
 
 
 

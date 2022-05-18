@@ -7,3 +7,5 @@ debug.test
 node_modules
 site/.firebaserc
 site/.firebase/**
+site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/visual_analytics.code-workspace
+.gitignore
