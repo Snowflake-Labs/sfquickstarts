@@ -105,7 +105,7 @@ Log in with your credentials
 
 ![6](assets/sf-6-login.png)
 
-**Bookmark this URL for easy, future access**
+```Bookmark this URL for easy, future access```
 
 Resize your browser window, so that you can view this guide and your web browser side-by-side and follow the lab instructions. If possible, use a secondary display dedicated to the lab guide.
 
