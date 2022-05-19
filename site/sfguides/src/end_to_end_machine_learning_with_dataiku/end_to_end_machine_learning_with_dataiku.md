@@ -78,6 +78,9 @@ Duration: 5
 ![2](assets/sf-2-signup.png)
 
 
+![2](assets/sf-2-signup.png)
+
+
 ![3](assets/SF-3.jpg)
 
 - After registering, you will receive an **email** with an **activation** link and your Snowflake account URL. Kindly activate the account.
