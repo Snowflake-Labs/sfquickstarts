@@ -41,7 +41,7 @@ We will build a project. The project contains the input datasets from Snowflake.
 
 - Familiarity with Snowflake, basic SQL knowledge and Snowflake objects
 - Basic knowledge  Machine Learning
-- Basic knowledge Python, Jupyter notebook for **Bonus**
+- Basic knowledge Python, Jupyter notebook for ```Bonus```
 
 ### What You'll Need During the Lab
 
