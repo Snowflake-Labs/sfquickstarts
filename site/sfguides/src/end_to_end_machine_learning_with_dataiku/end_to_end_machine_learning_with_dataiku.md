@@ -53,14 +53,14 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 ### What You'll Build
 
-Operational end-to-end ML project using joint capabilities of Snowflake and Dataiku from Data collection to deployement
+Operational end-to-end ML project using joint capabilities of Snowflake and Dataiku from Data collection to deployment
 
 - Create a Data Science project in Dataiku and perform analysis on data via Dataiku within Snowflake
 - The analysis and feature engineering using Dataiku
 - Create, run, and evaluate simple Machine Learning models in Dataiku,  measure their performance and interpret
 - Building and deploying Pipelines
-- Creating  Snowpark-Java UDF, and using it to score result on test dataset writing back to Snowflake
-- Use cloning to create seprate pipeline for testing 
+- Use Snowpark-Java UDF to score result on test dataset and write back to Snowflake
+- Use cloning to create separate pipeline for testing 
 - Bonus track using Snowpark - python 
 
 
@@ -69,11 +69,14 @@ Operational end-to-end ML project using joint capabilities of Snowflake and Data
 Duration: 5
 
 
+
 - If you haven’t already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com/) 
 
-- **Region**  - Kindly choose which is physically closest to you. For this lab example we have choosen ```US West (Oregon)```
+- **Note**: Please ensure that you use the `same email address` for both your Snowflake and Dataiku sign up
 
-- **Cloud Provider**  - You can select any cloud provider. For this lab example we have choosen ```AWS```
+- **Region**  - Kindly choose which is physically closest to you. For this lab example we have chosen ```US West (Oregon)```
+
+- **Cloud Provider**  - You can select any cloud provider. For this lab example we have chosen ```AWS```
 
 - **Snowflake edition**  - Select the ```Enterprise edition``` so you can leverage some advanced capabilities that are not available in the Standard Edition.
 
@@ -100,7 +103,7 @@ After activation, you will create a ```user name```and ```password```. Write dow
 
 <!-- ------------------------ -->
 ## Logging in  Snowflake 
-Duration: 2
+Duration: 5
 
 
 #### Step 1
@@ -161,6 +164,8 @@ You can name anything, but for this lab we will Rename it as ```Data Loading```.
 
 
 ## Load data in  Snowflake 
+Duration: 15
+
 
 Download the following .sql file that contains a series of SQL commands we will execute throughout this lab. You can either execute cell by cell commands from the sql file or copy the below code blocks and follow. 
 
@@ -515,7 +520,7 @@ SELECT * FROM KNOEMA_EMPLOYMENT_DATA LIMIT 100;
 
 ![25](assets/sf-25-marketplace7.png)
  
-We have succesfully created the view. 
+We have successfully created the view. 
 
 **Step 8** : Now in this step we will ```Create``` a new table  called ```UNEMPLOYMENT DATA``` using the geography and time periods by joining ```LOAN_DATA``` table created from ```S3``` and ```KNOEMA_EMPLOYMENT_DATA VIEW``` created in last step.
 
@@ -603,14 +608,8 @@ Click on ```Connect```. You may be asked to provide your first and last name.  I
 
 
 This will launch a new page that will redirect you to a launch page from Dataiku.
-Here, you will have two options:
-1) Login with an existing Dataiku username
 
-2) Sign up for a new Dataiku account
-
-We assume that you’re new to ```Dataiku```, so ensure the “Sign Up” box is selected, and sign up with either GitHub, Google or your email address and your new password. 
-
-Click sign up. <<NOTE: ADD INSTRUCTION FOR EXISTING IN ADDITION>>
+For the lab ae assume that you’re new to ```Dataiku```, so ensure the “Sign Up” box is selected, and sign up using the email address **(Note: This should be the same email address that you used to set up your Snowflake account)** and a new password of your choosing. 
 
 
 ![31](assets/dk-2_signin.jpg)
@@ -655,7 +654,7 @@ You’ve now successfully set up your Dataiku trial account via Snowflake’s Pa
 
 
 ## Database for Machine Learning
-
+Duration: 5
 
 After connecting  ```Snowflake``` to ```Dataiku``` via partner connect. We will clone the table created in ```ML_DB``` to ```PC_DATAIKU_DB``` for the Dataiku consumption. 
 
@@ -677,7 +676,7 @@ You should see  ```PC_DATAIKU_USER``` is the system generated database created.
 Go back to ```Data_Loading Worksheet``` you are working and run below commands. 
 
 
-#### Granting Previlages of ML_DB to PC_Dataiku_role
+#### Granting Privileges of ML_DB to PC_Dataiku_role
 
 ```
 
@@ -717,19 +716,19 @@ Negative
 
 <!-- ------------------------ -->
 ## Getting Started with a Dataiku Project
-Duration: 2
+Duration: 4
 
 Return to Dataiku Online and if you haven't already click on **OPEN DATAIKU DSS** from the Launchpad to start your instance of Dataiku DSS
 
 ![35](assets/dk-6_100_DKU_Online_launch_screen.png)
 
 
-At the end of the lab, the project Flow will look like this:
+Here is the project we are going to build along with some annotations to help you understand some key concepts in Dataiku DSS: 
 
-![35a](assets/dk-6c-flow.png)
+![35a](assets/dk-flow-overview.png)
 
 
-* A **dataset** is represented by a blue square with a symbol that depicts the dataset type or connection. The initial datasets (also known as input datasets) are found on the left of the Flow. In this project, the input datasets will be the ones we just created in Snowflake.
+* A **dataset** is represented by a blue square with a symbol that depicts the dataset type or connection. The initial datasets (also known as input datasets) are found on the left of the Flow. In this project, the input datasets will be the ones we created in the first part of the lab.
 
 * A **recipe** in Dataiku DSS (represented by a circle icon with a symbol that depicts its function) can be either visual or code-based, and it contains the processing logic for transforming datasets.
 
@@ -741,14 +740,12 @@ At the end of the lab, the project Flow will look like this:
 
 
 **Input dataset:**
-  _The dataset is based on the Loans Dataset from ***LendingClub*** which is a peer-to-peer lending company that matches borrowers and investors._
+  _The dataset is based on the Loans Dataset from LendingClub which is a peer-to-peer lending company that matches borrowers and investors._
 
   _In the interests of time we have performed some initial steps of the data pipeline such as cleansing and transformations on the loans dataset. These steps can be created in Dataiku from the raw datasets from the Lending Club to form a complete pipeline with the data and execution happening in Snowflake._
 
-  You can find a [Data Dictionary](#Data-Dictionary) for the table at the end of this guide 
 
-
-### How We’ll Build The Project
+### Reminder of our goal
 
 Our goal is to build an optimized machine learning model that can be used to predict the risk of default on loans for customers and advise them on how to reduce their risk.
 To do this, we’ll join the input datasets, perform transformations & feature engineering so that they are ready to use for building a binary classification model.
@@ -757,16 +754,16 @@ To do this, we’ll join the input datasets, perform transformations & feature e
 ### Creating a Dataiku Project
 
 
-Once you’ve logged in, `click` on `+NEW PROJECT` and `select Blank project` to create a new project.
+Once you’ve logged in, `click` on `+ NEW PROJECT` and select `+ Blank project` to create a new project.
 
-Name the project as `Credit Scoring`
+Name the project as ``Credit Scoring``
 
 ![35d](assets/dk6d-new_project.png)
 
 
 <!-- ------------------------ -->
 ## Data Import, Analysis & Join
-Duration: 5
+Duration: 10
 
 The project home acts as the command center from which you can see the overall status of a project, view recent activity, and collaborate through comments, tags, and a project to-do list. Let’s add our datasets from Snowflake.
 
@@ -779,7 +776,7 @@ The project home acts as the command center from which you can see the overall s
 
 * Select the `Search and import option` 
 
-![38](assets/dk-8_400_Search&Import_option_closeup.png)
+![38](assets/dk-search-import.png)
 
 * Select the `PC_DATAIKU_DB` connection from the dropdown then `click the refresh icon` next to the database or schema dropdowns to populate these options.
 * Select the database and schema as below then click on `LIST TABLES`
@@ -800,15 +797,13 @@ The project home acts as the command center from which you can see the overall s
 
 ![42](assets/dk-12_500_Two_datasets_in_flow.png)
 
-In DSS, the datasets and the recipes together make up the flow. We have created a visual grammar for data science, so users can quickly understand a data pipeline through the flow.
+In DSS, the datasets and the recipes together make up the `flow`. We have created a visual grammar for data science, so users can quickly understand a data pipeline through the flow.
 
 Using the flow, DSS knows the lineage of every dataset in the flow. DSS, therefore, is able to dynamically rebuild datasets whenever one of their parent datasets or recipes has been modified. This is where we will work from in this lab.
 
 Now we have all of the raw data needed for this lab. Let’s explore what’s inside these datasets.
 
-* From the Flow, double click on the `LOANS_ENRICHED` dataset to open it.
-
-Although this dataset has already had a number of extraneous columns removed from the original there are still quite a few and whilst some columns names such as **ZIP_CODE** or **HOME_OWNERSHIP** are clear others might not be. Refer to the data dictionary at the back of the guide if you wish to understand more. 
+* From the Flow (keyboard shortcut G+F), double click on the `LOANS_ENRICHED` dataset to open it.
 
 One column to note is the **LOAN_STATUS** column. This will be our target variable to predict against later in the lab. 
 
@@ -828,34 +823,31 @@ So far, your Flow only contains datasets. To take action on datasets, you need t
 * Choose `UNEMPLOYMENT_DATA` as the second input dataset.
 
  
+* Leave the defaults for `Name` and `PC_DATAIKU_DB for “Store into”` and `Create` the recipe. 
 
 ![44](assets/dk-15_700_join_tables.png)
 
-* Leave the defaults for `Name` and `PC_DATAIKU_DB for “Store into”` and `Create` the recipe. 
-* On the Join step you can `click on Left Join` to observe the selected join type and conditions.
 
-![45](assets/dk-16_700_join_conditions.png)
+* Leave the defaults for the `Join` and `Selected columns` steps.
 
+![45](assets/dk-join1.png)
 
-
-* Leave the defaults for the `Selected columns` step
-* On the Output step, note the output column names
+* Select the `Output step`
+* Note: You can view the SQL query as well as the execution plan generated by selecting `VIEW QUERY`
+* Ensure that `In-database (SQL)` is selected as the engine. You can view this underneath the `Run button`(Bottom left). If it is set to a different engine `click on the three cogs` to change it 
 * Before running, `Save` the recipe
-* Ensure that `In-database (SQL)` is selected as the engine. You can view this underneath the `Run button` (Bottom left). If it is set to a different engine `click on the three cogs` to change it
+* Click the `RUN` button
+* If prompted agree to `Update Schema` then return to the `flow (G+F)`
 
-![45](assets/dk-join-engine.png)
+![45](assets/dk-loan2.png)
 
-* Click `RUN` and `Update Schema` if prompted, then return to the Flow
-
-Note: You can view the SQL query as well as the execution plan generated by selecting `VIEW QUERY` on the `Output` screen.
-
-Your ```flow``` should now look like this
+Your flow should now look like this
 
 
 ![45](assets/dk-17_700_Flow_join.png)
 
 ## Prepare the Data 
-Duration: 5
+Duration: 12
 
 Data cleaning and preparation is typically one of the most time-consuming tasks for anyone working with data. In our lab, in order to save some of that time, our main lending dataset already had a number of cleaning steps applied. In the real world this would be done by other colleagues, say, from the data analytics team collaborating on this project and you would see their work as steps in our projects flow. 
 
@@ -874,14 +866,16 @@ Secondly because Dataiku DSS infers meanings for each column, it suggests releva
 
 Let's try using processors with both methods, firstly via the suggested actions:
 * Click on the `EARLIEST_CR_LINE` column header and from the dropdown, `select Parse date`
-* In `Add a custom format` set the format to `d-MMM-yyyy` and click on `USE DATE FORMAT`
-* A step is generated on the left. Change the `Locale` to `en_US`
-
-
 
 ![46](assets/dk-18_800_parse_date.jpg)
 
+* In `Add a custom format` set the format to `d-MMM-yyyy` and click on `USE DATE FORMAT`
+
+
 ![47](assets/dk-19_800_date_format.jpg)
+
+
+* A step is generated on the left. Change the `Locale` to `en_US`
 
 ![48](assets/dk-20_800_parse_en.jpg)
 
@@ -946,9 +940,9 @@ As before you can optionally group and comment your transformation steps.
 
 <!-- ------------------------ -->
 ## Feature Engineering with Code
-Duration: 5
+Duration: 10
 
-Till now we've used visual tools but lets see how users who prefer to code can collaborate alongside their low/no code colleagues
+Until now we've used visual tools but lets see how users who prefer to code can collaborate alongside their low/no code colleagues
 
 * Return to the Flow.
 * `Click` on the output dataset of the prepare recipe `LOANS_ENRICHED_joined_prepared`.
@@ -1049,7 +1043,7 @@ On the left side we can view/adjust the various settings for our current experim
 
 **FEATURES HANDLING** - We can allow Dataiku DSS to automatically choose the features included in our model, or we can manually select which features we want to include when our model is trained and how we handle the feature types. 
 
-**ALGORITHMS** - DSS natively supports algorithms that can be used to train predictive models depending on the machine learning task: Clustering or Prediction (Classification or Regression). We can also choose to use our own machine learning algorithm, by adding a custom Python model. In our case we are using the algorithms based on the Scikit Learn, LightGBM and XGBoost ML libraries.
+**ALGORITHMS** - DSS natively supports algorithms that can be used to train predictive models depending on the machine learning task: Clustering or Prediction (Classification or Regression). We can also choose to use our own machine learning algorithm, by adding a custom Python model. In our case we are using the algorithms based on the Scikit-Learn, LightGBM and XGBoost ML libraries.
 
 
 Let's use the defaults the template has set.
@@ -1060,7 +1054,10 @@ Let's use the defaults the template has set.
 
 ![58](assets/dk-ml-train3.png)
 
-In the `RESULTS` screen we can see the results of our first experiment. DSS displays a graph of the evolution of the best cross-validation scores found so far. Hovering over one of the points, we can see the evolution of the hyperparameter values that yielded an improvement. In the right part of the charts, we can see final test scores.
+In the `RESULTS` pane of any machine learning task, DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model in terms of the chosen metric.
+
+Here we can see the results of our first experiment. DSS displays a graph of the evolution of the best cross-validation scores found so far. Hovering over one of the points, we can see the evolution of the hyperparameter values that yielded an improvement. In the right part of the charts, we can see final test scores.
+
 
 We can also see that some `Diagnostics` checks have been flagged.
 
@@ -1072,28 +1069,41 @@ Here we can see there a number of potential issues DSS has identified for us. It
 
 We can see this in our distribution.
 
-* Go back to the `DESIGN` menu and choose `Features handling` and our taget variable `LOAN_STATUS`
+* Go back to the `DESIGN` menu and choose `Features handling` and our target variable `LOAN_STATUS`
 
 ![58](assets/dk-ml-target1.png)
 
-Here we can see that our loan defaults only make 4% of the dataset. So even if our model erroneoulsy predicted that no loan would ever default it would still be correct 96% of the time for this imbalenced dataset! This is a common problem in certain types of classification problems such as credit card fraud, identifying rare diseases or, as in our case, loan defaults.
+Here we can see that our loan defaults only make 4% of the dataset. So even if our model erroneously predicted that no loan would ever default it would still be correct 96% of the time for this imbalanced dataset! This is a common issue in certain types of classification problems such as credit card fraud, identifying rare diseases or, as in our case, loan defaults.
 
-Although this a common problem in machine learning it is not one that is always easy to solve. Fortunatly DSS has a number of ways to help such as Weighting strategies, class rebalance sampling, Algorithm selection and more Let's look at a couple of them.
+Although this a common problem in machine learning it is not one that is always easy to solve. Fortunately DSS has a number of ways to help such as weighting strategies, class rebalance sampling, Algorithm selection and more. Let's look at a couple of these techniques.
 
-Firtly we can a look at class rebalance.
+Firstly we can a look at class rebalance.
 
 * Go to the `Train/Test Set` and from the `Sampling method` dropdown select `Class rebalance (approx. ratio)`
-* Set the percentaage to 33% and the Column as our target **LOAN_STATUS**
+* Set the percentage to 33% and the Column as our target **LOAN_STATUS**
 
 ![58](assets/dk-model_rebalance.png)
 
 Lets also change the algorithms we are using as logistic regression and tree-based algos tend not to perform as well with imbalanced datasets. Let's look at some of our boosting algos.
 
-* Go to `Algorithms` and deselect `Logistic Regression` and `Random Forest` and then select `XGBoost` and `LightGBM` (Note: you can select many more algo's but be aware it may take significantly longer depending on your runtime setup)
+* Go to `Algorithms` and deselect `Logistic Regression` and `Random Forest` and then select `XGBoost` and `LightGBM` (Note: you can select many more algo's but be aware it may take longer depending on your runtime setup)
 
 ![58](assets/dk-ml-algoboost.png)
 
-* `Save` your settings and `click TRAIN`
+Finally lets revisit the `Features handling` section to remove some features from our training session.
+
+* Select the `Features handling` menu then locate and switch off the following features:
+* `ISSUE_DATE_PARSED`
+* `MTHS_SINCE_LAST_DELINQ`
+* `MTHS_SINCE_LAST_RECORD`
+* `MTHS_SINCE_LAST_MAJOR_DEROG`
+
+![58](assets/dk-ml-features-removedate.png)
+![58](assets/dk-ml-features-derog.png)
+
+We don't need the date feature and with the MNHS_SINCE... features we can see there are significant gaps in the data. DSS can impute values for us here but we can use our understanding of the data and use case to choose to remove these from our training session.
+
+* `Save` your settings and then click `TRAIN`
 
 As you can see on our results page we saw an improvement in our score and addressed our imbalance issue. The diagnostics warn us the test set might be too small now but we have a much larger dataset available to us from the LendingClub if we want to use it.
 
@@ -1111,28 +1121,21 @@ Duration: 10
 
 ![58](assets/dk-model_compare.png)
 
-We can compare accross our experiments, saved models and evalauations from a DSS evaluation store (not part of this lab). You can set a champion and compare to challengers.
+We can compare across our experiments, saved models and evaluations from a DSS evaluation store (not part of this lab). You can set a champion and compare to challengers.
 
-* Explore some of the options. When you are done `select Visual Analysis` from the top menu, then `select` your modeling session and the the `Models` option
+* Explore some of the options. When you are done select your best performing model from the `Summary` tab by `clicking on the models name` in the `Model Evaluation table` 
 
-![58](assets/dk-va1.png)
-![58](assets/dk-va2.png)
-![58](assets/dk-va4.png)
+![58](assets/dk-ml-compare-nav.png)
 
-After having trained as many models as desired, DSS offers tools for full training management to track and compare model performance across different algorithms. DSS also makes it easy to update models as new data becomes available and to monitor performance across sessions over time.
 
-In the `Result` pane of any machine learning task, DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model in terms of the chosen metric.
+Here we can view a full report of tables and visualizations of performance against a range of different possible metrics for our chosen model.
 
-![60](assets/dk-ml-5.png)
-
-Clicking on any model produces a full report of tables and visualizations of performance against a range of different possible metrics.
-
-* `Click` on your best performing model
 * Step through the various graphs and interactive charts to better understand your model. 
-* For example `Subpopulations Analysis` allows you to identify potential bias in your model by seeing how it performs across different sub-groups
-* `Interactive Scoring` allows you to run real time `“what-if” analysis` to understand the impact of given features
+* Some tasks are computationally expensive so you can choose if you want them to run. For example `Subpopulations Analysis` allows you to identify potential bias in your model by seeing how it performs across different sub-groups. Try selecting `ADDR_STATE` from the dropdown then click `compute`
 
-![60](assets/dk-33_1100_subpop.jpg)
+![60](assets/dk-subpop.png)
+
+* `Interactive Scoring` allows you to run real time `“what-if” analysis` to understand the impact of given features
 
 
 Here we can see `Variable importance` 
@@ -1161,17 +1164,16 @@ Your flow should now look like this:
 
 <!-- ------------------------ -->
 ## Scoring  
-Duration: 5
+Duration: 8
 
 
-* From your `Flow` select the `LOANS_TEST` dataset and the `Predict` recipe from the `actions menu`
+* Return to the `Flow` and select the newly deployed model (its represented as a green diamond) and then from the `Actions` menu select the `Score` recipe.
 
-![62](assets/dk-predict-rec.png)
+![62](assets/dk-score.png)
 
-* Select your model from the dropdown. Leave the `Name` and `Store into` for the output as the defaults and click `CREATE RECIPE`
+* Select the `LOANS_TEST` dataset from the dropdown. Leave the `Name` and `Store into` for the output as the defaults and click `CREATE RECIPE`
 
-
-![62](assets/dk-predict-2.png)
+![62](assets/dk-score2.png)
 
 * Ensure `In-Database (Snowflake native)` is selected as the engine in order to use the Java UDF capability then click `RUN'
 
@@ -1180,11 +1182,11 @@ Duration: 5
 
 Your final project flow should now look like this.
 
-![62](assets/dk-final-flow.png)
+![62](assets/dk-final-flow2.png)
 
 We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the ```CREDIT_SCORING_LOANS_TEST_SCORED``` table that was created once we kicked off our prediction job. 
 
-```Preview Data``` will give you glimplse of additional column added to the list.
+```Preview Data``` will give you glimpse of additional column added to the list.
 
 
 ```
@@ -1193,10 +1195,12 @@ USE DATABASE PC_DATAIKU_DB;
 USE WAREHOUSE PC_DATAIKU_WH;
 
 SELECT * 
-FROM CREDIT_SCORING_LOANS_TEST_SCORED 
+FROM LOANS_TEST_SCORED_CREDITSCORING 
 LIMIT 10;
 
 ```
+
+![62](assets/sf-score-results.png)
 
 Additional info, 
 
@@ -1205,7 +1209,7 @@ SELECT
 	EMP_TITLE ,
 	SUM(CASE WHEN "prediction" = 'ok' THEN 1 ELSE 0 END) AS prediction_yes,
 	SUM(CASE WHEN "prediction" = 'incident' THEN 1 ELSE 0 END) AS prediction_no
-	FROM CREDIT_SCORING_LOANS_TEST_SCORED 
+	FROM LOANS_TEST_SCORED_CREDITSCORING
 GROUP BY 
 	EMP_TITLE 
 order by prediction_yes DESC;
@@ -1214,20 +1218,15 @@ order by prediction_yes DESC;
 
 
 <!-- ------------------------ -->
-## Conclusion  and Next Steps  
-Duration: 2
+## Conclusion and Next Steps  
+Duration: 1
 
 Congratulations  you have now successfully built,  deployed and scored your model results back to Snowflake. Your final flow should look like this.
 
-![63](assets/dk-38-1400_complete_flow.jpg)
+![63](assets/dk-final-flow2.png)
 
 
 ## Bonus Material - Snowpark -Python  
-Duration: 5
 
 To be added soon
 
-## Data Dictionary
-Duration: 1
-
-To be added soon
