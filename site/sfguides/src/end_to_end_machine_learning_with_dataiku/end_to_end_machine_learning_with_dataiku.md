@@ -47,7 +47,7 @@ We will build a project. The project contains the input datasets from Snowflake.
 
 To participate in the virtual hands-on lab, attendees need the following:
 
-- A [Snowflake free 30-day trial](https://trial.snowflake.com/) **ACCOUNTADMIN** access
+- A [Snowflake free 30-day trial](https://trial.snowflake.com/) ```ACCOUNTADMIN``` access
 - Dataiku Cloud trial version via Snowflake’s Partner Connect
 
 
@@ -60,7 +60,8 @@ Operational end-to-end ML project using joint capabilities of Snowflake and Data
 - Create, run, and evaluate simple Machine Learning models in Dataiku,  measure their performance and interpret
 - Building and deploying Pipelines
 - Creating  Snowpark-Java UDF, and using it to score result on test dataset writing back to Snowflake
-- Use cloning and time travel for test environment
+- Use cloning to create seprate pipeline for testing 
+- Bonus track using Snowpark - python 
 
 
 <!-- ------------------------ -->
@@ -70,9 +71,11 @@ Duration: 5
 
 - If you haven’t already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com/) 
 
-- **Region**  - Kindly choose which is physically closest to you
+- **Region**  - Kindly choose which is physically closest to you. For this lab example we have choosen ```US West (Oregon)```
 
-- **Snowflake edition**  - Select the **Enterprise edition** so you can leverage some advanced capabilities that are not available in the Standard Edition.
+- **Cloud Provider**  - You can select any cloud provider. For this lab example we have choosen ```AWS```
+
+- **Snowflake edition**  - Select the ```Enterprise edition``` so you can leverage some advanced capabilities that are not available in the Standard Edition.
 
 
 ![2](assets/sf-2-signup.png)
@@ -83,14 +86,15 @@ Duration: 5
 
 ![3](assets/SF-3.jpg)
 
-- After registering, you will receive an **email** with an **activation** link and your Snowflake account URL. Kindly activate the account.
+After registering, you will receive an ```email```with an ```activation``` link and your Snowflake account URL. Kindly activate the account.
 
 
 ![4](assets/SF-4.jpg)
 
 
-- After activation, you will create a **user name** and **password**. Write down these credentials
+After activation, you will create a ```user name```and ```password```. Write down these credentials
 
+```Bookmark this URL for easy, future access```
 
 ![5](assets/sf-5-user_id_password.png)
 
@@ -115,35 +119,36 @@ Resize your browser window, so that you can view this guide and your web browser
 
 #### Step 2
 
-Log into your Snowflake account. By default it will open up  
+Log into your Snowflake account. By default it will open up ```home``` page.  
 
 
 
 ![7](assets/sf-7-firstpage.png)
 
 
-If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise
 
 #### Step 3
 
-Create **Worksheet**  
+To create ```Worksheet``` . Click on the ```Worksheets``` tab. A new screen will open up. 
 
 
 ![8](assets/sf-8-createworksheet.png)
 
 #### Step 4
 
-Adding a **Worksheet** 
+Click on ```+ Worksheet``` to create your first worksheet. 
 
 ![9](assets/sf-9-createworksheet2.png)
 
 #### Step 5
 
-- Creating a new  **Worksheet** and **Renaming** it to **Data Loading**
+New ```Worksheet``` will be created with a ```Time stamp```. Let's now rename this ```Worksheet``` by clicking on the ```Time stamp```. 
 
 
 ![10](assets/sf-10-createworksheet.png)
 
+
+You can name anything, but for this lab we will Rename it as ```Data Loading```.
 
 
 ![11](assets/sf-11-renameworksheet.png)
@@ -172,13 +177,15 @@ Download the following .sql file that contains a series of SQL commands we will 
 
 
 
-After creating the worksheet in the last step we can import the sql file provided . 
+After creating the ```worksheet``` in the last step we can import the sql file provided . 
+
+Click on ```drop down``` button.
+
 ![13](assets/SF-13.jpg)
 
 
+Select ``` Import SQL from File ``` option to import the SQL file just downloaded. Select it and ```Enter```.
 
- Importing  **Sql** to **Worksheet** 
-To ingest our script in the Snowflake UI, Import SQL from File.
 
 ![13](assets/SF-12.jpg)
 
@@ -187,12 +194,18 @@ To ingest our script in the Snowflake UI, Import SQL from File.
 
 
 
-Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab. If you wish to run the code at once **Part 1** : ```Step 1 - Step 4```  need to run first and then additional ```Steps``` are required before executing  **Part 2** : ```Step 5 - Step 8``` can be executed.
+Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab. 
+
+If you wish to run the code at once 
+
+**Part 1** : ```Step 1 - Step 4```  need to run first and then ```additional steps ``` are  then required before executing  
+
+**Part 2** : ```Step 5 - Step 8```. 
 
 To execute this code, all we need to do is place our cursor on the line we wish to run and then either hit the "run" button at the top left of the worksheet or press ```Cmd/Ctrl + Enter```
 
 
-**Step 1** : Virtual warehouse that we will use to compute with the **SYSADMIN** role, and then grant all privileges to the **ML\_ROLE**.
+**Step 1** : Virtual warehouse that we will use to compute with the ```SYSADMIN``` role.
 
 
 ```
@@ -212,7 +225,8 @@ CREATE OR REPLACE WAREHOUSE ML_WH
 ```
 
 
-**Step 2** : Create **Loan_data** table in the database
+**Step 2** : In this step  we will first create ```ML_DB ``` and then ```create ``` a ```Loan_data``` table in that database.
+
 
 ```
 
@@ -299,13 +313,16 @@ CREATE OR REPLACE TABLE loan_data (
 
 ```
 
-After running the cell above, we have successfully created a **loan data** table. 
+After running the cell above, we have successfully created a ```loan_data``` table. 
 
 
 ![15](assets/sf-15-dataloading2.png)
 
 
-**Step 3** :Creating a external stage to load the lab data into the table. This is done from a public S3 bucket to simplify the workshop. Typically an external stage will be using various secure integrations as described in this [link](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html). 
+**Step 3** : In this step we will create an external stage ```LOAN_DATA``` to load the lab data. This is done from a public S3 bucket to simplified for this workshop.
+
+
+Typically an external stage will be using various secure integrations as described in this [link](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html). 
 
 ```
 CREATE OR REPLACE STAGE LOAN_DATA
@@ -317,11 +334,15 @@ CREATE OR REPLACE STAGE LOAN_DATA
 
  list @LOAN_DATA;
 ```
-**Screen shot again after moving to new s3 folder** 
+
+Listing the files from ```S3``` bucket
+
+
+
 ![16](assets/sf-16-dataloading3.png)
 
 
-**Step 4** :Cloning  the data in the database
+**Step 4** : In this step we will ```copy``` the ```loan_data``` csv file to the ```loan_data``` table we created. 
 
 ```
 
@@ -341,31 +362,32 @@ Below is the snapshot of the data and it represents aggregation from various int
 
 
 
-We have successfully loaded the data from **external stage** to snowflake.
+We have successfully loaded the data from ```external stage``` to snowflake.
+
+Negative
+: **About the screen captures, sample code, and environment** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
 
 
                               ------- End of Part 1 ---------
 
 
 
-**Step 5** : Time to switch to get **Konema Employement Data** from Snowflake Market place
+**Step 5** : Time to switch to get ```Konema Employement Data``` from Snowflake Market place
 
 We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Data Marketplace and see what external data is available from the data providers.
 
-Lets go to home screen 
+Lets go to ```home screen``` by clicking on ```home``` icon. 
 
 ![18](assets/sf-18-dataloading5.png)
 
 
+#### Imp Note 
 
+1. ```Click Market place tab```
 
-#### Imp Note
+2. Make Sure ```ACCOUNTADMIN``` role is selected 
 
-1. **Click Market place tab** 
-
-2. Make Sure **ACCOUNTADMIN** role is selected 
-
-3. In search bar **Labor Data Atlas**
+3. In search bar type ```Labor Data Atlas```
 
 
 
@@ -373,57 +395,61 @@ Lets go to home screen
 
 
 
- Click on the tile with **Labor Data Atlas.**
+
+ Click on the tile with ```Labor Data Atlas```
 
 
 ![20](assets/sf-20-marketplace2.png)
 
 
-Next click on the **Get Data** button. This will provide a pop up window in which you can create a database in your account that will provide the data from the data provider.
-
-
+Next click on the ```Get Data``` button. This will provide a pop up window in which you can create a database in your account that will provide the data from the data provider.
 
 
 #### Important : Steps 
 
-1. Change the name of the database to  **KNOEMA_LABOR_DATA_ATLAS**  
+1. Change the name of the database to  ```KNOEMA_LABOR_DATA_ATLAS```
 
-2. Select additional roles drop down **PUBLIC**
+2. Select additional roles drop down ```PUBLIC```
 
-3. Click **Get Data**
+3. Click ```Get Data```
 
 
 ![21](assets/sf-21-marketplace3.png)
 
 
-When the confirmation is provided click on done and then you can close the browser tab with the Preview App.
+
+When the confirmation is provided click on ```done``` and then you can close the browser tab with the Preview App.
+
 
 
 ![22](assets/sf-22-marketplace4.png)
 
 
-  Other advantage of using Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.After done just to confirm the datasets are properly configured.
+  Other advantage of using Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.
+  
+1. After done just to ```confirm``` the datasets are properly configured
 
 
- Click on Data tab **Database**
+2. Click on Data tab ```Database```
 
-You should see **KNOEMA_LABOR_DATA_ATLAS**  and **ML_DB**
+
+3. You should see ```KNOEMA_LABOR_DATA_ATLAS```  and ```ML_DB```
 
 ![23](assets/sf-23-marketplace5.png)
 
 
-After confirming **Databases**.  Lets go to **Worksheets tab** and **open** the **Data Loading** worksheet 
 
+After confirming ```Databases```.  Lets go to ```Worksheets tab``` and  then ```open``` the ```Data Loading```worksheet 
 
 
 
 ![24](assets/sf-24-marketplace6.png)
 
 
-**Step 6** :Querying the **Market Place dataset** for some basic analysis 
+**Step 6** : Querying the ```KNOEMA_LABOR_DATA_ATLAS```for some basic analysis 
 
 
-There are multiple datasets in **Labor Atlas dataset**. Lets try to find unemployment dataset in US to narrow down our search. 
+There are multiple datasets. Lets try to find unemployment dataset in US to narrow down our search. 
 
 ```
 USE WAREHOUSE ML_WH;
@@ -439,6 +465,7 @@ AND "DatasetName" ILIKE '%U.S%';
 
 
 ![22](assets/sf-22-marketplace4a.png)
+
 
 Amazing! We have successfully tapped into live data collection of the most important, used, and high-quality datasets on the labor market and human resources on national and sub-national levels from a dozen of sources.
 
@@ -457,10 +484,11 @@ SELECT * FROM "LABOR"."USUID2017Sep" WHERE "Region Name" = 'United States' AND
 
 
 
- Now for this exercise we are going to **Enrich** the **Loan dataset** we created earlier using the ```BLSLA``` dataset
+ Now for this exercise we are going to ```Enrich``` the ```Loan dataset``` we created earlier using the ```BLSLA``` dataset
 
 
-**Step 7** :Creating a **KNOEMA_EMPLOYMENT_DATA** marketplace data view to pivot the data for the different employment metrics to columns for easier consumption. 
+
+**Step 7** : Creating a ```KNOEMA_EMPLOYMENT_DATA``` marketplace data ```view```. We will ```pivot``` the data for the different employment metrics so it can be used easily for analysis. 
 
 ```
 USE DATABASE ML_DB;
@@ -487,7 +515,11 @@ SELECT * FROM KNOEMA_EMPLOYMENT_DATA LIMIT 100;
 
 ![25](assets/sf-25-marketplace7.png)
  
-**Step 8** : Create a new table **UNEMPLOYMENT DATA** using the geography and time periods. This will provide us with unemployment data in the region associated with the specific loan.
+We have succesfully created the view. 
+
+**Step 8** : Now in this step we will ```Create``` a new table  called ```UNEMPLOYMENT DATA``` using the geography and time periods by joining ```LOAN_DATA``` table created from ```S3``` and ```KNOEMA_EMPLOYMENT_DATA VIEW``` created in last step.
+
+This will provide us with unemployment data in the region associated with the specific loan.
 
 
 ```
@@ -509,48 +541,62 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 
                            ------- End of Part 2 ---------
 
-#### IMPORTANT: Database for Machine learning consumption will be created after connecting Snowflake with Dataiku using partner connect. 
 
 
+Negative
+: **Database for Machine learning consumption** <br>  This will be created after connecting Snowflake with Dataiku using partner connect...
 
 <!-- ------------------------ -->
 ## Connect Dataiku with Snowflake
 Duration: 8
 
 
-Verify that your user is operating under the Account Admin role.
+Go to ```home screen``` clicking on home button. 
 
-To do this:
-
-* Click your account name in the upper left-hand corner (if you are using the Classic Console this is top-right)
-
-* Choose **Switch Role** from the drop-down list
-
-* Click **ACCOUNTADMIN**
+![27](assets/SF-17.JPG)
 
 
 
+```Select``` the ```Admin``` from the list 
 
-![27](assets/SF-17.jpg)
-
-![28](assets/SF-16.jpg)
-
-
-* Click on the **Dataiku** tile. This will launch the following window, which will automatically create the **connection parameters** required for Dataiku to connect to Snowflake.
-
-Snowflake will create a dedicated database, warehouse, system user, system password and system role, with the intention of those being used by the Dataiku account.
+![27a](assets/SF-17a.png)
 
 
+
+
+For the ```next steps```
+
+
+1. ```Click``` the ```Partner Connect```
+
+2. From ```drop down```  switch role and make sure  ```ACCOUNTADMIN``` is selected 
+
+3. Search title type ```Dataiku```
+
+4. Click on the ```Dataiku``` tile.  
+
+Your screen should like below ```Screen Shot ```
+
+![28](assets/SF-16.png)
+
+
+After you have clicked on ```Dataiku```.  This will launch the following window, which will automatically create the ```connection parameters``` required for Dataiku to connect to Snowflake.
 
 ![29](assets/sf-27-partnerconnect1.png)
 
 
 
-We’d like to use the **PC_DATAIKU_USER** to connect from Dataiku to Snowflake, and use the **PC_DATAIKU_WH** when performing activities within Dataiku that are pushed down into Snowflake.
+Snowflake will create a dedicated database, warehouse, system user, system password and system role, with the intention of those being used by the Dataiku account.
 
-Note that the user password (which is autogenerated by Snowflake and never displayed), along with all of the other Snowflake connection parameters, are passed to the Dataiku server so that they will automatically be used for the Dataiku connection.  **DO NOT CHANGE THE PC_DATAIKU_USER** password, otherwise Dataiku will not be able to connect to the Snowflake database.
 
-Click on **Connect**. You may be asked to provide your first and last name.  If so, add them and click Connect. Your partner account has been created. Click on **Activate** to get it activated.
+We’d like to use the ```PC_DATAIKU_USER``` to connect from Dataiku to Snowflake, and use the ```PC_DATAIKU_WH```when performing activities within Dataiku that are pushed down into Snowflake.
+
+Note that the user password (which is autogenerated by Snowflake and never displayed), along with all of the other Snowflake connection parameters, are passed to the Dataiku server so that they will automatically be used for the Dataiku connection.  ```DO NOT CHANGE THE PC_DATAIKU_USER``` password, otherwise Dataiku will not be able to connect to the Snowflake database.
+
+
+Click on ```Connect```. You may be asked to provide your first and last name.  If so, add them and click Connect. Your partner account has been created. Click on ```Activate``` to get it activated.
+
+
 
 ![30](assets/dk-1_100_PC_created.png)
 
@@ -559,9 +605,10 @@ Click on **Connect**. You may be asked to provide your first and last name.  If 
 This will launch a new page that will redirect you to a launch page from Dataiku.
 Here, you will have two options:
 1) Login with an existing Dataiku username
+
 2) Sign up for a new Dataiku account
 
-We assume that you’re new to **Dataiku**, so ensure the “Sign Up” box is selected, and sign up with either GitHub, Google or your email address and your new password. 
+We assume that you’re new to ```Dataiku```, so ensure the “Sign Up” box is selected, and sign up with either GitHub, Google or your email address and your new password. 
 
 Click sign up. <<NOTE: ADD INSTRUCTION FOR EXISTING IN ADDITION>>
 
@@ -578,19 +625,19 @@ When using your email address, ensure your password fits the following criteria:
 
       **Numbers (i.e. 0-9)**
 
-Upon clicking on the activation link, please briefly review the Terms of Service of Dataiku Cloud. In order to do so, please scroll down to the bottom of the page. Click on **I AGREE**
+Upon clicking on the activation link, please briefly review the Terms of Service of Dataiku Cloud. In order to do so, please scroll down to the bottom of the page. Click on ```I AGREE```
 
 ![32](assets/dk-3_100_DKU_Online_T&Cs.png)
 
 
-Next, you’ll need to complete your sign up information then click on **Start**.
+Next, you’ll need to complete your sign up information then click on ```Start```.
 
 
 
 <!-- ![33](assets/dk-4_sign_in_details.png) -->
 
 
-You will be redirected to the Dataiku Cloud Launchpad site. Click **GOT IT!** to continue.
+You will be redirected to the Dataiku Cloud Launchpad site. Click ```GOT IT!``` to continue.
 
 
 
@@ -603,19 +650,31 @@ You will be redirected to the Dataiku Cloud Launchpad site. Click **GOT IT!** to
 
 
 
-You’ve now successfully set up your Dataiku trial account via Snowflake’s Partner Connect. We are now ready to continue with the lab. For this, move back to your Snowflake browser.
+You’ve now successfully set up your Dataiku trial account via Snowflake’s Partner Connect. We are now ready to continue with the lab. For this, move back to your ```Snowflake browser```.
 
 
 
-#### Database for Machine Learning
+## Database for Machine Learning
 
 
-After connecting  **Snowflake** to **Dataiku** via partner connect. We will clone the table created in **ML_DB** to **PC_DATAIKU_DB** for the Dataiku consumption. Snowflake provides a very unique feature called [Zero Copy Cloning](https://www.youtube.com/watch?v=yQIMmXg7Seg) that will create a new copy of the data by **only making a copy of the metadata of the objects**. This drastically speeds up creation of copies and also drastically reduces the storage space needed for data copies.
+After connecting  ```Snowflake``` to ```Dataiku``` via partner connect. We will clone the table created in ```ML_DB``` to ```PC_DATAIKU_DB``` for the Dataiku consumption. 
+
+Snowflake provides a very unique feature called [Zero Copy Cloning](https://www.youtube.com/watch?v=yQIMmXg7Seg) that will create a new copy of the data by ```only making a copy of the metadata of the objects```. This drastically speeds up creation of copies and also drastically reduces the storage space needed for data copies.
+
+
+You should see three database now  ```PC_DATAIKU_DB``` is the system generated database created. 
 
 
 ![36](assets/sf-28-partnerconnect2.png)
 
-You should see three database now  **PC_DATAIKU_DB** is the system generated database created. Go back to **Worksheet** you are working and run below commands. 
+
+You should see  ```PC_DATAIKU_USER``` is the system generated database created. 
+
+
+![36a](assets/sf-28-partnerconnect2b.png)
+
+
+Go back to ```Data_Loading Worksheet``` you are working and run below commands. 
 
 
 #### Granting Previlages of ML_DB to PC_Dataiku_role
@@ -645,12 +704,16 @@ CREATE OR REPLACE TABLE UNEMPLOYMENT_DATA CLONE ML_DB.PUBLIC.UNEMPLOYMENT_DATA;
 SELECT * FROM LOANS_ENRICHED LIMIT 10;
 ```
 
-After running above commands, we have created clones for the tables to be used for analysis. Kindly check **PC_DATAIKU_DB** you should have two datasets **LOANS_ENRICHED** and **UNEMPLOYMENT_DATA**
+After running above commands, we have created clones for the tables to be used for analysis. Kindly check ```PC_DATAIKU_DB``` 
+
+you should have two datasets ```LOANS_ENRICHED``` and ```UNEMPLOYMENT_DATA```
 
 ![37](assets/sf-29-partnerconnect4.png)
 
 
-#### Now lets move to Dataiku console for feature engineering, model building, Scoring and deployment. 
+Negative
+: **Move to Dataiku console** <br> For feature engineering, model building, Scoring and deployment. 
+
 
 <!-- ------------------------ -->
 ## Getting Started with a Dataiku Project
@@ -1161,6 +1224,7 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 
 ## Bonus Material - Snowpark -Python  
 Duration: 5
+
 To be added soon
 
 ## Data Dictionary
