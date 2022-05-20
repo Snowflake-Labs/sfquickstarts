@@ -303,120 +303,16 @@ Duration: 10
 
 At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer machine learning capabilities, and therefore, happily partners with the leading data science and machine learning partners in the industry. We are on a mission to help us figure out which of our customers are most likely to churn and DataRobot can help us build a machine learning model to answer that question.
 
-Snowflake's Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible. To get here, click our "Home" button and then navigate to "Admin" and then "Partner Connect". This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. Click the "Data Science & ML" category to see the two tools we will be using for this hands on lab: Zepl & DataRobot.
+Snowflake's Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible. To get here, click our "Home" button and then navigate to "Admin" and then "Partner Connect". This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. Click the "Data Science & ML" category and click "DataRobot".
 
 ![](assets/p62.png)
 <br/><br/>
 
-To get started, go ahead and click on the Zepl application. This will present you with a screen to connect to Zepl. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
-
-![](assets/p63.png)
-<br/><br/>
-
-You then will be prompted to activate your account now, press the blue "Activate" button to do so.
-
-![](assets/p64.png)
-
-This will launch a new tab to the Zepl platform. Of course, in this lab, we will be using both Zepl & DataRobot, so we will need to rinse and repeat. Again, find you way back to the Snowflake tab you have open and click "DataRobot". Again, we have all the Snowflake objects we need created already, so press "Connect".
+We have all the Snowflake objects we need created already, so press "Connect".
 
 ![](assets/p65.png)
 
 You will get an email to verify your account which will lead you to the create account page, don't verify it yet, let's wait until after the next activity.
-
-<!-- ------------------------ -->
-## Getting Started with Zepl - DataRobot notebooks in the cloud
-Duration: 2
-
-DataRobot Zepl the cloud data science notebook solution that enables advanced data scientists to do exploratory, code-centric work in Python, R, and Scala with enterprise features such as collaboration, versioning, and security. 
-
-In this exercise, we will use snowpark python and datarobot zepl notebook to do some EDA and visualizatoion
-
-First, let's configure Zepl:
-After creating your zepl account through the partner connect import the notebook that was preshared:
-
-Click on my My Notebooks
-
-![](assets/p66.png)
-<br/><br/>
-
-Import the notebook: press import on the right side, upload the notebook that was preshared and once the notebook appears in your screen press on the notebook name: Snowflake_HOL
-
-<!-- ------------------------ -->
-## Creating a Zepl Data Connection
-Duration: 2
-
-To create a data connection from a notebook do the following:
-1. Open the data sources sidebar by clicking the data sources icon on the right side of the notebook
-2. Click the Add new button at the top of the sidebar and select 'Secret store' 
-3. Fill in the fields:
-NAME: 'Snowflake_DR_HOL'
-KEY VALUES: 
-  Key: 'password'
-  Value: your snowflake account password
-And press on the button 'Add'
-
-You will see the new secret under the 'Attached to this notebook'
-
-![](assets/p67.png)
-<br/><br/>
-
-<!-- ------------------------ -->
-## Connect to Snowflake Snowpark
-Duration: 5
-
-To import the Snowpark library:
-1. Open the folder sidebar by clicking the folder icon on the right side of the notebook
-2. Import the Snowpark library that was preshared
-3. When you see the file, hover on the file and click the symbol '</>' and copy the path
-
-![](assets/p69.png)
-<br/><br/>
-
-4. Modify section1:
--Replace the path in line1 with the copied path
--Change the id number in line2 - the line id is teh id from the path
-
-Now you can run in the notebook sections 1-2:
-Section 1 will download and install the snowpark python package
-Section 2 will import the necessery packages
-
-5. Modify section3:
-
-account: change to your Snowflake account name (WITHOUT snowflakecomputing.com)
-user: change to your user name
-
-Now you can run sections 3-4:
-
-Section 3 will connect to snowflake where we created the training table
-
-![](assets/p68.png)
-<br/><br/>
-
-Section 4 will present the data in the training table we created in snowflake, query is running in Snowflake
-
-![](assets/p70.png)
-<br/><br/>
-
-<!-- ------------------------ -->
-## EDA on Zepl notebook using python for snowpark
-Duration: 2
-
-In the notebook, run section 5
-This section will create a new feature to identify if a user is more active at night or day.
-That can contribute to our model, yo understand things like - why this user churn, when to send this use promotions, etc.
-using python for snowpark, using the snowflake compute.
-The results will be overwrtie the train table in Snowflake
-
-
-Go back to your snowflake account and run again the sql:
-'SELECT
-    *
-FROM
-    train_data
-LIMIT 10;'
-
-![](assets/p71.png)
-<br/><br/>
 
 <!-- ------------------------ -->
 ## Getting Started with DataRobot
@@ -493,7 +389,13 @@ Duration: 10
 
 When we want to take some data and leave with a model to deploy, the culmination of all these steps are stored in a DataRobot "project." A new project is kicked off as soon as you load your data into the system, just like we did. When your data is upload, DataRobot then begins performing exploratory data analysis (EDA), the first step in a typical machine learning lifecycle. This is a combination of detecting the data types and showing the number of unique, missing, mean, median, standard deviation, and minimum and maximum values. This information is helpful for getting a sense of the data shape and distribution.
 
-If we scroll down to the bottom, we can see all of the columns that were present in our raw dataset.
+
+If we scroll down we can see that automated data quality check:
+
+![](assets/dr24.png)
+<br/><br/>
+
+And underneath, we can see all of the columns that were present in our raw dataset.
 
 Click on the feature called `TOTAL_DAY_MINS` and you will see the following histogram:
 
@@ -685,9 +587,157 @@ If you click the hamburger icon again and go to “View job history” you can s
 ![](assets/dr30.png)
 <br/><br/>
 
-We can now finally head back to our Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the `SCORED_DATA` table that was created once we kicked off our prediction job. If you click "Preview Data," you will see our data with two new columns showing the likelihood that each person is likely to churn or stay.
+We can now finally head back to our Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the `SCORED_DATA` table that was created once we kicked off our prediction job. If you excecute the query:
+
+'SELECT
+    *
+FROM
+    customer_data.public.scored_dat;'
+
+You will see our data with three new columns: 'CHURN_True_Prediction', 'CHURN_False_Prediction' showing the likelihood that each person is likely to churn or stay, and the decision in the column 'CHURN_PREDICTION'
+
+Pressing on the 'CHURN_PREDICTION'column, on the right side, we can see that snowflake snowsight presents statistics - In this case, looks like 430 (which is 17.5%) of the customers for this dataset are likely to churn. It also offers additional charts for further analysis.
 
 ![](assets/dr25.png)
 <br/><br/>
 
 And as they say, that is all folks!
+
+For the advanced python users you can keep the lab to see how to use python for snowpark togetehr with DataRobot.
+
+## Connecting Snowflake with Zepl - DataRobot notebooks in the cloud
+
+Duration: 2
+
+Go back to the partner connect section in Snowflake and click the "Data Science & ML" category and click "Zepl"
+
+![](assets/p62.png)
+<br/><br/>
+
+This will present you with a screen to connect to Zepl. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
+
+![](assets/p63.png)
+<br/><br/>
+
+You then will be prompted to activate your account now, press the blue "Activate" button to do so.
+
+![](assets/p64.png)
+
+This will launch a new tab to the Zepl platform. 
+<!-- ------------------------ -->
+## Getting Started with Zepl - DataRobot notebooks in the cloud
+Duration: 2
+
+DataRobot Zepl the cloud data science notebook solution that enables advanced data scientists to do exploratory, code-centric work in Python, R, and Scala with enterprise features such as collaboration, versioning, and security. 
+
+In this exercise, we will use snowpark python and datarobot zepl notebook to do some EDA and visualizatoion
+
+First, let's configure Zepl:
+After creating your zepl account through the partner connect download the following notebook:
+
+<button>
+  [Download the notebook](https://app.zepl.com/viewer/notebooks/bm90ZTovL2F0YWxpYS5ob3JlbnNodGllbkBkYXRhcm9ib3QuY29tLzAxYjY3NjdiMDk0ZDQwZjE5YmI1Njg1MjJlODI2MDJjL25vdGUuanNvbg)
+</button>
+
+Click on my My Notebooks
+
+![](assets/p66.png)
+<br/><br/>
+
+Import the notebook: press import on the right side, upload the notebook that was preshared and once the notebook appears in your screen press on the notebook name: Snowflake_HOL
+
+
+<!-- ------------------------ -->
+## Creating a Zepl Data Connection
+Duration: 2
+
+To create a data connection from a notebook do the following:
+1. Open the data sources sidebar by clicking the data sources icon on the right side of the notebook
+2. Click the Add new button at the top of the sidebar and select 'Secret store' 
+
+![](assets/p42.png)
+<br/><br/>
+
+3. Fill in the fields:
+
+a. NAME: 'Snowflake_DR_HOL'
+b. KEY VALUES: 
+
+  Key: 'password'
+  
+  Value: your snowflake account password
+  
+And press on the button 'Add'
+
+![](assets/p41.png)
+<br/><br/>
+
+You will see the new secret under the 'Attached to this notebook'
+
+![](assets/p67.png)
+<br/><br/>
+
+<!-- ------------------------ -->
+## Connect to Snowflake Snowpark
+Duration: 5
+
+Download the Snowpark library:
+<button>
+  [Download the Snowpark library](https://drive.google.com/file/d/15kVt0XtGIKl7CrN27jpUHwcW4MvdIdiA/view?usp=sharin)
+</button>
+
+To import the Snowpark library:
+1. Open the folder sidebar by clicking the folder icon on the right side of the notebook
+2. Import the Snowpark library that was preshared
+3. When you see the file, hover on the file and click the symbol '</>' and copy the path
+
+![](assets/p69.png)
+<br/><br/>
+
+4. Modify Section1:
+-Replace the path in line1 with the copied path
+-Change the id number in line2 - the line id is teh id from the path
+
+Now you can run in the notebook Sections 1-2:
+Section 1 will download and install the snowpark python package
+Section 2 will import the necessery packages
+
+5. Modify Section3:
+
+account: change to your Snowflake account name (WITHOUT snowflakecomputing.com)
+user: change to your user name
+
+Now you can run Sections 3-4:
+
+Section 3 will connect to snowflake where we created the training table
+
+![](assets/p68.png)
+<br/><br/>
+
+Section 4 will present the data in the training table we created in snowflake, query is running in Snowflake
+
+![](assets/p70.png)
+<br/><br/>
+
+<!-- ------------------------ -->
+## EDA on Zepl notebook using python for snowpark
+Duration: 2
+
+In the notebook, run Section 5
+This section will create a new feature to identify if a user is more active at night or day.
+That can contribute to our model, yo understand things like - why this user churn, when to send this use promotions, etc.
+using python for snowpark, using the snowflake compute.
+The results will be overwrtie the train table in Snowflake
+
+
+Go back to your snowflake account and run again the sql:
+'SELECT
+    *
+FROM
+    train_data
+LIMIT 10;'
+
+![](assets/p71.png)
+<br/><br/>
+
+<!-- ------------------------ -->
