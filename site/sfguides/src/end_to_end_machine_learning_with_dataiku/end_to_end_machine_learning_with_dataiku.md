@@ -95,9 +95,7 @@ After registering, you will receive an ```email```with an ```activation``` link 
 ![4](assets/SF-4.jpg)
 
 
-After activation, you will create a ```user name```and ```password```. Write down these credentials
-
-```Bookmark this URL for easy, future access```
+After activation, you will create a ```user name```and ```password```. Write down these credentials. ```Bookmark this URL for easy, future access```.
 
 ![5](assets/sf-5-user_id_password.png)
 
@@ -108,14 +106,12 @@ Duration: 5
 
 #### Step 1
 
-Log in with your credentials
+Log in with your credentials. ```Bookmark this URL for easy, future access```.
 
 
 
 
 ![6](assets/sf-6-login.png)
-
-```Bookmark this URL for easy, future access```
 
 Resize your browser window, so that you can view this guide and your web browser side-by-side and follow the lab instructions. If possible, use a secondary display dedicated to the lab guide.
 
@@ -561,11 +557,10 @@ Go to ```home screen``` clicking on home button.
 ![27](assets/SF-17.JPG)
 
 
+`Select` the `Admin` from the list.
 
-```Select``` the ```Admin``` from the list 
 
 ![27a](assets/SF-17a.png)
-
 
 
 
@@ -1186,18 +1181,16 @@ Your final project flow should now look like this.
 
 We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the ```CREDIT_SCORING_LOANS_TEST_SCORED``` table that was created once we kicked off our prediction job. 
 
-```Preview Data``` will give you glimpse of additional column added to the list.
+`Preview Data` will give you glimpse of additional column added to the list.
 
 
 ```
 USE ROLE SYSADMIN;
 USE DATABASE PC_DATAIKU_DB;
 USE WAREHOUSE PC_DATAIKU_WH;
-
 SELECT * 
 FROM LOANS_TEST_SCORED_CREDITSCORING 
 LIMIT 10;
-
 ```
 
 ![62](assets/sf-score-results.png)
