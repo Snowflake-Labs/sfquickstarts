@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: DataRobot, AutoML, Partner Connect, Databases, Tables, Stages, File Formats
 
-# Accelerating Data Science with Snowflake and DataRobot
+# Accelerating Machine Learning with Snowflake and DataRobot
 
 <!-- ------------------------ -->
 ## Use Case Overview
