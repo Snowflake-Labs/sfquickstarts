@@ -369,9 +369,6 @@ Negative
 : **About the screen captures, sample code, and environment** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
 
 
-                              ------- End of Part 1 ---------
-
-
 
 **Step 5** : Time to switch to get ```Konema Employement Data``` from Snowflake Market place
 
@@ -539,9 +536,6 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 
 ```
 ![26](assets/sf-26-marketplace8.png)
-
-                           ------- End of Part 2 ---------
-
 
 
 Negative
