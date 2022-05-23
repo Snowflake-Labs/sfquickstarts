@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: DataRobot, AutoML, Partner Connect, Databases, Tables, Stages, File Formats
 
-# Accelerating Machine Learning with Snowflake and DataRobot
+# AutoML with Snowflake and DataRobot
 
 <!-- ------------------------ -->
 ## Use Case Overview
@@ -312,13 +312,15 @@ We have all the Snowflake objects we need created already, so press "Connect".
 
 ![](assets/p65.png)
 
-You will get an email to verify your account which will lead you to the create account page, don't verify it yet, let's wait until after the next activity.
-
 <!-- ------------------------ -->
 ## Getting Started with DataRobot
 Duration: 10
 
-Go to your email, and verify your account, you will be redirected to the DataRobot account registration page. DataRobot is software-as-a-service (SaaS) application deployed on the cloud for your convenience, allowing you to build machine learning models without having to provision and manage any compute infrastructure. Go ahead and enter your name and password, and then click "Sign Up" for us to proceed.
+Go to your email, and verify your account, you will be redirected to the DataRobot account registration page. 
+
+![](assets/p43.png)
+
+DataRobot is software-as-a-service (SaaS) application deployed on the cloud for your convenience, allowing you to build machine learning models without having to provision and manage any compute infrastructure. Go ahead and enter your name and password, and then click "Sign Up" for us to proceed.
 
 ![](assets/p25.png)
 <br/><br/>
@@ -333,7 +335,7 @@ We are interested in developing models, so lets go ahead and choose "Create AI M
 ![](assets/p27.png)
 <br/><br/>
 
-We will now land on the DataRobot main home page. Feel free to take a peak around. You can always get back to this screen by clicking on the "DataRobot" icon at the top left of the screen. On the top right of the screen, you will see a bunch of orange icons. On the very right, you should see the "people" icon. It will take us to a bunch of options regarding our account. The item we are interested in is "Data Connections." Go ahead and click.
+We will now land on the DataRobot main home page. Feel free to take a peak around. You can always get back to this screen by clicking on the "DataRobot" icon at the top left of the screen. On the top right of the screen, you will see a bunch of orange icons. On the very right, you should see the "people" icon. It will take us to a bunch of options regarding our account. 
 
 <!-- ------------------------ -->
 ## Creating a DataRobot Data Connection
@@ -344,7 +346,7 @@ To start a new ML project - on the top right click on the button '+ Create new p
 ![](assets/p28.png)
 <br/><br/>
 
-To import the data for the ML project press the button 'Data Source' - We will be creating the connection that maps to the context we were using when in the Snowflake platform.
+To import the data for the ML project click the button 'Data Source' - We will be creating the connection that maps to the context we were using when in the Snowflake platform.
 
 ![](assets/p29.png)
 <br/><br/>
@@ -364,21 +366,21 @@ We now will have a bunch of fields to fill in. The first is "Data connection nam
 ![](assets/p35.png)
 <br/><br/>
 
-From here you will now see your new data connection. We now need to associate our Snowflake login to this connection. If we didnt, anyone with the deployment URL could use the connection string!
+From here you will now see your new data connection. We now need to associate our Snowflake login to this connection. If we didnt, anyone with the deployment URL could use the connection string! 
 
-Enter your credentials - user name and password and press 'Save and sign in'
+Enter your credentials - user name and password and click 'Save and sign in'
 
-Once the connection succeeded press on 'Add new data source'
+Once the connection succeeded click on 'Add new data source'
 
 ![](assets/p36.png)
 <br/><br/>
 
-Once the connection succeeded press on 'Add new data source'
+Once the connection succeeded click on 'Add new data source'
 
 ![](assets/p37.png)
 <br/><br/>
 
-On the Search by: choose Tables and type 'train' - you will see the table 'TRAIN_DATA', select this table and press 'Create project'
+On the Search by: choose Tables and type 'train' - you will see the table 'TRAIN_DATA', select this table and click 'Create project'
 
 ![](assets/p38.png)
 <br/><br/>
@@ -439,18 +441,18 @@ And of course, recommends a model for deployment.
 ![](assets/dr4.png)
 <br/><br/>
 
-Let's take a 5 min break, and when we come back, we will analyze the results.
+Let's take a 5 min break, and when we come back, we will analyze the results. 
 <!-- ------------------------ -->
 ## Evaluating the "Recommended For Deployment" Model
 Duration: 10
 
 Let's 'star' the first model in the leadeboard. This is the model that was the most optimal given our chosen optimization metric. To start evaluating it, we can click on the model which will present use with the following options: Evaluate, Understand, Describe, and Predict (​additional tabs may be present based on extra features that are enabled).
 
-Before we deep dive on each tab let's go to the Understand tab > Feature Effects and press 'compute feature effect'
+Before we deep dive on each tab let's go to the Understand tab > Feature Effects and click 'Compute Feature Effects'
 
 DataRobot offers superior transparency, interpretability, and explainability to help you better understand how models were built and give you the confidence to explain to others why a model made the predictions it did. If we go back and click the “D​escribe”​ tab, you can view the end-to-end model blueprint containing details of the specific feature engineering tasks and algorithms DataRobot used to run the model. In addition to an automated compliance report (In non trial accounts)
 
-In non trial accounts this flow can be customized - Composable ML provides a full-flexibility approach to model building, allowing you to direct your data science and subject matter expertise to the models you build. With Composable ML, you build blueprints that best suit your needs using built-in tasks and custom Python/R code.
+In non trial accounts this flow can be customized - Composable ML provides a full-flexibility approach to model building, allowing you to direct your data science and subject matter expertise to the models you build. With Composable ML, you build blueprints that best suit your needs using built-in tasks and custom Python/R code. 
 
 ![](assets/dr9.png)
 <br/><br/>
@@ -504,8 +506,8 @@ If you click the number in the "Prediction Threshold" box, you can see a few dif
 ![](assets/dr15.png)
 <br/><br/>
 
-Here we are presented with a bunch of options to tweak our deployment.
-The model can be deploy to any prediction server - even deploy to Snowflake
+Here we are presented with a bunch of options to tweak our deployment. 
+The model can be deploy to any prediction server - even deploy to Snowflake 
 
 Scroll down to the main section "Association ID." Here we want to type in `CUST_ID`. This is going to allow use to track predictions by customer when we go to monitor our model.
 
@@ -513,42 +515,43 @@ Then go ahead and toggle the "Require association ID in prediction requests" and
 
 ![](assets/dr16.png)
 <br/><br/>
-
-All our options are enabled except for 'Continuous AI'
-
+ 
+Scroll back up. We will see all of our boxes are green except for 'Continuous AI'
 ![](assets/dr17.png)
 <br/><br/>
 
-To maintain model performance after deployment without extensive manual work, DataRobot provides an automatic retraining capability for deployments.
+To maintain model performance after deployment without extensive manual work, DataRobot provides an automatic retraining capability for deployments. (we won't test it today)
 
-Scroll back up. We will see all of our boxes are green. Click "Create Deployment"
+Click "Create Deployment"
 
 This will present us with a screen to give a priority setting to this deployment. We can skip and click "Create deployment." This may take a couple of minutes to create the deployment.
 
 ![](assets/dr18.png)
 <br/><br/>
 
-After creating the new deployment - press on 'return to deployments'
+After creating the new deployment - click on 'return to deployments'
 
 ![](assets/p39.png)
 <br/><br/>
 
-The Deployments Inventory shows the real-time status of all deployed models, regardless of where they have been trained or deployed. Here you can manage, monitor, and govern your deployed models and seeing at a glance which models are stale, preventing risk to your business.
+The Deployments Inventory shows the real-time status of all deployed models, regardless of how they were created or when and where they were deployed.. Here you can manage, monitor, and govern your deployed models and seeing at a glance which models are stale, preventing risk to your business.
 
-And now we have one active deployment. Go ahead and click on it again.
+And now we have one active deployment. Go ahead and click on it.
 
 ![](assets/dr19.png)
 <br/><br/>
+
+We have different capabilities as part of MLOps, including service health, data drift, accuracy, Embedded Governance, Humility, Fairness and more, that we won't cover today. 
 
 Go to the "Predictions" tab then "Job Definitions" tab and click on "+Add job definition".
 
 ![](assets/dr20.png)
 <br/><br/>
 
-We will start setting up our job definition.
+We will start setting up our job definition. 
 
-Press on '+ Define connection' next to the Prediction source and choose the 'Snowflake HOL' connection and your user.
-On the Search by: choose Tables and type 'scoring' - you will see the table 'SCORING_DATA', select this table and press 'Save connection'
+click on '+ Define connection' next to the Prediction source and choose the 'Snowflake HOL' connection and your user.
+On the Search by: choose Tables and type 'scoring' - you will see the table 'SCORING_DATA', select this table and click 'Save connection'
 
 ![](assets/dr21.png)
 <br/><br/>
@@ -568,9 +571,9 @@ Repeat the process as before in the "Prediction Source"  and on tables create a 
 ![](assets/dr26.png)
 <br/><br/>
 
-Go ahead and click “Create a table”
-Schema: 'CUSTOMER_DATA.PUBLIC'
-name: SCORED_DATA' and press 'Save connection'
+Go ahead and click “Create a table” 
+Schema: 'CUSTOMER_DATA.PUBLIC' 
+name: SCORED_DATA' and click 'Save connection'
 
 ![](assets/dr27.png)
 <br/><br/>
@@ -596,7 +599,7 @@ FROM
 
 You will see our data with three new columns: 'CHURN_True_Prediction', 'CHURN_False_Prediction' showing the likelihood that each person is likely to churn or stay, and the decision in the column 'CHURN_PREDICTION'
 
-Pressing on the 'CHURN_PREDICTION'column, on the right side, we can see that snowflake snowsight presents statistics - In this case, looks like 430 (which is 17.5%) of the customers for this dataset are likely to churn. It also offers additional charts for further analysis.
+Click on the 'CHURN_PREDICTION'column, on the right side, we can see that snowflake snowsight presents statistics - In this case, looks like 430 (which is 17.5%) of the customers for this dataset are likely to churn. It also offers additional charts for further analysis.
 
 ![](assets/dr25.png)
 <br/><br/>
@@ -614,21 +617,21 @@ Go back to the partner connect section in Snowflake and click the "Data Science 
 ![](assets/p62.png)
 <br/><br/>
 
-This will present you with a screen to connect to Zepl. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
+This will present you with a screen to connect to Zepl. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can click "Connect" .
 
 ![](assets/p63.png)
 <br/><br/>
 
-You then will be prompted to activate your account now, press the blue "Activate" button to do so.
+You then will be prompted to activate your account now, click the blue "Activate" button to do so.
 
 ![](assets/p64.png)
 
-This will launch a new tab to the Zepl platform.
+This will launch a new tab to the Zepl platform. 
 <!-- ------------------------ -->
 ## Getting Started with Zepl - DataRobot notebooks in the cloud
 Duration: 2
 
-DataRobot Zepl the cloud data science notebook solution that enables advanced data scientists to do exploratory, code-centric work in Python, R, and Scala with enterprise features such as collaboration, versioning, and security.
+DataRobot Zepl the cloud data science notebook solution that enables advanced data scientists to do exploratory, code-centric work in Python, R, and Scala with enterprise features such as collaboration, versioning, and security. 
 
 In this exercise, we will use snowpark python and datarobot zepl notebook to do some EDA and visualizatoion
 
@@ -644,7 +647,7 @@ Click on my My Notebooks
 ![](assets/p66.png)
 <br/><br/>
 
-Import the notebook: press import on the right side, upload the notebook that was preshared and once the notebook appears in your screen press on the notebook name: Snowflake_HOL
+Import the notebook: click import on the right side, upload the notebook that was preshared and once the notebook appears in your screen click on the notebook name: Snowflake_HOL
 
 
 <!-- ------------------------ -->
@@ -653,7 +656,7 @@ Duration: 2
 
 To create a data connection from a notebook do the following:
 1. Open the data sources sidebar by clicking the data sources icon on the right side of the notebook
-2. Click the Add new button at the top of the sidebar and select 'Secret store'
+2. Click the Add new button at the top of the sidebar and select 'Secret store' 
 
 ![](assets/p42.png)
 <br/><br/>
@@ -661,13 +664,14 @@ To create a data connection from a notebook do the following:
 3. Fill in the fields:
 
 a. NAME: 'Snowflake_DR_HOL'
-b. KEY VALUES:
+
+b. KEY VALUES: 
 
   Key: 'password'
-
+  
   Value: your snowflake account password
-
-And press on the button 'Add'
+  
+And click on the button 'Add'
 
 ![](assets/p41.png)
 <br/><br/>
@@ -695,16 +699,21 @@ To import the Snowpark library:
 <br/><br/>
 
 4. Modify Section1:
+
 -Replace the path in line1 with the copied path
+
 -Change the id number in line2 - the line id is teh id from the path
 
 Now you can run in the notebook Sections 1-2:
+
 Section 1 will download and install the snowpark python package
+
 Section 2 will import the necessery packages
 
 5. Modify Section3:
 
 account: change to your Snowflake account name (WITHOUT snowflakecomputing.com)
+
 user: change to your user name
 
 Now you can run Sections 3-4:
