@@ -50,9 +50,13 @@ In this lab we’ll be transforming raw retail data into a consumable orders mod
 
 ![Architecture Overview](assets/architecture_diagram.png)
 
+Here's a sneak peak of the model lineage that we'll be creating using dbt!
+
+![Project Lineage](assets/project_lineage.png)
+
 <!-- ------------------------ -->
 
-## Snowflake Configuration
+## Let's Get Started With Snowflake
 Duration: 5
 
 1. To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
@@ -70,26 +74,17 @@ Once your account is created you’ll receive an email confirmation. Within that
 
     ![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
 
-    If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
+5. Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html). <br>
 
-    ```sql
-    create database snowflake_sample_data from share sfc_samples.sample_data;
-    ```
-
-    You should now see the database as one of your database objects, with associated schemas within it. 
-
-5. Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, `TPCH_SF1`. <br>
-
-    ![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
+![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
 
 6. Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
 
-    ```sql
+    ```
     select *
       from snowflake_sample_data.tpch_sf1.orders
      limit 100
     ```
-
 
     You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
 
@@ -97,33 +92,36 @@ Once your account is created you’ll receive an email confirmation. Within that
 
 <!-- ------------------------ -->
 
-## dbt Configuration
+## Launching dbt Cloud via Partner Connect
 Duration: 5
 
 1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
 2. In the Snowflake UI, click on the home icon in the top left hand corner of the screen. To access Partner Connect, click on your user and then click `Partner Connect`. 
 
-![Open Partner Connect](assets/Snowflake_open_partner_connect.png)
+    ![Open Partner Connect](assets/Snowflake_open_partner_connect.png)<br>
 
-Check to make sure your role is set as the ACCOUNTADMIN role. If you're using the classic console, the Partner Connect button will be in the top bar just right of center.
+    Check to make sure your role is set as the ACCOUNTADMIN role. If you're using the classic console, the Partner Connect button will be in the top bar just right of center.
 
 3. Find the dbt tile by typing `dbt` into the `Search Partner Connect` search bar. Click on the dbt tile.
 
-![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
+    ![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
 
-4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
+4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
 
-![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
+    ![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
 
 5. When you see the popup that says `Your partner account has been created`, click on `Activate`.
 
-![Activate Partner Connect](assets/snowflake_activate_partner_connect.png)
+    ![Activate Partner Connect](assets/snowflake_activate_partner_connect.png)
 
 6. You should be redirected to a dbt Cloud registration page. Fill out the form and make sure to save the password somewhere for login in the future.
-![dbt Cloud Registration](assets/dbt_Cloud_registration.png)
+
+    ![dbt Cloud Registration](assets/dbt_Cloud_registration.png)
 
 7. Click on `Complete Registration`. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
+
+    ![dbt Cloud Home Page](assets/dbt_Cloud_home_page.png)
 
 8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
 
@@ -445,7 +443,7 @@ Here we have renaming similar to what we did in the first staging model, as well
 
 ![Source Function](assets/dbt_Cloud_source_function.png)
 
-There are a number of reasons why the source function is used instead of a hardcoded database reference, but one to highlight here is that it creates a dependency between our source database object and our staging models. This is going to be really important when we take a look at our data lineage later on in the workshop. Defining sources and referring to them with the source function also allows you to test and document those sources as you can with any other model in your project that you build on top of your sources. Also, if your source changes database or schema, you only have to update it in your `tpch_sources.yml` file rather than updating all of the models it might be used in.
+There are a number of reasons why the source function is used instead of a hardcoded database reference, but one reason to highlight here is that it creates a dependency between our source database object and our staging models. This is going to be really important when we take a look at our data lineage later on in the workshop. Defining sources and referring to them with the source function also allows you to test and document those sources as you can with any other model in your project that you build on top of your sources. Also, if your source changes database or schema, you only have to update it in your `tpch_sources.yml` file rather than updating all of the models it might be used in.
 
 5. Now that the staging models are built and saved, it’s time to create the models in our development schema in Snowflake. To do this we’re going to pass the `dbt run` command at the command line to run all of the models in our project, which includes the two new staging models and the existing example models. 
 
@@ -836,7 +834,7 @@ Duration: 12
 
 Now that we’ve built out our models and transformations, it’s really important to document and test them. This ensures we catch any errors that violate our assumptions about our data models and provides a guide to anyone else that comes across our work and wants to understand what we built. dbt’s native features include both a data testing and documentation framework to help us accomplish all of our documentation and testing needs.
 
-Testing in dbt comes in two flavors: generic and singular. A singular test is testing in its simplest form: if you can write a SQL query that returns failing rows, it’s a dbt test that can be executed by the dbt test command. Generic tests are basically the same, but with the ability to accept arguments. You define them in a test block (similar to a macro) and once defined, you can reference them by name in your .yml files (applying them to models, columns, sources, snapshots, and seeds). dbt ships with four generic tests that work out of the box that we’re going to use here: `unique`, `not null`, `accepted values`, and `relationships`. We’re also going to write our own singular test to understand a flavor of custom testing in dbt.  And while we won’t cover them in this workshop, you can also access other generic tests from packages like the dbt_utils package as well as [dbt_expectations](https://hub.getdbt.com/calogica/dbt_expectations/latest/), which brings tests inspired by the Great Expectations python package into dbt. 
+Testing in dbt comes in two flavors: generic and singular. A [singular test](https://docs.getdbt.com/docs/building-a-dbt-project/tests#singular-tests) is testing in its simplest form: if you can write a SQL query that returns failing rows, it’s a dbt test that can be executed by the dbt test command. [Generic tests](https://docs.getdbt.com/docs/building-a-dbt-project/tests#generic-tests) are basically the same, but with the ability to accept arguments. You define them in a test block (similar to a macro) and once defined, you can reference them by name in your .yml files (applying them to models, columns, sources, snapshots, and seeds). dbt ships with four generic tests that work out of the box that we’re going to use here: `unique`, `not null`, `accepted values`, and `relationships`. We’re also going to write our own singular test to understand a flavor of custom testing in dbt.  And while we won’t cover them in this workshop, you can also access other generic tests from packages like the dbt_utils package as well as [dbt_expectations](https://hub.getdbt.com/calogica/dbt_expectations/latest/), which brings tests inspired by the Great Expectations python package into dbt. 
 
 
 When it comes to documentation, dbt brings together both column and model level descriptions that you can provide as well as details from your Snowflake information schema in a static site for consumption by other data team members and stakeholders.
