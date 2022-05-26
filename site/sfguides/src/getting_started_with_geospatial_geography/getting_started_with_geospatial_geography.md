@@ -35,6 +35,9 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 ### What You’ll Build 
 - A sample use case that involves points-of-interest in New York City.
 
+Negative
+: The Marketplace data used in this QuickStart changes from time-to-time, and as such, your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
+
 <!-- ------------------------ -->
 ## Acquire Marketplace Data
 Duration: 20
@@ -77,9 +80,9 @@ Be sure to change the `Suspend After (min)` field to 1 min to avoid wasting comp
 
 Now you can acquire sample geospatial data from the Snowflake Marketplace.
 
-- Navigate to the `Data > Marketplace` screen using the menu on the left side of the window
+- Navigate to the `Marketplace` screen using the menu on the left side of the window
 - Search for `OpenStreetMap New York` in the search bar
-- Click the `Sonra OpenStreetMap New York` tile (should be the first tile in the list)
+- Find and click the `Sonra OpenStreetMap New York` tile
 
 ![marketplace-listing-image](assets/snowflake_listing.png)
 
@@ -249,7 +252,7 @@ file_format=(type=csv field_optionally_enclosed_by='"')
 single=true overwrite=true;
 ```
 
-Run that query above and you should see an output that indicates 848 rows were unloaded.
+Run that query above and you should see an output that indicates the number of rows were unloaded.
 
 Run the second unload query below, which adds some filtering to the output query and a parser:
 
@@ -310,7 +313,7 @@ copy into electronics_all from @~/osm_ny_shop_electronics_all.csv
 file_format=(format_name='geocsv');
 ```
 
-You should see 848 rows loaded successfully into the table with 0 errors seen.
+You should see all rows loaded successfully into the table with 0 errors seen.
 
 Now turn your attention to the other 'points' file. If you recall, you used `ST_X` and `ST_Y` to make discrete longitude and latitude columns in this file. It is not uncommon to receive data which contains these values in different columns, and you can use the `ST_MAKEPOINT` constructor to combine two discrete longitude and latitude columns into one `GEOGRAPHY` typed column. Run this query:
 
@@ -818,14 +821,14 @@ from v_osm_ny_shop sh
 join search_area sa on st_within(sh.coordinates,sa.polygon);
 ```
 
-You should see the 13 results below (WKT output is shown below for readability):
+You should see similar results as below, though the number of rows may be different (WKT output is shown below for readability):
 
 ![polygon-results-image](assets/snowflake_inside_polygon_results.png)
 
 And your final step will be to construct a single geospatial object that includes both the `POLYGON` you created as well as a `POINT` for every shop inside the `POLYGON`. This single object is known as a `GEOMETRYCOLLECTION`, which a geospatial type that can hold any combination of geospatial objects as one grouping. To create this object, you will do the following:
 
-- Create a CTE that unions the `POLYGON` query with the above query that finds shops inside the polygon, keeping only the necessary `coordinates` column in the latter query for simplicity. This CTE will produce 1 row for the `POLYGON` and 13 rows for each individual shop `POINT` inside the `POLYGON`.
-- Use `ST_COLLECT` to aggregate the 14 rows above (1 `POLYGON`, 13 `POINTS`) into a single `GEOMETRYCOLLECTION`.
+- Create a CTE that unions the `POLYGON` query with the above query that finds shops inside the polygon, keeping only the necessary `coordinates` column in the latter query for simplicity. This CTE will produce 1 row for the `POLYGON` and rows for each individual shop `POINT` inside the `POLYGON`.
+- Use `ST_COLLECT` to aggregate the rows above (1 `POLYGON`, all the `POINTS`) into a single `GEOMETRYCOLLECTION`.
 
 Run the query below:
 
@@ -899,7 +902,7 @@ join search_area sa on st_within(sh.coordinates,sa.polygon)))
 select st_collect(polygon) from final_plot;
 ```
 
-Copy the result cell from the above query and paste it into geojson.io. You should get this:
+Copy the result cell from the above query and paste it into geojson.io. You should get something similar to this (your image may have more/less points):
 
 ![polygon-full-image](assets/playground_polygon_full.png)
 
