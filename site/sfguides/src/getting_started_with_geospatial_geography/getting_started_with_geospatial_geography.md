@@ -252,7 +252,7 @@ file_format=(type=csv field_optionally_enclosed_by='"')
 single=true overwrite=true;
 ```
 
-Run that query above and you should see an output that indicates the number of rows were unloaded.
+Run the query above and you should see an output that indicates the number of rows that were unloaded.
 
 Run the second unload query below, which adds some filtering to the output query and a parser:
 
@@ -340,7 +340,7 @@ copy into electronics_points from (
 ) file_format=(format_name='geocsv');
 ```
 
-You should see 728 rows loaded successfully into the table with 0 errors seen.
+You should see all rows loaded successfully into the table with 0 errors seen.
 
 Positive
 : In the 'all' file load statement, you didn't have to specify a query to load the file because when you have a column in a file that is already in a Snowflake supported geospatial format, and load that value into a `GEOGRAPHY` typed column, Snowflake automatically does the geospatial construction for you. In the 'points' file, however, you must use a transform query to construct two discrete columns into a single `GEOGRAPHY` column using a geospatial constructor function.
