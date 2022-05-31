@@ -140,6 +140,8 @@ curl "http://localhost:5000/trips/day_of_week" | jq
 curl "http://localhost:5000/trips/temperature" | jq
 ```
 
+If these endpoints are not working and you are on macOS, make sure [port 5000 is not in use](https://www.reddit.com/r/webdev/comments/qg8yt9/apple_took_over_port_5000_in_the_latest_macos/). 
+
 To test the query string parameters you can use the following:
 
 ```bash
