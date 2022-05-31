@@ -51,7 +51,7 @@ Duration: 5
 
 1. Install conda to manage a separate environment by running `pip install conda`. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 
-2. Create environment by running `conda create --name snowpark python=3.8`
+2. Create environment by running `conda create --name snowpark python=3.8 -c`
 
 3. Activate conda environment by running `conda activate snowpark`
 
@@ -296,7 +296,7 @@ Here are a couple of tips and tricks to note:
 
 - You can change the theme (light or dark) by clicking on the hamburger menu on the top right and then clicking on the **Settings** menu
 - Making any changes to the source script and saving it will automatically prompt you to **Rerun** the application in the browser without having to stop and restart the application at the command line. (This can also be configured to always rerun the app without a prompt.)
-- You can use Streamlit's `st.session_state` to save objects like `snowflake.snowpark.session import Session` so it's only created once during a session. For example:
+- You can use Streamlit's `st.session_state` to save objects like `snowflake.snowpark.Session` so it's only created once during a session. For example:
 
 ```python
 if "snowpark_session" not in st.session_state:
