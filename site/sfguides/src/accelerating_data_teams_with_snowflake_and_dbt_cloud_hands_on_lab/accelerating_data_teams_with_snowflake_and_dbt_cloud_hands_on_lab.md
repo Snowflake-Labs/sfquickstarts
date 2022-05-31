@@ -74,6 +74,14 @@ Once your account is created you’ll receive an email confirmation. Within that
 
     ![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
 
+    If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
+
+    ```sql
+    create or replace database snowflake_sample_data from share sfc_samples.sample_data;
+    ```
+
+    You should now see the database as one of your database objects, with associated schemas within it.
+
 5. Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html). <br>
 
     ![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
