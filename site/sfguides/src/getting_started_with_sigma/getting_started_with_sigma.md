@@ -32,12 +32,14 @@ By walking through this lab you will:
 - Build a Sigma Dataset that models the sample data in Snowflake
 - Build a polished Sigma Workbook that analyzes the sample data  
 
+![Footer](assets/Sigma_Footer.png)
+
 <!-- ------------------------ -->
 ## Prepare Your Snowflake Lab Environment
 Duration: 3
 
 ### Steps to Prepare Your Lab Environment
-1. If not yet done, register for a Snowflake free 30-day trial at https://trial.snowflake.com 
+1. If not yet done, register for a Snowflake free 30-day trial at [https://trial.snowflake.com](https://trial.snowflake.com) 
 
     - You will have different Snowflake editions (Standard, Enterprise, e.g.), cloud providers (GCP, AWS, or Azure), and Regions (US Central, Europe West, e.g.) Available to you. We suggest you select the cloud provider and region which is physically closest to you and your data, and select the Enterprise edition so you can leverage advanced capabilities that are not available in the Standard Edition.
 
@@ -45,6 +47,7 @@ Duration: 3
 
 2. Click [here](https://sigma-snowflake-vhol.s3-us-west-1.amazonaws.com/sql/sigma_vhol.sql) and download the “sigma_vhol.sql” file to your local machine. This file contains pre-written SQL commands and we will use this file later in the lab.
 
+![Footer](assets/Sigma_Footer.png)
 
 <!-- ------------------------ -->
 ## The Snowflake User Interface
@@ -94,6 +97,7 @@ First let’s get you acquainted with Snowflake! This section covers the basic c
 
 ![Import SQL Menu](assets/Snowflake_UI_5.png)
 
+![Footer](assets/Sigma_Footer.png)
 
 <!-- ------------------------ -->
 ## Provisioning Sigma
@@ -141,6 +145,8 @@ Duration: 5
 ![Sigma Sign-up](assets/Provisioning_Sigma_5.png)
 
 ![tab close-up](assets/Provisioning_Sigma_6.png)
+
+![Footer](assets/Sigma_Footer.png)
 
 <!-- ------------------------ -->
 ## Preparing & Loading Data into Snowflake
@@ -274,6 +280,7 @@ A select count(*) from the customer table should complete successfully.  If not,
 12. select count(*) from transactions;  
 This will confirm that the PC_SIGMA_ROLE has access to the customer table as well.
 
+![Footer](assets/Sigma_Footer.png)
 
 <!-- ------------------------ -->
 ## Using Sigma for Analysis & Visualizations
@@ -316,6 +323,8 @@ Your Snowflake account has now been set up with the data that will be used by Si
 5. If you expand the Plugs_DB database you will be able to see our two tables that were loaded into Snowflake.
 
 ![Completed Connection Details](assets/Using_Sigma_for_Analysis_8.png)
+
+![Footer](assets/Sigma_Footer.png)
 
 <!-- ------------------------ -->
 ## Modeling The Data
@@ -371,6 +380,8 @@ Sigma has the ability to join tables, other datasets, csv uploads, or your own S
 
 ![Expanded JSON Result](assets/Modeling_and_Accessing_The_Data_11.png)
 
+![Footer](assets/Sigma_Footer.png)
+
 <!-- ------------------------ -->
 ## Accessing The Data
 Duration: 5
@@ -405,12 +416,12 @@ Duration: 5
 **Spreadsheet-like Interface**
 Sigma is unique in empowering users to do analysis in an interface they already know and love: the spreadsheet. It also uses familiar functions found in spreadsheets. No need for SQL knowledge as the Sigma interface automatically, and behind the scenes, converts all user actions into optimized SQL. This interface helps speed up user adoption and success, especially with non-technical business users.
 
-
+![Footer](assets/Sigma_Footer.png)
 
 <!-- ------------------------ -->
+
 ## Analyzing The Data
 Duration: 18
-
 
 ### Sigma Workbook Analysis
 Today we will be looking at our fictitious company Plugs Electronics data. It contains the retail transactions from our stores across the country as well as some attributes around our customers making the purchase. We will create some calculations, join tables, parse json, and build some visualizations with the ultimate goal of creating and embedding a dashboard for our Regional Sales Managers to get insights into the performance of their stores.
@@ -541,6 +552,8 @@ From the In Use tab select the Workbook Element “TRANSACTIONS”
 
 ![Save Workbook](assets/Analyzing_The_Data_30.png)
 
+![Footer](assets/Sigma_Footer.png)
+
 <!-- ------------------------ -->
 ## Finalizing The Workbook
 Duration: 8
@@ -617,6 +630,7 @@ You will also notice other UI elements available to you here:
 
 6. Finally, let’s go ahead and click “Publish” to save our work.
 
+![Footer](assets/Sigma_Footer.png)
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -637,3 +651,5 @@ The seamless transition from Snowflake to Sigma enables data professionals to it
 - Help Center including Documentation: [https://help.sigmacomputing.com/hc/en-us](https://help.sigmacomputing.com/hc/en-us)
 - Sigma Blog: [https://www.sigmacomputing.com/blog/](https://www.sigmacomputing.com/blog/)
 - Resources and Case Studies: [https://www.sigmacomputing.com/resources/](https://www.sigmacomputing.com/resources/)
+
+![Footer](assets/Sigma_Footer.png)
