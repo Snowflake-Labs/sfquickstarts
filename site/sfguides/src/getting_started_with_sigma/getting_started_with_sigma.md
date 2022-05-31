@@ -22,8 +22,8 @@ The exercises in this lab will walk you through the steps to:
 - Explore and analyze data and turn it into visualizations and dashboards
 
 ### What You'll Need 
-- A Snowflake free 30-day trial environment: https://trial.snowflake.com
-- Download .SQL file: https://sigma-snowflake-vhol.s3-us-west-1.amazonaws.com/sql/sigma_vhol.sql
+- A Snowflake free 30-day trial environment: [https://trial.snowflake.com](https://trial.snowflake.com)
+- Download .SQL file: [https://sigma-snowflake-vhol.s3-us-west-1.amazonaws.com/sql/sigma_vhol.sql](https://sigma-snowflake-vhol.s3-us-west-1.amazonaws.com/sql/sigma_vhol.sql)
 
 ### What You'll Build
 By walking through this lab you will:
@@ -106,6 +106,7 @@ Duration: 5
 
 ![Partner Connect Button](assets/Provisioning_Sigma_1.png)
 
+
 ![Partner Connect Menu](assets/Provisioning_Sigma_2.png)
 
   - Sigma is the only cloud analytics and BI platform purpose-built as software-as-a service for Snowflake. Sigma offers a spreadsheet-like interface anyone can use to explore, analyze, and visualize data at unlimited scale.
@@ -167,10 +168,10 @@ We will load this data into Snowflake and highlight some Snowflake capabilities.
 In this lab, never check the “All Queries” box at the top of the worksheet. We want to run SQL queries one at a time in a specific order; not all at once.
 
 4. use role sysadmin;
-This will set the context of the WORKSHEET, to use the role of SYSADMIN, when we "Play" the command. We do not to be in the role ACCOUNTADMIN any more.
+This will set the context of the WORKSHEET, to use the role of SYSADMIN, when we "Play" the command. We do not want to be in the role ACCOUNTADMIN any more.
 
 5. use warehouse pc_sigma_wh;
-Sets the PC_SIGMA_WH to be used for commands run in the WORKSHEET.  As you can see by the (XS) to the right of the warehouse name, that an extra small warehouse is being used for this lab.  An XS translates to a single node cluster for our virtual warehouse. Here is a link to Snowflake’s doc covering warehouses in detail.
+Sets the PC_SIGMA_WH to be used for commands run in the WORKSHEET.  As you can see by the (XS) to the right of the warehouse name, that an extra small warehouse is being used for this lab.  An XS translates to a single node cluster for our virtual warehouse. [Here is a link to Snowflake’s doc](https://docs.snowflake.com/en/user-guide/warehouses-overview.html#warehouse-size) covering warehouses in detail.
 
 6. create or replace database plugs_db;
 Creates a database named PLUGS_DB in our account.  It also automatically sets the context for the worksheet to use .  
@@ -230,7 +231,7 @@ DATE_FORMAT = 'AUTO'
 TIMESTAMP_FORMAT = 'AUTO'  
 NULL_IF = ('\\N');  
 )  
-We have data files in our stage as shown in the previous list (ls).  These files have certain formats that need to be defined in Snowflake in order for the data to be loaded properly.  In this case we are creating a FILE FORMAT named COMMA_DELIMITED that is specifying that the data in the file is delimited by commas, has been compressed, has a record delimiter of newline character ‘\n’, has a first row record that has column names that needs to be skipped, etc.  More information regarding file formats can be found here. 
+We have data files in our stage as shown in the previous list (ls).  These files have certain formats that need to be defined in Snowflake in order for the data to be loaded properly.  In this case we are creating a FILE FORMAT named COMMA_DELIMITED that is specifying that the data in the file is delimited by commas, has been compressed, has a record delimiter of newline character ‘\n’, has a first row record that has column names that needs to be skipped, etc.  More information regarding file formats can be found [here](https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html). 
 
 3. copy into transactions from @sigma_stage/Plugs_Transactions.csv FILE_FORMAT = ( FORMAT_NAME = 'COMMA_DELIMITED' );  
 This copies the data from our Plugs_Transactions.csv file and loads into our transactions table.  A SELECT COUNT(*) from the table will show we loaded 4,709,568 rows into the table.
@@ -238,14 +239,14 @@ This copies the data from our Plugs_Transactions.csv file and loads into our tra
 4. create or replace table Customer (cust_key integer, cust_json variant);  
 This creates our customer table for the second data file, or “Plugs_Customers.csv” which is composed of structured data and semi-structured data. It consists of Plugs Electronics customer information including age group and age, civil status, address, gender,if they are in the loyalty program, and more. It is also staged on AWS where the data represents 5k rows and 1.9 MB total size. 
 
-The cust_json column is defined as VARIANT.  We use the variant data type to store json, parquet, orc, avro, and xml as they are semi-structured data, you can find more information on this here.  We are able to store the data without applying structure, then use SQL with path notation to immediately start querying our semi-structured data asi-is.  Sigma’s integration with Snowflake generates SQL with path notation so that you do not have to write the SQL yourself.  This will be shown later on in the lab.
+The cust_json column is defined as VARIANT.  We use the variant data type to store json, parquet, orc, avro, and xml as they are semi-structured data, you can find more information on this [here](https://docs.snowflake.com/en/sql-reference/data-types-semistructured.html#variant).  We are able to store the data without applying structure, then use SQL with path notation to immediately start querying our semi-structured data asi-is.  Sigma’s integration with Snowflake generates SQL with path notation so that you do not have to write the SQL yourself.  This will be shown later on in the lab.
 
 A partial screenshot of the file is:
 
 ![JSON Result Set](assets/Loading_Data_Into_Snowflake_3.png)
 
 **SEMI-STRUCTURED DATA**
-Snowflake can easily load and query semi-structured data, such as JSON, Parquet, or Avro, without transformation. This is important because an increasing amount of business-relevant data being generated today is semi-structured, and many traditional data warehouses cannot easily load and query this sort of data. With Snowflake it is easy!
+Snowflake can easily load and query [semi-structured data](https://docs.snowflake.com/en/user-guide/semistructured-intro.html), such as JSON, Parquet, or Avro, without transformation. This is important because an increasing amount of business-relevant data being generated today is semi-structured, and many traditional data warehouses cannot easily load and query this sort of data. With Snowflake it is easy!
 
 5. copy into customer from @sigma_stage/Plugs_Customers.csv FILE_FORMAT = ( FORMAT_NAME = 'COMMA_DELIMITED' );  
 Loads data from our stage into our customer table.  The copy will load 4,972 rows into the table.  We recommend doing a select * from customer; to see how the semi-structured data differs from the structured cust_key column.  In the diagram below, we clicked in the general area on the second row of the cust_json column in the answer set, highlighted by the red box.  The UI then popped open the Details dialog box showing the contents (key value pairs) of the JSON.
@@ -253,7 +254,7 @@ Loads data from our stage into our customer table.  The copy will load 4,972 row
 ![JSON Record](assets/Loading_Data_Into_Snowflake_4.png)
 
 6. grant usage on database PLUGS_DB to role PC_SIGMA_ROLE;  
-Snowflake access rights are based upon role based access control (RBAC).  We now need to allow the PC_SIGMA_ROLE to use the plugs_db database.
+Snowflake access rights are based [upon role based access control (RBAC)](https://docs.snowflake.com/en/user-guide/security-access-control-overview.html).  We now need to allow the PC_SIGMA_ROLE to use the plugs_db database.
 
 7. grant usage on schema PLUGS_DB.PUBLIC to role PC_SIGMA_ROLE;  
 We now allow the PC_SIGMA_ROLE to use the plugs_db.public schema.
@@ -275,12 +276,12 @@ This will confirm that the PC_SIGMA_ROLE has access to the customer table as wel
 
 
 <!-- ------------------------ -->
-## Using SigmaUsing Sigma for Analysis & Visualizations
+## Using Sigma for Analysis & Visualizations
 Duration: 10
 
 
 ### Start Working With Sigma
-Your Snowflake account has now been set up with the data that will be used by Sigma to create an embedded dashboard on our fictitious website.  In order to get started with Sigma, please click on the tab that was opened in your browser when we clicked the launch button from Partner Connect.
+Your Snowflake account has now been set up with the data that will be used by Sigma to create an workbook. In order to get started with Sigma, please click on the tab that was opened in your browser when we clicked the launch button from Partner Connect.
 
 ![Company Name](assets/Using_Sigma_for_Analysis_1.png)
 
@@ -292,7 +293,7 @@ Your Snowflake account has now been set up with the data that will be used by Si
 
 ![Create Your Profile](assets/Using_Sigma_for_Analysis_3.png)
 
-3. If you are utilizing IP white listing  in Snowflake (most likely not applicable if you just signed up for a free Snowflake trial) you can read more about that here, these are the URLs you would need to add to the white listing .  Click “Get Started Using Sigma”.
+3. If you are utilizing IP white listing  in Snowflake (most likely not applicable if you just signed up for a free Snowflake trial) [you can read more about that here](https://docs.snowflake.com/en/user-guide/network-policies.html#creating-network-policies), these are the URLs you would need to add to the white listing .  Click “Get Started Using Sigma”.
 
 ![IP Address To Whitelist](assets/Using_Sigma_for_Analysis_4.png)
 
@@ -317,8 +318,8 @@ Your Snowflake account has now been set up with the data that will be used by Si
 ![Completed Connection Details](assets/Using_Sigma_for_Analysis_8.png)
 
 <!-- ------------------------ -->
-## Modeling and Accessing The Data
-Duration: 15
+## Modeling The Data
+Duration: 10
 
 
 ### Create a Sigma Dataset
@@ -370,6 +371,10 @@ Sigma has the ability to join tables, other datasets, csv uploads, or your own S
 
 ![Expanded JSON Result](assets/Modeling_and_Accessing_The_Data_11.png)
 
+<!-- ------------------------ -->
+## Accessing The Data
+Duration: 5
+
 ### Sigma Workbook
 1. At the top left of the Sigma UI click on the small crane icon to go to the home page.
 
@@ -404,7 +409,7 @@ Sigma is unique in empowering users to do analysis in an interface they already 
 
 <!-- ------------------------ -->
 ## Analyzing The Data
-Duration: 15
+Duration: 18
 
 
 ### Sigma Workbook Analysis
@@ -538,7 +543,7 @@ From the In Use tab select the Workbook Element “TRANSACTIONS”
 
 <!-- ------------------------ -->
 ## Finalizing The Workbook
-Duration: 5
+Duration: 8
 
 ### Create Filters
 1. Next, let's add a filter to this data. We will do this by adding a control element to our canvas.  Controls enable interactions with the chart such as filter the charts when in use. Clicking the “+” icon on the upper left hand pane next to “Page Elements”, select “Date Range”.  This will add a Date Range control to the canvas.
