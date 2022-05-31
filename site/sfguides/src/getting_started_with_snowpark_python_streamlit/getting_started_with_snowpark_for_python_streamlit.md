@@ -57,7 +57,7 @@ Duration: 5
 
 4. Install pandas by running `conda install pandas` or `pip install pandas`
 
-5. Install Snowpark for Python by running `conda install snowflake_snowpark_python` or `pip install snowflake_snowpark_python`
+5. Install Snowpark for Python by running `conda install snowflake-snowpark-python` or `pip install snowflake-snowpark-python`
 
 <!-- ------------------------ -->
 ## Create Python Script
