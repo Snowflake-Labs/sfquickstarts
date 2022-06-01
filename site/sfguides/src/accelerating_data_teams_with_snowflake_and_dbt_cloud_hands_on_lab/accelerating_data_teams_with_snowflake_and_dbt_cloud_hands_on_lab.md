@@ -55,7 +55,6 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 ![Project Lineage](assets/project_lineage.png)
 
 <!-- ------------------------ -->
-
 ## Let's Get Started With Snowflake
 Duration: 5
 
@@ -99,7 +98,6 @@ Once your account is created you’ll receive an email confirmation. Within that
 7. Great! Now it’s time to set up dbt Cloud.
 
 <!-- ------------------------ -->
-
 ## Launching dbt Cloud via Partner Connect
 Duration: 5
 
@@ -134,7 +132,6 @@ Duration: 5
 8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
 
 <!-- ------------------------ -->
-
 ## IDE Walkthrough
 Duration: 7
 
@@ -193,7 +190,6 @@ Duration: 7
 10. Great! We’re ready to move on to developing our dbt project.
 
 <!-- ------------------------ -->
-
 ## Foundational Structure
 Duration: 12
 
@@ -258,7 +254,7 @@ Materializations and warehouses aren’t the only type of configurations you can
 
 ### Folder Structure
 
-dbt Labs has developed a [project structure guide](https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355) that contains a number of recommendations for how to build the folder structure for your project.  The folder structure we’ll be building in this lab follows this guidance and fits into the following categories mentioned in the guide:
+dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project.  The folder structure we’ll be building in this lab follows this guidance and fits into the following categories mentioned in the guide:
 
 * **Sources**: This is our TPC-H dataset and it will be defined in a source YAML file.
 
