@@ -24,7 +24,7 @@ We will be exploring a financial service use of evaluating loan information to p
 We will first load this data set into Snowflake to simulate data collected from internal systems for analytical purposes. Using Snowflake’s Zero Copy Cloning feature will make this data available to the Data Science team, without duplicating the data and also protecting the production data from any data manipulation. The data will then be enriched with unemployment data from Knoema on the Snowflake Data Marketplace.
 
 
-From within SageMaker Studio we will then retrieve the data using Data Wrangler, which we will use to do analysis of the data. Using Data Wrangler we will perform feature engineering and then analyze the data for ML model potential. The next step will be to add the enriched unemployment data and reevaluate the data. The data prep flow will then be used to provide data for model training. Finally we will deploy a scoring pipeline and write the data back to Snowflake.
+From within SageMaker Studio we will then retrieve the data using Data Wrangler, which we will use to do analysis of the combined loan and unemployment data. Using Data Wrangler we will perform feature engineering and then analyze the data for ML model potential. The data prep flow will then be used to provide data for model training. Finally we will deploy a scoring pipeline and write the data back to Snowflake.
 
 
 
@@ -34,17 +34,18 @@ From within SageMaker Studio we will then retrieve the data using Data Wrangler,
 
 ### Prerequisites
 
-- Familiarity with Snowflake, basic SQL knowledge and Snowflake objects
-- Familiarity with AWS Service and Management Console
+- Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects
+- Familiarity with AWS Services, Networking and the Management Console
 - Basic knowledge of Python, Jupyter notebook and Machine Learning
 
 ### What You'll Need During the Lab
 
 To participate in the virtual hands-on lab, attendees need the following:
 
-- A [Snowflake account](https://trial.snowflake.com/) **ACCOUNTADMIN** access
-- An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with admin access
-- **An AWS VPC and Subnet in your AWS where SageMaker studio can be deployed**
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) **ACCOUNTADMIN** access
+- An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with **admin access**
+- In the AWS account [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the **same region** as the Snowflake account
+- In the VPC [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic
 
 ### What You'll Learn
 
@@ -74,31 +75,29 @@ To participate in the virtual hands-on lab, attendees need the following:
 Duration: 3
 
 
-The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
+The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab. **Click the green button to download the file**
 <button>[Data_Wrangler_Snowflake_VHOL_V2.sql](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Data_Wrangler/V2/files/Data_Wrangler_Snowflake_VHOL_V2.sql)</button>
 
-At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
+At this point log into your Snowflake. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
 
+In the Snowflake UI click on Worksheets on the left side.
 
 
 ![](assets/image14.png)
 
+Create a new Worksheet by clicking on the new worksheet button (+ Worksheet) on the top right side.
 
+![](assets/image91.png)
 
-To ingest our script in the Snowflake UI, navigate to the ellipsis button on the top right hand side of a "New Worksheet" and load our script.
-
+To ingest SQL file in the Snowflake UI, navigate to the worksheet name (the worksheet name will be the date and time) on the top left hand side and click on the small down arrow next to it. This will give you the option to change the worksheet name
+and also the option to import a SQL scrpt file. Click on **Import SQL from File**
 
 
 ![](assets/image6.png)
 
+You can now select the .sql file you downloaded earlier.
 
-
-The SQL script file should show up as text in a new worksheet.
-
-It is also helpful to turn on code highlight in the worksheet. This will highlight the SQL command(s) that you will execute before "running" the command. Navigate to the ellipsis button on the top right hand side of a "New Worksheet" and click Turn on Code Highlight.
-
-![](assets/image49.png)
-
+The SQL script file should show up as text in a new worksheet. You may need to scroll to the top of the file to start executing commands.
 
 
 Each step throughout the Snowflake portion of the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab.
@@ -132,7 +131,7 @@ GRANT ROLE ML_ROLE TO USER ML_USER;
 
 
 
-Please note the default password assigned for the user. If you choose to change it make sure to record the password as you will need to provide it later in the lab for the integration with Data Wrangler.
+**Please note the default password assigned for the user. If you choose to change it make sure to record the password as you will need to provide it later in the lab for the integration with Data Wrangler.**
 
 
 
@@ -155,12 +154,31 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 <!-- ------------------------ -->
 ## Configure Amazon SageMaker Studio and Snowflake Storage Integration with AWS
-Duration: 2
+Duration: 4
+
+Before configuring the Sagemaker environment we will need to determine the **Snowflake Account Identifier** for your account.
+First you can reference the Snowflake region by running the following SQL.
+```
+SELECT CURRENT_REGION();
+```
+This will show you the Snowflaek region. Use this **[reference](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#non-vps-account-locator-formats-by-cloud-platform-and-region)** to identify the region you need to add to your account identifier.
+
+Next you can find the account name by running.
+```
+SELECT CURRENT_ACCOUNT();
+```
+Combine the output from CURRENT_ACCOUNT with the reference you looked up for the region above to get your Snowflake Account Identifier.
+
+**Example account identifiers:** abc12345 or def34567.us-east-2.aws 
+<br />
+<br />
+<br />
 
 
-To save some time we will configure the SageMaker environment and the Snowflake Storage Integration that will be used by Data Wrangler by using a CloudFormation Template. Open another tab in your browser and log into your AWS console.
+**To save some time we will configure the SageMaker environment and the Snowflake Storage Integration that will be used by Data Wrangler by using a CloudFormation Template.** <br />
+Open another tab in your browser and log into your AWS console.
 
-Next we will go to a Github repo by clicking the link below.
+Next we will go to a Github repo by **clicking the link below**.
 
 <button>[Github Repo](https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops)</button>
 
@@ -203,14 +221,9 @@ On the next page you will specify your stack details. Please pay close attention
   - SageMaker Studio User Profile Name
 * **VPC Configurations**
   - VPC - Choose existing VPC
-  - VPC Subnet - Choose existing VPC Subnet in availability zone supported by SageMaker
+  - VPC Subnet - Choose existing VPC Subnet(s) in availability zones supported by SageMaker (You can select multiple subnets)
 
 
-
-Positive
-: The Snowflake account name can be found by looking at the URL in your browser tab logged into the Snowflake UI. Copy the characters after the https:// and before snowflakecomputing.com i.e. **https://abcd123.us-east-1.snowflakecomputing.com** the account name will be **abcd123.us-east-1**
-
-In some cases the region (us-east-1 or other region name) may not be present, in this case just copy the characters before snowflakecomputing.com i.e. **https://xyz1234.snowflakecomputing.com** the account name will be **xyz1234**
 
 - - -
 
@@ -254,7 +267,7 @@ It may take a few minutes for the stack to be created and we will use the time t
 
 <!-- ------------------------ -->
 ## Load data in Snowflake and access the Marketplace
-Duration: 5
+Duration: 10
 
 
 Next we will create a virtual warehouse that we will use to compute with the **SYSADMIN** role, and then grant all privileges to the **ML\_ROLE**.
@@ -389,6 +402,7 @@ Next we will create an external stage to load the lab data into the table. This 
 
 
 
+
 ```
 CREATE OR REPLACE STAGE LOAN_DATA
 
@@ -407,7 +421,8 @@ COPY INTO LOAN_DATA FROM @LOAN_DATA/loan_data.csv
 
 
 
-This data represents aggregation from various internal systems for lender information and loans. We can have a quick look and see the various attributes in it.
+**This data represents aggregation from various internal systems for lender information and loans.**\
+We can have a quick look and see the various attributes in it.
 
 
 
@@ -420,17 +435,17 @@ SELECT * FROM LOAN_DATA LIMIT 100;
 
 
 
-We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Data Marketplace and see what external data is available from the data providers.
+We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Marketplace and see what external data is available from the data providers.
 
 
 
-To be able to add Marketplace data we will use the new Snowflake UI. Click on the **Preview App** button on the top right hand of the Snowflake console, next to the Partner Connect and Help buttons.
+Click on the Home (House symbol) button on the top left corner to go to the Snowflake UI home menu.
 
 ![](assets/image38.png)
 
 
 
-Once you click on the Preview App button a new browser tab will open with the new preview Snowflake UI. On the top left hand corner click on your username and then hover over the **Switch Role** menu. Scroll and select the **ML\_ROLE** from the list of roles.
+Once in the Home Menu on the top left hand corner click on your username and then hover over the **Switch Role** menu. Scroll and select the **ML\_ROLE** from the list of roles.
 
 
 
@@ -438,7 +453,7 @@ Once you click on the Preview App button a new browser tab will open with the ne
 
 
 
-Now click on the **Data** menu bar on the left side. Then select **Marketplace**.
+Then select **Marketplace**.
 
 ![](assets/image88.png)
 
@@ -468,9 +483,11 @@ Change the name of the database to **KNOEMA\_LABOR\_DATA\_ATLAS** and then click
 
 
 
-When the confirmation is provided click on done and then you can close the browser tab with the Preview App.
+When the confirmation is provided click on **Done** /
 
+Click on **Worksheets** on the left hand menu and then select your worksheet you have been using.
 
+![](assets/image92.png)
 
 Data from the Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.
 
@@ -582,8 +599,7 @@ SHOW INTEGRATIONS;
 
 Make sure to note the name of the storage integration that was created as it will be used with Data Wrangler configuration.
 
-Positive
-: We can also get the storage integration name from the CloudFormation stack. Click on the NESTED stack with a name like snowflake-sagemaker-credit-risk-workshop-StorageIntegrationStack and then the Outputs tab in the CloudFormation browser tab.
+**Note:** We can also get the storage integration name from the CloudFormation stack. Click on the NESTED stack with a name like snowflake-sagemaker-credit-risk-workshop-StorageIntegrationStack and then the Outputs tab in the CloudFormation browser tab.
 You can also find Snowflake Secret ARN in the Output tab.
 
 
@@ -602,15 +618,17 @@ Duration: 30
 
 Click on this link ([https://console.aws.amazon.com/sagemaker/home](https://console.aws.amazon.com/sagemaker/home)) and it will open a new browser tab with the SageMaker Console.
 
-Click on the **Amazon SageMaker Studio** menu on the left hand side.
-
-Next to the**User name - sagemaker-user** you will click on the link to**Open Studio** to open SageMaker Studio
+Click on the **Amazon SageMaker - Control panel** menu on the left hand side.
 
 ![](assets/image76.png)
 
+In the **Users** you will see Name **sagemaker-user** click on the **Launch App** button then select **Studio** to open SageMaker Studio
+
+![](assets/image93.png)
 
 
-This will open a new browser tab with SageMaker Studio. It may take a minute or two to create the environment.
+
+This will open SageMaker Studio. It may take a minute or two to create the environment.
 
 
 
@@ -618,14 +636,14 @@ This will open a new browser tab with SageMaker Studio. It may take a minute or 
 
 #### Next we can clone the Git repository that includes all the files we need for the lab in SageMaker Studio.
 
-On the Left side menu click on the Git repository icon and then the Clone a Repository button.
+On the Left side menu click on the Git repository icon and then the **Clone a Repository** button.
 
 
 ![](assets/image40.png)
 
 
 
-You will then enter copy the Git URL below for the repository in the popup window and then click CLONE
+You will then copy the Git URL below for the repository in the popup window and then click CLONE
 
 [https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops](https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops)
 
@@ -637,7 +655,7 @@ You will then enter copy the Git URL below for the repository in the popup windo
 
 The Studio environment will then switch to the folder browser.
 
-Navigate to the /snowflake-sagemaker-workshops/loan-default/notebooks folder by double clicking each folder in the path.
+Navigate to the **/snowflake-sagemaker-workshops/loan-default/notebooks** folder by double clicking each folder in the path.
 
 
 
@@ -645,9 +663,9 @@ Navigate to the /snowflake-sagemaker-workshops/loan-default/notebooks folder by 
 
 
 
-Open the snowflake-loan-default-workshop.ipnyb notebook by double clicking on it.
+Open the **snowflake-loan-default-workshop.ipnyb** notebook by double clicking on it.
 
-A window will pop up to select the Kernel you want to use. Select the Python 3 (snowflake-workshop/) kernel and click Select.
+A window will pop up to select the Image and Kernel you want to use. Under **Image** select the **Custom Image** then **snowflake-workshop** and then select **snowflake-workshop-v1**, keep the Kernel as Python 3 and click **Select**.
 
 
 
@@ -665,9 +683,9 @@ Give the kernel a little time to startup.
 
 The notebook is very well documented with the steps needed for the workshop.
 
-You can execute the code sections by selecting them and hitting the **run button** at the top or **shift+return/enter**.
-
-
+You can execute the code sections by selecting them and hitting the **run button** at the top or **shift+return/enter**.\
+\
+Execute the first code block to import libraries and set environment variables.
 
 
 
@@ -697,7 +715,7 @@ We will now create a Data Wrangler flow.
 
 Create a new Data Wrangler flow by selecting it from the top **File Menu**
 
-File&gt;New&gt;Data Wrangler Flow
+**File &gt; New &gt; Data Wrangler Flow**
 
 ![](assets/image67.png)
 
@@ -720,13 +738,14 @@ Click on Add data source and Select Snowflake
 
 
 
-You can either use the username and password that was created in Snowflake earlier or the AWS Secret that was created in the CloudFormation template to connect to Snowflake. You can use AWS Secret Manager Console ([https://console.aws.amazon.com/secretsmanager/home](https://console.aws.amazon.com/secretsmanager/home) ) to get the secret **ARN**.
+You can either use the **username and password** that was created in Snowflake earlier **or the AWS Secret** that was created in the CloudFormation template to connect to Snowflake.\
+You can use AWS Secret Manager Console ([https://console.aws.amazon.com/secretsmanager/home](https://console.aws.amazon.com/secretsmanager/home) ) to get the secret **ARN**.
 
 
 
 Use the Snowflake account name from Step 3 if you don’t use the AWS Secrets Manager
 
-The Snowflake Storage Integration name from Step 4 will be used - SMSNOW\_\<region>\_\<accountid>\_STORAGE\_INTEGRATION</accountid></region>
+The Snowflake Storage Integration name from Step 4 will be used - **SMSNOW\_\<region>\_\<accountid>\_STORAGE\_INTEGRATION</accountid></region>**
 
 
 
@@ -746,15 +765,15 @@ You can now navigate the Snowflake data by looking at the Snowflake objects on t
 
 When using the SQL window you can set the context of the queries, similar to Snowflake. Select:
 
-Data Warehouse - ML\_WH
+**Data Warehouse - ML\_WH
 
 Database - ML\_LENDER\_DATA
 
-Schema - ML\_DATA
+Schema - ML\_DATA**
 
 
 
-To see the LOAN\_DATA in Data Wrangler execute the following SQL and click Run
+To see the LOAN\_DATA in Data Wrangler execute the following SQL and click **Run**
 
 ```
 SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML
@@ -814,7 +833,7 @@ Click **Run** and then click the **Import** button on the top right.
 
 Enter a name for the Dataset - loan\_data
 
-Then click**Add**
+Then click **Add**
 
 ![](assets/image1.png)
 
@@ -825,7 +844,7 @@ Then click**Add**
 
 Profile the data by Clicking the **+ sign** next to the Data types block
 
-Select**Add Analysis**
+Select **Add Analysis**
 
 ![](assets/image32.png)
 
@@ -853,13 +872,13 @@ Then click **Preview** to get an analysis of the skew.
 
 Next we will use Data Wrangler to perform some feature transformations.
 
-In the Analysis window click**Back to data flow** at the top.
+In the Analysis window click **Data flow** at the top.
 
 ![](assets/image64.png)
 
 
 
-Click on the**+** and select **Add Transform** by the Data types box.
+Click on the **\+** and select **Add Transform** by the Data types box.
 
 ![](assets/image42.png)
 
@@ -875,10 +894,10 @@ Click on **+ Add Step** - To add a transform step
 
 First we will fix the **INT\_RATE** column from a string with a % sign to a numeric data type.
 
-- Click on Search and edit
-- Select Input Column as INT\_RATE
+- Scroll down under ADD TRANSFORM and click on **Search and edit**
+- Select Input Columns as INT\_RATE
 - Enter % in the Pattern field
-- In the **Replacement string** <span class="c13">*type space and then delete it* to have % replaced with an empty string
+- In the **Replacement string** *type space and then delete it* to have % replaced with an empty string
 - Click Preview
 - Click Add
 
@@ -888,7 +907,7 @@ First we will fix the **INT\_RATE** column from a string with a % sign to a nume
 
 
 
-To add additional steps click + Add Step each time
+To add additional steps click **\+ Add Step** each time
 
 
 
@@ -903,11 +922,11 @@ To add additional steps click + Add Step each time
 
 
 
-Next we will address the VERIFICATION\_STATUS column, which has various string values to indicate boolean values.
+Next we will address the **VERIFICATION\_STATUS** column, which has various string values to indicate boolean values.
 
 
 
-Select **Custom Transform**then **Python(Spark)** and copy the following Python code in the code box
+Select **Custom Transform** then make sure **Python(Spark)** is selected and copy the following Python code in the code box to repalce the existing text
 
 ```
 from pyspark.sql.functions import udf
@@ -961,7 +980,7 @@ Finally we will drop the LOAN\_ID column using the steps above.
 
 
 
-Click onBack to data flow. You should see the five transform steps at the tail of your data prep flow.
+Click on **Data flow**. You should see the five transform steps at the tail of your data prep flow.
 
 
 
@@ -979,7 +998,7 @@ Target leakage occurs when you accidently train a model with features that are n
 
 
 
-Click the + sign next to the 5 Transform Steps and select Add analysis.
+Click the **\+ sign** next to the 5 Transform Steps and select Add analysis.
 
 ![](assets/image34.png)
 
@@ -996,7 +1015,7 @@ In the Analysis select:
 
 
 
-Select Preview
+Select **Preview**
 
 
 
@@ -1049,7 +1068,7 @@ The report does not reveal any salient data bias issues.
 
 
 
-Amazon Data Wrangler provides aQuick Model report which can serve as a prototyping mechanism. The report will sample your dataset, process your flow and generates a Random Forest Model. The report provides model and feature importance scores to help you assess:
+Amazon Data Wrangler provides a Quick Model report which can serve as a prototyping mechanism. The report will sample your dataset, process your flow and generates a Random Forest Model. The report provides model and feature importance scores to help you assess:
 
 
 
@@ -1090,14 +1109,14 @@ Take note of the feature importance ranking in the bar chart. This gives you an 
 
 <!-- ------------------------ -->
 ## Iterate, Experiment and Improve
-Duration: 10
+Duration: 5
 
 
-We will now add a new data source to your existing flow.
+We will now add additional data to your existing flow.
 
-First clickBack to data flow
+First click **Data flow**
 
-SELECT the Import sub tab and click on the Snowflake icon.
+SELECT the Import tab at the top and click on the Snowflake icon.
 
 ![](assets/image66.png)
 
@@ -1115,9 +1134,9 @@ FROM ML_LENDER_DATA.ML_DATA.UNEMPLOYMENT_DATA
 
 
 
-Click Run and then the Import button
+Click **Run** and then the **Import button**
 
-Name the datasetunemployment\_data
+Name the dataset unemployment\_data
 
 Click Add
 
@@ -1125,7 +1144,7 @@ Click Add
 
 
 
-Next, you're going to merge the two datasets. There are many ways to do this. You could have performed this entirely using Snowflake. In this lab, you'll learn how to perform this merge through DataWrangler.
+Next, you're going to merge the two datasets. There are many ways to do this. You could have performed this entirely using Snowflake. In this lab, you'll learn how to perform this merge through Data Wrangler.
 
 
 
@@ -1145,7 +1164,7 @@ Confirm the Delete
 
 Next we will merge the data sets using a join operator
 
-Click on the end of the original flow and select the Join operator.
+Click on **\+** at the end of the original flow and select the **Join** operator.
 
 SELECT the other flow.
 
@@ -1181,7 +1200,7 @@ SELECT LOAN\_ID for both the Left and Right join keys.
 
 
 
-Click **Apply**
+Click **Preview**
 
 
 
@@ -1193,38 +1212,13 @@ Select the Join Node and Add Transform
 
 ![](assets/image26.png)
 
-Drop the columns, LOAN\_ID\_0 and LOAN\_ID\_1 using the same transformation steps as before.
+Drop the columns, LOAN\_ID\_0 and LOAN\_ID\_1 using the same transformation step as before.
 
-Manage Columns&gt;Drop Column&gt;Loan\_ID\_0
+Manage Columns &gt; Drop Column &gt; Columns to Drop &gt; Loan\_ID\_0 and Loan\_ID\_1
 
-Manage Columns&gt;Drop Column&gt;Loan\_ID\_1
 
 ![](assets/image12.png)
 
-
-
-
-
-Re-Validate the Dataset
-
-You should re-validate your dataset since it has been modified.
-
-Add analysis to the Join Operator similar to previous steps.
-
-- Analysis type - Target Leakage
-- Max Features - 30
-- Problem type - Classification
-- Target - LOAN\_DEFAULT
-
-
-
-
-
-The Target Leakage report calculates the correlation between your features and the target variable. In effect, it provides you with an idea of how likely your new feature will improve your model. The report should present the new feature, UNEMPLOYMENT\_RATE, as the feature with the highest predictive potential.
-
-
-
-![](assets/image86.png)
 
 
 
@@ -1279,18 +1273,6 @@ This tells us that we are likely heading in the right direction. We added a feat
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- ------------------------ -->
 ## Generate the Dataset and Train your Model
 Duration: 10
@@ -1311,27 +1293,12 @@ In this lab, you will select the option that generates a notebook that can be ru
 
 
 
-Click on **Back to data flow**
+Click on **Data flow**
 
-Select the **Export** tab
+Click on the **\+ symbol** next to the last transform step and select **Export to** and select **Amazon S3(via Jupyter Notebook)**
 
 ![](assets/image25.png)
 
-
-
-Select thelast step in the flow and the lastDrop Column transformation
-
-![](assets/image16.png)
-
-
-
-Then click Export Step on the top right
-
-![](assets/image36.png)
-
-Select**Save to S3**
-
-![](assets/image5.png)
 
 
 
@@ -1365,21 +1332,21 @@ COPY the S3 URI to the PREP\_DATA\_S3 variable in your initial workshop notebook
 
 
 
-TIP: You can monitor the processing jobs in the SageMaker Console
+**TIP:** You can monitor the processing jobs in the SageMaker Console
 
 ![](assets/image72.png)
 
 
 
 
+ 
+
+
+### Train your Model
 
 
 
-Train your Model
-
-
-
-Subscribe to AutoGluon in the AWS Marketplace
+**Subscribe to AutoGluon in the AWS Marketplace**
 
 
 
@@ -1389,8 +1356,8 @@ Next, you are going to subscribe to the AutoGluon Marketplace algorithm. This pr
 
 Follow these steps to subscribe to the AWS Marketplace AutoGluon algorithm:
 
-- Click this[URL](https://aws.amazon.com/marketplace/pp/Amazon-Web-Services-AutoGluon-Tabular/prodview-n4zf5pmjt7ism) to navigate to the AutoGluon product page.
-- SELECT the orange "Continue to Subscribe" button.
+- Click this [URL](https://aws.amazon.com/marketplace/pp/Amazon-Web-Services-AutoGluon-Tabular/prodview-n4zf5pmjt7ism) to navigate to the AutoGluon product page.
+- SELECT the orange "**Continue to Subscribe**" button.
 - Run the helper function below to identify the AWS resource ID (ARN) of your AutoGluon Marketplace algorithm.
 
 ![](assets/image80.png)
@@ -1421,7 +1388,7 @@ You can monitor the training job in the SageMaker Console
 
 <!-- ------------------------ -->
 ## Deploy your Model
-Duration: 15
+Duration: 13
 
 
 
@@ -1443,11 +1410,11 @@ In the following sections we are going to deploy our model as a batch inference 
 
 First we will make a copy of our flow file.
 
-- Right click on theuntitled.flowfile and selectDuplicate
+- Right click on the **untitled.flow** file and select **Duplicate**
 
 ![](assets/image71.png)
 
-- Right click on the duplicate copy -untitled-Copy1.flowand select Rename
+- Right click on the duplicate copy **untitled-Copy1.flow** and select Rename
 - Use **inference\_flow\_loan.flow** as the new name
 
 
@@ -1456,7 +1423,7 @@ Positive
 
 
 
-Set the INFERENCE\_FLOW\_NAME to the new flow file in your workshop notebook.
+Set the INFERENCE\_FLOW\_NAME to the new flow file in your workshop notebook. By running the cell shown below. 
 
 ![](assets/image62.png)
 
@@ -1466,7 +1433,7 @@ Set the INFERENCE\_FLOW\_NAME to the new flow file in your workshop notebook.
 
 We can now change the data source for the flow:
 
-- Click on theData Flowtab at the top
+- Click on the **Data Flow** tab at the top
 - Click on the + next to the Snowflake:loan\_data source and select Edit Query
 - ![](assets/image61.png)
 - Click on the Snowflake Connection button
@@ -1474,68 +1441,44 @@ We can now change the data source for the flow:
 
 ```
 SELECT
-
   L1.LOAN_ID,  L1.LOAN_AMNT,   L1.FUNDED_AMNT,
-
   L1.TERM,   L1.INT_RATE,   L1.INSTALLMENT,
-
   L1.GRADE,   L1.SUB_GRADE,   L1.EMP_LENGTH,
-
   L1.HOME_OWNERSHIP,   L1.ANNUAL_INC,
-
   L1.VERIFICATION_STATUS,   L1.PYMNT_PLAN,
-
   L1.PURPOSE,   L1.ZIP_SCODE,   L1.DTI,
-
   L1.DELINQ_2YRS,   L1.EARLIEST_CR_LINE,
-
   L1.INQ_LAST_6MON,   L1.MNTHS_SINCE_LAST_DELINQ,
-
   L1.MNTHS_SINCE_LAST_RECORD,   L1.OPEN_ACC,
-
   L1.PUB_REC,   L1.REVOL_BAL,   L1.REVOL_UTIL,
-
   L1.TOTAL_ACC,   L1.INITIAL_LIST_STATUS,
-
   L1.MTHS_SINCE_LAST_MAJOR_DEROG,   L1.POLICY_CODE,
-
   L1.LOAN_DEFAULT,   L1.ISSUE_MONTH
-
 FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML AS L1
-
  LEFT OUTER JOIN
-
  (SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML sample block (80) REPEATABLE(100)) AS L2
-
  ON L1.LOAN_ID = L2.LOAN_ID
-
 WHERE L2.LOAN_ID IS NULL
 ```
 
-- ClickRunand then theApplybutton on the top right
-- Name the dataset loan\_inference
+- Click **Run** and then the **Apply** button on the top right
+- Name the dataset loan\_inference and click the **Add** button
 
 
 
 #### Re-export and re-factor your flow as a Pipeline
 
-First select theExport tab at the top.
 
-As previously select the last step in the flow and bottom Drop Column transform.
+As previously select the **\+** next to the last step in the flow.
 
 ![](assets/image43.png)
 
 
 
-Then click Export Step on the top right and select Pipeline
+Then go to **Export to** and select **SageMaker Pipelines (via Jupyter Notebook)**
 
 
-
-![](assets/image23.png)
-
-
-
-This will generate a new notebook - inference\_flow\_loan.ipynb
+This will generate a new notebook - **inference\_flow\_loan.ipynb**
 
 
 
@@ -1585,7 +1528,7 @@ You can monitor the pipeline in SageMaker Studio.
 - ![](assets/image53.png)
 - Right click on your pipeline and select**Open pipeline details**
 - ![](assets/image15.png)
-- This will open a pipeline tab. Right click on the status of the pipeline and select**Open execution details**
+- This will open a pipeline tab. Right click on the status of the pipeline and select **Open execution details**
 - ![](assets/image48.png)
 - This opens a tab with the pipeline steps. You can click on each step to get more information.
 - ![](assets/image7.png)
@@ -1593,7 +1536,7 @@ You can monitor the pipeline in SageMaker Studio.
 
 <!-- ------------------------ -->
 ## Evaluate Model Performance and Write Back to Snowflake
-Duration: 5
+Duration: 3
 
 
 
@@ -1609,7 +1552,7 @@ The next cell will load the data set and provide an output of the results.
 
 We can use some utilities to evaluate how well the model performed using the test data set.
 
-Execute next 2 cells
+Execute the next 2 cells
 
 ![](assets/image65.png)
 
@@ -1623,7 +1566,7 @@ The last cell will provide an interactive chart to see how well the model perfor
 
 #### Writeback to Snowflake
 
-Typically for large batch transforms we will use Snowflake’s automated capability to read data from S3 called[Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html), or alternatively the [COPY](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) command to perform bulk loads. Since this data set is in a dataframe we can use the Python connector to write it directly back to Snowflake.
+Typically for large batch transforms we will use Snowflake’s automated capability to read data from S3 called [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html), or alternatively the [COPY](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) command to perform bulk loads. Since this data set is in a dataframe we can use the Python connector to write it directly back to Snowflake.
 
 
 
@@ -1650,18 +1593,18 @@ The next cell will establish a connection with Snowflake using the secret’s in
 The last cell will write the dataframe data into a Snowflake table.
 
 
-Positive
-: TIP: The same connection can be used to read data from Snowflake as well as issue Snowflake commands to help process data.
+**TIP:** The same connection can be used to read data from Snowflake as well as issue Snowflake commands to help process data.
 
 
 
 ![](assets/image24.png)
 
 
+You can now query the results in your Snowflake account  
 
 
 
-Congratulations! you have completed the lab.
+Congratulations! You have completed the lab.
 
 
 
