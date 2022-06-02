@@ -93,6 +93,8 @@ Once your account is created you’ll receive an email confirmation. Within that
      limit 100
     ```
 
+    <br/><br/>
+
     You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
 
 7. Great! Now it’s time to set up dbt Cloud.
