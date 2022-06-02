@@ -90,8 +90,7 @@ Once your account is created you’ll receive an email confirmation. Within that
     ```
     select *
       from snowflake_sample_data.tpch_sf1.orders
-     limit 100
-    ```
+     limit 100;```
 
     <br/><br/>
 
