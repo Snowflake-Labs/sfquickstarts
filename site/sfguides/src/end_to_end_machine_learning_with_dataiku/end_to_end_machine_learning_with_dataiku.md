@@ -745,8 +745,6 @@ At the end of the lab, the project Flow will look like this:
 
   _In the interests of time we have performed some initial steps of the data pipeline such as cleansing and transformations on the loans dataset. These steps can be created in Dataiku from the raw datasets from the Lending Club to form a complete pipeline with the data and execution happening in Snowflake._
 
-  You can find a [Data Dictionary](#Data-Dictionary) for the table at the end of this guide 
-
 
 ### How We’ll Build The Project
 
@@ -788,7 +786,7 @@ The project home acts as the command center from which you can see the overall s
 ![39](assets/dk-9_400_Connection_explorer_with_filled_out_values.png)
 
 
-* Select the `Loans_Enriched` and `Unemployment_Data` datasets and click `CREATE 2 DATASETS` followed by `OK`
+* Select the `Loans_Enriched` and `Unemployment_Data` datasets and click on the `IMPORT TABLES` button (top right) followed by `CREATE 2 DATASETS` and `OK`
 
 
 ![40](assets/dk-10_400_Renamed_tables.png)
@@ -808,7 +806,7 @@ Now we have all of the raw data needed for this lab. Let’s explore what’s in
 
 * From the Flow, double click on the `LOANS_ENRICHED` dataset to open it.
 
-Although this dataset has already had a number of extraneous columns removed from the original there are still quite a few and whilst some columns names such as **ZIP_CODE** or **HOME_OWNERSHIP** are clear others might not be. Refer to the data dictionary at the back of the guide if you wish to understand more. 
+Although this dataset has already had a number of extraneous columns removed from the original there are still quite a few and whilst some columns names such as **ZIP_CODE** or **HOME_OWNERSHIP** are clear others might not be. Refer to the various online data dictionaries if you wish to understand more. 
 
 One column to note is the **LOAN_STATUS** column. This will be our target variable to predict against later in the lab. 
 
@@ -867,7 +865,7 @@ Let’s take a brief look at the `Prepare recipe`, the workhorse of the visual r
 ![45](assets/dk-prep-create.png)
 
 In a Prepare recipe you assemble a series of steps to transform your data from a library of ~100 processors. There are a couple of ways you can select these processors to build your script. Firstly you can select these processors directly by using the `+ADD A NEW STEP` button on the left.
-Secondly because Dataiku DSS infers meanings for each column, it suggests relevant actions in many cases. In the example below although the column is stored in Snowflake as a String Dataiku DSS recognises it as a date format so infers a `Date(unparsed)` meaning and suggests the `Parse Date` processor, by selecting the `More actions` menu item further suggestions are made.
+Secondly because Dataiku DSS infers meanings for each column, it suggests relevant actions in many cases. In the example below although the column is stored in Snowflake as a String Dataiku DSS recognizes it as a date format so infers a `Date(unparsed)` meaning and suggests the `Parse Date` processor, by selecting the `More actions` menu item further suggestions are made.
 
 ![46](assets/dk-prepare_overview2.png)
 
@@ -966,7 +964,7 @@ Till now we've used visual tools but lets see how users who prefer to code can c
 Dataiku DSS generates some starter code for us, we can also use code samples our colleagues have created and tagged or, if we prefer, work from Jupyter notebooks or a range of IDE’s. For this lab we will stick with the default code editor.
 
 * To save some typing let's `change our dataframe name to df` on line 8
-* Remove the to-do starter code on lines `11 - 15`
+* Remove the to-do starter code on `line 15`
 * Replace with the following lines to generate new features
 
 ```
@@ -1060,7 +1058,9 @@ Let's use the defaults the template has set.
 
 ![58](assets/dk-ml-train3.png)
 
-In the `RESULTS` screen we can see the results of our first experiment. DSS displays a graph of the evolution of the best cross-validation scores found so far. Hovering over one of the points, we can see the evolution of the hyperparameter values that yielded an improvement. In the right part of the charts, we can see final test scores.
+The `RESULTS` pane in DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model for the chosen metric.
+
+In the `RESULTS` screen we can see the output of our first experiment. DSS displays a graph of the evolution of the best cross-validation scores found so far. Hovering over one of the points, we can see the evolution of the hyperparameter values that yielded an improvement. In the right part of the charts, we can see final test scores.
 
 We can also see that some `Diagnostics` checks have been flagged.
 
@@ -1072,18 +1072,18 @@ Here we can see there a number of potential issues DSS has identified for us. It
 
 We can see this in our distribution.
 
-* Go back to the `DESIGN` menu and choose `Features handling` and our taget variable `LOAN_STATUS`
+* Go back to the `DESIGN` menu and choose `Features handling` and our target variable `LOAN_STATUS`
 
 ![58](assets/dk-ml-target1.png)
 
-Here we can see that our loan defaults only make 4% of the dataset. So even if our model erroneoulsy predicted that no loan would ever default it would still be correct 96% of the time for this imbalenced dataset! This is a common problem in certain types of classification problems such as credit card fraud, identifying rare diseases or, as in our case, loan defaults.
+Here we can see that our loan defaults only make 4% of the dataset. So even if our model erroneously predicted that no loan would ever default it would still be correct 96% of the time for this imbalanced dataset! This is a common problem in certain types of classification problems such as credit card fraud, identifying rare diseases or, as in our case, loan defaults.
 
-Although this a common problem in machine learning it is not one that is always easy to solve. Fortunatly DSS has a number of ways to help such as Weighting strategies, class rebalance sampling, Algorithm selection and more Let's look at a couple of them.
+Although this a common problem in machine learning it is not one that is always easy to solve. Fortunately DSS has a number of ways to help such as Weighting strategies, class rebalance sampling, Algorithm selection and more Let's look at a couple of them.
 
-Firtly we can a look at class rebalance.
+Firstly we can a look at class rebalance.
 
 * Go to the `Train/Test Set` and from the `Sampling method` dropdown select `Class rebalance (approx. ratio)`
-* Set the percentaage to 33% and the Column as our target **LOAN_STATUS**
+* Set the percentage to 33% and the Column as our target **LOAN_STATUS**
 
 ![58](assets/dk-model_rebalance.png)
 
@@ -1103,31 +1103,25 @@ As you can see on our results page we saw an improvement in our score and addres
 ## Evaluate a Model 
 Duration: 10
 
+After having trained as many models as desired, DSS offers tools for full training management to track and compare model performance across different algorithms. DSS also makes it easy to update models as new data becomes available and to monitor performance across sessions over time.
+
 * We can directly compare models from different experiments by selecting them via the `checkbox` and then selecting `Compare` from the `ACTIONS` menu.
 
 ![58](assets/dk-compare.png)
 
-* Select `Create a new comparison` and then click `compare`
+* Make sure `Create a new comparison` is selected and then click `COMPARE`
 
 ![58](assets/dk-model_compare.png)
 
-We can compare accross our experiments, saved models and evalauations from a DSS evaluation store (not part of this lab). You can set a champion and compare to challengers.
+We can compare across our experiments, saved models and evaluations from a DSS evaluation store (not part of this lab). You can set a champion and compare to challengers.
 
-* Explore some of the options. When you are done `select Visual Analysis` from the top menu, then `select` your modeling session and the the `Models` option
+* Explore some of the options. When you are done `click` on the `model name` of your best performing model from the `Summary` menu.
 
-![58](assets/dk-va1.png)
-![58](assets/dk-va2.png)
-![58](assets/dk-va4.png)
+![58](assets/dk-model-eval2.png)
 
-After having trained as many models as desired, DSS offers tools for full training management to track and compare model performance across different algorithms. DSS also makes it easy to update models as new data becomes available and to monitor performance across sessions over time.
-
-In the `Result` pane of any machine learning task, DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model in terms of the chosen metric.
-
-![60](assets/dk-ml-5.png)
 
 Clicking on any model produces a full report of tables and visualizations of performance against a range of different possible metrics.
 
-* `Click` on your best performing model
 * Step through the various graphs and interactive charts to better understand your model. 
 * For example `Subpopulations Analysis` allows you to identify potential bias in your model by seeing how it performs across different sub-groups
 * `Interactive Scoring` allows you to run real time `“what-if” analysis` to understand the impact of given features
@@ -1148,6 +1142,7 @@ Duration: 3
 After experimenting with a range of models built on historic training data, the next stage is to deploy our chosen model to score new, unseen records. 
 
 For many AI applications, batch scoring, where new data is collected over some period of time before being passed to the model, is the most effective scoring pattern. 
+
 Deploying a model creates a “saved” model in the Flow, together with its lineage. A saved model is the output of a Training recipe which takes as input the original training data used while designing the model.
 
 * Click on `DEPLOY`, accept the default model name and click `CREATE`
@@ -1164,14 +1159,14 @@ Your flow should now look like this:
 Duration: 5
 
 
-* From your `Flow` select the `LOANS_TEST` dataset and the `Predict` recipe from the `actions menu`
+* From your `Flow` select the `newly deployed model` (Green diamond) and the `Score` recipe from the `actions menu`
 
-![62](assets/dk-predict-rec.png)
+![62](assets/dk-score1.png)
 
-* Select your model from the dropdown. Leave the `Name` and `Store into` for the output as the defaults and click `CREATE RECIPE`
+* Select your `LOANS_TEST` from the `Input dataset dropdown`. Leave the `Name` and `Store into` for the output as the defaults and click `CREATE RECIPE`
 
 
-![62](assets/dk-predict-2.png)
+![62](assets/dk-score2.png)
 
 * Ensure `In-Database (Snowflake native)` is selected as the engine in order to use the Java UDF capability then click `RUN'
 
@@ -1184,7 +1179,7 @@ Your final project flow should now look like this.
 
 We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the ```CREDIT_SCORING_LOANS_TEST_SCORED``` table that was created once we kicked off our prediction job. 
 
-```Preview Data``` will give you glimplse of additional column added to the list.
+```Preview Data``` will give you glimpse of additional column added to the list.
 
 
 ```
@@ -1222,12 +1217,46 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 ![63](assets/dk-38-1400_complete_flow.jpg)
 
 
-## Bonus Material - Snowpark -Python  
+## Bonus Material - Snowpark for Python  
 Duration: 5
 
-To be added soon
+Dataiku DSS integrates with `Snowpark for Python` allowing coders to take advantage all the benefits of Snowflake whilst collaborating alongside their no/low-code colleagues on projects to accelerate time to value in DSS, their end-to-end, governed AI lifecycle platform.
 
-## Data Dictionary
-Duration: 1
+When using Dataiku's SaaS option from Partner Connect the setup is done for us automatically.
 
-To be added soon
+Let's check that.
+
+Return to your browser tab with `Dataiku Launchpad` open (if you have shut this just go to https://launchpad-dku.app.dataiku.io/).
+
+`Select` the `Features` menu
+![64](assets/dk-spk1.png)
+
+Check if Snowpark is already enabled. If it is you're good to go and can return to your DSS instance and start coding!
+
+If, as in the example here, it is not yet enabled  `click on +ADD A FEATURE`
+![64](assets/dk-spk2.png)
+
+
+From the `Extensions` menu `select Snowpark`
+![64](assets/dk-spk3.png)
+
+
+`Click CONFIRM`
+![64](assets/dk-spk4.png)
+
+
+`Click BACK TO SPACE`
+![64](assets/dk-spk5.png)
+
+
+Your Snowpark extension is now ready to use.
+![64](assets/dk-spk6.png)
+
+Return to your projects `Flow` in Dataiku DSS and either edit the existing Python Code Recipe or create a new one from the `LOANS_ENRICHED_joined_prepared` dataset.
+
+In the `Advanced` tab of your Python Code Recipe you can select your `Snowpark` Code environment and then `Save`
+![65](assets/dk-spk-code1.png)
+
+Once saved it will also be the default kernel if you prefer to work from a Notebook
+![66](assets/dk-spk-code2.png)
+
