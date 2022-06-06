@@ -38,11 +38,12 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 ### Prerequisites
 
 - Familiarity with Python
+- Python 3.8
 - Snowpark for Python library
 - A [Snowflake](https://www.snowflake.com/) account with ACCOUNTADMIN role
   - For this guide, we’ll use the **Environment Data Atlas** dataset provided (for free) by **Knoema**. In the [Data Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on Get Data and follow the instructions to gain access to KNOEMA_ENVIRONMENT_DATA_ATLAS.
   - In particular, we will analyze data in schema **ENVIRONMENT** from tables **EDGARED2019**, **WBWDI2019Jan**, and **UNENVDB2018**.
-- Streamlit library
+- Streamlit Python library
 
 <!-- ------------------------ -->
 ## Setup Environment
@@ -51,13 +52,15 @@ Duration: 5
 
 1. Install conda to manage a separate environment by running `pip install conda`. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 
-2. Create environment by running `conda create --name snowpark python=3.8 -c`
+2. Create environment by running `conda create --name snowpark python=3.8 -c snowflake`
 
 3. Activate conda environment by running `conda activate snowpark`
 
-4. Install pandas by running `conda install pandas` or `pip install pandas`
+4. Install pandas by running `conda install pandas`
 
-5. Install Snowpark for Python by running `conda install snowflake-snowpark-python` or `pip install snowflake-snowpark-python`
+5. Install Streamlit by running `pip install streamlit` or `pip3 install streamlit`
+
+6. Install Snowpark for Python by running `conda install snowflake-snowpark-python`
 
 <!-- ------------------------ -->
 ## Create Python Script
