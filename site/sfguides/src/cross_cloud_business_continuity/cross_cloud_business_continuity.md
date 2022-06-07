@@ -128,14 +128,22 @@ Our row access policy is applied to the global_sales.online_retail.customer tabl
 - sales_admin role should be able to see data for market segments 'automobile', 'machinery', 'building' and 'household'.
 - product_manager role should be able to see data across ALL market segments.
 - All other roles should not be able to see data for ANY market segment.
+
+
+Positive
+: This will appear in a positive info box.
+
+<p class="callout info">A success message</p>
+
 ```sql
-## Below query when run with the sysadmin role should return 0 records, but when run 
-## with the product_manager role it should return proper results.
+<!--
+Below query when run with the sysadmin role should return 0 records, but when run 
+with the product_manager role it should return proper results.
 
-## Run the query once with each role - sysadmin and product_manager
-## Switch roles in your worksheet with the use role <role_name> command. 
-
-## use role sysadmin (or product_manager);
+Run the query once with each role - sysadmin and product_manager
+Switch roles in your worksheet with the use role <role_name> command. 
+-->
+use role sysadmin;
 use warehouse bi_reporting_wh;
 select * from global_sales.online_retail.customer limit 100;
 ```
@@ -148,12 +156,12 @@ Our payroll.noam_northeast.employee_detail data contains critical PII data eleme
 - iban, credits_card and ssn: hr_admin and product_manager see ibans in the clear, all the other roles would see fully masked values.
 - salary: hr_admin and product_manager see actual salaries and all the other roles would see 0.0
 ```sql
-
-## Run the query below with two different roles - hr_analyst and hr_admin, observe 
-## all fields in the return results. What values does hr_analyst see for email, 
-## iban, cc and salary columns? What values does the hr_admin see?
-
-## use role hr_analyst (or hr_admin);
+<!--
+Run the query below with two different roles - hr_analyst and hr_admin, observe 
+all fields in the return results. What values does hr_analyst see for email, 
+iban, cc and salary columns? What values does the hr_admin see?
+-->
+use role hr_analyst;
 use warehouse hr_wh;
 select * from payroll.noam_northeast.employee_detail limit 100;
 ```
