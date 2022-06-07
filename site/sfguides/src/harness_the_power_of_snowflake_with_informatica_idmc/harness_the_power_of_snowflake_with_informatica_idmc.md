@@ -16,9 +16,13 @@ This quickstart will guide you through the steps to use the Informatica Intellig
 
 The Informatica IDMC provides complete, comprehensive cloud-native and AI-powered data management capabilities, including data catalog, data integration, API and application integration, data prep, data quality, master data management, and a data marketplace, on a foundation of governance and privacy. Informatica IDMC is powered by our AI and machine learning (ML) engine, CLAIRE®, optimized for intelligence and automation, and is built on a modern, elastic, serverless microservices stack that connects data consumers to the data sources they need. It enables you to intelligently discover and understand all the data within and outside the enterprise, access and ingest all types of data wherever and whenever you want, curate and prepare data in a self-service fashion so that it is fit for use, and deliver an authoritative and trusted single view of all your data. Informatica IDMC is the single and most complete platform you will ever need for cloud-native data management.
 
+IDMC Data Integration allows you to load source data from databases, applications, and data files in the cloud or on-premises into Snowflake. Data Integration supports many transformations that can be used to transform and enrich the source data. In addition, pushdown optimization (PDO) can be utilized for some transformations and functions to take advantage of Snowflake compute resources for data processing.
+
+In this lab, you will create a mapping to read two delimited files (Orders and Lineitem) from S3, join the files, perform an aggregation to create a count and total, and write the results into a new table in Snowflake. Then in the mapping task, you will turn on pushdown optimization to enable the processing to occur in Snowflake.
+
 JSON (JavaScript Object Notation) is a text-based data format commonly used between servers and web applications and web-connected devices.  Because it is text-based, it is readable by both humans and machines.  JSON semi-structured data can be stored in Snowflake variant column alongside relational data.  In IDMC, the hierarchy parser transformation parses and transforms hierarchy data to relational data.
 
-In this guide, you will learn how to build a data integration mapping and mapping task or data pipeline using Informatica's Data Integration. You will also use sample weather forecast data to create a hierarchical schema, then use it in a mapping to parse and transform the JSON weather forecast data, join them, add an expression to convert the temperature, and then write the data to a new table.
+In this lab, you will also use sample weather forecast data to create a hierarchical schema, then use it in a mapping to parse and transform the JSON weather forecast data, join them, add an expression to convert the temperature, and then write the data to a new table.
 
 ### Prerequisites
 - Familiarity with Snowflake
@@ -258,15 +262,15 @@ Create a new mapping
 4. Click **Create** <BR>
 ![NewMapping](assets/Lab2_Picture28.png)
 5. Under properties, enter **m_S3_Orders_Lineitem_into_Snowflake** in Name field.
-6. Ensure Location is **Hands-on Lab**. If not, click **Browse** and select it.
+6. Ensure that Location is **Hands-on Lab**. If not, click **Browse** and select it.
 ![Mapping](assets/Lab2_Picture29.png)
 
 ### Step 2
 Let's configure the Orders data source from S3.
-1.	Click **Source** transform in the mapping canvas to assign its properties.
-2.	In General tab, enter **src_S3_Orders** in the Name field.<BR>
+1.	Click the **Source** transform in the mapping canvas to assign its properties.
+2.	In the General tab, enter **src_S3_Orders** in the Name field.<BR>
 ![src1](assets/Lab2_Picture30.png)
-3.	In Source tab, select **S3** in the Connection dropdown field.
+3.	In the Source tab, select **S3** in the Connection dropdown field.
 4.	Click **Select** to select a source file.
 ![srcS3Orders](assets/Lab2_Picture31.png)
 5.	Click on **dataforingestion** S3 bucket.
@@ -282,7 +286,7 @@ Let's configure the Orders data source from S3.
 12.	Records should be separated by fields.
 ![srcS3OrdersPreviewFields](assets/Lab2_Picture35.png)
 13.	Click **OK**.
-14.	In Fields tab, select fields **7**, **8**, and **9**.  Then click **trash icon** to remove those fields.  
+14.	In the Fields tab, select fields **7**, **8**, and **9**.  Then click **trash icon** to remove those fields.  
 15.	Click **Yes** when prompted.
 ![srcS3OrdersDeleteFields](assets/Lab2_Picture36.png)
 16.	Let’s edit the **o_totalprice** metadata so that it is a decimal field.
@@ -300,8 +304,8 @@ Now we will add the Lineitem file as another data source.  The steps are the sam
 1.	From the transformation palette, drag **Source** transform and drop in the mapping canvas.
 ![srcS3newSource](assets/Lab2_Picture38.png)
 2.	Let’s assign its properties.
-3.	In General tab, enter **src_S3_Lineitem** in the Name field.
-4.	In Source tab, select **S3** in the Connection dropdown field.
+3.	In the General tab, enter **src_S3_Lineitem** in the Name field.
+4.	In the Source tab, select **S3** in the Connection dropdown field.
 5.	Click **Select** to select a source file.
 6.	Click on **dataforingestion** S3 bucket.
 7.	From the results on the right, select **lineitem.tbl** file.
@@ -312,7 +316,7 @@ Now we will add the Lineitem file as another data source.  The steps are the sam
 12.	Click **Data Preview** to view the first 10 records.
 13.	Records should be separated by fields.
 14.	Click **OK**.
-15.	In Fields tab, remove all fields except **l_orderkey**, **l_extendedprice**, **l_discount**, **l_tax**.
+15.	In the Fields tab, remove all fields except **l_orderkey**, **l_extendedprice**, **l_discount**, **l_tax**.
 16. Click **Yes**. <BR>
 ![srcS3newProperties](assets/Lab2_Picture39.png)
 17.	Click **Save** to save work in progress.
@@ -320,18 +324,18 @@ Now we will add the Lineitem file as another data source.  The steps are the sam
 ### Step 4
 Let’s join the two data sources.
 
-1.	From the transformation palette, drag **Joiner** transform and drop it over the line between the src_S3_Orders source and target transforms.  The Joiner should now be linked to the Orders and target.  If not, manually link them.
+1.	From the transformation palette, drag the **Joiner** transform and drop it over the line between the src_S3_Orders source and target transforms.  The Joiner should now be linked to the Orders and target.  If not, manually link them.
 2.	Click align icon to align transformations in the mapping canvas.
 ![joinertx](assets/Lab2_Picture40.png)
 3.	Click the plus icon above the Joiner to expand.  
 4.	Link **src_S3_Lineitem** to the Detail of Joiner transform.
 ![joinerdetail](assets/Lab2_Picture41.png)
 5.	Let’s assign the Joiner properties.
-6.	In General tab, enter **jnr_orders_lineitem** in the Name field.
-7.	In Join Condition tab, click the plus icon to add a new condition.
+6.	In the General tab, enter **jnr_orders_lineitem** in the Name field.
+7.	In the Join Condition tab, click the plus icon to add a new condition.
 8.	Select **o_orderkey** for Master and **l_orderkey** for Detail.
 ![joinercondition](assets/Lab2_Picture42.png)
-9.	In Advanced tab, check the **Sorted Input** checkbox.
+9.	In the Advanced tab, check the **Sorted Input** checkbox.
 ![joinersorted](assets/Lab2_Picture43.png)
 10.	Click **Save** to save work in progress.
 
@@ -371,24 +375,27 @@ Now we will add an Aggregator transformation in the mapping to calculate the num
 23.	Click **OK**.
 24.	Click **Configure** to configure the expression.
 25.	Enter the following in the Expression field.  This function will add the total of all items in an order.
+
 ```SQL
 sum(to_decimal(l_extendedprice) * (1-to_decimal(l_discount)) * (1+to_decimal(l_tax)))
 ```
+
 26.	Click **Validate**.
 27.	Click **OK**.
 28.	When completed, your Expression tab properties should look like this:
 ![groupbycomplete](assets/Lab2_Picture53.png)
 29.	Click **Save** to save work in progress.
 
-### Step 8 (Optional)
+### Step 6 (Optional)
 Now we will add another expression to rename the fields so that they look better and are in the order we want in the Snowflake table.  This is an optional transformation.
 
 1.	From the transformation palette, drag **Expression** transform and drop it over the line between the agg_item_count_and_order_total and target transforms.  The expression should now be linked to the aggregator and Target transforms.  If not, manually link them.
 2.	Click align icon to align transformations in the mapping canvas.
 ![expr](assets/Lab2_Picture54.png)
 3.	Let’s assign the properties.
-4.	In General tab, enter **exp_rename_fields** in the Name field.
-5.	In Expression tab, click the plus icon to add the following fields:
+4.	In the General tab, enter **exp_rename_fields** in the Name field.
+5.	In the Expression tab, click the plus icon to add the following fields:
+
 | **Field Name** | **Type** | **Precision**	| **Scale**	| **Expression** |
 | --- | --- | --- | --- | --- |
 | orderkey | string	| 255 | 0 | o_orderkey |
@@ -396,17 +403,18 @@ Now we will add another expression to rename the fields so that they look better
 | orderdate	| string | 255 | 0 | o_orderdate | 
 | orderpriority	| string	| 255	| 0	| o_orderpriority| 
 | orderstatus| 	string| 	255| 	0| 	o_orderstatus| 
-| totalprice| 	decimal| 	38| 	2| 	o_totalprice| 
+| totalprice| 	decimal| 	38| 	2| 	o_totalprice|
+
 6.	When completed, your Expression tab properties should look like this:
 ![exprcomplete](assets/Lab2_Picture55.png)
 7.	Click **Save** to save work in progress.
 
-### Step 9
+### Step 7
 Lastly the target table is going to be in Snowflake.
 
 1.	Click **Target** to set a target properties.
-2.	In General tab, enter **tgt_Snowflake** in the Name field.
-3.	In Incoming Fields tab, click plus icon to add a field rule.
+2.	In the General tab, enter **tgt_Snowflake** in the Name field.
+3.	In the Incoming Fields tab, click plus icon to add a field rule.
 4.	Click Include operator and change it to **Exclude**.
 5.	Click **Configure**.
 ![target](assets/Lab2_Picture56.png)
@@ -440,7 +448,7 @@ Let’s configure Pushdown Optimization (PDO) in the Mapping Task and execute it
 
 ### Step 1
 
-1.	Click **Save** to save and validate mapping.
+1.	Click **Save** to save and validate the mapping.
 2.	Click 3 dots icon to create a **Mapping task** from the mapping
 ![mct](assets/Lab2_Picture62.png)
 3.	Select **New Mapping Task…**
@@ -463,14 +471,15 @@ View job execution progress.
 
 1.	Click **My Jobs** to monitor the job execution.
 ![job](assets/Lab2_Picture67.png)
-2.	Click **Refresh** icon when “Updates available” message appears.
-3.	When job is completed, make sure Status is **Success**.
+2.	Click **Refresh** icon when the “Updates available” message appears.
+3.	When the job is completed, make sure Status is **Success**.
 ![success](assets/Lab2_Picture68.png)
 4.	Drill down to the completed job by clicking the instance name.  Then click Download Session Log to view the log.  
 ![download](assets/Lab2_Picture69.png)
-5. In the log you will see a message indicating Pushdown Optimization is successfully enabled. 
+5. In the log you will see a message indicating that Pushdown Optimization is successfully enabled. 
 ![pdosuccess](assets/Lab2_Picture70.png)
-5.	You will also see an INSERT SQL statement that Informatica generated for execution in Snowflake.
+6.	You will also see an INSERT SQL statement that Informatica generated for execution in Snowflake.
+
 ```SQL
 INSERT INTO "PC_INFORMATICA_DB"."PUBLIC"."ORDERSLINEITEM"("orderkey","custkey","orderdate","orderpriority","orderstatus","totalprice","itemcount","total_calc") SELECT t5.t5c6, t5.t5c7, t5.t5c10, t5.t5c11, t5.t5c8, t5.t5c9, t5.t5c12::NUMBER(18,0), t5.t5c13 FROM (SELECT t3.t3c0, t3.t3c1, t3.t3c2, t3.t3c3, t3.t3c4, t3.t3c5, t3.t3c0 c0, t3.t3c1 c1, t3.t3c2 c2, t3.t3c3 c3, t3.t3c4 c4, t3.t3c5 c5, COUNT(t1.t1c0)::NUMBER(10,0), SUM(((t1.t1c1) * (1 - (t1.t1c2))) * (1 + (t1.t1c3))) FROM (SELECT t0."l_orderkey"::VARCHAR(256), t0."l_extendedprice"::VARCHAR(256), t0."l_discount"::VARCHAR(256), t0."l_tax"::VARCHAR(256) FROM "PC_INFORMATICA_DB"."PUBLIC"."ORDERSLINEITEM_1617648173588" AS t0) AS t1(t1c0 , t1c1 , t1c2 , t1c3) Join (SELECT t2."o_orderkey"::VARCHAR(256), t2."o_custkey"::VARCHAR(256), t2."o_orderstatus"::VARCHAR(256), (t2."o_totalprice"::NUMBER(38,2))::DOUBLE, t2."o_orderdate"::VARCHAR(256), t2."o_orderpriority"::VARCHAR(256) FROM "PC_INFORMATICA_DB"."PUBLIC"."ORDERSLINEITEM_1617648173277" AS t2) AS t3(t3c0 , t3c1 , t3c2 , t3c3 , t3c4 , t3c5) ON t3.t3c0 = t1.t1c0 GROUP BY 1, 2, 3, 4, 5, 6) AS t5(t5c0 , t5c1 , t5c2 , t5c3 , t5c4 , t5c5 , t5c6 , t5c7 , t5c8 , t5c9 , t5c10 , t5c11 , t5c12 , t5c13)
 ```
@@ -493,8 +502,9 @@ In this section, we'll load some JSON-formatted weather data into the PC_INFORMA
 For this step we will use standard Snowflake SQL commands to create a table with a Snowflake **VARIANT** column, create an external stage (pointing to an S3 buket), re-size our warehouse to **Large** to speed up the load, run a Snowflake **COPY** command to load the data, and importantly, re-size the warehouse back to **X-Small** after all of the commands complete.
 
 1. In Snowflake **Snowsight**, execute all of the following SQL statements.
+
 ```SQL
--- Set the correct ROLE and WAREHOUSE
+-- Set the correct ROLE, WAREHOUSE, and SCHEMA
 use role PC_INFORMATICA_ROLE;
 use warehouse PC_INFORMATICA_WH;
 use schema PC_INFORMATICA_DB.PUBLIC;
@@ -519,8 +529,8 @@ copy into daily_14_total
    
 -- Set the warehouse back to the original size
 alter warehouse pc_informatica_wh set warehouse_size = xsmall;
-
 ```
+
 ![copytable](assets/Lab3_Picture2.png)
 
 ## Configure Hierarchical Schema
@@ -543,18 +553,18 @@ Create a Hierarchical Schema in IDMC.
 
 1.	In IDMC, go to **Data Integration** service.
 2.  Click **New**.
-2.	Click **Components**.
-3.	Select **Hierarchical Schema** and click **Create**.
+3.	Click **Components**.
+4.	Select **Hierarchical Schema** and click **Create**.
 ![Hschema](assets/Lab3_Picture3.png)
-4.	Enter **Daily_14** in the Name field.
-5.	Select **Hands-on Lab** in the Location field if not already filled in.
-6.	Click **Upload**.
+5.	Enter **Daily_14** in the Name field.
+6.	Select **Hands-on Lab** in the Location field if not already filled in.
+7.	Click **Upload**.
 ![upload](assets/Lab3_Picture4.png)
-7.	Click **Choose File** and select the JSON file you saved in Step 1 above.
-8.	Click **Validate** and you should see **"JSON Sample is Valid"** message.
-9.	Click **OK**.
+8.	Click **Choose File** and select the JSON file you saved in Step 1 above.
+9.	Click **Validate** and you should see **"JSON Sample is Valid"** message.
+10.	Click **OK**.
 ![upload](assets/Lab3_Picture5.png)
-10.	Click Save.
+11.	Click Save.
 ![save](assets/Lab3_Picture6.png)
 
 ## Create a Mapping to Read the Weather Table
@@ -587,9 +597,11 @@ Let’s configure the data source from Snowflake.
 ![queryoption](assets/Lab3_Picture9.png)
 10.	Click Filter Condition dropdown and select **Advanced**.
 11.	Paste the following in the filter condition:
+
 ```condition
 DAILY_14_TOTAL.T >= to_date('2021-02-01','YYYY-MM-DD') AND DAILY_14_TOTAL.T <= to_date('2021-02-28','YYYY-MM-DD') AND DAILY_14_TOTAL.V:city:country='US' and DAILY_14_TOTAL.V:city:name = 'San Francisco'
 ```
+
 12.	Click **OK**.
 ![condition](assets/Lab3_Picture10.png)
 13.	Click **Save** to save work in progress.
@@ -651,8 +663,9 @@ Add Expression transform to create an ordered fields in the target and convert t
 1.	Drag and drop **Expression** transform on the canvas.
 2.	Link **jnr_condition** to the **Expression**.
 ![expr](assets/Lab3_Picture23.png)
-3.	In General tab, enter **exp_convert_temperature** in the Name field.
-4.	In Expression tab, add the following fields and expressions.
+3.	In the General tab, enter **exp_convert_temperature** in the Name field.
+4.	In the Expression tab, add the following fields and expressions.
+
 | **Field Name** | **Type; Precision; Scale** | **Expression** |
 | --- | --- | --- |
 | Date | Date/time; 29; 9 | Add_To_Date(To_Date( '1970-01-01', 'YYYY-MM-DD'),'SS',dt) |
@@ -662,25 +675,26 @@ Add Expression transform to create an ordered fields in the target and convert t
 | Max_Temp | Decimal; 10; 1 | (max - 273.15) * 9/5 + 32 |
 | Condition | String; 100; 0 | description |
 | Humidity_Level | Double; 15; 0 | humidity |
+
 ![expressions](assets/Lab3_Picture24.png)
 
 ### Step 7
 Finally, let’s configure the Target. 
 
 1.	Link **exp_convert_temperature** to Target.
-2.	In General tab, enter **tgt_sf_weather_forecast** in the Name field.
-3.	In Incoming Fields tab, change All Fields to **Named Fields** by clicking on that field.
+2.	In the General tab, enter **tgt_sf_weather_forecast** in the Name field.
+3.	In the Incoming Fields tab, change All Fields to **Named Fields** by clicking on that field.
 4.	Then click **Configure** to select fields.  Select the fields that were created in the **exp_convert_temperature** expression transform.
 ![targetincomingfields](assets/Lab3_Picture25.png)
-5.	In Target tab, select **Snowflake** connection.
+5.	In the Target tab, select **Snowflake** connection.
 6.	Click **Select** to select a table.
-7.	In Target Object window, check **Create New at Runtime**.
+7.	In the Target Object window, check **Create New at Runtime**.
 8.	Enter **SF_WEATHER_FORECAST** in Object Name field.
 9.	Enter **TABLE** in TableType.
 10.	Enter **PC_INFORMATICA_DB/PUBLIC** in Path.
 11.	Click **OK**.
 ![target](assets/Lab3_Picture26.png)
-12.	In Field Mapping tab, the target fields are automatically mapped from the incoming fields.
+12.	In the Field Mapping tab, the target fields are automatically mapped from the incoming fields.
 ![field mapping](assets/Lab3_Picture27.png)
 13.	Click **Save**.
 
