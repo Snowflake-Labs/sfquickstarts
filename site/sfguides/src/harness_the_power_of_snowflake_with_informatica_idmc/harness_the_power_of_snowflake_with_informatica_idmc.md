@@ -336,66 +336,14 @@ Let’s join the two data sources.
 10.	Click **Save** to save work in progress.
 
 ### Step 5
-Let’s add an Expression to convert input fields from string to decimal data type.
-
-1.	From the transformation palette, drag **Expression** transform and drop it over the line between the jnr_orders_lineitem and target transforms.  The expression should now be linked to the Joiner and Target.  If not, manually link them.
-2.	Click align icon to align transformations in the mapping canvas.
-![expr](assets/Lab2_Picture44.png)
-3.	Let’s assign the properties.
-4.	In General tab, enter **exp_convert_to_decimal** in the Name field.
-5.	In Expression tab, click the plus icon to add a new field.
-6.	Enter **itemprice** in the Name field.
-7.	Select **decimal** in the Type dropdown field.
-8.	Enter **38** in the Precision field.
-9.	Enter **2** in the Scale field.
-10.	Click **OK**. <BR>
-![expritemprice](assets/Lab2_Picture45.png)
-11.	Click **Configure** to configure the expression.
-![expritempriceconfigure](assets/Lab2_Picture46.png)
-12.	Enter **to_decimal(l_extendedprice)** in the Expression field.  Click Fields dropdown list to view available System Variables, Parameters, and Functions.
-13.	Click **Validate**.  "The expression is valid" message shows up.
-14.	Click **OK**. <BR>
-![exprvalidate](assets/Lab2_Picture47.png)
-15.	Repeat no. 5-14 to add the following fields and expressions:
-| **Field Name** | **Expression** |
-| --- | --- |
-| discountpercentage | to_decimal(l_discount) |
-| taxpercentage | to_decimal(l_tax) |
-16.	When completed, your Expression tab properties should look like this:
-![exprvalidate2](assets/Lab2_Picture48.png)
-17.	Click **Save** to save work in progress.
-
-### Step 6
-Let’s add another Expression transform to calculate the item price.
-
-1.	From the transformation palette, drag **Expression** transform and drop it over the line between the exp_convert_to_decimal and target transforms.  The expression should now be linked to the expression and Target.  If not, manually link them.
-2.	Click align icon to align transformations in the mapping canvas.
-![expr2](assets/Lab2_Picture49.png)
-3.	Let’s assign the properties.
-4.	In General tab, enter **exp_itemtotal** in the Name field.
-5.	In Expression tab, click the plus icon to add a new field.
-6.	Enter **itemtotal** in the Name field.
-7.	Select **decimal** in the Type dropdown field.
-8.	Enter **38** in the Precision field.
-9.	Enter **2** in the Scale field.
-10.	Click **OK**.
-11.	Click **Configure** to configure the expression.
-12.	Enter **itemprice * (1-discountpercentage) * (1+taxpercentage)** in the Expression field.  
-13.	Click **Validate**.
-14.	Click **OK**.
-15.	When completed, your Expression tab properties should look like this:
-![expritemtotal](assets/Lab2_Picture50.png)
-16.	Click **Save** to save work in progress.
-
-### Step 7
 Now we will add an Aggregator transformation in the mapping to calculate the number of items for an order and the total of all items.
 
-1.	From transformation palette, select **Aggregator** transformation, drag and drop between the exp_itemtotal and Target in mapping canvas window.
+1.	From the transformation palette, select **Aggregator** transformation, drag and drop between the exp_itemtotal and Target in mapping canvas window.
 2.	Click align icon to align transformations in the mapping canvas.
 ![aggr](assets/Lab2_Picture51.png)
 3.	Let’s assign the properties.
-4.	In General tab, enter **agg_item_count_and_order_total** in the Name field.
-5.	In Group By tab, click the plus icon to add new fields.
+4.	In the General tab, enter **agg_item_count_and_order_total** in the Name field.
+5.	In the Group By tab, click the plus icon to add new fields.
 6.	Add the following fields:
 <br>	**o_orderkey**
 <br>	**o_custkey**
@@ -405,7 +353,7 @@ Now we will add an Aggregator transformation in the mapping to calculate the num
 <br>	**o_orderpriority**
 7.	When completed, the Group By tab properties should look like this:
 ![groupby](assets/Lab2_Picture52.png)
-8.	In Aggregate tab, click the plus icon   to add a new field.
+8.	In the Aggregate tab, click the plus icon   to add a new field.
 9.	Enter **itemcount** in the Name field.
 10.	Select **integer** in the Type dropdown field.
 11.	Enter **10** in the Precision field.
@@ -422,7 +370,10 @@ Now we will add an Aggregator transformation in the mapping to calculate the num
 22.	Enter **2** in the Scale field.
 23.	Click **OK**.
 24.	Click **Configure** to configure the expression.
-25.	Enter **sum(itemtotal)** in the Expression field.  This function will add the total of all items in an order.
+25.	Enter the following in the Expression field.  This function will add the total of all items in an order.
+```SQL
+sum(to_decimal(l_extendedprice) * (1-to_decimal(l_discount)) * (1+to_decimal(l_tax)))
+```
 26.	Click **Validate**.
 27.	Click **OK**.
 28.	When completed, your Expression tab properties should look like this:
@@ -531,16 +482,25 @@ INSERT INTO "PC_INFORMATICA_DB"."PUBLIC"."ORDERSLINEITEM"("orderkey","custkey","
 ![snowflakehistory](assets/Lab2_Picture72.png)
 
 <!-- ------------------------ -->
-## Load weather data into a Snowflake table
+## Transform Semi-Structured JSON Data
 Duration: 3
 
 ### Step 1 
-Now we'll load some JSON-formatted weather data into the PC_INFORMATICA_DB database.  For this step we will use standard Snowflake SQL commands to create a table with a Snowflake **VARIANT** column, create an external stage (pointing to an S3 buket), re-size our warehouse to **Large** to speed up the load, run a Snowflake **COPY** command to load the data, and importantly, re-size the warehouse back to **X-Small** after all of the commands complete.
+JSON (JavaScript Object Notation) is a text-based data format commonly used between servers and web applications and web-connected devices.  Because it is text-based, it is readable by both humans and machines.  JSON semi-structured data can be stored in Snowflake variant column alongside relational data.  In IDMC, the hierarchy parser transformation parses and transforms hierarchy data to relational data.
+
+In this section, we'll load some JSON-formatted weather data into the PC_INFORMATICA_DB database.  You will then use it to create a hierarchical schema, then use it in a mapping to parse and transform the JSON weather forecast data, join them, add an expression to convert the temperature, then write to a new table.
+
+For this step we will use standard Snowflake SQL commands to create a table with a Snowflake **VARIANT** column, create an external stage (pointing to an S3 buket), re-size our warehouse to **Large** to speed up the load, run a Snowflake **COPY** command to load the data, and importantly, re-size the warehouse back to **X-Small** after all of the commands complete.
 
 1. In Snowflake **Snowsight**, execute all of the following SQL statements.
 ```SQL
+-- Set the correct ROLE and WAREHOUSE
+use role PC_INFORMATICA_ROLE;
+use warehouse PC_INFORMATICA_WH;
+use schema PC_INFORMATICA_DB.PUBLIC;
+
 -- Create the table
-create or replace table pc_informatica_db.daily_14_total (
+create or replace table pc_informatica_db.public.daily_14_total (
   v variant,
   t timestamp);
 
@@ -691,7 +651,7 @@ Add Expression transform to create an ordered fields in the target and convert t
 1.	Drag and drop **Expression** transform on the canvas.
 2.	Link **jnr_condition** to the **Expression**.
 ![expr](assets/Lab3_Picture23.png)
-3.	In General tab, enter exp_convert_temperature in the Name field.
+3.	In General tab, enter **exp_convert_temperature** in the Name field.
 4.	In Expression tab, add the following fields and expressions.
 | **Field Name** | **Type; Precision; Scale** | **Expression** |
 | --- | --- | --- |
@@ -707,10 +667,10 @@ Add Expression transform to create an ordered fields in the target and convert t
 ### Step 7
 Finally, let’s configure the Target. 
 
-1.	Link exp_convert_temperature to Target.
+1.	Link **exp_convert_temperature** to Target.
 2.	In General tab, enter **tgt_sf_weather_forecast** in the Name field.
 3.	In Incoming Fields tab, change All Fields to **Named Fields** by clicking on that field.
-4.	Then click **Configure** to select fields.  Select the fields that were created in exp_convert_temperate expression transform.
+4.	Then click **Configure** to select fields.  Select the fields that were created in the **exp_convert_temperature** expression transform.
 ![targetincomingfields](assets/Lab3_Picture25.png)
 5.	In Target tab, select **Snowflake** connection.
 6.	Click **Select** to select a table.
