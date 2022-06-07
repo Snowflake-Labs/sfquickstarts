@@ -848,7 +848,7 @@ Let’s take a brief look at the `Prepare recipe`, the workhorse of the visual r
 ![45](assets/dk-prep-create.png)
 
 In a Prepare recipe you assemble a series of steps to transform your data from a library of ~100 processors. There are a couple of ways you can select these processors to build your script. Firstly you can select these processors directly by using the `+ADD A NEW STEP` button on the left.
-Secondly because Dataiku DSS infers meanings for each column, it suggests relevant actions in many cases. In the example below although the column is stored in Snowflake as a String Dataiku DSS recognises it as a date format so infers a `Date(unparsed)` meaning and suggests the `Parse Date` processor, by selecting the `More actions` menu item further suggestions are made.
+Secondly because Dataiku DSS infers meanings for each column, it suggests relevant actions in many cases. In the example below although the column is stored in Snowflake as a String Dataiku DSS recognizes it as a date format so infers a `Date(unparsed)` meaning and suggests the `Parse Date` processor, by selecting the `More actions` menu item further suggestions are made.
 
 ![46](assets/dk-prepare_overview2.png)
 
@@ -856,15 +856,15 @@ Secondly because Dataiku DSS infers meanings for each column, it suggests releva
 Let's try using processors with both methods, firstly via the suggested actions:
 * Click on the `EARLIEST_CR_LINE` column header and from the dropdown, `select Parse date`
 
-![46](assets/dk-18_800_parse_date.jpg)
-
 * In `Add a custom format` set the format to `d-MMM-yyyy` and click on `USE DATE FORMAT`
+
+* A step is generated on the left. Change the `Locale` to `en_US`
+
+![46](assets/dk-18_800_parse_date.jpg)
 
 
 ![47](assets/dk-19_800_date_format.jpg)
 
-
-* A step is generated on the left. Change the `Locale` to `en_US`
 
 ![48](assets/dk-20_800_parse_en.jpg)
 
@@ -872,6 +872,7 @@ Let's try using processors with both methods, firstly via the suggested actions:
 * Click on the newly created column (click outside the step to action the change) and select `Compute time difference`
 
 * Change `Until` to `Another Date Column` and add **ISSUE_DATE_PARSED** as that column.
+
 * Change the unit to `Years` and name the new column `since_Earliest_CR_LINE_years`
 
 
@@ -949,7 +950,7 @@ Until now we've used visual tools but lets see how users who prefer to code can 
 Dataiku DSS generates some starter code for us, we can also use code samples our colleagues have created and tagged or, if we prefer, work from Jupyter notebooks or a range of IDE’s. For this lab we will stick with the default code editor.
 
 * To save some typing let's `change our dataframe name to df` on line 8
-* Remove the to-do starter code on lines `11 - 15`
+* Remove the to-do starter code on `line  15`
 * Replace with the following lines to generate new features
 
 ```
@@ -1043,9 +1044,9 @@ Let's use the defaults the template has set.
 
 ![58](assets/dk-ml-train3.png)
 
-In the `RESULTS` pane of any machine learning task, DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model in terms of the chosen metric.
+The `RESULTS` pane in DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model for the chosen metric.
 
-Here we can see the results of our first experiment. DSS displays a graph of the evolution of the best cross-validation scores found so far. Hovering over one of the points, we can see the evolution of the hyperparameter values that yielded an improvement. In the right part of the charts, we can see final test scores.
+In the `RESULTS` screen we can see the output of our first experiment. DSS displays a graph of the evolution of the best cross-validation scores found so far. Hovering over one of the points, we can see the evolution of the hyperparameter values that yielded an improvement. In the right part of the charts, we can see final test scores.
 
 
 We can also see that some `Diagnostics` checks have been flagged.
@@ -1102,29 +1103,29 @@ As you can see on our results page we saw an improvement in our score and addres
 ## Evaluate a Model 
 Duration: 10
 
+After having trained as many models as desired, DSS offers tools for full training management to track and compare model performance across different algorithms. DSS also makes it easy to update models as new data becomes available and to monitor performance across sessions over time.
+
 * We can directly compare models from different experiments by selecting them via the `checkbox` and then selecting `Compare` from the `ACTIONS` menu.
 
 ![58](assets/dk-compare.png)
 
-* Select `Create a new comparison` and then click `compare`
+* Make sure `Create a new comparison` and then click `compare`
 
 ![58](assets/dk-model_compare.png)
 
 We can compare across our experiments, saved models and evaluations from a DSS evaluation store (not part of this lab). You can set a champion and compare to challengers.
 
-* Explore some of the options. When you are done select your best performing model from the `Summary` tab by `clicking on the models name` in the `Model Evaluation table` 
+* Explore some of the options. When you are done `click` on the `model name` of your best performing model from the `Summary` menu.
 
-![58](assets/dk-ml-compare-nav.png)
+![58](assets/dk-model-eval2.png)
 
-
-Here we can view a full report of tables and visualizations of performance against a range of different possible metrics for our chosen model.
+Clicking on any model produces a full report of tables and visualizations of performance against a range of different possible metrics.
 
 * Step through the various graphs and interactive charts to better understand your model. 
-* Some tasks are computationally expensive so you can choose if you want them to run. For example `Subpopulations Analysis` allows you to identify potential bias in your model by seeing how it performs across different sub-groups. Try selecting `ADDR_STATE` from the dropdown then click `compute`
-
-![60](assets/dk-subpop.png)
-
+* For example `Subpopulations Analysis` allows you to identify potential bias in your model by seeing how it performs across different sub-groups
 * `Interactive Scoring` allows you to run real time `“what-if” analysis` to understand the impact of given features
+
+![60](assets/dk-33_1100_subpop.jpg)
 
 
 Here we can see `Variable importance` 
@@ -1156,11 +1157,12 @@ Your flow should now look like this:
 Duration: 8
 
 
-* Return to the `Flow` and select the newly deployed model (its represented as a green diamond) and then from the `Actions` menu select the `Score` recipe.
+* From your `Flow` select the `newly deployed model` (Green diamond) and the `Score` recipe from the `actions menu`
 
-![62](assets/dk-score.png)
+![62](assets/dk-score1.png)
 
-* Select the `LOANS_TEST` dataset from the dropdown. Leave the `Name` and `Store into` for the output as the defaults and click `CREATE RECIPE`
+* Select your `LOANS_TEST` from the `Input dataset dropdown`. Leave the `Name` and `Store into` for the output as the defaults and click `CREATE RECIPE`
+
 
 ![62](assets/dk-score2.png)
 
@@ -1171,11 +1173,11 @@ Duration: 8
 
 Your final project flow should now look like this.
 
-![62](assets/dk-final-flow2.png)
+![62](assets/dk-final-flow.png)
 
 We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the ```CREDIT_SCORING_LOANS_TEST_SCORED``` table that was created once we kicked off our prediction job. 
 
-`Preview Data` will give you glimpse of additional column added to the list.
+```Preview Data``` will give you glimpse of additional column added to the list.
 
 
 ```
@@ -1213,7 +1215,38 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 ![63](assets/dk-final-flow2.png)
 
 
-## Bonus Material - Snowpark -Python  
+## Bonus Material - Snowpark  for Python  
+Duration: 5
 
-To be added soon
+Dataiku DSS integrates with `Snowpark for Python` allowing coders to take advantage all the benefits of Snowflake whilst collaborating alongside their no/low-code colleagues on projects to accelerate time to value in DSS, their end-to-end, governed AI lifecycle platform.
+
+When using Dataiku's SaaS option from Partner Connect the setup is done for us automatically. Let's check that.
+
+Return to your browser tab with `Dataiku Launchpad` open (if you have shut this just go to https://launchpad-dku.app.dataiku.io/).
+
+`Select` the `Features` menu
+![64](assets/dk-spk1.png)
+
+From the `Extensions` menu `select Snowpark`
+![64](assets/dk-spk3.png)
+
+
+`Click CONFIRM`
+![64](assets/dk-spk4.png)
+
+
+`Click BACK TO SPACE`
+![64](assets/dk-spk5.png)
+
+
+Your Snowpark extension is now ready to use.
+![64](assets/dk-spk6.png)
+
+Return to your projects `Flow` in Dataiku DSS and either edit the existing Python Code Recipe or create a new one from the `LOANS_ENRICHED_joined_prepared` dataset.
+
+In the `Advanced` tab of your Python Code Recipe you can select your `Snowpark` Code environment and then `Save`
+![65](assets/dk-spk-code1.png)
+
+Once saved it will also be the default kernel if you prefer to work from a Notebook
+![66](assets/dk-spk-code2.png)
 
