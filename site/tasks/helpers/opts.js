@@ -4,6 +4,7 @@ const autoprefixer = require('autoprefixer');
 const closureCompilerPackage = require('google-closure-compiler');
 const cssdeclarationsorter = require('css-declaration-sorter');
 const cssnano = require('cssnano');
+const fs = require('fs')
 
 exports.babel = () => {
   return {
@@ -80,7 +81,15 @@ exports.vulcanize = () => {
 };
 
 exports.webserver = () => {
-  return {
+  const webserverOpts = {
     livereload: false,
-  };
+  }
+  // If docker,
+  try {
+    if (fs.existsSync('/.dockerenv')) {
+      // then export server to host
+      webserverOpts.host = '0.0.0.0';
+    }
+  } catch(err) {}
+  return webserverOpts;
 };

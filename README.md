@@ -21,8 +21,14 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 * Mobile friendly user experience
 
 ## Getting Started
+There are two methods to get started.
 
-### Prerequisites
+ - The first method - local is preferable, but requires the installation of dependencies that are used by the project itself.
+ - The second method using Docker containers is recommended for users who are familiar with this technology. However, it doesn't require you to install system-specific dependencies yourself, so you can get started faster.
+
+### Run locally
+
+**Prerequisites**
 
   1. [Install Node 14](https://nodejs.org/en/download/); Homebrew installed? `brew install node@14`
      - Install gulp-cli `npm i -g gulp-cli`
@@ -31,13 +37,31 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
      - Ensure go and claat is in your `PATH` [claat path setup](#claat-related-errors)
   3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
-### Run locally
+**Steps**
 
-  1. Fork this repository to your personal github account (top right of webpage, `fork` button)
+  1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
   3. Navigate to the site directory `cd sfquickstarts/site`
   4. Install node dependencies `npm install`
   5. Run the site `npm run serve`
+  6. Open ``http://localhost:8000``
+
+Congratulations! You now have the Snowflake Quickstarts landing page running.
+
+### Run in Docker
+
+**Prerequisites**
+
+  1. On Mac and Windows, install [Docker Desktip](hhttps://docs.docker.com/desktop/)
+  2. On Linux, install [Docker Engine](https://docs.docker.com/engine/install/) and [Docker compose](https://docs.docker.com/compose/install/)
+  3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
+
+**Steps**
+
+  1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
+  2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
+  3. Run the site`docker-compose up`
+  5. Open ``http://localhost:8000``
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
@@ -73,7 +97,7 @@ You can always read the [sample Quickstart](site/sfguides/sample.md) online.
 ### Tips
 
 - Review the [sample.md](site/sfguides/sample.md) file to learn more about to to structure your Quickstart for the claat tool. 
-- You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
+- You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a GitHub issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
