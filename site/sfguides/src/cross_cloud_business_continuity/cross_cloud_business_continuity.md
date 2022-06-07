@@ -151,7 +151,6 @@ Our payroll.noam_northeast.employee_detail data contains critical PII data eleme
 Positive
 : Run the query below with two different roles - hr_analyst and hr_admin, observe all fields in the return results. What values does hr_analyst see for email, iban, cc and salary columns? What values does the hr_admin see?
 
-
 ```sql
 
 use role hr_analyst;
