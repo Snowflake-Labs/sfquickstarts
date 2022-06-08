@@ -81,6 +81,8 @@ git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
 ```
 After downloading the code you should see numbered sql scripts in the scripts folder. The sequence also determines their order of execution.
 
+Execute the below scripts (100 - 600) on your _source account_.
+
 - **100_create_env_resources_source.sql**: Create roles, roles hierarchy, databases and warehouses. 
 
 - **200_create_users_source.sql**: Create user base. 
@@ -93,9 +95,37 @@ After downloading the code you should see numbered sql scripts in the scripts fo
 
 - **600_update_primary_task.sql**: Create and start task to update primary tables every 3 minutes.
 
-You can run these scripts via UI by copy/pasting them or importing them as shown below. For some of our seasoned Snowflake users - if you have installed our awesome CLI SnowSQL and are comfortable pointing it to your source account for the lab, feel free to use that to execute the script. Make sure though that you pay attention to any errors encountered along the way. 
+You can run these scripts via UI by copy/pasting them or importing them as shown below. For some of our seasoned Snowflake users - if you have installed our awesome CLI SnowSQL and are comfortable pointing it to your source account for the lab, feel free to use that to execute the script. Make sure though that you pay attention to any errors encountered along the way.
 
 ![import_sql_ss](assets/Import_sql_ss.png)
+
+#### Ingest Payroll Data
+In the code base downloaded from Github earlier, there's a data/hr_data_sample.csv file that we'll now ingest in our "payroll.noam_northeast.employee_detail" table. We'll use the data loader functionality of the UI to achieve this (unfortunately, the data loader functionality is only available in the classic UI for now. Psst.. it will soon be available in snowsight as well!). Follow along the screenshots to load the data
+
+**Navigate to the table Databases -> Payroll -> Employee_detail**
+
+![payroll_ingest_1](assets/payroll_ingest_1.png)
+
+**Select ETL_WH to load your data**
+
+![payroll_ingest_2](assets/payroll_ingest_2.png)
+
+**Choose source file location**
+
+![payroll_ingest_3](assets/payroll_ingest_3.png)
+
+**Create a new file format and call it "csv_format"**
+
+![payroll_ingest_4](assets/payroll_ingest_4.png)
+
+**Choose following options for the file format**
+
+![payroll_ingest_5](assets/payroll_ingest_5.png)
+
+**You should have successfully loaded 100 records**
+
+![payroll_ingest_6](assets/payroll_ingest_6.png)
+
 
 <!-- ------------------------ -->
 ## Review Source Account
@@ -130,32 +160,25 @@ Our row access policy is applied to the global_sales.online_retail.customer tabl
 - product_manager role should be able to see data across ALL market segments.
 - All other roles should not be able to see data for ANY market segment.
 
+Below query when run with the sysadmin role should return 0 records, but when run with the sales_analyst, sales_admin or product_manaher role it should return results based on their privilege described above. Run the query once with each role - sysadmin, sales_analyst, sales_admin and product_manager and verify whether these rules are being adhered. Switch roles in your worksheet with the "use role <role_name>" command.
+
 ```sql
-
-#Below query when run with the sysadmin role should return 0 records, but when run 
-#with the product_manager role it should return proper results.
-
-#Run the query once with each role - sysadmin and product_manager
-#Switch roles in your worksheet with the use role <role_name> command. 
-
 use role sysadmin;
-use warehouse bi_reporting_wh;
+use warehouse sales_wh;
 select * from global_sales.online_retail.customer limit 100;
 ```
 When we replicate our data and our account objects, row level security is applied to the target account as well. This ensures that your access rules around data are retained even on the DR instance.
 
 #### Verify dynamic data masking policy
-Our payroll.noam_northeast.employee_detail data contains critical PII data elements such as salary, ssn, email and iban. This is information that cannot be visible by everybody that access to this data. We therefore deploy dynamic data masking policy protecting this dataset and only allowing authorized roles to see this information in the clear. The remaining roles would either see partially masked or completely redacted version of these columns, while having full visibility on other columns in this dataset that they can still use. Below are the rules of our dynamic data masking policy.
+Our payroll.noam_northeast.employee_detail data contains critical PII data elements such as salary, ssn, email and iban. This is information that cannot be visible by everyone that has access to this data. We therefore deploy dynamic data masking policy protecting this dataset and only allowing authorized roles to see this information in the clear. The remaining roles would either see partially masked or completely redacted version of these columns, while having full visibility on other columns in this dataset that they can still use. Below are the rules of our dynamic data masking policy.
 
 - email_address: hr_admin and product_manager roles can see complete email ids while all the other roles would see partially masked values, with only the domain name (@gmail.com, @yahoo.com) being visible.
 - iban, credits_card and ssn: hr_admin and product_manager see ibans in the clear, all the other roles would see fully masked values.
 - salary: hr_admin and product_manager see actual salaries and all the other roles would see 0.0
+
+Run the query below with two different roles - hr_analyst and hr_admin, observe all fields in the return results. What values does hr_analyst see for email, iban, cc and salary columns? What values does the hr_admin see?
+
 ```sql
-
-#Run the query below with two different roles - hr_analyst and hr_admin, observe 
-#all fields in the return results. What values does hr_analyst see for email, 
-#iban, cc and salary columns? What values does the hr_admin see?
-
 use role hr_analyst;
 use warehouse hr_wh;
 select * from payroll.noam_northeast.employee_detail limit 100;
@@ -168,15 +191,17 @@ The global_sales_share that we've created should have the following privileges
 - select on customer, lineitem and nation tables in global_sales.online_retail schema
 
 Verify the permissions on the data share with below commands:
+
 ```sql 
 use role accountadmin;
 show grants to share global_sales_share;
 ```
+
 #### Verify location, type and owner of governance policies
-We have built 5 masking policies, 4 object tags and 1 row access policy that we use to protect our data. Observe their details like which schema are these policies kept in, who owns them etc.
+We have built 6 masking policies, 4 object tags and 2 row access policies that we use to protect our data. Observe their details like which schema are these policies kept in, who owns them etc.
 
 ```sql
-use role sysadmin;
+use role governance_admin;
 show masking policies;
 show row access policies;
 show tags;
@@ -184,20 +209,20 @@ show tags;
 The output of the three commands should look something like this:
 
 __Masking Policies:__
-![masking_policy](assets/masking_policy_location.png)
+![masking_policy](assets/masking_policy_loc_latest.png)
 
 __Row Access Policy:__
-![row_access_policy](assets/row_access_policy_location.png)
+![row_access_policy](assets/row_access_policy_loc_latest.png)
 
 __Object Tags:__
-![object_tags](assets/object_tags_location.png)
+![object_tags](assets/object_tag_loc_latest.png)
 
 
 <!-- ------------------------ -->
 ## Configure DR On Source And Target Accounts
 Let the DR configuration Begin! (and finish, you'll breeze through these steps with the blink of the eye - it's that easy to setup DR configuration on Snowflake). This is where we make use of the account replication and client redirect features and setup two first class snowflake objects on the source account:
--- connection: The connection object stores a secure connection URL that you can use with any Snowflake client to connect to Snowflake.
--- Failover group:  It is a collection of objects in a source account that are replicated as a unit to one or more target accounts and can failover as a unit. A secondary failover group in a target account provides read-only access for the replicated objects. When a secondary failover group is promoted to become the primary failover group, read-write access is available.
+- **Connection:** The connection object stores a secure connection URL that you can use with any Snowflake client to connect to Snowflake.
+- **Failover group:**  It is a collection of objects in a source account that are replicated as a unit to one or more target accounts and can failover as a unit. A secondary failover group in a target account provides read-only access for the replicated objects. When a secondary failover group is promoted to become the primary failover group, read-write access is available.
 
 ### Run these queries on source account
 
@@ -220,13 +245,14 @@ Here you'll create a secondary connection and a secondary failover group.
 
 - A secondary connection is linked to the primary connection and must be created in an account in a different region from the source account. The secondary connection name must be the same as the primary connection name.
 - Just like the secondary connection, a secondary failover group is also linked to it's corresponding primary failover group and must be created in an account in a different region from the source account and with the same name as the primary failover group.
+
 ```sql
 use role accountadmin;
 create connection sfsummitfailover
-    as replica of organame.source_account_name.SFSUMMITFAILOVER;
+    as replica of <organame.source_account_name.SFSUMMITFAILOVER>;
 
 create failover group SALES_PAYROLL_FAILOVER
-    as replica of organame.source_account_name.SALES_PAYROLL_FAILOVER;
+    as replica of <organame.source_account_name.SALES_PAYROLL_FAILOVER>;
 ```
 
 ### Note the value for connection_url
@@ -238,8 +264,6 @@ Once you've setup your connection object successfully, we need to note the value
 # show connections command.
 show connections;
 ```
-
-
 
 <!-- ------------------------ -->
 ## Build BI and/or Streamlit Apps
