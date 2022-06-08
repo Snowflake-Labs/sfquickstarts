@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 
 “By failing to prepare, you are preparing to fail” - Benjamin Franklin
 
-A sound business continuity/disaster recovery plan is an important milestone for organizations looking to build resilient data platforms. We are in the information age and data-driven insights grow revenue, provide services, support customers and aid with critical decision making. Digital transformation is the need of the hour and in this important endeavor businesses face many forms of disruptions like fire, floods, cyberattacks, ransomware. These disruptions can spiral into various undesirable outcomes - from operational systems coming to a standstill leading to financial losses to something worse, like reputational damage.
+A sound business continuity/disaster recovery plan is an important milestone for organizations looking to build resilient data platforms. We are in the information age and data-driven insights grow revenue, provide services, support customers and aid with critical decision making. Digital transformation is the need of the hour and in this important endeavor businesses face many forms of disruptions like fire, floods, cyberattacks, ransomware etc. These disruptions can spiral into various undesirable outcomes - from operational systems coming to a standstill leading to financial losses to something worse, like reputational damage.
 
 The covid-19 pandemic forced many organizations to re-think their BC/DR plans and risk assessment. An immediate result of the pandemic was the inability to perform day-to-day jobs in person, this especially applied to tech workers who have traditionally performed remote work but during the pandemic this became the new norm. Everyone connected remotely all the time everyday, indirectly bringing more attention, focus and budget allocation towards cybersecurity. 
 
@@ -26,8 +26,8 @@ Finally, Snowflake's client redirect feature will facilitate seamless failover f
 
 ### Prerequisites
 - Basic understanding of Snowflake concepts, familiarity with Snowflake UI.
-- Two snowflake trial accounts, preferably in different regions and different cloud platforms. Designate any one of them as the primary account and the other one will be secondary. The instructions in this guide will ask you to fire specific commands on source and target accounts. So remember which accounts you're treating as primary and secondary and not mix them up.
-- Account replication preview feature enabled on both trial accounts.
+- Two snowflake trial accounts, preferably in different regions and different cloud platforms. Designate any one of them as the primary account and the other one will be secondary. The instructions in this guide will ask you to fire specific commands on source and target accounts. So remember (or make a note) of your primary and secondary account names to avoid confusion.
+- Account replication preview feature enabled on both trial accounts. If you've applied for this lab in advance and provided your account details, this should already be enabled for you by the Snowflake team.
 - Accountadmin access on both trial accounts.
 - Failover App: BI Sigma Dashboard
   - A sigma trial account that is valid on the day of the lab. The trial account is valid for 14 days from the day of signing up. You can sign for the trial account directly from the [sigmacomputing free trial link](https://www.sigmacomputing.com/free-trial/) or from your Snowflake UI by clicking on “Partner Connect” -> Click on “Sigma” tile.
@@ -44,15 +44,15 @@ Finally, Snowflake's client redirect feature will facilitate seamless failover f
 
 ### What You’ll Learn 
 In this quickstart you will learn
-- How to use out of the box features available in Snowflake to build resiliency against region failuresin
+- How to use out of the box features available in Snowflake to build resiliency against region failures.
 - Group based replication and failover of account objects.
-- Database replication from primary account to secondary account. 
+- Database replication (as part of the group) from primary to secondary. 
 - Account object replication (users, roles, WHs, resource monitors, data shares) from primary to secondary.
 - How to keep a DR instance ready to serve as exact replica of the primary instance - with upto date data and governance policies.
 - How to trigger failover of replication/failover groups and client connections.
 
 ### What You’ll Need 
-Items 2 and 3 below are required to mimic application failover, you can build one or both apps depending upon your use case and comfort. If you're comfortable with working with Python, 2nd point might be relevant Or if your use case aligns more with a BI dashboard failover then point 3 might be of more interest. You can opt to build both apps too.
+Items 2 and 3 below are required to mimic application failover, you can build one or both apps depending upon your use case and comfort. If you're comfortable with working with Python, 2nd point might be relevant Or if your use case aligns more with a BI dashboard failover then point 3 might be of more interest. You can opt to build both apps too. Infact, we recommend you build both apps for broader use case coverage.
 - Account Admin access to two Snowflake accounts deployed in different regions and on different cloud platforms 
 - Python installed on local machine to stimulate a python app failover. 
 - A sigma trial account to stimulate a BI dashboard failover.
@@ -66,7 +66,7 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 
 ### What You’ll Build 
 - Source account resources to mimic a production grade Snowflake account.
-- Replicate/Failover required resources to a secondary account in a transactinally consistent fashion.
+- Replicate/Failover selective resources to a secondary account in a transactinally consistent fashion.
 - Build apps powered by primary snowflake account.
 - Failover from primary to secondary account.
 - Observe your apps now seamlessly powered by the secondary account.
@@ -74,11 +74,12 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 <!-- ------------------------ -->
 ## Source Account Setup
 
-The code required to setup resources on your source account is hosted in github. You can download the code as a ZIP from [GitHub](ttps://github.com/Snowflake-Labs/vhol_failover_scripts.git) or use the following git command to clone the repository.
+The code required to setup resources on your source account is hosted in github. You can download the code as a ZIP from [GitHub](https://github.com/Snowflake-Labs/vhol_failover_scripts) or use the following git command to clone the repository.
 
 ```bash
 git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
 ```
+
 After downloading the code you should see numbered sql scripts in the scripts folder. The sequence also determines their order of execution.
 
 - **100_create_env_resources_source.sql**: Create roles, roles hierarchy, databases and warehouses. 
@@ -91,6 +92,8 @@ After downloading the code you should see numbered sql scripts in the scripts fo
 
 - **500_governance_policies_source.sql**: Create and assign object tags, masking policies and row access policy.
 
+- **600_update_primary_task.sql**: Create and start task to update primary tables every 3 minutes.
+
 You can run these scripts via UI by copy/pasting them or importing them as shown below. For some of our seasoned Snowflake users - if you have installed our awesome CLI SnowSQL and are comfortable pointing it to your source account for the lab, feel free to use that to execute the script. Make sure though that you pay attention to any errors encountered along the way. 
 
 ![import_sql_ss](assets/Import_sql_ss.png)
@@ -98,7 +101,7 @@ You can run these scripts via UI by copy/pasting them or importing them as shown
 <!-- ------------------------ -->
 ## Review Source Account
 
-Our scripts in the previous step has created a production like snowflake environment for us. Here's a list of objects you just created when you ran those scripts:
+Our scripts in the previous step have created a production like snowflake environment for us. Here's a list of objects you just created when you ran those scripts:
 - Users & Roles
 - RBAC Hierarchy
 - Databases
@@ -139,6 +142,7 @@ use role sysadmin;
 use warehouse bi_reporting_wh;
 select * from global_sales.online_retail.customer limit 100;
 ```
+
 When we replicate our data and our account objects, row level security is applied to the target account as well. This ensures that your access rules around data are retained even on the DR instance.
 
 #### Verify dynamic data masking policy
@@ -149,6 +153,7 @@ Our payroll.noam_northeast.employee_detail data contains critical PII data eleme
 - salary: hr_admin and product_manager see actual salaries and all the other roles would see 0.0
 
 ```sql
+
 #Run the query below with two different roles - hr_analyst and hr_admin, observe all fields in the return results. 
 #What values does hr_analyst see for #email, iban, cc and salary columns? What values does the hr_admin see?
 
