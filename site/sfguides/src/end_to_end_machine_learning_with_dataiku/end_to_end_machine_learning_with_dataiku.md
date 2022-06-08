@@ -938,12 +938,13 @@ Until now we've used visual tools but lets see how users who prefer to code can 
 * `Click` on the output dataset of the prepare recipe `LOANS_ENRICHED_joined_prepared`.
 * Once selected `click on the Python Code recipe` from the `Actions panel`
 
-![53a](assets/dk-26a_python.png)
+![53a](assets/dk-flow_x.png)
 
 * Now `Add a new output dataset`. We'll name it **LOANS_FE** 
 * Leave the `Store into` as the default nad then click `CREATE DATASET`
 
 ![53a](assets/df-py-in.png)
+
 
 * Click `CREATE RECIPE`
 
@@ -967,7 +968,8 @@ df["INSTALL_NORM"] = (df.INSTALLMENT.values - np.mean(df.INSTALLMENT.values))/np
 
 Your code should now look like this
 
-![53](assets/dk-26-900_Python_Code_highlighted.jpg)
+
+![53a](assets/dk-code-updated.png)
 
 * `SAVE` the recipe then `click RUN`
 
@@ -1175,23 +1177,25 @@ Your final project flow should now look like this.
 
 ![62](assets/dk-final-flow.png)
 
-We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the ```CREDIT_SCORING_LOANS_TEST_SCORED``` table that was created once we kicked off our prediction job. 
+We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the `CREDIT_SCORING_LOANS_TEST_SCORED` table that was created once we kicked off our prediction job. 
 
-```Preview Data``` will give you glimpse of additional column added to the list.
-
+`Preview Data` will give you glimpse of additional column added to the list.
 
 ```
+
 USE ROLE SYSADMIN;
 USE DATABASE PC_DATAIKU_DB;
 USE WAREHOUSE PC_DATAIKU_WH;
 SELECT * 
 FROM LOANS_TEST_SCORED_CREDITSCORING 
 LIMIT 10;
+
 ```
+
 
 ![62](assets/sf-score-results.png)
 
-Additional info, 
+Additional info 
 
 ```
 SELECT 
@@ -1250,3 +1254,24 @@ In the `Advanced` tab of your Python Code Recipe you can select your `Snowpark` 
 Once saved it will also be the default kernel if you prefer to work from a Notebook
 ![66](assets/dk-spk-code2.png)
 
+**A Note on Code Environments:**  Dataiku uses the concept of code environments to address the problem of managing dependencies and versions when writing code in R and Python.Code environments provide a number of benefits such as:
+
+**Isolation:** Two teams can work independently on different projects using different versions of Python (or R) and a set of libraries whose versions differ.
+
+**Reproducibility of results:** When you create a project bundle or API service package and push it to production, Dataiku DSS includes the specification for the project’s code environment, and then rebuilds the code environment according to that specification when you import the bundle into the Dataiku Automation node or the package into the Dataiku API node. In this way, environments are versioned on your production server and you can rollback your code to a previous version together with its code environment.
+
+When using Snowpark for Python from Dataiku DSS you will use a code environment that includes the Snowpark library as well as other packages you wish to use. In our lab, to make things easy, we are using a default Snowpark code environment which just contains just the minimum required libraries but once you have completed the lab and wish to explore further you can create your own code environments.
+
+
+
+In addition to selecting an appropriate code environment there are just a couple of extra lines of code to add to your DSS recipe to start using Snowpark for Python.
+
+Firstly you need to add the following line to your imports:
+
+
+`from dataiku.snowpark import DkuSnowpark`
+
+Next instantiate Snowpark:
+
+
+`dku_snowpark = DkuSnowpark()`
