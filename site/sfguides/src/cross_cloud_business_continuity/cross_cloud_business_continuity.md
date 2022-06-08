@@ -57,6 +57,7 @@ Items 2 and 3 below are required to mimic application failover, you can build on
 - Python installed on local machine to stimulate a python app failover. 
 - A sigma trial account to stimulate a BI dashboard failover.
 - Our source data is based on the TPC-DS benchmark dataset that is shared with all Snowflake accounts by default. If you don't see that share, you can create it with below commands.
+
 ```bash
 use role ACCOUNTADMIN;
 create database SNOWFLAKE_SAMPLE_DATA from share SFC_SAMPLES.SAMPLE_DATA;
