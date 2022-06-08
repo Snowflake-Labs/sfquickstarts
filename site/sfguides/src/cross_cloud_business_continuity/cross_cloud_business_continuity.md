@@ -75,6 +75,7 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 ## Source Account Setup
 
 The code required to setup resources on your source account is hosted in github. You can download the code as a ZIP from [GitHub](ttps://github.com/Snowflake-Labs/vhol_failover_scripts.git) or use the following git command to clone the repository.
+
 ```bash
 git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
 ```
@@ -146,7 +147,6 @@ Our payroll.noam_northeast.employee_detail data contains critical PII data eleme
 - email_address: hr_admin and product_manager roles can see complete email ids while all the other roles would see partially masked values, with only the domain name (@gmail.com, @yahoo.com) being visible.
 - iban, credits_card and ssn: hr_admin and product_manager see ibans in the clear, all the other roles would see fully masked values.
 - salary: hr_admin and product_manager see actual salaries and all the other roles would see 0.0
-
 
 ```sql
 #Run the query below with two different roles - hr_analyst and hr_admin, observe all fields in the return results. 
@@ -450,6 +450,7 @@ st.header("Conclusion")
 st.text(conclusion_text)
 st.snow()
 ```
+
 #### Streamlit app should look like this
 
 ![streamlit_ss](assets/streamlit_dashboard.png)
