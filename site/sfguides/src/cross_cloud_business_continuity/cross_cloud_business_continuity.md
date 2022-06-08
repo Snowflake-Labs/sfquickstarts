@@ -10,7 +10,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 # Cross Cloud Business Continuity With Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 “By failing to prepare, you are preparing to fail” - Benjamin Franklin
 
@@ -58,6 +57,7 @@ Items 2 and 3 below are required to mimic application failover, you can build on
 - Python installed on local machine to stimulate a python app failover. 
 - A sigma trial account to stimulate a BI dashboard failover.
 - Our source data is based on the TPC-DS benchmark dataset that is shared with all Snowflake accounts by default. If you don't see that share, you can create it with below commands.
+
 ```bash
 use role ACCOUNTADMIN;
 create database SNOWFLAKE_SAMPLE_DATA from share SFC_SAMPLES.SAMPLE_DATA;
@@ -73,9 +73,9 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 
 <!-- ------------------------ -->
 ## Source Account Setup
-Duration: 2
 
-The code required to setup resources on your source account is hosted in github. You can download the code as a ZIP from [GitHub](https://github.com/sfc-gh-pparashar/summit-replication-hol) or use the following git command to clone the repository.
+The code required to setup resources on your source account is hosted in github. You can download the code as a ZIP from [GitHub](ttps://github.com/Snowflake-Labs/vhol_failover_scripts.git) or use the following git command to clone the repository.
+
 ```bash
 git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
 ```
@@ -97,18 +97,17 @@ You can run these scripts via UI by copy/pasting them or importing them as shown
 
 <!-- ------------------------ -->
 ## Review Source Account
-Duration: 2
 
 Our scripts in the previous step has created a production like snowflake environment for us. Here's a list of objects you just created when you ran those scripts:
 - Users & Roles
 - RBAC Hierarchy
 - Databases
 - Compute warehouses
-- Data copied from the snowflake_sample_data share.
-- Direct data shares.
-- Dynamic data masking policies.
-- Row access policy.
-- Object tags.
+- Data copied from the snowflake_sample_data share
+- Direct data shares
+- Dynamic data masking policies
+- Row access policy
+- Object tags
 
 Phew! That's quite a list here's what all of this looks like in a picture:
 
@@ -126,23 +125,16 @@ Our row access policy is applied to the global_sales.online_retail.customer tabl
 
 - sales_analyst role should be able to see data for market segments 'automobile' and 'machinery'.
 - sales_admin role should be able to see data for market segments 'automobile', 'machinery', 'building' and 'household'.
-- product_manager role should be able to see data across ALL market segments.
+- product_manager role should be able to see data for ALL market segments.
 - All other roles should not be able to see data for ANY market segment.
 
-
-Positive
-: This will appear in a positive info box.
-
-<p class="callout info">A success message</p>
+Below query when run with the sysadmin role should return 0 records, but when run with the product_manager role it should return proper results. Run the query once with each role - sysadmin and product_manager. Switch roles in your worksheet with the "use role <role_name>" command.
 
 ```sql
-<!--
-Below query when run with the sysadmin role should return 0 records, but when run 
-with the product_manager role it should return proper results.
+#Below query when run with the sysadmin role should return 0 records, but when run with the product_manager role 
+#it should return proper results. Run the #query once with each role - sysadmin and product_manager. Switch roles 
+#in your worksheet with the "use role <role_name>" command.
 
-Run the query once with each role - sysadmin and product_manager
-Switch roles in your worksheet with the use role <role_name> command. 
--->
 use role sysadmin;
 use warehouse bi_reporting_wh;
 select * from global_sales.online_retail.customer limit 100;
@@ -155,12 +147,11 @@ Our payroll.noam_northeast.employee_detail data contains critical PII data eleme
 - email_address: hr_admin and product_manager roles can see complete email ids while all the other roles would see partially masked values, with only the domain name (@gmail.com, @yahoo.com) being visible.
 - iban, credits_card and ssn: hr_admin and product_manager see ibans in the clear, all the other roles would see fully masked values.
 - salary: hr_admin and product_manager see actual salaries and all the other roles would see 0.0
+
 ```sql
-<!--
-Run the query below with two different roles - hr_analyst and hr_admin, observe 
-all fields in the return results. What values does hr_analyst see for email, 
-iban, cc and salary columns? What values does the hr_admin see?
--->
+#Run the query below with two different roles - hr_analyst and hr_admin, observe all fields in the return results. 
+#What values does hr_analyst see for #email, iban, cc and salary columns? What values does the hr_admin see?
+
 use role hr_analyst;
 use warehouse hr_wh;
 select * from payroll.noam_northeast.employee_detail limit 100;
@@ -459,7 +450,8 @@ st.header("Conclusion")
 st.text(conclusion_text)
 st.snow()
 ```
-#### Streamlit app should look like this..
+
+#### Streamlit app should look like this
 
 ![streamlit_ss](assets/streamlit_dashboard.png)
 
