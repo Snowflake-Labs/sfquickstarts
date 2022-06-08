@@ -10,7 +10,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 # Cross Cloud Business Continuity With Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 “By failing to prepare, you are preparing to fail” - Benjamin Franklin
 
@@ -76,9 +75,11 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 ## Source Account Setup
 
 The code required to setup resources on your source account is hosted in github. You can download the code as a ZIP from [GitHub](https://github.com/Snowflake-Labs/vhol_failover_scripts) or use the following git command to clone the repository.
+
 ```bash
 git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
 ```
+
 After downloading the code you should see numbered sql scripts in the scripts folder. The sequence also determines their order of execution.
 
 Execute the below scripts (100 - 600) on your _source account_.
@@ -135,11 +136,11 @@ Our scripts in the previous step have created a production like snowflake enviro
 - RBAC Hierarchy
 - Databases
 - Compute warehouses
-- Data copied from the snowflake_sample_data share.
-- Direct data shares.
-- Dynamic data masking policies.
-- Row access policy.
-- Object tags.
+- Data copied from the snowflake_sample_data share
+- Direct data shares
+- Dynamic data masking policies
+- Row access policy
+- Object tags
 
 Phew! That's quite a list here's what all of this looks like in a picture:
 
@@ -157,7 +158,7 @@ Our row access policy is applied to the global_sales.online_retail.customer tabl
 
 - sales_analyst role should be able to see data for market segments 'automobile' and 'machinery'.
 - sales_admin role should be able to see data for market segments 'automobile', 'machinery', 'building' and 'household'.
-- product_manager role should be able to see data across ALL market segments.
+- product_manager role should be able to see data for ALL market segments.
 - All other roles should not be able to see data for ANY market segment.
 
 Below query when run with the sysadmin role should return 0 records, but when run with the sales_analyst, sales_admin or product_manaher role it should return results based on their privilege described above. Run the query once with each role - sysadmin, sales_analyst, sales_admin and product_manager and verify whether these rules are being adhered. Switch roles in your worksheet with the "use role <role_name>" command.
@@ -167,6 +168,7 @@ use role sysadmin;
 use warehouse sales_wh;
 select * from global_sales.online_retail.customer limit 100;
 ```
+
 When we replicate our data and our account objects, row level security is applied to the target account as well. This ensures that your access rules around data are retained even on the DR instance.
 
 #### Verify dynamic data masking policy
@@ -478,7 +480,8 @@ st.header("Conclusion")
 st.text(conclusion_text)
 st.snow()
 ```
-#### Streamlit app should look like this..
+
+#### Streamlit app should look like this
 
 ![streamlit_ss](assets/streamlit_dashboard.png)
 
