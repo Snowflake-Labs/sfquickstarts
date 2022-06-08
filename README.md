@@ -68,11 +68,11 @@ export PATH=$PATH:$HOME/go/bin
   4. Run the website again `npm run serve`
   5. As you edit and save changes, your changes will automatically load in the browser.
 
-You can always read the [sample Quickstart](site/sfguides/sample.md) online.
+You can always read the [sample Quickstart](site/sfguides/src/sample/sample.md) online.
 
 ### Tips
 
-- Review the [sample.md](site/sfguides/sample.md) file to learn more about to to structure your Quickstart for the claat tool. 
+- Review the [sample.md](site/sfguides/src/sample/sample.md) file to learn more about to to structure your Quickstart for the claat tool. 
 - You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
