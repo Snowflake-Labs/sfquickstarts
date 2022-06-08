@@ -12,7 +12,7 @@ tags: Data Science, Data Engineering, Getting Started, Machine Learning
 ## Overview 
 Duration: 7
 
-**Note: if this is your first time experimenting with Snowpark Python, we recommend completing the [Getting Started with Snowpark for Python](https://drive.google.com/drive/folders/1cl8F5etKqbB57VzgqP2pmMT0B76o_x-W) Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.**
+**Note: if this is your first time experimenting with Snowpark Python, we recommend completing the [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0) Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.**
 
 *This quickstart was initially built as a Hands-on-Lab at Snowflake Summit 2022*
 
@@ -27,7 +27,7 @@ Throughout this quickstart, we will specifically explore the power of the Snowpa
 The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python).
 
 ### Prerequisites
-- Completion of the [Getting Started with Snowpark for Python](https://drive.google.com/drive/folders/1cl8F5etKqbB57VzgqP2pmMT0B76o_x-W) Quickstart
+- Completion of the [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0) Quickstart
 - Working knowledge of Python
 - Familiarity with Snowflake
 - Familiarity with Docker, Apache AirFlow, Streamlit a +
