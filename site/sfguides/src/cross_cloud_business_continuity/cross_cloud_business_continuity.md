@@ -125,7 +125,7 @@ Our row access policy is applied to the global_sales.online_retail.customer tabl
 
 - sales_analyst role should be able to see data for market segments 'automobile' and 'machinery'.
 - sales_admin role should be able to see data for market segments 'automobile', 'machinery', 'building' and 'household'.
-- product_manager role should be able to see data across ALL market segments.
+- product_manager role should be able to see data for ALL market segments.
 - All other roles should not be able to see data for ANY market segment.
 
 Below query when run with the sysadmin role should return 0 records, but when run with the product_manager role it should return proper results. Run the query once with each role - sysadmin and product_manager. Switch roles in your worksheet with the "use role <role_name>" command.
