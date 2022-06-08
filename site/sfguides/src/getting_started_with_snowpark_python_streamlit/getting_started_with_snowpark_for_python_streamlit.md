@@ -326,6 +326,7 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 
 ### Related Resources
 
-- [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html)
+- [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0)
+- [Machine Learning with Snowpark for Python](https://quickstarts.snowflake.com/guide/machine_learning_with_snowpark_python/index.html?index=..%2F..index#0)
 - [Snowpark API Reference for Python](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)
