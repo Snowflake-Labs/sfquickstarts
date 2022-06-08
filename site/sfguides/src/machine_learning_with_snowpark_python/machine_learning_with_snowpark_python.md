@@ -158,10 +158,10 @@ Duration: 5
 
 **Persona**: Data Engineer
 
-**What You'll Do**: Use the Snowflake Data Marketplace to subscribe to weather data from Weather Source.
+**What You'll Do**: Use the Snowflake Marketplace to subscribe to weather data from Weather Source.
 
 **Snowflake Features**:
-- [Snowflake Data Marketplace](https://www.snowflake.com/data-marketplace/)
+- [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/)
 
 Weather Source is a leading provider of global weather and climate data and the OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries.
 
@@ -184,12 +184,12 @@ Duration: 20
 **What You'll Do**: 
 - Query daily trip data in Snowflake using Snowpark Python and visualize time-series data
 - Train a preliminary PyTorch TabNet model to predict daily trip counts
-- Augment your model feature trips data with Holiday reference data, along with weather data available in the [Snowflake Data Marketplace](https://www.snowflake.com/data-marketplace/?_sft_dataset-category=weather)
+- Augment your model feature trips data with Holiday reference data, along with weather data available in the [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/?_sft_dataset-category=weather)
 - Consolidate final feature data into feature engineering functions and write them to a Python module for use by the ML engineering team to operationalize your model.
 
 **Snowflake Features**:
 - Snowpark Python Client Dataframe API for query & data transformation push-down
-- Snowflake Data Marketplace for data enrichment
+- Snowflake Marketplace for data enrichment
 
 Now that the data engineers have cleaned and loaded the data to the `trips` table, we can begin our model development. For this, we will leverage Snowpark to do the feature preparation and exploratory analysis. This dataset is initially ~100 million rows and is likely too large to fit into memory on our local machine or even a reasonable sized single VM in the cloud. The Snowpark Python client-side Dataframe API allows us to push-down most of the computation for preparation and feature engineering to Snowpark. For security and goverance reasons we can read data into memory for model training and inference but no intermediate data products can be stored outside of Snowflake.
 
