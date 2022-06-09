@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Analytics, Data Engineering, BI, Business Intelligence, Sigma, Sigma Computing, Snowflake, Dashboarding, Visualization, Analysis, Excel, Spreadsheet 
 
-# Sigma Workbooks Quickstart
+# Getting Started with Sigma
 <!-- ------------------------ -->
 ## Lab Overview 
 Duration: 3
