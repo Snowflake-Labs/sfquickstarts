@@ -70,7 +70,7 @@ Snowflake provides "worksheets" as the spot for you to execute your code. For ea
 Lets go ahead and set the role we want to act as, which will be `ACCOUNTADMIN` to begin with. This can either be done manually in the UI or programmatically in a worksheet (`ACCOUNTADMIN` is the default role for a first time user). Lets do so programmatically in our worksheet by executing our first line of code:
 
 ```sql
-USE ROLE sysadmin;
+USE ROLE accountadmin;
 ```
 
 To execute this code, all we need to do is place our cursor on the line we wish to run and then either hit the "run" button at the top left of the worksheet or press `Cmd/Ctrl + Enter`.
@@ -101,7 +101,7 @@ You should now see your new databases add to the list. Lets navigate back to our
 CREATE OR REPLACE DATABASE customer_data;
 ```
 
-We will continue to set the context for our worksheet. The "role": `SYSADMIN`, we already set earlier. To set our "database", "schema", and "warehouse", execute the following code:
+We will continue to set the context for our worksheet. The "role": `ACCOUNTADMIN`, we already set earlier. To set our "database", "schema", and "warehouse", execute the following code:
 
 ```sql
 CREATE OR REPLACE WAREHOUSE compute_wh WITH
@@ -361,7 +361,7 @@ You'll then be asked to choose what type of connection you want to create. DataR
 ![](assets/p34.png)
 <br/><br/>
 
-We now will have a bunch of fields to fill in. The first is "Data connection name." I just called mine `Snowflake HOL` given this is a "Snowflake DataRobot Hands On Lab." For the driver dropdown, go ahead and choose the recommanded one Next, paste the url we just copied into the "address" box. Our "db" will be `CUSTOMER_DATA` and the "warehouse" is `COMPUTE_WH`. Finally, lets go ahead and add two more parameters. By clicking the "Add parameter box," let search for the "role" parameter and set it to `SYSADMIN` and then "schema" and set it to `PUBLIC`. Click "Add data connection"
+We now will have a bunch of fields to fill in. The first is "Data connection name." I just called mine `Snowflake HOL` given this is a "Snowflake DataRobot Hands On Lab." For the driver dropdown, go ahead and choose the recommanded one Next, paste the url we just copied into the "address" box. Our "db" will be `CUSTOMER_DATA` and the "warehouse" is `COMPUTE_WH`. Finally, lets go ahead and add two more parameters. By clicking the "Add parameter box," let search for the "role" parameter and set it to `ACCOUNTADMIN` and then "schema" and set it to `PUBLIC`. Click "Add data connection"
 
 ![](assets/p35.png)
 <br/><br/>
