@@ -608,7 +608,7 @@ And as they say, that is all folks!
 
 For the advanced python users you can keep the lab to see how to use python for snowpark togetehr with DataRobot.
 
-## Connecting Snowflake with Zepl - DataRobot notebooks in the cloud
+## (Extra) Connecting Snowflake with Zepl - DataRobot notebooks in the cloud
 
 Duration: 2
 
