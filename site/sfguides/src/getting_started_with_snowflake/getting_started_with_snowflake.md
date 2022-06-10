@@ -947,7 +947,7 @@ Use the following commands to create the role and assign it to you. Before you r
 ```SQL
 create role junior_dba;
 
-grant role junior_dba to user YOUR_USERNAME_GOES HERE;
+grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
 ```
 
 Positive
@@ -959,11 +959,27 @@ Change your worksheet context to the new `JUNIOR_DBA` role:
 use role junior_dba;
 ```
 
-In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role.
+In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role. 
 
 ![JUNIOR_DBA context](assets/9Role_2.png)
 
-Also, in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Also, the warehouse is not selected because the newly created role does not have usage privileges on any warehouse. Let's fix it by switching back to ADMIN role and grant usage privileges to `COMPUTE_WH` warehouse.
+
+```SQL
+use role accountadmin;
+
+grant usage on warehouse compute_wh to role junior_dba;
+```
+
+Switch back to the `JUNIOR_DBA` role. You should be able to use `COMPUTE_WH` now.
+
+```SQL
+use role junior_dba;
+
+use warehouse compute_wh;
+```
+
+Finally, you can notice that in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
 Switch back to the ACCOUNTADMIN role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CITIBIKE` and `WEATHER` databases:
 
