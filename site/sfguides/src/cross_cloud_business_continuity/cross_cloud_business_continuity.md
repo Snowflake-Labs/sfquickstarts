@@ -16,24 +16,29 @@ Duration: 1
 
 A sound business continuity/disaster recovery plan is an important milestone for organizations looking to build resilient data platforms. We are in the information age and data-driven insights grow revenue, provide services, support customers and aid with critical decision making. Digital transformation is the need of the hour and in this important endeavor businesses face many forms of disruptions like fire, floods, cyberattacks, ransomware etc. These disruptions can spiral into various undesirable outcomes - from operational systems coming to a standstill leading to financial losses to something worse, like reputational damage.
 
-The covid-19 pandemic forced many organizations to re-think their BC/DR plans and risk assessment. An immediate result of the pandemic was the inability to perform day-to-day jobs in person, this especially applied to tech workers who have traditionally performed remote work but during the pandemic this became the new norm. Everyone connected remotely all the time everyday, indirectly bringing more attention, focus and budget allocation towards cybersecurity. 
+Technology is the center-piece of all businesses and mission-critical data can never be unavailable. As businesses become cloud-based, new complexity arises. Namely, business continuity and continuous global operations rely even more on cloud dependability.
 
-The number one priority to mitigate IT risks of the modern world therefore becomes a robust business continuity plan. Technology is the center-piece of all businesses and mission-critical data can never be unavailable.
+Snowflake’s new **Group-Based Replication and Failover** feature (in preview) enables account metadata, including everything from user identity and role-based access controls to governance policies, warehouses and resource monitors, to be automatically synchronized across clouds and regions for continuous availability. Multiple databases, shares and account metadata can be replicated as a unit, ensuring point-in-time consistency with the primary region.
 
-Snowflake's new group based replication feature facilitates just that, it will allow organizations ready a DR instance that is an exact replica of their primary Snowflake account. Therefore, during an actual region level outage, the org and it's customers will have their data, account resources like WHs, users, roles, shares etc. and governance policies available to them intact on the secondary account.
-
-Finally, Snowflake's client redirect feature will facilitate seamless failover from primary to secondary so that apps and users can continue functioning without disruption. In a way, the end users wouldn't even realize that an outage has occurred and that they are now powered a different Snowflake account not just in another region but also on a different public cloud platform. 
+Snowflake's **Client Redirect** feature facilitates seamless failover from primary to secondary so that apps and users can continue functioning without disruption. In the past, to recover, the connection string in every client application had to be manually changed to connect to the new primary site (the former secondary site) in a different region or cloud. With Client Redirect, administrators can use a single server-side command to redirect client applications to the new primary site, without disrupting business teams. 
  
 
 ### Prerequisites
 - Basic understanding of Snowflake concepts, familiarity with Snowflake UI.
 - Two snowflake trial accounts, preferably in different regions and different cloud platforms. Designate any one of them as the primary account and the other one will be secondary. The instructions in this guide will ask you to fire specific commands on source and target accounts. So remember (or make a note) of your primary and secondary account names to avoid confusion.
-- Account replication preview feature enabled on both trial accounts. If you've applied for this lab in advance and provided your account details, this should already be enabled for you by the Snowflake team.
+- Account replication preview feature enabled on both trial accounts. If you've applied for this lab in advance and provided your account details, this should already be enabled for you by the Snowflake team. Verify that account replication has been enabled for both your accounts with the command below
+
+```bash
+use role ACCOUNTADMIN;
+show replication accounts;
+```
+
+- The organization administrator (ORGADMIN role) must enable replication for the source and target accounts before replicating a database as documented [here](https://docs.snowflake.com/en/user-guide/database-replication-config.html#prerequisite-enable-replication-for-accounts-in-the-organization). For the Summit Lab, your Snowflake team will ensure this is done for the two trial accounts.
 - Accountadmin access on both trial accounts.
 - Failover App: BI Sigma Dashboard
   - A sigma trial account that is valid on the day of the lab. The trial account is valid for 14 days from the day of signing up. You can sign for the trial account directly from the [sigmacomputing free trial link](https://www.sigmacomputing.com/free-trial/) or from your Snowflake UI by clicking on “Partner Connect” -> Click on “Sigma” tile.
-- Failover App: Python Streamlit Dashboard
-  - [snowflake python connector](https://docs.snowflake.com/en/user-guide/python-connector-install.html#installing-the-python-connector) (Minimum python version 3.6)
+- Failover App: Python Streamlit Dashboard - Install the following modules/connectors. Minimum python version needed is 3.7
+  - [snowflake python connector](https://docs.snowflake.com/en/user-guide/python-connector-install.html#installing-the-python-connector)
   - [streamlit](https://docs.streamlit.io/library/get-started/installation) (pip/pip3 install streamlit)
   - streamlit-echarts (pip/pip3  install streamlit-echarts)
   - Pandas (pip/pip3 install pandas)
@@ -53,10 +58,9 @@ In this quickstart you will learn
 - How to trigger failover of replication/failover groups and client connections.
 
 ### What You’ll Need 
-Items 2 and 3 below are required to mimic application failover, you can build one or both apps depending upon your use case and comfort. If you're comfortable with working with Python, 2nd point might be relevant Or if your use case aligns more with a BI dashboard failover then point 3 might be of more interest. You can opt to build both apps too. Infact, we recommend you build both apps for broader use case coverage.
-- Account Admin access to two Snowflake accounts deployed in different regions and on different cloud platforms 
-- Python installed on local machine to stimulate a python app failover. 
-- A sigma trial account to stimulate a BI dashboard failover.
+
+- Python installed on local machine to stimulate a python app failover (Needed for streamlit app).
+- A Sigma trial account to stimulate a BI dashboard failover (Needed for Sigma BI app). 
 - Our source data is based on the TPC-DS benchmark dataset that is shared with all Snowflake accounts by default. If you don't see that share, you can create it with below commands.
 
 ```bash
@@ -67,7 +71,7 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 
 ### What You’ll Build 
 - Source account resources to mimic a production grade Snowflake account.
-- Replicate/Failover selective resources to a secondary account in a transactinally consistent fashion.
+- Replicate/Failover selective resources to a secondary account in a transactionally consistent fashion.
 - Build apps powered by primary snowflake account.
 - Failover from primary to secondary account.
 - Observe your apps now seamlessly powered by the secondary account.
@@ -75,10 +79,14 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 <!-- ------------------------ -->
 ## Source Account Setup
 
-The code required to setup resources on your source account is hosted in github. You can download the code as a ZIP from [GitHub](https://github.com/Snowflake-Labs/vhol_failover_scripts) or use the following git command to clone the repository.
+Download scripts to populate your source account from this Github repository as a ZIP: _https://github.com/Snowflake-Labs/sfguide_failover_scripts_ 
+
+OR clone to a directory in your local machine with the below command
+
 ```bash
 git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
 ```
+
 After downloading the code you should see numbered sql scripts in the scripts folder. The sequence also determines their order of execution.
 
 Execute the below scripts (100 - 600) on your _source account_.
@@ -185,17 +193,37 @@ select * from payroll.noam_northeast.employee_detail limit 100;
 ```
 
 #### Verify data shares
-The global_sales_share that we've created should have the following privileges
-- Usage on global_sales DB
-- Usage on global_sales.online_retail schema
-- select on customer, lineitem and nation tables in global_sales.online_retail schema
+We've created a few data shares with different variations, we'll observe what permissions each of these shares have and whether these are replicated as is to our secondary account.
 
-Verify the permissions on the data share with below commands:
+Below code snippet display permissions on three data shares - GLOBAL_SALES_SHARE, INVENTORY_SHARE and CROSS_DATABASE_SHARE
 
 ```sql 
 use role accountadmin;
 show grants to share global_sales_share;
+show grants to share inventory_share;
+show grants to share cross_database_share;
 ```
+
+- _GLOBAL_SALES_SHARE should have_ 
+  - usage on global_sales DB
+  - usage on global_sales.online_retail schema
+  - select on customer, lineitem and nation tables in global_sales.online_retail schema
+
+- _INVENTORY_SHARE should have_ 
+  - usage on products DB
+  - reference_usage on references DB
+  - usage on internal and public schema in the products DB
+  - usage on products.internal.item_quantity() table function
+
+- _CROSS_DATABASE_SHARE should have_ 
+  - usage on cross_database DB
+  - reference_usage on references and sales DB
+  - usage on cross_database.public schema
+  - usage on cross_database.public.morning_sales view
+
+Verify the permissions on the data share with below commands:
+
+
 
 #### Verify location, type and owner of governance policies
 We have built 6 masking policies, 4 object tags and 2 row access policies that we use to protect our data. Observe their details like which schema are these policies kept in, who owns them etc.
@@ -224,7 +252,17 @@ Let the DR configuration Begin! (and finish, you'll breeze through these steps w
 - **Connection:** The connection object stores a secure connection URL that you can use with any Snowflake client to connect to Snowflake.
 - **Failover group:**  It is a collection of objects in a source account that are replicated as a unit to one or more target accounts and can failover as a unit. A secondary failover group in a target account provides read-only access for the replicated objects. When a secondary failover group is promoted to become the primary failover group, read-write access is available.
 
-### Run these queries on source account
+#### Note values for orgname, source_account_name and target_account_name
+Fire the command below and note down values for "organization_name" and "account_name" for source and target accounts. You will need these in order to setup DR resources on the source and target accounts
+
+```sql
+use role accountadmin;
+show replication accounts;
+```
+
+#### Run these queries on source account
+
+Substitue value of orgname and target_account_name (as noted above) in the commands below
 
 ```sql
 use role accountadmin;
@@ -240,11 +278,13 @@ create failover group sales_payroll_failover
 
 ```
 
-### Run these queries on target account
+#### Run these queries on target account
 Here you'll create a secondary connection and a secondary failover group.
 
 - A secondary connection is linked to the primary connection and must be created in an account in a different region from the source account. The secondary connection name must be the same as the primary connection name.
 - Just like the secondary connection, a secondary failover group is also linked to it's corresponding primary failover group and must be created in an account in a different region from the source account and with the same name as the primary failover group.
+
+Substitue value of orgname and source_account_name (as noted above) in the commands below
 
 ```sql
 use role accountadmin;
@@ -255,7 +295,7 @@ create failover group SALES_PAYROLL_FAILOVER
     as replica of <organame.source_account_name.SALES_PAYROLL_FAILOVER>;
 ```
 
-### Note the value for connection_url
+#### Note the value for connection_url
 Once you've setup your connection object successfully, we need to note the value for connection_url for our connection object. This URL is what we'll be using in all our application building from this point on. The url takes an account agnostic form (_orgname-connection_name.snowflakecomputing.com_) because it could be pointing to either account depending upon which one is primary. 
 
 ```sql
@@ -284,6 +324,9 @@ You can choose to build one of both of these.
 ### Sigma BI Dashboard
 
 In this step, we'll build a sigma dashboard that will rely on data available on our primary account. Once we replicate this data to our secondary account and failover, we'll see the sigma dashboard seamlessly point to the failover region and powered by our secondary account.
+
+In the video, you will see we connect Sigma to Snowflake by creating a connection. When filling up the connection details ensure that account name is same as the value recorded for "connection_url" at the end of step 4.
+
 <video id="vfmmDcQ1uB0"></video>
 
 #### Query used to build the global sales dashboard
@@ -305,6 +348,8 @@ Once you're done building the dashboard, the end result should look something li
 
 
 ### Python Streamlit App
+Save the code below in a python file and run it with the command "streamlit run <your-python-filename.py>". Remember to substitute user_name, password and account_name (in the ctx object) for your account before running the script. The account_name should be same as the value recorded for "connection_url" at the end of step 4, you only need to include everything before ".snowflakecomputing.com".
+
 ```python
 #Save this python script in a file and run from terminal/command prompt as 'streamlit run <name_of_script>.py'
 import snowflake.connector
@@ -313,7 +358,7 @@ import pandas as pd
 import streamlit_echarts as ste
 import json
 
-# Gets the version
+# Snowflake connection details
 ctx = snowflake.connector.connect(
     user=<user_name>,
     password=<password>,
@@ -490,7 +535,24 @@ Now we have to do this all over again just to have a DR instance - how much more
 
 But wait a minute, our source account and target account are on _different_ public cloud providers - won't that factor into the setup or cause some kind of _extra work_? Nope, not with Snowflake - we're cloud agnostic and we hide all that complexity from you.  
 
-Here's that single command that you need to replicate everything that this failover group contains.
+#### Replicate to Secondary
+Run the command below on your **target/secondary account** to begin replication
+
+```bash
+use role accountadmin;
+alter failover group sales_payroll_failover refresh;
+```
+
+#### Did the replication fail?
+Why do you think the first attempt to replication fail? Notice that there's an externals db that contains an external table which is not supported for replication and is the reason why replication failed.
+
+Let's fix this by removing the externals db from our failover group
+
+```sql
+use role accountadmin;
+alter failover group sales_payroll_failover remove externals from allowed_databases;
+```
+Now lets re-reun our replication, it should succeed this time
 
 ```bash
 use role accountadmin;
@@ -501,7 +563,17 @@ This command would take about a minute to run , but wait where's it getting the 
 
 After this command has run - you should all of the databases and other objects that we included in the failover group definition available in your secondary account.
 
-Here's a fun exercise to carry out, go back to step 3 and verify whether the governance policies (RLS and CLS) are intact in your secondary account as well (spoiler alert: they should be)
+#### Verify Replication
+In order to ensure that replication worked, go back to step 3 and run all commands under "Lets review our source account" on _your target account_ and ensure that you see the exact same results as you did on your source account. This will confirm that our replication worked as expected.
+
+#### Replicate on a schedule
+With the initial replication successfully completed, we want to now replicate on a schedule so that any additional changes on the primary account are regularly made available to the secondary. Let's assume a strict RPO and replicate every 3 minutes. It is important to note that if there are no changes to primary, nothing will be replicated to secondary and there will be no replication cost incurred. Run the command below to replicate our group evey three minutes.
+
+```sql
+use role accountadmin;
+alter failover group sales_payroll_failover set replication_schedule = '3 MINUTES';
+```
+
 
 <!-- ------------------------ -->
 ## Failover To Target
@@ -509,8 +581,8 @@ Moment of truth! With our data and account objects safely replicated to the seco
 
 So what do we do? Again, something very simple - fire two commands.
 
-- The first command will failover our connection - making the secondary account the new primary account for the account redirect.
-- The second command has done the same for our failover group, it has made the other account primary for objects covered in this failover group. This means that databases within this FG have now become read-write and the same databases in our new secondary (old primary) account have become read-only.
+- The first command will failover our connection - making the secondary account the new primary account for account redirect. Meaning the url in the connection_url property of our connection object will start to point to the new primary account. 
+- The second command will do the same for our failover group, it has made the other account primary for objects covered in the failover group. This means that databases within this FG have now become read-write and the same databases in our new secondary (old primary) account have become read-only.
 
 ```bash
 use role accountadmin;
@@ -518,7 +590,26 @@ use role accountadmin;
 alter connection sfsummitfailover primary;
 alter failover group sales_payroll_failover primary;
 ```
-As an exercise, try to update any table (that is part of the DBs in your failover group) in your new secondary account. You should get an error. 
+
+#### Run sales updates on the new primary account
+Now that we have a new primary account, let's re-create the task (remember that tasks are not replicated) from our 600 script to update the sales table every 3 minutes
+
+```sql
+use role sysadmin;
+#Important to note that IT_WH is available as part of the failover group that was replicated.
+use warehouse it_wh;
+
+CREATE OR REPLACE TASK REFERENCES..UPDATESALES
+    WAREHOUSE = etl_wh
+    SCHEDULE = '3 minute'
+AS
+    CALL sales..update_sales();
+
+use role accountadmin;
+grant execute task on account to role sysadmin;
+use role sysadmin;
+ALTER TASK REFERENCES..UPDATESALES RESUME;
+```
 
 <!-- ------------------------ -->
 ## Let's Revisit Our Apps
