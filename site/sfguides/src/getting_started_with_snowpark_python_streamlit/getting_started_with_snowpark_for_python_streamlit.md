@@ -4,7 +4,7 @@ categories: Getting Started
 environments: web
 status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started
+tags: Getting Started, Snowpark, Streamlit
 authors: Dash Desai
 
 # Getting Started With Snowpark for Python and Streamlit
@@ -15,9 +15,7 @@ Duration: 1
 
 ### What is Snowpark?
 
-Snowpark at its core provides an API that developers can use to construct DataFrames that are executed lazily on Snowflake’s platform. It enables data engineers, data scientists, and developers coding in languages other than SQL such as Python to take advantage of Snowflake’s powerful platform without having to first move data out of Snowflake. This enables data application developers to run complex transformations within Snowflake while taking advantage of the built-in unlimited scalability, performance, governance and security features.
-
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/) and [Snowpark for Python](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html).
+Snowpark at its core provides an API that developers can use to construct DataFrames that are executed lazily on Snowflake’s platform. It enables data engineers, data scientists, and developers coding in languages other than SQL such as Python to take advantage of Snowflake’s powerful platform without having to first move data out of Snowflake. This enables data application developers to run complex transformations within Snowflake while taking advantage of the built-in unlimited scalability, performance, governance and security features. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ### What is Streamlit?
 
@@ -33,7 +31,7 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 - How to create Snowpark DataFrames and load data from Snowflake
 - How to display tabular data and interactive charts using Streamlit
 - How to run the web-based data application using Streamlit
-- Tips and tricks for enhancing the web-based data application
+- Tips and tricks for enhancing the web-based data application in Streamlit
 
 ### Prerequisites
 
@@ -50,17 +48,21 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 Duration: 5
 
-1. Install conda to manage a separate environment by running `pip install conda`. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+1. Install conda to manage a separate environment by running: `pip install conda`. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 
-2. Create environment by running `conda create --name snowpark python=3.8 -c snowflake`
+2. Create environment using Snowflake Anaconda channel by running:
 
-3. Activate conda environment by running `conda activate snowpark`
+    `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
 
-4. Install pandas by running `conda install pandas`
+3. Activate conda environment by running: `conda activate snowpark`
 
-5. Install Streamlit by running `pip install streamlit` or `pip3 install streamlit`
+4. Install Snowpark for Python including compatible Pandas version by running:
 
-6. Install Snowpark for Python by running `conda install snowflake-snowpark-python`
+    `pip install "snowflake-snowpark-python[pandas]"`
+
+5. Install Streamlit by running: `pip install streamlit`
+
+NOTE: You many need to use `pip3` instead of `pip`
 
 <!-- ------------------------ -->
 ## Create Python Script
@@ -204,11 +206,9 @@ In the application:
 
 ---
 
-*my_snowpark_streamlit_app.py*
+*my_snowpark_streamlit_app.py* -- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/my_snowpark_streamlit_app.py)
 
 ```python
-#!/usr/bin/env python
-
 # Snowpark
 from snowflake.snowpark.session import Session
 from snowflake.snowpark.functions import avg, sum, col,lit
@@ -299,6 +299,7 @@ Here are a couple of tips and tricks to note:
 
 - You can change the theme (light or dark) by clicking on the hamburger menu on the top right and then clicking on the **Settings** menu
 - Making any changes to the source script and saving it will automatically prompt you to **Rerun** the application in the browser without having to stop and restart the application at the command line. (This can also be configured to always rerun the app without a prompt.)
+- You can create [multi-page apps in Stremlit](https://docs.streamlit.io/library/get-started/multipage-apps).
 - You can use Streamlit's `st.session_state` to save objects like `snowflake.snowpark.Session` so it's only created once during a session. For example:
 
 ```python
@@ -310,7 +311,7 @@ else:
 ```
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 
 Duration: 1
 
@@ -326,6 +327,10 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 
 ### Related Resources
 
-- [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html)
-- [Snowpark API Reference for Python](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/my_snowpark_streamlit_app.py)
+- [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0)
+- [Machine Learning with Snowpark for Python](https://quickstarts.snowflake.com/guide/machine_learning_with_snowpark_python/index.html?index=..%2F..index#0)
+- [Snowpark for Python Examples](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
+- [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html)
+- [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)

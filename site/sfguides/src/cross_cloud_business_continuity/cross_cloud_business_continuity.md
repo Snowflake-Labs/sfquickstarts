@@ -10,7 +10,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 # Cross Cloud Business Continuity With Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 “By failing to prepare, you are preparing to fail” - Benjamin Franklin
 
@@ -34,6 +33,7 @@ show replication accounts;
 ```
 
 - The organization administrator (ORGADMIN role) must enable replication for the source and target accounts before replicating a database as documented [here](https://docs.snowflake.com/en/user-guide/database-replication-config.html#prerequisite-enable-replication-for-accounts-in-the-organization). For the Summit Lab, your Snowflake team will ensure this is done for the two trial accounts.
+
 - Accountadmin access on both trial accounts.
 - Failover App: BI Sigma Dashboard
   - A sigma trial account that is valid on the day of the lab. The trial account is valid for 14 days from the day of signing up. You can sign for the trial account directly from the [sigmacomputing free trial link](https://www.sigmacomputing.com/free-trial/) or from your Snowflake UI by clicking on “Partner Connect” -> Click on “Sigma” tile.
@@ -58,7 +58,6 @@ In this quickstart you will learn
 - How to trigger failover of replication/failover groups and client connections.
 
 ### What You’ll Need 
-
 - Python installed on local machine to stimulate a python app failover (Needed for streamlit app).
 - A Sigma trial account to stimulate a BI dashboard failover (Needed for Sigma BI app). 
 - Our source data is based on the TPC-DS benchmark dataset that is shared with all Snowflake accounts by default. If you don't see that share, you can create it with below commands.
@@ -143,11 +142,11 @@ Our scripts in the previous step have created a production like snowflake enviro
 - RBAC Hierarchy
 - Databases
 - Compute warehouses
-- Data copied from the snowflake_sample_data share.
-- Direct data shares.
-- Dynamic data masking policies.
-- Row access policy.
-- Object tags.
+- Data copied from the snowflake_sample_data share
+- Direct data shares
+- Dynamic data masking policies
+- Row access policy
+- Object tags
 
 Phew! That's quite a list here's what all of this looks like in a picture:
 
@@ -165,7 +164,7 @@ Our row access policy is applied to the global_sales.online_retail.customer tabl
 
 - sales_analyst role should be able to see data for market segments 'automobile' and 'machinery'.
 - sales_admin role should be able to see data for market segments 'automobile', 'machinery', 'building' and 'household'.
-- product_manager role should be able to see data across ALL market segments.
+- product_manager role should be able to see data for ALL market segments.
 - All other roles should not be able to see data for ANY market segment.
 
 Below query when run with the sysadmin role should return 0 records, but when run with the sales_analyst, sales_admin or product_manaher role it should return results based on their privilege described above. Run the query once with each role - sysadmin, sales_analyst, sales_admin and product_manager and verify whether these rules are being adhered. Switch roles in your worksheet with the "use role <role_name>" command.
@@ -175,6 +174,7 @@ use role sysadmin;
 use warehouse sales_wh;
 select * from global_sales.online_retail.customer limit 100;
 ```
+
 When we replicate our data and our account objects, row level security is applied to the target account as well. This ensures that your access rules around data are retained even on the DR instance.
 
 #### Verify dynamic data masking policy
@@ -195,7 +195,7 @@ select * from payroll.noam_northeast.employee_detail limit 100;
 #### Verify data shares
 We've created a few data shares with different variations, we'll observe what permissions each of these shares have and whether these are replicated as is to our secondary account.
 
-Below code snippet display permissions on three data shares - GLOBAL_SALES_SHARE, INVENTORY_SHARE and CROSS_DATABASE_SHARE
+Below code snippet displays permissions on three data shares - GLOBAL_SALES_SHARE, INVENTORY_SHARE and CROSS_DATABASE_SHARE
 
 ```sql 
 use role accountadmin;
@@ -220,10 +220,6 @@ show grants to share cross_database_share;
   - reference_usage on references and sales DB
   - usage on cross_database.public schema
   - usage on cross_database.public.morning_sales view
-
-Verify the permissions on the data share with below commands:
-
-
 
 #### Verify location, type and owner of governance policies
 We have built 6 masking policies, 4 object tags and 2 row access policies that we use to protect our data. Observe their details like which schema are these policies kept in, who owns them etc.
@@ -523,7 +519,8 @@ st.header("Conclusion")
 st.text(conclusion_text)
 st.snow()
 ```
-#### Streamlit app should look like this..
+
+#### Streamlit app should look like this
 
 ![streamlit_ss](assets/streamlit_dashboard.png)
 
