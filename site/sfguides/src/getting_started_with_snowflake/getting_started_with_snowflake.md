@@ -1006,7 +1006,7 @@ Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs ar
 
 The **Usage** tab shows the following, each with their own page:
 
-- **Orgamization**: Credit usaged across all the accounts in your organization.
+- **Organization**: Credit usaged across all the accounts in your organization.
 - **Consumption**: Credits consumed by the virtual warehouses in the current account.
 - **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
 - **Transfers**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
