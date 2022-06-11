@@ -79,7 +79,7 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 <!-- ------------------------ -->
 ## Source Account Setup
 
-Download scripts to populate your source account from this Github repository as a ZIP: _https://github.com/Snowflake-Labs/sfguide_failover_scripts_ 
+Download scripts to populate your source account from [this Github repository](https://github.com/Snowflake-Labs/sfguide_failover_scripts) as a ZIP
 
 OR clone to a directory in your local machine with the below command
 
@@ -89,13 +89,13 @@ git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
 
 After downloading the code you should see numbered sql scripts in the scripts folder. The sequence also determines their order of execution.
 
-Execute the below scripts (100 - 600) on your _source account_.
+Execute the below scripts (100 - 600) on your _source account_. Script 300 needs to have the generic user name replaced in order for it to run without issues. Make sure you replace the user name before running the 300 script as instructed below.
 
 - **100_create_env_resources_source.sql**: Create roles, roles hierarchy, databases and warehouses. 
 
 - **200_create_users_source.sql**: Create user base. 
 
-- **300_roles_privileges_assignment_source.sql**: Grant object privileges to roles and grant roles to create personas. *Be sure to replace user name on lines 93 - 95 with your own admin user, the admin user in each account should have the product_manager, data_science and governance_admin roles assigned.*
+- **300_roles_privileges_assignment_source.sql**: Grant object privileges to roles and grant roles to create personas. *Be sure to replace user name "REPLACEME" with your own admin user.*
 
 - **400_ingest_data_source.sql**: Create tables and data share and ingests data in tables. 
 
@@ -546,13 +546,13 @@ alter failover group sales_payroll_failover refresh;
 #### Did the replication fail?
 Why do you think the first attempt to replication fail? Notice that there's an externals db that contains an external table which is not supported for replication and is the reason why replication failed.
 
-Let's fix this by removing the externals db from our failover group
+Let's fix this by removing the externals db from our failover group. Run the below command on the **primary account**.
 
 ```sql
 use role accountadmin;
 alter failover group sales_payroll_failover remove externals from allowed_databases;
 ```
-Now lets re-reun our replication, it should succeed this time
+Now lets re-reun our replication, it should succeed this time. Run the below command on the **secondary account**.
 
 ```bash
 use role accountadmin;
@@ -567,7 +567,7 @@ After this command has run - you should all of the databases and other objects t
 In order to ensure that replication worked, go back to step 3 and run all commands under "Lets review our source account" on _your target account_ and ensure that you see the exact same results as you did on your source account. This will confirm that our replication worked as expected.
 
 #### Replicate on a schedule
-With the initial replication successfully completed, we want to now replicate on a schedule so that any additional changes on the primary account are regularly made available to the secondary. Let's assume a strict RPO and replicate every 3 minutes. It is important to note that if there are no changes to primary, nothing will be replicated to secondary and there will be no replication cost incurred. Run the command below to replicate our group evey three minutes.
+With the initial replication successfully completed, we want to now replicate on a schedule so that any additional changes on the primary account are regularly made available to the secondary. Let's assume a strict RPO and replicate every 3 minutes. It is important to note that if there are no changes to primary, nothing will be replicated to secondary and there will be no replication cost incurred. Run the command below (on the **primary account**) to replicate our group evey three minutes.
 
 ```sql
 use role accountadmin;
@@ -583,6 +583,8 @@ So what do we do? Again, something very simple - fire two commands.
 
 - The first command will failover our connection - making the secondary account the new primary account for account redirect. Meaning the url in the connection_url property of our connection object will start to point to the new primary account. 
 - The second command will do the same for our failover group, it has made the other account primary for objects covered in the failover group. This means that databases within this FG have now become read-write and the same databases in our new secondary (old primary) account have become read-only.
+
+Run the two commands below on the **secondary account**
 
 ```bash
 use role accountadmin;
