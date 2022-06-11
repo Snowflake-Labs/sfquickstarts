@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Snowpark
 authors: Brenna Buuck, StreamSets
 
-# A Dive into Slowly Changing Dimensions with Snowpark
+# A Dive Into Slowly Changing Dimensions with Snowpark and StreamSets
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -103,7 +103,7 @@ In the settings for the Slowly Changing Dimension, add the following configurati
 - Specify Active Flag: **Checked**
 - Active Flag Field: **Checked**
 - Active Field Type: **True-False**
-- Specify Timestamp Fields: **8Checked**
+- Specify Timestamp Fields: **Checked**
 - Start Timestamp Field: **START_TIMESTAMP**
 - End Timestamp Field: **END_TIMESTAMP**
 - Timestamp Expression: **CURRENT_TIMESTAMP** (Default Value)
