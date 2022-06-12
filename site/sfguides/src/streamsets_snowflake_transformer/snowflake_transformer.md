@@ -12,10 +12,14 @@ authors: Brenna Buuck, StreamSets
 ## Overview 
 Duration: 1
 
-StreamSets Transformer for Snowflake is a hosted service embedded within the DataOps Platform that uses the Snowpark client libraries to generate queries that run directly on Snowflake. Transformer for Snowflake accelerates the development of data pipelines by providing features that go beyond a drag and drop interface to construct the equivalent of basic SQL. Snowpark enables StreamSets to construct the SQL queries at the pipeline runtime, allowing pipeline definitions to be more flexible than the SQL queries written by hand. StreamSets also provides processors that combine the logic for common use cases into a single element on your canvas. 
+StreamSets Transformer for Snowflake is a hosted service embedded within the StreamSets DataOps Platform that uses the Snowpark Client Libraries to generate SnowSQL queries that are executed in Snowflake. Build your pipelines in the StreamSets canvas and when you execute that pipeline, StreamSets generates a DAG. StreamSets then uses the DAG and the Snowpark Client Libraries to generate SnowSQL. That SnowSQL is sent over to Snowflake to be executed in the Warehouse of your choice. 
+
+![How_Does_It_Work](assets/how_does_it_work.png)
+
+Transformer for Snowflake accelerates the development of data pipelines by providing features that go beyond a drag and drop interface to construct the equivalent of basic SQL. Snowpark enables StreamSets to construct the SnowSQL queries at the pipeline runtime, allowing pipeline definitions to be more flexible than SnowSQL queries written by hand. StreamSets also provides processors that combine the logic for common use cases into a single element on your canvas. 
 
 Let’s explore how to get started using Transformer for Snowflake and some of the features that will accelerate pipeline development.
-
+ 
 ### Prerequisites
 - Access to [StreamSets DataOps Platform account](https://cloud.login.streamsets.com/login)
 - A [Snowflake](https://signup.snowflake.com/) account and a schema that your user has CREATE TABLE privileges on
@@ -42,6 +46,8 @@ If you have not used Transformer for Snowflake before, after signing up for the 
 Under My Account, select the **Snowflake Settings** tab. You must enter Snowflake credentials. There are two options for authentication: Username/Password or Key Pair Authentication. You can find instructions for setting up Key Pair authentication with Snowflake [here](https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-using-key-pair-authentication). You will want to use a key pair that is **not** encrypted
 
 You also have the option to set pipeline defaults, which is highly recommended. This will prevent you from having to enter your Account URL, Warehouse, Database, Schema, and/or Role for every pipeline. When these values are populated, new Transformer for Snowflake pipelines are created with parameters for those settings pre-populated with the values provided here. These settings can be overwritten directly in any pipeline.
+
+Your Snowflake account URL will change depending on the area where you’re located. Make sure you copy paste it up until the “.com".
 
 ![Snowflake_Settings](assets/step_1_img_2.png)
 
@@ -75,11 +81,11 @@ Duration: 2
 
 Every Transformer for Snowflake pipeline must have an origin and a destination. For this pipeline, select the Snowflake Table Origin from either the drop down menu at the top of the canvas or from the full menu of processors on the right.
 
-At this point, run the first section of SQL in the SQL Script file to create and populate the EMPLOYEES and UPDATE_FEED tables in a Snowflake Worksheet. You will need to substitute the names of your database and schema into the script if you already have your own that you want to use.  
+Click on the Table origin, under the General tab, and name it 'Employees', and on the Table tab, enter the table name **EMPLOYEES**. This will be the Dimension table that tracks the employee data.
 
-Click on the Table origin, and you have the option to rename it and add a description, then on the Table tab, enter the table name **EMPLOYEES** for the Table setting. This will be the Dimension table that tracks the employee data.  
+Add a second Snowflake Table origin to the canvas. This origin will be for a feed of updated Employee data. Under the General tab, name the origin 'Updates' and on the Table tab, enter **UPDATE_FEED**.
 
-Add a second Snowflake Table Origin to the canvas, this will be for a feed of updated Employee data. Name the Origin “Updates” and on the Table tab, enter **UPDATE_FEED**
+At this point, run the first section of SQL in the SQL Script file to create and populate the **EMPLOYEES** and **UPDATE_FEED** tables in a Snowflake Worksheet. You will need to substitute the names of your database and schema into the script if you already have your own that you want to use.
 
 <!-- ------------------------ -->
 ## Add Slowly Changing Dimension
@@ -101,7 +107,7 @@ In the settings for the Slowly Changing Dimension, add the following configurati
 - Specify Version Field: **Checked**
 - Version Field: **VERSION**
 - Specify Active Flag: **Checked**
-- Active Flag Field: **Checked**
+- Active Flag Field: **ACTIVE_FLAG**
 - Active Field Type: **True-False**
 - Specify Timestamp Fields: **Checked**
 - Start Timestamp Field: **START_TIMESTAMP**
