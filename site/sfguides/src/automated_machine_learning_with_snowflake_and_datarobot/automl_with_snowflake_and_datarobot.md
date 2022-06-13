@@ -361,14 +361,14 @@ You'll then be asked to choose what type of connection you want to create. DataR
 ![](assets/p34.png)
 <br/><br/>
 
-We now will have a bunch of fields to fill in. The first is "Data connection name." I just called mine `Snowflake HOL` given this is a "Snowflake DataRobot Hands On Lab." For the driver dropdown, go ahead and choose the recommanded one Next, paste the url we just copied into the "address" box. Our "db" will be `CUSTOMER_DATA` and the "warehouse" is `COMPUTE_WH`. Finally, lets go ahead and add two more parameters. By clicking the "Add parameter box," let search for the "role" parameter and set it to `ACCOUNTADMIN` and then "schema" and set it to `PUBLIC`. Click "Add data connection"
+We now will have a bunch of fields to fill in. The first is "Data connection name." I just called mine `Snowflake HOL` given this is a "Snowflake DataRobot Hands On Lab." For the driver dropdown, go ahead and choose the recommanded one Next, paste the url we just copied into the "address" box (without the 'http://'). Our "db" will be `CUSTOMER_DATA` and the "warehouse" is `COMPUTE_WH`. Finally, lets go ahead and add two more parameters. By clicking the "Add parameter box," let search for the "role" parameter and set it to `ACCOUNTADMIN` and then "schema" and set it to `PUBLIC`. Click "Add data connection"
 
 ![](assets/p35.png)
 <br/><br/>
 
 From here you will now see your new data connection. We now need to associate our Snowflake login to this connection. If we didnt, anyone with the deployment URL could use the connection string!
 
-Enter your credentials - user name and password and click 'Save and sign in'
+Choose 'Basic' and enter your credentials - user name and password and click 'Save and sign in'
 
 Once the connection succeeded click on 'Add new data source'
 
@@ -413,7 +413,7 @@ Once you select the name of the target, you should see the following screen:
 ![](assets/dr2.png)
 <br/><br/>
 
-If you want to customize the model building process, you can modify a variety of advanced parameters, optimization metrics, feature lists, transformations, partitioning, and sampling options. The default modeling mode is “Autopilot”, which employs the full breadth of DataRobot’s automation capabilities. For more control over which algorithms DataRobot runs, there are manual and quick-run options.
+If you want to customize the model building process, you can modify a variety of advanced parameters, optimization metrics, feature lists, transformations, partitioning, and sampling options. The default modeling mode is “Quick”. For more control over which algorithms DataRobot runs, there are manual, Autopilot and comprehensive options.
 
 
 <!-- ------------------------ -->
@@ -432,7 +432,7 @@ You can again drill down on features in our feature list to view distributions, 
 
 
 
-Moving over to the "Models" tab, DataRobot supports popular advanced machine learning techniques and open source tools such as Apache Spark, H2O, Scala, Python, R, TensorFlow, and XGBoost. During the automated modeling process, DataRobot analyzes the characteristics of the training data and the selected prediction target, and selects the most appropriate machine learning algorithms to apply, also known as a DataRobot "Blueprint". DataRobot blueprints is a collection of preprocessing steps plus the algorithm, and includes operations like one-hot encoding, missing value imputation, text mining, etc.
+Moving over to the "Models" tab, DataRobot supports popular open source software frameworks, including software available in programming languages like Python and R and libraries such as XGBoost and more. During the automated modeling process, DataRobot analyzes the characteristics of the training data and the selected prediction target, and selects the most appropriate machine learning algorithms to apply, also known as a DataRobot "Blueprint". DataRobot blueprints is a collection of preprocessing steps plus the algorithm, and includes operations like one-hot encoding, missing value imputation, text mining, etc.
 
 DataRobot streamlines model development, in a leaderboard type fashion, by automatically ranking models (or ensembles of models) based on the techniques advanced data scientists use, including boosting, bagging, random forests, kernel-based methods, generalized linear models, deep learning, and many others. By cost-effectively evaluating a near-infinite combination of data transformations, features, algorithms, and tuning parameters in parallel across a large cluster of servers, DataRobot delivers the best predictive model in the shortest amount of time.
 
@@ -441,12 +441,12 @@ And of course, recommends a model for deployment.
 ![](assets/dr4.png)
 <br/><br/>
 
-Let's take a 5 min break, and when we come back, we will analyze the results.
+Let's take a 7 min break, and when we come back, we will analyze the results.
 <!-- ------------------------ -->
 ## Evaluating the "Recommended For Deployment" Model
 Duration: 10
 
-Let's 'star' the first model in the leadeboard. This is the model that was the most optimal given our chosen optimization metric. To start evaluating it, we can click on the model which will present use with the following options: Evaluate, Understand, Describe, and Predict (​additional tabs may be present based on extra features that are enabled).
+Let's 'star' the first model in the leadeboard. This is the model that was the most optimal given our chosen optimization metric. Let's star it. To start evaluating it, we can click on the model which will present use with the following options: Evaluate, Understand, Describe, and Predict (​additional tabs may be present based on extra features that are enabled).
 
 Before we deep dive on each tab let's go to the Understand tab > Feature Effects and click 'Compute Feature Effects'
 
@@ -459,7 +459,7 @@ In non trial accounts this flow can be customized - Composable ML provides a ful
 
 Click on "Evaluate". The “Evaluate” option includes: Lift Chart, ROC Curve (for classification models), Confusion Matrix, Feature Fit, and Advanced Tuning.
 
-The "Lift Chart" depicts quite plaining how well the model is able to predict the target. If the blue "Predicted" line is flat, that means the model doesn't really do a good job of differentiation between people who are likely to stay vs people who are going to leave. If the line has some slope it, this indicates that there is some predictive power in our features you have chosen to model on. In our case, we can see that the blue line pops up as the likelihood of someone leaving pops.
+The Lift Chart depicts how well a model segments the target population and how capable it is of predicting the target, letting you visualize the model's effectiveness. Looking at the Lift Chart, the left side of the curve indicates where the model predicted a low score on one section of the population while the right side of the curve indicates where the model predicted a high score. In general, the steeper the actual line is, and the more closely the predicted line matches the actual line, the better the model is. A consistently increasing line is another good indicator.
 
 ![](assets/dr7.png)
 <br/><br/>
@@ -472,7 +472,7 @@ The ROC Curve tab helps to explore classification, performance, and statistics r
 
 In the “U​nderstand”​ tab, popular exploratory capabilities include Feature Impact, Feature Effects, Prediction Explanations, and Word Cloud (depending on the features in the dataset). These all help enlighten you on what drives a model’s predictions.
 
-“Feature Impact” measures how much each feature contributes to the overall accuracy of the model. For this example, we can see that the most impactful reason a person is likely to stay as a customer or leave is the number of `CUSTOMER_SERVICE_CALLS`. The real question is, now how do we go reduce that number :) so that less people leave. This is just another way to take information from the machine learning lifecycle to add value to a business.
+DataRobot uses permutation importance to estimate feature impact. “Feature Impact” measures how much each feature contributes to the overall accuracy of the model. For this example, we can see that the most impactful reason a person is likely to stay as a customer or leave is the number of `CUSTOMER_SERVICE_CALLS`. The real question is, now how do we go reduce that number :) so that less people leave. This is just another way to take information from the machine learning lifecycle to add value to a business.
 
 ![](assets/dr10.png)
 <br/><br/>
@@ -566,7 +566,7 @@ The last section to complete is the "Prediction Destination". Go ahead and leave
 ![](assets/dr23.png)
 <br/><br/>
 
-Repeat the process as before in the "Prediction Source"  and on tables create a new table
+Repeat the process as before in the "Prediction Source" (choose the data connection) and on tables create a new table
 
 ![](assets/dr26.png)
 <br/><br/>
@@ -578,7 +578,7 @@ name: SCORED_DATA' and click 'Save connection'
 ![](assets/dr27.png)
 <br/><br/>
 
-Change the write strategy to 'Insert' and Click “Save Connection”.
+Change the write strategy to 'Insert'.
 
 At the bottom you can schedule this job to run on a Schedule, or just run it manually. Go ahead and click "Save Prediction job definition" in the bottom left, then click on "View all Job Definitions" in the upper left. Click the hamburger icon on the right side of the job definition you just made, and click "Run now".
 
@@ -592,10 +592,13 @@ If you click the hamburger icon again and go to “View job history” you can s
 
 We can now finally head back to our Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the `SCORED_DATA` table that was created once we kicked off our prediction job. If you excecute the query:
 
-'SELECT
+```sql
+SELECT
     *
 FROM
-    customer_data.public.scored_dat;'
+    customer_data.public.scored_data;
+```
+
 
 You will see our data with three new columns: 'CHURN_True_Prediction', 'CHURN_False_Prediction' showing the likelihood that each person is likely to churn or stay, and the decision in the column 'CHURN_PREDICTION'
 
@@ -740,11 +743,15 @@ The results will be overwrtie the train table in Snowflake
 
 
 Go back to your snowflake account and run again the sql:
-'SELECT
+
+```sql
+SELECT
     *
 FROM
     train_data
-LIMIT 10;'
+LIMIT 10;
+```
+
 
 ![](assets/p71.png)
 <br/><br/>
