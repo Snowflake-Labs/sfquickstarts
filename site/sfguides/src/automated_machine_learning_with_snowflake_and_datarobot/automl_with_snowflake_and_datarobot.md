@@ -25,7 +25,6 @@ Throughout this process, you will discover the ease at which it is possible to b
 
 To showcase the full lifecycle of a deploying machine learning model, we will first load in Snowflake, our data cloud where all of our data lives. Then, we will leverage the DataRobot auto-pilot process to perform exploratory data analysis, and then train, evaluate, and interpret a slew of potential machine learning models. And finally, use the Snowflake-DataRobot prediction integration to score our model against new data, as if the model was in production.
 ### Prerequisites
-- A Business email
 - Basic knowledge of SQL, and database concepts and objects
 - Basic understanding of data science and machine learning
 
