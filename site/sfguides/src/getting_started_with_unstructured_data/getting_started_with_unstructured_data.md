@@ -137,7 +137,7 @@ encryption = (type = 'SNOWFLAKE_SSE');
 ```
 
 <aside class="warning">
-    Note that we have to specify a server-side encryption on the internal stage. When using the default client side encryption, the files will be returned encrypted and not readable when accessed through URLs (in Section 6).
+    Note that we have to specify a server-side encryption on the internal stage. When using the default client-side encryption, the files will be returned encrypted and not readable when accessed through URLs (in Section 6).
 </aside>
 
 #### Download Data and Scripts
@@ -158,7 +158,7 @@ Before opening terminal, find out your account identifier which for the trial ac
 
 For example, the URL to access the trial account is `https://xx74264.ca-central-1.aws.snowflakecomputing.com/`. These are the values for the account identifier:
 
-- Account Identifier: `xx74264`
+- Account Locator: `xx74264`
 - Region ID: `ca-central-1`
 - Cloud: `aws`
 
@@ -177,7 +177,7 @@ snowsql -a <account-identifier> \
 Using the examples above for the path and the account identifier, and the userid `myuser`, the command would be:
 
 ```
-snowsql -a xx74264.ca-central1-1.aws \
+snowsql -a xx74264.ca-central-1.aws \
 -u myuser -d emaildb -r sysadmin -s raw \
 -D srcpath=/Users/znh/Downloads/quickstart/mailbox \
 -D stagename=@email_stage_internal \
@@ -224,7 +224,7 @@ grant usage on warehouse quickstart to role analyst;
 grant read on stage email_stage_internal to role analyst;
 ```
 
-You can verify the `analyst` role only has access to read by listing the files in the external stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message.
+You can verify the `analyst` role only has access to read by listing the files in the internal stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message.
 
 ```sql
 use role analyst;
@@ -302,7 +302,7 @@ In this quickstart, we won’t setup notifications in S3, but the command below 
 
 ```sql
 -- Create a table stream on directory table
-create stream documents_stream on directory(@documents);
+create stream documents_stream on directory(<stage_name>);
 ```
 
 <!-- ------------------------ -->
@@ -319,7 +319,7 @@ There are three different types of URLs that you can use to access unstructured 
 - [__Pre-signed URL__](https://docs.snowflake.com/en/sql-reference/functions/get_presigned_url.html): As the name suggests, pre-signed URLs are already authenticated. Users can simply download the files using pre-signed URLs.
 
 
-The URL format for files is https://&lt;account&gt;.snowflakecomputing.com/api/files/&lt;db_name&gt;/&lt;schema_name&gt;/&lt;stage_name&gt;/&lt;file_path&gt;. 
+The URL format for files is https://<account>.snowflakecomputing.com/api/files/<db_name>/<schema_name>/<stage_name>/<file_path>. 
 
 ### Scoped URL
 Scoped URLs are encoded URLs that permit temporary access to a staged file without granting privileges to the stage. The URL expires when the persisted query result period ends (i.e. the results cache expires), which is currently 24 hours.
@@ -513,6 +513,7 @@ A few elements relevant for this code:
 The precompiled jar file including all the dependencies has been uploaded and available on a Snowflake s3 public bucket. Creating the UDF involves a few steps in Snowflake.
 
 1. Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:
+
 ```sql
 use role sysadmin;
 use schema emaildb.raw;
@@ -521,6 +522,7 @@ create or replace stage jars_stage_external
 url = "s3://sfquickstarts/Common JARs/"
 directory = (enable = true auto_refresh = true);
 ```
+
 From the Snowflake worksheet, you can run the following command to confirm the jar file is listed in the external stage.
 ```sql
 ls @jars_stage_external;

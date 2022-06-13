@@ -1,4 +1,4 @@
-summary: This lab will walk you through how to accelerate Feature Engineering for Machine Learning Models with Snowflake and Amazon SageMaker.
+summary: This lab will walk you through how to apply a data-centric approach to Machine Learning with Snowflake and Amazon SageMaker.
 id: vhol_snowflake_data_wrangler
 categories: Getting Started
 environments: web
@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SageMaker, Data Wrangler, Feature Engineering, Data Marketplace, Machine Learning, Financial Services, Storage Integration
 authors: andries.engelbrecht@snowflake.com
 
-# Accelerate ML Feature Engineering with Snowflake and Amazon SageMaker Data Wrangler
+# Data-centric Approach to Machine Learning Using Snowflake and Amazon SageMaker Data Wrangler
 
 
 <!-- ------------------------ -->
@@ -80,7 +80,7 @@ The first thing you will need to do is download the following .sql file that con
 
 At this point log into your Snowflake. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
 
-In the Snowflake UI click on Worksheets on the left side.
+In the Snowflake UI click on **Worksheets** on the left side.
 
 
 ![](assets/image14.png)
@@ -663,7 +663,7 @@ Navigate to the **/snowflake-sagemaker-workshops/loan-default/notebooks** folder
 
 
 
-Open the **snowflake-loan-default-workshop.ipnyb** notebook by double clicking on it.
+Open the **snowflake-loan-default-workshop-v1.1.ipnyb** notebook by double clicking on it.
 
 A window will pop up to select the Image and Kernel you want to use. Under **Image** select the **Custom Image** then **snowflake-workshop** and then select **snowflake-workshop-v1**, keep the Kernel as Python 3 and click **Select**.
 
@@ -715,7 +715,7 @@ We will now create a Data Wrangler flow.
 
 Create a new Data Wrangler flow by selecting it from the top **File Menu**
 
-**File &gt; New &gt; Data Wrangler Flow**
+**File \> New \> Data Wrangler Flow**
 
 ![](assets/image67.png)
 
@@ -765,11 +765,11 @@ You can now navigate the Snowflake data by looking at the Snowflake objects on t
 
 When using the SQL window you can set the context of the queries, similar to Snowflake. Select:
 
-**Data Warehouse - ML\_WH
+Data Warehouse - ML\_WH
 
 Database - ML\_LENDER\_DATA
 
-Schema - ML\_DATA**
+Schema - ML\_DATA
 
 
 
@@ -911,7 +911,7 @@ To add additional steps click **\+ Add Step** each time
 
 
 
-- Next select Parse column as type
+- Next select **Parse column as type**
 - Select INT\_RATE column
 - From: String
 - To: Float
@@ -963,7 +963,7 @@ This code creates a new column VERIFIED with boolean values.
 
 Now we can drop the original VERIFICATION\_STATUS column.
 
-- Select Manage columns
+- Select **Manage columns**
 - Transform - select Drop Column
 - Column to Drop - select VERIFICATION\_STATUS
 - Select Preview and then Add
@@ -1006,7 +1006,7 @@ Click the **\+ sign** next to the 5 Transform Steps and select Add analysis.
 
 In the Analysis select:
 
-- Analysis type - Target Leakage
+- Analysis type - **Target Leakage**
 - Max Features - 30
 - Problem type - Classification
 - Target - LOAN\_DEFAULT
@@ -1033,7 +1033,7 @@ Our data does not have any obvious sensitive attributes like gender and race. Ho
 
 In the Analysis window select:
 
-- Analysis Type - Bias Report
+- Analysis Type - **Bias Report**
 - SELECT the column your model predicts (target): LOAN\_DEFAULT
 - Is your predicted column a value or threshold?: Value
 - Predicted value(s): 0;1
@@ -1082,7 +1082,7 @@ Navigate to the Analysis panel from the tail end of your flow—as you did in th
 
 Configure your report:
 
-- Analysis type: Quick Model
+- Analysis type: **Quick Model**
 - Analysis name: Quick Test
 - Label: LOAN\_DEFAULT
 
@@ -1090,7 +1090,7 @@ Configure your report:
 
 
 
-It will take about 5 minutes to generate a report like the following:
+It can take few minutes to generate a report like the following:
 
 ![](assets/image28.png)
 
@@ -1116,7 +1116,7 @@ We will now add additional data to your existing flow.
 
 First click **Data flow**
 
-SELECT the Import tab at the top and click on the Snowflake icon.
+SELECT the **Import tab** at the top and click on the Snowflake icon.
 
 ![](assets/image66.png)
 
@@ -1150,7 +1150,7 @@ Next, you're going to merge the two datasets. There are many ways to do this. Yo
 
 First delete the last transformation from the original flow, so that we have **LOAN\_ID** available.
 
-Click on the Steps and then on the ellipsis next to step 5 and select **Delete Step**
+Click on the **Steps** and then on the ellipsis next to step 5 and select **Delete Step**
 
 ![](assets/image69.png)
 
@@ -1166,9 +1166,9 @@ Next we will merge the data sets using a join operator
 
 Click on **\+** at the end of the original flow and select the **Join** operator.
 
-SELECT the other flow.
+SELECT the other flow by clicking on the **Data Types** box on the bottom flow
 
-Click on Configure
+Click on **Configure** - lower left of the window
 
 SELECT Left Outer as the Join Type.
 
@@ -1214,7 +1214,7 @@ Select the Join Node and Add Transform
 
 Drop the columns, LOAN\_ID\_0 and LOAN\_ID\_1 using the same transformation step as before.
 
-Manage Columns &gt; Drop Column &gt; Columns to Drop &gt; Loan\_ID\_0 and Loan\_ID\_1
+Manage Columns \> Drop Column \> Columns to Drop \> Loan\_ID\_0 and Loan\_ID\_1
 
 
 ![](assets/image12.png)
@@ -1232,6 +1232,8 @@ Create a new Quick Model report to assess the impact of your modifications.
 
 The results should be similar to the following:
 
+- Go back to Data Flow
+- Add Analysis to the last node 
 - Analysis type - Quick Model
 - Label - LOAN\_DEFAULT
 
@@ -1308,7 +1310,7 @@ This will generate a new notebook tab. Select the new notebook.
 
 
 
-- Follow the steps outlined in thegenerated notebook.
+- Follow the steps outlined in the generated notebook.
 - Run the cells and wait for the processing job to complete.
 - COPY the output S3 URI of the processed dataset.
 
@@ -1326,7 +1328,7 @@ The S3 URI will look similar to: s3://(YOUR\_BUCKET)/export-flow-23-23-17-34-6a8
 
 
 
-COPY the S3 URI to the PREP\_DATA\_S3 variable in your initial workshop notebook
+COPY the S3 URI to the PREP\_DATA\_S3 variable in your **initial workshop notebook**
 
 ![](assets/image73.png)
 
@@ -1346,25 +1348,7 @@ COPY the S3 URI to the PREP\_DATA\_S3 variable in your initial workshop notebook
 
 
 
-**Subscribe to AutoGluon in the AWS Marketplace**
-
-
-
-Next, you are going to subscribe to the AutoGluon Marketplace algorithm. This provides your account access to a SageMaker compatible container for running AutoGluon. This Marketplace algorithm is managed by AWS and doesn't have additional software costs. Marketplace algorithms are similar to SageMaker built-in algorithms. Once subscribed, you can run the algorithm to train and serve models with "low-to-no-code".
-
-
-
-Follow these steps to subscribe to the AWS Marketplace AutoGluon algorithm:
-
-- Click this [URL](https://aws.amazon.com/marketplace/pp/Amazon-Web-Services-AutoGluon-Tabular/prodview-n4zf5pmjt7ism) to navigate to the AutoGluon product page.
-- SELECT the orange "**Continue to Subscribe**" button.
-- Run the helper function below to identify the AWS resource ID (ARN) of your AutoGluon Marketplace algorithm.
-
-![](assets/image80.png)
-
-
-
-Next, we'll configure our algorithm for remote training.
+Your data can now be used to train a model. We'll be using an AutoML toolkit, [AutoGluon](https://auto.gluon.ai/stable/tutorials/tabular_prediction/index.html).
 
 More details are provided in the notebook description.
 
@@ -1387,8 +1371,9 @@ You can monitor the training job in the SageMaker Console
 
 
 <!-- ------------------------ -->
-## Deploy your Model
+## Deploy your Model [Optional]
 Duration: 13
+
 
 
 
@@ -1418,8 +1403,7 @@ First we will make a copy of our flow file.
 - Use **inference\_flow\_loan.flow** as the new name
 
 
-Positive
-: **TIP:** Click on the Folder icon on the left hand side of the screen to see the files
+**TIP:** Click on the Folder icon on the left hand side of the screen to see the files
 
 
 
@@ -1441,23 +1425,38 @@ We can now change the data source for the flow:
 
 ```
 SELECT
-  L1.LOAN_ID,  L1.LOAN_AMNT,   L1.FUNDED_AMNT,
-  L1.TERM,   L1.INT_RATE,   L1.INSTALLMENT,
-  L1.GRADE,   L1.SUB_GRADE,   L1.EMP_LENGTH,
-  L1.HOME_OWNERSHIP,   L1.ANNUAL_INC,
-  L1.VERIFICATION_STATUS,   L1.PYMNT_PLAN,
-  L1.PURPOSE,   L1.ZIP_SCODE,   L1.DTI,
-  L1.DELINQ_2YRS,   L1.EARLIEST_CR_LINE,
-  L1.INQ_LAST_6MON,   L1.MNTHS_SINCE_LAST_DELINQ,
-  L1.MNTHS_SINCE_LAST_RECORD,   L1.OPEN_ACC,
-  L1.PUB_REC,   L1.REVOL_BAL,   L1.REVOL_UTIL,
-  L1.TOTAL_ACC,   L1.INITIAL_LIST_STATUS,
-  L1.MTHS_SINCE_LAST_MAJOR_DEROG,   L1.POLICY_CODE,
-  L1.LOAN_DEFAULT,   L1.ISSUE_MONTH
+  L1.LOAN_ID,
+  L1.LOAN_AMNT,
+  L1.FUNDED_AMNT,
+  L1.TERM,
+  L1.INT_RATE,
+  L1.INSTALLMENT,
+  L1.GRADE,
+  L1.SUB_GRADE,
+  L1.EMP_LENGTH,
+  L1.HOME_OWNERSHIP,
+  L1.ANNUAL_INC,
+  L1.VERIFICATION_STATUS,
+  L1.PYMNT_PLAN,
+  L1.PURPOSE,
+  L1.ZIP_SCODE,
+  L1.DTI,
+  L1.DELINQ_2YRS,
+  L1.EARLIEST_CR_LINE,
+  L1.INQ_LAST_6MON,
+  L1.MNTHS_SINCE_LAST_DELINQ,
+  L1.MNTHS_SINCE_LAST_RECORD,
+  L1.OPEN_ACC,
+  L1.PUB_REC,
+  L1.REVOL_BAL,
+  L1.REVOL_UTIL,
+  L1.TOTAL_ACC,
+  L1.LOAN_DEFAULT,
+  L1.ISSUE_MONTH
 FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML AS L1
- LEFT OUTER JOIN
- (SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML sample block (80) REPEATABLE(100)) AS L2
- ON L1.LOAN_ID = L2.LOAN_ID
+ LEFT OUTER JOIN
+ (SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML sample block (80) REPEATABLE(100)) AS L2
+ ON L1.LOAN_ID = L2.LOAN_ID
 WHERE L2.LOAN_ID IS NULL
 ```
 
@@ -1465,9 +1464,23 @@ WHERE L2.LOAN_ID IS NULL
 - Name the dataset loan\_inference and click the **Add** button
 
 
+The purpose of this flow is for use in production to prep data from new loan applications. This data is then passed through your model to make predications about the default risks of these new applicants.
+
+For testing purposes, we're using the 20% of the data set we didn't use for training and we're including the LOAN_DEFAULT attribute so that we can evaluate our models and perform error analysis. We're going to move the the LOAN_DEFAULT column to the first position in our dataset, so that it's easier for us to filter this data out of the model input and merge it with the model's predictions.
+
+- Select **Add transform** at the end of your data flow.
+- Click on the orange button labeled **Add step**
+- Click on the **"Manage columns"** category.
+- Select **Move column** under the **Transform** dialog.
+- Select **Move to start** under the **Move type** dialog.
+- Select **LOAN_DEFAULT** under the **Column to move** dialog.
+- Click on the **Preview** button to preview the changes and finalize the transformation by clicking on the **Add** button.
+
+![](assets/image94.png)
 
 #### Re-export and re-factor your flow as a Pipeline
 
+Go back to the **Data Flow** by clicking on the top Data Flow link
 
 As previously select the **\+** next to the last step in the flow.
 
@@ -1496,7 +1509,7 @@ In practice, you will need to refactor the exported script. This has been done f
 
 
 
-#### Go back to your workshop notebook - snowflake-loan-default-workshop.ipynb
+#### Go back to your workshop notebook - snowflake-loan-default-workshop-v1.1.ipynb
 
 
 
@@ -1526,16 +1539,18 @@ You can monitor the pipeline in SageMaker Studio.
 - ![](assets/image52.png)
 - SELECT Pipelines from the drop down menu
 - ![](assets/image53.png)
-- Right click on your pipeline and select**Open pipeline details**
+- Right click on your pipeline and select **Open pipeline details**
 - ![](assets/image15.png)
 - This will open a pipeline tab. Right click on the status of the pipeline and select **Open execution details**
 - ![](assets/image48.png)
 - This opens a tab with the pipeline steps. You can click on each step to get more information.
 - ![](assets/image7.png)
 
+**TIP:** Click the small refresh icon at the top left to refresh your few from time to time
+
 
 <!-- ------------------------ -->
-## Evaluate Model Performance and Write Back to Snowflake
+## Evaluate Model Performance and Write Back to Snowflake [Optional]
 Duration: 3
 
 
@@ -1621,11 +1636,11 @@ Duration: 5
 
 
 
-In this lab we build an example of how you can enrich your internal data with Snowflake Data marketplace data to improve the performance of your Machine Learning Models. We also covered how you can integrate Data Wrangler with Snowflake to gain access to the data and drive pipelines for your ML models.
+In this lab we build an example of how you can enrich your internal data with Snowflake Marketplace data to improve the performance of your Machine Learning Models. We also covered how you can integrate Data Wrangler with Snowflake to gain access to the data and drive pipelines for your ML models.
 
 
 
-Additionally we covered how you can use SageMaker Studio and deploy CloudFormation Templates to create prebuild kernels with the Snowflake Python Connector prebuild. Also how to deploy the Snowflake Storage Integrations with a CloudFormation template and using AWS Secrets Manager to provide more secure connections with Snowflake.
+Additionally we covered how you can use SageMaker Studio and deploy CloudFormation Templates to create prebuild kernels with the Snowflake Python Connector. Also how to deploy the Snowflake Storage Integrations with a CloudFormation template and using AWS Secrets Manager to provide more secure connections with Snowflake.
 
 
 
@@ -1633,7 +1648,7 @@ Additionally we covered how you can use SageMaker Studio and deploy CloudFormati
 
 Related Resources
 
-- [Snowflake Data Marketplace](https://docs.snowflake.com/en/user-guide/data-marketplace.html)
+- [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/data-marketplace.html)
 - [SageMaker Data Wrangler](https://aws.amazon.com/sagemaker/data-wrangler/)
 - [SageMaker Studio](https://aws.amazon.com/sagemaker/studio/)
 

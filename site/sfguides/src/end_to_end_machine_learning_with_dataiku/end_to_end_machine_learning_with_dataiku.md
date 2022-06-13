@@ -676,10 +676,23 @@ grant select on all views in schema ML_DB.public to role PC_Dataiku_role;
 
 ```
 
+There are two options after this. You can either create a `New Worksheet` or continue in `same worksheet `. We will continue with `same Worksheet`. We just have to `refresh` your browser after the `next step`
+
+```
+
+USE ROLE PC_DATAIKU_ROLE;
+
+```
+
+#### Imp:  Refresh the web page 
+
+After running above command you might see the prompt below. Kindly `refresh `the browser. 
+
+![36b](assets/error_pc_dk_role.png)
+
 
 #### Cloning tables to DATAIKU Database before consuming it for Dataiku DSS 
 ```
-USE ROLE PC_DATAIKU_ROLE;
 USE DATABASE PC_DATAIKU_DB;
 USE WAREHOUSE PC_DATAIKU_WH;
 
@@ -853,6 +866,10 @@ Secondly because Dataiku DSS infers meanings for each column, it suggests releva
 ![46](assets/dk-prepare_overview2.png)
 
 
+Negative
+: **Note about shortcuts** <br> When navigating Dataiku DSS, there are many keyboard short-cuts, one of the most useful when working with the explore tab is the `scroll to column`, simply  click `c ` on your keyboard. 
+
+
 Let's try using processors with both methods, firstly via the suggested actions:
 * Click on the `EARLIEST_CR_LINE` column header and from the dropdown, `select Parse date`
 
@@ -869,7 +886,7 @@ Let's try using processors with both methods, firstly via the suggested actions:
 ![48](assets/dk-20_800_parse_en.jpg)
 
 
-* Click on the newly created column (click outside the step to action the change) and select `Compute time difference`
+* Click on the newly created column (click outside the step to action the change) and select `Compute time since`
 
 * Change `Until` to `Another Date Column` and add **ISSUE_DATE_PARSED** as that column.
 
@@ -880,11 +897,17 @@ Let's try using processors with both methods, firstly via the suggested actions:
 
 Now we have our desired feature we can remove the two date columns.
 
-* Click on `EARLIEST_CR_LINE` and select `delete`, do the same for `EARLIEST_CR_LINE_parsed`
+* Click on `EARLIEST_CR_LINE` and select `delete`, do the same for `EARLIEST_CR_LINE_parsed` and `ISSUE_DATE_PARSED`.
+
+![48a](assets/dk-prepared-actual-deletion.png)
+
+
 
 Your script steps should now look like this:
 
-![49](assets/dk-22_800_final_steps_dates.jpg)
+
+![49](assets/dk-prepared-deletion.png)
+
 
 
 Optionally you can place the three date transformation script steps into their own group with comments to make it simple for a colleague to follow everything you have done. 
@@ -912,16 +935,21 @@ Finally lets take a look at our `DTI` column which is a ratio of the borrower’
 
 * Click on the `DTI` column header and select `Analyze`
 
-![52](assets/dk-dti.png)
+
+
+![52](assets/dku-prep-dti.png)
 
 We can see that there are a very small number of missing rows. We're going to perform some calculations using this column in our next lab section so lets fix that now.
 
-* Close your `Analyze` window if it is still open
-* Click on the `DTI` column header and select `More actions` and `Remove rows with no value`
+* Select the `top` actions menu and select `Remove rows where DTI is empty`
+* Close your `Analyze` window 
 
 Your final series of steps should look like this
 
-![52](assets/dk-prep-final.png)
+![52](assets/dk-prepared-final.png)
+
+
+
 
 
 As before you can optionally group and comment your transformation steps. 
@@ -1002,15 +1030,26 @@ This is how your flow should look like before splitting
 * Add two datasets named `LOANS_TRAIN` and `LOANS_TEST` (leave `Store into` as the default for both) and click `CREATE RECIPE`
 
 
-![55](assets/dk-28-1000_split_tables.jpg)
-
-* Choose `Dispatch Percentiles` as the splitting strategy and have 80% go to **LOANS_TRAIN** and the remaining 20% to **LOANS_TEST**. 
-* Choose `ISSUE_DATE_PARSED` to sort by and then click `RUN`
+![55](assets/dk-split.png)
 
 
-![56](assets/dk-29-1000_percentiles.jpg)
+
+
+* Choose `Dispatch percentiles of sorted data` as the splitting strategy 
+
+
+
+![55a](assets/dk-split3.png)
+
+* `LOAN_ID` as the column to split on, `70 & 30 ` split for Train and Test data. `Click run`
+
+![56](assets/dk-split2.png)
+
+
+
 
 * Return to the flow and select the `LOANS_TRAIN` dataset and click the `LAB` button in the Actions menu
+
 * Select `AutoML Prediction` (aka supervised machine learning) and set `LOAN_STATUS` as the target and leave the default template of `Quick Prototypes` then click `CREATE`
 
 ![57](assets/dk-30_1100_Lab_button.jpg)
@@ -1055,7 +1094,9 @@ We can also see that some `Diagnostics` checks have been flagged.
 
 * `Hover over` the `Diagnostics` to see what the guardrails have found.
 
-![58](assets/dk-ml-results1.png)
+**Imp Note : Your results may vary from the screen shots below.**
+
+![58](assets/dk-train1.png)
 
 Here we can see there a number of potential issues DSS has identified for us. It seems we have an imbalanced dataset which is leading to the model almost always predicting class 1 (that there will be no default on the loan).
 
@@ -1072,9 +1113,9 @@ Although this a common problem in machine learning it is not one that is always 
 Firstly we can a look at class rebalance.
 
 * Go to the `Train/Test Set` and from the `Sampling method` dropdown select `Class rebalance (approx. ratio)`
-* Set the percentage to 33% and the Column as our target **LOAN_STATUS**
+* Set the percentage to 20% and the Column as our target **LOAN_STATUS**
 
-![58](assets/dk-model_rebalance.png)
+![58](assets/dk-train2.png)
 
 Lets also change the algorithms we are using as logistic regression and tree-based algos tend not to perform as well with imbalanced datasets. Let's look at some of our boosting algos.
 
@@ -1082,24 +1123,12 @@ Lets also change the algorithms we are using as logistic regression and tree-bas
 
 ![58](assets/dk-ml-algoboost.png)
 
-Finally lets revisit the `Features handling` section to remove some features from our training session.
-
-* Select the `Features handling` menu then locate and switch off the following features:
-* `ISSUE_DATE_PARSED`
-* `MTHS_SINCE_LAST_DELINQ`
-* `MTHS_SINCE_LAST_RECORD`
-* `MTHS_SINCE_LAST_MAJOR_DEROG`
-
-![58](assets/dk-ml-features-removedate.png)
-![58](assets/dk-ml-features-derog.png)
-
-We don't need the date feature and with the MNHS_SINCE... features we can see there are significant gaps in the data. DSS can impute values for us here but we can use our understanding of the data and use case to choose to remove these from our training session.
 
 * `Save` your settings and then click `TRAIN`
 
 As you can see on our results page we saw an improvement in our score and addressed our imbalance issue. The diagnostics warn us the test set might be too small now but we have a much larger dataset available to us from the LendingClub if we want to use it.
 
-![58](assets/dk-results2.png)
+![58](assets/dk-train3.png)
 
 
 ## Evaluate a Model 
@@ -1109,7 +1138,7 @@ After having trained as many models as desired, DSS offers tools for full traini
 
 * We can directly compare models from different experiments by selecting them via the `checkbox` and then selecting `Compare` from the `ACTIONS` menu.
 
-![58](assets/dk-compare.png)
+![58](assets/dk-train4.png)
 
 * Make sure `Create a new comparison` and then click `compare`
 
@@ -1187,7 +1216,7 @@ USE ROLE SYSADMIN;
 USE DATABASE PC_DATAIKU_DB;
 USE WAREHOUSE PC_DATAIKU_WH;
 SELECT * 
-FROM LOANS_TEST_SCORED_CREDITSCORING 
+FROM LOANS_TEST_SCORED_CREDITSCORING_1 
 LIMIT 10;
 
 ```
@@ -1202,7 +1231,7 @@ SELECT
 	EMP_TITLE ,
 	SUM(CASE WHEN "prediction" = 'ok' THEN 1 ELSE 0 END) AS prediction_yes,
 	SUM(CASE WHEN "prediction" = 'incident' THEN 1 ELSE 0 END) AS prediction_no
-	FROM LOANS_TEST_SCORED_CREDITSCORING
+	FROM LOANS_TEST_SCORED_CREDITSCORING_1 
 GROUP BY 
 	EMP_TITLE 
 order by prediction_yes DESC;
@@ -1218,60 +1247,172 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 
 ![63](assets/dk-final-flow2.png)
 
+**What we have covered**
+
+- Worked in Explored Snowflake interface
+
+- Investigated Snowflake Marketplace
+
+- Explored and transformed the data in Dataiku using visual tools understanding how to leverage Snowflake for both storage and compute
+
+- Transformed the data using Python code (optionally using Snowpark)
+
+- Built and refined an ML model
+
+- Scored back results using Java UDF to Snowflake for further analysis
+
+**Related Resources**
+
+[SnowFlake University](http://https://community.snowflake.com/s/snowflake-university)
+
+[Dataiku Academy](https://academy.dataiku.com/)
+
+
 
 ## Bonus Material - Snowpark  for Python  
 Duration: 5
+
 
 Dataiku DSS integrates with `Snowpark for Python` allowing coders to take advantage all the benefits of Snowflake whilst collaborating alongside their no/low-code colleagues on projects to accelerate time to value in DSS, their end-to-end, governed AI lifecycle platform.
 
 When using Dataiku's SaaS option from Partner Connect the setup is done for us automatically. Let's check that.
 
-Return to your browser tab with `Dataiku Launchpad` open (if you have shut this just go to https://launchpad-dku.app.dataiku.io/).
+Return to your browser tab with `Dataiku Launchpad` open (if you have shut this just go to [Launchpad](https://launchpad-dku.app.dataiku.io/).
+
 
 `Select` the `Features` menu
 ![64](assets/dk-spk1.png)
 
-From the `Extensions` menu `select Snowpark`
-![64](assets/dk-spk3.png)
-
-
-`Click CONFIRM`
-![64](assets/dk-spk4.png)
-
-
-`Click BACK TO SPACE`
-![64](assets/dk-spk5.png)
 
 
 Your Snowpark extension is now ready to use.
 ![64](assets/dk-spk6.png)
 
-Return to your projects `Flow` in Dataiku DSS and either edit the existing Python Code Recipe or create a new one from the `LOANS_ENRICHED_joined_prepared` dataset.
 
-In the `Advanced` tab of your Python Code Recipe you can select your `Snowpark` Code environment and then `Save`
-![65](assets/dk-spk-code1.png)
 
-Once saved it will also be the default kernel if you prefer to work from a Notebook
-![66](assets/dk-spk-code2.png)
 
-**A Note on Code Environments:**  Dataiku uses the concept of code environments to address the problem of managing dependencies and versions when writing code in R and Python.Code environments provide a number of benefits such as:
-
-**Isolation:** Two teams can work independently on different projects using different versions of Python (or R) and a set of libraries whose versions differ.
-
-**Reproducibility of results:** When you create a project bundle or API service package and push it to production, Dataiku DSS includes the specification for the project’s code environment, and then rebuilds the code environment according to that specification when you import the bundle into the Dataiku Automation node or the package into the Dataiku API node. In this way, environments are versioned on your production server and you can rollback your code to a previous version together with its code environment.
+**A Note on Code Environments:**  Dataiku uses the concept of code environments to address the problem of managing dependencies and versions when writing code in R and Python.Code environments provide a number of benefits such as: Isolation and Reproducibility of results
 
 When using Snowpark for Python from Dataiku DSS you will use a code environment that includes the Snowpark library as well as other packages you wish to use. In our lab, to make things easy, we are using a default Snowpark code environment which just contains just the minimum required libraries but once you have completed the lab and wish to explore further you can create your own code environments.
 
 
-
 In addition to selecting an appropriate code environment there are just a couple of extra lines of code to add to your DSS recipe to start using Snowpark for Python.
+
+Lets take a look at a simple example.
 
 Firstly you need to add the following line to your imports:
 
 
-`from dataiku.snowpark import DkuSnowpark`
+```
+from dataiku.snowpark import DkuSnowpark
+```
 
-Next instantiate Snowpark:
+Then read the inputs, instantiate Snowpark, get the dataframe, write your code then write your output.
 
 
-`dku_snowpark = DkuSnowpark()`
+```
+# Read recipe inputs
+input_dataset = dataiku.Dataset("my_input_dataset")
+
+# get input dataset as snowpark dataframe
+dku_snowpark = DkuSnowpark()
+snowdf = dku_snowpark.get_dataframe(input_dataset)
+
+# ALL YOUR CODE HERE
+
+# get output dataset
+OUTPUT_DATASET = dataiku.Dataset("my_output_dataset")
+
+# write input dataframe to output dataset
+dku_snowpark.write_with_schema(OUTPUT_DATASET,snowdf)
+```
+
+
+
+We have an example Jupyter notebook to help you get started. Download the notebook from the S3 bucket to a local drive then we will upload to DSS (note you would typically use the Git integrations in DSS for managing team notebooks developed outside of DSS).
+
+
+ <button>[Snowpark_Jupyter_notebook.ipynb](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Summit_Snowflake_Dataiku/src/Loans_FE_Snowpark.ipynb)</button>
+
+Either `select notebooks` from the menu or use the `G+N` keyboard shortcut. Select to `upload` your notebook, `choose the file` and `click upload`.
+
+
+
+![66](assets/dk-snowpark-2.png)
+
+
+
+
+![67](assets/dk-snowpark-3.png)
+
+
+
+
+
+
+Here is the notebook we imported, click `create recipe`
+
+
+![65](assets/dku-spk-recipe1.png)
+
+select `Python recipe` and click `ok ` 
+
+![66](assets/dku-spk-recipe2.png)
+
+
+For the input dataset we will select `LOANS_ENRICHED_joined_prepared` and for the output dataset type `LOANS_FE_SNOWPARK` and then click `Create recipe`
+
+![67](assets/dku-spk-recipe3.png)
+
+You now have the notebook set up with correct input and output datasets in our flow. You can either use the default code editor or jupyter notebook. We will work on jupyter notebook. `Click edit in notebook`
+
+
+
+![68](assets/dku-spk-recipe4.png)
+
+Ensure your Jupyter notebook is using the `snowpark` kernel, if not change it from the `Change Kernel` menu
+
+
+![68](assets/dk-snowpark-4.png)
+
+
+![69](assets/dk-snowpark-4a.png)
+
+Test running your cells (note the code assumes the dataset names specified above. If you have changed any input or output dataset names be sure and make those updates in the code).
+
+Feel free to add you own code and experiment, when you are done click `SAVE BACK TO RECIPE` then `Run` the recipe to generate the output datset in the flow.
+
+If you wish you can you use the output from Snowpark to build out the reminder of our lab flow  steps - `11 -14`, and compare model results. 
+
+
+When deploying model in `Stage -13` select `Deploy as a new retrainable model`
+
+![71](assets/dk-snowpark-6.png)
+
+
+Your `final flow` should then look like this 
+
+![72](assets/dk-snowpark-7.png)
+
+
+**To enable the anaconda libraries on snowflake account**
+
+1.Create a new trial account on https://signup.snowflake.com
+
+2.Login
+
+3.Switch to ORGADMIN role
+
+4.Go into Admin » Billing
+
+5.Click on Terms & Billing, and enable Anaconda terms.
+
+![73](assets/sf-anaconda1.png)
+
+
+
+
+Your flow is started to look clutered. Data Science projects tend to quickly become complex, with large number of recipes and datasets in the Flow. This can make the Flow complex to read and navigate. To better manage large projects, you can divide them into zones. You can explore more about [Flow zones](https://doc.dataiku.com/dss/latest/flow/zones.html). 
+
+
+Congratulations, you have built an ML model. Explore further from the Dataiku Academy link in the previous section and see how you can deploy and monitor the model in production, automate tasks, share results to the business and much more.
