@@ -265,7 +265,7 @@ The core components of the orchestrated DAG are:
 **Snowflake Features**:
 - Orchestration using Partner Tools
 
-Open up the [`05_Airflow_Pipeline`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/05_Airflow_Pipeline.ipynb) notebook. We will define Airflow tasks using the `@task()` decorator:
+Open up the [`05_Airflow_Pipeline`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/05_Airflow_Pipeline.ipynb) notebook. We normally define Airflow tasks using the `@task()` decorator, but for this project, while python 3.8 is a requirement, the tasks are run using the `@task.virtualenv()` decorator:
 
 ```python
 @task()
@@ -291,100 +291,19 @@ def generate_forecast_table_task(state_dict:dict,
     session.close()
     return state_dict
 ```
-Then, we will define an Airflow dag using the `@dag` decorator:
-```python
-%%writefile dags/airflow_incremental_pipeline.py
 
-from datetime import datetime, timedelta
+We use the [Astronomer CLI](https://docs.astronomer.io/astro/cli/get-started) and Docker to spin up a local Airflow instance. You can find the installation instructions [here](https://docs.astronomer.io/astro/cli/get-started#step-1-install-the-astro-cli).
 
-from airflow.decorators import dag, task
-from dags.airflow_tasks import snowpark_database_setup
-from dags.airflow_tasks import incremental_elt_task
-from dags.airflow_tasks import initial_bulk_load_task
-from dags.airflow_tasks import materialize_holiday_task
-from dags.airflow_tasks import materialize_weather_task
-from dags.airflow_tasks import deploy_model_udf_task
-from dags.airflow_tasks import deploy_eval_udf_task
-from dags.airflow_tasks import generate_feature_table_task
-from dags.airflow_tasks import generate_forecast_table_task
-from dags.airflow_tasks import bulk_train_predict_task
-from dags.airflow_tasks import eval_station_models_task 
-from dags.airflow_tasks import flatten_tables_task
+_**Note:** This will require a docker process running on the local machine, e.g. dockerd, Docker Desktop, Colima etc._
 
-default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'email_on_failure': False,
-    'email_on_retry': False,
-    'retries': 1,
-    'retry_delay': timedelta(minutes=5)
-}
+* First step is to install [astrocloud CLI](https://docs.astronomer.io/astro/cli/get-started#step-1-install-the-astro-cli). 
+* Next clone the this repo locally if you have not done so already.
+* If you have been working with SageMaker, you will need to copy the final `state.json` file you created while working through the Notebooks locally. Place this file in the `include` directory and overwrite the existing file.
+* Start up the *astrocloud* instance by running `astro dev start` in the repo directory.
+* After a few mins you will have an Airflow instance running at http://localhost:8080.
 
-#local_airflow_path = '/usr/local/airflow/'
+_**Note:** The `Dockerfile` file for this project has been modified to make things run quicker, see [the Dockerfile](Dockerfile) for details._
 
-@dag(default_args=default_args, schedule_interval=None, start_date=datetime(2020, 4, 1), catchup=False, tags=['monthly'])
-def citibikeml_monthly_taskflow(files_to_download:list, run_date:str):
-    """
-    End to end Snowpark / Astronomer ML Demo
-    """
-    import uuid
-    import json
-    
-    with open('./include/state.json') as sdf:
-        state_dict = json.load(sdf)
-    
-    model_id = str(uuid.uuid1()).replace('-', '_')
-
-    state_dict.update({'model_id': model_id})
-    state_dict.update({'run_date': run_date})
-
-    state_dict.update({'load_table_name': 'RAW_',
-                       'trips_table_name': 'TRIPS',
-                       'load_stage_name': 'LOAD_STAGE',
-                       'model_stage_name': 'MODEL_STAGE',
-                       'weather_table_name': 'WEATHER',
-                       'holiday_table_name': 'HOLIDAYS',
-                       'clone_table_name': 'CLONE_'+model_id,
-                       'feature_table_name' : 'FEATURE_'+model_id,
-                       'pred_table_name': 'PRED_'+model_id,
-                       'eval_table_name': 'EVAL_'+model_id,
-                       'forecast_table_name': 'FORECAST_'+model_id,
-                       'forecast_steps': 30,
-                       'train_udf_name': 'station_train_predict_udf',
-                       'train_func_name': 'station_train_predict_func',
-                       'eval_udf_name': 'eval_model_output_udf',
-                       'eval_func_name': 'eval_model_func'
-                      })
-
-    incr_state_dict = incremental_elt_task(state_dict, files_to_download)
-    feature_state_dict = generate_feature_table_task(incr_state_dict, incr_state_dict, incr_state_dict) 
-    forecast_state_dict = generate_forecast_table_task(incr_state_dict, incr_state_dict, incr_state_dict)
-    pred_state_dict = bulk_train_predict_task(feature_state_dict, feature_state_dict, forecast_state_dict)
-    eval_state_dict = eval_station_models_task(pred_state_dict, pred_state_dict, run_date)
-    state_dict = flatten_tables_task(pred_state_dict, eval_state_dict)
-
-    return state_dict
-```
-We use the [Astronomer dev CLI](https://github.com/astronomer/astro-cli) and Docker to spin up a local Airflow instance:
-
-```
-!curl -sSL https://install.astronomer.io | sudo bash -s
-!brew install docker
-!brew install colima
-!docker context use colima
-!colima start
-!DOCKER_BUILDKIT=0 docker build --build-arg PYTHON_MAJOR_MINOR_VERSION=3.8 -t ap-airflow:py38 https://github.com/astronomer/ap-airflow.git#master:2.2.5/bullseye/
-
-!astro dev start
-```
-We can then run the following to trigger the Airflow pipeline from a command-line shell (this is meant to be executed from a Jupyter shell):
-```
-#This sample code can be used to trigger the Airflow pipeline from a command-line shell.
-!curl -X POST 'http://localhost:8080/api/v1/dags/citibikeml_monthly_taskflow/dagRuns' \
--H 'Content-Type: application/json' \
---user "admin:admin" \
--d '{"conf": {"files_to_download": ["202003-citibike-tripdata.csv.zip"], "run_date": "2020_04_01"}}'
-```
 
 <!-- ------------------------ -->
 ## Integration with Streamlit for Model Consumption
