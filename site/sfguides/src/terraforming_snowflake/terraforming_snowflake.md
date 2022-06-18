@@ -230,9 +230,9 @@ Now that you have reviewed the plan, we simulate the next step of the CI/CD job 
     ```
     $ terraform apply
     ```
-2. Terraform regenerates the execution plan (unless you supply an optional path to the `plan.out` file) and applies the needed changes after confirmation. In this case, Terraform will create two new resources, and have no other changes.
+1. Terraform regenerates the execution plan (unless you supply an optional path to the `plan.out` file) and applies the needed changes after confirmation. In this case, Terraform will create two new resources, and have no other changes.
 
-3. Log in to your Snowflake account and verify that Terraform created the database and the warehouse.
+1. Log in to your Snowflake account and verify that Terraform created the database and the warehouse.
 
 
 ## Changing and Adding Resources
@@ -370,8 +370,8 @@ You're almost done with the demo. We have one thing left to do: clean up your ac
    ```
     $ terraform destroy
    ```
-2.  Accept the changes if they look appropriate.
-3. Log in to the console to verify that all the objects are destroyed. The database, schema, warehouse, role, and the user objects created by Terraform will be automatically deleted.
+1.  Accept the changes if they look appropriate.
+1. Log in to the console to verify that all the objects are destroyed. The database, schema, warehouse, role, and the user objects created by Terraform will be automatically deleted.
 
 ### Drop the User we added
 
