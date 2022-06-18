@@ -208,7 +208,7 @@ Next, you can log in to GitHub and create a Pull Request.
 
 In many production systems, a GitHub commit triggers a CI/CD job, which creates a plan that engineers can review. If the changes are desired, the Pull Request is merged. After the merge, a CI/CD job kicks off and applies the changes made in the main branch.
 
-To manage different environments (dev/test/prod), you can configure the Terraform code with different [input variables](https://www.terraform.io/docs/language/values/variables.html) and either deploy to either the same Snowflake account, or different Snwoflake accounts. 
+To manage different environments (dev/test/prod), you can configure the Terraform code with different [input variables](https://www.terraform.io/docs/language/values/variables.html) and either deploy to either the same Snowflake account, or different Snowflake accounts. 
 
 Your specific workflow will depend on your requirements, including your compliance needs, your other workflows, and your environment and account topology.
 
@@ -245,18 +245,21 @@ You'll see that most of this is what you would expect. The only new part is crea
 
 1. Change the warehouse size in the `main.tf` file from `xsmall` to `small`.
 
-2. Add the following resources to your `main.tf` file:
+1. Add the following resources to your `main.tf` file:
 
     ```
         provider "snowflake" {
+            alias = "security_admin"
             role  = "SECURITYADMIN"
         }
 
         resource "snowflake_role" "role" {
+            provider = snowflake.security_admin
             name     = "TF_DEMO_SVC_ROLE"
         }
 
         resource "snowflake_database_grant" "grant" {
+            provider          = snowflake.security_admin
             database_name     = snowflake_database.db.name
             privilege         = "USAGE"
             roles             = [snowflake_role.role.name]
@@ -270,6 +273,7 @@ You'll see that most of this is what you would expect. The only new part is crea
         }
 
         resource "snowflake_schema_grant" "grant" {
+            provider          = snowflake.security_admin
             database_name     = snowflake_database.db.name
             schema_name       = snowflake_schema.schema.name
             privilege         = "USAGE"
@@ -278,6 +282,7 @@ You'll see that most of this is what you would expect. The only new part is crea
         }
 
         resource "snowflake_warehouse_grant" "grant" {
+            provider          = snowflake.security_admin
             warehouse_name    = snowflake_warehouse.warehouse.name
             privilege         = "USAGE"
             roles             = [snowflake_role.role.name]
@@ -290,6 +295,7 @@ You'll see that most of this is what you would expect. The only new part is crea
         }
 
         resource "snowflake_user" "user" {
+            provider          = snowflake.security_admin
             name              = "tf_demo_user"
             default_warehouse = snowflake_warehouse.warehouse.name
             default_role      = snowflake_role.role.name
@@ -298,12 +304,13 @@ You'll see that most of this is what you would expect. The only new part is crea
         }
 
         resource "snowflake_role_grants" "grants" {
+            provider  = snowflake.security_admin
             role_name = snowflake_role.role.name
             users     = [snowflake_user.user.name]
         }
     ```
 
-3. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
+1. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
 
     Add the following resources to a new file named `outputs.tf`
 
