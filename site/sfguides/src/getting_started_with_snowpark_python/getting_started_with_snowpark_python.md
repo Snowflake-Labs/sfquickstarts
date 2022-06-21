@@ -20,7 +20,7 @@ A key component of Snowpark for Python is that you can "Bring Your Own IDE"- any
 
 Throughout this quickstart, we will specifically explore the power of the Snowpark Python Dataframe API, as well as server-side Python runtime capabilities, and how Snowpark Python can enable and accelerate end-to-end Machine Learning workflows.
 
-The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/getting-started-snowpark-python).
+The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python).
 
 ![](./assets/image2.png)
 
@@ -37,7 +37,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 - A Snowflake Account with Anaconda Integration enabled by ORGADMIN - if you do not already have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/)
 - Python 3.8
 - Jupyter Notebook
-- Snowpark Python 0.7.0 API (included in the [Quickstart GitHub repo](https://github.com/Snowflake-Labs/getting-started-snowpark-python))
+- Snowpark Python 0.7.0 API (included in the [Quickstart GitHub repo](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python))
 
 ### What You’ll Build 
 You will build an end-to-end data science workflow leveraging Snowpark for Python to load, clean and prepare data and then deploy our trained model in Snowflake using Python UDF for inference.
@@ -62,9 +62,9 @@ Duration: 5
 
 Let's set up the Python environment necessary to run this quickstart:
 
-First, clone the source code for this repo to your local environment (you can also download the code [here](https://github.com/Snowflake-Labs/getting-started-snowpark-python)):
+First, clone the source code for this repo to your local environment (you can also download the code [here](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python)):
 ```bash
-git clone git@github.com:Snowflake-Labs/getting-started-snowpark-python.git
+git clone git@github.com:Snowflake-Labs/sfguide-getting-started-snowpark-python.git
 cd getting-started-snowpark-python/customer-churn-prediction
 ```
 
@@ -72,14 +72,14 @@ cd getting-started-snowpark-python/customer-churn-prediction
 If you are using [Anaconda](https://www.anaconda.com/python-r-distribution?utm_campaign=python&utm_medium=online-advertising&utm_source=google&utm_content=anaconda-download&gclid=Cj0KCQjwnNyUBhCZARIsAI9AYlFtPjClvSFJ8hUR4_IAtlQiDbNOm1QwqIzwf_bQvduX_OmrS8wtz5QaAhi8EALw_wcB) on your local machine, create a conda env for this quickstart:
 ```bash
 conda env create -f jupyter_env.yml
-conda activate getting-started-snowpark-python
+conda activate getting_started_snowpark_python
 ```
 
 Conda will automatically install `snowflake-snowpark-python==0.7.0` and all other dependencies for you.
 
 Once Snowpark is installed, create a kernel for Jupyter:
 ```bash
-python -m ipykernel install --user --name=getting-started-snowpark-python
+python -m ipykernel install --user --name=getting_started_snowpark_python
 ```
 
 Now, launch Jupyter Notebook on your local machine:
@@ -87,9 +87,9 @@ Now, launch Jupyter Notebook on your local machine:
 jupyter notebook
 ```
 
-Open up the [`config.py`](https://github.com/Snowflake-Labs/getting-started-snowpark-python/blob/main/customer-churn-prediction/config.py) file in Jupyter and modify with your account, username, and password information.
+Open up the [`config.py`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python/blob/main/customer-churn-prediction/config.py) file in Jupyter and modify with your account, username, and password information.
 
-Now, you are ready to get started with the notebooks. For each notebook, make sure that you select the `getting-started-snowpark-python` kernel when running. You can do this by navigating to: `Kernel -> Change Kernel` and selecting `getting-started-snowpark-python` after launching each Notebook.
+Now, you are ready to get started with the notebooks. For each notebook, make sure that you select the `getting_started_snowpark_python` kernel when running. You can do this by navigating to: `Kernel -> Change Kernel` and selecting `getting_started_snowpark_python` after launching each Notebook.
 
 <!-- ------------------------ -->
 ## Load Data Using Snowpark Python Client API
@@ -102,7 +102,7 @@ Duration: 10
 - Create the database, schema, and warehouses needed for the remainder of the lab
 - Load raw parquet data into Snowflake using Snowpark Python
 
-Open up the [`01-Load-Data-with-Snowpark`](https://github.com/Snowflake-Labs/getting-started-snowpark-python/blob/main/customer-churn-prediction/01-Load-Data-with-Snowpark.ipynb) Jupyter notebook and run each of the cells to explore loading and transforming data with Snowpark Python.
+Open up the [`01-Load-Data-with-Snowpark`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python/blob/main/customer-churn-prediction/01-Load-Data-with-Snowpark.ipynb) Jupyter notebook and run each of the cells to explore loading and transforming data with Snowpark Python.
 
 <!-- ------------------------ -->
 ## Analyze Data Using Snowpark Python Dataframe API
@@ -114,7 +114,7 @@ Duration: 10
 - Understand and analyze the data set
 - Perform data and feature discovery
 
-Open up the [`02-Data-Analysis`](https://github.com/Snowflake-Labs/getting-started-snowpark-python/blob/main/customer-churn-prediction/02-Data-Analysis.ipynb) Jupyter notebook and run each of the cells to explore data analysis using Snowpark Python.
+Open up the [`02-Data-Analysis`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python/blob/main/customer-churn-prediction/02-Data-Analysis.ipynb) Jupyter notebook and run each of the cells to explore data analysis using Snowpark Python.
 
 <!-- ------------------------ -->
 ## Deploy Trained Models using Snowpark Python UDFs
@@ -126,7 +126,7 @@ Duration: 10
 - Perform feature selection, model training, and model seelction
 - Deploy the model into Snowflake for inference using Snowpark Python UDFs
 
-Open up the [`03-Snowpark-UDF-Deployment`](https://github.com/Snowflake-Labs/getting-started-snowpark-python/blob/main/customer-churn-prediction/03-Snowpark-UDF-Deployment.ipynb) Jupyter notebook and run each of the cells to train a model and deploy it for in-Snowflake inference using Snowpark Python UDFs
+Open up the [`03-Snowpark-UDF-Deployment`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python/blob/main/customer-churn-prediction/03-Snowpark-UDF-Deployment.ipynb) Jupyter notebook and run each of the cells to train a model and deploy it for in-Snowflake inference using Snowpark Python UDFs
 
 <!-- ------------------------ -->
 ## Conclusion
