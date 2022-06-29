@@ -25,8 +25,9 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 ![](./assets/image2.png)
 
 ### Prerequisites
-- Working knowledge of Python
-- Familiarity with Snowflake
+- Working knowledge of [Python](https://www.udemy.com/course/data-analysis-with-python-and-pandas/)
+- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0)
+- Familiarity with Git/GitHub
 
 ### What You’ll Learn 
 - How to create a DataFrame that loads data from a stage
@@ -34,7 +35,8 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 - How to bring a trained ML model into Snowflake as a UDF to score new data
 
 ### What You’ll Need 
-- A Snowflake Account with Anaconda Integration enabled by ORGADMIN - if you do not already have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/)
+- A Snowflake Account with [Anaconda Integration enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) - if you do not already have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/)
+- A Snowflake login with the `ACCOUNTADMIN` role. If you have this role in your corporate environment, you may choose to use it directly. If not, you will either need to (1) register for a free trial account above, (2) use a different role that has the ability to create and use a database, schema and tables, and UDFs (edit the `config.py` file and Jupyter notebooks to use this alternative role), OR (3) use an existing database and schema in which you can create tables and UDFs (edit the `config.py` file and notebook to use that role, database, and schema). If you're confused, it is best to just sign up for a free Enterprise-level trial account via the link above.
 - Python 3.8
 - Jupyter Notebook
 - Snowpark Python 0.7.0 API (included in the [Quickstart GitHub repo](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python))
@@ -62,7 +64,7 @@ Duration: 5
 
 Let's set up the Python environment necessary to run this quickstart:
 
-First, clone the source code for this repo to your local environment (you can also download the code [here](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python)):
+First, clone the source code for this repo to your local environment (you can also download the code [here](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python) and unzip the files into the location of your choosing in your local environment):
 ```bash
 git clone git@github.com:Snowflake-Labs/sfguide-getting-started-snowpark-python.git
 cd getting-started-snowpark-python/customer-churn-prediction
@@ -87,7 +89,28 @@ Now, launch Jupyter Notebook on your local machine:
 jupyter notebook
 ```
 
-Open up the [`config.py`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python/blob/main/customer-churn-prediction/config.py) file in Jupyter and modify with your account, username, and password information.
+Open up the [`config.py`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python/blob/main/customer-churn-prediction/config.py) file in Jupyter and modify with your account, username, and password information:
+
+If your Snowflake URL is https://mycompany-sandpit.snowflakecomputing.com/console/login#/ , your username is `THOMAS`, and the role you will use is `ACCOUNTADMIN`, then you would fill it in like so:
+```json
+snowflake_conn_prop = {
+
+   "account": "mycompany-sandpit",
+
+   "user": "THOMAS",
+
+   "password": "YourPasswordHere",
+
+   "role": "ACCOUNTADMIN",
+
+   "database": "snowpark_quickstart",
+
+   "schema": "TELCO",
+
+   "warehouse": "sp_qs_wh",
+
+}
+```
 
 Now, you are ready to get started with the notebooks. For each notebook, make sure that you select the `getting_started_snowpark_python` kernel when running. You can do this by navigating to: `Kernel -> Change Kernel` and selecting `getting_started_snowpark_python` after launching each Notebook.
 
