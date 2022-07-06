@@ -154,22 +154,25 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 <!-- ------------------------ -->
 ## Configure Amazon SageMaker Studio and Snowflake Storage Integration with AWS
-Duration: 4
+Duration: 12
 
 Before configuring the Sagemaker environment we will need to determine the **Snowflake Account Identifier** for your account.
 First you can reference the Snowflake region by running the following SQL.
 ```
 SELECT CURRENT_REGION();
 ```
-This will show you the Snowflaek region. Use this **[reference](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#non-vps-account-locator-formats-by-cloud-platform-and-region)** to identify the region you need to add to your account identifier.
+This will show you the Snowflake region.  
 
 Next you can find the account name by running.
 ```
 SELECT CURRENT_ACCOUNT();
 ```
-Combine the output from CURRENT_ACCOUNT with the reference you looked up for the region above to get your Snowflake Account Identifier.
 
-**Example account identifiers:** abc12345 or def34567.us-east-2.aws 
+Combine the output from CURRENT_ACCOUNT with the reference below for the Snowflake region to get your full Snowflake Account Identifier.
+
+#### Use this **[reference](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#non-vps-account-locator-formats-by-cloud-platform-and-region)** to identify the region you need to add to your account identifier.
+
+
 <br />
 <br />
 <br />
@@ -267,7 +270,7 @@ It may take a few minutes for the stack to be created and we will use the time t
 
 <!-- ------------------------ -->
 ## Load data in Snowflake and access the Marketplace
-Duration: 10
+Duration: 7
 
 
 Next we will create a virtual warehouse that we will use to compute with the **SYSADMIN** role, and then grant all privileges to the **ML\_ROLE**.
@@ -1372,7 +1375,7 @@ You can monitor the training job in the SageMaker Console
 
 <!-- ------------------------ -->
 ## Deploy your Model [Optional]
-Duration: 13
+Duration: 0
 
 
 
@@ -1551,7 +1554,7 @@ You can monitor the pipeline in SageMaker Studio.
 
 <!-- ------------------------ -->
 ## Evaluate Model Performance and Write Back to Snowflake [Optional]
-Duration: 3
+Duration: 0
 
 
 
