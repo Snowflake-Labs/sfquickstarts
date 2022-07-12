@@ -5,23 +5,23 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Data Applications, Terraform
-authors: Brad Culberson
+authors: Brad Culberson, Scott Winkler
 
 # Terraforming Snowflake
 
 ## Overview
 Duration: 5
 
-[Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by HashiCorp. A [provider](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest/docs) is available for Snowflake (written by the [Chan Zuckerberg Initiative](https://chanzuckerberg.com/)), as well as the cloud providers we host on: [Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest), [AWS](https://registry.terraform.io/providers/hashicorp/aws/latest/docs), and [GCP](https://registry.terraform.io/providers/hashicorp/google/latest).
+[Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by HashiCorp. It is a declarative Infrastructure as Code tool, meaning instead of writing step-by-step imperative instructions like with SQL, JavaScript or Python, you can declare what you want using a YAML like syntax. Terraform is also stateful, meaning it keeps track of your current state, and compares it with your desired state. A reconcilation process between the two states generates an plan that Terraform can execute to create new resources, or update/delete existing resources. This plan is implemented as an acyclic graph, and is what allows Terraform to understand and handle dependencies between resources. Using Terraform is a great way to manage account level Snowflake resources like Warehouses, Databases, Schemas, Tables, and Roles/Grants, among many other use cases.  
 
-Terraform is declarative, so you can define the resources and configurations you want, and Terraform calculates dependencies, looks at previous state, and makes all the necessary changes to converge to the new desired state. Using Terraform is a great way to deploy new projects and make infrastructure changes in production. It makes managing dependencies between cloud providers especially easy.
+A Terraform provider is available for [Snowflake](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest/docs), that allows Terraform to integrate with Snowflake.
 
 Example Terraform use-cases:
  - Set up storage in your cloud provider and add it to Snowflake as an external stage
  - Add storage and connect it to Snowpipe
  - Create a service user and push the key into the secrets manager of your choice, or rotate keys
 
-Many Snowflake customers use IaC to abide by compliance controls, maintain consistency, and support similar engineering workflows for infrastructure while updates are underway.
+Many Snowflake customers use Terraform to comply with security controls, maintain consistency, and support similar engineering workflows for infrastructure at scale.
 
 This tutorial demonstrates how you can use Terraform to manage your Snowflake configurations in an automated and source-controlled way. We show you how to install and use Terraform to create and manage your Snowflake environment, including how to create a database, schema, warehouse, multiple roles, and a service user.  
 
@@ -138,28 +138,25 @@ Add a file to your project in the base directory named `main.tf`. In `main.tf` w
 
 Copy the contents of the following block to your `main.tf`
 
-```JSON
+```
 terraform {
   required_providers {
     snowflake = {
-      source  = "chanzuckerberg/snowflake"
-      version = "0.22.0"
+      source  = "Snowflake-Labs/snowflake"
+      version = "~> 0.35"
     }
   }
 }
 
 provider "snowflake" {
-  alias = "sys_admin"
   role  = "SYSADMIN"
 }
 
 resource "snowflake_database" "db" {
-  provider = snowflake.sys_admin
   name     = "TF_DEMO"
 }
 
 resource "snowflake_warehouse" "warehouse" {
-  provider       = snowflake.sys_admin
   name           = "TF_DEMO"
   warehouse_size = "large"
 
@@ -182,9 +179,9 @@ $ terraform init
 
 The dependencies needed to run Terraform are downloaded to your computer.
 
-In this demo, we use local state for Terraform. The state files are required to calculate all changes. Because the files are needed to correctly merge future changes, they are extremely important. If multiple users run Terraform, and/or if it runs on different computers, and/or if runs through CI/CD, the state files' state **needs** to be put in [Remote Storage](https://www.terraform.io/docs/language/state/remote.html). While using local state, you'll see the current state stored in `*.tfstate` and old versions named `*.tfstate.*`.
+In this demo, we use a local backend for Terraform, which means that state file are stored locally on the machine running Terraform. Because Terraform state files are required to calculate all changes, its critical that you do not lose this file (`*.tfstate`, and `*.tfstate.*` for older state files), or Terraform will lose track of what resources it is managing. For any kind of multi-tenancy or automation workflows, it is highly recommended to use [Remote Backends](https://www.terraform.io/docs/language/state/remote.html), which is outside the scope of this lab.
 
-The `.terraform` folder is where all dependencies are downloaded. It's safe to add _that_ and the state files to `.gitignore` to minimize changes.
+The `.terraform` folder is where all provider and modules depenencies are downloaded. There is nothing important in this folder and it is safe to delete. You should add this folder, and the Terraform state files (since you do not want to be checking in sensitive information to VCS) to `.gitignore`.
 
 Create a file named `.gitignore` in your project root, then add the following text to the file and save it:
 
@@ -211,11 +208,11 @@ Next, you can log in to GitHub and create a Pull Request.
 
 In many production systems, a GitHub commit triggers a CI/CD job, which creates a plan that engineers can review. If the changes are desired, the Pull Request is merged. After the merge, a CI/CD job kicks off and applies the changes made in the main branch.
 
-To manage different environments (dev/test/prod), you can use names to isolate resources from one another, or—to reduce complexity and limit the blast radius—you can use separate Snowflake accounts. If you pass the environment as an [input variable](https://www.terraform.io/docs/language/values/variables.html) to the project, you can run the same Terraform project unchanged for each environment.
+To manage different environments (dev/test/prod), you can configure the Terraform code with different [input variables](https://www.terraform.io/docs/language/values/variables.html) and either deploy to either the same Snowflake account, or different Snowflake accounts. 
 
 Your specific workflow will depend on your requirements, including your compliance needs, your other workflows, and your environment and account topology.
 
-For this lab, you can simulate the proposed CI/CD job and do a plan to see what Terraform wants to change. During plan, Terraform compares its known and stored state with what's in the desired resources, and displays all changes needed to conform the resources.
+For this lab, you can simulate the proposed CI/CD job and do a plan to see what Terraform wants to change. During the Terraform plan, Terraform performs a diff calculation to compare the desired state with the previous/current state from the state file to determine the acitons that need to be done.
 
 From a shell in your project folder (with your Account Information in environment), run:
 
@@ -233,7 +230,7 @@ Now that you have reviewed the plan, we simulate the next step of the CI/CD job 
     ```
     $ terraform apply
     ```
-1. Terraform recreates the plan and applies the needed changes after you verify it. In this case, Terraform will be creating two new resources, and have no other changes.
+1. Terraform regenerates the execution plan (unless you supply an optional path to the `plan.out` file) and applies the needed changes after confirmation. In this case, Terraform will create two new resources, and have no other changes.
 
 1. Log in to your Snowflake account and verify that Terraform created the database and the warehouse.
 
@@ -244,13 +241,13 @@ Duration: 5
 
 All databases need a schema to store tables, so we'll add that and a service user so that our application/client can connect to the database and schema. The syntax is very similar to the database and warehouse you already created. By now you have learned everything you need to know to create and update resources in Snowflake. We'll also add privileges so the service role/user can use the database and schema.
 
-You'll see that most of this is what you would expect. The only complicated part is creating the private key. Because the Terraform TLS private key generator doesn't export the public key in a format that the Terraform provider can consume, some string manipulations are needed.
+You'll see that most of this is what you would expect. The only new part is creating the private key. Because the Terraform TLS private key generator doesn't export the public key in a format that the Terraform provider can consume, some string manipulations are needed.
 
 1. Change the warehouse size in the `main.tf` file from `xsmall` to `small`.
 
 1. Add the following resources to your `main.tf` file:
 
-    ```JSON
+    ```
         provider "snowflake" {
             alias = "security_admin"
             role  = "SECURITYADMIN"
@@ -270,7 +267,6 @@ You'll see that most of this is what you would expect. The only complicated part
         }
 
         resource "snowflake_schema" "schema" {
-            provider   = snowflake.sys_admin
             database   = snowflake_database.db.name
             name       = "TF_DEMO"
             is_managed = false
@@ -314,7 +310,7 @@ You'll see that most of this is what you would expect. The only complicated part
         }
     ```
 
-1. To get the public and private key information for the application, use Terraform [output variables](https://www.terraform.io/docs/language/values/outputs.html).
+1. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
 
     Add the following resources to a new file named `outputs.tf`
 
@@ -390,7 +386,7 @@ Duration: 3
 
 If you are new to Terraform, there's still a lot to learn. We suggest researching [remote state](https://www.terraform.io/docs/language/state/remote.html), [input variables](https://www.terraform.io/docs/language/values/variables.html), and [building modules](https://www.terraform.io/docs/language/modules/develop/index.html). This will empower you to build and manage your Snowflake environment(s) through a simple declarative language.
 
-The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/chanzuckerberg/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
+The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/SnowflakeLabs/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
 
 ### Next steps
 

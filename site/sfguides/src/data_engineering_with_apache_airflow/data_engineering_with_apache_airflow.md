@@ -59,27 +59,29 @@ First, let us create a folder by running the command below
 mkdir dbt_airflow && cd "$_"
 ```
 
-Next, we will get our docker-compose file of our airflow. To do so lets do a curl of the file onto our local laptop
+Next, we will get our docker-compose file of our Airflow. To do so lets do a curl of the file onto our local laptop
 
 ```bash
-curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.1.2/docker-compose.yaml'
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.yaml'
 ```
 
-We would now need to create 2 additional files
+We will be now adjusting our docker-compose file - add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our dbt models and our CSV files. 
 
-1. <b>requirements.txt</b>: This is requirements file with the dbt requirements
-2. <b>Dockerfile</b>: The Dockerfile will have a custom build of airflow with dbt installed
-   
-`requirements.txt`
 ```bash
-dbt==0.19.0
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ./dbt:/dbt # add this in
+    - ./dags:/dags # add this in
+
 ```
 
-`Dockerfile`
+We would now need to create additional file with additional docker-compose parameters. This way dbt will be installed when the containers are started.
+
+`.env`
 ```bash
-FROM apache/airflow:2.1.2
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+_PIP_ADDITIONAL_REQUIREMENTS=dbt==0.19.0
 ```
 
 ---
@@ -389,12 +391,13 @@ With Airflow, we can then schedule the ```transform_and_analysis``` DAG on a dai
 
 init.py
 ```python
+from datetime import datetime
+import os
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
-from datetime import datetime
-
 
 default_args = {
     'owner': 'airflow',
@@ -464,32 +467,9 @@ with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_
 
 
 <!-- ------------------------ -->
-## Adjusting our docker-compose file for Airflow
+## Running our docker-compose file for Airflow
 Duration: 5
 
-We will be now adjusting our docker-compose file. There are 2 parts which we will be adjusting
-
-- We will be commenting out the `image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.1.2}` and include in the `build: .` in the line as below
-
-```bash
-version: '3'
-x-airflow-common:
-  &airflow-common
-  build: . # add this in and comment the line below out
-  #image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.1.2}
-  environment:
-```
-- We will be add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our dbt models and our CSV files. 
-
-```bash
-  volumes:
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./plugins:/opt/airflow/plugins
-    - ./dbt:/dbt # add this in
-    - ./dags:/dags # add this in
-
-```
 Let's run our ```docker-compose up``` and go to [http://localhost:8080/](http://localhost:8080/). The default username is ```airflow``` and password is ```airflow```
 
 ![airflow](assets/data_engineering_with_apache_airflow_2_airflow_url.png)
