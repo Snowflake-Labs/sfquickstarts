@@ -23,7 +23,7 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 ### What You’ll Build
 
-- A web-based data application that uses Snowpark for Python and Streamlit
+- A web-based data application that uses Snowpark for Python (public preview) and Streamlit
 
 ### What You’ll Learn
 
