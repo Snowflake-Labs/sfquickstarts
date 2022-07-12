@@ -314,7 +314,7 @@ In the "Create Securable Object" dialog that opens, replace the following values
 
 `stage_name`: `citibike_trips`
 
-`url`: `s3://snowflake-workshop-lab/citibike-trips/`
+`url`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
 
