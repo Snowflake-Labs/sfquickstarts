@@ -170,7 +170,7 @@ Also under **Compute**, the **​Warehouses​** tab is where you set up and man
 
 ![roles tab](assets/3UIStory_12.png)
 
-Under **Account**, the **Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tablular/list format by clicking **Table** at the top of the page.
+Under **Account**, the **Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by clicking **Table** at the top of the page.
 
 
 #### Users
@@ -306,7 +306,7 @@ We are working with structured, comma-delimited data that has already been stage
 Positive
 : For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** buttion, then **Stage** > **Amazon S3**.
+From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** button, then **Stage** > **Amazon S3**.
 
 ![stages create](assets/4PreLoad_8.png)
 
@@ -498,7 +498,7 @@ Navigate to the **Compute** > **Warehouses** tab, click **+ Warehouse**, and nam
 
 If you are using Snowflake Enterprise Edition (or higher) and **Multi-cluster Warehouses** is enabled, you will see additional settings:
 
-- Make sure **Max Clusters** is sset to `1`.
+- Make sure **Max Clusters** is set to `1`.
 - Leave all the other settings at their defaults.
 
 ![warehouse settings](assets/5Load_10.png)
@@ -631,7 +631,7 @@ Snowflake can easily load and query semi-structured data such as JSON, Parquet, 
 
 ### Create a New Database and Table for the Data
 
-First, in the worksheet, let's create a database named `WEATHER` tto use for storing the semi-structured JSON data.
+First, in the worksheet, let's create a database named `WEATHER` to use for storing the semi-structured JSON data.
 
 ```SQL
 create database weather;
@@ -940,14 +940,14 @@ Notice that, in the top right of the worksheet, the context has changed to ACCOU
 
 ![ACCOUNTADMIN context](assets/9Role_1.png)
 
-Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowfalke user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
+Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowflake user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
 
 Use the following commands to create the role and assign it to you. Before you run the GRANT ROLE command, replace `YOUR_USERNAME_GOES_HERE` with your username:
 
 ```SQL
 create role junior_dba;
 
-grant role junior_dba to user YOUR_USERNAME_GOES HERE;
+grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
 ```
 
 Positive
@@ -959,11 +959,27 @@ Change your worksheet context to the new `JUNIOR_DBA` role:
 use role junior_dba;
 ```
 
-In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role.
+In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role. 
 
 ![JUNIOR_DBA context](assets/9Role_2.png)
 
-Also, in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Also, the warehouse is not selected because the newly created role does not have usage privileges on any warehouse. Let's fix it by switching back to ADMIN role and grant usage privileges to `COMPUTE_WH` warehouse.
+
+```SQL
+use role accountadmin;
+
+grant usage on warehouse compute_wh to role junior_dba;
+```
+
+Switch back to the `JUNIOR_DBA` role. You should be able to use `COMPUTE_WH` now.
+
+```SQL
+use role junior_dba;
+
+use warehouse compute_wh;
+```
+
+Finally, you can notice that in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
 Switch back to the ACCOUNTADMIN role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CITIBIKE` and `WEATHER` databases:
 
@@ -1006,7 +1022,7 @@ Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs ar
 
 The **Usage** tab shows the following, each with their own page:
 
-- **Orgamization**: Credit usaged across all the accounts in your organization.
+- **Organization**: Credit usaged across all the accounts in your organization.
 - **Consumption**: Credits consumed by the virtual warehouses in the current account.
 - **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
 - **Transfers**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
@@ -1187,7 +1203,7 @@ We encourage you to continue with your free trial by loading your own sample or 
 - Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document.
 - Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers.
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
-- Sighn up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
+- Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
 - Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
 
 ### What we've covered:
