@@ -113,7 +113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     {% endraw %}
 
     {# Event pages force down attribute. On homepage, it's applied dynamically. #}
-    <header id="banner" {% if view.id != 'default' -%}down{%- else %}down$="[[_toBoolean(selectedFilter)]]"{%- endif %}>
+    <!-- <header id="banner" {% if view.id != 'default' -%}down{%- else %}down$="[[_toBoolean(selectedFilter)]]"{%- endif %}>
       <div class="site-width">
         {% if view.id == 'default' %}
         <h2 class="banner-title">Getting Started with Snowflake</h2>
@@ -136,6 +136,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               {%- endif %}
             </div>
         {%- endif %}
+          </div>
+      </div>
+    </header> -->
+
+    <header id="banner" down$="[[_toBoolean(selectedFilter)]]">
+      <div class="site-width">
+        <h2 class="banner-title">Getting Started with Snowflake</h2>
+        <div class="banner-description"
+             data-filter-selected$="{% raw %}[[_toBoolean(selectedFilter)]]{% endraw %}">
+          <p class="banner-info">
+            Follow along with our tutorials to get you up and running with the Snowflake Data Cloud.
+            <br>
+            <a href="https://github.com/Snowflake-Labs/devlabs" target="_blank">Snowflake Quickstarts on GitHub</a> 
+            <a href="https://www.snowflake.com/virtual-hands-on-lab/?topic=data-applications" target="_blank">Virtual Hands-on Labs</a>
+            <a href="https://signup.snowflake.com/?utm_cta=trial-en-www-quickstart-nav-ss-evg" target="_blank">Free Trial</a>
+          </p>
           </div>
       </div>
     </header>

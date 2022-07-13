@@ -4,7 +4,7 @@ categories: Getting Started
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
+tags: Getting Started, Data Science, Data Engineering, kr
 
 # Snowflake 시작하기 - 제로부터 Snowflake까지
 
