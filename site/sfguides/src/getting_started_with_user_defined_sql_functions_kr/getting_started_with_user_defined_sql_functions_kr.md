@@ -2,9 +2,9 @@ id: getting_started_with_user_defined_sql_functions
 summary: 사용자 정의 SQL 함수 시작하기 가이드
 categories: Getting Started, UDF, UDTF
 environments: Web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: 스노우플레이크 시작하기, SQL, UDF, UDTF
+tags: 스노우플레이크 시작하기, SQL, UDF, UDTF, kr
 authors: Jason West
 
 # 사용자 정의 SQL 함수 시작하기

@@ -2,9 +2,9 @@ summary: 이 가이드는 Snowpipe를 시작하는 데 도움이 됩니다.
 id: getting_started_with_snowpipe_kr
 categories: Getting Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
-tags: 스노우플레이크 시작하기, AWS, SQL, 데이터 엔지니어링, Snowpipe, 자동 수집
+tags: 스노우플레이크 시작하기, AWS, SQL, 데이터 엔지니어링, Snowpipe, 자동 수집, kr
 
 # Snowpipe 시작하기
 

@@ -2,9 +2,9 @@ summary: 이 가이드는 고객이 쿼리는 과도한 소비를 초래할 수�
 id: resource_optimization_setup_kr
 categories: Resource Optimization 
 environments: web
-status: Published 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 리소스 최적화, 비용 최적화, 소비, 설정, 구성, 관리, 모니터링, Resource Optimization, Cost Optimization, Monitoring 
+tags: 스노우플레이크 리소스 최적화, 비용 최적화, 소비, 설정, 구성, 관리, 모니터링, Resource Optimization, Cost Optimization, Monitoring, kr
 authors: Matt Meredith
 
 # 리소스 최적화: 설정 및 구성

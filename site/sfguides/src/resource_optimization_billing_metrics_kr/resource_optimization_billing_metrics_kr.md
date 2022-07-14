@@ -2,9 +2,9 @@ summary: 이 가이드는 고객이 과도한 소비가 발생하는 영역을 �
 id: resource_optimization_billing_metrics_kr
 categories: Resource Optimization
 environments: web
-status: Published 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크, 리소스 최적화, 비용 최적화, 청구, 청구 메트릭, 모니터링, Resource Optimization, Cost Optimization, Billing, Billing Metrics, Monitoring 
+tags: 스노우플레이크, 리소스 최적화, 비용 최적화, 청구, 청구 메트릭, 모니터링, Resource Optimization, Cost Optimization, Billing, Billing Metrics, Monitoring, kr
 authors: Matt Meredith
 
 # 리소스 최적화: 청구 메트릭

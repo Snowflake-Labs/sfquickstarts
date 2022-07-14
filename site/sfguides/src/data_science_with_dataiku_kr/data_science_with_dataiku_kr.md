@@ -2,9 +2,9 @@ summary: Snowflake 및 Dataiku로 데이터 과학 가속화
 id: data_science_with_dataiku_kr
 categories: Getting Started
 environments: web
-status: Published
+status: Hidden
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크, 데이터 사이언스, Data Science, Dataiku
+tags: 스노우플레이크, 데이터 사이언스, Data Science, Dataiku, kr
 
 # Snowflake 및 Dataiku로 데이터 과학 가속화
 

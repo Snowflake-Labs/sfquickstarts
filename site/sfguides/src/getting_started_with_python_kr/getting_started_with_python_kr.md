@@ -2,9 +2,9 @@ summary: Python 시작하기
 id: getting_started_with_python_kr
 categories: Getting Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL, Python
+tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL, Python, kr
 
 # Python 시작하기
 

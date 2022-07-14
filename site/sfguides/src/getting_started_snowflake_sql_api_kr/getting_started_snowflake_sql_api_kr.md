@@ -2,9 +2,9 @@ id: getting_started_snowflake_sql_api_kr
 summary: Snowflake SQL API 시작하기
 categories: Getting Started
 environments: web
-status: Draft
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링
+tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, kr
 
 # Snowflake SQL API 시작하기
 

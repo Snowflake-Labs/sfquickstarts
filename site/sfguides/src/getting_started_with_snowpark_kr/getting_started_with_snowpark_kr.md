@@ -2,9 +2,9 @@ id: getting_started_with_snowpark_kr
 summary: 이 가이드는 Snowpark를 사용하여 단순한 예시 설정을 위한 기본 지침을 제공합니다.
 categories: Getting Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 시작하기, 데이터 과학, 데이터 엔지니어링, Twitter
+tags: 스노우플레이크 시작하기, 데이터 과학, 데이터 엔지니어링, Twitter, kr
 
 # Snowpark 시작하기
 

@@ -2,9 +2,9 @@ id:getting_started_with_snowsql_kr
 summary: SnowSQL 시작하기
 categories: Getting Started
 environments: web
-status: Published 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL
+tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL, kr
 
 # SnowSQL 시작하기
 
