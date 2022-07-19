@@ -16,10 +16,6 @@ Welcome! The Snowflake SQL API is a [REST API](https://en.wikipedia.org/wiki/Rep
 
 This getting started guide will walk you through executing a SQL statement with the API and retrieving the results. 
 
-Negative
-: Support for the Snowflake SQL API is currently not in production.
-
-
 ### Prerequisites
 
 - A familiarity with [Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4)

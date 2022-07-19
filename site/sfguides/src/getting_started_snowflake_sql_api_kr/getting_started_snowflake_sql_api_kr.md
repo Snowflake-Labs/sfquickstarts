@@ -17,8 +17,6 @@ Duration: 1
 
 이 시작하기 가이드는 API를 통해 SQL 문을 실행하고 결과를 검색하는 것을 안내합니다.
 
-Negative : Snowflake SQL API 지원이 현재 프로덕션에 없습니다.
-
 ### 사전 필요 조건 및 지식
 
 - [Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4)에 대한 이해
