@@ -514,6 +514,7 @@ The precompiled jar file including all the dependencies has been uploaded and av
 
 1. Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:
 
+
 ```sql
 use role sysadmin;
 use schema emaildb.raw;
@@ -522,6 +523,7 @@ create or replace stage jars_stage_external
 url = "s3://sfquickstarts/Common JARs/"
 directory = (enable = true auto_refresh = true);
 ```
+
 
 From the Snowflake worksheet, you can run the following command to confirm the jar file is listed in the external stage.
 ```sql
