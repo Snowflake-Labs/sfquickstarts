@@ -74,16 +74,14 @@ Duration: 5
 
 - **Note**: Please ensure that you use the `same email address` for both your Snowflake and Dataiku sign up
 
-- **Region**  - Kindly choose  ```US West (Oregon)``` for this lab
+- **Region**  - Kindly choose which is physically closest to you. For this lab example we have chosen ```US West (Oregon)```
 
-- **Cloud Provider**  - Kindly choose ```AWS``` for this lab
+- **Cloud Provider**  - You can select any cloud provider. For this lab example we have chosen ```AWS```
 
 - **Snowflake edition**  - Select the ```Enterprise edition``` so you can leverage some advanced capabilities that are not available in the Standard Edition.
 
 
-Negative
-: **Snowflake Marketplace dataset** <br> It is strongly recommended that when setting up a new account you use the Provider and Region above because to leverage the marketplace dataset in this lab. If you already have an existing Snowflake account you wish to use that uses a different Provider/Region we would recommend creating a new trial instance for this lab.
-
+![2](assets/sf-2-signup.png)
 
 
 ![2](assets/sf-2-signup.png)
@@ -959,129 +957,52 @@ As before you can optionally group and comment your transformation steps.
 
 
 <!-- ------------------------ -->
-## Feature Engineering with Code Recipes & Snowpark
+## Feature Engineering with Code
 Duration: 10
 
+Until now we've used visual tools but lets see how users who prefer to code can collaborate alongside their low/no code colleagues
 
-Dataiku DSS integrates with `Snowpark for Python` allowing coders to take advantage all the benefits of Snowflake whilst collaborating alongside their no/low-code colleagues on projects to accelerate time to value in DSS, their end-to-end, governed AI lifecycle platform.
+* Return to the Flow.
+* `Click` on the output dataset of the prepare recipe `LOANS_ENRICHED_joined_prepared`.
+* Once selected `click on the Python Code recipe` from the `Actions panel`
 
-When using Dataiku's SaaS option from Partner Connect the setup is done for us automatically. Let's check that.
+![53a](assets/dk-flow_x.png)
 
-Return to your browser tab with `Dataiku Launchpad` open (if you have shut this just go to [Launchpad](https://launchpad-dku.app.dataiku.io/).
+* Now `Add a new output dataset`. We'll name it **LOANS_FE** 
+* Leave the `Store into` as the default nad then click `CREATE DATASET`
 
-
-`Select` the `Features` menu
-![64](assets/dk-spk1.png)
-
-
-
-Your Snowpark extension is now ready to use.
-![64](assets/dk-spk6.png)
+![53a](assets/df-py-in.png)
 
 
+* Click `CREATE RECIPE`
 
+Dataiku DSS generates some starter code for us, we can also use code samples our colleagues have created and tagged or, if we prefer, work from Jupyter notebooks or a range of IDE’s. For this lab we will stick with the default code editor.
 
-**A Note on Code Environments:**  Dataiku uses the concept of code environments to address the problem of managing dependencies and versions when writing code in R and Python. Code environments provide a number of benefits such as **Isolation and Reproducibility** of results
-
-When using Snowpark for Python from Dataiku DSS you will use a code environment that includes the Snowpark library as well as other packages you wish to use. In our lab, to make things easy, we are using a default Snowpark code environment which just contains just the minimum required libraries but once you have completed the lab and wish to explore further you can create your own code environments.
-
-
-In addition to selecting an appropriate code environment there are just a couple of extra lines of code to add to your DSS recipe to start using Snowpark for Python.
-
-Lets take a look at a simple example.
-
-Firstly you need to add the following line to your imports:
-
+* To save some typing let's `change our dataframe name to df` on line 8
+* Remove the to-do starter code on `line  15`
+* Replace with the following lines to generate new features
 
 ```
-from dataiku.snowpark import DkuSnowpark
+df['DEBT_AMNT'] = [d*df.INSTALLMENT.values[idx]/100.0 for idx,d in enumerate(df.DTI.values)]
+
+
+df["DEBT_AMNT_NORM"] = (df.DEBT_AMNT.values - np.mean(df.DEBT_AMNT.values))/np.std(df.DEBT_AMNT.values)
+
+df["INSTALL_NORM"] = (df.INSTALLMENT.values - np.mean(df.INSTALLMENT.values))/np.std(df.INSTALLMENT.values)
+
 ```
 
-Then read the inputs, instantiate Snowpark, get the dataframe, write your code then write your output.
+* Ensure you replace the name of the dataframe in the final line (.write_with_schema(your_dataframe_name) with df.
+
+Your code should now look like this
 
 
-```
-# Read recipe inputs
-input_dataset = dataiku.Dataset("my_input_dataset")
+![53a](assets/dk-code-updated.png)
 
-# get input dataset as snowpark dataframe
-dku_snowpark = DkuSnowpark()
-snowdf = dku_snowpark.get_dataframe(input_dataset)
-
-# ALL YOUR CODE HERE
-
-# get output dataset
-OUTPUT_DATASET = dataiku.Dataset("my_output_dataset")
-
-# write input dataframe to output dataset
-dku_snowpark.write_with_schema(OUTPUT_DATASET,snowdf)
-```
+* `SAVE` the recipe then `click RUN`
 
 
-
-We have an example Jupyter notebook to help you get started. Download the notebook from the S3 bucket to a local drive then we will upload to DSS (Note: You would typically use the Git integrations in DSS for managing team notebooks developed outside of DSS).
-
-
- <button>[Snowpark_Jupyter_notebook.ipynb](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Summit_Snowflake_Dataiku/src/Loans_FE_Snowpark.ipynb)</button>
-
-Either `select notebooks` from the menu or use the `G+N` keyboard shortcut. Select to `upload` your notebook, `choose the file` and `click upload`.
-
-
-
-![66](assets/dk-snowpark-2.png)
-
-
-
-
-![67](assets/dk-snowpark-3.png)
-
-
-
-
-
-
-Here is the notebook we imported, click `create recipe`
-
-
-![65](assets/dku-spk-recipe1b.png)
-
-select `Python recipe` and click `ok ` 
-
-![66](assets/dku-spk-recipe2.png)
-
-
-For the input dataset we will select `LOANS_ENRICHED_joined_prepared` and for the output dataset type `LOANS_FE` and then click `Create recipe`
-
-![67](assets/dku-spk-recipe3b.png)
-
-You now have the notebook set up with correct input and output datasets in our flow. You can either use the default code editor or jupyter notebook. We will work on jupyter notebook. `Click edit in notebook`
-
-
-
-![68](assets/dku-spk-recipe4b.png)
-
-Ensure your Jupyter notebook is using the `snowpark` kernel, if not change it from the `Change Kernel` menu
-
-
-![68](assets/dk-snowpark-4b.png)
-
-
-Test running your cells (note the code assumes the dataset names specified above. If you have changed any input or output dataset names be sure and make those updates in the code).
-
-Feel free to add you own code and experiment, when you are done click `SAVE BACK TO RECIPE`.
-
-From the default Code Editor lets check apply the correct code environment. Click on `Advanced` and then select a Snowpark code environment from the dropdown (Note: Your available code environments may differ from the screenshot)
-
-![68a](assets/dku-snowpark-9.png)
-
-![68b](assets/dku-snowpark-10.png)
-
-
- Return to the `Code` screen and click the `Run` button to execute the recipe using Snowpark and to generate the output dataset in the flow.
-
-
-
-
+Dataiku DSS allows you to create an arbitrary number of `Code environments` to address managing dependencies and versions when writing code in R and Python. Code environments in Dataiku DSS are similar to the Python virtual environments. In each location where you can run Python or R code (e.g., code recipes, notebooks, and when performing visual machine learning/deep learning) in your project, you can select which code environment to use.
 
 
 <!-- ------------------------ -->
@@ -1347,8 +1268,131 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 [Dataiku Academy](https://academy.dataiku.com/)
 
 
-<!-- ------------------------ -->
-## Appendix  
+
+## Bonus Material - Snowpark  for Python  
+Duration: 5
+
+
+Dataiku DSS integrates with `Snowpark for Python` allowing coders to take advantage all the benefits of Snowflake whilst collaborating alongside their no/low-code colleagues on projects to accelerate time to value in DSS, their end-to-end, governed AI lifecycle platform.
+
+When using Dataiku's SaaS option from Partner Connect the setup is done for us automatically. Let's check that.
+
+Return to your browser tab with `Dataiku Launchpad` open (if you have shut this just go to [Launchpad](https://launchpad-dku.app.dataiku.io/).
+
+
+`Select` the `Features` menu
+![64](assets/dk-spk1.png)
+
+
+
+Your Snowpark extension is now ready to use.
+![64](assets/dk-spk6.png)
+
+
+
+
+**A Note on Code Environments:**  Dataiku uses the concept of code environments to address the problem of managing dependencies and versions when writing code in R and Python.Code environments provide a number of benefits such as: Isolation and Reproducibility of results
+
+When using Snowpark for Python from Dataiku DSS you will use a code environment that includes the Snowpark library as well as other packages you wish to use. In our lab, to make things easy, we are using a default Snowpark code environment which just contains just the minimum required libraries but once you have completed the lab and wish to explore further you can create your own code environments.
+
+
+In addition to selecting an appropriate code environment there are just a couple of extra lines of code to add to your DSS recipe to start using Snowpark for Python.
+
+Lets take a look at a simple example.
+
+Firstly you need to add the following line to your imports:
+
+
+```
+from dataiku.snowpark import DkuSnowpark
+```
+
+Then read the inputs, instantiate Snowpark, get the dataframe, write your code then write your output.
+
+
+```
+# Read recipe inputs
+input_dataset = dataiku.Dataset("my_input_dataset")
+
+# get input dataset as snowpark dataframe
+dku_snowpark = DkuSnowpark()
+snowdf = dku_snowpark.get_dataframe(input_dataset)
+
+# ALL YOUR CODE HERE
+
+# get output dataset
+OUTPUT_DATASET = dataiku.Dataset("my_output_dataset")
+
+# write input dataframe to output dataset
+dku_snowpark.write_with_schema(OUTPUT_DATASET,snowdf)
+```
+
+
+
+We have an example Jupyter notebook to help you get started. Download the notebook from the S3 bucket to a local drive then we will upload to DSS (note you would typically use the Git integrations in DSS for managing team notebooks developed outside of DSS).
+
+
+ <button>[Snowpark_Jupyter_notebook.ipynb](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Summit_Snowflake_Dataiku/src/Loans_FE_Snowpark.ipynb)</button>
+
+Either `select notebooks` from the menu or use the `G+N` keyboard shortcut. Select to `upload` your notebook, `choose the file` and `click upload`.
+
+
+
+![66](assets/dk-snowpark-2.png)
+
+
+
+
+![67](assets/dk-snowpark-3.png)
+
+
+
+
+
+
+Here is the notebook we imported, click `create recipe`
+
+
+![65](assets/dku-spk-recipe1.png)
+
+select `Python recipe` and click `ok ` 
+
+![66](assets/dku-spk-recipe2.png)
+
+
+For the input dataset we will select `LOANS_ENRICHED_joined_prepared` and for the output dataset type `LOANS_FE_SNOWPARK` and then click `Create recipe`
+
+![67](assets/dku-spk-recipe3.png)
+
+You now have the notebook set up with correct input and output datasets in our flow. You can either use the default code editor or jupyter notebook. We will work on jupyter notebook. `Click edit in notebook`
+
+
+
+![68](assets/dku-spk-recipe4.png)
+
+Ensure your Jupyter notebook is using the `snowpark` kernel, if not change it from the `Change Kernel` menu
+
+
+![68](assets/dk-snowpark-4.png)
+
+
+![69](assets/dk-snowpark-4a.png)
+
+Test running your cells (note the code assumes the dataset names specified above. If you have changed any input or output dataset names be sure and make those updates in the code).
+
+Feel free to add you own code and experiment, when you are done click `SAVE BACK TO RECIPE` then `Run` the recipe to generate the output datset in the flow.
+
+If you wish you can you use the output from Snowpark to build out the reminder of our lab flow  steps - `11 -14`, and compare model results. 
+
+
+When deploying model in `Stage -13` select `Deploy as a new retrainable model`
+
+![71](assets/dk-snowpark-6.png)
+
+
+Your `final flow` should then look like this 
+
+![72](assets/dk-snowpark-7.png)
 
 
 **To enable the anaconda libraries on snowflake account**
@@ -1364,3 +1408,11 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 5.Click on Terms & Billing, and enable Anaconda terms.
 
 ![73](assets/sf-anaconda1.png)
+
+
+
+
+Your flow is started to look clutered. Data Science projects tend to quickly become complex, with large number of recipes and datasets in the Flow. This can make the Flow complex to read and navigate. To better manage large projects, you can divide them into zones. You can explore more about [Flow zones](https://doc.dataiku.com/dss/latest/flow/zones.html). 
+
+
+Congratulations, you have built an ML model. Explore further from the Dataiku Academy link in the previous section and see how you can deploy and monitor the model in production, automate tasks, share results to the business and much more.
