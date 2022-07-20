@@ -67,7 +67,7 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 
 1. Install conda to manage a separate environment by running pip install conda. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 2. Open the terminal or command prompt
-3. Create environment by running `conda create --name snowpark python=3.8 -c snowflake`
+3. Create environment by running `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
 4. Activate conda environment by running `conda activate snowpark`
 5. Install pandas by running `conda install pandas`
 6. Install Streamlit by running `pip install streamlit` or `pip3 install streamlit`
