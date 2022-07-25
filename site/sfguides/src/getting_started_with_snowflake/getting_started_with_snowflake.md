@@ -621,9 +621,9 @@ Going back to the lab's example, the Citi Bike analytics team wants to determine
 - Run a query that joins the JSON data to the previously loaded `TRIPS` data.
 - Analyze the weather and ride count data to determine their relationship.
 
-The JSON data consists of weather information provided by OpenWeatherMap detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 57.9k rows, 61 objects, and 2.5MB compressed. If viewed in a text editor, the raw JSON in the GZ files looks like:
+The JSON data consists of weather information provided by *MeteoStat* detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 75k rows, 36 objects, and 1.1MB compressed. If viewed in a text editor, the raw JSON in the GZ files looks like:
 
-![raw JSON sample](assets/7SemiStruct_1.png)
+![raw JSON sample](assets/7SemiStruct_1_1.png)
 
 Negative
 : **SEMI-STRUCTURED DATA**
@@ -666,7 +666,7 @@ The VARIANT data type allows Snowflake to ingest semi-structured data without ha
 
 In the results pane at the bottom of the worksheet, verify that your table, `JSON_WEATHER_DATA`, was created:
 
-![success message](assets/7SemiStruct_2.png)
+![success message](assets/7SemiStruct_2_1.png)
 
 ### Create Another External Stage
 
@@ -674,7 +674,7 @@ In the `CITIBIKE_ZERO_TO_SNOWFLAKE` worksheet, use the following command to crea
 
 ```SQL
 create stage nyc_weather
-url = 's3://snowflake-workshop-lab/weather-nyc';
+url = 's3://snowflake-workshop-lab/zero-weather-nyc';
 ```
 
 Now let's take a look at the contents of the `nyc_weather` stage. Execute the following LIST command to display the list of files:
@@ -685,7 +685,7 @@ list @nyc_weather;
 
 In the results pane, you should see a list of `.gz` files from S3:
 
-![results output](assets/7SemiStruct_3.png)
+![results output](assets/7SemiStruct_3_1.png)
 
 ### Load and Verify the Semi-structured Data
 
@@ -697,13 +697,13 @@ Note that you can specify a `FILE FORMAT` object inline in the command. In the p
 
 ```SQL
 copy into json_weather_data
-from @nyc_weather
-file_format = (type=json);
+from @nyc_weather 
+    file_format = (type = json strip_outer_array = true);
 ```
 
 Verify that each file has a status of `LOADED`:
 
-![query result](assets/7SemiStruct_4.png)
+![query result](assets/7SemiStruct_4_1.png)
 
 
 Now, let's take a look at the data that was loaded:
@@ -714,7 +714,7 @@ select * from json_weather_data limit 10;
 
 Click any of the rows to display the formated JSON in the right panel:
 
-![JSON data snippet](assets/7SemiStruct_5.png)
+![JSON data snippet](assets/7SemiStruct_5_1.png)
 
 To close the display in the panel and display the query details again, click the **X** (Close) button that appears when you hover your mouse in the right corner of the panel.
 
@@ -727,35 +727,39 @@ Negative
 A view allows the result of a query to be accessed as if it were a table. Views can help present data to end users in a cleaner manner, limit what end users can view in a source table, and write more modular SQL.
 Snowflake also supports materialized views in which the query results are stored as though the results are a table. This allows faster access, but requires storage space. Materialized views can be created and queried if you are using Snowflake Enterprise Edition (or higher).
 
-Run the following command to create a columnar view of the semi-structured JSON weather data so it is easier for analysts to understand and query. The ``5128638`` value for ``city_id`` corresponds to New York City.
+Run the following command to create a columnar view of the semi-structured JSON weather data so it is easier for analysts to understand and query. The ``72502`` value for ``station_id`` corresponds to Newark Airport, the closest station that has weather conditions for the whole period.
 
 ```SQL
-create view json_weather_data_view as
+// create a view that will put structure onto the semi-structured data
+create or replace view json_weather_data_view as
 select
-v:time::timestamp as observation_time,
-v:city.id::int as city_id,
-v:city.name::string as city_name,
-v:city.country::string as country,
-v:city.coord.lat::float as city_lat,
-v:city.coord.lon::float as city_lon,
-v:clouds.all::int as clouds,
-(v:main.temp::float)-273.15 as temp_avg,
-(v:main.temp_min::float)-273.15 as temp_min,
-(v:main.temp_max::float)-273.15 as temp_max,
-v:weather[0].main::string as weather,
-v:weather[0].description::string as weather_desc,
-v:weather[0].icon::string as weather_icon,
-v:wind.deg::float as wind_dir,
-v:wind.speed::float as wind_speed
-from json_weather_data
-where city_id = 5128638;
+    v:obsTime::timestamp as observation_time,
+    v:station::string as station_id,
+    v:name::string as city_name,
+    v:country::string as country,
+    v:latitude::float as city_lat,
+    v:longitude::float as city_lon,
+    v:weatherCondition::string as weather_conditions,
+    v:coco::int as weather_conditions_code,
+    v:temp::float as temp,
+    v:prcp::float as rain,
+    v:tsun::float as tsun,
+    v:wdir::float as wind_dir,
+    v:wspd::float as wind_speed,
+    v:dwpt::float as dew_point,
+    v:rhum::float as relative_humidity,
+    v:pres::float as pressure
+from
+    json_weather_data
+where
+    station_id = '72502';
 ```
 
-SQL dot notation `v:city.coord.lat` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
+SQL dot notation `v:temp` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
 The new view should appear as `JSON_WEATHER_DATA` under `WEATHER` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
 
-![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6.png)
+![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6_1.png)
 
 Verify the view with the following query: 
 
@@ -767,7 +771,7 @@ limit 20;
 
 Notice the results look just like a regular structured data source. Your result set may have different `observation_time` values:
 
-![query results with view](assets/7SemiStruct_7.png)
+![query results with view](assets/7SemiStruct_7_1.png)
 
 ### Use a Join Operation to Correlate Against Data Sets
 
@@ -780,7 +784,7 @@ Positive
 
 
 ```SQL
-select weather as conditions
+select weather_conditions as conditions
 ,count(*) as num_trips
 from citibike.public.trips
 left outer join json_weather_data_view
@@ -789,7 +793,7 @@ where conditions is not null
 group by 1 order by 2 desc;
 ```
 
-![weather results](assets/7SemiStruct_8.png)
+![weather results](assets/7SemiStruct_8_1.png)
 
 The initial goal was to determine if there was any correlation between the number of bike rides and the weather by analyzing both ridership and weather data. Per the results above we have a clear answer. As one would imagine, the number of trips is significantly higher when the weather is good!
 
