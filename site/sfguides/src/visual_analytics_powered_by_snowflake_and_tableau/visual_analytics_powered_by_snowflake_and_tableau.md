@@ -38,7 +38,7 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 * A [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
 * [Visual Studio Code](https://code.visualstudio.com/download) editor
 * The ["open in browser"](https://marketplace.visualstudio.com/items?itemName=techer.open-in-browser) VS code extension from Visual Studio Marketplace
-* Get [Tableau Embedded Script](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/Tableau+Embedded+Portal.zip)
+* Get [Tableau Embedded Script](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/Tableau+Embedded+Portal.zip)
 
 ### What You’ll Build
 
@@ -81,7 +81,7 @@ Duration: 5
 
 ### Download Demo SQL Script
 
-[Download workload.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/Workshop_SQL.sql).
+[Download workload.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/Workshop_SQL.sql).
 
  ![Snowflake Login](assets/Worksheet_1.png)
 
@@ -119,7 +119,7 @@ show stages;
 
 --External Stage on S3
 create or replace STAGE VHOL_STAGE
-    URL = 's3://snowflake-workshop-lab/citibike-trips/json';
+    URL = 's3://snowflake-workshop-lab/citibike-trips-json';
 
 --Lists Files on the S3 Bucket
 list @VHOL_STAGE/;
@@ -1184,7 +1184,7 @@ Duration: 5
 
 ### Set Role ACCOUNTADMIN & Add Worksheet
 
-[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql)          ![Change Role to Accountadmin](assets/Reader_Account_3.png)
+[Download reader_query.sql & Create Worksheet from SQL File](https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/reader_query.sql)          ![Change Role to Accountadmin](assets/Reader_Account_3.png)
 
 
 ```sql

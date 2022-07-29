@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- </VHOL SQL - this is to be run in the Reader Account>
 -- <Visual Analytics  Powered by Snowflake and Tableau>
--- <May 5, 2022 | 11:00am PST>
+-- <July 26, 2022 | 11:00am PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
---  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/reader_query.sql
+--  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/reader_query.sql
 -------------------------------------------------------------------------------------------------------------------*/
 -- create database from share in the reader account  
 use role accountadmin;
