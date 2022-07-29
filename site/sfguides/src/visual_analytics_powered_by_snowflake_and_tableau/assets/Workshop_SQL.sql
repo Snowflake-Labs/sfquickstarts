@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- <VHOL SQL>
 -- <Visual Analytics  Powered by Snowflake and Tableau>
--- <May 16, 2022 | 11:00am PST>
+-- <July 26, 2022 | 11:00am PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
---  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips/workshop.sql
+--  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/workshop.sql
 -------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------Set Up---------------------------------------------------------*/
@@ -39,7 +39,7 @@ show stages;
 
 --External Stage on S3
 create or replace STAGE VHOL_STAGE
-    URL = 's3://snowflake-workshop-lab/citibike-trips/json';
+    URL = 's3://snowflake-workshop-lab/citibike-trips-json';
 
 --Lists Files on the S3 Bucket
 list @VHOL_STAGE/;
