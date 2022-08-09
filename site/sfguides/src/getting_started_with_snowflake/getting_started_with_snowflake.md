@@ -142,35 +142,35 @@ Also under **Data**, the **Shared Data** tab is where data sharing can be config
 **Marketplace**, the last tab under **Data**, is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
 
 
-#### History
+#### Query History
 
 ![history tab](assets/3UIStory_9.png)
 
-Under **Compute**, the **History** tab shows the following:
+Under **Activity** there are two tabs **Query History**  and **Copy History**:
 
-- **Queries** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
-- **Copies** shows the status of copy commands run to ingest data into Snowflake.
+- **QuerHistory** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
+- **Copy History** shows the status of copy commands run to ingest data into Snowflake.
 
 
 #### Warehouses
 
 ![warehouses tab](assets/3UIStory_10.png)
 
-Also under **Compute**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH (XS) already exists in your environment.
+Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
 
 
 #### Resource Monitors
 
 ![resource monitors tab](assets/3UIStory_11.png)
 
-**Resource Monitors**, the last tab under **Compute**, shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
+Under **Admin**, the **Resource Monitoris** tab shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
 
 
 #### Roles
 
 ![roles tab](assets/3UIStory_12.png)
 
-Under **Account**, the **Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by clicking **Table** at the top of the page.
+Under **Admin**, the **Roles** sub-tab of the **Users and Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
 
 
 #### Users
