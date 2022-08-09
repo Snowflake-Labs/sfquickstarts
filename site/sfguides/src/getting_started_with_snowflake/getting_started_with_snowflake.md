@@ -128,25 +128,25 @@ The **Dashboards** tab allows you to create flexible displays of one or more cha
 Under **Data**, the **Databases**​ tab shows information about the databases you have created or have permission to access. You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that a database already exists in your environment. However, we will not be using it in this lab.
 
 
-#### Shared Data
+#### Private Shared Data
 
 ![shared data tab](assets/3UIStory_7.png)
 
-Also under **Data**, the **Shared Data** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.
+Also under **Data**, the **Private Shared Data** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.
 
 
 #### Marketplace
 
 ![marketplace tab](assets/3UIStory_8.png)
 
-**Marketplace**, the last tab under **Data**, is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
+The **Marketplace** tab is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
 
 
 #### Query History
 
 ![history tab](assets/3UIStory_9.png)
 
-Under **Activity** there are two tabs **Query History**  and **Copy History**:
+Under **Activity** there are two tabs **Query History** and **Copy History**:
 
 - **QuerHistory** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
 - **Copy History** shows the status of copy commands run to ingest data into Snowflake.
@@ -163,7 +163,7 @@ Under **Admin**, the **​Warehouses​** tab is where you set up and manage com
 
 ![resource monitors tab](assets/3UIStory_11.png)
 
-Under **Admin**, the **Resource Monitoris** tab shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
+Under **Admin**, the **Resource Monitors** tab shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
 
 
 #### Roles
@@ -177,7 +177,7 @@ Under **Admin**, the **Roles** sub-tab of the **Users and Roles** tab shows a li
 
 ![users tab](assets/3UIStory_13.png)
 
-Also under **Account** tab, the **Users** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to ACCOUNTADMIN.
+Also under **Admin** tab, the **Users** sub-tab of the **Users and Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to ACCOUNTADMIN.
 
 
 ![user preferences dropdown](assets/3UIStory_14.png)
