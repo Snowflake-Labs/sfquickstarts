@@ -219,15 +219,15 @@ SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL, 
 ### Convert Kelvin to Celcius
 
 ```sql
--- UDF to convert Kelvin to Celcius
+-- UDF to convert Fahrenheit to Celcius
 use database vhol_database;
 use schema vhol_schema;
 use warehouse vhol_wh;
-create or replace function degFtoC(k float)
+create or replace function degFtoC(f float)
 returns float
 as
 $$
-  truncate((k - 32) * 5/9, 2)
+  truncate((f - 32) * 5/9, 2)
 $$; 
 ```
 
