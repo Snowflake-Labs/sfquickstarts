@@ -1,32 +1,36 @@
 author: 
 id: snaketokens
-summary: This is a sample Snowflake Guide
-categories: Getting Started
+summary: Project Snake Tokens aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
+categories: data-governance
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering, Tokenization, Encryption, Security, Python 
 
-# Snowflake Snake Tokens Demo Setup Guide
+# Tokenization in Snowflake Using Python UDFs
 <!-- ------------------------ -->
-## Overview 
+## Snake Tokens Overview 
 Duration: 1
 
-The "Snake-Tokens" Guide will show you how to setup FF3 format preserving encryption (tokenization) in a demo database in your Snowflake account as a "minimum viable" prototype. This means that all the functionality needed for FF3 tokenization 
-will be functional to test.
+Project Snake Tokens aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
 
 ### Prerequisites
 - Snowflake Enterprise Edition Account
+- Access to connect to Snowflake via web browser & SnowSQL
+- Beginner level knowledge of Python
+- Working knowledge of SQL in Snowflake
+- Working knowledge of Snowflake's Web UI
+- Working knowledge of Snowflake's SnowSQL CLI
 
 ### What You’ll Learn 
 - How to install and use the "Snake-Tokens" Python UDFs in order to run FF3 format preserving encrpytion in test setup in your Snowflake account
 
-
 ### What You’ll Need 
-- A [Snowflake Enterprise Edition Account](https://signup.snowflake.com/) 
+- A [Snowflake Enterprise Edition (or better) Account](https://signup.snowflake.com/) 
+- SnowSQL installed on your machine
 
 ### What You’ll Build 
-- A demo that shows how FF3 tokenization can work in your Snowflake account
+- A demo that shows how to use Python UDFs to achieve FF3 tokenization
 
 <!-- ------------------------ -->
 ## Metadata Configuration
@@ -35,7 +39,7 @@ Duration: 2
 It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
 
 
-- **summary**: Project Snake Tokens aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend. 
+- **summary**:  
 - **id**: sample 
 - **categories**: data-governance 
 - **environments**: web 
