@@ -145,6 +145,8 @@ Duration: 3
 
 In addition to the database, schema, and stage objects, you will also use tags and some demo data in a couple tables. We will create those now. Let's start with the tags. 
 
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results.
+
 ```
 --- Create tags
 create or replace tag ff3_data_sc;
@@ -262,6 +264,8 @@ Duration: 7
 All the real tokenization work is done in UDFs leveraging Python. We will work with these UDFs in a few stages. First, we will take an example using strings, specifcially emails, and walk through it step by step. Then we will install the remaining UDFs for the data types which are currently supported in this demo code. Finally, we will use the tables and tags we created in the first steps to apply these UDFs to something more like a real world demo. 
 
 There's a lot to copy and paste below. First you will create 5 Python based UDFs leveraging the zip file you uploaded earlier, and then we will run some tests which use those.
+
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 ```
 --- Install & Test the Python-based Tokenization UDFs for Email Strings
@@ -614,6 +618,8 @@ What we have seen in this section is our first glimpse of the potential of using
 Duration: 3
 
 Now that we have the basic concept understood, we will install the UDFs needed for all the other data types. After they are installed we will test them all out. Get your copy + paste muscles all warmed up...
+
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 ```
 --- Install the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
@@ -1206,6 +1212,8 @@ Duration: 5
 
 With the full set of UDFs installed, let us now test each of them to see how they work. Each of the sets deals with tokenizing the data, formatting the tokens for both human and machine use (*e.g.* in SQL joins), and detokenizing the data.
 
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+
 First we step through float data types.
 ```
 --- Test the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
@@ -1246,6 +1254,7 @@ select encrypt_ff3_number_38_8_pass3('KEY678901', 1000, $userkeys);
 ```
 
 One important thing to note is that when looking for the value indicated in the output expected, it's best to select the value in the UI and look at the data displayed in the right hand pane. In this case (shown in the screen show below), we see the right hand pane correctly displays ther "raw" value of `4121376945460401.00000000` - which is what we want to see. This only underscores the importance of having many display options to process data like this.
+
 ![Screenshot showing differences in UI between formats in the display of numbers](https://github.com/kkellersnow/sfquickstarts/blob/671c2104bdf534f1920112f29a20f5b161a57f94/site/sfguides/src/snaketokens/assets/Number-Different-Screen-Shot.png "Number UI Display")
 
 Now we continue to test the number UDFs. 
@@ -1293,6 +1302,376 @@ select format_ff3_string_uspostal_pass3('[C0]58KuL005');
 ```
 
 This gives us a full set of tools, but now we want to see how those tools can be applied in different circumstances. To achieve that, we need to build out a little more for our demo environment. 
+
+<!-- ------------------------ -->
+## Create Masking Policies and Grant More Rights
+Duration: 4
+
+The final step before our last big of walkthrough is to create a number of policies and grant rights on those and the other UDFs to all the roles that will need to interact with the policies to see these controls appliued automatically. 
+
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+
+```
+--- Create encrypt polices 
+create or replace masking policy ff3_encrypt_string_pass3 as (val string, keyid string)  returns string ->
+  case
+    when  current_role() in ('ACCOUNTADMIN') 
+     then val
+   when  current_role() in ('FF3_ENCRYPT')
+     then encrypt_ff3_string_pass3(keyid,val, $userkeys)
+    else '** masked **'
+  end;
+  
+create or replace masking policy ff3_encrypt_float_pass3 as (val float,keyid string)  returns float ->
+  case
+   when  current_role() in ('ACCOUNTADMIN') 
+     then val
+    when  current_role() in ('FF3_ENCRYPT') 
+     then encrypt_ff3_float_pass3(keyid,val, $userkeys)
+    else -999
+  end;
+  
+create or replace masking policy ff3_encrypt_number_pass3_integer as (val integer,keyid string)  returns integer ->
+  case
+   when  current_role() in ('ACCOUNTADMIN') 
+     then val
+    when  current_role() in ('FF3_ENCRYPT') 
+     then encrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+    else -999
+  end;
+
+create or replace masking policy ff3_encrypt_number_pass3_decimal as (val number(38,8),keyid string)  returns number(38,8) ->
+  case
+   when  current_role() in ('ACCOUNTADMIN') 
+     then val
+    when  current_role() in ('FF3_ENCRYPT') 
+     then encrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+    else -999
+  end;
+  
+  
+--- Create decrypt and format policies 
+create or replace masking policy ff3_decrypt_format_string_pass3 as (val string, keyid string)  returns string ->
+  case
+    when  current_role() in ('FF3_DECRYPT')
+     then decrypt_ff3_string_pass3(keyid,val, $userkeys)
+     
+     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
+     then sqljoin_ff3_string_pass3(val)  
+    
+    when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('email')=''
+     then format_email_ff3_string_pass3(val)
+     
+    when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('uspostal')=''
+     then format_ff3_string_uspostal_pass3(val)
+     
+     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('usphone')=''
+     then format_ff3_string_usphone_pass3(val)
+     
+    when  current_role() in ('DATA_SC')
+     then format_ff3_string_pass3(val) 
+    when  current_role() in ('ACCOUNTADMIN') 
+     then val
+    else '** masked **'
+  end;
+  
+  
+create or replace masking policy ff3_decrypt_format_float_pass3 as (val float, keyid string)  returns float ->
+  case
+    when  current_role() in ('FF3_DECRYPT')
+     then decrypt_ff3_float_pass3(keyid,val, $userkeys)
+    when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
+     then sqljoin_ff3_float_pass3(val)
+    when  current_role() in ('DATA_SC')
+     then format_ff3_float_pass3(val)
+    when  current_role() in ('ACCOUNTADMIN') 
+     then val
+    else -999
+  end;
+  
+create or replace masking policy ff3_decrypt_format_pass3_integer as (val integer, keyid string)  returns integer ->
+  case
+    when  current_role() in ('FF3_DECRYPT')
+     then decrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
+     then sqljoin_ff3_number_38_8_pass3(val)
+    when  current_role() in ('DATA_SC')
+     then format_ff3_number_38_8_pass3(val)
+    when  current_role() in ('ACCOUNTADMIN') 
+     then val
+    else -999
+  end;
+
+
+create or replace masking policy ff3_decrypt_format_pass3_decimal as (val number(38,8), keyid string)  returns number(38,8) ->
+  case
+    when  current_role() in ('FF3_DECRYPT')
+     then decrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
+     then sqljoin_ff3_number_38_8_pass3(val)
+    when  current_role() in ('DATA_SC')
+     then format_ff3_number_38_8_pass3(val)
+    when  current_role() in ('ACCOUNTADMIN') 
+     then val
+    else -999
+  end;
+  
+grant all privileges on function encrypt_ff3_string_pass3(string, string, string) to role ff3_encrypt;
+grant all privileges on function encrypt_ff3_string_pass3(string, string, string) to role sysadmin;
+grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role ff3_decrypt;
+grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role data_sc;
+grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role sysadmin;
+
+grant all privileges on function format_ff3_string_pass3(string) to role data_sc;
+grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role data_sc;
+grant all privileges on function format_email_ff3_string_pass3(string) to role data_sc;
+
+grant all privileges on function format_ff3_string_pass3(string) to role sysadmin;
+grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role sysadmin;
+grant all privileges on function format_email_ff3_string_pass3(string) to role sysadmin;
+
+grant all privileges on function format_ff3_string_pass3(string) to role ff3_decrypt;
+grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role ff3_decrypt;
+grant all privileges on function format_email_ff3_string_pass3(string) to role ff3_decrypt;
+
+grant all privileges on function format_ff3_string_pass3(string) to role sysadmin;
+grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role sysadmin;
+grant all privileges on function format_email_ff3_string_pass3(string) to role sysadmin;
+
+grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role ff3_encrypt;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role ff3_decrypt;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role data_sc;
+
+grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role sysadmin;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role sysadmin;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role sysadmin;
+
+grant all privileges on function format_ff3_float_pass3(float) to role data_sc;
+grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role data_sc;
+
+grant all privileges on function format_ff3_float_pass3(float) to role sysadmin;
+grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role sysadmin;
+
+grant all privileges on function format_ff3_float_pass3(float) to role ff3_decrypt;
+grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role ff3_decrypt;
+
+grant all privileges on function format_ff3_float_pass3(float) to role sysadmin;
+grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role sysadmin;
+
+grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_encrypt;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_decrypt;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role data_sc;
+
+grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role sysadmin;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role sysadmin;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role sysadmin;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role ff3_decrypt;
+grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role ff3_decrypt;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role sysadmin;
+grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role sysadmin;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role data_sc;
+grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role data_sc;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role sysadmin;
+grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role sysadmin;
+
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_encrypt;
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_decrypt;
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role sysadmin;
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role data_sc;
+
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role ff3_encrypt;
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role ff3_decrypt;
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role sysadmin;
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role data_sc;
+```
+
+<!-- ------------------------ -->
+## Walkthrough Full Demo of Tokenization Applied Automatically
+Duration: 7
+
+Up to this point, we have called the UDFs directly to manipulate data. That is not a very real world way to use this. Instead, you would want to have this applied in the background so that users don't need to do anything special. That is what we will explore in these steps. 
+
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+
+First, it's unlikely you would grant users access to keys directly. It's also unlikely that they would have access to all keys. They would only have access to specific keys. And steps like this to set that key may even be done in the background without their knowledge. Here we will set a specific key as the one to use for the following steps by putting a name in a session variable. Then we create a view that will use that keyname, and grant access to that view to some of our roles.
+```
+-- which encryption key do you want to use for the encryption?
+set encryptkey='KEY678901';
+
+-- Create a view that will embed a keyname into the view itself
+create or replace view ff3_encrypt_view1 as select $encryptkey as KEYID, * from ff3_pass3_source1;
+
+-- Grant access rights to view
+grant all privileges on view ff3_encrypt_view1 to role accountadmin;
+grant all privileges on view ff3_encrypt_view1 to role sysadmin;
+grant all privileges on view ff3_encrypt_view1 to role ff3_encrypt;
+```
+
+Now we can select from both the source table and the view to see the data, but we see the view also has a column showing the key used for each column. Note that though this demo assumes the same key is used foreach columnb, that would not be required in a more complex case. So you may allow different keys on a column by column basis. 
+```
+-- Test queries. Query source should be plaintext as well as view. View view however contains an extra 
+-- column with the encryption key.
+select * from ff3_pass3_source1;
+select * from ff3_encrypt_view1;
+```
+
+Now we will tag each of the columns in the view, and then assign policies to the tag which will fire based on the column's datatype and apply the tokenization.
+```
+-- Set the tag that will trigger the encrypt policy on the view
+alter view ff3_encrypt_view1 modify 
+    column name set tag ff3_encrypt='',
+    column phone set tag ff3_encrypt='',
+    column email set tag ff3_encrypt='',
+    column postalzip set tag ff3_encrypt='',
+    column integernumber set tag ff3_encrypt='',
+    column floatnumber set tag ff3_encrypt='',
+    column decimalnumber set tag ff3_encrypt=''
+;
+
+-- Check the tags
+select * from table(
+    information_schema.tag_references_all_columns(
+        'FF3_TESTING_DB.FF3_TESTING_SCHEMA.FF3_ENCRYPT_VIEW1', 'table'
+    )
+);
+
+-- assign encrypt tags to to view
+alter tag ff3_encrypt set
+  masking policy ff3_encrypt_string_pass3,
+  masking policy ff3_encrypt_number_pass3_decimal,
+  masking policy ff3_encrypt_float_pass3;
+  
+-- Check the policies applied
+select *
+from table (ff3_testing_db.information_schema.policy_references(
+  ref_entity_domain => 'VIEW',
+  ref_entity_name => 'FF3_TESTING_DB.FF3_TESTING_SCHEMA.FF3_ENCRYPT_VIEW1' )
+);
+```
+
+Now we can change roles to show how the tokenization is applied by default based on the tags and their policies.
+```
+-- Change to role FF3_Encrypt and query the view. Data should be encrypted now.
+use role ff3_encrypt;
+
+select * from ff3_encrypt_view1;
+```
+
+```
+-- Prepare target table for encrypted data and in order to show how to decrypt or show how data analyst 
+-- work with encrypted data (stay with role FF3_Encrypt)
+
+-- Populate target table with encrypted data (stay with role FF3_Encrypt)
+insert into ff3_testing_db.ff3_testing_schema.ff3_pass3_target1  select * from ff3_encrypt_view1; 
+ 
+-- Change back to Accountadmin
+-- Assign decrypt tag to decrypt demo table
+use role accountadmin;
+alter table ff3_pass3_target1 modify 
+    column name set tag ff3_data_sc='',
+    column phone set tag ff3_data_sc='',
+    column email set tag ff3_data_sc='',
+    column postalzip set tag ff3_data_sc='',
+    column integernumber set tag ff3_data_sc='',
+    column floatnumber set tag ff3_data_sc='',
+    column decimalnumber set tag ff3_data_sc=''
+;
+
+-- Assign decrypt and format policies to decrypt/format tag (stay with accountadmin)
+alter tag ff3_data_sc set
+  masking policy ff3_decrypt_format_float_pass3,
+  masking policy ff3_decrypt_format_string_pass3,
+  masking policy ff3_decrypt_format_pass3_decimal ;
+
+select * from ff3_pass3_target1;
+select * from ff3_pass3_source1;
+
+-- Switch to role FF3-Decrypt and see the data decrypted
+use role ff3_decrypt;
+  
+select * from ff3_pass3_target1;
+     
+-- Switch to role Data_SC and see the data encrypted but formatted nicely
+use role data_sc;
+  
+select * from ff3_pass3_target1;
+
+-- Assign format tags to target table to see tokenized data formatted differently. Set the email tag on 
+-- a string column to see it formatted like an email, set the uspostal tag on a string column to see it 
+-- formaated like an uspostal code. 
+-- The same applies to the usphone number tag.
+-- Play with it as you see fit.
+
+use role accountadmin;
+
+alter table ff3_pass3_target1 modify column email set tag email='';
+alter table ff3_pass3_target1 modify column email unset tag email;
+  
+alter table ff3_pass3_target1 modify column postalzip set tag uspostal='';
+alter table ff3_pass3_target1 modify column postalzip unset tag uspostal;
+  
+alter table ff3_pass3_target1 modify column phone set tag usphone='';
+alter table ff3_pass3_target1 modify column phone unset tag usphone;
+  
+  
+-- Check tags on target table
+select * from table(information_schema.tag_references_all_columns('FF3_TESTING_DB.FF3_TESTING_SCHEMA.ff3_pass3_target1', 'table'));
+
+-- shows data masked
+use role sysadmin; 
+
+-- shows data encrypted in pure form
+use role accountadmin;
+
+-- shows data decrypted
+use role ff3_decrypt;
+
+-- shows data encrypted but formatted
+use role data_sc;
+
+select * from ff3_pass3_target1;
+
+-- Formatting in rare cases may lead to duplicates. If a data scientist needs encrypted tokens to be 100% 
+-- unique for SQLJoins use this tag:
+
+use role accountadmin;
+
+alter table ff3_pass3_target1 modify column email set tag sqljoin='';
+alter table ff3_pass3_target1 modify column email unset tag sqljoin;
+  
+use role data_sc;
+
+select  * from ff3_pass3_target1;
+
+-- show encrypted data with different keys
+use role accountadmin;
+
+-- which encryption key do you want to use for the encryption?
+set encryptkey='KEY678902';
+
+-- Create the view
+create or replace view ff3_encrypt_view2 as  select  $encryptkey as KEYID, * from ff3_pass3_source1 ;
+
+-- Attach tags
+alter view ff3_encrypt_view2 modify 
+    column name set tag ff3_encrypt='',
+    column phone set tag ff3_encrypt='',
+    column email set tag ff3_encrypt='',
+    column postalzip set tag ff3_encrypt='',
+    column integernumber set tag ff3_encrypt='',
+    column floatnumber set tag ff3_encrypt='',
+    column decimalnumber set tag ff3_encrypt=''
+;
+grant all privileges on view ff3_encrypt_view2 to role ff3_encrypt;
+
+use role ff3_encrypt;
+
+select * from ff3_encrypt_view2;
+```
 
 <!-- ------------------------ -->
 ## Conclusion
