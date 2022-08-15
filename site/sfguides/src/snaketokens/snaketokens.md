@@ -139,15 +139,12 @@ ls @python_libs; -- should now contain the ff3.zip file
 ```
 
 <!-- ------------------------ -->
-## Tags, Source and Target Table Preparation
-Duration: 2
-
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
+## Tags, Source and Target Table Preparation, Granting Rights
 Duration: 3
 
+In addition to the database, schema, and stage objects, you will also use tags and some demo data in a couple tables. We will create those now. Let's start with the tags. 
+
+```
 --- Create tags
 create or replace tag ff3_data_sc;
 create or replace tag ff3_encrypt;
@@ -155,7 +152,11 @@ create or replace tag sqljoin;
 create or replace tag email;
 create or replace tag uspostal;
 create or replace tag usphone;
+```
 
+Next we create two tables to be used for the demo portions of lab. We will populate one of these with some rows of fake data that have properties that will allow us to exercise the FF3 tokenization well. 
+
+```
 --- Create source table for encrypt, decrypt and data analyst demo
 create or replace table ff3_pass3_source1 (
   name varchar(255) default NULL,
@@ -187,45 +188,48 @@ create or replace table ff3_pass3_target1 (
   floatnumber float NULL,
   decimalnumber number(38,8) NULL
 );
+```
 
+Now we will grant rights to the roles we will use in the demo. 
+
+```
 --- Grant access rights to demo database, schema and tables
-grant usage on database ff3_testing_db TO ROLE ff3_encrypt;
-grant usage on schema ff3_testing_db.ff3_testing_schema TO ROLE ff3_encrypt;
+grant usage on database ff3_testing_db to role ff3_encrypt;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
 
-grant usage on database ff3_testing_db TO ROLE ff3_decrypt;
-grant usage on schema ff3_testing_db.ff3_testing_schema TO ROLE ff3_decrypt;
+grant usage on database ff3_testing_db to role ff3_decrypt;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
 
-grant usage on database ff3_testing_db TO ROLE data_sc;
-grant usage on schema ff3_testing_db.ff3_testing_schema TO ROLE data_sc;
+grant usage on database ff3_testing_db to role data_sc;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role data_sc;
 
-grant usage on database ff3_testing_db TO ROLE sysadmin;
-grant usage on schema ff3_testing_db.ff3_testing_schema TO ROLE sysadmin;
+grant usage on database ff3_testing_db to role sysadmin;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role sysadmin;
 
 grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
 grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
 grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role data_sc;
 grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role sysadmin;
 
+grant insert on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
+
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role data_sc;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role sysadmin;
-
 ```
 
-
-
-
 <!-- ------------------------ -->
-## Keys
+## Setting Up Encryption Keys - CAUTION
 Duration: 2
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+Under the covers, FF3 is using encryption to achieve the results it gets. Like with all encryption, there are keys. These keys are secrets. For this demo, the keys will be set explicitly, and we will give example keys here as part of that demo. The acutal requirement is that they be present as a session variable. These keys can be populated any way that is apprpriate. In a real world setting. they may be retrieved programmatically via External Function from am external KMS or other vault.  
 
-```markdown
-## Step 1 Title
-Duration: 3
+### CAUTION DO NOT EVER USE THESE KEYS IN A REAL WORLD SYSTEM. NOW THAT THEY HAVE BEEN USED IN THIS DEMO, THEY SHOULD BE CONSIDERED DANGEROUS, AND NEVER USED OUTSIDE OF THIE DEMO.
 
+> Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be differen t and therefore the rsulting, underlying encryption operations will turn out differently.
+
+```
 ---  Set the userkeys. 
 -------------------------------------
 ---  For this demo, the keys will be set explicitly. The acutal requirement is that they be present as a session variable. 
@@ -248,8 +252,6 @@ set userkeys='''{
 */
 
 select $userkeys; -- check the results
-
-
 ```
 
 
