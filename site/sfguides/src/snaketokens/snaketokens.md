@@ -1558,14 +1558,12 @@ Now we can change roles to show how the tokenization is applied by default based
 -- Change to role FF3_Encrypt and query the view. Data should be encrypted now.
 use role ff3_encrypt;
 
-select * from ff3_encrypt_view1;
+select * from ff3_encrypt_view1; - you should see tokenized data
 ```
 
+A common question is: what happens when people copy this data to other objects?" Let's step through doing just that by inserting data into a new object, tagging that object appropriately, and then seeing if that data is recoverable in the new object.
 ```
--- Prepare target table for encrypted data and in order to show how to decrypt or show how data analyst 
--- work with encrypted data (stay with role FF3_Encrypt)
-
--- Populate target table with encrypted data (stay with role FF3_Encrypt)
+-- Populate target table with encrypted data.
 insert into ff3_testing_db.ff3_testing_schema.ff3_pass3_target1  select * from ff3_encrypt_view1; 
  
 -- Change back to Accountadmin
@@ -1586,20 +1584,15 @@ alter tag ff3_data_sc set
   masking policy ff3_decrypt_format_float_pass3,
   masking policy ff3_decrypt_format_string_pass3,
   masking policy ff3_decrypt_format_pass3_decimal ;
+```
 
+Now we select from the target and we see the data is in it's tokenized form.
+```
 select * from ff3_pass3_target1;
-select * from ff3_pass3_source1;
+```
 
--- Switch to role FF3-Decrypt and see the data decrypted
-use role ff3_decrypt;
-  
-select * from ff3_pass3_target1;
-     
--- Switch to role Data_SC and see the data encrypted but formatted nicely
-use role data_sc;
-  
-select * from ff3_pass3_target1;
-
+We can use this tagging and policy approach to produce many different effects in how the data is seen. Here we will step through a number of them which will use many of the different UDFs we tested earlier. 
+```
 -- Assign format tags to target table to see tokenized data formatted differently. Set the email tag on 
 -- a string column to see it formatted like an email, set the uspostal tag on a string column to see it 
 -- formaated like an uspostal code. 
@@ -1607,82 +1600,37 @@ select * from ff3_pass3_target1;
 -- Play with it as you see fit.
 
 use role accountadmin;
-
 alter table ff3_pass3_target1 modify column email set tag email='';
-alter table ff3_pass3_target1 modify column email unset tag email;
-  
 alter table ff3_pass3_target1 modify column postalzip set tag uspostal='';
-alter table ff3_pass3_target1 modify column postalzip unset tag uspostal;
-  
 alter table ff3_pass3_target1 modify column phone set tag usphone='';
-alter table ff3_pass3_target1 modify column phone unset tag usphone;
   
-  
--- Check tags on target table
-select * from table(information_schema.tag_references_all_columns('FF3_TESTING_DB.FF3_TESTING_SCHEMA.ff3_pass3_target1', 'table'));
-
--- shows data masked
 use role sysadmin; 
+select * from ff3_pass3_target1; -- shows data tokenized
 
--- shows data encrypted in pure form
 use role accountadmin;
+select * from ff3_pass3_target1; -- shows data encrypted in pure form
 
--- shows data decrypted
 use role ff3_decrypt;
+select * from ff3_pass3_target1; -- shows data detokenized
 
--- shows data encrypted but formatted
 use role data_sc;
-
-select * from ff3_pass3_target1;
-
--- Formatting in rare cases may lead to duplicates. If a data scientist needs encrypted tokens to be 100% 
--- unique for SQLJoins use this tag:
+select * from ff3_pass3_target1; -- shows data tokenized but well formatted
 
 use role accountadmin;
-
 alter table ff3_pass3_target1 modify column email set tag sqljoin='';
-alter table ff3_pass3_target1 modify column email unset tag sqljoin;
   
 use role data_sc;
-
-select  * from ff3_pass3_target1;
-
--- show encrypted data with different keys
-use role accountadmin;
-
--- which encryption key do you want to use for the encryption?
-set encryptkey='KEY678902';
-
--- Create the view
-create or replace view ff3_encrypt_view2 as  select  $encryptkey as KEYID, * from ff3_pass3_source1 ;
-
--- Attach tags
-alter view ff3_encrypt_view2 modify 
-    column name set tag ff3_encrypt='',
-    column phone set tag ff3_encrypt='',
-    column email set tag ff3_encrypt='',
-    column postalzip set tag ff3_encrypt='',
-    column integernumber set tag ff3_encrypt='',
-    column floatnumber set tag ff3_encrypt='',
-    column decimalnumber set tag ff3_encrypt=''
-;
-grant all privileges on view ff3_encrypt_view2 to role ff3_encrypt;
-
-use role ff3_encrypt;
-
-select * from ff3_encrypt_view2;
+select  * from ff3_pass3_target1; -- shows data in SQL join format
 ```
 
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+TBD
 
 ### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- What tokenization is, and how it relates to masking, encryption and other capabilities
+- Leveraging Python to deliver FF3 style tokenization within Snowflake
+- Combining tagging, masking policies, and their relationships to apply tokenization transparently
+- A demo which can be extended to as many data types as you like
