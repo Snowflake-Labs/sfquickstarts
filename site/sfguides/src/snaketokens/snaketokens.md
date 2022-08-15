@@ -17,6 +17,7 @@ Project Snake Tokens aims to give a working MVP for tokenization in Snowflake us
 ### Prerequisites
 - Snowflake Enterprise Edition Account
 - Access to connect to Snowflake via web browser & SnowSQL
+- Access to github CLI, and basic knowledge about its use
 - Beginner level knowledge of Python
 - Working knowledge of SQL in Snowflake
 - Working knowledge of Snowflake's Web UI
@@ -40,7 +41,7 @@ The key to understanding this project is understanding the difference between �
 
 Another aspect of tokenization is often that it will give you tokens that even appear to have the same qualities of the data which was tokenized. In other words, you can tokenize a number and get back a number of the same order of magnitude. You can tokenize an email and get back a string with the same format as an email (i.e. it will have valid email format, and @ in the middle, etc.). Confusingly, this is most commonly referred to as “format preserving encryption” - even though it is another form of what we are calling tokenization here with all the consistency benefits. 
 
-Tokenization, especially the kind which preserves formats, is very complex. When you need to scale it to hundreds of millions of records and beyond, it becomes even more difficult. This is why it is most often accomplished using third party, commercially available solutions. Of course, it is still only technology. So there are libraries in many languages that provide the basic building blocks of tokenization. Project {TBD} takes advantage of pre-existing Python libraries which provide FF3 tokenization. FF3 is based on AES encryption, and has been the standard upon which the entire industry around toeknization has based its work. When Snowflake introduced Python UDFs, it provided Kevin Keller from the Security Field CTO team the chance to flex his programming muscles and apply these libraries to Snowflake’s new features to produce this MVP, which can now serve as an MVP and starting point for customers who wish to have the benefits of tokenization, do not wish to use a commercial solution or external functions, and are willing to roll up their sleeves a bit to get what they want. 
+Tokenization, especially the kind which preserves formats, is very complex. When you need to scale it to hundreds of millions of records and beyond, it becomes even more difficult. This is why it is most often accomplished using third party, commercially available solutions. Of course, it is still only technology. So there are libraries in many languages that provide the basic building blocks of tokenization. Project Snake Tokens takes advantage of pre-existing Python libraries which provide FF3 tokenization. FF3 is based on AES encryption, and has been the standard upon which the entire industry around toeknization has based its work. This is only a demo which can serve as a starting point for customers who wish to have the benefits of tokenization, but do not wish to use a commercial solution or external functions, and are willing to roll up their sleeves a bit to get what they want. 
 
 Let's start getting some things done!
 
@@ -561,11 +562,23 @@ def udf(ff3keyinput, ff3input, userkeys):
 $$;
 ```
 
+Let's be sure all the UDFs were properly created:
+```
+show functions like '%ff3%';
+```
+
+You should see 5 rows of results, with each of these UDFs listed:
+1. DECRYPT_FF3_STRING_PASS3
+2. ENCRYPT_FF3_STRING_PASS3
+3. FORMAT_EMAIL_FF3_STRING_PASS3
+4. FORMAT_FF3_STRING_PASS3
+5. SQLJOIN_FF3_STRING_PASS3
+
 With the UDFs created, we can now run some tests. We will run the tests in a specific order, each building on the last. That order will reflect the natural flow of the tokenization process:
-1. We will tokenize the data using an `encrypt*` UDF.
-2. We will format the newly created token in different ways, reflecting how it would be used in different circumstances. 
-3. We will make the token suitable for unique SQL joins. 
-4. We will de-tokenize the data back to it's original form. 
+- We will tokenize the data using an `encrypt*` UDF.
+- We will format the newly created token in different ways, reflecting how it would be used in different circumstances. 
+- We will make the token suitable for unique SQL joins. 
+- We will de-tokenize the data back to it's original form. 
 
 The thing that is subtle is the need for for formatting and SQL join UDFs. The first formatting example (`format_ff3_string_pass3()`) takes the token and removes metadata which this process adds. That can be useful for display of the string. The second fomatting example (`format_email_ff3_string_pass3()`) is specific to email strings, and will make a token look like an email for display or other pruposes. The SQL join formatting procedure (`sqljoin_ff3_string_pass3()`) also removes metadata and padding, but for the prupose of ensuring that those elements do not accidentally intorduce noise to joins. Essentially they leave the token in its original form without any extra layers. 
 
@@ -1210,6 +1223,28 @@ $$;
 ## Test the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats
 Duration: 5
 
+Let's be sure all the UDFs were properly created:
+```
+show functions like '%ff3%';
+```
+
+You should see 15 rows of results, with each of these UDFs listed:
+1. DECRYPT_FF3_FLOAT_PASS3
+2. DECRYPT_FF3_NUMBER_38_8_PASS3
+3. DECRYPT_FF3_STRING_PASS3
+4. ENCRYPT_FF3_FLOAT_PASS3
+5. ENCRYPT_FF3_NUMBER_38_8_PASS3
+6. ENCRYPT_FF3_STRING_PASS3
+7. FORMAT_EMAIL_FF3_STRING_PASS3
+8. FORMAT_FF3_FLOAT_PASS3
+9. FORMAT_FF3_NUMBER_38_8_PASS3
+10. FORMAT_FF3_STRING_PASS3
+11. FORMAT_FF3_STRING_USPHONE_PASS3
+12. FORMAT_FF3_STRING_USPOSTAL_PASS3
+13. SQLJOIN_FF3_FLOAT_PASS3
+14. SQLJOIN_FF3_NUMBER_38_8_PASS3
+15. SQLJOIN_FF3_STRING_PASS3
+
 With the full set of UDFs installed, let us now test each of them to see how they work. Each of the sets deals with tokenizing the data, formatting the tokens for both human and machine use (*e.g.* in SQL joins), and detokenizing the data.
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
@@ -1558,7 +1593,7 @@ Now we can change roles to show how the tokenization is applied by default based
 -- Change to role FF3_Encrypt and query the view. Data should be encrypted now.
 use role ff3_encrypt;
 
-select * from ff3_encrypt_view1; - you should see tokenized data
+select * from ff3_encrypt_view1; -- you should see tokenized data
 ```
 
 A common question is: what happens when people copy this data to other objects?" Let's step through doing just that by inserting data into a new object, tagging that object appropriately, and then seeing if that data is recoverable in the new object.
