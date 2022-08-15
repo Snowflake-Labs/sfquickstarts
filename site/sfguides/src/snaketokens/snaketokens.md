@@ -33,36 +33,26 @@ Project Snake Tokens aims to give a working MVP for tokenization in Snowflake us
 - A demo that shows how to use Python UDFs to achieve FF3 tokenization
 
 <!-- ------------------------ -->
-## Metadata Configuration
+## Understanding Tokenization
 Duration: 2
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+The key to understanding this project is understanding the difference between “masking” and “tokenization.” These terms (as well as “obfuscation” and even sometimes “encryption”) are often used interchangeably. However, there is an important distinction between them when used in a more formal tone. Masking is something that is destructive. If I take the value “Wade Wilson” and I mask it, I could get completely different masked versions each time I run it through my masking algorithm. When I use tokenization, I expect the results to be the same every time I run “Wade Wilson” through my tokenization algorithm. The result is that if I take the tokenized version of “Wade Wilson” and place it in several different tables, then I can still join on this value even though it’s not the “real” value of the data. Tokenization gives me consistent results across multiple iterations. Since many identifiers are PII, this has a lot of value in analytical data sets. 
 
+Another aspect of tokenization is often that it will give you tokens that even appear to have the same qualities of the data which was tokenized. In other words, you can tokenize a number and get back a number of the same order of magnitude. You can tokenize an email and get back a string with the same format as an email (i.e. it will have valid email format, and @ in the middle, etc.). Confusingly, this is most commonly referred to as “format preserving encryption” - even though it is another form of what we are calling tokenization here with all the consistency benefits. 
 
-- **summary**:  
-- **id**: sample 
-- **categories**: data-governance 
-- **environments**: web 
-- **status**: Published
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Governance, Tokenization, Encrpytion
-- **authors**: [Kevin Keller](mailto:kevin.keller@snowflake.com) 
+Tokenization, especially the kind which preserves formats, is very complex. When you need to scale it to hundreds of millions of records and beyond, it becomes even more difficult. This is why it is most often accomplished using third party, commercially available solutions. Of course, it is still only technology. So there are libraries in many languages that provide the basic building blocks of tokenization. Project {TBD} takes advantage of pre-existing Python libraries which provide FF3 tokenization. FF3 is based on AES encryption, and has been the standard upon which the entire industry around toeknization has based its work. When Snowflake introduced Python UDFs, it provided Kevin Keller from the Security Field CTO team the chance to flex his programming muscles and apply these libraries to Snowflake’s new features to produce this MVP, which can now serve as an MVP and starting point for customers who wish to have the benefits of tokenization, do not wish to use a commercial solution or external functions, and are willing to roll up their sleeves a bit to get what they want. 
 
----
-
-
+Let's start getting some things done!
 
 <!-- ------------------------ -->
-## Roles, Database, Schema, Warehouse, Stage and Intial Grants Setup
-Duration: 2
+## Set Up Roles, Database, Schema, and Warehouse
+Duration: 3
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+To walk through this we will use manuy objects, and we need to create those and grant the rights to them. 
 
-```markdown
-## Step 1 Title
-Duration: 1
+> Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
 
-
+```
 ---  Create objects for use in the demo. 
 -------------------------------------
 --- To walk through this we will use manuy objects, and we need to create those and 
@@ -75,9 +65,9 @@ create or replace role data_sc;
 
 --- Grant demo roles to your demo user
 --- Replace <USER> with your demo user
-grant role ff3_encrypt to user deadpool;
-grant role ff3_decrypt to user deadpool;
-grant role data_sc to user deadpool;
+grant role ff3_encrypt to user <USER>;
+grant role ff3_decrypt to user <USER>;
+grant role data_sc to user <USER>;
 
 --- Create warehouse for demo  
 create or replace warehouse ff3_testing_wh warehouse_size=medium initially_suspended=true;
@@ -105,9 +95,24 @@ grant usage, operate on warehouse ff3_testing_wh to role sysadmin;
 
 --- Create internal stage for the FF3 Python library
 create stage python_libs;
+```
 
+<!-- ------------------------ -->
+## Set Up a Stage and Upload FF3 Python Libraries
+Duration: 5
+
+The libraries we will leveage to accomplish the FF3 tokenization are not included in Snowflake's default set today. So we will have to obtain those, package them for use in Snowflake, and upload them to a Snowflake Stage where they can be accessed by our User Defined Functiosn (UDFs) which will do the heavy lifting later. Let's start by making sure our stage is ready by running a simple list command. 
+
+```
 ls @python_libs; -- should be empty for now, gets "Query produced no results"
+```
 
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results. 
+
+With the stage ready, we can now upload the file. To do this, you will need to upload the FF3 Python library from the Mysto FPE Project(https://github.com/mysto/python-fpe). That will require clone that repository, and zipping up the contents of the `ff3` directory from it. Then you will upload that zip file to the Snowflake Stage you've created. Please see the outline of steps below, but please note they are best suited as an example for Linux or Mac systems. For Windows you may need to adjust the settings a bit more for correct results.
+
+> Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment.
+```
 --- Here you have to upload the FF3 Python library from here https://github.com/mysto/python-fpe
 --- Git clone this library locally, change (cd) into the python-fpe directory, then zip up the ff3 folder, and
 --- upload this zip file into the stage.
@@ -126,16 +131,14 @@ ls @python_libs; -- should be empty for now, gets "Query produced no results"
 Type SQL statements or !help
 <USER>#ff3_testing_wh@ff3_testing_db.ff3_testing_schema> put file://<PATH>/ff3.zip @python_libs auto_compress=false;
 */
+```
 
+Once you have the file uploaded, you can run the list command on your stage agin, and you should not see that zip file listed in the results.
+```
 ls @python_libs; -- should now contain the ff3.zip file
-
-
 ```
 
 <!-- ------------------------ -->
-
-
-
 ## Tags, Source and Target Table Preparation
 Duration: 2
 
