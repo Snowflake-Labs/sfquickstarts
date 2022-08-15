@@ -1245,9 +1245,10 @@ Second, we deal with number data types. Since numbers can be formatting in so ma
 select encrypt_ff3_number_38_8_pass3('KEY678901', 1000, $userkeys);
 ```
 
-![Screenshot showing differences in UI between formats in the display of numbers](/assets/Number-Different-Screen-Shot.png "Number UI Display")
+One important thing to note is that when looking for the value indicated in the output expected, it's best to select the value in the UI and look at the data displayed in the right hand pane. In this case (shown in the screen show below), we see the right hand pane correctly displays ther "raw" value of `4121376945460401.00000000` - which is what we want to see. This only underscores the importance of having many display options to process data like this.
+![Screenshot showing differences in UI between formats in the display of numbers](https://github.com/kkellersnow/sfquickstarts/blob/671c2104bdf534f1920112f29a20f5b161a57f94/site/sfguides/src/snaketokens/assets/Number-Different-Screen-Shot.png "Number UI Display")
 
--- SEE SCREEN SHOT SHOWING DIFFERENT VIEWS IN SNOWFLAKE UI.
+Now we continue to test the number UDFs. 
 ```
 -- Test number token formatting UDF. This gives back the value in the same length and form as it was before 
 -- it was encrypted. 
@@ -1262,7 +1263,10 @@ select sqljoin_ff3_number_38_8_pass3('4121376945460401.00000000');
 -- Test the detokenize number UDF. 
 -- Output should be: 1,000 (1000.00000000) 
 select decrypt_ff3_number_38_8_pass3('KEY678901', 4121376945460401.00000000, $userkeys);
+```
 
+Finally, we move to the other string examples. Above we tested the email string exmaples, but let's try out two more the demo includes.
+```
 -- Above we tested the email string exmaples, but let's try out two more the demo includes.
 
 -- Test string token USphone formatting UDF. This UDF formats and converts the string token into a 
@@ -1288,6 +1292,7 @@ select encrypt_ff3_string_pass3('KEY678901', '17182', $userkeys);
 select format_ff3_string_uspostal_pass3('[C0]58KuL005');
 ```
 
+This gives us a full set of tools, but now we want to see how those tools can be applied in different circumstances. To achieve that, we need to build out a little more for our demo environment. 
 
 <!-- ------------------------ -->
 ## Conclusion
