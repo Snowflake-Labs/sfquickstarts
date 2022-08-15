@@ -45,7 +45,8 @@ Tokenization, especially the kind which preserves formats, is very complex. When
 Let's start getting some things done!
 
 <!-- ------------------------ -->
-## Set Up Roles, Database, Schema, and Warehouse
+
+Set Up Roles, Database, Schema, and Warehouse
 Duration: 3
 
 To walk through this we will use manuy objects, and we need to create those and grant the rights to them. 
@@ -254,22 +255,24 @@ set userkeys='''{
 select $userkeys; -- check the results
 ```
 
-
-
-
-
 <!-- ------------------------ -->
-## Python UDF Installation
-Duration: 2
+## Installing and Testing String Tokenization UDFs
+Duration: 7
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+All the real tokenization work is done in UDFs leveraging Python. We will work with these UDFs in a few stages. First, we will take an example using strings, specifcially emails, and walk through it step by step. Then we will install the remaining UDFs for the data types which are currently supported in this demo code. Finally, we will use the tables and tags we created in the first steps to apply these UDFs to something more like a real world demo. 
 
-```markdown
-## Step 1 Title
-Duration: 3
+There's a lot to copy and paste below. First you will create 5 Python based UDFs leveraging the zip file you uploaded earlier, and then we will run some tests which use those.
 
--- Install the string encrypt UDF
+```
+--- Install & Test the Python-based Tokenization UDFs for Email Strings
+-------------------------------------
+--- All the real work is done in UDFs leveraging Python. We will work with these UDFs in a 
+--- few stages. First, we will take an example using strings, specifcially emails, and walk
+--- through it step by step. Then we will install the remaining UDFs for the data types which
+--- are currently supported in this demo code. Finally, we will use the tables and tags we 
+--- created in the first steps to apply these UDFs to something more like a real world demo. 
 
+--- Install the string encryptng UDF
 create or replace function encrypt_ff3_string_pass3(ff3key string, ff3input string, ff3_user_keys string)
 returns string
 language python
@@ -322,8 +325,7 @@ def udf(ff3keyinput, ff3input, userkeys):
         if lengthchunk==1:
                 plaintext=chunk+padding[0:3]
                 lengthpadding.append('3')
-        
-        
+                
         ciphertext = c.encrypt(plaintext)
         encrypted_value_list.append(ciphertext)
 
@@ -331,39 +333,169 @@ def udf(ff3keyinput, ff3input, userkeys):
     x=0
     for encrypted_value in encrypted_value_list:
         i=i+1
-        #result = result + '[C' + str(i) +']' + encrypted_value + '[C' + str(i) +']'
         result = result + '[C' + lengthpadding[x] +']' + encrypted_value
         x=x+1
 
     if length<10:
         result=result+"00"+str(length)
-        test=result.split('[C]')
-        #print(str(test[-1])[-3:])
-        #print(test)
         return result
 
     if 10 <= length <= 99:
         result=result+'0'+str(length)
-        test=result.split('[C]')
-        #print(test)
-        #print(str(test[-1])[-3:])
         return result
 
     if length>99 :
         result=result+str(length)
-        test=result.split('[C]')
-        #print(test)
-        #print(str(test[-1])[-3:])
         return result
 $$;
 
+--- Install the string token formatting UDF
+create or replace function format_ff3_string_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = 'udf'
+as $$
 
--- Test the string encrypt UDF. Result should be: [C0]4Ig8d005
-select encrypt_ff3_string_pass3('KEY678901', 'hello', $userkeys);
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
+
+def udf(ff3input):
+    result=''
+    encrypted_value_list=ff3input.split('[C')
+    decrypted_value_list=[]
+    encryptedvalue=''
+    i=0
+    x=0
+    
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i >= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+ lastvalue
+    
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+    
+    if x ==1:
+        #formatted=encryptedvalue[2:]
+        formatted=formatted[0:howmany-2]
+        formatted=encryptedvalue[2:]
+    else:
+        formatted=encryptedvalue
+        formatted=formatted[0:howmany]
+        #formatted=encryptedvalue
+        
+    formatted=formatted.replace(' ','')
+   
+    return formatted
+$$;
+
+-- Install string token email formatting UDF
+create or replace function format_email_ff3_string_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = 'udf'
+as $$
 
 
--- Install the decrypt string UDF
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
 
+
+def udf(ff3input):
+    result=''
+    encrypted_value_list=ff3input.split('[C')
+    decrypted_value_list=[]
+    encryptedvalue=''
+    i=0
+    x=0
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i >= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+ lastvalue
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+    
+    if x ==1:
+        email=encryptedvalue[2:]
+    else:
+        email=encryptedvalue
+    
+    howlongemail=len(email)
+    positionemail=howlongemail/2
+    if isDivisibleBy2(positionemail)==True:
+       positionemail=int(positionemail)
+    else:
+       positionemail=int(positionemail+1)
+    email=email.replace('@','')
+    email = email[:positionemail] + "@" + email[positionemail:]
+    email=email[0:howmany]
+    email=email+".com"
+    email=email.replace(' ','')
+    
+    #temporary fix
+    #email=email.replace('0]','')
+    email=email.replace('@@','@')
+   
+    return email
+$$;
+
+--- Install string token SQL join formatting UDF
+create or replace function sqljoin_ff3_string_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = 'udf'
+as $$
+
+def udf(ff3input):
+    result=''
+    encrypted_value_list=ff3input.split('[C')
+ 
+    encryptedvalue=''
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        encryptedvalue=encryptedvalue+encrypted_value[2:]
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    encryptedvalue=encryptedvalue+lastvalue[2:]
+    encryptedvalue=encryptedvalue[:-3]
+  
+    return encryptedvalue
+$$;
+
+--- Install the string decrypting UDF
 create or replace function decrypt_ff3_string_pass3(ff3key string, ff3input string, ff3_user_keys string)
 returns string
 language python
@@ -376,18 +508,13 @@ as $$
 import json
 from ff3 import FF3Cipher
 
-
 def isDivisibleBy2(num):
     if (num % 2) == 0:
         return True
     else:
         return False
 
-
 def udf(ff3keyinput, ff3input, userkeys):
-
-    
-    
     userkeys=userkeys.replace("'","")
     ff3_userkey_dict=json.loads(userkeys)
     userkeys_list=[]
@@ -396,16 +523,9 @@ def udf(ff3keyinput, ff3input, userkeys):
     key=userkeyslist[0]
     tweak=userkeyslist[1]
     padding=userkeyslist[2]
-    
-   
 
     result=''
     length=len(ff3input)
-    #ff3_key_dict=json.loads(ff3key)
-    #keyid = str(list(ff3_key_dict.keys())[0])
-    #ff3_key=ff3_key_dict[keyid][0]
-    #ff3_tweak=ff3_key_dict[keyid][1]
-    #ff3_padding=ff3_key_dict[keyid][2]
 
     c = FF3Cipher.withCustomAlphabet(key, tweak, """0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-().@ '""")
 
@@ -421,14 +541,9 @@ def udf(ff3keyinput, ff3input, userkeys):
             decrypted=decrypted[:-paddinglength]
          decrypted_value_list.append(decrypted)
          encryptedvalue=encryptedvalue+encrypted_value
-      
 
     for decrypted_value in decrypted_value_list:
              result=result+decrypted_value
-
-
-   
-
 
     lastvalue=encrypted_value_list[-1]
     lastvalue = lastvalue[:-3]
@@ -439,24 +554,74 @@ def udf(ff3keyinput, ff3input, userkeys):
         lastdecrypt=lastdecrypt[:-int(paddinglength)]
     result=result+lastdecrypt
     return result
-   
-
-    
-    
-
-
 $$;
+```
 
--- Test the decrypt string UDF. Result should be "hello"
-select decrypt_ff3_string_pass3('KEY678901', '[C0]4Ig8d005', $userkeys);
+With the UDFs created, we can now run some tests. We will run the tests in a specific order, each building on the last. That order will reflect the natural flow of the tokenization process:
+1. We will tokenize the data using an `encrypt*` UDF.
+2. We will format the newly created token in different ways, reflecting how it would be used in different circumstances. 
+3. We will make the token suitable for unique SQL joins. 
+4. We will de-tokenize the data back to it's original form. 
 
+The thing that is subtle is the need for for formatting and SQL join UDFs. The first formatting example (`format_ff3_string_pass3()`) takes the token and removes metadata which this process adds. That can be useful for display of the string. The second fomatting example (`format_email_ff3_string_pass3()`) is specific to email strings, and will make a token look like an email for display or other pruposes. The SQL join formatting procedure (`sqljoin_ff3_string_pass3()`) also removes metadata and padding, but for the prupose of ensuring that those elements do not accidentally intorduce noise to joins. Essentially they leave the token in its original form without any extra layers. 
 
+First, we will apply tokenization to a fake email address to get a token.
+```
+-- Now we can test the procedure for strings that contain emails. The first thing we do is 
+-- take an email string and tokenize it using the FF3 method. You can run this as many times
+-- as you like and you will always get the same result. Only when you change the keys or the
+-- input string will you get a different output.
+-- Output should be: [C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031
+select encrypt_ff3_string_pass3('KEY678901', 'ullamcorper.viverra@hotmail.org', $userkeys);
+```
 
+Next, we will apply both generic string formatting and specific email formatting to the token.
+```
+-- The raw token result carries not only the encrypted value of the string, but also a certain
+-- amount of metadata to help the system manage the tokens and their decryption. This removes 
+-- the some metadata from the token and makes sure that the token length matches the intial 
+-- value that was encrypted. 
+-- Output should be: D.eaU(5+iijkXsS4@yFULDB58hLTGDg (Note the "@" is coincidental, not related to 
+-- the email used as input. You can test with other values to convince yourself of this.)
+select format_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031');
 
+-- This UDF formats and converts the string token into a string token that looks like an email
+-- to a human user. 
+-- Output should be: D.eaU(5+iijkXsS4yF@ULDB58hLTGDgyYs.com (Note the ".com" and "@")
+select format_email_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031');
+```
 
+Next, we make the token ready to be used in SQL joins.
+```
+-- Test string token SQL join formatting UDF. This UDF removes metadata and just gives the plain 
+-- token back. This insures that SQL joins can be done with token values that are guaranteed to be 
+-- unique. This removes any token formatting. 
+-- Output should be: D.eaU(5+iijkXsS4@yFULDB58hLTGDgyYs
+select sqljoin_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031');
+```
 
---Create the float encrypt UDF
+Finally, we will take the token and convert it back to it's original form. 
+```
+-- Finally, this takes the token in it's full form and converts it back to the real string as 
+-- long as the session is in possesion of the keys.
+-- Output should be: ullamcorper.viverra@hotmail.org
+select decrypt_ff3_string_pass3('KEY678901', '[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031', $userkeys);
+```
+What we have seen in this section is our first glimpse of the potential of using these FF3 capabilities. After we get the rest of the UDFs set up, we can see them at full speed. 
 
+<!-- ------------------------ -->
+## Install the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats
+Duration: 3
+
+Now that we have the basic concept understood, we will install the UDFs needed for all the other data types. After they are installed we will test them all out. Get your copy + paste muscles all warmed up...
+
+```
+--- Install the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
+-------------------------------------
+--- Now that we have the basic concept understood, we will install the UDFs needed for all the 
+--- other data types. After they are installed we will test them all out.
+
+--- Install the encrypt float UDF
 create or replace function encrypt_ff3_float_pass3(ff3key string, ff3input float, ff3_user_keys string)
 returns float
 language python
@@ -502,14 +667,12 @@ def udf(ff3key_input, ff3_input, userkeys):
     detect_float=plaintext_org.split('.')
 
     #dont try to encode more than 11 digits with float or more than 9 digits before or after the comma
-
     if len(detect_float[0]) >= 10:
         print ("VALUE BEFORE COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED")
     if len(detect_float[1])>=10:
         print("VALUE AFTER COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED")
     if len(detect_float[1])+len(detect_float[0])>=12:
         print ("VALUE  TOO BIG NOT MORE THAN 11 DIGITS ALLOWED")
-
 
     plaintext =  value
     plaintext=plaintext.replace('.','')
@@ -527,17 +690,10 @@ def udf(ff3key_input, ff3_input, userkeys):
 
     endresult=str(commais)+endresult+str(beforecomma)+str(aftercomma)+str(lengthpadding)
     return float(endresult)
-    
-
-
-
 $$;
 
--- Test the encrypt float UDF. Result should be : 1417378124
-select encrypt_ff3_float_pass3('KEY678901', 9.03, $userkeys);
-
--- Install the decrypt float UDF
-create or replace function decrypt_ff3_float_pass3(ff3key string, ff3input float, ff3_user_keys string)
+--- Install the float token formatting UDF
+create or replace function format_ff3_float_pass3(ff3input float)
 returns float
 language python
 runtime_version = 3.8
@@ -546,6 +702,47 @@ imports = ('@python_libs/ff3.zip')
 handler = 'udf'
 as $$
 
+def udf(ff3_input):
+    formatting=str(ff3_input)[-5:]
+    formatting = formatting[:-3]
+
+    beforecomma=int(formatting[0])
+    aftercomma=int(formatting[-1])
+    numberofdigits=beforecomma+aftercomma
+
+    formatted=str(ff3_input)[0:numberofdigits]
+    formatted=formatted[:beforecomma] + '.' + formatted[beforecomma:]
+
+    checkformatted=int(formatted[-1])
+    if checkformatted==0:
+            formatted = formatted[:-1] + '1'
+
+    return float(formatted)
+$$;
+
+--- Install  float token formatting for sql joins UDF
+create or replace function sqljoin_ff3_float_pass3(ff3input float)
+returns float
+language python
+runtime_version = 3.8
+packages = ('pycryptodome')
+imports = ('@python_libs/ff3.zip')
+handler = 'udf'
+as $$
+
+def udf(ff3_input):
+    return float(ff3_input)
+$$;
+
+--- Install the decrypt float UDF
+create or replace function decrypt_ff3_float_pass3(ff3key string, ff3input float, ff3_user_keys string)
+returns float
+language python
+runtime_version = 3.8
+packages = ('pycryptodome')
+imports = ('@python_libs/ff3.zip')
+handler = 'udf'
+as $$
 
 from ff3 import FF3Cipher
 import json
@@ -572,7 +769,6 @@ def udf(ff3key_input, ff3_input, userkeys):
 
     lengthpadding=int(str(ff3_input)[-3])
     commais=int(str(ff3_input)[0])
-
     
     if lengthpadding==1:
             decrypted=decrypted[:commais] + '.' + decrypted[commais:]
@@ -582,16 +778,11 @@ def udf(ff3key_input, ff3_input, userkeys):
 
 
     return float(decrypted)
-
 $$;
 
--- Test the decrypt float UDF. Result should be 9.03
-select decrypt_ff3_float_pass3('KEY678901',1417378124, $userkeys);
-
-
-
--- Install the encrypt number UDF. You can install it as taking integers and returning integers or taking and returning number 38,X)
-create or replace function encrypt_ff3_number_pass3(ff3key string, ff3input number(38,8), ff3_user_keys string)
+--- Install the encrypt number UDF. You can install it as taking integers and returning 
+--- integers or taking and returning number 38,X)
+create or replace function encrypt_ff3_number_38_8_pass3(ff3key string, ff3input number(38,8), ff3_user_keys string)
 returns number(38,8)
 language python
 runtime_version = 3.8
@@ -605,10 +796,7 @@ import json
 import re
 from decimal import *
 
-
-
 def udf(ff3key, ff3input, userkeys):
-
     userkeys=userkeys.replace("'","")
     ff3_userkey_dict=json.loads(userkeys)
     userkeys_list=[]
@@ -618,12 +806,9 @@ def udf(ff3key, ff3input, userkeys):
     tweak=userkeyslist[1]
     padding=userkeyslist[2]
     
-    
     checkdecimal="." in str(ff3input)
     
-    
     if checkdecimal==False :
-        
         length=len(str(ff3input))
         lengthpadding=0
     
@@ -654,22 +839,16 @@ def udf(ff3key, ff3input, userkeys):
             lengthpadding=6
         
         ciphertext = c.encrypt(plaintext)
-    
         
         if length<10:
             ciphertext=ciphertext+"0"+str(length)
         else:
             ciphertext=ciphertext+str(length)
 
-
         ciphertext=str(lengthpadding)+ciphertext
         return int(ciphertext)
         
-        
     if checkdecimal==True :
-    
-       
-
         c = FF3Cipher(ff3key, tweak)
 
         value = str(ff3input)
@@ -691,16 +870,6 @@ def udf(ff3key, ff3input, userkeys):
         commais=commais
         detect_float=plaintext_org.split('.')
 
-        #dont try to encode more than 11 digits with float or more than 9 digits before or after the comma
-
-        #if len(detect_float[0]) >= 10:
-         #   print ("VALUE BEFORE COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED")
-        #if len(detect_float[1])>=10:
-        #    print("VALUE AFTER COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED")
-        #if len(detect_float[1])+len(detect_float[0])>=12:
-        #    print ("VALUE  TOO BIG NOT MORE THAN 11 DIGITS ALLOWED")
-
-
         plaintext =  value
         plaintext=plaintext.replace('.','')
         if ff3_padding !=None:
@@ -713,13 +882,7 @@ def udf(ff3key, ff3input, userkeys):
         beforecomma=len(detect_float[0])
         aftercomma=len(detect_float[1])
         
-        #d = Decimal(value)
-        #aftercomma=int(d.as_tuple().exponent)
-        #aftercomma=-aftercomma
-        
         aftercommacheck=value
-       # before, sep, after = strValue.partition('-')
-        #strValue = before
         
         mo = re.match('.+([1-9])[^1-9]*$', aftercommacheck)
         if mo !=  None:
@@ -729,644 +892,25 @@ def udf(ff3key, ff3input, userkeys):
             aftercomma=len(aftercommacheck[1])
         else:
             aftercomma=0
-            
-        
-        
-        
-   
-        
 
         endresult=ciphertext
 
         endresult=str(commais)+endresult+str(beforecomma)+str(aftercomma)+str(lengthpadding)
         
-
-
-        
         return Decimal(endresult)
-
-
-
-
 $$;
 
--- Test the encrypt number UDF. Result for decimal 38,10 should be 4121376945460401.00000000 . Result for integer should be 319241204 .
-select encrypt_ff3_number_pass3('KEY678901', 1000, $userkeys);
-
-
-
-
---Install the decrypt number UDF. Can take and return an integer or decimal like number 38,X
-
-
-create or replace function decrypt_ff3_number_pass3(ff3key string, ff3input number(38,8), ff3_user_keys string)
-returns number(38,8)
-language python
-runtime_version = 3.8
-packages = ('pycryptodome')
-imports = ('@python_libs/ff3.zip')
-handler = 'udf'
-as $$
-
-from ff3 import FF3Cipher
-import json
-from decimal import *
-
-
-
-def udf(ff3key, ff3input, userkeys):
-
-
-    userkeys=userkeys.replace("'","")
-    ff3_userkey_dict=json.loads(userkeys)
-    userkeys_list=[]
-    userkeyslist=ff3_userkey_dict[ff3key[3:]]
-    
-    ff3key=userkeyslist[0]
-    tweak=userkeyslist[1]
-    padding=userkeyslist[2]
-    
-    checkdecimal="." in str(ff3input)
-    
-    if checkdecimal==False :
-        
-        lengthpadding=str(ff3input)[0]
-        lengthpadding=int(lengthpadding)
-        lengthpadding=lengthpadding-1
-    
-        c = FF3Cipher(ff3key, tweak)
-
-        
-        ciphertext=str(ff3input)[1:]
-        ciphertext=ciphertext[:-2]
-        decrypted = c.decrypt(ciphertext)
-        length=lengthpadding 
- 
-        if length==5:
-            decrypted=decrypted[:-5]
-        if length==4:
-            decrypted=decrypted[:-4]
-        if length==3:
-            decrypted=decrypted[:-3]
-        if length==2:
-            decrypted=decrypted[:-2]
-        if length==1:
-            decrypted=decrypted[:-1]
-
-    
-
-        return int(decrypted)
-        
-    if checkdecimal==True :
-    
-        c = FF3Cipher(ff3key, tweak)
-
-        value=str(ff3input)
-        valuesplit=value.split('.')
-        
-        plaintext_org=valuesplit[0]
-        plaintext_org=plaintext_org[1:]
-        plaintext_org=plaintext_org[:-3]
-
-        decrypted = c.decrypt(str(plaintext_org))
-        value=valuesplit[0]
-        lengthpadding=int(value[-1])
-        commais=int(value[0])
-
-     
-        if lengthpadding==1:
-                decrypted=decrypted[:commais] + '.' + decrypted[commais:]
-        else:
-                decrypted=decrypted[:-lengthpadding+1]
-                decrypted=decrypted[:commais] + '.' + decrypted[commais:]
-
-
-        return Decimal(decrypted)
-
-
-
-$$;
-
--- Test the decrypt number UDF. Decimal (number 38,8) result should be 1,000 (1000.00000000) 
-select decrypt_ff3_number_pass3('KEY678901', 4121376945460401.00000000, $userkeys);
-
---Integer test:  Result should 1,000 (1000)
---select decrypt_ff3_number_pass3('KEY678901', 319241204, $userkeys);
-
-
--- Install and test string token formatting UDFs.
-
-
-create or replace function format_ff3_string_pass3(ff3input string)
-returns string
-language python
-runtime_version = 3.8
-handler = 'udf'
-as $$
-
-
-
-
-def isDivisibleBy2(num):
-    if (num % 2) == 0:
-        return True
-    else:
-        return False
-
-
-def udf(ff3input):
-
-    
-    
-
-
-    result=''
-    encrypted_value_list=ff3input.split('[C')
-    decrypted_value_list=[]
-    encryptedvalue=''
-    i=0
-    x=0
-
-    
-    for encrypted_value in encrypted_value_list[1:-1]:
-     
-        if i >= 1:
-            x=1
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        
-        else:
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        i=i+1
-
-
-    ## Formatting Block
-    lastvalue=encrypted_value_list[-1]
-    lastvalue=lastvalue[2:]
-    encryptedvalue=encryptedvalue+ lastvalue
-    
-    howmany = int(encryptedvalue[-3:])
-    encryptedvalue=encryptedvalue[:-3]
-    
-    if x ==1:
-        
-        #formatted=encryptedvalue[2:]
-        formatted=formatted[0:howmany-2]
-        formatted=encryptedvalue[2:]
-        
-        
-        
-        
-    else:
-         
-        formatted=encryptedvalue
-        #formatted=formatted[0:howmany]
-        #formatted=encryptedvalue
-         
-         
-    formatted=formatted.replace(' ','')
-   
-    
-    
-
-   
-    return formatted
-
-
-$$;
-
--- Test the string token formatting. This removes the some metadata from the token and makes sure that the token length matches the intial value that was encrypted. Output should be 4Ig8d .
-
-select format_ff3_string_pass3('[C0]4Ig8d005');
-select format_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031'); 
-
-
-
--- Install string token USphone formatting UDFs.
-create or replace function format_ff3_string_usphone_pass3(ff3input string)
-returns string
-language python
-runtime_version = 3.8
-handler = 'udf'
-as $$
-
-
-def split(word):
-    return [char for char in word]
-
-def isDivisibleBy2(num):
-    if (num % 2) == 0:
-        return True
-    else:
-        return False
-
-
-def udf(ff3input):
-
-    
-    
-
-
-    result=''
-    encrypted_value_list=ff3input.split('[C')
-    decrypted_value_list=[]
-    encryptedvalue=''
-    i=0
-    x=0
-
-    for encrypted_value in encrypted_value_list[1:-1]:
-        if i >= 1:
-            x=1
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        
-        else:
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        i=i+1
-
-
-    ## Formatting Block
-    lastvalue=encrypted_value_list[-1]
-    lastvalue=lastvalue[2:]
-    encryptedvalue=encryptedvalue+lastvalue
-
-    howmany = int(encryptedvalue[-3:])
-    encryptedvalue=encryptedvalue[:-3]
-    
-    #formatted=encryptedvalue[0:howmany]
-    
-    if x ==1:
-        
-        #formatted=encryptedvalue[2:]
-        #formatted=formatted[0:howmany-2]
-        formatted=encryptedvalue[2:]
-        
-        
-        
-        
-    else:
-         
-        formatted=encryptedvalue
-        #formatted=formatted[0:howmany]
-        #formatted=encryptedvalue
-    
-    formatted=formatted.replace(' ','')
-    
-    l = split(formatted)
-    #k = [ord(x)-96 for x in l]
-    k = [ord(x) for x in l]
-    
-    for i in k:
-        result=result+str(i)
-   
-    
-    
-
-   
-    
-    result=result[:3] + ") " + result[3:]
-    result='('+result
-    result = (result[:14] ) if len(result) > 14 else result
-    #result=result[:-1]
-    return result
-
-    
-    
-
-
-$$;
-
-----  Test string token USphone formatting UDFs. This UDF formats and converts the string token into a string token that is represented by numbers and looks like a US phone number. Output should be (527) 31035610 .
-select format_ff3_string_usphone_pass3('[C0]4Ig8d005');
-
--- Install string token US-postal-code formatting UDFs.
-create or replace function format_ff3_string_uspostal_pass3(ff3input string)
-returns string
-language python
-runtime_version = 3.8
-handler = 'udf'
-as $$
-
-
-def split(word):
-    return [char for char in word]
-
-def isDivisibleBy2(num):
-    if (num % 2) == 0:
-        return True
-    else:
-        return False
-
-
-def udf(ff3input):
-
-    
-    
-
-
-    result=''
-    encrypted_value_list=ff3input.split('[C')
-    decrypted_value_list=[]
-    encryptedvalue=''
-    i=0
-    x=0
-
-    for encrypted_value in encrypted_value_list[1:-1]:
-        if i >= 1:
-            x=1
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        
-        else:
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        i=i+1
-
-
-    ## Formatting Block
-    lastvalue=encrypted_value_list[-1]
-    lastvalue=lastvalue[2:]
-    encryptedvalue=encryptedvalue+ lastvalue
-    
-    howmany = int(encryptedvalue[-3:])
-    encryptedvalue=encryptedvalue[:-3]
-    #formatted=encryptedvalue[0:howmany]
-    
-    if x ==1:
-        
-        #formatted=encryptedvalue[2:]
-        #formatted=formatted[0:howmany-2]
-        formatted=encryptedvalue[2:]
-        
-        
-        
-        
-    else:
-         
-        formatted=encryptedvalue
-        #formatted=formatted[0:howmany]
-        #formatted=encryptedvalue
-    
-    formatted=formatted.replace(' ','')
-    
-    l = split(formatted)
-    #k = [ord(x)-96 for x in l]
-    k = [ord(x) for x in l]
-    
-    for i in k:
-        result=result+str(i)
-   
-    
-    
-
-   
-    
-    result = (result[:5] ) if len(result) > 5 else result
-    #result=result[:-1]
-    return result
-
-    
-    
-
-
-$$;
-
-----  Test string token USpostal-code formatting UDFs. This UDF formats and converts the string token into a string token that is represented by numbers and looks like a US post code number. Output should be 52731 .
-select format_ff3_string_uspostal_pass3('[C0]4Ig8d005');
-
-
-
-
--- Install string token email formatting UDFs.
-create or replace function format_email_ff3_string_pass3(ff3input string)
-returns string
-language python
-runtime_version = 3.8
-handler = 'udf'
-as $$
-
-
-def isDivisibleBy2(num):
-    if (num % 2) == 0:
-        return True
-    else:
-        return False
-
-
-def udf(ff3input):
-
-
-    result=''
-    encrypted_value_list=ff3input.split('[C')
-    decrypted_value_list=[]
-    encryptedvalue=''
-    i=0
-    x=0
-
-    for encrypted_value in encrypted_value_list[1:-1]:
-        if i >= 1:
-            x=1
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        
-        else:
-            encrypted_value=encrypted_value[2:]
-            encryptedvalue=encryptedvalue+encrypted_value
-        i=i+1
-
-
-    ## Formatting Block
-    lastvalue=encrypted_value_list[-1]
-    lastvalue=lastvalue[2:]
-    encryptedvalue=encryptedvalue+ lastvalue
-    howmany = int(encryptedvalue[-3:])
-    encryptedvalue=encryptedvalue[:-3]
-   
-   
-    
-    #email=encryptedvalue[0:howmany]
-    
-    if x ==1:
-        
-        #formatted=encryptedvalue[2:]
-        #formatted=formatted[0:howmany-2]
-        email=encryptedvalue[2:]
-        
-        
-        
-        
-    else:
-         
-        email=encryptedvalue
-        #formatted=formatted[0:howmany]
-        #formatted=encryptedvalue
-    
-    howlongemail=len(email)
-    positionemail=howlongemail/2
-    if isDivisibleBy2(positionemail)==True:
-       positionemail=int(positionemail)
-    else:
-       positionemail=int(positionemail+1)
-    email=email.replace('@','')
-    email = email[:positionemail] + "@" + email[positionemail:]
-    email=email[0:howmany]
-    email=email+".com"
-    email=email.replace(' ','')
-    
-    #temporary fix
-    #email=email.replace('0]','')
-    email=email.replace('@@','@')
-    
-
-
-   
-    return email
-
-$$;
-
-
-----  Test string token email formatting UDFs. This UDF formats and converts the string token into a string token that looks like an email . Output should be 4Ig@8d.com .
-
-select format_email_ff3_string_pass3('[C0]4Ig8d005');
-select format_email_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031');
-
-
--- Install string token sqljoin formatting UDFs.
-create or replace function sqljoin_ff3_string_pass3(ff3input string)
-returns string
-language python
-runtime_version = 3.8
-handler = 'udf'
-as $$
-
-def udf(ff3input):
-
-
-    result=''
-    encrypted_value_list=ff3input.split('[C')
- 
-    encryptedvalue=''
-
-    for encrypted_value in encrypted_value_list[1:-1]:
-        encryptedvalue=encryptedvalue+encrypted_value[2:]
-
-
-    ## Formatting Block
-    lastvalue=encrypted_value_list[-1]
-    encryptedvalue=encryptedvalue+lastvalue[2:]
-    #howmany = int(encryptedvalue[-3:])
-    encryptedvalue=encryptedvalue[:-3]
-
-    
-   
-    return encryptedvalue
-
-$$;
-
-----  Test string token sqljoin formatting UDFs. This UDF removes metadata and just gives the plain token back. This insures that sql joins can be done with token values that are guaranteed to be unique. This essentially removes any token 
--- formatting however. Output should be 4Ig8d .
-
-select sqljoin_ff3_string_pass3('[C0]4Ig8d005');
-
-
--- Install the float token formatting UDF
-
-create or replace function format_ff3_float_pass3(ff3input float)
-returns float
-language python
-runtime_version = 3.8
-packages = ('pycryptodome')
-imports = ('@python_libs/ff3.zip')
-handler = 'udf'
-as $$
-
-
-
-def udf(ff3_input):
-
-    
-
-    #lengthpadding=int(str(ff3_input)[-3])
-    #commais=int(str(ff3_input)[0])
-    
-    formatting=str(ff3_input)[-5:]
-    formatting = formatting[:-3]
-   
-
-    beforecomma=int(formatting[0])
-    aftercomma=int(formatting[-1])
-    numberofdigits=beforecomma+aftercomma
-    
-
-    formatted=str(ff3_input)[0:numberofdigits]
-    formatted=formatted[:beforecomma] + '.' + formatted[beforecomma:]
-
-    checkformatted=int(formatted[-1])
-    if checkformatted==0:
-            formatted = formatted[:-1] + '1'
-
-
-
-    return float(formatted)
-
-$$;
-
--- Test the float token formatting. This formatter reads the metadata from the token and gives back a float number that has the same length and the comma at the same place as the original float number that was encrypted.
--- Output should be: 1.41
-
-select format_ff3_float_pass3 (1417378124);
-
-
--- Install  float token formatting for sql joins UDF
-create or replace function sqljoin_ff3_float_pass3(ff3input float)
-returns float
-language python
-runtime_version = 3.8
-packages = ('pycryptodome')
-imports = ('@python_libs/ff3.zip')
-handler = 'udf'
-as $$
-
-
-
-def udf(ff3_input):
-
-    
-
-    
-    #formatting=str(ff3_input)[1:]
-    #formatting = formatting[:-4]
-   
-
-    return float(ff3_input)
-
-$$;
-
--- Test the float token sqljoin formatting. This just passes through the token and returns it as is in order to make sure this value is unique for sql joins. Output should be: 1760531124 .
-
-select sqljoin_ff3_float_pass3(1760531124);
-
-
--- Install the number token formatting UDF
-
-
-create or replace function format_ff3_number_pass3(ff3input number(38,8))
+--- Install the number token formatting UDF
+create or replace function format_ff3_number_38_8_pass3(ff3input number(38,8))
 returns number(38,8)
 language python
 runtime_version = 3.8
 handler = 'udf'
 as $$
 
-
 from decimal import *
 
-
-
 def udf(ff3input):
-
-    
     checkdecimal="." in str(ff3input)
     
     if checkdecimal==False :
@@ -1378,13 +922,11 @@ def udf(ff3input):
         formatted=value[1:]
         formatted=formatted[:-2]
         formatted=formatted[0:length]
-        #formatted='1'+formatted
         final=''
         addition=0
         numberofzeros=0
         nullen=''
         result=0
-        
         
         if formatted[0]=='0':
             numberofzeros=length-1
@@ -1394,15 +936,9 @@ def udf(ff3input):
             final=str(addition)+nullen
             result=int(formatted)+int(final)
             return result
-            
-
         return int(formatted)
         
     if checkdecimal==True :
-    
-    #1114907569131.00000000 = 9.021
-    #str(commais)+endresult+str(beforecomma)+str(aftercomma)+str(lengthpadding)
-    
         value=str(ff3input).split('.')
         result=value[0]
         result=result[1:]
@@ -1421,77 +957,32 @@ def udf(ff3input):
             acdigits=0
         
         endresult=str(bcdigits)+'.'+str(acdigits)
-        
-        
-        
       
         return Decimal(endresult)
-
-
-
 $$;
 
-
-
---  Test number token formatting UDFs if used number(38.X) for input/output. This gives back the value in the same length and form as it was before it was encrypted. Output should be 1,213 (1213.00000000)
-select format_ff3_number_pass3('4121376945460401.00000000');
-
---  Test number token formatting UDF if used integer for input/output. This gives back the value in the same length and form as it was before it was encrypted. Output should be 1924 .
---select format_ff3_number_pass3('319241204');
-
-
--- Install the sql join formatting UDF for numbers. 
-
-create or replace function sqljoin_ff3_number_pass3(ff3input number(38,8))
+--- Install the sql join formatting UDF for numbers. 
+create or replace function sqljoin_ff3_number_38_8_pass3(ff3input number(38,8))
 returns number(38,8)
 language python
 runtime_version = 3.8
 handler = 'udf'
 as $$
 
-
 from decimal import *
 
-
-
 def udf(ff3input):
-
-    
     checkdecimal="." in str(ff3input)
     
     if checkdecimal==False :
-    
         value=str(ff3input)
-        #length=int(value[-2:])
         
         formatted=''
         formatted=value[1:]
         formatted=formatted[:-2]
-        #formatted=formatted[0:length]
-        #formatted='1'+formatted
-        #final=''
-        #addition=0
-        #numberofzeros=0
-        #nullen=''
-        #result=0
-        
-        
-        #if formatted[0]=='0':
-        #    numberofzeros=length-1
-        #    addition=length-numberofzeros
-        #    for zeros in range(numberofzeros):
-        #        nullen=nullen+'0'
-        #    final=str(addition)+nullen
-        #    result=int(formatted)+int(final)
-        #    return result
-            
         return int(formatted)
         
     if checkdecimal==True :
-    
-    #1114907569131.00000000 = 9.021
-    #str(commais)+endresult+str(beforecomma)+str(aftercomma)+str(lengthpadding)
-    
         value=str(ff3input).split('.')
         result=value[0]
         result=result[1:]
@@ -1499,197 +990,303 @@ def udf(ff3input):
         commas=result[-2:]
         result=result[:-2]
         
-        #beforecomma=int(commas[0])
-        #aftercomma=int(commas[-1])
-        
         bcdigits=result
         
         acdigits=0
         
         endresult=str(bcdigits)+'.'+str(acdigits)
-        
-        
-        
       
         return Decimal(endresult)
-
 $$;
 
+--- Install the decrypt number UDF. Can take and return an integer or decimal like number 38,X
+create or replace function decrypt_ff3_number_38_8_pass3(ff3key string, ff3input number(38,8), ff3_user_keys string)
+returns number(38,8)
+language python
+runtime_version = 3.8
+packages = ('pycryptodome')
+imports = ('@python_libs/ff3.zip')
+handler = 'udf'
+as $$
 
+from ff3 import FF3Cipher
+import json
+from decimal import *
 
-
---  Test number token formatting UDF if used with number(38.X) for input/output. This gives back a unique simplified token to guarantee uniqueness for sql joins. Output should be 121376945460.00000000 with number 38,8.
-select sqljoin_ff3_number_pass3('4121376945460401.00000000');
-
---  Test number token formatting UDF if used with integer for input/output. This gives back a unique simplified token to guarantee uniqueness for sql joins. Output should be 192412 with integer. 
---select sqljoin_ff3_number_pass3('319241204');
-
-
-
-
-
-```
-
-
-
-<!-- ------------------------ -->
-
-
-## Policy Setup
-Duration: 2
-
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
-Duration: 3
-
---Create encrypt polices 
-
-
-create or replace masking policy ff3_encrypt_string_pass3 as (val string, keyid string)  returns string ->
-  case
-    when  current_role() in ('ACCOUNTADMIN') 
-     then val
-   when  current_role() in ('FF3_ENCRYPT')
-     then encrypt_ff3_string_pass3(keyid,val, $userkeys)
-    else '** masked **'
-  end;
-  
-  create or replace masking policy ff3_encrypt_float_pass3 as (val float,keyid string)  returns float ->
-  case
-   when  current_role() in ('ACCOUNTADMIN') 
-     then val
-    when  current_role() in ('FF3_ENCRYPT') 
-     then encrypt_ff3_float_pass3(keyid,val, $userkeys)
-    else -999
-  end;
-  
- create or replace masking policy ff3_encrypt_number_pass3_integer as (val integer,keyid string)  returns integer ->
-  case
-   when  current_role() in ('ACCOUNTADMIN') 
-     then val
-    when  current_role() in ('FF3_ENCRYPT') 
-     then encrypt_ff3_number_pass3(keyid,val, $userkeys)
-    else -999
-  end;
-
-
- create or replace masking policy ff3_encrypt_number_pass3_decimal as (val number(38,8),keyid string)  returns number(38,8) ->
-  case
-   when  current_role() in ('ACCOUNTADMIN') 
-     then val
-    when  current_role() in ('FF3_ENCRYPT') 
-     then encrypt_ff3_number_pass3(keyid,val, $userkeys)
-    else -999
-  end;
-  
-  
-
---  Create decrypt and format policies 4x 
-
-
-create or replace masking policy ff3_decrypt_format_string_pass3 as (val string, keyid string)  returns string ->
-  case
-    when  current_role() in ('FF3_DECRYPT')
-     then decrypt_ff3_string_pass3(keyid,val, $userkeys)
-     
-     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
-     then sqljoin_ff3_string_pass3(val)  
+def udf(ff3key, ff3input, userkeys):
+    userkeys=userkeys.replace("'","")
+    ff3_userkey_dict=json.loads(userkeys)
+    userkeys_list=[]
+    userkeyslist=ff3_userkey_dict[ff3key[3:]]
     
-    when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('email')=''
-     then format_email_ff3_string_pass3(val)
+    ff3key=userkeyslist[0]
+    tweak=userkeyslist[1]
+    padding=userkeyslist[2]
+    
+    checkdecimal="." in str(ff3input)
+    
+    if checkdecimal==False :
+        
+        lengthpadding=str(ff3input)[0]
+        lengthpadding=int(lengthpadding)
+        lengthpadding=lengthpadding-1
+    
+        c = FF3Cipher(ff3key, tweak)
+        
+        ciphertext=str(ff3input)[1:]
+        ciphertext=ciphertext[:-2]
+        decrypted = c.decrypt(ciphertext)
+        length=lengthpadding 
+ 
+        if length==5:
+            decrypted=decrypted[:-5]
+        if length==4:
+            decrypted=decrypted[:-4]
+        if length==3:
+            decrypted=decrypted[:-3]
+        if length==2:
+            decrypted=decrypted[:-2]
+        if length==1:
+            decrypted=decrypted[:-1]
+
+        return int(decrypted)
+        
+    if checkdecimal==True :
+        c = FF3Cipher(ff3key, tweak)
+
+        value=str(ff3input)
+        valuesplit=value.split('.')
+        
+        plaintext_org=valuesplit[0]
+        plaintext_org=plaintext_org[1:]
+        plaintext_org=plaintext_org[:-3]
+
+        decrypted = c.decrypt(str(plaintext_org))
+        value=valuesplit[0]
+        lengthpadding=int(value[-1])
+        commais=int(value[0])
      
-    when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('uspostal')=''
-     then format_ff3_string_uspostal_pass3(val)
-     
-     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('usphone')=''
-     then format_ff3_string_usphone_pass3(val)
-     
-    when  current_role() in ('DATA_SC')
-     then format_ff3_string_pass3(val) 
-    when  current_role() in ('ACCOUNTADMIN') 
-     then val
-    else '** masked **'
-  end;
-  
-  
-  create or replace masking policy ff3_decrypt_format_float_pass3 as (val float, keyid string)  returns float ->
-  case
-    when  current_role() in ('FF3_DECRYPT')
-     then decrypt_ff3_float_pass3(keyid,val, $userkeys)
-    when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
-     then sqljoin_ff3_float_pass3(val)
-    when  current_role() in ('DATA_SC')
-     then format_ff3_float_pass3(val)
-    when  current_role() in ('ACCOUNTADMIN') 
-     then val
-    else -999
-  end;
-  
- create or replace masking policy ff3_decrypt_format_pass3_integer as (val integer, keyid string)  returns integer ->
-  case
-    when  current_role() in ('FF3_DECRYPT')
-     then decrypt_ff3_number_pass3(keyid,val, $userkeys)
-     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
-     then sqljoin_ff3_number_pass3(val)
-    when  current_role() in ('DATA_SC')
-     then format_ff3_number_pass3(val)
-    when  current_role() in ('ACCOUNTADMIN') 
-     then val
-    else -999
-  end;
+        if lengthpadding==1:
+                decrypted=decrypted[:commais] + '.' + decrypted[commais:]
+        else:
+                decrypted=decrypted[:-lengthpadding+1]
+                decrypted=decrypted[:commais] + '.' + decrypted[commais:]
 
+        return Decimal(decrypted)
+$$;
 
- create or replace masking policy ff3_decrypt_format_pass3_decimal as (val number(38,8), keyid string)  returns number(38,8) ->
-  case
-    when  current_role() in ('FF3_DECRYPT')
-     then decrypt_ff3_number_pass3(keyid,val, $userkeys)
-     when  current_role() in ('DATA_SC') AND system$get_tag_on_current_column('sqljoin')=''
-     then sqljoin_ff3_number_pass3(val)
-    when  current_role() in ('DATA_SC')
-     then format_ff3_number_pass3(val)
-    when  current_role() in ('ACCOUNTADMIN') 
-     then val
-    else -999
-  end;
-  
+-- Install string token USphone formatting UDFs.
+create or replace function format_ff3_string_usphone_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = 'udf'
+as $$
 
+def split(word):
+    return [char for char in word]
 
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
 
+def udf(ff3input):
+    result=''
+    encrypted_value_list=ff3input.split('[C')
+    decrypted_value_list=[]
+    encryptedvalue=''
+    i=0
+    x=0
 
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i >= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
 
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+lastvalue
 
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+    
+    if x ==1:
+        formatted=encryptedvalue[2:]
+    else:
+        formatted=encryptedvalue
+    
+    formatted=formatted.replace(' ','')
+    
+    l = split(formatted)
+    k = [ord(x) for x in l]
+    
+    for i in k:
+        result=result+str(i)
+    
+    result=result[:3] + ") " + result[3:]
+    result='('+result
+    result = (result[:14] ) if len(result) > 14 else result
+    return result
+$$;
 
+--- Install string token US-postal-code formatting UDFs.
+create or replace function format_ff3_string_uspostal_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = 'udf'
+as $$
 
+def split(word):
+    return [char for char in word]
+
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
+
+def udf(ff3input):
+    result=''
+    encrypted_value_list=ff3input.split('[C')
+    decrypted_value_list=[]
+    encryptedvalue=''
+    i=0
+    x=0
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i >= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+ lastvalue
+    
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+    
+    if x ==1:
+        formatted=encryptedvalue[2:]
+    else:
+        formatted=encryptedvalue
+    
+    formatted=formatted.replace(' ','')
+    
+    l = split(formatted)
+    k = [ord(x) for x in l]
+    
+    for i in k:
+        result=result+str(i)
+    
+    result = (result[:5] ) if len(result) > 5 else result
+    return result
+$$;
 ```
-
-
-
 
 <!-- ------------------------ -->
+## Test the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats
+Duration: 5
 
+With the full set of UDFs installed, let us now test each of them to see how they work. Each of the sets deals with tokenizing the data, formatting the tokens for both human and machine use (*e.g.* in SQL joins), and detokenizing the data.
 
-## Test
-Duration: 2
+First we step through float data types.
+```
+--- Test the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
+-------------------------------------
+--- With the full set of UDFs installed, let us now test each of them to see how they work. Each of the 
+--- sets deals with tokenizing the data, formatting the tokens for both human and machine use (e.g. in 
+--- SQL joins), and detokenizing the data. 
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+-- Test the tokenize float UDF. 
+-- Output should be: 1417378124
+select encrypt_ff3_float_pass3('KEY678901', 9.03, $userkeys);
 
-```markdown
-## Step 1 Title
-Duration: 3
+-- Test the float token formatting. This formatter reads the metadata from the token and gives back 
+-- a float number that has the same length and the comma at the same place as the original float number 
+-- that was encrypted. This is aimed at use by humans.
+-- Output should be: 1.41
+select format_ff3_float_pass3(1417378124);
 
-All the content for the step goes here.
+-- Test the float token sqljoin formatting. This just passes through the token and returns it as is in 
+-- order to make sure this value is unique for sql joins. This is aimed at use by machines.
+-- Output should be: 1417378124
+select sqljoin_ff3_float_pass3(1417378124);
 
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
+-- Test the detokenize float UDF. Here you trade the token for the real value if you have the keys.
+-- Output should be: 9.03
+select decrypt_ff3_float_pass3('KEY678901',1417378124, $userkeys);
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+Second, we deal with number data types. Since numbers can be formatting in so many different ways, this demo makes the assumption that each different way for your data may have a distinct function to properly handle it. In a more real world scenario you may try to handle a variety of numbers in a single function, or align to previously assigned standards for how numbers may be formatted in your data. Since all the number input and output has been defined as `38,8` in the functions, all the tests will expect that format as well. You can see how if you wished to use integers or other supported number types you would need to change or extend this model. 
+```
+-- Test the tokenize number UDF. Since numbers can be formatting in so many different ways, this demo makes
+-- the assumption that each different way for your data may have a distinct function to properly handle it.
+-- In a more real world scenario you may try to handle a variety of numbers in a single function, or align
+-- to previously assigned standards for how numbers may be formatted in your data. Since all the number input
+-- and output has been defined as `38,8` in the functions, all the tests will expect that format as well.
+-- Output should be: 4121376945460401.00000000
+select encrypt_ff3_number_38_8_pass3('KEY678901', 1000, $userkeys);
+```
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+![Screenshot showing differences in UI between formats in the display of numbers](/assets/Number-Different-Screen-Shot.png "Number UI Display")
+
+-- SEE SCREEN SHOT SHOWING DIFFERENT VIEWS IN SNOWFLAKE UI.
+```
+-- Test number token formatting UDF. This gives back the value in the same length and form as it was before 
+-- it was encrypted. 
+-- Output should be: 1,213 (1213.00000000)
+select format_ff3_number_38_8_pass3('4121376945460401.00000000');
+
+-- Test number token formatting UDF. This gives back a unique, simplified token with all metadata and padding 
+-- removed to guarantee uniqueness for sql joins. 
+-- Output should be: 121376945460.00000000
+select sqljoin_ff3_number_38_8_pass3('4121376945460401.00000000');
+
+-- Test the detokenize number UDF. 
+-- Output should be: 1,000 (1000.00000000) 
+select decrypt_ff3_number_38_8_pass3('KEY678901', 4121376945460401.00000000, $userkeys);
+
+-- Above we tested the email string exmaples, but let's try out two more the demo includes.
+
+-- Test string token USphone formatting UDF. This UDF formats and converts the string token into a 
+-- string token that is represented by numbers and looks like a US phone number. 
+
+-- First let's create a token from a "real" us phone number
+-- Output should be: [C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031
+select encrypt_ff3_string_pass3('KEY678901', '+1 (888) 555-1337', $userkeys);
+
+-- Now we run this through the formatting UDF for US phone numbers.
+-- Output should be: (113) 46668065
+select format_ff3_string_usphone_pass3('[C0]q.BPAvFlRwWWfq+60017');
+
+-- Test string token USpostal-code formatting UDFs. This UDF formats and converts the string token 
+-- into a string token that is represented by numbers and looks like a US post code number. 
+
+-- First let's create a token from a "real" us phone zip code
+-- Output should be: [C0]58KuL005
+select encrypt_ff3_string_pass3('KEY678901', '17182', $userkeys);
+
+-- Now we run this through the formatting UDF for US zip codes.
+-- Output should be: 53567
+select format_ff3_string_uspostal_pass3('[C0]58KuL005');
+```
 
 
 <!-- ------------------------ -->
