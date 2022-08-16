@@ -46,8 +46,7 @@ Tokenization, especially the kind which preserves formats, is very complex. When
 Let's start getting some things done!
 
 <!-- ------------------------ -->
-
-Set Up Roles, Database, Schema, and Warehouse
+## Set Up Roles, Database, Schema, and Warehouse
 Duration: 3
 
 To walk through this we will use manuy objects, and we need to create those and grant the rights to them. 
