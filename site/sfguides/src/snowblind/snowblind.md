@@ -1315,7 +1315,7 @@ select encrypt_ff3_number_38_8_pass3('KEY678901', 1000, $userkeys);
 
 One important thing to note is that when looking for the value indicated in the output expected, it's best to select the value in the UI and look at the data displayed in the right hand pane. In this case (shown in the screen show below), we see the right hand pane correctly displays ther "raw" value of `4121376945460401.00000000` - which is what we want to see. This only underscores the importance of having many display options to process data like this.
 
-
+![UI Screen Shot](assets/Number-Different-Screen-Shot.png "UI Screen Shot")
 
 Now we continue to test the number UDFs. 
 ``` */
