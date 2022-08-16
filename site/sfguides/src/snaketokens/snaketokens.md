@@ -139,7 +139,7 @@ Type SQL statements or !help
 /*
 ```
 
-Once you have the file uploaded, you can run the list command on your stage agin, and you should not see that zip file listed in the results. */
+Once you have the file uploaded, you can run the list command on your stage agin, and you should not see that zip file listed in the results.
 ``` */
 ls @python_libs; -- should now contain the ff3.zip file
 /*
