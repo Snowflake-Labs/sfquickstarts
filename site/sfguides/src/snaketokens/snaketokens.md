@@ -1,3 +1,4 @@
+/*
 author: Kevin Keller (https://github.com/kkellersnow)
 id: snaketokens
 summary: Project Snake Tokens aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
@@ -32,7 +33,7 @@ Project Snake Tokens aims to give a working MVP for tokenization in Snowflake us
 
 ### What You’ll Build 
 - A demo that shows how to use Python UDFs to achieve FF3 tokenization
-
+*/
 <!-- ------------------------ -->
 ## Understanding Tokenization
 Duration: 2
