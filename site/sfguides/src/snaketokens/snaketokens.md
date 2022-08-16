@@ -1,7 +1,7 @@
 /*
 author: Kevin Keller (https://github.com/kkellersnow)
 id: snaketokens
-summary: Project Snake Tokens aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
+summary: Project Snow Blind aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
 categories: data-governance
 environments: web
 status: Published 
@@ -10,10 +10,10 @@ tags: Getting Started, Data Science, Data Engineering, Tokenization, Encryption,
 
 # Tokenization in Snowflake Using Python UDFs
 <!-- ------------------------ -->
-## Snake Tokens Overview 
+## Snow Blind Overview 
 Duration: 1
 
-Project Snake Tokens aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
+Project Snow Blind aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
 
 ### Prerequisites
 - Snowflake Enterprise Edition Account
@@ -25,7 +25,7 @@ Project Snake Tokens aims to give a working MVP for tokenization in Snowflake us
 - Working knowledge of Snowflake's SnowSQL CLI
 
 ### What You’ll Learn 
-- How to install and use the "Snake-Tokens" Python UDFs in order to run FF3 format preserving encrpytion in test setup in your Snowflake account
+- How to install and use the Snow Blind Python UDFs in order to run FF3 format preserving encrpytion in test setup in your Snowflake account
 
 ### What You’ll Need 
 - A [Snowflake Enterprise Edition (or better) Account](https://signup.snowflake.com/) 
@@ -45,7 +45,7 @@ The key to understanding this project is understanding the difference between �
 
 Another aspect of tokenization is often that it will give you tokens that even appear to have the same qualities of the data which was tokenized. In other words, you can tokenize a number and get back a number of the same order of magnitude. You can tokenize an email and get back a string with the same format as an email (i.e. it will have valid email format, and @ in the middle, etc.). Confusingly, this is most commonly referred to as “format preserving encryption” - even though it is another form of what we are calling tokenization here with all the consistency benefits. 
 
-Tokenization, especially the kind which preserves formats, is very complex. When you need to scale it to hundreds of millions of records and beyond, it becomes even more difficult. This is why it is most often accomplished using third party, commercially available solutions. Of course, it is still only technology. So there are libraries in many languages that provide the basic building blocks of tokenization. Project Snake Tokens takes advantage of pre-existing Python libraries which provide FF3 tokenization. FF3 is based on AES encryption, and has been the standard upon which the entire industry around toeknization has based its work. This is only a demo which can serve as a starting point for customers who wish to have the benefits of tokenization, but do not wish to use a commercial solution or external functions, and are willing to roll up their sleeves a bit to get what they want. 
+Tokenization, especially the kind which preserves formats, is very complex. When you need to scale it to hundreds of millions of records and beyond, it becomes even more difficult. This is why it is most often accomplished using third party, commercially available solutions. Of course, it is still only technology. So there are libraries in many languages that provide the basic building blocks of tokenization. Project Snow Blind takes advantage of pre-existing Python libraries which provide FF3 tokenization. FF3 is based on AES encryption, and has been the standard upon which the entire industry around toeknization has based its work. This is only a demo which can serve as a starting point for customers who wish to have the benefits of tokenization, but do not wish to use a commercial solution or external functions, and are willing to roll up their sleeves a bit to get what they want. 
 
 Let's start getting some things done!
 
