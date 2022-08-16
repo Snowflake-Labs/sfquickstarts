@@ -118,7 +118,7 @@ ls @python_libs; -- should be empty for now, gets "Query produced no results"
 
 With the stage ready, we can now upload the file. To do this, you will need to upload the FF3 Python library from the Mysto FPE Project(https://github.com/mysto/python-fpe). That will require clone that repository, and zipping up the contents of the `ff3` directory from it. Then you will upload that zip file to the Snowflake Stage you've created. Please see the outline of steps below, but please note they are best suited as an example for Linux or Mac systems. For Windows you may need to adjust the settings a bit more for correct results.
 
-> Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
+> Note: Anywhere you see values in brackets (*e.g.* `&lt;REPLACEME&gt;`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
 ``` */
 --- Here you have to upload the FF3 Python library from here https://github.com/mysto/python-fpe
 --- Git clone this library locally, change (cd) into the python-fpe directory, then zip up the ff3 folder, and
