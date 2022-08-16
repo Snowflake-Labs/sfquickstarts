@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Tokenization, Encryption, Security, Python 
 
-# Tokenization in Snowflake Using Python UDFs
+# Tokenization in Snowflake Using Python UDFs (Snow Blind)
 <!-- ------------------------ -->
 ## Snow Blind Overview 
 Duration: 1
@@ -1312,7 +1312,7 @@ select encrypt_ff3_number_38_8_pass3('KEY678901', 1000, $userkeys);
 
 One important thing to note is that when looking for the value indicated in the output expected, it's best to select the value in the UI and look at the data displayed in the right hand pane. In this case (shown in the screen show below), we see the right hand pane correctly displays ther "raw" value of `4121376945460401.00000000` - which is what we want to see. This only underscores the importance of having many display options to process data like this.
 
-![Screenshot showing differences in UI between formats in the display of numbers](https://github.com/kkellersnow/sfquickstarts/raw/master/site/sfguides/src/snowblind/assets/Number-Different-Screen-Shot.png "Number UI Display")
+
 
 Now we continue to test the number UDFs. 
 ``` */
