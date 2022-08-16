@@ -280,6 +280,8 @@ There's a lot to copy and paste below. First you will create 5 Python based UDFs
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
+> Note: The `encrypt_ff3_string_pass3()` UDF contains a custom alphabet which determines what characters can be used in the FF3 tokenization. If your data contains characters not listed in that alphabet, then you would need to add it to that alphabet. If you intend to use this demo with any data aside from the demo data provided, then please take care to review that alphabet to ensure it meets your needs. 
+
 ``` */
 --- Install & Test the Python-based Tokenization UDFs for Email Strings
 -------------------------------------
@@ -318,6 +320,7 @@ def udf(ff3keyinput, ff3input, userkeys):
     
     length=len(ff3input)
    
+    # THIS IS WHERE YOU NEED TO ADD CHARACTERS TO THE ALPHABET
     c = FF3Cipher.withCustomAlphabet(ff3_key, ff3_tweak, """0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-().@ '""")
     
     n =30
