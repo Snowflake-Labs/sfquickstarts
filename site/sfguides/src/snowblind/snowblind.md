@@ -1487,19 +1487,19 @@ grant all privileges on function decrypt_ff3_string_pass3(string, string, string
 grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role masked;
 
 grant all privileges on function format_ff3_string_pass3(string) to role data_sc;
-grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role data_sc;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role data_sc;
 grant all privileges on function format_email_ff3_string_pass3(string) to role data_sc;
 
 grant all privileges on function format_ff3_string_pass3(string) to role masked;
-grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role masked;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role masked;
 grant all privileges on function format_email_ff3_string_pass3(string) to role masked;
 
 grant all privileges on function format_ff3_string_pass3(string) to role ff3_decrypt;
-grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role ff3_decrypt;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role ff3_decrypt;
 grant all privileges on function format_email_ff3_string_pass3(string) to role ff3_decrypt;
 
 grant all privileges on function format_ff3_string_pass3(string) to role masked;
-grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role masked;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role masked;
 grant all privileges on function format_email_ff3_string_pass3(string) to role masked;
 
 grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role ff3_encrypt;
@@ -1511,16 +1511,16 @@ grant all privileges on function decrypt_ff3_float_pass3(string, float, string) 
 grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role masked;
 
 grant all privileges on function format_ff3_float_pass3(float) to role data_sc;
-grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role data_sc;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role data_sc;
 
 grant all privileges on function format_ff3_float_pass3(float) to role masked;
-grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role masked;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role masked;
 
 grant all privileges on function format_ff3_float_pass3(float) to role ff3_decrypt;
-grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role ff3_decrypt;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role ff3_decrypt;
 
 grant all privileges on function format_ff3_float_pass3(float) to role masked;
-grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role masked;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role masked;
 
 grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_encrypt;
 grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_decrypt;
@@ -1531,16 +1531,16 @@ grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, s
 grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role masked;
 
 grant all privileges on function format_ff3_number_38_8_pass3(number) to role ff3_decrypt;
-grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role ff3_decrypt;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role ff3_decrypt;
 
 grant all privileges on function format_ff3_number_38_8_pass3(number) to role masked;
-grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role masked;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role masked;
 
 grant all privileges on function format_ff3_number_38_8_pass3(number) to role data_sc;
-grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role data_sc;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role data_sc;
 
 grant all privileges on function format_ff3_number_38_8_pass3(number) to role masked;
-grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role masked;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role masked;
 
 grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_encrypt;
 grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_decrypt;
@@ -1698,7 +1698,7 @@ select  * from ff3_pass3_target1; -- shows data in SQL join format
 ## Conclusion
 Duration: 1
 
-TBD
+Hope this demo has given you a glimpse into how tokenization can be achieved leveraging Snowflake's Python support. Project Snow Blind aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
 
 ### What we've covered
 - What tokenization is, and how it relates to masking, encryption and other capabilities
