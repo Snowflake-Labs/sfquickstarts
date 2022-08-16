@@ -33,7 +33,7 @@ Project Snake Tokens aims to give a working MVP for tokenization in Snowflake us
 
 ### What You’ll Build 
 - A demo that shows how to use Python UDFs to achieve FF3 tokenization
-*/
+
 <!-- ------------------------ -->
 ## Understanding Tokenization
 Duration: 2
@@ -53,7 +53,7 @@ Duration: 3
 To walk through this we will use manuy objects, and we need to create those and grant the rights to them. 
 
 > Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
-
+*/
 ```
 ---  Create objects for use in the demo. 
 -------------------------------------
@@ -98,22 +98,22 @@ grant usage, operate on warehouse ff3_testing_wh to role sysadmin;
 --- Create internal stage for the FF3 Python library
 create stage python_libs;
 ```
-
+/*
 <!-- ------------------------ -->
 ## Set Up a Stage and Upload FF3 Python Libraries
 Duration: 5
 
 The libraries we will leveage to accomplish the FF3 tokenization are not included in Snowflake's default set today. So we will have to obtain those, package them for use in Snowflake, and upload them to a Snowflake Stage where they can be accessed by our User Defined Functiosn (UDFs) which will do the heavy lifting later. Let's start by making sure our stage is ready by running a simple list command. 
-
+*/
 ```
 ls @python_libs; -- should be empty for now, gets "Query produced no results"
 ```
-
+/*
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results. 
 
 With the stage ready, we can now upload the file. To do this, you will need to upload the FF3 Python library from the Mysto FPE Project(https://github.com/mysto/python-fpe). That will require clone that repository, and zipping up the contents of the `ff3` directory from it. Then you will upload that zip file to the Snowflake Stage you've created. Please see the outline of steps below, but please note they are best suited as an example for Linux or Mac systems. For Windows you may need to adjust the settings a bit more for correct results.
 
-> Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment.
+> Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. */
 ```
 --- Here you have to upload the FF3 Python library from here https://github.com/mysto/python-fpe
 --- Git clone this library locally, change (cd) into the python-fpe directory, then zip up the ff3 folder, and
@@ -134,12 +134,12 @@ Type SQL statements or !help
 <USER>#ff3_testing_wh@ff3_testing_db.ff3_testing_schema> put file://<PATH>/ff3.zip @python_libs auto_compress=false;
 */
 ```
-
-Once you have the file uploaded, you can run the list command on your stage agin, and you should not see that zip file listed in the results.
+/*
+Once you have the file uploaded, you can run the list command on your stage agin, and you should not see that zip file listed in the results. */
 ```
 ls @python_libs; -- should now contain the ff3.zip file
 ```
-
+/*
 <!-- ------------------------ -->
 ## Tags, Source and Target Table Preparation, Granting Rights
 Duration: 3
@@ -147,7 +147,7 @@ Duration: 3
 In addition to the database, schema, and stage objects, you will also use tags and some demo data in a couple tables. We will create those now. Let's start with the tags. 
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results.
-
+*/
 ```
 --- Create tags
 create or replace tag ff3_data_sc;
@@ -157,8 +157,8 @@ create or replace tag email;
 create or replace tag uspostal;
 create or replace tag usphone;
 ```
-
-Next we create two tables to be used for the demo portions of lab. We will populate one of these with some rows of fake data that have properties that will allow us to exercise the FF3 tokenization well. 
+/*
+Next we create two tables to be used for the demo portions of lab. We will populate one of these with some rows of fake data that have properties that will allow us to exercise the FF3 tokenization well. */
 
 ```
 --- Create source table for encrypt, decrypt and data analyst demo
@@ -193,8 +193,8 @@ create or replace table ff3_pass3_target1 (
   decimalnumber number(38,8) NULL
 );
 ```
-
-Now we will grant rights to the roles we will use in the demo. 
+/*
+Now we will grant rights to the roles we will use in the demo. */
 
 ```
 --- Grant access rights to demo database, schema and tables
@@ -222,7 +222,7 @@ grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_dec
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role data_sc;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role sysadmin;
 ```
-
+/*
 <!-- ------------------------ -->
 ## Setting Up Encryption Keys - CAUTION
 Duration: 2
@@ -231,7 +231,7 @@ Under the covers, FF3 is using encryption to achieve the results it gets. Like w
 
 ### CAUTION DO NOT EVER USE THESE KEYS IN A REAL WORLD SYSTEM. NOW THAT THEY HAVE BEEN USED IN THIS DEMO, THEY SHOULD BE CONSIDERED DANGEROUS, AND NEVER USED OUTSIDE OF THIE DEMO.
 
-> Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be differen t and therefore the rsulting, underlying encryption operations will turn out differently.
+> Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be differen t and therefore the rsulting, underlying encryption operations will turn out differently. */
 
 ```
 ---  Set the userkeys. 
@@ -257,7 +257,7 @@ set userkeys='''{
 
 select $userkeys; -- check the results
 ```
-
+/*
 <!-- ------------------------ -->
 ## Installing and Testing String Tokenization UDFs
 Duration: 7
@@ -266,7 +266,7 @@ All the real tokenization work is done in UDFs leveraging Python. We will work w
 
 There's a lot to copy and paste below. First you will create 5 Python based UDFs leveraging the zip file you uploaded earlier, and then we will run some tests which use those.
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.*/
 
 ```
 --- Install & Test the Python-based Tokenization UDFs for Email Strings
@@ -561,12 +561,12 @@ def udf(ff3keyinput, ff3input, userkeys):
     return result
 $$;
 ```
-
-Let's be sure all the UDFs were properly created:
+/*
+Let's be sure all the UDFs were properly created: */
 ```
 show functions like '%ff3%';
 ```
-
+/*
 You should see 5 rows of results, with each of these UDFs listed:
 1. DECRYPT_FF3_STRING_PASS3
 2. ENCRYPT_FF3_STRING_PASS3
@@ -582,7 +582,7 @@ With the UDFs created, we can now run some tests. We will run the tests in a spe
 
 The thing that is subtle is the need for for formatting and SQL join UDFs. The first formatting example (`format_ff3_string_pass3()`) takes the token and removes metadata which this process adds. That can be useful for display of the string. The second fomatting example (`format_email_ff3_string_pass3()`) is specific to email strings, and will make a token look like an email for display or other pruposes. The SQL join formatting procedure (`sqljoin_ff3_string_pass3()`) also removes metadata and padding, but for the prupose of ensuring that those elements do not accidentally intorduce noise to joins. Essentially they leave the token in its original form without any extra layers. 
 
-First, we will apply tokenization to a fake email address to get a token.
+First, we will apply tokenization to a fake email address to get a token. */
 ```
 -- Now we can test the procedure for strings that contain emails. The first thing we do is 
 -- take an email string and tokenize it using the FF3 method. You can run this as many times
