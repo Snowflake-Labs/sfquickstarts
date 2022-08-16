@@ -278,9 +278,9 @@ All the real tokenization work is done in UDFs leveraging Python. We will work w
 
 There's a lot to copy and paste below. First you will create 5 Python based UDFs leveraging the zip file you uploaded earlier, and then we will run some tests which use those.
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
-
 > Note: The `encrypt_ff3_string_pass3()` UDF contains a custom alphabet which determines what characters can be used in the FF3 tokenization. If your data contains characters not listed in that alphabet, then you would need to add it to that alphabet. If you intend to use this demo with any data aside from the demo data provided, then please take care to review that alphabet to ensure it meets your needs. 
+
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 ``` */
 --- Install & Test the Python-based Tokenization UDFs for Email Strings
@@ -652,6 +652,8 @@ What we have seen in this section is our first glimpse of the potential of using
 Duration: 3
 
 Now that we have the basic concept understood, we will install the UDFs needed for all the other data types. After they are installed we will test them all out. Get your copy + paste muscles all warmed up...
+
+> Note: Since this approach to tokenization includes the use of metadata stored along with the value, values for Float and Number data types will require some space for this metadata. This means Floats can be no larger than 9 digits, and Number data types will require 5 of the digits to store metadata (which will always appear to the right of the decimal point). If you intend to use this demo with any data aside from the demo data provided, then please take care to review these requirements to ensure it meets your needs.  
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
