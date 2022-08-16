@@ -164,7 +164,7 @@ create or replace tag usphone;
 /*
 ```
 
-Next we create two tables to be used for the demo portions of lab. We will populate one of these with some rows of fake data that have properties that will allow us to exercise the FF3 tokenization well. */
+Next we create two tables to be used for the demo portions of lab. We will populate one of these with some rows of fake data that have properties that will allow us to exercise the FF3 tokenization well.
 
 ``` */
 --- Create source table for encrypt, decrypt and data analyst demo
@@ -201,7 +201,7 @@ create or replace table ff3_pass3_target1 (
 /*
 ```
 
-Now we will grant rights to the roles we will use in the demo. */
+Now we will grant rights to the roles we will use in the demo.
 
 ``` */
 --- Grant access rights to demo database, schema and tables
@@ -239,7 +239,7 @@ Under the covers, FF3 is using encryption to achieve the results it gets. Like w
 
 ### CAUTION DO NOT EVER USE THESE KEYS IN A REAL WORLD SYSTEM. NOW THAT THEY HAVE BEEN USED IN THIS DEMO, THEY SHOULD BE CONSIDERED DANGEROUS, AND NEVER USED OUTSIDE OF THIE DEMO.
 
-> Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be differen t and therefore the rsulting, underlying encryption operations will turn out differently. */
+> Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be differen t and therefore the rsulting, underlying encryption operations will turn out differently.
 
 ``` */
 ---  Set the userkeys. 
@@ -572,7 +572,7 @@ $$;
 /*
 ```
 
-Let's be sure all the UDFs were properly created: */
+Let's be sure all the UDFs were properly created:
 ``` */
 show functions like '%ff3%';
 /*
@@ -593,7 +593,7 @@ With the UDFs created, we can now run some tests. We will run the tests in a spe
 
 The thing that is subtle is the need for for formatting and SQL join UDFs. The first formatting example (`format_ff3_string_pass3()`) takes the token and removes metadata which this process adds. That can be useful for display of the string. The second fomatting example (`format_email_ff3_string_pass3()`) is specific to email strings, and will make a token look like an email for display or other pruposes. The SQL join formatting procedure (`sqljoin_ff3_string_pass3()`) also removes metadata and padding, but for the prupose of ensuring that those elements do not accidentally intorduce noise to joins. Essentially they leave the token in its original form without any extra layers. 
 
-First, we will apply tokenization to a fake email address to get a token. */
+First, we will apply tokenization to a fake email address to get a token.
 ``` */
 -- Now we can test the procedure for strings that contain emails. The first thing we do is 
 -- take an email string and tokenize it using the FF3 method. You can run this as many times
