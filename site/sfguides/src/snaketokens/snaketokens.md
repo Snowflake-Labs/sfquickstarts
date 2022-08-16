@@ -34,6 +34,9 @@ Project Snake Tokens aims to give a working MVP for tokenization in Snowflake us
 ### What You’ll Build 
 - A demo that shows how to use Python UDFs to achieve FF3 tokenization
 
+### Using This as a Snowflake Worksheet
+Since there are so many pieces of code in this demo, it may be better to put the whole thing in a Snowflake worksheet. To make that easier, we've placed `/* */` style comments throughout. If you're following along on the Snowflake Quickstarts site, then you can ignore these. If you want to take the whole thing to a worksheet, you'll find these diable al the extraneous, non-SQL text in the worksheet (inclduing this test). That's why you'll see these in what may seem like random spots. 
+
 <!-- ------------------------ -->
 ## Understanding Tokenization
 Duration: 2
