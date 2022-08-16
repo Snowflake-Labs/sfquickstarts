@@ -67,12 +67,14 @@ To walk through this we will use manuy objects, and we need to create those and 
 create or replace role ff3_encrypt;
 create or replace role ff3_decrypt;
 create or replace role data_sc;
+create or replace role masked;
 
 --- Grant demo roles to your demo user
 --- Replace <USER> with your demo user
 grant role ff3_encrypt to user <USER>;
 grant role ff3_decrypt to user <USER>;
 grant role data_sc to user <USER>;
+grant role masked to user <USER>;
 
 --- Create warehouse for demo  
 create or replace warehouse ff3_testing_wh warehouse_size=medium initially_suspended=true;
@@ -81,8 +83,7 @@ create or replace warehouse ff3_testing_wh warehouse_size=medium initially_suspe
 grant usage, operate on warehouse ff3_testing_wh to role ff3_encrypt;
 grant usage, operate on warehouse ff3_testing_wh to role ff3_decrypt;
 grant usage, operate on warehouse ff3_testing_wh to role data_sc;
-grant usage, operate on warehouse ff3_testing_wh to role accountadmin;
-grant usage, operate on warehouse ff3_testing_wh to role sysadmin;
+grant usage, operate on warehouse ff3_testing_wh to role masked;
 
 --- Create demo database and schema for demo
 create or replace database ff3_testing_db;
@@ -95,8 +96,7 @@ use schema ff3_testing_db.ff3_testing_schema;
 grant usage, operate on warehouse ff3_testing_wh to role ff3_encrypt;
 grant usage, operate on warehouse ff3_testing_wh to role ff3_decrypt;
 grant usage, operate on warehouse ff3_testing_wh to role data_sc;
-grant usage, operate on warehouse ff3_testing_wh to role accountadmin;
-grant usage, operate on warehouse ff3_testing_wh to role sysadmin;
+grant usage, operate on warehouse ff3_testing_wh to role masked;
 
 --- Create internal stage for the FF3 Python library
 create stage python_libs;
@@ -217,20 +217,20 @@ grant usage on schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
 grant usage on database ff3_testing_db to role data_sc;
 grant usage on schema ff3_testing_db.ff3_testing_schema to role data_sc;
 
-grant usage on database ff3_testing_db to role sysadmin;
-grant usage on schema ff3_testing_db.ff3_testing_schema to role sysadmin;
+grant usage on database ff3_testing_db to role masked;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role masked;
 
 grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
 grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
 grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role data_sc;
-grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role sysadmin;
+grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role masked;
 
 grant insert on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
 
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role data_sc;
-grant all privileges on schema ff3_testing_db.ff3_testing_schema to role sysadmin;
+grant all privileges on schema ff3_testing_db.ff3_testing_schema to role masked;
 /*
 ```
 
@@ -1476,75 +1476,75 @@ create or replace masking policy ff3_decrypt_format_pass3_decimal as (val number
   end;
   
 grant all privileges on function encrypt_ff3_string_pass3(string, string, string) to role ff3_encrypt;
-grant all privileges on function encrypt_ff3_string_pass3(string, string, string) to role sysadmin;
+grant all privileges on function encrypt_ff3_string_pass3(string, string, string) to role masked;
 grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role ff3_decrypt;
 grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role data_sc;
-grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role sysadmin;
+grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role masked;
 
 grant all privileges on function format_ff3_string_pass3(string) to role data_sc;
 grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role data_sc;
 grant all privileges on function format_email_ff3_string_pass3(string) to role data_sc;
 
-grant all privileges on function format_ff3_string_pass3(string) to role sysadmin;
-grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role sysadmin;
-grant all privileges on function format_email_ff3_string_pass3(string) to role sysadmin;
+grant all privileges on function format_ff3_string_pass3(string) to role masked;
+grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role masked;
+grant all privileges on function format_email_ff3_string_pass3(string) to role masked;
 
 grant all privileges on function format_ff3_string_pass3(string) to role ff3_decrypt;
 grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role ff3_decrypt;
 grant all privileges on function format_email_ff3_string_pass3(string) to role ff3_decrypt;
 
-grant all privileges on function format_ff3_string_pass3(string) to role sysadmin;
-grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role sysadmin;
-grant all privileges on function format_email_ff3_string_pass3(string) to role sysadmin;
+grant all privileges on function format_ff3_string_pass3(string) to role masked;
+grant all privileges on function SQLJOIN_FF3_STRING_PASS3(string) to role masked;
+grant all privileges on function format_email_ff3_string_pass3(string) to role masked;
 
 grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role ff3_encrypt;
 grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role ff3_decrypt;
 grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role data_sc;
 
-grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role sysadmin;
-grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role sysadmin;
-grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role sysadmin;
+grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role masked;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role masked;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role masked;
 
 grant all privileges on function format_ff3_float_pass3(float) to role data_sc;
 grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role data_sc;
 
-grant all privileges on function format_ff3_float_pass3(float) to role sysadmin;
-grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role sysadmin;
+grant all privileges on function format_ff3_float_pass3(float) to role masked;
+grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role masked;
 
 grant all privileges on function format_ff3_float_pass3(float) to role ff3_decrypt;
 grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role ff3_decrypt;
 
-grant all privileges on function format_ff3_float_pass3(float) to role sysadmin;
-grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role sysadmin;
+grant all privileges on function format_ff3_float_pass3(float) to role masked;
+grant all privileges on function SQLJOIN_FF3_FLOAT_PASS3(float) to role masked;
 
 grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_encrypt;
 grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_decrypt;
 grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role data_sc;
 
-grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role sysadmin;
-grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role sysadmin;
-grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role sysadmin;
+grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role masked;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role masked;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role masked;
 
 grant all privileges on function format_ff3_number_38_8_pass3(number) to role ff3_decrypt;
 grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role ff3_decrypt;
 
-grant all privileges on function format_ff3_number_38_8_pass3(number) to role sysadmin;
-grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role sysadmin;
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role masked;
+grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role masked;
 
 grant all privileges on function format_ff3_number_38_8_pass3(number) to role data_sc;
 grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role data_sc;
 
-grant all privileges on function format_ff3_number_38_8_pass3(number) to role sysadmin;
-grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role sysadmin;
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role masked;
+grant all privileges on function SQLJOIN_ff3_number_38_8_pass3(number) to role masked;
 
 grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_encrypt;
 grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_decrypt;
-grant all privileges on function format_ff3_string_uspostal_pass3(string) to role sysadmin;
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role masked;
 grant all privileges on function format_ff3_string_uspostal_pass3(string) to role data_sc;
 
 grant all privileges on function format_ff3_string_usphone_pass3(string) to role ff3_encrypt;
 grant all privileges on function format_ff3_string_usphone_pass3(string) to role ff3_decrypt;
-grant all privileges on function format_ff3_string_usphone_pass3(string) to role sysadmin;
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role masked;
 grant all privileges on function format_ff3_string_usphone_pass3(string) to role data_sc;
 /*
 ```
@@ -1566,8 +1566,7 @@ set encryptkey='KEY678901';
 create or replace view ff3_encrypt_view1 as select $encryptkey as KEYID, * from ff3_pass3_source1;
 
 -- Grant access rights to view
-grant all privileges on view ff3_encrypt_view1 to role accountadmin;
-grant all privileges on view ff3_encrypt_view1 to role sysadmin;
+grant all privileges on view ff3_encrypt_view1 to role masked;
 grant all privileges on view ff3_encrypt_view1 to role ff3_encrypt;
 /*
 ```
@@ -1643,7 +1642,7 @@ alter table ff3_pass3_target1 modify
     column decimalnumber set tag ff3_data_sc=''
 ;
 
--- Assign decrypt and format policies to decrypt/format tag (stay with accountadmin)
+-- Assign decrypt and format policies to decrypt/format tag 
 alter tag ff3_data_sc set
   masking policy ff3_decrypt_format_float_pass3,
   masking policy ff3_decrypt_format_string_pass3,
@@ -1670,7 +1669,7 @@ alter table ff3_pass3_target1 modify column email set tag email='';
 alter table ff3_pass3_target1 modify column postalzip set tag uspostal='';
 alter table ff3_pass3_target1 modify column phone set tag usphone='';
   
-use role sysadmin; 
+use role masked; 
 select * from ff3_pass3_target1; -- shows data tokenized
 
 use role accountadmin;
