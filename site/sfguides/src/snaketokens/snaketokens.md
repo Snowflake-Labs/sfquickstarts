@@ -97,24 +97,26 @@ grant usage, operate on warehouse ff3_testing_wh to role sysadmin;
 
 --- Create internal stage for the FF3 Python library
 create stage python_libs;
+/* 
 ```
-/*
+
 <!-- ------------------------ -->
 ## Set Up a Stage and Upload FF3 Python Libraries
 Duration: 5
 
 The libraries we will leveage to accomplish the FF3 tokenization are not included in Snowflake's default set today. So we will have to obtain those, package them for use in Snowflake, and upload them to a Snowflake Stage where they can be accessed by our User Defined Functiosn (UDFs) which will do the heavy lifting later. Let's start by making sure our stage is ready by running a simple list command. 
-*/
-```
+
+``` */
 ls @python_libs; -- should be empty for now, gets "Query produced no results"
-```
 /*
+```
+
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results. 
 
 With the stage ready, we can now upload the file. To do this, you will need to upload the FF3 Python library from the Mysto FPE Project(https://github.com/mysto/python-fpe). That will require clone that repository, and zipping up the contents of the `ff3` directory from it. Then you will upload that zip file to the Snowflake Stage you've created. Please see the outline of steps below, but please note they are best suited as an example for Linux or Mac systems. For Windows you may need to adjust the settings a bit more for correct results.
 
-> Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. */
-```
+> Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
+``` */
 --- Here you have to upload the FF3 Python library from here https://github.com/mysto/python-fpe
 --- Git clone this library locally, change (cd) into the python-fpe directory, then zip up the ff3 folder, and
 --- upload this zip file into the stage.
@@ -133,13 +135,16 @@ With the stage ready, we can now upload the file. To do this, you will need to u
 Type SQL statements or !help
 <USER>#ff3_testing_wh@ff3_testing_db.ff3_testing_schema> put file://<PATH>/ff3.zip @python_libs auto_compress=false;
 */
-```
+
 /*
+```
+
 Once you have the file uploaded, you can run the list command on your stage agin, and you should not see that zip file listed in the results. */
-```
+``` */
 ls @python_libs; -- should now contain the ff3.zip file
-```
 /*
+```
+
 <!-- ------------------------ -->
 ## Tags, Source and Target Table Preparation, Granting Rights
 Duration: 3
@@ -147,8 +152,8 @@ Duration: 3
 In addition to the database, schema, and stage objects, you will also use tags and some demo data in a couple tables. We will create those now. Let's start with the tags. 
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results.
-*/
-```
+
+``` */
 --- Create tags
 create or replace tag ff3_data_sc;
 create or replace tag ff3_encrypt;
@@ -156,11 +161,12 @@ create or replace tag sqljoin;
 create or replace tag email;
 create or replace tag uspostal;
 create or replace tag usphone;
-```
 /*
+```
+
 Next we create two tables to be used for the demo portions of lab. We will populate one of these with some rows of fake data that have properties that will allow us to exercise the FF3 tokenization well. */
 
-```
+``` */
 --- Create source table for encrypt, decrypt and data analyst demo
 create or replace table ff3_pass3_source1 (
   name varchar(255) default NULL,
@@ -192,11 +198,12 @@ create or replace table ff3_pass3_target1 (
   floatnumber float NULL,
   decimalnumber number(38,8) NULL
 );
-```
 /*
+```
+
 Now we will grant rights to the roles we will use in the demo. */
 
-```
+``` */
 --- Grant access rights to demo database, schema and tables
 grant usage on database ff3_testing_db to role ff3_encrypt;
 grant usage on schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
@@ -221,8 +228,9 @@ grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_enc
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role data_sc;
 grant all privileges on schema ff3_testing_db.ff3_testing_schema to role sysadmin;
-```
 /*
+```
+
 <!-- ------------------------ -->
 ## Setting Up Encryption Keys - CAUTION
 Duration: 2
@@ -233,7 +241,7 @@ Under the covers, FF3 is using encryption to achieve the results it gets. Like w
 
 > Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be differen t and therefore the rsulting, underlying encryption operations will turn out differently. */
 
-```
+``` */
 ---  Set the userkeys. 
 -------------------------------------
 ---  For this demo, the keys will be set explicitly. The acutal requirement is that they be present as a session variable. 
@@ -256,8 +264,9 @@ set userkeys='''{
 */
 
 select $userkeys; -- check the results
-```
 /*
+```
+
 <!-- ------------------------ -->
 ## Installing and Testing String Tokenization UDFs
 Duration: 7
@@ -268,7 +277,7 @@ There's a lot to copy and paste below. First you will create 5 Python based UDFs
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.*/
 
-```
+``` */
 --- Install & Test the Python-based Tokenization UDFs for Email Strings
 -------------------------------------
 --- All the real work is done in UDFs leveraging Python. We will work with these UDFs in a 
@@ -560,13 +569,15 @@ def udf(ff3keyinput, ff3input, userkeys):
     result=result+lastdecrypt
     return result
 $$;
-```
 /*
+```
+
 Let's be sure all the UDFs were properly created: */
-```
+``` */
 show functions like '%ff3%';
-```
 /*
+```
+
 You should see 5 rows of results, with each of these UDFs listed:
 1. DECRYPT_FF3_STRING_PASS3
 2. ENCRYPT_FF3_STRING_PASS3
@@ -583,17 +594,18 @@ With the UDFs created, we can now run some tests. We will run the tests in a spe
 The thing that is subtle is the need for for formatting and SQL join UDFs. The first formatting example (`format_ff3_string_pass3()`) takes the token and removes metadata which this process adds. That can be useful for display of the string. The second fomatting example (`format_email_ff3_string_pass3()`) is specific to email strings, and will make a token look like an email for display or other pruposes. The SQL join formatting procedure (`sqljoin_ff3_string_pass3()`) also removes metadata and padding, but for the prupose of ensuring that those elements do not accidentally intorduce noise to joins. Essentially they leave the token in its original form without any extra layers. 
 
 First, we will apply tokenization to a fake email address to get a token. */
-```
+``` */
 -- Now we can test the procedure for strings that contain emails. The first thing we do is 
 -- take an email string and tokenize it using the FF3 method. You can run this as many times
 -- as you like and you will always get the same result. Only when you change the keys or the
 -- input string will you get a different output.
 -- Output should be: [C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031
 select encrypt_ff3_string_pass3('KEY678901', 'ullamcorper.viverra@hotmail.org', $userkeys);
+/*
 ```
 
 Next, we will apply both generic string formatting and specific email formatting to the token.
-```
+``` */
 -- The raw token result carries not only the encrypted value of the string, but also a certain
 -- amount of metadata to help the system manage the tokens and their decryption. This removes 
 -- the some metadata from the token and makes sure that the token length matches the intial 
@@ -606,23 +618,26 @@ select format_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031');
 -- to a human user. 
 -- Output should be: D.eaU(5+iijkXsS4yF@ULDB58hLTGDgyYs.com (Note the ".com" and "@")
 select format_email_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031');
+/*
 ```
 
 Next, we make the token ready to be used in SQL joins.
-```
+``` */
 -- Test string token SQL join formatting UDF. This UDF removes metadata and just gives the plain 
 -- token back. This insures that SQL joins can be done with token values that are guaranteed to be 
 -- unique. This removes any token formatting. 
 -- Output should be: D.eaU(5+iijkXsS4@yFULDB58hLTGDgyYs
 select sqljoin_ff3_string_pass3('[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031');
+/*
 ```
 
 Finally, we will take the token and convert it back to it's original form. 
-```
+``` */
 -- Finally, this takes the token in it's full form and converts it back to the real string as 
 -- long as the session is in possesion of the keys.
 -- Output should be: ullamcorper.viverra@hotmail.org
 select decrypt_ff3_string_pass3('KEY678901', '[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031', $userkeys);
+/*
 ```
 What we have seen in this section is our first glimpse of the potential of using these FF3 capabilities. After we get the rest of the UDFs set up, we can see them at full speed. 
 
@@ -634,7 +649,7 @@ Now that we have the basic concept understood, we will install the UDFs needed f
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
-```
+``` */
 --- Install the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
 -------------------------------------
 --- Now that we have the basic concept understood, we will install the UDFs needed for all the 
@@ -1217,6 +1232,7 @@ def udf(ff3input):
     result = (result[:5] ) if len(result) > 5 else result
     return result
 $$;
+/*
 ```
 
 <!-- ------------------------ -->
@@ -1224,8 +1240,9 @@ $$;
 Duration: 5
 
 Let's be sure all the UDFs were properly created:
-```
+``` */
 show functions like '%ff3%';
+/*
 ```
 
 You should see 15 rows of results, with each of these UDFs listed:
@@ -1250,7 +1267,7 @@ With the full set of UDFs installed, let us now test each of them to see how the
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 First we step through float data types.
-```
+``` */
 --- Test the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
 -------------------------------------
 --- With the full set of UDFs installed, let us now test each of them to see how they work. Each of the 
@@ -1275,10 +1292,11 @@ select sqljoin_ff3_float_pass3(1417378124);
 -- Test the detokenize float UDF. Here you trade the token for the real value if you have the keys.
 -- Output should be: 9.03
 select decrypt_ff3_float_pass3('KEY678901',1417378124, $userkeys);
+/*
 ```
 
 Second, we deal with number data types. Since numbers can be formatting in so many different ways, this demo makes the assumption that each different way for your data may have a distinct function to properly handle it. In a more real world scenario you may try to handle a variety of numbers in a single function, or align to previously assigned standards for how numbers may be formatted in your data. Since all the number input and output has been defined as `38,8` in the functions, all the tests will expect that format as well. You can see how if you wished to use integers or other supported number types you would need to change or extend this model. 
-```
+``` */
 -- Test the tokenize number UDF. Since numbers can be formatting in so many different ways, this demo makes
 -- the assumption that each different way for your data may have a distinct function to properly handle it.
 -- In a more real world scenario you may try to handle a variety of numbers in a single function, or align
@@ -1286,6 +1304,7 @@ Second, we deal with number data types. Since numbers can be formatting in so ma
 -- and output has been defined as `38,8` in the functions, all the tests will expect that format as well.
 -- Output should be: 4121376945460401.00000000
 select encrypt_ff3_number_38_8_pass3('KEY678901', 1000, $userkeys);
+/*
 ```
 
 One important thing to note is that when looking for the value indicated in the output expected, it's best to select the value in the UI and look at the data displayed in the right hand pane. In this case (shown in the screen show below), we see the right hand pane correctly displays ther "raw" value of `4121376945460401.00000000` - which is what we want to see. This only underscores the importance of having many display options to process data like this.
@@ -1293,7 +1312,7 @@ One important thing to note is that when looking for the value indicated in the 
 ![Screenshot showing differences in UI between formats in the display of numbers](https://github.com/kkellersnow/sfquickstarts/blob/671c2104bdf534f1920112f29a20f5b161a57f94/site/sfguides/src/snaketokens/assets/Number-Different-Screen-Shot.png "Number UI Display")
 
 Now we continue to test the number UDFs. 
-```
+``` */
 -- Test number token formatting UDF. This gives back the value in the same length and form as it was before 
 -- it was encrypted. 
 -- Output should be: 1,213 (1213.00000000)
@@ -1307,10 +1326,11 @@ select sqljoin_ff3_number_38_8_pass3('4121376945460401.00000000');
 -- Test the detokenize number UDF. 
 -- Output should be: 1,000 (1000.00000000) 
 select decrypt_ff3_number_38_8_pass3('KEY678901', 4121376945460401.00000000, $userkeys);
+/*
 ```
 
 Finally, we move to the other string examples. Above we tested the email string exmaples, but let's try out two more the demo includes.
-```
+``` */
 -- Above we tested the email string exmaples, but let's try out two more the demo includes.
 
 -- Test string token USphone formatting UDF. This UDF formats and converts the string token into a 
@@ -1334,6 +1354,7 @@ select encrypt_ff3_string_pass3('KEY678901', '17182', $userkeys);
 -- Now we run this through the formatting UDF for US zip codes.
 -- Output should be: 53567
 select format_ff3_string_uspostal_pass3('[C0]58KuL005');
+/*
 ```
 
 This gives us a full set of tools, but now we want to see how those tools can be applied in different circumstances. To achieve that, we need to build out a little more for our demo environment. 
@@ -1346,7 +1367,7 @@ The final step before our last big of walkthrough is to create a number of polic
 
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
-```
+``` */
 --- Create encrypt polices 
 create or replace masking policy ff3_encrypt_string_pass3 as (val string, keyid string)  returns string ->
   case
@@ -1522,6 +1543,7 @@ grant all privileges on function format_ff3_string_usphone_pass3(string) to role
 grant all privileges on function format_ff3_string_usphone_pass3(string) to role ff3_decrypt;
 grant all privileges on function format_ff3_string_usphone_pass3(string) to role sysadmin;
 grant all privileges on function format_ff3_string_usphone_pass3(string) to role data_sc;
+/*
 ```
 
 <!-- ------------------------ -->
@@ -1533,7 +1555,7 @@ Up to this point, we have called the UDFs directly to manipulate data. That is n
 > Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 First, it's unlikely you would grant users access to keys directly. It's also unlikely that they would have access to all keys. They would only have access to specific keys. And steps like this to set that key may even be done in the background without their knowledge. Here we will set a specific key as the one to use for the following steps by putting a name in a session variable. Then we create a view that will use that keyname, and grant access to that view to some of our roles.
-```
+``` */
 -- which encryption key do you want to use for the encryption?
 set encryptkey='KEY678901';
 
@@ -1544,18 +1566,20 @@ create or replace view ff3_encrypt_view1 as select $encryptkey as KEYID, * from 
 grant all privileges on view ff3_encrypt_view1 to role accountadmin;
 grant all privileges on view ff3_encrypt_view1 to role sysadmin;
 grant all privileges on view ff3_encrypt_view1 to role ff3_encrypt;
+/*
 ```
 
 Now we can select from both the source table and the view to see the data, but we see the view also has a column showing the key used for each column. Note that though this demo assumes the same key is used foreach columnb, that would not be required in a more complex case. So you may allow different keys on a column by column basis. 
-```
+``` */
 -- Test queries. Query source should be plaintext as well as view. View view however contains an extra 
 -- column with the encryption key.
 select * from ff3_pass3_source1;
 select * from ff3_encrypt_view1;
+/*
 ```
 
 Now we will tag each of the columns in the view, and then assign policies to the tag which will fire based on the column's datatype and apply the tokenization.
-```
+``` */
 -- Set the tag that will trigger the encrypt policy on the view
 alter view ff3_encrypt_view1 modify 
     column name set tag ff3_encrypt='',
@@ -1586,18 +1610,20 @@ from table (ff3_testing_db.information_schema.policy_references(
   ref_entity_domain => 'VIEW',
   ref_entity_name => 'FF3_TESTING_DB.FF3_TESTING_SCHEMA.FF3_ENCRYPT_VIEW1' )
 );
+/*
 ```
 
 Now we can change roles to show how the tokenization is applied by default based on the tags and their policies.
-```
+``` */
 -- Change to role FF3_Encrypt and query the view. Data should be encrypted now.
 use role ff3_encrypt;
 
 select * from ff3_encrypt_view1; -- you should see tokenized data
+/*
 ```
 
 A common question is: what happens when people copy this data to other objects?" Let's step through doing just that by inserting data into a new object, tagging that object appropriately, and then seeing if that data is recoverable in the new object.
-```
+``` */
 -- Populate target table with encrypted data.
 insert into ff3_testing_db.ff3_testing_schema.ff3_pass3_target1  select * from ff3_encrypt_view1; 
  
@@ -1618,16 +1644,18 @@ alter table ff3_pass3_target1 modify
 alter tag ff3_data_sc set
   masking policy ff3_decrypt_format_float_pass3,
   masking policy ff3_decrypt_format_string_pass3,
-  masking policy ff3_decrypt_format_pass3_decimal ;
+  masking policy ff3_decrypt_format_pass3_decimal;
+/*
 ```
 
 Now we select from the target and we see the data is in it's tokenized form.
-```
+``` */
 select * from ff3_pass3_target1;
+/*
 ```
 
 We can use this tagging and policy approach to produce many different effects in how the data is seen. Here we will step through a number of them which will use many of the different UDFs we tested earlier. 
-```
+``` */
 -- Assign format tags to target table to see tokenized data formatted differently. Set the email tag on 
 -- a string column to see it formatted like an email, set the uspostal tag on a string column to see it 
 -- formaated like an uspostal code. 
@@ -1656,6 +1684,7 @@ alter table ff3_pass3_target1 modify column email set tag sqljoin='';
   
 use role data_sc;
 select  * from ff3_pass3_target1; -- shows data in SQL join format
+/*
 ```
 
 <!-- ------------------------ -->
