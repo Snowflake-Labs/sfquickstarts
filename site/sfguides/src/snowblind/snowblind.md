@@ -278,7 +278,7 @@ All the real tokenization work is done in UDFs leveraging Python. We will work w
 
 There's a lot to copy and paste below. First you will create 5 Python based UDFs leveraging the zip file you uploaded earlier, and then we will run some tests which use those.
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.*/
+> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 ``` */
 --- Install & Test the Python-based Tokenization UDFs for Email Strings
