@@ -53,8 +53,8 @@ Duration: 3
 To walk through this we will use manuy objects, and we need to create those and grant the rights to them. 
 
 > Note: Anywhere you see values in brackets (*e.g.* `<REPLACEME>`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
-*/
-```
+
+``` */
 ---  Create objects for use in the demo. 
 -------------------------------------
 --- To walk through this we will use manuy objects, and we need to create those and 
