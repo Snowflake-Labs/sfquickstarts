@@ -483,8 +483,6 @@ def udf(ff3input):
     email=email+".com"
     email=email.replace(' ','')
     
-    #temporary fix
-    #email=email.replace('0]','')
     email=email.replace('@@','@')
    
     return email
