@@ -55,7 +55,7 @@ Duration: 3
 
 To walk through this we will use many objects, and we need to create those and grant the rights to them. 
 
-> Note: Anywhere you see values in brackets (*e.g.* `&lt;REPLACEME&gt;`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
+> Note: Anywhere you see values in brackets (*e.g.* `&lt;REPLACEME&gt;`), you should replace the value (including the brackets) with the value appropriate to your own lab environment. 
 
 ``` */
 ---  Create objects for use in the demo. 
@@ -114,11 +114,11 @@ ls @python_libs; -- should be empty for now, gets "Query produced no results"
 /*
 ```
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results. 
+> Note: if you stopped earlier and came back to continue, be sure you have set the same environment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results. 
 
 With the stage ready, we can now upload the file. To do this, you will need to upload the FF3 Python library from the Mysto FPE Project(https://github.com/mysto/python-fpe). That will require clone that repository, and zipping up the contents of the `ff3` directory from it. Then you will upload that zip file to the Snowflake Stage you've created. Please see the outline of steps below, but please note they are best suited as an example for Linux or Mac systems. For Windows you may need to adjust the settings a bit more for correct results.
 
-> Note: Anywhere you see values in brackets (*e.g.* `&lt;REPLACEME&gt;`), you should replace the value (including the brackets) with the vlaue apporpriate to your own lab environment. 
+> Note: Anywhere you see values in brackets (*e.g.* `&lt;REPLACEME&gt;`), you should replace the value (including the brackets) with the value appropriate to your own lab environment. 
 ``` */
 --- Here you have to upload the FF3 Python library from here https://github.com/mysto/python-fpe
 --- Git clone this library locally, change (cd) into the python-fpe directory, then zip up the ff3 folder, and
@@ -142,7 +142,7 @@ Type SQL statements or !help
 /*
 ```
 
-Once you have the file uploaded, you can run the list command on your stage agin, and you should not see that zip file listed in the results.
+Once you have the file uploaded, you can run the list command on your stage again, and you should not see that zip file listed in the results.
 ``` */
 ls @python_libs; -- should now contain the ff3.zip file
 /*
@@ -154,7 +154,7 @@ Duration: 3
 
 In addition to the database, schema, and stage objects, you will also use tags and some demo data in a couple tables. We will create those now. Let's start with the tags. 
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results.
+> Note: if you stopped earlier and came back to continue, be sure you have set the same environment (*i.e.* used the same role, database, schema, and warehouse). Otherwise you may get different results.
 
 ``` */
 --- Create tags
@@ -238,11 +238,11 @@ grant all privileges on schema ff3_testing_db.ff3_testing_schema to role masked;
 ## Setting Up Encryption Keys - CAUTION
 Duration: 2
 
-Under the covers, FF3 is using encryption to achieve the results it gets. Like with all encryption, there are keys. These keys are secrets. For this demo, the keys will be set explicitly, and we will give example keys here as part of that demo. The acutal requirement is that they be present as a session variable. These keys can be populated any way that is apprpriate. In a real world setting. they may be retrieved programmatically via External Function from am external KMS or other vault.  
+Under the covers, FF3 is using encryption to achieve the results it gets. Like with all encryption, there are keys. These keys are secrets. For this demo, the keys will be set explicitly, and we will give example keys here as part of that demo. The actual requirement is that they be present as a session variable. These keys can be populated any way that is apprpriate. In a real world setting. they may be retrieved programmatically via External Function from am external KMS or other vault.  
 
-### CAUTION DO NOT EVER USE THESE KEYS IN A REAL WORLD SYSTEM. NOW THAT THEY HAVE BEEN USED IN THIS DEMO, THEY SHOULD BE CONSIDERED DANGEROUS, AND NEVER USED OUTSIDE OF THIE DEMO.
+### CAUTION DO NOT EVER USE THESE KEYS IN A REAL WORLD SYSTEM. NOW THAT THEY HAVE BEEN USED IN THIS DEMO, THEY SHOULD BE CONSIDERED DANGEROUS, AND NEVER USED OUTSIDE OF THIS DEMO.
 
-> Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be differen t and therefore the rsulting, underlying encryption operations will turn out differently.
+> Note: Do not use these keys outside this demo. You may also feel free to substitute in different keys at this time. If you do so, then understand that the results you get during the future steps will differ from the examples output offered as the keys will be different and therefore the resulting, underlying encryption operations will turn out differently.
 
 ``` */
 ---  Set the userkeys. 
@@ -280,7 +280,7 @@ There's a lot to copy and paste below. First you will create 5 Python based UDFs
 
 > Note: The `encrypt_ff3_string_pass3()` UDF contains a custom alphabet which determines what characters can be used in the FF3 tokenization. If your data contains characters not listed in that alphabet, then you would need to add it to that alphabet. If you intend to use this demo with any data aside from the demo data provided, then please take care to review that alphabet to ensure it meets your needs. 
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+> Note: if you stopped earlier and came back to continue, be sure you have set the same environment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 ``` */
 --- Install & Test the Python-based Tokenization UDFs for Email Strings
@@ -595,7 +595,7 @@ With the UDFs created, we can now run some tests. We will run the tests in a spe
 - We will make the token suitable for unique SQL joins. 
 - We will de-tokenize the data back to it's original form. 
 
-The thing that is subtle is the need for for formatting and SQL join UDFs. The first formatting example (`format_ff3_string_pass3()`) takes the token and removes metadata which this process adds. That can be useful for display of the string. The second fomatting example (`format_email_ff3_string_pass3()`) is specific to email strings, and will make a token look like an email for display or other pruposes. The SQL join formatting procedure (`sqljoin_ff3_string_pass3()`) also removes metadata and padding, but for the prupose of ensuring that those elements do not accidentally intorduce noise to joins. Essentially they leave the token in its original form without any extra layers. 
+The thing that is subtle is the need for for formatting and SQL join UDFs. The first formatting example (`format_ff3_string_pass3()`) takes the token and removes metadata which this process adds. That can be useful for display of the string. The second fomatting example (`format_email_ff3_string_pass3()`) is specific to email strings, and will make a token look like an email for display or other purposes. The SQL join formatting procedure (`sqljoin_ff3_string_pass3()`) also removes metadata and padding, but for the purpose of ensuring that those elements do not accidentally introduce noise to joins. Essentially they leave the token in its original form without any extra layers. 
 
 First, we will apply tokenization to a fake email address to get a token.
 ``` */
@@ -653,7 +653,7 @@ Now that we have the basic concept understood, we will install the UDFs needed f
 
 > Note: Since this approach to tokenization includes the use of metadata stored along with the value, values for Float and Number data types will require some space for this metadata. This means Floats can be no larger than 9 digits, and Number data types will require 5 of the digits to store metadata (which will always appear to the right of the decimal point). If you intend to use this demo with any data aside from the demo data provided, then please take care to review these requirements to ensure it meets your needs.  
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+> Note: if you stopped earlier and came back to continue, be sure you have set the same environment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 ``` */
 --- Install the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
@@ -1270,7 +1270,7 @@ You should see 15 rows of results, with each of these UDFs listed:
 
 With the full set of UDFs installed, let us now test each of them to see how they work. Each of the sets deals with tokenizing the data, formatting the tokens for both human and machine use (*e.g.* in SQL joins), and detokenizing the data.
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+> Note: if you stopped earlier and came back to continue, be sure you have set the same environment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 First we step through float data types.
 ``` */
@@ -1371,7 +1371,7 @@ Duration: 4
 
 The final step before our last big of walkthrough is to create a number of policies and grant rights on those and the other UDFs to all the roles that will need to interact with the policies to see these controls appliued automatically. 
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+> Note: if you stopped earlier and came back to continue, be sure you have set the same environment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 ``` */
 --- Create encrypt polices 
@@ -1558,7 +1558,7 @@ Duration: 7
 
 Up to this point, we have called the UDFs directly to manipulate data. That is not a very real world way to use this. Instead, you would want to have this applied in the background so that users don't need to do anything special. That is what we will explore in these steps. 
 
-> Note: if you stopped earlier and came back to continue, be sure you have set the same envirnoment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
+> Note: if you stopped earlier and came back to continue, be sure you have set the same environment (*i.e.* used the same role, database, schema, and warehouse - as well as setting the keys up again so they are in the session variables). Otherwise you may get different results.
 
 First, it's unlikely you would grant users access to keys directly. It's also unlikely that they would have access to all keys. They would only have access to specific keys. And steps like this to set that key may even be done in the background without their knowledge. Here we will set a specific key as the one to use for the following steps by putting a name in a session variable. Then we create a view that will use that keyname, and grant access to that view to some of our roles.
 ``` */
@@ -1574,7 +1574,7 @@ grant all privileges on view ff3_encrypt_view1 to role ff3_encrypt;
 /*
 ```
 
-Now we can select from both the source table and the view to see the data, but we see the view also has a column showing the key used for each column. Note that though this demo assumes the same key is used foreach columnb, that would not be required in a more complex case. So you may allow different keys on a column by column basis. 
+Now we can select from both the source table and the view to see the data, but we see the view also has a column showing the key used for each column. Note that though this demo assumes the same key is used for each column, that would not be required in a more complex case. So you may allow different keys on a column by column basis. 
 ``` */
 -- Test queries. Query source should be plaintext as well as view. View view however contains an extra 
 -- column with the encryption key.
@@ -1627,7 +1627,7 @@ select * from ff3_encrypt_view1; -- you should see tokenized data
 /*
 ```
 
-A common question is: what happens when people copy this data to other objects?" Let's step through doing just that by inserting data into a new object, tagging that object appropriately, and then seeing if that data is recoverable in the new object.
+A common question is: "what happens when people copy this data to other objects?" Let's step through doing just that by inserting data into a new object, tagging that object appropriately, and then seeing if that data is recoverable in the new object.
 ``` */
 -- Populate target table with encrypted data.
 insert into ff3_testing_db.ff3_testing_schema.ff3_pass3_target1  select * from ff3_encrypt_view1; 
