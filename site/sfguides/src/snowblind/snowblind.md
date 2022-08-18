@@ -91,12 +91,6 @@ create schema ff3_testing_db.ff3_testing_schema;
 use database ff3_testing_db;
 use schema ff3_testing_db.ff3_testing_schema;
 
---- Grants on warehouse for demo
-grant usage, operate on warehouse ff3_testing_wh to role ff3_encrypt;
-grant usage, operate on warehouse ff3_testing_wh to role ff3_decrypt;
-grant usage, operate on warehouse ff3_testing_wh to role data_sc;
-grant usage, operate on warehouse ff3_testing_wh to role masked;
-
 --- Create internal stage for the FF3 Python library
 create stage python_libs;
 /*
