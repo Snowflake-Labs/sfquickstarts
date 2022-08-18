@@ -1455,7 +1455,7 @@ create or replace masking policy ff3_decrypt_format_pass3_integer as (val intege
   end;
 
 
-create or replace masking policy ff3_decrypt_format_pass3_decimal as (val number(38,8), keyid string)  returns number(38,8) ->
+create or replace masking policy ff3_decrypt_format_decimal_pass3 as (val number(38,8), keyid string)  returns number(38,8) ->
   case
     when  current_role() in ('FF3_DECRYPT')
      then decrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
@@ -1639,7 +1639,7 @@ alter table ff3_pass3_target1 modify
 alter tag ff3_data_sc set
   masking policy ff3_decrypt_format_float_pass3,
   masking policy ff3_decrypt_format_string_pass3,
-  masking policy ff3_decrypt_format_pass3_decimal;
+  masking policy ff3_decrypt_format_decimal_pass3;
 /*
 ```
 
