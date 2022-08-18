@@ -1663,10 +1663,10 @@ alter table ff3_pass3_target1 modify column postalzip set tag uspostal='';
 alter table ff3_pass3_target1 modify column phone set tag usphone='';
 
 use role masked;
-select * from ff3_pass3_target1; -- shows data tokenized
+select * from ff3_pass3_target1; -- shows data masked
 
 use role accountadmin;
-select * from ff3_pass3_target1; -- shows data encrypted in pure form
+select * from ff3_pass3_target1; -- shows data tokenized
 
 use role ff3_decrypt;
 select * from ff3_pass3_target1; -- shows data detokenized
