@@ -16,7 +16,8 @@ Data Clean Rooms (DCRs) are secure environments that enable multiple organizatio
 
 Traditional DCR implementations require organizations to copy their data to a separate physical location.  Snowflake's DCR model, however, leverages [a unique architecture](https://www.snowflake.com/blog/distributed-data-clean-rooms-powered-by-snowflake/) that enables each organization to *maintain full control of their data* in their *own secure Snowflake account*.  In other words, two (or more) organizations can leverage Snowflake DCRs to join data without copying, moving, or sharing the underlying data, and to perform analyses on large amounts of data with high performance and scalability.
 
-**Caveat: This Data Clean Room QuickStart is for illustrative purposes only, as a hands-on lab intended to show some of the basic features used to build a data clean room on Snowflake. The result of this lab must not be used in a production environment.**
+Negative
+: **Caveat:** This Data Clean Room QuickStart is for illustrative purposes only, as a hands-on lab intended to show some of the basic features used to build a data clean room on Snowflake. The result of this lab must not be used in a production environment.
 
 ### Prerequisites
 - Familiarity with Snowflake's [unique DCR architecture](https://www.snowflake.com/blog/distributed-data-clean-rooms-powered-by-snowflake/)
@@ -993,7 +994,7 @@ You should be able to observe the aggregate counts of common Party1 and Party2 c
 At this point you should have a look at the records in the following tables:
 - `PARTY2_DCR_DB.SHARED_SCHEMA.QUERY_REQUESTS` - Contains the query request created by our execution of the Party2 `GENERATE_QUERY_REQUEST` stored procedure.
 - `PARTY1_DCR_DB.SHARED_SCHEMA.REQUEST_STATUS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
-- `PARTY1_DCR_DB.SHARED_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
+- `PARTY1_DCR_DB.INTERNAL_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
 ![Look at records in these tables](assets/demoLookAtTables.png)
 
 ### Customer Data Enrichment
@@ -1052,7 +1053,7 @@ You should be able to observe that the `CUSTOMER_DETAILS` table contains the ori
 As before, you may want to have a look at the records in the following tables:
 - `PARTY2_DCR_DB.SHARED_SCHEMA.QUERY_REQUESTS` - Contains the query request created by our execution of the Party2 `GENERATE_QUERY_REQUEST` stored procedure.
 - `PARTY1_DCR_DB.SHARED_SCHEMA.REQUEST_STATUS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
-- `PARTY1_DCR_DB.SHARED_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
+- `PARTY1_DCR_DB.INTERNAL_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
 
 ### Declined Query Example
 Let's re-run a query request for the `CUSTOMER_OVERLAP_ENRICH` query template, but this time we'll ask for demographic attributes to be returned that _aren't_ listed in the `AVAILABLE_VALUES` table.  Paste this code into the `Party2 - Demo` worksheet in the **Party2** account UI:
@@ -1094,7 +1095,7 @@ INSERT INTO party1_dcr_db.shared_schema.available_values VALUES ('PARTY1','MARIT
 You should now observe an approval when you re-run the `GENERATE_QUERY_REQUEST` and `VALIDATE_QUERY` stored procedures.  It's worth taking a look the records in the tables below to see the records that were created as a result of this last demostration sequence:
 - `PARTY2_DCR_DB.SHARED_SCHEMA.QUERY_REQUESTS` - Contains the query request created by our execution of the Party2 `GENERATE_QUERY_REQUEST` stored procedure.
 - `PARTY1_DCR_DB.SHARED_SCHEMA.REQUEST_STATUS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
-- `PARTY1_DCR_DB.SHARED_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
+- `PARTY1_DCR_DB.INTERNAL_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
 
 ### You Did It!
 You've successfully completed your walk-through of this two-party Snowflake DCR!
@@ -1114,6 +1115,10 @@ use warehouse PARTY1_WH;
 
 delete from party1_dcr_db.internal_schema.approved_query_requests;
 delete from party1_dcr_db.shared_schema.request_status;
+CREATE OR REPLACE STREAM party1_dcr_db.internal_schema.party2_new_requests
+ON TABLE party2_dcr_db.shared_schema.query_requests
+  APPEND_ONLY = TRUE 
+  DATA_RETENTION_TIME_IN_DAYS = 14;
 
 DELETE FROM party1_dcr_db.shared_schema.query_templates; 
 INSERT INTO party1_dcr_db.shared_schema.query_templates
@@ -1636,6 +1641,10 @@ use warehouse PARTY1_WH;
 
 delete from party1_dcr_db.internal_schema.approved_query_requests;
 delete from party1_dcr_db.shared_schema.request_status;
+CREATE OR REPLACE STREAM party1_dcr_db.internal_schema.party2_new_requests
+ON TABLE party2_dcr_db.shared_schema.query_requests
+  APPEND_ONLY = TRUE 
+  DATA_RETENTION_TIME_IN_DAYS = 14;
 
 DELETE FROM party1_dcr_db.shared_schema.query_templates; 
 INSERT INTO party1_dcr_db.shared_schema.query_templates
