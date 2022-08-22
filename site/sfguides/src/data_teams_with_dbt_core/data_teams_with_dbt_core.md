@@ -14,7 +14,7 @@ Duration: 5
 
 Modern Businesses need modern data strategy built on platforms that could support agility, growth and operational efficiency. Snowflake is Data Cloud, a future proof solution that can simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance.
 
-[dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by the [Fishtown Analytics](https://www.fishtownanalytics.com/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the open-source version of dbtCloud that is providing similar functionality, but as a SaaS.
+[dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by [dbt Labs](https://www.getdbt.com/dbt-labs/about-us/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the open-source version of dbtCloud that is providing similar functionality, but as a SaaS.
 In this virtual hands-on lab, you will follow a step-by-step guide to Snowflake and dbt to see some of the benefits this tandem brings. 
 
 Let’s get started. 
@@ -105,7 +105,7 @@ As result of these steps, we should have:
 Please note, this set up is simplified for the purpose of the lab. 
 There are many ways environments, roles, credentials could be modeled to fit your final requirements. 
 
-We would suggest having a look at these articles for inspiration: [How we configure Snowflake by Fishtown Team](https://blog.getdbt.com/how-we-configure-snowflake/), [Model Structure by GitLab team](https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure)
+We would suggest having a look at these articles for inspiration: [How we configure Snowflake by the dbt Labs Team](https://blog.getdbt.com/how-we-configure-snowflake/), [Model Structure by GitLab team](https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure)
 
 <!-- ------------------------ -->
 ## dbt Configuration 
@@ -344,13 +344,13 @@ So if you go in Snowflake UI and click 'History' icon on top, you are going to s
 
 ![Query Tag](assets/image24.png) 
 
-4.. **dbt plugins**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of GitHub repository. In our lab, we are going to demonstrate how to use some automation that [dbt_utils](https://hub.getdbt.com/fishtown-analytics/dbt_utils/latest) package provides. 
+4.. **dbt plugins**. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the [dbt Hub](https://hub.getdbt.com) or straight out of GitHub repository. In our lab, we are going to demonstrate how to use some automation that the [dbt_utils](https://hub.getdbt.com/dbt-labs/dbt_utils/latest/) package provides. 
 Let's install it. For that, let's create a file called ***packages.yml*** in the root of your dbt project folder and add the following lines: 
 
 ```yml
 packages:
-  - package: fishtown-analytics/dbt_utils
-    version: 0.6.4
+  - package: dbt-labs/dbt_utils
+    version: 0.8.2
 ```
 
 ![Query Tag](assets/image25.png) 

@@ -69,9 +69,11 @@ Duration: 3
 
 Privilege | Required for | Alternative
 ---------|----------|---------
+
  USAGE on DATABASE & SCHEMA| Access metadata for existing database and schema objects and bring them into a SqlDBM project | Use sample DDL provided
  REFERENCES on TABLE/VIEW | Reference the DDL for underlying tables and views | Use sample DDL provided
  USAGE on File Format, Sequence, Stored Procedure, User-Defined Function | Access the DDL for these objects | Not required for this tutorial
+
  ALL on schema | Deploying changes back into Snowflake | N/A
 
 _If you wish to use an existing schema, skip this step._
@@ -114,7 +116,9 @@ SELECT GET_DDL('schema','"DATABASE_NAME"."SCHEMA_NAME"', true);
 
 
 ### Option 2) Use the example schema 
+
 Download our [example DDL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/database_modeling_with_sqldbm/assets/sample_schema.sql) 
+
 
 * you can paste the contents directly into the text area on the screen.
 

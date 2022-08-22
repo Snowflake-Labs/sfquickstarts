@@ -165,7 +165,7 @@ Copy the contents of `config-template.js` to `config.js` and change the followin
 * `snowflake_user`
 * `snowflake_private_key`    
 
-To get the `snowflake_account` value from Snowflake, run `Select CURRENT_ACCOUNT()`. The user is `DATA_APPS_DEMO`, and the `snowflake_private_key` will be the full path to the private key that you created previously.
+To get the `snowflake_account` value from Snowflake, run `Select CURRENT_ACCOUNT()`. The user is `DATA_APPS_DEMO`, and the `snowflake_private_key` will be the text of the private key that you created previously.
 
 Run ```npm start``` in a terminal to start the application. If you see errors, check that the configuration is correct.
 

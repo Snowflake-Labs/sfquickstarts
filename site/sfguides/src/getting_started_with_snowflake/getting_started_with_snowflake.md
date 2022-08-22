@@ -128,56 +128,56 @@ The **Dashboards** tab allows you to create flexible displays of one or more cha
 Under **Data**, the **Databases**​ tab shows information about the databases you have created or have permission to access. You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that a database already exists in your environment. However, we will not be using it in this lab.
 
 
-#### Shared Data
+#### Private Shared Data
 
 ![shared data tab](assets/3UIStory_7.png)
 
-Also under **Data**, the **Shared Data** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.
+Also under **Data**, the **Private Shared Data** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.
 
 
 #### Marketplace
 
 ![marketplace tab](assets/3UIStory_8.png)
 
-**Marketplace**, the last tab under **Data**, is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
+The **Marketplace** tab is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
 
 
-#### History
+#### Query History
 
 ![history tab](assets/3UIStory_9.png)
 
-Under **Compute**, the **History** tab shows the following:
+Under **Activity** there are two tabs **Query History** and **Copy History**:
 
-- **Queries** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
-- **Copies** shows the status of copy commands run to ingest data into Snowflake.
+- **QuerHistory** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
+- **Copy History** shows the status of copy commands run to ingest data into Snowflake.
 
 
 #### Warehouses
 
 ![warehouses tab](assets/3UIStory_10.png)
 
-Also under **Compute**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH (XS) already exists in your environment.
+Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
 
 
 #### Resource Monitors
 
 ![resource monitors tab](assets/3UIStory_11.png)
 
-**Resource Monitors**, the last tab under **Compute**, shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
+Under **Admin**, the **Resource Monitors** tab shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
 
 
 #### Roles
 
 ![roles tab](assets/3UIStory_12.png)
 
-Under **Account**, the **Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tablular/list format by clicking **Table** at the top of the page.
+Under **Admin**, the **Roles** sub-tab of the **Users and Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
 
 
 #### Users
 
 ![users tab](assets/3UIStory_13.png)
 
-Also under **Account** tab, the **Users** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to ACCOUNTADMIN.
+Also under **Admin** tab, the **Users** sub-tab of the **Users and Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to ACCOUNTADMIN.
 
 
 ![user preferences dropdown](assets/3UIStory_14.png)
@@ -306,7 +306,7 @@ We are working with structured, comma-delimited data that has already been stage
 Positive
 : For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** buttion, then **Stage** > **Amazon S3**.
+From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** button, then **Stage** > **Amazon S3**.
 
 ![stages create](assets/4PreLoad_8.png)
 
@@ -314,7 +314,7 @@ In the "Create Securable Object" dialog that opens, replace the following values
 
 `stage_name`: `citibike_trips`
 
-`url`: `s3://snowflake-workshop-lab/citibike-trips/`
+`url`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
 
@@ -498,7 +498,7 @@ Navigate to the **Compute** > **Warehouses** tab, click **+ Warehouse**, and nam
 
 If you are using Snowflake Enterprise Edition (or higher) and **Multi-cluster Warehouses** is enabled, you will see additional settings:
 
-- Make sure **Max Clusters** is sset to `1`.
+- Make sure **Max Clusters** is set to `1`.
 - Leave all the other settings at their defaults.
 
 ![warehouse settings](assets/5Load_10.png)
@@ -621,9 +621,9 @@ Going back to the lab's example, the Citi Bike analytics team wants to determine
 - Run a query that joins the JSON data to the previously loaded `TRIPS` data.
 - Analyze the weather and ride count data to determine their relationship.
 
-The JSON data consists of weather information provided by OpenWeatherMap detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 57.9k rows, 61 objects, and 2.5MB compressed. If viewed in a text editor, the raw JSON in the GZ files looks like:
+The JSON data consists of weather information provided by *MeteoStat* detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 75k rows, 36 objects, and 1.1MB compressed. If viewed in a text editor, the raw JSON in the GZ files looks like:
 
-![raw JSON sample](assets/7SemiStruct_1.png)
+![raw JSON sample](assets/7SemiStruct_1_1.png)
 
 Negative
 : **SEMI-STRUCTURED DATA**
@@ -631,7 +631,7 @@ Snowflake can easily load and query semi-structured data such as JSON, Parquet, 
 
 ### Create a New Database and Table for the Data
 
-First, in the worksheet, let's create a database named `WEATHER` tto use for storing the semi-structured JSON data.
+First, in the worksheet, let's create a database named `WEATHER` to use for storing the semi-structured JSON data.
 
 ```SQL
 create database weather;
@@ -666,7 +666,7 @@ The VARIANT data type allows Snowflake to ingest semi-structured data without ha
 
 In the results pane at the bottom of the worksheet, verify that your table, `JSON_WEATHER_DATA`, was created:
 
-![success message](assets/7SemiStruct_2.png)
+![success message](assets/7SemiStruct_2_1.png)
 
 ### Create Another External Stage
 
@@ -674,7 +674,7 @@ In the `CITIBIKE_ZERO_TO_SNOWFLAKE` worksheet, use the following command to crea
 
 ```SQL
 create stage nyc_weather
-url = 's3://snowflake-workshop-lab/weather-nyc';
+url = 's3://snowflake-workshop-lab/zero-weather-nyc';
 ```
 
 Now let's take a look at the contents of the `nyc_weather` stage. Execute the following LIST command to display the list of files:
@@ -685,7 +685,7 @@ list @nyc_weather;
 
 In the results pane, you should see a list of `.gz` files from S3:
 
-![results output](assets/7SemiStruct_3.png)
+![results output](assets/7SemiStruct_3_1.png)
 
 ### Load and Verify the Semi-structured Data
 
@@ -697,13 +697,13 @@ Note that you can specify a `FILE FORMAT` object inline in the command. In the p
 
 ```SQL
 copy into json_weather_data
-from @nyc_weather
-file_format = (type=json);
+from @nyc_weather 
+    file_format = (type = json strip_outer_array = true);
 ```
 
 Verify that each file has a status of `LOADED`:
 
-![query result](assets/7SemiStruct_4.png)
+![query result](assets/7SemiStruct_4_1.png)
 
 
 Now, let's take a look at the data that was loaded:
@@ -714,7 +714,7 @@ select * from json_weather_data limit 10;
 
 Click any of the rows to display the formated JSON in the right panel:
 
-![JSON data snippet](assets/7SemiStruct_5.png)
+![JSON data snippet](assets/7SemiStruct_5_1.png)
 
 To close the display in the panel and display the query details again, click the **X** (Close) button that appears when you hover your mouse in the right corner of the panel.
 
@@ -727,35 +727,39 @@ Negative
 A view allows the result of a query to be accessed as if it were a table. Views can help present data to end users in a cleaner manner, limit what end users can view in a source table, and write more modular SQL.
 Snowflake also supports materialized views in which the query results are stored as though the results are a table. This allows faster access, but requires storage space. Materialized views can be created and queried if you are using Snowflake Enterprise Edition (or higher).
 
-Run the following command to create a columnar view of the semi-structured JSON weather data so it is easier for analysts to understand and query. The ``5128638`` value for ``city_id`` corresponds to New York City.
+Run the following command to create a columnar view of the semi-structured JSON weather data so it is easier for analysts to understand and query. The ``72502`` value for ``station_id`` corresponds to Newark Airport, the closest station that has weather conditions for the whole period.
 
 ```SQL
-create view json_weather_data_view as
+// create a view that will put structure onto the semi-structured data
+create or replace view json_weather_data_view as
 select
-v:time::timestamp as observation_time,
-v:city.id::int as city_id,
-v:city.name::string as city_name,
-v:city.country::string as country,
-v:city.coord.lat::float as city_lat,
-v:city.coord.lon::float as city_lon,
-v:clouds.all::int as clouds,
-(v:main.temp::float)-273.15 as temp_avg,
-(v:main.temp_min::float)-273.15 as temp_min,
-(v:main.temp_max::float)-273.15 as temp_max,
-v:weather[0].main::string as weather,
-v:weather[0].description::string as weather_desc,
-v:weather[0].icon::string as weather_icon,
-v:wind.deg::float as wind_dir,
-v:wind.speed::float as wind_speed
-from json_weather_data
-where city_id = 5128638;
+    v:obsTime::timestamp as observation_time,
+    v:station::string as station_id,
+    v:name::string as city_name,
+    v:country::string as country,
+    v:latitude::float as city_lat,
+    v:longitude::float as city_lon,
+    v:weatherCondition::string as weather_conditions,
+    v:coco::int as weather_conditions_code,
+    v:temp::float as temp,
+    v:prcp::float as rain,
+    v:tsun::float as tsun,
+    v:wdir::float as wind_dir,
+    v:wspd::float as wind_speed,
+    v:dwpt::float as dew_point,
+    v:rhum::float as relative_humidity,
+    v:pres::float as pressure
+from
+    json_weather_data
+where
+    station_id = '72502';
 ```
 
-SQL dot notation `v:city.coord.lat` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
+SQL dot notation `v:temp` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
 The new view should appear as `JSON_WEATHER_DATA` under `WEATHER` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
 
-![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6.png)
+![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6_1.png)
 
 Verify the view with the following query: 
 
@@ -767,7 +771,7 @@ limit 20;
 
 Notice the results look just like a regular structured data source. Your result set may have different `observation_time` values:
 
-![query results with view](assets/7SemiStruct_7.png)
+![query results with view](assets/7SemiStruct_7_1.png)
 
 ### Use a Join Operation to Correlate Against Data Sets
 
@@ -780,7 +784,7 @@ Positive
 
 
 ```SQL
-select weather as conditions
+select weather_conditions as conditions
 ,count(*) as num_trips
 from citibike.public.trips
 left outer join json_weather_data_view
@@ -789,7 +793,7 @@ where conditions is not null
 group by 1 order by 2 desc;
 ```
 
-![weather results](assets/7SemiStruct_8.png)
+![weather results](assets/7SemiStruct_8_1.png)
 
 The initial goal was to determine if there was any correlation between the number of bike rides and the weather by analyzing both ridership and weather data. Per the results above we have a clear answer. As one would imagine, the number of trips is significantly higher when the weather is good!
 
@@ -940,14 +944,14 @@ Notice that, in the top right of the worksheet, the context has changed to ACCOU
 
 ![ACCOUNTADMIN context](assets/9Role_1.png)
 
-Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowfalke user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
+Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowflake user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
 
 Use the following commands to create the role and assign it to you. Before you run the GRANT ROLE command, replace `YOUR_USERNAME_GOES_HERE` with your username:
 
 ```SQL
 create role junior_dba;
 
-grant role junior_dba to user YOUR_USERNAME_GOES HERE;
+grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
 ```
 
 Positive
@@ -959,11 +963,27 @@ Change your worksheet context to the new `JUNIOR_DBA` role:
 use role junior_dba;
 ```
 
-In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role.
+In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role. 
 
 ![JUNIOR_DBA context](assets/9Role_2.png)
 
-Also, in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Also, the warehouse is not selected because the newly created role does not have usage privileges on any warehouse. Let's fix it by switching back to ADMIN role and grant usage privileges to `COMPUTE_WH` warehouse.
+
+```SQL
+use role accountadmin;
+
+grant usage on warehouse compute_wh to role junior_dba;
+```
+
+Switch back to the `JUNIOR_DBA` role. You should be able to use `COMPUTE_WH` now.
+
+```SQL
+use role junior_dba;
+
+use warehouse compute_wh;
+```
+
+Finally, you can notice that in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
 Switch back to the ACCOUNTADMIN role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CITIBIKE` and `WEATHER` databases:
 
@@ -1006,7 +1026,7 @@ Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs ar
 
 The **Usage** tab shows the following, each with their own page:
 
-- **Orgamization**: Credit usaged across all the accounts in your organization.
+- **Organization**: Credit usaged across all the accounts in your organization.
 - **Consumption**: Credits consumed by the virtual warehouses in the current account.
 - **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
 - **Transfers**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
@@ -1187,7 +1207,7 @@ We encourage you to continue with your free trial by loading your own sample or 
 - Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document.
 - Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers.
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
-- Sighn up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
+- Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
 - Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
 
 ### What we've covered:

@@ -60,30 +60,32 @@ git clone https://github.com/Snowflake-Labs/sfguide-snowflake-python-api.git
 
 After downloading you will have a folder sfguide-snowflake-python containing all the code needed for the API. Open the folder in VSCode to review the project.
 
-The app.py contains all the entrypoints for the API endpoints. The get_trips_monthly function is one of the API endpoints we needed
+The connector.py contains all the entrypoints for the API endpoints using the Snowflake Python connector. The get_trips_monthly function is one of the API endpoints we needed
 for this API which pulls the trips completed aggregated by month. Review the code and the SQL needed to retrieve the data from Snowflake and serialize it to JSON for the response. This endpoint also takes 2 optional query string parameters start_range and end_range.
 
 ```python
-@app.route("/trips/monthly")
+@connector.route("/trips/monthly")
 @api_response
 def get_trips_monthly():
     start_range = request.args.get('start_range')
     end_range = request.args.get('end_range')
-    if start_range and end_range:
-        sql = "select COUNT(*) as trip_count, MONTHNAME(starttime) as month from demo.trips where starttime between ? and ? group by MONTH(starttime), MONTHNAME(starttime) order by MONTH(starttime);"
-        return exec_and_fetch(sql, (start_range, end_range))
+    if start_range and end_range and params_valid(start_range, end_range):
+        sql = f"select COUNT(*) as trip_count, MONTHNAME(starttime) as month from demo.trips where starttime between '{start_range}' and '{end_range}' group by MONTH(starttime), MONTHNAME(starttime) order by MONTH(starttime);"
+        return exec_and_fetch(sql)
     sql = "select COUNT(*) as trip_count, MONTHNAME(starttime) as month from demo.trips group by MONTH(starttime), MONTHNAME(starttime) order by MONTH(starttime);"
     return exec_and_fetch(sql)
 ```
 
-You can also review the other endpoints in [app.py](https://github.com/Snowflake-Labs/sfguide-snowflake-python-api/blob/main/app.py) to see how simple it is to host multiple endpoints.
+You can also review the other endpoints in [connector.py](https://github.com/Snowflake-Labs/sfguide-snowflake-python-api/blob/main/connector.py) to see how simple it is to host multiple endpoints.
+
+If you would also like to see how to build endpoints using the Snowflake SQL API, review [sqlapi.py](https://github.com/Snowflake-Labs/sfguide-snowflake-python-api/blob/main/sqlapi.py).
 
 ## Configuring the Application
 Duration: 3
 
 The config.py file is setup to configure the application from environment variables. These environment variables will be set for the lambda in AWS by the Serverless Framework automatically.
 
-Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to have your Snowflake account in both places that have <ACCOUNT> (SNOWFLAKE_ACCOUNT and SNOWFLAKE_PRIVATE_KEY). This Snowflake account must be the same one used for the [Building a Data Application](https://quickstarts.snowflake.com/guide/data_app/index.html) guide as we will be using the same database and user. If you haven't completed the first 4 steps of that guide, do so before continuing.
+Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to name your service by replacing <NAME_OF_YOUR_SERVICE> and update your Snowflake account in both places that have <ACCOUNT> (SNOWFLAKE_ACCOUNT and SNOWFLAKE_PRIVATE_KEY). This Snowflake account must be the same one used for the [Building a Data Application](https://quickstarts.snowflake.com/guide/data_app/index.html) guide as we will be using the same database and user. If you haven't completed the first 4 steps of that guide, do so before continuing.
 
 Modify the region in the serverless.yml (line 17) to the same region as your credentials.
 

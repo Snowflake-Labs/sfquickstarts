@@ -75,7 +75,7 @@ const CODELABS_ENVIRONMENT = args.codelabsEnv || 'web';
 const CODELABS_FILTER = args.codelabsFilter || '*';
 
 // CODELABS_FORMAT is the output format for which to build codelabs.
-const CODELABS_FORMAT = args.codelabsFormat || 'html';
+const CODELABS_FORMAT = args.codelabsFormat || '../../../claat/render/template.html';
 
 // CODELABS_NAMESPACE is the content namespace.
 const CODELABS_NAMESPACE = (args.codelabsNamespace || 'guide').replace(/^\/|\/$/g, '');
