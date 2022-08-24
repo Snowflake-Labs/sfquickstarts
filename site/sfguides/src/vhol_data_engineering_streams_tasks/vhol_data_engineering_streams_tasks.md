@@ -54,7 +54,7 @@ Duration: 5
 
 ### Download
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab. **Click the green button to download the file**
-<button>[Data_Engineering_Streams_Tasks_VHOL.sql](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/vhol_data_engineering_streams_tasks/V2/files/Data_Engineering_Streams_Tasks_VHOL.sql)</button>
+<button>[Data_Engineering_Streams_Tasks_VHOL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/vhol_data_engineering_streams_tasks/files/Data_Engineering_Streams_Tasks_VHOL.sql)</button>
 
 ### Login
 At this point log into your Snowflake. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
