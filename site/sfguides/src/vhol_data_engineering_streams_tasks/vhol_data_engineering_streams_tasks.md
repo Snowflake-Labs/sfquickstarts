@@ -336,6 +336,12 @@ Duration: 15
 
 Create Tasks to orchestrate Processing for this VHOL.  Each Task will be independent and separately scheduled.
 
+See diagram:
+![](assets/pipeline1.png)
+- First task will create an incoming JSON file containing credit card transactions and store this file in the Stage.
+- Second task will perform a COPY INTO operation, reading file(s) within the Stage and load into staging/landing table
+- Third task will perform an ELT transformation operation, processing recently-added records to the staging/landing table and load into the "analytics-ready" table.
+
 ### a)  Create Task
 Task be our real-time kafka streaming source (calling Stored Procedure to simulate incoming Kafka-provided credit card transactions).  This task will be scheduled to run every 60 seconds, very similar to how Snowflake's Kafka Connector bundles and ingests data.
 ```
@@ -520,7 +526,11 @@ select count(*) from CC_TRANS_ALL;
 
 ## Create Data Pipeline #2
 Duration: 15
-This section will orchestration task with dependencies, rather than independently scheduled and executed.
+
+This section's Data Pipeline will be very similar to the first, except will orchestrate tasks with dependencies, rather than being independently scheduled and executed.
+
+See diagram:
+![](assets/pipeline2.png)
 
 ### a)  Create Two Tasks
 Similar to the tasks created in the previous section, but ones that will become subtasks (rather than independent scheduling).
