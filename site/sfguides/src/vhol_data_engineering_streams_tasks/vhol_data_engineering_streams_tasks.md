@@ -662,7 +662,15 @@ drop database VHOL_ST;
 
 ### e)    Drop Warehouse (Optional)
 ```
+
+use role ACCOUNTADMIN;
 drop warehouse VHOL_WH;
+```
+
+### e)    Drop Role (Optional)
+```
+use role ACCOUNTADMIN;
+drop role VHOL;
 ```
 
 ## Conclusion
@@ -685,3 +693,7 @@ Congratulations, you have completed this Lab!
 - [Handling Task Errors](https://docs.snowflake.com/en/user-guide/tasks-errors.html)
 - [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe.html)
 - [Kafka Connector](https://docs.snowflake.com/en/user-guide/kafka-connector.html)
+
+
+
+
