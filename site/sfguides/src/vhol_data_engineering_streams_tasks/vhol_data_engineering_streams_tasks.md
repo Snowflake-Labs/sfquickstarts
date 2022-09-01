@@ -1,13 +1,13 @@
 id: vhol_data_engineering_streams_tasks
 summary: Virtual Hands-On Lab:  Data Engineering, Streams & Tasks
-categories: VHOL,Data Engineering
+categories: VHOL,Data Engineering, Getting Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Tasks, Streams, Financial Services
 authors: steven.maser@snowflake.com 
 
-# Building Continuous Data Pipelines with Snowflake
+# Getting Started with Streams & Tasks
 <!-- ------------------------ -->
 ## Overview 
 Duration: 4
