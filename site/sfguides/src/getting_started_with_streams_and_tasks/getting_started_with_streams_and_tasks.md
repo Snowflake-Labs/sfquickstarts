@@ -1,13 +1,13 @@
 id: vhol_data_engineering_streams_tasks
 summary: Virtual Hands-On Lab:  Data Engineering, Streams & Tasks
-categories: VHOL,Data Engineering
+categories: VHOL,Data Engineering, Getting Started
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Tasks, Streams, Financial Services
 authors: steven.maser@snowflake.com 
 
-# Building Continuous Data Pipelines with Snowflake
+# Getting Started with Streams & Tasks
 <!-- ------------------------ -->
 ## Overview 
 Duration: 4
@@ -18,8 +18,7 @@ Streams provides a change tracking mechanism for your tables and views, enabling
 
 Tasks are Snowflake objects to execute a single command, which could be simple SQL command or calling an extensive stored procedure.  Tasks can be scheduled or run on-demand, either within a Snowflake Virtual warehouse or serverless.
 
-This Lab will also construct a Directed Acyclic Graph (DAG), which is a series of tasks composed of a single root task and
-additional tasks, organized by their dependencies. Tasks will be combined with table streams to create data pipelines, continuous ELT workflows to process recently received or changed table rows. 
+This Lab will also construct a Directed Acyclic Graph (DAG), which is a series of tasks composed of a single root task and additional tasks, organized by their dependencies. Tasks will be combined with table streams to create data pipelines, continuous ELT workflows to process recently received or changed table rows. 
 
 A simulated streaming datafeed will be used for this exercise, using a Snowpark-based Stored Procedure, to simplify your setup and focus on these two capabilities.  The simulation will be high-volume, at 1 million transactions a minute (exceeding 15k/second), of credit card purchases and returns.
 This prerequisite streaming ingestion was modeled to mirror one created from Snowflake's Kafka Connector, without the distraction of having to setup a running Kafka instance.  
@@ -32,7 +31,7 @@ While not covered in this exercise, one can use these building blocks to further
 ### What You’ll Learn 
 - how to create a Snowflake Stream
 - how to create and schedule a Snowflake Task 
-- how to orchestrate tasks into a data pipeline
+- how to orchestrate tasks into data pipelines
 - how Snowpark can be used to build new types of user-defined functions and stored procedures 
 - multiple ways to manage and monitor your Snowflake tasks and data pipelines
 
@@ -40,11 +39,12 @@ While not covered in this exercise, one can use these building blocks to further
 To participate in the virtual hands-on lab, attendees need the following:
 
 - A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with **ACCOUNTADMIN** access
-- B Be able to download a SQL File, or will have to copy/paste each command from this Guide
+- Be able to download a SQL File, or will have to copy/paste each command from this Guide
 
 ### What You’ll Build 
 - A Snowflake database that contains all data and objects built in this lab
 - A Stage and Staging table to initially land your incoming data stream
+- An Analytics-Ready Table
 - A Stream to track recently-received credit card transactions
 - Tasks orchestrated two ways to process those new transactions
 
@@ -54,7 +54,7 @@ Duration: 5
 
 ### Download
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab. **Click the green button to download the file**
-<button>[Data_Engineering_Streams_Tasks_VHOL.sql](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/vhol_data_engineering_streams_tasks/V2/files/Data_Engineering_Streams_Tasks_VHOL.sql)</button>
+<button>[Data_Engineering_Streams_Tasks_VHOL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting_started_with_streams_and_tasks/files/Data_Engineering_Streams_Tasks_VHOL.sql)</button>
 
 ### Login
 At this point log into your Snowflake. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
@@ -77,7 +77,7 @@ The SQL script file should show up as text in a new worksheet. You may need to s
 Each step throughout the Snowflake portion of the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code one command at-a-time as we walk through the lab.
 
 ### Set your Role
-Finally, switch to the ACCOUNTADMIN role that we will use throughout this lab.  Creating Stages and monitoring tasks executed by 'System' requires higher-level permissions.    
+Finally, switch to the ACCOUNTADMIN role.  If you just created an evaluation account to go through this Lab, this should be easy.  However, if you are using an established account and find this role missing from your list, you may need assistance to complete the next few steps.  Creating a Role, Database, Stages, Tasks, and monitoring tasks executed by 'System' requires higher-level permissions.    
 ![](assets/image2-4.png)
 
 
@@ -85,27 +85,42 @@ Finally, switch to the ACCOUNTADMIN role that we will use throughout this lab.  
 ## Begin Construction
 Duration: 5
 
-Create Foundational Snowflake Objects for this VHOL
-### a)  Create a Database
+Create Foundational Snowflake Objects for this Hands-on Lab
+### a)  Create a new role for this Lab and grant permissions
 ```
-create or replace database VHOL_ST;
-use database VHOL_ST;
-use schema PUBLIC;
+use role ACCOUNTADMIN;
+set myname = current_user();
+create role if not exists VHOL;
+grant role VHOL to user identifier($myname);
+grant create database on account to role VHOL;
+grant EXECUTE TASK, EXECUTE MANAGED TASK on ACCOUNT to role VHOL;
+grant IMPORTED PRIVILEGES on DATABASE SNOWFLAKE to role VHOL;
 ```
-### b)  Create a Compute Warehouse
-Size XS, dedicated for this VHOL
+### b)  Create a Dedicated Virtual Compute Warehouse
+Size XS, dedicated for this Hands-on Lab
 ```
-create warehouse if not exists VHOL WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
+create or replace warehouse VHOL_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
+grant all privileges on warehouse VHOL_WH to role VHOL;
 ```
 
-### c)  Create an internal Stage
+### c)  Create Database used throughout this Lab
+```
+use role VHOL;
+create or replace database VHOL_ST;
+grant all privileges on database VHOL_ST to role VHOL;
+use database VHOL_ST;
+use schema PUBLIC;
+use warehouse VHOL_WH;
+```
+
+### d)  Create an internal Stage
 Dedicated for incoming streaming files (Typically real-time stream consumption would be automated from Kafka using Snowflake Kafka Connector, but for this exercise we are simulating data and focusing on Task and Stream usage.).  Incoming data will JSON format, with many transactions within each file.
 ```
-create or replace stage VHOL
+create or replace stage VHOL_STAGE
 FILE_FORMAT = ( TYPE=JSON,STRIP_OUTER_ARRAY=TRUE );
 ```
 ### d)  Create a Staging/Landing Table
-Where all incoming data will land initially.  Each row will contain a transaction, but JSON will be stored as a variant datatype within Snowflake.
+Where all incoming data will land initially.  Each row will contain a transaction, but JSON will be stored as a VARIANT datatype within Snowflake.
 ```
 create or replace table CC_TRANS_STAGING (RECORD_CONTENT variant);
 ```
@@ -217,30 +232,29 @@ Which will return:
 ## Develop and Testing
 Duration: 15
 
-
 ### a)  Call SP to generate the compressed JSON load file
-This will later be run every X minutes to simulate a real-time stream ingestion process.  But we can also run it using:  
+Later, this will be setup to run repetitively on a schedule to simulate a real-time stream ingestion process.  First, we run the stored procedure on-demand using:  
 ```
-call SIMULATE_KAFKA_STREAM('@VHOL','SNOW_',1000000);
+call SIMULATE_KAFKA_STREAM('@VHOL_STAGE','SNOW_',1000000);
 ```
 Which returns:  
 ![](assets/image5-1.png)
 
 ### b)  Verify file was created in the internal stage
 ```
-list @VHOL PATTERN='.*SNOW_.*';
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
 This file looks similar to this in your Stage:
 ![](assets/image5-2.png)
 
 ### c)  Load file into Staging Table  (about 100Mb raw json data per file).  Later, this will be setup to run every x minutes.
 ```
-copy into CC_TRANS_STAGING from @VHOL PATTERN='.*SNOW_.*';
+copy into CC_TRANS_STAGING from @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
 Which will return this:
 ![](assets/image5-3.png)
 
-### d)  Now, there should be raw source JSON data in our Landing/Staging Table, but now a variant datatype.
+### d)  Now, there should be raw source JSON data in our Landing/Staging Table, but now a VARIANT datatype.
 ```
 select count(*) from CC_TRANS_STAGING;
 select * from CC_TRANS_STAGING limit 10;
@@ -248,7 +262,7 @@ select * from CC_TRANS_STAGING limit 10;
 Select one of the rows, and you will see a better view of the contents, which will be similar to:
 ![](assets/image5-4.png)
 
-### e) Run Test Queries.  Now that it is a varient datatype, the contents of the JSON is now understood.
+### e) Run Test Queries.  Now that it is a VARIANT datatype, the contents of the JSON is now understood.
 ```
 select RECORD_CONTENT:card:number as card_id from CC_TRANS_STAGING limit 10;
 ```
@@ -266,11 +280,11 @@ RECORD_CONTENT:transaction:timestamp::datetime
 from CC_TRANS_STAGING
 where RECORD_CONTENT:transaction:amount::float < 600 limit 10;
 ```
-While the raw data was JSON, Snowflake has converted that during the COPY INTO step, creating Variant column values, making semi-structured data much easier
+While the raw data was JSON, Snowflake has converted that during the COPY INTO step, creating VARIANT column values, making semi-structured data much easier
 ![](assets/image5-5.png)
 
 
-### f)  Create a View of Staging Table for real-time operational queries (normalize variant column to a full tabular representation)
+### f)  Create a View of Staging Table for real-time operational queries (normalize VARIANT column to a full tabular representation)
 ```
 create or replace view CC_TRANS_STAGING_VIEW (card_id, merchant_id, transaction_id, amount, currency, approved, type, timestamp ) as (
 select
@@ -303,7 +317,7 @@ create or replace stream CC_TRANS_STAGING_VIEW_STREAM on view CC_TRANS_STAGING_V
 select count(*) from CC_TRANS_STAGING_VIEW_STREAM;
 select * from CC_TRANS_STAGING_VIEW_STREAM limit 10;
 ```
-Note:  Note we are populating the Stream with the all current rows in the table.  Querying the Stream does not consume it.  But, something that is in a transaction (auto or manual committed) will consume the records in the stream for exactly-once change pattern.
+Note:  We are populating the Stream with the all current rows in the table.  Querying the Stream does not consume it.  But, something that is in a transaction (auto or manual committed) will consume the records in the stream for exactly-once change pattern.
 
 ### j) Create Analytical table (normalized) for transformation (ELT) and easier user consumption (Staging table for landing can then be purged after X days)
 ```
@@ -320,17 +334,23 @@ timestamp datetime);
 ## Create Data Pipeline #1
 Duration: 15
 
-Create Tasks to orchestrate Processing for this VHOL
+Create Tasks to orchestrate Processing for this Hands-on Lab.  Each Task will be independent and separately scheduled.
+
+See diagram:
+![](assets/pipeline1.png)
+- First task will create an incoming JSON file containing credit card transactions and store this file in the Stage.
+- Second task will perform a COPY INTO operation, reading file(s) within the Stage and load into staging/landing table
+- Third task will perform an ELT transformation operation, processing recently-added records to the staging/landing table and load into the "analytics-ready" table.
 
 ### a)  Create Task
 Task be our real-time kafka streaming source (calling Stored Procedure to simulate incoming Kafka-provided credit card transactions).  This task will be scheduled to run every 60 seconds, very similar to how Snowflake's Kafka Connector bundles and ingests data.
 ```
 create or replace task GENERATE_TASK
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 SCHEDULE = '1 minute'
 COMMENT = 'Generates simulated real-time data for ingestion'
 as
-call SIMULATE_KAFKA_STREAM('@VHOL','SNOW_',1000000);
+call SIMULATE_KAFKA_STREAM('@VHOL_STAGE','SNOW_',1000000);
 ```
 
 ### b)  View Definition of Task
@@ -365,7 +385,7 @@ execute task GENERATE_TASK;
 ![](assets/image6-5.png)
 
 If you don't see your tasks, make sure you are ACCOUNTADMIN in this tab/window too (or same role if not ACCOUNTADMIN but have rights to see SYSTEM-executed tasks).
-Finally, click on your Worksheet tab leaving your Query History tab available as you will want to return and jump between these two Snowsite views.
+Finally, click on your Worksheet tab leaving your Query History tab available as you will want to return and jump between these two Snowsight views.
 
 
 ### e)  Enable Task to Run on its Schedule
@@ -375,22 +395,23 @@ alter task GENERATE_TASK RESUME;
 ```
 
 ### f)  List Files in Stage
-List the files that were created now in Stage and ready to be copied into Snowflake.
-NOTE:  task will not run instantly, it will wait a minute before running
+List Files in Stage now ready to be copied into Snowflake.
+NOTE:  Task will not run instantly, it will wait a minute before running
 ```
-list @VHOL PATTERN='.*SNOW_.*';
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
 
 ### g)  Wait
-Wait a couple minutes, see it is regularly generating files to the schedule
+Wait a couple minutes and then you should see that the Task is regularly generating and adding a new file to the Stage.
 Reminder:  Remember to turn these Tasks off at end of lab or, if you take a break, jump to the last step of this section for the commands to suspend your tasks.
 ```
-list @VHOL PATTERN='.*SNOW_.*';
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
 
 ### h)  Create a Second Task
-This Task will run every 3 minutes and utilizes the Staging Stream that identifies newly added records to the Staging file and loads into our analytical table
-For this Task, lets utilize option to run with a serverless compute, as a full compute warehouse is not really necessary to have running for these small continuous microbatch tasks.  In an actual implementation, the incoming simulated data stream will be external.
+This Task will run every 3 minutes and utilizes the Staging Stream that identifies newly added records to the Staging file and loads into our analytical table.  As there will be multiple files ready for ingestion, note each will be loaded independently and in parallel.
+
+For this Task, we will utilize the option to run with a serverless compute, as a full compute warehouse is not really necessary to have running for these small continuous micro-batch tasks.  In an actual implementation, the incoming simulated data stream will be external.
 
 ```
 create or replace task PROCESS_FILES_TASK
@@ -398,9 +419,9 @@ USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
 SCHEDULE = '3 minute'
 COMMENT = 'Ingests Incoming Staging Datafiles into Staging Table'
 as
-copy into CC_TRANS_STAGING from @VHOL PATTERN='.*SNOW_.*';
+copy into CC_TRANS_STAGING from @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
-Note:  Snowflake does track what files in a stage it has already processed for a period of time, but if you get thousands and thousands of files in your stage you don't want this process to sort through them for each run of the Task.  Using "PURGE" is a way to delete them during the COPY INTO step, or can create a separate step to archive or delete these files on your preferred schedule.
+Note:  Snowflake does track what files in a stage it has already processed for a period of time, but, if you get thousands and thousands of files in your stage, you don't want this process to sort through them for each run of the Task. Using "PURGE" is a way to delete them during the COPY INTO step, or you can create a separate step to archive or delete these files on your preferred schedule.
 
 ### i)  Check Staging Table, View, and Stream
 Query Staging Table and its Stream tracking changes, before running Process Task.  Note before and after row counts.
@@ -415,7 +436,7 @@ select * from CC_TRANS_STAGING_VIEW_STREAM limit 10;
 ```
 execute task PROCESS_FILES_TASK;
 ```
-Wait here for processing (Can monitor from you Query History tab)
+Wait here for processing (Can monitor from your Query History tab)
 
 ### k)  Query Staging View and its Stream
 Streams make it so easy to track changes, after running Process Task:
@@ -430,8 +451,8 @@ alter task PROCESS_FILES_TASK resume;
 ```
 
 ### m)  Create Third Task
-This task will run every 4 minutes, utilizing the Staging Stream to process new records and load into the Analytical Table.
-Note that this first checks if there is records in the stream, then will process if stream has records.
+This task will run every 4 minutes, leveraging the Staging Stream to process new records and load into the Analytical Table.
+Note that this first checks if there are records in the stream and then will process and load records if the stream has records.
 ```
 create or replace task REFINE_TASK
 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
@@ -472,7 +493,7 @@ select count(*) from CC_TRANS_ALL;
 select count(*) from CC_TRANS_STAGING_VIEW_STREAM;
 ```
 
-Note: Note the first time it runs, the Stream will show just the initial records (1,000,000).  Once those are consumed for the initial rows, then the stream will show the rows added by the scheduled tasks.
+Note: The Stream will first show just the initial records (1,000,000).  Once those are consumed for the initial rows, then the stream will show the rows added by the scheduled tasks.
 
 ### r)  Schedule Task
 Resume Task so it will run on its schedule.  Note it is fully independent of the other tasks we have running.  You can also configure tasks to run at a certain time, using CRON-based syntax option.
@@ -482,15 +503,15 @@ alter task REFINE_TASK resume;
 
 ### s)  Reporting
 One can report on LOAD metadata generated by Snowflake.  This is available in two views:
+1)  For no latency, but only 14 days of retention:
 ```
 select * from VHOL_ST.INFORMATION_SCHEMA.LOAD_HISTORY where SCHEMA_NAME=current_schema() and TABLE_NAME='CC_TRANS_STAGING';
 ```
-For no latency, but only 14 days of retention
-and
+
+2)  Up to 90 minutes latency with this view, but 365 days of retention:
 ```
 select * from SNOWFLAKE.ACCOUNT_USAGE.LOAD_HISTORY where SCHEMA_NAME=current_schema() and TABLE_NAME='CC_TRANS_STAGING';
 ```
-Up to 90 minutes latency with this view, but 365 days of retention
 
 ### t)  Stop Tasks
 ```
@@ -506,15 +527,19 @@ select count(*) from CC_TRANS_ALL;
 
 ## Create Data Pipeline #2
 Duration: 15
-This section will orchestration task with dependencies, rather than independently scheduled and executed.
+
+This section's Data Pipeline will be very similar to the first, except will orchestrate tasks with dependencies, rather than being independently scheduled and executed.
+
+See diagram:
+![](assets/pipeline2.png)
 
 ### a)  Create Two Tasks
 Similar to the tasks created in the previous section, but ones that will become subtasks (rather than independent scheduling).
-Note:  Defining all of these to run within the same warehouse, but that is not a requirement.
+Note: Define all of these to run within the same warehouse, but that is not a requirement.
 - First Task
 ```
 create or replace task REFINE_TASK2
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 as
 insert into CC_TRANS_ALL (select                     
 card_id, merchant_id, transaction_id, amount, currency, approved, type, timestamp
@@ -523,20 +548,20 @@ from CC_TRANS_STAGING_VIEW_STREAM);
 - Second Task
 ```
 create or replace task PROCESS_FILES_TASK2
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 as
-copy into CC_TRANS_STAGING from @VHOL PATTERN='.*SNOW_.*';
+copy into CC_TRANS_STAGING from @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
 
 ### b)  Create Root Task
 This is the Task where all others will be subprocesses of.
 ```
 create or replace task LOAD_TASK
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 SCHEDULE = '1 minute'
 COMMENT = 'Full Sequential Orchestration'
 as
-call SIMULATE_KAFKA_STREAM('@VHOL','SNOW_',1000000);
+call SIMULATE_KAFKA_STREAM('@VHOL_STAGE','SNOW_',1000000);
 ```
 
 ### c)  First Predecessor
@@ -553,19 +578,19 @@ alter task PROCESS_FILES_TASK2 RESUME;
 Note:  One can also use the 'after' within the create task command
 
 ### d)  View DAG Orchestration
-- In a new tab (use right-click on "home icon" at upper left), Navigate in Snowsite to:  
+- In a new tab (use right-click on "home icon" at upper left), Navigate in Snowsight to:  
   **Data>Databases>VHOL_ST>PUBLIC>Tasks>LOAD_TASK**
 - Review "Task Details" tab:    
 ![](assets/image7-1.png)
 
 - Review "Graph" to see graphical representation of our simple flow:    
 ![](assets/image7-2.png)
-Remember your warehouse is 'VHOL'
+Remember your warehouse is 'VHOL_WH'
 
 - Review "Run History" to view Task Executions:   
 ![](assets/image7-3.png)
 
-Note:  Graph and Task History are recently added previews, so may need to ask on how to enable in your account if this menu options are missing.
+Note:  Graph and Task History are recently added previews, so may need to ask on how to enable in your account if these menu options are missing.
 
 ### e)  Start LOAD Task
 ```
@@ -573,7 +598,7 @@ alter task LOAD_TASK RESUME;
 ```
 Wait, as task will run after one minute.  Then, see a file created in Stage
 ```
-list @VHOL PATTERN='.*SNOW_.*';
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
 Go back to Activity tab, reviewing Query History and Task's Run History (refresh)
 
@@ -582,14 +607,14 @@ Tasks do not have to be sequential, they can also run in parallel.  Let's create
 ```
 alter task LOAD_TASK SUSPEND;
 create or replace task WAIT_TASK
-  WAREHOUSE=VHOL
+  WAREHOUSE=VHOL_WH
   after PROCESS_FILES_TASK2
 as
   call SYSTEM$wait(1);
 ```
 
 ### g)  Run Load Task
-Resume/enable both tasks, after this addition.  Note we utilized the "AFTER" option during create rather than using alter afterward to create this dependency to the DAG process.
+After this addition, resume/enable both tasks. Note we utilized the "AFTER" option during creation rather than using "ALTER" afterward to create this dependency to the DAG process.
 ```
 alter task WAIT_TASK RESUME;
 alter task LOAD_TASK RESUME;
@@ -599,7 +624,7 @@ alter task LOAD_TASK RESUME;
 Go back to your Task tab, refreshing your Graph view and task's Run History.
 
 ### i)  Task Dependencies
-Can also See task dependencies via SQL.  As this is available via query, this can be collected for your data catalog and other analysis/reporting purposes.
+Can also see task dependencies via SQL.  As this is available via query, this can be collected for your data catalog and other analysis/reporting purposes.
 ```
 select * from table(information_schema.task_dependents(task_name => 'LOAD_TASK', recursive => true));
 ```
@@ -631,14 +656,22 @@ show tasks;
 ```
 (suspend any still running)
 
-### d)    Drop Database, removing all objects created by this VHOL (Optional)  
+### d)    Drop Database, removing all objects created by this Hands-on Lab (Optional)  
 ```
-drop database VHOL;
+drop database VHOL_ST;
 ```
 
 ### e)    Drop Warehouse (Optional)
 ```
-drop warehouse VHOL;
+
+use role ACCOUNTADMIN;
+drop warehouse VHOL_WH;
+```
+
+### e)    Drop Role (Optional)
+```
+use role ACCOUNTADMIN;
+drop role VHOL;
 ```
 
 ## Conclusion
