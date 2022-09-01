@@ -409,7 +409,8 @@ list @VHOL_STAGE PATTERN='.*SNOW_.*';
 ```
 
 ### h)  Create a Second Task
-This Task will run every 3 minutes and utilizes the Staging Stream that identifies newly added records to the Staging file and loads into our analytical table
+This Task will run every 3 minutes and utilizes the Staging Stream that identifies newly added records to the Staging file and loads into our analytical table.  As there will be multiple files ready for ingestion, note each will be loaded independently and in parallel.
+
 For this Task, we will utilize the option to run with a serverless compute, as a full compute warehouse is not really necessary to have running for these small continuous micro-batch tasks.  In an actual implementation, the incoming simulated data stream will be external.
 
 ```
