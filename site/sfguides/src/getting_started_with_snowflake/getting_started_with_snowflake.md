@@ -894,7 +894,7 @@ In Snowflake, we can simply run a command to find the query ID of the last UPDAT
 ```SQL
 set query_id =
 (select query_id from table(information_schema.query_history_by_session (result_limit=>5))
-where query_text like 'update%' order by start_time limit 1);
+where query_text like 'update%' order by start_time desc limit 1);
 ```
 
 Use Time Travel to recreate the table with the correct station names:
