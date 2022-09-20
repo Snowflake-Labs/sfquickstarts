@@ -227,6 +227,8 @@ It is in comma-delimited format with a single header line and double quotes encl
 
 First, let's create a database called `CITIBIKE` to use for loading the structured data.
 
+Ensure you are using the sysadmin role by selecting **Switch Role** > **SYSADMIN**.
+
 Navigate to the **Databases** tab. Click **Create**, name the database `CITIBIKE`, then click **CREATE**.
 
 ![worksheet creation](assets/4PreLoad_2.png)
@@ -317,6 +319,7 @@ In the "Create Securable Object" dialog that opens, replace the following values
 `url`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
+Also ensure you have removed 'credentials = (...)' statejment which is not required. The create stage command should resemble that show above exactly. 
 
 Positive
 : The S3 bucket for this lab is public so you can leave the credentials options in the statement empty. In a real-world scenario, the bucket used for an external stage would likely require key information.
@@ -376,7 +379,7 @@ In this section, we will use a virtual warehouse and the COPY command to initiat
 
 Compute resources are needed for loading data. Snowflake's compute nodes are called virtual warehouses and they can be dynamically sized up or out according to workload, whether you are loading data, running a query, or performing a DML operation. Each workload can have its own warehouse so there is no resource contention.
 
-Navigate to the **Warehouses** tab (under **Compute**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
+Navigate to the **Warehouses** tab (under **Admin**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
 
 Note the **+ Warehouse** option in the upper right corner of the top. This is where you can quickly add a new warehouse. However, we want to use the existing warehouse COMPUTE_WH included in the 30-day trial environment.
 
@@ -436,7 +439,7 @@ In the result pane, you should see the status of each file that was loaded. Once
 
 ![results load status](assets/5Load_5.png)
 
-Next, navigate to the **History** tab by clicking the **Home** icon and then **Compute** > **History**. Select the query at the top of the list, which should be the COPY INTO statement that was last executed. Note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
+Next, navigate to the **Query History** tab by clicking the **Home** icon and then **Activity** > **Query History**. Select the query at the top of the list, which should be the COPY INTO statement that was last executed. Select the **Query Profile** tab and note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
 
 ![history and duration](assets/5Load_6.png)
 
@@ -488,13 +491,13 @@ file_format=CSV;
 
 ![compare load durations](assets/5Load_9.png)
 
-Once the load is done, navigate back to the **Queries** page (**Home** icon > **Compute** > **History** > **Queries**). Compare the times of the two COPY INTO commands. The load using the `Large` warehouse was significantly faster.
+Once the load is done, navigate back to the **Queries** page (**Home** icon > **Activity** > **Query History**). Compare the times of the two COPY INTO commands. The load using the `Large` warehouse was significantly faster.
 
 ### Create a New Warehouse for Data Analytics
 
 Going back to the lab story, let's assume the Citi Bike team wants to eliminate resource contention between their data loading/ETL workloads and the analytical end users using BI tools to query Snowflake. As mentioned earlier, Snowflake can easily do this by assigning different, appropriately-sized warehouses to various workloads. Since Citi Bike already has a warehouse for data loading, let's create a new warehouse for the end users running analytics. We will use this warehouse to perform analytics in the next section.
 
-Navigate to the **Compute** > **Warehouses** tab, click **+ Warehouse**, and name the new warehouse `ANALYTICS_WH` and set the size to `Large`.
+Navigate to the **Admin** > **Warehouses** tab, click **+ Warehouse**, and name the new warehouse `` and set the size to `Large`.
 
 If you are using Snowflake Enterprise Edition (or higher) and **Multi-cluster Warehouses** is enabled, you will see additional settings:
 
@@ -1017,7 +1020,7 @@ Negative
 : **Roles in User Preference vs Worksheet**
 Why did we use the user preference menu to change the role instead of the worksheet? The UI session and each worksheet have their own separate roles. The UI session role controls the elements you can see and acceess in the UI, whereas the worksheet role controls only the objects and actions you can access within the role.
 
-Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs are available under **Account**.
+Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs are available under **Admin**.
 
 
 #### Usage
@@ -1115,7 +1118,7 @@ Snowflake provides several ways to securely share data without compromising conf
 
 ### Snowflake Data Marketplace
 
-Make sure you're using the ACCOUNTADMIN role and, under **Data**, navigate to the **Marketplace** tab:
+Make sure you're using the ACCOUNTADMIN role and, navigate to the **Marketplace**:
 
 ![data marketplace tab](assets/10Share_7.png)
 
@@ -1131,7 +1134,7 @@ In the **COVID-19 Epidemiological Data** page, you can learn more about the data
 
 ![get data fields](assets/10Share_starschema_get_data.png)
 
-Review the information in the dialog and glick **Get Data** again:
+Review the information in the dialog and glick **Get** again:
 
 ![get data fields](assets/10Share_starschema_get_data2.png)
 
@@ -1139,7 +1142,7 @@ You can now click **Done** or choose to run the sample queries provided by Stars
 
 ![get data fields](assets/10Share_starschema_query_data.png)
 
-If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
+If you chose **Open**, a new worksheet opens in a new browser tab/window:
 
 1. Select the query you want to run (or place your cursor in the query text).
 2. Click the **Run/Play** button (or use the keyboard shortcut).
