@@ -10,7 +10,7 @@ tags: Data Engineering, dbt
 # Data Engineering with Snowpark Python and dbt
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
+Duration: 4
 
 <img src="assets/data_engineering_with_snowpark_python_and_dbt-1.png" width="600" />
 
@@ -66,9 +66,9 @@ The following are optional but will help you debug your Python dbt models:
 
 <!-- ------------------------ -->
 ## Create the dbt Project
-Duration: 2
+Duration: 10
 
-The easiest way to get started with dbt, and ensure you have the most up-to-date dbt configurations, is to the run the `dbt init` command. The `dbt init` process will create two folders in the directory you run it from, a `logs` folder and a folder named the same as your project. So in a terminal change to the directory where you want the new dbt project folder created and execute `dbt init`. Follow the prompts to create your new project. For most of the prompts enter the value appropriate to your environment, but for **database** and **schema** enter the values below:
+The easiest way to get started with dbt, and ensure you have the most up-to-date dbt configurations, is to the run the `dbt init` command. The `dbt init` process will create two folders in the directory you run it from, a `logs` folder and a folder with the same name as your project. So in a terminal change to the directory where you want the new dbt project folder created and execute `dbt init`. Follow the prompts to create your new project. For most of the prompts enter the value appropriate to your environment, but for **database** and **schema** enter the values below:
 
 * Enter a name for your project (letters, digits, underscore): `<project name>`
 * Which database would you like to use? ... Enter a number: `[1] snowflake`
@@ -82,7 +82,7 @@ The easiest way to get started with dbt, and ensure you have the most up-to-date
 * schema (default schema that dbt will build objects in): `DEMO_SCHEMA`
 * threads (1 or more) [1]: `1`
 
-See [More Details](#more-details-on-dbt-init) below for a summary of what just happened. But after `dbt init` finished you will have a functional dbt project and the following default SQL models in the `models` folder:
+See the [dbt init documentation](https://docs.getdbt.com/reference/commands/init) for more details on what just happened, but after `dbt init` finished you will have a functional dbt project and the following default SQL models in the `models` folder:
 
 ```
 models
@@ -92,46 +92,371 @@ models
 |--|-- schema.yml
 ```
 
-To verify that everything is configured properly, open a terminal and execute `dbt run`. You should now have the following objects created in Snowflake in your `DEMO_DB.DEMO_SCHEMA` schema:
+Positive
+: **Note** - The connection details you just entered have been stored in a dbt connection profile in the default location: `~/.dbt/profiles.yml`. To learn more about managing connection details with dbt profiles please see [configuring your profile](https://docs.getdbt.com/dbt-cli/configure-your-profile).
+
+To verify that everything is configured properly, open a terminal and execute `dbt run`. dbt should execute successfully and you should now have the following objects created in Snowflake in your `DEMO_DB.DEMO_SCHEMA` schema:
 
 * A table named `my_first_dbt_model`
 * A view named `my_second_dbt_model`
 
-### More Details on dbt init
-See the [dbt init documentation](https://docs.getdbt.com/reference/commands/init) for more details, but here's how they summary the process:
-
->If this is your first time ever using the tool, it will:
->
->* ask you to name your project
->* ask you which database adapter you're using (or to [install the one you need](https://docs.getdbt.com/docs/available-adapters))
->* prompt you for each piece of information that dbt needs to connect to that database: things like `account`, `user`, `password`, etc
->
-> Then, it will:
->
->* Create a new folder with your project name and sample files, enough to get you started with dbt
->* Create a connection profile on your local machine. The default location is `~/.dbt/profiles.yml`. Read more in [configuring your profile](https://docs.getdbt.com/dbt-cli/configure-your-profile).
-
-
+Negative
+: **Note** - If the `dbt run` command did not complete successfully, it's most likely something wrong with your connection details. Please review and update those details in your dbt connection profile saved here: `~/.dbt/profiles.yml`. Then retry.
 
 <!-- ------------------------ -->
 ## Create a Simple Python Model
-Duration: 2
+Duration: 8
+
+### Overview
+Now that you've created your dbt project and run it once successfully, it's time to create our first Python model! But before we do, here's a brief overview of how to create a Python model in dbt (from [dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models)):
+
+>Each Python model lives in a `.py` file in your `models/` folder. It defines a function named **`model()`**, which takes two parameters:
+>
+>* `dbt`: A class compiled by dbt Core, unique to each model, that enables you to run your Python code in the context of your dbt project and DAG.
+>* `session`: A class representing the connection to the Python backend on your data platform. The session is needed to read in tables as DataFrames, and to write DataFrames back to tables. In PySpark, by convention, the `SparkSession` is named `spark`, and available globally. For consistency across platforms, we always pass it into the `model` function as an explicit argument named `session`.
+>
+>The `model()` function must return a single DataFrame.
+
+### Create my_first_python_model
+
+In the `models/example` folder, create a new file named `my_first_python_model.py` and copy & paste the following content to the new file:
+
+```python
+def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = "table")
+
+    # DataFrame representing an upstream model
+    df = dbt.ref("my_first_dbt_model")
+ 
+    return df
+```
+
+Finally, save the file and execute `dbt run` again. If everything ran successfully you just ran your very first Python model in dbt! It's that simple. Here are a few things to note at this point:
+
+* No Jinja! dbt Python models don't use Jinja to render compiled code.
+* You don't have to explicity import the Snowflake Snowpark Python library, dbt will do that for you. More on this in the next step.
+* As mentioned above, every dbt Python model must define a method named `model` that has the following signature: `model(dbt, session)`.
+* As of 9/10/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
+* You can use `dbt.ref()` and `dbt.source()` just the same as their Jinja equivalents in SQL models. And you can refer to either Python or SQL models interchangably!
+
+Positive
+: **Note** - For more details on accessing dbt project contexts from your Python models, please check out [Accessing project context](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models#accessing-project-context).
 
 
 <!-- ------------------------ -->
 ## Understand How the Simple dbt Python Model Works
-Duration: 2
+Duration: 10
+
+So what just happened you ran your dbt Python model? The single best thing to help you debug and understand what's happening is to look at your [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake. Please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history.
+
+### Overivew of dbt Executed Queries
+Here are the queries that dbt executed when you ran the `my_first_python_model` model. I've omited the content of the stored procedure in this section so that it's easier to see what's happening at a high level. In the next section we'll discuss what's happening inside the stored procedure.
+
+1. List schemas
+
+        show terse schemas in database DEMO_DB
+
+1. List objects
+
+        show terse objects in DEMO_DB.DEMO_SCHEMA
+
+1. Create stored procedure
+
+        CREATE OR REPLACE PROCEDURE DEMO_DB.DEMO_SCHEMA.my_first_python_model__dbt_sp ()
+        RETURNS STRING
+        LANGUAGE PYTHON
+        RUNTIME_VERSION = '3.8' -- TODO should this be configurable?
+        PACKAGES = ('snowflake-snowpark-python')
+        HANDLER = 'main'
+        EXECUTE AS CALLER
+        AS
+        $$
+
+        <dbt compiled Python code>
+
+        $$;
+
+1. Call stored procedure
+
+        CALL DEMO_DB.DEMO_SCHEMA.my_first_python_model__dbt_sp()
+
+    1. Materialize model
+
+            CREATE  OR  REPLACE TABLE DEMO_DB.DEMO_SCHEMA.my_first_python_model AS  SELECT  *  FROM ( SELECT  *  FROM (DEMO_DB.DEMO_SCHEMA.my_first_dbt_model)
+
+1. Drop stored procedure
+
+        drop procedure if exists DEMO_DB.DEMO_SCHEMA.my_first_python_model__dbt_sp(string)
+
+
+### Overivew of Stored Procedure Code Generated by dbt
+So what exactly is happening in the stored procedure? This is really the critical part to focus on in order to understatnd what dbt is doing with Python models. As we go through this, keep in mind that a core desing principal for dbt Python models is that all of the Python code will be executed in Snowflake, and none will be run locally. Here's how dbt's documentation puts it:
+
+> The prerequisites for dbt Python models include using an adapter for a data platform that supports a fully featured Python runtime. In a dbt Python model, all Python code is executed remotely on the platform. None of it is run by dbt locally. We believe in clearly separating model definition from model execution. In this and many other ways, you'll find that dbt's approach to Python models mirrors its longstanding approach to modeling data in SQL. (from [dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models))
+
+With that, let's look at our first Python dbt model again:
+
+```python
+def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = "table")
+
+    # DataFrame representing an upstream model
+    df = dbt.ref("my_first_dbt_model")
+ 
+    return df
+```
+
+So in order to run that in Snowflake we need a few things. First it needs to run in the context of a stored procedure, and second the stored procedure needs to contain everything necessary to run the model. This means that dbt needs to generate Python code to handle the following things:
+
+1. Provide a `dbt` and `session` object to our `model()` method.
+    1. The `dbt` object needs to provide access to dbt configuration and dag context with methods like `ref()`, `source()`, `config()`, `this()`, etc.
+    1. The `session` object is the Snowpark session
+1. Provide the logic to materialize the resulting DataFrame returned by the `model()` method
+1. Provide the overall orchestration of these pieces
+
+Here's the full content of the stored procedure generated by dbt (which was removed in the overview above and replaced with the `<dbt compiled Python code>` placeholder):
+
+```python
+def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = "table")
+
+    # DataFrame representing an upstream model
+    df = dbt.ref("my_first_dbt_model")
+ 
+    return df
+
+
+# This part is user provided model code
+# you will need to copy the next section to run the code
+# COMMAND ----------
+# this part is dbt logic for get ref work, do not modify
+
+def ref(*args,dbt_load_df_function):
+    refs = {"my_first_dbt_model": "DEMO_DB.DEMO_SCHEMA.my_first_dbt_model"}
+    key = ".".join(args)
+    return dbt_load_df_function(refs[key])
+
+
+def source(*args, dbt_load_df_function):
+    sources = {}
+    key = ".".join(args)
+    return dbt_load_df_function(sources[key])
+
+
+config_dict = {}
+
+
+class config:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    @staticmethod
+    def get(key):
+        return config_dict.get(key)
+
+class this:
+    """dbt.this() or dbt.this.identifier"""
+    database = 'DEMO_DB'
+    schema = 'DEMO_SCHEMA'
+    identifier = 'my_first_python_model'
+    def __repr__(self):
+        return 'DEMO_DB.DEMO_SCHEMA.my_first_python_model'
+
+
+class dbtObj:
+    def __init__(self, load_df_function) -> None:
+        self.source = lambda x: source(x, dbt_load_df_function=load_df_function)
+        self.ref = lambda x: ref(x, dbt_load_df_function=load_df_function)
+        self.config = config
+        self.this = this()
+        self.is_incremental = False
+
+# COMMAND ----------
+
+# To run this in snowsight, you need to select entry point to be main
+# And you may have to modify the return type to text to get the result back
+# def main(session):
+#     dbt = dbtObj(session.table)
+#     df = model(dbt, session)
+#     return df.collect()
+
+# to run this in local notebook, you need to create a session following examples https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python
+# then you can do the following to run model
+# dbt = dbtObj(session.table)
+# df = model(dbt, session)
+
+
+def materialize(session, df, target_relation):
+    # we have to make sure pandas is imported
+    import pandas
+    if isinstance(df, pandas.core.frame.DataFrame):
+        # session.write_pandas does not have overwrite function
+        df = session.createDataFrame(df)
+    df.write.mode("overwrite").save_as_table("DEMO_DB.DEMO_SCHEMA.my_first_python_model", create_temp_table=False)
+
+def main(session):
+    dbt = dbtObj(session.table)
+    df = model(dbt, session)
+    materialize(session, df, dbt.this)
+    return "OK"
+```
+
+Positive
+: **Note** - When building and debugging your dbt Python models, you can find this Python code in the compiled version of the model by running `dbt compile` (or `dbt run`). The compiled files are written to the `target-path` folder, which by default is a folder named `target` in your dbt project folder.
 
 
 <!-- ------------------------ -->
 ## Create a Python Model with a UDF
-Duration: 2
+Duration: 10
+
+Now that you understand the basics of dbt Python models, let's add in another concept, the user-defined function (or UDF for short). "A UDF (user-defined function) is a user-written function that can be called from Snowflake in the same way that a built-in function can be called. Snowflake supports UDFs written in multiple languages, including Python." (see [Introduction to Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-introduction.html) for more details). By creating and registering a UDF it can be used in your DataFrame (or SQL) expression just liike a built-in function.
+
+So let's create a second dbt Python model, this time with a UDF. In the `models/example` folder, create a new file named `my_second_python_model.py` and copy & paste the following content to the new file:
+
+```python
+from snowflake.snowpark.functions import udf
+
+def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = "table")
+
+    # User defined function
+    @udf
+    def add_one(x: int) -> int:
+        x = 0 if not x else x
+        return x + 1
+
+    # DataFrame representing an upstream model
+    df = dbt.ref("my_first_dbt_model")
+
+    # Add a new column containing the id incremented by one
+    df = df.withColumn("id_plus_one", add_one(df["id"]))
+
+    return df
+```
+
+As you can see from the code above we're creating a very simple UDF named `add_one()` which adds one to the number passed to the function. Finally, save the file and execute `dbt run` again (or just run this new model by executing `dbt run --model my_second_python_model`). If everything ran successfully you just ran your second Python model with a UDF in dbt!
+
+### Aside: Where to Define the UDF
+
+Remember in the last section how we saw that your dbt Python model code is supplemented with dbt's compiled code and then wrapped in a Snowflake stored procedure? Well that's important to note as it has implications for where/how you define a UDF in your Python model. In the example above we defined and registered the function inside the `main()` handler function, using the `@udf` decorator.
+
+If you try and define and register the function outside of the `main()` handler function you will get the following error: `Query outside the handler is not allowed in Stored Procedure. Please move query related functions into the handler in function`. In order to move the function definition outside of the `main()` handler function you must only define it there and then register it inside. Here is an example from dbt's documentation ([dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models)):
+
+```python
+import snowflake.snowpark.types as T
+import snowflake.snowpark.functions as F
+import numpy
+
+def register_udf_add_random():
+    add_random = F.udf(
+        # use 'lambda' syntax, for simple functional behavior
+        lambda x: x + numpy.random.normal(),
+        return_type=T.FloatType(),
+        input_types=[T.FloatType()]
+    )
+    return add_random
+
+def model(dbt, session):
+
+    dbt.config(
+        materialized = "table",
+        packages = ["numpy"]
+    )
+
+    temps_df = dbt.ref("temperatures")
+
+    add_random = register_udf_add_random()
+
+    # warm things up, who knows by how much
+    df = temps_df.withColumn("degree_plus_random", add_random("degree"))
+    return df
+```
+
+Notice that the function is defined outside the `main()` handler function and then registered (and used) inside.
 
 
 <!-- ------------------------ -->
 ## Understand How the dbt Python Model with a UDF Works
-Duration: 2
+Duration: 8
 
+Now let's take another deep dive into what happened when we run the second dbt model with a UDF. As before, please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history ([Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history).
+
+
+### Overivew of dbt Executed Queries
+Here are the queries that dbt executed when you ran the `my_second_python_model` model. You will notice that it's similar to the first model, but with some more queries to deal with creating the UDF. I've again omited the content of the stored procedure in this section so that it's easier to see what's happening at a high level. But I won't walk through it this time as it's very similar to the previous example, the only real difference being the difference in model code.
+
+1. List schemas
+
+        show terse schemas in database DEMO_DB
+
+1. List objects
+
+        show terse objects in DEMO_DB.DEMO_SCHEMA
+
+1. Create stored procedure
+
+        CREATE OR REPLACE PROCEDURE DEMO_DB.DEMO_SCHEMA.my_second_python_model__dbt_sp ()
+        RETURNS STRING
+        LANGUAGE PYTHON
+        RUNTIME_VERSION = '3.8' -- TODO should this be configurable?
+        PACKAGES = ('snowflake-snowpark-python')
+        HANDLER = 'main'
+        EXECUTE AS CALLER
+        AS
+        $$
+
+        <dbt compiled Python code>
+
+        $$;
+
+1. Call stored procedure
+
+        CALL DEMO_DB.DEMO_SCHEMA.my_second_python_model__dbt_sp()
+
+    1. Use the correct database
+
+            SELECT CURRENT_DATABASE()
+
+    1. Create a temporary stage
+
+            create temporary stage if not exists DEMO_DB.DEMO_SCHEMA.SNOWPARK_TEMP_STAGE_4LBT18DLR8
+
+    1. List the contents of the stage
+
+            ls '@"DEMO_DB"."DEMO_SCHEMA".SNOWPARK_TEMP_STAGE_4LBT18DLR8'
+
+    1. Get the name of the pickled function
+
+            SELECT "name" FROM ( SELECT  *  FROM  TABLE ( RESULT_SCAN('<previous_query_id')))
+
+    1. Create the temporary function
+
+            CREATE TEMPORARY FUNCTION "DEMO_DB"."DEMO_SCHEMA".SNOWPARK_TEMP_FUNCTION_1Z5V5PPNVH(arg1 BIGINT)
+            RETURNS BIGINT
+            LANGUAGE PYTHON
+            RUNTIME_VERSION=3.8
+            PACKAGES=('cloudpickle==2.0.0')
+            HANDLER='compute'
+
+            AS $$
+
+            <Pickled Python code>
+
+            $$;
+
+    1. Materialize the table
+
+            CREATE  OR  REPLACE TABLE  DEMO_DB.DEMO_SCHEMA.my_second_python_model AS  SELECT  *  FROM ( SELECT "ID", "DEMO_DB"."DEMO_SCHEMA".SNOWPARK_TEMP_FUNCTION_1Z5V5PPNVH("ID") AS "ID_PLUS_ONE" FROM ( SELECT  *  FROM (DEMO_DB.DEMO_SCHEMA.my_first_dbt_model)))
+
+1. Drop stored procedure
+
+        drop procedure if exists DEMO_DB.DEMO_SCHEMA.my_second_python_model__dbt_sp(string)
+
+The overall steps are the same, but notice that what happens during the stored procedure execution (step #4) is different and more complex. This is because the Snowpark library, running inside the Snowflake Python stored procedure has more work to do with UDFs. It has to pickle the UDF content, create a temporary stage, upload the pickled file (not shown), and finally create the UDF in Snowflake. 
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
@@ -140,6 +465,7 @@ Duration: 4
 Add closing remarks
 Add links to Snowpark docs
 Add links to dbt docs
+Add tips for debugging code
 
 ### What We've Covered
 
