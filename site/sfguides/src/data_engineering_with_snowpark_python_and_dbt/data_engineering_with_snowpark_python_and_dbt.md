@@ -14,16 +14,24 @@ Duration: 4
 
 <img src="assets/data_engineering_with_snowpark_python_and_dbt-1.png" width="600" />
 
+### Background
+Data engineering is a broad discipline which includes data ingestion, data tranformation, and data consumption, along with the accompanying SDLC best practices (i.e. DevOps). Data engineers employ different tools and approaches depending on the phase. For this Quickstart we will focus on the data transformation phase in particular.
+
+Data transformation involves taking source data which has been ingested into your data platform and cleansing it, combining it, and modeling it for downstream use. Historically the most popular way to transform data has been with the SQL language. Data engineers built data transformation pipelines using SQL often with the help of ETL/ELT tools. But recently many folks have also begun adopting the DataFrame API in languages like Python for this task. For the most part a data engineer can accomplish the same data transformations with either approach, and deciding between the two is mostly a mattter of preference and particular use cases. That being said, there are use cases where a particular data transform can't be expressed in SQL and a different approach is needed. The most popular approach for these use cases is Python along with a DataFrame API.
+
+### dbt
+Enter dbt. dbt is one of the most (maybe the most) popular data transformation tools today. And until now dbt has been entirely a SQL-based transformation tool. But with the announcement of dbt Python models, things have changed. It's now possible to create both SQL and Python based models in dbt! Here's how dbt explains it:
+
+>dbt Python ("dbt-py") models will help you solve use cases that can't be solved with SQL. You can perform analyses using tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics. Before, you would have needed separate infrastructure and orchestration to run Python transformations in production. By defining your Python transformations in dbt, they're just models in your project, with all the same capabilities around testing, documentation, and lineage. ([dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models))
+
+### Snowflake
+Python based dbt models are made possible by Snowflake's new native Python support and Snowpark API for Python. With Snowflake's native Python support and DataFrame API, you no longer need to maintain and pay for separate infrastructure/services to run Python code, it can be run directly within Snowflake's Enterprise grade data platform!
+
 This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt's new Python-based models.
 
-Add note about preview status of both these features.
-Add note about carefully following the dbt install instructions below.
+Negative
+: **Note** - As of 10/1/2022, both of these features are still in preview. Snowflake's native Python support and Snowpark API for Python is in Public Preview, and dbt's Python model support is in preview and will be released with version 1.3.
 
-Snowpark Python summary
-[Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-
-dbt Python model summary
-[dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models)
 
 ### Prerequisites
 
@@ -47,7 +55,7 @@ You will need the following things before beginning:
 1. Anaconda
     1. **Anaconda installed on your computer.** Check out the [Anaconda Installation](https://docs.anaconda.com/anaconda/install/) instructions for the details. 
 1. dbt
-    1. **dbt installed on your computer.** Since Python models in dbt are still in preview, you will need to manually specify the correct beta version of dbt. As of 9/10/2022, please follow these step (where `<env-name>` is any name you want for the Anaconda environment):
+    1. **dbt installed on your computer.** Since Python models in dbt are still in preview, you will need to manually specify the correct beta version of dbt. As of 10/1/2022, please follow these step (where `<env-name>` is any name you want for the Anaconda environment):
         1. `conda create -n <env-name> python=3.8`
         1. `conda activate <env-name>`
         1. `pip install dbt-core==1.3.0b1`
@@ -137,7 +145,7 @@ Finally, save the file and execute `dbt run` again. If everything ran successful
 * No Jinja! dbt Python models don't use Jinja to render compiled code.
 * You don't have to explicity import the Snowflake Snowpark Python library, dbt will do that for you. More on this in the next step.
 * As mentioned above, every dbt Python model must define a method named `model` that has the following signature: `model(dbt, session)`.
-* As of 9/10/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
+* As of 10/1/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
 * You can use `dbt.ref()` and `dbt.source()` just the same as their Jinja equivalents in SQL models. And you can refer to either Python or SQL models interchangably!
 
 Positive
@@ -151,7 +159,7 @@ Duration: 10
 So what just happened you ran your dbt Python model? The single best thing to help you debug and understand what's happening is to look at your [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake. Please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history.
 
 ### Overivew of dbt Executed Queries
-Here are the queries that dbt executed when you ran the `my_first_python_model` model. I've omited the content of the stored procedure in this section so that it's easier to see what's happening at a high level. In the next section we'll discuss what's happening inside the stored procedure.
+Here are the queries that dbt executed when you ran the `my_first_python_model` model. I've omitted the content of the stored procedure in this section so that it's easier to see what's happening at a high level. In the next section we'll discuss what's happening inside the stored procedure.
 
 1. List schemas
 
@@ -191,7 +199,7 @@ Here are the queries that dbt executed when you ran the `my_first_python_model` 
 
 
 ### Overivew of Stored Procedure Code Generated by dbt
-So what exactly is happening in the stored procedure? This is really the critical part to focus on in order to understatnd what dbt is doing with Python models. As we go through this, keep in mind that a core desing principal for dbt Python models is that all of the Python code will be executed in Snowflake, and none will be run locally. Here's how dbt's documentation puts it:
+So what exactly is happening in the stored procedure? This is really the critical part to focus on in order to understatnd what dbt is doing with Python models. As we go through this, keep in mind that a core design principal for dbt Python models is that all of the Python code will be executed in Snowflake, and none will be run locally. Here's how dbt's documentation puts it:
 
 > The prerequisites for dbt Python models include using an adapter for a data platform that supports a fully featured Python runtime. In a dbt Python model, all Python code is executed remotely on the platform. None of it is run by dbt locally. We believe in clearly separating model definition from model execution. In this and many other ways, you'll find that dbt's approach to Python models mirrors its longstanding approach to modeling data in SQL. (from [dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models))
 
@@ -387,7 +395,7 @@ Now let's take another deep dive into what happened when we run the second dbt m
 
 
 ### Overivew of dbt Executed Queries
-Here are the queries that dbt executed when you ran the `my_second_python_model` model. You will notice that it's similar to the first model, but with some more queries to deal with creating the UDF. I've again omited the content of the stored procedure in this section so that it's easier to see what's happening at a high level. But I won't walk through it this time as it's very similar to the previous example, the only real difference being the difference in model code.
+Here are the queries that dbt executed when you ran the `my_second_python_model` model. You will notice that it's similar to the first model, but with some more queries to deal with creating the UDF. I've again omitted the content of the stored procedure in this section so that it's easier to see what's happening at a high level. But I won't walk through it this time as it's very similar to the previous example, the only real difference being the difference in model code.
 
 1. List schemas
 
@@ -462,10 +470,23 @@ The overall steps are the same, but notice that what happens during the stored p
 ## Conclusion & Next Steps
 Duration: 4
 
-Add closing remarks
-Add links to Snowpark docs
-Add links to dbt docs
-Add tips for debugging code
+### Conclusion
+
+Hopefully you've seen how powerful the combination of dbt Python models and the Snowflake platform can be! By supporting both SQL and Python based transformations in dbt, data engineers can take advantage of both while building robust data pipelines. While most of the time the choice between SQL or DataFrames is simply a matter of preference, as we discussed in the introduction there are use cases where data transformations can't be expressed in SQL. In these cases data engineers can make use of tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics.
+
+And best of all, the Snowflake platform enables this with Native Python support and rich Snowpark API for Python. This eliminates the need for data engineers to maintain and pay for separate infrastructure/services to run Python code. Snowflake manages all of it for you with the ease of use that you would expect from Snowflake!
+
+Data engineering with Snowflake and dbt just got easier!
+
+### Some Tips for Debugging dbt Python Models
+
+There are a few ways to debug your dbt Python models.
+
+The first tip is to build and debug via dbt. This is probably the default for most people. With this approach you edit the dbt Python model code directly in the dbt model file and execute it via the `dbt run` command (and it's often best to use the `dbt run --model <model_name>` syntax to only run the model in consideration). But this can be a bit time consuming and require you to flip back and forth between your dbt and Snowflake.
+
+The second tip is to build and debug the model code directly in Python. Like I mentioned in Section 1, I personally like Visual Studio Code and the [the Python extension from Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-python.python), but you can use whatever Python IDE you prefer. Regardless, the idea here is to copy/paste the contents of the dbt generated Python code into a temporary Python script as a starting point then edit/debug until it's right and finally paste just the contents of the model back into your dbt model file. As we saw in section 4 of this quickstart you can get the dbt generated Python code by compiling the model and looking at the compiled script. There is even commented out code in the dbt generated Python code to help get you started.
+
+Hope that helps!
 
 ### What We've Covered
 
