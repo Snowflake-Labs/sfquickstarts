@@ -450,14 +450,14 @@ In this model, we use Snowflake's [PIVOT](https://docs.snowflake.com/en/sql-refe
 ```SQL
 WITH cst AS
 (
-SELECT company_symbol, company_name, stock_exchange_name, indicator_name, date, value , data_source_name
+SELECT company_ticker, company_name, stock_exchange_name, indicator_name, date, value , data_source_name
   FROM {{ref('base_knoema_stock_history')}} src
  WHERE indicator_name IN ('Close', 'Open','High','Low', 'Volume', 'Change %') 
 )
 SELECT * 
   FROM cst
   PIVOT(SUM(Value) for indicator_name IN ('Close', 'Open','High','Low', 'Volume', 'Change %')) 
-  AS p(company_symbol, company_name, stock_exchange_name, date, data_source_name, close ,open ,high,low,volume,change)  
+  AS p(company_ticker, company_name, stock_exchange_name, date, data_source_name, close ,open ,high,low,volume,change)  
 ```
 
 - **models/l20_transform/tfm_knoema_stock_history_alt.sql**
@@ -465,14 +465,14 @@ SELECT *
 While this model is more for illustration purposes on how similar could be achieved by leveraging **dbt_utils.pivot** 
 ```SQL
 SELECT
-  company_symbol, company_name, stock_exchange_name, date, data_source_name,
+  company_ticker, company_name, stock_exchange_name, date, data_source_name,
   {{ dbt_utils.pivot(
       column = 'indicator_name',
       values = dbt_utils.get_column_values(ref('base_knoema_stock_history'), 'indicator_name'),
       then_value = 'value'
   ) }}
 FROM {{ ref('base_knoema_stock_history') }}
-GROUP BY company_symbol, company_name, stock_exchange_name, date, data_source_name
+GROUP BY company_ticker, company_name, stock_exchange_name, date, data_source_name
 ```
 
 - **models/l20_transform/tfm_stock_history.sql**
@@ -497,7 +497,7 @@ Let's we go to Snowflake UI to check the results
 ```sql
 SELECT * 
   FROM dbt_hol_dev.l20_transform.tfm_stock_history
- WHERE company_symbol = 'AAPL'
+ WHERE company_ticker = 'AAPL'
    AND date = '2021-03-01'
 ```
 ![Query Tag](assets/image39.png) 
@@ -575,7 +575,7 @@ Let's we go to Snowflake UI to check the results
 ```sql
 SELECT * 
   FROM dbt_hol_dev.l20_transform.tfm_stock_history_major_currency
- WHERE company_symbol = 'AAPL'
+ WHERE company_ticker = 'AAPL'
    AND date = '2021-03-01'
 ```
 ![Query Tag](assets/image38.png) 
@@ -590,7 +590,7 @@ Following our use case story, we are going to manually upload two small datasets
 
 For this let's create two csv files with the following content:  
 
-- **data/manual_book1.csv**
+- **seeds/manual_book1.csv**
 
 ```csv
 Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
@@ -603,7 +603,7 @@ B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-9800,GBP,100,98,NASDAQ
 B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-1000,GBP,50,103,NASDAQ
 ```
 
-- **data/manual_book2.csv**
+- **seeds/manual_book2.csv**
 
 ```csv
 Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
@@ -735,7 +735,7 @@ SELECT t.instrument, t.stock_exchange_name,
        total_shares  * close_price_matching_ccy + cash_cumulative AS PnL
    FROM       {{ref('tfm_daily_position_with_trades')}}    t
    INNER JOIN {{ref('tfm_stock_history_major_currency')}}  s 
-      ON t.instrument = s.company_symbol 
+      ON t.instrument = s.company_ticker 
      AND s.date = t.date 
      AND t.stock_exchange_name = s.stock_exchange_name
 ```
@@ -857,11 +857,11 @@ models:
           - not_null
           - relationships:
               to: ref('tfm_stock_history')
-              field: company_symbol
+              field: company_ticker
 
   - name: tfm_stock_history
     columns:
-      - name: company_symbol||date
+      - name: company_ticker||date
         tests:
           - not_null
           - unique
@@ -883,16 +883,16 @@ Let's quickly check the full row width for one of the records failed by extendin
 WITH cst AS
 (
     select
-        company_symbol||date conctat
+        company_ticker||date conctat
 
     from dbt_hol_dev.l20_transform.tfm_stock_history
-    where company_symbol||date is not null
-    group by company_symbol||date
+    where company_ticker||date is not null
+    group by company_ticker||date
     having count(*) > 1 
     limit 1
 )
 SELECT * FROM dbt_hol_dev.l20_transform.tfm_stock_history
- WHERE company_symbol||date IN (SELECT conctat FROM cst) 
+ WHERE company_ticker||date IN (SELECT conctat FROM cst) 
 ```
 
 ![Query Tag](assets/image56.png) 
@@ -904,7 +904,7 @@ Aha! There are shares which are traded on more than one stock exchanges. So we n
 ```yml
   - name: tfm_stock_history
     columns:
-      - name: company_symbol||date||stock_exchange_name
+      - name: company_ticker||date||stock_exchange_name
         tests:
           - not_null
           - unique
