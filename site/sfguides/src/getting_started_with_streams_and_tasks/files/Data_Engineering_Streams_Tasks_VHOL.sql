@@ -7,19 +7,32 @@
 
 --** 3. Begin Construction **
 
---3.a)  Create a Database
+--3.a)  Create a new role for this Lab and grant permissions
+use role ACCOUNTADMIN;
+set myname = current_user();
+create role if not exists VHOL;
+grant role VHOL to user identifier($myname);
+grant create database on account to role VHOL;
+grant EXECUTE TASK, EXECUTE MANAGED TASK on ACCOUNT to role VHOL;
+grant IMPORTED PRIVILEGES on DATABASE SNOWFLAKE to role VHOL;
+
+--3.b)  Create a dedicated virtual warehouse for compute
+create or replace warehouse VHOL_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
+grant all privileges on warehouse VHOL_WH to role VHOL;
+
+--3.c)  Create Database used throughout this Lab
+use role VHOL;
 create or replace database VHOL_ST;
+grant all privileges on database VHOL_ST to role VHOL;
 use database VHOL_ST;
 use schema PUBLIC;
+use warehouse VHOL_WH;
 
---3.b)  Create a Compute Warehouse
-create warehouse if not exists VHOL WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
-
---3.c)  Create an internal Stage
-create or replace stage VHOL
+--3.d)  Create an internal Stage
+create or replace stage VHOL_STAGE
 FILE_FORMAT = ( TYPE=JSON,STRIP_OUTER_ARRAY=TRUE );
 
---3.d)  Create a Staging/Landing Table
+--3.e)  Create a Staging/Landing Table
 create or replace table CC_TRANS_STAGING (RECORD_CONTENT variant);
 
 
@@ -124,19 +137,19 @@ $$;
 --** 5. Develop and Testing **
 
 --5.a)  Call SP to generate the compressed JSON load file
-call SIMULATE_KAFKA_STREAM('@VHOL','SNOW_',1000000);
+call SIMULATE_KAFKA_STREAM('@VHOL_STAGE','SNOW_',1000000);
 
 --5.b)  Verify file was created in the internal stage
-list @VHOL PATTERN='.*SNOW_.*';
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 
---5.c)  Load file into Staging Table  (about 100Mb raw json data per file).  Later, this will be setup to run every x minutes.
-copy into CC_TRANS_STAGING from @VHOL PATTERN='.*SNOW_.*';
+--5.c)  Load file into Staging Table  (about 100Mb raw json data per file).  Later, this will be setup to run repetitively on a schedule to simulate a real-time stream ingestion process.
+copy into CC_TRANS_STAGING from @VHOL_STAGE PATTERN='.*SNOW_.*';
 
---5.d)  Now, there should be raw source JSON data in our Landing/Staging Table, but now a variant datatype.
+--5.d)  Now, there should be raw source JSON data in our Landing/Staging Table now stored in a VARIANT column.
 select count(*) from CC_TRANS_STAGING;
 select * from CC_TRANS_STAGING limit 10;
 
---5.e) Run Test Queries.  Now that it is a varient datatype, the contents of the JSON is now understood.
+--5.e) Run Test Queries.  Now as a VARIANT datatype, the contents of the JSON is now understood.
 select RECORD_CONTENT:card:number as card_id from CC_TRANS_STAGING limit 10;
 
 select
@@ -193,11 +206,11 @@ timestamp datetime);
 
 --6.a)  Create Task
 create or replace task GENERATE_TASK
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 SCHEDULE = '1 minute'
 COMMENT = 'Generates simulated real-time data for ingestion'
 as
-call SIMULATE_KAFKA_STREAM('@VHOL','SNOW_',1000000);
+call SIMULATE_KAFKA_STREAM('@VHOL_STAGE','SNOW_',1000000);
 
 
 --6.b)  View Definition of Task
@@ -211,11 +224,11 @@ execute task GENERATE_TASK;
 --6.e)  Enable Task to Run on its Schedule
 alter task GENERATE_TASK RESUME;
 
---6.f)  List Files in Stage
-list @VHOL PATTERN='.*SNOW_.*';
+--6.f)  List Files in Stage now ready to be copied into Snowflake
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 
---6.g)  Wait a couple minutes, see it is regularly generating files to the schedule
-list @VHOL PATTERN='.*SNOW_.*';
+--6.g)  Wait a couple minutes and then you should see that the Task is regularly generating and adding a new file to the Stage.
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 
 --6.h)  Create a Second Task
 create or replace task PROCESS_FILES_TASK
@@ -223,7 +236,7 @@ USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
 SCHEDULE = '3 minute'
 COMMENT = 'Ingests Incoming Staging Datafiles into Staging Table'
 as
-copy into CC_TRANS_STAGING from @VHOL PATTERN='.*SNOW_.*';
+copy into CC_TRANS_STAGING from @VHOL_STAGE PATTERN='.*SNOW_.*';
 
 --6.i)  Check Staging Table, View, and Stream
 select count(*) from CC_TRANS_STAGING;
@@ -290,7 +303,7 @@ select count(*) from CC_TRANS_ALL;
 --7.a)  Create Two Tasks
 --First Task
 create or replace task REFINE_TASK2
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 as
 insert into CC_TRANS_ALL (select
 card_id, merchant_id, transaction_id, amount, currency, approved, type, timestamp
@@ -298,17 +311,17 @@ from CC_TRANS_STAGING_VIEW_STREAM);
 
 --Second Task
 create or replace task PROCESS_FILES_TASK2
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 as
-copy into CC_TRANS_STAGING from @VHOL PATTERN='.*SNOW_.*';
+copy into CC_TRANS_STAGING from @VHOL_STAGE PATTERN='.*SNOW_.*';
 
 --7.b)  Create Root Task
 create or replace task LOAD_TASK
-WAREHOUSE=VHOL
+WAREHOUSE=VHOL_WH
 SCHEDULE = '1 minute'
 COMMENT = 'Full Sequential Orchestration'
 as
-call SIMULATE_KAFKA_STREAM('@VHOL','SNOW_',1000000);
+call SIMULATE_KAFKA_STREAM('@VHOL_STAGE','SNOW_',1000000);
 
 --7.c)  First Predecessor
 --Have task REFINE_TASK2 be a predecessor of PROCESS_FILES_TASK2
@@ -325,12 +338,12 @@ alter task PROCESS_FILES_TASK2 RESUME;
 alter task LOAD_TASK RESUME;
 
 --Wait, as task will run after one minute.  Then, see a file created in Stage
-list @VHOL PATTERN='.*SNOW_.*';
+list @VHOL_STAGE PATTERN='.*SNOW_.*';
 
 --7.f)  Tasks in Parallel
 alter task LOAD_TASK SUSPEND;
 create or replace task WAIT_TASK
-  WAREHOUSE=VHOL
+  WAREHOUSE=VHOL_WH
   after PROCESS_FILES_TASK2
 as
   call SYSTEM$wait(1);
@@ -360,17 +373,25 @@ select count(*) from CC_TRANS_ALL;
 --8.b) Let's look at our newest record now in your Analytical table:
 select * from CC_TRANS_ALL order by TIMESTAMP desc limit 1;
 
---8.c)  See all tasks we have created, and to confirm their state is all "Suspended"
+--8.c)  See all tasks we have created, and to confirm their state are all "Suspended"
 show tasks;
 
---8.d)    Drop Database, removing all objects created by this VHOL (Optional)
---drop database VHOL_ST;
+--8.d)    Drop Database, removing all objects created by this Lab (Optional)
+--use role ACCOUNTADMIN;
+--drop database if exists VHOL_ST;
 
 --8.e)    Drop Warehouse (Optional)
---drop warehouse VHOL;
+--use role ACCOUNTADMIN;
+--drop warehouse if exists VHOL_WH;
+
+--8.f)    Drop Role (Optional)
+--use role ACCOUNTADMIN;
+--drop role if exists VHOL;
+
+-- or if not Dropping Role, at least revoke these permissions
+--use role ACCOUNTADMIN;
+--revoke create database on account from role VHOL;
+--revoke create warehouse on account from role VHOL;
 
 -- ** #9 Conclusion **
 --Congratulations, you have completed this Lab!
-
-
-
