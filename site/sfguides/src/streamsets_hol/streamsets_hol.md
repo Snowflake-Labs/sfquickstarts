@@ -1,9 +1,9 @@
 author: Kate Guttridge, StreamSets
-id: streamsets_transformer_for_snowflake_hol
+id: streamsets_tx4snowflake_hol
 summary: Hands on Lab for Transformer for Snowflake
 categories: Getting Started
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, StreamSets
 
@@ -12,38 +12,39 @@ tags: Getting Started, Data Science, Data Engineering, StreamSets
 ## Overview 
 Duration: 3
 
-StreamSets Transformer for Snowflake is a hosted service embedded within the StreamSets DataOps Platform that uses the Snowpark Client Libraries to generate SnowSQL queries that are executed in Snowflake. Build your pipelines in the StreamSets canvas and when you execute that pipeline, StreamSets generates a DAG. StreamSets then uses the DAG and the Snowpark Client Libraries to generate SnowSQL. That SnowSQL is sent over to Snowflake to be executed in the Warehouse of your choice. 
+StreamSets Transformer for Snowflake is a hosted service embedded within the StreamSets DataOps Platform that uses the Snowpark Client Libraries to generate SnowSQL queries that are executed in Snowflake. 
+
+  - When you build pipelines in the StreamSets canvas, StreamSets builds a DAG when that pipeline is executed.
+  - StreamSets then uses the DAG and the Snowpark Client Libraries to generate SnowSQL
+  - That SnowSQL is sent to Snowflake to be executed in the Warehouse of your choice. 
 
 ![How_Does_It_Work](assets/how_does_it_work.png)
 
 Transformer for Snowflake accelerates the development of data pipelines by providing features that go beyond a drag and drop interface to construct the equivalent of basic SQL. Snowpark enables StreamSets to construct the SnowSQL queries at the pipeline runtime, allowing pipeline definitions to be more flexible than SnowSQL queries written by hand. StreamSets also provides processors that combine the logic for common use cases into a single element on your canvas. 
 
-Let’s explore how to get started using Transformer for Snowflake and some of the features that will accelerate pipeline development.
- 
-[Read more about pipelines in Transformer for Snowflake](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/WhatIsSnowflake.html#concept_t2x_nsn_4rb)
+This lab will explore how to get started using Transformer for Snowflake and some of the features that will accelerate pipeline development. [Read more about pipelines in Transformer for Snowflake.](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/WhatIsSnowflake.html#concept_t2x_nsn_4rb)
 
 ### **Prerequisites**
-- A trial [Snowflake](https://trial.snowflake.com/?owner=SPN-PID-26749) account with `ACCOUNTADMIN` privileges. It is strongly recommended to create a new trial account for this lab, using an email address that has not been previously used to create a StreamSets organization.
+- A trial [Snowflake](https://trial.snowflake.com/?owner=SPN-PID-26749) account with `ACCOUNTADMIN` privileges. 
+    - It is strongly recommended to create a new trial account for this lab, using an email address that is not tied to an existing a StreamSets organization.
+
+<!-- could add downloadable SQL script here  
 - PLACEHOLDER FOR A SQL SCRIPT [here](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/SCD_Snowpark.sql)
+-->
+
 
 ### **What You’ll Learn** 
 In this guide, you will learn how to build pipelines using Transformer for Snowflake that are executed directly in your Snowflake Data Cloud, including:
 - How to use Partner Connect to create a StreamSets Organization
-- How to create pipelines that will transform your data directly in Snowflake
-- 
-- TBD How to use the Slowly Changing Dimension processor
-- TBD How to apply transformations to multiple columns at one time
-- TBD How to create, execute, and schedule a job
-- TBD How to use Parameters to ...
-
-
-### **What You’ll Need** 
-- ??? Do we need to put snowflake trial again?
+- How to create pipelines that dynamically generate your SQL queries at pipeline runtime.
+- How to use Fragments to share logic across multiple pipelines.
+- How to create and run Jobs to control pipeline execution. 
+- How to use the Slowly Changing Dimension processor
 
 ### **What You’ll Build**
 
-- One pipeline that can populate multiple tables with raw data, summary data, and pivoted data.
-- A pipeline in StreamSets using Snowpark to process a Slowly Changing Dimension. You can import the final product to compare against [placeholder for pipeline export(s)](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/Snowpark_Snowflake_Transformer.zip).
+- One pipeline that renames columns, joins data, performs calculations, and reshapes the data to populate multiple tables with raw data, summary data, and pivoted data.
+- A pipeline to process a Slowly Changing Dimension. <!-- You can import the final product to compare against [placeholder for pipeline export(s)](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/Snowpark_Snowflake_Transformer.zip). !>>
 
 <!-- ------------------------ -->
 
@@ -151,14 +152,16 @@ If you were not able to finish setting up your organization and had to navigate 
   - Use the link that was sent to the email address for your Snowflake account. Be sure to check your Spam folder if you don’t see it.
 ---
 
+<!-- 
 ## **Placeholder for Walkthrough of the DataOps Platform**
 
 Duration: 5
 
 Before we get started with building a pipeline, let's take a quick detour for an overview of the DataOps Platform interface. 
 
+-->
 
-## **Create and Preview a Simple Transformer for Snowflake Pipeline**
+## **Create and Run a Simple Transformer for Snowflake Pipeline**
 Duration: 8
 
 ### **Pipeline Goals** - Move to section 1
@@ -216,7 +219,7 @@ Duration: 8
 
     ![Pipeline Parameters](assets/ss_canvas_pipeline_parameters.png)
 
-### **Create Sources**
+### **Create a Source**
 
 This pipeline will use data prepopulated in the ``SNOWFLAKE_SAMPLE_DATA`` database, located in schema ``TPCH_SF1``. It will use data from the ``ORDERS`` and ``LINEITEM`` tables.
 
@@ -260,7 +263,7 @@ This pipeline will use data prepopulated in the ``SNOWFLAKE_SAMPLE_DATA`` databa
   
   ![Connect 2 Stages](assets/ss_connect_stages.png)
 
-### **Preview Your Pipeline**
+### **Preview the Pipeline**
 
 Now preview the pipeline results for the first time. Data Preview shows the input and output of each orgin, processor, and destination. Find out more about Preview in the [documentation](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Preview/DataPreview.html?hl=preview). 
 
@@ -296,102 +299,102 @@ Now preview the pipeline results for the first time. Data Preview shows the inpu
   
   ![Close Preview](assets/ss_close_preview.png)
 
-## **Transform Your Data**
-Duration: 10
 
-### **Rename Columns**
-1. Now that we created the most basic of pipelines, let's start transforming the data by renaming the columns that are being read from the ``ORDERS`` table.
+Now let's start transforming the data. The immediate goal is create a table in Snowflake that joins the Order and Line Item data.
 
-2. During the data preview, we could see that the column names all begin with O_. Let's clean the names up by removing that prefix.
+### **Begin Data Transformation by Renaming Columns**
+1. The first step is to rename the columns readfrom the ``ORDERS`` table.
 
-3. Make sure that you have closed your preview, and click on the arrow connecting the Orders Origin and Trash Destination. 
+2. The data preview showed that the Order column names all begin with O_. Let's clean the names up by removing that prefix.
+
+3. Make sure the preview is closed, and click on the arrow connecting the **Orders** origin and **Trash** destination. 
 
     ![Add Renamer](assets/ss_add_renamer.png)
 
-  - The **Pipeline Creation Help Bar** should appear when you click on the line connecting the two stages.
-    - From that dropdown menu, choose the Field Renamer stage.
+  - The **Pipeline Creation Help Bar** should appear after selecting the line connecting the two stages.
+    - On the dropdown menu, choose the Field Renamer processor.
     - If the Pipeline Creation Help Bar does not appear:
-      - use the **Stage Library Panel** on the right, search for _Field Renamer_, and click on it. This should add a **Field Renamer** stage to the canvas. 
-      - delete the connection between Orders and Trash
-      - connect Orders to Field Renamer
-      - connect the Field Renamer to Trash
+      - use the **Stage Library Panel** on the right, search for ``Field Renamer``, and click on it. This should add a **Field Renamer** processor to the canvas. 
+      - delete the connection between **Orders** and **Trash**
+      - connect **Orders** to the **Field Renamer**
+      - connect **Field Renamer** to **Trash**
   - Now the pipeline should look like this:
   
     ![Orders Renamer Trash](assets/ss_orders_renamer_trash.png)
 
-4. If you want to re-organize the canvas at any time, use the auto-arrange button as done before or drag the stages to reposition them.
-5. Open the **Field Renamer** stage by clicking on it. It’s Properties should appear below the canvas:
+4. If the canvas becomes too disorganized at any time, use the auto-arrange button as done before or drag the processors to reposition them. Note: the more objects and connections on the canvas, it makes more sense to arrange by hand.  
+
+5. Open the **Field Renamer** processor by clicking on it. It’s properties should appear below the canvas:
 
   ![Field Renamer Properties](assets/ss_field_renamer_properties_1.png)
 
   - Name the stage ``Remove Column Name Prefixes`` on the General tab.
   - Select the **Rename** tab.
     - Select the **Rename Type** drop down menu. 
-    - There are multiple options here, and since we know that we want to remove the “O_” prefix from all fields, select ``Remove prefix from all fields``. 
-
-      ![Renamer Options](assets/ss_renamer_rename_options.png)
-
+    - There are multiple options here, and since we know that we want to remove the ``O_`` prefix from all fields, select ``Remove prefix from all fields``. 
     - Leave the **Case Insensitive** setting selected, so we can remove both upper and lower cased column names, and enter _“O\_”_ for Remove String. 
-      
-      ![Renamer Final Config](assets/ss_renamer_final_config.png)
 
-### **Choose a Snowflake Table to Write To**
-1. Now replace the Trash stage with a real destination in Snowflake. Click on the Trash stage and delete it using the trash can icon on the pop up menu.
+  ![Renamer Options](assets/ss_renamer_rename_options.png)
+ 
+  ![Renamer Final Config](assets/ss_renamer_final_config.png)
+
+### **Write to a Snowflake Table**
+
+Now replace the Trash stage with a real destination in Snowflake.
+
+1. Click on the Trash stage and delete it using the trash can icon on the pop up menu.
 
   ![Delete Trash](assets/ss_delete.png)
 
-2. Select the **Field Renamer** stage, and the **Pipeline Creation Help Bar** should appear. Choose the Select New Destination to connect… and choose Snowflake Table.
+2. Select the **Field Renamer [Remove Column Name Prefixes]** processor, and the **Pipeline Creation Help Bar** should appear. Choose the ``Select New Destination to connect…`` menu and choose ``Snowflake Table``.
 
   ![Add Snowflake Destination](assets/ss_add_destination.png)
 
-3. With the new Snowflake Table destination selected, you can rename your destination on the General Tab in the properties panel.
-4. On the Table tab, nter the name of the table you want to write to in the **Table** field, ``ORDER_LINE_ITEMS``. If that table does not exist in Snowflake already, just make sure that the **Create Table** option is selected below.  
-5. If you do not want to write to a table in the pipeline’s default database and/or schema, select the object you would like to overwrite, and fill in the appropriate values.
-6. Table destinations have 4 different write modes, which are mostly self-explanatory, but you can find more details [here](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/OriginsDestinations/SnowflakeTable-D.html#concept_wdr_fzy_prb):
-    1. Append to Table
-    2. Overwrite Table
-    3. Merge Table by Condition
-    4. Propagate updates for Slowly-Changing Dimension processor.
-      
-        ![Write Modes](assets/ss_dest_write_modes.png)
+3. With the new Snowflake Table destination selected update the following settings:
+    - **General** tab > **Name**: ``Order Line Items ``
+    - **Table** tab > 
+      - **Table**:  ``ORDER_LINE_ITEMS``
+      - **Write Mode**: ``Overwrite Table``
+      - **Overwrite Mode***: ``Drop Table``
+      - **Create Table**: **✓**
+    
+      ***Note**:Table destinations have 4 different write modes which are explained [here](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/OriginsDestinations/SnowflakeTable-D.html#concept_wdr_fzy_prb).
 
-7. Update the Write Mode to Overwrite Table. A new option, Overwrite Mode, appears, and this is where you get to decide what happens when you execute a pipeline and the target table already exists. It can be truncated with the existing table DDL preserved, or it can be dropped entirely and recreated.
-  - For this lab, select **Drop Table**. 
-8. Preview the pipeline again. Select the preview (eye) icon above the canvas. When the Preview Configuration Window appears, change the **Preview Batch Size** to **1**.
+4. Preview the pipeline again by clicking on the preview icon above the canvas. When the Preview Configuration Window appears, change the **Preview Batch Size** to **1**.
 
-9. Once the preview finishes processing, select the Field Renamer to see the results.         
+5. When the preview finishes processing, select the **Field Renamer [Remove Column Name Prefixes]** to see the results. All of the _“O\_”_ prefixes were removed from the column names.       
 
-    ![Preview Renamer](assets/ss_renamer_preview.png)
-  - All of the _“O\_”_ prefixes were removed from the column names. 
+  ![Preview Renamer](assets/ss_renamer_preview.png) 
 
-10. Select the **Table Destination** stage, and it can be seen that the new column names are passed to the destination.
-11. Close the preview.
+6. Select the **Table Destination [Order Line Items]** stage to see the new column names  passed to the destination.
+
+7. Close the preview.
 
 ### **Run the Pipeline**
-1. Now that the pipeline’s behavior was verified using preview, let’s try running the pipeline on the entire data set.
+1. Now that the pipeline’s behavior was verified using preview, let’s run the pipeline on the entire data set.
 2. In the toolbar above the canvas, there is a **Draft Run** button on the far right. Choose **Start Pipeline** from the drop down that appears when clicking on it.
 
-    ![Draft Run](assets/ss_draft_run.png)
+    - In StreamSets, a [Draft Run](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_snq_pkg_4tb) allows you to execute a pipeline that is still in development and not yet published. Running a _published_ version of a pipeline is considered a StreamSets [Job](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb). Jobs can be scheduled, run with different parameter values, and made into templates. See the [documentation](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb) for more details.
 
-    In StreamSets, a [Draft Run](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_snq_pkg_4tb) allows you to execute a pipeline that is still in development and not yet published. Running a _published_ version of a pipeline is considered a StreamSets [Job](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb). Jobs can be scheduled, run with different parameter values, and made into templates. See the [documentation](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb) for more details.
+  ![Draft Run](assets/ss_draft_run.png)
 
 3. When the run completes, the job status in the properties panel will change to ``INACTIVE``, and the **Realtime Summary** tab will display the total number of records read and written. Click on the **Draft Run History** tab to view more details.
 
-    ![Draft Run Complete](assets/ss_draft_run_complete.png)
+  ![Draft Run Complete](assets/ss_draft_run_complete.png)
 
 4. On the **Draft Run History** tab, you can see the history of draft runs for the pipeline. On the most recent run, click on **View Summary**.
 
-    ![Draft Run History](assets/ss_draft_run_history_1.png)
+  ![Draft Run History](assets/ss_draft_run_history_1.png)
 
 5. In the pop-up window that appears, the Job Metrics Summary appears at the top, and **Scroll Down** to view the Snowflake Queries that are generated to populate the target table(s) as well as some logging.
 
-    ![Job Summary 2](assets/ss_job_summary_2.png)
+  ![Job Summary 2](assets/ss_job_summary_2.png)
 
 6. Now let's take a look at what is happening in Snowflake. Go back to your Snowflake Trial account, and under the **Activity** menu on the left, select **Query History**. By default, there will be a filter on your user. Since a new user was created for the Partner Connect integration, you will need to remove the User filter from the top right of the **Query History** window.  
 
     Now Look for the ``CREATE OR REPLACE TABLE`` statement in the query history, and you can click on the SQL text to see the query Snowpark generated to create this table in Snowflake. Since we chose the ``Overwrite Mode`` of ``Drop Table``, that is why a ``CREATE OR REPLACE TABLE`` statement is used. If we had selected the ``Truncate`` option, we would see a ``TRUNCATE`` statement followed by an ``INSERT`` statement that leverages the same query.
 
-    ![Snowflake Query History](assets/snowflake_query_history_1.png)
+  ![Snowflake Query History](assets/snowflake_query_history_1.png)
 
 7. Lastly, go to the **Worksheets** tab in Snowflake. Click on the **plus** (**+**) icon to create a new worksheet. Use the SQL below to run a couple queries on the table that was just created to see the number of rows in the new table as well as a sample of ten rows. Notice that the new table has the updated column names with the prefix removed. 
 
@@ -439,22 +442,23 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
 
 1. There are a couple ways to add a new origin , but the quickest is to simply copy the origin we already created. Select the **ORDERS** stage, and choose the **Copy** icon from the pop-up menu above. A new origin will appear on the screen, with the default name **Snowflake Table 1**.
 
-    ![Copy Stage](assets/ss_copy_stage.png)
+  ![Copy Stage](assets/ss_copy_stage.png)
 
 2. Update the new origin stage **Snowflake Table 1** with the following configurations:
     - On the **General** properties tab, give it the name ``LINEITEMS``
     - On the **Table** properties tab, we can see that the settings from the **Orders** origin are pre-populated. This means that all we need to do is update the Table name to  ``LINEITEM``, with this resulting configuration: 
 
-      ![LineItems Properties](assets/ss_line_items_properties.png)
+    ![LineItems Properties](assets/ss_line_items_properties.png)
 
 3. Let's do the same column name transformations on the Line Items data, since all of the column names in this table begin with _L\__. You can see the column names from the table in Snowflake below.
 
-    ![LineItem Columns](assets/snowflake_lineitem_column.png)
+  ![LineItem Columns](assets/snowflake_lineitem_column.png)
 
-4. We are going to add another **Field Renamer** to the canvas. Since we are going to join the Orders and Line Item data, we want a meaningful prefix on the lineitems so we can tell the data appart. Instead of the ``L_`` prefix, we prefer to prefix these columns with ``LINEITEM``. 
-  - You can do this by clicking on the output node of the **LINEITEM** origin stage and using the **Pipeline Creation Help Bar** above the canvas or click on the **Stage Panel Library** on the right of the canvas and connect the **LINEITEM** output to the new stage's input. 
-    - Click on the new stage
-    - Rename it to ``Update Column Prefixes`` on the **General**.
+4. Add another **Field Renamer** to the canvas. Eventually, the Orders and Line Item data will be joined, so it would be good to add a meaningful prefix on the Line Item columns to indicate which table each column is from. Instead of the ``L_`` prefix, the columns will be prefixed with ``LINEITEM``. 
+
+  - Do this by clicking on the output node of the **LINEITEM** origin and use the **Pipeline Creation Help Bar** above the canvas to select a **Field Renamer** processor[or click on the **Stage Panel Library** on the right canvas to select a **Field Renamer** and connect the **LINEITEM** output to the new processor's input]. 
+    - Click on the new processor.
+    - On the **General** tab, set the **Name** to ``Update Column Prefixes``
     - On the **Rename** tab, update the following properties:
       - **Rename Type**: ``Find and replace in all fields by string``
       - **Match Pattern**: ``L_``
