@@ -1,7 +1,7 @@
 author: Kate Guttridge, StreamSets
 id: streamsets_transformer_for_snowflake_hol
 summary: Hands on Lab for Transformer for Snowflake
-categories: Getting Started
+categories: getting-started,data-warehouse,data-engineering
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -27,10 +27,7 @@ This lab will explore how to get started using Transformer for Snowflake and som
 ### **Prerequisites**
 - A trial [Snowflake](https://trial.snowflake.com/?owner=SPN-PID-26749) account with `ACCOUNTADMIN` privileges. 
     - It is strongly recommended to create a new trial account for this lab, using an email address that is not tied to an existing a StreamSets organization.
-
-<!-- could add downloadable SQL script here  
-- PLACEHOLDER FOR A SQL SCRIPT [here](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/SCD_Snowpark.sql)
--->
+- [optional] Download the sql used in this lab [here](https://github.com/streamsets/Pipeline-Examples/blob/359a57b4e5f486ba5c094a3380e4a618662a1657/tx4snowflake_hol/SNOWFLAKE_WORKSHEET.sql).
 
 
 ### **What You’ll Learn** 
@@ -44,7 +41,8 @@ In this guide, you will learn how to build pipelines using Transformer for Snowf
 ### **What You’ll Build**
 
 - One pipeline that renames columns, joins data, performs calculations, and reshapes the data to populate multiple tables with raw data, summary data, and pivoted data.
-- A pipeline to process a Slowly Changing Dimension. <!-- You can import the final product to compare against [placeholder for pipeline export(s)](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/Snowpark_Snowflake_Transformer.zip). !>>
+- A pipeline to process a Slowly Changing Dimension. 
+<!-- You can import the final products to compare against [placeholder for pipeline export(s)](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/). !>>
 
 <!-- ------------------------ -->
 
@@ -164,15 +162,8 @@ Before we get started with building a pipeline, let's take a quick detour for an
 ## **Create and Run a Simple Transformer for Snowflake Pipeline**
 Duration: 8
 
-### **Pipeline Goals** - Move to section 1
-  - create a table that combines orders with their line item information
-  - create an order summary that combines all sales information from the line items for each order
-  - create a table that combines order information with the summary sales data
+The pipeline we build in this portion of the lab is based on the sample Sales data in the ``SNOWFLAKE_SAMPLE_DATA`` database. It contains tables with Orders and Order Line Items. We would like to be able to report from one table with a combination of the data from both tables. We are going to step through the pipeline build, noting some of the StreamSets features that make pipeline and development easier.
 
-
-### **Explain the pipeline to be built**
-
-`` TO DO``
 
 ### **Start Building**
 
@@ -414,7 +405,7 @@ Now replace the Trash stage with a real destination in Snowflake.
 Now that we have successfully created and executed this simple pipeline, let's go back to StreamSets to make this pipeline more interesting.
 
 ## **More Advanced Transformation**
-Duration: 20
+Duration: 25
 
 ### **Pipeline Publishing & Version Control**
 
@@ -638,11 +629,12 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
           ```
 
 16. Now we will specify which table this data should be loaded to.
-  - Insert a new **Snowflake Table** destination 
+  - Add a new **Snowflake Table** destination to the canvas.
   - Connect the output of the **Field Remover** to its input.
   - On the **Table** tab in the properties, specify the table name ``ORDER_AMOUNTS``
   - At this point, the pipeline should look something like this: 
-    ![](assets/ss_pipeline_final_pre_pivot.png)
+
+    ![pipeline](assets/ss_pipeline_final_pre_pivot.png)
 
 17. Now preview the results, looking at each of the stages. If it would be helpful to see some more data in the preview, add another ORDERKEY to the the **Preview Where Clause** by changing them to ``O_ORDERKEY IN (1,2)`` for the Orders table and ``L_ORDERKEY IN (1,2)`` for the Line Item table. 
 
@@ -654,7 +646,8 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
     ```
 19. Check in this version of the pipeline and enter a commit message. Choose ``Save & Close`` from the **Check In** window.
 
-20. A complete version of this pipeline can be found on github at [TO DO- ADD FINAL LINK](/Pipeline-Examples/tx4snowflake_hol/my_first_pipeline_step_3.zip).
+20. A complete version of this pipeline can be found [here](https://github.com/streamsets/Pipeline-Examples/blob/359a57b4e5f486ba5c094a3380e4a618662a1657/tx4snowflake_hol/my_first_pipeline_step_3.zip) on github.
+
 
 ## **Pipeline Fragments**
 Duration: 10
@@ -665,14 +658,14 @@ Instead of individually adding and configuring processors, we are going to use a
 
 A [**pipeline fragment**](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Pipeline_Fragments/PipelineFragments_title.html) is a stage or set of connected stages that you can use in other pipelines. Use them to easily add the same processing logic to multiple pipelines and to ensure that the logic is used as designed.
 
-Download the pipeline fragment from github [TO DO- ADD FINAL LINK](/Pipeline-Examples/tx4snowflake_hol/pivot_fragment_example.zip) that was created to implement this logic. This fragment has been fully parameterized, allowing you to fill in parameter values for the date, the date format to pivot on, the field you want to group by, the value to aggregate, and the table to populate. So this fragment could be used multiple times to create and populate different pivot tables by only changing the input parameters when adding it to the pipeline. 
+Download the pipeline fragment from github [here](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/pivot_fragment.zip) that was created to implement this logic. This fragment has been fully parameterized, allowing you to fill in parameter values for the date, the date format to pivot on, the field you want to group by, the value to aggregate, and the table to populate. So this fragment could be used multiple times to create and populate different pivot tables by only changing the input parameters when adding it to the pipeline. 
 
-You can find out more about Pipeline Fragments in the[ StreamSets Documentation](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Pipeline_Fragments/PipelineFragments_title.html).
+You can find out more about Pipeline Fragments in [StreamSets Documentation](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Pipeline_Fragments/PipelineFragments_title.html).
 
 ### **Import a Pipeline Fragment**
 
 1. Instead of creating this fragment from scratch,  we will [import](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/ExportImport/Importing.html#task_dd4_d5z_rdb) it. 
-    - Download the pipeline fragment from [TO DO- ADD FINAL LINK](/Pipeline-Examples/tx4snowflake_hol/pivot_fragment_example.zip) 
+    - If you haven't already, download the pipeline fragment from [github](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/pivot_fragment.zip).
     - Click **Build** > **Fragments** in the Navigation panel, and then click the **Import a Pipeline Fragment** option at above the fragment list or the **Import** icon.
 
       ![StreamSets Fragment](assets/ss_fragments.png)
@@ -680,7 +673,7 @@ You can find out more about Pipeline Fragments in the[ StreamSets Documentation]
     - On the pop-up window, use the following settings:
       - **Import file type**: ``Archive File`` (default)
       - **Commit Message**: ``import``
-      - **Browse File**: use the **pivot_fragment_example.zip** file that can be found at [insert github link here](/Pipeline-Examples/tx4snowflake_hol/pivot_fragment_example.zip). You will need to download this file locally first.
+      - **Browse File**: use the download of **pivot_fragment.zip**. 
    
     - Click on **Import**.
     - Click on **Close**.  Upon import, note that the fragment is already in the **Published** state, which means that it can be immediately used in pipelines. Just keep in mind that all fragments must be published before they can be added to a pipeline.
@@ -742,10 +735,12 @@ You can find out more about Pipeline Fragments in the[ StreamSets Documentation]
     ```sql
     SELECT * FROM PC_STREAMSETS_DB.PUBLIC.PIVOT_SALES_BY_CLERK LIMIT 10;
     ```
+3. An archive file with the completed pipeline can be found [here](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/my_first_pipeline_final.zip).
 
 ## **Create a Job**
-Duration: 10
+Duration: 5
 
+### Create & Run a Job
 In this next step, we will create a StreamSets [job instance](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb), which is the execution of a puplished pipeline. A job instance can be created from a pipeline or a job template.
 
   - Check in the pipeline.
@@ -786,6 +781,13 @@ In this next step, we will create a StreamSets [job instance](https://docs.strea
       ![Fragment Pop-up Menu](assets/ss_pipeline_with_fragment.png)
 -->
 
+<!--
+### Schedule a Job
+-->
+
+<!--
+### Create a Job Template
+-->
 
 ## **Slowly Changing Dimension**
 Duration: 20
@@ -799,12 +801,12 @@ You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database 
     CREATE OR REPLACE TABLE PC_STREAMSETS_DB.PUBLIC.NATION_DIMENSION AS
     SELECT
         N.N_NATIONKEY AS NATION_KEY,
-        N_NAME        AS NATION_NAME,
-        R.R_NAME      AS REGION_NAME,
-        0             AS START_TIMESTAMP,
-        NULL          AS END_TIMESTAMP,
-        1             AS VERSION,
-        TRUE          AS ACTIVE_FLAG
+        N_NAME AS NATION_NAME,
+        R.R_NAME AS REGION_NAME,
+        '2022-01-01T00:00:00Z'::TIMESTAMP_NTZ(0) AS START_TIMESTAMP,
+        NULL::TIMESTAMP_NTZ(0)  AS END_TIMESTAMP,
+        1::INTEGER AS VERSION,
+        TRUE AS ACTIVE_FLAG
     FROM
         SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.NATION N
         JOIN SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.REGION R 
@@ -813,16 +815,18 @@ You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database 
     -- CREATE A TABLE FOR CHANGE DATA
     CREATE OR REPLACE TABLE PC_STREAMSETS_DB.PUBLIC.NATION_UPDATES
       (
-        NATION_KEY    INTEGER,
-        NATION_NAME   VARCHAR,
-        REGION_NAME   VARCHAR
+        NATION_KEY INTEGER,
+        NATION_NAME VARCHAR,
+        REGION_NAME VARCHAR,
+        EFFECTIVE_DATE TIMESTAMP_NTZ(0) 
         );
 
+    -- Insert Records into change data table
     INSERT INTO PC_STREAMSETS_DB.PUBLIC.NATION_UPDATES 
       VALUES 
-        (2,'BRAZIL','AMERICA')
-        ,(24, 'UNITED STATES','NORTH AMERICA')
-        ,(25, 'AUSTRALIA','ANZ') ;
+      (2,'BRAZIL','AMERICA','2022-10-01T00:00:00Z')
+      , (24, 'UNITED STATES','NORTH AMERICA','2022-09-01T00:00:00Z')
+      , (25, 'AUSTRALIA','ANZ','2022-08-01T00:00:00Z') ;
     ```
 
 2. Create a new pipeline by going to **Build** > **Pipelines**. Use the ➕ icon to create a new Transformer for Snowflake pipeline.
@@ -915,67 +919,26 @@ You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database 
 
   ![SCD Query Results](assets/snowflake_scd_results.png)
 
-13. ``INSERT LINK TO DOWNLOAD FINISHED PIPELINE HERE``
-
-
-
-  
-
-<!-- ------------------------ -->
-## To be deleted - Code Snippets, Info Boxes, and Tables
-Duration: 0
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### SQL
-```sql
-  select * 
-  from x;
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
-
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
-
-<!-- ------------------------ -->
-### Images, Videos, and Surveys, and iFrames
-Duration: 0
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
+13. You can download a completed version of the pipeline [here](https://github.com/streamsets/Pipeline-Examples/blob/main/tx4snowflake_hol/scd_pipeline_final.zip).
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 0
+Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Thank you for participating in this Hands on Lab! 
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+![Streamie](assets/Streamie_small.png)
 
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+### What We Covered
 
----
-**NOTE**
+- How to create your own StreamSets instance using Snowflake Partner Connect
+- How to create, preview, and run Transformer for Snowflake pipelines
+- How to use fragments to minimize your development efforts
+- How to process data in a Slowly Changing Dimension
+- How to create and execute jobs
 
-It works with almost all markdown flavours (the below blank line matters).
-
----
+### Ready to learn more?
+- [Schedule a live Demo](https://streamsets.com/products/schedule-demo/) that includes more on StreamSets including the Data Collector engine!
+- Download the [Data Engineers Handbook for Snowflake](https://go.streamsets.com/snowflake-data-engineers-handbook.html)
+- Watch the webinar [End-to-End Data Integration for Snowflake with Snowpark](https://go.streamsets.com/snowpark-first-look.html)
+- Go to [StreamSets Academy](https://academy.streamsets.com/) for **free** self paced lessons to learn more!
