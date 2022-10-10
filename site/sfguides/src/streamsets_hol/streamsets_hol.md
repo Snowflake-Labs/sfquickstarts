@@ -7,76 +7,97 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, StreamSets
 
-# Transformer for Snowflake Hands on Lab
+# StreamSets' Transformer for Snowflake: Hands on Lab
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
+Duration: 5
 
-StreamSets Transformer for Snowflake is a hosted service embedded within the StreamSets DataOps Platform that uses the Snowpark Client Libraries to generate SnowSQL queries that are executed in Snowflake. 
+StreamSets is a data integration platform for the modern data ecosystem, empowering data engineers to build, run, monitor, and manage smart data pipelines in one place. **Transformer for Snowflake** is a fully hosted service embedded within the StreamSets DataOps Platform. It uses the Snowpark Client Libraries to generate SnowSQL queries that are executed natively in Snowflake, allowing your data to remain in your Snowflake Data Cloud.
 
-  - When you build pipelines in the StreamSets canvas, StreamSets builds a DAG when that pipeline is executed.
-  - StreamSets then uses the DAG and the Snowpark Client Libraries to generate SnowSQL
-  - That SnowSQL is sent to Snowflake to be executed in the Warehouse of your choice. 
+Transformer for Snowflake is just one part of the StreamSets DataOps Platform, which consists of:
 
-![How_Does_It_Work](assets/how_does_it_work.png)
+  1. **Control Hub** - to manage and monitor smart data pipelines at scale, providing real time visibility into operations.
+  2. **Data Collector** -  designed for streaming, CDC and batch ingest.
+  3. **Transformer** - a family of engines to do heavy duty transformation ETL, ELT and ML work, executing natively on modern data platforms such as Snowflake and Spark.
+        
+Data Collector and Transformer (for Spark) engines can be deployed on-premises (VM or containers), in a customer’s VPC, and/or in the customer’s namespace in a public cloud. The engines, and therefore the data accessed by the engines, remains in the customer’s environments across all of their on-prem, hybrid, & multi-cloud environments.
 
-Transformer for Snowflake accelerates the development of data pipelines by providing features that go beyond a drag and drop interface to construct the equivalent of basic SQL. Snowpark enables StreamSets to construct the SnowSQL queries at the pipeline runtime, allowing pipeline definitions to be more flexible than SnowSQL queries written by hand. StreamSets also provides processors that combine the logic for common use cases into a single element on your canvas. 
-
-This lab will explore how to get started using Transformer for Snowflake and some of the features that will accelerate pipeline development. [Read more about pipelines in Transformer for Snowflake.](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/WhatIsSnowflake.html#concept_t2x_nsn_4rb)
+This lab shows you how to get started using **Transformer for Snowflake** as a part of the DataOps Platform. You can read more about pipelines in Transformer for Snowflake [here](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/WhatIsSnowflake.html#concept_srx_qxm_4rb).
 
 ### **Prerequisites**
 - A trial [Snowflake](https://trial.snowflake.com/?owner=SPN-PID-26749) account with `ACCOUNTADMIN` privileges. 
-    - It is strongly recommended to create a new trial account for this lab, using an email address that is not tied to an existing a StreamSets organization.
-- [optional] Download the sql used in this lab [here](https://github.com/streamsets/Pipeline-Examples/blob/359a57b4e5f486ba5c094a3380e4a618662a1657/tx4snowflake_hol/SNOWFLAKE_WORKSHEET.sql).
-
+    - It is recommended to create a new trial account for this lab, using an email address that is not tied to an existing a StreamSets organization.
+- [optional] [Download](https://github.com/streamsets/Pipeline-Examples/blob/359a57b4e5f486ba5c094a3380e4a618662a1657/tx4snowflake_hol/SNOWFLAKE_WORKSHEET.sql) the sql used in this lab [here](https://github.com/streamsets/Pipeline-Examples/blob/359a57b4e5f486ba5c094a3380e4a618662a1657/tx4snowflake_hol/SNOWFLAKE_WORKSHEET.sql). Individual SQL statements are provided to copy/paste throughout the lab.
 
 ### **What You’ll Learn** 
-In this guide, you will learn how to build pipelines using Transformer for Snowflake that are executed directly in your Snowflake Data Cloud, including:
-- How to use Partner Connect to create a StreamSets Organization
+You will learn how to build pipelines using Transformer for Snowflake that are executed natively in your Snowflake Data Cloud, including:
+- How to use Partner Connect to create a StreamSets Organization.
 - How to create pipelines that dynamically generate your SQL queries at pipeline runtime.
+- How to leverage User Defined Functions within your pipelines.
 - How to use Fragments to share logic across multiple pipelines.
 - How to create and run Jobs to control pipeline execution. 
-- How to use the Slowly Changing Dimension processor
+- How to use the Slowly Changing Dimension processor.
 
 ### **What You’ll Build**
 
-- One pipeline that renames columns, joins data, performs calculations, and reshapes the data to populate multiple tables with raw data, summary data, and pivoted data.
+The lab uses the **TPCH_SF1** dataset pre-populated in your Snowflake account to transform raw retail data into consumable orders information that can support business analytics, including: 
+- A pipeline that renames columns, joins data, performs calculations, resuses portions of existing pipelines, and reshapes the data to populate multiple tables with raw data, summary data, and pivoted data.
 - A pipeline to process a Slowly Changing Dimension. 
-<!-- You can import the final products to compare against [placeholder for pipeline export(s)](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/). !>>
+<!-- You can import the final products to compare against [placeholder for pipeline export(s)](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/). -->
 
-<!-- ------------------------ -->
+## **Transformer for Snowflake**
+Duration: 2
+
+### **What does it do?**
+
+Transformer for Snowflake accelerates the development of data pipelines by going beyond the construction of basic SQL with a drag and drop UI. Snowpark enables StreamSets to construct the SnowSQL queries at the pipeline runtime, allowing pipeline definitions to be more flexible than static SnowSQL queries. StreamSets also provides processors that combine the logic for common use cases into a single element to drop on your canvas. 
+
+### **How does it work?**
+Transformer for Snowflake is a hosted service embedded within the StreamSets DataOps Platform. It uses the Snowpark Client Libraries to generate SnowSQL queries that are executed in Snowflake. How does that happen?
+
+  - You build pipelines in the StreamSets design canvas.
+  - Upon pipeilne execution, StreamSets builds a Directed Acyclic Graph
+([DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)).
+  - StreamSets uses the DAG and the Snowpark Client Libraries to generate SnowSQL.
+  - StreamSets sends the SnowSQL to Snowflake.
+  - Snowflake executes the SnowSQL in the Warehouse of your choice. 
+
+  ![How_Does_It_Work](assets/how_does_it_work.png)
 
 ## **Getting Started with Snowflake**
 Duration: 5
 
-### **Create Snowflake Trial Account and Verify Sample Data**
-1. Create a Snowflake trial Account using this [link](https://trial.snowflake.com/?owner=SPN-PID-26749). 
+### **Create Snowflake Trial Account**
+1. If you haven't already, create a Snowflake trial Account using this [link](https://trial.snowflake.com/?owner=SPN-PID-26749). 
     - Fill out the form and click **Continue**.  
     - Choose a Snowflake edition, cloud provider, and region for that provider. For the purposes of this lab, any of the providers or editions are fine to select. 
     - After checking the box to agree to the terms, click **Get Started**.
     - Check your email inbox for a message from Snowflake that contains the link to **Activate** your trial. Click that link.
     - Specify your username and password, and be sure to save these somewhere secure.
 
-2. You can find a detailed walkthrough of the Snowflake UI [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). This lab will use the Snowsight UI (new Snowflake UI) exclusively and all instructions for the following steps in Snowflake are for that UI. You can use the Classic UI, but the Snowflake resources will be located in different places. 
+2. You can find a detailed walk through of the Snowflake UI [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). This lab will use the Snowsight UI (new Snowflake UI) exclusively and all instructions for the following steps in Snowflake are for that UI. You can use the Classic UI, but the Snowflake resources will be located in different places. 
 
-3. This lab will leverage the ``SNOWFLAKE_SAMPLE_DATABASE`` that is accessible by default as a part of your Snowflake trial. 
-    - Select the **Worksheet** tab on the lefthand menu, and then click the blue ``+Worksheet`` button in the top right of the screen.
+### **Confirm Existence of Sample Data**
+3. This lab utilizes the ``SNOWFLAKE_SAMPLE_DATABASE`` that is included by default as a part of Snowflake accounts. 
+    - Select the **Worksheet** tab on the left-hand menu, and then click the blue ``+ Worksheet`` button in the top right of the screen.
 
       ![Snowflake Worksheet](assets/snowflake_worksheet.png) 
 
     - With the new worksheet open:
-        - Click on the **Databases** tab on the lefthand menu.
+        - Click on the **Databases** tab on the left-hand menu.
         - You should see the **SNOWFLAKE_SAMPLE_DATA** database in the list of objects.
         
           ![Snowflake Sample DB](assets/snowflake_sample_database.png)
 
+    - If  **SNOWFLAKE_SAMPLE_DATA** is present, proceed on to the next section, **Use Partner Connect to Create a StreamSets Organization**.
 
 ### If **SNOWFLAKE_SAMPLE_DATA** is not present: 
 
-  - You may have removed it from your account.  Run the following command in your worksheet to restore it:
+  - You may have removed it from your account. Run the following command in your worksheet to restore it:
   
     ```sql
-    create or replace database snowflake_sample_data from share sfc_samples.sample_data;
+      CREATE OR REPLACE DATABASE SNOWFLAKE_SAMPLE_DATA 
+        FROM SHARE SFC_SAMPLES.SAMPLE_DATA;
     ```
 
   - You should now see the database as one of the objects. Click on  **SNOWFLAKE_SAMPLE_DATABASE** to reveal the schemas it contains, including ``TPCH_SF1``, which will be used in this lab. You can click on **TPCH_SF1** and then **Tables** to see the included tables.  
@@ -87,12 +108,12 @@ Duration: 5
       CREATE  WAREHOUSE  IF NOT EXISTS TRIAL_WH; 
       USE WAREHOUSE TRIAL_WH;
 
-      select *
-      from snowflake_sample_data.tpch_sf1.orders
-      limit 100;
+      SELECT *
+      FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS
+      LIMIT 10;
     ```
     
-    Snowflake requires a warehouse to execute most queries, so we need to create a warehouse, which will be size ``XSMALL`` by default. You can find out more about Snowflake warehouses in their [documentation](https://docs.snowflake.com/en/user-guide/warehouses-overview.html).
+  - Snowflake requires a warehouse to execute most queries, which is why the SQL contains the command to create a warehouse (size ``XSMALL`` by default). You can find out more about Snowflake warehouses in their [documentation](https://docs.snowflake.com/en/user-guide/warehouses-overview.html).
 
   - If the query returns results, you are ready to proceed! If not, check your query syntax to confirm it is correct.  
 
@@ -101,18 +122,18 @@ Duration: 5
 ## **Use Partner Connect to Create a StreamSets Organization**
 Duration: 5
 
-We’ll use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a StreamSets organization that will have your [Snowflake Credentials](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/MyAccount.html#concept_d2k_yld_gsb) auto-populated in addition to your [Snowflake Pipeline Default Settings](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/MyAccount.html#concept_ofy_mld_gsb) so you can start building pipelines right away.
+We’ll use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a StreamSets organization that will  auto-populate [Snowflake Credentials](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/MyAccount.html#concept_d2k_yld_gsb) and [Snowflake Pipeline Default Settings](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/MyAccount.html#concept_ofy_mld_gsb) so you can start building pipelines right away.
 
 Note: All steps assume you are using the SnowSight UI.
 
-1. After logging into your Snowflake Trial instance, confirm that your active role is **ACCOUNTADMIN** in the top left corner of the UI. If it is not:
+1. After logging into your Snowflake Trial instance, look in the top left corner of the UI to confirm that your active role is **ACCOUNTADMIN** . If it is not:
    - select the drop down next to your user name
    - click on **Switch Role**
    - select **ACCOUNTADMIN**
 
   ![Set your Role to AccountAdmin](assets/snowflake_set_role.png)
 
-2. On the left menu, expand the Admin section and select Partner Connect.
+2. On the left menu, expand the **Admin** section and select **Partner Connect**.
 
   ![Partner Connect](assets/partner_connect_admin.png)
 
@@ -120,46 +141,61 @@ Note: All steps assume you are using the SnowSight UI.
   
   ![Partner Connect TileSearch](assets/partner_connect_search.png)
 
-4. After selecting the StreamSets tile, this window will appear.  It contains information about the Database, Warehouse, User, Password and Role that will be created in Snowflake. Select **Connect**.
+4. After selecting the StreamSets tile, the following window will appear.  It contains information about the Database, Warehouse, User, Password and Role that will be created in Snowflake. Select **Connect**.
 
   ![Partner Connect Grants](assets/partner_connect_grants.png)
 
-5. A message will appear to indicate that the StreamSets account has been created. Select **Activate**.
+5. A message will appear to indicate that the StreamSets account was created. Select **Activate**.
 
   ![Activate Account](assets/partner_connect_account_created.png)
 
-6. Now you will be taken to StreamSets to finish setting up your StreamSets Organization. You can create a password or use Single Sign On through Google or Microsoft.
+6. Now you will be taken to StreamSets to finish setting up your StreamSets Organization. You can create a password for your Streamsets acccount or use Single Sign On through Google or Microsoft.
 
   ![Create User](assets/ss_create_password.png)
 
-7. Finish creating your StreamSets organization by choosing the region that is closest to you and updating the name, if you prefer. The default name uses the same prefix as your Snowflake Trial instance. Check the boxes to agree to the Terms of Service and acknowledge the Privacy Policy and hit the button to **Agree & Continue**.
+7. Finish creating your StreamSets organization by choosing the region that is closest to you and updating the name, if you prefer. The default name uses the same prefix as your Snowflake Trial instance. Check the boxes to agree to the Terms of Service and acknowledge the Privacy Policy. Click on **Agree & Continue**.
 
   ![Name Org and Choose Location](assets/ss_org_name_and_location.png)
 
 8. If the updated privacy policy message appears, go ahead and dismiss it.
 
-9. Now the diaglog should appear asking about ingesting data into Snowflake. We do not need to do that becasue we are going to use data already loaded in the Snowflake Sample Database. Select **Create Transformer for Snowflake Pipeline** to be taken to the Pipeline Design Canvas.
+9. Now the dialog should appear asking about ingesting data into Snowflake. We do not need to do that because we are going to use data already loaded in the Snowflake Sample Database. Select **Create Transformer for Snowflake Pipeline** to be taken to the Pipeline Design Canvas.
 
   ![Create first pipeline](assets/ss_create_first_pipeline.png)
 
 **Congratulations!** You now have your very own StreamSets Organization!
 
----
-If you were not able to finish setting up your organization and had to navigate away, you can either:
-  - Go back and select StreamSets' partner connect tile in Snowflake, and then select **Launch**.
+#### If you were not able to finish setting up your organization and navigated away, you can either:
+  - Go back and select StreamSets' partner connect tile in Snowflake, then select **Launch**.
   - Use the link that was sent to the email address for your Snowflake account. Be sure to check your Spam folder if you don’t see it.
----
-
-<!-- 
-## **Placeholder for Walkthrough of the DataOps Platform**
-
+ 
+## **Overview of the DataOps Platform UI**
 Duration: 5
 
-Before we get started with building a pipeline, let's take a quick detour for an overview of the DataOps Platform interface. 
+Before we get started building a pipeline, let's look at how to navigate Control Hub, a web-based user interface (UI) for building, managing, and monitoring all of your pipelines. (Note: Control Hub displays timestamps using the browser time zone determined by your local operating system.)
 
--->
+The Control Hub UI includes the following general areas and icons. You can find more details in the [documentation](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/GettingStarted/ControlHubUI_Next.html#concept_ywv_x3d_lpb):
 
-## **Create and Run a Simple Transformer for Snowflake Pipeline**
+  ![Control Hub UI](assets/ControlHubUI.png)
+
+  1. **Navigation panel**: lists the areas that you can manage within Control Hub. Displays one of the following views based on your selection in the navigation panel:
+      - **Learn**: access tutorial steps and videos to help you get started with StreamSets.
+      - **Set Up**: create and manage environments, deployments, engines, and connections (_Not applicable to Transformer for Snowflake_)
+      - **Build**: design and manage **fragments** and **pipelines**.
+      - **Run**: create and manage job templates and instances, schedule tasks, and view draft runs.
+      - **Monitor**: access the operations and topologies dashboards and much more.
+      - **Manage**: administer your organizatio,  create and manage users/groups, view audit entries to monitor logins and actions, and generate and manage credentials for use with the Control Hub REST API.
+  2. **View**: displays one of the areas listed above based on your selection in the navigation panel.
+  3. **Global search**: search for Control Hub objects by name, such as pipelines, fragments, and jobs.
+  4. **Filter**: filter the information displayed in the selected view. 
+  
+  - ![Toggle Nav](assets/icon_ToggleNavigation.png) Navigation panel icon	- Toggles the display of the navigation panel.
+
+  - ![My Account](assets/icon_MyAccount_Next.png) My Account icon	- Displays your account and browser settings. Allows you to invite other users to your organization or to sign out.
+
+  - ![help](assets/icon_Help.png) Help icon	- Provides access to the online help and shows help tips. Also provides documentation for the Control Hub REST API.
+
+## **Create and Run a Simple Pipeline**
 Duration: 8
 
 The pipeline we build in this portion of the lab is based on the sample Sales data in the ``SNOWFLAKE_SAMPLE_DATA`` database. It contains tables with Orders and Order Line Items. We would like to be able to report from one table with a combination of the data from both tables. We are going to step through the pipeline build, noting some of the StreamSets features that make pipeline and development easier.
@@ -174,15 +210,15 @@ The pipeline we build in this portion of the lab is based on the sample Sales da
   - If there is no pipeline listed:
     
     - Click the plus (**+**) symbol to create a new pipeline.
-    - On the pop-up that appears, select **Use Transformer for Snowflake**. If you were creating a pipeline that used one of our other engines, you would need to Create a Deployment to set up those engines, but since we are using Serverless Transformer for Snowflake, that is unnecessary.
+    - On the pop-up that appears, select **Use Transformer for Snowflake**. If you were creating a pipeline that used one of our other engines, you would need to **Create a Deployment** to set up those engines, but since we are using serverless Transformer for Snowflake, that is unnecessary.
     
       ![Tx 4 Snowflake Pipeline](assets/ss_tx4snowflake_pipeline.png)
 
     - A new window will appear to create your pipeline. 
         
-        - Give your pipeline a name and (optionally) add a description.
-        - The Engine Type: Transformer for Snowflake is pre-selected for you. 
-        - Select *Next*.
+        - Give your pipeline a name and add a description (optional).
+        - **Engine Type**: ``Transformer for Snowflake`` is pre-selected 
+        - Select **Next**.
 
           ![Pipeline Settings](assets/ss_tx4snowflake_pipeline_settings.png)
     
@@ -190,7 +226,7 @@ The pipeline we build in this portion of the lab is based on the sample Sales da
 
       ![Pipeline Share Settings](assets/ss_share_pipeline_settings.png)
 
-2. Now you will see the empty design canvas shown below. Key items on the canvas are explained in more detail below. Additional details about the pipeline canvas can be found [here](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Pipelines/PipelineCanvas.html#concept_zj5_nj4_mpb) in the StreamSets documentation.
+2. Now you will see the empty design canvas, with key items on the canvas explained in more detail below. Additional details about the pipeline canvas can be found [here](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Pipelines/PipelineCanvas.html#concept_zj5_nj4_mpb) in the StreamSets documentation.
 
     ![Canvas Guide](assets/ss_canvas_guide.png)
    
@@ -200,31 +236,31 @@ The pipeline we build in this portion of the lab is based on the sample Sales da
     - 4 - **Selected stage pop-up menu** - Displays the icons for commands that you can apply to the selected stages. 
     - 5 - **Stage library panel** - Used to add stages to the pipeline. You can drag a stage to a location on the canvas or click a stage to add it to the end of the pipeline.
    
-3. Click on any blank space in the canvas to view the pipeline properties on the window below.
+3. Click on any blank space in the canvas to view the pipeline properties in the panel below.
   
-  - On the **General** tab, there are 5 properties that are directly related to Snowflake. These include the **Snowflake Account URL, Warehouse, Database, Schema**, and **Role**. When your pipeline is executed, these properties are sent to Snowflake to determine the resources the pipeline uses to execute. If you are using the default values as shown below: you can see that each of these is pre-populated with a StreamSets pipeline parameter. Those are written with the ``${parameter_name}`` syntax.  
+    - On the **General** tab, there are 5 properties directly related to Snowflake. These are the **Snowflake Account URL, Warehouse, Database, Schema**, and **Role**. When your pipeline is executed, these properties are sent to Snowflake to determine what resources the pipeline uses to execute. As shown below, each of these is pre-populated with a StreamSets pipeline parameter. Those are written with the ``${parameter_name}`` syntax.  
 
-    ![General Pipeline Properties](assets/ss_canvas_general_properties.png)
+  ![General Pipeline Properties](assets/ss_canvas_general_properties.png)
 
-  - Now select the **Parameters** tab. This is where you can see the values that each of these parameters are given. By default, the Database, Warehouse, and Role that your pipelines point to are the ones generated by the Partner Connect Integration. By default, the pipeline also points to the default `PUBLIC` schema.  
+  - Now select the **Parameters** tab. This is where you can see the values that each of these parameters are given. By default, the Database, Warehouse, and Role that your pipelines point to are the ones generated by the Partner Connect Integration. The pipeline settings also points to the ``PUBLIC`` schema.  
 
     ![Pipeline Parameters](assets/ss_canvas_pipeline_parameters.png)
 
 ### **Create a Source**
 
-This pipeline will use data prepopulated in the ``SNOWFLAKE_SAMPLE_DATA`` database, located in schema ``TPCH_SF1``. It will use data from the ``ORDERS`` and ``LINEITEM`` tables.
+This pipeline will use data prepopulated in the ``SNOWFLAKE_SAMPLE_DATA`` database, in schema ``TPCH_SF1``. It will use data from the ``ORDERS`` and ``LINEITEM`` tables.
 
   ![Tables Used](assets/snowflake_tables_used.png)
 
-1. Using the **Pipeline Creation Help Bar**, let’s add a **Snowflake Table Origin** to the canvas. Next to Origin Missing, select Snowflake Table from the dropdown menu.  
+1. Using the **Pipeline Creation Help Bar**, add a **Snowflake Table Origin** to the canvas. Next to Origin Missing, select ``Snowflake Table`` from the drop-down menu.
 
   ![Add Origin](assets/ss_add_origin_1.png)
 
-2. Click on the new Origin if it is not already selected, and let’s give it a meaningful name. Since this Origin will read the data from the ``ORDERS`` table, let’s name it ``Orders``.
+2. Click on the new Origin if it is not already selected, and give it a meaningful name. Since this Origin will read the data from the ``ORDERS`` table, name it ``Orders``.
 
   ![Name Origin](assets/ss_name_origin_1.png)
 
-3. On the **Table** tab of the properties, we will tell the pipeline where this table is located. Since the data we are reading is in a Read-Only database, that database cannot be the pipeline’s default. In this case we need to override the database and schema, and we start by selecting the Specify Database option, which makes the options for the Database and Schema appear. Use the following values to configure this origin, see the finished configuration in the image below:
+3. On the **Table** tab of the properties panel, we will tell the pipeline where this table is located. Since the data we are reading is in a Read-Only database, that database cannot be the pipeline’s default. In this case we need to override the database and schema. To do this, select **Specify Database**, which makes the options for the Database and Schema appear. Use the following values to configure this origin, and see the finished configuration in the image below:
 
     - **Database**: ``SNOWFLAKE_SAMPLE_DATA``
     - **Schema**: ``TPCH_SF1``
@@ -256,23 +292,23 @@ This pipeline will use data prepopulated in the ``SNOWFLAKE_SAMPLE_DATA`` databa
 
 ### **Preview the Pipeline**
 
-Now preview the pipeline results for the first time. Data Preview shows the input and output of each orgin, processor, and destination. Find out more about Preview in the [documentation](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Preview/DataPreview.html?hl=preview). 
+Now preview the pipeline results for the first time. Data Preview shows the input and output of each origin, processor, and destination. Find out more about Preview in the [documentation](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Preview/DataPreview.html?hl=preview). 
 
 1. In order to preview the pipeline results, select the Preview icon (eye) located above the canvas on the right.
 
   ![Preview Icon](assets/ss_preview_button.png)
 
 2. A pop-up will now appear to configure previews. More details about preview configuration settings can be found [here](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Preview/DataPreview.html#task_szc_z5l_nsb), but the important things to note are: 
-    - **Preview Batch Size**- the number of records it will show coming out of each stage
-    - **Write to Destinations**- if a Snowflake table was the destination, selecting this option means that the pipeline would actually write the previewd data to the target table(s). Usually this will be left de-selected as it is by default.
+    - **Preview Batch Size**: the number of records shown at each origin, processor, or destination.
+    - **Write to Destinations**: if a Snowflake table is the destination, selecting this option means that the pipeline would actually write only the previewed data to the target table(s).
   
   ![Preview config](assets/ss_preview_config.png)
 
 3. Click **Run Preview**.
 
-4. TO DO? Explanation about what is happening with Tx 4 Snowflake?
+4. At this time, Transformer for Snowflake is using Snowpark to generate the queries for this pipeline, and sending them over to Snowflake. Keep in mind that if the specified warehouse is currently suspended, it may take an extra moment to generate the preview results while it is resumed.
 
-5. In the properties window, there may be updates about the status of the pipeline preview like below. This is expected as the pipeline is converted to SQL and the queries are executed in Snowflake.
+5. There may be updates about the status of the pipeline preview in the properties panel as shown below.
 
   ![preview status](assets/ss_preview_status.png)
 
@@ -294,7 +330,7 @@ Now preview the pipeline results for the first time. Data Preview shows the inpu
 Now let's start transforming the data. The immediate goal is create a table in Snowflake that joins the Order and Line Item data.
 
 ### **Begin Data Transformation by Renaming Columns**
-1. The first step is to rename the columns readfrom the ``ORDERS`` table.
+1. The first step is to rename the columns read from the ``ORDERS`` table.
 
 2. The data preview showed that the Order column names all begin with O_. Let's clean the names up by removing that prefix.
 
@@ -303,8 +339,8 @@ Now let's start transforming the data. The immediate goal is create a table in S
     ![Add Renamer](assets/ss_add_renamer.png)
 
   - The **Pipeline Creation Help Bar** should appear after selecting the line connecting the two stages.
-    - On the dropdown menu, choose the Field Renamer processor.
-    - If the Pipeline Creation Help Bar does not appear:
+    - On the drop-down menu, choose the Field Renamer processor.
+    - _If the Pipeline Creation Help Bar does **not** appear_:
       - use the **Stage Library Panel** on the right, search for ``Field Renamer``, and click on it. This should add a **Field Renamer** processor to the canvas. 
       - delete the connection between **Orders** and **Trash**
       - connect **Orders** to the **Field Renamer**
@@ -313,9 +349,7 @@ Now let's start transforming the data. The immediate goal is create a table in S
   
     ![Orders Renamer Trash](assets/ss_orders_renamer_trash.png)
 
-4. If the canvas becomes too disorganized at any time, use the auto-arrange button as done before or drag the processors to reposition them. Note: the more objects and connections on the canvas, it makes more sense to arrange by hand.  
-
-5. Open the **Field Renamer** processor by clicking on it. It’s properties should appear below the canvas:
+4. Open the **Field Renamer** processor by clicking on it. Its properties should appear below the canvas:
 
   ![Field Renamer Properties](assets/ss_field_renamer_properties_1.png)
 
@@ -323,7 +357,7 @@ Now let's start transforming the data. The immediate goal is create a table in S
   - Select the **Rename** tab.
     - Select the **Rename Type** drop down menu. 
     - There are multiple options here, and since we know that we want to remove the ``O_`` prefix from all fields, select ``Remove prefix from all fields``. 
-    - Leave the **Case Insensitive** setting selected, so we can remove both upper and lower cased column names, and enter _“O\_”_ for Remove String. 
+    - Leave the **Case Insensitive** setting selected, so we can remove both upper and lower cased column names, and enter ``O_`` for Remove String. 
 
   ![Renamer Options](assets/ss_renamer_rename_options.png)
  
@@ -351,18 +385,18 @@ Now replace the Trash stage with a real destination in Snowflake.
     
       ***Note**:Table destinations have 4 different write modes which are explained [here](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/OriginsDestinations/SnowflakeTable-D.html#concept_wdr_fzy_prb).
 
-4. Preview the pipeline again by clicking on the preview icon above the canvas. When the Preview Configuration Window appears, change the **Preview Batch Size** to **1**.
+4. Preview the pipeline again by clicking on the preview icon above the canvas. When the Preview Configuration Window appears, change the **Preview Batch Size** to ``1``.
 
-5. When the preview finishes processing, select the **Field Renamer [Remove Column Name Prefixes]** to see the results. All of the _“O\_”_ prefixes were removed from the column names.       
+5. When the preview finishes processing, select the **Field Renamer [Remove Column Name Prefixes]** to see the results. All of the _“O\_”_ prefixes were removed from the column names. This is just one example of how Transformer for Snowflake pipelines dynamically generate SQL at pipeline runtime. The **Apply Functions**, **Field Remover**, **Field Renamer**, and **Field Type Converter** processors all allow you to dynamically specify column names based on patterns. This means that even as the data evolves over time, your pipelines won't break if a new column appears. For example, if a pipeline has an **Apply Functions** processor configured to trim all strings to remove extra characters, and specifies the columns to operate using the pattern ``.*``, no matter what columns are named, the ``TRIM`` function will be applied. This works for a variety of String, Numeric, DateTime, and User Defined functions.
 
   ![Preview Renamer](assets/ss_renamer_preview.png) 
 
-6. Select the **Table Destination [Order Line Items]** stage to see the new column names  passed to the destination.
+6. Select the **Table Destination [Order Line Items]** stage to see the new column names passed to the destination.
 
 7. Close the preview.
 
 ### **Run the Pipeline**
-1. Now that the pipeline’s behavior was verified using preview, let’s run the pipeline on the entire data set.
+1. Now that the pipeline’s behavior was verified using preview, run the pipeline on the entire data set.
 2. In the toolbar above the canvas, there is a **Draft Run** button on the far right. Choose **Start Pipeline** from the drop down that appears when clicking on it.
 
     - In StreamSets, a [Draft Run](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_snq_pkg_4tb) allows you to execute a pipeline that is still in development and not yet published. Running a _published_ version of a pipeline is considered a StreamSets [Job](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb). Jobs can be scheduled, run with different parameter values, and made into templates. See the [documentation](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb) for more details.
@@ -381,9 +415,9 @@ Now replace the Trash stage with a real destination in Snowflake.
 
   ![Job Summary 2](assets/ss_job_summary_2.png)
 
-6. Now let's take a look at what is happening in Snowflake. Go back to your Snowflake Trial account, and under the **Activity** menu on the left, select **Query History**. By default, there will be a filter on your user. Since a new user was created for the Partner Connect integration, you will need to remove the User filter from the top right of the **Query History** window.  
+6. Now let's take a look at what is happening in Snowflake. Go back to your Snowflake account, and under the **Activity** menu on the left, select **Query History**. By default, there will be a filter on your user. Since a new user was created for the Partner Connect integration, you will need to remove the User filter from the top right of the **Query History** window.  
 
-    Now Look for the ``CREATE OR REPLACE TABLE`` statement in the query history, and you can click on the SQL text to see the query Snowpark generated to create this table in Snowflake. Since we chose the ``Overwrite Mode`` of ``Drop Table``, that is why a ``CREATE OR REPLACE TABLE`` statement is used. If we had selected the ``Truncate`` option, we would see a ``TRUNCATE`` statement followed by an ``INSERT`` statement that leverages the same query.
+    Now Look for the ``CREATE OR REPLACE TABLE`` statement in the query history, and you can click on the SQL text to see the query Snowpark generated to create this table in Snowflake. Since we chose the ``Overwrite Mode`` of ``Drop Table``, that is why a ``CREATE OR REPLACE TABLE`` statement is used. If we had selected the ``Truncate`` option, we would see a ``TRUNCATE`` statement followed by an ``INSERT`` statement that leverages the same subquery.
 
   ![Snowflake Query History](assets/snowflake_query_history_1.png)
 
@@ -402,7 +436,8 @@ Now replace the Trash stage with a real destination in Snowflake.
     SELECT * FROM ORDER_LINE_ITEMS LIMIT 10;
     ```
 
-Now that we have successfully created and executed this simple pipeline, let's go back to StreamSets to make this pipeline more interesting.
+- Now that we successfully created and executed this simple pipeline, go back to StreamSets to continue developing. 
+- Want to download and import a copy of the pipeline build so far? Download it from [github](https://github.com/streamsets/Pipeline-Examples/blob/main/tx4snowflake_hol/my_first_pipeline_v1.zip). Later in the lab, we'll go over the simple task of importing object, but you can find the documentation [here](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/ExportImport/Importing.html#task_qr5_szm_qx).
 
 ## **More Advanced Transformation**
 Duration: 25
@@ -424,9 +459,6 @@ Now we are going to use StreamSets built-in version control to [publish](https:/
 
     ![Edit Version](assets/ss_pipeline_edit_version.png)
 
-###
-    ### Should I add the option to import a pipeline here??
-
 ### **Join Orders with Line Items**
 
 Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to the pipeline so that we can finish our ```ORDER_LINE_ITEMS``` table. 
@@ -445,9 +477,9 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
 
   ![LineItem Columns](assets/snowflake_lineitem_column.png)
 
-4. Add another **Field Renamer** to the canvas. Eventually, the Orders and Line Item data will be joined, so it would be good to add a meaningful prefix on the Line Item columns to indicate which table each column is from. Instead of the ``L_`` prefix, the columns will be prefixed with ``LINEITEM``. 
+4. Add another **Field Renamer** to the canvas. Eventually, the Orders and Line Item data will be joined, so it would be good to add a meaningful prefix on the Line Item columns to indicate which table each column is from. Instead of the ``L_`` prefix, the columns will be prefixed with ``LINEITEM_``. 
 
-  - Do this by clicking on the output node of the **LINEITEM** origin and use the **Pipeline Creation Help Bar** above the canvas to select a **Field Renamer** processor[or click on the **Stage Panel Library** on the right canvas to select a **Field Renamer** and connect the **LINEITEM** output to the new processor's input]. 
+  - Do this by clicking on the output node of the **LINEITEM** origin and use the **Pipeline Creation Help Bar** above the canvas to select a **Field Renamer** processor [or click on the **Stage Panel Library** on the right canvas to select a **Field Renamer** and connect the **LINEITEM** output to the new processor's input]. 
     - Click on the new processor.
     - On the **General** tab, set the **Name** to ``Update Column Prefixes``
     - On the **Rename** tab, update the following properties:
@@ -455,15 +487,15 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
       - **Match Pattern**: ``L_``
       - **Replacement**: ``LINEITEM_``
 
-#### **Calculate Unit Price, Discounts, and Tax**
+### **Calculate Unit Price, Discounts, and Tax**
 
-5. Now that we have cleaned up the column names on the ``LINEITEM`` table, let's perform a few calculations that we want to see downstream in our analytics. We want to add some columns that calculate the unit base price per item, discounted price per item, total discount amount, and total sales amount.
+5. Now that the column names are updated on the ``LINEITEM`` table, let's perform a few calculations that we want to see downstream in our analytics. We want to add some columns that calculate the unit base price per item, discounted price per item, total discount amount, and total sales amount.
 
     - We will use an [**Expression Evaluator**](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Processors/Expression.html#concept_i1k_wxc_5rb) to create new columns.
       - Add an **Expression Evaluator** processor to the canvas after the **Update Column Prefixes** processor. 
       - Name the **Expression Evaluator** ``Calculate Unit and Total Amounts``.
       - Go to the **Expressions** tab.
-      - Now we want to add the following columns and accompanying calcuations. Don't add this just yet! 
+      - Now we want to add the following columns and accompanying calculations. Don't add this just yet! 
 
         | Column name | Expression |
         | --- | --- |
@@ -474,7 +506,7 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
         | ``net_total_amount`` | ``lineitem_extendedprice + total_discount_amount + total_tax_amount`` | 
       
       
-      - When there is a lot of configuration that you want to copy/paste, you can often take advantage of [``Bulk Edit Mode``](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Pipelines/SimpleBulkEdit.html?hl=bulk%2Cedit). This switchs the individual configurations to a json blob where you can copy/paste JSON arrays. 
+      - When there is a lot of configuration that you want to copy/paste, you can often take advantage of [``Bulk Edit Mode``](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Pipelines/SimpleBulkEdit.html?hl=bulk%2Cedit). This switches the individual configurations to a json blob where you can copy/paste JSON arrays. 
       
           ![Bulk Edit Mode](assets/ss_pipeline_exp_eval_config.png)
 
@@ -497,14 +529,16 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
           ![pipeline with expression evaluator](assets/ss_pipeline_exp_eval_v2.png) 
 
 
-1. Now let's join these two tables together.
-    - Click on the line connecting the first **Field Renamer [Remove Column Name Prefixes]** to the **Snowflake Table [ORDER LINE ITEMS]** destination.
-    - On the **Pipeline Creation Help Bar**, select **Join** from the _Select Processor to add in between the selected stream..._ dropdown.
+### **Join**
 
-6. Now connect the second **Field Renamer [Update Column Prefixes]** to the **Join** stage just added, so that it has two inputs. Your pipeline should now look like this:
+6. Now let's join these two tables together.
+    - Click on the line connecting the first **Field Renamer [Remove Column Name Prefixes]** to the **Snowflake Table [ORDER LINE ITEMS]** destination.
+    - On the **Pipeline Creation Help Bar**, select **Join** from the _Select Processor to add in between the selected stream..._ drop-down.
+
+7. Now connect the second **Field Renamer [Update Column Prefixes]** to the **Join** stage just added, so that it has two inputs. Your pipeline should now look like this:
     ![Joined Pipeline](assets/ss_pipeline_first_join.png)
 
-7. Click on the [Join](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Processors/Join.html#concept_edd_sc2_5rb) stage, and name the processor ``Order and Line Item Join``.
+8. Click on the [Join](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Processors/Join.html#concept_edd_sc2_5rb) stage, and name the processor ``Order and Line Item Join``.
     - On the **Join** properties tab below the canvas, we describe the join criteria. This is a very flexible processor as described in the [documentation](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Processors/Join.html#concept_edd_sc2_5rb), so there are multiple join types to choose from and join conditions can be based on matching column names or the join clause can be written out in SQL.  
     - In this case, we will do an inner join on the ``ORDERS`` and ``LINEITEM`` tables based on the ``ORDERKEY``.  
     - Make sure that the stage has the settings below:
@@ -513,36 +547,37 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
         - **Join Criteria**: ``Condition``
         - **Condition**: ``ORDERKEY = LINEITEM_ORDERKEY``
 
-8. Now preview the pipeline to see if the pipeline changes have had the desired effect. Use the preview button (eye icon) on the right side above the canvas. 
+9. **Preview** the pipeline to see if the pipeline changes have had the desired effect. Use the preview button (eye icon) on the right side above the canvas. 
     - Looking at the previews for the **Field Renamer** stages, we can see that all of the prefixes were removed or updated accordingly.
     - The preview for the **Join** stage probably isn't showing any records. Why not?
         - When using preview, the pipeline is randomly pulling the records from each of the sources, so in this case, there is no guarantee that they will have Order Keys that will overlap. That's ok, because we can use the **Preview Where Clause** to filter the records that are used for preview.
-        - In this case, we will filter on the Order Id so that we can match the lineitems to the order. 
+        - In this case, we will filter on the Order Id so that we can match the line items to the order. 
     - Close the preview 
 
-9. Update the Preview filters on the Snowflake Table origins.
+10. Update the preview filters on the Snowflake Table origins.
     - Go to the **ORDERS** origin and open the **Table** properties tab. For the **Additional Preview Where Clause**, enter ``O_ORDERKEY = 1``
     - On the **LINEITEM** origin, add ``L_ORDERKEY = 1`` as the  **Additional Preview Where Clause**.
 
-10. Preview the pipeline again, and select the **Join [Order & Line Item Join]** processor. Now the processor is showing input and output where the Order and Line Item information have a matching order key. 
+11. Preview the pipeline again, and select the **Join [Order & Line Item Join]** processor. Now the processor is showing input and output where the Order and Line Item information have a matching order key. 
 
     ![Join Preview](assets/ss_join_preview.png)
 
+
 ### **Create an Order Summary Table**
 
-12. Now we want to create a **Order Summary** table that includes some of the calculations we just added.  We want to get total gross sales amount, total discount amount, total tax amount, and total net sales amount for each order. We'll also create a column, ``ORDER_COUNT``, so that subsequent aggregations can use that to total orders.
+12. Now create a **Order Summary** table that includes some of the calculations we just added.  We want to get total gross sales amount, total discount amount, total tax amount, and total net sales amount for each order. We'll also create a column, ``ORDER_COUNT``, so that subsequent aggregations can use that to total orders.
 
     - To do this, add an [**Aggregate**](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Processors/Aggregate.html#concept_rvw_5rc_5rb) processor to the pipeline.
     - Create a second output from the **Join [Order & Line Item Join]** processor by drawing a line from its output node to the input node of the **Aggregate** processor. 
     - Name the **Aggregate** processor ``Aggregate Line Items``. On the  **Aggregate** properties tab, add the following fields under _**Aggregations**_ (bulk edit option provided too): 
         
-        | Aggregate Function | Aggregate Field | Calculation | Output Field Name |
-        | --- | --- | --- | --- |
-        | ``Sum`` | ``LINEITEM_EXTENDEDPRICE``||``GROSS_SALES_AMOUNT``|
-        | ``Sum`` | ``TOTAL_DISCOUNT_AMOUNT`` ||``TOTAL_DISCOUNT_AMOUNT``|
-        | ``Sum`` | ``TOTAL_TAX_AMOUNT`` ||``TOTAL_TAX_AMOUNT``|
-        | ``Sum`` | ``NET_TOTAL_AMOUNT`` || ``NET_TOTAL_AMOUNT`` |
-        | ``Count Distinct`` | ``ORDERKEY``||``ORDER_COUNT``|
+        | Aggregate Function | Aggregate Field | Output Field Name |
+        | --- | --- | --- |
+        | ``Sum`` | ``LINEITEM_EXTENDEDPRICE`` | ``GROSS_SALES_AMOUNT`` |
+        | ``Sum`` | ``TOTAL_DISCOUNT_AMOUNT`` | ``TOTAL_DISCOUNT_AMOUNT`` |
+        | ``Sum`` | ``TOTAL_TAX_AMOUNT`` | ``TOTAL_TAX_AMOUNT`` |
+        | ``Sum`` | ``NET_TOTAL_AMOUNT`` | ``NET_TOTAL_AMOUNT`` |
+        | ``Count Distinct`` | ``ORDERKEY`` | ``ORDER_COUNT`` |
           
       JSON to copy/paste in **Bulk Edit Mode**:
         
@@ -580,17 +615,17 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
 
       ![Order Summary Properties](assets/ss_order_summary_properties.png)
 
-13. Preview the Pipeline. Look at the output of the **Expression Evaluator** and **Aggregate** stages to see the calculated columns and the aggregated Order Summary record. 
+13. Preview the Pipeline. Look at the output of the **Expression Evaluator** state to see the calculated columns. 
 
-    **Expression Evaluator Preview:**    
-      ![Expression Evaluator Preview](assets/ss_exp_evaluator_preview.png)
-  
-    **Aggregate Preview**
-    ![Aggregate Preview](assets/ss_aggregate_preview.png)
+  ![Expression Evaluator Preview](assets/ss_exp_evaluator_preview.png)
+
+14. Look at the output of the **Aggregate** stage to see the aggregated Order Summary record. 
+
+  ![Aggregate Preview](assets/ss_aggregate_preview.png)
 
 ### **Create Final Order Summary**
 
-14. Now we want to join the summary data to the original orders data to create a table that has both the Order level details, such as ``CUSTOMERKEY``, and the totals derived from the Line Items.
+15. Now we want to join the summary data to the original orders data to create a table that has both the Order level details, such as ``CUSTOMERKEY``, and the totals derived from the Line Items.
 
   - Start by adding another **Join** stage to the canvas using the **Stage Library Panel** on the right.
   - Connect the output from the first **Field Renamer [Remove Column Name Prefixes]** processor as the input to the new **Join**
@@ -603,10 +638,11 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
 
           ![Join Properties](assets/ss_join2_properties.png)
 
-15. Now we want to limit the columns that will be inserted into the new target table because maybe there are columns that are no longer used or not relevant to the data consumers. This can by done by using a **Field Remover** processor to specify the columns to **keep**. This processor gives you the option to specify either the columns to keep or the columns to remove. This can be done be specifying a list of columns OR using pattern matching to specify which columns to keep/remove.
+<!--
+16. Now we want to limit the columns that will be inserted into the new target table because maybe there are columns that are no longer used or not relevant to the data consumers. This can by done by using a **Field Remover** processor to specify the columns to **keep**. This processor gives you the option to specify either the columns to keep or the columns to remove. This can be done be specifying a list of columns OR using pattern matching to specify which columns to keep/remove.
 
     - Insert a **Field Remover** stage. 
-    - Connect the output of **Join 2** to its input.
+    - Connect the output of **Join [Order and Aggregate Join]** to its input.
     - Name the stage ``Curate Columns``
     - On the **Fields** tab of the stage properties, update the following settings:
       - **Action**: ``Keep Listed Fields``
@@ -627,6 +663,7 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
             "NET_TOTAL_AMOUNT"
           ]
           ```
+-->
 
 16. Now we will specify which table this data should be loaded to.
   - Add a new **Snowflake Table** destination to the canvas.
@@ -644,9 +681,60 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
     SELECT * FROM PC_STREAMSETS_DB.PUBLIC.ORDER_SUMMARY LIMIT 10;
     SELECT * FROM PC_STREAMSETS_DB.PUBLIC.ORDER_AMOUNTS LIMIT 10;   
     ```
+
 19. Check in this version of the pipeline and enter a commit message. Choose ``Save & Close`` from the **Check In** window.
 
 20. A complete version of this pipeline can be found [here](https://github.com/streamsets/Pipeline-Examples/blob/359a57b4e5f486ba5c094a3380e4a618662a1657/tx4snowflake_hol/my_first_pipeline_step_3.zip) on github.
+
+## **User Defined Functions**
+Duration: 5
+
+In the previous step, we added an **Expression Evaluator** to the pipeline to calculate values like unit cost and unit discount amount. What if these calculations were already codified in Snowflake? Snowflake UDFs (User Defined Functions) make this possible. (At the time this lab was written) Snowflake  supports UDFs written in Java, JavaScript, Python, and SQL, and [Transformer for Snowflake supports](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Pipelines/UDF.html?hl=udf) the use of **ALL** of these. The only thing required is that your role has the **USAGE** privilege granted the function. 
+
+To make things even better, StreamSets allows the definition of Java UDFs _within the pipeline_. Defined at the pipeline level, a ``CREATE OR REPLACE FUNCTION`` statement will be executed with the provided code at  pipeline runtime. Let's replicate one of the calculations from the **Expression Evaluator [Calculate Unit and Total Amounts]** to see this in action. 
+
+1. Click on **Edit** above the canvas to create a new version of **My First Pipeline**.
+
+2. Click on a blank area of the canvas to see the pipeline-level configurations in the pane below (**General** | **Parameters** | **Advanced** tabs). Click on the **Advanced** tab.
+
+  ![Advanced Configs](assets/ss_pipeline_advanced_config.png)
+
+3. To add a UDF, click on **+ Add** to the right of **UDF Configs**.
+
+4. We are going to create a simple UDF to calculate the discounted unit price, just to show another way that this logic can be applied. Enter the following configurations:
+    - **UDF Name**: ``discounted_unit_price_java``
+    - **Java Handler Function**: ``discounted_unit_price_java``
+    - **Target Path for Jar**: ``@~/``
+    - **Java UDF Class Definition**: 
+
+      ```java
+      public class sales {
+
+          public static double discounted_unit_price_java(double extended_price, double quantity, double discount_pct) {
+
+              double discounted_unit_price = (extended_price / quantity) * (1 - discount_pct);
+
+              return (discounted_unit_price);
+          }
+
+      }      
+      ```
+
+    Your final configuration will look like this: 
+
+  ![Inline UDF Config](assets/ss_udf_config.png)
+
+5. Now click on the **Expression Evaluator [Calculate Unit and Total Amounts]** and add a new column with the following settings: 
+    - **Output Field Name**: ``discounted_unit_price_udf_java``
+    - **Expression**: ``discounted_unit_price_java(lineitem_extendedprice, lineitem_quantity, lineitem_discount)``
+
+6. Preview the pipeline to compare the results of ``discounted_unit_price`` and ``discounted_unit_price_udf_java``. 
+
+  ![Compare UDF results](assets/ss_udf_compare_results.png)
+
+7. Check in your pipeline. You can download a completed copy of this pipeline [here](https://github.com/streamsets/Pipeline-Examples/blob/main/tx4snowflake_hol/my_first_pipeline_udf.zip)
+
+Obviously this is a very simple example, but the ability to use _any_ Snowflake UDF from a Transformer for Snowflake pipeline makes your pipelines even more powerful!
 
 
 ## **Pipeline Fragments**
@@ -658,14 +746,14 @@ Instead of individually adding and configuring processors, we are going to use a
 
 A [**pipeline fragment**](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Pipeline_Fragments/PipelineFragments_title.html) is a stage or set of connected stages that you can use in other pipelines. Use them to easily add the same processing logic to multiple pipelines and to ensure that the logic is used as designed.
 
-Download the pipeline fragment from github [here](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/pivot_fragment.zip) that was created to implement this logic. This fragment has been fully parameterized, allowing you to fill in parameter values for the date, the date format to pivot on, the field you want to group by, the value to aggregate, and the table to populate. So this fragment could be used multiple times to create and populate different pivot tables by only changing the input parameters when adding it to the pipeline. 
+Download the pipeline fragment from github [here](https://github.com/streamsets/Pipeline-Examples/blob/main/tx4snowflake_hol/pivot_fragment.zip) that was created to implement this logic. This fragment has been fully parameterized, allowing you to fill in parameter values for the date, the date format to pivot on, the field you want to group by, the value to aggregate, and the table to populate. So this fragment could be used multiple times to create and populate different pivot tables by only changing the input parameters when adding it to the pipeline. 
 
 You can find out more about Pipeline Fragments in [StreamSets Documentation](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Pipeline_Fragments/PipelineFragments_title.html).
 
 ### **Import a Pipeline Fragment**
 
 1. Instead of creating this fragment from scratch,  we will [import](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/ExportImport/Importing.html#task_dd4_d5z_rdb) it. 
-    - If you haven't already, download the pipeline fragment from [github](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/pivot_fragment.zip).
+    - If you haven't already, download the pipeline fragment from [github](https://github.com/streamsets/Pipeline-Examples/blob/main/tx4snowflake_hol/pivot_fragment.zip).
     - Click **Build** > **Fragments** in the Navigation panel, and then click the **Import a Pipeline Fragment** option at above the fragment list or the **Import** icon.
 
       ![StreamSets Fragment](assets/ss_fragments.png)
@@ -720,13 +808,13 @@ You can find out more about Pipeline Fragments in [StreamSets Documentation](htt
 
 ### **Use Fragment to create Pivot Table**
 
-1. In the pipeline canvas for **My First Pipeline**, use the **Stage library panel** on the right. Click on the ``A`` in the top left of the panel produce a dropdown menu with the list of object types that can be added to the canvas. Select ``Fragments`` from the list. Now select the **Pivot Fragment**. A pop-up will appear to allow you to alter the prefix that StreamSets adds to the parameters for that fragment. Leave this unchanged and click on **Done**.
+1. In the pipeline canvas for **My First Pipeline**, use the **Stage library panel** on the right. Click on the ``A`` in the top left of the panel produce a drop-down menu with the list of object types that can be added to the canvas. Select ``Fragments`` from the list. Now select the **Pivot Fragment**. A pop-up will appear to allow you to alter the prefix that StreamSets adds to the parameters for that fragment. Leave this unchanged and click on **Done**.
 
       ![Stage Library Panel](assets/ss_stage_library_panel.png)
 
     - The fragment will now appear on the canvas.
     - Connect the output of **Order and Aggregate Join** to the input of the **Pivot Fragment**.
-    - Click on the **Pivot Fragment**. On the **General** tab below, there is a property for the **Fragment Commit/Tag**, where the version of the fragment currently in use can be seen and changed with the dropdown menu of its versions.
+    - Click on the **Pivot Fragment**. On the **General** tab below, there is a property for the **Fragment Commit/Tag**, where the version of the fragment currently in use can be seen and changed with the drop-down menu of its versions.
       ![Choose Fragment Version](assets/ss_pipeline_fragment_version.png)
     - The **Fragment Parameters** tab contains the parameters with the updated prefixes where the parameters have the default values assigned in the fragment.
     - Now look at the pipeline parameters by clicking on an area of blank canvas to have the general pipeline properties appear below the canvas. On the **Parameters** tab, the parameters from the fragment were automatically added to this list as well, and pre-populated with the default values. The values for the fragment parameters can be updated in either place, and the new value will automatically be populated on both tabs.
@@ -735,13 +823,13 @@ You can find out more about Pipeline Fragments in [StreamSets Documentation](htt
     ```sql
     SELECT * FROM PC_STREAMSETS_DB.PUBLIC.PIVOT_SALES_BY_CLERK LIMIT 10;
     ```
-3. An archive file with the completed pipeline can be found [here](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/my_first_pipeline_final.zip).
+3. An archive file with the completed pipeline can be found [here](https://github.com/streamsets/Pipeline-Examples/blob/85acaa98a6af565e4eb8fb2ce5e8f86829e2761f/tx4snowflake_hol/my_first_pipeline_final.zip).
 
 ## **Create a Job**
 Duration: 5
 
 ### Create & Run a Job
-In this next step, we will create a StreamSets [job instance](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb), which is the execution of a puplished pipeline. A job instance can be created from a pipeline or a job template.
+In this next step, we will create a StreamSets [job instance](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb), which is the execution of a published pipeline. A job instance can be created from a pipeline or a job template.
 
   - Check in the pipeline.
   - After entering the **Commit Message**, click on ``Publish and Next``.
@@ -774,16 +862,8 @@ In this next step, we will create a StreamSets [job instance](https://docs.strea
 
 - The full lists of job instances, job templates, draft runs, can also be found under the **Run** tab on the left. 
 
-- There is much more that can be done with jobs, such as scheduling them or triggering job runs via the Rest API. You can find more information in the Control Hub documentation [here](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Run/Run.html).
+There is much more that can be done with jobs, such as scheduling them or triggering job runs via the Rest API. You can find more information in the Control Hub documentation [here](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Run/Run.html).
 
-<!-- Add a step to show the Run -> Job Instances menu -->
-<!--     - Now click on the **Pivot Fragment** to have the pop-up menu appear. Select the icon to expand the fragment to see the individual processors in the fragment. 
-      ![Fragment Pop-up Menu](assets/ss_pipeline_with_fragment.png)
--->
-
-<!--
-### Schedule a Job
--->
 
 <!--
 ### Create a Job Template
@@ -792,9 +872,9 @@ In this next step, we will create a StreamSets [job instance](https://docs.strea
 ## **Slowly Changing Dimension**
 Duration: 20
 
-You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database and ``TPCH_SF1`` schema has a region assigned to each country. Overtime, the company might add or change regions as they grow. For instance, there is only an ``America`` region, but eventually it might make sense to split that into ``North America`` and ``South America``. For our reporting over time, however, we may want to preserve the historical nation to region mappings, so we want to capture this in a **Slowly Changing Dimension**. 
+You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database and ``TPCH_SF1`` schema has a region assigned to each country. Over time, the company might add or change regions as they grow. For instance, there is only an ``America`` region, but eventually it might make sense to split that into ``North America`` and ``South America``. For our reporting over time, however, we may want to preserve the historical nation to region mappings, so we want to capture this in a **Slowly Changing Dimension**. 
 
-1. Go back to your Snowflake Worksheet and run the following ``SQL`` queries to create the tables for this portion of the lab.  When you finish, you should have two tables in the ``PC_STREAMSETS_DB`` database and ``PUBLIC`` schema: ``NATION_DIMENSION`` and ``NATION_UPDATES``.
+1. Go back to your Snowflake Worksheet and run the following ``SQL`` queries to create the tables for this portion of the lab.  When you finish, you should have two new tables in the ``PC_STREAMSETS_DB`` database and ``PUBLIC`` schema: ``NATION_DIMENSION`` and ``NATION_UPDATES``.
 
     ```sql
     -- CREATE NATION DIMENSION FOR SCD PIPELINE
@@ -834,7 +914,7 @@ You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database 
  
 3. Click on **Use Transformer for Snowflake**! Name your pipeline ``My SCD Pipeline`` and click on **Next**. At the next prompt, chooose **Save and Open in Canvas**.
 
-4. Check on the **General** and **Parameters** tabs below the pipeline canvas to make sure that your pipeline default vaues are populated. If not, enter them. 
+4. Check on the **General** and **Parameters** tabs below the pipeline canvas to make sure that your pipeline default values are populated. If not, enter them. 
 
 5. Add a **Snowflake Table** origin to the canvas. Since we are using our default database and schema, all we need to do is add the table name to read from. Name the origin ``Nation Dimension``, and go to the **Table** tab to enter the following settings: 
     - **Table**: ``NATION_DIMENSION``
@@ -847,7 +927,7 @@ You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database 
 
 7. Connect the output of the **Nation Update** origin to the **Slowly Changing Dimension** processor. Your pipeline should now look like the image below. It is important which number each input is assigned to. **Nation Dimension** should be input ``1`` and **Nation Update** should be input ``2``. If the inputs are reversed, you can switch them by selecting the SCD processor and clicking on the button with the up and down arrows.
 
-![SCD Pipeline](assets/ss_scd_1.png)   
+  ![SCD Pipeline](assets/ss_scd_1.png)   
 
 8. Now it's time to configure the processor. Make sure that the SCD processor is selected, and on the **Dimension** configuration below, enter the following settings:
 
@@ -906,7 +986,7 @@ You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database 
         - **Nation_Key** ``25``: ``Australia``
           This record does not exist in the current dimension table, so a new row will be created as Version 1 of the record.
 
-12. Close the preview. Do a **Draft Run** of the pipeline and go back to Snowflake and continue wih the previous worksheet and run the following SQL statement:
+12. Close the preview. Do a **Draft Run** of the pipeline and go back to Snowflake and continue with the previous worksheet and run the following SQL statement:
 
       ```sql
       SELECT *
