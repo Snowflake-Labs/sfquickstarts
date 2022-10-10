@@ -1,4 +1,4 @@
-_author: Allan Campopiano
+author: Allan Campopiano
 id: exploratory_data_analysis_with_snowflake_and_deepnote
 summary: Deepnote's SQL + Python notebook, along with their suite of low-code tools, allow for rapid data exploration of the Snowflake warehouse.
 categories: data-science
@@ -33,11 +33,11 @@ more generally to any dataset used within Deepnote.
 
 ### What You’ll Learn
 
-- How to set up a Snowflake integration inside Deepnote
-- How to query a Snowflake database using Deepnote's SQL blocks
-- How to seamlessly mix-and-match Python and SQL
-- Data visualization of query results
-- How to build a UI around the SQL query
+This guide will walk you through a generalizable workflow for 
+exploratory data analysis (EDA) using Deepnote and Snowflake. 
+You will learn how to combine Python, SQL, and low-code solutions to 
+complete common EDA tasks—including data wrangling and 
+interactive data visualization.
 
 ### What You’ll Need
 
@@ -47,9 +47,10 @@ more generally to any dataset used within Deepnote.
 
 ### What You’ll Build
 
-You will build a generalizable data analysis workflow based on data stored in Snowflake. 
-The guide will cover data transformation, data visualization, 
-and various methods and tools in Deepnote that make EDA more time efficient.
+You will use the EDA tools in Deepnote to explore weather patterns in New York city. 
+By the end of the guide, you will have created a notebook that contains generalizable 
+techniques—and one that demonstrates how Snowflake and Deepnote work together
+to solve the hardest data analysis problems.
 
 <!-- ------------------------ -->
 
@@ -220,4 +221,4 @@ We have built a generalizable workflow for exploratory data analysis.
 Deepnote's Python, SQL, and low-code solutions make analyzing data in Snowflake 
 straightforward and time efficient—even for team members without 
 advanced technical knowledge. Apply these approaches to your own datasets 
-to make exploratory data analysis more productive._
+to make exploratory data analysis more productive.
