@@ -3,7 +3,7 @@ id: streamsets_transformer_for_snowflake_hol
 summary: Hands on Lab for Transformer for Snowflake
 categories: getting-started,data-warehouse,data-engineering
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, StreamSets
 
