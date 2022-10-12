@@ -47,7 +47,7 @@ Duration: 5
 The first thing you'll need to do is download a small version of the dataset. Once downloaded, unzip the folder.
 
 <button>
-  [Download Dataset](http://files.grouplens.org/datasets/movielens/ml-latest-small.zip)
+  [Download Dataset](https://files.grouplens.org/datasets/movielens/ml-latest-small.zip)
 </button>
 
 We're going to take that data and load it into some tables on Snowflake. First, you'll want to sign in to Snowflake. Then run the following block of code to set the context, create a compute warehouse, and create the tables:
@@ -447,7 +447,7 @@ Great! Now that we’ve created all the functions, we need to grant the ability 
 ```sql
 grant usage on function train_and_get_recommendations(varchar, varchar) to role sysadmin;
 grant usage on function deploy_model(varchar, varchar) to role sysadmin;
-grant usage on function invoke_model(varchar, varchar) to role sysadmin;
+grant usage on function invoke_model(varchar, varchar, varchar) to role sysadmin;
 ```
 
 And with usage granted, we can now test the functions out!

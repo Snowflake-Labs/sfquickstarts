@@ -232,7 +232,7 @@ results are simple, with a few functions and some query syntax.
 - [WHERE​](https://docs.snowflake.com/en/sql-reference/constructs/where.html#where) is an additional clause you can add to your select query.
 
 ```
-select * from emp_basic where first_name = ‘Ron’;
+select * from emp_basic where first_name = 'Ron';
 ```
 
 This query returns a list of employees by the `first_name` of ‘Ron’ from the `emp_basic` table.

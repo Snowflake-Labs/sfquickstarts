@@ -132,13 +132,13 @@ CREATE TEMPORARY TABLE TEMP_WEATHER (
 	TOT_SNOWDEPTH_MM NUMBER(8,1)
 );
 
-COPY INTO TEMP_TRIPS from @DEMOCITIBIKEDATA
+COPY INTO TEMP_TRIPS from @DEMO.DEMOCITIBIKEDATA
 file_format=(type=csv skip_header=1) pattern='.*trips.*.csv.gz';
 
 CREATE TABLE TRIPS AS
 (Select * from TEMP_TRIPS order by STARTTIME);
 
-COPY INTO TEMP_WEATHER from @DEMOCITIBIKEDATA
+COPY INTO TEMP_WEATHER from @DEMO.DEMOCITIBIKEDATA
 file_format=(type=csv skip_header=1) pattern='.*weather.*.csv.gz';
 
 CREATE TABLE WEATHER AS
@@ -165,7 +165,7 @@ Copy the contents of `config-template.js` to `config.js` and change the followin
 * `snowflake_user`
 * `snowflake_private_key`    
 
-To get the `snowflake_account` value from Snowflake, run `Select CURRENT_ACCOUNT()`. The user is `DATA_APPS_DEMO`, and the `snowflake_private_key` will be the full path to the private key that you created previously.
+To get the `snowflake_account` value from Snowflake, run `Select CURRENT_ACCOUNT()`. The user is `DATA_APPS_DEMO`, and the `snowflake_private_key` will be the text of the private key that you created previously.
 
 Run ```npm start``` in a terminal to start the application. If you see errors, check that the configuration is correct.
 

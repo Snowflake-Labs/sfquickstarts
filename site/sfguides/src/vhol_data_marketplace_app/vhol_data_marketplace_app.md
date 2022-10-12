@@ -42,7 +42,6 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 ### What You’ll Need 
 - A [AWS] (https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all) free trial Account 
 - A [Snowflake](https://signup.snowflake.com/?_ga=2.216496658.583434456.1619544527-1296939414.1603389593) trial Account 
-- [Download](https://download) snowflake-connector-python, snowflake queries, quasar sample application code.
 - [Quasar CLI](https://quasar.dev/start/pick-quasar-flavour/) Installed
 - [Quasar Installation Video ](https://www.youtube.com/watch?v=BK66mQTSl7U) Installed
 - [Download snowflake-connector-python.zip](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/releases/tag/v1)
@@ -184,11 +183,9 @@ agi."geo RegionId" as GeoRegionIdAgi
 "hhtyp Name" ) as sr_lin
 
 from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."sdg_01_20" agi  --pov atlas
-inner join "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01" pth on agi."geo 
-RegionId"=pth."geo RegionId" and agi."Date"=pth."Date"  -- join thresholds
-inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098" ir on agi."geo 
-RegionId"=ir."geo RegionId" and agi."Date"=ir."Date" -- join investment rate
-inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."geo - RegionId"=sr."geo RegionId" and agi."Date"=sr."Date"  -- join saving rate
+inner join "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01" pth on agi."geo RegionId"=pth."geo RegionId" and agi."Date"=pth."Date"  -- join thresholds
+inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098" ir on agi."geo RegionId"=ir."geo RegionId" and agi."Date"=ir."Date" -- join investment rate
+inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."geo RegionId"=sr."geo RegionId" and agi."Date"=sr."Date"  -- join saving rate
 
 
 --## Step 3 Create a view to pair down the variables for the APP --
@@ -232,7 +229,7 @@ So, before we begin to review the index.vue code make sure you have successfully
 
 **You will need to drop the quasar folder from the repository into your local quasar project folder** 
 
-[Download Quasar Folder from repository](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/quasar)
+[Download Quasar Folder from repository](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/tree/main/quasar)
 
 Now let’s take a look at the application we are going to build. In the image displayed below, you will  see a dropdown selection box for the Geography  which will pass the GeoRegionIdPth variable to the selection box, A slider bar to set the Time Period (start date, and end date) which will pass the Dateagi variable(s) to slider bar. The Refresh Button which will populate 3-line charts which represent the Poverty Threshold, Savings Rate and Avg Investment Rate relative to the Time Period  and Geography selected. If a Geography is not selected, an error message will display in red, “You Must select a Geography”
 ![img1](assets/vue-final.png)
@@ -474,10 +471,10 @@ Now let’s begin our work on in  AWS to create a server-less environment to run
 ![img1](assets/lambda4.png)
 * Under Environment, select lambda_Function.py. 
 * Now select the default script and delete so you have a clear tab. Now using visual studio code open the file “lambda.py and paste into the lambda_function tab
-[Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)
+[Download Lambda](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/tree/main/Lambda-src)
 ![img1](assets/lambda5.png)
 * Click on the “Test Tab” 
-* Now using visual studio code, our your preferred code editor, open the file [Download Lambda](https://github.com/brenStokes/Building-an-App-with-Data-Marketplace-/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name "Hello"
+* Now using visual studio code, our your preferred code editor, open the file [Download Lambda](https://github.com/Snowflake-Labs/sfguide-marketplace-data-app/tree/main/Lambda-src)“lambda-Test-Script.gyp and past into the AWS configure test event and Give it an event name "Hello"
 * Select Create
 ![img1](assets/lambda6.png)
 
@@ -587,15 +584,6 @@ Duration: 2
 A fantastic reference for downloading the snowflake-python connector .zip file  [Getting your AWS Lambda Functions to work with Snowflake](https://medium.com/snowflake/getting-your-aws-lambda-functions-to-work-with-snowflake-a14b453bb5ee) to see how to use markdown to generate these elements. 
 
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
@@ -606,9 +594,6 @@ To learn more about Snowflake Data MarketPlace visit the official website here: 
 
 To learn more about Building Data Applications visit the official  website here: ([Building Data Applications](https://www.snowflake.com/workloads/data-applications/)
 
-
-
- [Register for Snowflake Summit 2021](https://www.snowflake.com/summit/?utm_source=paidsearch&utm_medium=ppc&utm_campaign=NA-Branded&_bt=513345067347&_bk=%2Bsnowflake%20%2Bsummit&_bm=b&_bn=g&_bg=111755576146&gclid=CjwKCAjw7J6EBhBDEiwA5UUM2iW-7BWtxKYf9hV5qno24Wvie0GWuaqoHyToZvEC0xRjga0Z5N_Y0BoCr9MQAvD_BwE&gclsrc=aw.ds) 
 
 
 ### What we've covered

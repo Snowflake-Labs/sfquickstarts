@@ -2,7 +2,7 @@ summary: Learn how to get started with Jupyter Notebooks on Snowpark and use the
 id: getting_started_with_snowpark_dataframe_api
 categories: Getting Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Snowpark, Data Engineering
 authors: Robert Fehrmann
@@ -26,15 +26,15 @@ With Snowpark, developers can program using a familiar construct like the DataFr
 
 Snowpark provides several benefits over how developers have designed and coded data driven solutions in the past:
 
-1. Simplify architecture and data pipelines by bringing different data users to the same data platform, and process against the same data without  moving it around. 
+1. Simplifies architecture and data pipelines by bringing different data users to the same data platform, and process against the same data without moving it around.
 
-1. Accelerate data pipeline workloads by executing with performance, reliability, scalability with Snowflake’s elastic performance engine.  
- 
-1. Eliminate maintenance and overhead with managed services with near-zero maintenance. 
+2. Accelerates data pipeline workloads by executing with performance, reliability, and scalability with Snowflake’s elastic performance engine.
 
-1. One governance framework and set of policies to maintain by using a single platform.
+3. Eliminates maintenance and overhead with managed services and near-zero maintenance.
 
-1. Highly secure with administrators having full control over which libraries are allowed to execute inside the Java/Scala runtimes for Snowpark.
+4. Creates a single governance framework and a single set of policies to maintain by using a single platform.
+
+5. Provides a highly secure environment with administrators having full control over which libraries are allowed to execute inside the Java/Scala runtimes for Snowpark.
 
 The following tutorial highlights these benefits and lets you experience Snowpark in your environment.
 
@@ -45,7 +45,6 @@ This [repo](https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter) is st
 
 All notebooks will be fully self contained, meaning that all you need for processing and analyzing datasets is a Snowflake account.  If you do not have a Snowflake account, you can sign up for a [free trial](https://signup.snowflake.com/). It doesn't even require a credit card.
 
-Versions used in this notebook are up-to-date as of August 2021. Please update them as necessary in the Snowtire setup step.
 
 - Use of the [Snowflake free 30-day trial environment](https://trial.snowflake.com)
 - All notebooks in this series require a Jupyter Notebook environment with a Scala kernel.  
@@ -58,6 +57,13 @@ Versions used in this notebook are up-to-date as of August 2021. Please update t
 
     The first notebook in this series provides a quick-start guide and an introduction to the Snowpark DataFrame API. The notebook explains the steps for setting up the environment (REPL), and how to resolve dependencies to Snowpark. After a simple "Hello World" example you will learn about the Snowflake DataFrame API, projections, filters, and joins.
  
+- [Part 2](https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/notebook/part2/part2.ipynb)
+
+    The second notebook in the series builds on the quick-start of the first part. Using the TPCH dataset in the sample database, it shows how to use aggregations and pivot functions in the Snowpark DataFrame API. Then it introduces UDFs and how to build a stand-alone UDF: a UDF that only uses standard primitives. From there, we will learn how to use third party Scala libraries to perform much more complex tasks like math for numbers with unbounded (unlimited number of significant digits) precision and how to perform sentiment analysis on an arbitrary string.
+
+- [Part 3](https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/notebook/part3/part3.ipynb)
+
+    The third notebook combines what you learned in part 1 and 2. It implements an end-to-end ML use case including data ingestion, ETL/ELT transformations, model training, model scoring, and result visualization.
 
 <!-- ------------------------ -->
 ## Preparing your lab environment 
@@ -79,7 +85,7 @@ The following instructions show how to build a Notebook server using a Docker co
         mkdir DockerImages
 
         cd DockerImages
-        git clone git@github.com:Snowflake-Labs/sfguide_snowpark_on_jupyter.git
+        git clone https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter.git
 
 6. Build the Docker container (this may take a minute or two, depending on your network connection speed)
 
@@ -103,14 +109,18 @@ The following instructions show how to build a Notebook server using a Docker co
 
 8. Start a browser session (Safari, Chrome, ...). Paste the line with the local host address (127.0.0.1) printed in **your shell window** into the browser status bar and update the port (8888) to **your port** in case you have changed the port in the step above.
 
-9. Stopping your Docker lab environment
+Positive
+:  Once you have completed this step, you can move on to the Setup Credentials Section.
+
+Negative
+:  Stopping your Docker lab environment
     
-    Type the following command into a new shell window when you want to stop your the tutorial. All changes/work will be saved on your local machine. 
+    Type the following command into a new shell window when you want to stop the tutorial. All changes/work will be saved on your local machine. 
 
         docker stop snowparklab
         
 
-    This command will stop and then delete the container. When you want to restart the tutorial, just run the commands above in **Starting your Snowtrek environment**.
+
 
 
 ### Option 2:  Running Jupyter in the AWS cloud
@@ -147,54 +157,112 @@ Duration: 10
 
 First, we have to set up the Jupyter environment for our notebook. The full instructions for setting up the environment are in the Snowpark documentation [Configure Jupyter](https://docs.snowflake.com/en/developer-guide/snowpark/quickstart-jupyter.html#configuring-the-jupyter-notebook-for-snowpark).
 
-#### Import the part 1 notebook
-Open your Jupyter environment and import the ~/DockerImages/sfguide_snowpark_on_jupyter/notebook/part1/part1.ipynb
-
-![Import Part1](assets/jupyter1.png)
 
 #### Setup your credentials file
-- Open the folder:  ~/DockerImages/sfguide_snowpark_on_jupyter/creds
-- Make a copy of the template_credentials.txt and name it credentials.txt
-- Create a folder named 'creds' in Jupyter
 
-![Import Credentials](assets/jupyter2.png)
+To create a Snowflake session, we need to authenticate to the Snowflake instance. Though it might be tempting to just override the authentication variables with hard coded values in your Jupyter notebook code, it's not considered best practice to do so. If you share your version of the notebook, you might disclose your credentials by mistake to the recipient. Even worse, if you upload your notebook to a public code repository, you might advertise your credentials to the whole world. To prevent that, you should keep your credentials in an external file (like we are doing here).
 
-- Import the credentials.txt file into your Jupyter folder named 'creds'
+Then, update your credentials in that file and they will be saved on your local machine. Even better would be to switch from user/password authentication to [private key authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth.html#key-pair-authentication-key-pair-rotation).
 
-![Import Credentials](assets/jupyter3.png)
+Positive
+:  Put your key pair files into the same directory or update the location in your credentials file.
 
-- Double click the credential.txt file to open and edit it in the Jupyter environment
+- Open your Jupyter environment in your web browser
+- Navigate to the folder:  /snowparklab/creds
+- Duplicate the file **template_credentials.txt**
+
+![Duplicate Credentials](assets/jupyter_duplicate_creds.png)
+
+- Rename the duplicated file to **credentials.txt** (right click menu)
+- Double click the **credential.txt** file to open and edit it in the Jupyter environment
 - Update the file to your Snowflake environment connection parameters
 
-![Import Credentials](assets/credentials.png)
+Positive
+:  You can comment out parameters by putting a # at the beginning of the line.
+
+![Update Credentials](assets/jupyter_update_credentials.png)
 
 
 <!-- ------------------------ -->
-## Introduction to the Snowpark DataFrame API: Hello World 
+## Part 1:  Introduction to the Snowpark DataFrame API 
 Duration: 10
 
 This is the first notebook of a series to show how to use Snowpark on Snowflake. This notebook provides a quick-start guide and an introduction to the Snowpark DataFrame API. The notebook explains the steps for setting up the environment (REPL), and how to resolve dependencies to Snowpark. After a simple "Hello World" example you will learn about the Snowflake DataFrame API, projections, filters, and joins.
 
 ### Open the Part 1 notebook
 
-Double click on the part1.ipynb to open it
+Open your Jupyter environment.
+Navigate to the folder snowparklab/notebook/part1 and Double click on the part1.ipynb to open it
 
-![Import Credentials](assets/part1_open.png)
+![Find Part 1](assets/part1_open.png)
+
+![Open Part 1 Notebook](assets/part1a_open.png)
 
 ### Now read through and run each step in the notebook.
 
-Positive
-:  Return here once you have finished the notebook so you can read the conclusion & Next steps, and complete the guide.
-
 ![Import Credentials](assets/part1_run_step_1.png)
+
+Positive
+:  **Return here once you have finished the first notebook.**
+
+<!-- ------------------------ -->
+## Part 2:  Aggregations, Pivots, and UDF's 
+Duration: 15
+
+This is the second notebook in the series. It builds on the quick-start of the first part. Using the TPCH dataset in the sample database, we will learn how to use aggregations and pivot functions in the Snowpark DataFrame API. Then, it introduces user definde functions (UDFs) and how to build a stand-alone UDF: a UDF that only uses standard primitives. From there, we will learn how to use third party Scala libraries to perform much more complex tasks like math for numbers with unbounded (unlimited number of significant digits) precision and how to perform sentiment analysis on an arbitrary string.
+
+In this session, the focus will be on:
+
+- Advanced API features and visualization
+- User-defined functions
+
+### Open the Part 2 notebook
+
+Open your Jupyter environment.
+Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.ipynb to open it
+
+![Find Part 2](assets/part2_open.png)
+
+![Open Part 2 Notebook](assets/part2a_open.png)
+
+### Now read through and run each step in the notebook.
+
+![Run Cells](assets/part2_run_step_1.png)
+
+Positive
+:  **Return here once you have finished the second notebook.**
+
+
+<!-- ------------------------ -->
+## Part 3:  Data Ingestion, transformation, and model training 
+Duration: 15
+
+The third notebook builds on what you learned in part 1 and 2. It implements an end-to-end ML use-case including data ingestion, ETL/ELT transformations, model training, model scoring, and result visualization.
+
+
+### Open the Part 3 notebook
+
+Open your Jupyter environment.
+Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.ipynb to open it
+
+![Find Part 3](assets/part3_open.png)
+
+![Open Part 3 Notebook](assets/part3a_open.png)
+
+### Now read through and run each step in the notebook.
+
+![Run Cells](assets/part3_run_step_1.png)
+
+Positive
+:  **Return here once you have finished the third notebook so you can read the conclusion & Next steps, and complete the guide.**
+
+
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
 Duration: 2
 
 Snowpark is a brand new developer experience that brings scalable data processing to the Data Cloud. In Part1 of this series, we learned how to set up a Jupyter Notebook and configure it to use Snowpark to connect to the Data Cloud. Next, we built a simple Hello World! program to test connectivity using embedded SQL. Then we enhanced that program by introducing the Snowpark Dataframe API. Lastly we explored the power of the Snowpark Dataframe API using filter, projection, and join transformations.
-
-In the next post of this series, we will learn how to create custom Scala based functions and execute arbitrary logic directly in Snowflake using user defined functions (UDFs) just by defining the logic in a Jupyter Notebook!
 
 We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. 
 
@@ -205,16 +273,12 @@ We encourage you to continue with your free trial by loading your own sample or 
 - [Join the Snowflake community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
 - [Sign up for Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
 - [Contact our Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more
-- [Part 2](https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/notebook/part2/part2.ipynb) 
 
-    The second notebook in the series builds on the quick-start of the first part. Using the TPCH dataset in the sample database, it shows how to use aggregations and pivot functions in the Snowpark DataFrame API. Then it introduces UDFs and how to build a stand-alone UDF: a UDF that only uses standard primitives. From there, we will learn how to use third party Scala libraries to perform much more complex tasks like math for numbers with unbounded (unlimited number of significant digits) precision and how to perform sentiment analysis on an arbitrary string.
-    
-- [Part 3](https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/notebook/part3/part3.ipynb) 
-
-    The third notebook combines what you learned in part 1 and 2. It implements an end-to-end ML use case including data ingestion, ETL/ELT transformations, model training, model scoring, and result visualization.
 
 ### What we've covered:
 
 - Quick Start: Set up the environment
 - Hello World: First steps
 - Snowflake DataFrame API: Query the Snowflake Sample Datasets via Snowflake DataFrames
+- Aggregations, Pivots, and UDF's using the Snowpark API
+- Data Ingestion, transformation, and model training

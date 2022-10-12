@@ -569,6 +569,7 @@ We need to collect the following components from Driverless AI:
 - `mojo2-runtime.jar`
 - `H2oDaiScore.jar`
 - A valid Driverless AI license file. `license.sig`
+- (as pointed out in the Prerequisites, a H2O Driverless AI trial license key can be obtained [here](https://www.h2o.ai/try-driverless-ai/).)
 
 The first two files we will download from Driverless AI directly. Select `DOWNLOAD MOJO SCORING PIPELINE` from the `STATUS: COMPLETE` buttons
 
@@ -580,7 +581,7 @@ and then `DOWNLOAD MOJO SCORING PIPELINE` again from the `MOJO Scoring Pipeline 
 
 This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files, along with a number of other files we will not be needing.
 
-The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.4 at the time of this writing). Extract the downloaded `H2oScore-0.0.4.tgz` file to find `H2oDaiScore-0.0.4.jar`.
+The next file, `H2oDaiScore`, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: [https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html](https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html). Select the latest release (0.0.7 at the time of this writing). Extract the downloaded `H2oScore-0.0.7.tgz` file to find `H2oDaiScore-0.0.7.jar`.
 
 Last, you will need your Driverless AI license file `license.sig`.
 
@@ -606,10 +607,10 @@ These are the login name  and password you created after navigating to the uniqu
 
 Once logged in, you can now execute the following:
 ```
-USE DATABASE lendingclub;
+USE DATABASE PC_H2O_DB;
 USE SCHEMA public;
-USE WAREHOUSE demo_wh;
-USE ROLE sysadmin;
+USE WAREHOUSE PC_H2O_WH;
+USE ROLE PC_H2O_ROLE;
 ```
 
 Finally, we can now upload the 4 artifacts:
@@ -617,7 +618,7 @@ Finally, we can now upload the 4 artifacts:
 ```
 put file://{path}/pipeline.mojo @%loans auto_compress=false;
 put file://{path}/license.sig @%loans auto_compress=false;
-put file://{path}/H2oDaiScore-0.0.4.jar @%loans auto_compress=false;
+put file://{path}/H2oDaiScore-0.0.7.jar @%loans auto_compress=false;
 put file://{path}/mojo2-runtime.jar @%loans auto_compress=false;
 ```
 
@@ -630,6 +631,7 @@ We are now ready to actually create the Java UDF via the `CREATE FUNCTION` state
 - a name for the function and its parameters,
 - the location in the stage of `pipeline.mojo` and all other artifacts,
 - the Java method to be invoked when the Java UDF is called.
+  
 
 The code has been prepared for you. At this point, this can either be run in SnowSQL or back in your GUI session.
 
@@ -641,7 +643,7 @@ CREATE FUNCTION H2OScore_Java(params STRING, rowData ARRAY)
     imports = ('@%loans/pipeline.mojo',
                '@%loans/license.sig',
                '@%loans/mojo2-runtime.jar',
-               '@%loans/H2oDaiScore-0.0.4.jar'
+               '@%loans/H2oDaiScore-0.0.7.jar'
                )
 
     handler = 'h2oDai.H2oDaiScore.h2oDaiScore';
@@ -655,18 +657,32 @@ The syntax for calling a Java UDF in Snowflake is
 ``` sql
 SELECT <JAVA_UDF_FUNCTION_NAME>(<JAVA_UDF_FUNCTION_PARAMS>) FROM <TABLE_NAME>;
 ```
+  
+**Importtant:**  H2O's customer scorer, `H2oDaiScore.jar`, has a unique feature to autogenerate the SQL command for scoring. Simply call the Java UDF you just created (`H2OScore_Java`) with the parameter `sql` set to `true`.
 
-Using the `H2OScore_Java` UDF defined above, we will now score our table `loans` using `pipeline.mojo` as follows:
+For example,
+  
+  ```sql
+  SELECT H2OScore_Java('Modelname=pipeline.mojo Sql=true', ARRAY_CONSTRUCT());
+ 
+  ```
+
+  **Results Preview**
+  
+  ```sql
+  "select ROW_NUMBER() OVER (ORDER BY (select 0)) as RowNumber, H2OScore_Java('Modelname=pipeline.mojo', ARRAY_CONSTRUCT(loan_amnt, term, int_rate, installment, emp_length, home_ownership, annual_inc, verification_status, addr_state, dti, delinq_2yrs, inq_last_6mths, pub_rec, revol_bal, revol_util, total_acc)) from <add-table-name>;"
+  ```
+  
+Now let's look at an example using the `H2OScore_Java` UDF defined above to score our table `loans` using `pipeline.mojo` as follows:
 
 ``` sql
 SELECT
-    ID,
+    ROW_NUMBER() OVER (ORDER BY (select 0)) as RowNumber,
     H2OScore_Java(
         'Modelname=pipeline.mojo',
-        ARRAY_CONSTRUCT(loan_amnt, term, installment, grade, sub_grade, emp_length,
-                        home_ownership, annual_inc, verification_status, issue_d,
-                        purpose, addr_state, dti, inq_last_6mths, open_acc,
-                        revol_util, total_acc, credit_length)
+        ARRAY_CONSTRUCT(loan_amnt, term, int_rate, installment, emp_length,
+                        home_ownership, annual_inc, verification_status, addr_state,
+                        dti, delinq_2yrs, inq_last_6mths, pub_rec, revol_bal, revol_util, total_acc)
     ) AS H2OScore
 FROM loans;
 ```
@@ -681,7 +697,7 @@ It should take about 7 seconds to score and the results should look like this:
 | 2   | 1077430 | 0.5798575133085251 |
 | 3   | 1077175 | 0.5994115248322487 |
 
-And as they say, that is all folks! We have now scored a model inside Snowflake. What this does is gives you the flexibility of Snowflake's Scale Up and Scale Out capabilities to score as much data as you want.
+And as they say, that is all folks! We have now scored a model inside Snowflake. What this does is give you the flexibility of Snowflake's Scale Up and Scale Out capabilities to score as much data as you want.
 
 ### (Extra) Easy Deployment using AutoGen
 
