@@ -85,7 +85,7 @@ Duration: 5
 
 Check out the code repository README, and ensure you've followed the setup instructions for your environment of choie (AWS SageMaker Studio Lab or local Jupyter)
 
-Then, open up the [`00-Setup`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/00-Setup.ipynb) Jupyter notebook and execute the cells. Make sure to fill in the `state_dict` at the top of this Notebook with your Snowflake account information. Run through the notebook, executing each cell along the way.
+Then, open up the [`00-Setup`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/00_Setup.ipynb) Jupyter notebook and execute the cells. Make sure to fill in the `state_dict` at the top of this Notebook with your Snowflake account information. Run through the notebook, executing each cell along the way.
 
 ***If you are using a brand new Snowflake account***, with just a single ACCOUNTADMIN user, you'll need to run some additional steps to create additional users, initial databases, schemas, compute warehouses, etc. that we will use throughout this quickstart:
 ```python

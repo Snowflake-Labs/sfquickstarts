@@ -115,7 +115,9 @@ Run the following to find the `YOUR_ACCOUNT_LOCATOR` and your Snowflake Region I
 SELECT current_account() as YOUR_ACCOUNT_LOCATOR, current_region() as YOUR_SNOWFLAKE_REGION_ID;
 ```
 
-You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#snowflake-region-ids). Example: aws_us_west_2 would have a us-west-2 value for `YOUR_REGION_HERE`.
+You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#snowflake-region-ids). 
+
+**Example**: aws_us_west_2 would have a us-west-2 value for `YOUR_REGION_HERE`.
 
 
 ### Add Account Information to Environment
@@ -124,7 +126,7 @@ Run these commands in your shell. Be sure to replace the `YOUR_ACCOUNT_LOCATOR` 
 
 ```Shell
 $ export SNOWFLAKE_USER="tf-snow"
-$ export SNOWFLAKE_PRIVATE_KEY_PATH="~/.ssh/snowflake_tf_snow_key"
+$ export SNOWFLAKE_PRIVATE_KEY_PATH="~/.ssh/snowflake_tf_snow_key.p8"
 $ export SNOWFLAKE_ACCOUNT="YOUR_ACCOUNT_LOCATOR"
 $ export SNOWFLAKE_REGION="YOUR_REGION_HERE"
 ```
