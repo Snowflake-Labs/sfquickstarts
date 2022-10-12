@@ -246,7 +246,7 @@ As you would see, this Economy Atlas comes with more than 300 datasets. In order
 
 ```SQL
 SELECT * 
-  FROM "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS"
+  FROM "ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS"
  WHERE "DatasetName" ILIKE 'US Stock%'
     OR "DatasetName" ILIKE 'Exchange%Rates%';
 ```
@@ -256,7 +256,7 @@ SELECT *
 Finally, let's try to query one of the datasets: 
 ```
 SELECT * 
-  FROM KNOEMA_ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
+  FROM ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
  WHERE "Date" = current_date();
 ```
 ![Preview App](assets/image20.png) 
@@ -376,8 +376,8 @@ For this let's create a **models/l10_staging/sources.yml** file and add the foll
 version: 2
 
 sources:
-  - name: knoema_economy_data_atlas
-    database: knoema_economy_data_atlas
+  - name: economy_data_atlas
+    database: economy_data_atlas
     schema: economy
     tables:
       - name: exratescc2018
@@ -397,7 +397,7 @@ SELECT "Currency"        currency
      , "Value"           value
      , 'Knoema.FX Rates' data_source_name
      , src.*
-  FROM {{source('knoema_economy_data_atlas','exratescc2018')}}  src 
+  FROM {{source('economy_data_atlas','exratescc2018')}}  src 
 ```
 
 - **models/l10_staging/base_knoema_stock_history.sql**
@@ -416,7 +416,7 @@ SELECT "Company"                    Company
      , "Date"                       Date
      , "Value"                      Value
      , 'Knoema.Stock History' data_source_name
-  FROM {{source('knoema_economy_data_atlas','usindssp2020')}}  src 
+  FROM {{source('economy_data_atlas','usindssp2020')}}  src 
 ```
 As you can see we used the opportunity to change case-sensitive & quoted name of the attributes to case insensitive to improve readability. Also as I am sure you noticed, this looks like SQL with the exception of macro **{{source()}}** that is used in "FROM" part of the query instead of fully qualified path (database.schema.table). This is one of the key concepts that is allowing dbt during compilation to replace this with target-specific name. As result, you as a developer, can promote **same** pipeline code to DEV, PROD and any other environments without any changes. 
 
