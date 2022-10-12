@@ -239,6 +239,7 @@ What is happening here? Knoema has granted access to this data from their Snowfl
 ![Preview App](assets/image17.png)  
 
 Now let's go back to worksheets and after refreshing the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you'll see views under the ECONOMY schema. We'll use one of these next.
+Please note, Knoema recently changed the database name from KNOEMA_ECONOMY_DATA_ATLAS to ECONOMY_DATA_ATLAS. All code snippets are now reflecting the new name, but please don't be confused if old name appear in some screenshots. The content is exactly the same!
 
 ![Preview App](assets/image18.png) 
 
