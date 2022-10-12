@@ -405,7 +405,7 @@ SELECT "Currency"        currency
 ```sql
 SELECT "Company"                    Company
      , "Company Name"               Company_Name
-     , "Company Symbol"             Company_Symbol
+     , "Company Ticker"             Company_Ticker
      , "Stock Exchange"             Stock_Exchange
      , "Stock Exchange Name"        Stock_Exchange_Name
      , "Indicator"                  Indicator
@@ -432,7 +432,7 @@ Now we can go and query this dataset to take a feel of what the data profile loo
 ```sql
 SELECT * 
   FROM dbt_hol_dev.l10_staging.base_knoema_stock_history 
- WHERE Company_Symbol ='AAPL' 
+ WHERE Company_Ticker ='AAPL' 
    AND date ='2021-03-01'
 ```
 ![Query Tag](assets/image28.png) 
