@@ -30,7 +30,7 @@ Python based dbt models are made possible by Snowflake's new native Python suppo
 This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt's new Python-based models.
 
 Negative
-: **Note** - As of 10/1/2022, both of these features are still in preview. Snowflake's native Python support and Snowpark API for Python is in Public Preview, and dbt's Python model support is in preview and will be released with version 1.3.
+: **Note** - As of 10/12/2022, both of these features are still in preview. Snowflake's native Python support and Snowpark API for Python is in Public Preview, and dbt's Python model support is in preview and will be released with version 1.3.
 
 
 ### Prerequisites
@@ -55,7 +55,7 @@ You will need the following things before beginning:
 1. Anaconda
     1. **Anaconda installed on your computer.** Check out the [Anaconda Installation](https://docs.anaconda.com/anaconda/install/) instructions for the details. 
 1. dbt
-    1. **dbt installed on your computer.** Since Python models in dbt are still in preview, you will need to manually specify the correct beta version of dbt. As of 10/1/2022, please follow these step (where `<env-name>` is any name you want for the Anaconda environment):
+    1. **dbt installed on your computer.** Since Python models in dbt are still in preview, you will need to manually specify the correct beta version of dbt. As of 10/12/2022, please follow these step (where `<env-name>` is any name you want for the Anaconda environment):
         1. `conda create -n <env-name> python=3.8`
         1. `conda activate <env-name>`
         1. `pip install dbt-core==1.3.0rc1`
@@ -145,7 +145,7 @@ Finally, save the file and execute `dbt run` again. If everything ran successful
 * No Jinja! dbt Python models don't use Jinja to render compiled code.
 * You don't have to explicitly import the Snowflake Snowpark Python library, dbt will do that for you. More on this in the next step.
 * As mentioned above, every dbt Python model must define a method named `model` that has the following signature: `model(dbt, session)`.
-* As of 10/1/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
+* As of 10/12/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
 * You can use `dbt.ref()` and `dbt.source()` just the same as their Jinja equivalents in SQL models. And you can refer to either Python or SQL models interchangeably!
 
 Positive
