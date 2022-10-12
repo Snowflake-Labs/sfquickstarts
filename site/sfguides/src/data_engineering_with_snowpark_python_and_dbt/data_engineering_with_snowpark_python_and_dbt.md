@@ -20,12 +20,12 @@ Data engineering is a broad discipline which includes data ingestion, data trans
 Data transformation involves taking source data which has been ingested into your data platform and cleansing it, combining it, and modeling it for downstream use. Historically the most popular way to transform data has been with the SQL language and data engineers have built data transformation pipelines using SQL often with the help of ETL/ELT tools. But recently many folks have also begun adopting the DataFrame API in languages like Python for this task. For the most part a data engineer can accomplish the same data transformations with either approach, and deciding between the two is mostly a matter of preference and particular use cases. That being said, there are use cases where a particular data transform can't be expressed in SQL and a different approach is needed. The most popular approach for these use cases is Python along with a DataFrame API.
 
 ### dbt
-Enter dbt. dbt is one of the most (maybe the most) popular data transformation tools today. And until now dbt has been entirely a SQL-based transformation tool. But with the announcement of dbt Python models, things have changed. It's now possible to create both SQL and Python based models in dbt! Here's how dbt explains it:
+Enter dbt. dbt is one of the most popular data transformation tools today. And until now dbt has been entirely a SQL-based transformation tool. But with the announcement of dbt Python models, things have changed. It's now possible to create both SQL and Python based models in dbt! Here's how dbt explains it:
 
 >dbt Python ("dbt-py") models will help you solve use cases that can't be solved with SQL. You can perform analyses using tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics. Before, you would have needed separate infrastructure and orchestration to run Python transformations in production. By defining your Python transformations in dbt, they're just models in your project, with all the same capabilities around testing, documentation, and lineage. ([dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models))
 
 ### Snowflake
-Python based dbt models are made possible by Snowflake's new native Python support and Snowpark API for Python. With Snowflake's native Python support and DataFrame API, you no longer need to maintain and pay for separate infrastructure/services to run Python code, it can be run directly within Snowflake's Enterprise grade data platform!
+Python based dbt models are made possible by [Snowflake's new native Python support and Snowpark API for Python](https://www.snowflake.com/blog/snowpark-python-innovation-available-all-snowflake-customers/). With Snowflake's native Python support and DataFrame API, you no longer need to maintain and pay for separate infrastructure/services to run Python code, it can be run directly within Snowflake's Enterprise grade data platform!
 
 This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt's new Python-based models.
 
@@ -474,7 +474,7 @@ Duration: 4
 
 Hopefully you've seen how powerful the combination of dbt Python models and the Snowflake platform can be! By supporting both SQL and Python based transformations in dbt, data engineers can take advantage of both while building robust data pipelines. While most of the time the choice between SQL or DataFrames is simply a matter of preference, as we discussed in the introduction there are use cases where data transformations can't be expressed in SQL. In these cases data engineers can make use of tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics.
 
-And best of all, the Snowflake platform enables this with Native Python support and rich Snowpark API for Python. This eliminates the need for data engineers to maintain and pay for separate infrastructure/services to run Python code. Snowflake manages all of it for you with the ease of use that you would expect from Snowflake!
+And best of all, the Snowflake platform enables this with native Python support and rich Snowpark API for Python. This eliminates the need for data engineers to maintain and pay for separate infrastructure/services to run Python code. Snowflake manages all of it for you with the ease of use that you would expect from Snowflake!
 
 Data engineering with Snowflake and dbt just got easier!
 
@@ -498,4 +498,5 @@ Hope that helps!
 ### Related Resources
 
 * [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+* [Snowpark API Reference (Python)](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 * [dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models)
