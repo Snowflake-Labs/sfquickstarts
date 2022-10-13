@@ -239,6 +239,7 @@ What is happening here? Knoema has granted access to this data from their Snowfl
 ![Preview App](assets/image17.png)  
 
 Now let's go back to worksheets and after refreshing the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you'll see views under the ECONOMY schema. We'll use one of these next.
+Please note, Knoema recently changed the database name from KNOEMA_ECONOMY_DATA_ATLAS to ECONOMY_DATA_ATLAS. All code snippets are now reflecting the new name, but please don't be confused if old name appear in some screenshots. The content is exactly the same!
 
 ![Preview App](assets/image18.png) 
 
@@ -246,7 +247,7 @@ As you would see, this Economy Atlas comes with more than 300 datasets. In order
 
 ```SQL
 SELECT * 
-  FROM "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS"
+  FROM "ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS"
  WHERE "DatasetName" ILIKE 'US Stock%'
     OR "DatasetName" ILIKE 'Exchange%Rates%';
 ```
@@ -256,7 +257,7 @@ SELECT *
 Finally, let's try to query one of the datasets: 
 ```
 SELECT * 
-  FROM KNOEMA_ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
+  FROM ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
  WHERE "Date" = current_date();
 ```
 ![Preview App](assets/image20.png) 
@@ -376,8 +377,8 @@ For this let's create a **models/l10_staging/sources.yml** file and add the foll
 version: 2
 
 sources:
-  - name: knoema_economy_data_atlas
-    database: knoema_economy_data_atlas
+  - name: economy_data_atlas
+    database: economy_data_atlas
     schema: economy
     tables:
       - name: exratescc2018
@@ -397,7 +398,7 @@ SELECT "Currency"        currency
      , "Value"           value
      , 'Knoema.FX Rates' data_source_name
      , src.*
-  FROM {{source('knoema_economy_data_atlas','exratescc2018')}}  src 
+  FROM {{source('economy_data_atlas','exratescc2018')}}  src 
 ```
 
 - **models/l10_staging/base_knoema_stock_history.sql**
@@ -405,7 +406,7 @@ SELECT "Currency"        currency
 ```sql
 SELECT "Company"                    Company
      , "Company Name"               Company_Name
-     , "Company Symbol"             Company_Symbol
+     , "Company Ticker"             Company_Ticker
      , "Stock Exchange"             Stock_Exchange
      , "Stock Exchange Name"        Stock_Exchange_Name
      , "Indicator"                  Indicator
@@ -416,7 +417,7 @@ SELECT "Company"                    Company
      , "Date"                       Date
      , "Value"                      Value
      , 'Knoema.Stock History' data_source_name
-  FROM {{source('knoema_economy_data_atlas','usindssp2020')}}  src 
+  FROM {{source('economy_data_atlas','usindssp2020')}}  src 
 ```
 As you can see we used the opportunity to change case-sensitive & quoted name of the attributes to case insensitive to improve readability. Also as I am sure you noticed, this looks like SQL with the exception of macro **{{source()}}** that is used in "FROM" part of the query instead of fully qualified path (database.schema.table). This is one of the key concepts that is allowing dbt during compilation to replace this with target-specific name. As result, you as a developer, can promote **same** pipeline code to DEV, PROD and any other environments without any changes. 
 
@@ -432,7 +433,7 @@ Now we can go and query this dataset to take a feel of what the data profile loo
 ```sql
 SELECT * 
   FROM dbt_hol_dev.l10_staging.base_knoema_stock_history 
- WHERE Company_Symbol ='AAPL' 
+ WHERE Company_Ticker ='AAPL' 
    AND date ='2021-03-01'
 ```
 ![Query Tag](assets/image28.png) 
