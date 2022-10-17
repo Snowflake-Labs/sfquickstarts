@@ -20,17 +20,26 @@ Data engineering is a broad discipline which includes data ingestion, data trans
 Data transformation involves taking source data which has been ingested into your data platform and cleansing it, combining it, and modeling it for downstream use. Historically the most popular way to transform data has been with the SQL language and data engineers have built data transformation pipelines using SQL often with the help of ETL/ELT tools. But recently many folks have also begun adopting the DataFrame API in languages like Python for this task. For the most part a data engineer can accomplish the same data transformations with either approach, and deciding between the two is mostly a matter of preference and particular use cases. That being said, there are use cases where a particular data transform can't be expressed in SQL and a different approach is needed. The most popular approach for these use cases is Python along with a DataFrame API.
 
 ### dbt
-Enter dbt. dbt is one of the most popular data transformation tools today. And until now dbt has been entirely a SQL-based transformation tool. But with the announcement of dbt Python models, things have changed. It's now possible to create both SQL and Python based models in dbt! Here's how dbt explains it:
+Enter dbt. dbt is one of the most popular data transformation tools today. And until now dbt has been entirely a SQL-based transformation tool. But with the release of dbt version 1.3, it's now possible to create both SQL and Python based models in dbt! Here's how dbt explains it:
 
 >dbt Python ("dbt-py") models will help you solve use cases that can't be solved with SQL. You can perform analyses using tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics. Before, you would have needed separate infrastructure and orchestration to run Python transformations in production. By defining your Python transformations in dbt, they're just models in your project, with all the same capabilities around testing, documentation, and lineage. ([dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models))
 
 ### Snowflake
-Python based dbt models are made possible by [Snowflake's new native Python support and Snowpark API for Python](https://www.snowflake.com/blog/snowpark-python-innovation-available-all-snowflake-customers/). With Snowflake's native Python support and DataFrame API, you no longer need to maintain and pay for separate infrastructure/services to run Python code, it can be run directly within Snowflake's Enterprise grade data platform!
+Python based dbt models are made possible by [Snowflake's new native Python support and Snowpark API for Python](https://www.snowflake.com/blog/snowpark-python-innovation-available-all-snowflake-customers/) (Snowpark Python for short). Snowpark Python includes the following exciting capabilities:
+
+* Python (DataFrame) API
+* Python Scalar User Defined Functions (UDFs)
+* Python UDF Batch API (Vectorized UDFs)
+* Python Table Functions (UDTFs)
+* Python Stored Procedures
+* Integration with Anaconda
+
+With Snowflake's Snowpark Python capabilities, you no longer need to maintain, secure and pay for separate infrastructure/services to run Python code as it can now be run directly within Snowflake's Enterprise grade data platform! For more details check out [the Snowpark Developer Guide for Python](ttps://docs.snowflake.com/en/developer-guide/snowpark/python/index.html).
 
 This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt's new Python-based models.
 
 Negative
-: **Note** - As of 10/12/2022, both of these features are still in preview. Snowflake's native Python support and Snowpark API for Python is in Public Preview, and dbt's Python model support is in preview and will be released with version 1.3.
+: **Note** - As of 10/17/2022, Snowflake's Snowpark Python feature is in Public Preview.
 
 
 ### Prerequisites
@@ -55,11 +64,10 @@ You will need the following things before beginning:
 1. Anaconda
     1. **Anaconda installed on your computer.** Check out the [Anaconda Installation](https://docs.anaconda.com/anaconda/install/) instructions for the details. 
 1. dbt
-    1. **dbt installed on your computer.** Since Python models in dbt are still in preview, you will need to manually specify the correct beta version of dbt. As of 10/12/2022, please follow these step (where `&lt;env-name&gt;` is any name you want for the Anaconda environment):
+    1. **dbt installed on your computer.** Python models were first introduced in dbt version 1.3, so make sure you install version 1.3 or newer of dbt. Please follow these steps (where `&lt;env-name&gt;` is any name you want for the Anaconda environment):
         1. `conda create -n &lt;env-name&gt; python=3.8`
         1. `conda activate &lt;env-name&gt;`
-        1. `pip install dbt-core==1.3.0rc1`
-        1. `pip install dbt-snowflake==1.3.0rc1`
+        1. `pip install dbt-core dbt-snowflake` (or `pip install --upgrade dbt-core dbt-snowflake` if upgrading)
 1. Integrated Development Environment (IDE)
     1. **Your favorite IDE installed on your computer.** If you don’t already have a favorite IDE I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
 
@@ -145,7 +153,7 @@ Finally, save the file and execute `dbt run` again. If everything ran successful
 * No Jinja! dbt Python models don't use Jinja to render compiled code.
 * You don't have to explicitly import the Snowflake Snowpark Python library, dbt will do that for you. More on this in the next step.
 * As mentioned above, every dbt Python model must define a method named `model` that has the following signature: `model(dbt, session)`.
-* As of 10/12/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
+* As of 10/17/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
 * You can use `dbt.ref()` and `dbt.source()` just the same as their Jinja equivalents in SQL models. And you can refer to either Python or SQL models interchangeably!
 
 Positive
