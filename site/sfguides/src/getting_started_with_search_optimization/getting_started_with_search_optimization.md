@@ -17,7 +17,7 @@ Are you looking to significantly improve the performance of point lookup queries
 We create optimized search access paths for the columns in your tables. We take advantage of those optimized paths in addition to other processing enhancements to reduce the number of micro partitions scanned and hence speed up the queries. 
 
 For example, in the picture below, we have a query that is trying to find all rows where the name is Martin in a table. If Search Optimization is enabled, it helps identify ***the micro partitions that don't contain ‘Martin’ in the name column*** and reduces the number of partitions to be scanned. In this particular example, it reduces the number of partitions to be scanned from 15 to 1.
-![SO Working](assets/SO%20Working.png)
+![SO Working](assets/SOWorking.png)
 
 
 ### Prerequisites
@@ -73,7 +73,7 @@ This will allow you to create shared databases from Snowflake Marketplace listin
 - Click the big blue + Warehouse button in the upper right of the window
 - Create a Small Warehouse as shown in the screen below
 
-![new-warehouse](assets/New%20Warehouse.png)
+![new-warehouse](assets/NewWarehouse.png)
 
 Be sure to change the `Suspend After (min) field` to 1 min to avoid wasting compute credits.
 
