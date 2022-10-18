@@ -90,9 +90,10 @@ Once your account is created you’ll receive an email confirmation. Within that
     ```
     select *
       from snowflake_sample_data.tpch_sf1.orders
-     limit 100;```
+     limit 100; 
+     ```
 
-    <br/><br/>
+    <br/>
 
     You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
 
