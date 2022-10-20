@@ -11,6 +11,7 @@ tags: Getting Started, Data Engineering, Search Optimization, Search, Query acce
 
 <!-- ------------------------ -->
 ## Overview 
+Duration: 10
 
 Are you looking to significantly improve the performance of point lookup queries and certain analytical queries that require fast access to records? Search Optimization Service will help you achieve exactly that. 
 
@@ -45,6 +46,8 @@ Negative: The Marketplace data used in this guide changes from time-to-time, and
 
 <!-- ------------------------ -->
 ## Setup Snowflake Account and Virtual Warehouse 
+Duration: 5
+
 The first step in the guide is to set up or log into Snowflake and set up a virtual warehouse if necessary. 
 
 ### Access Snowflake's Web UI
@@ -66,6 +69,7 @@ This will allow you to create shared databases from Snowflake Marketplace listin
 ---
 
 ## Create a Virtual Warehouse (if needed)
+Duration: 2
 
 ***If you don't already have access to a Virtual Warehouse to run queries***, you will need to create one.
 
@@ -82,6 +86,7 @@ Be sure to change the `Suspend After (min) field` to 1 min to avoid wasting comp
 ---
 
 ## Acquiring Data from Snowflake Marketplace
+Duration: 2
 
 The next step is to acquire data that has all data types supported by Search Optimization. The best place to acquire this data is the Snowflake Marketplace.
 
@@ -100,6 +105,7 @@ Congratulations! You have just created a shared database named `WIKIDATA` from a
 ---
 
 ## Data Setup
+Duration: 10
 
 The prior section opened a worksheet editor in the new Snowflake UI with a few pre-populated queries that came from the sample queries defined in the Marketplace listing. You are not going to run any of these queries in this guide, but you are welcome to run them later. 
 
@@ -145,20 +151,20 @@ Run the query below in the `Search Optimization Guide` worksheet:
 
 ```
 CREATE DATABASE wiki_so;
-CREATE SCHEMA experiments;`
+CREATE SCHEMA experiments;
 
 //Note: Substitute my_wh with your warehouse name if different
-ALTER WAREHOUSE my_wh set warehouse_size=large;`
+ALTER WAREHOUSE my_wh set warehouse_size='4x-large';
 
+//This query will run in ~90 seconds.
 CREATE TABLE wiki_so.experiments.wikidata_original AS (SELECT * FROM wikidata.wikidata.wikidata_original);
 
+//This query will run in ~7 seconds.
 CREATE TABLE wiki_so.experiments.entity_is_subclass_of AS (SELECT * FROM wikidata.wikidata.entity_is_subclass_of);
 
 //Note: Substitute my_wh with your warehouse name if different
-ALTER WAREHOUSE my_wh set warehouse_size=small;
+ALTER WAREHOUSE my_wh set warehouse_size='small';
 ```
-
-You should find an output that indicates the number of rows that were copied into the tables. This will take a few minutes to complete. 
 
 ### Enable Search Optimization
 
@@ -179,7 +185,7 @@ ALTER TABLE wikidata_original ADD SEARCH OPTIMIZATION ON EQUALITY(labels);
 
 ### Ensure Search Optimization first time indexing is complete
 
-Now, let’s verify that Search Optimization is enabled and the backend process has finished indexing our data. It might take about 5 minutes for that to happen as the optimized search access paths are being built for these columns by Snowflake. 
+Now, let’s verify that Search Optimization is enabled and the backend process has finished indexing our data. It will take about 2 minutes for that to happen as the optimized search access paths are being built for these columns by Snowflake. 
 
 Run the below query against the newly created database (`WIKI_SO`)
 
@@ -197,10 +203,12 @@ Now you are all set up to run some queries and dive deep into Search Optimizatio
 
 We have intentionally enabled Search Optimization for `wikidata_original` table and not `entity_is_subclass_of` table for this guide.
 
-Negative: Note: Please note that the results, query time, partitions or bytes scanned might differ when you run the queries in comparison to the values noted below as the data gets refreshed monthly in the above two tables. 
+> **_NOTE:_** 
+Please note that the results, query time, partitions or bytes scanned might differ when you run the queries in comparison to the values noted below as the data gets refreshed monthly in the above two tables. 
 
 ---
 ## Equality and Wildcard Search
+Duration: 10
 
 Now let’s build some queries and observe how Search Optimization helps optimize them. 
 
@@ -208,12 +216,11 @@ To start off, we have already enabled Search Optimization on the `LABEL` and `DE
 
 ![SOEqualitySearch](assets/EqualitySearchSOEnabled.png)
 
-Negative: 
-Note: If you wish to run the queries below on both databases (`WIKIDATA` and `WIKI_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. 
-```
-ALTER SESSION SET USE_CACHED_RESULT = false;
+> **_NOTE:_** \
+If you wish to run the queries below on both databases (`WIKIDATA` and `WIKI_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+\
+ALTER SESSION SET USE_CACHED_RESULT = false; \
 ALTER WAREHOUSE my_wh SUSPEND;
-```
 
 Now, let’s say you want to find all the articles about the `iPhone` which have the words `wikimedia or page` in the description (in that order). The query would look like:
 
@@ -225,17 +232,17 @@ SELECT *
     description ILIKE '%wikimedia%page%';
 ```
 
-| Without search optimization | With Search Optimization|
+| **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| It takes 28 seconds to run the query on the table without search optimization. the other interesting aspect is, ***almost all partitions*** need to be scanned. also you will note that ~ 23.01gb data is scanned. following are the full statistics ![equalityStat1](assets/EqualityStat1.png) | On the other hand, the query takes 5.7 seconds on the search optimized table. you will notice that ***only 7 partitions*** of the total 5413 partitions are scanned. in addition only 31.79mb of the data needs to be scanned.![equalityStats2](assets/StatisticsEquality2.png) |
+| It takes 28 seconds to run the query on the table without search optimization. the other interesting aspect is, **almost all partitions** need to be scanned. also you will note that ~23.01GB data is scanned. Following are the full statistics ![equalityStat1](assets/EqualityStat1.png) | On the other hand, the query takes 5.7 seconds on the search optimized table. you will notice that **only 7 partitions** of the total 5413 partitions are scanned. in addition only 31.79MB of the data needs to be scanned.![equalityStats2](assets/StatisticsEquality2.png) |
 
 *Looking at the numbers side by side, we know that Search Optimization has definitely improved the query performance.*
 
-|                                      | Without Search Optimization  | With Search Optimization | Performance Impact |
+|                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
 |--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 28 seconds                   | 5.7 seconds              |***79.64% improvement*** in query speed  |
-| **Percentage of partitions scanned** | 99.91%                       |0.13%                     |***99.78% less partitions*** scanned     |
-| **Bytes scanned**                    |23.01GB                       |31.79MB                   |***99.86% less data*** scanned           |
+| **Query run time**                   | 28 seconds                   | 5.7 seconds              |**79.64% improvement** in query speed  |
+| **Percentage of partitions scanned** | 99.91%                       |0.13%                     |**99.78% less partitions** scanned     |
+| **Bytes scanned**                    |23.01GB                       |31.79MB                   |**99.86% less data** scanned           |
 
 Let’s look at another example. Say, you want to find all articles which have the words `blog post` in their description, following would be the query to do so:
 
@@ -245,32 +252,33 @@ SELECT *
   WHERE 
     description ILIKE '%blog post%';
 ```
-| Without search optimization | With Search Optimization|
+| **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| The query runs for 23 seconds and ***ALL partitions*** are scanned. Also, 10.60GB of data is scanned. See the picture below for full details.![equalityStat3](assets/StatsEquality3Copy.png) | On the other hand, the query runs in 8.7 seconds on the Search Optimized table. You’ll also notice that ***only 347 partitions*** of the total 5413 partitions are scanned. In addition 4.09GB of the data was scanned.  See the picture below for full details.![equalityStats4](assets/EqualityStats4.png) |
+| The query runs for 23 seconds and **ALL partitions** are scanned. Also, 10.60GB of data is scanned. See the picture below for full details.![equalityStat3](assets/StatsEquality3Copy.png) | On the other hand, the query runs in 8.7 seconds on the Search Optimized table. You’ll also notice that **only 347 partitions** of the total 5413 partitions are scanned. In addition 4.09GB of the data was scanned.  See the picture below for full details.![equalityStats4](assets/EqualityStats4-2.png) |
 
-*As you can see from the ***Performance Impact*** column above, using Search Optimization allows us to make significant improvements in query performance.*
+*As you can see from the **Performance Impact** column above, using Search Optimization allows us to make significant improvements in query performance.*
 
-|                                      | Without Search Optimization  | With Search Optimization | Performance Impact |
+|                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
 |--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 23 seconds                   | 8.7 seconds              |***62.17% improvement*** in query speed  |
-| **Percentage of partitions scanned** | 100%                       |6.41%                     |***99.59% less partitions*** scanned     |
-| **Bytes scanned**                    |10.60GB                       |4.09GB                  |***61.42% less data*** scanned           |
+| **Query run time**                   | 23 seconds                   | 8.7 seconds              |**62.17% improvement** in query speed  |
+| **Percentage of partitions scanned** | 100%                       |6.41%                     |**99.59% less partitions** scanned     |
+| **Bytes scanned**                    |10.60GB                       |4.09GB                  |**61.42% less data** scanned           |
 
 Want to learn more? You can refer to our external documentations for benefitting from Search Optimization for queries with [ Equality Predicates](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#equality-or-in-predicates) and [Wildcards](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#substrings-and-regular-expressions)
 
 ---
 
 ## Searching in Variant data
+Duration: 5
 
 In this section, let’s search in the variant data and analyze how Search Optimization helps in these cases. 
 
-Negative: 
-Note: If you wish to run the queries below on both databases (`WIKIDATA` and `WIKI_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. 
-```
-ALTER SESSION SET USE_CACHED_RESULT = false;
+> **_NOTE:_**  
+ If you wish to run the queries below on both databases (`WIKIDATA` and `WIKI_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+ \
+ALTER SESSION SET USE_CACHED_RESULT = false;\
 ALTER WAREHOUSE my_wh SUSPEND;
-```
+
 
 To start off, we have already enabled Search Optimization on the `Labels` field which is an unstructured JSON.
 
@@ -283,29 +291,31 @@ SELECT *
   FROM wikidata_original 
   WHERE labels:en:value = 'National Doughnut Day';
 ```
-The above query returns ***2 rows out of 96.9 million rows***. 
+The above query returns **2 rows out of 96.9 million rows**. 
 
-| Without search optimization | With Search Optimization|
+| **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| The query runs for 42 seconds on the shared database. You will also see that ***ALL partitions*** need to be scanned. In addition, ~83.38GB of data was scanned. ![variantStats1](assets/variantStats1.png) | On the other hand, it takes 5.2 seconds to run the same query on the search optimized table. You will also notice that ***only 5 partitions*** of the total 5413 partitions are scanned. In addition only 94.25MB of the data was scanned.![varinatStats2](assets/VariantStats2.png) |
+| The query runs for 42 seconds on the shared database. You will also see that **ALL partitions** need to be scanned. In addition, ~83.38GB of data was scanned. ![variantStats1](assets/variantStats1.png) | On the other hand, it takes 5.2 seconds to run the same query on the search optimized table. You will also notice that **only 5 partitions** of the total 5413 partitions are scanned. In addition only 94.25MB of the data was scanned.![varinatStats2](assets/VariantStats2.png) |
 
-*From the ***Performance Impact*** column below, we see that using Search Optimization allows us to make significant improvements in query performance*
+*From the **Performance Impact** column below, we see that using Search Optimization allows us to make significant improvements in query performance*
 
-|                                      | Without Search Optimization  | With Search Optimization | Performance Impact |
+|                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
 |--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 42 seconds                   | 5.2 seconds              |***87.62% improvement*** in query speed  |
-| **Percentage of partitions scanned** | 100%                       |0.09%                     |***99.91% less partitions*** scanned     |
-| **Bytes scanned**                    |83.38GB                       |94.35MB                   |***99.80% less data*** scanned           |
+| **Query run time**                   | 42 seconds                   | 5.2 seconds              |**87.62% improvement** in query speed  |
+| **Percentage of partitions scanned** | 100%                       |0.09%                     |**99.91% less partitions** scanned     |
+| **Bytes scanned**                    |83.38GB                       |94.35MB                   |**99.80% less data** scanned           |
 
 Want to learn more? You can refer to our external documentations for [benefitting from Search Optimization for queries on Variant Data](https://docs.snowflake.com/en/user-guide/search-optismization-service.html#fields-in-variant-columns)
 
 ----
 
 ## Accelerating Joins
+Duration: 5
 
 The search optimization service can improve the performance of queries that join a small table with a large table. 
 
-***Note***: In data warehousing, the large table is often referred to as the fact table. The small table is referred to as the dimension table. The rest of this topic uses these terms when referring to the large table and the small table in the join.
+> **_NOTE:_** \
+In data warehousing, the large table is often referred to as the fact table. The small table is referred to as the dimension table. The rest of this topic uses these terms when referring to the large table and the small table in the join.
 
 To enable the search optimization service to improve the performance of joins, you need to add Search Optimization to the fact table (the larger of the two tables).
 In addition, the dimension table (the smaller of the two tables) should have few distinct values. In our guide, `wikidata_original` is the fact table whereas `entity_is_subclass_of` is the dimension table.
@@ -322,17 +332,23 @@ SELECT *
   WHERE e.entity_id IN ('Q1437617','Q8564669','Q1968','Q5470299') ;
 ```
 
-| Without search optimization | With Search Optimization|
+> **_NOTE:_** \
+If you wish to run the queries below on both databases (`WIKIDATA` and `WIKI_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+\
+ALTER SESSION SET USE_CACHED_RESULT = false; \
+ALTER WAREHOUSE my_wh SUSPEND;
+
+| **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| It takes ~43 seconds and scans nearly ALL partitions and about 64.64GB of data to find the resulting Subclass ID. See the picture below for full details. ![joinStats1](assets/JoinStats1.png) | On the other hand, the query on the search optimized table, returns the result (subclass_of_id => Q1199515) in 4.4 seconds. Also, only a small portion of data is scanned to find the answer (12 partitions and 99.30MB of data is scanned).![joinStats2](assets/JoinStats2.png) |
+| It takes ~43 seconds and scans nearly **ALL partitions** and about 64.64GB of data to find the resulting Subclass ID. See the picture below for full details. ![joinStats1](assets/JoinStats1.png) | On the other hand, the query on the search optimized table, returns the result (subclass_of_id => Q1199515) in 4.4 seconds. Also, only a small portion of data is scanned to find the answer (**12 partitions** and 99.30MB of data is scanned).![joinStats2](assets/JoinStats2.png) |
 
 *If we compare the statistics side by side, we can observe that Search Optimization greatly optimized the JOIN query.*
 
-|                                      | Without Search Optimization  | With Search Optimization | Performance Impact |
+|                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
 |--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 43 seconds                   | 4.4 seconds              |***92.09% improvement*** in query speed  |
-| **Percentage of partitions scanned** | 99.92%                       |0.22%                     |***99.70% less partitions*** scanned     |
-| **Bytes scanned**                    |62.64GB                       |99.30MB                   |***99.84% less data*** scanned           |
+| **Query run time**                   | 43 seconds                   | 4.4 seconds              |**92.09% improvement** in query speed  |
+| **Percentage of partitions scanned** | 99.92%                       |0.22%                     |**99.70% less partitions** scanned     |
+| **Bytes scanned**                    |62.64GB                       |99.30MB                   |**99.84% less data** scanned           |
 
 Want to learn more? You can refer to our external documentations for [benefitting from Search Optimization for JOIN queries](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#enabling-the-search-optimization-service-to-improve-the-performance-of-joins)
 
@@ -348,8 +364,17 @@ SELECT *
   WHERE description ILIKE '%wikimedia%page%';
 ```
 
-The following query returns ***1.4 Million rows***. As shown in the snapshot below, ***only 1 out of the 5413 partitions is skipped*** when you run the query on the search optimized `wikimedia_original` table in our newly created `WIKI_SO` database . 
+The following query returns **1.4 Million rows**. As shown in the snapshot below, ***only 1 out of the 5413 partitions is skipped*** when you run the query on the search optimized `wikimedia_original` table in our newly created `WIKI_SO` database . 
 
 ![SO_Not_Applicable](assets/SOna.png)
 
-***Such queries aren’t benefitted from Search Optimization as the number of partitions that can be skipped by Search Optimization Service are very minimal.***
+**Such queries aren’t benefitted from Search Optimization as the number of partitions that can be skipped by Search Optimization Service are very minimal.**
+
+----
+
+## Conclusion
+Duration: 1
+
+In this guide, we have covered how to acquire a shared database from Snowflake Marketplace, how to enable Search Optimization on specific columns and analyze the performance improvements in queries with Search Optimization enabled. 
+
+You are now ready to explore the larger world of Snowflake [Search Optimizaitn Service](https://docs.snowflake.com/en/user-guide/search-optimization-service.html)
