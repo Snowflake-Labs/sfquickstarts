@@ -234,7 +234,7 @@ SELECT *
 
 | **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| It takes 28 seconds to run the query on the table without search optimization. the other interesting aspect is, **almost all partitions** need to be scanned. also you will note that ~23.01GB data is scanned. Following are the full statistics ![equalityStat1](assets/EqualityStat1.png) | On the other hand, the query takes 5.7 seconds on the search optimized table. you will notice that **only 7 partitions** of the total 5413 partitions are scanned. in addition only 31.79mb of the data needs to be scanned.![equalityStats2](assets/StatisticsEquality2.png) |
+| It takes 28 seconds to run the query on the table without search optimization. the other interesting aspect is, **almost all partitions** need to be scanned. also you will note that ~23.01GB data is scanned. Following are the full statistics ![equalityStat1](assets/EqualityStat1.png) | On the other hand, the query takes 5.7 seconds on the search optimized table. you will notice that **only 7 partitions** of the total 5413 partitions are scanned. in addition only 31.79MB of the data needs to be scanned.![equalityStats2](assets/StatisticsEquality2.png) |
 
 *Looking at the numbers side by side, we know that Search Optimization has definitely improved the query performance.*
 
