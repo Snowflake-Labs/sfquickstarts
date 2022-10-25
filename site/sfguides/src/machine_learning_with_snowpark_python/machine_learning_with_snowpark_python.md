@@ -22,7 +22,7 @@ Snowpark includes client-side APIs and server-side runtimes that extends Snowfla
 
 A key component of Snowpark for Python is that you can "Bring Your Own IDE"- anywhere that you can run a Python kernel, you can run client-side Snowpark Python. You can use it in your code development the exact same way as any other Python library or module. In this quickstart, we will be using Jupyter Notebooks, but you could easily replace Jupyter with any IDE of your choosing.
 
-Throughout this quickstart, we will specifically explore the power of the Snowpark Python Dataframe API, as well as server-side Python runtime capabilities, and how Snowpark Python can enable and accelerate end-to-end Machine Learning workflows, from initial data and feature engineering all the way to production model deployment. We will also demonstrate how High-Memory Warehouse instance types can be used to accelerate ML workflows specifically. We will even explore orchestrating model training and deployment pipelines using Apache Airflow.
+Throughout this quickstart, we will specifically explore the power of the Snowpark Python Dataframe API, as well as server-side Python runtime capabilities, and how Snowpark Python can enable and accelerate end-to-end Machine Learning workflows, from initial data and feature engineering all the way to production model deployment. We will also demonstrate how Snowpark-optimized warehouse instance types can be used to accelerate ML workflows specifically. We will even explore orchestrating model training and deployment pipelines using Apache Airflow.
 
 The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main).
 
@@ -233,7 +233,7 @@ Duration: 10
 **What You'll Do**:
 - Take the functions created by the Data Scientist and ML Engineer and wrap them in such a way that they can be easily automated using the company's orchestration tools (Airflow)
 - Deploy the model training and inference as a permanent [Python Snowpark User-Defined Table Function (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-tabular-functions.html)
-- Scale your model training and inference to be performed for hundreds of models simultaneously using High-Memory Warehouse instance types
+- Scale your model training and inference to be performed for hundreds of models simultaneously using Snowpark-optimized warehouse instance types
 - Use [Zero-Copy Cloning](https://docs.snowflake.com/en/sql-reference/sql/create-clone.html) in Snowflake to produce point-in-time snapshots of the data in order to reproduce results on-demand in the future, withtout creating physical copies of any data
 - Use [object tagging](https://docs.snowflake.com/en/user-guide/object-tagging.html) to tag training/inference datasets with a `model_id` for lineage
 - Test out the pipeline that will eventually orchestrated
@@ -242,7 +242,7 @@ Duration: 10
 **Snowflake Features**:
 - Object Tagging for model/data lineage
 - Snowpark Python UD(T)F Deployment
-- High-Memory Warehouse instance types
+- Snowpark-optimized warehouse instance types
 - Zero-Copy Cloning for point-in-time snapshots of model training data
 
 The ML Engineer must now create a pipeline to automate deployment of your station-trip models, batch the predictions, and expose them in such a way that a business user can consume them via a front-end application (which will be developed in Streamlit). Most importantly, ***no data should leave Snowflake!*** Open up the [`04_ML_Ops`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/04_ML_Ops.ipynb) notebook, and walk through the code cells.
