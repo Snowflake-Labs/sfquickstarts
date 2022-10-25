@@ -58,20 +58,20 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 ## Let's Get Started With Snowflake
 Duration: 5
 
-1. To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
+To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
 Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
 
 
-2. For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
+For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
 
-3. The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `Worksheets` tab click the blue `Worksheet` button in the upper right hand corner of the page to create a new worksheet. 
+The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `Worksheets` tab click the blue `Worksheet` button in the upper right hand corner of the page to create a new worksheet. 
 
-    ![Snowflake Create Worksheet](assets/Snowflake_create_worksheet.png)
+![Snowflake Create Worksheet](assets/Snowflake_create_worksheet.png)
 
-4. Once there, click `Databases` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
+Once there, click `Databases` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
 
 
-    ![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
+![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
 
     If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
 
@@ -81,27 +81,25 @@ Once your account is created you’ll receive an email confirmation. Within that
 
     You should now see the database as one of your database objects, with associated schemas within it.
 
-5. Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html). <br>
+Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html).
 
-    ![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
+![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
 
-6. Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
+Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
 
-    ```
-    select *
-      from snowflake_sample_data.tpch_sf1.orders
-     limit 100; 
-     ```
+```
+select *
+    from snowflake_sample_data.tpch_sf1.orders
+    limit 100; 
+```
 
-    <br/>
-
-    You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
-
-7. Great! Now it’s time to set up dbt Cloud.
+You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
+Great! Now it’s time to set up dbt Cloud.
 
 <!-- ------------------------ -->
 ## Launching dbt Cloud via Partner Connect
 Duration: 5
+
 
 1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
