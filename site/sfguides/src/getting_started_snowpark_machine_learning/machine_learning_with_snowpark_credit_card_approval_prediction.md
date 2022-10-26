@@ -1,5 +1,5 @@
 author: Michael Gorkow
-id: snowpark_handson_lab_fraud_detection
+id: getting_started_snowpark_machine_learning
 summary: This is a sample Snowflake Guide
 categories: Getting Started
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark 
 
-# Snowpark Handson Lab - Credit Card Approval Prediction
+# Machine Learning with Snowpark Python: - Credit Card Approval Prediction
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
