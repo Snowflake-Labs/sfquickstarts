@@ -41,7 +41,7 @@ interactive data visualization.
 
 ### What You’ll Need
 
-- A free [Deepnote account](https://deepnote.com/home)
+- A free [Deepnote account](https://deepnote.com/sign-up?utm_source=eda_with_snowflake_and_deepnote&utm_medium=snowflake_quickstart)
 - A [Snowflake account](https://signup.snowflake.com/) with admin access
 - The [weather dataset](https://drive.google.com/file/d/127iMXdC3ZYdfrlqAFLm2pPORZ6tGj_wM/view?usp=sharing) uploaded to your Snowflake database (uploading instructions [here](https://docs.snowflake.com/en/user-guide/script-data-load-transform-parquet.html))
 
