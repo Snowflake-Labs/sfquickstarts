@@ -46,9 +46,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 ***Note: If you are planning to run this Quickstart locally, you may have additional requirements, e.g. Docker, Miniconda. Take a look at the source code [README](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main) for more information on additional local environment requirements.***
 
 ### What You’ll Build 
-- An orchestrated end-to-end Machine Learning pipeline to perform monthly forecasts using Snowflake, Snowpark Python, PyTorch, and Apache Airflow.
-![](./assets/apache_airflow.jpeg)
-This pipeline will:
+- An orchestrated end-to-end Machine Learning pipeline to perform monthly forecasts using Snowflake, Snowpark Python, PyTorch, and Apache Airflow. ![](./assets/HOL_ML_Snowpark_Python.jpg) This pipeline will:
     - Incrementally ingest new data monthly from Amazon S3 into Snowflake
     - Generate feature data from the new raw data and generate forecast data for relevant features for the prediction period
     - Train hundreds of PyTorch TabNet models in parallel and generate new forecasts from the updated models, all inside of Snowflake
