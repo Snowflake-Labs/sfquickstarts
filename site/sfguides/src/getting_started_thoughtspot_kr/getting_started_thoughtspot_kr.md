@@ -1,6 +1,6 @@
 summary: ThoughtSpot 및 Snowflake로 대화형 React 앱 구축 
 id: getting_started_thoughtspot_kr
-categories: 시작하기
+categories: Getting Started
 environments: 웹
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 

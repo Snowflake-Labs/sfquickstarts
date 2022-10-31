@@ -67,7 +67,8 @@ Duration: 5
 [Download sample SQL](https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Snowflake_Dataiku/Snowflake_Dataiku_VHOL.sql) for use in Snowflake.
 </button>
 
-Negative : **화면 캡처, 샘플 코드 및 환경에 관하여** <br> 이 랩의 화면 캡처는 여러분이 이 연습을 완료하고 보게 되는 것과는 약간 다른 예시 및 결과를 보여줄 수 있습니다.
+Negative
+: **화면 캡처, 샘플 코드 및 환경에 관하여** <br> 이 랩의 화면 캡처는 여러분이 이 연습을 완료하고 보게 되는 것과는 약간 다른 예시 및 결과를 보여줄 수 있습니다.
 
 <!-- ------------------------ -->
 ## Snowflake 사용자 인터페이스
@@ -124,9 +125,11 @@ Duration: 10
 
 ![img](assets/dataiku9.png)
 
-Negative : **경고 - 워크시트로 SQL 복사/붙여 넣기 금지** <br> Snowflake 워크시트에 SQL 코드를 복사하여 붙여 넣으면 형식 오류가 발생할 수 있으며 SQL이 올바르게 실행되지 않을 수 있습니다. 방금 다룬 ‘Load Script’ 메서드를 사용해야 합니다.  이전 또는 잠긴 브라우저에서는 브라우저가 여러분이 .sql 파일을 여는 것을 방해할 것이기에 이 ‘Load Script’ 단계를 수행할 수 없을지도 모릅니다. 이 경우 텍스트 편집기로 .sql 파일을 연 다음 .sql 파일에서 복사한 모든 텍스트를 ‘Worksheet 1’에 붙여 넣습니다
+Negative
+: **경고 - 워크시트로 SQL 복사/붙여 넣기 금지** <br> Snowflake 워크시트에 SQL 코드를 복사하여 붙여 넣으면 형식 오류가 발생할 수 있으며 SQL이 올바르게 실행되지 않을 수 있습니다. 방금 다룬 ‘Load Script’ 메서드를 사용해야 합니다.  이전 또는 잠긴 브라우저에서는 브라우저가 여러분이 .sql 파일을 여는 것을 방해할 것이기에 이 ‘Load Script’ 단계를 수행할 수 없을지도 모릅니다. 이 경우 텍스트 편집기로 .sql 파일을 연 다음 .sql 파일에서 복사한 모든 텍스트를 ‘Worksheet 1’에 붙여 넣습니다
 
-Positive : **워크시트 vs UI** <br> 이 랩의 많은 구성은 시간을 절약하기 위해 이 워크시트 내에 미리 작성된 SQL을 통해 실행될 것입니다. 이러한 구성은 또한 덜 기술적인 방식으로 UI를 통해 실행할 수도 있지만 시간이 더 많이 소요됩니다.
+Positive
+: **워크시트 vs UI** <br> 이 랩의 많은 구성은 시간을 절약하기 위해 이 워크시트 내에 미리 작성된 SQL을 통해 실행될 것입니다. 이러한 구성은 또한 덜 기술적인 방식으로 UI를 통해 실행할 수도 있지만 시간이 더 많이 소요됩니다.
 
 **History** 탭을 통해 지난 14일 동안 Snowflake 계정에서 실행했던 모든 쿼리의 세부 정보를 볼 수 있습니다(더 자세한 사항을 위해 쿼리를 분석하려면 Query ID 클릭).
 
@@ -136,7 +139,8 @@ Positive : **워크시트 vs UI** <br> 이 랩의 많은 구성은 시간을 절
 
 ![img](assets/dataiku11.png)
 
-Negative : **SYSADMIN** <br> 이 랩 대부분에서는 웨어하우스, 데이터베이스 및 계정의 기타 오브젝트를 생성하기 위한 권한을 가진 SYSADMIN(또는 시스템 관리자) 역할을 유지할 것입니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake의 액세스 제어에 대한 더 자세한 내용은 이 랩의 말미와 [설명서](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)에서 다룹니다.
+Negative
+: **SYSADMIN** <br> 이 랩 대부분에서는 웨어하우스, 데이터베이스 및 계정의 기타 오브젝트를 생성하기 위한 권한을 가진 SYSADMIN(또는 시스템 관리자) 역할을 유지할 것입니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake의 액세스 제어에 대한 더 자세한 내용은 이 랩의 말미와 [설명서](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)에서 다룹니다.
 
 <!-- ------------------------ -->
 ## Snowflake Partner Connect를 통해 Dataiku 평가판 계정 준비
@@ -176,11 +180,13 @@ Dataiku에서 Snowflake와 연결하기 위해 **PC_DATAIKU_USER**를 사용하�
 
 ![img](assets/dataiku14.png)
 
-Negative : **정보 참고:** <br> 처음 생성했던 것과 다른 Snowflake 계정을 사용하고 있다면 여러분의 이메일 세부 정보를 요청하는 다음 화면이 나타날 수 있습니다.
+Negative
+: **정보 참고:** <br> 처음 생성했던 것과 다른 Snowflake 계정을 사용하고 있다면 여러분의 이메일 세부 정보를 요청하는 다음 화면이 나타날 수 있습니다.
 
 ![img](assets/dataiku15.png)
 
-Negative : ‘Go to Preferences’를 클릭하고 이메일 세부 정보를 입력합니다
+Negative
+: ‘Go to Preferences’를 클릭하고 이메일 세부 정보를 입력합니다
 
 ![img](assets/dataiku16.png)
 
@@ -249,7 +255,8 @@ Negative : ‘Go to Preferences’를 클릭하고 이메일 세부 정보를 �
 
 이제 Snowflake의 Partner Connect를 통해 여러분의 Dataiku 평가판 계정을 성공적으로 설정했습니다. 이제 이 랩을 계속할 준비가 되었습니다. 이를 위해 Snowflake 브라우저로 되돌아갑니다.
 
-Negative : 사용자 암호(Snowflake에서 생성되며 절대 표시되지 않음)는 다른 모든 Snowflake 연결 매개 변수와 같이 Dataiku 서버로 전달됩니다. 따라서 Dataiku 연결에 자동으로 사용될 것입니다. PC_DATAIKU_USER 암호 변경 금지. 암호를 변경하면 Dataiku는 Snowflake 데이터베이스와 연결할 수 없을 것입니다.
+Negative
+: 사용자 암호(Snowflake에서 생성되며 절대 표시되지 않음)는 다른 모든 Snowflake 연결 매개 변수와 같이 Dataiku 서버로 전달됩니다. 따라서 Dataiku 연결에 자동으로 사용될 것입니다. PC_DATAIKU_USER 암호 변경 금지. 암호를 변경하면 Dataiku는 Snowflake 데이터베이스와 연결할 수 없을 것입니다.
 
 ![img](assets/dataiku28.png)
 
@@ -258,7 +265,8 @@ Negative : 사용자 암호(Snowflake에서 생성되며 절대 표시되지 않
 
 Duration: 20
 
-Positive : **Snowflake의 데이터 공유** <br> Snowflake Data Marketplace는 Snowflake의 호스팅된 데이터 익스체인지입니다. 여기에서 모든 Snowflake 고객은 원활하게 타사 데이터에 액세스할 수 있습니다. 또한 여기에서 회사는 데이터를 게시하고 다른 Snowflake 고객이 검색하고 구매할 데이터 서비스를 제공할 수 있습니다. 오늘날 220개 이상의 데이터 목록과 더불어 100명 이상의 데이터 공급자를 보유하고 있습니다. 더 자세한 정보는 [이 웹 페이지](https://www.snowflake.com/data-marketplace/)를 검토하십시오. <br> 또한 Snowflake Data Exchange를 확장하고, 여러분의 고객을 위한 파일을 생성하기 위해 FTP, 파일 공유 및 ETL 프로세스의 필요를 없앨 수 있으며, Snowflake Data Exchange를 표준화할 수 있습니다. 이는 데이터 사일로를 허물 것이며 이를 통해 여러분의 회사, 공급업체, 파트너 또는 고객을 높은 수준으로 통제하는 방식으로 마찰 없이 데이터를 공유할 수 있습니다. 여러분의 Data Exchange는 단일 데이터 사본에 대한 실시간 액세스를 통제합니다. 이를 통해 데이터에 대한 액세스를 안전하게 제어할 수 있으며, 파일을 복사하거나 ETL 파이프라인을 구축하는 것과 같은 기존 데이터 공유 메서드의 비용과 문제를 제거합니다.
+Positive
+: **Snowflake의 데이터 공유** <br> Snowflake Data Marketplace는 Snowflake의 호스팅된 데이터 익스체인지입니다. 여기에서 모든 Snowflake 고객은 원활하게 타사 데이터에 액세스할 수 있습니다. 또한 여기에서 회사는 데이터를 게시하고 다른 Snowflake 고객이 검색하고 구매할 데이터 서비스를 제공할 수 있습니다. 오늘날 220개 이상의 데이터 목록과 더불어 100명 이상의 데이터 공급자를 보유하고 있습니다. 더 자세한 정보는 [이 웹 페이지](https://www.snowflake.com/data-marketplace/)를 검토하십시오. <br> 또한 Snowflake Data Exchange를 확장하고, 여러분의 고객을 위한 파일을 생성하기 위해 FTP, 파일 공유 및 ETL 프로세스의 필요를 없앨 수 있으며, Snowflake Data Exchange를 표준화할 수 있습니다. 이는 데이터 사일로를 허물 것이며 이를 통해 여러분의 회사, 공급업체, 파트너 또는 고객을 높은 수준으로 통제하는 방식으로 마찰 없이 데이터를 공유할 수 있습니다. 여러분의 Data Exchange는 단일 데이터 사본에 대한 실시간 액세스를 통제합니다. 이를 통해 데이터에 대한 액세스를 안전하게 제어할 수 있으며, 파일을 복사하거나 ETL 파이프라인을 구축하는 것과 같은 기존 데이터 공유 메서드의 비용과 문제를 제거합니다.
 
 ### Snowflake Data Marketplace에서 COVID-19 데이터 가져오기
 
@@ -458,9 +466,11 @@ Snowflake Enterprise Edition 이상을 보유하고 있다면 Maximum Clusters �
 
 ![img](assets/dataiku53.png)
 
-Positive : **Snowflake 컴퓨팅 vs 타사 웨어하우스** <br> 웨어하우스 생성, 스케일 업, 스케일 아웃 및 자동 일시 중단/재개 기능과 같이 방금 다룬 여러 웨어하우스/컴퓨팅 기능이 Snowflake에서는 모두 간단하게 이뤄지며 단 몇 초면 할 수 있습니다. 그러나 온프레미스 데이터 웨어하우스의 경우 이러한 기능은 상당한 물리적 하드웨어, 워크로드 급증에 대비한 과한 하드웨어 프로비저닝, 상당한 구성 작업을 필요로 하며 추가적인 문제로 인해 구현하기가 매우 어렵습니다(또는 불가능합니다). 심지어 다른 클라우드 데이터 웨어하우스는 훨씬 더 많은 구성 작업과 시간을 투자하지 않고는 Snowflake와 같은 스케일 아웃 및 스케일 다운이 가능하지 않습니다.
+Positive
+: **Snowflake 컴퓨팅 vs 타사 웨어하우스** <br> 웨어하우스 생성, 스케일 업, 스케일 아웃 및 자동 일시 중단/재개 기능과 같이 방금 다룬 여러 웨어하우스/컴퓨팅 기능이 Snowflake에서는 모두 간단하게 이뤄지며 단 몇 초면 할 수 있습니다. 그러나 온프레미스 데이터 웨어하우스의 경우 이러한 기능은 상당한 물리적 하드웨어, 워크로드 급증에 대비한 과한 하드웨어 프로비저닝, 상당한 구성 작업을 필요로 하며 추가적인 문제로 인해 구현하기가 매우 어렵습니다(또는 불가능합니다). 심지어 다른 클라우드 데이터 웨어하우스는 훨씬 더 많은 구성 작업과 시간을 투자하지 않고는 Snowflake와 같은 스케일 아웃 및 스케일 다운이 가능하지 않습니다.
 
-Negative : **경고 - 지출을 조심하십시오!**
+Negative
+: **경고 - 지출을 조심하십시오!**
 
 이 랩을 진행하는 동안이나 이후에 정당한 이유 없이 다음 작업을 수행하는 걸 권장하지 *않습니다*. 왜냐면 그렇게 할 경우에는 $400의 무료 크레딧을 원하는 것보다 빨리 소진할 수도 있습니다.
 
@@ -480,7 +490,8 @@ Duration: 20
 
 이 모듈에서는 Dataiku에서 호스팅하는 평가판 계정에 로그인하고 Dataiku 프로젝트를 생성할 것입니다.
 
-Positive : **완료된 샘플 프로젝트** <br> 이 랩에서 생성할 **COVID-19** 프로젝트의 완벽히 종료된 예를 추가했습니다. 또한 로그인하는 즉시 사용 가능합니다(아래 스크린샷에서와 같이 **Flight Delays**를 예측하는 또 다른 예시 프로젝트 포함).
+Positive
+: **완료된 샘플 프로젝트** <br> 이 랩에서 생성할 **COVID-19** 프로젝트의 완벽히 종료된 예를 추가했습니다. 또한 로그인하는 즉시 사용 가능합니다(아래 스크린샷에서와 같이 **Flight Delays**를 예측하는 또 다른 예시 프로젝트 포함).
 
 ### Dataiku 프로젝트 생성
 
@@ -639,7 +650,8 @@ John Hopkins 데이터에는 4가지 사례 유형이 있지만 Deaths와 Confir
 - \+ Add A Condition 버튼을 클릭하고 CASE_TYPE를 다시 드롭다운에서 선택하고, ‘is different from’을 선택한 다음 Active를 입력합니다
 - \+ Add A Condition 버튼을 클릭하고 COUNTRY_REGION를 다시 드롭다운에서 선택하고, ‘is different from’을 선택한 다음 Peru를 입력합니다
 
-Positive :  참고: 이러한 값은 대/소문자를 구분하기에 ‘recovered’, ‘active’ 및 ‘PERU’는 올바르게 작동하지 않을 것입니다.  또한 위 단계에서 ‘all the following conditions column’이 아닌 ‘all the following conditions’를 선택해야 합니다
+Positive
+:  참고: 이러한 값은 대/소문자를 구분하기에 ‘recovered’, ‘active’ 및 ‘PERU’는 올바르게 작동하지 않을 것입니다.  또한 위 단계에서 ‘all the following conditions column’이 아닌 ‘all the following conditions’를 선택해야 합니다
 
 이제 화면은 다음과 같이 나타나야 합니다.
 
@@ -1049,7 +1061,8 @@ Snowflake를 사용하면 "제로 카피 클론"이라고도 하는 테이블, �
 
 제로 카피 클론 생성의 일반적인 사용 사례는 개발 및 테스트를 위한 프로덕션 환경을 복제하여 프로덕션 환경에 부정적인 영향을 미치지 않게 두 개의 별도 프로덕션 환경을 설정 및 관리할 필요가 없도록 테스트하고 실험하는 것입니다.
 
-Positive : **제로 카피 클론 생성은 최고입니다!** <br> 큰 이점은 기본 데이터가 복사되지 않는다는 것입니다. 기본 데이터의 메타데이터/포인터만 변경됩니다. 이런 이유로 ‘제로 카피’이며 데이터 복제 시 저장소 요구 사항이 두 배로 늘어나지 않습니다. 대부분의 데이터 웨어하우스에서는 이렇게 할 수 없지만, Snowflake에서는 쉽게 할 수 있습니다!
+Positive
+: **제로 카피 클론 생성은 최고입니다!** <br> 큰 이점은 기본 데이터가 복사되지 않는다는 것입니다. 기본 데이터의 메타데이터/포인터만 변경됩니다. 이런 이유로 ‘제로 카피’이며 데이터 복제 시 저장소 요구 사항이 두 배로 늘어나지 않습니다. 대부분의 데이터 웨어하우스에서는 이렇게 할 수 없지만, Snowflake에서는 쉽게 할 수 있습니다!
 
 기존 UI로 되돌아가고 Covid19 워크시트를 선택하겠습니다.
 

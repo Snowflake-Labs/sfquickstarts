@@ -63,7 +63,8 @@ Positive
 
 새로운 Preview Snowflake 웹 인터페이스는 다양한 기능을 제공하지만 지금은 여러분의 현재 역할을 기본값인 `SYSADMIN`에서 `ACCOUNTADMIN`으로 전환합니다. 이 권한 확장을 통해 Snowflake Marketplace 목록에서 공유 데이터베이스를 생성할 수 있습니다.
 
-Positive : `ACCOUNTADMIN` 역할이 없다면 대신 `IMPORT SHARE` 권한을 가진 역할로 전환합니다.
+Positive
+: `ACCOUNTADMIN` 역할이 없다면 대신 `IMPORT SHARE` 권한을 가진 역할로 전환합니다.
 
 ![account-role-change-image](assets/snowflake_role.png)
 

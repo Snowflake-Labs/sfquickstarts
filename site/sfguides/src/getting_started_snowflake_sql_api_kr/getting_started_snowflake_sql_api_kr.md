@@ -17,7 +17,8 @@ Duration: 1
 
 이 시작하기 가이드는 API를 통해 SQL 문을 실행하고 결과를 검색하는 것을 안내합니다.
 
-Negative : Snowflake SQL API 지원이 현재 프로덕션에 없습니다.
+Negative
+: Snowflake SQL API 지원이 현재 프로덕션에 없습니다.
 
 ### 사전 필요 조건 및 지식
 
@@ -53,7 +54,8 @@ Duration: 3
 https://*account_locator*.snowflakecomputing.com/api/v2
 ```
 
-Negative : 계정 로케이터에는 여러분의 지역 및 클라우드 공급자를 위한 추가 세그먼트가 포함되어 있을 수 있습니다. 자세한 사항은 [계정 호스트 이름에 지역 정보 지정](https://docs.snowflake.com/ko/user-guide/intro-regions.html#label-region-ids)을 확인하십시오.
+Negative
+: 계정 로케이터에는 여러분의 지역 및 클라우드 공급자를 위한 추가 세그먼트가 포함되어 있을 수 있습니다. 자세한 사항은 [계정 호스트 이름에 지역 정보 지정](https://docs.snowflake.com/ko/user-guide/intro-regions.html#label-region-ids)을 확인하십시오.
 
 사용을 시작하기 전에 이제 API의 각 부분을 분석해 보겠습니다. API는 `/api/v2/statements/` 리소스로 구성되어 있으며 다음 엔드포인트를 제공합니다.
 
@@ -63,7 +65,8 @@ Negative : 계정 로케이터에는 여러분의 지역 및 클라우드 공급
 
 다음 단계에서는 이러한 모든 엔드포인트를 사용하여 여러분이 API에 익숙해질 수 있도록 합니다.
 
-Positive : REST API(예: Postman)를 위한 개발자 도구 및 라이브러리를 사용하여 요청을 전송하고 응답을 처리할 수 있습니다.
+Positive
+: REST API(예: Postman)를 위한 개발자 도구 및 라이브러리를 사용하여 요청을 전송하고 응답을 처리할 수 있습니다.
 
 ### SQL API의 한계
 
@@ -105,7 +108,8 @@ Duration: 3
 $ snowsql -a <account> -u <user> --private-key-path <path to private key>
 ```
 
-Negative : OAuth로 인증하고자 한다면 [OAuth](https://docs.snowflake.com/ko/developer-guide/sql-api/guide.html#using-oauth)로 인증하는 것에 대한 Snowflake 설명서를 방문하십시오.
+Negative
+: OAuth로 인증하고자 한다면 [OAuth](https://docs.snowflake.com/ko/developer-guide/sql-api/guide.html#using-oauth)로 인증하는 것에 대한 Snowflake 설명서를 방문하십시오.
 
 키 쌍 인증을 사용하여 Snowflake와 연결할 수 있음을 확인한 후 JWT 토큰을 생성해야 합니다.  이 JWT 토큰은 여러분의 키로 서명된 시간제한 토큰입니다. 또한 Snowflake는 여러분이 SQL API를 위해 이 토큰을 인증에 사용할 수 있도록 인가했음을 알게 됩니다.
 
@@ -161,7 +165,8 @@ X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
 
 - 웨어하우스, 데이터베이스, 스키마 및 역할을 사용에 지정하기 위해 `warehouse`, `database`, `schema` 및 `role` 필드를 설정합니다.
 
-Negative : 참고: 이러한 필드에 있는 값은 대/소문자를 구분합니다.
+Negative
+: 참고: 이러한 필드에 있는 값은 대/소문자를 구분합니다.
 
 - 문 실행에 시간제한을 설정하려면 `timeout` 필드를 최대 대기 시간(초)으로 설정합니다. `timeout` 필드가 설정되어 있지 않다면 [STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/ko/sql-reference/parameters.html#label-statement-timeout-in-seconds) 매개 변수에 의해 지정된 시간제한이 사용됩니다.
 
@@ -225,7 +230,8 @@ Duration: 5
 
 - 각 셀은 특정 Snowflake 데이터 형식의 열에 데이터를 삽입하기 위해 바인딩 형식과 함께 사용할 수 있는 값의 형식을 지정합니다.
 
-Negative : 바인딩 형식과 Snowflake 데이터 형식을 위한 셀이 비어 있다면 지정된 바인딩 형식을 사용하여 데이터를 해당 Snowflake 데이터 형식 열에 삽입할 수 없습니다.
+Negative
+: 바인딩 형식과 Snowflake 데이터 형식을 위한 셀이 비어 있다면 지정된 바인딩 형식을 사용하여 데이터를 해당 Snowflake 데이터 형식 열에 삽입할 수 없습니다.
 
 ![바인딩 형식](assets/binding-types.png)
 

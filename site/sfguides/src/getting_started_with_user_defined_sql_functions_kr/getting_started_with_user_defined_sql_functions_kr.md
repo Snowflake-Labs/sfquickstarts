@@ -74,7 +74,8 @@ https://<your-account-name>.snowflakecomputing.com/console/login
 
 ### 역할 변경
 
-Positive : Snowflake 계정이 이미 있다면 데이터베이스 생성 권한을 가진 역할을 사용할 수 있습니다.
+Positive
+: Snowflake 계정이 이미 있다면 데이터베이스 생성 권한을 가진 역할을 사용할 수 있습니다.
 
 ![Snowflake_SwitchRole_DemoUser-image](assets/Snowflake_SwitchRole_DemoUser.png)
 
@@ -101,7 +102,8 @@ create or replace database udf_db;
 
 ![Snowflake_udf_CreateDB-image](assets/Snowflake_udf_CreateDB.png)
 
-Positive : **Results**는 **Database UDF_DB successfully created**라는 상태 메시지를 표시해야 합니다.
+Positive
+: **Results**는 **Database UDF_DB successfully created**라는 상태 메시지를 표시해야 합니다.
 
 ### 2. 새로운 스키마 생성
 
@@ -113,7 +115,8 @@ create schema if not exists udf_schema_public;
 
 ![Snowflake_udf_CreateSchema-image](assets/Snowflake_udf_CreateSchema.png)
 
-Positive : **Results**는 **Schema UDF_SCHEMA_PUBLIC successfully created**라는 상태 메시지를 표시해야 합니다.
+Positive
+: **Results**는 **Schema UDF_SCHEMA_PUBLIC successfully created**라는 상태 메시지를 표시해야 합니다.
 
 ### 3. 새로운 테이블에 샘플 데이터 복사
 
@@ -128,7 +131,8 @@ create or replace table udf_db.udf_schema_public.sales
 
 ![Snowflake_udf_CreateTable-image](assets/Snowflake_udf_CreateTable.png)
 
-Positive : **Results**는 **Table SALES successfully created**라는 상태 메시지를 표시해야 합니다.
+Positive
+: **Results**는 **Table SALES successfully created**라는 상태 메시지를 표시해야 합니다.
 
 필요한 데이터베이스 오브젝트가 생성되었으니 다음 섹션에서 UDF로 작업하는 메인 수업으로 이동할 시간입니다.
 
@@ -139,7 +143,8 @@ Duration: 6
 
 샘플 매출 데이터가 포함된 데이터베이스가 있으니 스칼라 UDF 생성을 시도할 준비가 _거의_ 끝났습니다. 시작하기 전에 우선 UDF 명명 규칙에 대해 더 자세히 이해해 보겠습니다.
 
-Negative : 함수 이름이 데이터베이스와 스키마(예: `udf_db.udf_schema_public.udf_name`)를 지정하지 않는다면 기본값으로 활성 세션이 됩니다. UDF는 데이터베이스 오브젝트이기에 자체적인 [명명 규칙](https://docs.snowflake.com/ko/sql-reference/udf-overview.html#naming-conventions-for-udfs)을 따르는 것이 더 낫습니다. 빠른 연습을 위해 활성 세션에 의존하겠습니다.
+Negative
+: 함수 이름이 데이터베이스와 스키마(예: `udf_db.udf_schema_public.udf_name`)를 지정하지 않는다면 기본값으로 활성 세션이 됩니다. UDF는 데이터베이스 오브젝트이기에 자체적인 [명명 규칙](https://docs.snowflake.com/ko/sql-reference/udf-overview.html#naming-conventions-for-udfs)을 따르는 것이 더 낫습니다. 빠른 연습을 위해 활성 세션에 의존하겠습니다.
 
 ### 1. UDF 생성
 
