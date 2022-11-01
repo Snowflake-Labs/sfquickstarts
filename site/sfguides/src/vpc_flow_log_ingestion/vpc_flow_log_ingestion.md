@@ -10,7 +10,7 @@ tags: Cybersecurity, SIEM, CSPM, VPC Flow Logs
 # AWS VPC Flow Logs Ingestion
 
 ## Overview 
-Duration: 3
+Duration: 1
 
 VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. 
 Flow logs can help you with a number of tasks, such as:
@@ -21,7 +21,7 @@ Flow logs can help you with a number of tasks, such as:
 
 Flow log data is collected outside of the path of your network traffic, and therefore does not affect network throughput or latency. You can create or delete flow logs without any risk of impact to network performance.
 
-This tutorial is a guide for ingestion AWS VPC Flowlogs into Snowflake. It demonstrates configuration of VPC flowlogs on AWS, ingestion using an external stage with Snowpipe and sample queries for CSPM and threat detection.
+This quickstart is a guide for ingestion AWS VPC Flowlogs into Snowflake. It demonstrates configuration of VPC flowlogs on AWS, ingestion using an external stage with Snowpipe and sample queries for CSPM and threat detection.
 
 ### Prerequisites
 - AWS user with permission to create and manage IAM policies and roles
@@ -50,7 +50,7 @@ Configure VPC flow logs as desired. Ensure the following settings:
 ![A screenshot of the VPC configuration wizard with the above configuration](assets/vpc-flow-configuration.png)
 
 ## Create a storage integration in Snowflake
-Duration: 5
+Duration: 3
 
 *Replace \<RoleName\> with the desired name of the role you’d like snowflake to use ( this role will be created in the next step).  Replace \<BUCKET_NAME\>/path/to/logs/ with the path to your VPC flow logs as set in the previous step*
 
@@ -152,7 +152,7 @@ You will now be able to see your role, policy and trust relationship in the cons
 ![Screenshot of snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
 
 ## Prepare Snowflake to receive data
-Duration: 10
+Duration: 8
 
 This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 5 minutes of inactivity. For production workloads a larger warehouse will likely be required.
 
@@ -199,5 +199,135 @@ select * from public.vpc_flow limit 10;
 ## Setup Snowpipe for continuous loading
 Duration: 5
 
+The following instructions depend on a Snowflake account running on AWS. Accounts running on other cloud providers may invoke snowpipe from a rest endpoint.
+[https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html)
 
 
+Configure the Snowflake snowpipe
+```sql
+create pipe public.vpc_flow_pipe auto_ingest=true as
+  copy into public.vpc_flow
+  from @public.vpc_flow_stage
+  file_format = public.vpc_flow_format
+;
+```
+
+Show pipe to retrieve SQS queue ARN 
+```sql
+show pipes;
+```
+![Screenshot showing output of show pipes command](assets/generic-show-pipes.png)
+
+Setup S3 bucket with following [AWS instructions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications.html).
+
+Target Bucket -> Open property -> Select “Create Event notification”
+
+![Screenshot of empty event notfications dashboard in AWS](assets/generic-s3-event-notifications.png)
+
+Fill out below items
+- Name: Name of the event notification (e.g. Auto-ingest Snowflake).
+- Prefix(Optional) :  if you receive notifications only when files are added to a specific folder (for example, logs/). 
+- Events: Select the ObjectCreate (All) option.
+- Send to: Select “SQS Queue” from the dropdown list.
+- SQS: Select “Add SQS queue ARN” from the dropdown list.
+- SQS queue ARN: Paste the SQS queue name from the SHOW PIPES output.
+
+![Screenshot of create event notification form in AWS console](assets/generic-s3-crate-event-notification.png)
+
+![Screenshot of destination configuration in create event notification form in AWS console](assets/generic-s3-crate-event-notification-destination.png)
+
+Event notification has been created
+![Screenshot of event notfications dashboard with created notification in AWS](assets/generic-s3-event-notifications-filled.png)
+
+Refresh Snowpipe to retrieve unloaded file and run select if unloaded data should be loaded
+```sql
+alter pipe vpc_flow_pipe refresh;
+select * from public.vpc_flow;
+```
+You can confirm also if snowpipe worked properly
+```sql
+select *
+  from table(snowflake.information_schema.pipe_usage_history(
+    date_range_start=>dateadd('day',-14,current_date()),
+    date_range_end=>current_date(),
+    pipe_name=>'public.vpc_flow_pipe));
+```
+
+## Create a view to better query data
+Duration: 3
+
+Create a view
+```sql
+create view vpc_flow_view as
+select 
+    record:account_id::varchar(16) as account_id,
+    record:action::varchar(16) as action,
+    record:bytes::integer as bytes,
+    record:dstaddr::varchar(128) as dstaddr,
+    record:dstport::integer as dstport,
+    record:end::TIMESTAMP as "END",
+    record:interface_id::varchar(32) as interface_id,
+    record:log_status::varchar(8) as log_status,
+    record:packets::integer as packets,
+    record:protocol::integer as protocol,
+    record:srcaddr::varchar(128) as srcaddr,
+    record:srcport::integer as srcport,
+    record:start::TIMESTAMP as "START",
+    record:version::varchar(8) as version
+from public.vpc_flow;
+
+```
+Preview the data
+```sql
+select * from vpc_flow_view limit 10;
+```
+![Screenshot of view for vpc flow logs](assets/vpc-flow-view.png)
+
+## Query the data
+Duration 2:
+
+Create a workbook to query the new view. If desired, use the following to help get you started:
+
+```sql
+CREATE OR REPLACE FUNCTION ipv4_is_internal(ip varchar)
+  RETURNS Boolean
+  AS
+  $$
+    (parse_ip(ip,'INET'):ipv4 between (167772160) AND (184549375)) OR 
+    (parse_ip(ip,'INET'):ipv4 between (2886729728) AND (2887778303))OR 
+    (parse_ip(ip,'INET'):ipv4 between (3232235520) AND (3232301055))
+  $$
+  ;
+  
+-- Administrative traffic from public internet in past 30 days
+
+(select distinct srcaddr as internal_addr,dstaddr as external_addr, srcport as port from vpc_flow_view where "START" > dateadd(day, -30, current_date()) and action = 'ACCEPT' and srcport in (22,3389) and ipv4_is_internal(internal_addr)) 
+union all 
+(select distinct dstaddr as internal_addr,srcaddr as external_addr, dstport as port from vpc_flow_view where "START" > dateadd(day, -30, current_date()) and action = 'ACCEPT' and dstport in (22,3389) and ipv4_is_internal(internal_addr));
+
+
+-- Biggest talkers by destination in past 30 days
+select dstaddr,sum(bytes) as total_bytes from vpc_flow_view where "START" > dateadd(day, -30, current_date()) and action = 'ACCEPT' group by dstaddr order by total_bytes desc limit 10;
+
+-- Biggest talkers by source in past 30 days
+select srcaddr,sum(bytes) as total_bytes from vpc_flow_view where "START" > dateadd(day, -30, current_date()) and action = 'ACCEPT' group by srcaddr order by total_bytes desc limit 10;
+
+-- Biggest talkers by ENI in past 30 days
+select interface_id,sum(bytes) as total_bytes from vpc_flow_view where "START" > dateadd(day, -30, current_date()) and action = 'ACCEPT' group by interface_id order by total_bytes desc limit 10;
+```
+
+## Conclusion & next steps
+Duration: 0
+
+Having completed this quickstart you have successfully:
+- Enabled VPC flow logs
+- Created and configured an external stage using S3
+- Ingested VPC flow logs into snowflake
+- Created and configured a pipeline to automatically load data
+- Created a view to better explore and query VPC flow logs
+- Explored sample queries to get insights out of your flow logs
+
+### Additional References
+- [https://docs.snowflake.com/en/user-guide/data-load-s3-config.html](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html)
+- [https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe)
+- [https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html)
