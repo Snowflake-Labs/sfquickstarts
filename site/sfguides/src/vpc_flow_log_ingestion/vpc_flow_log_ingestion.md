@@ -12,6 +12,15 @@ tags: Cybersecurity, SIEM, CSPM, VPC Flow Logs
 ## Overview 
 Duration: 3
 
+VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. 
+Flow logs can help you with a number of tasks, such as:
+
+- Monitoring the traffic that is reaching your instance
+- Determining the direction of the traffic to and from the network interfaces
+- Analyzing properties such as IP addresses, ports, protocol and total packets sent without the overhead of taking packet captures
+
+Flow log data is collected outside of the path of your network traffic, and therefore does not affect network throughput or latency. You can create or delete flow logs without any risk of impact to network performance.
+
 This tutorial is a guide for ingestion AWS VPC Flowlogs into Snowflake. It demonstrates configuration of VPC flowlogs on AWS, ingestion using an external stage with Snowpipe and sample queries for CSPM and threat detection.
 
 ### Prerequisites
@@ -141,4 +150,54 @@ aws iam put-role-policy \
 You will now be able to see your role, policy and trust relationship in the console
 
 ![Screenshot of snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
+
+## Prepare Snowflake to receive data
+Duration: 10
+
+This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 5 minutes of inactivity. For production workloads a larger warehouse will likely be required.
+
+```sql
+create warehouse security_quickstart with 
+  WAREHOUSE_SIZE = MEDIUM 
+  AUTO_SUSPEND = 300;
+```
+
+Create External Stage using the storage integration
+```sql
+create stage vpc_flow_stage
+  url = 's3://<BUCKET_NAME>/<PREFIX>/'
+  storage_integration = s3_int_vpc_flow
+;
+```
+
+Check if snowflake can list S3 files
+```sql
+list @vpc_flow_stage;
+```
+![Screenshot of listing files in external stage](assets/generic-list-source-stage-s3.png)
+
+```sql
+create table public.vpc_flow(
+  record VARIANT
+);
+```
+Test Injection from External Stage
+```sql
+copy into public.vpc_flow
+  from @vpc_flow_stage
+  file_format = (type = parquet);
+```
+
+![Screenshot showing result of above copy into command, for all files the status column shows "LOADED"](assets/generic-copy-from-s3-stage.png)
+
+Select data
+```sql
+select * from public.vpc_flow limit 10;
+```
+![Screenshot showing vpc flowlogs in snowflake](assets/vpc-flow-select.png)
+
+## Setup Snowpipe for continuous loading
+Duration: 5
+
+
 
