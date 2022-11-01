@@ -152,7 +152,7 @@ You will now be able to see your role, policy and trust relationship in the cons
 ![Screenshot of snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
 
 ## Prepare Snowflake to receive data
-Duration: 8
+Duration: 6
 
 This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 5 minutes of inactivity. For production workloads a larger warehouse will likely be required.
 
@@ -284,7 +284,7 @@ select * from vpc_flow_view limit 10;
 ![Screenshot of view for vpc flow logs](assets/vpc-flow-view.png)
 
 ## Query the data
-Duration 2:
+Duration: 2
 
 Create a workbook to query the new view. If desired, use the following to help get you started:
 
