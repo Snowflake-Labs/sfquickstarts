@@ -47,7 +47,7 @@ You will build an end-to-end data science workflow leveraging Snowpark for Pytho
 
 The end-to-end workflow will look like this:
 
-![](./assets/flow.jpg)
+![](./assets/flow.png)
 
 <!-- ------------------------ -->
 ## Use-Case: Credit Card Approval Prediction
