@@ -35,7 +35,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 
 ### What You’ll Need 
 - A free [Snowflake Trial Account](https://signup.snowflake.com/) 
-- [Anaconda Integration enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python)
+- [Anaconda Integration enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)
 - Python 3.8
 - Jupyter Notebook
 
@@ -57,7 +57,7 @@ You are part of a team of data engineers and data scientists at a banking compan
 
 To build this, you have access to customer demographic and credit history data. Using Snowpark, we will ingest, analyze and transform this data to train a model that will then be deployed inside Snowflake to score new data.
 
-The dataset you are using is part of a Kaggle competition that can be found here:\
+The dataset you are using is part of a Kaggle competition that can be found here:  
 [Kaggle: Credit Card Approval Prediction](https://www.kaggle.com/datasets/rikdifos/credit-card-approval-prediction)
 
 <!-- ------------------------ -->
@@ -187,17 +187,17 @@ Duration: 20
 - Apply your knowledge of Stored Procedures and User Defined Functions to develop additional models
 - You can choose between [XGBoost](https://github.com/dmlc/xgboost) or [LightGBM](https://github.com/microsoft/LightGBM) as your additional model
 
-**For XGBoost:**\
+**For XGBoost:**  
 Open up the [`4_1_EXERCISE_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_1_EXERCISE_additional_models_xgboost.ipynb) Jupyter notebook and develop/adjust the code to solve the tasks.
 
-**For LightGBM:**\
+**For LightGBM:**  
 Open up the [`4_2_EXERCISE_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_2_EXERCISE_additional_models_lightgbm.ipynb) Jupyter notebook and develop/adjust the code to solve the tasks.
 
 ### Solution
-**For XGBoost:**\
+**For XGBoost:**  
 You can verify your excercise results by having a look at the solution provided in the  [`4_1_SOLUTION_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_1_SOLUTION_additional_models_xgboost.ipynb) Jupyter notebook.
 
-**For LightGBM:**\
+**For LightGBM:**  
 You can verify your excercise results by having a look at the solution provided in the  [`4_2_SOLUTION_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_2_SOLUTION_additional_models_lightgbm.ipynb) Jupyter notebook.
 
 <!-- ------------------------ -->
