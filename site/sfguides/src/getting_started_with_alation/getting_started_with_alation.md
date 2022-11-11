@@ -14,7 +14,7 @@ Duration: 1
 
 Does your organization have data intelligence? Can people easily find, understand, and trust data? If not, you’ll want to join this lab to learn how Alation ensures people have reliable and trustworthy data to make confident, data-driven decisions.
 
-In this expert-led, hands-on lab you will follow a step-by-step guide to learn how Alation Data Catalog improves productivity with self-service analytics and uses automation and continuous improvement to manage data governance. See why Alation is Snowflake’s *2-time Data Governance Partner of the Year*. 
+In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing an Alation-provided sample database of a fictitious TV streaming company, Juno. Using this example data, you will learn how the Alation Data Catalog improves productivity with self-service analytics and uses automation and continuous improvement to manage data governance. See why Alation is Snowflake’s *2-time Data Governance Partner of the Year*. 
 
 During the lab, you’ll kickstart your 14-day free trial of Alation — to which you can connect to your own Snowflake environment and continue to explore the data catalog. 
 
@@ -118,10 +118,10 @@ One of the best parts of using the Alation data intelligence platform is that yo
 This section is all about how to get started and achieve value quickly from Alation—starting with curating assets to understanding common problems that most data organizations want to solve. Some challenges impact a particular role in an organization, and you will see how **all roles** benefit from the data intelligence platform solutions. 
 
 
-![VHOL-Screen3](./assets/Screen3-DgWheel.png)
+![VHOL-Screen3](./assets/Screen3-DGWheel.png)
 ![VHOL-Border3](./assets/BorderLine.png)
 
-![VHOL-Screen4](./assets/Screen3-DgWheel-Bottom.png)
+![VHOL-Screen4](./assets/Screen3-DGWheel-Bottom.png)
 
 To continue to the next section, click on the link in the highlighted box at the bottom of the page.
 
@@ -159,7 +159,7 @@ In today's world of data management, it is common to have policies and procedure
 
 ![VHOL-Screen7](./assets/Screen4-Policies-Exer2.png)
 
-4. Once in Policy Center you will be able to complete the execerise as outlined.
+4. Once in Policy Center, you will be able to complete the exercise as outlined.
 
 ![VHOL-Screen8](./assets/Screen4-Policies-Exer3.png)
 
@@ -284,18 +284,18 @@ Queries and Compose are accessible from several places in the application. The f
 1. When viewing a table, you can click on the Queries tab to see all of the queries associated with this table.
 2. The Compose link is in the upper right of the table view page. 
 
-![VHOL-Screen16](./assets/Screen6-Compose-exer1.png)
+![VHOL-Screen16](./assets/Screen6-Compose-Exer1.png)
 
 3. The left-hand navigation provides a Queries selection that can be expanded to see current queries.
 4. You can click on the arrow to see additional queries and filters.
 5. You can click on this link to launch the Compose SQL editor application, which will appear in a new tab.
 
-![VHOL-Screen17](./assets/Screen6-Compose-exer2.png)
+![VHOL-Screen17](./assets/Screen6-Compose-Exer2.png)
 
 6. Since Compose was launched from a table view, a select statement with that table appears. If you were coming to Compose from a query, the query would appear.
-7. The Connection Settings is where you provide your credentials to connect to the data source.
+7. The Connection Settings is where you provide your credentials to connect to the Alation provided Demo Sample Data - data source.
 
-![VHOL-Screen18](./assets/Screen6-Compose-exer3.png)
+![VHOL-Screen18](./assets/Screen6-Compose-Exer3.png)
 
 ![VHOL-Border9](./assets/BorderLine.png)
 
@@ -340,7 +340,7 @@ To get the most out Alation during your trial.
 
 ![VHOL-Screen20](./assets/Screen7-Summary-next.png)
 
-3. Click on this link to see how to connect your Snowflake data sources.
+3. Click on this link to see how to connect your own Snowflake data sources.
 
 ![VHOL-Screen21](./assets/Screen7-Summary-next1.png)
 
