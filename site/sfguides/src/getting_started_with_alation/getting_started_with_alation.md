@@ -117,6 +117,7 @@ One of the best parts of using the Alation data intelligence platform is that yo
 
 This section is all about how to get started and achieve value quickly from Alation—starting with curating assets to understanding common problems that most data organizations want to solve. Some challenges impact a particular role in an organization, and you will see how **all roles** benefit from the data intelligence platform solutions. 
 
+**Note** that we will be accessing an Alation-provided Snowflake account for this lab. At the conclusion of the lab, we'll discuss how to set up Alation to manage your own Snowflake data sources.
 
 ![VHOL-Screen3](./assets/Screen3-DGWheel.png)
 ![VHOL-Border3](./assets/BorderLine.png)
