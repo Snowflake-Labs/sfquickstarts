@@ -50,6 +50,7 @@ Duration: 5
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
 <button>
+  
   [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/Snowflake_Datarobot_VHOL_guides.sql)
 </button>
 <br/><br/>
