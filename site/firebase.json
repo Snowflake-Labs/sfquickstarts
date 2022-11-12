@@ -48,7 +48,7 @@
       "type": 301
     }, 
     {
-      "source": "/guide/machine_learning_with_snowpark_python{,/**}",
+      "source": "/guide/getting_started_with_snowpark_python{,/**}",
       "destination": "/guide/getting_started_snowpark_machine_learning",
       "type": 301
     },
