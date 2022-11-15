@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Hex, Notebooks, Partner Connect
 
-# Building and deploying a time series forecasts with Hex + Snowflake
+# Building and deploying a time series forecast with Hex + Snowflake
 
 <!-- ------------------------ -->
 ## Lab Overview 
@@ -21,13 +21,15 @@ In this demo, we will play the role of a data scientist at a large restaurant ch
 - Familiarity with data science notebooks
 
 ### What You'll Learn
-* Use Snowflake’s “Partner Connect” to seamlessly create a Hex trial
-* How to navigate the Hex workspace/notebooks
+* How to generate a time series dataset
+* How to import/export data between Hex and Snowflake
 * How to train an XGBoost model and deploy to Snowflake using UDTFs
+* How to visualize a forecast
+* How to convert a Hex project into an interactive web app
 
 
 ### What You’ll Need
-- A [Snowflake](https://signup.snowflake.com/) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
+- A [Snowflake](https://signup.Snowflake.com/) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
 
 ### What You’ll Build
 An end-to-end Machine Learning pipeline to forecast hourly traffic for a restaurant chain using Hex, Snowflake, Snowpark, and XGBoost.
@@ -41,24 +43,24 @@ This pipeline will:
 
 
 <!-- ------------------------ -->
-## Creating a snowflake account
+## Creating a Snowflake account
 Duration: 5
 
-Head over to the [Snowflake](https://signup.snowflake.com/) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
+Head over to the [Snowflake](https://signup.Snowflake.com/) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
 
 ## Connecting Snowflake with Hex
 Duration: 5
 
 At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer notebook capabilities, and therefore, happily partners with the leading cloud notebook  partners in the industry.
 
-Once you've logged into your Snowflake account, you'll land on the `Learn` page. Simply navigate to the `Admin` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a connection screen, and all that's required is to press the connect button in the lower right corner. This will bring you to a new screen saying that your account has been created and from here you can click `Activate`.
+Once you've logged into your Snowflake account, you'll land on the `Learn` page. Simply navigate to the `Admin` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the connect button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
 
 ![](assets/vhol-partner-connect.gif)
 
 
-Once activated, you'll be brought to a Hex screen asking you what you'd like to name your Hex workspace *(you can choose whatever name you like)*. 
+Once activated, you'll be brought over to Hex and will prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page where you can create new projects, import existing projects (Hex or Jupyter) as well as navigate to other sections of your workspace.
 
-Once you've created your workspace, head back over to Snowflake and navigate to the `Admin` tab again but this time select `Users & roles`. From here, you should see 3 users with one of them being named `PC_HEX_USER`. This is the user that was created when you activated Hex with partner connect. We'll need to activate the `ORGADMIN` role for this user. Select `PC_HEX_USER`, and at the bottom of the page you'll see a section to grant new roles.
+We'll revisit your newly created workspace in a bit, but for now, head back over to Snowflake. Let's navigate to the `Admin` tab again but this time select `Users & roles`. From here, you should see 3 users with one of them being named `PC_HEX_USER`. This is the user that was created when you activated Hex with partner connect. We'll need to activate the `ORGADMIN` role for this user. Select `PC_HEX_USER`, and at the bottom of the page you'll see a section to grant new roles.
 
 ![](assets/vhol-grant-roles.png)
 
@@ -76,7 +78,7 @@ Inside of the Workspace assets page, you'll see your data connections at the top
 ![](assets/vhol-edit-settings.gif)
 
 Inside of the data connection configuration page, we'll change 3 things
-* Remove `.snowflakecomputing.com` from the Account name.
+* Remove `.Snowflakecomputing.com` from the Account name.
 * Turn `Proxy` off.
 * Enable `Writeback` functionality.
 
@@ -84,7 +86,7 @@ Inside of the data connection configuration page, we'll change 3 things
 
 ### Accepting Anaconda terms
 
-The last thing we'll want to do is accept the [Anaconda terms and conditions enabled by the ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the ORGADMIN role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow to accept the anaconda terms and conditions which is required for a later step in our project.
+The last thing we'll want to do is accept the [Anaconda terms and conditions enabled by the ORGADMIN](https://docs.Snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the ORGADMIN role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow to accept the anaconda terms and conditions which is required for a later step in our project.
 
 ![](assets/vhol-accept-terms.gif)
 
@@ -104,7 +106,7 @@ Once downloaded, head over to Hex and you'll see a button to import a project in
 
 ![](assets/vhol-import.gif)
 
-Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to:
+Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to:
 1. Change our compute profile to run Python 3.8
 2. Import our Snowflake data connection
 
@@ -124,7 +126,7 @@ The first thing we'll want to do is make sure that all of the packages we want t
 
 ![](assets/vhol-cell-install.gif)
 
-Notice that running the cell doesn't actually install the packages and the output prompts us to click the button above the cell in order to install. This is because this cell is being controlled by a button input parameter, which allows you to control when and how your code gets executed. If you take a look under the button input parameter, you'll see an output variable named `install`. This variable is set to true whenever the button is activated, resulting in any conditional logic to be executed.
+Notice that running the cell doesn't actually install the packages and the output prompts us to click the button above the cell in order to install. This is because this cell is being controlled by a [button input parameter](https://learn.hex.tech/docs/logic-cell-types/input-parameter-cells/run-button), which allows you to control when and how your code gets executed. If you take a look under the button input parameter, you'll see an output variable named `install`. This variable is set to true whenever the button is activated, resulting in any conditional logic to be executed.
 
 Clicking the button will install the packages.
 
@@ -134,22 +136,22 @@ Clicking the button will install the packages.
 ## Establishing a connection to Snowflake
 Duration: 3
 
-Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a snowpark session using this connection. Click on the dropdown next to the `query` button and select `get snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a snowpark session.
+Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a Snowpark session using this connection. Click on the dropdown next to the `query` button and select `get Snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a Snowpark session.
 
 
 *The cell created by this button will be positioned under the cell that is currently selected. Make sure that the cell you have selected is the markdown cell with the header "Establishing a secure connection to Snowflake." You'll know if this cell is selected because it'll be outlined in blue.*
 
 
-![](assets/vhol-snowpark.gif)
+![](assets/vhol-Snowpark.gif)
 
-We'll also add a two lines at the end of the cell to let snowpark know which schema and database we want to use throughout the project.
+We'll also add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project.
 
 ```python
-hex_snowpark_session.use_schema("PC_HEX_DB.PUBLIC")
-hex_snowpark_session.use_database(database='PC_HEX_DB')
+hex_Snowpark_session.use_schema("PC_HEX_DB.PUBLIC")
+hex_Snowpark_session.use_database(database='PC_HEX_DB')
 ```
 
-In this cell, we reference our snowpark session with the variable `hex_snowpark_session` which is the name assigned by default. Throughout the rest of the project however, we reference our snowpark session with the variable name `session`. The most effective way to change the name of variables in Hex is to change the name of the output variable located at the bottom of the cell rather than in the cell itself. By changing the name of the output variable, we ensure that all other references to that variable are updated throughout the entirety of the project.
+In this cell, we reference our Snowpark session with the variable `hex_Snowpark_session` which is the name assigned by default. Throughout the rest of the project however, we reference our Snowpark session with the variable name `session`. The most effective way to change the name of variables in Hex is to change the name of the output variable located at the bottom of the cell rather than in the cell itself. By changing the name of the output variable, we ensure that all other references to that variable are updated throughout the entirety of the project.
 
 ![](assets/vhol-var-edit.gif)
 
@@ -162,12 +164,12 @@ In order to train our forecasting model, we'll need to show it historical data s
 
 ![](assets/vhol-datagen.png)
 
-<!-- Ask chase what exactly the holiday table is for, also maybe check out the presentation that he sent. https://www.snowflake.com/blog/snowpark-python-feature-engineering-machine-learning/ -->
+<!-- Ask chase what exactly the holiday table is for, also maybe check out the presentation that he sent. https://www.Snowflake.com/blog/Snowpark-python-feature-engineering-machine-learning/ -->
 
-## Write the data back to snowflake
+## Write the data back to Snowflake
 Duration: 5
 
-Now that we've created our data, we're going to write our tables back to snowflake. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
+Now that we've created our data, we're going to write our tables back to Snowflake. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
 
 ![](assets/vhol-add-write.gif)
 
@@ -188,14 +190,14 @@ To write the data back to our database, we'll want to enable the cell by clickin
 ## Exploring the Historical data
 Duration: 3
 
-Now that we have our data back in Snowflake, we can use our snowpark session object to pull our data back into Hex using the function `session.table()` with the name of our tables as arguments. By calling the `toPandas` function, we can preview the table in Hex.
+Now that we have our data back in Snowflake, we can use our Snowpark session object to pull our data back into Hex using the function `session.table()` with the name of our tables as arguments. By calling the `toPandas` function, we can preview the table in Hex.
 
 ![](assets/vhol-dataset.png)
 
 ## Feature Engineering
 Duration: 5
 
-To create our training dataset we'll use our tables pulled in from snowflake and join them together. We extract the date and hour from the `TIME_POINTS` column in the traffic table and join on the `DATE` column in the calendar table. We've also filtered out records between the hours of 10pm and 7am which is when the restaurants are closed. This table will be the input to our XGBoost model where we'll index on the `TIME_POINTS` column, the rest of the columns will be our features and `HOURLY_TRAFFIC` is the value we want to predict.
+To create our training dataset we'll use our tables pulled in from Snowflake and join them together. We extract the date and hour from the `TIME_POINTS` column in the traffic table and join on the `DATE` column in the calendar table. We've also filtered out records between the hours of 10pm and 7am which is when the restaurants are closed. This table will be the input to our XGBoost model where we'll index on the `TIME_POINTS` column, the rest of the columns will be our features and `HOURLY_TRAFFIC` is the value we want to predict.
 
 ![](assets/vhol-join-data.png)
 
@@ -203,11 +205,11 @@ To run a forecast using XGBoost, not only do we need to provide the historical v
 
 ![](assets/vhol-future.png)
 
-Next, we want to also add in the calendar features for the next 4 weeks while also replacing nulls for the holiday column. We can then join the future hourly traffic with the future calendar info to get our final future table. Since we don't know what the traffic will be like in he future, we've filled that columns with 0s and will be replaced with the predictions once we run our forecast.
+Next, we want to also add in the calendar features for the next 4 weeks while also replacing nulls for the holiday column. We can then join the future hourly traffic with the future calendar info to get our final future table. Since we don't know what the traffic will be like in the future, we've filled that columns with 0s and it will be replaced with the predictions once we run our forecast.
 
 ![](assets/vhol-future2.png)
 
-As the last step, we combine the past and future tables together in order to obtain our final training table. Then we can write this table back to snowflake by calling `write.saveAsTable()` on our joined dataframe.
+As the last step, we combine the past and future tables together in order to obtain our final training table. Then we can write this table back to Snowflake by calling `write.saveAsTable()` on our joined dataframe.
 
 ![](assets/vhol-union.png)
 
@@ -219,7 +221,7 @@ The objective here is to provide a store level forecast across the restaurant's 
 
 ![](assets/vhol-schema.png)
 
-We can register our UDTF using the decorator and specify the required parameters such as the output and input types, name of the UDTF, and required packages. Because the same packages and versions are being installed in Snowflake, snowpark automatically picks up and resolves these dependencies on the server side using the integrated Conda package manager ensuring all our code runs seamlessly inside of snowflake.
+We can register our UDTF using the decorator and specify the required parameters such as the output and input types, name of the UDTF, and required packages. Because the same packages and versions are being installed in Snowflake, Snowpark automatically picks up and resolves these dependencies on the server side using the integrated Conda package manager ensuring all our code runs seamlessly inside of Snowflake.
 
 ![](assets/vhol-udtf.png)
 
@@ -233,9 +235,9 @@ Now that we've developed our training code, to get our predictions without movin
 
 ![](assets/vhol-training.png)
 
-As a last step, we can write the predicted values back into our snowflake database. To do this, we'll call `write.saveAsTable('FOUR_WEEK_FORECAST', mode='overwrite', create_temp_table=False)` on our forecast model.
+As a last step, we can write the predicted values back into our Snowflake database. To do this, we'll call `write.saveAsTable('FOUR_WEEK_FORECAST', mode='overwrite', create_temp_table=False)` on our forecast model.
 
-If you want to see a performance boost at this step, you can upgrade the size of the warehouse that processes our model. To do this, head back over to snowflake and select `Warehouses` under the `Admin` tab. Here, you should only see a single warehouse that we can edit. Click the 3-dot menu on the far right and select edit. You'll see a dropdown to change the size of your warehouse. If the model is already running, you may want to cancel and run again in order to run on the new warehouse.
+If you want to see a performance boost at this step, you can upgrade the size of the warehouse that processes our model. To do this, head back over to Snowflake and select `Warehouses` under the `Admin` tab. Here, you should only see a single warehouse that we can edit. Click the 3-dot menu on the far right and select edit. You'll see a dropdown to change the size of your warehouse. If the model is already running, you may want to cancel and run again in order to run on the new warehouse.
 
 ![](assets/vhol-warehouse.gif)
 
@@ -243,7 +245,7 @@ If you want to see a performance boost at this step, you can upgrade the size of
 ## Visualizing the results
 Duration: 5
 
-Now that we have our data in snowflake, we can pull the predicted values back into Hex using an SQL cell. To do this, add a new SQL cell to the project and paste the following snippet into the cell.
+Now that we have our data in Snowflake, we can pull the predicted values back into Hex using an SQL cell. To do this, add a new SQL cell to the project and paste the following snippet into the cell.
 
 ```sql
 select * from "PC_HEX_DB"."PUBLIC"."FOUR_WEEK_FORECAST"
@@ -289,5 +291,5 @@ Congratulations on on making it to the end of this Lab!
 
 ### Resources
 - [Hex docs](https://learn.hex.tech/docs)
-- [Snowflake Docs](https://docs.snowflake.com/en/)
-- [UDTFs](https://docs.snowflake.com/en/developer-guide/udf/sql/udf-sql-tabular-functions.html)
+- [Snowflake Docs](https://docs.Snowflake.com/en/)
+- [UDTFs](https://docs.Snowflake.com/en/developer-guide/udf/sql/udf-sql-tabular-functions.html)
