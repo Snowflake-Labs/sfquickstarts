@@ -48,6 +48,11 @@
       "type": 301
     }, 
     {
+      "source": "/guide/getting_started_with_snowpark_python{,/**}",
+      "destination": "/guide/getting_started_snowpark_machine_learning",
+      "type": 301
+    },
+    {
       "source": "/guide/getting_started_with_user_defined_functions{,/**}",
       "destination": "/guide/getting_started_with_user_defined_sql_functions",
       "type": 301
