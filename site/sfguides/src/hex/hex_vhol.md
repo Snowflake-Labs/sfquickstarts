@@ -13,11 +13,7 @@ tags: Hex, Notebooks, Partner Connect
 ## Lab Overview 
 Duration: 5
 
-{use case / lab overview}
-
-Hex is a platform for doing collaborative data science and analytics in Python, SQL, and No-code. In this guide, you will be introduced to the basics of using Hex in collaboration with Snowflake/Snowpark to build a data science project. It is designed specifically for use with the [Snowflake free 30-day trial](https://trial.snowflake.com), and a Hex trial account via Snowflake’s Partner Connect.
-
-This lab will walk you through the process of creating a forecasting model to predict the hourly foot traffic for various restaurants. We will then take our trained model and deploy it to Snowflake through the use of a User-Defined Table Function or UDTF. Once our function is 
+In this demo, we will play the role of a data scientist at a large restaurant chain tasked with helping the restaurant operators optimize their staffing schedule. To do this, we would like to forecast the hourly foot traffic for each of the restaurants stores in 200 different locations. Let's see how we can use Hex in collaboration with Snowflake/Snowpark to build an XGBoost forecasting model to help with the task at hand. 
 
 ### Prerequisites
 - Familiarity with basic Python and SQL 
@@ -26,6 +22,8 @@ This lab will walk you through the process of creating a forecasting model to pr
 
 ### What You'll Learn
 - Use Snowflake’s “Partner Connect” to seamlessly create a Hex trial
+- How to navigate the Hex workspace/notebooks
+- How to train an XGBoost model and deploy to Snowflake using UDTFs
 
 
 ### What You’ll Need
@@ -83,7 +81,7 @@ The last thing we'll want to do is accept the [Anaconda terms and conditions ena
 
 <!-- ------------------------ -->
 ## Getting Started with Hex
-Duration: 10
+Duration: 5
 
 Now we can move back over to Hex and get started on our project. The first thing you'll need to do is download the Hex project that contains all of the code for generating our data and training our model.
 
@@ -111,24 +109,25 @@ Next we can import our Snowflake data connection by heading over to the `Data so
 ![](assets/vhol-dc.gif)
 
 ## Install and import required packages
+Duration: 3
+
 The first thing we'll want to do is make sure that all of the packages we want to use are installed and imported. Hex comes with a variety of [pre-installed](https://learn.hex.tech/docs/environment-configuration/using-packages#use-a-pre-installed-package) packages and also supports [installing new packages through pip](https://learn.hex.tech/docs/environment-configuration/using-packages#install-new-packages-through-pip). You can run this cell to install the packages: 
 
-![](assets/vhal-cell-install.gif)
+![](assets/vhol-cell-install.gif)
 
-Notice that running the cell doesn't actually install the packages and the output prompts us to click the button above the cell in order to install them. This is because this cell is being controlled by an input parameter. Specifically, we're using a button which allows you to control when and how your code gets executed. If you take a look under the button input parameter, you'll see an output variable named `install`. This variable is set to true whenever the button is activated, resulting in any conditional logic to be executed once this occurs.
+Notice that running the cell doesn't actually install the packages and the output prompts us to click the button above the cell in order to install. This is because this cell is being controlled by a button input parameter, which allows you to control when and how your code gets executed. If you take a look under the button input parameter, you'll see an output variable named `install`. This variable is set to true whenever the button is activated, resulting in any conditional logic to be executed.
 
-Let's follow the buttons instructions now and click it to install the packages.
 ![](assets/vhol-install.gif)
 
 
 ## Establishing a connection to Snowflake
-Now, we can connect to that Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a snowpark session using this connection. Click on the dropdown next to the `query` button and select `get snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a snowpark session.
+Duration: 3
 
-```
- The cell created by this button will be positioned under the cell that is currently selected. Make sure the the cell you have selected is the markdown cell with the 
- 
- header "Establishing a secure connection to Snowflake." You'll know if this cell is selected because it'll be outlined in blue.
-```
+Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a snowpark session using this connection. Click on the dropdown next to the `query` button and select `get snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a snowpark session.
+
+
+*The cell created by this button will be positioned under the cell that is currently selected. Make sure the the cell you have selected is the markdown cell with the header "Establishing a secure connection to Snowflake." You'll know if this cell is selected because it'll be outlined in blue.*
+
 
 ![](assets/vhol-snowpark.gif)
 
@@ -144,6 +143,8 @@ In this cell, we reference our snowpark session with the variable `hex_snowpark_
 ![](assets/vhol-var-edit.gif)
 
 ## Generating our forecasting data
+Duration: 8
+
 <!-- Not sure how much detail I should go into here -->
 
 In order to train our forecasting model, we'll need to show it historical data so that it can have a source to learn from. In code cell 7, we've defined a class that does all the heavy lifting for us and we can generate the data we need with a single function call. In code cell 8, we're creating an instance of our dataset class so that we can use this object in the following cells. In code cell 9, we're calling the `create_traffic_table()` function which will return a dataframe with the hourly traffic data from 2018 up until now. The final data generation step in code cell 10 creates a calendar table that includes the day of the week, month of the year, holidays, etc.
@@ -153,6 +154,8 @@ In order to train our forecasting model, we'll need to show it historical data s
 <!-- Ask chase what exactly the holiday table is for, also maybe check out the presentation that he sent. https://www.snowflake.com/blog/snowpark-python-feature-engineering-machine-learning/ -->
 
 ## Write the data back to snowflake
+Duration: 5
+
 Now that we've created our data, we're going to write our tables back to snowflake. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
 
 ![](assets/vhol-add-write.gif)
@@ -161,7 +164,7 @@ Using this cell is quite simple. First we'll need choose the source data from th
 
 ![](assets/vhol-writeback.gif)
 
-You can repeat these same steps for the `cal` dataframe, the only change is that we'll name the table `CALENDAR_INFO`.
+You can repeat these same steps for the `cal` dataframe, the only change to make here is naming the table `CALENDAR_INFO`.
 
 ![](assets/vhol-write-cal.gif)
 
@@ -172,11 +175,15 @@ To write the data back to our database, we'll want to enable the cell by clickin
 
 
 ## Exploring the Historical data
+Duration: 3
+
 Now that we have our data back in Snowflake, we can use our snowpark session object to pull our data back into Hex using the function `session.table()` with the name of our tables as arguments. By calling the `toPandas` function, we can preview the table in Hex.
 
 ![](assets/vhol-dataset.png)
 
 ## Feature Engineering
+Duration: 5
+
 To create our training dataset we'll use our tables pulled in from snowflake and join them together. We extract the date and hour from the `TIME_POINTS` column in the traffic table and join on the `DATE` column in the calendar table. We've also filtered out records between the hours of 10pm and 7am which is when the restaurants are closed. This table will be the input to our XGBoost model where we'll index on the `TIME_POINTS` column, the rest of the columns will be our features and `HOURLY_TRAFFIC` is the value we want to predict.
 
 ![](assets/vhol-join-data.png)
@@ -195,6 +202,75 @@ As the last step, we combine the past and future tables together in order to obt
 
 
 ## Training the model
-The objective 
+Duration: 10
+
+The objective here is to provide a store level forecast across the restaurant's 200 locations, which means we need to train 200 individual forecast models. By leveraging a UDTF, we're able to distribute the processing across multiple nodes and train our model in parallel. First, we'll define the output schema for the UDTF.
+
+![](assets/vhol-schema.png)
+
+We can register our UDTF using the decorator and specify the required parameters such as the output and input types, name of the UDTF, and required packages. Because the same packages and versions are being installed in Snowflake, snowpark automatically picks up and resolves these dependencies on the server side using the integrated Conda package manager ensuring all our code runs seamlessly inside of snowflake.
+
+![](assets/vhol-udtf.png)
+
+To get a high level overview of the forecast class, the init method initializes the processing of input partitions. The process method is invoked for each input drill, and the end partition method is invoked to finalize the processing of input partitions. In the end partition method, we set the datetime column as our index. We then convert all variables to categorical, then encode our features since the XGBoost model expects all numerical inputs. Next, we split our data into train and test sets and pass the training data to our XGBoost model.
+
+Now that we've developed our training code, to get our predictions without moving any data out of Snowflake, all we need to do is call the UDTF on the model features we created earlier. The UDTF runs the model on the historical data and returns the forecast for the hourly traffic.
+
+![](assets/vhol-training.png)
+
+As a last step, we can write the predicted values back into our snowflake database. To do this, we'll call `write.saveAsTable('FOUR_WEEK_FORECAST', mode='overwrite', create_temp_table=False)` on our forecast model.
+
+If you want to see a performance boost at this step, you can upgrade the size of the warehouse that processes our model. To do this, head back over to snowflake and select `Warehouses` under the `Admin` tab. Here, you should only see a single warehouse that we can edit. Click the 3-dot menu on the far right and select edit. You'lll see a dropdown to change the size of your warehouse. If the model is already running, you may want to cancel and run again in order to run on the new warehouse.
+
+![](assets/vhol-warehouse.gif)
+
 
 ## Visualizing the results
+Duration: 5
+
+Now that we have our data in snowflake, we can pull the predicted values back into Hex using an SQL cell. To do this, add a new SQL cell to the project and paste the following snippet into the cell.
+
+```sql
+select * from "PC_HEX_DB"."PUBLIC"."FOUR_WEEK_FORECAST"
+```
+
+By default, the output of SQL cells in Hex are dataframes. This allows us to seamlessly switch between SQL and Python where the dataframe can be further manipulated in any Python cell. You can even query it again using [dataframe SQL](https://learn.hex.tech/docs/logic-cell-types/sql-cells/overview#dataframe-sql). 
+
+
+![](assets/vhol-query.gif)
+
+Here, we've taken the results of our query and combined the `DATE` and `HOUR_OF_DAY` columns into a datetime column so that we can visualize the traffic per hour. 
+
+![](assets/vhol-qresults.png)
+
+We can use a native Hex chart to build up this visual. First, hover over the output variable `cast` under cell 36. You'll see a panel appear with the option to visualize in a chart cell. Select this option and select `time` as the x-axis variable and `HOURLY_FORECAST` as the y-axis variable. 
+
+![](assets/vhol-vis.gif)
+
+Once selected you will see this visual appear:
+
+![](assets/vhol-vis.png)
+
+## Sharing our results
+Duration: 3
+
+Now that we've completed going through our project, how can we share this project with others. First, we might want to arrange our cells and also hide some of the logic that isn't super important for understanding how to build a forecast model. To do this we can head over to the app side of things. At the top of you're project, you'll see a button showing if you're in the logic or app view. By switching over to the app side of things, we can start arranging our cells and adding/removing them as we see fit. Check out the [Hex docs](https://learn.hex.tech/docs/build-apps/app-builder) to learn about how you can effectively use the app builder.
+
+![](assets/vhol-app.gif)
+
+Once we're happy with the layout, we can go a head and publish. Publishing is like taking a snapshot of the current state of our app and publishing it as an interactive web app that anyone can see. To publish, hit the green publish button in the top right corner. Once that's done, hit the blue share button next to publish, and select `Publish to web`. Whoever you share the link with will be able to see the live version of your app.
+
+![](assets/vhol-publish.gif)
+
+## Conclusion
+Congratulations on on making it to the end of this Lab!
+
+### What we've covered
+- Use Snowflake’s “Partner Connect” to seamlessly create a Hex trial
+- How to navigate the Hex workspace/notebooks
+- How to train an XGBoost model and deploy to Snowflake using UDTFs
+
+### Resources
+- [Hex docs](https://learn.hex.tech/docs)
+- [Snowflake Docs](https://docs.snowflake.com/en/)
+- [UDTFs](https://docs.snowflake.com/en/developer-guide/udf/sql/udf-sql-tabular-functions.html)
