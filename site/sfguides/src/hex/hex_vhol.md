@@ -277,7 +277,7 @@ Once we're happy with the layout, we can go a head and publish. Publishing is li
 
 ![](assets/vhol-publish.gif)
 
-***The "Publish with errors" is expected. When publishing an app, the project runs from top to bottom on a fresh kernel. This means that the packages we installed in the beginning haven't been installed yet because we haven't clicked the button yet. So when we try to import a package that hasn't been installed yet, we get the error. Running this button while publishing will resolve the error.***
+<!-- ***The "Publish with errors" is expected. When publishing an app, the project runs from top to bottom on a fresh kernel. This means that the packages we installed in the beginning haven't been installed yet because we haven't clicked the button yet. So when we try to import a package that hasn't been installed yet, we get the error. Running this button while publishing will resolve the error.*** -->
 
 ## Conclusion
 Congratulations on on making it to the end of this Lab!
