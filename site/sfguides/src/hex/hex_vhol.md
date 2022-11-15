@@ -1,4 +1,4 @@
-author: miles.adkins@snowflake.com
+author: gflomo@hex.tech
 id: hex
 summary: This lab will walk you through how to use Snowflake and Hex.
 categories: Getting Started
@@ -21,9 +21,9 @@ In this demo, we will play the role of a data scientist at a large restaurant ch
 - Familiarity with data science notebooks
 
 ### What You'll Learn
-- Use Snowflake’s “Partner Connect” to seamlessly create a Hex trial
-- How to navigate the Hex workspace/notebooks
-- How to train an XGBoost model and deploy to Snowflake using UDTFs
+* Use Snowflake’s “Partner Connect” to seamlessly create a Hex trial
+* How to navigate the Hex workspace/notebooks
+* How to train an XGBoost model and deploy to Snowflake using UDTFs
 
 
 ### What You’ll Need
@@ -41,6 +41,11 @@ This pipeline will:
 
 
 <!-- ------------------------ -->
+## Creating a snowflake account
+Duration: 5
+
+Head over to the [Snowflake](https://signup.snowflake.com/) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
+
 ## Connecting Snowflake with Hex
 Duration: 5
 
@@ -51,11 +56,13 @@ Once you've logged into your Snowflake account, you'll land on the `Learn` page.
 ![](assets/vhol-partner-connect.gif)
 
 
-Once activated, you'll be brought to a Hex screen asking you what you'd like to name your Hex workspace *(you can choose whatever name you like)*. Once you've created your workspace, head back over to Snowflake and navigate to the `Admin` tab again but this time select `Users & roles`. From here, you should see 3 users with one of them being named `PC_HEX_USER`. This is the user that was created when you activated Hex with partner connect. We'll need to activate the `ORGADMIN` role for this user. Select `PC_HEX_USER`, and at the bottom of the page you'll see a section to grant new roles.
+Once activated, you'll be brought to a Hex screen asking you what you'd like to name your Hex workspace *(you can choose whatever name you like)*. 
+
+Once you've created your workspace, head back over to Snowflake and navigate to the `Admin` tab again but this time select `Users & roles`. From here, you should see 3 users with one of them being named `PC_HEX_USER`. This is the user that was created when you activated Hex with partner connect. We'll need to activate the `ORGADMIN` role for this user. Select `PC_HEX_USER`, and at the bottom of the page you'll see a section to grant new roles.
 
 ![](assets/vhol-grant-roles.png)
 
-Click on grant role, which will open a window to grant roles to the `PC_HEX_USER` account. In the `Role to grant` dropdown, you'll see the role `ORGADMIN`. Select this role and then click `Grant`. This will activate the role for you and we'll come back to this later.
+Click on grant role, which will open a window to grant roles to the `PC_HEX_USER` account. In the `Role to grant` dropdown, you'll see the role `ORGADMIN`. Select this role and then click `Grant`. This will activate the role for you and we'll revisit this step later.
 
 ![](assets/vhol-add-orgadmin.gif)
 
@@ -74,6 +81,8 @@ Inside of the data connection configuration page, we'll change 3 things
 * Enable `Writeback` functionality.
 
 ![](assets/vhol-edit-dc.gif)
+
+### Accepting Anaconda terms
 
 The last thing we'll want to do is accept the [Anaconda terms and conditions enabled by the ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the ORGADMIN role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow to accept the anaconda terms and conditions which is required for a later step in our project.
 
@@ -99,12 +108,12 @@ Now that you've got your project imported, you will find yourself in the [Logic 
 1. Change our compute profile to run Python 3.8
 2. Import our Snowflake data connection
 
-Which we can do all from the left control panel. To change the compute profile, click on the Environments tab represented by a cube, at the top of this section you'll see the compute profile portion at the top. CLick on the `Image` dropdown and select Python 3.8. 
+Which we can do all from the left control panel. To change the compute profile, click on the Environments tab represented by a cube. At the top of this section you'll see the compute profile portion at the top. Click on the `Image` dropdown and select Python 3.8. 
 
 ![](assets/vhol-compute.gif)
 
 
-Next we can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake. Once you import this connection, all the setup steps will be completed and you can dive into the project. 
+Next we can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake. Once you import this connection, all the setup steps will be completed and we can dive into the project. 
 
 ![](assets/vhol-dc.gif)
 
@@ -117,6 +126,8 @@ The first thing we'll want to do is make sure that all of the packages we want t
 
 Notice that running the cell doesn't actually install the packages and the output prompts us to click the button above the cell in order to install. This is because this cell is being controlled by a button input parameter, which allows you to control when and how your code gets executed. If you take a look under the button input parameter, you'll see an output variable named `install`. This variable is set to true whenever the button is activated, resulting in any conditional logic to be executed.
 
+Clicking the button will install the packages.
+
 ![](assets/vhol-install.gif)
 
 
@@ -126,7 +137,7 @@ Duration: 3
 Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a snowpark session using this connection. Click on the dropdown next to the `query` button and select `get snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a snowpark session.
 
 
-*The cell created by this button will be positioned under the cell that is currently selected. Make sure the the cell you have selected is the markdown cell with the header "Establishing a secure connection to Snowflake." You'll know if this cell is selected because it'll be outlined in blue.*
+*The cell created by this button will be positioned under the cell that is currently selected. Make sure that the cell you have selected is the markdown cell with the header "Establishing a secure connection to Snowflake." You'll know if this cell is selected because it'll be outlined in blue.*
 
 
 ![](assets/vhol-snowpark.gif)
@@ -188,7 +199,7 @@ To create our training dataset we'll use our tables pulled in from snowflake and
 
 ![](assets/vhol-join-data.png)
 
-To run a forecast using XGBoost, not only do I need to provide the historical values but I will need the future ones as well. To do this, we'll create a column that will have the hourly records for the next 4 weeks and filtering out the closed hours. Then, we [cross join](https://www.w3resource.com/sql/joins/cross-join.php) this column with the `HOURLY_TRAFFIC` table such that each store has these future values.
+To run a forecast using XGBoost, not only do we need to provide the historical values but we will need the future ones as well. To do this, we'll create a column that will have the hourly records for the next 4 weeks and filtering out the closed hours. Then, we [cross join](https://www.w3resource.com/sql/joins/cross-join.php) this column with the `HOURLY_TRAFFIC` table such that each store has these future values.
 
 ![](assets/vhol-future.png)
 
@@ -214,13 +225,17 @@ We can register our UDTF using the decorator and specify the required parameters
 
 To get a high level overview of the forecast class, the init method initializes the processing of input partitions. The process method is invoked for each input drill, and the end partition method is invoked to finalize the processing of input partitions. In the end partition method, we set the datetime column as our index. We then convert all variables to categorical, then encode our features since the XGBoost model expects all numerical inputs. Next, we split our data into train and test sets and pass the training data to our XGBoost model.
 
+***If you run the cell where we define the UDTF and see an error in the output, it is likely because you haven't accepted the Anaconda terms yet. If you still need to complete this step, head back to step 3 in this guide and follow the instructions under "Accepting Anaconda terms."***
+
 Now that we've developed our training code, to get our predictions without moving any data out of Snowflake, all we need to do is call the UDTF on the model features we created earlier. The UDTF runs the model on the historical data and returns the forecast for the hourly traffic.
+
+
 
 ![](assets/vhol-training.png)
 
 As a last step, we can write the predicted values back into our snowflake database. To do this, we'll call `write.saveAsTable('FOUR_WEEK_FORECAST', mode='overwrite', create_temp_table=False)` on our forecast model.
 
-If you want to see a performance boost at this step, you can upgrade the size of the warehouse that processes our model. To do this, head back over to snowflake and select `Warehouses` under the `Admin` tab. Here, you should only see a single warehouse that we can edit. Click the 3-dot menu on the far right and select edit. You'lll see a dropdown to change the size of your warehouse. If the model is already running, you may want to cancel and run again in order to run on the new warehouse.
+If you want to see a performance boost at this step, you can upgrade the size of the warehouse that processes our model. To do this, head back over to snowflake and select `Warehouses` under the `Admin` tab. Here, you should only see a single warehouse that we can edit. Click the 3-dot menu on the far right and select edit. You'll see a dropdown to change the size of your warehouse. If the model is already running, you may want to cancel and run again in order to run on the new warehouse.
 
 ![](assets/vhol-warehouse.gif)
 
@@ -254,13 +269,15 @@ Once selected you will see this visual appear:
 ## Sharing our results
 Duration: 3
 
-Now that we've completed going through our project, how can we share this project with others. First, we might want to arrange our cells and also hide some of the logic that isn't super important for understanding how to build a forecast model. To do this we can head over to the app side of things. At the top of you're project, you'll see a button showing if you're in the logic or app view. By switching over to the app side of things, we can start arranging our cells and adding/removing them as we see fit. Check out the [Hex docs](https://learn.hex.tech/docs/build-apps/app-builder) to learn about how you can effectively use the app builder.
+Now that we've completed going through our project, how can we share this project with others? First, we might want to arrange our cells and also hide some of the logic that isn't super important for understanding how to build a forecast model. To do this we can head over to the app side of things. At the top of your project, you'll see a button showing if you're in the logic or app view. By switching over to the app side of things, we can start arranging our cells and adding/removing them as we see fit. Check out the [Hex docs](https://learn.hex.tech/docs/build-apps/app-builder) to learn about how you can effectively use the app builder.
 
 ![](assets/vhol-app.gif)
 
 Once we're happy with the layout, we can go a head and publish. Publishing is like taking a snapshot of the current state of our app and publishing it as an interactive web app that anyone can see. To publish, hit the green publish button in the top right corner. Once that's done, hit the blue share button next to publish, and select `Publish to web`. Whoever you share the link with will be able to see the live version of your app.
 
 ![](assets/vhol-publish.gif)
+
+***The "Publish with errors" is expected. When publishing an app, the project runs from top to bottom on a fresh kernel. This means that the packages we installed in the beginning haven't been installed yet because we haven't clicked the button yet. So when we try to import a package that hasn't been installed yet, we get the error. Running this button while publishing will resolve the error.***
 
 ## Conclusion
 Congratulations on on making it to the end of this Lab!
