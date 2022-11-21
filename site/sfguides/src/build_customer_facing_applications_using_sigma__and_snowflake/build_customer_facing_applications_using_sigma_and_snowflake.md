@@ -64,8 +64,8 @@ Duration: 2
 2. At the top left of the page click on the dowward facing arrow next to the worksheet name, select "Import SQL from File", then brose to the "sigma_vhol.sql" file you downloaded in the prior module. Click "Open". 
    - All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. Do not run any of the SQL commands yet. 
   
-  # Provisioning Sigma
-  ## Provisioning Sigma via Snowflake Partner Connect
+  ## Provisioning Sigma
+  ### Provisioning Sigma via Snowflake Partner Connect
 
 1. On the lefthand side of the Snowflake UI, navigate to Admin, then select partner connect. Click the icon for Sigma.
    
@@ -73,9 +73,9 @@ Duration: 2
 
 3. Click "Connect" then "Activate", which will open a new tab. You will be prompted to choose a name for your new Sigma Organization to be be created. Once you have chosen a name, click continue. This will open Sigma in a new tab. Please keep this tab open, as we will return to it later in the lab. 
    
-# Preparing and Loading Data into Snowflake
+## Preparing and Loading Data into Snowflake
 
-## The Lab Story
+# The Lab Story
 
 This Snowflake and Sigma lab will be done as part of a theoretical real world story to help you better understand why we are performing the steps in this lab, and the order they appear. 
 
@@ -83,7 +83,7 @@ Throughout the lab, we will be working with some common sales data from our fict
 
 We will use this data to create a retailer portal where brands who sell their products at Plugs retail locations can log in to see their sales performance across different metrics. 
 
-## Create a Database and Table
+### Create a Database and Table
 
 1. Go back to the Snowfalke UI and click on the worksheets tab. Per the prior steps, ensure the SQL text from the "Sigma_vhol.sql" file has been loaded into the workseet.
 
@@ -100,7 +100,7 @@ We will use this data to create a retailer portal where brands who sell their pr
 7. CREATE STAGE SIGMA_LAB_STAGE URL = 's3://sigma-embedded-lab-demo/LabData/'; This creates an external stage in Snowflake that points to an S3 bucket that has the data files we would like to use for the lab. 
 8. LS @SIGMA_LAB_STAGE; This command lists all of the files in the stage we just created. 
 
-## Loading Data into Snowflake
+### Loading Data into Snowflake
 
 The data we will be using is demo data for a fictious retailer called Plugs Electronics. This data has been exported and pre=staged for you in an AWS S3 bucket in the US-East(Northern Virginia) region. THe data is in a CSV format, and includes transaction data like order numbers, product names and prices, as well as customer information. This data set is just under 4 million rows.
 
@@ -162,9 +162,9 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 - A SELECT * from teh transactions table should complete successfully. If not, please go back and re-run the prior steps of this module as SYSADMIN to ensure permissions were granted to the new role appropriately.    
   
 
-# Building Your Sigma Workbook 
+## Building Your Sigma Workbook 
 
-## Connect Your Workbook to the Dataset
+### Connect Your Workbook to the Dataset
 
 1. Navigate to the Sigma tab that was previously opened through partner connect. Select the top left Paper Crane logo to navigate back to the Sigma homepage if you are not there already. 
 
@@ -176,7 +176,7 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 
 5. On the resulting page, navigate to "Connections", expand the drop down, and click into "Snowflake PC_SIGMA_WH". Select PC_SIGMA_DB, then navigate to teh EMBEDDED_LAB schema and select the "TRANSACTIONS" table. You will notice Sigma automatically populates a preview of the table. Click "Select" to begin our data modeling. 
    
- ## Workbook Analysis 
+ ### Workbook Analysis 
  In this segment we will begin to clean up the data set for our customer portal. We will create calculations, parse JSON, and build visualizations with the ultiate goal of creating and embedding a dashboard for our brand managers to get a sense of how their products are performing in Plugs Electronics stores. 
 
  1. First, lets save our workbook as Customer Portal Workbook by clicking Save As at the top of the page. We will then rename our page to "Data" by clicking the down arrow next to "Page 1" in the bottom left of the UI. 
@@ -195,7 +195,7 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 
   - Every action we take in Sigma produces machine-generated SQL, optimized for Snowflake, that runs live against the warehouse. This ensures that the data is secure and up to date at all times. YOu can see the queries we are generating by clicking the dropdown next to the refresh button on the top right nad selecting "Query History". 
 
-  ## Creating Visualizations 
+  ### Creating Visualizations 
   It is often easier to spot trends, outliers, or inishgts which lead to further questions when viewing data in a vizualization. Sigma makes it easy to create vizualizations of your data while also enabling you to dig into the data that makes up the vizualization. 
 
   1. Start the creation of a visuzalization by selecting the table that we just build, then clicking the "Create Child Element" icon on the top right corner. Select "Visualization" to start creating a new chart. 
@@ -214,7 +214,7 @@ We have data files in our stage as shown in the previous list (ls) command. THes
   13. Next drag Revenue to the value. This will automatically sum the revenue across all transactions. Rename this visualization to Total Revenue by double clicking Sum of Revenue on the left hand side and typing Total Revenue. 
   14. Finally, we want to share some transaction level data with our end users. From our transactions table on the data page, click create child element - table. This create a new table from our Transactions table. Let's sort this table by purchase date descending, so that our most recent transactions are shown first. Then move this element to our Customer Portal page. 
   15. Drage and drop the visuzaliations on the Customer Portal page so that the Total Revenue element is at the top, the line chart and bar graph are side by side below it, and the transactions table is at the bottom. 
-   ## Create Filters
+   ### Create Filters
    1. Next, let's add a filter to this data. We will do this by adding a control element to our canvas. Controls enable interactions with the chart such as filtering the charts when in use. Clicking the "+" icon on the upper left hand pane next to "Page ELements", select "Date". This will add a Date control element to the canvas. 
 
    2. After adding the "Date" control to our Customer Portal page, lets drag it to the top of the page and update the control_id to say "Date-Range" and update the control label to say "Select a Date Range". 
@@ -224,15 +224,15 @@ We have data files in our stage as shown in the previous list (ls) command. THes
    4. On the data page, right click on the drop down next to the column "Product Brand" and select the "Fliter" option from the menue. A new filter will be added to the table. 
 
    5. CLick on the kebab menu to the right of the "Product Brand" filter and select "Convert to Page Control". The filter will be added as a page control to the canvas. This product brand filter is additionally what we will pass into our embed URL to only serve up data related to the brand we are exploring. Since this filter started out with a target, there is no need to add one. 
-   ## Finishing up the Canvas
+   ### Finishing up the Canvas
 
    1. To start, navigate to your Customer Portal page, and click add element. Under UI elements, select Text. 
    2. We are going to create a dynamic Text element as the header for our page. In the text bar type =If(CountDistint([TRANSACTIONS/Product Brand]) >1, "All Brands", [TRANSACTIONS/Product Brand])Sales Performance. From the text bar, select "Large Heading" for the element size, and drag it to the top. Finally, click the formatting option to center the element. This text element will adjust based ont eh user we log into our portal as, and the brand we are exploring. 
    3. ON the bottom left, click the down arrow next to your 'Data' page and select "Hide". This will hide the page with the underlying data set from your end users. 
    4. Click Publish to save these changes. 
-   # Embedding the Sigma Workbook into an Application
+   ## Embedding the Sigma Workbook into an Application
 
-   ## Building the Application / Portal
+   ### Building the Application / Portal
 
   We are now going to begin buildng our portal where we can embed our workbook. This will be a Sales Performance dashboard where our family of brands can log in to see how their products are performing in our store. 
 
@@ -259,14 +259,14 @@ Note: All controls must exist on the dashboard. This is to ensure changes to a d
 
 There are two key edits we need to make in order for the server to use our workbook, the Secret Key and the Embed URL of our workbook. We will obtain both of these pieces of information next. 
 
-## Generating an Application Embedding Secret in Sigma
+### Generating an Application Embedding Secret in Sigma
 
 1. If we go back to Sigma, we can generate our secret key that is needed for application embedding. You can do this by clicking on your user icon on the top right of the screen and selecting "Administration". 
 2. On the account screen there is an Embedding section with a subheading labeled "Application Embedding". Click on the "Add" button to generate teh key. 
 3. You will now get your secret key that can be used for all embedded workbooks. Please make sure to save this key in a secure place. If you lose it, you will have to re-generate a new key. 
 4. Copy this key and place it in the server.js file where it says "YOUR_SECRET_KEY_HERE". 
 
-## Generating an Embed URL for your Workbook
+### Generating an Embed URL for your Workbook
 
 1. Now, if we go back to your Sigma workbook by clicking on the back button in the top left, we can retrieve the embed URL. 
 2. Find the drop-down icon next to the dashboard name in the top header bar and select "Embedding". 
@@ -284,7 +284,7 @@ There are two key edits we need to make in order for the server to use our workb
 4. Navigate to your server.js file and un-comment the field that describes the control_id by deleting the "//" at the beginning of the line. Here is where we can place our control_id and pass a value to set that control. Today we will hardcode the value to "Samsung", but in a real world scenario, you would likely pass in a customer_id or other unique identifier to filter the dashboard.
 5. Save your server.js file and navigate back to your terminal. Here we need to stop the server by pressing "Control + C". This will exit the running server process. We can then start it again with our new configuration by running the command "Node server.js".
 6. Now if you go back to your browser and reload the web page, you should notice that we only see data for Samsung now. You will additionally notice that the dynamic text we created for the header now reads "Samsung Sales Performance" rather than "All Brands Sales Performance". 
-# Exploring the Embed
+## Exploring the Embed
 
 For the purpose of this lab, we will now explore the portal as a memeber of the Samsung merchandising team. We have been tasked with identifying which regions to focus our in store marketing efforts on, and will use the Plugs Sales Performance portal to help identify where the majority of our purchases are coming from. 
 
@@ -300,7 +300,7 @@ For the purpose of this lab, we will now explore the portal as a memeber of the 
 10. Click the minus to the left of Order Channel to collapse the view at the aggregate level. You should now see revenue generated by different order channels across regions. 
 11. Minimize the element using the arrows in the top right to collapse this new visuzalization back into the larger page. 
 
-# Helpful Resource
+## Helpful Resource
 
 - Help Center including Documentation: https://help.sigmacomputing.com/hc/en-us
 - Sigma Blog: https://www.sigmacomputing.com/blog/
