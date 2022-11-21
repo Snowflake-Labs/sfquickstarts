@@ -342,7 +342,8 @@ We have data files in our stage as shown in the previous list (ls) command. THes
    ![embed1](assets/embeddingtheworkbook_1.png)
 
   2. Once downloaded, double click on the download and go through the installation steps. This should only take a minute. 
-    ![embed2](assets/embeddingtheworkbook_2.png)
+
+  ![embed2](assets/embeddingtheworkbook_2.png)
 
   3. Now open the app_embed folder that was provided to you. This holds the shell for the portal we will be building today. 
 
