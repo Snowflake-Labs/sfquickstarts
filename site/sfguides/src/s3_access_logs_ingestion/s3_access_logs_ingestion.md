@@ -41,6 +41,8 @@ See [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-a
 
 ![A screenshot of the edit server access logging page. It was the enable radio button selected and a target bucked specified](assets/s3-access-config.png)
 
+Note: S3 access logging may take some time to start creating records. 
+
 
 
 ## Create a storage integration in Snowflake
