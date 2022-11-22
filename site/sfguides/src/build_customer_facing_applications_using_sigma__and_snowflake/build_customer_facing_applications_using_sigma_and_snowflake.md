@@ -334,20 +334,26 @@ After selecting the 'Viz' icon, you will be prompted to select a source to use f
    
     The filter will be added as a page control to the canvas. This product brand filter is additionally what we will pass into our embed URL to only serve up data related to the brand we are exploring. Since this filter started out with a target, there is no need to add one. 
    ### Finishing up the Canvas
+In Sigma, you can add a variety of UI elements to your workbook to customize the look and feel. In this section, we will work with text elements to create a dynamic text element as the header for our workbook. When you click the '+' in the top left, you will see a variety of elements available to you such as:
+- <strong> Image</strong>: Upload images or links to URLs to show an image on the canvas
+- <strong> Button</strong>: Use buttons to navigate to toher workbooks, websites, or download the workbook as a PDF
+- <strong>Embed</strong>: Embed other websites or applications into your workbook
+- <strong>Spacer</strong>: Use to add space between elements on the canvas
+- <strong>Divider</strong>: Use to create hard divisions between sections of the canvas
 
-   1. To start, navigate to your Customer Portal page, and click add element. Under UI elements, select Text. 
+1. To start, navigate to your Customer Portal page, and click add element. Under UI elements, select Text. 
 
    ![build34](assets/buildworkbook_34.png)
 
-   2. We are going to create a dynamic Text element as the header for our page. In the text bar type =If(CountDistint([TRANSACTIONS/Product Brand]) >1, "All Brands", [TRANSACTIONS/Product Brand])Sales Performance. From the text bar, select "Large Heading" for the element size, and drag it to the top. Finally, click the formatting option to center the element. This text element will adjust based ont eh user we log into our portal as, and the brand we are exploring. 
+2. We are going to create a dynamic Text element as the header for our page. In the text bar type <strong>=If(CountDistint([TRANSACTIONS/Product Brand]) >1, "All Brands", [TRANSACTIONS/Product Brand])Sales Performance</strong>. From the text bar, select "Large Heading" for the element size, and drag it to the top. Finally, click the formatting option to center the element. This text element will adjust based ont eh user we log into our portal as, and the brand we are exploring. 
 
    ![build35](assets/buildworkbook_35.png)
 
-   3. On the bottom left, click the down arrow next to your 'Data' page and select "Hide". This will hide the page with the underlying data set from your end users. 
+3. On the bottom left, click the down arrow next to your 'Data' page and select "Hide". This will hide the page with the underlying data set from your end users. 
 
    ![build36](assets/buildworkbook_36.png)
 
-   4. Click Publish to save these changes. 
+4. Click Publish to save these changes. 
    ## Embedding the Sigma Workbook into an Application
 
    ### Building the Application / Portal
