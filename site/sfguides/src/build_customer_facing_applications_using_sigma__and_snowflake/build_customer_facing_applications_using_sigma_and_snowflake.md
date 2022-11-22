@@ -102,14 +102,14 @@ We will use this data to create a retailer portal where brands who sell their pr
 
 - In this lab, never check the "All Queries" box at the top of the worksheet. We want to run SQL queries one at a time, in a specific order. 
 
-2. USE ROLE SYSADMIN; This will set the context of the worksheet to use the role of SYSADMIN when we run the command. We do not want to be in the role ACCOUNTADMIN any more in this lab. 
+2. <strong> USE ROLE SYSADMIN; </strong> This will set the context of the worksheet to use the role of SYSADMIN when we run the command. We do not want to be in the role ACCOUNTADMIN any more in this lab. 
 
-3. USE WAREHOUSE PC_SIGMA_WH; Sets the PC_SIGMA_WH to be used for commands run in the worksheet As you can see by the (XS) to the right of the warehouse name, that an extra small warehouse is being used for this lab. An XS translates to a single node cluster for our virtual warehouse. Here is a link to Snowflake's docs covering warehouses in detail.
-4. USE DATABASE PC_SIGMA_DB; This command tells Snowflake to opperate off the PC_SIGMA_DB database, which was created when your Sigma trial was spun up. 
-5. CREATE SCHEMA EMBEDDED_LAB; This creates a new schema in our PC_SIGMA_DB database.
-6. USE SCHEMA EMBEDDED_LAB; This sets the context of the worksheet to use our newly created schema. 
-7. CREATE STAGE SIGMA_LAB_STAGE URL = 's3://sigma-embedded-lab-demo/LabData/'; This creates an external stage in Snowflake that points to an S3 bucket that has the data files we would like to use for the lab. 
-8. LS @SIGMA_LAB_STAGE; This command lists all of the files in the stage we just created. 
+1. <strong> USE WAREHOUSE PC_SIGMA_WH; </strong> Sets the PC_SIGMA_WH to be used for commands run in the worksheet As you can see by the (XS) to the right of the warehouse name, that an extra small warehouse is being used for this lab. An XS translates to a single node cluster for our virtual warehouse. [Here is a link to Snowflake's docs covering warehouses in detail.](https://docs.snowflake.com/en/user-guide/warehouses-overview.html)
+2. <strong> USE DATABASE PC_SIGMA_DB; </strong> This command tells Snowflake to opperate off the PC_SIGMA_DB database, which was created when your Sigma trial was spun up. 
+3. <strong>CREATE SCHEMA EMBEDDED_LAB;</strong> This creates a new schema in our PC_SIGMA_DB database.
+4. <strong>USE SCHEMA EMBEDDED_LAB; </strong>This sets the context of the worksheet to use our newly created schema. 
+5. <strong>CREATE STAGE SIGMA_LAB_STAGE URL = 's3://sigma-embedded-lab-demo/LabData/'; </strong>This creates an external stage in Snowflake that points to an S3 bucket that has the data files we would like to use for the lab. 
+6. <strong>LS @SIGMA_LAB_STAGE; </strong>This command lists all of the files in the stage we just created. 
 
 ### Loading Data into Snowflake
 
@@ -150,27 +150,27 @@ The data we will be using is demo data for a fictious retailer called Plugs Elec
     );
 
 
-We have data files in our stage as shown in the previous list (ls) command. THese files have certain formats that need to be defined in Snowflake in order for the data to be properly loaded. In this case, we are creating a file format named SIGMA_CSV that is specifiying that the data in the files is delimited by commas, has been compressed, and how to determine null values. We additionally created a table to hold the data we are about to load. More information regarding file formats can be found here. 
+We have data files in our stage as shown in the previous list (ls) command. THese files have certain formats that need to be defined in Snowflake in order for the data to be properly loaded. In this case, we are creating a file format named SIGMA_CSV that is specifiying that the data in the files is delimited by commas, has been compressed, and how to determine null values. We additionally created a table to hold the data we are about to load. More information regarding file formats can be found [here](https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html). 
 
-3. COPY INTO TRANSACTIONS FROM @SIGMA_LAB_STAGE
-   FILE_FORMAT = SIGMA_CSV;
+3. <strong>COPY INTO TRANSACTIONS FROM @SIGMA_LAB_STAGE
+   FILE_FORMAT = SIGMA_CSV;</strong>
 
   - This copies the data from our S3 bucket and loads it into our Transactions table. A SELECT COUNT(*) from the table will show we loaded 3.9 million rows into the table. 
 
-4. GRANT USAGE ON DATABASE PC_SIGMA_DB TO ROLE PC_SIGMA_ROLE; 
- - Snowflake access rights are based upon role based access control (RBAC). This command allows the PC_SIGMA_ROLE to use the PC_SIGMA_DB database. 
+4. <strong>GRANT USAGE ON DATABASE PC_SIGMA_DB TO ROLE PC_SIGMA_ROLE; </strong>
+ - Snowflake access rights are based upon [role based access control (RBAC)](https://docs.snowflake.com/en/user-guide/security-access-control-overview.html). This command allows the PC_SIGMA_ROLE to use the PC_SIGMA_DB database. 
   
-  5. GRANT USAGE ON SCHEMA PC_SIGMA_DB.EMBEDDED_LAB TO ROLE PC_SIGMA_ROLE;
+  5.<strong> GRANT USAGE ON SCHEMA PC_SIGMA_DB.EMBEDDED_LAB TO ROLE PC_SIGMA_ROLE; </strong>
   - This allows the PC_SIGMA_ROLE to use the schema we created earlier in the lab. 
 
-6. GRANT SELECT ON ALL TABLES IN SCHEMA PC_SIGMA_DB.EMBEDDED_LAB TO ROLE PC_SIGMA_ROLE; 
+6. <strong>GRANT SELECT ON ALL TABLES IN SCHEMA PC_SIGMA_DB.EMBEDDED_LAB TO ROLE PC_SIGMA_ROLE;</strong> 
 - This allows our PC_SIGMA_ROLE to query against the transactions table we created. 
    
-7. USE ROLE PC_SIGMA_ROLE; 
+7. <strong>USE ROLE PC_SIGMA_ROLE; </strong>
 - We completed granting access to the data we ingested to the PC_SIGMA ROLE. This command will now allow the user to start reporting on the data from Sigma using this role. 
 
-8. SELECT * FROM TRANSACTIONS;
-- A SELECT * from teh transactions table should complete successfully. If not, please go back and re-run the prior steps of this module as SYSADMIN to ensure permissions were granted to the new role appropriately.    
+8. <strong>SELECT * FROM TRANSACTIONS;</strong>
+- A SELECT * from the transactions table should complete successfully. If not, please go back and re-run the prior steps of this module as SYSADMIN to ensure permissions were granted to the new role appropriately.    
   
 
 ## Building Your Sigma Workbook 
@@ -203,7 +203,7 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 
   - All workbooks are considered purley exploratory until you as their creator actively save the first version. This means you have one central location to start both your ad-hoc analysis and reporting. Once you begin exploring your data, you can choose to leave the unsaved workbook behind, or you can save it an continue to build it out as a report. 
 
-  2. Lets start by formatting our currency columns. Select the columns for Sale Amount, Item Price, and Wholesale Cost, then click the "$" icon by the formula bar. You will see that these columns are now formatted as curency.
+  2. Let's start by formatting our currency columns. Select the columns for Sale Amount, Item Price, and Wholesale Cost, then click the "$" icon by the formula bar. You will see that these columns are now formatted as curency.
 
 ![build6](assets/buildworkbook_6.png)
 
@@ -223,7 +223,9 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 
 ![build10](assets/buildworkbook_10.png)
 
-  - Every action we take in Sigma produces machine-generated SQL, optimized for Snowflake, that runs live against the warehouse. This ensures that the data is secure and up to date at all times. YOu can see the queries we are generating by clicking the dropdown next to the refresh button on the top right nad selecting "Query History". 
+  - Every action we take in Sigma produces machine-generated SQL, optimized for Snowflake, that runs live against the warehouse. This ensures that the data is secure and up to date at all times. YOu can see the queries we are generating by clicking the dropdown next to the refresh button on the top right and selecting "Query History". 
+
+  - If we navigate back to our Snowflake environment quickly, we can see the queries being pushed down in our Snowflake query history view as well. 
 
 ![build11](assets/buildworkbook_11.png)
 
@@ -232,7 +234,7 @@ We have data files in our stage as shown in the previous list (ls) command. THes
   ### Creating Visualizations 
   It is often easier to spot trends, outliers, or inishgts which lead to further questions when viewing data in a vizualization. Sigma makes it easy to create vizualizations of your data while also enabling you to dig into the data that makes up the vizualization. 
 
-  1. Start the creation of a visuzalization by selecting the table that we just build, then clicking the "Create Child Element" icon on the top right corner. Select "Visualization" to start creating a new chart. 
+  1. Start the creation of a visuzalization by sclicking on the table that we just build, then clicking the "Create Child Element" icon on the top right corner. Select "Visualization" to start creating a new chart. 
    
 ![build12](assets/buildworkbook_12.png)
 
@@ -244,6 +246,8 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 ![build14](assets/buildworkbook_14.png)
 
   4. Click the 'kebab' (3 dots) on the top right hand side of the element. From the drop down, select move to new page. This will create a page in our workbook to hold our visualizations. Rename this new page "Customer Portal".
+   
+![build38](assets/buildworkbook_38.png)
 
   5. Now lets looks at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selectiong the plus icon on the top of the left hand pannel next to our 'Page Elements' title. Click on this icon to get a list of elements that we can add to our canvas, and choose 'Viz'. 
 
@@ -275,7 +279,12 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 ![build22](assets/buildworkbook_22.png)
 ![build23](assets/buildworkbook_23.png)
 
-  12. For the data source, go to the In Use tab adn select the Workbook Element "Transactions". For the visualization type, select "Single Value" from the drop down list. 
+After selecting the 'Viz' icon, you will be prompted to select a source to use for that 'viz'. You can see tabs for selecting:
+- <strong> In Use </strong> : sources that are currently being used by other elements in the workbook.
+- <strong> New </strong>: a new source that could be a table, dataset, SQL, or uploaded CSV.
+- <strong> Page Elements </strong> : any data elements already in the workbook, such as the bar chart or table we created.
+
+12. For the data source, go to the In Use tab and select the Workbook Element "Transactions". For the visualization type, select "Single Value" from the drop down list. 
 
  ![build24](assets/buildworkbook_24.png)
 
@@ -292,11 +301,20 @@ We have data files in our stage as shown in the previous list (ls) command. THes
   ![build27](assets/buildworkbook_27.png)
 
    ### Create Filters
-   1. Next, let's add a filter to this data. We will do this by adding a control element to our canvas. Controls enable interactions with the chart such as filtering the charts when in use. Clicking the "+" icon on the upper left hand pane next to "Page ELements", select "Date". This will add a Date control element to the canvas. 
+   Let's add a filter to this data. We will do this by adding a control element to our canvas. Controls enable interactions with the chart such as filtering the charts when in use. When clicking the '+' icon in the upper left hand pane, we will see options for control elements:
+   - <strong> Number Range</strong>: Creates a range of values you wish to look at
+   - <strong> List Values</strong>: Creates a list of values for users to choose from
+   - <strong> Text Box</strong>: Allows users to input free form text
+   - <strong> Switch</strong>: Allows users to filter on Boolean (true/false) values
+   - <strong> Drill Down</strong>: Allows you to specify specific drill paths
+   - <strong> Date </strong>: Allows users to filter for a specific date or date range
+   
+   
+  1. Clicking the "+" icon on the upper left hand pane next to "Page ELements", select "Date". This will add a Date control element to the canvas. 
 
 ![build28](assets/buildworkbook_28.png)
 
-   2. After adding the "Date" control to our Customer Portal page, lets drag it to the top of the page and update the control_id to say "Date-Range" and update the control label to say "Select a Date Range". 
+   1. After adding the "Date" control to our Customer Portal page, lets drag it to the top of the page and update the control_id to say "Date-Range" and update the control label to say "Select a Date Range". 
 
 ![build29](assets/buildworkbook_29.png)
 
@@ -336,7 +354,7 @@ We have data files in our stage as shown in the previous list (ls) command. THes
 
   We are now going to begin buildng our portal where we can embed our workbook. This will be a Sales Performance dashboard where our family of brands can log in to see how their products are performing in our store. 
 
-  1. First we will need to install NOde.js. Node is going to allow us to set up a local server, as well as the front end portal, and securely embed our dashboards with row level security so that brands are not seeing eachother's data. Downlaod and install Node.js by going here: https://nodejs.org/
+  1. First we will need to install Node.js. Node is going to allow us to set up a local server, as well as the front end portal, and securely embed our dashboards with row level security so that brands are not seeing eachother's data. Downlaod and install Node.js by going here: [https://nodejs.org/](https://nodejs.org/)
    - Note, there are many programming languages and libraries you can use to code a client and server side application, this just happens to be the one we will be using today. 
 
    ![embed1](assets/embeddingtheworkbook_1.png)
