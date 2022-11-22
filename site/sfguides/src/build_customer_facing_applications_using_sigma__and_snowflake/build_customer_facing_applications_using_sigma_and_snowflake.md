@@ -382,16 +382,16 @@ In Sigma, you can add a variety of UI elements to your workbook to customize the
   ![embed5](assets/embeddingtheworkbook_5.png)
 
   6. If we move over to the server.js file, we can start to see what is expected.  Sigma requires a variety of parameters to be set when requesting a dashboard. These parameters not only ensure security, but also allow for flexible interaction with filters and parameters within the dashboard.
--  <dashboard_embed_path> is the Embed Path that is generated on the dashboard you wish to embed.
-- <random_nonce_value> is a  random unique string (less than 255 characters). Sigma uses this to prevent application embed URLs from being shared and reused.
-- <allow_export_boolean> [optional] is a boolean (true/false) parameter that controls whether the viewer of the dashboard will be able to download data from the dashboard visualizations. If this parameter is not specified, the URL will default to false and viewers will not be able to download data.
-- <session_length> is the number of seconds after <unix_timestamp> that the URL will remain valid. After the specified number of seconds, the Application Embed will no longer display new values.
-- <unix_timestamp> is the current time as a UNIX timestamp. Sigma uses this in combination with the <session_length> to determine if your link has expired. The URL is valid after the <unix_timestamp> and before the <session_length> expiration.
-- <control_id> and <control_value> are the ID and value of a dashboard control you'd wish to pass through to the dashboard. You may pass multiple control IDs and values. This will allow you to customize what your viewers see.
+- <strong> <dashboard_embed_path> </strong>is the Embed Path that is generated on the dashboard you wish to embed.
+- <strong><random_nonce_value></strong> is a  random unique string (less than 255 characters). Sigma uses this to prevent application embed URLs from being shared and reused.
+- <strong> <allow_export_boolean> </strong>(optional) is a boolean (true/false) parameter that controls whether the viewer of the dashboard will be able to download data from the dashboard visualizations. If this parameter is not specified, the URL will default to false and viewers will not be able to download data.
+- <strong><session_length></strong> is the number of seconds after <unix_timestamp> that the URL will remain valid. After the specified number of seconds, the Application Embed will no longer display new values.
+- <strong><unix_timestamp></strong> is the current time as a UNIX timestamp. Sigma uses this in combination with the <strong><session_length> </strong>to determine if your link has expired. The URL is valid after the <strong><unix_timestamp></strong> and before the <strong><session_length></strong> expiration.
+- <strong><control_id></strong> and <strong><control_value></strong> are the ID and value of a dashboard control you'd wish to pass through to the dashboard. You may pass multiple control IDs and values. This will allow you to customize what your viewers see.
 Note: All controls must exist on the dashboard. This is to ensure changes to a dashboard do not cause data to be visible unintentionally.
-- < mode > Determines the end users permissions. For this lab, it will be set to mode = explore to allow end users to take advantage of Sigma’s exploratory capabilities. 
+- <Strong>< mode ></strong> Determines the end users permissions. For this lab, it will be set to <strong>mode = explore</strong> to allow end users to take advantage of Sigma’s exploratory capabilities. 
 
-   We need to install a couple libraries in order to get this working: express and uuid. These libraries are used to construct a unique signature for your embed URLs when combined with a secret key provided by Sigma. This makes it so that no one is able to ever modify ad request the dashboard other than the server.
+We need to install a couple libraries in order to get this working: express and uuid. These libraries are used to construct a unique signature for your embed URLs when combined with a secret key provided by Sigma. This makes it so that no one is able to ever modify ad request the dashboard other than the server.
 
 ![embed6](assets/embeddingtheworkbook_6.png)
 
@@ -399,7 +399,7 @@ Note: All controls must exist on the dashboard. This is to ensure changes to a d
 
 ![embed7](assets/embeddingtheworkbook_7.png)
 
-8. Now we can install the needed libraries by issuing the following command: npm install expresss uuid.
+8. Now we can install the needed libraries by issuing the following command:<strong> npm install expresss uuid</strong>.
 
 ![embed8](assets/embeddingtheworkbook_8.png)
 
