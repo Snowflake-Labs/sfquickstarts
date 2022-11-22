@@ -243,7 +243,7 @@ Setup S3 bucket with following [AWS instructions](https://docs.aws.amazon.com/Am
 
 Target Bucket -> Open property -> Select “Create Event notification”
 
-![Screenshot of empty event notfications dashboard in AWS](assets/generic-s3-event-notifications.png)
+![Screenshot of empty event notifications dashboard in AWS](assets/generic-s3-event-notifications.png)
 
 Fill out below items
 - Name: Name of the event notification (e.g. Auto-ingest Snowflake).
@@ -258,7 +258,7 @@ Fill out below items
 ![Screenshot of destination configuration in create event notification form in AWS console](assets/generic-s3-crate-event-notification-destination.png)
 
 Event notification has been created
-![Screenshot of event notfications dashboard with created notification in AWS](assets/generic-s3-event-notifications-filled.png)
+![Screenshot of event notifications dashboard with created notification in AWS](assets/generic-s3-event-notifications-filled.png)
 
 Refresh Snowpipe to retrieve unloaded files
 ```sql
@@ -277,7 +277,7 @@ select *
 
 Now that the raw data is loaded into Snowflake, we will create a custom python function to parse and clean up the raw logs.
 
-Create a python user defined tablular function (UDTF) to process logs. This will return a table.
+Create a python user defined table function (UDTF) to process logs. This will return a table.
 
 ```sql
 create or replace function parse_s3_access_logs(log STRING)
@@ -341,7 +341,7 @@ insert into s3_access_logs (select parsed_logs.*
 alter task s3_access_logs_transformation resume;
 ```
 
-After the task runs, very that the data was parsed. If you don't wish to wait either reduct the time specified in schedule or run the above `insert into` command manually.
+After the task runs, very that the data was parsed. If you don't wish to wait either reduce the time specified in schedule or run the above `insert into` command manually.
 
 
 ## Query the data
@@ -385,7 +385,7 @@ WHERE Requester IS NULL;
 Duration: 0
 
 Having completed this quickstart you have successfully:
-- Configued S3 access logging
+- Configured S3 access logging
 - Created and configured an external stage using S3
 - Ingested S3 access logs into Snowflake
 - Created and configured a pipeline to automatically load data
