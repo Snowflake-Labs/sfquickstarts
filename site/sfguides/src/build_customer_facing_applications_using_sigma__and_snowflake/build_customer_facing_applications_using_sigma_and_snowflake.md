@@ -439,18 +439,17 @@ There are two key edits we need to make in order for the server to use our workb
 
 ![embed16](assets/embeddingtheworkbook_16.png)
 
-4. Now it has generated the embed path for your dashboard. IF you select the unique identifier on the end you can copy and pase it into the server.js file where it says "YOUR_DASHBOARD_ID_HERE".
-
-![embed17](assets/embeddingtheworkbook_17.png)
-
-5. Save your server.js file.
-6. Once complete, we are ready to start our sever. Back in your terminal, you can run the folloiwng command to start the server: node server.js
+1. Now it has generated the embed path for your dashboard. Select COPY to copy this URL, then paste it into the server.js file where it says "YOUR WORKBOOK PATH HERE".
 
 ![embed18](assets/embeddingtheworkbook_18.png)
 
-7. Now that the server is running, we can visit our portal by going to http://localhost:3000 in our browser. 
+5. Save your server.js file.
+6. Once complete, we are ready to start our sever. Back in your terminal, you can run the folloiwng command to start the server: <strong>node server.js</strong>
 
 ![embed19](assets/embeddingtheworkbook_19.png)
+1. Now that the server is running, we can visit our portal by going to http://localhost:3000 in our browser. 
+
+
 ## Row Level Security 
 
 1. Now we might want to put some row level security on this dashboard, so that brands can only see data related to the sale of their own products. Navigate back to your data page in your Sigma workbook. 
@@ -463,17 +462,23 @@ There are two key edits we need to make in order for the server to use our workb
 
 ![rls2](assets/rowlevelsecurity_2.png)
 
-4. Navigate to your server.js file and un-comment the field that describes the control_id by deleting the "//" at the beginning of the line. Here is where we can place our control_id and pass a value to set that control. Today we will hardcode the value to "Samsung", but in a real world scenario, you would likely pass in a customer_id or other unique identifier to filter the dashboard.
+1. Navigate to your server.js file and un-comment the field that contains the control_id by deleting the "//" before searchParams at the beginning of the line. Here is where we can place thr control_id from our workbook and pass a value to set that control. Today, we will hardcode a value, but these can always be set in a more dynamic fashion based on user properties. Update control-id to 'Product-Brand' (or whatever the control ID was labeled in your workbook) and the controlValue to 'Samsung' as shown in the photos below.  
 
+
+Before the changes in step 1 your file looks like this:
+![rls6](assets/rowlevelsecurity_6.png)
+After changes it should look like this: 
 ![rls3](assets/rowlevelsecurity_3.png)
 
-5. Save your server.js file and navigate back to your terminal. Here we need to stop the server by pressing "Control + C". This will exit the running server process. We can then start it again with our new configuration by running the command "Node server.js".
+5. Save your server.js file and navigate back to your terminal. Here we need to stop the server by pressing <strong>Control + C</strong>. This will exit the running server process. We can then start it again with our new configuration by running the command <strong>Node server.js</strong>.
 
 ![rls4](assets/rowlevelsecurity_4.png)
 
 6. Now if you go back to your browser and reload the web page, you should notice that we only see data for Samsung now. You will additionally notice that the dynamic text we created for the header now reads "Samsung Sales Performance" rather than "All Brands Sales Performance". 
 
 ![rls5](assets/rowlevelsecurity_5.png)
+
+For more details on how to set up dynamic row-level security in Sigma, refer [here](https://help.sigmacomputing.com/hc/en-us/articles/6709896696979-User-Attributes).
 ## Exploring the Embed
 
 For the purpose of this lab, we will now explore the portal as a memeber of the Samsung merchandising team. We have been tasked with identifying which regions to focus our in store marketing efforts on, and will use the Plugs Sales Performance portal to help identify where the majority of our purchases are coming from. 
