@@ -208,7 +208,7 @@ Configure the Snowflake snowpipe
 create pipe public.vpc_flow_pipe auto_ingest=true as
   copy into public.vpc_flow
   from @public.vpc_flow_stage
-  file_format = public.vpc_flow_format
+  file_format = (type = parquet)
 ;
 ```
 
