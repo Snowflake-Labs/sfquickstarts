@@ -4,7 +4,7 @@ categories: Getting Started
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark, Streamlit
+tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai
 
 # Getting Started With Snowpark for Python and Streamlit
@@ -48,7 +48,7 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 Duration: 5
 
-1. Create conda environment by downloading the miniconda installer from https://conda.io/miniconda.html. OR, you may use any other Python environment with Python 3.8
+1. Create conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). OR, you may use any other Python environment with Python 3.8
 
     `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
 
@@ -80,7 +80,7 @@ import pandas as pd
 
 Duration: 5
 
-In this step, you'll create a [Session object](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-a-session)
+In this step, you'll create a [Session object](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-session.html)
 to connect to your Snowflake. Here’s a quick way of doing that, but note that hard coding credentials directly in code is not recommended in production environments. In production environments a better approach would be to load credentials from [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) or [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py), for example.
 
 ```python
@@ -144,15 +144,17 @@ Duration: 10
 
 In this step, you'll add...
 
-1. A header and sub-header and also use containers and columns to organize our dataframes using Streamlit’s *columns()* and *container()*
-2. Tabular display of the data using Streamlit's *dataframe()*
-3. Interactive bar chart using Streamlit's *slider()* and *bar_chart()*
+A header and sub-header and also use containers and columns to organize our dataframes using Streamlit’s *columns()* and *container()*
 
 ```python
 # Add header and a subheader
 st.header("Knoema: Environment Data Atlas")
 st.subheader("Powered by Snowpark for Python and Snowflake Data Marketplace | Made with Streamlit")
+```
 
+Use containers and columns to organize our dataframes using Streamlit’s *columns()* and *container()* to display the data using Streamlit's *dataframe()* and an interactive bar chart using Streamlit's *slider()* and *bar_chart()*
+
+```python
 # Use columns to display the three dataframes side-by-side along with their headers
 col1, col2, col3 = st.columns(3)
 with st.container():
@@ -266,10 +268,9 @@ if __name__ == "__main__":
 
 Duration: 10
 
-The fun part! Assuming your [Python script](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/my_snowpark_streamlit_app.py)
-) is free of syntax and connection errors, you’re ready to run the application.
+The fun part! Assuming your [application script](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/my_snowpark_streamlit_app.py) is free of syntax and connection errors, you’re ready to run the application.
 
-You can run the by executing `streamlit run my_snowpark_streamlit_app.py` at the command line.
+To run the application, execute `streamlit run my_snowpark_streamlit_app.py` at the command line.
 
 In the application:
 
