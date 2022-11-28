@@ -48,7 +48,7 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 Duration: 5
 
-1. Create conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). OR, you may use any other Python environment with Python 3.8
+1. Create conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8)
 
     `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
 
@@ -99,7 +99,9 @@ def create_session_object():
    return session
 ```
 
-In the above code snippet, replace variables enclosed in “<>” with your values. Note: For the *account* parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.
+In the above code snippet, replace variables enclosed in “<>” with your values. 
+
+*Note*: For the *account* parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.
 
 <!-- ------------------------ -->
 ## Load Data in Snowpark DataFrames
@@ -144,7 +146,7 @@ Duration: 10
 
 In this step, you'll add...
 
-A header and sub-header and also use containers and columns to organize our dataframes using Streamlit’s *columns()* and *container()*
+- A header and sub-header
 
 ```python
 # Add header and a subheader
@@ -152,7 +154,7 @@ st.header("Knoema: Environment Data Atlas")
 st.subheader("Powered by Snowpark for Python and Snowflake Data Marketplace | Made with Streamlit")
 ```
 
-Use containers and columns to organize our dataframes using Streamlit’s *columns()* and *container()* to display the data using Streamlit's *dataframe()* and an interactive bar chart using Streamlit's *slider()* and *bar_chart()*
+- Use containers and columns to organize our dataframes using Streamlit’s *columns()* and *container()* to display the data using Streamlit's *dataframe()* and an interactive bar chart using Streamlit's *slider()* and *bar_chart()*
 
 ```python
 # Use columns to display the three dataframes side-by-side along with their headers
@@ -303,7 +305,7 @@ else:
   session = st.session_state['snowpark_session']
 ```
 
-- Checkout the [updated application on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/my_snowpark_streamlit_app.py)
+- Checkout the [updated application on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/new_snowpark_streamlit_app.py)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
