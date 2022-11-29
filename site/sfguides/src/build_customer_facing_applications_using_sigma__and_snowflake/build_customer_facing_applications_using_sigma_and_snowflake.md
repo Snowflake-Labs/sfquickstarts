@@ -253,12 +253,11 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
    
 ![build38](assets/buildworkbook_38.png)
 
-  5. Now let's look at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selectiong the plus icon on the top of the left hand pannel next to our 'Page Elements' title. Click on this icon to get a list of elements that we can add to our canvas, and choose 'Viz'. 
+  5. Now let's look at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selectiong the plus icon on the top of the left hand pannel next to our 'Page Overview' title. Click on this icon to get a list of elements that we can add to our canvas, and choose 'Viz'. 
 
-![build15](assets/buildworkbook_15.png)
 ![build16](assets/buildworkbook_16.png)
 
-  6. After selecting the 'Viz' icon, you will be prompted to select a source to use for that visuzalization. You can see tabs for "In Use", which shows sources currently being used by other elements in the workbook, "New", which allows you to add a new source from a table, dataset, SQL, or CSV upload, and "Page Elements", which holds all of the data elements already in the workbook, such as the bar chart we created or the table. From the "In Use" tab, select the Workbook Element "Transactions". 
+  1. After selecting the 'Viz' icon, you will be prompted to select a source to use for that visuzalization. You can see tabs for "In Use", which shows sources currently being used by other elements in the workbook, "New", which allows you to add a new source from a table, dataset, SQL, or CSV upload, and "Page Elements", which holds all of the data elements already in the workbook, such as the bar chart we created or the table. From the "In Use" tab, select the Workbook Element "Transactions". 
 
 ![build17](assets/buildworkbook_17.png)
 
