@@ -211,7 +211,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 
 ![build7](assets/buildworkbook_7.png)
 
-  4. Click the drop down to the right of Purchase Date and select "Truncate Date - Day". This will now display the purchase timestamps as the date only. Rename the column to Purchase Date, then repeat this process for the Cust Since column.
+  4. Click the drop down to the right of Purchase Date and select "Truncate Date - Day". This will now display the purchase timestamps as the date only. Rename the column to Purchase Date, by double clicking the column name and typing "Purchase Date". Repeat this process for the Cust Since column.
 
 ![build8](assets/buildworkbook_8.png)
 
