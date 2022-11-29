@@ -265,7 +265,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 
   ![build18](assets/buildworkbook_18.png)
 
-  8. Notice that Sigma has defaulted to change the aggregation to "Day", and the title now reads "Day of Date". We can change this aggregation at any time using the dropdown next to the field name, and selecting a new aggregation level under the "Truncate Date" submenu. Let's change the aggregation level to be "Month".   
+  1. We previously truncated our purchase date timestamp to the day of date, but can change this aggregation level for the visualization. Using the dropdown next to the field name, select a new aggregation level under the "Truncate Date" submenu. Let's change the aggregation level to be "Month".   
 
 ![build19](assets/buildworkbook_19.png)
 
