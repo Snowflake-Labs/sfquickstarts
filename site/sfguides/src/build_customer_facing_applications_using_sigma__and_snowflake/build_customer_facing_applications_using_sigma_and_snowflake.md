@@ -341,7 +341,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
    ![build32](assets/buildworkbook_32.png)
 
 
-   5. CLick on the kebab menu to the right of the "Product Brand" filter and select "Convert to Page Control".
+   5. Click on the kebab menu to the right of the "Product Brand" filter and select "Convert to Page Control".
    
    ![build33](assets/buildworkbook_33.png)
    
@@ -359,16 +359,19 @@ In Sigma, you can add a variety of UI elements to your workbook to customize the
 
    ![build34](assets/buildworkbook_34.png)
 
-2. We are going to create a dynamic text element as the header for our page. In the text bar type <strong>=If(CountDistinct([TRANSACTIONS/Product Brand]) >1, "All Brands", [TRANSACTIONS/Product Brand])Sales Performance</strong>. From the text bar, select "Large Heading" for the element size, and drag it to the top. Finally, click the formatting option to center the element. This text element will adjust based on the user we log into our portal as, and the brand we are exploring. 
+2. We are going to create a dynamic text element as the header for our page. In the text bar type '='. This will start the input of a formula. In the formula bar type <strong>If(CountDistinct([TRANSACTIONS/Product Brand]) >1, "All Brands", [TRANSACTIONS/Product Brand])</strong>. Hit Enter. You should now see a circle stating "All Brands". To the right of this, type "Sales Performance".
 
+![build42](assets/buildworkbook_42.png)
 
-  ![build35](assets/buildworkbook_35.png)
+3. Click your new dynamic text element to open the formating bar at the top.Select "Large Heading" for the element size, and drag your text element to the top of the page. Finally, click the formatting option to center the element. This dynamic title will adjust based on the user we log into our portal as, and the brand we are exploring. 
 
-3. On the bottom left, click the down arrow next to your 'Data' page and select "Hide". This will hide the page with the underlying data set from your end users. 
+  ![build43](assets/buildworkbook_43.png)
+
+4. On the bottom left, click the down arrow next to your 'Data' page and select "Hide". This will hide the page with the underlying data set from your end users. 
 
   ![build36](assets/buildworkbook_36.png)
 
-4. Click Publish to save these changes. 
+5. Click Publish to save these changes. 
    
 ## Embedding the Sigma Workbook into an Application
 
