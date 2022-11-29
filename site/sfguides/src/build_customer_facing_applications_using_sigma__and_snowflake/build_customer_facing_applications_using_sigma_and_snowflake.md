@@ -257,7 +257,13 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 
 ![build16](assets/buildworkbook_16.png)
 
-  1. After selecting the 'Viz' icon, you will be prompted to select a source to use for that visuzalization. You can see tabs for "In Use", which shows sources currently being used by other elements in the workbook, "New", which allows you to add a new source from a table, dataset, SQL, or CSV upload, and "Page Elements", which holds all of the data elements already in the workbook, such as the bar chart we created or the table. From the "In Use" tab, select the Workbook Element "Transactions". 
+  6. After selecting the 'Viz' icon, you will be prompted to select a source to use for the new visualization. You can see tabs for selecting:
+- <strong> In Use </strong> : sources that are currently being used by other elements in the workbook.
+- <strong> New </strong>: a new source that could be a table, dataset, SQL, or uploaded CSV.
+- <p><strong> Page Elements </strong> : any data elements already in the workbook, such as the bar chart or table we created.<br> 
+
+<br>
+  From the "In Use" tab, select the Workbook Element "Transactions". </p>
 
 ![build17](assets/buildworkbook_17.png)
 
@@ -265,7 +271,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 
   ![build18](assets/buildworkbook_18.png)
 
-  1. We previously truncated our purchase date timestamp to the day of date, but can change this aggregation level for the visualization. Using the dropdown next to the field name, select a new aggregation level under the "Truncate Date" submenu. Let's change the aggregation level to be "Month".   
+  8. We previously truncated our purchase date timestamp to the day of date, but can change this aggregation level for the visualization. Using the dropdown next to the field name, select a new aggregation level under the "Truncate Date" submenu. Let's change the aggregation level to be "Month".   
 
 ![build19](assets/buildworkbook_19.png)
 
@@ -284,29 +290,26 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 ![build21](assets/buildworkbook_21.png)
 
 
-  11. Let's create one more visualization around our revenue generated. Again, select the "+" icon on the top left of the screen and select "Viz". 
+  12. Let's create one more visualization around our revenue generated. Again, select the "+" icon on the top left of the screen and select "Viz". 
 
 ![build22](assets/buildworkbook_22.png)
 ![build23](assets/buildworkbook_23.png)
 
-After selecting the 'Viz' icon, you will be prompted to select a source to use for the new visualization. You can see tabs for selecting:
-- <strong> In Use </strong> : sources that are currently being used by other elements in the workbook.
-- <strong> New </strong>: a new source that could be a table, dataset, SQL, or uploaded CSV.
-- <strong> Page Elements </strong> : any data elements already in the workbook, such as the bar chart or table we created.
 
-12. For the data source, go to the In Use tab and select the Workbook Element "Transactions". For the visualization type, select "Single Value" from the drop down list. 
+
+13. For the data source, go to the In Use tab and select the Workbook Element "Transactions". For the visualization type, select "Single Value" from the drop down list. 
 
  ![build24](assets/buildworkbook_24.png)
 
-13. Next drag Revenue to the value. This will automatically sum the revenue across all transactions. Rename this visualization to Total Revenue by double clicking Sum of Revenue on the left hand side and typing Total Revenue. 
+14. Next drag Revenue to the value. This will automatically sum the revenue across all transactions. Rename this visualization to Total Revenue by double clicking Sum of Revenue on the left hand side and typing Total Revenue. 
 
  ![build25](assets/buildworkbook_25.png)
 
-14. Finally, we want to share some transaction level data with our end users. From our transactions table on the data page, click "Create child element - table". This create a new table from our Transactions table. Let's sort this table by purchase date descending, so that our most recent transactions are shown first. Finally, move this element to our Customer Portal page. 
+15. Finally, we want to share some transaction level data with our end users. From our transactions table on the data page, click "Create child element - table". This create a new table from our Transactions table. Let's sort this table by purchase date descending, so that our most recent transactions are shown first. Finally, move this element to our Customer Portal page. 
 
   ![build26](assets/buildworkbook_26.png)
 
-15. Drag and drop the visuzaliations on the Customer Portal page so that the Total Revenue element is at the top, the line chart and bar graph are side by side below it, and the transactions table is at the bottom.
+16. Drag and drop the visuzaliations on the Customer Portal page so that the Total Revenue element is at the top, the line chart and bar graph are side by side below it, and the transactions table is at the bottom.
 
   ![build27](assets/buildworkbook_27.png)
 
