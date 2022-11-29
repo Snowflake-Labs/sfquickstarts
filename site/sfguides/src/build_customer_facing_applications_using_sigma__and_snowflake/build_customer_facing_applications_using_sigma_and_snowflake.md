@@ -273,9 +273,16 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 
 ![build20](assets/buildworkbook_20.png)
 
-  10. We now have a line graph with revenue by month. Let's add some more detail by breaking the series out by customer age group. To do this add "AGE_GROUP" to the color grouping section in the left sidebar. Once this is done, double click the title on the line graph and rename it Revenue by Month & Age Group. 
+  10. We now have a line graph with revenue by month. Let's add some more detail by breaking the series out by customer age group. To do this add "AGE_GROUP" to the color grouping section in the left sidebar.  
 
+
+![build41](assets/buildworkbook_41.png)
+
+  11. You will notice a sharp drop off on the right side of the chart where our data end. Right click on the right most data point, and select "exclude 2022-04". Once this is done, rename the visualization to "Revenue by Month & Age Group".
+
+![build40](asssets/../assets/Buildworkbook_40.png)
 ![build21](assets/buildworkbook_21.png)
+
 
   11. Let's create one more visualization around our revenue generated. Again, select the "+" icon on the top left of the screen and select "Viz". 
 
