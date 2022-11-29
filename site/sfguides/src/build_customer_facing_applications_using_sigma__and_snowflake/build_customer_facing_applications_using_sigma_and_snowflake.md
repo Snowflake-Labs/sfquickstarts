@@ -219,9 +219,13 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 
 ![build9](assets/buildworkbook_9.png)
 
-  6. Finally, to prevent end users from extracting more sensitive customer information, click the arrow next to the Cust_JSON column and select "Hide Column" from the drop down. 
+  6. To prevent end users from extracting more sensitive customer information, click the arrow next to the Cust_JSON column and select "Hide Column" from the drop down. 
 
 ![build10](assets/buildworkbook_10.png)
+
+ 7. Finally, click the Revenue column once more. For reporting purposes, we are going to remove the decimals so that our total Revenue metrics in the report are more aligned with the industry standard. With the column selected, click the decrease decimal places button in the top tool bar twice to turn this into a whole number. 
+
+ ![build39](assets/buildworkbook_39.png)
 
   - Every action we take in Sigma produces machine-generated SQL, optimized for Snowflake, that runs live against the warehouse. This ensures that the data is secure and up to date at all times. You can see the queries we are generating by clicking the dropdown next to the refresh button on the top right and selecting "Query History". 
 
