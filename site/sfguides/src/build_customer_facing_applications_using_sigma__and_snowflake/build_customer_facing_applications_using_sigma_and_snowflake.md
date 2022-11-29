@@ -26,7 +26,7 @@ Duration: 1
 - How end users of the application can explore data and generate new insights in a self-serve fashion 
 
 ### What You’ll Need 
-- Access to a Snowflake account on AWS
+- Access to a Snowflake trial account on AWS or a Snowflake instance on AWS in which you have Account Admin permissions.
 - Download Portal Template: 
 - Download and Install Node.js:
 - Download SQL Script: 
