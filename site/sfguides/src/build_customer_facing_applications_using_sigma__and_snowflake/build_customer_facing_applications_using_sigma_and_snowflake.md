@@ -562,6 +562,7 @@ If you want to learn more about Snowflake Guide formatting, checkout the officia
 - Connecting Sigma to Snowflake
 - Creating workbooks, visualizations, and filters
 - Embedding Sigma workbooks into an application
+- Adding row level security to an embed
 - Exploring an embedded Sigma workbook 
 
 # Helpful Resources
