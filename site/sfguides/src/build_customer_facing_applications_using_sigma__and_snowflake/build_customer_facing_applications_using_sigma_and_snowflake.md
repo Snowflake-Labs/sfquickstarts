@@ -469,6 +469,8 @@ There are two key edits we need to make in order for the server to use our workb
 
 7. Now that the server is running, we can visit our portal by going to [http://localhost:3000](http://localhost:3000) in our browser. 
 
+8. You will notice that your workbook shows All Brands Sales Performance as we have not added any row level security yet. We will see changes in this title following the next section.
+
 
 ## Row Level Security 
 
