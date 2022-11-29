@@ -323,7 +323,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
    - <strong> Date </strong>: Allows users to filter for a specific date or date range
    
    
-  1. Click the "+" icon on the upper left hand pane next to "Page ELements", then select "Date". This will add a Date control element to the canvas. 
+  1. Click the "+" icon on the upper left hand pane, then select "Date". This will add a Date control element to the canvas. 
 
 ![build28](assets/buildworkbook_28.png)
 
