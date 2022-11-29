@@ -215,7 +215,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 
 ![build8](assets/buildworkbook_8.png)
 
-  5. On the far right side of the table you will see the CUST_JSON column. This column holds JSON data around the customers who made these purchases. Click on the arrow to the right of the column name, and choose "extract columns". This will bring up a window where Sigma has already identified the fields within the JSON object. Select Age Group and Cust_Gender. You will notice that Sigma intuitively parses this data out of the JSON object and adds it to the table as columns. 
+  5. On the far right side of the table you will see the CUST_JSON column. This column holds JSON data around the customers who made these purchases. Click on the arrow to the right of the column name, and choose "extract columns". This will bring up a window where Sigma has already identified the fields within the JSON object. Select Age Group and Cust_Gender, then click confirm. You will notice that Sigma intuitively parses this data out of the JSON object and adds it to the table as columns. 
 
 ![build9](assets/buildworkbook_9.png)
 
