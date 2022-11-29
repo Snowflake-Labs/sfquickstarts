@@ -102,7 +102,7 @@ We will use this data to create a retailer portal where brands who sell their pr
 
 - In this lab, never check the "All Queries" box at the top of the worksheet. We want to run SQL queries one at a time, in a specific order. 
 
-2. <strong> USE ROLE SYSADMIN; </strong> This will set the context of the worksheet to use the role of SYSADMIN when we run the commands. We do not want to be in the role ACCOUNTADMIN anymore in this lab. 
+2. <strong> USE ROLE ACCOUNTADMIN; </strong> This will set the context of the worksheet to use the role of ACCOUNTADMIN when we run the commands. This role holds the highest level of permission in a given Snowflake account, and can create new object, grant permissions to other roles, and more. 
 
 3. <strong> USE WAREHOUSE PC_SIGMA_WH; </strong> Sets the PC_SIGMA_WH to be used for commands run in the worksheet. As you can see by the (XS) to the right of the warehouse name, an extra small warehouse is being used for this lab. An XS translates to a single node cluster for our virtual warehouse. [Here is a link to Snowflake's docs covering warehouses in detail.](https://docs.snowflake.com/en/user-guide/warehouses-overview.html)
 4. <strong> USE DATABASE PC_SIGMA_DB; </strong> This command tells Snowflake to opperate off the PC_SIGMA_DB database, which was created when your Sigma trial was spun up. 
