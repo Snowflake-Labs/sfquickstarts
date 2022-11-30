@@ -3,9 +3,9 @@ id: build_an_ad_tag_in_python_on_aws
 summary: A guide to building and running a simple ad tag (in Python) Powered by Snowflake and AWS
 categories: Getting Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started
+tags: Getting Started, AdTech
 
 # Build an Ad Tag in Python on AWS
 
