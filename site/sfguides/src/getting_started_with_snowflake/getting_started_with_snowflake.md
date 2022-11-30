@@ -92,7 +92,6 @@ The top left corner contains the following:
 
 The top right corner contains the following:
 
-- **+** button: This creates a new worksheet.
 - **Context** box: This lets Snowflake know which role and warehouse to use during this session. It can be changed via the UI or SQL commands.
 - **Share** button: Open the sharing menu to share to other users or copy the link to the worksheet.
 - **Play/Run** button: Run the SQL statement where the cursor currently is or multiple selected statements.
@@ -102,7 +101,10 @@ The middle pane contains the following:
 - Drop-down at the top for setting the database/schema/object context for the worksheet.
 - General working area where you enter and execute queries and other SQL statements. 
 
-The middle-left panel contains the database objects browser which enables you to explore all databases, schemas, tables, and views accessible by the role currently in use for the worksheet. 
+The middle-left panel contains the following:
+- **Worksheets** tab: Use this tab to quickly select and jump between different worksheets
+- **Databases** tab: Use this tab to view all of the database objects available to the current role
+- **Search** bar: database objects browser which enables you to explore all databases, schemas, tables, and views accessible by the role currently in use for the worksheet. 
 
 The bottom pane displays the results of queries and other operations. Also includes 4 options (**Object**, **Query**, **Result**, **Chart**) that open/close their respective panels on the UI. **Chart** opens a visualization panel for the returned results. More on this later.
 
@@ -238,7 +240,7 @@ Now navigate to the **Worksheets** tab. You should see the worksheet we created 
 
 ![new worksheet](assets/4PreLoad_3.png)
 
-We need to set the context appropriately within the worksheet. In the upper right corner of the worksheet, click the box next to the **+** to show the context menu. Here we control the elements you can see and run from each worksheet. We are using the UI here to set the context. Later in the lab, we will accomplish the same thing via SQL commands within the worksheet.
+We need to set the context appropriately within the worksheet. In the upper right corner of the worksheet, click the box to the left of the **Share** button to show the context menu. Here we control the elements you can see and run from each worksheet. We are using the UI here to set the context. Later in the lab, we will accomplish the same thing via SQL commands within the worksheet.
 
 Select the following context settings:
 
@@ -396,9 +398,11 @@ Positive
 
 - The **Size** drop-down is where the capacity of the warehouse is selected. For larger data loading operations or more compute-intensive queries, a larger warehouse is recommended. The sizes translate to the underlying compute resources provisioned from the cloud provider (AWS, Azure, or GCP) where your Snowflake account is hosted. It also determines the number of credits consumed by the warehouse for each full hour it runs. The larger the size, the more compute resources from the cloud provider are allocated to the warehouse and the more credits it consumes. For example, the `4X-Large` setting consumes 128 credits for each full hour. This sizing can be changed up or down at any time with a simple click.
 
+- If you are using Snowflake Enterprise Edition (or higher) the **Query Acceleration** option is available. When it is enabled for a warehouse, it can improve overall warehouse performance by reducing the impact of outlier queries, which are queries that use more resources than the typical query. Leave this disabled 
+
 - If you are using Snowflake Enterprise Edition (or higher) and the **Multi-cluster Warehouse** option is enabled, you will see additional options. This is where you can set up a warehouse to use multiple clusters of compute resources, up to 10 clusters. For example, if a `4X-Large` multi-cluster warehouse is assigned a maximum cluster size of 10, it can scale out to 10 times the compute resources powering that warehouse...and it can do this in seconds! However, note that this will increase the number of credits consumed by the warehouse to 1280 if all 10 clusters run for a full hour (128 credits/hour x 10 clusters). Multi-cluster is ideal for concurrency scenarios, such as many business analysts simultaneously running different queries using the same warehouse. In this use case, the various queries are allocated across multiple clusters to ensure they run quickly.
 
-- Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources.
+- Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources. Additionally, there is an option to change the Warehouse type from Standard to Snowpark-optimized. Snowpark-optmized warehouses provide 16x memory per node and are recommended for workloads that have large memory requirements such as ML training use cases using a stored procedure on a single virtual warehouse node. Leave this type as Standard
 
 Negative
 : **Snowflake Compute vs Other Data Warehouses**
@@ -846,7 +850,7 @@ The json_weather_data table should be restored. Verify by running the following 
 ```SQL 
 --verify table is undropped
 
-select * from json_weather_data_view limit 10;
+select * from json_weather_data limit 10;
 ```
 
 ![restored table result](assets/8Time_2.png)
@@ -1088,11 +1092,11 @@ In the home page, navigate to **Data** > **Databases**. In the list of databases
 
 Let's go back to the Citi Bike story and assume we are the Account Administrator for Snowflake at Citi Bike. We have a trusted partner who wants to analyze the data in our `TRIPS` database on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. So let's use secure data sharing to allow them to access this information.
 
-Navigate to **Data** > **Shared Data**, then click **Shared by My Account** at the top of the tab. Click the **Share Data** button in the top right corner and select **Share with Other Accounts**:
+Navigate to **Data** > **Private Sharing**, then at the top of the tab click **Shared by My Account**. Click the **Shar** button in the top right corner and select **Publish to Specificed Consumers**:
 
 ![shares outbound button](assets/10Share_2.png)
 
-Click **+ Data** and navigate to the `CITIBIKE` database and `PUBLIC` schema. Select the 2 tables we created in the schema and click the **Done** button:
+Click **+ Select Data** and navigate to the `CITIBIKE` database and `PUBLIC` schema. Select the 2 tables we created in the schema and click the **Done** button:
 
 ![share fields](assets/10Share_3.png)
 
@@ -1130,7 +1134,7 @@ Type `COVID` in the search box, scroll through the results, and select **COVID-1
 
 ![health tab](assets/10Share_8.png)  
 
-In the **COVID-19 Epidemiological Data** page, you can learn more about the dataset and see some usage example queries. When you're ready, click the **Get Data** button to make this information available within your Snowflake account:
+In the **COVID-19 Epidemiological Data** page, you can learn more about the dataset and see some usage example queries. When you're ready, click the **Get** button to make this information available within your Snowflake account:
 
 ![get data fields](assets/10Share_starschema_get_data.png)
 
@@ -1144,10 +1148,11 @@ You can now click **Done** or choose to run the sample queries provided by Stars
 
 If you chose **Open**, a new worksheet opens in a new browser tab/window:
 
-1. Select the query you want to run (or place your cursor in the query text).
-2. Click the **Run/Play** button (or use the keyboard shortcut).
-3. You can view the data results in the bottom pane.
-4. When you are done running the sample queries, click the **Home** icon in the upper left corner.
+1. Set your context 
+2. Select the query you want to run (or place your cursor in the query text).
+3. Click the **Run/Play** button (or use the keyboard shortcut).
+4. You can view the data results in the bottom pane.
+5. When you are done running the sample queries, click the **Home** icon in the upper left corner.
 
 ![get data fields](assets/10Share_starschema_query_data2.png)
 
