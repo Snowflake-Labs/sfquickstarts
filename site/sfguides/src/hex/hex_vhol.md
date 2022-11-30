@@ -24,7 +24,7 @@ In this demo, we will play the role of a data scientist at a large restaurant ch
 * How to generate a time series dataset
 * How to import/export data between Hex and Snowflake
 * How to train an XGBoost model and deploy to Snowflake using UDTFs
-* How to visualize a forecast
+* How to visualize the predicted results from the forecasting model
 * How to convert a Hex project into an interactive web app
 
 
@@ -60,15 +60,19 @@ Once you've logged into your Snowflake account, you'll land on the `Learn` page.
 
 Once activated, you'll be brought over to Hex and will prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page where you can create new projects, import existing projects (Hex or Jupyter) as well as navigate to other sections of your workspace.
 
+### Enabling ORGADMIN
+
 We'll revisit your newly created workspace in a bit, but for now, head back over to Snowflake. Let's navigate to the `Admin` tab again but this time select `Users & roles`. From here, you should see 3 users with one of them being named `PC_HEX_USER`. This is the user that was created when you activated Hex with partner connect. We'll need to activate the `ORGADMIN` role for this user. Select `PC_HEX_USER`, and at the bottom of the page you'll see a section to grant new roles.
 
 ![](assets/vhol-grant-roles.png)
 
-Click on grant role, which will open a window to grant roles to the `PC_HEX_USER` account. In the `Role to grant` dropdown, you'll see the role `ORGADMIN`. Select this role and then click `Grant`. This will activate the role for you and we'll revisit this step later.
+Click on grant role, which will open a window to grant roles to the `PC_HEX_USER` account. In the `Role to grant` dropdown, you'll see the role `ORGADMIN`. Select this role and then click `Grant`. We will revisit this step in a later section.
+
+
 
 ![](assets/vhol-add-orgadmin.gif)
 
-### Configuring the Snowflake data connection in Hex
+<!-- ### Configuring the Snowflake data connection in Hex
 Next, we'll need to tweak the configurations of our data connection a bit. Head over to Hex, click on `Projects` and then navigate to the  `Settings` page. On the left side of the screen, you'll see a section called `Workspace settings` with the subcategory `Workspace assets`, this is where we can edit our data connection settings. 
 
 ![](assets/vhol-workspace-assets.gif)
@@ -82,13 +86,13 @@ Inside of the data connection configuration page, we'll change 3 things
 * Turn `Proxy` off.
 * Enable `Writeback` functionality.
 
-![](assets/vhol-edit-dc.gif)
+![](assets/vhol-edit-dc.gif) -->
 
-### Accepting Anaconda terms
+<!-- ### Accepting Anaconda terms
 
 The last thing we'll want to do is accept the [Anaconda terms and conditions enabled by the ORGADMIN](https://docs.Snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the ORGADMIN role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow to accept the anaconda terms and conditions which is required for a later step in our project.
 
-![](assets/vhol-accept-terms.gif)
+![](assets/vhol-accept-terms.gif) -->
 
 <!-- ------------------------ -->
 ## Getting Started with Hex
@@ -227,10 +231,16 @@ We can register our UDTF using the decorator and specify the required parameters
 
 To get a high level overview of the forecast class, the init method initializes the processing of input partitions. The process method is invoked for each input drill, and the end partition method is invoked to finalize the processing of input partitions. In the end partition method, we set the datetime column as our index. We then convert all variables to categorical, then encode our features since the XGBoost model expects all numerical inputs. Next, we split our data into train and test sets and pass the training data to our XGBoost model.
 
-***If you run the cell where we define the UDTF and see an error in the output, it is likely because you haven't accepted the Anaconda terms yet. If you still need to complete this step, head back to step 3 in this guide and follow the instructions under "Accepting Anaconda terms."***
+
+### Accepting Anaconda terms
+
+At this point, you are going to run into an error when running the cell that defines the UDTF. This is because we haven't yet accepted the Anaconda terms and conditions. In this step, we'll go over how to accept the [Anaconda terms and conditions enabled by the ORGADMIN](https://docs.Snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the `ORGADMIN` role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that defines our UDTF.
+
+![](assets/vhol-accept-terms.gif)
+
+### Using our forecasting model
 
 Now that we've developed our training code, to get our predictions without moving any data out of Snowflake, all we need to do is call the UDTF on the model features we created earlier. The UDTF runs the model on the historical data and returns the forecast for the hourly traffic.
-
 
 
 ![](assets/vhol-training.png)
