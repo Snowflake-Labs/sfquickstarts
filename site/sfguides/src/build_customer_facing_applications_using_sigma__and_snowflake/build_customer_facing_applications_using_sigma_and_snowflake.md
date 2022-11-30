@@ -552,8 +552,8 @@ For the purpose of this lab, we will now explore the portal as a member of the S
 ## Conclusion & Helpful Resources
 Duration: 5
 
-# Conclusion
-Thank you for your participation in this hands on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, please check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)
+### Conclusion
+Thank you for your participation in this hands on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)
 
 
 ### What we've covered
@@ -564,10 +564,10 @@ Thank you for your participation in this hands on lab. To learn more about how r
 - Adding row level security to an embed
 - Exploring an embedded Sigma workbook 
 
-# Helpful Resources
+### Helpful Resources
 
-- Help Center including Documentation: https://help.sigmacomputing.com/hc/en-us
-- Sigma Blog: https://www.sigmacomputing.com/blog/
-- Resource and Case Studies: https://www.sigmacomputing.com/resources/
-- Sigma Embedding Docs: https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics  
+- Help Center including Documentation: [https://help.sigmacomputing.com/hc/en-us](https://help.sigmacomputing.com/hc/en-us)
+- Sigma Blog: [https://www.sigmacomputing.com/blog](https://www.sigmacomputing.com/blog)
+- Resource and Case Studies: [https://www.sigmacomputing.com/resources](https://www.sigmacomputing.com/resources)
+- Sigma Embedding Docs: [https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics](https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics)  
 
