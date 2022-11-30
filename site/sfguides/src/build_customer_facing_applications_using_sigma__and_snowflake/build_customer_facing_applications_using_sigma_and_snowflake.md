@@ -20,10 +20,10 @@ Duration: 5
 
 ### What You’ll Learn 
 - How to ingest data into Snowflake & connect to Sigma
-- How to leverage Sigma functions for data prep 
-- How to build a workbook and visualizations 
-- How to embed a workbook in your application  
-- How end users of the application can explore data and generate new insights in a self-serve fashion 
+- How to leverage Sigma functions for data prep
+- How to build a workbook and visualizations
+- How to embed a workbook into your application
+- How end users of the application can explore data and generate new insights in a self-serve fashion with Sigma 
 
 ### What You’ll Need 
 - Access to a Snowflake trial account on AWS or a Snowflake instance on AWS in which you have Account Admin permissions.
@@ -64,7 +64,7 @@ Duration: 10
 ![image2](assets/settingupsnowflake_2.png)
 
 2. At the top left of the page click on the downward facing arrow next to the worksheet name, and select "Import SQL from File". Browse to the "sigma_vhol.sql" file you downloaded in the prior module. Click "Open". 
-   - All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. Do not run any of the SQL commands yet. 
+- All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. Do not run any of the SQL commands yet. 
 
  ![imgae3](assets/settingupsnowflake_4.png) 
   ## Provisioning Sigma
@@ -553,9 +553,8 @@ For the purpose of this lab, we will now explore the portal as a member of the S
 Duration: 5
 
 # Conclusion
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Thank you for your participation in this hands on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, please check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
 
 ### What we've covered
 - Creating objects in Snowflake and ingesting data
