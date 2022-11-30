@@ -64,7 +64,7 @@ Duration: 10
 ![image2](assets/settingupsnowflake_2.png)
 
 2. At the top left of the page click on the downward facing arrow next to the worksheet name, and select "Import SQL from File". Browse to the "sigma_vhol.sql" file you downloaded in the prior module. Click "Open". 
-- All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. Do not run any of the SQL commands yet. 
+- All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. <strong>Do not run any of the SQL commands yet. </strong>
 
  ![imgae3](assets/settingupsnowflake_4.png) 
   ## Provisioning Sigma
@@ -78,7 +78,7 @@ Duration: 10
 
 ![connecting](assets/provisioningsigma_2.png)
 
-3. Click "Connect" then "Activate", which will open a new tab. You will be prompted to choose a name for the new Sigma Organization that will be created for you. Once you have chosen a name, click continue. This will open Sigma in a new tab. Please keep this tab open, as we will return to it later in the lab. 
+3. Click "Connect" then "Activate", which will open a new tab. You will be prompted to choose a name for the new Sigma Organization that will be created for you. Once you have chosen a name, click continue. You do not need to worry about the IP whitelisting screen, and can click "Get Started". This will open Sigma in a new tab.  <strong>Please keep this tab open, as we will return to it later in the lab. </strong>
    
 ![sigmaorg](assets/provisioningsigma_3.png)
 
@@ -101,7 +101,7 @@ We will use this data to create a retailer portal where brands who sell their pr
 
 - As you can see from the SQL we loaded into our worksheet, a worksheet can have more than one command in it. SQL commands are delimited by semicolons. In order to run a single command, click anywhere on the line / command you would like to execture, then click the "Run" or "Play" button.  
 
-- In this lab, never check the "All Queries" box at the top of the worksheet. We want to run SQL queries one at a time, in a specific order. 
+- <strong>In this lab, never check the "All Queries" box at the top of the worksheet</strong>. We want to run SQL queries one at a time, in a specific order. 
 
 2. <strong> USE ROLE ACCOUNTADMIN; </strong> This will set the context of the worksheet to use the role of ACCOUNTADMIN when we run the commands. This role holds the highest level of permission in a given Snowflake account, and can create new object, grant permissions to other roles, and more. 
 
@@ -566,8 +566,8 @@ Thank you for your participation in this hands on lab. To learn more about how r
 
 ### Helpful Resources
 
-- Help Center including Documentation: [https://help.sigmacomputing.com/hc/en-us](https://help.sigmacomputing.com/hc/en-us)
+- Sigma Embedding Docs: [https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics](https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics)  
 - Sigma Blog: [https://www.sigmacomputing.com/blog](https://www.sigmacomputing.com/blog)
 - Resource and Case Studies: [https://www.sigmacomputing.com/resources](https://www.sigmacomputing.com/resources)
-- Sigma Embedding Docs: [https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics](https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics)  
+- Help Center including Documentation: [https://help.sigmacomputing.com/hc/en-us](https://help.sigmacomputing.com/hc/en-us)
 
