@@ -485,7 +485,8 @@ Duration: 5
 
 ![rls2](assets/rowlevelsecurity_2.png)
 
-4. Navigate to your server.js file and un-comment the field that contains the control_id by deleting the "//" before searchParams at the beginning of the line. Here is where we can place the control_id from our workbook and pass a value to set that control. Today, we will hardcode a value, but these can always be set in a more dynamic fashion based on user properties. Update control-id to 'Product-Brand' (or whatever the control ID was labeled in your workbook) and the controlValue to 'Samsung' as shown in the photos below.  
+4. Navigate to your server.js file and un-comment the field that contains the control_id by deleting the "//" before searchParams at the beginning of the line. Here is where we can place the control_id from our workbook and pass a value to set that control. Today, we will hardcode a value, but these can always be set in a more dynamic fashion based on user properties. For more information on more dynamic security for embedding, please see the Sigma docs [here](https://help.sigmacomputing.com/hc/en-us/articles/6797945342483-User-Backed-Embedding-).
+Update control-id to 'Product-Brand' (or whatever the control ID was labeled in your workbook) and the controlValue to 'Samsung' as shown in the photos below.  
 
 
   Before the changes in step 1 your file looks like this:
@@ -566,8 +567,9 @@ Thank you for your participation in this hands-on lab. To learn more about how r
 
 ### Helpful Resources
 
-- Sigma Embedding Docs: [https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics](https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics)  
+- General Sigma Embedding Docs: [https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics](https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics)  
+- User Backed Embedding Docs: [https://help.sigmacomputing.com/hc/en-us/articles/6797945342483-User-Backed-Embedding-](https://help.sigmacomputing.com/hc/en-us/articles/6797945342483-User-Backed-Embedding-)
 - Sigma Blog: [https://www.sigmacomputing.com/blog](https://www.sigmacomputing.com/blog)
-- Resource and Case Studies: [https://www.sigmacomputing.com/resources](https://www.sigmacomputing.com/resources)
+- Resources and Case Studies: [https://www.sigmacomputing.com/resources](https://www.sigmacomputing.com/resources)
 - Help Center including Documentation: [https://help.sigmacomputing.com/hc/en-us](https://help.sigmacomputing.com/hc/en-us)
 
