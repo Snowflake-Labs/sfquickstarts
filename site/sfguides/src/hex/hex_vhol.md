@@ -58,7 +58,9 @@ Once you've logged into your Snowflake account, you'll land on the `Learn` page.
 ![](assets/vhol-partner-connect.gif)
 
 
-Once activated, you'll be brought over to Hex and will prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page where you can create new projects, import existing projects (Hex or Jupyter) as well as navigate to other sections of your workspace.
+Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page where you can create new projects, import existing projects (Hex or Jupyter) as well as navigate to other sections of your workspace.
+
+### Enabling ORGADMIN
 
 ### Enabling ORGADMIN
 
@@ -151,11 +153,11 @@ Now, we can connect to our Snowflake connection that we imported earlier. To do 
 We'll also add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project.
 
 ```python
-hex_Snowpark_session.use_schema("PC_HEX_DB.PUBLIC")
-hex_Snowpark_session.use_database(database='PC_HEX_DB')
+hex_snowpark_session.use_schema("PC_HEX_DB.PUBLIC")
+hex_snowpark_session.use_database(database='PC_HEX_DB')
 ```
 
-In this cell, we reference our Snowpark session with the variable `hex_Snowpark_session` which is the name assigned by default. Throughout the rest of the project however, we reference our Snowpark session with the variable name `session`. The most effective way to change the name of variables in Hex is to change the name of the output variable located at the bottom of the cell rather than in the cell itself. By changing the name of the output variable, we ensure that all other references to that variable are updated throughout the entirety of the project.
+In this cell, we reference our Snowpark session with the variable `hex_snowpark_session` which is the name assigned by default. Throughout the rest of the project however, we reference our Snowpark session with the variable name `session`. The most effective way to change the name of variables in Hex is to change the name of the output variable located at the bottom of the cell rather than in the cell itself. By changing the name of the output variable, we ensure that all other references to that variable are updated throughout the entirety of the project.
 
 ![](assets/vhol-var-edit.gif)
 
@@ -234,7 +236,9 @@ To get a high level overview of the forecast class, the init method initializes 
 
 ### Accepting Anaconda terms
 
-At this point, you are going to run into an error when running the cell that defines the UDTF. This is because we haven't yet accepted the Anaconda terms and conditions. In this step, we'll go over how to accept the [Anaconda terms and conditions enabled by the ORGADMIN](https://docs.Snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the `ORGADMIN` role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that defines our UDTF.
+
+At this point, you are going to run into an error when running the cell that defines the UDTF. This is because we haven't yet accepted the Anaconda terms and conditions. In this step, we'll go over how to accept the [Anaconda terms and conditions enabled by the ORGADMIN](https://docs.Snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the `ORGADMIN` role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow you to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that defines our UDTF.
+
 
 ![](assets/vhol-accept-terms.gif)
 
@@ -292,7 +296,7 @@ Once we're happy with the layout, we can go a head and publish. Publishing is li
 <!-- ***The "Publish with errors" is expected. When publishing an app, the project runs from top to bottom on a fresh kernel. This means that the packages we installed in the beginning haven't been installed yet because we haven't clicked the button yet. So when we try to import a package that hasn't been installed yet, we get the error. Running this button while publishing will resolve the error.*** -->
 
 ## Conclusion
-Congratulations on on making it to the end of this Lab!
+Congratulations on on making it to the end of this Lab! You can view the published version of this [project here](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)!
 
 ### What we've covered
 - Use Snowflake’s “Partner Connect” to seamlessly create a Hex trial
@@ -303,3 +307,5 @@ Congratulations on on making it to the end of this Lab!
 - [Hex docs](https://learn.hex.tech/docs)
 - [Snowflake Docs](https://docs.Snowflake.com/en/)
 - [UDTFs](https://docs.Snowflake.com/en/developer-guide/udf/sql/udf-sql-tabular-functions.html)
+
+
