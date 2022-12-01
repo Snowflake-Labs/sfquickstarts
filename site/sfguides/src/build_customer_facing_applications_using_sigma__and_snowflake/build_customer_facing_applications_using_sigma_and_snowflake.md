@@ -89,7 +89,7 @@ Duration : 10
 
 This Snowflake and Sigma lab will be done as part of a theoretical real world story to help you better understand why we are performing the steps in this lab, and the order they appear. 
 
-Throughout the lab, we will be working with some common sales data from our fictious physical retail company "Plugs Electronics". This data includes order and SKU numbers, product names, prices, store names and regions, as well as customer data. Some of this data is structured and some is JSON (semi-structured). 
+Throughout the lab, we will be working with some common sales data from our fictitious physical retail company "Plugs Electronics". This data includes order and SKU numbers, product names, prices, store names and regions, as well as customer data. Some of this data is structured and some is JSON (semi-structured). 
 
 We will use this data to create a retailer portal where brands who sell their products at Plugs retail locations can log in to see their sales performance across different metrics. 
 
