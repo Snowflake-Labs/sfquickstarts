@@ -18,7 +18,7 @@ Duration: 5
 ### Prerequisites
 - This lab is designed for semi-technical users who will be aiding in the planning or implementation of Sigma. No SQL or technical data skills are required for this lab.  
 
-### What You’ll Learn 
+### What You Will Learn 
 - How to ingest data into Snowflake & connect to Sigma
 - How to leverage Sigma functions for data prep
 - How to build a workbook and visualizations
@@ -27,12 +27,12 @@ Duration: 5
 
 ### What You’ll Need 
 - Access to a Snowflake trial account on AWS or a Snowflake instance on AWS in which you have Account Admin permissions.
-- Download Portal Template: 
+- Download Portal Template: [App_embed.zip](https://partnershiptesting.s3.us-west-2.amazonaws.com/app_embed_RAW+.zip)
 - Download and Install [Node.js](https://nodejs.org/)
-- Download SQL Script: 
+- Download SQL Script: [Sigma_VHOL.sql](https://partnershiptesting.s3.us-west-2.amazonaws.com/Embedded.sql)
 
 ### What You’ll Build 
-- In this lab you will build a sales performance portal that live queries data in Snowflake and provides unique drill down and exploration capabilities to the end users through embedding Sigma. 
+- In this lab you will build a sales performance portal that live queries against data in Snowflake and provides unique drill down and exploration capabilities to the end users through embedding Sigma. 
 
 <!-- ------------------------ -->
 ## Setting up Snowflake 
@@ -44,9 +44,9 @@ Duration: 10
 
 - You will have different Snowflake editions (Standard, Enterprise, e.g.), cloud providers (GCP, AWS, or Azure), and regions (Us Central, Europe West, e.g.) available to you. For this lab, please select AWS as your cloud provider and at minimum enterprise edition.
 
-- After registering, you will recieve an email with an activation link and your Snowflake account URL. Bookmark this URL for easy future access. 
+- After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy future access. 
 
-2. Click here and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
+1. Click [here](https://partnershiptesting.s3.us-west-2.amazonaws.com/Embedded.sql) and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
    
 ### The Snowflake User Interface   
 
@@ -70,7 +70,7 @@ Duration: 10
   ## Provisioning Sigma
   ### Provisioning Sigma via Snowflake Partner Connect
 
-1. On the lefthand side of the Snowflake UI, navigate to Admin, then select partner connect. Click the icon for Sigma.
+1. On the left hand side of the Snowflake UI, navigate to Admin, then select partner connect. Click the icon for Sigma.
    
  ![partnerconnect](assets/provisioningsigma_1.png)  
 
@@ -95,18 +95,18 @@ We will use this data to create a retailer portal where brands who sell their pr
 
 ### Create a Database and Table
 
-1. Go back to the Snowflake UI and click on the worksheets tab. Per the prior steps, ensure the SQL text from the "Sigma_vhol.sql" file has been loaded into the workseet.
+1. Go back to the Snowflake UI and click on the worksheets tab. Per the prior steps, ensure the SQL text from the "Sigma_vhol.sql" file has been loaded into the worksheet.
 
 ![dbandtable](assets/prepandloaddata_1.png)
 
-- As you can see from the SQL we loaded into our worksheet, a worksheet can have more than one command in it. SQL commands are delimited by semicolons. In order to run a single command, click anywhere on the line / command you would like to execture, then click the "Run" or "Play" button.  
+- As you can see from the SQL we loaded into our worksheet, a worksheet can have more than one command in it. SQL commands are delimited by semicolons. In order to run a single command, click anywhere on the line / command you would like to execute, then click the "Run" or "Play" button.  
 
 - <strong>In this lab, never check the "All Queries" box at the top of the worksheet</strong>. We want to run SQL queries one at a time, in a specific order. 
 
-2. <strong> USE ROLE ACCOUNTADMIN; </strong> This will set the context of the worksheet to use the role of ACCOUNTADMIN when we run the commands. This role holds the highest level of permission in a given Snowflake account, and can create new object, grant permissions to other roles, and more. 
+2. <strong> USE ROLE ACCOUNTADMIN; </strong> This will set the context of the worksheet to use the role of ACCOUNTADMIN when we run the commands. This role holds the highest level of permission in a given Snowflake account, and can create new objects, grant permissions to other roles, and more. 
 
 3. <strong> USE WAREHOUSE PC_SIGMA_WH; </strong> Sets the PC_SIGMA_WH to be used for commands run in the worksheet. As you can see by the (XS) to the right of the warehouse name, an extra small warehouse is being used for this lab. An XS translates to a single node cluster for our virtual warehouse. [Here is a link to Snowflake's docs covering warehouses in detail.](https://docs.snowflake.com/en/user-guide/warehouses-overview.html)
-4. <strong> USE DATABASE PC_SIGMA_DB; </strong> This command tells Snowflake to opperate off the PC_SIGMA_DB database, which was created when your Sigma trial was spun up. 
+4. <strong> USE DATABASE PC_SIGMA_DB; </strong> This command tells Snowflake to operate off the PC_SIGMA_DB database, which was created when your Sigma trial was spun up. 
 5. <strong>CREATE SCHEMA IF NOT EXISTS EMBEDDED_LAB;</strong> This creates a new schema in our PC_SIGMA_DB database.
 6. <strong>USE SCHEMA EMBEDDED_LAB; </strong>This sets the context of the worksheet to use our newly created schema. 
 7. <strong>CREATE STAGE IF NOT EXISTS SIGMA_LAB_STAGE URL = 's3://sigma-embedded-lab-demo/LabData/'; </strong>This creates an external stage in Snowflake that points to an S3 bucket that has the data files we would like to use for the lab. 
@@ -114,7 +114,7 @@ We will use this data to create a retailer portal where brands who sell their pr
 
 ### Loading Data into Snowflake
 
-The data we will be using is demo data for a fictious retailer called Plugs Electronics. This data has been exported and pre-staged for you in an AWS S3 bucket in the US-East (Northern Virginia) region. The data is in a CSV format, and includes transaction data like order numbers, product names and prices, as well as customer information. This data set is just under 4 million rows.
+The data we will be using is demo data for a fictitious retailer called Plugs Electronics. This data has been exported and pre-staged for you in an AWS S3 bucket in the US-East (Northern Virginia) region. The data is in a CSV format, and includes transaction data like order numbers, product names and prices, as well as customer information. This data set is just under 4 million rows.
 
 1. <strong> <p>CREATE FILE FORMAT IF NOT EXISTS SIGMA_CSV<br>
    TYPE = CSV<br>
@@ -151,9 +151,9 @@ The data we will be using is demo data for a fictious retailer called Plugs Elec
     );</p></strong>
 
 
-We have data files in our stage as shown in the previous list (ls) command. These files have certain formats that need to be defined in Snowflake in order for the data to be properly loaded. In this case, we are creating a file format named SIGMA_CSV that is specifiying that the data in the files is delimited by commas, has been compressed, and how null values can be determined. We additionally created a table to hold the data we are about to load. More information regarding file formats can be found [here](https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html). 
+We have data files in our stage as shown in the previous list (ls) command. These files have certain formats that need to be defined in Snowflake in order for the data to be properly loaded. In this case, we are creating a file format named SIGMA_CSV that is specifying that the data in the files is delimited by commas, has been compressed, and how null values can be determined. We additionally created a table to hold the data we are about to load. More information regarding file formats can be found [here](https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html). 
 
-3. <strong>COPY INTO TRANSACTIONS FROM @SIGMA_LAB_STAGE
+1. <strong>COPY INTO TRANSACTIONS FROM @SIGMA_LAB_STAGE
    FILE_FORMAT = SIGMA_CSV;</strong>
 
   - This copies the data from our S3 bucket and loads it into our Transactions table. A SELECT COUNT(*) from the table will show we loaded 3.9 million rows into the table. 
@@ -245,16 +245,16 @@ Duration:20
 
   2. You will see a new visualization element has been created under our table. In the left-hand bar you will see a dropdown that lists all of the visualizations that Sigma currently supports. Select the bar chart. 
 
-  3. On the X-Axis click the plus icon and add our "Store Region" column. Notice that Sigma allows you to search for the column you would like to add. We can also drag values onto the axies instead of using the add button. Find "Revenue" in the list of columns and drag it to the Y-axis. The value will automatically aggregate and become "Sum of Revenue". Double click the header on the bar chart and name it Revenue by Store Region. 
+  3. On the X-Axis click the plus icon and add our "Store Region" column. Notice that Sigma allows you to search for the column you would like to add. We can also drag values onto the axis instead of using the add button. Find "Revenue" in the list of columns and drag it to the Y-axis. The value will automatically aggregate and become "Sum of Revenue". Double click the header on the bar chart and name it Revenue by Store Region. 
 
 ![build13](assets/buildworkbook_13.png)
 ![build14](assets/buildworkbook_14.png)
 
-  4. Click the 'kebab' (3 dots) on the top right hand side of the element. From the drop down, select move to new page. This will create a new page in our workbook to hold our visualizations. Rename this new page "Customer Portal".
+  4. Click the 'kebab' (3 dots) on the top right hand side of the element. From the drop down, select 'move to new page'. This will create a new page in our workbook to hold our visualizations. Rename this new page "Customer Portal".
    
 ![build38](assets/buildworkbook_38.png)
 
-  5. Now let's look at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selectiong the plus icon on the top of the left hand pannel next to our 'Page Overview' title. Click on this icon to get a list of elements that we can add to our canvas, and choose 'Viz'. 
+  5. Now let's look at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selectiong the plus icon on the top of the left hand panel next to our 'Page Overview' title. Click on this icon to get a list of elements that we can add to our canvas, and choose 'Viz'. 
 
 ![build16](assets/buildworkbook_16.png)
 
@@ -306,11 +306,11 @@ Duration:20
 
  ![build25](assets/buildworkbook_25.png)
 
-15. Finally, we want to share some transaction level data with our end users. From our transactions table on the data page, click "Create child element - table". This create a new table from our Transactions table. Let's sort this table by purchase date descending, so that our most recent transactions are shown first. Finally, move this element to our Customer Portal page. 
+15. Finally, we want to share some transaction level data with our end users. From our transactions table on the data page, click "Create child element - table". This creates a new table from our Transactions table. Let's sort this table by purchase date descending, so that our most recent transactions are shown first. Finally, move this element to our Customer Portal page. 
 
   ![build26](assets/buildworkbook_26.png)
 
-16. Drag and drop the visuzaliations on the Customer Portal page so that the Total Revenue element is at the top, the line chart and bar graph are side by side below it, and the transactions table is at the bottom.
+16. Drag and drop the visualizations on the Customer Portal page so that the Total Revenue element is at the top, the line chart and bar graph are side by side below it, and the transactions table is at the bottom.
 
   ![build27](assets/buildworkbook_27.png)
 
@@ -328,7 +328,7 @@ Duration:20
 
 ![build28](assets/buildworkbook_28.png)
 
-  2. After adding the "Date" control to our Customer Portal page, lets drag it to the top of the page and update the control_id to say "Date-Range" and update the control label to say "Select a Date Range". 
+  2. After adding the "Date" control to our Customer Portal page, let's drag it to the top of the page and update the control_id to say "Date-Range" and update the control label to say "Select a Date Range". 
 
 ![build29](assets/buildworkbook_29.png)
 
@@ -336,7 +336,7 @@ Duration:20
 
    ![build30](assets/buildworkbook_30.png)
 
-  4. On the data page, right click on the drop down next to the column "Product Brand" and select the "Fliter" option from the menu. A new filter will be added to the table. 
+  4. On the data page, right click on the drop down next to the column "Product Brand" and select the "Filter" option from the menu. A new filter will be added to the table. 
 
    ![build31](assets/buildworkbook_31.png)
    ![build32](assets/buildworkbook_32.png)
@@ -351,12 +351,12 @@ The filter will be added as a page control to the canvas. This product brand fil
    ### Finishing up the Canvas
 In Sigma, you can add a variety of UI elements to your workbook to customize the look and feel. In this section, we will work with text elements to create a dynamic text element as the header for our workbook. When you click the '+' in the top left, you will see a variety of elements available to you such as:
 - <strong> Image</strong>: Upload images or links to URLs to show an image on the canvas
-- <strong> Button</strong>: Use buttons to navigate to toher workbooks, websites, or download the workbook as a PDF
+- <strong> Button</strong>: Use buttons to navigate to other workbooks, websites, or download the workbook as a PDF
 - <strong>Embed</strong>: Embed other websites or applications into your workbook
 - <strong>Spacer</strong>: Use to add space between elements on the canvas
 - <strong>Divider</strong>: Use to create hard divisions between sections of the canvas
 
-1. To start, navigate to your Customer Portal page, and click add element. Under UI elements, select "Text". 
+1. To start, navigate to your Customer Portal page, and click "add element". Under UI elements, select "Text". 
 
    ![build34](assets/buildworkbook_34.png)
 
@@ -364,7 +364,7 @@ In Sigma, you can add a variety of UI elements to your workbook to customize the
 
 ![build42](assets/buildworkbook_42.png)
 
-3. Click your new dynamic text element to open the formating bar at the top.Select "Large Heading" for the element size, and drag your text element to the top of the page. Finally, click the formatting option to center the element. This dynamic title will adjust based on the user we log into our portal as, and the brand we are exploring. 
+3. Click your new dynamic text element to open the formatting bar at the top. Select "Large Heading" for the element size, and drag your text element to the top of the page. Finally, click the formatting option to center the element. This dynamic title will adjust based on the user we log into our portal as, and the brand we are exploring. 
 
   ![build43](assets/buildworkbook_43.png)
 
@@ -380,7 +380,7 @@ Duration: 15
 
   We are now going to begin building our portal where we can embed our workbook. This will be a Sales Performance dashboard where the Plugs Electronics family of brands can log in to see how their products are performing in our store. 
 
-  1. First we will need to install Node.js. Node is going to allow us to set up a local server, as well as the front end portal, and securely embed our dashboards with row level security so that brands are not seeing eachother's data. Download and install Node.js by going here: [https://nodejs.org/](https://nodejs.org/)
+  1. First we will need to install Node.js. Node is going to allow us to set up a local server, as well as the front end portal, and securely embed our dashboards with row level security so that brands are not seeing each other's data. Download and install Node.js by going here: [https://nodejs.org/](https://nodejs.org/)
    - Note, there are many programming languages and libraries you can use to code a client and server side application, this just happens to be the one we will be using today. 
 
    ![embed1](assets/embeddingtheworkbook_1.png)
@@ -419,7 +419,7 @@ We need to install a couple of libraries in order to get this working: <strong>e
 
 ![embed7](assets/embeddingtheworkbook_7.png)
 
-8. Now we can install the needed libraries by issuing the following command:<strong> npm install expresss uuid</strong>.
+8. Now we can install the needed libraries by issuing the following command:<strong> npm install express uuid</strong>.
 
 ![embed8](assets/embeddingtheworkbook_8.png)
 
@@ -464,7 +464,7 @@ There are two key edits we need to make in order for the server to use our workb
 
 5. Save your server.js file.
 
-6. Once complete, we are ready to start our sever. Back in your terminal, you can run the folloiwng command to start the server: <strong>node server.js</strong>
+6. Once complete, we are ready to start our server. Back in your terminal, you can run the folloiwng command to start the server: <strong>node server.js</strong>
 
 ![embed19](assets/embeddingtheworkbook_19.png)
 
@@ -477,7 +477,7 @@ There are two key edits we need to make in order for the server to use our workb
 Duration: 5
 1. Now we might want to put some row level security on this dashboard, so that brands can only see data related to the sale of their own products. Navigate back to your data page in your Sigma workbook. 
 
-2. On the data page, find the page control we created previously for Product-Brand. When we select it the left pannel will show its properties. Find the Control ID and copy the value. It should be a value similar to "Product-Brand". 
+2. On the data page, find the page control we created previously for Product-Brand. When we select it the left panel will show its properties. Find the Control ID and copy the value. It should be a value similar to "Product-Brand". 
 
 ![rls1](assets/rowlevelsecurity_1.png)
 
