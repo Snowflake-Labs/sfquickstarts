@@ -254,7 +254,7 @@ Duration:20
    
 ![build38](assets/buildworkbook_38.png)
 
-  5. Now let's look at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selectiong the plus icon on the top of the left hand panel next to our 'Page Overview' title. Click on this icon to get a list of elements that we can add to our canvas, and choose 'Viz'. 
+  5. Now let's look at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selecting the plus icon on the top of the left hand panel next to our 'Page Overview' title. Click on this icon to get a list of elements that we can add to our canvas, and choose 'Viz'. 
 
 ![build16](assets/buildworkbook_16.png)
 
