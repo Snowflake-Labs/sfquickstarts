@@ -28,7 +28,7 @@ Duration: 5
 ### What You’ll Need 
 - Access to a Snowflake trial account on AWS or a Snowflake instance on AWS in which you have Account Admin permissions.
 - Download Portal Template: 
-- Download and Install Node.js:
+- Download and Install [Node.js](https://nodejs.org/)
 - Download SQL Script: 
 
 ### What You’ll Build 
@@ -107,16 +107,16 @@ We will use this data to create a retailer portal where brands who sell their pr
 
 3. <strong> USE WAREHOUSE PC_SIGMA_WH; </strong> Sets the PC_SIGMA_WH to be used for commands run in the worksheet. As you can see by the (XS) to the right of the warehouse name, an extra small warehouse is being used for this lab. An XS translates to a single node cluster for our virtual warehouse. [Here is a link to Snowflake's docs covering warehouses in detail.](https://docs.snowflake.com/en/user-guide/warehouses-overview.html)
 4. <strong> USE DATABASE PC_SIGMA_DB; </strong> This command tells Snowflake to opperate off the PC_SIGMA_DB database, which was created when your Sigma trial was spun up. 
-5. <strong>CREATE SCHEMA EMBEDDED_LAB;</strong> This creates a new schema in our PC_SIGMA_DB database.
+5. <strong>CREATE SCHEMA IF NOT EXISTS EMBEDDED_LAB;</strong> This creates a new schema in our PC_SIGMA_DB database.
 6. <strong>USE SCHEMA EMBEDDED_LAB; </strong>This sets the context of the worksheet to use our newly created schema. 
-7. <strong>CREATE STAGE SIGMA_LAB_STAGE URL = 's3://sigma-embedded-lab-demo/LabData/'; </strong>This creates an external stage in Snowflake that points to an S3 bucket that has the data files we would like to use for the lab. 
+7. <strong>CREATE STAGE IF NOT EXISTS SIGMA_LAB_STAGE URL = 's3://sigma-embedded-lab-demo/LabData/'; </strong>This creates an external stage in Snowflake that points to an S3 bucket that has the data files we would like to use for the lab. 
 8. <strong>LS @SIGMA_LAB_STAGE; </strong>This command lists all of the files in the stage we just created. 
 
 ### Loading Data into Snowflake
 
 The data we will be using is demo data for a fictious retailer called Plugs Electronics. This data has been exported and pre-staged for you in an AWS S3 bucket in the US-East (Northern Virginia) region. The data is in a CSV format, and includes transaction data like order numbers, product names and prices, as well as customer information. This data set is just under 4 million rows.
 
-1. <strong> <p>CREATE FILE FORMAT SIGMA_CSV<br>
+1. <strong> <p>CREATE FILE FORMAT IF NOT EXISTS SIGMA_CSV<br>
    TYPE = CSV<br>
    COMPRESSION = GZIP<br>
    FIELD_OPTIONALLY_ENCLOSED_BY = '0x27'<br>
@@ -124,7 +124,7 @@ The data we will be using is demo data for a fictious retailer called Plugs Elec
 
  
 
-2. <strong><p>CREATE TABLE TRANSACTIONS<br>
+2. <strong><p>CREATE TABLE IF NOT EXISTS TRANSACTIONS<br>
    (ORDER_NUMBER INTEGER,<br>
    PURCHASE_DATE TIMESTAMP,<br>
    TRANSACTION_TYPE STRING,<br>
@@ -170,7 +170,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 7. <strong>USE ROLE PC_SIGMA_ROLE; </strong>
 - We completed granting access to the data we ingested to the PC_SIGMA ROLE. This command will now allow the user to start reporting on the data from Sigma using this role. 
 
-8. <strong>SELECT * FROM TRANSACTIONS;</strong>
+8. <strong>SELECT * FROM TRANSACTIONS LIMIT 1000;</strong>
 - A SELECT * against the transactions table should complete successfully and show the data we have loaded. If not, please go back and re-run the prior steps of this module using the SYSADMIN role to ensure permissions were granted to the new role appropriately.    
   
 
