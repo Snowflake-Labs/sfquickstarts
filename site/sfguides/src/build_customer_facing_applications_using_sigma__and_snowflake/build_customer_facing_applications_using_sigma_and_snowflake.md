@@ -287,7 +287,7 @@ Duration:20
 
   11. You will notice a sharp drop off on the right side of the chart where our data end. Right click on the right most data point, and select "exclude 2022-04". Once this is done, rename the visualization to "Revenue by Month & Age Group".
 
-![build40](asssets/../assets/Buildworkbook_40.png)
+![build40](assets/../assets/Buildworkbook_40.png)
 ![build21](assets/buildworkbook_21.png)
 
 
@@ -464,7 +464,7 @@ There are two key edits we need to make in order for the server to use our workb
 
 5. Save your server.js file.
 
-6. Once complete, we are ready to start our server. Back in your terminal, you can run the folloiwng command to start the server: <strong>node server.js</strong>
+6. Once complete, we are ready to start our server. Back in your terminal, you can run the following command to start the server: <strong>node server.js</strong>
 
 ![embed19](assets/embeddingtheworkbook_19.png)
 
@@ -532,9 +532,9 @@ For the purpose of this lab, we will now explore the portal as a member of the S
 
 7. In the formula bar, type <strong>CountDistinct([Order Number])</strong>. Rename this column Number of Orders. 
 
-8. Again, click the drop down next to Order Channel and select "Add Column". This time, type <strong>Sum([Revenue])</strong> in the formula bar. What we can now see is Revenue generated for a sepecific region by the Order Channel the purchase was made from. 
+8. Again, click the drop down next to Order Channel and select "Add Column". This time, type <strong>Sum([Revenue])</strong> in the formula bar. What we can now see is Revenue generated for a specific region by the Order Channel the purchase was made from. 
 
-9. With Sum of Revenue column selected, click the paintbrush to the right of the table icon in the left hand tool pane. 
+9. With the Sum of Revenue column selected, click the paintbrush to the right of the table icon in the left hand tool pane. 
 
 ![explore4](assets/exploretheembed_4.png)
 
@@ -546,14 +546,14 @@ For the purpose of this lab, we will now explore the portal as a member of the S
 
 ![explore6](assets/exploretheembed_6.png)
 
-12. Minimize the element using the arrows in the top right to collapse this new visuzalization back into the larger page. 
+12. Minimize the element using the arrows in the top right to collapse this new visualization back into the larger page. 
 
 
 ## Conclusion & Helpful Resources
 Duration: 5
 
 ### Conclusion
-Thank you for your participation in this hands on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)
+Thank you for your participation in this hands-on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)
 
 
 ### What we've covered
