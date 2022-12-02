@@ -46,7 +46,7 @@ Duration: 10
 
 - After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy future access. 
 
-1. Click [here](https://partnershiptesting.s3.us-west-2.amazonaws.com/Embedded.sql) and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
+2. Click [here](https://partnershiptesting.s3.us-west-2.amazonaws.com/Embedded.sql) and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
    
 ### The Snowflake User Interface   
 
@@ -83,7 +83,7 @@ Duration: 10
 ![sigmaorg](assets/provisioningsigma_3.png)
 
 ## Preparing and Loading Data into Snowflake
-Duration : 10
+Duration: 10
 
 # <Strong>The Lab Story</strong>
 
