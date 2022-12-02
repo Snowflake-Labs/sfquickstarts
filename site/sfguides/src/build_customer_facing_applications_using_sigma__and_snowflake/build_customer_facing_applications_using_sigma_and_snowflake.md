@@ -47,7 +47,7 @@ Duration: 5
 
 - After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy future access. 
 
-1. Click [here](https://partnershiptesting.s3.us-west-2.amazonaws.com/Sigma_VHOL.sql) and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
+2. Click [here](https://partnershiptesting.s3.us-west-2.amazonaws.com/Sigma_VHOL.sql) and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
    
 ### The Snowflake User Interface   
 
