@@ -36,7 +36,7 @@ Duration: 5
 
 <!-- ------------------------ -->
 ## Setting up Snowflake 
-Duration: 10
+Duration: 5
 
 ### Prepare Your Snowflake Lab Environment
 
