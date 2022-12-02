@@ -153,7 +153,7 @@ The data we will be using is demo data for a fictitious retailer called Plugs El
 
 We have data files in our stage as shown in the previous list (ls) command. These files have certain formats that need to be defined in Snowflake in order for the data to be properly loaded. In this case, we are creating a file format named SIGMA_CSV that is specifying that the data in the files is delimited by commas, has been compressed, and how null values can be determined. We additionally created a table to hold the data we are about to load. More information regarding file formats can be found [here](https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html). 
 
-1. <strong>COPY INTO TRANSACTIONS FROM @SIGMA_LAB_STAGE
+3. <strong>COPY INTO TRANSACTIONS FROM @SIGMA_LAB_STAGE
    FILE_FORMAT = SIGMA_CSV;</strong>
 
   - This copies the data from our S3 bucket and loads it into our Transactions table. A SELECT COUNT(*) from the table will show we loaded 3.9 million rows into the table. 
