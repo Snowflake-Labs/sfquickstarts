@@ -29,7 +29,7 @@ Duration: 5
 - Access to a Snowflake trial account on AWS or a Snowflake instance on AWS in which you have Account Admin permissions.
 - Download Portal Template: [App_embed.zip](https://partnershiptesting.s3.us-west-2.amazonaws.com/app_embed_RAW+.zip)
 - Download and Install [Node.js](https://nodejs.org/)
-- Download SQL Script: [Sigma_VHOL.sql](https://partnershiptesting.s3.us-west-2.amazonaws.com/Embedded.sql)
+- Download SQL Script: [Sigma_VHOL.sql](https://partnershiptesting.s3.us-west-2.amazonaws.com/Sigma_VHOL.sql)
 
 ### What You’ll Build 
 - In this lab you will build a sales performance portal that live queries against data in Snowflake and provides unique drill down and exploration capabilities to the end users through embedding Sigma. 
@@ -47,7 +47,7 @@ Duration: 5
 
 - After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy future access. 
 
-2. Click [here](https://partnershiptesting.s3.us-west-2.amazonaws.com/Embedded.sql) and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
+1. Click [here](https://partnershiptesting.s3.us-west-2.amazonaws.com/Sigma_VHOL.sql) and download the "sigma_vhol.sql" file to your local machine. This file contains pre-written SQL commands which will be used later in the lab. 
    
 ### The Snowflake User Interface   
 
