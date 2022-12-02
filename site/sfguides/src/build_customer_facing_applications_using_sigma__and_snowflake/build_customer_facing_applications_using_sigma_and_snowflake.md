@@ -88,7 +88,7 @@ Duration: 5
 ![Footer](assets/Sigma_Footer.png)
 
 ## Preparing and Loading Data into Snowflake
-Duration: 10
+Duration: 5
 
 # <Strong>The Lab Story</strong>
 
@@ -240,7 +240,7 @@ Duration: 10
  - If we navigate back to our Snowflake environment, we can see the queries being pushed down in our Snowflake query history view as well.
 ![Footer](assets/Sigma_Footer.png)
   ## Creating Visualizations & Filters
-Duration:20
+Duration:15
   ### Creating Visualizations
   It is often easier to spot trends, outliers, or insights which lead to further questions when viewing data in a visualization. Sigma makes it easy to create visualizations of your data while also enabling you to dig into the data that makes up the visualization. 
 
@@ -380,7 +380,7 @@ In Sigma, you can add a variety of UI elements to your workbook to customize the
 5. Click Publish to save these changes. 
 ![Footer](assets/Sigma_Footer.png)   
 ## Embedding the Sigma Workbook into an Application
-Duration: 15
+Duration: 10
    ### Building the Application / Portal
 
   We are now going to begin building our portal where we can embed our workbook. This will be a Sales Performance dashboard where the Plugs Electronics family of brands can log in to see how their products are performing in our store. 
