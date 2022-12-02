@@ -562,7 +562,7 @@ Duration: 5
 Thank you for your participation in this hands-on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)
 
 
-### What we've covered
+### What We Have Covered
 - Creating objects in Snowflake and ingesting data
 - Connecting Sigma to Snowflake
 - Creating workbooks, visualizations, and filters
