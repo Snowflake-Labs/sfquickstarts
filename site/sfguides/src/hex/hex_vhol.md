@@ -20,6 +20,7 @@ In this demo, we will play the role of a data scientist at a large restaurant ch
 - Familiarity with training ML models
 - Familiarity with data science notebooks
 
+
 ### What You'll Learn
 * How to generate a time series dataset
 * How to import/export data between Hex and Snowflake
@@ -42,6 +43,8 @@ This pipeline will:
 - Use the model to make predictions on future data
 
 
+
+
 <!-- ------------------------ -->
 ## Creating a Snowflake account
 Duration: 5
@@ -51,16 +54,27 @@ Head over to the [Snowflake](https://signup.Snowflake.com/) sign-up page and reg
 ## Connecting Snowflake with Hex
 Duration: 5
 
-At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer notebook capabilities, and therefore, happily partners with the leading cloud notebook  partners in the industry.
 
 Once you've logged into your Snowflake account, you'll land on the `Learn` page. Simply navigate to the `Admin` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the connect button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
 
 ![](assets/vhol-partner-connect.gif)
 
+### Workflow roadblocks
+The following issues may occur if you have an existing Hex account and you're not an Admin in that org.
 
+**Unauthorized error**
+> If you have an existing Hex account that was created with a password and username, you may run into an "Unauthorized" error when activating your workspace in Partner Connect. If this is your experience, head over to [hex.tech](https://hex.tech) and login with your password and username. 
+
+**Plan upgrade**
+> If you are an existing Hex user currently on a Community plan, you may encounter an issue that will prevent you from using Partner Connect. If you’re unclear on what Hex plan you are on, feel free to reach out to [support@hex.tech](mailto:support@hex.tech). If you are the Admin of your organization, you can see your plan under Manage plan on the Settings page. To extend a trial, email [support@hex.tech](mailto:support@hex.tech) with the subject "VHOL trial extension."
+
+**Role privileges**
+> If you do not have an Editor role or higher, you won't be able to create data connections in your workspace. To upgrade your role, contact your workspace Admin. You can find out who this is by navigating to Settings -> Users & groups within your Hex workspace.
+
+*If you're still encountering issues, or encounter any issues other than the ones listed above, please contact our support team [support@hex.tech](mailto:support@hex.tech) with the subject "VHOL" for priority support.*
+
+### Creating a workspace
 Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page where you can create new projects, import existing projects (Hex or Jupyter) as well as navigate to other sections of your workspace.
-
-### Enabling ORGADMIN
 
 ### Enabling ORGADMIN
 
