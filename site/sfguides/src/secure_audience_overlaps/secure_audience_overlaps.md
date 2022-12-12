@@ -3,7 +3,7 @@ id: secure_audience_overlaps
 summary: This Quickstart shows how to do a simple audience overlap with a partner before setting up a more permanent clean room.
 categories: Getting Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, AdTech
 
