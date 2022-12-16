@@ -253,9 +253,9 @@ Fill out below items
 - SQS: Select “Add SQS queue ARN” from the dropdown list.
 - SQS queue ARN: Paste the SQS queue name from the SHOW PIPES output.
 
-![Screenshot of create event notification form in AWS console](assets/generic-s3-crate-event-notification.png)
+![Screenshot of create event notification form in AWS console](assets/generic-s3-create-event-notification.png)
 
-![Screenshot of destination configuration in create event notification form in AWS console](assets/generic-s3-crate-event-notification-destination.png)
+![Screenshot of destination configuration in create event notification form in AWS console](assets/generic-s3-create-event-notification-destination.png)
 
 Event notification has been created
 ![Screenshot of event notifications dashboard with created notification in AWS](assets/generic-s3-event-notifications-filled.png)
