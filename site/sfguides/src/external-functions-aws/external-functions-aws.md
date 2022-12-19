@@ -79,8 +79,9 @@ You should create the function with the following selected parameters:
 * Select the language to use. For this example, choose Python 3.8.
 * Expand "Choose or create an execution role" and select "Create a new role with basic Lambda permissions."
 
-Negative
-: Note that the role you are creating here is separate from both your cloud account role and your Snowflake role(s).
+> aside negative
+> 
+>  Note that the role you are creating here is separate from both your cloud account role and your Snowflake role(s).
 
 ![Snowflake_Create_Function.png](assets/Snowflake_Create_Function.png)
 
@@ -281,8 +282,9 @@ You will now be on the page "<your-stage-name> Stage editor." Under "Stages," ex
 
 Click on "POST" and record the "Invoke URL" for the POST request as the "Resource Invocation URL" field in the template.
 
-Negative
-: Make sure that the invocation URL includes the name of the resource; if it doesn't, you might have clicked on the invocation URL for the stage rather than the resource.
+> aside negative
+> 
+>  Make sure that the invocation URL includes the name of the resource; if it doesn't, you might have clicked on the invocation URL for the stage rather than the resource.
 
 ![Snowflake_Resource_Invocation_URL.png](assets/Snowflake_Resource_Invocation_URL.png)
 
@@ -385,8 +387,9 @@ You'll need to jot down a few more pieces of information in your template:
 * Look for the property named "API_AWS_IAM_USER_ARN" and then record that property's "property_value."
 * Find the property named "API_AWS_EXTERNAL_ID" and record that property's "property_value."
 
-Negative
-: Note that the "property_value" of the "API_AWS_EXTERNAL_ID" often ends with an equal sign ("="). That equals sign is part of the value; make sure that you cut and paste it along with the rest of the "property_value."
+> aside negative
+> 
+>  Note that the "property_value" of the "API_AWS_EXTERNAL_ID" often ends with an equal sign ("="). That equals sign is part of the value; make sure that you cut and paste it along with the rest of the "property_value."
 
 <!-- ------------------------ -->
 ## Setting up a trust relationship between Snowflake and IAM role.

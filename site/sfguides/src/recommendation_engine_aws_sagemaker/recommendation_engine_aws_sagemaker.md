@@ -47,6 +47,7 @@ Duration: 5
 The first thing you'll need to do is download a small version of the dataset. Once downloaded, unzip the folder.
 
 <button>
+
   [Download Dataset](https://files.grouplens.org/datasets/movielens/ml-latest-small.zip)
 </button>
 

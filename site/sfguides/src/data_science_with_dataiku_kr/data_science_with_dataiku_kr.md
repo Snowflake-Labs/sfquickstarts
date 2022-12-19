@@ -64,6 +64,7 @@ Duration: 5
 #### 랩 리소스 다운로드:
 
 <button>
+
 [Download sample SQL](https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Snowflake_Dataiku/Snowflake_Dataiku_VHOL.sql) for use in Snowflake.
 </button>
 

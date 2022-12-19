@@ -51,8 +51,9 @@ Duration: 10
 5. Select Create Database > View Database
 </br> <img src="./assets/zepl_marketplace_get_data.png" />
 
-Positive
-: You must have `ACCOUNTADMIN` privileges to clone this data set
+> aside positive
+> 
+>  You must have `ACCOUNTADMIN` privileges to clone this data set
 
 #### *Troubleshooting* 
 Check if the database was created properly
@@ -141,8 +142,9 @@ https://raw.githubusercontent.com/zshainsky/Getting_Started_on_Zepl/master/Snowf
 
 1. Apply
 
-Positive
-: Complete notebook code can be found here: [Notebook](https://app.zepl.com/viewer/notebooks/bm90ZTovL3pzaGFpbnNreUB6ZXBsLmNvbS8xZjNiMjQwZTFjZjQ0MDk4YTU0Njc1MDM3MTMwNThlZC9ub3RlLmpzb24)
+> aside positive
+> 
+>  Complete notebook code can be found here: [Notebook](https://app.zepl.com/viewer/notebooks/bm90ZTovL3pzaGFpbnNreUB6ZXBsLmNvbS8xZjNiMjQwZTFjZjQ0MDk4YTU0Njc1MDM3MTMwNThlZC9ub3RlLmpzb24)
 
 <img src="./assets/zepl_notebook_overview.png" />
 
@@ -220,8 +222,9 @@ Add this code to the first paragraph and select "Run Paragraph":
 !pip install fbprophet==0.7.1
 ```
 
-Positive
-: This code may take several minutes to complete execution. <br> <br> The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
+> aside positive
+> 
+>  This code may take several minutes to complete execution. <br> <br> The container must start, download, and install all of the libraries. This is one reason to build your own images using our Custom Image builder so notebooks start up instantly with all of the required libraries!
 
 #### Code Explained
 `!pip install pystan~=2.14 Cython>=0.22 cmdstanpy==0.9.68 numpy>=1.15.4 pandas>=1.0.4 matplotlib>=2.0.0 LunarCalendar>=0.0.9 convertdate>=2.1.2 holidays>=0.10.2 setuptools-git>=1.2 python-dateutil>=2.8.0 tqdm>=4.36.1`</br>
@@ -383,8 +386,9 @@ print('''%html <h4> Projected Change:                   <b><span style="color:re
 ```
 <img src="./assets/zepl_predicted_target.png" width="600"/>
 
-Positive
-: Note that you can display HTML directly from our Python interpreter! If you want to learn more, look here: [Link](https://new-docs.zepl.com/docs/using-the-zepl-notebook/develop/data-visualization#html-css-javascript)
+> aside positive
+> 
+>  Note that you can display HTML directly from our Python interpreter! If you want to learn more, look here: [Link](https://new-docs.zepl.com/docs/using-the-zepl-notebook/develop/data-visualization#html-css-javascript)
 
 
 Finally, let's zoom in and visualize the forecasted values 30 days in the future. The price that our model predicted is displayed in blue and the final 365 days of adjusted close values are shown in black.
@@ -551,8 +555,9 @@ tuning_results['mape'] = mape
 z.show(tuning_results)
 ```
 
-Positive
-: This may take some time to run. Again, try a larger container size (> 32GB) if you are running into any memory related errors. Go grab some coffee :)
+> aside positive
+> 
+>  This may take some time to run. Again, try a larger container size (> 32GB) if you are running into any memory related errors. Go grab some coffee :)
 
 Lastly, display the parameters with the most optimal results and compare the new parameters with the original ones:
 ```python

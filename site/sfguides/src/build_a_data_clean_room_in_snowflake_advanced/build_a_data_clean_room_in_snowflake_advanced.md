@@ -16,8 +16,9 @@ Data Clean Rooms (DCRs) are secure environments that enable multiple organizatio
 
 Traditional DCR implementations require organizations to copy their data to a separate physical location.  Snowflake's DCR model, however, leverages [a unique architecture](https://www.snowflake.com/blog/distributed-data-clean-rooms-powered-by-snowflake/) that enables each organization to *maintain full control of their data* in their *own secure Snowflake account*.  In other words, two (or more) organizations can leverage Snowflake DCRs to join data without copying, moving, or sharing the underlying data, and to perform analyses on large amounts of data with high performance and scalability.
 
-Negative
-: **Caveat:** This Data Clean Room QuickStart is for illustrative purposes only, as a hands-on lab intended to show some of the basic features used to build a data clean room on Snowflake. The result of this lab must not be used in a production environment.
+> aside negative
+> 
+>  **Caveat:** This Data Clean Room QuickStart is for illustrative purposes only, as a hands-on lab intended to show some of the basic features used to build a data clean room on Snowflake. The result of this lab must not be used in a production environment.
 
 ### Prerequisites
 - Successful completion of the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart (or equivalent functional expertise)
@@ -25,8 +26,9 @@ Negative
 - Working knowledge with Snowflake database objects and the [Snowflake Web UI](https://docs.snowflake.com/en/user-guide/ui-web.html)
 - Clear understanding of how Snowflake [Secure Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro.html) works
 
-Negative
-: This Quickstart builds upon the technical foundation provided by the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart.  If you've never implemented a Snowflake Data Clean Room then it's _critical_ for you to [start there first](../build_a_data_clean_room_in_snowflake) so that you have hands-on expertise with Snowflake DCR architectural components and flow before proceeding with this Quickstart.
+> aside negative
+> 
+>  This Quickstart builds upon the technical foundation provided by the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart.  If you've never implemented a Snowflake Data Clean Room then it's _critical_ for you to [start there first](../build_a_data_clean_room_in_snowflake) so that you have hands-on expertise with Snowflake DCR architectural components and flow before proceeding with this Quickstart.
 
 ### What You’ll Learn 
 - How to create and deploy a DCR environment between two or more Snowflake accounts
@@ -57,14 +59,16 @@ Duration: 10
 If it's been awhile since you looked at the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart then it would probably be helpful to watch the following YouTube video where I provide a walk-through of Snowflake's DCR architecture, along with a demonstration of the DCR that was built during that Quickstart:
 <video id="UI5na73_9cA"></video>
 
-Negative
-: The remainder of this Quickstart assumes you're familiar with the concepts covered in the above video.  Again, if you've never implemented a Snowflake Data Clean Room then please [start here first](../build_a_data_clean_room_in_snowflake) so that you have hands-on expertise with Snowflake DCR architectural components and flow before proceeding with this Quickstart.
+> aside negative
+> 
+>  The remainder of this Quickstart assumes you're familiar with the concepts covered in the above video.  Again, if you've never implemented a Snowflake Data Clean Room then please [start here first](../build_a_data_clean_room_in_snowflake) so that you have hands-on expertise with Snowflake DCR architectural components and flow before proceeding with this Quickstart.
 
 ### Log Into Both Snowflake Accounts
 The first task at hand is to log into each of the two Snowflake accounts that you'll be using for this Quickstart.  As mentioned earlier, the logins that you use for these Snowflake accounts must have [ACCOUNTADMIN role access](https://docs.snowflake.com/en/user-guide/security-access-control-considerations.html) and both accounts must be deployed in the **same** [cloud and region](https://docs.snowflake.com/en/user-guide/intro-regions.html). You should now log in to each account simultaneously using separate browser tabs or windows.
 
-Positive
-: You may use either the [classic Snowflake UI](https://docs.snowflake.com/en/user-guide/ui-using.html) or the [new Snowsight interface](https://docs.snowflake.com/en/user-guide/ui-web.html) for this Quickstart. I used Snowsight in [the YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) that you watched earlier, and for all of the screenshots in this Quickstart.
+> aside positive
+> 
+>  You may use either the [classic Snowflake UI](https://docs.snowflake.com/en/user-guide/ui-using.html) or the [new Snowsight interface](https://docs.snowflake.com/en/user-guide/ui-web.html) for this Quickstart. I used Snowsight in [the YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) that you watched earlier, and for all of the screenshots in this Quickstart.
 
 ### Designate Provider And Consumer Accounts
 I referred to these as "Party1" and "Party2" in [my YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) as well as in the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart.  But the DCR we're building now is capable of having multiple Consumers, so we're replacing the "Party1" and "Party2" labels with "PROVIDER_1" and "CONSUMER_1". At this point you should designate each of your two accounts likewise. 
@@ -170,8 +174,9 @@ Now, go back and open your `provider_init.sql` worksheet, then scroll down to wh
 
 You'll recall from my [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart how a row access policy acts as a _Data Firewall_ to protect the Provider's data.  Well, here it is again, protecting these three tables in `SHARED_SCHEMA`.  Now, you'll notice that the row access policy is coded such that it leverages the `REQUEST_LOG` table that's located in the `ADMIN` schema.  Although this table logs _all_ query approval requests, you should observe that the row access policy is coded such that it only allows queries that have been flagged as **Approved** to return data to the Consumer.  That other Quickstart had two tables (`REQUEST_STATUS` and `APPROVED_QUERY_REQUESTS`) so this is definitely a more elegant approach.  Notice also that this row access policy references a `PARTY_ACCOUNT` column, which enables multi-party DCR deployments (we'll look at this later). 
 
-Positive
-: Even though the `DATA_FIREWALL` row access policy has been created, we haven't yet looked at how it actually gets activated.  We'll do that shortly when we look at a set of Secure Views that sit on top of these source tables.
+> aside positive
+> 
+>  Even though the `DATA_FIREWALL` row access policy has been created, we haven't yet looked at how it actually gets activated.  We'll do that shortly when we look at a set of Secure Views that sit on top of these source tables.
 
 Let's begin drawing a map of the DCR objects we've explored so far:
 
@@ -303,8 +308,9 @@ Another thing you may have noticed in the text of the proposed query is the incl
 
 The `campaign_conversion` template for this request joins the Providers advertising campaign exposure dataset with the Consumer's customer conversion data to help evaluate advertising campaign effectiveness.  You can use the same techniques as with the prior examples to check for request approval and to run the proposed query.  Again, feel free to experiment - both with the request process as well as testing out that `DATA_FIREWALL` row access policy.
 
-Negative
-: The demo sections that appear after this point are intended for execution in DCR deployments with multiple Providers and Consumers (see the next section for a discussion on that topic)
+> aside negative
+> 
+>  The demo sections that appear after this point are intended for execution in DCR deployments with multiple Providers and Consumers (see the next section for a discussion on that topic)
 
 <!-- ------------------------ -->
 ## Adding Tables, Templates, Consumers, and Providers
@@ -360,8 +366,9 @@ Use our [Streamlit-based DCR Setup Assistant app](https://snowflake-labs-sfquick
 
 The DCR Setup Assistant also custom-generates a `consumer_request.sql` script which provides a set of commands and queries for testing the newly-created Provider account using the templates and data deployed by the `provider_templates.sql` and `provider_data.sql` scripts, respectively.  You'll want to look specifically at the _Multiparty_ scenarios in this script to see how the Consumer initiates requests for joining their data with datasets from multiple Provider accounts, paying particular attention to how the UTC timestamp gets passed to the `REQUEST` stored procedure to ensure compatibility with Providers in different timezones.
 
-Negative
-: You'll need to run through the above sequence for _each_ Consumer account when adding additional Provider accounts into a DCR deployment where multiple Consumer accounts are present.
+> aside negative
+> 
+>  You'll need to run through the above sequence for _each_ Consumer account when adding additional Provider accounts into a DCR deployment where multiple Consumer accounts are present.
 
 
 <!-- ------------------------ -->

@@ -43,8 +43,9 @@ Duration: 5
 
 First we'll create a set of users and roles to use for the rest of the demo. 
 
-Negative
-: You MUST change the passwords assigned to each user. DO NOT use the samples given here. If you wish, you can remove the `password='usesomethinggoodthiswontwork' must_change_password = true` part of these SQL statements and skip to the key pair instructions below.
+> aside negative
+> 
+>  You MUST change the passwords assigned to each user. DO NOT use the samples given here. If you wish, you can remove the `password='usesomethinggoodthiswontwork' must_change_password = true` part of these SQL statements and skip to the key pair instructions below.
 
 ```sql
 -- create users are roles for the demo

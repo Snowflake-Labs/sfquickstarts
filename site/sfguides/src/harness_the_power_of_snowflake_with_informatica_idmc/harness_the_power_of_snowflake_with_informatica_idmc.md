@@ -221,9 +221,11 @@ Reference: [AWS S3 V2 Connector Documentation](https://docs.informatica.com/inte
 ### Step 4 (Alternative method for using your own S3 bucket)
 1. Click to download the following files.<br>
   <button>
+
   [orders.tbl](https://sfquickstarts.s3.us-west-1.amazonaws.com/VHOL+Informatica+Data+Management/orders.tbl)
   </button>
   <button>
+
   [lineitem.tbl](https://sfquickstarts.s3.us-west-1.amazonaws.com/VHOL+Informatica+Data+Management/lineitem.tbl)
   </button>
 2. Upload those two files into your S3 bucket.  Make sure to the files are protected with an access key and secret key.  IDMC requires those keys in the S3 connection.
