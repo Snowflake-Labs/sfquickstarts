@@ -1,6 +1,6 @@
 id: data_teams_with_dbt_core
 summary: Build your data pipeline with dbt Core & Snowflake
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

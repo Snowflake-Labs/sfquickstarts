@@ -1,6 +1,6 @@
 summary: This guide will help you get started with Snowpipe.
 id: getting_started_with_snowpipe
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

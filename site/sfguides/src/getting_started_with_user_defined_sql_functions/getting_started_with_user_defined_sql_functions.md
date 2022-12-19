@@ -1,6 +1,6 @@
 summary: Guide to getting started with user-defined SQL functions
 Id: getting_started_with_user_defined_sql_functions
-categories: Getting Started, UDF, UDTF
+categories: Getting-Started, UDF, UDTF
 environments: Web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues

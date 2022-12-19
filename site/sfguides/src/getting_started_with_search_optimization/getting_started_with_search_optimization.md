@@ -1,7 +1,7 @@
 author: Yogitha Chilukuri
 id: getting_started_with_search_optimization
 summary: This is a sample Snowflake Guide
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

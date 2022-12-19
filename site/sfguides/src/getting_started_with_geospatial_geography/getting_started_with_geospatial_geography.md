@@ -1,7 +1,7 @@
 author: Kevin McGinley
 id: getting_started_with_geospatial_geography
 summary: Getting Started with Geospatial - Geography
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

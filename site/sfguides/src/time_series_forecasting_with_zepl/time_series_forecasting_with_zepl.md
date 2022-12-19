@@ -1,6 +1,6 @@
 summary: Time Series Forecasting with Zepl
 id: time_series_forecasting_zepl 
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues

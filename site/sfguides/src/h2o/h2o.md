@@ -1,7 +1,7 @@
 author: miles.adkins@snowflake.com
 id: automl_with_snowflake_and_h2o
 summary: This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,6 +1,6 @@
 summary: Learn how to get started with Jupyter Notebooks on Snowpark and use the DataFrame API.
 id: getting_started_with_snowpark_dataframe_api
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

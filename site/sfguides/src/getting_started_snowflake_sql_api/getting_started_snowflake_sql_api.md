@@ -1,6 +1,6 @@
 summary: Getting Started With Snowflake SQL API
 id: getting_started_snowflake_sql_api
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

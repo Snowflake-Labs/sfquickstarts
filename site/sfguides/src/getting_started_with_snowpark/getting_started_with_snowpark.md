@@ -1,6 +1,6 @@
 id: getting_started_with_snowpark_scala
 summary: This guide provides the basic instructions for setting up a simple example using Snowpark.
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

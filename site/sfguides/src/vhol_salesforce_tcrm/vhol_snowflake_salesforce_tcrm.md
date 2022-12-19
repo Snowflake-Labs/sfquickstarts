@@ -1,7 +1,7 @@
 author: andries.engelbrecht@snowflake.com
 id: vhol_snowflake_salesforce_tcrm
 summary: This lab will walk you through how to use Snowflake, Salesforce and Tableau CRM to integrate data, and deliver Customer 360.
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

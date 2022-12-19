@@ -1,7 +1,7 @@
 author: Lorena Diaconescu
 id: determining_warehouse_size
 summary: Determine the best warehouse size to use for your query
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

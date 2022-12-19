@@ -1,7 +1,7 @@
 author: Bren Stokes
 id: vhol_data_marketplace_app
 summary: This is a sample Snowflake Guide
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

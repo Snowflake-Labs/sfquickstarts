@@ -1,6 +1,6 @@
 summary: This is a sample Snowflake Guide
 id: sample 
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -110,17 +110,20 @@ for (statement 1; statement 2; statement 3) {
 ```
 
 ### Info Boxes
-Positive
-: This will appear in a positive info box.
+
+> aside positive
+> 
+> This will appear in a positive info box.
 
 
-Negative
-: This will appear in a negative info box.
+
+> aside negative
+> 
+> This will appear in a negative info box.
 
 ### Buttons
-<button>
-  [This is a download button](link.com)
-</button>
+
+<button>[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)</button>
 
 ### Tables
 <table>
