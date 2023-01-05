@@ -261,8 +261,8 @@ In order to build and run the applications, setup your environment as described 
 - From the app folder, create conda environment. Then activate conda environment and install Snowpark for Python and other libraries including Streamlit. *Note: You can skip installing openai if you're not going to run the second application.*
 
 ```python
-conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8
-conda activate snowpark
+conda create --name snowpark-img-rec -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+conda activate snowpark-img-rec
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas streamlit notebook cachetools
 pip install uuid
 pip install openai
@@ -284,7 +284,8 @@ Duration: 5
 
 Assuming you've satisfied the prerequisites and set up your environment, running the two applications is pretty straightforward.
 
-- In your favorite IDE, open and run through the cells in **Snowpark_PyTorch_Image_Rec.ipynb** after making sure the notebook Python kernel is set to **snowpark** -- the name of the conda environment created in previous step. Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the UDF exists by running the following command in Snowsight.
+- In your favorite IDE, open and run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb) after making sure the notebook Python kernel is set to **snowpark-img-rec** -- the name of the conda environment created in the previous step.
+- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the UDF exists by running the following command in Snowsight.
 
 ```sql
 list @dash_files;
