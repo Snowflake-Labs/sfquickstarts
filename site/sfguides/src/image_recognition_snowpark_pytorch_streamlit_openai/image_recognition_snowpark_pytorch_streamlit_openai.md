@@ -57,8 +57,8 @@ Two web-based image recognition applications in Streamlit. These applications ca
     - Click on the **Billing** on the left side panel
     - Click on **Terms and Billing**
     - Read and accept terms to continue
+  - Create a [Warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), a [Database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and a [Schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html)
 - (***Optionally***) [OpenAI account](https://beta.openai.com/overview) for creating the second application. Once the account is created, you will need to generate an [OpenAI API key](https://beta.openai.com/account/api-keys) to use in the application. *Note: At the time of writing this guide, creating a new OpenAI account granted you $18.00 credit which is plenty for this application.*
-- Your favorite IDE - Jupyter Notebook, VS Code, etc.
 
 <!-- ------------------------ -->
 ## Streamlit Applications
@@ -268,9 +268,9 @@ pip install uuid
 pip install openai
 ```
 
-- Update **connection.json** with your Snowflake account details and credentials. *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
+- Update [connection.json](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/connection.json) with your Snowflake account details and credentials. *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
-- In your Snowflake account, create a Snowflake table and internal stage by running the following commands in Snowsight. The table will store image data and the stage is for storing serialized Snowpark Python UDF code.
+- In your Snowflake account, create a Snowflake table and internal stage by running the following commands in Snowsight. The table will store the image data and the stage is for storing serialized Snowpark Python UDF code. *Note: It's assumed that you've already created a warehouse, a database and a schema in your Snowflake account.*
 
 ```sql
 create or replace table images (file_name string, image_bytes string);
@@ -282,9 +282,9 @@ create or replace stage dash_files;
 
 Duration: 5
 
-Assuming you've satisfied the prerequisites and set up your environment, running the two applications is pretty straightforward.
+Once you have satisfied the prerequisites and set up your environment as described, running the two applications is pretty straightforward.
 
-- In your favorite IDE, open and run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb) after making sure the notebook Python kernel is set to **snowpark-img-rec** -- the name of the conda environment created in the previous step.
+- In your favorite IDE such as Jupyter Notebook or VS Code, set the Python kernel to **snowpark-img-rec** (the name of the conda environment created in the previous step) and then run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb).
 - Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the UDF exists by running the following command in Snowsight.
 
 ```sql
