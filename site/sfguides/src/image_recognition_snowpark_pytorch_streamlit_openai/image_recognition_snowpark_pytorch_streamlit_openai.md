@@ -19,7 +19,7 @@ First things first though for those that are new to some of these technologies.
 
 ### What is Snowpark?
 
-It allows developers to query data and write data applications in languages other than SQL using a set of APIs and DataFrame-style programming constructs in languages like Python, Java, and Scala. These applications run on and take advantage of the same distributed computation on Snowflake's elastic engine as your SQL workloads. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+It allows developers to query data and write data applications in languages other than SQL using a set of APIs and DataFrame-style programming constructs in Python, Java, and Scala. These applications run on and take advantage of the same distributed computation on Snowflake's elastic engine as your SQL workloads. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ### What is Streamlit?
 
@@ -27,7 +27,7 @@ Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit)
 
 ### What is PyTorch?
 
-It is one of the most popular [open source](https://github.com/pytorch/pytorch) machine learning frameworks that also happens to be pre-installed and available for developers to use in Snowpark via [Snowflake Anaconda](https://snowpark-python-packages.streamlit.app/) channel. This means that you (the developers) can load pre-trained PyTorch models in Snowpark for Python without having to manually install it and worrying about managing all its dependencies as well.
+It is one of the most popular [open source](https://github.com/pytorch/pytorch) machine learning frameworks that also happens to be pre-installed and available for developers to use in Snowpark via [Snowflake Anaconda](https://snowpark-python-packages.streamlit.app/) channel. This means that you can load pre-trained PyTorch models in Snowpark for Python without having to manually install the library and manage all its dependencies.
 
 ### OpenAI and DALL-E 2
 
@@ -52,13 +52,12 @@ Two web-based image recognition applications in Streamlit. These applications ca
 
 ### Prerequisites
 
-- Familiarity with Python and PyTorch
 - A [Snowflake account](https://signup.snowflake.com/)
   - Login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges). Keep this tab open during the session.
     - Click on the **Billing** on the left side panel
     - Click on **Terms and Billing**
     - Read and accept terms to continue
-- (Optionally) [OpenAI account](https://beta.openai.com/overview) for creating the second application. Once the account is created, generate [OpenAI API key](https://beta.openai.com/account/api-keys) to use in the application. *Note: At the time of writing this guide, creating a new OpenAI account granted you $18.00 credit which is plenty for this application.*
+- (***Optionally***) [OpenAI account](https://beta.openai.com/overview) for creating the second application. Once the account is created, you will need to generate an [OpenAI API key](https://beta.openai.com/account/api-keys) to use in the application. *Note: At the time of writing this guide, creating a new OpenAI account granted you $18.00 credit which is plenty for this application.*
 - Your favorite IDE - Jupyter Notebook, VS Code, etc.
 
 <!-- ------------------------ -->
@@ -141,7 +140,7 @@ Notes:
 predicted_label = session.sql(f"SELECT image_recognition_using_bytes(image_bytes) as PREDICTED_LABEL from IMAGES where FILE_NAME = '{file_name}'").to_pandas().iloc[0,0]
 ```
 
-- In the above code snippet, Snowpark for Python UDF *image_recognition_using_bytes()* is passed the contents of the column *image_bytes* where the column *FILE_NAME* matches the name of the image file generated using uuid.
+- In the above code snippet, the Snowpark for Python UDF *image_recognition_using_bytes()* is passed the contents of the column *image_bytes* where the column *FILE_NAME* matches the name of the image file generated using uuid.
 
 <!-- ------------------------ -->
 ## Snowpark for Python and PyTorch
@@ -246,7 +245,7 @@ def image_recognition_using_bytes(image_bytes_in_str: str) -> str:
 Notes:
 
 - There are two ways to deploy Python functions as UDFs in Snowpark so that they're executed in Snowflake. One is to use [*@udf decorator*](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/api/snowflake.snowpark.functions.udf.html#snowflake.snowpark.functions.udf) as shown above in image_recognition_using_bytes() and the other is to use [register()](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/api/snowflake.snowpark.udf.UDFRegistration.register.html#snowflake.snowpark.udf.UDFRegistration.register).
-- Because functions *load_class_mapping(), load_image()*, and *load_model()* are global objects, they're also serialized and available to/as part of *image_recognition_using_bytes()* UDF.
+- Because functions *load_class_mapping(), load_image()*, and *load_model()* are global objects, they're also serialized and available in *image_recognition_using_bytes()* UDF.
 
 <!-- ------------------------ -->
 ## Setup Environment
