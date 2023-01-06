@@ -285,15 +285,15 @@ Duration: 5
 Once you have satisfied the prerequisites and set up your environment as described, running the two applications is pretty straightforward.
 
 - In your favorite IDE such as Jupyter Notebook or VS Code, set the Python kernel to **snowpark-img-rec** (the name of the conda environment created in the previous step) and then run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb).
-- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the UDF exists by running the following command in Snowsight.
+- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the UDF exists by running the following command in Snowsight. *Note: Replace the name of the stage with the one you created.*
 
 ```sql
-list @dash_files;
+list @dash_udfs;
 ```
 
 ### Application 1 - Upload image
 
-- In a terminal window, execute the following command from the app folder *sfguide-snowpark-pytorch-streamlit-openai-image-rec*.
+- In a terminal window, execute the following command from the app folder *sfguide-snowpark-pytorch-streamlit-openai-image-rec* to run Streamlit application [Snowpark_PyTorch_Streamlit_Upload_Image_Rec.py](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Streamlit_Upload_Image_Rec.py)
 
 ```shell
 streamlit run Snowpark_PyTorch_Streamlit_Upload_Image_Rec.py
@@ -305,7 +305,7 @@ streamlit run Snowpark_PyTorch_Streamlit_Upload_Image_Rec.py
 
 ### Application 2 - Generate images using OpenAI
 
-- In a terminal window, execute the following command from the app folder *sfguide-snowpark-pytorch-streamlit-openai-image-rec*.
+- In a terminal window, execute the following command from the app folder *sfguide-snowpark-pytorch-streamlit-openai-image-rec* to run Streamlit application [Snowpark_PyTorch_Streamlit_OpenAI_Image_Rec.py](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Streamlit_OpenAI_Image_Rec.py)
 
 ```shell
 streamlit run Snowpark_PyTorch_Streamlit_OpenAI_Image_Rec.py
