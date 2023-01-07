@@ -12,13 +12,17 @@ authors: Alex Engelmann
 ## Overview 
 Duration: 3
 
-Coalesce is a best-of-breed Data Transformation tool for Snowflake.  With Coalesce, you build a directed acyclic graph (DAG) of "nodes" that can then be run on a scheduled basis, producing tested, up-to-date datasets that can then be consumed by the rest of your business.
+Coalesce is a best-in-class Data Transformation solution for Snowflake. With Coalesce, you build directed acyclic graphs (DAG) made up of nodes that run on a schedule and produce tested, up-to-date datasets ready for your business users.
 
 The Coalesce product is built around the concept of "metadata" - column and table level information that describes the structure and transformations inside your data warehouse. This metadata makes both designing and deploying data warehouses easier, especially at enterprise scale.
 
 ![Coalesce Pipeline](assets/coalesce_overview_pipeline.png)
 
 This guide will help you quickly get started with Coalesce, connecting your database and creating a small data mart for a hypothetical sales team.  Using the Snowflake sample database, we will be implementing a Dimension node to track historical changes of their customers and a Fact node to record order transactions.
+
+The following video provides a brief overview of (most of) what this guide will be covering.
+
+<video id="Kg9Bo8_lUfU"></video>
 
 ### Prerequisites
 
@@ -45,7 +49,11 @@ Duration: 2
 
 ### Interface Overview
 
-When you first sign in and choose your **Workspace** you'll be presented with the **Build** interface.  This is where you'll spend most of your time creating nodes, building a graph with them, and transforming your data.  The other interface is the **Deploy** interface, which will be used to push your pipeline to other environments (QA, Production, etc.), including your graph and other metadata.  
+When you first sign in, you'll be presented with the **Workspaces Dashboard**, where you should choose and launch the initial Development workspace that Coalesce creates for you.
+
+![Launching a Workspace](assets/launch_workspace.png)
+
+Once you've done this you'll be presented with the **Build** interface.  This is where you'll spend most of your time creating nodes, building a graph with them, and transforming your data.  The other interface is the **Deploy** interface, which will be used to push your pipeline to other environments (QA, Production, etc.), including your graph and other metadata.
 
 > aside positive
 >
@@ -75,8 +83,8 @@ You've now connected Coalesce to your Snowflake instance!
 
 A storage location is a logical name you provide to represent a database and schema (in Snowflake) and you will need them to make use of the **Workspace** you configured earlier.
 
-1. Go to **Build Settings** → **Storage Locations** and click on **New Storage Location** to create a new location
-2. You can name this anything you'd like, but as this will be your data target, naming it TARGET or DESTINATION makes sense.  Also make sure to set it as the default **Storage Location**.
+1. Go to **Build Settings** → **Storage Locations** and click on **New Storage Location** to create a new location - TARGET
+2.  Make sure to set TARGET as the default **Storage Location**.
 3.  Edit your **Workspace** → **Storage Mappings**
 4.  From here enter the actual databases and schemas that will correspond to each **Storage Location**.  For this guide we will be using Snowflake's sample schema TPCH_SF1 as our data source.  Feel free to use any schema you'd like as the target for the transformed data.
 
