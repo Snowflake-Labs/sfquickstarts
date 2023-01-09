@@ -96,7 +96,7 @@ Duration: 2
 
 Now it's time to add **Sources** to the graph.  The graph node view is where you'll configure **Nodes** that will transform your data.  Below is an example of a graph with several nodes -
 
-![Example Graph](assets/example-graph.png)
+![Example Graph](assets/example_graph.png)
 
 To add **Source Nodes** take the following steps:
 
@@ -146,7 +146,7 @@ Congratulations!  You've connected your database and applied a basic transformat
 ## Create a Dimension Table
 Duration: 2
 
-Now let's create a simple slowly changing dimension (type 2) — an industry standard for tracking historical data by creating multiple records for a given natural key.
+Now let's create a simple slowly changing dimension (Type 2) — an industry standard for tracking historical data by creating multiple records for a given natural key.
 
 1. Create a new **Stage Node** from the CUSTOMER **Source Node**
 2. Go into this new node to **Create** and **Run**
