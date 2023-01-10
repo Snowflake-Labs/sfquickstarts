@@ -82,7 +82,7 @@ An Accounts Receivable pipeline for Financial Services from SAP ECC to Snowflake
 ## Create Azure account & deploy SAP ERP
 Duration: 120
 <aside class="callout">
-In the interest of getting data out of SAP for this lab, we will use Azure Data Factory's SAP CDC connector, but there are many other ways to do this, and we are not recommending this particular path. If you otherwise have access to the demo data in this lab, you can skip building the Azure and SAP environments and go directly to the sections of creating your Snowflake account and installing and configuring DBT. An example, one-off, file ingestion is provided for your convenience in the Appendix.
+In the interest of getting data out of SAP for this lab, we will use Azure Data Factory's SAP CDC connector, but there are many other ways to do this, and we are not recommending this particular path. If you otherwise have access to the demo data in this lab, you can skip building the Azure and SAP environments and go directly to the sections of creating your Snowflake account and installing and configuring DBT.
 </aside>
 
 In this section, we:
