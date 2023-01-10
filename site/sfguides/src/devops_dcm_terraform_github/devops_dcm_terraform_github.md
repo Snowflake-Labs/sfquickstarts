@@ -27,8 +27,9 @@ DevOps is concerned with automating the development, release and maintenance of 
 
 This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub for the CI/CD and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
-Positive
-: **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0).
+> aside positive
+> 
+>  **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0).
 
 Let’s begin with a brief overview of GitHub and Terraform.
 
@@ -105,8 +106,9 @@ While Terraform began as an IaC tool it has expanded and taken on many additiona
 
 Please note that this CZI Provider for Snowflake is a community-developed Provider, not an official Snowflake offering. It comes with no support or warranty.
 
-Negative
-: **REALLY IMPORTANT** - **Do not use this provider to manage your Snowflake tables.** Currently the CZI Snowflake Provider drops and re-creates a table each time you make changes to it. So when using Terraform with Snowflake use it to create/manage the account level objects (warehouses, roles, integrations, databases, schemas, etc.) and then use a separate DCM tool for most objects within the database schema (tables, views, stored procedures, etc.).
+> aside negative
+> 
+>  **REALLY IMPORTANT** - **Do not use this provider to manage your Snowflake tables.** Currently the CZI Snowflake Provider drops and re-creates a table each time you make changes to it. So when using Terraform with Snowflake use it to create/manage the account level objects (warehouses, roles, integrations, databases, schemas, etc.) and then use a separate DCM tool for most objects within the database schema (tables, views, stored procedures, etc.).
 
 ### State Files
 Another really important thing to understand about Terraform is how it tracks the state of the resources/objects being managed. Many declarative style tools like this will do a real-time comparison between the objects defined in code and the deployed objects and then figure out what changes are required. But Terraform does not operate in this manner, instead it maintains a State file which keeps track of things. See Terraform's overview of [State](https://www.terraform.io/docs/language/state/index.html) and in particular their discussion of why they chose to require a State file in [Purpose of Terraform State](https://www.terraform.io/docs/language/state/purpose.html).
@@ -172,8 +174,9 @@ In order for Terraform Cloud to be able to connect to your Snowflake account you
     </tbody>
 </table>
 
-Positive
-: **Tip** - For more details on the supported arguments please check out the [CZI Terraform Provider for Snowflake documentation](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest/docs).
+> aside positive
+> 
+>  **Tip** - For more details on the supported arguments please check out the [CZI Terraform Provider for Snowflake documentation](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest/docs).
 
 When you’re finished adding all the secrets, the page should look like this:
 
@@ -196,8 +199,9 @@ From the repository, click on the "Settings" tab near the top of the page. From 
 
 Click on the "New repository secret" button near the top right of the page. For the secret "Name" enter `TF_API_TOKEN` and for the "Value" enter the API token value you saved from the previous step.
 
-Positive
-: **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
+> aside positive
+> 
+>  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
 ### Action Workflows
 Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run Terraform and deploy changes to our Snowflake account.
@@ -254,8 +258,9 @@ A few things to point out from the YAML pipeline definition:
 - Please note that if you are re-using an existing GitHub repository it might retain the old `master` branch naming. If so, please update the YAML above (see the `on:` section).
 - We’re using the default GitHub-hosted Linux agent to execute the pipeline.
 
-Positive
-: **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page and the [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
+> aside positive
+> 
+>  **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page and the [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration

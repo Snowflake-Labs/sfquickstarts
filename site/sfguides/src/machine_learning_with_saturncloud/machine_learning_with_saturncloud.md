@@ -1,6 +1,6 @@
 summary: Machine learning on unstructured data with Saturn Cloud and Snowflake
 Id: machine_learning_with_saturncloud
-categories: Getting Started
+categories: Getting-Started
 environments: Web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues

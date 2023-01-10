@@ -16,7 +16,9 @@ Data Clean Rooms (DCRs) are secure environments that enable multiple organizatio
 
 Traditional DCR implementations require organizations to copy their data to a separate physical location.  Snowflake's DCR model, however, leverages [a unique architecture](https://www.snowflake.com/blog/distributed-data-clean-rooms-powered-by-snowflake/) that enables each organization to *maintain full control of their data* in their *own secure Snowflake account*.  In other words, two (or more) organizations can leverage Snowflake DCRs to join data without copying, moving, or sharing the underlying data, and to perform analyses on large amounts of data with high performance and scalability.
 
-**Caveat: This Data Clean Room QuickStart is for illustrative purposes only, as a hands-on lab intended to show some of the basic features used to build a data clean room on Snowflake. The result of this lab must not be used in a production environment.**
+> aside negative
+> 
+>  **Caveat:** This Data Clean Room QuickStart is for illustrative purposes only, as a hands-on lab intended to show some of the basic features used to build a data clean room on Snowflake. The result of this lab must not be used in a production environment.
 
 ### Prerequisites
 - Familiarity with Snowflake's [unique DCR architecture](https://www.snowflake.com/blog/distributed-data-clean-rooms-powered-by-snowflake/)
@@ -52,8 +54,9 @@ Before going any further, please watch the following YouTube video where I provi
 ### Log Into Both Snowflake Accounts
 The first task at hand is to log into each of the two Snowflake accounts that you'll be using for this Quickstart.  As mentioned earlier, the logins that you use for these Snowflake accounts must have [ACCOUNTADMIN role access](https://docs.snowflake.com/en/user-guide/security-access-control-considerations.html) and both accounts must be deployed in the **same** [cloud and region](https://docs.snowflake.com/en/user-guide/intro-regions.html). You should now log in to each account simultaneously using separate browser tabs or windows.
 
-Positive
-: You may use either the [classic Snowflake UI](https://docs.snowflake.com/en/user-guide/ui-using.html) or the [new Snowsight interface](https://docs.snowflake.com/en/user-guide/ui-web.html) for this Quickstart. I used Snowsight in [the YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) that you watched earlier, and for all of the screenshots in this Quickstart.
+> aside positive
+> 
+>  You may use either the [classic Snowflake UI](https://docs.snowflake.com/en/user-guide/ui-using.html) or the [new Snowsight interface](https://docs.snowflake.com/en/user-guide/ui-web.html) for this Quickstart. I used Snowsight in [the YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) that you watched earlier, and for all of the screenshots in this Quickstart.
 
 ### Designate Party1 (Provider) And Party2 (Consumer) Accounts
 As you noticed in [my YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA), one of the Snowflake accounts was called "Party1" (the Provider account, with the rich CUSTOMER data) and the other was called "Party 2" (the Consumer account).  At this point you should designate each of your two accounts likewise.  Here's a suggestion: Since you probably logged into each Snowflake account using separate browser tabs or windows, I'll suggest that the one on the left of your screen should be Party1, and the one on your right Party2 (to keep consistent with the diagrams in the video).  Whatever works best for you though.
@@ -91,8 +94,9 @@ Here's a screenshot of what it looks like when I did this for my accounts:
 
 Check the account identifiers that get echoed back to you for accuracy - they should match your notes.
 
-Positive
-: From here forward we'll be building the first part of the Party1 setup script.  So, you'll simply paste each of the code segments that appear below in your `Party1 - Setup1` worksheet and run them individually (this is done by selecting the newly-pasted code, then clicking the blue "Run" button in the upper-right corner).
+> aside positive
+> 
+>  From here forward we'll be building the first part of the Party1 setup script.  So, you'll simply paste each of the code segments that appear below in your `Party1 - Setup1` worksheet and run them individually (this is done by selecting the newly-pasted code, then clicking the blue "Run" button in the upper-right corner).
 
 ### Roles and Privileges
 These commands create the `party1_role` and assign it the appropriate privileges:
@@ -842,8 +846,9 @@ The instructions in the following sections are designed to align with the video,
 
 ... And then continue likewise for the remaining sections.  
 
-Negative
-: I would encourage you to resist the tempation to start skipping forward without taking the time to look at the corresponding video sections.  I've designed this Quickstart to work hand-in-hand with the video, which contains a lot of explanation that you'll miss if you skip over it now.
+> aside negative
+> 
+>  I would encourage you to resist the tempation to start skipping forward without taking the time to look at the corresponding video sections.  I've designed this Quickstart to work hand-in-hand with the video, which contains a lot of explanation that you'll miss if you skip over it now.
 
 Alright, let's begin...
 
@@ -869,8 +874,9 @@ Next, have a look at these `PARTY1_DCR_DB` tables:
 ### Party2's Tables
 Next we'll have a look at the Party2 tables.  Switch back to your **Party2** account UI, then click on the "Databases" tab and expand the tree down through `PARTY2_SOURCE_DB` and `SOURCE_SCHEMA` to the `PARTY1_CUSTOMERS` table.  Click the preview icon for the `PARTY2_CUSTOMERS` table, then scroll to the far right in the preview to observe some that this dataset _lacks the rich demographic attributes_ that Party1's customer dataset contains.  
 
-Positive
-: This is our use case: To bring those attributes from Party1 over to Party2 where both parties _share the same customers_ **without** either party revealing its PII to the other.
+> aside positive
+> 
+>  This is our use case: To bring those attributes from Party1 over to Party2 where both parties _share the same customers_ **without** either party revealing its PII to the other.
 
 Now, expand the `PARTY2_DCR_DB` database tree down through `SHARED_SCHEMA` and note that the `QUERY_REQUESTS` table is empty (since no requests have been made yet).
 
@@ -947,8 +953,9 @@ Notice also that a `WHERE exists` clause is paired with a query back to `PARTY2_
 
 Finally, notice the inclusion of an `@threshold` identifier.  In this case the `VALIDATE_QUERY` stored procedure that gets executed in Party1's account will insert a minimum number of records that the query must identify in order to return any data to Party2 - this is to prevent a _Thin-Slicing_ attack whereby a Party2 analyst reduces their customer dataset down to a minimal number of records in an attempt to isolate specific customer records in the Party1 dataset.  Party1 could potentially introduce "noise" into the return dataset to defend against this type of attack as well.  Again, we're not doing this sort of thing during our demo, but it most certainly could be done in a production deployment.
 
-Positive
-: Keep in mind that _both_ parties will have agreed to the content of these query templates before deploying the clean room environment, and could also add/modify templates along the way. Party1 maintains control of the templates, while Party2 can examine and select the query template(s) that they wish to use. Clearly the proper definition of these query templates is **key** to both the _security_ and _usability_ of the clean room.
+> aside positive
+> 
+>  Keep in mind that _both_ parties will have agreed to the content of these query templates before deploying the clean room environment, and could also add/modify templates along the way. Party1 maintains control of the templates, while Party2 can examine and select the query template(s) that they wish to use. Clearly the proper definition of these query templates is **key** to both the _security_ and _usability_ of the clean room.
 
 Now that we've fully considered what the `CUSTOMER_OVERLAP_COUNT` query template contains, let's use it to request a query.  Paste this code into the `Party2 - Demo` worksheet in the **Party2** account UI:
 
@@ -993,7 +1000,7 @@ You should be able to observe the aggregate counts of common Party1 and Party2 c
 At this point you should have a look at the records in the following tables:
 - `PARTY2_DCR_DB.SHARED_SCHEMA.QUERY_REQUESTS` - Contains the query request created by our execution of the Party2 `GENERATE_QUERY_REQUEST` stored procedure.
 - `PARTY1_DCR_DB.SHARED_SCHEMA.REQUEST_STATUS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
-- `PARTY1_DCR_DB.SHARED_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
+- `PARTY1_DCR_DB.INTERNAL_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
 ![Look at records in these tables](assets/demoLookAtTables.png)
 
 ### Customer Data Enrichment
@@ -1052,7 +1059,7 @@ You should be able to observe that the `CUSTOMER_DETAILS` table contains the ori
 As before, you may want to have a look at the records in the following tables:
 - `PARTY2_DCR_DB.SHARED_SCHEMA.QUERY_REQUESTS` - Contains the query request created by our execution of the Party2 `GENERATE_QUERY_REQUEST` stored procedure.
 - `PARTY1_DCR_DB.SHARED_SCHEMA.REQUEST_STATUS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
-- `PARTY1_DCR_DB.SHARED_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
+- `PARTY1_DCR_DB.INTERNAL_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
 
 ### Declined Query Example
 Let's re-run a query request for the `CUSTOMER_OVERLAP_ENRICH` query template, but this time we'll ask for demographic attributes to be returned that _aren't_ listed in the `AVAILABLE_VALUES` table.  Paste this code into the `Party2 - Demo` worksheet in the **Party2** account UI:
@@ -1094,7 +1101,7 @@ INSERT INTO party1_dcr_db.shared_schema.available_values VALUES ('PARTY1','MARIT
 You should now observe an approval when you re-run the `GENERATE_QUERY_REQUEST` and `VALIDATE_QUERY` stored procedures.  It's worth taking a look the records in the tables below to see the records that were created as a result of this last demostration sequence:
 - `PARTY2_DCR_DB.SHARED_SCHEMA.QUERY_REQUESTS` - Contains the query request created by our execution of the Party2 `GENERATE_QUERY_REQUEST` stored procedure.
 - `PARTY1_DCR_DB.SHARED_SCHEMA.REQUEST_STATUS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
-- `PARTY1_DCR_DB.SHARED_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
+- `PARTY1_DCR_DB.INTERNAL_SCHEMA.APPROVED_QUERY_REQUESTS` - Contains approve/decline acknowledgement from our execution of the Party1 `VALIDATE_QUERY` stored procedure.
 
 ### You Did It!
 You've successfully completed your walk-through of this two-party Snowflake DCR!
@@ -1114,6 +1121,10 @@ use warehouse PARTY1_WH;
 
 delete from party1_dcr_db.internal_schema.approved_query_requests;
 delete from party1_dcr_db.shared_schema.request_status;
+CREATE OR REPLACE STREAM party1_dcr_db.internal_schema.party2_new_requests
+ON TABLE party2_dcr_db.shared_schema.query_requests
+  APPEND_ONLY = TRUE 
+  DATA_RETENTION_TIME_IN_DAYS = 14;
 
 DELETE FROM party1_dcr_db.shared_schema.query_templates; 
 INSERT INTO party1_dcr_db.shared_schema.query_templates
@@ -1636,6 +1647,10 @@ use warehouse PARTY1_WH;
 
 delete from party1_dcr_db.internal_schema.approved_query_requests;
 delete from party1_dcr_db.shared_schema.request_status;
+CREATE OR REPLACE STREAM party1_dcr_db.internal_schema.party2_new_requests
+ON TABLE party2_dcr_db.shared_schema.query_requests
+  APPEND_ONLY = TRUE 
+  DATA_RETENTION_TIME_IN_DAYS = 14;
 
 DELETE FROM party1_dcr_db.shared_schema.query_templates; 
 INSERT INTO party1_dcr_db.shared_schema.query_templates

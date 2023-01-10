@@ -1,6 +1,6 @@
 id: getting_started_with_streams_and_tasks
 summary: Learn how to use streams and tasks with Snowflake.
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

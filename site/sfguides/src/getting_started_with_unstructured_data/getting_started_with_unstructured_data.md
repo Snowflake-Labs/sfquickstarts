@@ -1,7 +1,7 @@
 author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu
 id: getting_started_with_unstructured_data
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,7 +1,7 @@
 author: miles.adkins@snowflake.com
 id: automl_with_snowflake_and_h2o
 summary: This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -56,6 +56,7 @@ Duration: 5
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
 <button>
+
   [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/h2o/Snowflake_H2o_VHOL_guides.sql)
 </button>
 

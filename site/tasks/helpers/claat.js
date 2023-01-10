@@ -11,9 +11,10 @@ const spawn = childprocess.spawn;
 //   ga - google analytics tracking code
 //   args - an array of source doc IDs or codelab names (IDs)
 //   callback - an async task callback function
+//   prefix - prefix for codelab-elements
 //
-exports.run = (cwd, cmd, env, fmt, ga, o, args, callback) => {
-  args.unshift(cmd, '-e', env, '-f', fmt, '-ga', ga, '-o', o);
+exports.run = (cwd, cmd, env, fmt, ga, o, prefix, args, callback) => {
+  args.unshift(cmd, '-e', env, '-f', fmt, '-ga', ga, '-o', o, '-prefix', prefix);
   const proc = spawn('claat', args, { stdio: 'inherit', cwd: cwd, env: process.env, shell: true });
 
   proc.on('close', (e) => {

@@ -1,7 +1,7 @@
 author: miles.adkins@snowflake.com
 id: automl_with_snowflake_and_datarobot
 summary: This lab will walk you through how to use Snowflake and DataRobot to perform supervised machine learning.
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -50,6 +50,8 @@ Duration: 5
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
 <button>
+
+  
   [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/Snowflake_Datarobot_VHOL_guides.sql)
 </button>
 <br/><br/>
@@ -641,6 +643,7 @@ First, let's configure Zepl:
 After creating your zepl account through the partner connect download the following notebook:
 
 <button>
+
   [Download the notebook](https://app.zepl.com/viewer/notebooks/bm90ZTovL2F0YWxpYS5ob3JlbnNodGllbkBkYXRhcm9ib3QuY29tLzAxYjY3NjdiMDk0ZDQwZjE5YmI1Njg1MjJlODI2MDJjL25vdGUuanNvbg)
 </button>
 
@@ -689,6 +692,7 @@ Duration: 5
 
 Download the Snowpark library:
 <button>
+
   [Download the Snowpark library](https://drive.google.com/file/d/15kVt0XtGIKl7CrN27jpUHwcW4MvdIdiA/view?usp=sharin)
 </button>
 

@@ -1,6 +1,6 @@
 summary: This lab will walk you through how to apply a data-centric approach to Machine Learning with Snowflake and Amazon SageMaker.
 id: vhol_snowflake_data_wrangler
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -217,7 +217,7 @@ On the next page you will specify your stack details. Please pay close attention
   - Snowflake Storage Integration Name - Base name for what the storage integration will be called. Region and account ID will be added. Leave as is or if changed - only use CAPITAL LETTER, numbers and underscores
   - Snowflake User Name - ML\_USER
   - Snowflake Password - The password you assigned to the ML\_USER in the previous step - Required to enter.
-  - Snowflake Account - the Snowflake account name -**see note below**
+  - Snowflake Account - the Snowflake account name -**see account identifier section above**
   - Snowflake Role - ML\_ROLE
 * **SageMaker Studio Configurations**
   - SageMaker Studio Domain Name
@@ -424,7 +424,8 @@ COPY INTO LOAN_DATA FROM @LOAN_DATA/loan_data.csv
 
 
 
-**This data represents aggregation from various internal systems for lender information and loans.**\
+**This data represents aggregation from various internal systems for lender information and loans.**
+
 We can have a quick look and see the various attributes in it.
 
 
@@ -442,7 +443,7 @@ We can now look at additional data in the Snowflake Marketplace that can be help
 
 
 
-Click on the Home (House symbol) button on the top left corner to go to the Snowflake UI home menu.
+Click on the **Home (House symbol)** button on the top left corner to go to the Snowflake UI home menu.
 
 ![](assets/image38.png)
 
@@ -480,13 +481,17 @@ This will show what data is available from the listing. We will notice indicator
 
 Next click on the **Get Data** button. This will provide a pop up window in which you can create a database in your account that will provide the data from the data provider.
 
-Change the name of the database to **KNOEMA\_LABOR\_DATA\_ATLAS** and then click the **Get Data** button.
+**Click on the down arrow next to Options**
+
+Change the name of the database to **KNOEMA\_LABOR\_DATA\_ATLAS** and then click the **Get** button.
 
 ![](assets/image54.png)
 
 
 
-When the confirmation is provided click on **Done** /
+When the confirmation is provided click on **Done** 
+
+![](assets/image54a.png)
 
 Click on **Worksheets** on the left hand menu and then select your worksheet you have been using.
 
@@ -686,8 +691,8 @@ Give the kernel a little time to startup.
 
 The notebook is very well documented with the steps needed for the workshop.
 
-You can execute the code sections by selecting them and hitting the **run button** at the top or **shift+return/enter**.\
-\
+You can execute the code sections by selecting them and hitting the **run button** at the top or **shift+return/enter**.
+
 Execute the first code block to import libraries and set environment variables.
 
 
@@ -730,9 +735,13 @@ This can take a few minutes to start an instance.
 
 ##### Connect to Snowflake and Add Data
 
-A new tab will open in Studio with untitled.flow.
+A new tab will open in Studio with untitled.flow
 
-Click on Add data source and Select Snowflake
+Select the **Import** tab at the top left
+
+![](assets/image33a.png)
+
+Click on **Add data source** and Select **Snowflake**
 
 
 ![](assets/image33.png)
@@ -741,7 +750,7 @@ Click on Add data source and Select Snowflake
 
 
 
-You can either use the **username and password** that was created in Snowflake earlier **or the AWS Secret** that was created in the CloudFormation template to connect to Snowflake.\
+You can either use the **username and password** that was created in Snowflake earlier **or the AWS Secret** that was created in the CloudFormation template to connect to Snowflake.
 You can use AWS Secret Manager Console ([https://console.aws.amazon.com/secretsmanager/home](https://console.aws.amazon.com/secretsmanager/home) ) to get the secret **ARN**.
 
 
@@ -768,11 +777,11 @@ You can now navigate the Snowflake data by looking at the Snowflake objects on t
 
 When using the SQL window you can set the context of the queries, similar to Snowflake. Select:
 
-Data Warehouse - ML\_WH
+**Data Warehouse - ML\_WH**
 
-Database - ML\_LENDER\_DATA
+**Database - ML\_LENDER\_DATA**
 
-Schema - ML\_DATA
+**Schema - ML\_DATA**
 
 
 
@@ -844,6 +853,10 @@ Then click **Add**
 
 
 ##### Profile your data
+
+Click on the **Data Flow** tab
+
+![](assets/image32a.png)
 
 Profile the data by Clicking the **+ sign** next to the Data types block
 
@@ -929,7 +942,7 @@ Next we will address the **VERIFICATION\_STATUS** column, which has various stri
 
 
 
-Select **Custom Transform** then make sure **Python(Spark)** is selected and copy the following Python code in the code box to repalce the existing text
+Select **Custom Transform** then make sure **Python(PySpark)** is selected and copy the following Python code in the code box to repalce the existing text
 
 ```
 from pyspark.sql.functions import udf
@@ -983,7 +996,7 @@ Finally we will drop the LOAN\_ID column using the steps above.
 
 
 
-Click on **Data flow**. You should see the five transform steps at the tail of your data prep flow.
+Click on **Data flow**. You should see the five transform steps of your data prep flow.
 
 
 
@@ -1149,11 +1162,15 @@ Click Add
 
 Next, you're going to merge the two datasets. There are many ways to do this. You could have performed this entirely using Snowflake. In this lab, you'll learn how to perform this merge through Data Wrangler.
 
+Click back to the **Data flow**
+
+![](assets/image64.png)
+
 
 
 First delete the last transformation from the original flow, so that we have **LOAN\_ID** available.
 
-Click on the **Steps** and then on the ellipsis next to step 5 and select **Delete Step**
+Click on the **last step** and then on the + next to it and select **Delete**
 
 ![](assets/image69.png)
 
@@ -1169,25 +1186,15 @@ Next we will merge the data sets using a join operator
 
 Click on **\+** at the end of the original flow and select the **Join** operator.
 
-SELECT the other flow by clicking on the **Data Types** box on the bottom flow
-
-Click on **Configure** - lower left of the window
-
-SELECT Left Outer as the Join Type.
-
-SELECT LOAN\_ID for both the Left and Right join keys.
-
-
-
 ![](assets/image8.png)
 
-
-
-SELECT the other flow.
+SELECT the other flow by clicking on the **Data Types** box on the bottom flow
 
 ![](assets/image29.png)
 
-Click on Configure
+Click on **Configure** - lower left of the window
+
+
 
 ![](assets/image18.png)
 
@@ -1233,28 +1240,16 @@ Create a new Quick Model report to assess the impact of your modifications.
 
 
 
-The results should be similar to the following:
+The steps should be similar to the following:
 
-- Go back to Data Flow
-- Add Analysis to the last node 
+- Click on the Analysis tab 
 - Analysis type - Quick Model
 - Label - LOAN\_DEFAULT
-
-
+- Preview
 
 
 
 ![](assets/image50.png)
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1264,14 +1259,6 @@ A couple of key takeaways:
 * The F1 score increased substantially.
 
 This tells us that we are likely heading in the right direction. We added a feature that generated notable improvements to the "quick model" and the new feature had the greatest impact.
-
-
-
-
-
-
-
-
 
 
 
@@ -1327,7 +1314,7 @@ This can take a few minutes
 
 
 
-The S3 URI will look similar to: s3://(YOUR\_BUCKET)/export-flow-23-23-17-34-6a8a80ec/output/data-wrangler-flow-processing-23-23-17-34-6a8a80ec.
+The S3 URI will look similar to: s3://(YOUR\_BUCKET)/export-flow-23-23-17-34-6a8a80ec/output/data-wrangler-flow-processing-23-23-17-34-6a8a80ec
 
 
 
@@ -1469,7 +1456,7 @@ WHERE L2.LOAN_ID IS NULL
 
 The purpose of this flow is for use in production to prep data from new loan applications. This data is then passed through your model to make predications about the default risks of these new applicants.
 
-For testing purposes, we're using the 20% of the data set we didn't use for training and we're including the LOAN_DEFAULT attribute so that we can evaluate our models and perform error analysis. We're going to move the the LOAN_DEFAULT column to the first position in our dataset, so that it's easier for us to filter this data out of the model input and merge it with the model's predictions.
+For testing purposes, we're using the 20% of the data set we didn't use for training and we're including the LOAN\_DEFAULT attribute so that we can evaluate our models and perform error analysis. We're going to move the the LOAN\_DEFAULT column to the first position in our dataset, so that it's easier for us to filter this data out of the model input and merge it with the model's predictions.
 
 - Select **Add transform** at the end of your data flow.
 - Click on the orange button labeled **Add step**
@@ -1651,6 +1638,8 @@ Additionally we covered how you can use SageMaker Studio and deploy CloudFormati
 
 Related Resources
 
+
+- [Data Centric AI with Snowflake and Amazon SageMaker](https://aws.amazon.com/blogs/apn/enabling-data-centric-artificial-intelligence-through-snowflake-and-amazon-sagemaker/)
 - [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/data-marketplace.html)
 - [SageMaker Data Wrangler](https://aws.amazon.com/sagemaker/data-wrangler/)
 - [SageMaker Studio](https://aws.amazon.com/sagemaker/studio/)

@@ -22,9 +22,9 @@ Snowpark includes client-side APIs and server-side runtimes that extends Snowfla
 
 A key component of Snowpark for Python is that you can "Bring Your Own IDE"- anywhere that you can run a Python kernel, you can run client-side Snowpark Python. You can use it in your code development the exact same way as any other Python library or module. In this quickstart, we will be using Jupyter Notebooks, but you could easily replace Jupyter with any IDE of your choosing.
 
-Throughout this quickstart, we will specifically explore the power of the Snowpark Python Dataframe API, as well as server-side Python runtime capabilities, and how Snowpark Python can enable and accelerate end-to-end Machine Learning workflows, from initial data and feature engineering all the way to production model deployment. We will even explore orchestrating model training and deployment pipelines using Apache Airflow.
+Throughout this quickstart, we will specifically explore the power of the Snowpark Python Dataframe API, as well as server-side Python runtime capabilities, and how Snowpark Python can enable and accelerate end-to-end Machine Learning workflows, from initial data and feature engineering all the way to production model deployment. We will also demonstrate how Snowpark-optimized warehouse instance types can be used to accelerate ML workflows specifically. We will even explore orchestrating model training and deployment pipelines using Apache Airflow.
 
-The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python).
+The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main).
 
 ### Prerequisites
 - Completion of the [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0) Quickstart
@@ -43,12 +43,10 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 - An [Amazon SageMaker Studio Lab](https://studiolab.sagemaker.aws/) Account OR a local Jupyter Notebook runtime with Miniconda
 - ***Optionally*** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-***Note: If you are planning to run this Quickstart locally, you may have additional requirements, e.g. Docker, Miniconda. Take a look at the source code [README](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python) for more information on additional local environment requirements.***
+***Note: If you are planning to run this Quickstart locally, you may have additional requirements, e.g. Docker, Miniconda. Take a look at the source code [README](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main) for more information on additional local environment requirements.***
 
 ### What You’ll Build 
-- An orchestrated end-to-end Machine Learning pipeline to perform monthly forecasts using Snowflake, Snowpark Python, PyTorch, and Apache Airflow.
-![](./assets/apache_airflow.jpeg)
-This pipeline will:
+- An orchestrated end-to-end Machine Learning pipeline to perform monthly forecasts using Snowflake, Snowpark Python, PyTorch, and Apache Airflow. ![](./assets/HOL_ML_Snowpark_Python.jpg) This pipeline will:
     - Incrementally ingest new data monthly from Amazon S3 into Snowflake
     - Generate feature data from the new raw data and generate forecast data for relevant features for the prediction period
     - Train hundreds of PyTorch TabNet models in parallel and generate new forecasts from the updated models, all inside of Snowflake
@@ -85,7 +83,7 @@ Duration: 5
 
 Check out the code repository README, and ensure you've followed the setup instructions for your environment of choie (AWS SageMaker Studio Lab or local Jupyter)
 
-Then, open up the [`00-Setup`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/00-Setup.ipynb) Jupyter notebook and execute the cells. Make sure to fill in the `state_dict` at the top of this Notebook with your Snowflake account information. Run through the notebook, executing each cell along the way.
+Then, open up the [`00-Setup`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/00_Setup.ipynb) Jupyter notebook and execute the cells. Make sure to fill in the `state_dict` at the top of this Notebook with your Snowflake account information. Run through the notebook, executing each cell along the way.
 
 ***If you are using a brand new Snowflake account***, with just a single ACCOUNTADMIN user, you'll need to run some additional steps to create additional users, initial databases, schemas, compute warehouses, etc. that we will use throughout this quickstart:
 ```python
@@ -144,11 +142,11 @@ Duration: 10
 
 In this section of the demo, we will utilize Snowpark's Python client-side Dataframe API to build an ELT pipeline. We will extract the data from the source system (s3), load it into snowflake and add transformations to clean the data before analysis.
 
-Open up the [`01_Data_Engineering`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/01_Data_Engineering.ipynb) notebook and execute the cells. This notebook will:
+Open up the [`01_Data_Engineering`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/01_Data_Engineering.ipynb) notebook and execute the cells. This notebook will:
 
 Now that we've done our initial engineering and loaded a sample of data, let's create some bulk ELT processes using the exported modules from the Data Engineering notebook.
 
-Open up the [`01_Ingest`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/01_Ingest.ipynb) notebook and walk through the cells to see how to incrementally and bulk load data from S3 into Snowflake tables.
+Open up the [`01_Ingest`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/01_Ingest.ipynb) notebook and walk through the cells to see how to incrementally and bulk load data from S3 into Snowflake tables.
 
 Run the last few cells of the notebook to bulk-load ~94M records into your Snowflake table in only about 30 seconds.
 
@@ -167,7 +165,7 @@ Weather Source is a leading provider of global weather and climate data and the 
 
 Weather Source powers a majority of Fortune companies who use their data to quantify the impact of weather and climate on various KPIs including footfall traffic, product sales and demand, supply chain and logistics, advertising and more.
 
-Open up the [02_Data_Marketplace](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/02_Data_Marketplace.ipynb) notebook and follow the instructions to add the Snowpark Hands-on-Lab Weather Source dataset to your Snowflake account.
+Open up the [02_Data_Marketplace](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/02_Data_Marketplace.ipynb) notebook and follow the instructions to add the Snowpark Hands-on-Lab Weather Source dataset to your Snowflake account.
 
 1. Go the Snowflake UI, and select `Marketplace`
 2. Search for `snowpark` and click on the Snowpark for Python - Hands-on Lab - Weather Data tile
@@ -193,13 +191,13 @@ Duration: 20
 
 Now that the data engineers have cleaned and loaded the data to the `trips` table, we can begin our model development. For this, we will leverage Snowpark to do the feature preparation and exploratory analysis. This dataset is initially ~100 million rows and is likely too large to fit into memory on our local machine or even a reasonable sized single VM in the cloud. The Snowpark Python client-side Dataframe API allows us to push-down most of the computation for preparation and feature engineering to Snowpark. For security and goverance reasons we can read data into memory for model training and inference but no intermediate data products can be stored outside of Snowflake.
 
-Open up the [`02_Data_Science`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/02_Data_Science.ipynb) notebook, and step through executing the cells.
+Open up the [`02_Data_Science`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/02_Data_Science.ipynb) notebook, and step through executing the cells.
 
 After performing your feature engineering, you will write the feature engineering functions to a Python module for use by the ML engineering team in operationalizing this end-to-end workflow.
 
 Finally, train your TabNet regression model using the final feature set and evaluate its performance, along with feature importance.
 
-**OPTIONAL**: If you also want to train an ARIMA baseline model to compare against, you can open up the [02_Data_Science-ARIMA-Baseline](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/02_Data_Science-ARIMA-Baseline.ipynb) notebook and run the cells to train a baseline ARIMA forecast model.
+**OPTIONAL**: If you also want to train an ARIMA baseline model to compare against, you can open up the [02_Data_Science-ARIMA-Baseline](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/02_Data_Science-ARIMA-Baseline.ipynb) notebook and run the cells to train a baseline ARIMA forecast model.
 
 <!-- ------------------------ -->
 ## ML Engineering Development for ML Ops Pipelines
@@ -221,7 +219,7 @@ Duration: 10
 - Model evaluation using Snowpark Python Stored Procedures
 
 
-Your data scientists have done some exploratory analysis, feature engineering, and trained a model. Now, the ML engineer needs to develop code to deploy the model into production via an ML Ops pipeline. Open up the [`03_ML_Engineering`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/03_ML_Engineering.ipynb) notebook and step through, executing the cells. 
+Your data scientists have done some exploratory analysis, feature engineering, and trained a model. Now, the ML engineer needs to develop code to deploy the model into production via an ML Ops pipeline. Open up the [`03_ML_Engineering`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/03_ML_Engineering.ipynb) notebook and step through, executing the cells. 
 
 
 <!-- ------------------------ -->
@@ -232,7 +230,8 @@ Duration: 10
 
 **What You'll Do**:
 - Take the functions created by the Data Scientist and ML Engineer and wrap them in such a way that they can be easily automated using the company's orchestration tools (Airflow)
-- Deploy the model training and inference as a permanent [Python Snowpark User-Defined Function (UDF)](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-user-defined-functions-udfs-for-dataframes)
+- Deploy the model training and inference as a permanent [Python Snowpark User-Defined Table Function (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-tabular-functions.html)
+- Scale your model training and inference to be performed for hundreds of models simultaneously using Snowpark-optimized warehouse instance types
 - Use [Zero-Copy Cloning](https://docs.snowflake.com/en/sql-reference/sql/create-clone.html) in Snowflake to produce point-in-time snapshots of the data in order to reproduce results on-demand in the future, withtout creating physical copies of any data
 - Use [object tagging](https://docs.snowflake.com/en/user-guide/object-tagging.html) to tag training/inference datasets with a `model_id` for lineage
 - Test out the pipeline that will eventually orchestrated
@@ -240,10 +239,11 @@ Duration: 10
 
 **Snowflake Features**:
 - Object Tagging for model/data lineage
-- Snowpark Python UDF Deployment
+- Snowpark Python UD(T)F Deployment
+- Snowpark-optimized warehouse instance types
 - Zero-Copy Cloning for point-in-time snapshots of model training data
 
-The ML Engineer must now create a pipeline to automate deployment of your station-trip models, batch the predictions, and expose them in such a way that a business user can consume them via a front-end application (which will be developed in Streamlit). Most importantly, ***no data should leave Snowflake!*** Open up the [`04_ML_Ops`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/04_ML_Ops.ipynb) notebook, and walk through the code cells.
+The ML Engineer must now create a pipeline to automate deployment of your station-trip models, batch the predictions, and expose them in such a way that a business user can consume them via a front-end application (which will be developed in Streamlit). Most importantly, ***no data should leave Snowflake!*** Open up the [`04_ML_Ops`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/04_ML_Ops.ipynb) notebook, and walk through the code cells.
 
 <!-- ------------------------ -->
 ## Orchestration with Apache Airflow
@@ -265,7 +265,7 @@ The core components of the orchestrated DAG are:
 **Snowflake Features**:
 - Orchestration using Partner Tools
 
-Open up the [`05_Airflow_Pipeline`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/05_Airflow_Pipeline.ipynb) notebook. We normally define Airflow tasks using the `@task()` decorator, but for this project, while python 3.8 is a requirement, the tasks are run using the `@task.virtualenv()` decorator:
+Open up the [`05_Airflow_Pipeline`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/05_Airflow_Pipeline.ipynb) notebook. We normally define Airflow tasks using the `@task()` decorator, but for this project, while python 3.8 is a requirement, the tasks are run using the `@task.virtualenv()` decorator:
 
 ```python
 @task()
@@ -319,7 +319,7 @@ Duration: 15
 
 Streamlit is an open-source app framework for ML and Data Science teams that allows non-application developers to turn data scripts into shareable web apps in very little time, all using pure Python, without any front-end experience required.
 
-In the [`06_Streamlit_App`](https://github.com/Snowflake-Labs/vhol-citibike-ml-snowpark-python/blob/main/06_Streamlit_App.ipynb) notebook, run the cell that contains all the code for building and launching your Streamlit app.
+In the [`06_Streamlit_App`](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/06_Streamlit_App.ipynb) notebook, run the cell that contains all the code for building and launching your Streamlit app.
 
 Navigate to your Streamlit app on port `6006`:
 
@@ -344,5 +344,5 @@ While mature organizations may have different individuals and roles assigned to 
 Importantly, we showed how working in Snowpark Python allows you to "Bring Your Own IDE" with limited-to-zero dependencies outside of a Python kernel runtime environment, keeping things developer-friendly and allowing teams to work in their preferred dev environments.
 
 For more information on Snowpark Python, and Machine Learning in Snowflake, check out the following resources:
-- [Snowpark Python Developer Guide](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html)
+- [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark Python API Docs](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
