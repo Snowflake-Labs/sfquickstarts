@@ -1,7 +1,7 @@
 author: sfc-gh-drichert, sfc-gh-ahuck
 id: sap_accounts_receivable_to_snowflake_using_adf
 summary: Extract SAP data using Azure Data Factory and transform accounts receivable data in Snowflake.
-categories: SAP, Finance, AR
+categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: david.richert@snowflake.com
@@ -82,7 +82,7 @@ An Accounts Receivable pipeline for Financial Services from SAP ECC to Snowflake
 ## Create Azure account & deploy SAP ERP
 Duration: 120
 <aside class="callout">
-In the interest of getting data out of SAP for this lab, we will use Azure Data Factory's SAP CDC connector, but there are many other ways to do this, and we are not recommending this particular path. If you otherwise have access to the demo data in this lab, you can skip building the Azure and SAP environments and go directly to the sections of creating your Snowflake account and installing and configuring DBT. An example, one-off, file ingestion is provided for your convenience in the Appendix.
+In the interest of getting data out of SAP for this lab, we will use Azure Data Factory's SAP CDC connector, but there are many other ways to do this, and we are not recommending this particular path. If you otherwise have access to the demo data in this lab, you can skip building the Azure and SAP environments and go directly to the sections of creating your Snowflake account and installing and configuring DBT.
 </aside>
 
 In this section, we:
@@ -333,6 +333,9 @@ Some tables may not be exposed to ODP in your trial system. Not to worry, you ca
 1. Repeat the above steps for the sinks `0customer_attr` and `0fi_ar_4`.
 
 ## Create data flows
+<aside class="callout">
+These steps are only shown as an example, and following along with the example may require additional rights in third-party data, products, or services that are not owned or provided by Snowflake.  Please ensure that you have the appropriate rights in third-party data, products, or services before continuing.
+</aside>
 ### Create df_FIAR4_trunc_full_load
 1. From Azure Data Factory, select **Author** 
 1. Select Dataflows and click on **(...)** > New dataflow. 
@@ -392,20 +395,19 @@ Duration: 60
 
 1. Open a terminal on your local machine.
 
-2. Make and navigate to the directory where you want the dbt project to reside, for example:
+2. Make and navigate to the directory where you want the dbt project to reside, for example in your home directory:
 
 ```sh
-$ mkdir ~/dbt_projects
-$ cd ~/dbt_projects
+$ cd ~/
 ````
 1. Within the above directory, run the following command to clone the project from github:
 ```sh
-$ git clone https://github.com/Snowflake-Labs/sap-dbt-demo.git                       
+$ git clone https://github.com/Snowflake-Labs/sf-samples.git                       
 ```
 
 1. Check that the project (a set of directories and files) has been downloaded:
 ```sh
- $ ls sap-dbt-demo
+ $ ls sf-samples/samples/sap_accounts_receivable_dbt
 ```
 You should see the following directories and files:
 ```sh
@@ -422,7 +424,7 @@ If you already have dbt installed, feel free to skip this step.
 Install [dbt](https://www.getdbt.com/) using the following command that sources the right requirements.
 Use the `requirements.txt` in the project directory which includes the most recent tested version of Snowflake compatible package.
 ```sh
-$ cd ~/dbt_projects/sap-dbt-demo
+$ cd ~/sf-samples/samples/sap_accounts_receivable_dbt
 $ pip3 install -r requirements.txt --upgrade
 ```
 Verify that dbt was installed:
@@ -580,14 +582,14 @@ Visualize your Days of Sales Outstanding (DSO) by geography and customer through
 
 
 1. Launch Tableau Desktop. 
-2. Navigate to `~/dbt_projects/sap-dbt-demo/tableau` and open `Account_Receivables.twbx_v1``
+2. Navigate to `~/sf-samples/samples/sap_accounts_receivable_dbt/tableau` and open `Account_Receivables.twbx_v1``
 
 Alternatively you can launch from a command line:
-/Applications/Tableau\ Desktop\ 2021.3.app/Contents/MacOS/Tableau -f ~/dbt_projects/sap-dbt-demo/tableau/Account_Receivables_v1.twbx
+/Applications/Tableau\ Desktop\ 2021.3.app/Contents/MacOS/Tableau -f ~/sf-samples/samples/sap_accounts_receivable_dbt/tableau/Account_Receivables_v1.twbx
 
-3. You are prompted for the password. Wait! You need to edit the connection first!
+1. You are prompted for the password. Wait! You need to edit the connection first!
 
-4. Select `Edit connection`  and adjust the connection settings to your instance:
+2. Select `Edit connection`  and adjust the connection settings to your instance:
 ![Edit Tableau Connection](./assets/edit_tableau_connection.png)
 1. Select `Sign In`.
 
@@ -641,10 +643,10 @@ DROP USER IF EXISTS sap_dbt_user;
 ```
 
 ### Clean up Local machine
-1. Use pip uninstall to remove the dbt and packages. Run this before deleting the sap-dbt-demo directory if you want to delete the snowflake adapter and other directories, which are located under ~/anaconda/anaconda3/lib/python3.9/site-packages/dbt/.
+1. Use pip uninstall to remove the dbt and packages. Run this before deleting the `sf-samples` directory if you want to delete the snowflake adapter and other directories, which are located under ~/anaconda/anaconda3/lib/python3.9/site-packages/dbt/.
 
 ```Bash
-$ cd ~/dbt_projects/sap-dbt-demo
+$ cd ~/sf-samples/samples/sap_accounts_receivable_dbt
 $ pip3 uninstall -r requirements.txt
 
 Found existing installation: dbt-snowflake 1.0.0
@@ -656,8 +658,8 @@ Uninstalling dbt-snowflake-1.0.0:
 Proceed (Y/n)? Y
 Successfully uninstalled dbt-snowflake-1.0.0
 ```
-2. Removing the sap-dbt-demo package
-To remove the demo package you can simply delete the directory `~/dbt_projects/sap-dbt-demo`
+2. Removing the sf-samples repo
+To remove the demo package you can simply delete the directory `~/sf-samples/samples/sap_accounts_receivable_dbt`
 
 ## Optional: SAP extractors
 Duration: 15
