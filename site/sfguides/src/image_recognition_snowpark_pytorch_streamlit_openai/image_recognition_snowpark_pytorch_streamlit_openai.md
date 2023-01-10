@@ -221,7 +221,7 @@ def load_image(image_bytes_in_str):
     f.write(image_bytes_in_hex)
   return open(image_file, 'rb')
 
-@udf(name='image_recognition_using_bytes',session=session,replace=True,is_permanent=True,stage_location='@dash_udfs')
+@udf(name='image_recognition_using_bytes',session=session,replace=True,is_permanent=True,stage_location='@dash_files')
 def image_recognition_using_bytes(image_bytes_in_str: str) -> str:
   import sys
   import torch
@@ -268,6 +268,8 @@ pip install uuid
 pip install openai
 ```
 
+*Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0, streamlit 1.16.0, openai 0.26.0.*
+
 - Update [connection.json](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/connection.json) with your Snowflake account details and credentials. *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
 - In your Snowflake account, create a Snowflake table and internal stage by running the following commands in Snowsight. The table will store the image data and the stage is for storing serialized Snowpark Python UDF code. *Note: It's assumed that you've already created a warehouse, a database and a schema in your Snowflake account.*
@@ -286,10 +288,10 @@ Once you have satisfied the prerequisites and set up your environment as describ
 
 - In your favorite IDE such as Jupyter Notebook or VS Code, set the Python kernel to **snowpark-img-rec** (the name of the conda environment created in the previous step) and then run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb).
 
-- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the UDF exists by running the following command in Snowsight. *Note: Replace the name of the stage with the one you created.*
+- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the model files and the UDF exists by running the following command in Snowsight. *Note: Replace the name of the stage with the one you created.*
 
 ```sql
-list @dash_udfs;
+list @dash_files;
 ```
 
 ### Application 1 - Upload image

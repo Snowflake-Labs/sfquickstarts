@@ -12,7 +12,7 @@ tags: Getting Started, AdTech
 ## Overview 
 Duration: 1
 
-Hightouch helps marketers activate their customer data from Snowflake to over 125 different applications.  The [Data Activation](https://hightouch.com/blog/what-is-data-activation) platform, powered by Reverse ETL, provides both a SQL-based UI as well as a no-code [audience builder](https://hightouch.com/platform/audiences)to help teams across an organization complete what is now being called the "last mile" of the [Modern Data Stack](https://hightouch.com/blog/reverse-etl-bringing-the-modern-data-stack-full-circle).
+Hightouch helps marketers activate their customer data from Snowflake to over 125 different applications.  The [Data Activation](https://hightouch.com/blog/what-is-data-activation) platform, powered by Reverse ETL, provides both a SQL-based UI as well as a no-code [audience builder](https://hightouch.com/platform/audiences) to help teams across an organization complete what is now being called the "last mile" of the [Modern Data Stack](https://hightouch.com/blog/reverse-etl-bringing-the-modern-data-stack-full-circle).
 
 ![Snowflake and Hightouch stack](assets/Snowflake_Template_The_Modern_Data_Stack_e80de39d33.jpg)
 
