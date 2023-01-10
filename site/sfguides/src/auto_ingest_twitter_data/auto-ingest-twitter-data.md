@@ -19,7 +19,6 @@ In this guide, we’ll be walking you through how to auto-ingest streaming and e
 - A [Snowflake](https://www.snowflake.com/) Account
 - A Text Editor (such as [Visual Studio Code](https://code.visualstudio.com/))
 - [git](https://git-scm.com/downloads)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Twitter Developer](https://developer.twitter.com/) account (free)
 - [AWS](https://aws.amazon.com/) account (12-month free tier)
 
@@ -31,7 +30,7 @@ In this guide, we’ll be walking you through how to auto-ingest streaming and e
 
 
 ### What You’ll Build
-- A docker image containing a python application that listens and saves live tweets; those tweets are uploaded into Snowflake using AWS S3 as a file stage.
+- A python application that listens and saves live tweets; those tweets are uploaded into Snowflake using AWS S3 as a file stage.
 
 <!-- ------------------------ -->
 ## Application Architecture 
@@ -39,7 +38,7 @@ Duration: 5
 
 It's important to understand how the data flows within this application. This application consists of four main parts: 
 
-1. **A Python application**: this is running locally in a Docker container and listens for live tweets using the Twitter REST API.
+1. **A Python application**: this is running locally and listens for live tweets using the Twitter REST API.
 2. **An AWS S3 staging environment**: this is used to store the live tweets from the Python application
 3. **Snowpipe**: this listens for new objects created in AWS S3 and ingests the data into a user-configured table in Snowflake
 4. **Snowflake**: we use Snowflake to directly query and transform the raw, semi-structured JSON data.
@@ -66,22 +65,58 @@ cd sfguide-twitter-auto-ingest
 
 Now that you’re in the correct folder let’s begin adding the correct information for you.
 
+## Install Dependencies and Environment
+Duration: 5
+
+###Python dependencies
+
+After downloading the repository, we need to install our python dependencies. Run the following commands:
+
+```bash
+pip install boto3
+pip install awscli
+pip install tweepy
+pip install datetime
+```
+
+> aside negative
+> 
+>  Note: if you get any `pip's dependency resolver` errors, be sure to follow the instructions in the error message and install the additional packages.
+
+### AWS configuration
+
+* The AWS access keys can be found on the [AWS Account and Access Keys](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html) page.
+* The Twitter API and Access credentials can be found on the [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard).
+
+Now lets configure our AWS environment using the AWS information we have previously acquired. Run the commands:
+
+```bash
+aws configure set aws_access_key_id $AWS_Access_Key_ID
+aws configure set aws_secret_access_key $AWS_Secret_Access_Key
+```
+
+
+
 <!-- ------------------------ -->
 ## Add your AWS and Twitter keys
 Duration: 10
 
-There are two files you'll need to edit to specify your own credentials. The first file is `Dockerfile`. Open the file with a text editor. The lines you need to edit are lines 9 to 16:
+There are two files you'll need to edit to specify your own credentials. The first file is `twitter_local.py`. Open the file with a text editor. The lines you need to edit start at line 30:
 
-```
-#get your AWS Access keys: https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html
-ENV AWS_Access_Key_ID="********************"\
-AWS_Secret_Access_Key="****************************************"\
+```python
+##############
+# KEYS
+##############
 #get your Twitter API Key and Secret https://developer.twitter.com/en/apply-for-access
-consumer_key="*************************"\
-consumer_secret="**************************************************"\
+consumer_key = "*************************"
+consumer_secret = "**************************************************"
 # get your Twitter Access Token and Secret https://developer.twitter.com/en/apply-for-access
-access_token="**************************************************"\
-access_token_secret="*********************************************"\
+access_token = "**************************************************"
+access_token_secret = "*********************************************"
+#AWS bucket name
+bucket = "my-twitter-bucket"
+# specify your own default twitter keyword here. 
+keyword = "#covid"
 ```
 
 You need to replace all the asterisk-filled strings with your own credentials. You can grab these from two places:
@@ -89,20 +124,10 @@ You need to replace all the asterisk-filled strings with your own credentials. Y
 * The AWS access keys can be found on the [AWS Account and Access Keys](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html) page.
 * The Twitter API and Access credentials can be found on the [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard).
 
-Note that if you misplace your Twitter API and Access tokens, you’ll need to regenerate them. It’s straightforward to do, but your previous tokens will be revoked.
+> aside negative
+> 
+>  Note that if you misplace your Twitter API and Access tokens, you’ll need to regenerate them. It’s straightforward to do, but your previous tokens will be revoked.
 
-You also need to modify line 19, which needs to be the name of your AWS bucket:
-
-```
-#AWS bucket name
-bucket="my-twitter-bucket"\
-```
-When pulling tweets, the Docker file will use a default keyword. As you'll see, the command to run the image includes an option to specify another keyword, but you can also choose to change the default keyword on line 21:
-
-```
-# specify your own default twitter keyword here.
-keyword="covid19"
-```
 
 The second file you need to modify is `0_setup_twitter_snowpipe.sql`. Open the file and navigate to the section beginning on line 18. You'll need to replace the x-filled strings on lines 24 and 25 with your AWS credentials.
 
@@ -124,56 +149,25 @@ COMMENT = 'Tweets stored in S3';
 Make sure to save both files. With both of them modified, you have now successfully added your AWS and Twitter credentials.
 
 <!-- ------------------------ -->
-## Build the image
+## Run the application
 Duration: 5
 
-With your credentials established, you can now build the Dockerfile. From the command line, making sure you're still in the `demo-twitter-auto-ingest` directory, run the following command:
+To run the application we run the following command:
 
 ```bash
-docker build . -t snowflake-twitter
-```
-
-This command builds the Dockerfile and tags the built image as snowflake-twitter. If successful, you'll get an output whose last two lines take the following form:
-
-
-```
-writing image <YOUR_IMAGE_ID>
-naming to docker.io/library/snowflake-twitter
-```
-
-Great! The dockerfile is built. Now let's run the built image.
-
-<!-- ------------------------ -->
-## Run the image
-Duration: 5
-
-Running the image is straightforward and can be done with the following command:
-
-```bash
-$ docker run --name <YOUR_CONTAINER_NAME> snowflake-twitter:latest <YOUR_TWITTER_KEYWORD>
-```
-
-There are two parameters you'll want to modify:
-
-* `&lt;YOUR_CONTAINER_NAME&gt;`: The name you give for your Docker container
-* `&lt;YOUR_TWITTER_KEYWORD&gt;`: Tweets will be pulled only if they contain this hashtag. That keyword overrides the default keyword specified in your Dockerfile.
-
-Let's give it a try! Here's an example that pulls tweets with #success using the container "twitter-success":
-
-```bash
-$ docker run --name twitter-success snowflake-twitter:latest success
+python ./twitter_local.py 
 ```
 
 Running this command will provide an output that takes this form:
 
-```
+```bash
 ..................................................100 tweets retrieved
 ==> writing 100 records to tweets_20210129193748.json
 ==> uploading to #success/2021/1/29/19/37/tweets_20210129193748.json
 ==> uploaded to #success/2021/1/29/19/37/tweets_20210129193748.json
 ..................................................200 tweets retrieved
 ```
-These are all the tweets being pulled. Now that we can pull the tweets in let's get it incorporated with Snowpipe.
+These are all the tweets being pulled. Now that we can pull the tweets in let's get it ingested with Snowpipe.
 
 <!-- ------------------------ -->
 ## Configure Snowpipe in Snowflake
@@ -195,19 +189,15 @@ For this example, we’ll be using SQS queues to deliver event notifications. Fi
 * Event types: Select “All object create events” option.
 * Destination: Select SQS Queue, then “Enter SQS queue ARN”, and past the SQS queue name from your SHOW PIPES output.
 Now Snowpipe with auto-ingest is operational!
+
 <!-- ------------------------ -->
-## Stop your container
+## Stop your application
 Duration: 1
 
-The setup is now complete! You're good to go, but it's important to be cognizant of Twitter API rate limits. In order to not exceed Twitter API rate limits, you'll want to stop your Docker container.
+The setup is now complete! You're good to go, but it's important to be cognizant of Twitter API rate limits. In order to not exceed Twitter API rate limits, you'll want to stop your python application.
 
-Containers timeout within 15 minutes, but if you'd like to stop it earlier, you can run the following command:
+To stop the python application type `CTRL + C` in the terminal your python application is running in.
 
-```bash
-docker stop <YOUR_CONTAINER_NAME>
-```
-
-Or if you’d prefer, you can stop (and even delete it) through the Docker Desktop app. That's it! You now have full control over running your Docker container.
 
 <!-- ------------------------ -->
 ## Conclusion

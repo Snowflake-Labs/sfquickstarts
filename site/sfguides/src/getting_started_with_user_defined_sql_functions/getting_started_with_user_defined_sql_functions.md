@@ -1,6 +1,6 @@
 summary: Guide to getting started with user-defined SQL functions
 Id: getting_started_with_user_defined_sql_functions
-categories: Getting Started, UDF, UDTF
+categories: Getting-Started, UDF, UDTF
 environments: Web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
@@ -74,8 +74,9 @@ Log in to the [web interface](https://docs.snowflake.com/en/user-guide/connectin
 
 ### Changing your role
 
-Positive
-: If you already have a Snowflake account, you can use a role with privildges to create a database.
+> aside positive
+> 
+>  If you already have a Snowflake account, you can use a role with privildges to create a database.
 
 ![Snowflake_SwitchRole_DemoUser-image](assets/Snowflake_SwitchRole_DemoUser.png)
 
@@ -102,8 +103,9 @@ Build your new database named `udf_db` with the command above.
 
 ![Snowflake_udf_CreateDB-image](assets/Snowflake_udf_CreateDB.png)
 
-Positive
-: The **Results** should display a status message of **Database UDF_DB successfully created** .
+> aside positive
+> 
+>  The **Results** should display a status message of **Database UDF_DB successfully created** .
 
 ### 2. Create a new Schema
 
@@ -115,8 +117,9 @@ Use the above command to whip up a schema called `udf_schema_public`.
 
 ![Snowflake_udf_CreateSchema-image](assets/Snowflake_udf_CreateSchema.png)
 
-Positive
-: The **Results** should display a status message of **Schema UDF_SCHEMA_PUBLIC successfully created**.
+> aside positive
+> 
+>  The **Results** should display a status message of **Schema UDF_SCHEMA_PUBLIC successfully created**.
 
 ### 3. Copy Sample Data Into New Table
 
@@ -131,8 +134,9 @@ Create a table named ‘sales’ and import the sales data with this command. Be
 
 ![Snowflake_udf_CreateTable-image](assets/Snowflake_udf_CreateTable.png)
 
-Positive
-: The **Results** should display a status of **Table SALES successfully created** .
+> aside positive
+> 
+>  The **Results** should display a status of **Table SALES successfully created** .
 
 
 
@@ -144,8 +148,9 @@ Duration: 6
 
 With the database primed with sample sales data, we're _almost_ ready to try creating a scalar UDF. Before diving in, let’s first understand more about UDF naming conventions.
 
-Negative
-: If the function name doesn't specify the database and schema(e.x. `udf_db.udf_schema_public.udf_name`) then it defaults to the active session. Since UDFs are database objects, it's better to follow their [naming conventions](https://docs.snowflake.com/en/sql-reference/udf-overview.html#naming-conventions-for-udfs). For this quick practice, we'll rely on our active session.
+> aside negative
+> 
+>  If the function name doesn't specify the database and schema(e.x. `udf_db.udf_schema_public.udf_name`) then it defaults to the active session. Since UDFs are database objects, it's better to follow their [naming conventions](https://docs.snowflake.com/en/sql-reference/udf-overview.html#naming-conventions-for-udfs). For this quick practice, we'll rely on our active session.
 
 ### 1. Create UDF
 

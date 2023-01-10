@@ -1,6 +1,6 @@
 summary: Getting Started With Snowflake SQL API
 id: getting_started_snowflake_sql_api
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -15,10 +15,6 @@ Duration: 1
 Welcome! The Snowflake SQL API is a [REST API](https://en.wikipedia.org/wiki/Representational_state_transfer) that you can use to access and update data in a Snowflake database. You can use this API to execute [standard queries](https://docs.snowflake.com/en/sql-reference/constructs.html) and most [DDL](https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html) and [DML](https://docs.snowflake.com/en/sql-reference/sql-dml.html) statements.
 
 This getting started guide will walk you through executing a SQL statement with the API and retrieving the results. 
-
-Negative
-: Support for the Snowflake SQL API is currently not in production.
-
 
 ### Prerequisites
 
@@ -53,8 +49,9 @@ Head to the SQL API by navigating to your version of the following URL, replacin
 https://*account_locator*.snowflakecomputing.com/api/v2
 ```
 
-Negative
-: Note that the account locator might include additional segments for your region and cloud provider. See [Specifying Region Information in Your Account Hostname](https://docs.snowflake.com/en/user-guide/intro-regions.html#label-region-ids) for details.
+> aside negative
+> 
+>  Note that the account locator might include additional segments for your region and cloud provider. See [Specifying Region Information in Your Account Hostname](https://docs.snowflake.com/en/user-guide/intro-regions.html#label-region-ids) for details.
 
 Now let's break down the parts of the API before we begin using it. The API consists of the `/api/v2/statements/` resource and provides the following endpoints:
 
@@ -64,8 +61,9 @@ Now let's break down the parts of the API before we begin using it. The API cons
 
 In the steps to come, you shall use all these endpoints to familiarize yourself with the API. 
 
-Positive
-: You can use development tools and libraries for REST APIs (e.g., Postman) to send requests and handle responses.
+> aside positive
+> 
+>  You can use development tools and libraries for REST APIs (e.g., Postman) to send requests and handle responses.
 
 ### Limitations of the SQL API
 
@@ -106,8 +104,9 @@ You can test to make sure you can successfully connect to Snowflake Key Pairs us
 $ snowsql -a <account> -u <user> --private-key-path <path to private key>
 ```
 
-Negative
-: If you'd rather authenticate with OAuth, please visit our documentation on authenticating with [OAuth](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#using-oauth). 
+> aside negative
+> 
+>  If you'd rather authenticate with OAuth, please visit our documentation on authenticating with [OAuth](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#using-oauth). 
 
 After you've verified you can connect to Snowflake using key-pair authentication, you'll need to generate a JWT token.  This JWT token is time limited token which has been signed with your key and Snowflake will know that you authorized this token to be used to authenticate as you for the SQL API.
 
@@ -162,8 +161,9 @@ For the [body of the request](https://docs.snowflake.com/en/developer-guide/sql-
 
 - To specify the warehouse, database, schema, and role to use, set the `warehouse`, `database`, `schema`, and `role` fields.
 
-Negative
-: Note: the values in these fields are case-sensitive.
+> aside negative
+> 
+>  Note: the values in these fields are case-sensitive.
 
 - To set a timeout for the statement execution, set the `timeout` field to the maximum number of seconds to wait. If the `timeout` field is not set, the timeout specified by the [STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters.html#label-statement-timeout-in-seconds) parameter is used.
 
@@ -227,8 +227,9 @@ The following table specifies the values of the `type` field that you can use to
 
 - Each cell specifies the type of value that you can use with a binding type to insert data into a column of a particular Snowflake data type.
 
-Negative
-: If the cell for a binding type and Snowflake data type is empty, you cannot use the specified binding type to insert data into a column of that Snowflake data type.
+> aside negative
+> 
+>  If the cell for a binding type and Snowflake data type is empty, you cannot use the specified binding type to insert data into a column of that Snowflake data type.
 
 ![binding types](assets/binding-types.png)
 

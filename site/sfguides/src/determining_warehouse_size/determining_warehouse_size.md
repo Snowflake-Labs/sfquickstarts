@@ -1,7 +1,7 @@
 author: Lorena Diaconescu
 id: determining_warehouse_size
 summary: Determine the best warehouse size to use for your query
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -17,8 +17,9 @@ Duration: 1
 
 At Snowflake, compute resources (or warehouses) can be configured based on your needs. This guide will introduce you to warehouses and show how to determine the appropriate warehouse size for your query. Using the correct warehouse size can help you get the best experience from your Snowflake account.
 
-Positive
-: **Note** - Completing this guide in its entirety consumes approximately 3 credits.
+> aside positive
+> 
+>  **Note** - Completing this guide in its entirety consumes approximately 3 credits.
 
 ### Prerequisites
 
@@ -43,8 +44,9 @@ A warehouse is a cluster of compute resources in Snowflake. A warehouse provides
   - Loading data into tables ([COPY INTO \<table\>](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html)).
   - Unloading data from tables ([COPY INTO \<location\>](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html)).
 
-Positive
-: To perform these operations, a warehouse must be running and in use for the session. While a warehouse is running, it consumes Snowflake credits.
+> aside positive
+> 
+>  To perform these operations, a warehouse must be running and in use for the session. While a warehouse is running, it consumes Snowflake credits.
 
 ### Warehouse Sizes
 
@@ -64,8 +66,9 @@ In the following sections, you will run the same query on different sized wareho
 
 You will disable the query result cache and suspend the warehouse after each test so that performance of the next query is not artificially enhanced.
 
-Positive
-: **Tip** - When executing queries outside of this guide environment, you do not need to disable the query result cache or restart warehouses prior to each query.
+> aside positive
+> 
+>  **Tip** - When executing queries outside of this guide environment, you do not need to disable the query result cache or restart warehouses prior to each query.
 
 <!-- ------------------------ -->
 
@@ -111,8 +114,9 @@ ALTER SESSION SET USE_CACHED_RESULT = FALSE;
 ALTER SESSION SET QUERY_TAG = 'SAMPLE_WH_Sizing';
 ```
 
-Positive
-: **Tip** - Run specific queries within a worksheet by selecting the queries you want to run and pressing Cmd/Ctrl + Enter.
+> aside positive
+> 
+>  **Tip** - Run specific queries within a worksheet by selecting the queries you want to run and pressing Cmd/Ctrl + Enter.
 
 3. Run the following query to list detailed catalog sales data along with a running sum of sales price within the order. This will be your test query and will be used throughout the guide. The query will take several minutes to run.
 
@@ -157,8 +161,9 @@ ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = Small;
 ALTER WAREHOUSE SAMPLE_WH RESUME;
 ```
 
-Negative
-: If running `ALTER WAREHOUSE SAMPLE_WH SUSPEND;` generates the error `Invalid state. Warehouse 'SAMPLE_WH' cannot be suspended.` , it means your warehouse has been automatically suspended due to inactivity. There is no need to suspend the warehouse again. Continue to the next query to set the warehouse size.
+> aside negative
+> 
+>  If running `ALTER WAREHOUSE SAMPLE_WH SUSPEND;` generates the error `Invalid state. Warehouse 'SAMPLE_WH' cannot be suspended.` , it means your warehouse has been automatically suspended due to inactivity. There is no need to suspend the warehouse again. Continue to the next query to set the warehouse size.
 
 3. Re-run the test query.
 

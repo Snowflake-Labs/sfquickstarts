@@ -1,6 +1,6 @@
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 id: getting_started_with_snowflake
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -45,7 +45,7 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 
 Duration: 2
 
-If you haven't already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com). The rest of the sections in this lab assume you are using a new Snowfflake account created by registering for a trial.
+If you haven't already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com). The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
 
 The Snowflake edition (Standard, Enterprise, Business Critical, etc.) and cloud provider (AWS, Azure, GCP), and Region (US East, EU, etc.) you use for this lab do not matter. However, we suggest you select the region that is physically closest to you and Enterprise, our most popular offering, as your Snowflake edition.
 
@@ -58,8 +58,9 @@ After registering, you will receive an email with an activation link and URL for
 
 Duration: 8
 
-Negative
-: **About the screenshots, sample code, and environment**
+> aside negative
+> 
+>  **About the screenshots, sample code, and environment**
 Screenshots in this lab depict examples and results that may vary slightly from what you see when you complete the exercises.
 
 ### Logging into the Snowflake User Interface (UI)
@@ -92,7 +93,6 @@ The top left corner contains the following:
 
 The top right corner contains the following:
 
-- **+** button: This creates a new worksheet.
 - **Context** box: This lets Snowflake know which role and warehouse to use during this session. It can be changed via the UI or SQL commands.
 - **Share** button: Open the sharing menu to share to other users or copy the link to the worksheet.
 - **Play/Run** button: Run the SQL statement where the cursor currently is or multiple selected statements.
@@ -102,15 +102,19 @@ The middle pane contains the following:
 - Drop-down at the top for setting the database/schema/object context for the worksheet.
 - General working area where you enter and execute queries and other SQL statements. 
 
-The middle-left panel contains the database objects browser which enables you to explore all databases, schemas, tables, and views accessible by the role currently in use for the worksheet. 
+The middle-left panel contains the following:
+- **Worksheets** tab: Use this tab to quickly select and jump between different worksheets
+- **Databases** tab: Use this tab to view all of the database objects available to the current role
+- **Search** bar: database objects browser which enables you to explore all databases, schemas, tables, and views accessible by the role currently in use for the worksheet. 
 
 The bottom pane displays the results of queries and other operations. Also includes 4 options (**Object**, **Query**, **Result**, **Chart**) that open/close their respective panels on the UI. **Chart** opens a visualization panel for the returned results. More on this later.
 
 The various panes on this page can be resized by adjusting their sliders. If you need more room in the worksheet, collapse the database objects browser in the left panel. Many of the screenshots in this guide keep this panel closed.
 
 
-Negative
-: **Worksheets vs the UI**
+> aside negative
+> 
+>  **Worksheets vs the UI**
 Most of the exercises in this lab are executed using pre-written SQL within this worksheet to save time. These tasks can also be done via the UI, but would require navigating back-and-forth between multiple UI tabs.
 
 
@@ -128,64 +132,65 @@ The **Dashboards** tab allows you to create flexible displays of one or more cha
 Under **Data**, the **Databases**​ tab shows information about the databases you have created or have permission to access. You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that a database already exists in your environment. However, we will not be using it in this lab.
 
 
-#### Shared Data
+#### Private Shared Data
 
 ![shared data tab](assets/3UIStory_7.png)
 
-Also under **Data**, the **Shared Data** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.
+Also under **Data**, the **Private Shared Data** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.
 
 
 #### Marketplace
 
 ![marketplace tab](assets/3UIStory_8.png)
 
-**Marketplace**, the last tab under **Data**, is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
+The **Marketplace** tab is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
 
 
-#### History
+#### Query History
 
 ![history tab](assets/3UIStory_9.png)
 
-Under **Compute**, the **History** tab shows the following:
+Under **Activity** there are two tabs **Query History** and **Copy History**:
 
-- **Queries** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
-- **Copies** shows the status of copy commands run to ingest data into Snowflake.
+- **QuerHistory** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
+- **Copy History** shows the status of copy commands run to ingest data into Snowflake.
 
 
 #### Warehouses
 
 ![warehouses tab](assets/3UIStory_10.png)
 
-Also under **Compute**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH (XS) already exists in your environment.
+Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
 
 
 #### Resource Monitors
 
 ![resource monitors tab](assets/3UIStory_11.png)
 
-**Resource Monitors**, the last tab under **Compute**, shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
+Under **Admin**, the **Resource Monitors** tab shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
 
 
 #### Roles
 
 ![roles tab](assets/3UIStory_12.png)
 
-Under **Account**, the **Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tablular/list format by clicking **Table** at the top of the page.
+Under **Admin**, the **Roles** sub-tab of the **Users and Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
 
 
 #### Users
 
 ![users tab](assets/3UIStory_13.png)
 
-Also under **Account** tab, the **Users** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to ACCOUNTADMIN.
+Also under **Admin** tab, the **Users** sub-tab of the **Users and Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to ACCOUNTADMIN.
 
 
 ![user preferences dropdown](assets/3UIStory_14.png)
 
 Clicking on your username in the top right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
 
-Negative
-: **SYSADMIN**
+> aside negative
+> 
+>  **SYSADMIN**
 The `SYSADMIN` (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account.
 In a real-world environment, you would use different roles for the tasks in this lab, and assign roles to your users. We will cover more on roles and Snowflake's access control model in Section 9 and you can find additional information in the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
 
@@ -210,8 +215,9 @@ This section walks you through the steps to:
 - Create an external stage.
 - Create a file format for the data.
 
-Negative
-: **Getting Data into Snowflake**
+> aside negative
+> 
+>  **Getting Data into Snowflake**
 There are many ways to get data into Snowflake from many locations including the COPY command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT solutions. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide-data-load.html).
 For the purposes of this lab, we use the COPY command and AWS S3 storage to load data manually. In a real-world scenario, you would more likely use an automated process or ETL solution.
 
@@ -227,6 +233,8 @@ It is in comma-delimited format with a single header line and double quotes encl
 
 First, let's create a database called `CITIBIKE` to use for loading the structured data.
 
+Ensure you are using the sysadmin role by selecting **Switch Role** > **SYSADMIN**.
+
 Navigate to the **Databases** tab. Click **Create**, name the database `CITIBIKE`, then click **CREATE**.
 
 ![worksheet creation](assets/4PreLoad_2.png)
@@ -236,7 +244,7 @@ Now navigate to the **Worksheets** tab. You should see the worksheet we created 
 
 ![new worksheet](assets/4PreLoad_3.png)
 
-We need to set the context appropriately within the worksheet. In the upper right corner of the worksheet, click the box next to the **+** to show the context menu. Here we control the elements you can see and run from each worksheet. We are using the UI here to set the context. Later in the lab, we will accomplish the same thing via SQL commands within the worksheet.
+We need to set the context appropriately within the worksheet. In the upper right corner of the worksheet, click the box to the left of the **Share** button to show the context menu. Here we control the elements you can see and run from each worksheet. We are using the UI here to set the context. Later in the lab, we will accomplish the same thing via SQL commands within the worksheet.
 
 Select the following context settings:
 
@@ -252,8 +260,9 @@ Schema = `PUBLIC`
 
 ![context database settings](assets/4PreLoad_4b.png)
 
-Negative
-: **Data Definition Language (DDL) operations are free!**
+> aside negative
+> 
+>  **Data Definition Language (DDL) operations are free!**
 All the DDL operations we have done so far do not require compute resources, so we can create all our objects for free.
 
 To make working in the worksheet easier, let's rename it. In the top left corner, click the worksheet name, which is the timestamp when the worksheet was created, and change it to `CITIBIKE_ZERO_TO_SNOWFLAKE`.
@@ -280,8 +289,9 @@ birth_year integer,
 gender integer);
 ```
 
-Negative
-: **Many Options to Run Commands.**
+> aside negative
+> 
+>  **Many Options to Run Commands.**
 SQL commands can be executed through the UI, via the **Worksheets** tab, using our SnowSQL command line tool, with a SQL editor of your choice via ODBC/JDBC, or through our other connectors (Python, Spark, etc.).
 As mentioned earlier, to save time, we are performing most of the operations in this lab via pre-written SQL executed in the worksheet as opposed to using the UI.
 
@@ -303,10 +313,11 @@ Click `TRIPS` and the **Columns** tab to see the table structure you just create
 
 We are working with structured, comma-delimited data that has already been staged in a public, external S3 bucket. Before we can use this data, we first need to create a Stage that specifies the location of our external bucket.
 
-Positive
-: For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
+> aside positive
+> 
+>  For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** buttion, then **Stage** > **Amazon S3**.
+From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** button, then **Stage** > **Amazon S3**.
 
 ![stages create](assets/4PreLoad_8.png)
 
@@ -314,12 +325,14 @@ In the "Create Securable Object" dialog that opens, replace the following values
 
 `stage_name`: `citibike_trips`
 
-`url`: `s3://snowflake-workshop-lab/citibike-trips/`
+`url`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
+Also ensure you have removed 'credentials = (...)' statejment which is not required. The create stage command should resemble that show above exactly. 
 
-Positive
-: The S3 bucket for this lab is public so you can leave the credentials options in the statement empty. In a real-world scenario, the bucket used for an external stage would likely require key information.
+> aside positive
+> 
+>  The S3 bucket for this lab is public so you can leave the credentials options in the statement empty. In a real-world scenario, the bucket used for an external stage would likely require key information.
 
 ![create stage settings](assets/4PreLoad_9.png)
 
@@ -376,7 +389,7 @@ In this section, we will use a virtual warehouse and the COPY command to initiat
 
 Compute resources are needed for loading data. Snowflake's compute nodes are called virtual warehouses and they can be dynamically sized up or out according to workload, whether you are loading data, running a query, or performing a DML operation. Each workload can have its own warehouse so there is no resource contention.
 
-Navigate to the **Warehouses** tab (under **Compute**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
+Navigate to the **Warehouses** tab (under **Admin**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
 
 Note the **+ Warehouse** option in the upper right corner of the top. This is where you can quickly add a new warehouse. However, we want to use the existing warehouse COMPUTE_WH included in the 30-day trial environment.
 
@@ -386,19 +399,23 @@ Click the row of the `COMPUTE_WH` warehouse. Then click the **...** (dot dot dot
 
 Click **Edit** to walk through the options of this warehouse and learn some of Snowflake's unique functionality.
 
-Positive
-: If this account isn't using Snowflake Enterprise Edition (or higher), you will not see the **Mode** or **Clusters** options shown in the screenshot below. The multi-cluster warehouses feature is not used in this lab, but we will discuss it as a key capability of Snowflake.
+> aside positive
+> 
+>  If this account isn't using Snowflake Enterprise Edition (or higher), you will not see the **Mode** or **Clusters** options shown in the screenshot below. The multi-cluster warehouses feature is not used in this lab, but we will discuss it as a key capability of Snowflake.
 
 ![warehouse configure settings](assets/5Load_2.png)
 
 - The **Size** drop-down is where the capacity of the warehouse is selected. For larger data loading operations or more compute-intensive queries, a larger warehouse is recommended. The sizes translate to the underlying compute resources provisioned from the cloud provider (AWS, Azure, or GCP) where your Snowflake account is hosted. It also determines the number of credits consumed by the warehouse for each full hour it runs. The larger the size, the more compute resources from the cloud provider are allocated to the warehouse and the more credits it consumes. For example, the `4X-Large` setting consumes 128 credits for each full hour. This sizing can be changed up or down at any time with a simple click.
 
+- If you are using Snowflake Enterprise Edition (or higher) the **Query Acceleration** option is available. When it is enabled for a warehouse, it can improve overall warehouse performance by reducing the impact of outlier queries, which are queries that use more resources than the typical query. Leave this disabled 
+
 - If you are using Snowflake Enterprise Edition (or higher) and the **Multi-cluster Warehouse** option is enabled, you will see additional options. This is where you can set up a warehouse to use multiple clusters of compute resources, up to 10 clusters. For example, if a `4X-Large` multi-cluster warehouse is assigned a maximum cluster size of 10, it can scale out to 10 times the compute resources powering that warehouse...and it can do this in seconds! However, note that this will increase the number of credits consumed by the warehouse to 1280 if all 10 clusters run for a full hour (128 credits/hour x 10 clusters). Multi-cluster is ideal for concurrency scenarios, such as many business analysts simultaneously running different queries using the same warehouse. In this use case, the various queries are allocated across multiple clusters to ensure they run quickly.
 
-- Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources.
+- Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources. Additionally, there is an option to change the Warehouse type from Standard to Snowpark-optimized. Snowpark-optmized warehouses provide 16x memory per node and are recommended for workloads that have large memory requirements such as ML training use cases using a stored procedure on a single virtual warehouse node. Leave this type as Standard
 
-Negative
-: **Snowflake Compute vs Other Data Warehouses**
+> aside negative
+> 
+>  **Snowflake Compute vs Other Data Warehouses**
 Many of the virtual warehouse and compute capabilities we just covered, such as the ability to create, scale up, scale out, and auto-suspend/resume virtual warehouses are easy to use in Snowflake and can be done in seconds. For on-premise data warehouses, these capabilities are much more difficult, if not impossible, as they require significant physical hardware, over-provisioning of hardware for workload spikes, and significant configuration work, as well as additional challenges. Even other cloud-based data warehouses cannot scale up and out like Snowflake without significantly more configuration work and time.
 
 **Warning - Watch Your Spend!**
@@ -436,7 +453,7 @@ In the result pane, you should see the status of each file that was loaded. Once
 
 ![results load status](assets/5Load_5.png)
 
-Next, navigate to the **History** tab by clicking the **Home** icon and then **Compute** > **History**. Select the query at the top of the list, which should be the COPY INTO statement that was last executed. Note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
+Next, navigate to the **Query History** tab by clicking the **Home** icon and then **Activity** > **Query History**. Select the query at the top of the list, which should be the COPY INTO statement that was last executed. Select the **Query Profile** tab and note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
 
 ![history and duration](assets/5Load_6.png)
 
@@ -488,17 +505,17 @@ file_format=CSV;
 
 ![compare load durations](assets/5Load_9.png)
 
-Once the load is done, navigate back to the **Queries** page (**Home** icon > **Compute** > **History** > **Queries**). Compare the times of the two COPY INTO commands. The load using the `Large` warehouse was significantly faster.
+Once the load is done, navigate back to the **Queries** page (**Home** icon > **Activity** > **Query History**). Compare the times of the two COPY INTO commands. The load using the `Large` warehouse was significantly faster.
 
 ### Create a New Warehouse for Data Analytics
 
 Going back to the lab story, let's assume the Citi Bike team wants to eliminate resource contention between their data loading/ETL workloads and the analytical end users using BI tools to query Snowflake. As mentioned earlier, Snowflake can easily do this by assigning different, appropriately-sized warehouses to various workloads. Since Citi Bike already has a warehouse for data loading, let's create a new warehouse for the end users running analytics. We will use this warehouse to perform analytics in the next section.
 
-Navigate to the **Compute** > **Warehouses** tab, click **+ Warehouse**, and name the new warehouse `ANALYTICS_WH` and set the size to `Large`.
+Navigate to the **Admin** > **Warehouses** tab, click **+ Warehouse**, and name the new warehouse `` and set the size to `Large`.
 
 If you are using Snowflake Enterprise Edition (or higher) and **Multi-cluster Warehouses** is enabled, you will see additional settings:
 
-- Make sure **Max Clusters** is sset to `1`.
+- Make sure **Max Clusters** is set to `1`.
 - Leave all the other settings at their defaults.
 
 ![warehouse settings](assets/5Load_10.png)
@@ -514,8 +531,9 @@ Duration: 8
 
 In the previous exercises, we loaded data into two tables using Snowflake's COPY bulk loader command and the `COMPUTE_WH` virtual warehouse. Now we are going to take on the role of the analytics users at Citi Bike who need to query data in those tables using the worksheet and the second warehouse `ANALYTICS_WH`.
 
-Negative
-: **Real World Roles and Querying**
+> aside negative
+> 
+>  **Real World Roles and Querying**
 Within a real company, analytics users would likely have a different role than SYSADMIN. To keep the lab simple, we are going to stay with the SYSADMIN role for this section.
 Additionally, querying would typically be done with a business intelligence product like Tableau, Looker, PowerBI, etc. For more advanced analytics, data science tools like Datarobot, Dataiku, AWS Sagemaker or many others can query Snowflake. Any technology that leverages JDBC/ODBC, Spark, Python, or any of the other supported programmatic interfaces can run analytics on the data in Snowflake. To keep this lab simple, all queries are being executed via the Snowflake worksheet.
 
@@ -590,8 +608,9 @@ Snowflake allows you to create clones, also known as "zero-copy clones" of table
 
 A popular use case for zero-copy cloning is to clone a production environment for use by Development & Testing teams to test and experiment without adversely impacting the production environment and eliminating the need to set up and manage two separate environments.
 
-Negative
-: **Zero-Copy Cloning**
+> aside negative
+> 
+>  **Zero-Copy Cloning**
 A massive benefit of zero-copy cloning is that the underlying data is not copied. Only the metadata and pointers to the underlying data change. Hence, clones are “zero-copy" and storage requirements are not doubled when the data is cloned. Most data warehouses cannot do this, but for Snowflake it is easy!
 
 Run the following command in the worksheet to create a development (dev) table clone of the `trips` table:
@@ -611,8 +630,9 @@ Click the three dots (**...**) in the left pane and select **Refresh**. Expand t
 
 Duration: 16
 
-Positive
-: This section requires loading additional data and, therefore, provides a review of data loading while also introducing loading semi-structured data.
+> aside positive
+> 
+>  This section requires loading additional data and, therefore, provides a review of data loading while also introducing loading semi-structured data.
 
 Going back to the lab's example, the Citi Bike analytics team wants to determine how weather impacts ride counts. To do this, in this section, we will:
 
@@ -621,17 +641,18 @@ Going back to the lab's example, the Citi Bike analytics team wants to determine
 - Run a query that joins the JSON data to the previously loaded `TRIPS` data.
 - Analyze the weather and ride count data to determine their relationship.
 
-The JSON data consists of weather information provided by OpenWeatherMap detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 57.9k rows, 61 objects, and 2.5MB compressed. If viewed in a text editor, the raw JSON in the GZ files looks like:
+The JSON data consists of weather information provided by *MeteoStat* detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 75k rows, 36 objects, and 1.1MB compressed. If viewed in a text editor, the raw JSON in the GZ files looks like:
 
-![raw JSON sample](assets/7SemiStruct_1.png)
+![raw JSON sample](assets/7SemiStruct_1_1.png)
 
-Negative
-: **SEMI-STRUCTURED DATA**
+> aside negative
+> 
+>  **SEMI-STRUCTURED DATA**
 Snowflake can easily load and query semi-structured data such as JSON, Parquet, or Avro without transformation. This is a key Snowflake feature because an increasing amount of business-relevant data being generated today is semi-structured, and many traditional data warehouses cannot easily load and query such data. Snowflake makes it easy!
 
 ### Create a New Database and Table for the Data
 
-First, in the worksheet, let's create a database named `WEATHER` tto use for storing the semi-structured JSON data.
+First, in the worksheet, let's create a database named `WEATHER` to use for storing the semi-structured JSON data.
 
 ```SQL
 create database weather;
@@ -649,8 +670,9 @@ use database weather;
 use schema public;
 ```
 
-Positive
-: **Executing Multiple Commands** Remember that you need to execute each command individually. However, you can execute them in sequence together by selecting all of the commands and then clicking the **Play/Run** button (or using the keyboard shortcut).
+> aside positive
+> 
+>  **Executing Multiple Commands** Remember that you need to execute each command individually. However, you can execute them in sequence together by selecting all of the commands and then clicking the **Play/Run** button (or using the keyboard shortcut).
 
 Next, let's create a table named `JSON_WEATHER_DATA` to use for loading the JSON data. In the worksheet, execute the following CREATE TABLE command:
 
@@ -660,13 +682,14 @@ create table json_weather_data (v variant);
 
 Note that Snowflake has a special column data type called `VARIANT` that allows storing the entire JSON object as a single row and eventually query the object directly.
 
-Negative
-: **Semi-Structured Data Magic**
+> aside negative
+> 
+>  **Semi-Structured Data Magic**
 The VARIANT data type allows Snowflake to ingest semi-structured data without having to predefine the schema.
 
 In the results pane at the bottom of the worksheet, verify that your table, `JSON_WEATHER_DATA`, was created:
 
-![success message](assets/7SemiStruct_2.png)
+![success message](assets/7SemiStruct_2_1.png)
 
 ### Create Another External Stage
 
@@ -674,7 +697,7 @@ In the `CITIBIKE_ZERO_TO_SNOWFLAKE` worksheet, use the following command to crea
 
 ```SQL
 create stage nyc_weather
-url = 's3://snowflake-workshop-lab/weather-nyc';
+url = 's3://snowflake-workshop-lab/zero-weather-nyc';
 ```
 
 Now let's take a look at the contents of the `nyc_weather` stage. Execute the following LIST command to display the list of files:
@@ -685,7 +708,7 @@ list @nyc_weather;
 
 In the results pane, you should see a list of `.gz` files from S3:
 
-![results output](assets/7SemiStruct_3.png)
+![results output](assets/7SemiStruct_3_1.png)
 
 ### Load and Verify the Semi-structured Data
 
@@ -697,13 +720,13 @@ Note that you can specify a `FILE FORMAT` object inline in the command. In the p
 
 ```SQL
 copy into json_weather_data
-from @nyc_weather
-file_format = (type=json);
+from @nyc_weather 
+    file_format = (type = json strip_outer_array = true);
 ```
 
 Verify that each file has a status of `LOADED`:
 
-![query result](assets/7SemiStruct_4.png)
+![query result](assets/7SemiStruct_4_1.png)
 
 
 Now, let's take a look at the data that was loaded:
@@ -712,9 +735,9 @@ Now, let's take a look at the data that was loaded:
 select * from json_weather_data limit 10;
 ```
 
-Click any of the rows to display the formated JSON in the right panel:
+Click any of the rows to display the formatted JSON in the right panel:
 
-![JSON data snippet](assets/7SemiStruct_5.png)
+![JSON data snippet](assets/7SemiStruct_5_1.png)
 
 To close the display in the panel and display the query details again, click the **X** (Close) button that appears when you hover your mouse in the right corner of the panel.
 
@@ -722,40 +745,45 @@ To close the display in the panel and display the query details again, click the
 
 Next, let's look at how Snowflake allows us to create a view and also query the JSON data directly using SQL.
 
-Negative
-: **Views & Materialized Views**
+> aside negative
+> 
+>  **Views & Materialized Views**
 A view allows the result of a query to be accessed as if it were a table. Views can help present data to end users in a cleaner manner, limit what end users can view in a source table, and write more modular SQL.
 Snowflake also supports materialized views in which the query results are stored as though the results are a table. This allows faster access, but requires storage space. Materialized views can be created and queried if you are using Snowflake Enterprise Edition (or higher).
 
-Run the following command to create a columnar view of the semi-structured JSON weather data so it is easier for analysts to understand and query. The ``5128638`` value for ``city_id`` corresponds to New York City.
+Run the following command to create a columnar view of the semi-structured JSON weather data so it is easier for analysts to understand and query. The ``72502`` value for ``station_id`` corresponds to Newark Airport, the closest station that has weather conditions for the whole period.
 
 ```SQL
-create view json_weather_data_view as
+// create a view that will put structure onto the semi-structured data
+create or replace view json_weather_data_view as
 select
-v:time::timestamp as observation_time,
-v:city.id::int as city_id,
-v:city.name::string as city_name,
-v:city.country::string as country,
-v:city.coord.lat::float as city_lat,
-v:city.coord.lon::float as city_lon,
-v:clouds.all::int as clouds,
-(v:main.temp::float)-273.15 as temp_avg,
-(v:main.temp_min::float)-273.15 as temp_min,
-(v:main.temp_max::float)-273.15 as temp_max,
-v:weather[0].main::string as weather,
-v:weather[0].description::string as weather_desc,
-v:weather[0].icon::string as weather_icon,
-v:wind.deg::float as wind_dir,
-v:wind.speed::float as wind_speed
-from json_weather_data
-where city_id = 5128638;
+    v:obsTime::timestamp as observation_time,
+    v:station::string as station_id,
+    v:name::string as city_name,
+    v:country::string as country,
+    v:latitude::float as city_lat,
+    v:longitude::float as city_lon,
+    v:weatherCondition::string as weather_conditions,
+    v:coco::int as weather_conditions_code,
+    v:temp::float as temp,
+    v:prcp::float as rain,
+    v:tsun::float as tsun,
+    v:wdir::float as wind_dir,
+    v:wspd::float as wind_speed,
+    v:dwpt::float as dew_point,
+    v:rhum::float as relative_humidity,
+    v:pres::float as pressure
+from
+    json_weather_data
+where
+    station_id = '72502';
 ```
 
-SQL dot notation `v:city.coord.lat` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
+SQL dot notation `v:temp` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
 The new view should appear as `JSON_WEATHER_DATA` under `WEATHER` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
 
-![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6.png)
+![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6_1.png)
 
 Verify the view with the following query: 
 
@@ -767,7 +795,7 @@ limit 20;
 
 Notice the results look just like a regular structured data source. Your result set may have different `observation_time` values:
 
-![query results with view](assets/7SemiStruct_7.png)
+![query results with view](assets/7SemiStruct_7_1.png)
 
 ### Use a Join Operation to Correlate Against Data Sets
 
@@ -775,12 +803,13 @@ We will now join the JSON weather data to our `CITIBIKE.PUBLIC.TRIPS` data to an
 
 Run the query below to join `WEATHER` to `TRIPS` and count the number of trips associated with certain weather conditions:
 
-Positive
-: Because we are still in the worksheet, the `WEATHER` database is still in use. You must, therefore, fully qualify the reference to the `TRIPS` table by providing its database and schema name.
+> aside positive
+> 
+>  Because we are still in the worksheet, the `WEATHER` database is still in use. You must, therefore, fully qualify the reference to the `TRIPS` table by providing its database and schema name.
 
 
 ```SQL
-select weather as conditions
+select weather_conditions as conditions
 ,count(*) as num_trips
 from citibike.public.trips
 left outer join json_weather_data_view
@@ -789,7 +818,7 @@ where conditions is not null
 group by 1 order by 2 desc;
 ```
 
-![weather results](assets/7SemiStruct_8.png)
+![weather results](assets/7SemiStruct_8_1.png)
 
 The initial goal was to determine if there was any correlation between the number of bike rides and the weather by analyzing both ridership and weather data. Per the results above we have a clear answer. As one would imagine, the number of trips is significantly higher when the weather is good!
 
@@ -839,7 +868,7 @@ The json_weather_data table should be restored. Verify by running the following 
 ```SQL 
 --verify table is undropped
 
-select * from json_weather_data_view limit 10;
+select * from json_weather_data limit 10;
 ```
 
 ![restored table result](assets/8Time_2.png)
@@ -887,7 +916,7 @@ In Snowflake, we can simply run a command to find the query ID of the last UPDAT
 ```SQL
 set query_id =
 (select query_id from table(information_schema.query_history_by_session (result_limit=>5))
-where query_text like 'update%' order by start_time limit 1);
+where query_text like 'update%' order by start_time desc limit 1);
 ```
 
 Use Time Travel to recreate the table with the correct station names:
@@ -922,8 +951,9 @@ In this section, we will explore aspects of Snowflake's access control security 
 
 Continuing with the lab story, let's assume a junior DBA has joined Citi Bike and we want to create a new role for them with less privileges than the system-defined, default role of SYSADMIN.
 
-Negative
-: **Role-Based Access Control**
+> aside negative
+> 
+>  **Role-Based Access Control**
 Snowflake offers very powerful and granular access control that dictates the objects and functionality a user can access, as well as the level of access they have. For more details, check out the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
 
 ### Create a New Role and Add a User
@@ -940,18 +970,19 @@ Notice that, in the top right of the worksheet, the context has changed to ACCOU
 
 ![ACCOUNTADMIN context](assets/9Role_1.png)
 
-Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowfalke user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
+Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowflake user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
 
 Use the following commands to create the role and assign it to you. Before you run the GRANT ROLE command, replace `YOUR_USERNAME_GOES_HERE` with your username:
 
 ```SQL
 create role junior_dba;
 
-grant role junior_dba to user YOUR_USERNAME_GOES HERE;
+grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
 ```
 
-Positive
-: If you try to perform this operation while in a role such as SYSADMIN, it would fail due to insufficient privileges. By default (and design), the SYSADMIN role cannot create new roles or users.
+> aside positive
+> 
+>  If you try to perform this operation while in a role such as SYSADMIN, it would fail due to insufficient privileges. By default (and design), the SYSADMIN role cannot create new roles or users.
 
 Change your worksheet context to the new `JUNIOR_DBA` role:
 
@@ -959,11 +990,27 @@ Change your worksheet context to the new `JUNIOR_DBA` role:
 use role junior_dba;
 ```
 
-In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role.
+In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role. 
 
 ![JUNIOR_DBA context](assets/9Role_2.png)
 
-Also, in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Also, the warehouse is not selected because the newly created role does not have usage privileges on any warehouse. Let's fix it by switching back to ADMIN role and grant usage privileges to `COMPUTE_WH` warehouse.
+
+```SQL
+use role accountadmin;
+
+grant usage on warehouse compute_wh to role junior_dba;
+```
+
+Switch back to the `JUNIOR_DBA` role. You should be able to use `COMPUTE_WH` now.
+
+```SQL
+use role junior_dba;
+
+use warehouse compute_wh;
+```
+
+Finally, you can notice that in the database object browser panel on the left, the `CITIBIKE` and `WEATHER` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
 Switch back to the ACCOUNTADMIN role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CITIBIKE` and `WEATHER` databases:
 
@@ -993,11 +1040,12 @@ First, click the **Home** icon in the top left corner of the worksheet. Then, in
 
 ![switch UI role](assets/9Role_4.png)
 
-Negative
-: **Roles in User Preference vs Worksheet**
-Why did we use the user preference menu to change the role instead of the worksheet? The UI session and each worksheet have their own separate roles. The UI session role controls the elements you can see and acceess in the UI, whereas the worksheet role controls only the objects and actions you can access within the role.
+> aside negative
+> 
+>  **Roles in User Preference vs Worksheet**
+Why did we use the user preference menu to change the role instead of the worksheet? The UI session and each worksheet have their own separate roles. The UI session role controls the elements you can see and access in the UI, whereas the worksheet role controls only the objects and actions you can access within the role.
 
-Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs are available under **Account**.
+Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs are available under **Admin**.
 
 
 #### Usage
@@ -1006,7 +1054,7 @@ Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs ar
 
 The **Usage** tab shows the following, each with their own page:
 
-- **Orgamization**: Credit usaged across all the accounts in your organization.
+- **Organization**: Credit usage across all the accounts in your organization.
 - **Consumption**: Credits consumed by the virtual warehouses in the current account.
 - **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
 - **Transfers**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
@@ -1047,8 +1095,9 @@ With secure data sharing:
 - Providers can establish revocable, fine-grained access to shares.
 - Data sharing is simple and safe, especially compared to older data sharing methods, which were often manual and insecure, such as transferring large `.csv` files across the internet.
 
-Positive
-: **Cross-region & cross-cloud data sharing** To share data across regions or cloud platforms, you must set up replication. This is outside the scope of this lab, but more information is available in [this Snowflake article](https://www.snowflake.com/trending/what-is-data-replication).
+> aside positive
+> 
+>  **Cross-region & cross-cloud data sharing** To share data across regions or cloud platforms, you must set up replication. This is outside the scope of this lab, but more information is available in [this Snowflake article](https://www.snowflake.com/trending/what-is-data-replication).
 
 Snowflake uses secure data sharing to provide account usage data and sample data sets to all Snowflake accounts. In this capacity, Snowflake acts as the data provider of the data and all other accounts.
 
@@ -1065,11 +1114,11 @@ In the home page, navigate to **Data** > **Databases**. In the list of databases
 
 Let's go back to the Citi Bike story and assume we are the Account Administrator for Snowflake at Citi Bike. We have a trusted partner who wants to analyze the data in our `TRIPS` database on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. So let's use secure data sharing to allow them to access this information.
 
-Navigate to **Data** > **Shared Data**, then click **Shared by My Account** at the top of the tab. Click the **Share Data** button in the top right corner and select **Share with Other Accounts**:
+Navigate to **Data** > **Private Sharing**, then at the top of the tab click **Shared by My Account**. Click the **Share** button in the top right corner and select **Create a Direct Share**:
 
 ![shares outbound button](assets/10Share_2.png)
 
-Click **+ Data** and navigate to the `CITIBIKE` database and `PUBLIC` schema. Select the 2 tables we created in the schema and click the **Done** button:
+Click **+ Select Data** and navigate to the `CITIBIKE` database and `PUBLIC` schema. Select the 2 tables we created in the schema and click the **Done** button:
 
 ![share fields](assets/10Share_3.png)
 
@@ -1095,7 +1144,7 @@ Snowflake provides several ways to securely share data without compromising conf
 
 ### Snowflake Data Marketplace
 
-Make sure you're using the ACCOUNTADMIN role and, under **Data**, navigate to the **Marketplace** tab:
+Make sure you're using the ACCOUNTADMIN role and, navigate to the **Marketplace**:
 
 ![data marketplace tab](assets/10Share_7.png)
 
@@ -1107,11 +1156,11 @@ Type `COVID` in the search box, scroll through the results, and select **COVID-1
 
 ![health tab](assets/10Share_8.png)  
 
-In the **COVID-19 Epidemiological Data** page, you can learn more about the dataset and see some usage example queries. When you're ready, click the **Get Data** button to make this information available within your Snowflake account:
+In the **COVID-19 Epidemiological Data** page, you can learn more about the dataset and see some usage example queries. When you're ready, click the **Get** button to make this information available within your Snowflake account:
 
 ![get data fields](assets/10Share_starschema_get_data.png)
 
-Review the information in the dialog and glick **Get Data** again:
+Review the information in the dialog and lick **Get** again:
 
 ![get data fields](assets/10Share_starschema_get_data2.png)
 
@@ -1119,12 +1168,13 @@ You can now click **Done** or choose to run the sample queries provided by Stars
 
 ![get data fields](assets/10Share_starschema_query_data.png)
 
-If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
+If you chose **Open**, a new worksheet opens in a new browser tab/window:
 
-1. Select the query you want to run (or place your cursor in the query text).
-2. Click the **Run/Play** button (or use the keyboard shortcut).
-3. You can view the data results in the bottom pane.
-4. When you are done running the sample queries, click the **Home** icon in the upper left corner.
+1. Set your context 
+2. Select the query you want to run (or place your cursor in the query text).
+3. Click the **Run/Play** button (or use the keyboard shortcut).
+4. You can view the data results in the bottom pane.
+5. When you are done running the sample queries, click the **Home** icon in the upper left corner.
 
 ![get data fields](assets/10Share_starschema_query_data2.png)
 
@@ -1187,7 +1237,7 @@ We encourage you to continue with your free trial by loading your own sample or 
 - Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document.
 - Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers.
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
-- Sighn up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
+- Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
 - Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
 
 ### What we've covered:

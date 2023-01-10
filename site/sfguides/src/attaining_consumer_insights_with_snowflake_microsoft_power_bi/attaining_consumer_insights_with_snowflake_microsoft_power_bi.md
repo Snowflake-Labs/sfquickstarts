@@ -1,6 +1,6 @@
 summary: In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration.
 id: attaining_consumer_insights_with_snowflake_and_microsoft_power_bi
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -59,8 +59,9 @@ Perform optimization techniques to speed report/dashboard responsiveness
 
 #### Download and install the latest version of [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) (Optional).
 
-Positive
-: \*\*Consider This: \*\*
+> aside positive
+> 
+>  \*\*Consider This: \*\*
 Resize your browser windows so you can view this lab guide and your web browser side-by-side to more easily follow the lab instructions. If possible, even better is to use a secondary display dedicated to the lab guide. It is also advisable to open a second browser window so you are able to view the Snowflake UI and Azure Portal side by side.
 
 #### Download the Snowflake and Azure script files to your local machine
@@ -72,8 +73,9 @@ Resize your browser windows so you can view this lab guide and your web browser 
 
 Duration: 8
 
-Negative
-: **About the screen captures, sample code, and environment**
+> aside negative
+> 
+>  **About the screen captures, sample code, and environment**
 Screen captures in this lab depict examples and results that may vary slightly from what you see when you complete the exercises.
 
 ### Logging Into the Snowflake User Interface (UI)
@@ -122,8 +124,9 @@ At the top left of the default worksheet, to the right of the worksheet tab, cli
 
 ![worksheets tab navigation](assets/3UIStory_8.png)
 
-Negative
-: **Worksheets vs the UI**
+> aside negative
+> 
+>  **Worksheets vs the UI**
 Many of the configurations for this lab will be executed via the pre-written SQL within this worksheet to save time. These configurations could also be done via the UI in a less technical manner, but would take more time.
 
 The **History** tab allows you to view the details of all queries executed in the last 14 days from your Snowflake account. Click on a Query ID to drill into it for more information.
@@ -134,8 +137,9 @@ Clicking on your username in the top right of the UI allows you to change your p
 
 ![user preferences dropdown](assets/3UIStory_10.png)
 
-Negative
-: **SYSADMIN**
+> aside negative
+> 
+>  **SYSADMIN**
 The `SYSADMIN` (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account.
 In a real-world environment, you would use different roles for the tasks in this lab, and assign roles to your users. We will cover more on Snowflake access control in Section 9 and you can find additional information in the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
 

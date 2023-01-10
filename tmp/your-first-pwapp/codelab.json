@@ -1,0 +1,40 @@
+{
+  "environment": "web",
+  "format": "md",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-04-10T16:55:12Z",
+  "id": "your-first-pwapp",
+  "duration": 24,
+  "title": "Your First Progressive Web App",
+  "authors": "Pete LePage",
+  "summary": "In this codelab, you'll build an installable, Progressive Web App, which loads quickly, even on flaky networks, and when launched looks like any other installed app.",
+  "source": "https://docs.google.com/document/d/16KCCID9tVAFG3z5B-7nr22SpKk7GsF9Sw1EIfjY3CrI/edit?usp=sharing\u0026resourcekey=0-c_ujNSVZzb_3bNLkFKFA8g",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "web"
+  ],
+  "tags": [
+    "cds17",
+    "chrome-dev-summit-2016",
+    "devfest18",
+    "gdd17",
+    "io2016",
+    "io2017",
+    "io2018",
+    "io2019",
+    "jsconfeu",
+    "kiosk",
+    "pwa-dev-summit",
+    "pwa-roadshow",
+    "tag-web",
+    "typtwd17",
+    "web"
+  ],
+  "feedback": "https://github.com/googlecodelabs/your-first-pwapp/issues",
+  "ga": "UA-52746336-1",
+  "url": "your-first-pwapp"
+}

@@ -1,14 +1,15 @@
-id: getting_started_with_snowpark
+id: getting_started_with_snowpark_scala
 summary: This guide provides the basic instructions for setting up a simple example using Snowpark.
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Getting Started With Snowpark
+# Getting Started With Snowpark Scala
 <!-- ------------------------ -->
 ## Overview
+
 Duration: 1
 
 Using the [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index.html),
@@ -19,17 +20,18 @@ Snowflake directly without moving data. When you use the
 Snowpark API, the library uploads and runs your code in Snowflake so that you
 don't need to move the data to a separate system for processing.
 
-Currently, Snowpark is generally available on AWS and is a preview feature on Azure and GCP.
-
 ### What You’ll Build
+
 - A Scala application that uses the Snowpark library to process data in a stage
 
 ### What You’ll Learn
+
 - How to create a DataFrame that loads data from a stage
 - How to create a user-defined function for your Scala code
 - How to create a stored procedure from your Scala function
 
 ### Prerequisites
+
 - Familiarity with Scala
 - A [Snowflake](https://www.snowflake.com/) account hosted on Amazon Web Services
   (AWS) or Microsoft Azure. 
@@ -44,6 +46,7 @@ Snowpark supports code compiled to run on Java 11.
 
 <!-- ------------------------ -->
 ## Download the repository
+
 Duration: 5
 
 You'll find the demo in a Snowflake GitHub repository. After installing git, you can clone the
@@ -56,7 +59,7 @@ repository using your terminal.
 
     ```console
     cd {directory_where_you_want_the_repository}
-    git clone https://github.com/Snowflake-Labs/sfguide-snowpark-demo
+    git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-scala
     ```
 
 1. Change to the directory of the repository that you cloned:
@@ -84,7 +87,8 @@ run this example to create those stages and upload those files.
 - `src/main/scala/UDFDemo.scala`: This is a simple code example that creates and calls a UDF.
 
 <!-- ------------------------ -->
-##  Configure the settings for connecting to Snowflake
+## Configure the settings for connecting to Snowflake
+
 Duration: 5
 
 The demo directory contains a `snowflake_connection.properties` file that the
@@ -116,7 +120,8 @@ SCHEMA = my_schema
 - For the other properties, use any [connection parameter supported by the JDBC Driver](https://docs.snowflake.com/en/user-guide/jdbc-parameters.html).
 
 <!-- ------------------------ -->
-##  Connect to Snowflake
+## Connect to Snowflake
+
 Duration: 5
 
 In this step, you'll confirm that you can connect to Snowflake with the demo
@@ -186,6 +191,7 @@ the data and libraries to make the UDF work.
 
 <!-- ------------------------ -->
 ## Download the data file and libraries for the demo
+
 Duration: 10
 
 In this step, you'll download the sample data file and libraries you need to
@@ -237,6 +243,7 @@ the files to the stages.
 
 <!-- ------------------------ -->
 ## Upload the data file and libraries to internal stages
+
 Duration: 20
 
 In this section, you'll run the `UDFDemoSetup.scala` example to create
@@ -389,7 +396,8 @@ library to create a stage for the uploaded files.
 Next, run the `UDFDemo.scala` example to create the user-defined function.
 
 <!-- ------------------------ -->
-##  Run the UDF demo
+## Run the UDF demo
+
 Duration: 10
 
 In this step, you'll run the `UDFDemo.scala` demo application to create and call
@@ -419,7 +427,8 @@ This example does the following:
 See the topics that follow for more on how this works.
 
 <!-- ------------------------ -->
-##  Load data from a stage and create a DataFrame
+## Load data from a stage and create a DataFrame
+
 Duration: 5
 
 The `collectTweetData` method creates a `DataFrame` to [read CSV data from a file in a stage](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages). It does this with a
@@ -522,7 +531,8 @@ For `collectTweetData`, you'll see output such as the following.
 ```
 
 <!-- ------------------------ -->
-##  Define a UDF
+## Define a UDF
+
 Duration: 5
 
 The `createUDF` method sets up dependencies for a UDF that analyzes tweets
@@ -604,13 +614,14 @@ compiles your UDF and uploads the JAR file to the stage:
   ```
 
 <!-- ------------------------ -->
-##  Use the UDF to process the tweets
+## Use the UDF to process the tweets
+
 Duration: 5
 
 The `processHappyTweets` method uses the UDF to analyze tweet text to discover
-which tweets are happy. 
+which tweets are happy.
 
-### Code walkthrough 
+Code walkthrough
 
 - The method receives:
   - A `Session` for connecting to Snowflake.
@@ -692,7 +703,8 @@ In the last step, you'll take the code you've got already and turn it into
 a stored procedure in Snowflake.
 
 <!-- ------------------------ -->
-##  Create a stored procedure from the Scala code
+## Create a stored procedure from the Scala code
+
 Duration: 5
 
 In this step, you'll take the code you've just run and create a stored
@@ -736,7 +748,7 @@ For related documentation, be sure to read
 
     $$;
     ```
-    
+
     This code creates a stored procedure called `discoverHappyTweets`. The
     documentation has more, but be sure to note the following:
       - The `packages` parameter specifies the Snowpark version to use.
@@ -788,6 +800,7 @@ call discoverHappyTweets();
 <!-- ------------------------ -->
 
 ## Conclusion & Next Steps
+
 Duration: 1
 
 Congratulations! You used Snowpark to perform sentiment analysis on tweets. 
@@ -797,6 +810,7 @@ ingest new tweets as they are written, follow the
 guide.
 
 ### What You Covered
+
 - **Data Loading** - Loading Twitter data into Snowflake with Snowpark (Scala)
 - **Data** - Creating Dataframes from the CSV file and remove unwanted columns
 - **Sentiment Analysis** - Using Scala to perform sentiment analysis on a Dataframe of tweets
@@ -804,5 +818,6 @@ guide.
 - **Snowpark stored procedure** - Using Snowflake to create a stored procedure in Scala
 
 ### Related Resources
-- [Snowpark Docs](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark.html)
-- [Source code example on Github](https://github.com/Snowflake-Labs/sfguide-snowpark-demo)
+
+- [Snowpark Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/scala/index.html)
+- [Source code example on Github](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-scala)
