@@ -10,7 +10,7 @@ authors: Alex Engelmann
 # Accelerate Transformations with Coalesce and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
+Duration: 5
 
 Coalesce is a best-in-class Data Transformation solution for Snowflake. With Coalesce, you build directed acyclic graphs (DAG) made up of nodes that run on a schedule and produce tested, up-to-date datasets ready for your business users.
 
@@ -25,22 +25,15 @@ The following video provides a brief overview of (most of) what this guide will 
 <video id="Kg9Bo8_lUfU"></video>
 
 ### Prerequisites
-
 - Familiarity with SQL and Snowflake
 - Basic understanding of dimensional modeling
-
-### What You’ll Learn 
-
+### What You’ll Learn
 - How to use Coalesce to build a basic data transformation pipeline
-
 ### What You’ll Need 
-
 - If you haven't yet signed up for a Coalesce account, you can do so [here](https://coalesce.io/start-free/).
 - Make sure you're using Google's Chrome browser, as other browsers are not officially supported.
 - Have your Snowflake login information handy. Don’t have a Snowflake account yet or not ready to connect your company’s Snowflake to Coalesce? Sign up for a free trial [here](https://signup.snowflake.com/) and use Snowflake’s provided sample data.
-
 ### What You’ll Build 
-
 - A small data mart containing dimension and fact tables using native Snowflake SQL
 
 <!-- ------------------------ -->
@@ -60,7 +53,6 @@ Once you've done this you'll be presented with the **Build** interface.  This is
 > Note that on a brand new account, the **Problem Scanner** will show a few action items.  You can disregard those as most will be resolved by the end of this guide.
 
 ![Problem Scanner](assets/problem_scanner.png)
-<!-- TODO Will update this once we release 4.1 -->
 
 ### Connect to Snowflake
 
@@ -144,7 +136,7 @@ Congratulations!  You've connected your database and applied a basic transformat
 
 <!-- ------------------------ -->
 ## Create a Dimension Table
-Duration: 2
+Duration: 3
 
 Now let's create a simple slowly changing dimension (Type 2) — an industry standard for tracking historical data by creating multiple records for a given natural key.
 
@@ -171,7 +163,7 @@ You have now finished creating a Type 2 Dimension table.  Next we will make a Fa
 <!-- ------------------------ -->
 
 ## Create a Fact Table
-Duration: 1
+Duration: 3
 
 Now let's create a fact table.
 
@@ -210,7 +202,7 @@ Now that you've finished the Quick Start Guide, you're familiar with the general
 If you're comfortable and want more, you can try [using other node types](https://docs.coalesce.io/docs/out-of-the-box-nodes), backup your work using our [git integration](https://docs.coalesce.io/docs/git-version-control), or try [deploying your pipeline](https://docs.coalesce.io/docs/overview-of-the-deploy-interface) to an environment.
 
 ### What we've covered
-- Connecting Coalesce to Snowflake
+- Connecting Snowflake to Coalesce
 - Adding data sources
 - Transforming data with a Stage Node
 - Creating Dimension and Fact Tables
