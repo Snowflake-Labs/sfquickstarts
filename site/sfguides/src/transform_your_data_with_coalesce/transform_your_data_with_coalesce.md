@@ -3,7 +3,7 @@ id: transform_your_data_with_coalesce
 summary: Accelerate Transformations with Coalesce and Snowflake
 categories: Getting-Started
 environments: web
-status: draft 
+status: final
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 authors: Alex Engelmann
