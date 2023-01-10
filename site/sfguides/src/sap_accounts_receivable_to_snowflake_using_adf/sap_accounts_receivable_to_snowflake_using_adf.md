@@ -333,6 +333,9 @@ Some tables may not be exposed to ODP in your trial system. Not to worry, you ca
 1. Repeat the above steps for the sinks `0customer_attr` and `0fi_ar_4`.
 
 ## Create data flows
+<aside class="callout">
+These steps are only shown as an example, and following along with the example may require additional rights in third-party data, products, or services that are not owned or provided by Snowflake.  Please ensure that you have the appropriate rights in third-party data, products, or services before continuing.
+</aside>
 ### Create df_FIAR4_trunc_full_load
 1. From Azure Data Factory, select **Author** 
 1. Select Dataflows and click on **(...)** > New dataflow. 
