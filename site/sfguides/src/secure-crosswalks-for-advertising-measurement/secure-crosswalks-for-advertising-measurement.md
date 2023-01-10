@@ -7,14 +7,14 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, AdTech
 
-# Secure Crosswalks for Advertising Measurment
+# Secure Crosswalks for Advertising Measurement
 
 ## Overview 
 Duration: 1
 
 With the loss of historically common advertising identifiers, such as cookies and Mobile Advertising Identifiers (MAIDs), much of the advertising measurement ecosystem has moved to the use of panels. With a panel, an advertiser or publisher can use shared PII to perform measurement. However, because of privacy concerns and legislation such as GDPR and CCPA, many companies want to perform this match without directly sharing PII.
 
-This process, a translation between one company's internal identifier to another company's internal identifier using shared PII, is known as a crosswalk. Snowflake allows this process to take place natively, without requiring a trusted third-party or the movememt of data, and without exposing any PII.
+This process, a translation between one company's internal identifier to another company's internal identifier using shared PII, is known as a crosswalk. Snowflake allows this process to take place natively, without requiring a trusted third-party or the movement of data, and without exposing any PII.
 
 This process can take place within a [Clean Room](https://www.snowflake.com/blog/data-clean-room-explained/) or will soon be made easier with [Projection Constraints](https://medium.com/@alex.lei/embarking-on-the-snowflake-data-clean-room-dcf9fac23c21). However, this can also take place today, using only data sharing.  This Quickstart will walk through an example of this process.
 
@@ -210,7 +210,7 @@ Using the function shared by the measurement company, the customer can now make 
 
 ### Creating the table
 
-The table to be shared from the customer to the measurement company will be keyed off of the measurement company's internal identifier, using the secure UDF shared from the measurement company.  It also should hold only those impressions for campaignsx that this measurement company is measuring.
+The table to be shared from the customer to the measurement company will be keyed off of the measurement company's internal identifier, using the secure UDF shared from the measurement company.  It also should hold only those impressions for campaigns that this measurement company is measuring.
 
 ```sql
 -- create a view of data the measurement company should see

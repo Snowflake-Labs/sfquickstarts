@@ -204,7 +204,7 @@ Duration: 6
 
 ### Deploying to AWS
 
-Now that the application and configuration is verfied to be working, you can deploy it to AWS by running the following command:
+Now that the application and configuration is verified to be working, you can deploy it to AWS by running the following command:
 
 ```bash
 serverless deploy
