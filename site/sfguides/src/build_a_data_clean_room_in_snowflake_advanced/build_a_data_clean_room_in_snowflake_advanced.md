@@ -21,14 +21,10 @@ Traditional DCR implementations require organizations to copy their data to a se
 >  **Caveat:** This Data Clean Room QuickStart is for illustrative purposes only, as a hands-on lab intended to show some of the basic features used to build a data clean room on Snowflake. The result of this lab must not be used in a production environment.
 
 ### Prerequisites
-- Successful completion of the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart (or equivalent functional expertise)
 - Familiarity with Snowflake's [unique DCR architecture](https://www.snowflake.com/blog/distributed-data-clean-rooms-powered-by-snowflake/)
 - Working knowledge with Snowflake database objects and the [Snowflake Web UI](https://docs.snowflake.com/en/user-guide/ui-web.html)
 - Clear understanding of how Snowflake [Secure Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro.html) works
 
-> aside negative
-> 
->  This Quickstart builds upon the technical foundation provided by the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart.  If you've never implemented a Snowflake Data Clean Room then it's _critical_ for you to [start there first](../build_a_data_clean_room_in_snowflake) so that you have hands-on expertise with Snowflake DCR architectural components and flow before proceeding with this Quickstart.
 
 ### What You’ll Learn 
 - How to create and deploy a DCR environment between two or more Snowflake accounts
@@ -36,8 +32,8 @@ Traditional DCR implementations require organizations to copy their data to a se
 - How approved DCR query requests are executed
 
 ### What You’ll Build 
-This Quickstart lab will walk you through the process of deploying a Snowflake **v5.5** DCR environment, which is our latest General Availability (GA) release.  Here's how it differs from the one built during the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart:
-- Provides ability to deploy multi-party DCR environments
+This Quickstart lab will walk you through the process of deploying a Snowflake **v5.5** DCR environment, which is our latest General Availability (GA) release. 
+- Provides ability to deploy two-party and multi-party DCR environments
 - Leverages Jinja SQL templating language tags and logic
 - Designed for straightforward upgrade path to the forthcoming v6.0 DCR environment (when released)
 - Includes example query templates for some common advertising scenarios
@@ -56,22 +52,19 @@ The author wishes to recognize Rachel Blum, Michael Rainey, Mike Walton, Brett K
 Duration: 10
 
 ### Watch The Video
-If it's been awhile since you looked at the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart then it would probably be helpful to watch the following YouTube video where I provide a walk-through of Snowflake's DCR architecture, along with a demonstration of the DCR that was built during that Quickstart:
-<video id="UI5na73_9cA"></video>
+It might be helpful to watch the following YouTube video where I provide a walk-through of Snowflake's DCR architecture, along with a demonstration of the DCR that was built during an older version of the DCR Quickstart:
 
-> aside negative
-> 
->  The remainder of this Quickstart assumes you're familiar with the concepts covered in the above video.  Again, if you've never implemented a Snowflake Data Clean Room then please [start here first](../build_a_data_clean_room_in_snowflake) so that you have hands-on expertise with Snowflake DCR architectural components and flow before proceeding with this Quickstart.
+<video id="UI5na73_9cA"></video>
 
 ### Log Into Both Snowflake Accounts
 The first task at hand is to log into each of the two Snowflake accounts that you'll be using for this Quickstart.  As mentioned earlier, the logins that you use for these Snowflake accounts must have [ACCOUNTADMIN role access](https://docs.snowflake.com/en/user-guide/security-access-control-considerations.html) and both accounts must be deployed in the **same** [cloud and region](https://docs.snowflake.com/en/user-guide/intro-regions.html). You should now log in to each account simultaneously using separate browser tabs or windows.
 
 > aside positive
 > 
->  You may use either the [classic Snowflake UI](https://docs.snowflake.com/en/user-guide/ui-using.html) or the [new Snowsight interface](https://docs.snowflake.com/en/user-guide/ui-web.html) for this Quickstart. I used Snowsight in [the YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) that you watched earlier, and for all of the screenshots in this Quickstart.
+>  I used Snowsight in [the YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) that you watched earlier, and for all of the screenshots in this Quickstart.
 
 ### Designate Provider And Consumer Accounts
-I referred to these as "Party1" and "Party2" in [my YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA) as well as in the [Build A Data Clean Room in Snowflake](../build_a_data_clean_room_in_snowflake) Quickstart.  But the DCR we're building now is capable of having multiple Consumers, so we're replacing the "Party1" and "Party2" labels with "PROVIDER_1" and "CONSUMER_1". At this point you should designate each of your two accounts likewise. 
+I referred to these as "Party1" and "Party2" in [my YouTube video](https://www.youtube.com/watch?v=UI5na73_9cA).  But the DCR we're building now is capable of having multiple Consumers, so we're replacing the "Party1" and "Party2" labels with "PROVIDER_1" and "CONSUMER_1". At this point you should designate each of your two accounts likewise. 
 
 ### Acknowledge Snowflake Third Party Terms
 This DCR deployment utilizes open-source Python packages that are built and provided by Anaconda.  Consequently it'll be necessary to acknowledge the [Snowflake Third Party Terms](https://www.snowflake.com/legal/third-party-terms/) before proceeding.  You can do this by following [these instructions](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) in _both_ the PROVIDER_1 and CONSUMER_1 accounts.  Again, you _must_ successfully complete this step in order to proceed with the DCR installation process, so go ahead and do it now.
