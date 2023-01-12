@@ -5,199 +5,356 @@ categories: data-science
 environments: web
 status: Draft
 feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://github.com/Snowflake-Labs/sfguides/issues)
-tags: Data Science, Notebooks, Snowflake, Deepnote, Python, Jupyter, EDA
+tags: Data Science, Machine Learning, Notebooks, Snowflake, Snowpark, Deepnote, Python, Jupyter, EDA
 
-# Exploratory Data Analysis with Snowflake and Deepnote
+# Seamless Machine Learning Workflows with Snowpark & Deepnote
 
 <!-- ------------------------ -->
 
 ## Overview
 
-Duration: 2
+Duration: 4
 
-Deepnote brings Python and SQL into a collaborative data science notebook, along with a suite 
-of low-code tools and [tight integration with Snowflake](https://quickstarts.snowflake.com/guide/exploratory_data_analysis_with_snowflake_and_deepnote). Altogether, Deepnote 
-and Snowflake reduce the “time to insight” for teams as they explore their data.
+### What is Snowpark?
 
-![img](assets/structure.png)
+Machine learning workflows generally involve model prototyping, evaluation, and deployment. 
+These typically require different languages, technologies, compute environments, 
+and interfaces. **Snowpark for Python** brings these disparate 
+components together under a single Python library—greatly 
+simplifying end-to-end machine learning workflows. 
 
-In this quick-start guide, we will build an accelerated EDA workflow with Deepnote and 
-Snowflake. Specifically, we look at various methods for effectively cleaning 
-and visualizing weather readings; however, the techniques used can be applied 
-more generally to any dataset used within Deepnote.
+Snowpark provides a Python interface for interacting with data in 
+the warehouse—without moving it to the client (i.e., the notebook). 
+In addition, Snowpark allows data scientists to execute locally 
+developed Python code directly in the warehouse. This means that 
+model training (and returning predictions) can be executed from a 
+notebook but run on the server (i.e., the warehouse)—without changing the user’s code.
+
+### What is Deepnote?
+
+A major aspect of any ML workflow is **exploratory data analysis (EDA)**. 
+During model development, data scientists need rapid insights for the purposes of 
+feature selection, feature engineering, and hyperparameter tuning. Deepnote’s 
+collaborative data notebook is an interoperable Python and SQL environment 
+that includes a suite of no-code tools to help with EDA. To learn more 
+about how Deepnote helps with EDA and its tight integration with 
+Snowflake, see [this](https://quickstarts.snowflake.com/guide/exploratory_data_analysis_with_snowflake_and_deepnote/#0) quickstart.
+
+### Using Snowpark & Deepnote together
+
+Deepnote and Snowpark solve the common pain points that 
+data scientists experience when developing and deploying machine 
+learning models. As shown in the image below, Snowpark and Deepnote 
+work well together to accomplish transformation, EDA, and machine 
+learning tasks.
+
+In this quick-start guide, we will build a complete ML workflow with Deepnote and
+Snowpark. Specifically, we will (1) prototype a churn prediction 
+model using Deepnote’s EDA solutions and (2) use Snowpark to 
+evaluate and deploy the model inside Snowflake’s DWH.
+
+![img](assets/pipeline_and_tables.png)
 
 ### Prerequisites
 
 - Familiarity with basic Python and SQL
-- Familiarity with data science notebooks
+- Familiarity with data science notebooks (see [this guide](https://quickstarts.snowflake.com/guide/exploratory_data_analysis_with_snowflake_and_deepnote/#0) for an introduction to Deepnote)
 
 ### What You’ll Learn
 
-This guide will walk you through a generalizable workflow for 
-exploratory data analysis (EDA) using Deepnote and Snowflake. 
-You will learn how to combine Python, SQL, and low-code solutions to 
-complete common EDA tasks—including data wrangling and 
-interactive data visualization.
+Join us in this guide where we develop a churn prediction model using Scikit-learn. We will learn the following:
+
+- How to build a generalizable ML workflow that covers model prototyping, model evaluation, and deployment.
+- How to use Snowpark’s DataFrame API to examine data from your Snowflake warehouse without moving it to the notebook.
+- How to train and deploy a classification model directly in the warehouse.
 
 ### What You’ll Need
 
-- A free [Deepnote account](https://deepnote.com/sign-up?utm_source=ML_workflows_with_snowpark_&_deepnote&utm_medium=snowpark_quickstart)
-- A [Snowflake account](https://signup.snowflake.com/) with admin access and [3rd party packages enabled](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html)
-- The telecommunications parquet file [here](https://drive.google.com/file/d/1ZIBz1hibyEv8DNBJj12vk52XRmCuK3q0/view?usp=share_link).
-
-### What You’ll Build
-
-You will use the EDA tools in Deepnote to explore weather patterns in New York city. 
-By the end of the guide, you will have created a notebook that contains generalizable 
-techniques—and one that demonstrates how Snowflake and Deepnote work together
-to solve the hardest data analysis problems.
+- A free [Deepnote account](https://deepnote.com/sign-up?utm_source=ML_workflows_with_snowpark_&_deepnote&utm_medium=snowpark_quickstart).
+- A [Snowflake account](https://signup.snowflake.com/) with admin access and [3rd party packages enabled](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
+- The telecommunications parquet data file [here](https://drive.google.com/file/d/1ZIBz1hibyEv8DNBJj12vk52XRmCuK3q0/view?usp=share_link).
 
 <!-- ------------------------ -->
 
 ## Setup a Snowflake integration inside Deepnote
 
-Duration: 1
+Duration: 2
 
-To connect a Snowflake database to a Deepnote project, open the 
-Snowflake integration modal and supply the associated Snowflake 
-credentials (i.e., account, username, password). Note that the 
-connection parameters to Snowflake are stored in the notebook as Python environment 
-variables but can only be viewed by the workspace Admin. 
+To connect a Snowflake database to a Deepnote project, open the Snowflake 
+integration modal and supply the associated Snowflake credentials (i.e., 
+account, username, password). Note that the connection parameters to 
+Snowflake are stored in the notebook as Python environment variables but 
+can only be viewed by the workspace Admin.
 
-![img](assets/int.png)
+![img](assets/sf_integration.gif)
 
-Once you are connected, you will be able to browse your 
-schema directly from Deepnote and query your 
-tables with SQL blocks (described below).
-
-![img](assets/sch.png)
+Note that once you are connected to Snowflake, you will be able to browse 
+your schema directly from Deepnote and query your tables with [SQL blocks](https://deepnote.com/docs/sql-cells). 
+For more detailed information on using Deepnote and Snowflake together, 
+please see [this quickstart](https://quickstarts.snowflake.com/guide/exploratory_data_analysis_with_snowflake_and_deepnote/#0).
 
 <!-- ------------------------ -->
 
-## Query Snowflake with Deepnote's SQL blocks
+## Initialize the Snowpark session
+
+Duration: 2
+
+After connecting your Snowflake integration, click the “How to use” button on 
+the newly created integration in the right sidebar. As you can see in the 
+image below, you can insert a snippet of code into the notebook to 
+help you get started with Snowpark. This is simply boilerplate code 
+that will help you to initialize your Snowpark session.
+
+![img](assets/sp_helper.png)
+
+<!-- ------------------------ -->
+
+## Using Snowpark’s DataFrame API
 
 Duration: 3
 
-Similar to Python code cells used in Jupyter notebooks, Deepnote also includes 
-native SQL cells which include syntax highlighting and autocomplete 
-based on the Snowflake schema. Hover your mouse on the 
-border of block, click the ➕ sign, and select your Snowflake SQL 
-block from the list. Now you can write SQL as you would in a 
-standard SQL editor as shown below.
+Similar to Pandas and PySpark, Snowpark’s main abstraction is the DataFrame. 
+The SQL commands and functions that you require for selecting, 
+joining, and aggregating tables are methods on the DataFrame object. 
+And since this can all be done in pure Python, this opens up new 
+possibilities for interacting with your tables (e.g., using Python control structures). 
+In addition, data scientists that prefer Python over SQL can still can have 
+full control over the DWH.
 
-Notice that in the example below we can already start 
-exploring the weather data via the rich DataFrame display. 
-This includes being able to use filters, sorting, pagination, 
-as well as examining histograms, ratios of values, and data types. 
-Importantly, the results set is saved to a Pandas DataFrame 
-(in this case `df`)—meaning that you can continue using Pandas or any 
-other tool in the Python library ecosystem to further explore the data.
+For example, the following code snippet uses a standard Python *for loop* 
+to remove spaces from the column names directly on a view. Snowpark’s 
+session and DataFrame methods provide convenient access and manipulation 
+of the data in the warehouse—including writing back to new tables as shown below.
 
-![img](assets/q1.png)
+```python
+# create a temporary view on raw data to use for transformation
+session.table("RAW_DATA").create_or_replace_temp_view('RAW_STAGE')
+df_raw_stage = session.table("RAW_STAGE")
+
+# loop through columns and rename them
+for c in df_raw_stage.columns:
+    df_raw_stage=df_raw_stage.rename(c, c.replace(' ', ''))
+
+# write the new table to the warehouse
+df_raw_stage.write.mode('overwrite').saveAsTable('RAW_STAGE')
+```
+
+To further highlight how the DataFrame object abstracts away common SQL tasks, 
+here is an example of a two-way `GROUPBY` followed by an aggregation 
+and sorting. The resulting `churn_exploration` object can be converted 
+into an in-memory Pandas DataFrame with the `.to_pandas()` method. 
+
+```python
+churn_exploration = (
+    dfJoin.group_by(["CONTRACT", "CHURNVALUE"])
+    .count()
+    .sort(["CONTRACT", "CHURNVALUE"])
+)
+```
+
+It is important to note that Snowpark operations are executed 
+lazily on the server, which reduces the amount of data transferred 
+between your notebook and the Snowflake database.
 
 <!-- ------------------------ -->
 
-## Mix-and-match Python and SQL
-
-Duration: 3
-
-SQL queries in Deepnote also support the JinjaSQL templating language. 
-This allows users to pass Python variables **directly into SQL queries** as well as 
-use jinja-style control structures (conditionals and loops) for supplementing standard SQL.
-
-In the example below, weather stations are filtered in the `WHERE` 
-clause by passing in the python list called `station_list` 
-rather than having to list them all out manually.
-
-This is just one way to parameterize your SQL queries; we will 
-see later how you can build a UI around your SQL blocks, 
-allowing for interactive data exploration without having to 
-repeat similar blocks of code, over and over again.
-
-![img](assets/py1.png)
-
-![img](assets/q2.png)
-
-<!-- ------------------------ -->
-
-## Visualize the results of a query 
+## Prototyping machine learning models
 
 Duration: 4
 
-Deepnote provides no-code data visualization tools for streamlining EDA. 
-Given the results of the query above, let’s build a data visualization to 
-quickly explore the expected weather patterns (again, click the ➕ sign to 
-choose a chart block type). We should expect temperature to get warmer in 
-the summer months and colder in the winter months.
+After EDA, we enter a prototyping phase. Typically, this involves feature 
+selection and generation, as well as training and evaluation of a model before 
+productionizing it. One generalizable approach that is possible with 
+Snowpark is to prototype your ML models in the notebook (perhaps on a sample of data), 
+then, move that same code to the warehouse and run it on the full dataset.
 
-Let’s choose `df` as the DataFrame to visualize by selecting it from 
-the dropdown at the top of the Chart block. Select “point chart” and 
-specify how you would like to map columns of your data to the X/Y 
-coordinates on the chart. Since we want to see temperature as a 
-function of time, let’s select `date` for the X axis and `temp` 
-for the Y axis (example below).
+In the snippet below, we have a function that trains a churn detection 
+model as well as evaluates both the train and test sets. Interestingly, 
+the function can be run using the notebook’s compute (in the client); however, 
+it can also be registered to run in the warehouse by using Snowflake’s [stored procedures](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html).
 
-Sure enough, we can verify the seasonality in the weather 
-patterns—and all without a single line of code.
+```python
+def train_churn_prediction_model(session: Session, features_table: str) -> Variant:
 
-![img](assets/c1.png)
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import confusion_matrix, classification_report
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.compose import make_column_transformer
+    from sklearn.preprocessing import OneHotEncoder
+    from sklearn.preprocessing import MinMaxScaler
+    from sklearn.pipeline import make_pipeline
+    from sklearn.metrics import balanced_accuracy_score
 
-While the chart above confirms the expected seasonality, we can’t see 
-the data broken down by station (i.e., the location/city of the weather sensor). 
-Since the `name` column contains this information, we can again use 
-no-code charts to look at the average `temp` by `name` to get a 
-sense of how locations/cities differ in terms of temperature. 
+    import os
+    from joblib import dump
 
-As shown below, aggregations and other options can be selected by 
-clicking the ellipsis next to the encoding channels (X, Y, and Color). 
-Here, we can visualize average temperature by station name by 
-selecting `Average` from the aggregation options on the X axis 
-(which is set to `temp`), and setting the Y and Color channels to `name`.
+    # Load features
+    df = session.table(features_table).to_pandas()
 
-![img](assets/c2.gif)
+    # gather all categorial columns for preprocessing
+    cat_vars=df.select_dtypes(include=['bool', 'object']).columns.to_list()
+    cat_vars.remove('CUSTOMERID')
 
-Many chart types and encoding combinations can used to create helpful 
-data visualizations. This can be helpful not only in terms of developer 
-speed but also for non-technical team members who may not be as 
-familiar with plotting via code. For more complex needs, nothing is 
-stopping us from using Altair, Plotly, or any other Python visualization library in Deepnote.
+    # gather all numerical columns in case we want them for preprocessing
+    num_vars = df.select_dtypes(exclude=['bool', 'object']).columns.to_list()
+    num_vars.remove('CHURNVALUE');
+
+    # all desired columns (removing ID and target column)
+    x_cols=cat_vars+num_vars
+
+    # split the data into train and test
+    X_train, X_test, y_train, y_test = train_test_split(
+        df[x_cols],
+        df['CHURNVALUE'],
+        test_size=0.2
+    )
+
+    # preprocessing columns
+    col_trans = make_column_transformer(
+        (OneHotEncoder(), cat_vars),
+        #(MinMaxScaler(), num_vars),
+        remainder='passthrough')
+
+    #support_vect=svm.SVC(gamma = 'auto', probability=True)
+    random_forest=RandomForestClassifier()
+
+    # fit the model
+    pipeline = make_pipeline(col_trans, random_forest)
+
+    # Use GridSearch to find the best fitting model based on 10 folds
+    model = GridSearchCV(pipeline, param_grid={}, cv=10)
+    
+    model.fit(X_train, y_train);
+
+    # Upload trained model to a stage
+    model_output_dir = '/tmp'
+    model_file = os.path.join(model_output_dir, 'model.joblib')
+    dump(model, model_file)
+
+    # Let's first create a stage to store the artifacts.
+    session.sql('create stage if not exists my_models').collect()
+    session.file.put(model_file, "@my_models", overwrite=True)
+
+    # Return model R2 score on train and test data.
+    return {"R2 score on Train": model.score(X_train, y_train),"R2 score on Test": model.score(X_test, y_test)}
+
+# call the function on the client (passing in the session object and dataset) 
+train_churn_prediction_model(session,"TELCO_DATASET")
+
+# returns model scores. For example,
+{'R2 score on Train': 0.9976, 'R2 score on Test': 0.9968}
+```
+
+To run this same code in the warehouse, you must first register 
+the function as a stored procedure. Then you can simply use `session.call()` 
+to indicate that you want to run a specific stored procedure (in this case 
+function called `train_churn_prediction_model`) in the warehouse.
+
+```python
+# create a stage location for the stored procedure
+session.sql('create stage if not exists my_sprocs').collect()
+
+# register the function and indicate the libraries and versions needed
+session.sproc.register(
+    func=train_churn_prediction_model, 
+    name="train_churn_prediction_model", 
+    packages=['snowflake-snowpark-python==0.7.0','scikit-learn==1.0.2','joblib'], 
+    is_permanent=True, 
+    stage_location="@my_sprocs",
+    replace=True)
+
+# call the function server side (in the warehouse)
+print(session.call('train_churn_prediction_model','TELCO_DATASET'))
+
+# returns model scores from the warehouse. For example,
+{"R2 score on Test": 0.99685, "R2 score on Train": 0.9975625}
+```
+
+This demonstrates what makes Snowpark really shine for data scientists: take 
+the same data science code and libraries that you use to initially develop 
+you model, and then, without changing anything, run it directly in the 
+warehouse—where your data live. No need to move data back and fourth 
+(from client to server) or to change your code, languages, or interfaces.
 
 <!-- ------------------------ -->
 
-## Build a UI around the SQL query
+## Return predictions from the productionized model
 
 Duration: 4
 
-Data exploration is iterative. Put another way—data exploration is repetitive. 
-While analysts strive to follow the DRY principle (do not repeat yourself), 
-EDA code and behaviour is often at odds with that principle (in practice). 
-For example, an SQL query that neatly displays one aspect of the data is 
-likely going to be copied and pasted, then slightly changed, in order to 
-display another aspect of the data.
+You may have noticed that the `train_churn_prediction_model` also saves the 
+model object itself to a stage in Snowflake called `my_models` . This is 
+a key technique that makes the client-side function also work on the 
+serve side. Importantly, now that the model object lives in the warehouse, 
+it is essentially deployed into production; it can be accessed from within 
+the notebook, or from any other Python environment that is connected to 
+the warehouse (think dashboards, apps, reports, etc).
 
-Deepnote understands this tendency and provides a set of rich, interactive widgets 
-(called Input blocks) that can be used to parameterize your SQL queries (or Python code). 
-That is, instead of copying and pasting around similar queries, quickly wire 
-up a slider bar (or some other UI element) to scroll through dimensions of your data. 
-This approach is great for readability, reproducibility, and ease of use 
-(especially for those non-technical users). As usual, click the ➕ button above 
-to choose from the available input blocks.
+Methods on the model object can be called using 
+Snowflake’s [user-defined functions](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html) (UDFs). 
+Since we want to now return predictions from our model, we will have to 
+call the model’s `predict()` method and pass it some new samples to 
+classify. In the snippet below, we accomplish this by (1) creating a 
+stage (location) for the UDF, (2) importing our previously created model, 
+and (3) writing a function that will pass new data to the model’s `.predict()` method. 
 
-The SQL query below constructs binned temperature readings (i.e., similar to a histogram) 
-so that we can examine a distribution of results. As you can see, the `bin_size` 
-slider bar and `name` dropdown selector provide a small UI for controlling the 
-variables passed into the SQL query. This way, we can look at binned results 
-for any station we’d like (including tweaking the bin size) without having to 
-write additional code.
+```python
+# Let's first create a stage to store the artifacts
+session.sql('create stage if not exists my_udfs').collect()
+session.clear_imports()
+session.clear_packages()
 
-![img](assets/ui.png)
+# Add trained model as dependency
+session.add_import('@my_models/model.joblib.gz')
 
-As a bit of a bonus, and to bring things full circle, remember that the 
-output of this SQL query is still a Pandas DataFrame; therefore, 
-we can again use a chart block to visualize it further
-(and we should get an actual histogram). Perfect.
+# UDF definition 
+@udf(name='predict_churn', packages=['pandas','joblib','scikit-learn==1.0.2'], is_permanent = True, stage_location = '@my_udfs', replace=True, session=session)
+def predict_churn(args: list) -> float:
 
-![img](assets/c3.png)
+    import sys
+    import pandas as pd
+    from joblib import load
+
+    IMPORT_DIRECTORY_NAME = "snowflake_import_directory"
+    import_dir = sys._xoptions[IMPORT_DIRECTORY_NAME]
+
+    model_file = import_dir + 'model.joblib.gz'
+    model = load(model_file)
+
+    feature_cols=['GENDER',
+        'SENIORCITIZEN',
+        'PARTNER',
+        'DEPENDENTS',
+        'TECHSUPPORT',
+        'CONTRACT',
+        'PAPERLESSBILLING',
+        'MONTHLYCHARGES',
+        'TOTALCHARGES',
+        'TENUREMONTHS',
+        'PHONESERVICE',
+        'MULTIPLELINES',
+        'INTERNETSERVICE',
+        'ONLINESECURITY',
+        'ONLINEBACKUP',
+        'DEVICEPROTECTION',
+        'STREAMINGTV',
+        'STREAMINGMOVIES',
+        'PAYMENTMETHOD']
+
+    row = pd.DataFrame([args], columns=feature_cols)
+
+    return model.predict(row)
+```
+
+Finally, you can call this UDF as a part of a `SELECT` statement. 
+For every row in that statement, the `predict_churn` UDF will be 
+called (this is what makes the UDF a [scalar function](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-introduction.html#what-is-a-python-udf)). For example, 
+here we take a new set of data and pass each row to our classifier. The 
+output is a rich DataFrame with the classifications returned in the `PREDICTED_CHURN` 
+column. 
+
+![img](assets/udf_img.png)
 
 <!-- ------------------------ -->
 
@@ -205,20 +362,21 @@ we can again use a chart block to visualize it further
 
 Duration: 1
 
-With Deepnote and Snowflake you get the best in class for secure data 
-governance and rapid exploratory programming, together in the same place. 
-Snowflake provides a single unified view of data and ability execute 
-diverse analytics workloads—with near-unlimited scale, concurrency, and 
-performance. Snowflake dovetails perfectly with Deepnote’s collaborative 
-data science notebook and suite of tools built for exploratory data analysis. 
+Machine learning workflows generally involves model prototyping, evaluation, 
+and deployment. These typically require different languages, technologies, 
+compute environments, and interfaces. When we combine Snowpark with Deepnote, 
+we satisfy these goals without sacrificing the workflows and tools that data 
+scientists use. Further, computation can be directed client side (in the notebook) 
+or server side (in the warehouse)—without moving data around or changing your code. 
+This provides seamless flexibility and power when developing machine learning workflows. 
 
-If you want to learn more about Deepnote’s data science notebook 
-platform, visit [deepnote.com](http://deepnote.com).
+If you want to learn more about Deepnote’s data science notebook platform, 
+visit [deepnote.com](https://deepnote.com/sign-up?utm_source=ML_workflows_with_snowpark_&_deepnote&utm_medium=snowpark_quickstart).
 
 ### What we've covered
 
-We have built a generalizable workflow for exploratory data analysis. 
-Deepnote's Python, SQL, and low-code solutions make analyzing data in Snowflake 
-straightforward and time efficient—even for team members without 
-advanced technical knowledge. Apply these approaches to your own datasets 
-to make exploratory data analysis more productive.
+We have built and deployed a churn detection model using Deepnote and Snowpark. 
+We covered how to connect to Snowflake from Deepnote, and how you can use Snowpark 
+to process data without transferring it to the notebook. In addition, we learned 
+how Snowpark for Python can be used to training and deploy models directly in the 
+Snowflake warehouse. These steps can be applied more generally to your other machine learning projects.
