@@ -16,7 +16,7 @@ tags: Data Science, Notebooks, Snowflake, Deepnote, Python, Jupyter, EDA
 Duration: 2
 
 Deepnote brings Python and SQL into a collaborative data science notebook, along with a suite 
-of low-code tools and tight integration with Snowflake. Altogether, Deepnote 
+of low-code tools and [tight integration with Snowflake](https://quickstarts.snowflake.com/guide/exploratory_data_analysis_with_snowflake_and_deepnote). Altogether, Deepnote 
 and Snowflake reduce the “time to insight” for teams as they explore their data.
 
 ![img](assets/structure.png)
