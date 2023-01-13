@@ -370,8 +370,13 @@ scientists use. Further, computation can be directed client side (in the noteboo
 or server side (in the warehouse)—without moving data around or changing your code. 
 This provides seamless flexibility and power when developing machine learning workflows. 
 
-If you want to learn more about Deepnote’s data science notebook platform, 
+To learn more about Deepnote’s data science notebook platform, 
 visit [deepnote.com](https://deepnote.com/sign-up?utm_source=ML_workflows_with_snowpark_&_deepnote&utm_medium=snowpark_quickstart).
+
+### Related Snowpark Resources
+[Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
+[Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+[Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 
 ### What we've covered
 
