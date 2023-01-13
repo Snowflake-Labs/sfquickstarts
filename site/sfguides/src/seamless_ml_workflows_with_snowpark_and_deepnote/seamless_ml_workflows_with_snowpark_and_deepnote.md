@@ -368,15 +368,12 @@ compute environments, and interfaces. When we combine Snowpark with Deepnote,
 we satisfy these goals without sacrificing the workflows and tools that data 
 scientists use. Further, computation can be directed client side (in the notebook) 
 or server side (in the warehouse)—without moving data around or changing your code. 
-This provides seamless flexibility and power when developing machine learning workflows. 
+This provides seamless flexibility and power when developing machine learning workflows.
 
-To learn more about Deepnote’s data science notebook platform, 
-visit [deepnote.com](https://deepnote.com/sign-up?utm_source=ML_workflows_with_snowpark_&_deepnote&utm_medium=snowpark_quickstart).
-
-### Related Snowpark Resources
-[Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
-[Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-[Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
+### Related Resources
+- [Deepnote's data science notebook](https://deepnote.com/sign-up?utm_source=ML_workflows_with_snowpark_&_deepnote&utm_medium=snowpark_quickstart)
+- [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
+- [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 
 ### What we've covered
 
