@@ -1,6 +1,6 @@
 summary: Begin modeling your Snowflake database online with SqlDBM 
 id: database_modeling_with_sqldbm
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,7 +1,7 @@
 author: Prateek Parashar
 id: cross_cloud_business_continuity
 summary: This is a sample Snowflake Guide
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

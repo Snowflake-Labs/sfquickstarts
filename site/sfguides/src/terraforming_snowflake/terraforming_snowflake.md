@@ -1,6 +1,6 @@
 summary: Learn how to manage Snowflake using Terraform
 id: terraforming_snowflake
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -63,8 +63,9 @@ $ git remote add origin git@github.com:YOUR_GITHUB_USERNAME/sfguide-terraform-sa
 $ git push -u origin main
 ```
 
-Positive
-: **Tip** – If the commands don't work, verify that you can connect to GitHub using your SSH key, and that your git config is correct for your account.
+> aside positive
+> 
+>  **Tip** – If the commands don't work, verify that you can connect to GitHub using your SSH key, and that your git config is correct for your account.
 
 You now have an empty repo that we will use in subsequent steps to Terraform your Snowflake account.
 
@@ -101,8 +102,9 @@ GRANT ROLE SYSADMIN TO USER "tf-snow";
 GRANT ROLE SECURITYADMIN TO USER "tf-snow";
 ```
 
-Negative
-: We grant the user `SYSADMIN` and `SECURITYADMIN` privileges to keep the lab simple. An important security best practice, however, is to limit all user accounts to least-privilege access. In a production environment, this key should also be secured with a secrets management solution like Hashicorp Vault, Azure Key Vault, or AWS Secrets Manager.
+> aside negative
+> 
+>  We grant the user `SYSADMIN` and `SECURITYADMIN` privileges to keep the lab simple. An important security best practice, however, is to limit all user accounts to least-privilege access. In a production environment, this key should also be secured with a secrets management solution like Hashicorp Vault, Azure Key Vault, or AWS Secrets Manager.
 
 ## Setup Terraform Authentication
 Duration: 1

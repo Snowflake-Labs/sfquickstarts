@@ -1,7 +1,7 @@
 author: Michael Gorkow
 id: getting_started_snowpark_machine_learning
 summary: Machine Learning with Snowpark Python for Credit Card Approval Prediction
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -68,8 +68,8 @@ Let's set up the Python environment necessary to run this quickstart:
 
 First, clone the source code for this repo to your local environment:
 ```bash
-git clone git@github.com:Snowflake-Labs/sfguide-getting-started-snowpark-python.git
-cd getting-started-snowpark-python/customer-churn-prediction
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning.git
+cd sfguide-getting-started-machine-learning/
 ```
 
 ### Snowpark Python via Anaconda
@@ -79,7 +79,7 @@ conda env create -f conda_env.yml
 conda activate pysnowpark
 ```
 
-Conda will automatically install `snowflake-snowpark-python==0.10.0` and all other dependencies for you.
+Conda will automatically install `snowflake-snowpark-python` and all other dependencies for you.
 
 Now, launch Jupyter Notebook on your local machine:
 ```bash
@@ -100,6 +100,11 @@ If you decide to bring your own Python environment, please make sure to have the
 - [cachetools](https://pypi.org/project/cachetools/)
 - [imbalanced-learn](https://pypi.org/project/imbalanced-learn/)
 - [optuna](https://pypi.org/project/optuna/)
+
+### Apple M1
+There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
+Please refer to the Snowpark documentation to solve this issue:
+[Issue with running Snowpark Python on Apple M1 chips](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites)
 
 <!-- ------------------------ -->
 ## Snowflake Environment Setup

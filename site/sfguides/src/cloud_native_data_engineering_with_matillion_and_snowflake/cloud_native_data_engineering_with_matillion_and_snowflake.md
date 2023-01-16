@@ -1,6 +1,6 @@
 author: Ripu Jain, Yaser Najafi
 id: cloud_native_data_engineering_with_matillion_and_snowflake
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,6 +1,6 @@
 summary: 이 가이드는 고객이 다양한 요인으로 인한 낮은 성능이 과도한 소비를 초래할 수도 있는 영역을 확인하는 것과 관계된 쿼리를 설정 맟 실행하는 데 도움을 주기 위해 사용할 수 있습니다.
 id: resource_optimization_performance_optimization_kr
-categories: Resource Optimization
+categories: Resource-Optimization
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

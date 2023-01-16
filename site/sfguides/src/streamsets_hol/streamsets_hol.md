@@ -1,7 +1,7 @@
 author: Kate Guttridge, StreamSets
 id: streamsets_transformer_for_snowflake_hol
 summary: Hands on Lab for Transformer for Snowflake
-categories: getting started,data warehouse,data engineering
+categories: Getting-Started,data warehouse,data engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
