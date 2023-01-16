@@ -10,7 +10,7 @@ tags: Getting Started, Data Engineering
 # Getting Started with Keboola 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
+Duration: 2
 
 
 Modern Data Stack requires setup and maintenance and Snowflake goes a long way to lowering the bar.
@@ -251,7 +251,7 @@ This application will :
 - Give you an overview of the generated RFM Segmentation
 - Simulate Revenue impact of discount on targeted segment(s)
 - Get targeted customer list and expected discount to trigger a marketing campaign
-- Write back this information in Keboola for a next floaw to create the campaign
+- Write back this information in Keboola for a next flow to create the campaign
 
 From the previous step, you have now your Snowflake credentials, account information and Keboola token.
 
@@ -370,3 +370,22 @@ Select "Database Credentials" on the right:
 Check the DB, Schema, Warehouse:
 
 ![Template Creation](assets/checkCred.png)
+
+## Conclusion
+Duration: 1
+
+Congratulations! You've successfully built a complete data pipeline from ingestion, transformation, orchestration, to presentation in a Streamlit application!
+
+### What You Learned
+ - Connect to your Snowflake account to Keboola project
+ - Instaciate Keboola template
+ - Automatically generate RFM segmentation
+ - Connect Snowflake and Keboola to Streamlit application
+ - Write back data from Streamlit to Keboola 
+
+### Related Resources
+
+  - [Keboola documentation](https://help.keboola.com/)
+  - [Github Streamlit source code](https://github.com/aalteirac/streamlit_keboola_vhol)
+  - [Keboola Streamlit Component](https://pypi.org/project/streamlit-keboola-api/)
+  - [Keboola Streamlit Component source code](https://github.com/aalteirac/streamlit_keboola_api)
