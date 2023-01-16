@@ -378,7 +378,7 @@ Congratulations! You've successfully built a complete data pipeline from ingesti
 
 ### What You Learned
  - Connect to your Snowflake account to Keboola project
- - Instaciate Keboola template
+ - Instanciate Keboola template
  - Automatically generate RFM segmentation
  - Connect Snowflake and Keboola to Streamlit application
  - Write back data from Streamlit to Keboola 
