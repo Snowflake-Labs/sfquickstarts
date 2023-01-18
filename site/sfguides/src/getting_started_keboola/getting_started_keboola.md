@@ -4,7 +4,7 @@ summary: Getting Started With Keboola
 categories: Getting Started
 environments: web
 status: Draft 
-feedback link: https://github.com/aalteirac/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 tags: Getting Started, Data Engineering 
 
 # Getting Started with Keboola 
@@ -386,6 +386,6 @@ Congratulations! You've successfully built a complete data pipeline from ingesti
 ### Related Resources
 
   - [Keboola documentation](https://help.keboola.com/)
-  - [Github Streamlit source code](https://github.com/aalteirac/streamlit_keboola_vhol)
+  - [Github Streamlit source code](https://github.com/Snowflake-Labs/sfguide-getting-started-keboola-streamlit)
   - [Keboola Streamlit Component](https://pypi.org/project/streamlit-keboola-api/)
-  - [Keboola Streamlit Component source code](https://github.com/aalteirac/streamlit_keboola_api)
+
