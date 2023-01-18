@@ -104,7 +104,7 @@ Select the warehouse previously created (SHOP_WH)
 
 Click "Save User"
 
-## instantiate the Template
+## Instantiate the Template
 Duration: 2
 
 Let's move to Keboola platform, after you have created your Keboola trial account, login to the platform and navigate to the "Use Cases" tabs. 
