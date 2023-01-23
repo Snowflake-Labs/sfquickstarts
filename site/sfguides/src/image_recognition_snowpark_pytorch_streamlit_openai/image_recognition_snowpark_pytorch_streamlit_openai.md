@@ -60,10 +60,6 @@ Two web-based image recognition applications in Streamlit. These applications ca
   - Create a [Warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), a [Database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and a [Schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html)
 - (***Optionally***) [OpenAI account](https://beta.openai.com/overview) for creating the second application. Once the account is created, you will need to generate an [OpenAI API key](https://beta.openai.com/account/api-keys) to use in the application. *Note: At the time of writing this guide, creating a new OpenAI account granted you $18.00 credit which is plenty for this application.*
 
-## Demo
-
-[![Watch video](https://i9.ytimg.com/vi_webp/UX6hBV5c0T0/maxresdefault.webp?v=63c74ab8&sqp=CJjTu54G&rs=AOn4CLAlLu7Cgo5HCY3csQxihRzHOmSgfg)](https://youtu.be/UX6hBV5c0T0 "Watch video")
-
 <!-- ------------------------ -->
 ## Streamlit Applications
 
