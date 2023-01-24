@@ -232,6 +232,90 @@ We will use this pattern a few more times during this Quickstart, so it's import
 
 
 <!-- ------------------------ -->
+## Step 03: Load Weather
+Duration: 4
+
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace. To put this in context, we are on step **#3** in our data flow overview:
+
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+### Snowflake Data Marketplace
+Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Data Marketplace by following these steps:
+
+* Login to Snowsight
+* Click on the `Marketplace` link in the left navigation bar
+* Enter "Weather Source LLC: frostbyte" in the search box and click return
+* Click on the "Weather Source LLC: frostbyte" listing tile
+* Click the blue "Get" button
+    * Expand the "Options" dialog
+    * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
+    * Select the "HOL_ROLE" role to have access to the new database
+* Click on the blue "Get" button
+
+That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset?
+
+### Run the Script
+Open the `steps/03_load_weather.sql` script in VS Code from the file Explorer in the left navigation bar, and run the script. Notice how easy it is to query data shared through the Snowflake Marketplace! You access it just like any other table or view in Snowflake:
+
+```sql
+SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
+```
+
+
+<!-- ------------------------ -->
+## Step 04: Create POS View
+Duration: 10
+
+During this step we will be creating a view to simplify the raw POS schema by joining together 6 different tables and picking only the columns we need. But what's really cool is that we're going to define that view with the Snowpark DataFrame API! Then we're going to create a Snowflake stream on that view so that we can incrementally process changes to any of the POS tables. To put this in context, we are on step **#4** in our data flow overview:
+
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+### Run the Script
+To create the view and stream, execute the `steps/04_create_pos_view.py` script. Like we did in step 2, let's execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, then run the following commands (which assume that your terminal has the root of your repository open):
+
+```bash
+python 04_create_pos_view.py
+```
+
+While that is running, please open the script in VS Code and continue on this page to understand what is happening.
+
+### Snowpark DataFrame API
+The first thing you'll notice in the `create_pos_view()` function is that we define the Snowflake view using the Snowpark DataFrame API. After defining the final DataFrame, which captures all the logic we want in the view, we can simply call the Snowpark `create_or_replace_view()` method. Here's the final line from the `create_pos_view()` function:
+
+```python
+    final_df.create_or_replace_view('POS_FLATTENED_V')
+```
+
+For more details about the Snowpark Python DataFrame API, please check out our [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) page.
+
+### Streams for Incremental Processing (CDC)
+Snowflake makes processing data incrementally very easy. Traditionally the data engineer had to keep track of a high watermark (usually a datetime column) in order to process only new records in a table. This involved tracking and persisting that watermark somewhere and then using it in any query against the source table. But with Snowflake streams all the heavy lifting is done for you by Snowflake. For more details please check out our [Change Tracking Using Table Streams](https://docs.snowflake.com/en/user-guide/streams.html) user guide.
+
+All you need to do is create a [`STREAM`](https://docs.snowflake.com/en/sql-reference/sql/create-stream.html) object in Snowflake against your base table or view, then query that stream just like any table in Snowflake. The stream will return only the changed records since the last DML option your performed. To help you work with the changed records, Snowflake streams will supply the following metadata columns along with the base table or view columns:
+
+* METADATA$ACTION
+* METADATA$ISUPDATE
+* METADATA$ROW_ID
+
+For more details about these stream metadata columns please check out the [Stream Columns](https://docs.snowflake.com/en/user-guide/streams-intro.html#stream-columns) section in our documentation.
+
+### Streams on views
+What's really cool about Snowflake's incremental/CDC stream capability is the ability to create a stream on a view! In this example we are creating a stream on a view which joins together 6 of the raw POS tables. Here is the code to do that:
+
+```python
+def create_pos_view_stream(session):
+    session.use_schema('HARMONIZED')
+    _ = session.sql('CREATE OR REPLACE STREAM POS_FLATTENED_V_STREAM \
+                        ON VIEW POS_FLATTENED_V \
+                        SHOW_INITIAL_ROWS = TRUE').collect()
+```
+
+Now when we query the `POS_FLATTENED_V_STREAM` stream to find changed records, Snowflake is actually looking for changed records in any of the 6 tables included in the view. For those who have tried to build incremental/CDC processes around denormalized schemas like this, you will appreciate the incredibly powerful feature that Snowflake provides here.
+
+For more details please check out the [Streams on Views](https://docs.snowflake.com/en/user-guide/streams-intro.html#streams-on-views) section in our documentation.
+
+
+<!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
