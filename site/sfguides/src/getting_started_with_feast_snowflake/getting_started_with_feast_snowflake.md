@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Getting Started with Feast Snowflake
+# Getting Started with Snowpark for Python and Feast
 <!-- ------------------------ -->
 ## Overview
 Duration: 6
