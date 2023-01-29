@@ -1,11 +1,11 @@
 author: Adrian Gonzalez, Dan Murphy
 id: processing_hl7_fhir_messages_with_snowflake
 summary: This is a guide to get familiarized with how to ingest and process HL7 FHIR JSON messages using Snowflake native features.
-categories: Getting Started
+categories: Getting-Started
 environments: web
-status: Unpublished 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Warehousing, Semi-structured Data, Health & Life Sciences, HL7, FHIR, JSON
+tags: Getting Started, Data Science, Data Engineering, Data Lake, Health & Life Sciences, HL7, FHIRpwd
 
 # Getting Started - Processing HL7 FHIR Messages with Snowflake
 <!-- ------------------------ -->
