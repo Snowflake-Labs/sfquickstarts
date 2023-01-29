@@ -336,7 +336,7 @@ To test the UDF locally, you will execute the `steps/05_fahrenheit_to_celsius_ud
 
 ```bash
 cd steps/05_fahrenheit_to_celsius_udf
-python app.py
+python app.py 35
 ```
 
 While you're developing the UDF you can simply run it locally in VS Code. And if your UDF doesn't need to query data from Snowflake, this process will be entirely local.
@@ -580,14 +580,9 @@ During this step we will be orchestrating our new Snowpark pipelines with Snowfl
 <img src="assets/data_pipeline_overview.png" width="800" />
 
 ### Run the Script
-To test the procedure locally, you will execute the `steps/08_orchestrate_jobs.py` script. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/08_orchestrate_jobs.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
 
-```bash
-cd steps
-python 08_orchestrate_jobs.py
-```
-
-While that is running, please open the script in VS Code and continue on this page to understand what is happening.
+While that is running, please read through the script in VS Code and continue on this page to understand what is happening.
 
 ### Running the Tasks
 In this step we did not create a schedule for our task DAG, so it will not run on its own at this point. So in this script you will notice that we manually execute the DAG, like this:
@@ -684,11 +679,186 @@ For more details, and to learn about viewing account level task history, please 
 
 
 <!-- ------------------------ -->
+## Step 09: Process Incrementally
+Duration: 10
+
+During this step we will be adding new data to our POS order tables and then running our entire end-to-end pipeline to process the new data. And this entire pipeline will be processing data incrementally thanks to Snowflake's advanced stream/CDC capabilities. To put this in context, we are on step **#9** in our data flow overview:
+
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+### Run the Script
+Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/09_process_incrementally.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
+
+While that is running, let's briefly discuss what's happening. As in step #2, we're going to load data from Parquet into our raw POS tables. In step #2 we loaded all the order data except for the 2022 data for `ORDER_HEADER` and `ORDER_DETAIL`. So now we're going to load the remaining data.
+
+This time we will be doing the data loading through SQL instead of Python, but the process is the same. We'll resize the warehouse, scaling up so that we can load the data faster and then scaling back down after when we're done. After the new data is loaded we will also run the task DAG again. And this time both tasks will run and process the new data.
+
+### Viewing the Task History
+Like the in the previous step, to see what happened when you ran this task DAG, hightlight and run (using CMD/CTRL+Enter) this commented query in the script:
+
+```sql
+SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=>DATEADD('DAY',-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT => 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+```
+
+This time you will notice that the `ORDERS_UPDATE_TASK` task will not be skipped, since the `HARMONIZED.POS_FLATTENED_V_STREAM` stream has new data. In a few minutes you should see that both the `ORDERS_UPDATE_TASK` task and the `DAILY_CITY_METRICS_UPDATE_TASK` task completed sucessfully.
+
+### Query History for Tasks
+One important thing to understand about tasks, is that the queries which get executed by the task won't show up with the default Query History UI settings. In order to see the queries that just ran you need to do the following:
+
+* Remove filters at the top of this table, including your username, as later scheduled tasks will run as "System":
+
+![](assets/query_history_remove_filter1.png)
+
+* Click "Filter", and add filter option 'Queries executed by user tasks' and click "Apply Filters":
+
+![](assets/query_history_remove_filter2.png)
+
+You should now see all the queries run by your tasks! Take a look at each of the MERGE commands in the Query History to see how many records were processed by each task. And don't forget to notice that we processed the whole pipeline just now, and did so incrementally!
+
+
+<!-- ------------------------ -->
+## Step 10: Deploy Via CI/CD
+Duration: 10
+
+During this step we will be making a change to our `FAHRENHEIT_TO_CELSIUS_UDF()` UDF and then deploying it via a CI/CD pipeline. We will be updating the `FAHRENHEIT_TO_CELSIUS_UDF()` UDF to use a third-party Python package, pushing it to your forked GitHub repo, and finally deploying it using the SnowCLI in a GitHub Actions workflow! To put this in context, we are on step **#10** in our data flow overview:
+
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+### Update the Fahrenheit to Celsius UDF
+We will be replacing our hard-coded temperature conversion with a package from `scipy`. First we will make a few changes to the `steps/05_fahrenheit_to_celsius_udf/app.py` script. In this file we will be adding an `import` command and replacing the body of the `main()` function. So open the `steps/05_fahrenheit_to_celsius_udf/app.py` script in VS Code and replace this section:
+
+```python
+import sys
+
+def main(temp_f: float) -> float:
+    return (float(temp_f) - 32) * (5/9)
+```
+
+With this:
+
+```python
+import sys
+from scipy.constants import convert_temperature
+
+def main(temp_f: float) -> float:
+    return convert_temperature(float(temp_f), 'F', 'C')
+```
+
+Don't forget to save your changes.
+
+The second change we need to make is to add `scipy` to our `requirements.txt` file. Open the `steps/05_fahrenheit_to_celsius_udf/requirements.txt` file in VS Code, add a newline with `scipy` on it and save it.
+
+### Test your Changes Locally
+To test the UDF locally, you will execute the `steps/05_fahrenheit_to_celsius_udf/app.py` script. Like we did in previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+
+```bash
+pip install -r requirements.txt
+cd steps/05_fahrenheit_to_celsius_udf
+python app.py 35
+```
+
+Notice that this time we're running pip install to make sure that our dependent packages are installed. Once your function runs sucessfully we'll be ready to deploy it via CI/CD!
+
+### Configuring Your Forked GitHub Project
+In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by SnowCLI.
+
+From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
+
+<table>
+    <thead>
+        <tr>
+            <th>Secret name</th>
+            <th>Secret value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>SNOWSQL_ACCOUNT</td>
+            <td>myaccount</td>
+        </tr>
+        <tr>
+            <td>SNOWSQL_USER</td>
+            <td>myusername</td>
+        </tr>
+        <tr>
+            <td>SNOWSQL_PWD</td>
+            <td>mypassword</td>
+        </tr>
+        <tr>
+            <td>SNOWSQL_ROLE</td>
+            <td>HOL_ROLE</td>
+        </tr>
+        <tr>
+            <td>SNOWSQL_WAREHOUSE</td>
+            <td>HOL_WH</td>
+        </tr>
+        <tr>
+            <td>SNOWSQL_DATABASE</td>
+            <td>HOL_DB</td>
+        </tr>
+    </tbody>
+</table>
+
+> aside positive
+> 
+>  **Tip** - For more details on how to structure the account name in SNOWSQL_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
+
+When you’re finished adding all the secrets, the page should look like this:
+
+<img src="assets/github-actions-secrets.png" width="800" />
+
+> aside positive
+> 
+>  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
+
+
+### Push Changes to Forked Repository
+Now that we have a changes ready and tested, and our Snowflake credentials stored in GitHub, let's commit them to our local repository and then push them to your forked repository. This can certainly be done from the command line, but in this step we'll do so through VS Code to make it easy.
+
+Start by opening the "Source Control" extension in the left hand nav bar, you should see two files with changes. Click the `+` (plus) sign at the right of each file name to stage the changes. Then enter a message in the "Message" box and click the blue `Commit` button to commit the changes locally. Here's what it should look like before you click the button:
+
+<img src="assets/vs_code_repo_commit.png" width="400" />
+
+At this point those changes are only committed locally and have not yet been pushed to your forked repository in GitHub. To do that, simply click the blue `Sync Changes` button to push these commits to GitHub. Here's what it should look like before you click the button:
+
+<img src="assets/vs_code_repo_push.png" width="400" />
+
+### Viewing GitHub Actions Workflow
+This repository is already set up with a very simple GitHub Actions CI/CD pipeline. You can review the code for the workflow by opening the `.github/workflows/build_and_deploy.yaml` file in VS Code.
+
+As soon as you pushed the changes to your GitHub forked repo the workflow kicked off. To view the results go back to the homepage for your GitHub repository and do the following:
+
+* From the repository, click on the `Actions` tab near the top middle of the page
+* In the left navigation bar click on the name of the workflow `Deploy Snowpark Apps`
+* Click on the name of most recent specific run (which should match the comment you entered)
+* From the run overview page click on the `deploy` job and then browse through the output from the various steps. In particular you might want to review the output from the `Deploy Snowpark apps` step.
+
+<img src="assets/github-actions-run-summary.png" width="800" />
+
+The output of the `Deploy Snowpark apps` step should be familiar to you by now, and should be what you saw in the terminal in VS Code when you ran SnowCLI in previous steps. The one thing that may be different is the order of the output, but you should be able to see what's happening.
+
+
+<!-- ------------------------ -->
+## Step 11: Teardown
+Duration: 2
+
+Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/11_teardown.sql` script. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/11_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
+
+
+<!-- ------------------------ -->
 ## Conclusion
-Duration: 1
+Duration: 4
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Wow, we have covered a lot of ground during this Quickstart! By now you have built a robust data engineering pipeline using Snowpark Python stored procedures. This pipeline processes data incrementally, is orchestrated with Snowflake tasks, and is deployed via a CI/CD pipeline. You also learned how to use Snowflake's new developer CLI tool and Visual Studio Code extension! Here's a quick visual recap:
 
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+But we've really only just scratched the surface of what's possible with Snowpark. Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipeline with Snowpark Python. So, what will you build now?
 
 ### What we've covered
 We've covered a ton in this Quickstart, and here are the highlights:
@@ -709,27 +879,3 @@ We've covered a ton in this Quickstart, and here are the highlights:
 * Tasks (with Stream triggers)
 * Task Observability
 * GitHub Actions (CI/CD) integration
-
-
-<!-- ------------------------ -->
-## Extra
-Duration: 2
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
