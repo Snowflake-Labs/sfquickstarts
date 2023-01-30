@@ -14,7 +14,7 @@ Duration: 15
 
 > "Data engineers are focused primarily on building and maintaining data pipelines that transport data through different steps and put it into a usable state ... The data engineering process encompasses the overall effort required to create **data pipelines** that automate the transfer of data from place to place and transform that data into a specific format for a certain type of analysis. In that sense, data engineering isn’t something you do once. It’s an ongoing practice that involves collecting, preparing, transforming, and delivering data. A data pipeline helps automate these tasks so they can be reliably repeated. It’s a practice more than a specific technology." (From Cloud Data Engineering for Dummies, Snowflake Special Edition)
 
-Are you interested in unleashing the power of Snowpark Python to build data engineering pipelines? Well then this Quickstart is for you! The focus here will be on building data engineering pipelines with Python, and not on data science. For examples of doing data science with Snowpark Python please check out our [Machine Learning with Snowpark Python: - Credit Card Approval Prediction](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html?index=..%2F..index#0) Quickstart.
+Are you interested in unleashing the power of Snowpark Python to build data engineering pipelines? Well then, this Quickstart is for you! The focus here will be on building data engineering pipelines with Python, and not on data science. For examples of doing data science with Snowpark Python please check out our [Machine Learning with Snowpark Python: - Credit Card Approval Prediction](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html?index=..%2F..index#0) Quickstart.
 
 This Quickstart will cover a lot of ground, and by the end you will have built a robust data engineering pipeline using Snowpark Python stored procedures. That pipeline will process data incrementally, be orchestrated with Snowflake tasks, and be deployed via a CI/CD pipeline. You'll also learn how to use Snowflake's new developer CLI tool and Visual Studio Code extension! Here's a quick visual overview:
 
@@ -23,20 +23,21 @@ This Quickstart will cover a lot of ground, and by the end you will have built a
 
 So buckle up and get ready!
 
-**Note**: As of 1/21/2023, the following features/tools used in this Quickstart are still in preview:
-* [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)
-* [SnowCLI](https://github.com/Snowflake-Labs/snowcli)
+> aside negative
+> 
+> **Note** - As of 2/1/2023, both the [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) and the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) are still in preview.
+
 
 ### Prerequisites
 * Familiarity with Python
 * Familiarity with the DataFrame API
 * Familiarity with Snowflake
-* Familiatity with Git repositories and GitHub
+* Familiarity with Git repositories and GitHub
 
 ### What You’ll Learn
 You will learn about the following Snowflake features during this Quickstart:
 
-* Snowflake Tables (not file-based)
+* Snowflake's Table Format
 * Data ingestion with COPY
 * Schema inference
 * Data sharing/marketplace (instead of ETL)
@@ -74,9 +75,9 @@ You will need the following things before beginning:
 During this Quickstart you will accomplish the following things:
 
 * Load Parquet data to Snowflake using schema inference
-* Setup access to Snowflake Martketplace data
+* Setup access to Snowflake Marketplace data
 * Create a Python UDF to convert temperature
-* Create a data engineering pipeline with Python stored procedures to icrementally process data
+* Create a data engineering pipeline with Python stored procedures to incrementally process data
 * Orchestrate the pipelines with tasks
 * Monitor the pipelines with Snowsight
 * Deploy the Snowpark Python stored procedures via a CI/CD pipeline
@@ -87,7 +88,7 @@ During this Quickstart you will accomplish the following things:
 Duration: 10
 
 ### Fork and Clone Repository for Quickstart
-You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [tko-data-engineering GitHub Repository](https://github.com/sfc-gh-jhansen/tko-data-engineering) repository and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering Pipelines with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
 Next you will need to clone your new forked repository to your local computer. For connection details about your new Git repository, open the Repository, click on the green "Code" icon near the top of the page and copy the "HTTPS" link.
 
@@ -96,11 +97,11 @@ Next you will need to clone your new forked repository to your local computer. F
 Use that link in VS Code to clone the repo to your computer. Please follow the instructions at [Clone and use a GitHub repository in Visual Studio Code](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository) for more details. You can also clone the repository from the command line, if that's more comfortable for you, by running the following commands:
 
 ```bash
-git clone <repo-url>
-cd sfquickkstart-data-engineering-pipelines-with-snowpark-python/
+git clone <your-forked-repo-url>
+cd sfguide-data-engineering-with-snowpark-python/
 ```
 
-Once the forked respository has been cloned to your local computer open the folder with VS Code.
+Once the forked repository has been cloned to your local computer open the folder with VS Code.
 
 ### Configure Credentials
 We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. If that SnowSQL config file does not exist, please create an empty one.
@@ -138,7 +139,7 @@ To set up all the objects we'll need in Snowflake for this Quickstart you'll nee
 
 Start by clicking on the Snowflake extension in the left navigation bar in VS Code. Then login to your Snowflake account with a user that has ACCOUNTADMIN permissions. Once logged in to Snowflake, open the `steps/01_setup.sql` script in VS Code by going back to the file Explorer in the left navigation bar.
 
-To execute multiple queries, select the ones you want to run and press CMD/CTRL+Enter. You can also use the "Execute All Statements" button in the upper right corner of the editor window to run all queries in the current file.
+To run all the queries in this script, use the "Execute All Statements" button in the upper right corner of the editor window. Or, if you want to run them in chunks, you can highlight the ones you want to run and press CMD/CTRL+Enter. 
 
 
 <!-- ------------------------ -->
@@ -180,18 +181,18 @@ if __name__ == "__main__":
     session.close()
 ```
 
-A few things to point out here. First, the Snowpark session is being created in the `utils/snowpark_utils.py` module. It has multiple methods for obtaining your credentials, and for this Quickstart it pulls them from the SnowSQL config file located at `~/.snowsql/config`. For more details please check out the code for the [utils/snowpark_utils.py module](https://github.com/sfc-gh-jhansen/tko-data-engineering/blob/main/utils/snowpark_utils.py).
+A few things to point out here. First, the Snowpark session is being created in the `utils/snowpark_utils.py` module. It has multiple methods for obtaining your credentials, and for this Quickstart it pulls them from the SnowSQL config file located at `~/.snowsql/config`. For more details please check out the code for the [utils/snowpark_utils.py module](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python/blob/main/utils/snowpark_utils.py).
 
 Then after getting the Snowpark session it calls the `load_all_raw_tables(session)` method which does the heavy lifting. The next few sections will point out the key parts.
 
 Finally, almost all of the Python scripts in this Quickstart include a local debugging block. Later on we will create Snowpark Python stored procedures and UDFs and those Python scripts will have a similar block. So this pattern is important to understand.
 
 ### Viewing What Happened in Snowflake
-The [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake is a very power feature, that logs every query run against your Snowflake account not matter which tool or process initiated it. And this is especially helpful when working with client tools and APIs.
+The [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake is a very power feature, that logs every query run against your Snowflake account, no matter which tool or process initiated it. And this is especially helpful when working with client tools and APIs.
 
-The Python script you just ran did a small amount of work locally, basically just orchestrating the process by looping through each table and loading the data to Snowflake. But all of the heavy lifting ran inside Snowflake! This push-down is a hallmark of the Snowpark API and allows you to leverage the scalability and compute power of Snowflake!
+The Python script you just ran did a small amount of work locally, basically just orchestrating the process by looping through each table and issuing the command to Snowflake to load the data. But all of the heavy lifting ran inside Snowflake! This push-down is a hallmark of the Snowpark API and allows you to leverage the scalability and compute power of Snowflake!
 
-Log in to your Snowflake account and take a quick look at the SQL that was generated by the Snowpark API. This will help you better understand what the API is doing and will help you debug any issues you run into.
+Log in to your Snowflake account and take a quick look at the SQL that was generated by the Snowpark API. This will help you better understand what the API is doing and will help you debug any issues you may run into.
 
 <img src="assets/query_history_sproc.png" width="800" />
 
@@ -206,16 +207,16 @@ One very helpful feature in Snowflake is the ability to infer the schema of file
 ```
 
 ### Data Ingestion with COPY
-In order to load the data into a Snowflake table we will use the `copy_into_table()` method on a dataframe. This method will create the target table in Snoflake use the inferred schema and then call the highly optimized Snowflake [`COPY INTO &lt;table&gt;` Command](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html). Here is the code snippet:
+In order to load the data into a Snowflake table we will use the `copy_into_table()` method on a DataFrame. This method will create the target table in Snowflake using the inferred schema (if it doesn't exist), and then call the highly optimized Snowflake [`COPY INTO &lt;table&gt;` Command](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html). Here is the code snippet:
 
 ```python
     df.copy_into_table("{}".format(tname))
 ```
 
-### Snowflake Tables (Not File-Based)
-One of the major advantages of Snowflake is being able to eliminate the need to manage a file-based data lake. And Snowflake was designed for this purpose from the beginning. In the step we are loading the raw data into a Snowflake managed table. Snowflake tables can natively support structued and semi-structure data and are stored in Snowflake's mature cloud table format.
+### Snowflake's Table Format
+One of the major advantages of Snowflake is being able to eliminate the need to manage a file-based data lake. And Snowflake was designed for this purpose from the beginning. In the step we are loading the raw data into a structured Snowflake managed table. But Snowflake tables can natively support structured and semi-structured data, and are stored in Snowflake's mature cloud table format (which predates Hudi, Delta or Iceberg).
 
-Once loaded into Snowflake the data will be securely stored and managed, without the need to worry about securing and managing raw files. Additionally the data, whether raw or structured, can be transformed and querying in Snowflake using SQL or the language of your choice, without needing to manage separate compute services like Spark.
+Once loaded into Snowflake the data will be securely stored and managed, without the need to worry about securing and managing raw files. Additionally the data, whether raw or structured, can be transformed and queried in Snowflake using SQL or the language of your choice, without needing to manage separate compute services like Spark.
 
 This is a huge advantage for Snowflake customers.
 
@@ -259,7 +260,7 @@ Weather Source is a leading provider of global weather and climate data and thei
     * Select the "HOL_ROLE" role to have access to the new database
 * Click on the blue "Get" button
 
-That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset?
+That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset!
 
 ### Run the Script
 Open the `steps/03_load_weather.sql` script in VS Code from the file Explorer in the left navigation bar, and run the script. Notice how easy it is to query data shared through the Snowflake Marketplace! You access it just like any other table or view in Snowflake:
@@ -342,7 +343,7 @@ python app.py 35
 While you're developing the UDF you can simply run it locally in VS Code. And if your UDF doesn't need to query data from Snowflake, this process will be entirely local.
 
 ### Deploying the UDF to Snowflake
-To deploy your UDF to Snowflake we will use the SnowCLI tool. The SnowCLI tool will do all the heavy lifting of packing up your application, copying it to a Snowflake stage, and creating the object in Snowflake. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To deploy your UDF to Snowflake we will use the SnowCLI tool. The SnowCLI tool will do all the heavy lifting of packaging up your application, copying it to a Snowflake stage, and creating the object in Snowflake. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/05_fahrenheit_to_celsius_udf
@@ -378,7 +379,7 @@ SnowCLI simplifies the development and deployment of the following Snowflake obj
 * Snowpark Python Stored Procedures
 * Streamlit Applications
 
-For this Quickstart we will be focused on the first two. And for Snowpark Python UDFs and Sprocs in particular the SnowCLI does all the heavy lifting of deploying the objects to Snowflake. Here's a brief summary of the steps the SnowCLI deploy command does for you:
+For this Quickstart we will be focused on the first two. And for Snowpark Python UDFs and sprocs in particular, the SnowCLI does all the heavy lifting of deploying the objects to Snowflake. Here's a brief summary of the steps the SnowCLI deploy command does for you:
 
 * Dealing with third-party packages
     * For packages that can be accessed directly from our Anaconda channel it will add them to the `PACKAGES` list in the `CREATE PROCEDURE` or `CREATE FUNCTION` SQL command
@@ -391,10 +392,10 @@ This also allows you to develop and test your Python application without having 
 
 > aside negative
 > 
-> **Note** - As of 1/28/2023 the SnowCLI tool is still in preview.
+> **Note** - As of 2/1/2023 the SnowCLI tool is still in preview.
 
 ### More on Snowpark Python UDFs
-In this step we deployed a very simple Python UDF to Snowflake. In a future step will will update it to use a third-party package. And because we deployed it to Snowflake with the SnowCLI command you didn't have to worry about the SQL DDL Syntax to create the object in Snowflake. But for reference please check out our [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html) developer guide.
+In this step we deployed a very simple Python UDF to Snowflake. In a future step will update it to use a third-party package. And because we deployed it to Snowflake with the SnowCLI command you didn't have to worry about the SQL DDL Syntax to create the object in Snowflake. But for reference please check out our [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html) developer guide.
 
 Here is the SQL query that the SnowCLI tool generated to deploy the function:
 
@@ -469,7 +470,7 @@ CREATE OR REPLACE  PROCEDURE orders_update_sp()
 ```
 
 ### More on the Snowpark API
-In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like PySpark this is accomplished with the `Session.builder.configs().create()` methods. When running locally, we use the `utils.snowpark_utils.get_snowpark_session()` helper function. But when deployed to Snowflake, the session object is provisioned for you. And when building a Snowpark Python sproc the contract is that the first argument to the entry point (or handler) function is a Snowpark session.
+In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like PySpark, this is accomplished with the `Session.builder.configs().create()` methods. When running locally, we use the `utils.snowpark_utils.get_snowpark_session()` helper function to create the session object for us. But when deployed to Snowflake, the session object is provisioned for you automatically by Snowflake. And when building a Snowpark Python sproc the contract is that the first argument to the entry point (or handler) function is a Snowpark session.
 
 The first thing you'll notice in the `steps/06_orders_update_sp/app.py` script is that we have some functions which use SQL to create objects in Snowflake and to check object status. To issue a SQL statement to Snowflake with the Snowpark API you use the `session.sql()` function, like you'd expect. Here's one example:
 
@@ -502,7 +503,7 @@ Again, for more details about the Snowpark Python DataFrame API, please check ou
 ## Step 07: Daily City Metrics Update Sproc
 Duration: 10
 
-During this step we will be creating and deploying our second Snowpark Python sproc to Snowflake. This sproc will join the `HARMONIZED.ORDERS` data with the Weather Source data to create a final, aggregated table for analysis named `ANALYTICS.DAILY_CITY_METRICS`. We will process the data incrementally from the `HARMONIZED.ORDERS` table using another Snowflake Stream. And we will again us the Snowpark DataFrame `merge()` method to merge/upsert the data. To put this in context, we are on step **#7** in our data flow overview:
+During this step we will be creating and deploying our second Snowpark Python sproc to Snowflake. This sproc will join the `HARMONIZED.ORDERS` data with the Weather Source data to create a final, aggregated table for analysis named `ANALYTICS.DAILY_CITY_METRICS`. We will process the data incrementally from the `HARMONIZED.ORDERS` table using another Snowflake Stream. And we will again use the Snowpark DataFrame `merge()` method to merge/upsert the data. To put this in context, we are on step **#7** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
@@ -542,7 +543,7 @@ snow procedure execute -p "daily_city_metrics_update_sp()"
 That will result in the SnowCLI tool generating the SQL query above and running it against your Snowflake account.
 
 ### Data Modeling Best Practice
-When modeling data for analysis a best practice has been to clearly define and manage the schema of the table. In step 2, when we loaded raw data from Parquet we took advantage of Snowflake's schema detection feature to create a table with the same schema as the Parquet files. In this step we are explicity defining the schema in DataFrame syntax and using that to create the table.
+When modeling data for analysis a best practice has been to clearly define and manage the schema of the table. In step 2, when we loaded raw data from Parquet we took advantage of Snowflake's schema detection feature to create a table with the same schema as the Parquet files. In this step we are explicitly defining the schema in DataFrame syntax and using that to create the table.
 
 ```python
 def create_daily_city_metrics_table(session):
@@ -566,7 +567,7 @@ def create_daily_city_metrics_table(session):
 ```
 
 ### Complex Aggregation Query
-The `merge_daily_city_metrics()` function contains a complex aggregation query which is used to join together and aggregate the data from our POS and Weather Source. Take a look at the series of complex series of joins and aggregations that are expressed, and how we're leveraging the Snowpark UDF we created in step #5!
+The `merge_daily_city_metrics()` function contains a complex aggregation query which is used to join together and aggregate the data from our POS and Weather Source. Take a look at the series of complex series of joins and aggregations that are expressed, and how we're even leveraging the Snowpark UDF we created in step #5!
 
 The complex aggregation query is then merged into the final analytics table using the Snowpark `merge()` method. If you haven't already, check out your Snowflake Query history and see which queries were generated by the Snowpark API. In this case you will see that the Snowpark API took all the complex logic, including the merge and created a single Snowflake query to execute!
 
@@ -591,7 +592,7 @@ In this step we did not create a schedule for our task DAG, so it will not run o
 EXECUTE TASK ORDERS_UPDATE_TASK;
 ```
 
-To see what happened when you ran this task just now, hightlight and run (using CMD/CTRL+Enter) this commented query in the script:
+To see what happened when you ran this task just now, highlight and run (using CMD/CTRL+Enter) this commented query in the script:
 
 ```sql
 SELECT *
@@ -605,13 +606,13 @@ ORDER BY SCHEDULED_TIME DESC
 You will notice in the task history output that it skipped our task `ORDERS_UPDATE_TASK`. This is correct, because our `HARMONIZED.POS_FLATTENED_V_STREAM` stream doesn't have any data. We'll add some new data and run them again in the next step.
 
 ### More on Tasks
-Tasks are Snowflake's native scheduling/orchestration feature. With a task you cna execute any one of the following types of SQL code:
+Tasks are Snowflake's native scheduling/orchestration feature. With a task you can execute any one of the following types of SQL code:
 
 * Single SQL statement
 * Call to a stored procedure
 * Procedural logic using Snowflake Scripting Developer Guide
 
-For this quickstart we'll call our Snowpark stored procedures. Here is the SQL DDL code to create the second task:
+For this Quickstart we'll call our Snowpark stored procedures. Here is the SQL DDL code to create the second task:
 
 ```sql
 CREATE OR REPLACE TASK DAILY_CITY_METRICS_UPDATE_TASK
@@ -623,7 +624,7 @@ AS
 CALL ANALYTICS.DAILY_CITY_METRICS_UPDATE_SP();
 ```
 
-A few things to point out. First you specify which Snowflake virtual warehouse to use when running the task with the `WAREHOUSE` setting. The `AFTER` clause lets you define the relationship betwwen tasks, and the structure of this relationship is a Directed Acyclic Graph (or DAG) like most orchestration tools provide. The `AS` clause let's you define what the task should do when it runs, in this case to call our stored procedure.
+A few things to point out. First you specify which Snowflake virtual warehouse to use when running the task with the `WAREHOUSE` clause. The `AFTER` clause lets you define the relationship between tasks, and the structure of this relationship is a Directed Acyclic Graph (or DAG) like most orchestration tools provide. The `AS` clause let's you define what the task should do when it runs, in this case to call our stored procedure.
 
 The `WHEN` clause is really cool. We've already seen how streams work in Snowflake by allowing you to incrementally process data. We've even seen how you can create a stream on a view (which joins many tables together) and create a stream on that view to process its data incrementally! Here in the `WHEN` clause we're calling a system function `SYSTEM$STREAM_HAS_DATA()` which returns true if the specified stream has new data. With the `WHEN` clause in place the virtual warehouse will only be started up when the stream has new data. So if there's no new data when the task runs then your warehouse won't be started up and you won't be charged. You will only be charged when there's new data to process. Pretty cool, huh?
 
@@ -694,7 +695,7 @@ While that is running, let's briefly discuss what's happening. As in step #2, we
 This time we will be doing the data loading through SQL instead of Python, but the process is the same. We'll resize the warehouse, scaling up so that we can load the data faster and then scaling back down after when we're done. After the new data is loaded we will also run the task DAG again. And this time both tasks will run and process the new data.
 
 ### Viewing the Task History
-Like the in the previous step, to see what happened when you ran this task DAG, hightlight and run (using CMD/CTRL+Enter) this commented query in the script:
+Like the in the previous step, to see what happened when you ran this task DAG, highlight and run (using CMD/CTRL+Enter) this commented query in the script:
 
 ```sql
 SELECT *
@@ -705,7 +706,7 @@ ORDER BY SCHEDULED_TIME DESC
 ;
 ```
 
-This time you will notice that the `ORDERS_UPDATE_TASK` task will not be skipped, since the `HARMONIZED.POS_FLATTENED_V_STREAM` stream has new data. In a few minutes you should see that both the `ORDERS_UPDATE_TASK` task and the `DAILY_CITY_METRICS_UPDATE_TASK` task completed sucessfully.
+This time you will notice that the `ORDERS_UPDATE_TASK` task will not be skipped, since the `HARMONIZED.POS_FLATTENED_V_STREAM` stream has new data. In a few minutes you should see that both the `ORDERS_UPDATE_TASK` task and the `DAILY_CITY_METRICS_UPDATE_TASK` task completed successfully.
 
 ### Query History for Tasks
 One important thing to understand about tasks, is that the queries which get executed by the task won't show up with the default Query History UI settings. In order to see the queries that just ran you need to do the following:
@@ -723,7 +724,7 @@ You should now see all the queries run by your tasks! Take a look at each of the
 
 <!-- ------------------------ -->
 ## Step 10: Deploy Via CI/CD
-Duration: 10
+Duration: 15
 
 During this step we will be making a change to our `FAHRENHEIT_TO_CELSIUS_UDF()` UDF and then deploying it via a CI/CD pipeline. We will be updating the `FAHRENHEIT_TO_CELSIUS_UDF()` UDF to use a third-party Python package, pushing it to your forked GitHub repo, and finally deploying it using the SnowCLI in a GitHub Actions workflow! To put this in context, we are on step **#10** in our data flow overview:
 
@@ -762,7 +763,7 @@ cd steps/05_fahrenheit_to_celsius_udf
 python app.py 35
 ```
 
-Notice that this time we're running pip install to make sure that our dependent packages are installed. Once your function runs sucessfully we'll be ready to deploy it via CI/CD!
+Notice that this time we're also running pip install to make sure that our dependent packages are installed. Once your function runs successfully we'll be ready to deploy it via CI/CD!
 
 ### Configuring Your Forked GitHub Project
 In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by SnowCLI.
@@ -863,7 +864,7 @@ But we've really only just scratched the surface of what's possible with Snowpar
 ### What we've covered
 We've covered a ton in this Quickstart, and here are the highlights:
 
-* Snowflake Tables (not file-based)
+* Snowflake's Table Format
 * Data ingestion with COPY
 * Schema inference
 * Data sharing/marketplace (instead of ETL)
