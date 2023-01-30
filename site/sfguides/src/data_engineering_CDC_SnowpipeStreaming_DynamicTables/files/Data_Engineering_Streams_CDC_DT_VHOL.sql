@@ -35,7 +35,7 @@ grant usage on warehouse VHOL_CDC_WH to role PII_ADMIN;
 grant usage on warehouse VHOL_CDC_WH to role PII_ALLOWED;
 
 --4.c) Create Database
-create database VHOL_ENG_CDC;
+create or replace database VHOL_ENG_CDC;
 use database VHOL_ENG_CDC;
 grant ownership on schema PUBLIC to role VHOL;
 revoke all privileges on database VHOL_ENG_CDC from role ACCOUNTADMIN;
@@ -85,7 +85,7 @@ select
 --6.a) The Current State
 CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_CURRENT_DT
 LAG = '1 minute'
-WAREHOUSE = 'DEMO_WH'
+WAREHOUSE = 'VHOL_CDC_WH'
 AS
 SELECT * EXCLUDE (score,action) from (  
   SELECT
@@ -114,7 +114,7 @@ SELECT count(*) FROM LIMIT_ORDERS_CURRENT_DT;
 --6.b) The Historical View (Slowly-Changing Dimensions / SCD)
 CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_SCD_DT
 LAG = '1 minute'
-WAREHOUSE = 'DEMO_WH'
+WAREHOUSE = 'VHOL_CDC_WH'
 AS
 SELECT * EXCLUDE score from ( SELECT *,
   CASE when score=1 then true else false end as Is_Latest,
@@ -151,7 +151,7 @@ select  count(*) from LIMIT_ORDERS_SCD_DT;
 --6.c) Aggregations / Summary Table
 CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_SUMMARY_DT
 LAG = '1 minute'
-WAREHOUSE = 'DEMO_WH'
+WAREHOUSE = 'VHOL_CDC_WH'
 AS
 SELECT ticker,position,min(price) as MIN_PRICE,max(price) as MAX_PRICE, TO_DECIMAL(avg(price),38,2) as AVERAGE_PRICE,
     SUM(quantity) as TOTAL_SHARES,TO_DECIMAL(TOTAL_SHARES*AVERAGE_PRICE,38,2) as TOTAL_VALUE_USD
