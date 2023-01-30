@@ -406,8 +406,13 @@ select  count(*) from LIMIT_ORDERS_SUMMARY_DT;
 
 ### d) Monitoring Dynamic Tables
 
-First, lets look at the properties page for a Dynamic Table, from the left-side menu, navigate to "Data, Databases>VHOL_ENG_CDC, ENG schema, Dynamic Tables" and click one of the Dynamic Tables you created.  You will see four tabs (Table Details, Columns, Data Preview, Refresh History).  Click on Refresh History:
-![](assets/image6-35.png) ![](assets/image6-36.png)
+First, lets look at the properties page for a Dynamic Table, from the left-side menu, navigate to "Data, Databases>VHOL_ENG_CDC, ENG schema, Dynamic Tables" and click one of the Dynamic Tables you created.  
+
+![](assets/image6-35.png)
+
+You will see four tabs (Table Details, Columns, Data Preview, Refresh History).  Click on Refresh History:
+
+ ![](assets/image6-36.png)
 
 Can also leverage Query History, a more account-wide administrative view, from the left side menu, click Activity>Query History:
 ![](assets/image6-2.png) ![](assets/image6-31.png)
