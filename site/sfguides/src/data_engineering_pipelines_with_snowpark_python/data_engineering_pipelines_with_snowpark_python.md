@@ -60,6 +60,7 @@ You will need the following things before beginning:
 * Snowflake
     * **A Snowflake Account**
     * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
+    * **Anaconda Terms & Conditions accepted**. See Getting Started section in [Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started).
 * Miniconda
     * **Miniconda installed on your computer**. Download and install [Miniconda](https://conda.io/miniconda.html). Alternatively, you may use any other Python environment with Python 3.8.
 * SnowSQL
