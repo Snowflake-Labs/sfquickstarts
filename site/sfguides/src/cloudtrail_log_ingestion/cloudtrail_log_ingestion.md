@@ -35,9 +35,9 @@ For simplicity purposes, this quickstart will walk through configuring CloudTrai
 If you have already configured CloudTrail or if you require an organization based or custom configuration please see the official documentation [here](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-create-and-update-a-trail.html) and skip to the next step.
 
 
-1. Open the CloudTrail console at https://console.aws.amazon.com/cloudtrail/
+1. Open the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/)
 
-1. On the dashboard page find and press Create Trail
+1. On the dashboard page find and press `Create trail`
 
 1. Configure Cloudtrail with the following settings
 
@@ -169,7 +169,7 @@ create warehouse security_quickstart with
 ```
 
 
-Create External Stage using the storage integration and test that snowflake can test files
+Create External Stage using the storage integration and test that snowflake can test files. Make sure you include the trailing slash if using a prefix.
 ```sql
 create stage cloudtrail_logs_staging
   url = 's3://<BUCKET_NAME>/<PREFIX>/'
@@ -189,14 +189,14 @@ create table public.cloudtrail_raw(
 
 Test importing logs from External Stage
 ```sql
-copy into cloudtrail_raw FROM @cloudtrail_logs_staging (FILE_FORMAT => (type = json));
+copy into cloudtrail_raw FROM @cloudtrail_logs_staging FILE_FORMAT = (type = json);
 ```
 
 ![Screenshot showing result of above copy into command, for all files the status column shows "LOADED"](assets/generic-copy-from-s3-stage.png)
 
 Verify the logs were loaded properly
 ```sql
-select * from public.cloudtrail limit 5;
+select * from public.cloudtrail_raw limit 5;
 ```
 
 ## Setup Snowpipe for continuous loading
@@ -210,10 +210,10 @@ Configure the Snowflake snowpipe
 ```sql
 create pipe public.cloudtrail_pipe auto_ingest=true as
 copy into cloudtrail_raw 
-FROM @cloudtrail_logs_staging (FILE_FORMAT => (type = json));
+FROM @cloudtrail_logs_staging  FILE_FORMAT = (type = json);
 ```
 
-Show pipe to retrieve SQS queue ARN 
+Show pipe to retrieve SQS queue ARN in the `notification_channel` column
 ```sql
 show pipes;
 ```
@@ -221,15 +221,15 @@ show pipes;
 
 Setup S3 bucket with following [AWS instructions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications.html).
 
-Target Bucket -> Open property -> Select “Create Event notification”
+Target Bucket -> Properties -> Event notifications -> Create event notification
 
 ![Screenshot of empty event notifications dashboard in AWS](assets/generic-s3-event-notifications.png)
 
 Fill out below items
 - Name: Name of the event notification (e.g. Auto-ingest Snowflake).
 - Prefix(Optional) :  if you receive notifications only when files are added to a specific folder (for example, logs/). 
-- Events: Select the ObjectCreate (All) option.
-- Send to: Select “SQS Queue” from the dropdown list.
+- Events: Select "All object create events".
+- Destination: Select “SQS Queue” from the dropdown list.
 - SQS: Select “Add SQS queue ARN” from the dropdown list.
 - SQS queue ARN: Paste the SQS queue name from the SHOW PIPES output.
 
@@ -240,18 +240,11 @@ Fill out below items
 Event notification has been created
 ![Screenshot of event notifications dashboard with created notification in AWS](assets/generic-s3-event-notifications-filled.png)
 
-Refresh Snowpipe to retrieve unloaded files
+Refresh Snowpipe to start the pipe and retrieve unloaded files
 ```sql
 alter pipe cloudtrail_pipe refresh;
 ```
-You can confirm also if snowpipe worked properly
-```sql
-select *
-  from table(snowflake.information_schema.pipe_usage_history(
-    date_range_start=>dateadd('day',-14,current_date()),
-    date_range_end=>current_date(),
-    pipe_name=>'public.cloudtrail_pipe));
-```
+
 
 ## Create a view to better query data
 Duration: 3
@@ -290,7 +283,7 @@ select
     VALUE:edgeDeviceDetails::string as edgeDeviceDetails,
     VALUE:tlsDetails::variant as tlsDetails,
     VALUE:insightDetails::variant as insightDetails
-  from public.cloudtrail_raw , LATERAL FLATTEN(input => "record":Records);
+  from public.cloudtrail_raw , LATERAL FLATTEN(input => record:Records);
 ```
 
 Note: Cloudtrail groups individual events in JSON arrays. This view uses a native `LATERAL FLATTEN` function to parse them into individual rows. Users should consider using a materialized view to improve query performance. More information about materialized views and their tradeoffs can be found [here](https://docs.snowflake.com/en/user-guide/views-materialized.html)
@@ -300,7 +293,7 @@ Preview the data
 ```sql
 select * from cloudtrail limit 10;
 ```
-![Screenshot of view for vpc flow logs](assets/vpc-flow-view.png)
+
 
 
 ## Query the data
