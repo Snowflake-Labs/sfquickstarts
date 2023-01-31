@@ -43,6 +43,7 @@ grant ownership on database VHOL_ENG_CDC to role VHOL;
 
 use role VHOL;
 use database VHOL_ENG_CDC;
+use schema ENG;
 use warehouse VHOL_CDC_WH;
 grant usage on database VHOL_ENG_CDC to role VHOL_CDC_AGENT;
 create schema ENG;
@@ -53,15 +54,14 @@ grant usage on schema PUBLIC to role PUBLIC;
 --4.d) Create a Staging/Landing Table
 create or replace table ENG.CDC_STREAMING_TABLE (RECORD_CONTENT variant);
 grant insert on table ENG.CDC_STREAMING_TABLE to role VHOL_CDC_AGENT;
-select * from CDC_STREAMING_TABLE;
-select count(*) from CDC_STREAMING_TABLE;
-
+select * from ENG.CDC_STREAMING_TABLE;
+select count(*) from ENG.CDC_STREAMING_TABLE;
 
 ----    5 Streaming Records!
 
 --5.b)  View New Records in Snowflake
 select count(*) from ENG.CDC_STREAMING_TABLE;
-select * from CDC_STREAMING_TABLE limit 100;
+select * from ENG.CDC_STREAMING_TABLE limit 100;
 
 select RECORD_CONTENT:transaction:primaryKey_tokenized::string as orderid from ENG.CDC_STREAMING_TABLE limit 10;
 
@@ -77,7 +77,7 @@ select
   where RECORD_CONTENT:transaction:action::varchar='INSERT' limit 1000;
   
   --5.c) But There is More Than One Table in My Source System
-  select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from CDC_STREAMING_TABLE;
+  select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from ENG.CDC_STREAMING_TABLE;
   
 
 ----    6 Create Dynamic Tables
@@ -194,6 +194,7 @@ select * from PUBLIC.CURRENT_LIMIT_ORDERS_VW limit 1000;
 --7.a) Create roles and assign ownerships & access
 use role VHOL;
 use database VHOL_ENG_CDC;
+create or replace schema PII COMMENT='Stay Out - Authorized Users Only';
 grant ownership on schema PII to role PII_ADMIN;
 grant usage on database VHOL_ENG_CDC to role PII_ADMIN;
 grant usage on database VHOL_ENG_CDC to role PII_ALLOWED;
@@ -201,9 +202,6 @@ grant usage on schema ENG to role PII_ADMIN;
 grant usage on schema ENG to role PII_ALLOWED;
 grant select,references on dynamic table ENG.LIMIT_ORDERS_CURRENT_DT to role PII_ADMIN;
 grant select on dynamic table ENG.LIMIT_ORDERS_CURRENT_DT to role PII_ALLOWED;
-create or replace schema PII COMMENT='Stay Out - Authorized Users Only';
-revoke all privileges on schema VHOL_ENG_CDC.PII from role VHOL;
-grant ownership on schema VHOL_ENG_CDC.PII to role PII_ADMIN;
 
 --7.b) Become PII_ADMIN
 use role PII_ADMIN;
