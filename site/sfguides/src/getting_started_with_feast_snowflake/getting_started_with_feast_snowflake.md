@@ -134,7 +134,7 @@ Duration: 20
 - Install and Setup Feast on Snowflake
 - Unit your Feast integration by creating Online and Offline Feature Stores
 
-Open up the [`02-Data-Analysis`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-feast/blob/main/02-Install-and-Setup-Feast-Feature-Store.ipynb) Jupyter notebook.
+Open up the [`02-Install-and-Setup-Feast-Feature-Store`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-feast/blob/main/02-Install-and-Setup-Feast-Feature-Store.ipynb) Jupyter notebook.
 
 **Note:** 
 1. There are required setup instructions in this notebook that require a terminal CLI for execution. In this notebook, you will be toggling between your notebook and the terminal window. Do not skip any instructions to ensure a successful setup. 
