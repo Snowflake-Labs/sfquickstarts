@@ -60,8 +60,8 @@ You will need the following things before beginning:
 * Snowflake
     * **A Snowflake Account**
     * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
-* Anaconda
-    * **Anaconda installed on your computer**. Check out the [Anaconda Installation](https://docs.anaconda.com/anaconda/install/) instructions for the details.
+* Miniconda
+    * **Miniconda installed on your computer**. Download and install [Miniconda](https://conda.io/miniconda.html). Alternatively, you may use any other Python environment with Python 3.8.
 * SnowSQL
     * **SnowSQL installed on your computer**. Go to the [SnowSQL Download page](https://developers.snowflake.com/snowsql/) and see the [Installing SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) page for more details.
 * Visual Studio Code with required extensions
@@ -880,3 +880,15 @@ We've covered a ton in this Quickstart, and here are the highlights:
 * Tasks (with Stream triggers)
 * Task Observability
 * GitHub Actions (CI/CD) integration
+
+### Related Resources
+And finally, here's a quick recap of related resources:
+
+* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python)
+* [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+    * [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html)
+    * [Writing Stored Procedures in Snowpark (Python)](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html)
+    * [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)
+* Related Tools
+    * [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)
+    * [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli)
