@@ -221,7 +221,7 @@ Duration: 15
 ### a)  Run Streaming Application
 
 **You are now ready to Stream data into Snowflake!** 
-Execute the Streaming Simulator using 'Run_MAX.sh', which will stream 1,000,000 records as fast as your desktop can run:
+Execute the Streaming Simulator using 'Run_MAX.sh', which will stream 1,000,000 records as fast as your desktop can run (MAX will also be in the Channel name):
 ```
 ./Run_MAX.sh
 ```
@@ -268,7 +268,6 @@ The CDC Agent could easily be capturing changes from more than one source table,
 ```
 select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from CDC_STREAMING_TABLE;
 ```
-
 
 ## Create Dynamic Tables
 Duration: 15
@@ -415,6 +414,7 @@ You will see four tabs (Table Details, Columns, Data Preview, Refresh History). 
  ![](assets/image6-36.png)
 
 Can also leverage Query History, a more account-wide administrative view, from the left side menu, click Activity>Query History:
+
 ![](assets/image6-2.png) ![](assets/image6-31.png)
 
 and utilize the filters at the top.  Remove user filter, as these refresh actions are performed by user "SYSTEM".  With Filter, enable the "Client-generated statements" to see the all dynamic table refresh activation events.  Can filter to a specific table by utilizing the "SQL Text", entering a Dynamic Table name's name, for example: "ENG.LIMIT_ORDERS_CURRENT_DT".
@@ -422,7 +422,16 @@ and utilize the filters at the top.  Remove user filter, as these refresh action
 
 (Return to your Worksheet)
 
-### e) Deliver to Consumers
+ ### e) Monitor Landing Table Channels
+Specifically the offset token identifying the source's indicator of the last successfully-committed row identifier.  If there ever was an error on the source agent, this is the restart point.
+```
+show channels in table ENG.CDC_STREAMING_TABLE;
+```
+![](assets/image6-37.png)
+
+
+
+### f) Deliver to Consumers
 
 This data is now ready for public use!  To create access for users to consume, lets use views to allow access (note, JSON path syntax not seen or needed except from landing table).
 For our "Current View" Table:
