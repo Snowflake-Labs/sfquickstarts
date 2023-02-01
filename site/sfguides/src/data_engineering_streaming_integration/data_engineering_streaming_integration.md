@@ -54,7 +54,7 @@ Before we begin, let's take a few minutes to clarify the terminology as this top
 In this guide, we will outline the following key phases of the data lifecycle:
 * **Data Change**: This refers to a point in our timeline when events occur in the upstream system we integrate with
 * **Integrate**: This phase involves activities related to making a data change available for use in Snowflake
-* **Process a->b**: assuming data needs to be enriched/transformed before it can be used, this phase is for changing data from its inital state 'a' to a new state 'b'
+* **Process a->b**: assuming data needs to be enriched/transformed before it can be used, this phase is for changing data from its initial state 'a' to a new state 'b'
 * **Information is ready**: A point in our timeline when ready-to-consume information is available for consumption at the rest point
 * **Get results**: The final step, in which the consumer retrieves or is pushed new portions of information
 
@@ -79,7 +79,7 @@ It is common opinion that sync processing is offering better simplicity from orc
 
 In **asynchronous processing**, steps are executed independently of one another and the program can continue to execute other tasks while one is still in progress, so the program execution is not blocked.
 
-Whilst delviering great possibilities for parallelization & efficiency, async processing architectures often become a littl more complex when it comes to monitoring / orchestsration / troubleshooting as state of the end-to-end pipeline is passed from one service to another. 
+Whilst delivering great possibilities for parallelization & efficiency, async processing architectures often become a little more complex when it comes to monitoring / orchestration / troubleshooting as state of the end-to-end pipeline is passed from one service to another. 
 
 ### Next 
 
@@ -136,7 +136,7 @@ Duration: 10
 In this section, we will construct a pipeline that is prepared to integrate a stream of data that arrives as files. The steps are as follows:
 
 * Establish the environment
-* Generagte the input data files
+* Generate the input data files
 * Integrate the data using Snowpipe
 * Evaluate the results
 
@@ -555,13 +555,13 @@ So, here you have it!
 
 ### What we've covered
 We discussed a lot of important aspects in this quickstart:
-* batch, micro-batch, continious, real-time integration & processing
-* syncronous and asyncronous design patterns
+* batch, micro-batch, continuous, real-time integration & processing
+* synchronous and asynchronous design patterns
 * discussed options of using Snowflake build primitives for working with Streaming data, including direct stage queries, COPY, Snowpipe, Streaming Snowpipe
 * built three examples of getting sample streaming data into Snowflake target tables
 
 ### Next steps
-Hope now understanding various options at your fingertips your next data pipeline will be done easier and more efficient. 
+Hope now understanding various options at your fingertips your next data pipeline will be done easier and more efficiently. 
 Please stay tuned for the upcoming quickstarts in Snowflake Streaming series: 
 * **Streaming Data Integration with Snowflake (this very guide)** - This guide will focus on design patterns and building blocks for data integration within Snowflake
 
