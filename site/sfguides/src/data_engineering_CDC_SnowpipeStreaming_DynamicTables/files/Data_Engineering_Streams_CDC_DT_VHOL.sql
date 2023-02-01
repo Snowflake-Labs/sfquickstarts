@@ -42,8 +42,7 @@ revoke all privileges on database VHOL_ENG_CDC from role ACCOUNTADMIN;
 grant ownership on database VHOL_ENG_CDC to role VHOL;
 
 use role VHOL;
-use database VHOL_ENG_CDC;
-use schema ENG;
+use VHOL_ENG_CDC.ENG;
 use warehouse VHOL_CDC_WH;
 grant usage on database VHOL_ENG_CDC to role VHOL_CDC_AGENT;
 create schema ENG;
@@ -75,10 +74,15 @@ select
     RECORD_CONTENT:transaction:record_after::variant as after
   from ENG.CDC_STREAMING_TABLE
   where RECORD_CONTENT:transaction:action::varchar='INSERT' limit 1000;
-  
+
   --5.c) But There is More Than One Table in My Source System
   select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from ENG.CDC_STREAMING_TABLE;
-  
+
+  --5.d) We can also get metadata about the Client application's Channel.
+  --Specifically the offset token identifying the source's indicator of the last successfully-committed row.
+  show channels in table ENG.CDC_STREAMING_TABLE;
+
+
 
 ----    6 Create Dynamic Tables
 
@@ -87,7 +91,7 @@ CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_CURRENT_DT
 LAG = '1 minute'
 WAREHOUSE = 'VHOL_CDC_WH'
 AS
-SELECT * EXCLUDE (score,action) from (  
+SELECT * EXCLUDE (score,action) from (
   SELECT
     RECORD_CONTENT:transaction:primaryKey_tokenized::varchar as orderid_tokenized,
     RECORD_CONTENT:transaction:record_after:orderid_encrypted::varchar as orderid_encrypted,
@@ -100,13 +104,13 @@ SELECT * EXCLUDE (score,action) from (
     RECORD_CONTENT:transaction:record_after:Quantity::number(38,3) as quantity,
     RANK() OVER (
         partition by orderid_tokenized order by RECORD_CONTENT:transaction:committed_at::number desc) as score
-  FROM ENG.CDC_STREAMING_TABLE 
-    WHERE 
+  FROM ENG.CDC_STREAMING_TABLE
+    WHERE
         RECORD_CONTENT:transaction:schema::varchar='PROD' AND RECORD_CONTENT:transaction:table::varchar='LIMIT_ORDERS'
-) 
+)
 WHERE score = 1 and action != 'DELETE';
 
-SELECT count(*) FROM LIMIT_ORDERS_CURRENT_DT;
+SELECT count(*) FROM ENG.LIMIT_ORDERS_CURRENT_DT;
 
 -- Wait for the lag (1 minute)
 SELECT count(*) FROM LIMIT_ORDERS_CURRENT_DT;
@@ -120,7 +124,7 @@ SELECT * EXCLUDE score from ( SELECT *,
   CASE when score=1 then true else false end as Is_Latest,
   LAST_VALUE(score) OVER (
             partition by orderid_tokenized order by valid_from desc)+1-score as version
-  FROM (  
+  FROM (
       SELECT
         RECORD_CONTENT:transaction:primaryKey_tokenized::varchar as orderid_tokenized,
         --IFNULL(RECORD_CONTENT:transaction:record_after:orderid_encrypted::varchar,RECORD_CONTENT:transaction:record_before:orderid_encrypted::varchar) as orderid_encrypted,
@@ -133,10 +137,10 @@ SELECT * EXCLUDE score from ( SELECT *,
         RANK() OVER (
             partition by orderid_tokenized order by RECORD_CONTENT:transaction:committed_at::number desc) as score,
         TO_TIMESTAMP_NTZ(RECORD_CONTENT:transaction:committed_at::number/1000) as valid_from,
-        TO_TIMESTAMP_NTZ(LAG(RECORD_CONTENT:transaction:committed_at::number/1000,1,null) over 
+        TO_TIMESTAMP_NTZ(LAG(RECORD_CONTENT:transaction:committed_at::number/1000,1,null) over
                          (partition by orderid_tokenized order by RECORD_CONTENT:transaction:committed_at::number desc)) as valid_to
       FROM ENG.CDC_STREAMING_TABLE
-      WHERE 
+      WHERE
             RECORD_CONTENT:transaction:schema::varchar='PROD' AND RECORD_CONTENT:transaction:table::varchar='LIMIT_ORDERS'
     ))
 ;
@@ -155,7 +159,7 @@ WAREHOUSE = 'VHOL_CDC_WH'
 AS
 SELECT ticker,position,min(price) as MIN_PRICE,max(price) as MAX_PRICE, TO_DECIMAL(avg(price),38,2) as AVERAGE_PRICE,
     SUM(quantity) as TOTAL_SHARES,TO_DECIMAL(TOTAL_SHARES*AVERAGE_PRICE,38,2) as TOTAL_VALUE_USD
-from (  
+from (
   SELECT
     RECORD_CONTENT:transaction:action::varchar as action,
     RECORD_CONTENT:transaction:record_after:ticker::varchar as ticker,
@@ -163,11 +167,11 @@ from (
     RECORD_CONTENT:transaction:record_after:Price::number(38,3) as price,
     RECORD_CONTENT:transaction:record_after:Quantity::number(38,3) as quantity
   FROM ENG.CDC_STREAMING_TABLE
-  WHERE 
+  WHERE
         RECORD_CONTENT:transaction:schema::varchar='PROD' AND RECORD_CONTENT:transaction:table::varchar='LIMIT_ORDERS'
   QUALIFY RANK() OVER (
         partition by RECORD_CONTENT:transaction:primaryKey_tokenized::varchar order by RECORD_CONTENT:transaction:committed_at::number desc) = 1
-) 
+)
 WHERE action != 'DELETE' group by ticker,position order by position,TOTAL_VALUE_USD DESC
 ;
 
@@ -210,7 +214,7 @@ use warehouse VHOL_CDC_WH;
 
 --7.c) Reusable Decryption Secure Function
 CREATE OR REPLACE SECURE FUNCTION PII._DECRYPT_AES(FIELD string, ENCRYPTIONKEY string)
-RETURNS VARCHAR 
+RETURNS VARCHAR
 LANGUAGE JAVA
 HANDLER = 'Decrypt.decryptField'
 AS
@@ -255,12 +259,12 @@ select PII._DECRYPT_AES('NhVcyJa8/r3Wdy6WNvT0yQw+SouNYGPAy/ddVe6064Y=', 'O90hS0k
 --7.d)  This Pipeline's Decryption Secure Function
 
 CREATE OR REPLACE SECURE FUNCTION PII.DECRYPT_CDC_FIELD(FIELD string)
-RETURNS VARCHAR 
+RETURNS VARCHAR
  as
- $$ 
+ $$
  select PII._DECRYPT_AES(FIELD, 'O90hS0k9qHdsMDkPe46ZcQ==')
  $$;
- 
+
 grant usage on function PII.DECRYPT_CDC_FIELD(varchar) to role PII_ADMIN;
 select PII.DECRYPT_CDC_FIELD('NhVcyJa8/r3Wdy6WNvT0yQw+SouNYGPAy/ddVe6064Y=');
 
@@ -268,7 +272,7 @@ revoke usage on function PII.DECRYPT_CDC_FIELD(varchar) from role PII_ADMIN;
 
 --7.e)  Create Secure View
 Create or replace secure view PII.LIMIT_ORDERS_VW
-as 
+as
   select orderid_tokenized,orderid_encrypted,
     PII.DECRYPT_CDC_FIELD(orderid_encrypted) as orderid_PII,
     lastUpdated,client,ticker,position,price,quantity
@@ -281,7 +285,7 @@ grant select on view PII.LIMIT_ORDERS_VW to role PII_ALLOWED;
 
 --7.f)  Be PII-Enabled
 use role PII_ALLOWED;
-use database VHOL_ENG_CDC;
+use VHOL_ENG_CDC.PII;
 select * from PII.LIMIT_ORDERS_VW order by ORDERID_PII limit 1000;
 select * from PII.LIMIT_ORDERS_VW where ticker='MMM' and position='LONG' order by ORDERID_PII;
 select * from PII.LIMIT_ORDERS_VW limit 1000;
@@ -302,5 +306,4 @@ select count(*) from ENG.CDC_STREAMING_TABLE;
 --drop role VHOL_CDC_AGENT;
 --drop role PII_ADMIN;
 --drop role PII_ALLOWED;
-
 
