@@ -65,6 +65,9 @@ You will need the following things before beginning:
     * **Miniconda installed on your computer**. Download and install [Miniconda](https://conda.io/miniconda.html). Alternatively, you may use any other Python environment with Python 3.8.
 * SnowSQL
     * **SnowSQL installed on your computer**. Go to the [SnowSQL Download page](https://developers.snowflake.com/snowsql/) and see the [Installing SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) page for more details.
+* Git
+    * **Git installed on your computer**. Check out the [Getting Started - Installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) page for more details.
+    * **Git configured with your username and email address**. If you haven't already done so please [set your Git username](https://docs.github.com/en/get-started/getting-started-with-git/setting-your-username-in-git#setting-your-git-username-for-every-repository-on-your-computer) and [set your Git email address](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-email-preferences/setting-your-commit-email-address#setting-your-email-address-for-every-repository-on-your-computer) on your local computer.
 * Visual Studio Code with required extensions
     * **Visual Studio Code installed on your computer**. Check out the [Visual Studio Code](https://code.visualstudio.com/) homepage for a link to the download page.
     * **Python extension installed**. Search for and install the "Python" extension (from Microsoft) in the *Extensions* pane in VS Code.
@@ -90,6 +93,10 @@ Duration: 10
 
 ### Fork and Clone Repository for Quickstart
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering Pipelines with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+
+By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Python UDF and stored procedures, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
+
+<img src="assets/github-actions-activate.png" width="800" />
 
 Next you will need to clone your new forked repository to your local computer. For connection details about your new Git repository, open the Repository, click on the green "Code" icon near the top of the page and copy the "HTTPS" link.
 
@@ -230,12 +237,14 @@ And these virtual warehouses can be dynamically scaled, in under a second for mo
 Let's see how easy that is done. Here is the code snippet:
 
 ```python
-    _ = session.sql("ALTER WAREHOUSE HOL_WH SET WAREHOUSE_SIZE = XLARGE").collect()
+    _ = session.sql("ALTER WAREHOUSE HOL_WH SET WAREHOUSE_SIZE = XLARGE WAIT_FOR_COMPLETION = TRUE").collect()
 
     # Some data processing code
 
     _ = session.sql("ALTER WAREHOUSE HOL_WH SET WAREHOUSE_SIZE = XSMALL").collect()
 ```
+
+Please also note that we included the `WAIT_FOR_COMPLETION` parameter in the first `ALTER WAREHOUSE` statement. Setting this parameter to `TRUE` will block the return of the `ALTER WAREHOUSE` command until the resize has finished provisioning all its compute resources. This way we make sure that the full cluster is available before processing any data with it.
 
 We will use this pattern a few more times during this Quickstart, so it's important to understand.
 
