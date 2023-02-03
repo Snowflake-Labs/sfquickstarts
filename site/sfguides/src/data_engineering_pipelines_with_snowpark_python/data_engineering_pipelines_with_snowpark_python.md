@@ -136,7 +136,7 @@ conda activate pysnowpark
 
 
 <!-- ------------------------ -->
-## Step 01: Setup Snowflake
+## Setup Snowflake
 Duration: 10
 
 ### Snowflake Extensions for VS Code
@@ -151,7 +151,7 @@ To run all the queries in this script, use the "Execute All Statements" button i
 
 
 <!-- ------------------------ -->
-## Step 02: Load Raw
+## Load Raw
 Duration: 10
 
 During this step we will be loading the raw Tasty Bytes POS and Customer loyalty data from raw Parquet files in `s3://sfquickstarts/data-engineering-with-snowpark-python/` to our `RAW_POS` and `RAW_CUSTOMER` schemas in Snowflake. And you are going to be orchestrating this process from your laptop in Python using the Snowpark Python API. To put this in context, we are on step **#2** in our data flow overview:
@@ -250,7 +250,7 @@ We will use this pattern a few more times during this Quickstart, so it's import
 
 
 <!-- ------------------------ -->
-## Step 03: Load Weather
+## Load Weather
 Duration: 4
 
 During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace. To put this in context, we are on step **#3** in our data flow overview:
@@ -281,7 +281,7 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 
 
 <!-- ------------------------ -->
-## Step 04: Create POS View
+## Create POS View
 Duration: 10
 
 During this step we will be creating a view to simplify the raw POS schema by joining together 6 different tables and picking only the columns we need. But what's really cool is that we're going to define that view with the Snowpark DataFrame API! Then we're going to create a Snowflake stream on that view so that we can incrementally process changes to any of the POS tables. To put this in context, we are on step **#4** in our data flow overview:
@@ -335,7 +335,7 @@ For more details please check out the [Streams on Views](https://docs.snowflake.
 
 
 <!-- ------------------------ -->
-## Step 05: Fahrenheit to Celsius UDF
+## Fahrenheit to Celsius UDF
 Duration: 10
 
 During this step we will be creating and deploying our first Snowpark Python object to Snowflake, a user-defined function (or UDF). To begin with the UDF will be very basic, but in a future step we'll update it to include a third-party Python package. Also in this step you will be introduced to the new SnowCLI, a new developer command line tool. SnowCLI makes building and deploying Snowpark Python objects to Snowflake a consistent experience for the developer. More details below on SnowCLI. To put this in context, we are on step **#5** in our data flow overview:
@@ -421,7 +421,7 @@ CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
 
 
 <!-- ------------------------ -->
-## Step 06: Orders Update Sproc
+## Orders Update Sproc
 Duration: 10
 
 During this step we will be creating and deploying our first Snowpark Python stored procedure (or sproc) to Snowflake. This sproc will merge changes from the `HARMONIZED.POS_FLATTENED_V_STREAM` stream into our target `HARMONIZED.ORDERS` table. To put this in context, we are on step **#6** in our data flow overview:
@@ -510,7 +510,7 @@ Again, for more details about the Snowpark Python DataFrame API, please check ou
 
 
 <!-- ------------------------ -->
-## Step 07: Daily City Metrics Update Sproc
+## Daily City Metrics Update Sproc
 Duration: 10
 
 During this step we will be creating and deploying our second Snowpark Python sproc to Snowflake. This sproc will join the `HARMONIZED.ORDERS` data with the Weather Source data to create a final, aggregated table for analysis named `ANALYTICS.DAILY_CITY_METRICS`. We will process the data incrementally from the `HARMONIZED.ORDERS` table using another Snowflake Stream. And we will again use the Snowpark DataFrame `merge()` method to merge/upsert the data. To put this in context, we are on step **#7** in our data flow overview:
@@ -583,7 +583,7 @@ The complex aggregation query is then merged into the final analytics table usin
 
 
 <!-- ------------------------ -->
-## Step 08: Orchestrate Jobs
+## Orchestrate Jobs
 Duration: 10
 
 During this step we will be orchestrating our new Snowpark pipelines with Snowflake's native orchestration feature named Tasks. We will create two tasks, one for each stored procedure, and chain them together. We will then run the tasks. To put this in context, we are on step **#8** in our data flow overview:
@@ -690,7 +690,7 @@ For more details, and to learn about viewing account level task history, please 
 
 
 <!-- ------------------------ -->
-## Step 09: Process Incrementally
+## Process Incrementally
 Duration: 10
 
 During this step we will be adding new data to our POS order tables and then running our entire end-to-end pipeline to process the new data. And this entire pipeline will be processing data incrementally thanks to Snowflake's advanced stream/CDC capabilities. To put this in context, we are on step **#9** in our data flow overview:
@@ -733,7 +733,7 @@ You should now see all the queries run by your tasks! Take a look at each of the
 
 
 <!-- ------------------------ -->
-## Step 10: Deploy Via CI/CD
+## Deploy Via CI/CD
 Duration: 15
 
 During this step we will be making a change to our `FAHRENHEIT_TO_CELSIUS_UDF()` UDF and then deploying it via a CI/CD pipeline. We will be updating the `FAHRENHEIT_TO_CELSIUS_UDF()` UDF to use a third-party Python package, pushing it to your forked GitHub repo, and finally deploying it using the SnowCLI in a GitHub Actions workflow! To put this in context, we are on step **#10** in our data flow overview:
@@ -855,7 +855,7 @@ The output of the `Deploy Snowpark apps` step should be familiar to you by now, 
 
 
 <!-- ------------------------ -->
-## Step 11: Teardown
+## Teardown
 Duration: 2
 
 Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/11_teardown.sql` script. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/11_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
