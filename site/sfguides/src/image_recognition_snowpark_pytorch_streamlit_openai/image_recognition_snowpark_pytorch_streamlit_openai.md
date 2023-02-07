@@ -263,7 +263,8 @@ In order to build and run the applications, setup your environment as described 
 ```python
 conda create --name snowpark-img-rec -c https://repo.anaconda.com/pkgs/snowflake python=3.8
 conda activate snowpark-img-rec
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas streamlit notebook cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook cachetools
+pip install streamlit
 pip install uuid
 pip install openai
 ```
