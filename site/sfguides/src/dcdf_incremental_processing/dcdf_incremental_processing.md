@@ -27,7 +27,7 @@ In this lab, we will focus on the actual SQL code templates for ingesting, trans
 - [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) and configured to your account.
 - Familiarity and understanding of SQL syntax
 
-### What Youll Learn
+### What You'll Learn
 - DCDF Data Architecture
 - Incremental processing and Logical Partitions
 
@@ -145,7 +145,7 @@ Duration: 5
 ### Clone Repository for Quickstart
 These are sample code templates used to demonstrate incremental processing and logical partitions.  This code is written using SQL Scripting.  The code is tool ignostic and can be easily implemented into your tool set.
 
-You'll need to clone the repository for this Quickstart in your GitHub account. Visit the [Data Engineering Pipelines with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/samples/dcdf_incremental_processing). For connection details about your new Git repository, open the Repository, click on the green "Code" icon near the top of the page and copy the "HTTPS" link.
+You'll need to clone the repository for this Quickstart in your GitHub account. Visit the [DCDF Incremental Processing associated GitHub Repository](https://github.com/Snowflake-Labs/samples/dcdf_incremental_processing). For connection details about your new Git repository, open the Repository, click on the green "Code" icon near the top of the page and copy the "HTTPS" link.
 
 <img src="assets/git_repo_url.png" width="300" />
 
