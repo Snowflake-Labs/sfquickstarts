@@ -116,7 +116,7 @@ Let's see how this works!
 ## Lab Overview
 Duration: 2
 
-Below is an overview diagram of what we will be building in these labs throughout this quickstart.  Each section builds upon what was built in the prior section.
+Below is an overview diagram of what we will be building in this Quickstart.  Each step builds upon what was built in the prior step.
 ![img](assets/overview_diagram.png)
 
 ### Raw Layer
@@ -138,23 +138,16 @@ Below is an overview diagram of what we will be building in these labs throughou
 - In our example we will create a table to hold the dates that need to be incrementally processed.  
 - There will also be a table function created in the common database utilized for the logical partitions.
 
-### Sample Data Set
-- Login to your account and verify that you have access to the SNOWFLAKE_SAMPLE_DATA database.  See screenshot below.
-- SNOWFLAKE_SAMPLE_DATA data share is created by default in newer accounts.  If you are not seeing this data share, you might need to create the data share in your account.  [Using Sample Data](https://docs.snowflake.com/en/user-guide/sample-data-using.html)
-
-![img](assets/sample_data_set.png)
-
 <!-- ------------------------ -->
-## Prepare Your Lab Environment
+## Quickstart Setup
 Duration: 5
 
-### Download the Sample Code
+### Clone Repository for Quickstart
 These are sample code templates used to demonstrate incremental processing and logical partitions.  This code is written using SQL Scripting.  The code is tool ignostic and can be easily implemented into your tool set.
 
-<button>
+You'll need to clone the repository for this Quickstart in your GitHub account. Visit the [Data Engineering Pipelines with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/samples/dcdf_incremental_processing). For connection details about your new Git repository, open the Repository, click on the green "Code" icon near the top of the page and copy the "HTTPS" link.
 
-[Download sample code](https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Snowflake_Dataiku/Snowflake_Dataiku_VHOL.sql) for use in Snowflake.
-</button>
+<img src="assets/git_repo_url.png" width="300" />
 
 >aside positive
 >
@@ -173,9 +166,18 @@ These are sample code templates used to demonstrate incremental processing and l
   - ddl_orch.sql is the parent script that will execute all the database, schema, and table creation scripts.
   - dml_orch.sql is the parent script that will execute the data pipeline.
 
-### Setup
-Creating Example Databases, Schemas, Tables and Warehouse
-- Make sure you are in the folder on your laptop where you downloaded the sample code and make sure the sample code exists.  You want to be able to at the same level as the folders 000_admin, 100_acqusition, 200_raw, etc.
+<!-- ------------------------ -->
+## Snowflake Setup
+Duration: 5
+
+### Sample Data Set
+- Login to your account and verify that you have access to the SNOWFLAKE_SAMPLE_DATA database.  See screenshot below.
+- SNOWFLAKE_SAMPLE_DATA data share is created by default in newer accounts.  If you are not seeing this data share, you might need to create the data share in your account.  [Using Sample Data](https://docs.snowflake.com/en/user-guide/sample-data-using.html)
+
+![img](assets/sample_data_set.png)
+
+### Creating Example Databases, Schemas, Tables and Warehouse
+- Make sure you are in the folder on your laptop where you cloned the sample code.  You want to be at the top level where you see the sub-folders of 000_admin, 100_raw, etc.
 - Let's create the databases, tables and warehouse using the default names.
 - Run Snowsql from the command line.  This will create all the databases, schemas, tables and a warehouse that are needed for this sample code.  
 ``` sql
@@ -227,9 +229,8 @@ select
 ## Data Acquistion
 Duration: 5
 
->aside positive
->
->For the data acquisition in this lab, we will use the SNOWFLAKE_SAMPLE_DATA data set, lineitem table data to generate the data files to load into our raw layer.  
+During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set, lineitem table data to generate the data files to load into our raw layer.  
+
 ### Step 1 - Explain code snippets
 1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/line_item_acq.sql.
 ![img](assets/snowsight_load_from_file.png)
@@ -360,6 +361,8 @@ list @~/line_item;
 ## Raw Layer - Staging the data
 Duration: 1
 
+During this step we will load the acquired data from the prior step (Data Acquisition) into the staging tables in the raw layer.
+
 ![img](assets/raw_layer_load_stg_diagram.png)
 >aside positive
 >
@@ -467,6 +470,8 @@ and l_partkey in ( 105237594, 128236374); -- 2 lines
 ## Raw Layer - Identify Impacted Partitions
 Duration: 1
 
+During this step we will identify the impacted partitions that were loaded into the staging tables in the raw layer and persisting those identified partitions in a table for use in subsequent steps.
+
 ![img](assets/raw_layer_impacted_partitions.png)
 
 >aside positive
@@ -570,6 +575,9 @@ order by 1;
 
 <!-- ------------------------ -->
 ## Raw Layer - Incrementally Process
+
+During this step we will incrementally process through the data, loading it into the persistent tables in the raw layer utilizing the impacted partitions that were identified in the prior step. 
+
 ![img](assets/raw_layer_incremental_processing.png)
 
 >aside positive
@@ -887,6 +895,8 @@ order by 1;
 ## Integration Layer
 Duration: 1
 
+During this step we will incrementally process an isolated unit of work deriving certain business rules utilizing the identified impacted partitions. 
+
 ![img](assets/integration_incremental_process.png)
 >aside positive
 >
@@ -1008,6 +1018,8 @@ and m.dw_line_item_shk = l.dw_line_item_shk;
 <!-- ------------------------ -->
 ## Presentation Layer
 Duration: 1
+
+During this step we will incrementally process the data that was loaded, and re-organizing the data for consumption utilizing the identified impacted partitions.
 
 ![img](assets/presentation_incremental_process.png)
 >aside positive
@@ -1177,6 +1189,6 @@ We encourage you to continue with learning about the Data Cloud Deployment Frame
 Also the downloadable scripts contain more tables than what was covered in this lab.  It's a full working template model taking source data from raw, through integration, to presentation layer dimension model ready for consumption. Take the time to go through each one of them and run them over and over.  Feel free to take these as code templates to be utilized in your own environment and accounts for your processing.
 
 ### What we've covered
-1. A data pipeline utilizing incremental processing and logical partition definitions
-2. Walked through raw, integration and presentation layer scripts and how each utilizes incremental processing and the logical partition definitions.
-3. Walked through code snippets for different processing patterns such as truncate/reload, insert overwrite, merge and delete/insert.
+- A data pipeline utilizing incremental processing and logical partition definitions
+- Walked through raw, integration and presentation layer scripts and how each utilizes incremental processing and the logical partition definitions.
+- Walked through code snippets for different processing patterns such as truncate/reload, insert overwrite, merge and delete/insert.
