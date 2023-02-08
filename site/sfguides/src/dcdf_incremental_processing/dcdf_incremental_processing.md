@@ -78,7 +78,7 @@ Can contain a database and related warehouse for each department/team within a b
 
 <!-- ------------------------ -->
 ## Incremental Processing Concepts
-Duration: 2
+Duration: 4
 >aside positive
 >
 >"The best way to process big data, is to turn it into small data"
@@ -114,7 +114,7 @@ Let's see how this works!
 
 <!-- ------------------------ -->
 ## Lab Overview
-Duration: 2
+Duration: 3
 
 Below is an overview diagram of what we will be building in this Quickstart.  Each step builds upon what was built in the prior step.
 ![img](assets/overview_diagram.png)
@@ -227,7 +227,7 @@ select
 
 <!-- ------------------------ -->
 ## Data Acquistion
-Duration: 5
+Duration: 7
 
 During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set, lineitem table data to generate the data files to load into our raw layer.  
 
@@ -359,7 +359,7 @@ list @~/line_item;
 
 <!-- ------------------------ -->
 ## Raw Layer - Staging the data
-Duration: 1
+Duration: 7
 
 During this step we will load the acquired data from the prior step (Data Acquisition) into the staging tables in the raw layer.
 
@@ -468,7 +468,7 @@ and l_partkey in ( 105237594, 128236374); -- 2 lines
 
 <!-- ------------------------ -->
 ## Raw Layer - Identify Impacted Partitions
-Duration: 1
+Duration: 5
 
 During this step we will identify the impacted partitions that were loaded into the staging tables in the raw layer and persisting those identified partitions in a table for use in subsequent steps.
 
@@ -575,6 +575,7 @@ order by 1;
 
 <!-- ------------------------ -->
 ## Raw Layer - Incrementally Process
+Duration: 10
 
 During this step we will incrementally process through the data, loading it into the persistent tables in the raw layer utilizing the impacted partitions that were identified in the prior step. 
 
@@ -893,7 +894,7 @@ order by 1;
 ![img](assets/raw_layer_line_item_hist_output.png)
 <!-- ------------------------ -->
 ## Integration Layer
-Duration: 1
+Duration: 10
 
 During this step we will incrementally process an isolated unit of work deriving certain business rules utilizing the identified impacted partitions. 
 
@@ -1017,7 +1018,7 @@ and m.dw_line_item_shk = l.dw_line_item_shk;
 ![img](assets/integration_line_item_margin_results.png)
 <!-- ------------------------ -->
 ## Presentation Layer
-Duration: 1
+Duration: 6
 
 During this step we will incrementally process the data that was loaded, and re-organizing the data for consumption utilizing the identified impacted partitions.
 
@@ -1180,7 +1181,7 @@ where p_partkey in ( 105237594, 128236374);
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 2
+Duration: 4
 
 This tutorial was designed as a hands-on introduction to the Data Cloud Deployment Framework (DCDF) data architecture incremental processing and logical partitions.
 
