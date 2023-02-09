@@ -10,29 +10,29 @@ tags: Getting Started, Data Cloud Deployment Framework, DCDF, Data Engineering, 
 # Getting Started with DCDF Data Architecture Incremental Processing & Logical Partitions
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
+Duration: 3
 
 This quickstart was originally part of the Webinar series for the Data Cloud Deployment Framework (DCDF).  In [Webinar Episode 2](https://www.snowflake.com/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/) we focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.  The episode can be watched on demand as well.
 
-In this lab, we will focus on the actual SQL code templates for ingesting, transforming, and restructuring data into the presentation layer using incremental processing and logical partition definitions.
+In this quickstart, we will focus on the actual SQL code templates for ingesting, transforming, and restructuring data into the presentation layer using incremental processing and logical partition definitions.
 
 >aside negative
 >
-> **Caveat:** This DCDF data architecture labs and template scripts are for illustrative purposes only.  These scripts can be run in a customer’s own account or free trial account to understand the concepts and patterns.   These scripts can then be customized into your own environment with your own business use cases.
+> **Caveat:** This DCDF data architecture quickstart and template scripts are for illustrative purposes only.  These scripts can be run in a customer’s own account or free trial account to understand the concepts and patterns.   These scripts can then be customized into your own environment with your own business use cases.
 
 ### Prerequisites
-- A Snowflake account.  Existing or a free trial accounts can be used. [Trial Account](https://trial.snowflake.com/) account
+- A Snowflake account.  Existing or a free [Trial Account](https://trial.snowflake.com/) can be used.
 - Working knowledge with Snowflake database objects and the Snowflake Web UI/Snowsight.
 - Familiarity with Snowflake and Snowflake objects.
-- [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) and configured to your account.
+- [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) and configured to your Snowflake account.
 - Familiarity and understanding of SQL syntax
 
-### What You'll Learn
+### What You'll Learn 
 - DCDF Data Architecture
 - Incremental processing and Logical Partitions
 
 ### What You’ll Need 
-- A Snowflake Account, any edition will do as the scripts will run on any edition. [Trial Account](signup.snowflake.com).
+- A Snowflake Account or [Trial Account](signup.snowflake.com), any edition will do as the scripts will run on any edition.
 - Login to Snowflake account that has ACCOUNTADMIN role access (Note: Free Trial accounts provide this automatically)
 - [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html)
 
@@ -87,7 +87,7 @@ Duration: 4
 #### Step 1 - Define Logical Partitions
 - Logical partitions are defined usually as logical periods of time, time series data such as day, week, month, etc based on a business event represented in the data.
 - The volume of data being processed along with the typical periods impacted by the delta feed from the source system will drive the logical partition approach.
-- In our lab we will use order date as our logical partition in the line item table.  This defines how to identify new or changed data.
+- In our quickstart we will use order date as our logical partition in the line item table.  This defines how to identify new or changed data.
 
 #### Step 2 - Identify Impacted Partitions
 - Next step is to identify the impacted logical partitions that are represented in the delta feed from the sources system. 
@@ -117,6 +117,7 @@ Let's see how this works!
 Duration: 3
 
 Below is an overview diagram of what we will be building in this Quickstart.  Each step builds upon what was built in the prior step.
+
 ![img](assets/overview_diagram.png)
 
 ### Raw Layer
@@ -333,6 +334,7 @@ use schema   TPCH;
 ![img](assets/Statement_executed_successfully.png)
 
 2. Set the warehouse in your worksheet to *DEV_WEBINAR_WH*.
+![img](assets/Setting_warehouse.png)
 3. Highlight the code to set the variables for l_start_dt, l_end_dt and run them.
 ``` sql
 -- Set variables for this sample data for the time frame to acquire
@@ -351,11 +353,26 @@ select $l_start_dt, $l_end_dt;
 6. This might take around 2-3 minutes on a small warehouse.  If you want to increase the size of your warehouse, it will run faster. The output should be similar to this.
 ![img](assets/acq_copy_output.png)
 
-7. Let's verify the number of files created. Paste this into your worksheet and run it.  Output should be similar to this.
+7. Let's verify the number of files created. Paste this SQL into your worksheet and run it.  Output should be similar to this.
 ``` sql
 list @~/line_item;
 ```
 ![img](assets/acq_list_files.png)
+
+8. We are going to unload the part data into files so we can utilize this data later in the presentation layer. Select to *"create worksheet from SQL file"* and load the 100_acquisition/part_acq.sql.
+9. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+
+use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+```
+![img](assets/Statement_executed_successfully.png)
+
+10. Set the warehouse in your worksheet to *DEV_WEBINAR_WH*.
+![img](assets/Setting_warehouse.png)
+
+11. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
+![img](assets/acq_part_results.png)
 
 <!-- ------------------------ -->
 ## Raw Layer - Staging the data
@@ -380,7 +397,7 @@ During this step we will load the acquired data from the prior step (Data Acquis
 truncate table line_item_stg;
 ```
 3. Below in the *"copy into"* statement, the data from the files produced in the acquisition steps, will be loaded in one statement.  This is a bulk load.  
-4. The purge parameter is set to true so that the files will be purged from the internal table stage once they have been loaded.
+4. The purge parameter is set to true so that the files will be purged from the internal table stage once they have been loaded.  This saves on storage usage and cost since these files are no longer needed.
 ``` sql
 -- perform bulk load
 copy into
@@ -431,6 +448,7 @@ use schema   tpch;
 ![img](assets/Statement_executed_successfully.png)
 
 3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
 
 4. Highlight the truncate command in the script and run it.
 ``` sql
@@ -465,6 +483,27 @@ and l_partkey in ( 105237594, 128236374); -- 2 lines
 ```
 
 ![img](assets/raw_layer_verify_stg_ld.png)
+
+9. Now, we will load the part data into the staging table so we can utilize this later. Select to *"create worksheet from SQL file"* and load the 200_raw/part_stg_ld.sql.  
+10. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+```
+![img](assets/Statement_executed_successfully.png)
+
+11. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+
+12. Highlight the truncate command in the script and run it.
+``` sql
+truncate table part_stg;
+```
+![img](assets/Statement_executed_successfully.png)
+
+13. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
+![img](assets/raw_layer_part_stg_results.png)
 
 <!-- ------------------------ -->
 ## Raw Layer - Identify Impacted Partitions
@@ -552,6 +591,8 @@ use schema util;
 ![img](assets/Statement_executed_successfully.png)
 
 2. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+
 3. Set the cursor on the *"insert overwrite"* statement and run it. The output should look like the following.
 
 ![img](assets/delta_date_results.png)
@@ -851,7 +892,7 @@ begin
     )
 ```
 ### Step 2 - Execute code and Verify Results
-1. Open the worksheet for the line_item_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+1. Open the worksheet for the 200_raw/line_item_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
@@ -860,6 +901,8 @@ use schema   tpch;
 ![img](assets/Statement_executed_successfully.png)
 
 3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+
 4. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
@@ -873,13 +916,17 @@ order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
 
-7. Open the worksheet for the line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+7. Open the worksheet for the 200_raw/line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
 use schema   tpch;
 ```
+![img](assets/Statement_executed_successfully.png)
+
 8. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+
 9. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
@@ -892,6 +939,21 @@ and l_partkey in ( 105237594, 128236374)
 order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
+
+11. Now we want to load the part data into the part table.  Open the worksheet for the 200_raw/part_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+```
+![img](assets/Statement_executed_successfully.png)
+
+12. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+
+13. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+![img](assets/anonymous_block_success.png)
+
 <!-- ------------------------ -->
 ## Integration Layer
 Duration: 10
@@ -1002,6 +1064,7 @@ use schema   main;
 ![img](assets/Statement_executed_successfully.png)
 
 3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
 4. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
@@ -1148,10 +1211,11 @@ use schema   main;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-4. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+2. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+3. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
-5. Let's verify that the data was loaded into the order_line_fact table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
+4. Let's verify that the data was loaded into the order_line_fact table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
 ``` sql
 select olf.*
 from dev_webinar_pl_db.main.order_line_fact olf
@@ -1162,22 +1226,112 @@ and l.l_partkey in ( 105237594, 128236374);
 ```
 ![img](assets/presentation_order_line_results.png)
 
-6. Open the worksheet for the part_dm_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+5. Open the worksheet for the part_dm_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_pl_db;
 use schema   main;
 ```
-7. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-8. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+6. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+7. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
-9. Let's verify that the data was loaded into the part_dm table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
+8. Let's verify that the data was loaded into the part_dm table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
 ``` sql
 select *
 from dev_webinar_pl_db.main.part_dm p
 where p_partkey in ( 105237594, 128236374);
 ```
 ![img](assets/presentation_part_dm_output.png)
+
+<!-- ------------------------ -->
+## BONUS - Type 2 Dimension
+Duration: 4
+
+During this section we will go through a type 2 slowly changing dimension load processing and utilize incremental processing for this dimension.   
+
+"Slowly changing dimension type 2 changes add a new row in the dimension with the updated attribute values. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row.
+
+A minimum of three additional columns should be added to the dimension row with type 2 changes: 1) row effective date or date/time stamp; 2) row expiration date or date/time stamp; and 3) current row indicator."  Kimball Group.
+
+### Step 1 - Explain code snippets
+1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/customer_acq.sql.
+2. In the first few lines of the script we are setting the context for this script. For the lab, the defaults are DEV_WEBINAR_ORDERS_RL_DB for the database and TPCH for the schema in the raw layer.
+``` sql
+use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+```
+3. The *"copy into"* statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.    
+
+``` sql
+copy into
+    @~/customer
+from
+(
+    with l_customer as
+    (
+        select
+              row_number() over(order by uniform( 1, 60, random() ) ) as seq_no
+             ,c.c_custkey
+             ,c.c_name
+             ,c.c_address
+             ,c.c_nationkey
+             ,c.c_phone
+             ,c.c_acctbal
+             ,c.c_mktsegment
+             ,c.c_comment
+        from
+            snowflake_sample_data.tpch_sf1000.customer c
+    )
+    select
+         c.c_custkey
+        ,c.c_name
+        ,c.c_address
+        ,c.c_nationkey
+        ,c.c_phone
+        ,c.c_acctbal
+        ,c.c_mktsegment
+        ,c.c_comment
+        ,current_timestamp()            as last_modified_dt -- generating a last modified timestamp as customer of data acquisition.
+    from
+        l_customer c
+    order by
+        c.c_custkey
+)
+file_format      = ( type=csv field_optionally_enclosed_by = '"' )
+overwrite        = false
+single           = false
+include_query_id = true
+max_file_size    = 16000000
+;
+```
+
+### Step 2 - Execute code and Verify Results
+
+1. Open the worksheet for the 100_acquisition/customer_acq.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_rl_orders_db;
+use schema   tpch;
+```
+![img](assets/Statement_executed_successfully.png)
+
+2. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+![img](assets/Setting_warehouse.png)
+3. 
+
+![img](assets/raw_layer_customer_acq_results.png)
+
+![img](assets/raw_layer_customer_stg_ld_results.png)
+
+<!-- ------------------------ -->
+## Cleanup
+Duration: 2
+
+This step is to cleanup and drop all the objects we created as part of this quickstart.
+
+1. Open the worksheet for the 000_admin/cleanup.sql.  
+2. Run all the SQL statements to drop all the objects that were created.
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
@@ -1187,7 +1341,7 @@ This tutorial was designed as a hands-on introduction to the Data Cloud Deployme
 
 We encourage you to continue with learning about the Data Cloud Deployment Framework, by watching the [Data Cloud Deployment Framework Series Webinars](https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/) either on-demand on register for upcoming episodes.  
 
-Also the downloadable scripts contain more tables than what was covered in this lab.  It's a full working template model taking source data from raw, through integration, to presentation layer dimension model ready for consumption. Take the time to go through each one of them and run them over and over.  Feel free to take these as code templates to be utilized in your own environment and accounts for your processing.
+Also the github repo scripts contain more tables than what was covered in this lab.  It's a full working template model taking source data from raw, through integration, to presentation layer dimension model ready for consumption. Take the time to go through each one of them and run them over and over.  Feel free to use these as code templates to be utilized in your own environment and accounts for your processing.
 
 ### What we've covered
 - A data pipeline utilizing incremental processing and logical partition definitions
