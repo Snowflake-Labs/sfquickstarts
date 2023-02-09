@@ -1331,7 +1331,18 @@ Duration: 2
 This step is to cleanup and drop all the objects we created as part of this quickstart.
 
 1. Open the worksheet for the 000_admin/cleanup.sql.  
+``` sql
+-- Cleanup all the objects we created
+
+use role sysadmin;
+
+drop database dev_webinar_orders_rl_db;
+drop database dev_webinar_il_db;
+drop database dev_webinar_pl_db;
+drop database dev_webinar_common_db;
+```
 2. Run all the SQL statements to drop all the objects that were created.
+![img](assets/Statement_executed_successfully.png)
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
