@@ -1,6 +1,6 @@
 author: marzillo-snow
 id: example_matt_marzillo
-summary: This is a sample Snowflake Guide
+summary: This is a qucikstart for using Snowpark for ML on Sagemaker
 categories: Getting-Started, data-science, data-engineering, aws, sagemaker
 environments: web
 status: Published 
@@ -10,7 +10,7 @@ tags: Getting Started, Data Science, Data Engineering
 # Getting Started with Snowpark for Machine Learning on Sagemaker
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
+Duration: 15
 
 Python is the language of choice for Data Science and Machine Learning workloads. Snowflake has long supported Python via the Python Connector, allowing data scientists to interact with data stored in Snowflake from their preferred Python environment. This did, however, require data scientists to write verbose SQL queries. To provide a more friendly, expressive, and extensible interface to Snowflake, we built Snowpark Python, a native Python experience with a pandas and PySpark-like API for data manipulation. This includes a client-side API to allow users to write Python code in a Spark-like API without the need to write verbose SQL. Python UDF and Stored Procedure support also provides more general additional capabilities for compute pushdown.
 
@@ -29,7 +29,7 @@ This quickstart is designed to service as an introduction to using Sagemaker wit
 - Familiarity with Sagemaker and an AWS account
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 
-### What You’ll Learn 
+### You'll Learn
 - Using a Sagemaker Notebook with Snowpark
 - Loading and transforming data via Snowpark
 - Defining User Defined Functions for distributed scoring of machine learning models
@@ -53,16 +53,18 @@ The end-to-end workflow will look like this:
 ## Use Case
 Duration: 5
 
-In this use case you will build a binary model based on the 'Machine Predictive Maintenane Classificatoin' dataset from [Kaggle](hhttps://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](https://www.snowflake.com/en/data-cloud/marketplace/).
+In this use case you will build a binary model based on the 'Machine Predictive Maintenance Classification' dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](https://www.snowflake.com/en/data-cloud/marketplace/).
 
-The use case uses infromation related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.
-
+The use case uses information related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.
 
 <!-- ------------------------ -->
-## Set Up
+## Set Up and Load Data
 Duration: 15
 
-You will access your AWS Sagemaker Studio and first open up a terminal window: 
+First, you will access your AWS Sagemaker Studio and change the environment so that you are using an image that utilizes Python version 3.8. The Pytorch 3.8 or Tensorflow 3.8 will work for this quickstart.
+![](assets/sagemaker_image.png)
+
+Now open up a terminal window: 
 ![](assets/terminal_sagemaker.png)
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
@@ -71,30 +73,55 @@ git clone https://github.com/marzillo-snow/getting_started_with_snowpark_on_sage
 cd getting_started_with_snowpark_on_sagemaker
 ```
 
-Load Packages
-Need to figure this out!
-
-## Load Data
 Work through the set up script here to crate a database, warehouse and load the data: 
 [0_setup.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_sagemaker/blob/main/0_setup.ipynb).
 
-Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. You just a little bit of Snowpakr to get that data loaded!
+Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. You just a little bit of Snowpark to get that data loaded!
 ![](assets/database_check.png)
 
 <!-- ------------------------ -->
 ## Build and Deploy model
 Duration: 10
+Work through the 1_prepare_build_deploy_model.ipynb workbook to join together the datasets, bring in the training data then build and deploy the model. 
+
+[1_prepare_build_deploy_model.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
+
+Once that notebook is complete you will have a udf that you can use to generate predictions in your Snowflake environment! you can do this via Snowpark Python code or Snowflake SQL. Let's generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.
+
+```bash
+use role accountadmin;
+select predict_failure(AIR_TEMPERATURE_K,
+       PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
+       TOOL_WEAR_MIN, HUMIDITY_RELATIVE_AVG) as predicted_failure, * from maintenance_hum;
+```
+
+![](assets/snowflake_inference.png)
 
 <!-- ------------------------ -->
-## Conclusion
-Duration: 1
+## Conclusion and Additional Considerations
+Duration: 5
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+This quickstart is just that, a quick way to get you started with using Sagemaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+![](assets/enterprise_arch.png)
+Credit: Chase Ginther
 
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+Looking specifically at Sagemaker two additional considerations that you may want to consider are:
+1. Rather than using an pre-built image then installing packages, you may want to crate your own custom image that includes the Snowpark packages and other packages that you commonly use.
+2. You may know that the Snowpark sandbox on Snowflake includes Anaconda supported packages which inludes the scikitlearn package that was used to build the logistic regression model. If you use other packages to build your models that are not supported by Anaconda you will have to install [third party packages in the Snowpark sandbox](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
+
+### What We covered
+- Using a Sagemaker Studio with Snowpark
+- Loading and transforming data via Snowpark with pushdown compute
+- Deploying models to Snowflake via a User Defined Function
+
+### Additional Considerations
+- There are some great blogs on Medium regarding Snowpark, Sagemaker and using Snowflake with AWS.
+
+- [Snowpark for python with Sagemaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
+
+- [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
+
+- [AWS and Snowflake](https://aws.amazon.com/financial-services/partner-solutions/snowflake/)
+
+If you have any questions, reach out to your Snowflake account team!
