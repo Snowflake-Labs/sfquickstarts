@@ -48,15 +48,25 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 Duration: 5
 
-1. Create conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8)
+1. Create Conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8)
 
-    `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
+    ```shell
+    conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+    ```
 
-2. Activate conda environment by running: `conda activate snowpark`
+2. Activate conda environment by running the following command:
 
-3. Install Snowpark for Python including compatible versions of Pandas and Streamlit by running:
+    ```shell
+    conda activate snowpark
+    ```
 
-    `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas streamlit`
+3. Install Snowpark for Python including Pandas and Streamlit by running the following commands:
+
+    ````shell
+    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas
+
+    pip install streamlit
+    ```
 
 <!-- ------------------------ -->
 ## Create Python Script
@@ -294,7 +304,6 @@ Here are a couple of tips and tricks to note:
 
 - You can change the theme (light or dark) by clicking on the hamburger menu on the top right and then clicking on the **Settings** menu
 - Making any changes to the source script and saving it will automatically prompt you to **Rerun** the application in the browser without having to stop and restart the application at the command line. (This can also be configured to always rerun the app without a prompt.)
-- You can create [multi-page apps in Stremlit](https://docs.streamlit.io/library/get-started/multipage-apps).
 - You can use Streamlit's `st.session_state` to save objects like `snowflake.snowpark.Session` so it's only created once during a session. For example:
 
 ```python
@@ -305,7 +314,17 @@ else:
   session = st.session_state['snowpark_session']
 ```
 
-- Checkout the [updated application on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/new_snowpark_streamlit_app.py)
+- Checkout the multi-page [updated application](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/new_snowpark_streamlit_app.py) that you can run by executing `streamlit run new_snowpark_streamlit_app.py`.
+
+![App](assets/img2.png)
+
+---
+
+![App](assets/img3.png)
+
+___
+
+![App](assets/img4.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

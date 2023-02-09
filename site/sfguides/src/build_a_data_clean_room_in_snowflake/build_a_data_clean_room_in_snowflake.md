@@ -3,9 +3,9 @@ id: build_a_data_clean_room_in_snowflake
 summary: Learn how to build a simple Data Clean Room in Snowflake
 categories: Demos
 environments: web
-status: Published 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Clean Rooms, Data Engineering 
+tags: Getting Started, Data Clean Rooms, Data Engineering
 
 # Build A Data Clean Room in Snowflake
 <!-- ------------------------ -->

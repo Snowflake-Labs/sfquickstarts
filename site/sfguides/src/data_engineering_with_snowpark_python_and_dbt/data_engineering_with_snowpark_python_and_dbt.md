@@ -38,11 +38,6 @@ With Snowflake's Snowpark Python capabilities, you no longer need to maintain, s
 
 This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt's new Python-based models.
 
-> aside negative
-> 
->  **Note** - As of 10/17/2022, Snowflake's Snowpark Python feature is in Public Preview.
-
-
 ### Prerequisites
 
 This guide assumes that you have a basic working knowledge of dbt, Python, and Anaconda.
@@ -113,7 +108,7 @@ models
 > 
 >  **Note** - The connection details you just entered have been stored in a dbt connection profile in the default location: `~/.dbt/profiles.yml`. To learn more about managing connection details with dbt profiles please see [configuring your profile](https://docs.getdbt.com/dbt-cli/configure-your-profile).
 
-To verify that everything is configured properly, open a terminal and execute `dbt run`. dbt should execute successfully and you should now have the following objects created in Snowflake in your `DEMO_DB.DEMO_SCHEMA` schema:
+To verify that everything is configured properly, open a terminal, cd to the folder that `dbt init` created and then execute `dbt run`. dbt should execute successfully and you should now have the following objects created in Snowflake in your `DEMO_DB.DEMO_SCHEMA` schema:
 
 * A table named `my_first_dbt_model`
 * A view named `my_second_dbt_model`
