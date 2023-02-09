@@ -27,16 +27,16 @@ In this quickstart, we will focus on the actual SQL code templates for ingesting
 - [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) and configured to your Snowflake account.
 - Familiarity and understanding of SQL syntax
 
-### What You'll Learn 
+### What You Will Learn 
 - DCDF Data Architecture
 - Incremental processing and Logical Partitions
 
-### What You’ll Need 
+### What You Will Need 
 - A Snowflake Account or [Trial Account](signup.snowflake.com), any edition will do as the scripts will run on any edition.
 - Login to Snowflake account that has ACCOUNTADMIN role access (Note: Free Trial accounts provide this automatically)
 - [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html)
 
-### What You’ll Build 
+### What You Will Build 
 - This lab will walk you through the process of deploying a sample ELT data pipeline utilizing the techniques for incremental processing using logical partitions andn the repeatable processing patterns.
 - End to end sample templates for a data pipeline for a sample set of data.
 - Data pipeline repeatable patterns for ingestion, transformation and consumable data assets.
@@ -1245,69 +1245,20 @@ where p_partkey in ( 105237594, 128236374);
 ![img](assets/presentation_part_dm_output.png)
 
 <!-- ------------------------ -->
-## BONUS - Type 2 Dimension
+## BONUS - Type 2 Slowly Changing Dimension
 Duration: 4
 
-During this section we will go through a type 2 slowly changing dimension load processing and utilize incremental processing for this dimension.   
+"Slowly changing dimension type 2 changes add a new row in the dimension with the updated attribute values. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row." -  Kimball Group.
 
-"Slowly changing dimension type 2 changes add a new row in the dimension with the updated attribute values. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row.
+During this section we will go through a Type 2 slowly changing dimension example of incremental processing for this dimension.   
 
-A minimum of three additional columns should be added to the dimension row with type 2 changes: 1) row effective date or date/time stamp; 2) row expiration date or date/time stamp; and 3) current row indicator."  Kimball Group.
+### Step 1 - Acquistion
+1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/customer_initial_acq.sql.
+2. In the first few lines of the script we are setting the context for this script. Run these.
+3. The *"copy into"* statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.  Run this.  
+![img](assets/raw_layer_customer_acq_results.png)
 
-### Step 1 - Explain code snippets
-1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/customer_acq.sql.
-2. In the first few lines of the script we are setting the context for this script. For the lab, the defaults are DEV_WEBINAR_ORDERS_RL_DB for the database and TPCH for the schema in the raw layer.
-``` sql
-use database DEV_WEBINAR_ORDERS_RL_DB;
-use schema   TPCH;
-```
-3. The *"copy into"* statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.    
-
-``` sql
-copy into
-    @~/customer
-from
-(
-    with l_customer as
-    (
-        select
-              row_number() over(order by uniform( 1, 60, random() ) ) as seq_no
-             ,c.c_custkey
-             ,c.c_name
-             ,c.c_address
-             ,c.c_nationkey
-             ,c.c_phone
-             ,c.c_acctbal
-             ,c.c_mktsegment
-             ,c.c_comment
-        from
-            snowflake_sample_data.tpch_sf1000.customer c
-    )
-    select
-         c.c_custkey
-        ,c.c_name
-        ,c.c_address
-        ,c.c_nationkey
-        ,c.c_phone
-        ,c.c_acctbal
-        ,c.c_mktsegment
-        ,c.c_comment
-        ,current_timestamp()            as last_modified_dt -- generating a last modified timestamp as customer of data acquisition.
-    from
-        l_customer c
-    order by
-        c.c_custkey
-)
-file_format      = ( type=csv field_optionally_enclosed_by = '"' )
-overwrite        = false
-single           = false
-include_query_id = true
-max_file_size    = 16000000
-;
-```
-
-### Step 2 - Execute code and Verify Results
-
+### Step 2 - Raw Layer
 1. Open the worksheet for the 100_acquisition/customer_acq.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
@@ -1320,7 +1271,7 @@ use schema   tpch;
 ![img](assets/Setting_warehouse.png)
 3. 
 
-![img](assets/raw_layer_customer_acq_results.png)
+
 
 ![img](assets/raw_layer_customer_stg_ld_results.png)
 
@@ -1354,7 +1305,9 @@ We encourage you to continue with learning about the Data Cloud Deployment Frame
 
 Also the github repo scripts contain more tables than what was covered in this lab.  It's a full working template model taking source data from raw, through integration, to presentation layer dimension model ready for consumption. Take the time to go through each one of them and run them over and over.  Feel free to use these as code templates to be utilized in your own environment and accounts for your processing.
 
-### What we've covered
+As you went through this quickstart, our hope is that you also noticed the repeatable patterns throughout these scripts which can facilitate that agile development process.
+
+### What we have covered
 - A data pipeline utilizing incremental processing and logical partition definitions
 - Walked through raw, integration and presentation layer scripts and how each utilizes incremental processing and the logical partition definitions.
 - Walked through code snippets for different processing patterns such as truncate/reload, insert overwrite, merge and delete/insert.
