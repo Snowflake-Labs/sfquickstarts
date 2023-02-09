@@ -637,18 +637,20 @@ During this step we will incrementally process through the data, loading it into
 execute immediate $$
 ```
 3. In the declaration section, we are defining 2 variables (l_start_dt, and l_end_dt) that we will use to process the logical partition start and end dates.  
-4. Then we are declaring the cursor which is the results of the dw_delta_date_range_f table function that will return a start and end date for a week.  
 ``` sql
 declare
   l_start_dt date;
   l_end_dt   date;
-  -- Grab the dates for the logical partitions to process
+```
+4. Then we are declaring the cursor which is the results of the dw_delta_date_range_f table function that will return a start and end date for a week.  
+``` sql
+declare
+  ...
   c1 cursor for select start_dt, end_dt FROM table(dev_webinar_common_db.util.dw_delta_date_range_f('week')) order by 1;
 ```
 5.  The *"for"* loop is where we will loop through the weeks and process a week at a time.  This is the incremental processing.
 ``` sql
 begin
-
   --
   -- Loop through the dates to incrementally process based on the logical partition definition.
   -- In this example, the logical partitions are by week.
@@ -662,9 +664,7 @@ begin
 end;
 ```
 6. Scroll down to the *"insert"* statement.  
-7. Inside that CTE *"with"* statement, l_stg, the surrogate key and hash diff columns (_shk) are being created in this CTE that will be used in this script, to assist in identifying which rows have changed.
-8. In that CTE, the data is also being filtered (*"where"* clause) from the line_item_stg table to select only those rows that have an orderdate that is in that logical partiton week.  Processing one week at a time.
-
+7. Inside that CTE *"with"* statement named l_stg, the surrogate key and hash diff columns (_shk) are being created in this CTE that will be used in this script, to assist in identifying which rows have changed.
 ``` sql
 insert into line_item_hist
 with l_stg as
@@ -700,11 +700,25 @@ with l_stg as
             ,s.*
         from
             line_item_stg s
+```
+
+8. In that CTE, the data is also being filtered (*"where"* clause) from the line_item_stg table to select only those rows that have an orderdate that is in that logical partiton week.  Processing one week at a time.
+``` sql
+insert into line_item_hist
+with l_stg as
+    (
+        --
+        -- Driving CTE to identify all records in the logical partition to be processed.
+        select
+            ...
+        from
+            line_item_stg s
         where
                 s.o_orderdate >= :l_start_dt
             and s.o_orderdate  < :l_end_dt
     )
 ```
+
 9. The next CTE named l_deduped will go through and dedupe the records in the prior CTE (l_stg) using the hash_diff to identify duplicate rows.  This eliminates duplicates from getting loaded into the permanent raw layer line_item_hist table.
 ``` sql
 ,l_deduped as
@@ -722,34 +736,11 @@ with l_stg as
             row_number() over( partition by dw_hash_diff order by last_modified_dt desc, dw_file_row_no )  = 1
     )
 ```
+
 10. The final outside *"select"* will again select from the permanent raw layer table (line_item_hist) for the same logical partition range (week), and compare it to the deduped staging records to identify what needs to be inserted into the line_item_hist table.
 ``` sql
-select
-         s.dw_line_item_shk
-        ,s.dw_hash_diff
-        ,s.dw_load_ts             as dw_version_ts
-        ,s.l_orderkey
-        ,s.o_orderdate
-        ,s.l_partkey
-        ,s.l_suppkey
-        ,s.l_linenumber
-        ,s.l_quantity
-        ,s.l_extendedprice
-        ,s.l_discount
-        ,s.l_tax
-        ,s.l_returnflag
-        ,s.l_linestatus
-        ,s.l_shipdate
-        ,s.l_commitdate
-        ,s.l_receiptdate
-        ,s.l_shipinstruct
-        ,s.l_shipmode
-        ,s.l_comment
-        ,s.last_modified_dt
-        ,s.dw_file_name
-        ,s.dw_file_row_no
-        ,current_timestamp()    as dw_load_ts
-    
+    select
+        ...
     from
         l_deduped s
     where
@@ -762,14 +753,16 @@ select
                 and o_orderdate  < :l_end_dt
         )
 ```
+
 11. **Important:**  The *"order by"* is a key point as it sorts the rows with the same orderdate together in the micropartitions as they are inserted into the table, to optimize query performance.
 ``` sql
     order by
         o_orderdate  -- physically sort rows by a logical partitioning date
     ;
 ```
+
 12. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/line_item_ld.sql
-13. This script is very similar to line_item_hist_ld.sql but this is a merge pattern.  This has the same anonymous block and same cursor definition with the table function to loop through the logical partitions.  Also it has the same *"for"* loop.
+13. This script is very similar to line_item_hist_ld.sql but this is a merge pattern.  This has the same anonymous block and same variable declarations and same cursor definition with the table function to loop through the logical partitions.  Also it has the same *"for"* loop.
 ``` sql
 execute immediate $$
 
@@ -790,6 +783,7 @@ begin
     l_end_dt   := record.end_dt;
     ...
 ```
+
 14. It has the same initial CTE (l_stg) to identify the line_item_stg records within that week of logical partitions. It also doing the same surrogate key and hash diff derivations.
 ``` sql
        with l_stg as
@@ -832,6 +826,7 @@ begin
                 and s.o_orderdate  < :l_end_dt
         )
 ```
+
 15. It has the same dedupe logic.
 ``` sql
 ,l_deduped as
@@ -918,7 +913,7 @@ use schema   tpch;
 4. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-6. Let's verify that the data was loaded into the line_item_hist table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
+5. Let's verify that the data was loaded into the line_item_hist table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
 ``` sql
 select * 
 from dev_webinar_orders_rl_db.tpch.line_item_hist 
@@ -928,7 +923,7 @@ order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
 
-7. Open the worksheet for the 200_raw/line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+6. Open the worksheet for the 200_raw/line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
@@ -936,13 +931,13 @@ use schema   tpch;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-8. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+7. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
 ![img](assets/Setting_warehouse.png)
 
-9. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+8. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-10. Let's verify that the data was loaded into the line_item table. Copy/Paste this query into your worksheet.
+9. Let's verify that the data was loaded into the line_item table. Copy/Paste this query into your worksheet.
 ``` sql
 select * 
 from dev_webinar_orders_rl_db.tpch.line_item 
@@ -952,7 +947,7 @@ order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
 
-11. Now we want to load the part data into the part table.  Open the worksheet for the 200_raw/part_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+10. Now we want to load the part data into the part table.  Open the worksheet for the 200_raw/part_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
@@ -960,10 +955,10 @@ use schema   tpch;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-12. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
+11. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
 ![img](assets/Setting_warehouse.png)
 
-13. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+12. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
 <!-- ------------------------ -->
