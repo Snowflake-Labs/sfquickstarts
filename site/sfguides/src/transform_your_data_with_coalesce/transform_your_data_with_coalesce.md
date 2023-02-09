@@ -1,7 +1,7 @@
 author: Alex Engelmann
 id: transform_your_data_with_coalesce
 summary: Accelerate Transformations with Coalesce and Snowflake
-categories: Getting-Started
+categories: Getting-Started, Data-Engineering, Data-Science
 environments: web
 status: final
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -46,7 +46,7 @@ When you first sign in, you'll be presented with the **Workspaces Dashboard**, w
 
 ![Launching a Workspace](assets/launch_workspace.png)
 
-Once you've done this you'll be presented with the **Build** interface.  This is where you'll spend most of your time creating nodes, building a graph with them, and transforming your data.  The other interface is the **Deploy** interface, which will be used to push your pipeline to other environments (QA, Production, etc.), including your graph and other metadata.
+Once you've done this you'll be presented with the **Build** interface.  This is where you'll spend most of your time creating nodes, building a graph with them, and transforming your data.  In Coalesce, each Node is a logical unit of work that represents a table, a view, or multiple Snowflake objects.  The other interface is the **Deploy** interface, which will be used to push your pipeline to other environments (QA, Production, etc.), including your graph and other metadata.
 
 > aside positive
 >
