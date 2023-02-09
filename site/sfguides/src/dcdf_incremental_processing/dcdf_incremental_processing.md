@@ -12,7 +12,7 @@ tags: Getting Started, Data Cloud Deployment Framework, DCDF, Data Engineering, 
 ## Overview 
 Duration: 3
 
-This quickstart was originally part of the Webinar series for the Data Cloud Deployment Framework (DCDF).  In [Webinar Episode 2](https://www.snowflake.com/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/) we focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.  The episode can be watched on demand as well.
+These topics of incremental processing and logical partitions was originally in Episode 2 of the Webinar series for the Data Cloud Deployment Framework (DCDF).  In [Webinar Episode 2](https://www.snowflake.com/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/) we focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.  The episode can be watched on demand as well.
 
 In this quickstart, we will focus on the actual SQL code templates for ingesting, transforming, and restructuring data into the presentation layer using incremental processing and logical partition definitions.
 
@@ -616,7 +616,7 @@ order by 1;
 
 <!-- ------------------------ -->
 ## Raw Layer - Incrementally Process
-Duration: 10
+Duration: 12
 
 During this step we will incrementally process through the data, loading it into the persistent tables in the raw layer utilizing the impacted partitions that were identified in the prior step. 
 
@@ -662,8 +662,9 @@ begin
 end;
 ```
 6. Scroll down to the *"insert"* statement.  
-7. Inside that CTE *"with"* statement, the data is being filtered (*"where"* clause) from the line_item_stg table only those rows that have an orderdate that is in that logical partiton week.
-8. Surrogate key and hash diff columns are being created in this CTE that will be used in this script, to assist in identifying which rows have changed.
+7. Inside that CTE *"with"* statement, l_stg, the surrogate key and hash diff columns (_shk) are being created in this CTE that will be used in this script, to assist in identifying which rows have changed.
+8. In that CTE, the data is also being filtered (*"where"* clause) from the line_item_stg table to select only those rows that have an orderdate that is in that logical partiton week.  Processing one week at a time.
+
 ``` sql
 insert into line_item_hist
 with l_stg as
@@ -721,8 +722,7 @@ with l_stg as
             row_number() over( partition by dw_hash_diff order by last_modified_dt desc, dw_file_row_no )  = 1
     )
 ```
-10. The final *"select"* will again select from the permanent raw layer table (line_item_hist) for the same logical partition range (week), and compare it to the deduped staging records to identify what needs to be inserted into the line_item_hist table.
-11. **Important:**  The *"order by"* is a key point as it sorts the rows with the same orderdate together in the micropartitions as they are inserted into the table, to optimize query performance.
+10. The final outside *"select"* will again select from the permanent raw layer table (line_item_hist) for the same logical partition range (week), and compare it to the deduped staging records to identify what needs to be inserted into the line_item_hist table.
 ``` sql
 select
          s.dw_line_item_shk
@@ -755,11 +755,15 @@ select
     where
         s.dw_hash_diff not in
         (
+            -- Select only the rows in that logical partition from the final table.
             select dw_hash_diff from line_item_hist 
             where
                     o_orderdate >= :l_start_dt
                 and o_orderdate  < :l_end_dt
         )
+```
+11. **Important:**  The *"order by"* is a key point as it sorts the rows with the same orderdate together in the micropartitions as they are inserted into the table, to optimize query performance.
+``` sql
     order by
         o_orderdate  -- physically sort rows by a logical partitioning date
     ;
@@ -784,6 +788,7 @@ begin
   for record in c1 do
     l_start_dt := record.start_dt;
     l_end_dt   := record.end_dt;
+    ...
 ```
 14. It has the same initial CTE (l_stg) to identify the line_item_stg records within that week of logical partitions. It also doing the same surrogate key and hash diff derivations.
 ``` sql
@@ -844,7 +849,7 @@ begin
             row_number() over( partition by dw_hash_diff order by last_modified_dt desc, dw_file_row_no )  = 1
     )
 ```
-16. But...it does have an additional CTE.  This CTE is important for partition pruning efficiencies.
+16. But...it does have an additional CTE.  This CTE is important for partition pruning efficiencies.  Selecting only those rows from the final table that are in the logical partition range we are processing.  
 ``` sql
 ,l_tgt as
         (
@@ -859,7 +864,6 @@ begin
         )
 ```
 17. Now let's look at the *"merge"* statement.  In the *"select"* statement below, the l_deduped CTE and l_tgt CTE are joined together with a left join to identify the rows that are in line_item_stg table that might not in the permanent table or where the hash_diff is different and the modified date is after what is already in the table.  
-18. **Important:** Another note is the *"on"* clause of the *"merge"* statement.  The logical partition dates are used there to filter/limit the full table scan on the line_item permanent table.  
 ``` sql
 -- Merge Pattern 
     --
@@ -884,6 +888,14 @@ begin
         order by
             s.o_orderdate  -- physically sort rows by logical partitioning date
     ) src
+```
+18. **Important:** Another note is the *"on"* clause of the *"merge"* statement.  The logical partition dates are used there to filter/limit the full table scan on the line_item permanent table for the *"merge"*.
+``` sql
+-- Merge Pattern 
+    --
+    merge into line_item tgt using
+    (
+      ...
     on
     (
             tgt.dw_line_item_shk = src.dw_line_item_shk
@@ -892,7 +904,7 @@ begin
     )
 ```
 ### Step 2 - Execute code and Verify Results
-1. Open the worksheet for the 200_raw/line_item_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+1. Select *"create worksheet from SQL file"*, select the 200_raw/line_item_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
