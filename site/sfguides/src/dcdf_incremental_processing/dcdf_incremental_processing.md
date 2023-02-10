@@ -616,7 +616,7 @@ order by 1;
 
 <!-- ------------------------ -->
 ## Raw Layer - Incrementally Process
-Duration: 12
+Duration: 15
 
 During this step we will incrementally process through the data, loading it into the persistent tables in the raw layer utilizing the impacted partitions that were identified in the prior step. 
 
