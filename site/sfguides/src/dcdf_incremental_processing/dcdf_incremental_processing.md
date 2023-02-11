@@ -998,6 +998,14 @@ use warehouse dev_webinar_wh;
 2. Put your cursor on the *"execute immediate"* command at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
+3. Verify the part table was loaded.  Highlight the query and run it.
+``` sql
+select *
+from dev_webinar_orders_rl_db.tpch.part
+where p_partkey in ( 105237594, 128236374);
+```
+![img](assets/raw_layer_part_verify.png)
+
 **ORDER_HIST_LD.SQL**
 1. Now we want to load the changed order data into the order_hist table.  Open the worksheet for the 200_raw/order_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
@@ -1023,6 +1031,14 @@ use warehouse dev_webinar_wh;
 
 2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
+
+3. Verify the orders table was loaded with our order.  Highlight the query and run it.
+``` sql
+select * 
+from dev_webinar_orders_rl_db.tpch.orders 
+where o_orderkey = 5722076550;
+```
+![img](assets/raw_layer_order_verify.png)
 
 <!-- ------------------------ -->
 ## Integration Layer
