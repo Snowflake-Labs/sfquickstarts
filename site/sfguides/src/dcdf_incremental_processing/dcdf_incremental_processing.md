@@ -35,6 +35,10 @@ In this quickstart, we will focus on the actual SQL code templates for ingesting
 - A Snowflake Account or [Trial Account](signup.snowflake.com), any edition will do as the scripts will run on any edition.
 - Login to Snowflake account that has ACCOUNTADMIN role access (Note: Free Trial accounts provide this automatically)
 - [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html)
+- Snowsight or Classic Ui will be used in these examples.  
+
+>aside negative
+> VS Code Snowflake Extension Note: If you are using VS Code Snowflake Extension to view the code and run it, the SHA1_BINARY fields will not display correctly.  
 
 ### What You Will Build 
 - This lab will walk you through the process of deploying a sample ELT data pipeline utilizing the techniques for incremental processing using logical partitions andn the repeatable processing patterns.
@@ -325,17 +329,20 @@ max_file_size    = 16000000
 ```
 
 ### Step 2 - Execute the code and Verify results
+In this step we will unload data for the line_item, part and orders data.
+
+**LINE_ITEM_ACQ.SQL**
+
 1. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 
 use database DEV_WEBINAR_ORDERS_RL_DB;
 use schema   TPCH;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-2. Set the warehouse in your worksheet to *DEV_WEBINAR_WH*.
-![img](assets/Setting_warehouse.png)
-3. Highlight the code to set the variables for l_start_dt, l_end_dt and run them.
+2. Highlight the code to set the variables for l_start_dt, l_end_dt and run them.
 ``` sql
 -- Set variables for this sample data for the time frame to acquire
 set l_start_dt = dateadd( day, -16, to_date( '1998-07-02', 'yyyy-mm-dd' ) );
@@ -343,36 +350,47 @@ set l_end_dt   = dateadd( day,   1, to_date( '1998-07-02', 'yyyy-mm-dd' ) );
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-4. Let's verify those variables have been set. Run the following statement in your worksheet.
+3. Let's verify those variables have been set. Run the following statement in your worksheet.
 ``` sql
 select $l_start_dt, $l_end_dt;
 ```
 ![img](assets/acq_start_end_dates.png)
 
-5. Set your cursor on the *"copy into"* command and run it.
-6. This might take around 2-3 minutes on a small warehouse.  If you want to increase the size of your warehouse, it will run faster. The output should be similar to this.
+4. Set your cursor on the *"copy into"* command and run it.
+5. This might take around 2-3 minutes on a small warehouse.  If you want to increase the size of your warehouse, it will run faster. The output should be similar to this.
 ![img](assets/acq_copy_output.png)
 
-7. Let's verify the number of files created. Paste this SQL into your worksheet and run it.  Output should be similar to this.
+6. Let's verify the number of files created. Paste this SQL into your worksheet and run it.  Output should be similar to this.
 ``` sql
 list @~/line_item;
 ```
 ![img](assets/acq_list_files.png)
 
-8. We are going to unload the part data into files so we can utilize this data later in the presentation layer. Select to *"create worksheet from SQL file"* and load the 100_acquisition/part_acq.sql.
-9. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
+**PART_ACQ.SQL**
+1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/part_acq.sql.
+2. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
-
 use database DEV_WEBINAR_ORDERS_RL_DB;
 use schema   TPCH;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-10. Set the warehouse in your worksheet to *DEV_WEBINAR_WH*.
-![img](assets/Setting_warehouse.png)
-
-11. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
+3. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
 ![img](assets/acq_part_results.png)
+
+**ORDERS_ACQ.SQL**
+1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/orders_acq.sql.
+2. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+3. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
+![img](assets/acq_orders_results.png)
 
 <!-- ------------------------ -->
 ## Raw Layer - Staging the data
@@ -438,28 +456,29 @@ on_error      = skip_file
 ```
 
 #### Step 2 - Execute code and Verify Results
+In this step we will load 3 _stg tables: line_item_stg, orders_stg and part_stg.
 
-1. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
+**LINE_ITEM_STG_LD.SQL**
+1. Make sure you have 200_raw/line_item_stg_ld.sql script open in Snowsight.  
+2. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
 use schema   tpch;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-
-4. Highlight the truncate command in the script and run it.
+3. Highlight the truncate command in the script and run it.
 ``` sql
 truncate table line_item_stg;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-5. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 1 minute to load the files. The results should look like this.
+4. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 1 minute to load the files. The results should look like this.
 ![img](assets/raw_layer_line_item_stg_load_complete.png)
 
-6. Let's verify the data was loaded.  Highlight this in your worksheet and run it.  
+5. Let's verify the data was loaded.  Highlight this in your worksheet and run it.  
 ``` sql
 select 
     *
@@ -474,7 +493,7 @@ order by
 7.  The results will look similar to this.  File name might differ.
 ![img](assets/raw_layer_copy_history_results.png)
 
-8. Let's verify that the lines that we are monitoring are loaded into the line_item_stg table. Copy/paste the below SQL into your worksheet and run it.
+8. Let's verify that the lines that we are monitoring are loaded into the line_item_stg table. Highlight this in your worksheet and run it.
 ``` sql
 select * 
 from dev_webinar_orders_rl_db.tpch.line_item_stg 
@@ -484,26 +503,47 @@ and l_partkey in ( 105237594, 128236374); -- 2 lines
 
 ![img](assets/raw_layer_verify_stg_ld.png)
 
-9. Now, we will load the part data into the staging table so we can utilize this later. Select to *"create worksheet from SQL file"* and load the 200_raw/part_stg_ld.sql.  
-10. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
+**PART_STG_LD.SQL**
+
+1. Now, we will load the part data into the staging table so we can utilize this later. Select to *"create worksheet from SQL file"* and load the 200_raw/part_stg_ld.sql.  
+2. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
 use schema   tpch;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-11. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-
-12. Highlight the truncate command in the script and run it.
+3. Highlight the truncate command in the script and run it.
 ``` sql
 truncate table part_stg;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-13. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
+4. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
 ![img](assets/raw_layer_part_stg_results.png)
+
+**ORDERS_STG_LD.SQL**
+
+1. Now, we will load the part data into the staging table so we can utilize this later. Select to *"create worksheet from SQL file"* and load the 200_raw/orders_stg_ld.sql.  
+2. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+3. Highlight the truncate command in the script and run it.
+``` sql
+truncate table orders_stg;
+```
+![img](assets/Statement_executed_successfully.png)
+
+4. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
+![img](assets/raw_layer_orders_stg_results.png)
 
 <!-- ------------------------ -->
 ## Raw Layer - Identify Impacted Partitions
@@ -583,21 +623,21 @@ $$
 ```
 
 ### Step 2 - Execute code and Verify Results
+**DW_DELTA_DATE_LD.SQL**
+
 1. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use database dev_webinar_common_db;
 use schema util;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-2. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-
-3. Set the cursor on the *"insert overwrite"* statement and run it. The output should look like the following.
+2. Set the cursor on the *"insert overwrite"* statement and run it. The output should look like the following.
 
 ![img](assets/delta_date_results.png)
 
-4. Verify that the order dates for 17 days were loaded into the dw_delta_date table. Copy/Paste this query into your worksheet.
+3. Verify that the order dates for 17 days were loaded into the dw_delta_date table. Highlight this query into your worksheet and run it.
 ``` sql
 select * 
 from dev_webinar_common_db.util.dw_delta_date
@@ -605,7 +645,7 @@ order by event_dt;
 ```
 ![img](assets/delta_date_load_verify.png)
 
-5. Verify the table function returns results. Copy/Paste this query into your worksheet and run it.  This will return 3 rows representing 3 weeks of data.  We will utilize this table function in future scripts.
+4. Verify the table function returns results as well. Highlight this query your worksheet and run it.  This will return 3 rows representing 3 weeks of data.  We will utilize this table function in future scripts.
 ``` sql
 select start_dt, end_dt 
 FROM table(dev_webinar_common_db.util.dw_delta_date_range_f('week')) 
@@ -899,21 +939,21 @@ begin
     )
 ```
 ### Step 2 - Execute code and Verify Results
+
+**LINE_ITEM_HIST_LD.SQL**
 1. Select *"create worksheet from SQL file"*, select the 200_raw/line_item_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
 use schema   tpch;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-
-4. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+2. Put your cursor on the *"execute immediate"* command at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-5. Let's verify that the data was loaded into the line_item_hist table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
+3. Let's verify that the data was loaded into the line_item_hist table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
 ``` sql
 select * 
 from dev_webinar_orders_rl_db.tpch.line_item_hist 
@@ -923,21 +963,19 @@ order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
 
-6. Open the worksheet for the 200_raw/line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+4. Open the worksheet for the 200_raw/line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
 use schema   tpch;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-7. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-
-8. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+5. Put your cursor on the *"execute immediate"* command at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-9. Let's verify that the data was loaded into the line_item table. Copy/Paste this query into your worksheet.
+6. Let's verify that the data was loaded into the line_item table. Highlight this query in your worksheet and run it.
 ``` sql
 select * 
 from dev_webinar_orders_rl_db.tpch.line_item 
@@ -947,18 +985,43 @@ order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
 
-10. Now we want to load the part data into the part table.  Open the worksheet for the 200_raw/part_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+**PART_LD.SQL**
+1. Now we want to load the part data into the part table.  Open the worksheet for the 200_raw/part_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
 use schema   tpch;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-11. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
+2. Put your cursor on the *"execute immediate"* command at the top of the script and run it.
+![img](assets/anonymous_block_success.png)
 
-12. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+**ORDER_HIST_LD.SQL**
+1. Now we want to load the changed order data into the order_hist table.  Open the worksheet for the 200_raw/order_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+![img](assets/anonymous_block_success.png)
+
+**ORDER_LD.SQL**
+1. Now we want to load the order data into the order table.  Open the worksheet for the 200_raw/order_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
 <!-- ------------------------ -->
@@ -1067,15 +1130,14 @@ merge into line_item_margin t using
 use role     sysadmin;
 use database dev_webinar_il_db;
 use schema   main;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-4. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-5. Let's verify that the data was loaded into the line_item_margin table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
+3. Let's verify that the data was loaded into the line_item_margin table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
 ``` sql
 -- Integration
 select m.*
@@ -1215,14 +1277,13 @@ insert overwrite into part_dm
 use role     sysadmin;
 use database dev_webinar_pl_db;
 use schema   main;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
-
-2. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-3. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
-4. Let's verify that the data was loaded into the order_line_fact table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
+
+3. Let's verify that the data was loaded into the order_line_fact table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
 ``` sql
 select olf.*
 from dev_webinar_pl_db.main.order_line_fact olf
@@ -1233,17 +1294,17 @@ and l.l_partkey in ( 105237594, 128236374);
 ```
 ![img](assets/presentation_order_line_results.png)
 
-5. Open the worksheet for the part_dm_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+4. Open the worksheet for the part_dm_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_pl_db;
 use schema   main;
+use warehouse dev_webinar_wh;
 ```
-6. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-7. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+5. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
-8. Let's verify that the data was loaded into the part_dm table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
+
+6. Let's verify that the data was loaded into the part_dm table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
 ``` sql
 select *
 from dev_webinar_pl_db.main.part_dm p
