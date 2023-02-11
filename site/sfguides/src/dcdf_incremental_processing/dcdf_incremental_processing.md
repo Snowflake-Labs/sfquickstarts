@@ -1288,6 +1288,8 @@ insert overwrite into part_dm
 ```
 
 ### Step 2 - Execute code and Verify Results
+**ORDER_LINE_FACT_LD.SQL**
+
 1. Open the worksheet for the order_line_fact_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
@@ -1310,23 +1312,25 @@ and l.l_partkey in ( 105237594, 128236374);
 ```
 ![img](assets/presentation_order_line_results.png)
 
-4. Open the worksheet for the part_dm_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+**PART_DM_LD.SQL**
+1. Open the worksheet for the 400_dimension/part_dm_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_pl_db;
 use schema   main;
 use warehouse dev_webinar_wh;
 ```
-5. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
+2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-6. Let's verify that the data was loaded into the part_dm table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
+3. Let's verify that the data was loaded into the part_dm table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
 ``` sql
 select *
 from dev_webinar_pl_db.main.part_dm p
 where p_partkey in ( 105237594, 128236374);
 ```
 ![img](assets/presentation_part_dm_output.png)
+
 
 <!-- ------------------------ -->
 ## BONUS - Type 2 Slowly Changing Dimension
