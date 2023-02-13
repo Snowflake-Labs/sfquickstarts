@@ -37,9 +37,6 @@ In this quickstart, we will focus on the actual SQL code templates for ingesting
 - [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html)
 - Snowsight or Classic Ui will be used in these examples.  
 
->aside negative
-> VS Code Snowflake Extension Note: If you are using VS Code Snowflake Extension to view the code and run it, the SHA1_BINARY fields will not display correctly.  
-
 ### What You Will Build 
 - This lab will walk you through the process of deploying a sample ELT data pipeline utilizing the techniques for incremental processing using logical partitions andn the repeatable processing patterns.
 - End to end sample templates for a data pipeline for a sample set of data.
@@ -251,7 +248,7 @@ use schema   TPCH;
 set l_start_dt = dateadd( day, -16, to_date( '1998-07-02', 'yyyy-mm-dd' ) );
 set l_end_dt   = dateadd( day,   1, to_date( '1998-07-02', 'yyyy-mm-dd' ) );
 ```
-4. The *"copy into"* statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.  As part of this copy we are modifying the data a bit to show changes in l_line_status over time.  
+4. The *"copy into"* statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.  As part of this *"copy into"* statement we are modifying the data a bit to show changes in l_line_status over time.  
 
 ``` sql
 -- run this 2 or 3 times to produce overlapping files with new and modified records.
@@ -953,7 +950,11 @@ use warehouse dev_webinar_wh;
 2. Put your cursor on the *"execute immediate"* command at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-3. Let's verify that the data was loaded into the line_item_hist table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
+3. Let's verify that the data was loaded into the line_item_hist table. Highlight this query in your worksheet.  If you have run these acquisition and load scripts multiple times you may see history changes in this table.
+
+>aside negative
+> VS Code Snowflake Extension Note: If you are using VS Code Snowflake Extension to view the code and run it, the SHA1_BINARY fields will not display correctly.  
+
 ``` sql
 select * 
 from dev_webinar_orders_rl_db.tpch.line_item_hist 
@@ -1153,7 +1154,7 @@ use warehouse dev_webinar_wh;
 2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-3. Let's verify that the data was loaded into the line_item_margin table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
+3. Let's verify that the data was loaded into the line_item_margin table. Highlight this query in your worksheet.  If you have run these load scripts multiple times you may see history changes in this table.
 ``` sql
 -- Integration
 select m.*
@@ -1301,7 +1302,7 @@ use warehouse dev_webinar_wh;
 2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-3. Let's verify that the data was loaded into the order_line_fact table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
+3. Let's verify that the data was loaded into the order_line_fact table. Highlight this query in your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
 ``` sql
 select olf.*
 from dev_webinar_pl_db.main.order_line_fact olf
@@ -1323,7 +1324,7 @@ use warehouse dev_webinar_wh;
 2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-3. Let's verify that the data was loaded into the part_dm table. Copy/Paste this query into your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
+3. Let's verify that the data was loaded into the part_dm table. Highlight this query in your worksheet.  If you have run these load scripts multiple times you may see history changes in this table. 
 ``` sql
 select *
 from dev_webinar_pl_db.main.part_dm p
