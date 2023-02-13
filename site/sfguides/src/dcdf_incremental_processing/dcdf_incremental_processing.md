@@ -64,7 +64,7 @@ Integration is used to centralize all business rules applied to the data. Perfor
 - Purpose is to have one place where business rules or logic are applied and the intermediate results are persisted.
 
 ### Presentation Layer
-Performs the re-organization of data from the raw and integration layers into various purpose-built solutions for reporting and analytics.  Scope can cover conforming dimensions, atomic fact aggregate fact tables, flat data sets for data science model building and views for governing exposure of data to end-users and applications.  Note that business rules should not be implemented within this processing layer.
+Performs the re-organization of data from the raw and integration layers into various purpose-built solutions for reporting and analytics.  Scope can cover conforming dimensions, atomic fact tables, aggregate fact tables, flat data sets for data science model building and views for governing exposure of data to end-users and applications.  Note that business rules should not be implemented within this processing layer.
 - Purpose built solutions for consumption, analytics and sharing
 - Recommend using permanent tables for incrementally updated tables.
 
@@ -117,17 +117,17 @@ Let's see how this works!
 ## Lab Overview
 Duration: 3
 
-Below is an overview diagram of what we will be building in this Quickstart.  Each step builds upon what was built in the prior step.  In this Quickstart we will build only the tables in this diagram.  There are other table scripts that are included in the code templates that can be used to build out the dimensional model using the same concepts we will use here.
+Below is an overview diagram of what we will be building in this Quickstart.  Each step builds upon what was built in the prior step.  We will build only the tables in this diagram.  There are other table scripts that are included in the code templates that can be used to build out the dimensional model using the same concepts we will use here.
 
 ![img](assets/overview_diagram.png)
 
 ### Lab Structure
 - **Explain Code Snippets**
     - We will work through each DCDF data architecture layer in sequence.  Acquisition, Raw, Integration and Presentation layer.
-    - At each layer, we will walk through the actual code and explain each code snippit on what is happening in the code.
+    - At each layer, we will walk through the actual code and explain each code snippit with what is happening in the code.
 - **Execute Code and Verify Results**
     - In these sections, you will execute the code in your environment
-    - We will verify the dataat each step along the way, that the data was loaded using our example line_items, orders and parts.  
+    - We will verify the data each step along the way.  We will use our example line_items, orders and parts to verify the data was loaded.  
 
 ### DCDF Data Architecture Layers
 
@@ -138,12 +138,12 @@ Below is an overview diagram of what we will be building in this Quickstart.  Ea
     - Transient tables are used for the _stg tables.
 
 - **Integration Layer**
-    - For our labs, we have identified a unit of work to derive the margin at the line item level. 
+    - For this Quickstart, we have identified a unit of work to derive the margin at the line item level. 
     - We will walk through the code to derive these intermediate results and how to utilize incremental processing for this.
 
 - **Presentation Layer**
     - In our example, we will create the order line fact table as well as the part dimension as part of a dimensional model that can be used for consumption.
-    - We will walk through how to incrementally process the new data coming in.
+    - We will walk through how to incrementally process the new data being loaded.
 
 - **Common database**
     - Used for common UDFs, file formats, stages and tables that are utilized across the layers.
@@ -189,18 +189,17 @@ Duration: 5
 ![img](assets/sample_data_set.png)
 
 ### Creating Example Databases, Schemas, Tables and Warehouse
-- Make sure you are in the folder on your laptop where you cloned the sample code.  You want to be at the top level where you see the sub-folders of 000_admin, 100_raw, etc.
+- Make sure you are in the folder on your laptop where you cloned the sample code from Github.  You will want to be at the top level where you see the sub-folders of 000_admin, 100_raw, etc.
 - Let's create the databases, tables and warehouse using the default names.
 - Run Snowsql from the command line.  This will create all the databases, schemas, tables and a warehouse that are needed for this sample code.  
 ``` sql
 snowsql -a <account_name> -u <username> -r sysadmin -D l_env=dev -f ddl_orch.sql -o output_file=ddl_orch.out
 ```
-- End of the output should show success like this screenshot.
 
 ![img](assets/snowsql_success.png)
 
 ### Example Line Items
-As part of the labs, we will monitor specific line item records.
+As part of the quickstart, we will monitor specific line item records.
 1. Login to your Snowflake account and open a worksheet. 
 2. Copy and paste this query into a worksheet.
 ``` sql
@@ -241,9 +240,10 @@ select
 ## Data Acquistion
 Duration: 7
 
-During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set, lineitem table data to generate the data files to load into our raw layer.  
+During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA database to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set, lineitem table data to generate the data files to load into our raw layer.  
 
 ### Step 1 - Explain code snippets
+#### LINE_ITEM_ACQ.SQL
 1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/line_item_acq.sql.
 ![img](assets/snowsight_load_from_file.png)
 ![img](assets/load_line_item_acq.png)
@@ -338,7 +338,7 @@ max_file_size    = 16000000
 ### Step 2 - Execute the code and Verify results
 In this step we will unload data for the line_item, part and orders data.
 
-**LINE_ITEM_ACQ.SQL**
+#### LINE_ITEM_ACQ.SQL
 
 1. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
@@ -373,7 +373,7 @@ list @~/line_item;
 ```
 ![img](assets/acq_list_files.png)
 
-**PART_ACQ.SQL**
+#### PART_ACQ.SQL
 1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/part_acq.sql.
 2. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
@@ -386,7 +386,7 @@ use warehouse dev_webinar_wh;
 3. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
 ![img](assets/acq_part_results.png)
 
-**ORDERS_ACQ.SQL**
+#### ORDERS_ACQ.SQL
 1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/orders_acq.sql.
 2. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
