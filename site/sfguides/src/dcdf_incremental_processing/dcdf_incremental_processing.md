@@ -117,28 +117,38 @@ Let's see how this works!
 ## Lab Overview
 Duration: 3
 
-Below is an overview diagram of what we will be building in this Quickstart.  Each step builds upon what was built in the prior step.
+Below is an overview diagram of what we will be building in this Quickstart.  Each step builds upon what was built in the prior step.  In this Quickstart we will build only the tables in this diagram.  There are other table scripts that are included in the code templates that can be used to build out the dimensional model using the same concepts we will use here.
 
 ![img](assets/overview_diagram.png)
 
-### Raw Layer
-- Staging tables used for most recent loaded data - *_stg 
-- History tables to track the history of changes, like an transaction log or audit table to record all changes to rows  - *_hist
-- Permanent tables are used to maintain the current state of those rows in that table. 
-- Transient tables are used for the _stg tables.
+### Lab Structure
+- **Explain Code Snippets**
+    - We will work through each DCDF data architecture layer in sequence.  Acquisition, Raw, Integration and Presentation layer.
+    - At each layer, we will walk through the actual code and explain each code snippit on what is happening in the code.
+- **Execute Code and Verify Results**
+    - In these sections, you will execute the code in your environment
+    - We will verify the dataat each step along the way, that the data was loaded using our example line_items, orders and parts.  
 
-### Integration Layer
-- For our labs, we have identified a unit of work to derive the margin at the line item level. 
-- We will walk through the code to derive these intermediate results and how to utilize incremental processing for this.
+### DCDF Data Architecture Layers
 
-### Presentation Layer
-- In our example, we will create the order line fact table as well as the part dimension as part of a dimensional model that can be used for consumption.
-- We will walk through how to incrementally process the new data coming in.
+- **Raw Layer**
+    - Staging tables used for most recent loaded data - *_stg 
+    - History tables to track the history of changes, like an transaction log or audit table to record all changes to rows  - *_hist
+    - Permanent tables are used to maintain the current state of those rows in that table. 
+    - Transient tables are used for the _stg tables.
 
-### Common database
-- Used for common UDFs, file formats, stages and tables that are utilized across the layers.
-- In our example we will create a table to hold the dates that need to be incrementally processed.  
-- There will also be a table function created in the common database utilized for the logical partitions.
+- **Integration Layer**
+    - For our labs, we have identified a unit of work to derive the margin at the line item level. 
+    - We will walk through the code to derive these intermediate results and how to utilize incremental processing for this.
+
+- **Presentation Layer**
+    - In our example, we will create the order line fact table as well as the part dimension as part of a dimensional model that can be used for consumption.
+    - We will walk through how to incrementally process the new data coming in.
+
+- **Common database**
+    - Used for common UDFs, file formats, stages and tables that are utilized across the layers.
+    - In our example we will create a table to hold the dates that need to be incrementally processed.  
+    - There will also be a table function created in the common database utilized for the logical partitions.
 
 <!-- ------------------------ -->
 ## Quickstart Setup
@@ -405,7 +415,10 @@ During this step we will load the acquired data from the prior step (Data Acquis
 > - Truncate/Reload pattern is used here to load the line_item_stg table.
 > - First we truncate the prior data, and then load the new into the line_item_stg table.
  
-#### Step 1 - Explain code snippets
+### Step 1 - Explain code snippets
+
+#### LINE_ITEM_STG_LD.SQL
+
 1. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/line_item_stg_ld.sql
 2. In the code, after setting the context, the next step is to truncate the line_item_stg table to remove any old ddata from the previous run.
 ``` sql
@@ -452,10 +465,10 @@ on_error      = skip_file
 ;
 ```
 
-#### Step 2 - Execute code and Verify Results
+### Step 2 - Execute code and Verify Results
 In this step we will load 3 _stg tables: line_item_stg, orders_stg and part_stg.
 
-**LINE_ITEM_STG_LD.SQL**
+#### LINE_ITEM_STG_LD.SQL
 1. Make sure you have 200_raw/line_item_stg_ld.sql script open in Snowsight.  
 2. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
@@ -500,7 +513,7 @@ and l_partkey in ( 105237594, 128236374); -- 2 lines
 
 ![img](assets/raw_layer_verify_stg_ld.png)
 
-**PART_STG_LD.SQL**
+#### PART_STG_LD.SQL
 
 1. Now, we will load the part data into the staging table so we can utilize this later. Select to *"create worksheet from SQL file"* and load the 200_raw/part_stg_ld.sql.  
 2. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
@@ -521,7 +534,7 @@ truncate table part_stg;
 4. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
 ![img](assets/raw_layer_part_stg_results.png)
 
-**ORDERS_STG_LD.SQL**
+#### ORDERS_STG_LD.SQL
 
 1. Now, we will load the part data into the staging table so we can utilize this later. Select to *"create worksheet from SQL file"* and load the 200_raw/orders_stg_ld.sql.  
 2. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
@@ -559,6 +572,8 @@ During this step we will identify the impacted partitions that were loaded into 
 > - Then we persist those dates into a table called *"dw_delta_date"* so that we can utilize those impacted partitions to do our incremental processing at each layer (raw, integration and presentation).
 
 ### Step 1 - Explain code snippets
+
+#### DW_DELTA_DATE_LD.SQL
 1. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/dw_delta_date_ld.sql
 2. After setting the context there is an *"insert"* statement.  As part of the *"insert"* statement, there is a [CTE (Common Table Expression)](https://docs.snowflake.com/en/user-guide/queries-cte.html) identified by the *"with"* statement inside the *"insert"* statement. This *"select"* identifies all the orderdates that were impacted with the load into the stg table.
 ``` sql
@@ -579,6 +594,9 @@ order by
     1
 ;
 ```
+
+#### DW_DELTA_DATE_RANGE_F.SQL
+
 3. As part of the objects we created back in the Getting Started Section, we created a table function called dw_delta_date_range_f.  This function will take a type of time period such as day, week, month, quarter and year as a parameter, and return rows with a start_date and end_date of that period.  
 4. In Snowsight, *"create worksheet from SQL file"*, select the 000_admin/dw_delta_date_range_f.sql
 ``` sql
@@ -620,7 +638,8 @@ $$
 ```
 
 ### Step 2 - Execute code and Verify Results
-**DW_DELTA_DATE_LD.SQL**
+
+#### DW_DELTA_DATE_LD.SQL
 
 1. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
@@ -642,7 +661,9 @@ order by event_dt;
 ```
 ![img](assets/delta_date_load_verify.png)
 
-4. Verify the table function returns results as well. Highlight this query your worksheet and run it.  This will return 3 rows representing 3 weeks of data.  We will utilize this table function in future scripts.
+#### DW_DELTA_DATE_RANGE_F.SQL
+
+1. Verify the table function returns results as well. Highlight this query your worksheet and run it.  This will return 3 rows representing 3 weeks of data.  We will utilize this table function in future scripts.
 ``` sql
 select start_dt, end_dt 
 FROM table(dev_webinar_common_db.util.dw_delta_date_range_f('week')) 
@@ -668,6 +689,9 @@ During this step we will incrementally process through the data, loading it into
 > - In the line_item table, we are peristing the current state of that line_item row.
 
 ### Step 1 - Explain code snippets
+
+#### LINE_ITEM_HIST_LD.SQL
+
 1. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/line_item_hist_ld.sql
 2. After we set the context, there is the statement as below.  Since we are using [SQL Scripting](https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index.html) this statement is used to create the anonymous block.
 ``` sql
@@ -797,9 +821,10 @@ with l_stg as
         o_orderdate  -- physically sort rows by a logical partitioning date
     ;
 ```
+#### LINE_ITEM_LD.SQL
 
-12. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/line_item_ld.sql
-13. This script is very similar to line_item_hist_ld.sql but this is a merge pattern.  This has the same anonymous block and same variable declarations and same cursor definition with the table function to loop through the logical partitions.  Also it has the same *"for"* loop.
+1. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/line_item_ld.sql
+2. This script is very similar to line_item_hist_ld.sql but this is a merge pattern.  This has the same anonymous block and same variable declarations and same cursor definition with the table function to loop through the logical partitions.  Also it has the same *"for"* loop.
 ``` sql
 execute immediate $$
 
@@ -821,7 +846,7 @@ begin
     ...
 ```
 
-14. It has the same initial CTE (l_stg) to identify the line_item_stg records within that week of logical partitions. It also doing the same surrogate key and hash diff derivations.
+3. It has the same initial CTE (l_stg) to identify the line_item_stg records within that week of logical partitions. It also doing the same surrogate key and hash diff derivations.
 ``` sql
        with l_stg as
         (
@@ -864,7 +889,7 @@ begin
         )
 ```
 
-15. It has the same dedupe logic.
+4. It has the same dedupe logic.
 ``` sql
 ,l_deduped as
     (
@@ -881,7 +906,7 @@ begin
             row_number() over( partition by dw_hash_diff order by last_modified_dt desc, dw_file_row_no )  = 1
     )
 ```
-16. But...it does have an additional CTE.  This CTE is important for partition pruning efficiencies.  Selecting only those rows from the final table that are in the logical partition range we are processing.  
+5. But...it does have an additional CTE.  This CTE is important for partition pruning efficiencies.  Selecting only those rows from the final table that are in the logical partition range we are processing.  
 ``` sql
 ,l_tgt as
         (
@@ -895,7 +920,7 @@ begin
                 and o_orderdate  < :l_end_dt
         )
 ```
-17. Now let's look at the *"merge"* statement.  In the *"select"* statement below, the l_deduped CTE and l_tgt CTE are joined together with a left join to identify the rows that are in line_item_stg table that might not in the permanent table or where the hash_diff is different and the modified date is after what is already in the table.  
+6. Now let's look at the *"merge"* statement.  In the *"select"* statement below, the l_deduped CTE and l_tgt CTE are joined together with a left join to identify the rows that are in line_item_stg table that might not in the permanent table or where the hash_diff is different and the modified date is after what is already in the table.  
 ``` sql
 -- Merge Pattern 
     --
@@ -921,7 +946,7 @@ begin
             s.o_orderdate  -- physically sort rows by logical partitioning date
     ) src
 ```
-18. **Important:** Another note is the *"on"* clause of the *"merge"* statement.  The logical partition dates are used there to filter/limit the full table scan on the line_item permanent table for the *"merge"*.
+7. **Important:** Another note is the *"on"* clause of the *"merge"* statement.  The logical partition dates are used there to filter/limit the full table scan on the line_item permanent table for the *"merge"*.
 ``` sql
 -- Merge Pattern 
     --
@@ -937,7 +962,7 @@ begin
 ```
 ### Step 2 - Execute code and Verify Results
 
-**LINE_ITEM_HIST_LD.SQL**
+#### LINE_ITEM_HIST_LD.SQL
 1. Select *"create worksheet from SQL file"*, select the 200_raw/line_item_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
@@ -964,7 +989,9 @@ order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
 
-4. Open the worksheet for the 200_raw/line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
+#### LINE_ITEM_LD.SQL
+
+1. Open the worksheet for the 200_raw/line_item_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_orders_rl_db;
@@ -973,10 +1000,10 @@ use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-5. Put your cursor on the *"execute immediate"* command at the top of the script and run it.
+2. Put your cursor on the *"execute immediate"* command at the top of the script and run it.
 ![img](assets/anonymous_block_success.png)
 
-6. Let's verify that the data was loaded into the line_item table. Highlight this query in your worksheet and run it.
+3. Let's verify that the data was loaded into the line_item table. Highlight this query in your worksheet and run it.
 ``` sql
 select * 
 from dev_webinar_orders_rl_db.tpch.line_item 
@@ -986,7 +1013,7 @@ order by 1;
 ```
 ![img](assets/raw_layer_line_item_hist_output.png)
 
-**PART_LD.SQL**
+#### PART_LD.SQL
 1. Now we want to load the part data into the part table.  Open the worksheet for the 200_raw/part_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
@@ -1007,20 +1034,7 @@ where p_partkey in ( 105237594, 128236374);
 ```
 ![img](assets/raw_layer_part_verify.png)
 
-**ORDER_HIST_LD.SQL**
-1. Now we want to load the changed order data into the order_hist table.  Open the worksheet for the 200_raw/order_hist_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
-``` sql
-use role     sysadmin;
-use database dev_webinar_orders_rl_db;
-use schema   tpch;
-use warehouse dev_webinar_wh;
-```
-![img](assets/Statement_executed_successfully.png)
-
-2. Put your cursor on the *"execute immediate"* command back up at the top of the script and run it.
-![img](assets/anonymous_block_success.png)
-
-**ORDER_LD.SQL**
+#### ORDER_LD.SQL
 1. Now we want to load the order data into the order table.  Open the worksheet for the 200_raw/order_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
@@ -1058,6 +1072,7 @@ During this step we will incrementally process an isolated unit of work deriving
 > - The impacted logical partitions have been identified and will be incrementally processed.  
 
 ### Step 1 - Explain code snippets
+#### LINE_ITEM_MARGIN_LD.SQL
 1. In Snowsight, *"create worksheet from SQL file"*, select the 310_derivation/line_item_margin_ld.sql
 2. This script is also using the anonymous block in SQL Scripting. 
 ``` sql
@@ -1142,6 +1157,7 @@ merge into line_item_margin t using
 ```
 
 ### Step 2 - Execute code and Verify Results
+#### LINE_ITEM_MARGIN_LD.SQL
 1. Open the worksheet for the line_item_margin_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
@@ -1181,6 +1197,7 @@ During this step we will incrementally process the data that was loaded, and re-
 > - The impacted logical partitions have been identified and will be incrementally processed in the presentation layer.
 
 ### Step 1 - Explain code snippets
+#### ORDER_LINE_FACT_LD.SQL
 1. In Snowsight, *"create worksheet from SQL file"*, select the 410_fact_atomic/order_line_fact_ld.sql
 2. This script is also using the anonymous block in SQL Scripting. 
 ``` sql
@@ -1289,7 +1306,7 @@ insert overwrite into part_dm
 ```
 
 ### Step 2 - Execute code and Verify Results
-**ORDER_LINE_FACT_LD.SQL**
+#### ORDER_LINE_FACT_LD.SQL
 
 1. Open the worksheet for the order_line_fact_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
@@ -1313,7 +1330,7 @@ and l.l_partkey in ( 105237594, 128236374);
 ```
 ![img](assets/presentation_order_line_results.png)
 
-**PART_DM_LD.SQL**
+#### PART_DM_LD.SQL
 1. Open the worksheet for the 400_dimension/part_dm_ld.sql.  Set the context of our script.  Highlight these in your worksheet, and run them to set the context.
 ``` sql
 use role     sysadmin;
