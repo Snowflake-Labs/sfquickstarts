@@ -158,7 +158,7 @@ Below is an overview diagram of what we will be building.  Each step builds upon
     - Permanent History tables to track the history of changes and having a suffix of _hist.
 
 - **Integration Layer**
-    - In this layer, we will identify a unit of work to derive the margin (what is margin? profit margin?) at the line item level. 
+    - In this layer, we will identify a unit of work to derive the margin (retail price minus cost) at the line item level. 
     - We will step through the code and extract these intermediate results by applying incremental processing.
 
 - **Presentation Layer**
