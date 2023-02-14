@@ -14,6 +14,8 @@ Duration: 3
 
 The topics of covered in this guide were originally presented in Episode 2 of Snowflake's Data Cloud Deployment Framework (DCDF) webinar series. [DCDF Webinar Episode 2](https://www.snowflake.com/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/) focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.
 
+In this quickstart, we will focus on the actual SQL code templates for ingesting, transforming, and restructuring data into the presentation layer using incremental processing and logical partition definitions.
+
 >aside negative
 >
 > **Caveat:** This DCDF Data Architecture quickstart and template scripts are for illustrative purposes only. These scripts can be run in any Snowflake account in order to reinforce the concepts and patterns presented in DCDF Webinar Episode 2. They can be customized for your own business use cases.
@@ -33,6 +35,12 @@ In this quickstart, we will build on the topics discussed in the webinar by load
 - Data Ingestion
 - Data Transformation
 - Incremental processing and Logical Partitions
+
+### What You Will Need 
+- A Snowflake Account or [Trial Account](signup.snowflake.com), any edition will do as the scripts will run on any edition.
+- Login to Snowflake account that has ACCOUNTADMIN role access (Note: Free Trial accounts provide this automatically)
+- [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html)
+- Snowsight or Classic Ui will be used in these examples.  
 
 ### What You Will Build 
 An extensible ELT data pipeline, using logical partitions, that employs repeatable patterns for ingestion, transformation and consumable data assets.
@@ -213,7 +221,7 @@ snowsql -a <account_name> -u <username> -r sysadmin -D l_env=dev -f ddl_orch.sql
 ![img](assets/snowsql_success.png)
 
 ### Example Line Items
-As part of the labs, we will monitor specific line item records.
+As part of the quickstart, we will monitor specific line item records.
 1. Login to your Snowflake account and open a worksheet. 
 2. Copy and paste this query into a worksheet.
 ``` sql
@@ -257,6 +265,7 @@ Duration: 7
 During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set, lineitem table data to generate the data files to load into our raw layer.  
 
 ### Step 1 - Explain code snippets
+#### LINE_ITEM_ACQ.SQL
 1. Using the Snowsight UI, select Worksheets from the left hand menu.
 2. Click the ellipsis next to the blue +Worksheets button.
 3. Select *"create worksheet from SQL file"* and load the 100_acquisition/line_item_acq.sql.
@@ -353,7 +362,7 @@ max_file_size    = 16000000
 ### Step 2 - Execute the code and Verify results
 In this step we will unload data for the LINE_ITEM, PART and ORDERS tables.
 
-**LINE_ITEM_ACQ.SQL**
+#### LINE_ITEM_ACQ.SQL
 
 1. If you haven't done so already, click the ellipsis next to the blue +Worksheets button.
 2. Select *"create worksheet from SQL file"* and load the 100_acquisition/line_item_acq.sql.
@@ -390,7 +399,7 @@ list @~/line_item;
 ```
 ![img](assets/acq_list_files.png)
 
-**PART_ACQ.SQL**
+#### PART_ACQ.SQL
 1. Click the ellipsis next to the blue +Worksheets button.
 2. Select to *"create worksheet from SQL file"* and load the 100_acquisition/part_acq.sql.
 3. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
@@ -404,7 +413,7 @@ use warehouse dev_webinar_wh;
 4. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
 ![img](assets/acq_part_results.png)
 
-**ORDERS_ACQ.SQL**
+#### ORDERS_ACQ.SQL
 1. Click the ellipsis next to the blue +Worksheets button.
 2. Select to *"create worksheet from SQL file"* and load the 100_acquisition/orders_acq.sql.
 3. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
@@ -1125,7 +1134,7 @@ begin
     l_start_dt := record.start_dt;
     l_end_dt   := record.end_dt;
 ```
-4. Just like the line_item_ld.sql file in the previous section, the merge processing pattern is being utilized here to select data by using the logical partitions.
+4. Just like the line_item_ld.sql file in the previous section, the merge processing pattern is being utilized here to select data by using the logical partitions. **Important:** Another note is the *"on"* clause of the *"merge"* statement.
 ``` sql
 merge into line_item_margin t using
     (
