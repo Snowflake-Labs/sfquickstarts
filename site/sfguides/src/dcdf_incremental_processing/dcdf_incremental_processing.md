@@ -628,7 +628,7 @@ order by
 
 #### DW_DELTA_DATE_RANGE_F.SQL (Additional Information)
 
-1. As part of the objects we created back in the Getting Started Section, we created a table function called DW_DELTA_DATE_RANGE_F. This table function will take a type of time period such as day, week, month, quarter and year as a parameter, and return rows with a start_date and end_date of that period.  
+1. As part of the objects we created back in the Getting Started Section, we created a table function called DW_DELTA_DATE_RANGE_F. This table function will take a type of time period such as day, week, month, quarter and year as a parameter, and return rows with a start_date and end_date of that period.  We want the end_dt to be one greater than the actual max when returned from the function.  This is so in our code for incremental processing we can use less than that end_date, to catch all data up through the end of that date.
 2. To review the code in Snowsight, *"create worksheet from SQL file"*, select the 000_admin/dw_delta_date_range_f.sql
 ``` sql
 use schema   &{l_common_schema};;
@@ -656,7 +656,7 @@ $$
                  else current_date()
              end                as partition_dt
             ,min( event_dt ) as start_dt
-            ,max( event_dt ) as end_dt
+            ,dateadd( day, 1, max( event_dt ) ) as end_dt  -- To provide end date 
         from
             dw_delta_date
         group by
@@ -1393,36 +1393,167 @@ where p_partkey in ( 105237594, 128236374);
 
 <!-- ------------------------ -->
 ## BONUS - Type 2 Slowly Changing Dimension
-Duration: 4
+Duration: 5
 
 >aside positive
 >Slowly changing dimension type 2 changes add a new row in the dimension with the updated attribute values. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row. -  Kimball Group.
 
-In this section we will go through incremental processing of a Type 2, slowly changing dimension.   
+In this section we will go through incremental processing of a Type 2, slowly changing dimension; customer.   We will go through running each layer in the DCDF for this customer data.  
 
 ### Step 1 - Acquistion
-1. Select to *"create worksheet from SQL file"* and load the 100_acquisition/customer_initial_acq.sql.
+#### CUSTOMER_ACQ.SQL
+1. In Snowsight,  *"create worksheet from SQL file"*, select the 100_acquisition/customer_acq.sql.
 2. In the first few lines of the script we are setting the context for this script.
-3. The *"copy into"* statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.  
+3. Here you will see a *"union all"* statement where we are creating some modified data for a specific customer to illustrate changes over time to the data.
+4. The *"copy into"* statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.  
 ![img](assets/raw_layer_customer_acq_results.png)
 
 ### Step 2 - Raw Layer
-1. Select to *"create worksheet from SQL file"* and open the worksheet for the 100_acquisition/customer_acq.sql.
-2. Highlight the following SQL commands in your worksheet and run them to set the context.
+#### CUSTOMER_STG_LD.SQL
+1. In Snowsight, *"create worksheet from SQL file"*, select the 100_acquisition/customer_stg_ld.sql.
+2. Highlight the following SQL statements in your worksheet and run them to set the context.
 ``` sql
 use role     sysadmin;
 use database dev_webinar_rl_orders_db;
 use schema   tpch;
+use warehouse dev_webinar_wh;
 ```
 ![img](assets/Statement_executed_successfully.png)
 
-3. Make sure you have selected the *DEV_WEBINAR_WH* warehouse.
-![img](assets/Setting_warehouse.png)
-4. 
+3. Place the cursor on the *"truncate table "* command and run it.
+![img](assets/Statement_executed_successfully.png)
 
-
-
+4. Place the cursor on the *"execute immediate"* command and run it.
 ![img](assets/raw_layer_customer_stg_ld_results.png)
+
+5. Let's verify that the data was loaded into the CUSTOMER_STG table.  Highlight the following query at the bottom of your worksheet and run it.
+``` sql
+select *
+from dev_webinar_orders_rl_db.tpch.customer_stg
+where c_custkey in (50459048);
+```
+![img](assets/raw_layer_customer_stg_verify_results.png)
+
+#### DW_DELTA_DATE_LD_BONUS.SQL
+1. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/dw_delta_date_ld_bonus.sql.  
+2. This script has been updated to identify logical partitions in the CUSTOMER_STG table as well as the LINE_ITEM_STG.
+3. Highlight the following SQL statements in your worksheet and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_rl_orders_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+4. Place the cursor on the *"insert overwrite"* statement and run it.
+![img](assets/raw_layer_dw_delta_date_bonus.png)
+
+#### CUSTOMER_HIST_LD.SQL
+1. In Snowsight, *"create worksheet from SQL file"*, select the 100_acquisition/customer_hist_ld.sql.
+2. Highlight the following SQL statements in your worksheet and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_rl_orders_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+3. Scroll down to the dw_customer_shk surrogate key generation in the *"with"* statement.  We are generating a surrogate key for each combination of the c_custkey and the change_date.  We want to use this in the presentation layer to match an order to the correct version of the customer at the time of the order.
+``` sql
+    select
+        -- generate hash key and hash diff to streamline processing
+        sha1_binary( s.c_custkey || to_char( s.change_date, 'yyyymmdd' ) )  as dw_customer_shk
+        --
+        -- note that last_modified_dt is not included in the hash diff since it only represents recency of the record versus an 
+        -- actual meaningful change in the data
+        ,sha1_binary( concat( s.c_custkey || to_char( s.change_date, 'yyyymmdd' )
+                                     ,'|', coalesce( to_char( s.change_date, 'yyyymmdd'), '~' )
+                                     ,'|', coalesce( s.c_name, '~' )
+                                     ,'|', coalesce( s.c_address, '~' )
+                                     ,'|', coalesce( to_char( s.c_nationkey ), '~' )
+                                     ,'|', coalesce( s.c_phone, '~' )
+                                     ,'|', coalesce( to_char( s.c_acctbal ), '~' )
+                                     ,'|', coalesce( s.c_mktsegment, '~' )
+                                     ,'|', coalesce( s.c_comment, '~' )
+                            )
+     
+                    )               as dw_hash_diff
+        ,s.*
+    from
+        customer_stg s
+    where
+            s.change_date >= :l_start_dt
+        and s.change_date  < :l_end_dt
+```
+4. Place the cursor on the *"execute immediate"* command and run it.  Here we are loading the CUSTOMER_HIST table using the same repeatable pattern as we did with the LINE_ITEM_HIST table.  
+![img](assets/raw_layer_customer_stg_ld_results.png)
+
+5. Let's verify that the data was loaded into the CUSTOMER_HIST table.  Highlight the following query at the bottom of your worksheet and run it.   
+``` sql
+select *
+from dev_webinar_orders_rl_db.tpch.customer_hist
+where c_custkey in (50459048)
+order by 5;
+```
+![img](assets/raw_layer_customer_hist_results.png)
+
+### Step 3 - Integration Layer
+There are no steps here for the integration layer as there aren't any business rules being defined for customer.
+
+### Step 4 - Presentation Layer
+#### CUSTOMER_DM.SQL
+1. In Snowsight, *"create worksheet from SQL file"*, select the 400_dimension/customer_dm_ld.sql.
+2. Highlight the following SQL statements in your worksheet and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_pl_db;
+use schema   main;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+3. Place the cursor on the *"execute immediate"* command and run it.  Here we are loading the CUSTOMER_DM table.  
+![img](assets/Statement_executed_successfully.png)
+
+4. Let's veriy that the data was loaded into the CUSTOMER_DM table.  Highlight the query below in your worksheet and run it.  There should be two rows, where the values of the c_acctbal are different.
+``` sql
+select *
+from dev_webinar_pl_db.main.customer_dm
+where c_custkey in (50459048)
+order by 5;
+```
+![img](assets/presentation_customer_dm_results.png)
+
+#### ORDER_LINE_FACT_BONUS_LD.SQL
+1. In Snowsight, *"create worksheet from SQL file"*, select the 410_fact_atomic/order_line_fact_bonus_ld.sql.
+2. Highlight the following SQL statements in your worksheet and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_pl_db;
+use schema   main;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+3. Place the cursor on the *"execute immediate"* command and run it.  Here we are loading the ORDER_LINE_FACT_BONUS table.  
+![img](assets/Statement_executed_successfully.png)
+
+4. Let's verify that the data was loaded into the ORDER_LINE_FACT_BONUS table and that we can see the one order with multiple line_items and the c_acctbal column is 1,293. Highlight the query below in your worksheet and run it.
+``` sql
+select 
+     c.c_custkey
+    ,c.c_name
+    ,c.c_acctbal
+    ,olf.*
+from dev_webinar_pl_db.main.customer_dm c
+   join dev_webinar_pl_db.main.order_line_fact_bonus olf
+     on olf.dw_customer_shk = c.dw_customer_shk
+where c.c_custkey in (50459048);
+order by olf.orderdate;
+```
+![img](assets/presentation_order_line_fact_bonus.png)
 
 <!-- ------------------------ -->
 ## Cleanup
