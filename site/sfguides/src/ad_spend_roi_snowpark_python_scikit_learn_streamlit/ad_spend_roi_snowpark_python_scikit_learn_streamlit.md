@@ -65,6 +65,18 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#
 
 ***IMP: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.***
 
+Run the following SQL commands to create the warehouse, database and schema.
+
+```sql
+CREATE OR REPLACE WAREHOUSE DASH_L;
+
+CREATE OR REPLACE DATABASE DASH_DB;
+
+CREATE OR REPLACE SCHEMA DASH_SCHEMA;
+
+USE DASH_DB.DASH_SCHEMA;
+```
+
 Run the following SQL commands to create table CAMPAIGN_SPEND from data hosted on publicly accessible S3 bucket.
 
 ```sql
@@ -132,7 +144,9 @@ Run the following commands to create Snowflake (internal) stages for storing Sto
 
 ```sql
 CREATE OR REPLACE STAGE dash_sprocs;
+
 CREATE OR REPLACE STAGE dash_models;
+
 CREATE OR REPLACE STAGE dash_udfs;
 ```
 
@@ -342,13 +356,13 @@ Duration: 10
 
 ### Running Streamlit App Locally
 
-- In a terminal window, browse to this folder and execute the following command to run the Streamlit application [Snowpark_Streamlit_Revenue_Prediction.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction.py) locally on your machine.
+In a terminal window, browse to this folder and execute the following command to run the Streamlit application [Snowpark_Streamlit_Revenue_Prediction.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction.py) locally on your machine.
 
 ```shell
 streamlit run Snowpark_Streamlit_Revenue_Prediction.py
 ```
 
-- If all goes well, you should see a browser window open with the app loaded as shown below.
+If all goes well, you should see a browser window open with the app loaded as shown below.
 
 ---
 
@@ -358,7 +372,7 @@ streamlit run Snowpark_Streamlit_Revenue_Prediction.py
 
 ### Running Streamlit App in Snowflake -- Streamlit-in-Snowflake (SiS)
 
-- If you have SiS enabled in your account, follow these steps to run the application in Snowsight instead of locally on your machine.
+If you have SiS enabled in your account, follow these steps to run the application in Snowsight instead of locally on your machine.
 
 #### ***IMP: SiS is in Private Preview as of Feburary 2023.***
 
@@ -370,7 +384,7 @@ streamlit run Snowpark_Streamlit_Revenue_Prediction.py
   6) At this point, you will be provided code for an example Streamlit application. Now open [Snowpark_Streamlit_Revenue_Prediction_SiS.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction_SiS.py) and copy-paste the code into the example Streamlit application.
   7) Click on **Run** on the top right
 
-- If all goes well, you should see the following app in Snowsight as shown below.
+If all goes well, you should see the following app in Snowsight as shown below.
 
 ---
 
@@ -378,7 +392,7 @@ streamlit run Snowpark_Streamlit_Revenue_Prediction.py
 
 ---
 
-### Save Data To Snowflake
+#### **Save Data To Snowflake**
 
 In both applications, adjust the sliders to see the predicted ROI change. You can also click on **Save to Snowflake** button to save the current allocations and predcted ROI into BUDGET_ALLOCATIONS_AND_ROI table.
 
@@ -410,7 +424,7 @@ session = snowpark.session._get_active_session()
 
 Duration: 3
 
-Congratulations! You've successfully trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations.
+Congratulations! You've successfully perfomred data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations.
 
 ### What You Learned
 
@@ -426,5 +440,4 @@ Congratulations! You've successfully trained a Linear Regression model to predic
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-- [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)
