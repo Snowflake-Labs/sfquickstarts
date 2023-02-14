@@ -1450,7 +1450,7 @@ Duration: 4
 
 This tutorial was designed as a hands-on introduction to the Data Cloud Deployment Framework (DCDF) data architecture incremental processing and logical partitions.
 
-We encourage you to continue learning about the Data Cloud Deployment Framework, by watching the [Data Cloud Deployment Framework Series Webinars](https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/) either on-demand on register for upcoming episodes PLACE LINK TO NEXT WEBINAR HERE.  
+We encourage you to continue learning about the Data Cloud Deployment Framework, by watching the [Data Cloud Deployment Framework Series Webinars](https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/) either on-demand on register for upcoming episodes.  
 
 Also the github repo contains more scripts than what was covered in this lab.  It's a full, working template model taking source data from the Raw layer, through the Integration layer, and finally to the Presentation layer dimension model, ready for consumption. Please take the time to go through each one of these scripts and slowly work through the examples. Feel free to use these as code templates to be implemented in your own environments and accounts for your data processing.
 
