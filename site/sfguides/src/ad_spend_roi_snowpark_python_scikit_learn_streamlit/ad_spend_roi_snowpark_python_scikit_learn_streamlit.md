@@ -330,8 +330,8 @@ The Notebook linked below covers the following machine learning tasks.
 1) Establish secure connection from Snowpark Python to Snowflake
 2) Load features and target from Snowflake table into Snowpark DataFrame
 3) Prepare features for model training
-4) Create a Python Stored Procedure to deploy model training code on Snowflake
-5) Create Python Scalar and Vectorized User-Defined Functions (UDF) for inference on new data points.
+4) Create a [Python Stored Procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-python) to deploy model training code on Snowflake
+5) Create Scalar and Vectorized (aka Batch) [Python User-Defined Functions (UDFs)](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs) for inference on new data points for online and offline inference respectively.
 
 ---
 
