@@ -1,6 +1,6 @@
 author: Jake Berkowsky
 id: cloudtrail_log_ingestion
-summary: This quickstart is a guide to ingesting and processing AWS CloudTrail events into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for analytics, threat detection and posture management.
+summary: AWS CloudTrail is an AWS service that helps you enable operational and risk auditing, governance, and compliance of your AWS account. By ingesting and analyzing these logs in Snowflake, practitioners are able to gain analytical insights and work toward securing their environments at scale. This quickstart is a guide to ingesting and processing AWS CloudTrail events into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for analytics, threat detection and posture management.
 categories: Cybersecurity
 environments: web
 status: Published 
@@ -12,9 +12,9 @@ tags: Cybersecurity, AWS
 ## Overview 
 Duration: 1
 
-AWS CloudTrail is an AWS service that helps you enable operational and risk auditing, governance, and compliance of your AWS account. Actions taken by a user, role, or an AWS service are recorded as events in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface, and AWS SDKs and APIs.
+AWS CloudTrail is an AWS service that helps you enable operational and risk auditing, governance, and compliance of your AWS account. Actions taken by a user, role, or an AWS service are recorded as events in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface, and AWS SDKs and APIs. By ingesting and analyzing these logs in Snowflake, practitioners are able to gain analytical insights and work toward securing their environments at scale.
 
-This quickstart is a guide to ingesting and processing AWS CloudTrail events into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for analytics, threat detection and posture management. More information about AWS CloudTrail can be found in the [AWS Cloudtrail User Guide](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html)
+This quickstart is a guide to ingesting and processing AWS CloudTrail events into Snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for analytics, threat detection and posture management. More information about AWS CloudTrail can be found in the [AWS Cloudtrail User Guide](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html)
 
 
 ### Prerequisites
@@ -23,7 +23,7 @@ This quickstart is a guide to ingesting and processing AWS CloudTrail events int
 - An S3 Logging Bucket, preferably in the same region as your Snowflake target account.
 
 ### Architecture
-![A diagram depicting the journey of Cloudtrail events to a snowflake database. The diagram is split between sections, AWS Cloud and Snowflake Cloud. The diagram begins on the AWS Cloud side where an arrow links the AWS Cloudtrail service to an S3 External stage, then to an SQS Queue with the description “Event Notification”. An arrow leads from the SQS queue to the Snowflake Cloud section of the diagram to an icon named Snowpipe. After Snowpipe the arrow leads back to S3 External stage with a description of “triggers”. Finally the path terminates on the Snowflake Cloud side at an icon named “Snowflake DB” with a description of “copy into”.](assets/cloudtrail_architecture_diagram.png)
+![A diagram depicting the journey of Cloudtrail events to a Snowflake database. The diagram is split between sections, AWS Cloud and Snowflake Cloud. The diagram begins on the AWS Cloud side where an arrow links the AWS Cloudtrail service to an S3 External stage, then to an SQS Queue with the description “Event Notification”. An arrow leads from the SQS queue to the Snowflake Cloud section of the diagram to an icon named Snowpipe. After Snowpipe the arrow leads back to S3 External stage with a description of “triggers”. Finally the path terminates on the Snowflake Cloud side at an icon named “Snowflake DB” with a description of “copy into”.](assets/cloudtrail_architecture_diagram.png)
 
 
 
@@ -58,7 +58,7 @@ Note: Cloudtrail logging may take some time to start creating records.
 ## Create a storage integration in Snowflake
 Duration: 3
 
-*Replace \<RoleName\> with the desired name of the role you’d like snowflake to use ( this role will be created in the next step).  Replace \<BUCKET_NAME\>/path/to/logs/ with the path to your CloudTrail logs as set in the previous step*
+*Replace \<RoleName\> with the desired name of the role you’d like Snowflake to use ( this role will be created in the next step).  Replace \<BUCKET_NAME\>/path/to/logs/ with the path to your CloudTrail logs as set in the previous step*
 
 ```sql
 create STORAGE INTEGRATION s3_int_cloudtrail_logs
@@ -114,7 +114,7 @@ aws iam create-role \
     ]
 }'
 ```
-Create an inline-policy to allow snowflake to add and remove files from S3
+Create an inline-policy to allow Snowflake to retrieve and remove files from S3
 
 ```bash
 aws iam put-role-policy \
@@ -127,7 +127,6 @@ aws iam put-role-policy \
         {
             "Effect": "Allow",
             "Action": [
-              "s3:PutObject",
               "s3:GetObject",
               "s3:GetObjectVersion",
               "s3:DeleteObject",
@@ -155,7 +154,7 @@ aws iam put-role-policy \
 ```
 You will now be able to see your role, policy and trust relationship in the console
 
-![Screenshot of snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
+![Screenshot of Snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
 
 ## Prepare Snowflake to receive data
 Duration: 6
@@ -169,7 +168,7 @@ create warehouse security_quickstart with
 ```
 
 
-Create External Stage using the storage integration and test that snowflake can test files. Make sure you include the trailing slash if using a prefix.
+Create External Stage using the storage integration and test that Snowflake can test files. Make sure you include the trailing slash if using a prefix.
 ```sql
 create stage cloudtrail_logs_staging
   url = 's3://<BUCKET_NAME>/<PREFIX>/'
@@ -245,6 +244,15 @@ Refresh Snowpipe to start the pipe and retrieve unloaded files
 alter pipe cloudtrail_pipe refresh;
 ```
 
+You can view recent pipe usage history using the following command
+```sql
+  select *
+  from table(snowflake.information_schema.pipe_usage_history(
+    date_range_start=>dateadd('hour',-1,current_timestamp()),
+    date_range_end=>current_timestamp(),
+    pipe_name=>'public.cloudtrail_pipe'
+  ));
+  ```
 
 ## Create a view to better query data
 Duration: 3
