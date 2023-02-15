@@ -1659,6 +1659,6 @@ During this quickstart, our hope is that you noticed the repeatable patterns in 
 - Walked through code examples used for different processing patterns such as truncate/reload, insert overwrite, merge and delete/insert.
 
 ### Potential Next Steps
-- Create a stored procedure for the LINE_ITEM_MARGIN logic
+- Create a stored procedure for the LINE_ITEM_MARGIN business rules logic
 - Create streams on the LINE_ITEM raw layer table. 
 - Create a Snowflake Task to execute the LINE_ITEM_MARGIN stored procedure when there is data in the LINE_ITEM stream.
