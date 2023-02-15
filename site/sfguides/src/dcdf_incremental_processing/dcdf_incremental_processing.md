@@ -148,7 +148,15 @@ Below is an overview diagram of what we will be building.  Each step builds upon
 
 - **Execute Code and Verify Results**
     - In these sections, you will execute the code in your environment.
-    - We will validate that the data was loaded using our example tables line_items, orders and part.  
+    - We will validate that the data was loaded using our example tables line_items, orders, part and partsupp.  
+
+### Lab summary
+- We are loading data for 17 days(logical partition) between 1998-06-18 and 1998-07-02 representing three distinct weeks.
+- Generate CSV files for logical partition range from Snowflake Sample tables.
+- Save this date range in a separate common delta table.
+- For Raw data layer, use delta table to load data in Line Item History and Line Item table.
+- Generate surrogate key and hash value to ensure only unique data is merged in Raw table.
+- Use same Delta table to load data in subsequent layers(Integration and Presentation)
 
 ### DCDF Data Architecture Layers
 
@@ -167,9 +175,8 @@ Below is an overview diagram of what we will be building.  Each step builds upon
 
 - **Common database**
     - In this layer, we will create the DW_DELTA_DATE table that will be used for incremental processing.  
-> aside positive
->
-> A table function named DW_DELTA_DATE_RANGE_F will be created in the Common database and utilized for the logical partitions. This will take place in the Quickstart Setup section. 
+    - A table function named DW_DELTA_DATE_RANGE_F will be created in the Common database and utilized for the logical partitions. This will take place in the Quickstart Setup section. 
+
 
 <!-- ------------------------ -->
 ## Quickstart Setup
@@ -260,9 +267,9 @@ select
 
 <!-- ------------------------ -->
 ## Data Acquistion
-Duration: 7
+Duration: 15
 
-During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set, lineitem table data to generate the data files to load into our raw layer.  
+During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set for tables lineitem, orders, part, and partsupp to generate the data files to load into our raw layer.  
 
 ### Step 1 - Explain code snippets
 #### LINE_ITEM_ACQ.SQL
@@ -427,11 +434,25 @@ use warehouse dev_webinar_wh;
 4. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
 ![img](assets/acq_orders_results.png)
 
+#### PARTSUPP_ACQ.SQL
+1. Click the ellipsis next to the blue +Worksheets button.
+2. Select to *"create worksheet from SQL file"* and load the 100_acquisition/partsupp_acq.sql.
+3. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+4. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
+![img](assets/acq_partsupp_results.png)
+
 <!-- ------------------------ -->
 ## Raw Layer - Staging the data
-Duration: 7
+Duration: 10
 
-In this section, we will take the acquired data from the Internal Table Stage mentioned in the previous section and load it into the staging tables in the Raw layer.
+In this section, we will take the acquired data from the Internal Table Stage mentioned in the previous section and load it into the staging tables in the Raw layer.  We will load LINE_ITEM_STG, ORDER_STG, PART_STG, and PARTSUPP_STG tables.
 
 ![img](assets/raw_layer_load_stg_diagram.png)
 >aside positive
@@ -494,7 +515,7 @@ on_error      = skip_file
 ```
 
 ### Step 2 - Execute code and Verify Results
-In this step we will load 3 _stg tables: LINE_ITEM_STG, ORDERS_STG and PART_STG.
+In this step we will load 3 _stg tables: LINE_ITEM_STG, ORDERS_STG, PART_STG and PARTSUPP_STG.
 
 #### LINE_ITEM_STG_LD.SQL
 1. First, we will load the Line Item data into the LINE_ITEM_STG table.
@@ -585,6 +606,28 @@ truncate table orders_stg;
 
 5. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
 ![img](assets/raw_layer_orders_stg_results.png)
+
+#### PARTSUPP_STG_LD.SQL
+
+1. Finally, we will load the Orders data into the PARTSUPP_STG table. 
+2. Select to *"create worksheet from SQL file"* and load the 200_raw/partsupp_stg_ld.sql.  
+3. Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+4. Highlight the truncate command in the script and run it.
+``` sql
+truncate table partsupp_stg;
+```
+![img](assets/Statement_executed_successfully.png)
+
+5. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
+![img](assets/raw_layer_partsupp_stg_results.png)
 
 <!-- ------------------------ -->
 ## Raw Layer - Identify Impacted Partitions
@@ -707,7 +750,7 @@ order by 1;
 ## Raw Layer - Incrementally Process
 Duration: 15
 
-In this section we will incrementally process the data and load it into the persistent tables in the Raw layer by utilizing the impacted partitions that were identified in the prior step. 
+In this section we will incrementally process the data and load it into the persistent tables in the Raw layer by utilizing the impacted partitions that were identified in the prior step.  We will load LINE_ITEM, LINE_ITEM_HIST, PART, ORDERS, and PARTSUPP tables.
 
 ![img](assets/raw_layer_incremental_processing.png)
 
@@ -1092,6 +1135,29 @@ where o_orderkey = 5722076550;
 ```
 ![img](assets/raw_layer_order_verify.png)
 
+#### PARTSUPP_LD.SQL
+1. Now we want to load the partsupp data into the PARTSUPP table.  
+2. Select *"create worksheet from SQL file"* and open the 200_raw/partsupp_ld.sql file.  
+3. Highlight the following SQL statements in the worksheet and run them to set the context.
+``` sql
+use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+```
+![img](assets/Statement_executed_successfully.png)
+
+2. Put your cursor on the *"execute immediate"* command and run it.
+![img](assets/anonymous_block_success.png)
+
+3. Verify the PARTSUPP table was loaded with the partsupp data.  Highlight the following query and run it.
+``` sql
+select * 
+from dev_webinar_orders_rl_db.tpch.partsupp
+where ps_partkey in ( 105237594, 128236374);
+```
+![img](assets/raw_layer_partsupp_verify.png)
+
 <!-- ------------------------ -->
 ## Integration Layer
 Duration: 10
@@ -1347,7 +1413,7 @@ insert overwrite into part_dm
 ### Step 2 - Execute code and Verify Results
 #### ORDER_LINE_FACT_LD.SQL
 
-1. In Snowsight, *"create worksheet from SQL file"* and open the worksheet for the order_line_fact_ld.sql.
+1. In Snowsight, *"create worksheet from SQL file"* and open the worksheet for the 410_fact_atomic/order_line_fact_ld.sql.
 2. Highlight the following SQL statements in your worksheet and run them to set the context.
 ``` sql
 use role     sysadmin;
