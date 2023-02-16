@@ -185,11 +185,7 @@ Duration: 5
 ### Clone Repository for Quickstart
 The sample code templates provided will be used to demonstrate incremental processing and logical partitions.  This code is written using SQL Scripting.  The code is tool ignostic and can be easily implemented into your tool set.
 
-<<<<<<< HEAD
 To clone the repository for this Quickstart, visit the [DCDF Incremental Processing associated GitHub Repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/dcdf_incremental_processing). Click on the green "Code" icon near the top of the page to obtain the "HTTPS" link needed to clone the repository. For more information on cloning a git repository please refer to the [GitHub Docs](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
-=======
-To clone the repository for this Quickstart, visit the [DCDF Incremental Processing associated GitHub Repository](https://github.com/Snowflake-Labs/samples/dcdf_incremental_processing). Click on the green "Code" icon near the top of the page to obtain the "HTTPS" link needed to clone the repository. For more information on cloning a git repository please refer to the [GitHub Docs](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
->>>>>>> fc064237a6752a6a194e613f5cf575afd2b761e5
 
 <img src="assets/git_repo_url.png" width="300" />
 
