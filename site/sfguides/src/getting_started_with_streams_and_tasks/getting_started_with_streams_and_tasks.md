@@ -38,8 +38,7 @@ While not covered in this exercise, one can use these building blocks to further
 ### What You’ll Need 
 To participate in the virtual hands-on lab, attendees need the following:
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with **ACCOUNTADMIN** access
-- Be able to download a SQL File, or will have to copy/paste each command from this Guide
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?labs=getStartedWithStreamsAndTasks) with **ACCOUNTADMIN** access
 
 ### What You’ll Build 
 - A Snowflake database that contains all data and objects built in this lab
@@ -52,29 +51,10 @@ To participate in the virtual hands-on lab, attendees need the following:
 ## Setting up Snowflake
 Duration: 5
 
-### Download
-The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab. **Click the green button to download the file**
-<button>[Data_Engineering_Streams_Tasks_VHOL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting_started_with_streams_and_tasks/files/Data_Engineering_Streams_Tasks_VHOL.sql)</button>
+### Login and Setup Lab
+Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to [https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks](https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
 
-### Login
-At this point log into your Snowflake. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
-
-### Create a Worksheet
-In the Snowflake UI click on **Worksheets** on the left side.   
-![](assets/image2-1.png)
-
-Create a new Worksheet by clicking on the new worksheet button (+ Worksheet) on the top right side.     
-![](assets/image2-2.png)
-
-To ingest SQL file in the Snowflake UI, navigate to the worksheet name (the worksheet name will be the date and time) on the top left hand side and click on the small down arrow next to it. This will give you the option to change the worksheet name
-and also the option to import a SQL scrpt file. Click on **Import SQL from File**   
-![](assets/image2-3.png)
-
-You can now select the .sql file you downloaded and named earlier.
-
-The SQL script file should show up as text in a new worksheet. You may need to scroll to the top of the file to start executing commands.
-
-Each step throughout the Snowflake portion of the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code one command at-a-time as we walk through the lab.
+If you do not have an account, signup for a trial account [here](https://signup.snowflake.com/?labs=getStartedWithStreamsAndTasks) and you will be automatically taken to the Lab Setup Page after account activation.
 
 ### Set your Role
 Finally, switch to the ACCOUNTADMIN role.  If you just created an evaluation account to go through this Lab, this should be easy.  However, if you are using an established account and find this role missing from your list, you may need assistance to complete the next few steps.  Creating a Role, Database, Stages, Tasks, and monitoring tasks executed by 'System' requires higher-level permissions.    

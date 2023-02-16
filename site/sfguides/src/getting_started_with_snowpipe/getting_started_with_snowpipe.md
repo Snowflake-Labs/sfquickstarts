@@ -28,13 +28,22 @@ Let's look into how Snowpipe can be configured for continual loading. Then, we c
 - Next steps with database automation
 
 ### What You’ll Need 
-- Create a [Snowflake account](https://signup.snowflake.com/) with an **ACCOUNTADMIN** role
+- Create a [Snowflake account](https://signup.snowflake.com/?labs=getStartedWithSnowpipe) with an **ACCOUNTADMIN** role
 - AWS [Account](https://aws.amazon.com/free/?sc_icampaign=acq_aws_takeover-1st-visit-free-tier&sc_ichannel=ha&sc_icontent=awssm-evergreen-1st-visit&sc_iplace=hero&trk=ha_awssm-evergreen-1st-visit&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc) with access to a Snowflake supported [region](https://docs.snowflake.com/en/user-guide/intro-regions.html)
 
 ### What You’ll Build 
 - Automated data loading with Snowpipe between AWS S3 bucket and Snowflake database.
 
 After ensuring the prerequisites detailed in this section, jump into the queueing data integration options with Snowpipe.
+
+<!-- ------------------------ -->
+## Setting up Snowflake
+Duration: 2
+
+### Login and Setup Lab
+Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to [https://app.snowflake.com/resources/labs/getStartedWithSnowpipe](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+
+If you do not have an account, signup for a trial account [here](https://signup.snowflake.com/?labs=getStartedWithSnowpipe) and you will be automatically taken to the Lab Setup Page after account activation.
 
 <!-- ------------------------ -->
 ## Choose the Data Ingestion Method
