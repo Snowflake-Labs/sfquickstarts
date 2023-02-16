@@ -63,7 +63,7 @@ Duration: 15
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials and create tables, load data, and setup Snowflake internal stages as described below.
 
-***IMP: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.***
+***IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.***
 
 Run the following SQL commands to create the warehouse, database and schema.
 
@@ -152,12 +152,12 @@ CREATE OR REPLACE STAGE dash_udfs;
 
 Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/setup.sql) n Snowsight and run all SQL statements to create the objects and load data from AWS S3.
 
-***IMP: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.***
+***IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.***
 
 <!-- ------------------------ -->
 ## Clone GitHub Repository
 
-Duration: 10
+Duration: 8
 
 This section covers cloning of the GitHub repository and creating a Python 3.8 environment.
 
@@ -165,11 +165,18 @@ This section covers cloning of the GitHub repository and creating a Python 3.8 e
 
 - Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
 
-- From the root folder *sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn*, create conda environment. (Let's name the environment **snowpark-scikit**.) Then, activate conda environment and install Snowpark for Python and other libraries including Streamlit.
+- From the root folder *sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn*, create conda environment. Let's name the environment **snowpark-scikit**.
+
+***IMPORTANT: If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.***
 
 ```python
 conda create --name snowpark-scikit -c https://repo.anaconda.com/pkgs/snowflake python=3.8
 conda activate snowpark-scikit
+```
+
+- Install Snowpark Python and other libraries including Streamlit
+
+```python
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
 pip install streamlit
 ```
@@ -199,7 +206,7 @@ To get started, follow these steps:
 
 1) In a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
 
-2) Open and run through the [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)
+2) Open and run through the cells in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)
 
   **Note**: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-scikit***-- which is the name of the environment created in **Clone GitHub Repository** step.
 
@@ -207,7 +214,7 @@ To get started, follow these steps:
 
 In the above Notebook, there's a section that demonstrates how to build and run data pipelines as [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
 
-For reference purpose, here are the code snippets.
+For reference purposes, here are the code snippets.
 
 #### **Root/parent Task**
 
@@ -290,7 +297,7 @@ monthly_revenue_data_pipeline_task = """
 session.sql(monthly_revenue_data_pipeline_task).collect()
 ```
 
-***Note***: In the ***monthly_revenue_data_pipeline_task*** above, notice the **AFTER campaign_spend_data_pipeline_task** clause.
+***Note***: In the ***monthly_revenue_data_pipeline_task*** above, notice the **AFTER campaign_spend_data_pipeline_task** clause which makes it a dependant task.
 
 Here is how to start the tasks.
 
@@ -318,7 +325,7 @@ These tasks and their [DAGs](https://docs.snowflake.com/en/user-guide/tasks-intr
 
 ### Error Notificatons For Tasks
 
-Snowflake can push error notifications to a cloud messaging service when it encounters errors while executing tasks. For more information, please refer to the [documentation](https://docs.snowflake.com/en/user-guide/tasks-errors).
+You can also enable push notifications to a cloud messaging service when errors occur while tasks are being executed. For more information, please refer to the [documentation](https://docs.snowflake.com/en/user-guide/tasks-errors).
 
 <!-- ------------------------ -->
 ## Machine Learning
@@ -374,7 +381,7 @@ If all goes well, you should see a browser window open with the app loaded as sh
 
 If you have SiS enabled in your account, follow these steps to run the application in Snowsight instead of locally on your machine.
 
-#### ***IMP: SiS is in Private Preview as of Feburary 2023.***
+#### ***IMPORTANT: SiS is in Private Preview as of Feburary 2023.***
 
   1) Click on **Streamlit Apps** on the left navigation menu
   2) Click on **+ Streamlit App** on the top right
@@ -394,7 +401,7 @@ If all goes well, you should see the following app in Snowsight as shown below.
 
 #### **Save Data To Snowflake**
 
-In both applications, adjust the sliders to see the predicted ROI change. You can also click on **Save to Snowflake** button to save the current allocations and predcted ROI into BUDGET_ALLOCATIONS_AND_ROI table.
+In both applications, adjust the advertsing budget sliders to see the predicted ROI for those allocations. You can also click on **Save to Snowflake** button to save the current allocations and predcted ROI into BUDGET_ALLOCATIONS_AND_ROI Snowflake table.
 
 ### Differences between two Streamlit Apps
 
@@ -424,7 +431,7 @@ session = snowpark.session._get_active_session()
 
 Duration: 3
 
-Congratulations! You've successfully perfomred data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations.
+Congratulations! You've successfully performed data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations.
 
 ### What You Learned
 
