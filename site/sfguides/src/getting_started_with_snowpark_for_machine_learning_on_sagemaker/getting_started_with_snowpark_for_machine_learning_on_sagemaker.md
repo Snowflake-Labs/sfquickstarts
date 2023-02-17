@@ -61,10 +61,15 @@ The use case uses information related to machine diagnostics (torque, rotational
 ## Set Up and Load Data
 Duration: 15
 
-First, you will access your AWS Sagemaker Studio and change the environment so that you are using an image that utilizes Python version 3.8. The Pytorch 3.8 or Tensorflow 3.8 will work for this quickstart.
+If you haven't used SageMaker Studio before, for first time setup you will need to create a SageMaker Studio domain by following the [Quick setup](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html) process. After creating your domain you should be able to [Launch SageMaker Studio from the Domain details page](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-launch.html#studio-launch-console-domain).
+
+Once you've opened SageMaker Studio, our first step will be to launch a Python 3.8 notebook environment for Snowpark compatibility. To do this, select the 'Open Launcher' tile from the Home tab and then 'Change environment' so that you are using an image that utilizes Python version 3.8. The following images will work well for this quickstart:
+- PyTorch 1.12 Python 3.8 CPU Optimized
+- TensorFlow 2.6 Python 3.8 CPU Optimized
+
 ![](assets/sagemaker_image.png)
 
-Now open up a terminal window: 
+Now open up a terminal window:
 ![](assets/terminal_sagemaker.png)
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
