@@ -78,14 +78,26 @@ git clone https://github.com/marzillo-snow/getting_started_with_snowpark_on_sage
 cd getting_started_with_snowpark_on_sagemaker
 ```
 
-Work through the set up script here to crate a database, warehouse and load the data: 
-[0_setup.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_sagemaker/blob/main/0_setup.ipynb).
+You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
 
-Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. You just a little bit of Snowpark to get that data loaded!
+You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
+```python
+connection_parameters = {
+    "account": "hk12345.eu-west-2.aws",
+    "host": "hk12345.eu-west-2.aws.snowflakecomputing.com",
+    "user": <your_user>, 
+    "password": <your_password>,
+    "role": <your_role>, # using "ACCOUNTADMIN" may simplify things in an isolated lab environment
+    }
+```
+
+> Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so AWS Secrets Manager or a similar tool would be appropriate.
+
+Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. Review the steps as you go: you just used a little bit of Snowpark to get that data loaded via the `session.write_pandas` function!
 ![](assets/database_check.png)
 
 <!-- ------------------------ -->
-## Build and Deploy model
+## Build and Deploy Model
 Duration: 10
 Work through the 1_prepare_build_deploy_model.ipynb workbook to join together the datasets, bring in the training data then build and deploy the model. 
 
