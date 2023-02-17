@@ -114,17 +114,19 @@ Once the forked repository has been cloned to your local computer open the folde
 ### Configure Credentials
 We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. If that SnowSQL config file does not exist, please create an empty one.
 
-Create a SnowSQL configuration for this lab by adding the following section to your `~/.snowsql/config` file (replacing the account, username, and password with your values):
+Create a SnowSQL configuration for this lab by adding the following section to your `~/.snowsql/config` file (replacing the accountname, username, and password with your values):
 
 ```
 [connections.dev]
-account = myaccount
+accountname = myaccount
 username = myusername
 password = mypassword
 rolename = HOL_ROLE
 warehousename = HOL_WH
 dbname = HOL_DB
 ```
+
+**Note:** The SnowCLI tool (and by extension this Quickstart) currently does not work with Key Pair authentication. It simply grabs your username and password details from the shared SnowSQL config file.
 
 ### Create Anaconda Environment
 Create and active a conda environment for this lab using the supplied `conda_env.yml` file. Run these commands from a terminal in the root of your local forked repository.
@@ -143,9 +145,9 @@ Duration: 10
 You can run SQL queries against Snowflake in many different ways (through the Snowsight UI, SnowSQL, etc.) but for this Quickstart we'll be using the Snowflake extension for VS Code. For a brief overview of Snowflake's native extension for VS Code, please check out our [VS Code Marketplace Snowflake extension page](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
 
 ### Run the Script
-To set up all the objects we'll need in Snowflake for this Quickstart you'll need to run the `steps/01_setup.sql` script.
+To set up all the objects we'll need in Snowflake for this Quickstart you'll need to run the `steps/01_setup_snowflake.sql` script.
 
-Start by clicking on the Snowflake extension in the left navigation bar in VS Code. Then login to your Snowflake account with a user that has ACCOUNTADMIN permissions. Once logged in to Snowflake, open the `steps/01_setup.sql` script in VS Code by going back to the file Explorer in the left navigation bar.
+Start by clicking on the Snowflake extension in the left navigation bar in VS Code. Then login to your Snowflake account with a user that has ACCOUNTADMIN permissions. Once logged in to Snowflake, open the `steps/01_setup_snowflake.sql` script in VS Code by going back to the file Explorer in the left navigation bar.
 
 To run all the queries in this script, use the "Execute All Statements" button in the upper right corner of the editor window. Or, if you want to run them in chunks, you can highlight the ones you want to run and press CMD/CTRL+Enter. 
 
@@ -366,7 +368,7 @@ While that is running, please open the script in VS Code and continue on this pa
 In order to run the UDF in Snowflake you have a few options. Any UDF in Snowflake can be invoked through SQL as follows:
 
 ```sql
-SELECT FAHRENHEIT_TO_CELSIUS_UDF(35);
+SELECT ANALYTICS.FAHRENHEIT_TO_CELSIUS_UDF(35);
 ```
 
 And with the SnowCLI utility you can also invoke the UDF from the terminal in VS Code as follows:
@@ -768,8 +770,8 @@ The second change we need to make is to add `scipy` to our `requirements.txt` fi
 To test the UDF locally, you will execute the `steps/05_fahrenheit_to_celsius_udf/app.py` script. Like we did in previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
-pip install -r requirements.txt
 cd steps/05_fahrenheit_to_celsius_udf
+pip install -r requirements.txt
 python app.py 35
 ```
 
