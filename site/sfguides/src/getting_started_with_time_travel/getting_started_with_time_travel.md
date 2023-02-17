@@ -28,7 +28,7 @@ We’ll get started in the Snowflake web console, configure data retention, and 
 - Next options for data protection
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/?lab=getStartedWithTimeTravel) Account
+- A [Snowflake](https://signup.snowflake.com/?lab=getStartedWithTimeTravel&utm_cta=quickstart-getstartedwithtimetravel-en) Account
 
 ### What You’ll Build 
 - Create database objects with Time Travel data retention
@@ -42,10 +42,20 @@ First things first, let’s get your Snowflake account and user permissions prim
 
 ### Create a Snowflake Account
 
-Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?lab=getStartedWithTimeTravel). A **Standard**  account allows for one day of Time Travel data retention, and an **Enterprise** account allows for 90 days of data retention. An **Enterprise** account is necessary to practice some commands in this tutorial.
+Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?lab=getStartedWithTimeTravel&utm_cta=quickstart-getstartedwithtimetravel-en). A **Standard**  account allows for one day of Time Travel data retention, and an **Enterprise** account allows for 90 days of data retention. An **Enterprise** account is necessary to practice some commands in this tutorial.
 
 ### Login and Setup Lab
-Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to [https://app.snowflake.com/resources/labs/getStartedWithTimeTravel](https://app.snowflake.com/resources/labs/getStartedWithTimeTravel) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithTimeTravel) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+
+![setup_lab](assets/setup_lab.png)
+
+Once the lab has been setup, it can be continued by revisiting the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithTimeTravel) and clicking `Continue Lab`
+
+![continue_lab](assets/continue_lab.png)
+
+or by navigating to Worksheets and selecting the `Getting Started with Time Travel` folder.
+
+![worksheets](assets/worksheets.png)
 
 ### Increase Your Account Permission
 
