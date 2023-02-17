@@ -13,9 +13,16 @@ authors: Dash Desai
 
 Duration: 5
 
-In this guide, we will perform data engineering (data analysis and data preparation) and machine learning tasks to train a Linear Regression model to predict future ROI (Return On Investment) of variable ad spend budgets across multiple channels including search, video, social media, and email using Snowpark for Python, Streamlit and scikit-learn. By the end of the session, you will have an interactive web application deployed visualizing the ROI of different allocated advertising spend budgets.
+By completing this guide, you will be able to go from raw data to an interactive application that can help organizations optimize their advertising budget allocation.
 
-First things first though for those that are new to some of these technologies.
+Here is a summary of what you will be able to learn in each step by following this quickstart:
+
+- **Setup**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
+- **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications. Once done, learn how to leverage Snowflake Tasks to turn your code into operational pipelines with integrated monitoring.  
+- **Machine Learning**: Prepare data and run ML Training in Snowflake using scikit-learn and deploy the model as a Snowpark User-Defined-Function (UDF) using the integrated Anaconda package repository.
+- **Streamlit Application**: Build an interactive application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets.
+
+In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
 ### What is Snowpark?
 
@@ -43,11 +50,6 @@ It is one of the most popular [open source](https://scikit-learn.org/) machine l
 - How to create Scalar and Vectorized Snowpark Python User-Defined Functions (UDFs) for online and offline inference respectively
 - How to create Snowflake Tasks to automate data pipelines
 - How to create Streamlit web application that uses the Scalar UDF for inference based on user input
-
-### What You’ll Build
-
-- A Linear Regression model to predict ROI (Return On Investment)
-- An interactive Streamlit application that visualizes the ROI of different allocated advertising budgets. This application will also call the Snowpark for Python User-Defined Function (UDF) to load ML model for predicting ROI on new budget allocations based on user input.
 
 ### Prerequisites
 
@@ -161,11 +163,11 @@ Duration: 8
 
 This section covers cloning of the GitHub repository and creating a Python 3.8 environment.
 
-- Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
+1) Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
 
-- Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
+2) Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
 
-- From the root folder *sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn*, create conda environment. Let's name the environment **snowpark-scikit**.
+3) From the root folder, create conda environment. Let's name the environment **snowpark-scikit**.
 
 ***IMPORTANT: If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.***
 
@@ -174,7 +176,7 @@ conda create --name snowpark-scikit -c https://repo.anaconda.com/pkgs/snowflake 
 conda activate snowpark-scikit
 ```
 
-- Install Snowpark Python and other libraries including Streamlit
+4) Install Snowpark Python and other libraries including Streamlit
 
 ```python
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
@@ -183,9 +185,17 @@ pip install streamlit
 
   *Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0, streamlit 1.18.1.*
 
-- Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
+5) Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
   *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
+
+---
+
+**Troubleshooting `pyarrow` related issues**
+
+- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
+- If you have already installed any version of the `pyarrow` other than the recommended version 8.0.0, uninstall it before installing Snowpark.
+- Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
 <!-- ------------------------ -->
 ## Data Engineering
