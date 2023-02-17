@@ -28,11 +28,7 @@ In case you are new to some of the technologies mentioned above, here’s a quic
 
 It allows developers to query data and write data applications in languages other than SQL using a set of APIs and DataFrame-style programming constructs in Python, Java, and Scala. These applications run on and take advantage of the same distributed computation on Snowflake's elastic engine as your SQL workloads. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
----
-
 ![Snowpark](assets/snowpark_python0.png)
-
----
 
 ### What is Streamlit?
 
@@ -191,10 +187,10 @@ pip install streamlit
 
 ---
 
-**Troubleshooting `pyarrow` related issues**
+### Troubleshooting `pyarrow` related issues
 
+- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
 - If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
-- If you have already installed any version of the `pyarrow` other than the recommended version 8.0.0, uninstall it before installing Snowpark.
 - Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
 <!-- ------------------------ -->
@@ -342,6 +338,8 @@ You can also enable push notifications to a cloud messaging service when errors 
 
 Duration: 20
 
+*Prerequisite: Successful completion of Data Engineering steps outlined in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).*
+
 The Notebook linked below covers the following machine learning tasks.
 
 1) Establish secure connection from Snowpark Python to Snowflake
@@ -455,6 +453,8 @@ Congratulations! You've successfully performed data engineering tasks and traine
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
+- [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
+- [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)
