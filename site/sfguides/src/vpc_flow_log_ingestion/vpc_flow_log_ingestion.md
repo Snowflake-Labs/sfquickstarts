@@ -162,7 +162,7 @@ create warehouse security_quickstart with
   AUTO_SUSPEND = 300;
 ```
 
-Create External Stage using the storage integration
+Create External Stage using the storage integration. Make sure you include the trailing slash if using a prefix.
 ```sql
 create stage vpc_flow_stage
   url = 's3://<BUCKET_NAME>/<PREFIX>/'

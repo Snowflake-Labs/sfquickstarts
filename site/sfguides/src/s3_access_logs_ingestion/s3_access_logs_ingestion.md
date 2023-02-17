@@ -170,7 +170,7 @@ ESCAPE_UNENCLOSED_FIELD = NONE;
 
 
 
-Create External Stage using the storage integration and test that snowflake can test files
+Create External Stage using the storage integration and test that snowflake can test files. Make sure you include the trailing slash if using a prefix.
 ```sql
 create stage s3_access_logs
   url = 's3://<BUCKET_NAME>/<PREFIX>/'
