@@ -5,7 +5,7 @@
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
 --  PDF: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Embedded/Tableau_VHOL_IOT_Embedded.pdf
---  SQL: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Embedded/Sanitized_Workshop_SQL.sql 
+--  SQL: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/citibike-trips-scripts/MakeFinal_Workshop.sql 
 --           **************************** DO NOT USE THIS FILE , INSTEAD USE Workshop_SQL.sql *****************
 -------------------------------------------------------------------------------------------------------------------*/
 

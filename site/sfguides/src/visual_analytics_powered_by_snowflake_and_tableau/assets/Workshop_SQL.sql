@@ -4,7 +4,7 @@
 -- <Feb 15, 2023 | 8:00pm PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
---  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/workshop.sql
+--  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/Workshop.sql
 -------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------Set Up---------------------------------------------------------*/
@@ -242,7 +242,7 @@ from s inner join r on s.region_id = r.region_id
        left outer join n on st_contains(n.nhood_geo, s.station_geo);
        
 
-select * from vhol_stations;
+select * from vhol_stations limit 10;
 
 
 -- Now let's combine trip data with Geospatial and Stations Data
