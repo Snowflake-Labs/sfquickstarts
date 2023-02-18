@@ -1,11 +1,12 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- <VHOL SQL>
 -- <Embedded Analytics Applications Powered by Snowflake and Tableau>
--- <October 14, 2020 | 11:00am PST>
+-- <Febraury 17, 2023 | 11:00am PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
 --  PDF: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Embedded/Tableau_VHOL_IOT_Embedded.pdf
---  SQL: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Embedded/Sanitized_Workshop_SQL.sql
+--  SQL: https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Embedded/Sanitized_Workshop_SQL.sql 
+--           **************************** DO NOT USE THIS FILE , INSTEAD USE Workshop_SQL.sql *****************
 -------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------Set Up---------------------------------------------------------*/
@@ -232,7 +233,8 @@ with gbfs as (
         v:capacity::number station_capacity,
         v:rental_methods rental_methods
     from vhol_spatial_data
-    where type = 'station'),
+    where type = 'station' 
+    and v:station_id not like '%-%' ), -- introduced by Chandra because the station_id data is coming corrupt for some records on 02/15/2023 
     -- extract the region data
     r as (select
         v:region_id::number region_id,
@@ -254,7 +256,7 @@ from s inner join r on s.region_id = r.region_id
        left outer join n on st_contains(n.nhood_geo, s.station_geo);
        
 
-select * from vhol_stations;
+select * from vhol_stations limit 10;
 
 create or replace view vhol_trips_stations_vw as (
   with
