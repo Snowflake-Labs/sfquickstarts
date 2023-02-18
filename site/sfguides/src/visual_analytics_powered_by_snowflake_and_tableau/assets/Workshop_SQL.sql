@@ -209,7 +209,7 @@ with gbfs as (
     create or replace table vhol_stations as with 
   -- extract the station data
     s as (select 
-        v:station_id::string station_id,
+        v:station_id::number station_id,
         v:region_id::number region_id,
         v:name::string station_name,
         v:lat::float station_lat,
