@@ -1,5 +1,5 @@
 id: vhol_snowpipe_streaming_msk
-summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpile streaming and Managed Streaming for Apache Kafka (MSK).
+summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK).
 categories: Getting-Started
 environments: web
 status: Hidden
@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Kafka, Streaming, Amazon MSK, Snowpipe Streaming, SnowSQL
 authors: James Sun
 
-# Data-Intensive Approach to Real-Time Data Using Snowpipe streaming and Amazon MSK
+# Getting Started with Snowpipe Streaming and Amazon MSK
 <!---------------------------->
 ## Overview
 Duration: 5
