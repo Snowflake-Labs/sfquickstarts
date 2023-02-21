@@ -1,7 +1,7 @@
 author: Jonathan Tao and Hanbing Yan
 id: best_practices_guide_snowpark
-summary: This guide is meant to review best practices when using Snowpark for Data Engineering use cases.  It will advise on best practices and show, with sample data, why these choices are the best when using Snowpark.  
-categories: Best-Practices
+summary: Best Practices Guide: Snowpark
+categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -38,9 +38,9 @@ Below are the core parameters for the file. You may have to create some objects 
 ```
 
 ### What You’ll Learn - Snowpark Optimizations
-- Lab 1: Using Cachetools library to improve performance up to 20x (~20 mins)
-- Lab 2: Using Vectorized UDFs can improve numerical computations by 30-40%
-- Lab 3: Using Snowpark dataframes perform ~8X faster compared to Pandas dataframes
+- [Lab 1](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#1): Using Cachetools library to improve performance up to 20x (~20 mins)
+- [Lab 2](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#7): Using Vectorized UDFs can improve numerical computations by 30-40%
+- [Lab 3](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#12): Using Snowpark dataframes perform ~8X faster compared to Pandas dataframes
 
 ### What You’ll Need 
 - Snowflake Account
