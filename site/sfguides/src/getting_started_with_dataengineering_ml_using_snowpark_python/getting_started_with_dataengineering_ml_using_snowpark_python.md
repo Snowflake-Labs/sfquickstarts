@@ -1,13 +1,13 @@
-id: ad_spend_roi_snowpark_python_scikit_learn_streamlit
+id: getting_started_with_dataengineering_ml_using_snowpark_python
 summary: This guide provides the instructions for performing data engineering tasks (data analysis and data preparation) as well as training, deploying, and running a ML model using Snowpark for Python, scikit-learn, and Streamlit.
-categories: Data-Applicatons
+categories: Getting-Started
 environments: web
 status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Data Applicatons, Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning
+tags: Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning
 authors: Dash Desai
 
-# Ad Spend and ROI Prediction App using Snowpark for Python, Streamlit, and scikit-learn
+# Getting Started with Data Engineering and ML using Snowpark for Python
 <!-- ------------------------ -->
 ## Overview
 
