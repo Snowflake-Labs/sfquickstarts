@@ -61,6 +61,7 @@ Duration: 15
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, load data from Amazon S3, and setup Snowflake internal stages.
 
+> aside positive
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 Run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
@@ -150,6 +151,7 @@ CREATE OR REPLACE STAGE dash_udfs;
 
 Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/setup.sql) n Snowsight and run all SQL statements to create the objects and load data from AWS S3.
 
+> aside positive
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
@@ -179,11 +181,13 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 pip install streamlit
 ```
 
-  *Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0, streamlit 1.18.1.*
+> aside negative
+> Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0, streamlit 1.18.1.
 
 5) Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
-  *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
+> aside negative
+> Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
 ---
 
@@ -214,7 +218,8 @@ To get started, follow these steps:
 
 2) Open and run through the cells in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)
 
-> Note: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml***-- which is the name of the environment created in **Clone GitHub Repository** step.
+> aside positive
+> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml***-- which is the name of the environment created in **Clone GitHub Repository** step.
 
 ### Data Pipeline As a Task
 
@@ -303,6 +308,7 @@ monthly_revenue_data_pipeline_task = """
 session.sql(monthly_revenue_data_pipeline_task).collect()
 ```
 
+> aside negative
 > Note: In the ***monthly_revenue_data_pipeline_task*** above, notice the **AFTER campaign_spend_data_pipeline_task** clause which makes it a dependant task.
 
 Here is how to start the tasks.
@@ -338,7 +344,7 @@ You can also enable push notifications to a cloud messaging service when errors 
 
 Duration: 20
 
-*Prerequisite: Successful completion of Data Engineering steps outlined in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).*
+*PRERQUISITE: Successful completion of Data Engineering steps outlined in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).*
 
 The Notebook linked below covers the following machine learning tasks.
 
@@ -362,7 +368,8 @@ To get started, follow these steps:
 
 2) Open and run through the [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb)
 
-> Note: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml*** -- which is the name of the environment created in **Clone GitHub Repository** step.
+> aside positive
+> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml*** -- which is the name of the environment created in **Clone GitHub Repository** step.
 
 <!-- ------------------------ -->
 ## Streamlit Application
@@ -407,13 +414,13 @@ If all goes well, you should see the following app in Snowsight as shown below.
 
 ---
 
-### **Save Data To Snowflake**
+### Save Data To Snowflake
 
 In both applications, adjust the advertsing budget sliders to see the predicted ROI for those allocations. You can also click on **Save to Snowflake** button to save the current allocations and predcted ROI into BUDGET_ALLOCATIONS_AND_ROI Snowflake table.
 
 ### Differences between two Streamlit Apps
 
-The main difference between the two versions of Streamlit applications is how you create and access the Session object.
+The main difference between running the Streamlit application locally and in Snowflake (SiS) is how you create and access the Session object.
 
 When running locally, you'd create and access the new Session object it like so:
 
@@ -439,7 +446,7 @@ session = snowpark.session._get_active_session()
 
 Duration: 3
 
-Congratulations! You've successfully performed data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations.
+Congratulations! You've successfully performed data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations based on user input.
 
 ### What You Learned
 
