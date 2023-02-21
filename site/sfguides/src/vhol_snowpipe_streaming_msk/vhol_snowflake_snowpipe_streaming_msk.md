@@ -1,16 +1,16 @@
-Summary: This lab will walk you through how to apply a data-intensive approach to real-time data using Snowflake and Amazon Managed Grafana and Manager Streaming for Apache Kafka.
 id: vhol_snowpipe_streaming_msk
-categories: Getting Started
+summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpile streaming and Managed Streaming for Apache Kafka (MSK).
+categories: Getting-Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Kafka, Streaming, MSK, Snowpipe streaming, SnowSQL
-authors: james.sun@snowflake.com
+tags: Getting Started, Kafka, Streaming, Amazon MSK, Snowpipe Streaming, SnowSQL
+authors: James Sun
 
-# Data-Intensive Approach to Real-Time Data Using Snowflake Snowpipe streaming and Amazon Managed Streaming for Apache Kafka
+# Data-Intensive Approach to Real-Time Data Using Snowpipe streaming and Amazon MSK
 <!---------------------------->
 ## Overview
-Duration: 5 minutes
+Duration: 5
 
 Snowflake's Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency.
 It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake
@@ -73,7 +73,7 @@ to SSH if your instance is in a private subnet
 
 <!---------------------------->
 ## Create a provisioned Kafka cluster and a Linux jumphost in AWS
-Duration: 30 minutes
+Duration: 30
 
 #### 1. Create an MSK cluster and an EC2 instance
 The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure
@@ -291,7 +291,7 @@ See below example screenshot:
 
 <!---------------------------->
 ## Configure Snowflake to communicate with the MSK cluster
-Duration: 10 minutes
+Duration: 10
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -393,7 +393,7 @@ At this point, the Snowflake setup is complete.
 <!---------------------------->
 ## Configure Kafka connector to Snowflake with Snowpipe streaming SDK
 
-Duration: 10 minutes
+Duration: 10
 
 #### 1. Run the following commands to collect various connection parameters for the Kafka connector
 ```commandline
@@ -487,7 +487,7 @@ EOF
 
 <!---------------------------->
 ## Putting it all together
-Duration: 10 minutes
+Duration: 10
 
 Finally, we are ready to start ingesting data into the Snowflake table.
 
@@ -521,7 +521,7 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 
 <!---------------------------->
 ## Query ingested data in Snowflake
-Duration: 10 minutes
+Duration: 10
 
 Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
 The data should have been streamed into a table, ready for further processing.
@@ -627,7 +627,7 @@ DROP USER IF EXISTS STREAMING_USER;
 
 <!---------------------------->
 ## Conclusions
-Duration: 5 minutes
+Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
 connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
