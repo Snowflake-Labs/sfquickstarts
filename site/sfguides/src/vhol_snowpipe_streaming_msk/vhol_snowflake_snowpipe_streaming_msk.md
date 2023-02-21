@@ -10,7 +10,17 @@ authors: james.sun@snowflake.com
 # Data-Intensive Approach to Real-Time Data Using Snowflake Snowpipe streaming and Amazon Managed Streaming for Apache Kafka
 <!---------------------------->
 ## Overview
-Duration: 5
+Duration: 5 minutes
+
+Snowflake's Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency.
+It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake
+without requiring files with a more attractive cost/latency profile.
+
+Here are some of the use cases that can benefit from Snowpipe streaming:
+- IoT time-series data ingestion
+- CDC streams from OLTP systems
+- Log ingestion from SIEM systems
+- Ingestion into ML feature stores
 
 In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution using 
 Snowflake's Snowpipe streaming and [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/).
@@ -34,16 +44,15 @@ Please note that in the demo, we are not demonstrating the visualization aspect.
 - Familiarity with AWS Services (e.g. EC2, MSK, etc), Networking and the Management Console
 - Basic knowledge of Python and Linux shell scripting
 
-### What You'll Need During the Lab
+### What You'll Need Before the Lab
 
-To participate in the virtual hands-on lab, attendees need the following:
+To participate in the virtual hands-on lab, attendees need the following resources.
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with **ACCOUNTADMIN** access
-- An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with **Administrator Access**
-- In the AWS account [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the **same region** as the Snowflake account
-- In the VPC [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic
-- In one of the subnets, [create a Linux EC2 instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html)
-
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
+- An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
+- In the AWS account [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the same region as the Snowflake account
+- In the VPC, [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-subnets.html) and attach an [internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) to allow egress traffic to the internet by using a routing table and security group for outbound traffic.
+Note that the subnets can be public or private, for private subnets, you need to also attach a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to allow egress traffic to the internet. Public subnets are sufficient for this lab.
 ### What You'll Learn
 
 - Using [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/)
@@ -61,61 +70,62 @@ to SSH if your instance is in a private subnet
 
 <!---------------------------->
 ## Create a provisioned Kafka cluster and a Linux jumphost in AWS
-Duration: 30
+Duration: 30 minutes
 
 #### 1. Create an MSK cluster and an EC2 instance
-For security purpose, we will deploy the MSK cluster in private subnets. You should pre-create or use an existing
-VPC that has private subnets prior to the lab.
+The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure
+the communications between the MSK cluster and clients are secure. Please refer
+to this [document](https://docs.aws.amazon.com/whitepapers/latest/amazon-msk-migration-guide/amazon-managed-streaming-for-apache-kafka-amazon-msk.html) for the MSK networking topology.
 
 First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake&templateURL=https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/msk/msk-CFT-for-SE-Sandbox.json)
-to launch a provisioned MSK cluster. Note the default AWS region is **us-west-2 (Oregon)**, feel free to select a region you prefer to deploy the environment.
+to launch a provisioned MSK cluster. Note the default AWS region is `us-west-2 (Oregon)`, feel free to select a region you prefer to deploy the environment.
 
-Click **Next** at the **Create stack** page. 
-Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For **MSKSecurityGroupId**, we recommend
-to use the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. In the drop-down menu, pick two subnets, they should both public or private subnets depending on the layout of your VPC. Leave **TLSMutualAuthentication** as false and the jumphost instance type and AMI id as default before clicking
-**Next**. 
+Click `Next` at the `Create stack` page. 
+Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `MSKSecurityGroupId`, we recommend
+to use the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. In the drop-down menu, pick two subnets, they can be either public or private subnets depending on the network layout of your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
+`Next`. 
 
 See below sample screen capture for reference.
 
 ![](assets/msk-cft-stack-1.png)
 
-Leave everything as default in the **Configure stack options** page and click **Next**.
-In the **Review** page, click **Submit**.
+Leave everything as default in the `Configure stack options` page and click `Next`.
+In the `Review` page, click `Submit`.
 
-In about 5-10 minutes, the Cloudformation template provisions an MSK cluster with two brokers in the subnets you selected. It will also
-provision a Linux EC2 instance that we can use to run the Kafka connector, producer and consumer.
-
+In about 10-30 minutes depending on your AWS region, the Cloudformation template provisions an MSK cluster with two brokers. It will also
+provision a Linux EC2 instance in the subnet you selected. We will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
 
 #### 2. Configure the Linux session for timeout and default shell
 
 In this step we need to connect to the EC2 instance in order to interact with the MSK cluster.
 
 Go to the AWS [Systems Manager](https://us-west-2.console.aws.amazon.com/systems-manager/home) console in the same region where you setup the MSK cluster,
-Click **Session Manager** on the left pane.
+Click `Session Manager` on the left pane.
+
 ![](assets/session-mgr-1.png)
 
 Next, we will set the preferred shell as bash.
 
-Click **Preferences** tab.
+Click the `Preferences` tab.
 ![](assets/session-mgr-1.0.png)
 
-Click **Edit** button.
+Click the `Edit` button.
 ![](assets/session-mgr-1.1.png)
 
-Go to **General preferences** section, type in 60 minutes for idle session timeout value.
+Go to `General preferences` section, type in 60 minutes for idle session timeout value.
 
 ![](assets/session-mgr-1.1.5.png)
 
-Further scroll down to **Linux shell profile** section, and type in **/bin/bash** before clicking **Save** button.
+Further scroll down to `Linux shell profile` section, and type in `/bin/bash` before clicking `Save` button.
 
 ![](assets/session-mgr-1.2.png)
 
 #### 3. Connect to the Linux EC2 instance console
-Now go back to the **Session** tab and click the **Start session** button.
+Now go back to the `Session` tab and click the `Start session` button.
 ![](assets/session-mgr-2.png)
 
-Now you should see the EC2 instance created by the Cloudformation template under **Target instances**.
-Its name should be **\<Cloudformation stack name\>-jumphost**, select it and click **Start session**.
+Now you should see the EC2 instance created by the Cloudformation template under `Target instances`.
+Its name should be `<Cloudformation stack name>-jumphost`, select it and click `Start session`.
 ![](assets/session-mgr-3.png)
 
 #### 4. Create a key-pair to be used for authenticating with Snowflake programmatically
@@ -174,7 +184,7 @@ cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -st
 wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.8.2/snowflake-kafka-connector-1.8.2.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-1.8.2.jar
 
 #Snowpipe streaming SDK
-wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/1.0.2-beta.7/snowflake-ingest-sdk-1.0.2-beta.7.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-1.0.2-beta.7.jar
+wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/1.0.3-beta/snowflake-ingest-sdk-1.0.3-beta.jar   -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-1.0.3-beta.jar  
 wget https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/3.13.15/snowflake-jdbc-3.13.15.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-jdbc-3.13.15.jar
 wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
 wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
@@ -182,33 +192,33 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fi
 ```
 
 #### 6. Retrieve the broker string from the MSK cluster.
-Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click on the newly created MSK cluster, it should have a substring **MSKCluster** in its name.
+Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click on the newly created MSK cluster, it should have a substring `MSKCluster` in its name.
 
 ![](assets/bs-1.png)
 
-Click **View client information**
+Click `View client information`
 ![](assets/bs-2.png)
 
-We are going to use TLS authentication between the client and brokers. Copy down the broker string under **Private endpoint** for TLS authentication type.
+We are going to use TLS authentication between the client and brokers. Copy down the broker string under `Private endpoint` for TLS authentication type.
 ![](assets/bs-3.png)
 
-Now switch back to the Session Manager window and execute the following command by replacing **\<broker string\>** with 
+Now switch back to the Session Manager window and execute the following command by replacing `<broker string>` with 
 the copied values.
 
 ```commandline
 export BS=<broker string>
 ```
 
-Now run the following command to add **BS** as an environment variable so it is recognized across the Linux sessions.
+Now run the following command to add `BS` as an environment variable so it is recognized across the Linux sessions.
 ```
 echo "export BS=$BS" >> ~/.bashrc
 ```
 See the following example screen capture.
 
 ![](assets/bs-4.png)
-#### 7. Create a configuration file connect-standalone.properties for the Kafka connector
+#### 7. Create a configuration file `connect-standalone.properties` for the Kafka connector
 
-Run the following commands to generate a configuration file **connect-standalone.properties** in directory **/home/ssm-user/snowpipe-streaming/scripts** for the client to authenticate
+Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/ssm-user/snowpipe-streaming/scripts` for the client to authenticate
 with the Kafka cluster.
 
 ```commandline
@@ -242,11 +252,11 @@ consumer.ssl.enabled.protocols=TLSv1.1,TLSv1.2
 EOF
 
 ```
-A configuration file **connect-standalone.properties** is created in directory **/home/ssm-user/snowpipe-streaming/scripts**
+A configuration file `connect-standalone.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
 
 #### 8. Create a security client.properties configuration file for the producer
 
-Run the following commands to create a security configuration file **client.properties** for the MSK cluster
+Run the following commands to create a security configuration file `client.properties` for the MSK cluster
 ```commandline
 dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/client.properties
@@ -258,7 +268,7 @@ EOF
 
 ```
 
-A configuration file **client.properties** is created in directory **/home/ssm-user/snowpipe-streaming/scripts**
+A configuration file `client.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
 
 #### 9. Create a streaming topic called “streaming” in the MSK cluster
 
@@ -267,19 +277,19 @@ Now we can run the following commands to create a Kafka topic on the MSK cluster
 ```commandline
 $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming --partitions 2 --replication-factor 2
 ```
-You should see the response **Created topic streaming** if it is successful.
+You should see the response `Created topic streaming` if it is successful.
 
 To describe the topic, run the following commands:
 ```commandline
 $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --describe --topic streaming
 ```
-You should see there are two partitions with a replication factor of 2 in topic **streaming**.
+You should see there are two partitions with a replication factor of 2 in the `streaming` topic.
 See below example screenshot:
 ![](assets/list-kafka-topic.png)
 
 <!---------------------------->
 ## Configure Snowflake to communicate with the MSK cluster
-Duration: 10
+Duration: 10 minutes
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -320,7 +330,7 @@ ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
 ```
 
-Now logout of Snowflake, sign back in as the default user **streaming_user** we just created with the associated password (default: Test1234567).
+Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
 Run the following SQL commands in a worksheet:
 
 ```commandline
@@ -335,7 +345,7 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 
-First, in the Snowflake worksheet, replace **\<pubKey\>** with the content of the file **/home/ssm-user/pub.Key** (see step 3 in previous section) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 3 in previous section) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='<pubKey>';
@@ -372,16 +382,16 @@ See below example screenshot:
 
 ![](assets/key-pair-snowsql.png)
 
-Type **Ctrl-D** to get out of SnowSQL session.
+Type `Ctrl-D` to get out of SnowSQL session.
 
-You can edit the [**~/.snowsql/config**](https://docs.snowflake.com/en/user-guide/snowsql-config.html#snowsql-config-file) file to set default parameters and eliminate the need to specify them every time you run snowsql.
+You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/snowsql-config.html#snowsql-config-file) file to set default parameters and eliminate the need to specify them every time you run snowsql.
 
 At this point, the Snowflake setup is complete.
 
 <!---------------------------->
 ## Configure Kafka connector to Snowflake with Snowpipe streaming SDK
 
-Duration: 5
+Duration: 10 minutes
 
 #### 1. Run the following commands to collect various connection parameters for the Kafka connector
 ```commandline
@@ -465,8 +475,6 @@ snowflake.user.name=$user
 snowflake.private.key=$priv_key
 snowflake.role.name=MSK_STREAMING_RL
 snowflake.ingestion.method=snowpipe_streaming
-#snowflake.enable.schematization=TRUE
-#schema.registry.url=
 value.converter.schemas.enable=false
 jmx=true
 key.converter=org.apache.kafka.connect.storage.StringConverter
@@ -477,7 +485,7 @@ EOF
 
 <!---------------------------->
 ## Putting it all together
-Duration: 5
+Duration: 10 minutes
 
 Finally, we are ready to start ingesting data into the Snowflake table.
 
@@ -493,9 +501,9 @@ If everything goes well, you should something similar to screen capture below:
 
 #### 2. Start the producer that will ingest real-time data to the MSK cluster
 
-Start a new Linux session by following **step 3** in the section named **Create a provisioned Kafka cluster and a Linux jumphost in AWS**
+Start a new Linux session by following `step 3` in the section named `Create a provisioned Kafka cluster and a Linux jumphost in AWS`
 ```commandline
-curl -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+curl --connect-timeout 5 -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
 You should see response similar to screen capture below if everything works well.
 
@@ -503,17 +511,17 @@ You should see response similar to screen capture below if everything works well
 
 Note that in the script above, the producer queries a [Rest API](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky ) that provides real-time flight data over the San Francisco 
 Bay Area in JSON format. The data includes information such as timestamps, [icao](https://icao.usmission.gov/mission/icao/#:~:text=Home%20%7C%20About%20the%20Mission%20%7C%20U.S.,civil%20aviation%20around%20the%20world.) numbers, flight IDs, destination airport, longitude, 
-latitude, and altitude of the aircraft, etc. The data is ingested into the **streaming** topic on the MSK cluster and 
+latitude, and altitude of the aircraft, etc. The data is ingested into the `streaming` topic on the MSK cluster and 
 then picked up by the Snowpipe streaming Kafka connector, which delivers it directly into a Snowflake 
-table **msk_streaming_db.msk_streaming_schema.msk_streaming_tbl**.
+table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 
 ![](assets/flight-json.png)
 
 <!---------------------------->
 ## Query ingested data in Snowflake
-Duration: 10
+Duration: 10 minutes
 
-Now, switch back to the Snowflake console and make sure that you signed in as the default user **streaming_user**. 
+Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
 The data should have been streamed into a table, ready for further processing.
 
 #### 1. Query the raw data
@@ -531,10 +539,10 @@ Now run the following query on the table.
 ```
 select * from msk_streaming_tbl;
 ```
-You should see there are two columns in the table: **RECORD_METADATA** and **RECORD_CONTENT** as shown in the screen capture below.
+You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
 
 ![](assets/raw_data.png)
-The **RECORD_CONTENT** column is an JSON array that needs to be flattened.
+The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
 
 #### 2. Flatten the raw JSON data
 Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
@@ -562,7 +570,7 @@ FROM   msk_streaming_tbl,
 
 The SQL commands create a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools like Grafana
 
-Let's query the view **flights_vw** now.
+Let's query the view `flights_vw` now.
 ```commandline
 select * from flights_vw;
 ```
@@ -573,27 +581,33 @@ As a result, you will see a nicely structured output with columns derived from t
 #### 3. Stream real-time flight data continuously to Snowflake
 
 We can now write a loop to stream the flight data continuously into Snowflake.
+
+Note that there is a 30 seconds sleep time between the queries, it is because for our data source in this workshop, anything
+less than 30 seconds will not incur any new data as the source won't update more frequently than 30 seconds.
+Feel free to lower the frequency for other data sources that update more frequently.
+
 Go back to the Linux session and run the following script.
 
 ```commandline
 while true
 do
-  curl -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
-  sleep 90
+  curl --connect-timeout 5 -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  sleep 30
 done
 
 ```
+You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 30 seconds to verify that the row counts is indeed increasing.
 
 <!----------------------------->
-## Clean-up
+## Cleanup
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://us-west-2.console.aws.amazon.com/cloudformation/home?stacks) console.
-Select the Cloudformation template you deployed at the start of the demo, then click the **Delete** tab. All the resources that were deployed previously, such as EC2 instances, MSK clusters, roles, etc., will be cleaned up.
+Select the Cloudformation template you deployed at the start of the demo, then click the `Delete` tab. All the resources that were deployed previously, such as EC2 instances, MSK clusters, roles, etc., will be cleaned up.
 See example screen capture below.
 
 ![](assets/cleanup.png)
 
-For Snowflake clean-up, execute the following SQL commands.
+For Snowflake cleanup, execute the following SQL commands.
 
 ```commandline
 USE ROLE ACCOUNTADMIN;
@@ -608,7 +622,7 @@ DROP USER IF EXISTS STREAMING_USER;
 
 <!---------------------------->
 ## Conclusions
-Duration: 5
+Duration: 5 minutes
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
 connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
