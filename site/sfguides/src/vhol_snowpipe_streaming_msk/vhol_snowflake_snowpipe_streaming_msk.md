@@ -604,10 +604,13 @@ You can now go back to the Snowflake worksheet to run a `select count(1) from fl
 ## Cleanup
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://us-west-2.console.aws.amazon.com/cloudformation/home?stacks) console.
-Select the Cloudformation template you deployed at the start of the demo, then click the `Delete` tab. All the resources that were deployed previously, such as EC2 instances, MSK clusters, roles, etc., will be cleaned up.
+Select the Cloudformation template you used to deploy the MSK cluster at the start of the demo, then click the `Delete` tab. All the resources that were deployed previously, such as EC2 instances, MSK clusters, roles, etc., will be cleaned up.
+
 See example screen capture below.
 
 ![](assets/cleanup.png)
+
+After the deletion of the MSK cluster, you will also need to delete the Cloudformation template for VPC if you created your own at the very beginning of the lab.
 
 For Snowflake cleanup, execute the following SQL commands.
 
