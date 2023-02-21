@@ -59,11 +59,11 @@ Duration: 15
 
 ### Create Tables, Load Data and Setup Stages
 
-Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials and create tables, load data, and setup Snowflake internal stages as described below.
+Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, load data from Amazon S3, and setup Snowflake internal stages.
 
 ***IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.***
 
-Run the following SQL commands to create the warehouse, database and schema.
+Run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
 ```sql
 CREATE OR REPLACE WAREHOUSE DASH_L;
@@ -75,7 +75,7 @@ CREATE OR REPLACE SCHEMA DASH_SCHEMA;
 USE DASH_DB.DASH_SCHEMA;
 ```
 
-Run the following SQL commands to create table CAMPAIGN_SPEND from data hosted on publicly accessible S3 bucket.
+Run the following SQL commands to create table **CAMPAIGN_SPEND** from data hosted on publicly accessible S3 bucket.
 
 ```sql
 CREATE or REPLACE file format csvformat
@@ -99,7 +99,7 @@ COPY into CAMPAIGN_SPEND
   from @campaign_data_stage;
 ```
 
-Run the following SQL commands to create table MONTHLY_REVENUE from data hosted on publicly accessible S3 bucket.
+Run the following SQL commands to create table **MONTHLY_REVENUE** from data hosted on publicly accessible S3 bucket.
 
 ```sql
 CREATE or REPLACE stage monthly_revenue_data_stage
@@ -116,7 +116,7 @@ COPY into MONTHLY_REVENUE
   from @monthly_revenue_data_stage;
 ```
 
-Run the following SQL commands to create table BUDGET_ALLOCATIONS_AND_ROI that holds the last six months of budget allocations and ROI.
+Run the following SQL commands to create table **BUDGET_ALLOCATIONS_AND_ROI** that holds the last six months of budget allocations and ROI.
 
 ```sql
 CREATE or REPLACE TABLE BUDGET_ALLOCATIONS_AND_ROI (
@@ -138,7 +138,7 @@ VALUES
 ('June',35,50,35,85,8.22);
 ```
 
-Run the following commands to create Snowflake (internal) stages for storing Stored Procedures, UDFs, and ML model files.
+Run the following commands to create Snowflake [internal stages](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage) for storing Stored Procedures, UDFs, and ML model files.
 
 ```sql
 CREATE OR REPLACE STAGE dash_sprocs;
