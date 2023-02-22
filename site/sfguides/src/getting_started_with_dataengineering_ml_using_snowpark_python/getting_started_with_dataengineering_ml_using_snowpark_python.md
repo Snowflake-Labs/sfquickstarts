@@ -1,5 +1,5 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python
-summary: This guide provides the instructions for performing data engineering tasks (data analysis and data preparation) as well as training, deploying, and running a ML model using Snowpark for Python, scikit-learn, and Streamlit.
+summary: Getting Started with Data Engineering and ML using Snowpark for Python
 categories: Getting-Started
 environments: web
 status: Published
@@ -17,7 +17,7 @@ By completing this guide, you will be able to go from raw data to an interactive
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
-- **Setup**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
+- **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
 - **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications. Once done, learn how to leverage Snowflake Tasks to turn your code into operational pipelines with integrated monitoring.  
 - **Machine Learning**: Prepare data and run ML Training in Snowflake using scikit-learn and deploy the model as a Snowpark User-Defined-Function (UDF) using the integrated Anaconda package repository.
 - **Streamlit Application**: Build an interactive application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets.
