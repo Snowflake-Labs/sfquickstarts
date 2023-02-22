@@ -1,13 +1,13 @@
 author: Jonathan Tao and Hanbing Yan
-id: best_practices_guide_snowpark
-summary: Best Practices Guide: Snowpark
+id: best_practices_guide_snowpark_python
+summary: Best Practices Guide: Snowpark Python
 categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Best Practices
 
-# Best Practices Guide for Snowpark
+# Best Practices Guide for Snowpark Python
 <!-- ------------------------ -->
 ## Overview and Setup
 Duration: 5
@@ -764,9 +764,9 @@ Duration: 15
 **Lab Prerequisite:**
 1. Your snowflake user needs to be granted to a role have write access to database SNOWFLAKE_SAMPLE_DATA. For instructions to import SNOWFLAKE_SAMPLE_DATA, please click [here](https://docs.snowflake.com/en/user-guide/sample-data-using).
 
-2. By now, you should have finished setting up credential.json configuration file in the overview section, please ensure this configuration file is in the same folder of the jupyter notebook you will create next.
+2. By now, you should have finished setting up credentials.json configuration file in the overview section, please ensure this configuration file is in the same folder of the jupyter notebook you will create next.
 
-3. Create a new jupyter notebook and call it snowparkbp_lab3.ipynb, and then follow the below steps to copy and paste the code to the notebook.
+3. Create a new jupyter notebook and then follow the below steps to copy and paste the code to the notebook.
 
 **STEP 1: Import required python libraries and create a Snowpark Session.**
 
