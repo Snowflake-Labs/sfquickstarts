@@ -1,6 +1,6 @@
-id: vhol_data_engineering_streams_tasks
-summary: Virtual Hands-On Lab:  Data Engineering, Streams & Tasks
-categories: VHOL,Data Engineering, Getting Started
+id: getting_started_with_streams_and_tasks
+summary: Learn how to use streams and tasks with Snowflake.
+categories: Getting Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
