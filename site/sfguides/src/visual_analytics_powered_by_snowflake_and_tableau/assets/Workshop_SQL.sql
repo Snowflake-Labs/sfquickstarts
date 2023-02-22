@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- <VHOL SQL>
 -- <Visual Analytics  Powered by Snowflake and Tableau>
--- <July 26, 2022 | 11:00am PST>
+-- <Feb 15, 2023 | 8:00pm PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
---  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/workshop.sql
+--  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/Workshop.sql
 -------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------Set Up---------------------------------------------------------*/
@@ -204,9 +204,7 @@ with gbfs as (
     from gbfs, lateral flatten (input => payload:response.features)
     where type = 'neighborhood';
     
-    
-    select * from vhol_spatial_data;
-    
+      
     -- Combine station data with geospatial data
     create or replace table vhol_stations as with 
   -- extract the station data
@@ -221,7 +219,8 @@ with gbfs as (
         v:capacity::number station_capacity,
         v:rental_methods rental_methods
     from vhol_spatial_data
-    where type = 'station'),
+    where type = 'station'  
+    and v:station_id not like '%-%'  ), -- introduced by Chandra because the station_id data is coming corrupt for some records on 02/15/2023 
     -- extract the region data
     r as (select
         v:region_id::number region_id,
@@ -243,7 +242,7 @@ from s inner join r on s.region_id = r.region_id
        left outer join n on st_contains(n.nhood_geo, s.station_geo);
        
 
-select * from vhol_stations;
+select * from vhol_stations limit 10;
 
 
 -- Now let's combine trip data with Geospatial and Stations Data
@@ -269,7 +268,7 @@ create or replace view vhol_trips_stations_vw as (
     left outer join ss on start_station_id = ss.station_id
     left outer join es on end_station_id = es.station_id); 
     
-    select * from vhol_trips_stations_vw limit 200;    
+    select * from vhol_trips_stations_vw limit 20;    
     
 -- add the weather
 create or replace view vhol_trips_stations_weather_vw as (
