@@ -165,7 +165,7 @@ Duration: 10
 
 So what just happened you ran your dbt Python model? The single best thing to help you debug and understand what's happening is to look at your [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake. Please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history.
 
-### Overivew of dbt Executed Queries
+### Overview of dbt Executed Queries
 Here are the queries that dbt executed when you ran the `my_first_python_model` model. I've omitted the content of the stored procedure in this section so that it's easier to see what's happening at a high level. In the next section we'll discuss what's happening inside the stored procedure.
 
 1. List schemas
