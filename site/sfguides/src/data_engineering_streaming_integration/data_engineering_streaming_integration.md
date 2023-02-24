@@ -18,7 +18,7 @@ This quickstart is a part of a series covering various aspects of wваorking wi
 
 * **Streaming Data Integration with Snowflake (this very guide)** - This guide will focus on design patterns and building blocks for data integration within Snowflake
 
-* **Popular Kafka Integration options with Snowflake(coming up later!)** - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations
+* **Popular Kafka Integration options with Snowflake(coming up later!)** - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations. In the meantime, please check out our quickstart on [Streaming Snowpipe with Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0). 
 
 * **Streaming Use cases(coming up later!)** - This guide will share examples of common streaming use cases such as Change Data Capture (CDC), near real-time data sharing and others 
 
@@ -30,9 +30,9 @@ Prerequisites for this guide include:
 * Familiarity with Snowflake, basic SQL knowledge, and understanding of Snowflake objects such as Snowsight UI
 
 * Snowflake account. Existing or Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/).  Please sign up using an email address that hasn’t been used previously
-* Additionally, for Kafka step we will need the following installed locally (steps to install are described in the corresponting section):
+* Additionally, for Kafka step we will need the following installed locally (steps to install are described in the corresponding section):
   * open-source Apache Kafka 2.13-3.1.0
-  * Snowflake Kafka Connector 1.8.1.jar
+  * Snowflake Kafka Connector 1.9.0.jar
   * openJDK <= 15.0.2 
   * [homebrew](https://brew.sh/) for mac users
 
@@ -297,6 +297,8 @@ select *
 
 Here's a challenge for you. In the scripts we created earlier, we only loaded a small amount of data, around 1000 rows. Try generating more files based on sample data and observe how Snowpipe can handle a larger influx of data. 
 
+Also, if you'd like to learn more about SnowPipe and levelrage Cloud Storage Events for auto-ingest setup please have a look in our [Getting Started with Snowpipe](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html?index=..%2F..index#0) quickstart. 
+
 ## COPY command
 Duration: 15
 
@@ -454,7 +456,7 @@ As always, in our documentation you can find more details about the use of [Snow
 
 For testing this set up locally, we will need: 
 * open-source Apache Kafka 2.13-3.1.0 installed locally
-* Snowflake Kafka Connector 1.8.1 jar
+* Snowflake Kafka Connector 1.9.0 jar
 * openJDK <= 15.0.2 
 * a Snowflake user for streaming snowpipe with ssh key defined as authentication method
 
@@ -481,7 +483,7 @@ curl https://archive.apache.org/dist/kafka/3.3.1/kafka_2.13-3.3.1.tgz --output k
 tar -xzf kafka_2.13-3.3.1.tgz
 
 cd kafka_2.13-3.3.1/libs
-curl https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.8.2/snowflake-kafka-connector-1.8.2.jar --output snowflake-kafka-connector-1.8.2.jar
+curl https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.0/snowflake-kafka-connector-1.9.0.jar --output snowflake-kafka-connector-1.9.0.jar
 ```
 
 Create file `config/SF_connect.properties` with the following config. Please remember to replace **\<YOURACCOUNT>** & **\<YOURPRIVATEKEY>** with the corresponding details. Also, please note when adding private key you need to remove all new line characters as well as beginning and ending comments (e.g -----BEGIN PRIVATE KEY-----):  
@@ -571,6 +573,8 @@ Thanks to Snowflake's exceptional support for querying semi-structured data, wor
 
 ![staged data](assets/img12.png) 
 As you can see, Snowpipe Streaming is a fantastic new capability that can significantly reduce integration latency and improve pipeline efficiency. It also opens up new opportunities for your business, providing near-real-time insights and operational reporting, among other benefits.
+
+For those of you who would like to know more about use of Snowpipe Streaming in Amazon MSK (Managed Streaming for Apache Kafka) please have a look at this [Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0)!
 
 Hope you enjoyed this section. Let's summarize and provide some pointers to continue refining your streaming data pipeline skills.
 
