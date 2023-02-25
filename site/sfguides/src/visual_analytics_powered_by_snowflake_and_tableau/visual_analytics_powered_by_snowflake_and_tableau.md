@@ -1,7 +1,7 @@
 author: Chandra Nayak & Bailey Ferrari
 id: visual_analytics_powered_by_snowflake_and_tableau
 summary: Visual Analytics Powered by Snowflake and Tableau
-categories: Getting-Started
+categories: partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

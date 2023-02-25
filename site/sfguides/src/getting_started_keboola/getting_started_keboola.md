@@ -1,7 +1,7 @@
 author: Anthony Alteirac
 id: getting_started_keboola
 summary: Getting Started With Keboola
-categories: Getting-Started
+categories: getting-started,partner-integrations
 environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues

@@ -1,6 +1,6 @@
 summary: 지리 공간 데이터 활용기
 id: getting_started_with_geospatial_geography_kr
-categories: Getting-Started
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,7 +1,7 @@
 author: Alex Engelmann
 id: transform_your_data_with_coalesce
 summary: Accelerate Transformations with Coalesce and Snowflake
-categories: Getting-Started
+categories: data-engineering,partner-integrations
 environments: web
 status: final
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

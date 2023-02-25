@@ -1,6 +1,6 @@
 summary: This guide can be used to help customers setup and run queries pertaining to monitoring billing metrics that might help identify areas of over-consumption.
 id: resource_optimization_billing_metrics
-categories: Resource-Optimization
+categories: data-science-&-ml,resource-optimization
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

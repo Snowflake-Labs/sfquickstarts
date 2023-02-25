@@ -1,6 +1,6 @@
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 id: getting_started_with_snowflake_kr
-categories: Getting-Started
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

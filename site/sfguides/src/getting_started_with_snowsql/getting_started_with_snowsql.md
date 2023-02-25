@@ -1,6 +1,6 @@
 summary: Getting Started with SnowSQL
 id:getting_started_with_snowsql
-categories: Getting-Started
+categories: getting-started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

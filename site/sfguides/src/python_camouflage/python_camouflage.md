@@ -2,7 +2,7 @@
 author: Kevin Keller (https://github.com/kkellersnow)
 id: python_camouflage
 summary: Project Python Camouflage aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
-categories: Getting-Started
+categories: cybersecurity,architecture-patterns,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

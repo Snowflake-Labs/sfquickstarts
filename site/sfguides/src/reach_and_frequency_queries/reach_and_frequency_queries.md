@@ -1,7 +1,7 @@
 author: Jim Warner
 id: reach_and_frequency_queries
 summary: Shows common reach and frequency queries for advertising measurement
-categories: Getting-Started
+categories: data-science-&-ml,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

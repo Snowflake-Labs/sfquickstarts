@@ -1,7 +1,7 @@
 author: 
 id: data_apps_summit_lab
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
+categories: featured,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

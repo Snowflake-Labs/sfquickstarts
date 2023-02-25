@@ -25,12 +25,14 @@
 /* Snowflake specific category classes */
 
 $color-resource-optimization: #134369;
+$color-default: #134369;
 $color-getting-started: #5bc6d1;
 $color-demos: #c7477a;
 $color-devops: #347c3e;
 $color-architecture-patterns: #097e89;
 $color-data-applications: #282A72;
 $color-data-exchange: #282A72;
+@include codelab-card(['default'], $color-default, '');
 @include codelab-card(['getting-started'], $color-getting-started, '');
 @include codelab-card(['cybersecurity'], $color-getting-started, '');
 @include codelab-card(['resource-optimization'], $color-resource-optimization, '');
