@@ -103,10 +103,10 @@ print(version.VERSION)
 Last, let's open the credentials file and create the session.
 
 ```
-with open('properties.json') as f:
+with open('credentials.json') as f:
     connection_parameters = json.load(f)
-
-session = Session.builder.configs(snowflake_udf_conn_prop).create()
+    
+session = Session.builder.configs(connection_parameters).create()
 
 print(session.sql('select current_warehouse(), current_database(), current_schema()').collect())
 ```
@@ -406,10 +406,10 @@ from datetime import datetime, timedelta
 Next, open the credentials file and create a session.
 ```
 # Creating a session into Snowflake. This is the same as in previous sections of this lab
-with open('properties.json') as f:
+with open('credentials.json') as f:
     connection_parameters = json.load(f)
-
-session = Session.builder.configs(snowflake_udf_conn_prop).create()
+    
+session = Session.builder.configs(connection_parameters).create()
 
 # Testing the session
 session.sql("SELECT current_warehouse(), current_database(), current_schema()").show()
