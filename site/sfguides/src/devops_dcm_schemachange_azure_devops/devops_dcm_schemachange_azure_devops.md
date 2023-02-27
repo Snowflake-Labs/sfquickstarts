@@ -1,7 +1,7 @@
 author: Jeremiah Hansen
 id: devops_dcm_schemachange_azure_devops
 summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Azure DevOps
-categories: DevOps
+categories: devops
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

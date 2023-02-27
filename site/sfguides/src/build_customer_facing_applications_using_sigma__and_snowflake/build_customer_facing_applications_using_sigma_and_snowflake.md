@@ -1,7 +1,7 @@
 author: Kelsey Hammock
 id: build_customer_facing_applications_using_sigma_and_snowflake
 summary: This guide will lead you through the process of connecting Sigma to a Snowflake environment and building an application that leverages the data in Snowflake. This guide additionally highlights unique end user capabilities when Sigma is embedded in an application. 
-categories: Data-Applications, Data-Engineering, Analytics
+categories: app-development,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,7 +1,7 @@
 author: Jake Berkowsky
 id: s3_access_log_ingestion
 summary: This quickstart is a guide to ingesting and processing S3 Access Logs into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for data loss prevention and incident response.
-categories: Cybersecurity
+categories: solution-examples,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -170,7 +170,7 @@ ESCAPE_UNENCLOSED_FIELD = NONE;
 
 
 
-Create External Stage using the storage integration and test that snowflake can test files
+Create External Stage using the storage integration and test that snowflake can test files. Make sure you include the trailing slash if using a prefix.
 ```sql
 create stage s3_access_logs
   url = 's3://<BUCKET_NAME>/<PREFIX>/'

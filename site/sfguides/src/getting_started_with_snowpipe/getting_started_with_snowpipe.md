@@ -1,6 +1,6 @@
 summary: This guide will help you get started with Snowpipe.
 id: getting_started_with_snowpipe
-categories: Getting-Started
+categories: featured,getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -28,13 +28,30 @@ Let's look into how Snowpipe can be configured for continual loading. Then, we c
 - Next steps with database automation
 
 ### What You’ll Need 
-- Create a [Snowflake account](https://signup.snowflake.com/) with an **ACCOUNTADMIN** role
+- Create a [Snowflake account](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en) with an **ACCOUNTADMIN** role
 - AWS [Account](https://aws.amazon.com/free/?sc_icampaign=acq_aws_takeover-1st-visit-free-tier&sc_ichannel=ha&sc_icontent=awssm-evergreen-1st-visit&sc_iplace=hero&trk=ha_awssm-evergreen-1st-visit&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc) with access to a Snowflake supported [region](https://docs.snowflake.com/en/user-guide/intro-regions.html)
 
 ### What You’ll Build 
 - Automated data loading with Snowpipe between AWS S3 bucket and Snowflake database.
 
 After ensuring the prerequisites detailed in this section, jump into the queueing data integration options with Snowpipe.
+
+<!-- ------------------------ -->
+## Setting up Snowflake
+Duration: 2
+
+### Login and Setup Lab
+Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+
+![setup_lab](assets/setup_lab.png)
+
+Once the lab has been setup, it can be continued by revisiting the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe) and clicking `Continue Lab`
+
+![continue_lab](assets/continue_lab.png)
+
+or by navigating to Worksheets and selecting the `Getting Started with Snowpipe` folder.
+
+![worksheets](assets/worksheets.png)
 
 <!-- ------------------------ -->
 ## Choose the Data Ingestion Method

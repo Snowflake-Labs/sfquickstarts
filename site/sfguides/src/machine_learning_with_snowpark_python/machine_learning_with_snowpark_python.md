@@ -1,7 +1,7 @@
 author: Caleb Baechtold
 id: machine_learning_with_snowpark_python
 summary: This is a sample Snowflake Guide
-categories: data-science
+categories: getting-started,data-science-&-ml
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
