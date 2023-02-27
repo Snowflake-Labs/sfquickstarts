@@ -1,7 +1,7 @@
 author: Scott Teal, Saurin Shah
 id: extract_attributes_dicom_files_java_udf
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: Demos
+categories: data-engineering,app-development,architecture-patterns,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

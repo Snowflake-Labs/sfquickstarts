@@ -1,7 +1,7 @@
 author: Caleb Baechtold
 id: getting_started_with_snowpark_python
 summary: This is a sample Snowflake Guide
-categories: data-science, data-engineering
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
