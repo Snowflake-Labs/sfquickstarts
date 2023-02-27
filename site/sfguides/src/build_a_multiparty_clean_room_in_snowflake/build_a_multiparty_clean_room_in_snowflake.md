@@ -1,7 +1,7 @@
 author: Rachel Blum, Jim Warner
 id: build_a_multiparty_clean_room_in_snowflake
 summary: Learn how to build a simple three-party Data Clean Room in Snowflake
-categories: Demos
+categories: data-engineering,app-development,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
