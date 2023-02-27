@@ -1,6 +1,6 @@
 id: getting_started_with_snowpipe_streaming_aws_msk
 summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK).
-categories: Getting-Started
+categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
