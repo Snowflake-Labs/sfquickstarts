@@ -86,7 +86,7 @@ to launch a provisioned MSK cluster. Note the default AWS region is `us-west-2 (
 
 Click `Next` at the `Create stack` page. 
 Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `MSKSecurityGroupId`, we recommend
-to use the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. In the drop-down menu, pick two subnets, they can be either public or private subnets depending on the network layout of your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
+to use the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. In the drop-down menu, pick two different subnets, they can be either public or private subnets depending on the network layout of your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
 `Next`. 
 
 See below sample screen capture for reference.
