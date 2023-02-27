@@ -1,7 +1,7 @@
 author: Scott Teal, Saurin Shah
 id: analyze_pdf_invoices_java_udf_snowsight
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: Demos
+categories: data-science-&-ml,data-engineering,architecture-patterns,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

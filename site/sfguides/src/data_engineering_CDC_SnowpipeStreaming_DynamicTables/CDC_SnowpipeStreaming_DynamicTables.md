@@ -1,6 +1,6 @@
 id: CDC_SnowpipeStreaming_DynamicTables
 summary: Learn how to use Snowpipe Streaming and Dynamic Tables for Real-Time Streaming (CDC use case)
-categories: Data-Engineering
+categories: undefined
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

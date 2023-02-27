@@ -1,7 +1,7 @@
 author: gflomo@hex.tech
 id: hex
 summary: This lab will walk you through how to use Snowflake and Hex.
-categories: Getting-Started
+categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

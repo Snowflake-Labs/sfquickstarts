@@ -1,6 +1,6 @@
 summary: Building a Single-Page Data Application on Snowflake
 id: data_app
-categories: Getting-Started
+categories: app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

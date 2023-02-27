@@ -1,7 +1,7 @@
 author: Prash Medirattaa
 id: end_to_end_machine_learning_with_dataiku
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
+categories: data-science-&-ml,solution-examples,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
