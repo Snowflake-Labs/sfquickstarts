@@ -61,7 +61,15 @@ The use case uses information related to machine diagnostics (torque, rotational
 ## Set Up and Load Data
 Duration: 15
 
-First, you will access your AWS Sagemaker Studio and change the environment so that you are using an image that utilizes Python version 3.8. The Pytorch 3.8 or Tensorflow 3.8 will work for this quickstart.
+First, you will have to access your Snowflake enviornment and create the needed Warehouse and Database.
+
+```bash
+use role accountadmin;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
+CREATE OR REPLACE DATABASE HOL_DB;
+```
+
+Next, you will access your AWS Sagemaker Studio and change the environment so that you are using an image that utilizes Python version 3.8. The Pytorch 3.8 or Tensorflow 3.8 will work for this quickstart.
 ![](assets/sagemaker_image.png)
 
 Now open up a terminal window: 
@@ -69,12 +77,12 @@ Now open up a terminal window:
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 ```bash
-git clone https://github.com/marzillo-snow/getting_started_with_snowpark_on_sagemaker
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
 cd getting_started_with_snowpark_on_sagemaker
 ```
 
 Work through the set up script here to crate a database, warehouse and load the data: 
-[0_setup.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_sagemaker/blob/main/0_setup.ipynb).
+[0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb).
 
 Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. You just a little bit of Snowpark to get that data loaded!
 ![](assets/database_check.png)
@@ -84,7 +92,7 @@ Once complete with the script, check back to your Snowflake environment to make 
 Duration: 10
 Work through the 1_prepare_build_deploy_model.ipynb workbook to join together the datasets, bring in the training data then build and deploy the model. 
 
-[1_prepare_build_deploy_model.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
+[1_prepare_build_deploy_model.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
 
 Once that notebook is complete you will have a udf that you can use to generate predictions in your Snowflake environment! you can do this via Snowpark Python code or Snowflake SQL. Let's generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.
 
