@@ -1,6 +1,6 @@
 summary: Getting Started With External Functions Using the Google Cloud Console
 id: getting_started_external_functions_gcc
-categories: Getting Started
+categories: Getting-Started
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, SQL, Data Engineering, GCC, External Functions

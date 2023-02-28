@@ -1,7 +1,7 @@
 author: Chandra Nayak & Bailey Ferrari
 id: visual_analytics_powered_by_snowflake_and_tableau
 summary: Visual Analytics Powered by Snowflake and Tableau
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -89,6 +89,9 @@ Duration: 5
 
 ```sql
 -- Create Database, Schema and Warehouse
+
+USE ROLE ACCOUNTADMIN;
+
 create or replace database VHOL_DATABASE;
 use database VHOL_DATABASE;
 
@@ -320,7 +323,7 @@ with gbfs as (
     where type = 'neighborhood';
     
     
-    select * from vhol_spatial_data;
+    select * from vhol_spatial_data limit 10;
 ```
 
 ## Correlate Trips, Weather and Geospatial Data
@@ -343,7 +346,8 @@ create or replace table vhol_stations as with
         v:capacity::number station_capacity,
         v:rental_methods rental_methods
     from vhol_spatial_data
-    where type = 'station'),
+    where type = 'station'
+     and v:station_id not like '%-%' ), -- introduced by Chandra because the station_id data is coming corrupt for some records on 02/15/2023 
     -- Extract the region data
     r as (select
         v:region_id::number region_id,
@@ -365,7 +369,7 @@ from s inner join r on s.region_id = r.region_id
        left outer join n on st_contains(n.nhood_geo, s.station_geo);
 
 -- Query station data 
-select * from vhol_stations;
+select * from vhol_stations limit 10;
 ```
 
 ### Combine Trips, Geospatial and Stations

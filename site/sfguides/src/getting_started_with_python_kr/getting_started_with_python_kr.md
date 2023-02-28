@@ -1,6 +1,6 @@
 summary: Python 시작하기
 id: getting_started_with_python_kr
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

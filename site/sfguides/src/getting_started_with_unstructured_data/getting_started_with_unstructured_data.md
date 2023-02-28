@@ -1,7 +1,7 @@
 author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu
 id: getting_started_with_unstructured_data
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -224,7 +224,14 @@ grant usage on warehouse quickstart to role analyst;
 grant read on stage email_stage_internal to role analyst;
 ```
 
-You can verify the `analyst` role only has access to read by listing the files in the internal stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message.
+To make sure this works as expected, make sure secondary roles are disabled for `analyst` role.
+```sql
+use role analyst;
+select current_secondary_roles();
+use secondary roles none;
+```
+
+You can verify the `analyst` role only has access to read by listing the files in the internal stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message. 
 
 ```sql
 use role analyst;

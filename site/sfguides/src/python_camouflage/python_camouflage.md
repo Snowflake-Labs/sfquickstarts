@@ -2,7 +2,7 @@
 author: Kevin Keller (https://github.com/kkellersnow)
 id: python_camouflage
 summary: Project Python Camouflage aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
-categories: data-governance
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -35,7 +35,7 @@ Project Python Camouflage provides a basic framework for tokenization in Snowfla
 - A demo that shows you how to use Python UDFs to achieve FF3 tokenization
 
 ### Using This as a Snowflake Worksheet
-Because this demo has quite a few code snippets, we recommend putting the whole thing in a Snowflake worksheet. To make that easier, we added / * and  * / comments throughout the demo. If you are using the Snowflake Quickstart site to view this, you can ignore these. If you want to move the whole thing to a worksheet, you will find these disable the extraneous, non-SQL text in the worksheet (including this text). That's why you will see these in what may seem like random spots. To  get the full Worksheet version, go to this Quickstart's GitHub repo, and grab the raw version of the `*.md` file you find there. [This link should take you directly to that spot](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/Python Camouflage/Python Camouflage.md).
+Because this demo has quite a few code snippets, we recommend putting the whole thing in a Snowflake worksheet. To make that easier, we added / * and  * / comments throughout the demo. If you are using the Snowflake Quickstart site to view this, you can ignore these. If you want to move the whole thing to a worksheet, you will find these disable the extraneous, non-SQL text in the worksheet (including this text). That's why you will see these in what may seem like random spots. To  get the full Worksheet version, go to this Quickstart's GitHub repo, and grab the raw version of the `*.md` file you find there. [This link should take you directly to that spot](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/python_camouflage/python_camouflage.md).
 
 <!-- ------------------------ -->
 ## Understanding Tokenization
@@ -829,23 +829,31 @@ import json
 import re
 from decimal import *
 
+
+
 def udf(ff3key, ff3input, userkeys):
+
     userkeys=userkeys.replace("'","")
     ff3_userkey_dict=json.loads(userkeys)
     userkeys_list=[]
     userkeyslist=ff3_userkey_dict[ff3key[3:]]
-
+    
     ff3key=userkeyslist[0]
     tweak=userkeyslist[1]
     padding=userkeyslist[2]
-
+    
+    
     checkdecimal="." in str(ff3input)
-
+    
+    
+    
     if checkdecimal==False :
+    
         length=len(str(ff3input))
         lengthpadding=0
 
         c = FF3Cipher(ff3key, tweak)
+    
 
         if length<=6:
             plaintext=str(ff3input)
@@ -870,18 +878,26 @@ def udf(ff3key, ff3input, userkeys):
         if length==1:
             plaintext=str(ff3input)+padding
             lengthpadding=6
+            
+        if ff3input==0:
+            plaintext='000000'
+            lengthpadding=6
 
         ciphertext = c.encrypt(plaintext)
 
+        
         if length<10:
-            ciphertext=ciphertext+"0"+str(length)
+           ciphertext=ciphertext+"0"+str(length)
         else:
             ciphertext=ciphertext+str(length)
 
+
         ciphertext=str(lengthpadding)+ciphertext
         return int(ciphertext)
+        
+        
+    if checkdecimal==True :       
 
-    if checkdecimal==True :
         c = FF3Cipher(ff3key, tweak)
 
         value = str(ff3input)
@@ -903,6 +919,16 @@ def udf(ff3key, ff3input, userkeys):
         commais=commais
         detect_float=plaintext_org.split('.')
 
+        #dont try to encode more than 11 digits with decimal generally or more than 9 digits before or after the comma
+
+        #if len(detect_float[0]) >= 10:
+         #   print ("VALUE BEFORE COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED")
+        #if len(detect_float[1])>=10:
+        #    print("VALUE AFTER COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED")
+        #if len(detect_float[1])+len(detect_float[0])>=12:
+        #    print ("VALUE  TOO BIG NOT MORE THAN 11 DIGITS ALLOWED")
+
+
         plaintext =  value
         plaintext=plaintext.replace('.','')
         if ff3_padding !=None:
@@ -914,24 +940,26 @@ def udf(ff3key, ff3input, userkeys):
 
         beforecomma=len(detect_float[0])
         aftercomma=len(detect_float[1])
-
+        
         aftercommacheck=value
-
-        mo = re.match('.+([1-9])[^1-9]*$', aftercommacheck)
-        if mo !=  None:
-            lastposition=int(mo.start(1))
-            aftercommacheck=value[0:lastposition+1]
-            aftercommacheck=aftercommacheck.split('.')
-            aftercomma=len(aftercommacheck[1])
+        
+        mo = re.search('(?:(\.\d*?[1-9]+)|\.)0*$', aftercommacheck)
+        
+        if mo.group(1) !=  None:
+    
+            aftercommacheck=mo.group(1).replace('.','')
+            aftercomma=len(aftercommacheck)
+        
         else:
             aftercomma=0
 
         endresult=ciphertext
 
         endresult=str(commais)+endresult+str(beforecomma)+str(aftercomma)+str(lengthpadding)
-
+        
         return Decimal(endresult)
 $$;
+
 
 --- Install the number token formatting UDF
 create or replace function format_ff3_number_38_8_pass3(ff3input number(38,8))
@@ -940,27 +968,32 @@ language python
 runtime_version = 3.8
 handler = 'udf'
 as $$
-
 from decimal import *
 
+
+
 def udf(ff3input):
+
+    
     checkdecimal="." in str(ff3input)
-
+    
     if checkdecimal==False :
-
+    
         value=str(ff3input)
         length=int(value[-2:])
-
+        
         formatted=''
         formatted=value[1:]
         formatted=formatted[:-2]
         formatted=formatted[0:length]
+        #formatted='1'+formatted
         final=''
         addition=0
         numberofzeros=0
         nullen=''
         result=0
-
+        
+        
         if formatted[0]=='0':
             numberofzeros=length-1
             addition=length-numberofzeros
@@ -969,29 +1002,53 @@ def udf(ff3input):
             final=str(addition)+nullen
             result=int(formatted)+int(final)
             return result
-        return int(formatted)
+            
 
+        return int(formatted)
+        
     if checkdecimal==True :
+    
         value=str(ff3input).split('.')
         result=value[0]
-        result=result[1:]
-        result=result[:-1]
-        commas=result[-2:]
-        result=result[:-2]
-
-        beforecomma=int(commas[0])
-        aftercomma=int(commas[-1])
-
-        bcdigits=result[0:beforecomma]
-
-        if aftercomma!=0:
-            acdigits=result[-aftercomma:]
+        
+        if len(result)!=9:
+            result=result[1:]
+            result=result[:-1]
+            commas=result[-2:]
+            result=result[:-2]
+        
+            beforecomma=int(commas[0])
+            aftercomma=int(commas[-1])
+        
+            if beforecomma!=1:
+                bcdigits=value[0][0:beforecomma]
+        
+                if aftercomma!=0: 
+                    acdigits=value[0][-aftercomma:]
+                else:
+                    acdigits=0
+        
+                endresult=str(bcdigits)+'.'+str(acdigits)
+      
+                return Decimal(endresult)
+                
+            else:
+            
+                bcdigits=value[0][4]
+        
+                if aftercomma!=0: 
+                    acdigits=value[0][-aftercomma:]
+                else:
+                    acdigits=0
+        
+                endresult=str(bcdigits)+'.'+str(acdigits)
+      
+                return Decimal(endresult)              
+            
         else:
-            acdigits=0
+            endresult=result[5]
+            return Decimal(endresult)
 
-        endresult=str(bcdigits)+'.'+str(acdigits)
-
-        return Decimal(endresult)
 $$;
 
 --- Install the sql join formatting UDF for numbers.
@@ -1046,31 +1103,36 @@ from ff3 import FF3Cipher
 import json
 from decimal import *
 
+
+
 def udf(ff3key, ff3input, userkeys):
+
+
     userkeys=userkeys.replace("'","")
     ff3_userkey_dict=json.loads(userkeys)
     userkeys_list=[]
     userkeyslist=ff3_userkey_dict[ff3key[3:]]
-
+    
     ff3key=userkeyslist[0]
     tweak=userkeyslist[1]
     padding=userkeyslist[2]
-
+    
     checkdecimal="." in str(ff3input)
-
+    
     if checkdecimal==False :
-
+        
         lengthpadding=str(ff3input)[0]
         lengthpadding=int(lengthpadding)
         lengthpadding=lengthpadding-1
-
+    
         c = FF3Cipher(ff3key, tweak)
 
+        
         ciphertext=str(ff3input)[1:]
         ciphertext=ciphertext[:-2]
         decrypted = c.decrypt(ciphertext)
-        length=lengthpadding
-
+        length=lengthpadding 
+ 
         if length==5:
             decrypted=decrypted[:-5]
         if length==4:
@@ -1082,30 +1144,46 @@ def udf(ff3key, ff3input, userkeys):
         if length==1:
             decrypted=decrypted[:-1]
 
-        return int(decrypted)
+    
 
+        return int(decrypted)
+        
     if checkdecimal==True :
+    
         c = FF3Cipher(ff3key, tweak)
 
         value=str(ff3input)
         valuesplit=value.split('.')
-
+        
         plaintext_org=valuesplit[0]
-        plaintext_org=plaintext_org[1:]
-        plaintext_org=plaintext_org[:-3]
+        length_pt_org=len(valuesplit[0])
+        
+        
+        if length_pt_org==9:
+            ciphertext=str(plaintext_org)[1:]
+            ciphertext=ciphertext[:-2]
+            decrypted = c.decrypt(ciphertext)
+            
+            return Decimal(decrypted)
+        
+        else:    
+            plaintext_org=plaintext_org[1:]
+            plaintext_org=plaintext_org[:-3]
 
-        decrypted = c.decrypt(str(plaintext_org))
-        value=valuesplit[0]
-        lengthpadding=int(value[-1])
-        commais=int(value[0])
+            decrypted = c.decrypt(str(plaintext_org))
+            value=valuesplit[0]
+            lengthpadding=int(value[-1])
+            commais=int(value[0])
 
-        if lengthpadding==1:
+     
+            if lengthpadding==1:
                 decrypted=decrypted[:commais] + '.' + decrypted[commais:]
-        else:
+            else:
                 decrypted=decrypted[:-lengthpadding+1]
                 decrypted=decrypted[:commais] + '.' + decrypted[commais:]
 
-        return Decimal(decrypted)
+            return Decimal(decrypted)
+
 $$;
 
 -- Install string token USphone formatting UDFs.

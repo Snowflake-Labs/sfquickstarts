@@ -1,6 +1,6 @@
 id: getting_started_external_functions_azure
 summary: Getting Started With External Functions on Azure
-categories: Getting Started
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

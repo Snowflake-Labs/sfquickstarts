@@ -58,6 +58,9 @@ const DEFAULT_CATEGORY = 'Default';
 // trailing slash.
 const BASE_URL = args.baseUrl || 'https://quickstarts.snowflake.com';
 
+// [Dash] TEMP WORKAROUND to fix codelabs issue -- https://groups.google.com/g/codelab-authors/c/WwSdRF4bjBE/m/tA96pyWOEAAJ
+const CODELABS_ELEMENTS_PREFIX = BASE_URL + '/elements'
+
 // CODELABS_BUILD_DIR is the directory where the actual codelabs exist on disk.
 // Despite being a constant, this can be overridden with the --codelabs-dir
 // flag.
@@ -136,10 +139,12 @@ gulp.task('export:codelabs', (callback) => {
 
   if (source !== undefined) {
     const sources = Array.isArray(source) ? source : [source];
-    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+    // claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../" + CODELABS_BUILD_DIR, CODELABS_ELEMENTS_PREFIX, sources, callback);
   } else {
     const sources = ["[^_]*/*.md"]; //export all markdown files in the src directory, except _imports
-    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+    // claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
+    claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../" + CODELABS_BUILD_DIR, CODELABS_ELEMENTS_PREFIX, sources, callback);
   }
 });
 
