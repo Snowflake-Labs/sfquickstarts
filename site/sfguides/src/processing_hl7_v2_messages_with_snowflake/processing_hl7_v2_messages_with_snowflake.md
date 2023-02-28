@@ -1,7 +1,7 @@
 author: Sreedhar Bolneni, Venkatesh Sekar, Tushar Sarde
 id: processing_hl7_v2_messages_with_snowflake
 summary: This is a guide to get familiarised with how to ingest and process HL7 V2.x messages using Snowflake Data Programmability features.
-categories: Getting-Started
+categories: architecture-patterns,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

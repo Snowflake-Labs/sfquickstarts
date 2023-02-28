@@ -1,6 +1,6 @@
 id: getting_started_with_streams_and_tasks
 summary: Learn how to use streams and tasks with Snowflake.
-categories: Getting-Started
+categories: featured,getting-started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -38,7 +38,7 @@ While not covered in this exercise, one can use these building blocks to further
 ### What You’ll Need 
 To participate in the virtual hands-on lab, attendees need the following:
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks) with **ACCOUNTADMIN** access
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks&utm_cta=quickstart-getstartedwithstreamsandtasks-en) with **ACCOUNTADMIN** access
 
 ### What You’ll Build 
 - A Snowflake database that contains all data and objects built in this lab
@@ -52,9 +52,17 @@ To participate in the virtual hands-on lab, attendees need the following:
 Duration: 5
 
 ### Login and Setup Lab
-Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to [https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks](https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks&utm_cta=quickstart-getstartedwithstreamsandtasks-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
 
-If you do not have an account, signup for a trial account [here](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks) and you will be automatically taken to the Lab Setup Page after account activation.
+![setup_lab](assets/setup_lab.png)
+
+Once the lab has been setup, it can be continued by revisiting the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks) and clicking `Continue Lab`
+
+![continue_lab](assets/continue_lab.png)
+
+or by navigating to Worksheets and selecting the `Getting Started with Streams & Tasks` folder.
+
+![worksheets](assets/worksheets.png)
 
 ### Set your Role
 Finally, switch to the ACCOUNTADMIN role.  If you just created an evaluation account to go through this Lab, this should be easy.  However, if you are using an established account and find this role missing from your list, you may need assistance to complete the next few steps.  Creating a Role, Database, Stages, Tasks, and monitoring tasks executed by 'System' requires higher-level permissions.    

@@ -226,7 +226,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           {% if codelab.status.indexOf('hidden') === -1 || view.id !== 'default' %}
             {% set cat = levelledCategory(codelab, view.catLevel) %}
             <a href="{{codelabUrl(view, codelab)}}" on-tap="navigate"
-               class="codelab-card category-{{categoryClass(codelab, cat.level)}}"
+               class="codelab-card category-default category-{{categoryClass(codelab, cat.level)}}"
                data-category="{{codelab.category}}"
                data-title="{{codelab.title}}"
                data-duration="{{codelab.duration}}"
@@ -243,7 +243,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
               <div class="card-footer">
                 <div class="category-icon {{categoryClass(codelab, cat.level)}}-icon"></div>
-                <paper-button class="{{categoryClass(codelab, cat.level)}}-bg">Start</paper-button>
+                <paper-button class="default-bg {{categoryClass(codelab, cat.level)}}-bg">Start</paper-button>
               </div>
             </a>
           {%- endif %}

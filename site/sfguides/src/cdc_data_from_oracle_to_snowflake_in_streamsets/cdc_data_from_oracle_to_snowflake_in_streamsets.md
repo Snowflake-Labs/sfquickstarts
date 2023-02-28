@@ -1,7 +1,7 @@
 author: Brenna Buuck
 id: cdc_data_from_oracle_to_snowflake_in_streamsets
 summary: CDC Data from Oracle to Snowflake in StreamSets
-categories: data-engineering
+categories: data-engineering,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

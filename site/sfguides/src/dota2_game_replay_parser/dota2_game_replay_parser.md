@@ -1,6 +1,6 @@
 summary: Parse a Dota 2 game replay
 id: dota2_game_replay_parser 
-categories: Getting-Started
+categories: undefined
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
