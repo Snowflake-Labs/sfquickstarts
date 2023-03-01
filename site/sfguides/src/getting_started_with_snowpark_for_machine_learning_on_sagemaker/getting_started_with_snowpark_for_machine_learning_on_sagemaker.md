@@ -58,16 +58,18 @@ In this use case you will build a binary model based on the 'Machine Predictive 
 The use case uses information related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.
 
 <!-- ------------------------ -->
-## Set Up and Load Data
-Duration: 15
+## Set Up Snowflake Environment
+Duration: 5
 
-The first thing we will do is creat a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
-```bash
+The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
+```sql
 use role accountadmin;
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 CREATE OR REPLACE DATABASE HOL_DB;
 ```
-
+<!-- ------------------------ -->
+## Set Up Sagemaker Environment
+Duration: 5
 If you haven't used SageMaker Studio before, for first time setup you will need to create a SageMaker Studio domain by following the [Quick setup](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html) process. After creating your domain you should be able to [Launch SageMaker Studio from the Domain details page](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-launch.html#studio-launch-console-domain).
 
 Once you've opened SageMaker Studio, our first step will be to launch a Python 3.8 notebook environment for Snowpark compatibility. To do this, select the 'Open Launcher' tile from the Home tab and then 'Change environment' so that you are using an image that utilizes Python version 3.8. The following images will work well for this quickstart:
@@ -76,15 +78,21 @@ Once you've opened SageMaker Studio, our first step will be to launch a Python 3
 
 ![](assets/sagemaker_image.png)
 
+<!-- ------------------------ -->
+## Clone Github Repo
+Duration: 5
 Now open up a terminal window:
 ![](assets/terminal_sagemaker.png)
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 ```bash
-git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git)
 cd getting_started_with_snowpark_on_sagemaker
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
 ```
-
+<!-- ------------------------ -->
+## Load data into Snowflake
+Duration: 5
 You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
 
 You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
