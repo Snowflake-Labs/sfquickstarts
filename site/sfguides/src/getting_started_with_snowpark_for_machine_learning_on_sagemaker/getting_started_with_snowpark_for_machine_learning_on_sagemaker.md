@@ -86,7 +86,7 @@ Now open up a terminal window:
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 ```bash
-git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git)
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
 cd getting_started_with_snowpark_on_sagemaker
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
 ```
