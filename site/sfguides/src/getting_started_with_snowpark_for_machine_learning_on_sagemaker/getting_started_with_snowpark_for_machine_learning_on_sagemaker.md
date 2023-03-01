@@ -68,6 +68,7 @@ CREATE OR REPLACE DATABASE HOL_DB;
 <!-- ------------------------ -->
 ## Set Up Sagemaker Environment
 Duration: 5
+
 If you haven't used SageMaker Studio before, for first time setup you will need to create a SageMaker Studio domain by following the [Quick setup](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html) process. After creating your domain you should be able to [Launch SageMaker Studio from the Domain details page](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-launch.html#studio-launch-console-domain).
 
 Once you've opened SageMaker Studio, our first step will be to launch a Python 3.8 notebook environment for Snowpark compatibility. To do this, select the 'Open Launcher' tile from the Home tab and then 'Change environment' so that you are using an image that utilizes Python version 3.8. The following images will work well for this quickstart:
@@ -79,6 +80,7 @@ Once you've opened SageMaker Studio, our first step will be to launch a Python 3
 <!-- ------------------------ -->
 ## Clone Github Repo
 Duration: 5
+
 Now open up a terminal window:
 ![](assets/terminal_sagemaker.png)
 
@@ -91,6 +93,7 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 <!-- ------------------------ -->
 ## Load data into Snowflake
 Duration: 5
+
 You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
 
 You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
@@ -112,13 +115,14 @@ Once complete with the script, check back to your Snowflake environment to make 
 <!-- ------------------------ -->
 ## Build and Deploy Model
 Duration: 10
+
 Now open and work through the `1_prepare_build_deploy_model.ipynb` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
 
-[1_prepare_build_deploy_model.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/1_prepare_build_deploy_model.ipynb
+[1_prepare_build_deploy_model.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
 
 Once that notebook is complete you will have a udf that you can use to generate predictions in your Snowflake environment! you can do this via Snowpark Python code or Snowflake SQL. Let's generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.
 
-```bash
+```sql
 use role accountadmin;
 select predict_failure(AIR_TEMPERATURE_K,
        PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
