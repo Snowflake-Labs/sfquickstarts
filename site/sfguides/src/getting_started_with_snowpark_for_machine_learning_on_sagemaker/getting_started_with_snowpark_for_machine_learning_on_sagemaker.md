@@ -88,13 +88,25 @@ In the terminal window you will copy the public repo that contains the data and 
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
 cd getting_started_with_snowpark_on_sagemaker
+```
+
+Next, Open up the image terminal to install packages from the Snowflake Conda channel:
+![](assets/timage_terminal.png)
+
+```bash
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
 ```
+
 <!-- ------------------------ -->
 ## Load data into Snowflake
 Duration: 5
 
 You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+
+There is a chance that you will receive an error when loading the data to Snowflake that is related to pyarrow. If you receive this you will have to go back to the image terminal and run the below command then reinstall the previous packages from the Snowflake channel.
+```bash
+conda uninstall pyarrow
+```
 
 You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
 ```python
