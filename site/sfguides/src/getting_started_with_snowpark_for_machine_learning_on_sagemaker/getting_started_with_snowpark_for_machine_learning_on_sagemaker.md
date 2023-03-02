@@ -130,10 +130,6 @@ Once complete with the script, check back to your Snowflake environment to make 
 - If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
 - Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
-```bash
-conda uninstall pyarrow
-```
-
 <!-- ------------------------ -->
 ## Build and Deploy Model
 Duration: 10
