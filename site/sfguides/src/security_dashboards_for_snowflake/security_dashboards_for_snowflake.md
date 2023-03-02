@@ -10,7 +10,7 @@ tags: Security, SnowSight, Dashboards
 # Snowflake Security Dashboards
 <!-- ------------------------ -->
 ## Why Make Security Dashboards?
-Duration: 1
+Duration: 2
 
 The Security Field CTO team at Snowflake has talked with thousands of Snowflake customers over the years. Most of them have a simple request. "Tell us how to do security well for Snowflake, please." It's a reasonbale thing to ask. We've tried many ways to deliver the answer to this question from checklists and tutorials to documents and slides. In 2021, we started a project (code named "Snow Sentry") which aimed to take much of that advice and make it into code. We created a set of sample tiles contained in a single dashboard to act as an MVP for monitoring security items in Snowflake. You will build a replica of that MVP during this quickstart. 
 
@@ -40,7 +40,7 @@ These dashboards are for any Snowflake customer who wants gain deeper understand
 
 <!-- ------------------------ -->
 ## Getting Started with Snowflake's SnowSight Tiles
-Duration: 2
+Duration: 1
 
 Throughout this quickstart we will be creating tiles (i.e. charts, graphs) that will be part of dashboards to display the information we want to see. The steps to create thse tiles are not the core part of this, but without the ability to do the basics here, you will get lost pretty quickly. So we will spend the time to step through how to do this in detail for the first tile, but then all the following tiles will assume you know how to do what's needed and only give basic guidance and sample end results. 
 
@@ -51,7 +51,7 @@ The majority of what you should need to know is in the documentation here:
 
 <!-- ------------------------ -->
 ## Create the Dashboard and the First Tile
-Duration: 8
+Duration: 10
 
 First, you will need to set up some background items to prepare. We will create a special role, grant it rights, and then grant that role to the user you are using during this work. You can do this in whatever UI or other tool you want at this point. 
 
@@ -158,7 +158,7 @@ Since this dashboard only aims to be an MVP, this is a chance to ask yourself wh
 
 <!-- ------------------------ -->
 ## Privileged Access Tiles
-Duration: 5
+Duration: 6
 
 Keeping and eye on those with Privileged Access to any system is a must for good security practice. These tiles show you how you can do that with the audit trail Snowflake is providing to you. There are two tiles in this category. 
 
@@ -244,7 +244,7 @@ Again, there are many more aspects to Identity Management which deserve to be pl
 
 <!-- ------------------------ -->
 ## Least Privileged Access Tiles
-Duration: 8
+Duration: 5
 
 A close second to Identity Management is Entitlement Management. The ideal for this is achiving Least Privileged Access, the state where user and roles have only exactly the entitlements required to accomplish their authorized business goals. There are two tiles we have created to help with that. 
 
@@ -440,26 +440,33 @@ select * from role_path_privs_agg order by num_of_privs desc
 Since these tiles are doing a deeper level of analysis, the SQL is much more complex. Even with that complexity, there are likely areas to imagine pulling in more information, or aiming similar analysis at other aspects of the system like user that have the most code deployed in the form of SnowPark or stored procedures. 
 
 <!-- ------------------------ -->
-## Metadata Configuration
+## Network Policy Tile
 Duration: 2
 
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
+There are many types of policy that control security properties of your Snowflake Accounts. One of the most crucial is the Network Policy, which decides what network origination points will be allowed to connect to your Snowflake Accounts. This will help you track when any changes are made to these policies. The tile will look like this:
+![Network POlicy changes tile final state](assets/tile_net_policy_changes.png)
+The SQL for this tile is:
+```sql
+select user_name || ' made the following Network Policy change on ' || end_time || ' [' ||  query_text || ']' as Events
+   from query_history where execution_status = 'SUCCESS'
+   and query_type in ('CREATE_NETWORK_POLICY', 'ALTER_NETWORK_POLICY', 'DROP_NETWORK_POLICY')
+   or (query_text ilike '% set network_policy%' or
+       query_text ilike '% unset network_policy%')
+       and query_type != 'SELECT' and query_type != 'UNKNOWN'
+   order by end_time desc;
+```
 
-### Images
-![Chart](assets/login_failures_full_chart_config.png)
+You can easily modify this to watch for modifications for any of the policies controling access to your Snowflake Accounts.
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
+Duration: 2
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+The Security Dashboard you've built here is a starting point. The hope is you've seen that all the information you would likely want to use is available, and we make it relatively easy to get that information displayed in a useful way. 
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+If you want to learn more about Snowflake security, checkout the official documentation here: [Summary of Security Features (Docs)](https://docs.snowflake.com/user-guide/admin-security). There is also a lot more information about Security at Snowflake here: [Snowflake Security & Trust Center](https://www.snowflake.com/product/security-and-trust-center/). 
 
 ### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importin other markdown files
+- How to use Snowsight to create dashboard tiles
+- Using the Snowflake audit trail to find security data
+- Building tiles to explore your Snowflake security data
