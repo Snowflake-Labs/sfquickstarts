@@ -1,6 +1,6 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python
 summary: Getting Started with Data Engineering and ML using Snowpark for Python
-categories: Getting-Started
+categories: getting-started
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
