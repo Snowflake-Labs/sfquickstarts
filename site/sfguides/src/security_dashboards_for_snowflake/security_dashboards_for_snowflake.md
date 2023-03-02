@@ -59,7 +59,8 @@ First, you will need to set up some background items to prepare. We will create 
 use role accountadmin; 
 create role secdashboards;
 grant imported privileges on database snowflake to role secdashboards;
-grant usage on warehouse <YOURWAREHOUSE> to role secdashboards;
+create or replace warehouse SENTRY with warehouse_size='SMALL';
+grant usage on warehouse SENTRY to role secdashboards;
 grant role secdashboards to user <YOURUSER>;
 ```
 
@@ -67,7 +68,7 @@ Now we have a role named `secdashboards` that has access to the proper resources
 
 ```
 use role secdashboards;
-use warehouse <YOURWAREHOUSE>;
+use warehouse SENTRY;
 use database snowflake;
 use schema account_usage;
 ```
