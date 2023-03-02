@@ -96,7 +96,7 @@ Next, Open up the image terminal to install packages from the Snowflake Conda ch
 ![](assets/image_terminal.png)
 
 ```bash
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn
 ```
 
 > Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0
