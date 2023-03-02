@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: example_matt_marzillo
+id: getting_started_with_snowpark_for_machine_learning_on_sagemaker
 summary: This is a qucikstart for using Snowpark for ML on SageMaker
 categories: Getting-Started, data-science, data-engineering, aws, sagemaker
 environments: web
