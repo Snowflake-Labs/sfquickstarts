@@ -93,7 +93,7 @@ cd getting_started_with_snowpark_on_sagemaker
 ```
 
 Next, Open up the image terminal to install packages from the Snowflake Conda channel:
-![](assets/timage_terminal.png)
+![](assets/image_terminal.png)
 
 ```bash
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
