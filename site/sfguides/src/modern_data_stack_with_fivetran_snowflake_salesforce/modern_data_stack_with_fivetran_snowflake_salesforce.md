@@ -1,173 +1,198 @@
 author: David Hrncir
 id: modern_data_stack_with_fivetran_snowflake_salesforce
-summary: This is a sample Snowflake Guide
+summary: Lab to demonstrate the ease of use to ingest data from Salesforce to Snowflake through Fivetran with insights dashboard from dbt models.
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Analytics, Data Engineering, Fivetran, Salesforce, dbt
 
-# Snowflake Guide Template
+# Fivetran - Automate Salesforce Insights: Source, Target, Transformations, Dashboard...NO CODE
 <!-- ------------------------ -->
-## Overview 
-Duration: 1
-
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
-
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
-
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
-
-### Prerequisites
-- Familiarity with Markdown syntax
-
-### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
-
-### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
-
-### What You’ll Build 
-- A Snowflake Guide
-
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
-
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
-
-
-<!-- ------------------------ -->
-## Creating a Step
-Duration: 2
-
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
+## Overview
 Duration: 3
 
-All the content for the step goes here.
+You 
 
-## Step 2 Title
-Duration: 1
+### Prerequisites
+- Existing Snowflake account or a [new Snowflake trial account](https://signup.snowflake.com) with `ACCOUNTADMIN` role
+- [Salesforce development account](https://developer.salesforce.com/signup)
 
-All the content for the step goes here.
-```
+### What you'll learn in the lab
+- How to leverage Snowflake Partner Connect to create a Fivetran account
+- How to create/configure a Fivetran Salesforce connector
+- How to use Fivetran’s Quickstart Data Models to transform the raw data into analytics models
+- How to setup a Snowflake Dashboard to harness the Salesforce data models
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+### What you'll need
+- All you’ll need is a modern browser like Chrome
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
-
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
+### What you'll build 
+- A `NO CODE` Salesforce data pipeline
+  - With prebuilt data models ready for use
+  - Powered by Snowflake and Fivetran (and dbt Labs - transforms use dbt Core - no installs or account needed)
+- A dashboard that gives immediate insights into your Salesforce data
 
 
+## Accounts - Snowflake and Fivetran
+Duration: 10
+
+The outcome of this step is to:
+- Have a Snowflake account with all the objects needed for Fivetran to ingest data (account, user, role, warehouse, database)
+- Have a Fivetran account with a Snowflake destination setup ready to receive data
+
+The easiest option to get started with Fivetran and Snowflake is to use Snowflake Partner Connect.  Partner connect allows you to quickly create a Fivetran trial account and configures the default Snowflake destination within Fivetran in one easy step.
+
+If you are unable to use Snowflake Partner Connect (ex. you may already have a Fivetran account linked), the creation of a Fivetran trial and a Fivetran Snowflake destination are also shown below.
+
+### Partner Connect
+Ensure you are in the Snowflake UI as an `ACCOUNTADMIN`.  Expand `Admin`, click `Partner Connect`, under `Data Integration` click the Fivetran tile.
+![Partner Connect](assets/sfdc/SFPC.png)
+
+
+Once the tile is clicked you will be presented with the Fivetran configuration screen below.  Simply click the `Connect` button and follow the emails sent.  That's it!  That will kick off the Fivetran trial account as well as build your default Snowflake destination.  You may skip the below section.
+![Partner Connect Fivetran Configuration](assets/sfdc/SFPCFT.png)
+
+
+### Non-Partner Connect Only
 > aside negative
-> 
->  This will appear in a negative info box.
+> In the case where you are unable to use partner connect, you can create a [Fivetran trial account here](https://fivetran.com/signup).  Post Fivetran account creation, you simply follow [these instructions](https://fivetran.com/docs/destinations/snowflake/setup-guide) to setup your Snowflake destination in Fivetran and Snowflake.  Then you may continue to the next step.
+>
 
-### Buttons
-<button>
+## Configure the Fivetran Salesforce Connector
+Duration: 8
 
-  [This is a download button](link.com)
-</button>
+Ok, let's get our data from Salesforce into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
 
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
+Click `Explore/Add Connectors`:
+![Fivetran Connector 1](assets/connector/c_0010.png)
 
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+Click the `Salesforce` connector and then click `Continue Setup`:
+![Fivetran Connector 3](assets/connector/c_0030.png)
 
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
+Leave the `Destination schema` as `salesforce` and click `Authorize`.  This will launch your login for your Salesforce developer account.  If you area already logged, this will take the current token and return.  If not, you will be asked to login.  Enter your credentials.  Upon signing in, you will be redirected back to Fivetran configuration.
+![Fivetran Connector 4](assets/connector/c_0040.png)
 
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
+You will see that the authentication is successful.  Click `Save & Test`.
+![Fivetran Connector 5](assets/connector/c_0050.png)
 
-### Images
-![Puppy](assets/SAMPLE.jpg)
+Fivetran will test the token to ensure Fivetran can login to the API and query assets needed.  Click `Continue`.
+![Fivetran Connector 6](assets/connector/c_0060.png)
 
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
+Next you will select the tables/objects to replicate.  Salesforce contains over 900 objects.  Let's only select the ones we need here today.  Click the `minus` sign twice which will deselect all tables.
+![Fivetran Connector 7](assets/connector/c_0070.png)
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
+Then let's make this easy and use the filter textbox to only find and select the objects/tables we want to replicate.  Here is the list of objects we want to select (please be sure to choose the exact name).  Note that once you select a table and begin a new filter, the selected table(s) stay checked...even though the table may go out of view.  Repeat each search and select each table below until all are selected.
+- Account
+- Contact
+- Event
+- Lead
+- Opportunity
+- OpportunityLineItem
+- Order
+- Product2
+- Task
+- User
+- UserRole
+![Fivetran Connector 8](assets/connector/c_0080.png)
 
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+When done with all of the above adds, click the filter icon and check the `Only show selected tables` checkbox.
+![Fivetran Connector 9](assets/connector/c_0090.png)
 
-<!-- ------------------------ -->
+The filtered view should be as shown below.  If so, click `Save & Continue`.
+![Fivetran Connector 10](assets/connector/c_0100.png)
+
+Leave the schema changes setting as `Allow All`.  Click `Continue`.
+![Fivetran Connector 11](assets/connector/c_0110.png)
+
+With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`.  And let Fivetran seemlessly replicate your data into Snowflake.  This should only take a minute or two at most.  Now, let's move on to transformations!
+![Fivetran Connector 12](assets/connector/c_0120.png)
+
+## Configure Fivetran Quickstart Transformations
+Duration: 5
+
+Fivetran is going to replicate your Salesforce data into a fully normalized Snowflake schema.  Now to make the data easier to query for our dashboard/use cases, let's transform it.  Fivetran gives you the ability, and is ever expanding, to utilize dbt Core data modeling to further curate your data with NO CODE!  These transformations are called Quickstart Data Models.  Let's configure these now.
+
+From the Fivetran UI, click `Transformations` in the left navbar.  Then in the `Quickstart` section, click `Get Started`.
+![Fivetran Transform 1](assets/transforms/t_0010.png)
+
+In the configuration page, for `Source Type` choose `Salesforce`.  For `Connector`, choose your Salesforce connector.
+![Fivetran Transform 2](assets/transforms/t_0020.png)
+
+Scroll down on the configuration screen and under `Set Schedule` select `Fully integrated`, then click `Save`.
+![Fivetran Transform 3](assets/transforms/t_0030.png)
+
+The transformations are now configured and will show a status of `Pending`.
+![Fivetran Transform 4](assets/transforms/t_0040.png)
+
+The transformations should instantiate within a few minutes.  If not, you may reset the schedule for your Salesforce connector to a lower number like 15 minutes.
+![Fivetran Transform 5](assets/transforms/t_0050.png)
+
+If you catch it fast enough, the transformations page will show the transformation jobs status as `Running`.  Like the data replication, this should only take a minute or two to complete.
+![Fivetran Transform 6](assets/transforms/t_0060.png)
+
+Once the transformations complete, you will see new objects in the Snowflake database.  The objects prefixed with 'SALESFORCE__' are models ready to query to assist us in our use cases and dashboard.  Objects prefixed with 'STG_' are staging objects used to build the final models and are rebuilt upon every transformation run.  (The below Snowflake images display the objects built by the Quickstart Data Models...no further action needed on these tables!)
+![Fivetran Transform 7](assets/transforms/t_0070.png)
+![Fivetran Transform 8](assets/transforms/t_0080.png)
+
+In the Fivetran UI, you can view the lineage for any of the transformation jobs just by click the transformation job from the Transformations UI (`salesforce__sales_snapshot` shown below).
+![Fivetran Transform 9](assets/transforms/t_0090.png)
+
+### Recap
+> aside positive
+>You can see that with Fivetran Quickstart Data Models, there is no code, no git, and no deployments!  From 'E' to 'L' to 'T', your data is ready for use...in less than 20 minutes!
+>
+
+## Build Insights Via Snowflake Dashbaord
+Duration: 10
+Now that our models are built and ready to query, let's build some insights into your data!  For the purposes of this lab, we will build a 4 tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.
+
+### Snowflake Dashboard
+Click the `Dashboards` item in the left navbar.  This will display the Dashboard UI.  Click `+ Dashboard` in the upper right to begin the dashboard creation process.
+![Fivetran Dashboard 1](assets/dashboard/d_0001.png)
+
+Next give your dashboard a name.
+![Fivetran Dashboard 2](assets/dashboard/d_0002.png)
+
+Then it's time to start building tiles.
+![Fivetran Dashboard 3](assets/dashboard/d_0003.png)
+
+### Tile 1: Stage Counts by Month - Heatgrid
+```
+select stage_name, close_date, amount 
+from lab_fivetran_db.salesforce.salesforce__opportunity_enhanced
+```
+![Fivetran Dashboard 4](assets/dashboard/d_0010.png)
+
+### Tile 2: Opportunities Won - Bar
+```
+select sum(amount) as account_amount, account_name, count(*) as num_won 
+from lab_fivetran_db.salesforce.salesforce__opportunity_enhanced 
+where is_won = true group by account_name order by 1
+```
+![Fivetran Dashboard 5](assets/dashboard/d_0020.png)
+
+### Tile 3: Average Close Days - Score
+```
+select round(avg(days_to_close),1) 
+from lab_fivetran_db.salesforce.salesforce__opportunity_enhanced
+```
+![Fivetran Dashboard 6](assets/dashboard/d_0030.png)
+
+### Tile 4: Top 5 Performers - Table
+```
+select top 5 owner_name as "Owner", avg_bookings_amount as "Avg Booking Amt", round(avg_days_to_close,1) as "Avg Days to Close", 
+total_pipeline_amount as "Total Pipeline" 
+from lab_fivetran_db.salesforce.salesforce__owner_performance 
+where total_pipeline_amount is not null 
+order by total_pipeline_amount desc
+```
+![Fivetran Dashboard 7](assets/dashboard/d_0040.png)
+
+### Final Dashboard
+Here is the example dashboard giving immediate insights to the data for your use cases!  This lab was performed on a developer dataset, but the lab demonstrates the power, flexibility, reliability, and speed to insights by performing ELT with no code!  Further insights are simplified in that I am not required to possibly build complex SQL around my "raw" tables.  Don't stop here...try additional queries and visualizations to gain even more insight from your Salesforce data!
+![Fivetran Dashboard 8](assets/dashboard/d_0050.png)
+
 ## Conclusion
 Duration: 1
 
