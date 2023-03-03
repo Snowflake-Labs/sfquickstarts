@@ -225,9 +225,31 @@ To get started, follow these steps:
 
 ### Data Engineering Notebook in Hex
 
-- If you already have an account on [Hex](https://app.hex.tech/login), then Snowpark for Python is built-in so you don't have to install it.
-- As for connecting to Snowflake from Hex, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json), create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Data Engineering Notebook.
-- Then, [Import](https://learn.hex.tech/docs/versioning/import-export) [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb) as a Project in your account.
+If you already have an account on [Hex](https://app.hex.tech/login), then Snowpark for Python is built-in so you don't have to install it.
+
+1) Import [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
+
+2) Then, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) to connect to Snowflake, create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Data Engineering Notebook as shown below.
+
+![HEX Data Connection](assets/hex_data_connection.png)
+
+> aside negative
+> Note: You can also create shared data connections for your projects and users in your workspace. For more details, refer to the [docs](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+
+3) Replace the following code snippet
+
+```python
+connection_parameters = json.load(open('connection.json'))
+session = Session.builder.configs(connection_parameters).create()
+```
+
+**with...**
+
+```python
+import hextoolkit
+hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
+session = hex_snowflake_conn.get_snowpark_session()
+```
 
 <!-- ------------------------ -->
 ## Data Pipelines
@@ -236,7 +258,7 @@ In the [Data Engineering Notebook](https://github.com/Snowflake-Labs/sfguide-ad-
 
 For reference purposes, here are the code snippets.
 
-#### **Root/parent Task**
+### **Root/parent Task**
 
 ```python
 def campaign_spend_data_pipeline(session: Session) -> str:
@@ -283,7 +305,7 @@ AS
 session.sql(campaign_spend_data_pipeline_task).collect()
 ```
 
-#### **Child/dependant Task**
+### **Child/dependant Task**
 
 ```python
 def monthly_revenue_data_pipeline(session: Session) -> str:
@@ -320,21 +342,21 @@ session.sql(monthly_revenue_data_pipeline_task).collect()
 > aside negative
 > Note: In the ***monthly_revenue_data_pipeline_task*** above, notice the **AFTER campaign_spend_data_pipeline_task** clause which makes it a dependant task.
 
-Here is how to start the tasks.
+#### Start Tasks
 
 ```sql
 session.sql("alter task monthly_revenue_data_pipeline_task resume").collect()
 session.sql("alter task campaign_spend_data_pipeline_task resume").collect()
 ```
 
-***Note***: Suspend tasks to avoid unecessary resource utilization.
+#### Suspend Tasks
 
 ```sql
 session.sql("alter task campaign_spend_data_pipeline_task suspend").collect()
 session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
 ```
 
-### Task Observability
+### Tasks Observability
 
 These tasks and their [DAGs](https://docs.snowflake.com/en/user-guide/tasks-intro#label-task-dag) can be viewed in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks#viewing-individual-task-graphs) as shown below.
 
@@ -383,9 +405,31 @@ To get started, follow these steps:
 
 ### Machine Learning Notebook in Hex
 
-- If you already have an account on [Hex](https://app.hex.tech/login), then Snowpark for Python is built-in so you don't have to install it.
-- As for connecting to Snowflake from Hex, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json), create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Machine Learning Notebook.
-- Then, [Import](https://learn.hex.tech/docs/versioning/import-export) [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb) as a project in your account.
+If you already have an account on [Hex](https://app.hex.tech/login), then Snowpark for Python is built-in so you don't have to install it.
+
+1) Import [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
+
+2) Then, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) to connect to Snowflake, create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Machine Learning Notebook as shown below.
+
+![HEX Data Connection](assets/hex_data_connection.png)
+
+> aside negative
+> Note: You can also create shared data connections for your projects and users in your workspace. For more details, refer to the [docs](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+
+3) Replace the following code snippet
+
+```python
+connection_parameters = json.load(open('connection.json'))
+session = Session.builder.configs(connection_parameters).create()
+```
+
+**with...**
+
+```python
+import hextoolkit
+hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
+session = hex_snowflake_conn.get_snowpark_session()
+```
 
 <!-- ------------------------ -->
 ## Streamlit Application
