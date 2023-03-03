@@ -12,23 +12,25 @@ tags: Connectors, Data Engineering, Servicenow
 ## Overview 
 Duration: 1
 
-Use this quickstart to configure the Servicenow to Snowflake connector, select some tables, ingest data, and stop the connector.  
+Ingest data from ServiceNow into Snowflake automatically. The connector supports both the initial load of historical data as well as incremental updates. The latest data is regularly pulled from ServiceNow and you control how frequently it is refreshed.
+
+Use this quickstart to configure and understand the Servicenow to Snowflake connector using the Snowsight wizard, select some tables, ingest data, run some typical usage queries. When you are done stop the connector to avoid costs. You could also do all these steps programmatically, please refer to the documentation. 
 
 ### Prerequisites
 - Servicenow account with administrator's rights.
 - Snowflake account and user with accountadmin's role.
 
 ### What You’ll Learn 
-- how to set up the Snowflake Servicenow connector.
-- how to ingest table data.
-- how to stop the connector to avoid costs.
+- How to set up the Snowflake Servicenow connector.
+- How to ingest table data.
+- How to stop the connector to avoid unnecessary costs in a development environment.
 
 ### What You’ll Need 
 - A [Snowflake](https://snowflake.com/) Account 
 - A [Servicenow](https://developer.servicenow.com/dev.do/) developer account
 
 ### What You’ll Build 
-- A Servicenow connector to load data from Servicenow to Snowflake
+- A Servicenow to Snowflake ingestion data flow.
 
 <!-- ------------------------ -->
 ## Servicenow Setup
@@ -37,14 +39,15 @@ Duration: 30
 1. Go to the [Servicenow developer website](https://developer.servicenow.com), and create a developer user.
 
 1. Log on to the developer website with your newly created user and select **Create an Instance**. 
-1. Choose an instance type. Tokyo worked for me. Wait for about 5 minutes. You should receive an email with your instance URL, and admin user and password. 
+1. Choose an instance type. You receive an email with your instance URL, and admin user and password. 
 
 ## Servicenow endpoint configuration
-This procedure creates an OAuth client application record and generates a client ID and client secret that the client needs to access the restricted resources on the instance.
+The Servicenow endpoint configuration window creates an OAuth client application record and generates a client ID and client secret that Snowflake needs to access the restricted resources on the instance.
 
-1. Log on to your instance.
+1. Log on to your Servicenow developer instance.
 1. From the main page, select **All** and  search **Application Registry**.
-1. Select **New**.
+![Application Registry](assets/now_reg_auth.png)
+1. Select **New** in the upper right-hand side of the window.
 1. Select **Create an OAuth API endpoint for external clients**. 
 1. Give the endpoint a name, such as **Snowflake_connector**. Leave the client secret blank. This will autofill when you select Submit later in the procedure.
 1. Fill in the redirect URL with this syntax (Alternatively, Snowflake will generate this in a later step and you can come back and modify the redirect URL). 
@@ -55,16 +58,17 @@ This procedure creates an OAuth client application record and generates a client
    where 
    - **cloud_region_id** can be found in the URL of Snowsight, for example: 
  
+ 
   https://app.snowflake.com/**us-west-2**/MyAccountId/worksheets
 
   - and **cloud** is aws or azure or gcp.
 
-   For example, for  AWS US WEST 2:
+   For example, for  AWS US WEST 2 would be:
   ```javascript
   https://apps-api.c1.us-west-2.aws.app.snowflake.com/oauth/complete-secret
   ```
-
-Select Submit.
+![Oauth](assets/now_oauth_endpoint.png)
+Select **Submit**.
 
 
 ---
@@ -72,70 +76,107 @@ Select Submit.
 
 <!-- ------------------------ -->
 ## Snowflake Configuration
-Duration: 2
+Duration: 10
+
+
+
+### Accept Terms & Conditions
+1. Log on to your Snowflake account through the Snowsight web interface and change to the **orgadmin** role. 
+1. Select “Admin » Billing & Terms”.
+4. In the “Snowflake Marketplace” section, review the Consumer Terms of Service.
+5. If you agree to the terms, select “Accept Terms & Conditions”.
+
+
+### Set Up Two Virtual Warehouses
 
 Log on to your Snowflake account and change to the **accountadmin** role.
 
-### Set up Virtual Warehouse
-Create a warehouse with the name **SERVICENOW_CONNECTOR_WH**, for example:
+1. Navigate to Admin -> Warehouses and select **+ Warehouse**. 
+2. Name the first vitural warehosue **SERVICENOW_CONNECTOR_WH** and, leaving the defaults, select **Create Warehouse**. 
+![warehouse](assets/warehouse.png)
+
+1. Repeat the above two steps to create a second virtual warehouse **SERVICENOW_WAREHOUSE**.
+
+
+## Get the Servicenow connector
+The connector is delivered through the Snowflake native application framework into your account as a database with a couple of schemas, tables, views, and stored procedures. 
+
+1. From the Snowflake Account Home page, select **Data** and then **Private Sharing**. (For GA this will be through the Marketplace.)
+
+1. In the search window, enter **servicenow**. The tile appears:
+
+![Tile](assets/tile.png)
+
+1. Select the **Snowflake Connector for ServiceNow**.
+1. Review the business needs and usage samples. You may want to copy the samples, as you cannot access this page once you configure the connector. They are also at the end of this quickstart for your convenience.
+1. Select **Get**.
+
+1. Select the warehouse you created above, **SERVICENOW_CONNECTOR_WH**.
+1. For this quickstart, leave the default name for the installation database.
+The screen should look like the following:
+![Get](assets/get.png)
+
+1. After reading the small print on the bottom of the screen, select **Get**. After 10-20 seconds, you receive the following message, **Snowflake Connector for SeviceNow is now ready to use in your account.**
+
+1. Select **Done**.
+
+If you would like to verify the connector was installed, from Snowsight, you can go to **Data -> Databases**. You will see a new database with the name **Snowflake_Connector_for_ServiceNow**. Open the Public schema and views to see the Global_Config view. Procedures have also been installed. 
+
+![installed](assets/installed.png)
+
+## Connect Snowflake to Servicenow
+
+1. In Snowsight, select the **Snowflake Connector for Servicenow** tile.
+1. In the **Snowflake Connector for ServiceNow** window, select **Manage**.
+
+1. Select **Connect**.
+
+1. Fill in the Servicenow instance details. This is the first part of the Servicenow URL for your Servicenow account, **without** the trailing *service-now.com*.
+
+1. Select **OAuth2** for the Authentication method.
+
+1. Enter the **Client id** from Servicenow.
+
+1. Copy the Client secret from Servicenow and into the Snowflake configure pop-up.  *Hint: unlock the field by clicking on the lock, and then copy the text to make sure you are actually copying the right text.* The screen should look something similar to this: ![Connect](assets/now_connect.png)
+1. Select **Connect**. 
+Your Servicenow accounts pops up and requests to connect to Snowflake. 
+![check](assets/now_check.png)
+1. Select **Allow**.
+The connection is established between the two systems. 
+
+To verify the connection, select the three dots [...] and **View Details**. At the top of the pop-up you will see **ServiceNow** Authenticated on today's date.
+## Select Servicenow Tables
+
+1. In Snowsight, select the **Snowflake Connector for Servicenow** tile.
+
+1. In the **Snowflake Connector for ServiceNow** window, select **Select Tables**.
+
+1. From the search window enter **incident** and check the box next to it and choose a 30 minute sync time. **Do not start the ingestion yet!**
+
+1. To choose other tables, clear the search, put the table name and select the checkbox. Do this for the following tables:
+  
+    SYS_CHOICE
+    SYS_USER
+    SYS_USER_GROUP
+    TASK
+1. Now select **Start Ingestion**. The select windows closes and you get the message "Loading Data" from the main Connector window.
+
+![load](assets/load.png)
+
+and, depending on the load time, a success message.
+
+![success](assets/success.png)
+
+To programmatically verify what tables you selected, from SQL run the following commands:
 ```SQL
-CREATE WAREHOUSE IDENTIFIER('"SERVICENOW_CONNECTOR_WH"') COMMENT = '' WAREHOUSE_SIZE = 'X-Small' AUTO_RESUME = true AUTO_SUSPEND = 60 ENABLE_QUERY_ACCELERATION = false WAREHOUSE_TYPE = 'STANDARD' MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 SCALING_POLICY = 'STANDARD';
+
+USE DATABASE snowflake_connector_for_servicenow;
+USE SCHEMA public;
+SELECT * FROM enabled_tables WHERE ENABLED = true;
 ```
-### Get and Configure the Servicenow connector
-From the Snowflake Account Home page, select **Data** and then **Private Sharing** 
-
-> aside positive
-> Note: this may change for the general release.
-
-In the search window, enter **servicenow**. 
-
-Select the **Snowflake Connector for ServiceNow**.
-
-Select **Get**.
-
-Select the warehouse you created above.
-
-Select **Get**.
-
-You get the following message, "Snowflake Connector for ServiceNow is now ready to use in your account."
-
-Select **Manage**.
-
-Select **Connect**.
-
-Fill in the Servicenow instance. This is the first part of the Servicenow URL for your Servicenow account, **without** the trailing service-now.com
-
-Select **OAuth2** for the Authentication method.
-
-Enter the **Client id** from Servicenow.
-
-Copy the Client secret from Servicenow. 
-
-> aside positive Hint: unlock the field, and then copy the text to make sure you are actually copying the right text. 
-
-Select Connect.
-
-Servicenow requests to connet to Snowflake. Accept
-
-Select Configure, and Select Configure again. You will get the message "Connector Successfully configured".
-
-## Select Tables
-
-In this example we are select tables that give us information about incidents. You can choose the tables you want. 
-
-From the Snowflake Account Home page, select **Data** and then **Private Sharing** 
-
-
-
-> Note: this may change for the general release.
-
-From the search window enter **incident** and choose the **incident**, **incident_fact**, and **incident_task** tables. 
-
-Choose a sync scedule of 30 minutes for the three tables. 
-
 ## Connector Monitoring
  
-Use the following SQL to get general information about all ingestions
+Use the following SQL to get general information about all Servicenow ingestions:
  ```sql
  use database SNOWFLAKE_CONNECTOR_FOR_SERVICENOW;
  select * from connector_stats;
@@ -161,8 +202,7 @@ GRANT SELECT ON ALL VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 > aside positive
 > If you do not stop the connector, it will wake up the virtual warehouse at the specified time interval and consume credits.
 
-From the Snowflake Account Home page, select **Data** and then **Private Sharing** 
-
+From the Snowflake Account Home page, select **Data** and then **Private Sharing**. (For GA this will be through the Marketplace.)
 
 In the search window, enter **servicenow**. 
 
@@ -182,6 +222,417 @@ DROP DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW;
 
 ```
 <!-- ------------------------ -->
+## Query Examples
+
+### Identify number of incidents raised by month, application, priority
+Optionally add parent assignment group, child assignment group, who the incident was raised for, who was assigned to the incident, etc. Classification of the incident can be done based on category and subcategory.
+
+Tables to replicate to run this example:
+INCIDENT
+SYS_CHOICE
+SYS_USER
+SYS_USER_GROUP
+TASK
+
+```SQL
+USE DATABASE XXX
+CALL CONFIGURE_CONNECTOR('data_ingestion_schedule', '30m');
+CALL ENABLE_TABLES('
+INCIDENT,
+SYS_CHOICE,
+SYS_USER,
+SYS_USER_GROUP,
+TASK'
+, TRUE);
+````
+
+
+```SQL
+WITH T1 AS (
+    SELECT
+    DISTINCT
+        T.NUMBER AS TICKET_NUMBER
+        ,G1.NAME AS PARENT_ASSIGNMENT_GROUP
+        ,G.NAME AS CHILD_ASSIGNMENT_GROUP
+        ,T.SHORT_DESCRIPTION
+        ,T.DESCRIPTION
+        ,CI.NAME AS CONFIGURATION_ITEM
+        ,SC_CAT.LABEL AS CATEGORY
+        ,SC_SUBCAT.LABEL AS SUBCATEGORY
+        ,T.PRIORITY
+        ,T.SYS_CREATED_ON AS CREATED_ON
+        ,SU.NAME AS ASSIGNED_TO
+        ,SU1.NAME AS OPENED_BY
+        ,U2.NAME AS INCIDENT_REQUESTED_FOR
+        ,T.SYS_UPDATED_ON AS UPDATED_ON
+        ,T.CLOSED_AT
+
+    FROM
+      TASK T
+      LEFT JOIN 
+          INCIDENT I 
+          ON I.SYS_ID = T.SYS_ID -- ADDITIONAL INCIDENT DETAIL
+      LEFT JOIN 
+          (
+            SELECT 
+              * 
+            FROM 
+                SYS_CHOICE SC_CAT 
+            WHERE 
+                ELEMENT = 'U_T_CATEGORY'
+           ) SC_CAT
+           ON T.U_T_CATEGORY = SC_CAT.VALUE -- MAPPING FOR CATEGORY VALUES FROM TASK TABLE
+      LEFT JOIN 
+          (
+              SELECT 
+              * 
+              FROM 
+                  SYS_CHOICE 
+              WHERE 
+                  ELEMENT = 'U_T_SUBCATEGORY' 
+                  AND NAME ='SC_REQ_ITEM'
+          )SC_SUBCAT 
+          ON T.U_T_SUBCATEGORY = SC_SUBCAT.VALUE -- MAPPING FOR SUBCATEGORY VALUES FROM TASK TABLE
+      LEFT JOIN 
+          CMDB_CI CI 
+          ON T.CMDB_CI_VALUE = CI.SYS_ID -- CONFIGURATION ITEM OR APPLICATION NAME
+      LEFT JOIN 
+          SC_REQ_ITEM R 
+          ON T.SYS_ID = R.SYS_ID -- RITM OR SERVICE REQUEST INFORMATION
+      LEFT JOIN 
+          SC_REQUEST SR 
+          ON R.REQUEST_VALUE = SR.SYS_ID -- RITM REQUESTED FOR INFORMATION
+      LEFT JOIN 
+          SYS_USER SU 
+          ON T.ASSIGNED_TO_VALUE = SU.SYS_ID -- ASSIGNED TO USERS NAME
+      LEFT JOIN 
+          SYS_USER SU1 
+          ON T.OPENED_BY_VALUE = SU1.SYS_ID -- OPENED BY USERS NAME
+      LEFT JOIN 
+          SYS_USER U2 
+          ON I.CALLER_ID_VALUE = U2.SYS_ID -- INCIDENT REQUESTED FOR NAME
+      LEFT JOIN 
+          SYS_USER_GROUP G 
+          ON NVL(T.ASSIGNMENT_GROUP_VALUE, T.ASSIGNMENT_GROUP) = G.SYS_ID -- CHILD GROUP NAME
+      LEFT JOIN 
+          SYS_USER_GROUP G1 
+          ON NVL(G.PARENT_VALUE, G.PARENT) = G1.SYS_ID -- PARENT GROUPS
+      LEFT JOIN 
+          SYS_AUDIT_DELETE DEL 
+          ON T.SYS_ID = DEL.DOCUMENTKEY -- THIS JOIN HELPS IDENTIFY DELETED TICKETS
+
+    WHERE
+        DEL.DOCUMENTKEY IS NULL --  THIS CONDITION HELPS KEEP ALL DELETED RECORDS OUT
+    AND
+        I.SYS_ID IS NOT NULL -- THIS CONDITION HELPS KEEP JUST THE INCIDENT TICKETS
+)
+SELECT
+    YEAR(CREATED_ON) AS YEAR_CREATED
+    ,MONTH(CREATED_ON) AS MONTH_CREATED
+    ,CONFIGURATION_ITEM AS APPLICATION
+    ,PRIORITY
+    ,COUNT(DISTINCT TICKET_NUMBER)
+FROM
+    T1
+GROUP BY
+    YEAR_CREATED
+    ,MONTH_CREATED
+    ,APPLICATION
+    ,PRIORITY
+ORDER BY
+    YEAR_CREATED
+    ,MONTH_CREATED
+    ,APPLICATION
+    ,PRIORITY
+;
+```
+### CMDB applications count
+The CMDB (Configuration Management Database) is the ServiceNow database that stores information about all technical services. Within the CMDB, the support information for each service offering is stored in a Configuration Item (CI) specific to that service.
+This query provides the CMDB applications count by department, assignment groups, application owner, vendor or their respective status.
+
+Tables to replicate to run this example:
+CMDB_CI_BUSINESS_APP
+CMN_DEPARTMENT
+CORE_COMPANY
+SYS_USER_GROUP
+SYS_USER
+SYS_AUDIT_DELETE
+
+
+```SQL
+WITH T1 AS(
+    SELECT
+        DISTINCT 
+        B.NAME AS DEPARTMENT
+        ,D.NAME AS ASSIGNMENT_GROUP
+        ,A.NAME AS BUSINESS_APP_NAME
+        ,E.NAME AS APP_OWNER
+        ,A.BUSINESS_CRITICALITY
+        ,C.NAME AS VENDOR_NAME
+        ,C.STATUS AS VENDOR_STATUS
+    FROM
+  CMDB_CI_BUSINESS_APP A --  THIS TABLE INCLUDES ALL THE BUSINESS APPS THAT ARE CONFIGURED
+    LEFT JOIN
+        CMN_DEPARTMENT B --  THIS TABLE INCLUDES THE MAPPING THAT PROVIDE LABEL NAMES
+        ON NVL(A.DEPARTMENT_VALUE,A.DEPARTMENT) = B.SYS_ID
+    LEFT JOIN 
+        CORE_COMPANY C --  THIS TABLE INCLUDES VENDOR RELATED DETAILS WHO PROVIDE THE BUSINESS APPS
+        ON NVL(A.VENDOR_VALUE, A.VENDOR) = C.SYS_ID
+    LEFT JOIN 
+        SYS_USER_GROUP D --  THIS TABLE HELPS MAP IDENTIFIER CODE TO USER ASSIGNMENT GROUPS
+        ON NVL(A.ASSIGNMENT_GROUP_VALUE,A.ASSIGNMENT_GROUP) = D.SYS_ID
+    LEFT JOIN 
+        SYS_USER E --  THIS TABLE HELPS MAP IDENTIFIER TO USER NAMES
+        ON NVL(A.OWNED_BY_VALUE, A.OWNED_BY) = E.SYS_ID
+    LEFT JOIN
+        SYS_AUDIT_DELETE DEL
+        ON A.SYS_ID = DEL.DOCUMENTKEY
+    WHERE 
+        DEL.DOCUMENTKEY IS NULL
+
+ )
+ SELECT
+     DEPARTMENT
+     ,BUSINESS_CRITICALITY
+     ,COUNT(DISTINCT BUSINESS_APP_NAME) AS APP_COUNT_BY_DEPT
+FROM
+    T1
+GROUP BY
+    DEPARTMENT
+    ,BUSINESS_CRITICALITY
+ORDER BY
+    DEPARTMENT
+    ,BUSINESS_CRITICALITY
+;
+
+```
+### Identify number of problem tickets opened
+Problem tickets created by each parent group and respective child group. Details about who is working on the problem ticket, which state the problem is at, and which category and sub category the issue belongs to.
+
+Tables to replicate to run this example:
+CMDB_CI
+TASK
+PROBLEM
+SYS_AUDIT_DELETE
+SYS_CHOICE
+SYS_USER
+SYS_USER_GROUP
+
+
+
+```SQL
+WITH T1 AS(
+    SELECT
+        T.NUMBER AS TICKET_NUMBER
+        ,G1.NAME AS PARENT_ASSIGNMENT_GROUP
+        ,G.NAME AS CHILD_ASSIGNMENT_GROUP
+        ,T.SHORT_DESCRIPTION
+        ,T.DESCRIPTION
+        ,CI.NAME AS CONFIGURATION_ITEM
+        ,CAT.LABEL AS CATEGORY
+        ,SUBCAT.LABEL AS SUBCATEGORY
+        ,ST.LABEL AS STATE
+        ,SU.NAME AS ASSIGNED_TO
+        ,SU1.NAME AS OPENED_BY
+        ,SU2.NAME AS RESOLVED_BY
+        ,P.RESOLVED_AT
+        ,P.FIX_NOTES
+        ,P.U_NUMBER_OF_USERS_IMPACTED AS USERS_IMPACTED
+        ,COALESCE(P.WORKAROUND, P.U_WORKAROUND) AS WORKAROUND
+        
+    FROM
+        TASK T
+        LEFT JOIN PROBLEM P 
+            ON P.SYS_ID=T.SYS_ID
+        LEFT JOIN SYS_USER_GROUP G 
+            ON NVL(T.ASSIGNMENT_GROUP_VALUE, T.ASSIGNMENT_GROUP) = G.SYS_ID -- CHILD GROUP NAME
+        LEFT JOIN SYS_USER_GROUP G1 
+            ON NVL(G.PARENT_VALUE, G.PARENT) = G1.SYS_ID --PARENT GROUPS
+        LEFT JOIN SYS_USER SU 
+            ON T.ASSIGNED_TO_VALUE = SU.SYS_ID -- ASSIGNED TO USER DETAILS
+        LEFT JOIN SYS_USER SU1 
+            ON T.OPENED_BY_VALUE = SU1.SYS_ID -- OPENED BY USER DETAILS
+        LEFT JOIN SYS_USER SU2 
+            ON P.RESOLVED_BY_VALUE = SU2.SYS_ID -- RESOLVED BY USER DETAILS
+        LEFT JOIN 
+            (
+                SELECT 
+                    * 
+                FROM SYS_CHOICE 
+                WHERE NAME = 'PROBLEM' 
+                AND ELEMENT = 'CATEGORY'
+            ) CAT  
+            ON P.CATEGORY = CAT.VALUE -- CATEGORY MAPPING
+        LEFT JOIN 
+            (
+                SELECT 
+                    * 
+                FROM SYS_CHOICE 
+                WHERE NAME = 'PROBLEM' 
+                AND ELEMENT = 'SUBCATEGORY'
+            )SUBCAT 
+            ON P.SUBCATEGORY = SUBCAT.VALUE -- SUBCATEGORY MAPPING
+        LEFT JOIN 
+            (
+                SELECT 
+                    *
+                FROM SYS_CHOICE 
+                WHERE NAME = 'PROBLEM' 
+                AND ELEMENT = 'STATE'
+            )ST 
+            ON T.STATE = ST.VALUE -- STATE MAPPING
+        LEFT JOIN CMDB_CI CI 
+            ON T.CMDB_CI_VALUE = CI.SYS_ID -- CONFIGURATION ITEM
+        LEFT JOIN SYS_AUDIT_DELETE DEL 
+            ON T.SYS_ID = DEL.DOCUMENTKEY --DELETED TICKETS
+        
+        WHERE T.SYS_CLASS_NAME = 'PROBLEM' -- THIS FIELD BROADLY IDENTIFIES THE TICKET TYPE
+        AND DEL.DOCUMENTKEY IS NULL
+)
+
+SELECT
+    PARENT_ASSIGNMENT_GROUP
+    ,CHILD_ASSIGNMENT_GROUP
+    ,CONFIGURATION_ITEM
+    ,CATEGORY
+    ,COUNT(DISTINCT TICKET_NUMBER) AS TICKET_COUNT
+FROM 
+    T1
+GROUP BY
+    PARENT_ASSIGNMENT_GROUP
+    ,CHILD_ASSIGNMENT_GROUP
+    ,CONFIGURATION_ITEM
+    ,CATEGORY
+ORDER BY
+    PARENT_ASSIGNMENT_GROUP
+    ,CHILD_ASSIGNMENT_GROUP
+    ,CONFIGURATION_ITEM
+    ,CATEGORY
+;
+```
+### First contact resolution percentage by Configuration Item (application)
+How many tickets (Incidents + Service Requests) were resolved by Helpdesk right when they were created instead of hopping them onto another department or assignment group.
+
+Tables to replicate to run this example:
+
+CMDB_CI
+CMN_DEPARTMENT
+INCIDENT
+SC_REQUEST
+SC_REQ_ITEM
+SYS_AUDIT_DELETE
+SYS_CHOICE
+SYS_USER
+SYS_USER_GROUP
+TASK
+
+
+```SQL
+WITH T1 AS (
+    SELECT
+    DISTINCT
+        T.NUMBER AS TICKET_NUMBER
+        ,G1.NAME AS PARENT_ASSIGNMENT_GROUP
+        ,G.NAME AS CHILD_ASSIGNMENT_GROUP
+        ,D1.NAME AS DEPARTMENT
+        ,T.SHORT_DESCRIPTION
+        ,T.DESCRIPTION
+        ,CI.NAME AS CONFIGURATION_ITEM
+        ,SC_CAT.LABEL AS CATEGORY
+        ,SC_SUBCAT.LABEL AS SUBCATEGORY
+        ,SU.NAME AS ASSIGNED_TO
+        ,T.SYS_CREATED_ON AS CREATED_ON
+
+    FROM
+      TASK T
+      LEFT JOIN INCIDENT I 
+          ON I.SYS_ID = T.SYS_ID -- ADDITIONAL INCIDENT DETAIL
+      LEFT JOIN 
+          (
+            SELECT 
+              * 
+            FROM SYS_CHOICE SC_CAT 
+            WHERE ELEMENT = 'U_T_CATEGORY'
+           ) SC_CAT
+           ON T.U_T_CATEGORY = SC_CAT.VALUE -- MAPPING FOR CATEGORY VALUES FROM TASK TABLE
+      LEFT JOIN 
+          (
+              SELECT 
+              * 
+              FROM SYS_CHOICE 
+              WHERE ELEMENT = 'U_T_SUBCATEGORY' 
+                  AND NAME ='SC_REQ_ITEM'
+          )SC_SUBCAT 
+          ON T.U_T_SUBCATEGORY = SC_SUBCAT.VALUE -- MAPPING FOR SUBCATEGORY VALUES FROM TASK TABLE
+      LEFT JOIN CMDB_CI CI 
+          ON T.CMDB_CI_VALUE = CI.SYS_ID --CONFIGURATION ITEM OR APPLICATION NAME
+      LEFT JOIN SC_REQ_ITEM R 
+          ON T.SYS_ID = R.SYS_ID --RITM OR SERVICE REQUEST INFORMATION
+      LEFT JOIN SC_REQUEST SR 
+          ON R.REQUEST_VALUE = SR.SYS_ID --RITM REQUESTED FOR INFORMATION
+      LEFT JOIN SYS_USER SU 
+          ON T.ASSIGNED_TO_VALUE = SU.SYS_ID -- ASSIGNED TO USERS NAME
+      LEFT JOIN SYS_USER SU1 
+          ON T.OPENED_BY_VALUE = SU1.SYS_ID ----OPENED BY USERS NAME
+      LEFT JOIN SYS_USER U2 
+          ON I.CALLER_ID_VALUE = U2.SYS_ID ---INCIDENT REQUESTED FOR NAME
+      LEFT JOIN CMN_DEPARTMENT D1 -- DEPARTMENT MAPPING
+          ON D1.SYS_ID=SU.DEPARTMENT_VALUE
+      LEFT JOIN SYS_USER_GROUP G 
+          ON NVL(T.ASSIGNMENT_GROUP_VALUE, T.ASSIGNMENT_GROUP) = G.SYS_ID ---CHILD GROUP NAME
+      LEFT JOIN SYS_USER_GROUP G1 
+          ON NVL(G.PARENT_VALUE, G.PARENT) = G1.SYS_ID --PARENT GROUPS
+      LEFT JOIN SYS_AUDIT_DELETE DEL 
+          ON T.SYS_ID = DEL.DOCUMENTKEY --DELETED TICKETS
+
+    WHERE DEL.DOCUMENTKEY IS NULL
+    AND
+        (
+            I.SYS_ID IS NOT NULL 
+            OR 
+            R.SYS_ID IS NOT NULL
+        )
+)
+
+, T2 AS (
+    SELECT
+        CONFIGURATION_ITEM
+        ,ASSIGNED_TO
+        ,YEAR(CREATED_ON) YR
+        ,MONTH(CREATED_ON) MO
+        ,TICKET_NUMBER
+        ,CASE 
+                WHEN LOWER(CHILD_ASSIGNMENT_GROUP) = 'IT - SNOWDESK' 
+                    AND LOWER(ASSIGNED_TO) != 'LIFT AUTOMATION' 
+                    AND LOWER(ASSIGNED_TO) != 'SNOW BOT' 
+                    THEN 1
+                ELSE 0
+            END CT
+        ,1 AS TCKT_CT
+        
+    FROM T1
+)
+
+SELECT
+    YR
+    ,MO
+    ,CONFIGURATION_ITEM
+    ,(SUM(CT) / SUM(TCKT_CT))*100 AS FCR_PCT
+FROM
+    T2
+GROUP BY
+    YR
+    ,MO
+    ,CONFIGURATION_ITEM
+ORDER BY
+    YR
+    ,MO
+    ,CONFIGURATION_ITEM
+;
+
+```
+
+
 ## Conclusion
 Duration: 1
 
