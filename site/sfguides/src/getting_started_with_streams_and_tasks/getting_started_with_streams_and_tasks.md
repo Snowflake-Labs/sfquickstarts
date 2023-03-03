@@ -52,7 +52,11 @@ To participate in the virtual hands-on lab, attendees need the following:
 Duration: 5
 
 ### Login and Setup Lab
-Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks&utm_cta=quickstart-getstartedwithstreamsandtasks-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks&utm_cta=quickstart-getstartedwithstreamsandtasks-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:
+
+<button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks)</button>
+
+This will create worksheets containing the lab SQL that can be executed as we step through this lab.
 
 ![setup_lab](assets/setup_lab.png)
 
