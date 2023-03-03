@@ -57,17 +57,17 @@ First, you will need to set up some background items to prepare. We will create 
 
 ```
 use role accountadmin; 
-create role secdashboards;
-grant imported privileges on database snowflake to role secdashboards;
+create role SENTRY;
+grant imported privileges on database snowflake to role SENTRY;
 create or replace warehouse SENTRY with warehouse_size='SMALL';
-grant usage on warehouse SENTRY to role secdashboards;
-grant role secdashboards to user <YOURUSER>;
+grant usage on warehouse SENTRY to role SENTRY;
+grant role SENTRY to user <YOURUSER>;
 ```
 
-Now we have a role named `secdashboards` that has access to the proper resources. Each time you want to use these dashboards, you would set your context to use these resources, like so: 
+Now we have a role named `SENTRY` that has access to the proper resources. Each time you want to use these dashboards, you would set your context to use these resources, like so: 
 
 ```
-use role secdashboards;
+use role SENTRY;
 use warehouse SENTRY;
 use database snowflake;
 use schema account_usage;
