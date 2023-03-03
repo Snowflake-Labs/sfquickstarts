@@ -45,7 +45,12 @@ First things first, let’s get your Snowflake account and user permissions prim
 Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?lab=getStartedWithTimeTravel&utm_cta=quickstart-getstartedwithtimetravel-en). A **Standard**  account allows for one day of Time Travel data retention, and an **Enterprise** account allows for 90 days of data retention. An **Enterprise** account is necessary to practice some commands in this tutorial.
 
 ### Login and Setup Lab
-Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithTimeTravel) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:
+
+<button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithTimeTravel)</button>
+
+This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+
 
 ![setup_lab](assets/setup_lab.png)
 
