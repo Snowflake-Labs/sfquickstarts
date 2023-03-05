@@ -153,6 +153,7 @@ In the Fivetran UI, you can view the lineage for any of the transformation jobs 
 
 ## Build Insights Via Snowflake Dashbaord
 Duration: 10
+
 Now that our models are built and ready to query, let's build some insights into your data!  For the purposes of this lab, we will build a 4 tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.
 
 ### Snowflake Dashboard
