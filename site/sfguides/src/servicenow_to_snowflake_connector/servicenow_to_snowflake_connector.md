@@ -163,7 +163,7 @@ To verify the connection, select the three dots [...] and **View Details**. At t
 
 ![load](assets/load.png)
 
-and, depending on the load time, a success message.
+and, depending on the load time, a success message follows.
 
 ![success](assets/success.png)
 
@@ -186,7 +186,7 @@ Use the following to search for information about particular table ingestions
 select * from connector_stats where table_name = 'incident';
 ```
 
-## Accessing the Servicenow data in Snowflake
+## Setting Permissions to Read
 Once you have ingested some data, you probably want to access it. Use the following SQL to create the **servicenow_reader_role** and give it the right access.
 ```SQL
 CREATE ROLE servicenow_reader_role;
@@ -198,53 +198,20 @@ GRANT SELECT ON ALL TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 GRANT SELECT ON ALL VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 ```
 
-## Stop the Connector
-> aside positive
-> If you do not stop the connector, it will wake up the virtual warehouse at the specified time interval and consume credits.
-
-From the Snowflake Account Home page, select **Data** and then **Private Sharing**. (For GA this will be through the Marketplace.)
-
-In the search window, enter **servicenow**. 
-
-Select the **Snowflake Connector for ServiceNow**.
-
-Select **Stop Ingestion**.
-
-The message appears: "The configuration of tables will be cleared but data ingested from this report will still be available in SERVICENOW_DEST_DB until you remove it manually."
-
-Again, Select **Stop Ingestion**.
-
-
-## Delete the Connector (but not the data)
-To delete the connector you need to drop the connector database: 
-```SQL
-DROP DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW;
-
-```
-<!-- ------------------------ -->
-## Query Examples
+## Query the Data
 
 ### Identify number of incidents raised by month, application, priority
 Optionally add parent assignment group, child assignment group, who the incident was raised for, who was assigned to the incident, etc. Classification of the incident can be done based on category and subcategory.
 
-Tables to replicate to run this example:
-INCIDENT
-SYS_CHOICE
-SYS_USER
-SYS_USER_GROUP
-TASK
+Run the following to enable and ingest the tables you need for the example:
 
 ```SQL
-USE DATABASE XXX
-CALL CONFIGURE_CONNECTOR('data_ingestion_schedule', '30m');
-CALL ENABLE_TABLES('
-INCIDENT,
-SYS_CHOICE,
-SYS_USER,
-SYS_USER_GROUP,
-TASK'
-, TRUE);
-````
+BEGIN CALL
+ "SNOWFLAKE_CONNECTOR_FOR_SERVICENOW"."PUBLIC".CONFIGURE_CONNECTOR_TABLES('schedule_interval','30m','cmdb,cmdb_ci, incident, sc_req_item, sc_request,sys_audit,sys_audit_delete, sys_choice, sys_user, sys_user_group, task'); 
+ 
+ CALL "SNOWFLAKE_CONNECTOR_FOR_SERVICENOW"."PUBLIC".ENABLE_TABLES('cmdb, cmdb_ci, incident, sc_req_item, sc_request,sys_audit,sys_audit_delete, sys_choice, sys_user, sys_user_group, task', 'true'); 
+ END;
+```
 
 
 ```SQL
@@ -345,7 +312,31 @@ ORDER BY
     ,APPLICATION
     ,PRIORITY
 ;
+
+
+## Stop the Ingestion
+> aside positive
+> If you do not stop the connector, it will wake up the virtual warehouse at the specified time interval and consume credits.
+
+
+1. In Snowsight, select the **Snowflake Connector for Servicenow** tile.
+
+1. In the **Snowflake Connector for ServiceNow** window, select **Stop Ingestion**.
+
+![stop](assets/stop.png)
+
+Read the warning and select **Stop Ingestion**.
+
+
+## Delete the Connector (but not the data)
+To delete the connector you need to drop the connector database: 
+```SQL
+DROP DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW;
+
 ```
+<!-- ------------------------ -->
+## Query Examples
+
 ### CMDB applications count
 The CMDB (Configuration Management Database) is the ServiceNow database that stores information about all technical services. Within the CMDB, the support information for each service offering is stored in a Configuration Item (CI) specific to that service.
 This query provides the CMDB applications count by department, assignment groups, application owner, vendor or their respective status.
