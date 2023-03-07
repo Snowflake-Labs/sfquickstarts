@@ -11,6 +11,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 
 
 ## Overview
+Duration: 2
 
 In this hands-on lab, you will build a data application that leverages Economical Data Atlas published by Knoema on the Snowflake Marketplace.
 
@@ -62,7 +63,7 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 
 
 ## Prepare your lab environment
-
+Duration: 8
 
 
 1. Install conda to manage a separate environment by running pip install conda. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
@@ -78,7 +79,7 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 
 
 ## Prepare the Snowflake environment
-
+Duration: 6
 
 ### Working with the Snowflake Marketplace
 
@@ -125,6 +126,7 @@ Before we begin to review working with Marketplace data sets, verify you have in
 
 
 ### Create a new database
+Duration: 4
 
 Now that we have created a database with the Economy Data Atlas, we need to create a database for our application that will store the User Defined Function.
 
@@ -168,11 +170,8 @@ SELECT predict_pce_udf(2021);
 ```
 
 
-
-## 
-
-
 ## Exploring the Data with a (Jupyter) Notebook
+Duration: 15
 
 Now that we have a database that we can use for the Application, we want to explore the data and create a ML model in a User Defined Function (UDF) that can be used by our application.
 
@@ -340,6 +339,7 @@ session.sql("select predict_pce_udf(2021)").show()
 
 
 ## Creating the Streamlit application
+Duration: 7
 
 
 ### Import the required libraries
@@ -542,6 +542,7 @@ More details can be shown by using a year selection (Streamlit_ selectbox() _ fu
 
 
 ## Run Web Application
+Duration: 4
 
 The fun part! Assuming your Python script is free of syntax and connection errors, you’re ready to run the application.
 

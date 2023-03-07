@@ -32,7 +32,7 @@ Prerequisites for this guide include:
 * Snowflake account. Existing or Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/).  Please sign up using an email address that hasn’t been used previously
 * Additionally, for Kafka step we will need the following installed locally (steps to install are described in the corresponding section):
   * open-source Apache Kafka 2.13-3.1.0
-  * Snowflake Kafka Connector 1.9.0.jar
+  * Snowflake Kafka Connector 1.9.1.jar (or newer version)
   * openJDK <= 15.0.2 
   * [homebrew](https://brew.sh/) for mac users
 
@@ -456,7 +456,7 @@ As always, in our documentation you can find more details about the use of [Snow
 
 For testing this set up locally, we will need: 
 * open-source Apache Kafka 2.13-3.1.0 installed locally
-* Snowflake Kafka Connector 1.9.0 jar
+* Snowflake Kafka Connector 1.9.1.jar (or new version)
 * openJDK <= 15.0.2 
 * a Snowflake user for streaming snowpipe with ssh key defined as authentication method
 
@@ -483,7 +483,7 @@ curl https://archive.apache.org/dist/kafka/3.3.1/kafka_2.13-3.3.1.tgz --output k
 tar -xzf kafka_2.13-3.3.1.tgz
 
 cd kafka_2.13-3.3.1/libs
-curl https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.0/snowflake-kafka-connector-1.9.0.jar --output snowflake-kafka-connector-1.9.0.jar
+curl https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.1/snowflake-kafka-connector-1.9.1.jar --output snowflake-kafka-connector-1.9.1.jar
 ```
 
 Create file `config/SF_connect.properties` with the following config. Please remember to replace **\<YOURACCOUNT>** & **\<YOURPRIVATEKEY>** with the corresponding details. Also, please note when adding private key you need to remove all new line characters as well as beginning and ending comments (e.g -----BEGIN PRIVATE KEY-----):  
