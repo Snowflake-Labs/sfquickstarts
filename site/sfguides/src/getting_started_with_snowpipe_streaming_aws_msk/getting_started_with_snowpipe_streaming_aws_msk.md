@@ -185,7 +185,7 @@ cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.tr
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
 #Snowflake kafka connector
-wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.0/snowflake-kafka-connector-1.9.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-1.9.0.jar
+wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.1/snowflake-kafka-connector-1.9.1.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-1.9.1.jar
 
 #Snowpipe streaming SDK
 wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/1.1.0/snowflake-ingest-sdk-1.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-1.1.0.jar
@@ -507,7 +507,7 @@ If everything goes well, you should something similar to screen capture below:
 
 Start a new Linux session by following `step 3` in the section named `Create a provisioned Kafka cluster and a Linux jumphost in AWS`
 ```commandline
-curl --connect-timeout 5 -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
 You should see response similar to screen capture below if everything works well.
 
@@ -595,7 +595,7 @@ Go back to the Linux session and run the following script.
 ```commandline
 while true
 do
-  curl --connect-timeout 5 -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
   sleep 30
 done
 
