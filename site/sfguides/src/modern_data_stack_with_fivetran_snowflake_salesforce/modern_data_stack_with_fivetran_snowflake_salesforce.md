@@ -19,7 +19,7 @@ These data consolidation, centralization, curation, and analytics processes "use
 Fivetran will replicate all of your data from Salesforce, and all of your other data sources for your project, easily into Snowflake via a reliable, fast, secure, SaaS-based, automated, and no-code data replication solution with built-in transformation flexibility.  [Fivetran’s 300+ data source connectors](https://www.fivetran.com/connectors) (that's right 300+...we are just working with Salesforce today) allow you to seamlessly create all of your data replication processes in minutes versus weeks or months.  And in this lab, we are going to work together to see how easy and fast data replication with Fivetran and Snowflake can be.  So let’s get started!
 
 ### Prerequisites
-- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com), with `ACCOUNTADMIN` role
+- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com), with `ACCOUNTADMIN` role.  If setting up a new trial account, ensure to select the "Enterprise" edition when prompted to gain access to more Snowflake features!
 - [Salesforce development account](https://developer.salesforce.com/signup).  Setting up a Salesforce developer account is free and takes about 3-5 minutes.  If you currently have a Salesforce account and wish to use that account for this lab...even better!
 
 ### What you'll learn in the lab
@@ -38,7 +38,7 @@ Fivetran will replicate all of your data from Salesforce, and all of your other 
   - Transformed by Snowflake massive parallel processing (MPP) engine
 - A Snowflake dashboard giving immediate insights into your Salesforce data
 
-All in less than 30 minutes!
+All in less than 40 minutes!
 
 
 ## Accounts - Snowflake and Fivetran
@@ -52,12 +52,14 @@ The easiest option to get started with Fivetran and Snowflake is to use Snowflak
 
 ### Partner Connect
 Ensure you are in the Snowflake UI as an `ACCOUNTADMIN`.  Expand `Admin`, click `Partner Connect`, under `Data Integration` click the Fivetran tile.
-![Partner Connect](assets/sfdc/SFPC.png)
+![Partner Connect](assets/sfdc/s_0010.png)
 
 
-Once the tile is clicked you will be presented with the Fivetran configuration screen below.  Simply click the `Connect` button and follow the remaining prompts and email.  That's it!  That will create the free 14 day Fivetran trial account, build your default Snowflake destination within Fivetran, and configure the Snowflake objects needed to ingest data via Fivetran. 
-![Partner Connect Fivetran Configuration](assets/sfdc/SFPCFT.png)
+Once the tile is clicked you will be presented with the Fivetran configuration screen below.  Click the `Connect` button.
+![Partner Connect Fivetran Configuration](assets/sfdc/s_0020.png)
 
+ Click `Activate`.  You will be prompted to enter a Fivetran password.  Record this password.  This will be your password into the Fivetran UI.  That's it!  That will create the free 14 day Fivetran trial account, build your default Snowflake destination within Fivetran, and configure the Snowflake objects needed to ingest data via Fivetran.  
+![Partner Connect Fivetran Configuration](assets/sfdc/s_0030.png)
 
 ### Non-Partner Connect Only
 > aside negative
@@ -133,10 +135,7 @@ Scroll down on the configuration screen and under `Set Schedule` select `Fully i
 The transformations are now configured and will show a status of `Pending`.
 ![Fivetran Transform 4](assets/transforms/t_0040.png)
 
-The transformations should instantiate within a few minutes.  If not, you may reset the schedule for your Salesforce connector to a lower number like 15 minutes.
-![Fivetran Transform 5](assets/transforms/t_0050.png)
-
-If you catch it fast enough, the transformations page will show the transformation jobs status as `Running`.  Like the data replication, this should only take a minute or two to complete.
+The adding of transformations to your connector will signal the connector to perform a resync.  You may click on the `Connectors` section on the left navbar, then open your connector to watch it execute a resync.  When the resync completes, Fivetran will start the transformation jobs and change the status to `Running`.  Like the data replication, this should only take a minute or two to complete.
 ![Fivetran Transform 6](assets/transforms/t_0060.png)
 
 Once the transformations complete, you will see new objects in the Snowflake database.  The objects prefixed with 'SALESFORCE__' are models ready to query to assist us in our use cases and dashboard.  Objects prefixed with 'STG_' are staging objects used to build the final models and are rebuilt upon every transformation run.  (The below Snowflake images display the objects built by the Quickstart Data Models...no further action needed on these tables!)
@@ -163,7 +162,7 @@ Click the `Dashboards` item in the left navbar.  This will display the Dashboard
 Next give your dashboard a name and click `Create Dashboard`.
 ![Fivetran Dashboard 2](assets/dashboard/d_0002.png)
 
-Then it's time to start building tiles.  Click the `+ New Tile` to get started with the first dashboard tile.
+Then it's time to start building tiles.  See the image below.  Ensure to set the role to `sysadmin` and the warehouse to `pc_fivetran_wh`.  Click the `+ New Tile` to get started with the first dashboard tile.
 ![Fivetran Dashboard 3](assets/dashboard/d_0003.png)
 
 ### Tiles in Snowflake
@@ -171,22 +170,22 @@ Tiles represent dashboard objects, and each tile represents a separate execution
 1. After the `New Tile` or `New Tile from Worksheet` buttons are selected, a tile worksheet will be displayed like the ones below.
 2. Copy and paste the SQL for each tile into the SQL section in the tile worksheet.
 3. Click the `Run` button and ensure you are receiving results.  Always use a full path in SQL for database.schema.table/view.
-4. Enable the chart to display by clicking the `Chart` button (except where a table is to be rendered like Tile #4).
-5. To get the tiles to look like the ones in this lab, simply apply the metadata in the `Chart Type` section on the right side of the UI to match the image in each tile section below.
+4. Set tile name and enable the chart display by clicking the `Chart` button (except where a table is to be rendered like Tile #4).
+5. To get the tiles to look like the ones in this lab, simply apply the metadata in the `Chart Type` section (except for Tile #4) on the right side of the UI to match the image in each tile section below.
 
 Once all the tiles are created, you may move them around on the dashboard to your liking.
 
 ### Tile 1: Stage Counts by Month - Heatgrid
 ```
 select stage_name, close_date, amount 
-from lab_fivetran_db.salesforce.salesforce__opportunity_enhanced
+from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced
 ```
 ![Fivetran Dashboard 4](assets/dashboard/d_0010.png)
 
 ### Tile 2: Opportunities Won by Amount - Bar
 ```
 select sum(amount) as account_amount, account_name, count(*) as num_won 
-from lab_fivetran_db.salesforce.salesforce__opportunity_enhanced 
+from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced 
 where is_won = true group by account_name order by 1
 ```
 ![Fivetran Dashboard 5](assets/dashboard/d_0020.png)
@@ -194,7 +193,7 @@ where is_won = true group by account_name order by 1
 ### Tile 3: Average Days to Close - Score
 ```
 select round(avg(days_to_close),1) 
-from lab_fivetran_db.salesforce.salesforce__opportunity_enhanced
+from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced
 ```
 ![Fivetran Dashboard 6](assets/dashboard/d_0030.png)
 
@@ -202,7 +201,7 @@ from lab_fivetran_db.salesforce.salesforce__opportunity_enhanced
 ```
 select top 5 owner_name as "Owner", avg_bookings_amount as "Avg Booking Amt", round(avg_days_to_close,1) as "Avg Days to Close", 
 total_pipeline_amount as "Total Pipeline" 
-from lab_fivetran_db.salesforce.salesforce__owner_performance 
+from pc_fivetran_db.salesforce.salesforce__owner_performance 
 where total_pipeline_amount is not null 
 order by total_pipeline_amount desc
 ```
@@ -221,7 +220,7 @@ Here's what we did:
 - Created a production-ready data pipeline from Salesforce to Snowflake via Fivetran in a few clicks!
 - Utilized Fivetran's Quickstart Data Models to curate the data within Snowflake for easy consumption!
 - Designed and built a Snowflake dashboard to give us valuable insights into our Salesforce data!
-- All in less than 30 minutes!
+- All in less than 40 minutes!
 - But don't stop here.  Take this lab to the next level by adding more tiles and building more insights on your own!
 
 ### Snowflake
