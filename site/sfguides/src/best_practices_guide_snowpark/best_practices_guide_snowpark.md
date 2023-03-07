@@ -210,6 +210,8 @@ Before we look into the results, let's recap what we have done so far:
 
 #### Numeric Computation Use Cases
 
+![Numeric Results Table](assets/numeric_results_table.png)
+
 For Numerical Computation, keeping the same dataset and warehouse size, Vectorised UDFs outperform Normal UDFs.
 - This is also seen when we change the size of the warehouse (to Large) to accommodate the change in dataset size (to Customer 1000)
 - This is because Numerical data types (including Boolean [0, 1]) expose their contents as _memoryviews()_. Memoryviews allow direct read & write access to the data without needing to copy it. But if you do require to copy it, they don't need to be read sequentially first. This significantly improves performance.
@@ -221,6 +223,8 @@ For Numerical Computation, keeping the same dataset and warehouse size, Vectoris
 
 #### Non-Numeric Computation Use Cases
 
+![NonNumeric Results Table](assets/nonnumeric_results_table.png)
+
 As expected, it makes sense not to use Vectorised UDFs for Non-numeric operations
 - But apart from the obvious, let's check out what the Query Profile looks like for the String Manipulation for Customer 100 Dataset when using a Small warehouse:
   - The Total (and by extention Average) UDF Handler Execution Time was about half for a Normal UDF when compared to the Vectorised UDF
@@ -229,8 +233,6 @@ As expected, it makes sense not to use Vectorised UDFs for Non-numeric operation
   - The Python Sandbox environment creation time was 1/3rd for Normal UDFs when compared to Vectorised UDFs
   - It is also important to note that the Bytes scanned and written were almost the same, and the partitions were the same as no partitioning had been done to this dataset.
 - *Optional Work*: Leverage `GET_QUERY_OPERATOR_STATS()` table function for a more detailed and thorough analysis.
-
-![NonNumeric Results Table](assets/nonnumeric_results_table.png)
 
 #### Batch Sizes
 
