@@ -121,12 +121,12 @@ With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`.  A
 ## Configure Fivetran Quickstart Transformations
 Duration: 5
 
-Fivetran is going to replicate your Salesforce data into a fully normalized Snowflake schema.  Now to make the data easier to query for our dashboard/use cases, let's transform it.  Fivetran gives you the ability, and is ever expanding, to utilize dbt Core data modeling to further curate your data with NO CODE!  These transformations are called Fivetran Quickstart Data Models.  Let's configure these now.
+Fivetran is going to replicate your Salesforce data into a fully normalized Snowflake schema.  Now to make the data easier to query for our dashboard/use cases, let's transform it.  Fivetran gives you the ability, and is ever expanding, to utilize dbt Core data modeling to further curate your data with NO CODE!  These transformations are called Fivetran [Quickstart Data Models](https://fivetran.com/docs/transformations/dbt/quickstart).  Let's configure these now.
 
 From the Fivetran UI, click `Transformations` in the left navbar.  Then in the `Quickstart` section, click `Get Started`.
 ![Fivetran Transform 1](assets/transforms/t_0010.png)
 
-In the configuration page, for `Source Type` choose `Salesforce`.  For `Connector`, choose your Salesforce connector.
+In the configuration page, for `Source Type` choose `Salesforce`.  Source Type represents the type of connector used.  In our case, we created a Salesforce connector.  For `Connector`, choose your Salesforce connector. If you left the schema names the same in the configuration, your connector will also be named Salesforce.  Connector here represents the name/schema name given to your Salesforce connector during the connector configuration.
 ![Fivetran Transform 2](assets/transforms/t_0020.png)
 
 Scroll down on the configuration screen and under `Set Schedule` select `Fully integrated`, then click `Save`.
@@ -138,8 +138,7 @@ The transformations are now configured and will show a status of `Pending`.
 The adding of transformations to your connector will signal the connector to perform a resync.  You may click on the `Connectors` section on the left navbar, then open your connector to watch it execute a resync.  When the resync completes, Fivetran will start the transformation jobs and change the status to `Running`.  Like the data replication, this should only take a minute or two to complete.
 ![Fivetran Transform 6](assets/transforms/t_0060.png)
 
-Once the transformations complete, you will see new objects in the Snowflake database.  The objects prefixed with 'SALESFORCE__' are models ready to query to assist us in our use cases and dashboard.  Objects prefixed with 'STG_' are staging objects used to build the final models and are rebuilt upon every transformation run.  (The below Snowflake images display the objects built by the Quickstart Data Models...no further action needed on these tables!)
-![Fivetran Transform 7](assets/transforms/t_0070.png)
+Once the transformations complete, you will see new objects in the Snowflake database.  The objects prefixed with 'SALESFORCE__' are models ready to query to assist us in our use cases and dashboard.  Objects prefixed with 'STG_' are staging objects used to build the final models and are rebuilt upon every transformation run.  (The below Snowflake images display the objects built by the Quickstart Data Models...no further action needed on these tables/views!)
 ![Fivetran Transform 8](assets/transforms/t_0080.png)
 
 In the Fivetran UI, you can view the lineage for any of the transformation jobs just by clicking the transformation job from the Transformations UI (`salesforce__sales_snapshot` shown below).
