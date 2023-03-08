@@ -23,9 +23,9 @@ This Quickstart guide contains best practices for using Snowpark.  The guide is 
 
 In this quickstart, you will learn how to make optimized decisions when using Snowpark Python.  These choices will be compared with others to show performance improvements.  Each concept is broken up into a lab, listed below:
 
-- [Lab 1](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#1): Using Cachetools library to improve performance up to 20x (~20 mins)
-- [Lab 2](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#7): Using Vectorized UDFs can improve numerical computations by 30-40%
-- [Lab 3](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#12): Using Snowpark dataframes perform ~8X faster compared to Pandas dataframes
+- [Lab 1](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#2): Using Cachetools library to improve performance up to 20x (~20 mins)
+- [Lab 2](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#4): Using Vectorized UDFs can improve numerical computations by 30-40%
+- [Lab 3](https://quickstarts.snowflake.com/guide/best_practices_guide_snowpark/index.html?index=..%2F..index#6): Using Snowpark dataframes perform ~8X faster compared to Pandas dataframes
 
 ### What You’ll Need 
 - A [Snowflake](https://www.snowflake.com/) Account
@@ -97,8 +97,11 @@ CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=
 ### Edit the credentials.json file
 
 Throughout all the following labs, we will need to connect your notebook IDE to Snowflake.  This is done via a credentials file.  Edit the `credentials.json` file found in the cloned repo with your Snowflake account information.  
- - Specify the default database as `SNOWPARK_BEST_PRACTICES_LABS` and default schema as `PUBLIC`
+ - Provide your account information, username, and password.
  - Ensure the role you are specifying upon login will have access to the database you just created.
+ - Specify default warehouse as `COMPUTE_WH` as created above.
+ - Specify the default database as `SNOWPARK_BEST_PRACTICES_LABS` and default schema as `PUBLIC`.
+
 
 
 
