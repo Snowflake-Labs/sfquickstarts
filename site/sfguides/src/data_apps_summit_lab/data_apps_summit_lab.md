@@ -9,7 +9,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # Building a data application with Marketplace, Snowpark and Streamlit
 
-
 ## Overview
 Duration: 2
 
@@ -17,10 +16,7 @@ In this hands-on lab, you will build a data application that leverages Economica
 
 You will process data with Snowpark, develop a simple ML model and create a Python User Defined Function (UDF) in Snowflake, then visualize the data with Streamlit.
 
-
 ### Key Features & Technology
-
-
 
 * Snowflake Marketplace
 * Snowpark for Python
@@ -28,10 +24,7 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 * Python User Defined Functions (UDF)
 * Streamlit
 
-
 ### Prerequisites
-
-
 
 * Accountadmin role access in Snowflake or a Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/)
 * Basic knowledge of SQL, database concepts, and objects
@@ -39,10 +32,7 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 * Ability to install and run software on your computer
 * [VSCode](https://code.visualstudio.com/download) installed
 
-
-### What You'll Learn:
-
-
+### What You'll Learn
 
 * How to consume datasets in the Snowflake Data Marketplace.
 * How to perform queries on data in Python using Dataframes
@@ -50,24 +40,25 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 * How to create a Snowpark Python User Defined Function in Snowflake
 * How to create a data application with Streamlit to visualize data
 
-
 ### What You’ll Build
-
-
 
 * A Python notebook that connects to Snowflake with Snowpark for Python and prepares features for a Linear Regression model training.
 * A Snowflake User Defined Function (UDF) based on a Python trained model
-* A Streamlit dashboard data application 
+* A Streamlit dashboard data application
 
-
-
+<!-- ------------------------ -->
 
 ## Prepare your lab environment
-Duration: 8
 
+Duration: 8
 
 1. Install conda to manage a separate environment by running pip install conda. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 2. Open the terminal or command prompt
+
+> aside positive
+> IMPORTANT:
+> If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
+
 3. Create environment by running `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
 4. Activate conda environment by running `conda activate snowpark`
 5. Install Snowpark for Python, pandas, and scikit-learn by running `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn`
@@ -75,11 +66,20 @@ Duration: 8
 7. Create folder, e.g. “Summit HOL PCE” and download/save the Lab files in that folder.
     * Link to required files: https://drive.google.com/drive/folders/1CN6Ljj59XWv2B3Epqxk4DtfDmCH1co_Q?usp=sharing
 
+---
+
+### Troubleshooting `pyarrow` related issues
+
+- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
+- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
+- Do not reinstall a different version of `pyarrow` after installing Snowpark.
+
+<!-- ------------------------ -->
 ## Prepare the Snowflake environment
+
 Duration: 6
 
 ### Working with the Snowflake Marketplace
-
 
 Snowflake's Marketplace provides visibility to a wide variety of datasets from third party data stewards which broaden access to data points used to transform business processes. The Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.
 
@@ -120,10 +120,7 @@ Before we begin to review working with Marketplace data sets, verify you have in
 
     ```
 
-
-
 ### Create a new database
-Duration: 4
 
 Now that we have created a database with the Economy Data Atlas, we need to create a database for our application that will store the User Defined Function.
 
@@ -166,8 +163,10 @@ ORDER BY "Date"
 SELECT predict_pce_udf(2021);
 ```
 
+<!-- ------------------------ -->
 
 ## Exploring the Data with a (Jupyter) Notebook
+
 Duration: 15
 
 Now that we have a database that we can use for the Application, we want to explore the data and create a ML model in a User Defined Function (UDF) that can be used by our application.
@@ -331,11 +330,9 @@ Now we can test the UDF using a SQL command in Python.
 session.sql("select predict_pce_udf(2021)").show()
 ```
 
-
-
-
-
+<!-- ------------------------ -->
 ## Creating the Streamlit application
+
 Duration: 7
 
 
@@ -538,7 +535,9 @@ In the above code snippet, a bar chart is constructed using Streamlit's _bar_cha
 More details can be shown by using a year selection (Streamlit_ selectbox() _ function) and a chart with the quarterly values for the selected year and a detailed chart of the PCE values of the major product types for the selected year. Every time a year is selected, the query will be run on Snowflake and the results are displayed by Snowpark and Streamlit.
 
 
+<!-- ------------------------ -->
 ## Run Web Application
+
 Duration: 4
 
 The fun part! Assuming your Python script is free of syntax and connection errors, you’re ready to run the application.
