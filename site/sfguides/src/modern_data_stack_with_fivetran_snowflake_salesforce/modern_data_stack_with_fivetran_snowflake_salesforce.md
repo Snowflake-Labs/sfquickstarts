@@ -35,7 +35,7 @@ Fivetran will replicate all of your data from Salesforce, and all of your other 
 - A `NO-CODE` Salesforce data pipeline powered by Fivetran and Snowflake
 - Prebuilt, ready-to-query data models:
   - Via Fivetran, no-code, Quickstart Data Models powered by dbt Core (no installs or account needed)
-  - Transformed by Snowflake massive parallel processing (MPP) engine
+  - Transformed by Snowflake's massive parallel processing (MPP) engine
 - A Snowflake dashboard giving immediate insights into your Salesforce data
 
 All in less than 40 minutes!
@@ -126,7 +126,7 @@ Fivetran is going to replicate your Salesforce data into a fully normalized Snow
 From the Fivetran UI, click `Transformations` in the left navbar.  Then in the `Quickstart` section, click `Get Started`.
 ![Fivetran Transform 1](assets/transforms/t_0010.png)
 
-In the configuration page, for `Source Type` choose `Salesforce`.  Source Type represents the type of connector used.  In our case, we created a Salesforce connector.  For `Connector`, choose your Salesforce connector. If you left the schema names the same in the configuration, your connector will also be named Salesforce.  Connector here represents the name/schema name given to your Salesforce connector during the connector configuration.
+In the configuration page, for `Source Type` choose `Salesforce`.  Source Type represents the type of connector used.  In our case, we created a Salesforce connector.  For `Connector`, choose your Salesforce connector. If you left the schema names the same in the configuration, your connector will also be named `salesforce`.  'Connector' here represents the name/schema name given to your Salesforce connector during the connector configuration.
 ![Fivetran Transform 2](assets/transforms/t_0020.png)
 
 Scroll down on the configuration screen and under `Set Schedule` select `Fully integrated`, then click `Save`.
@@ -152,7 +152,7 @@ In the Fivetran UI, you can view the lineage for any of the transformation jobs 
 ## Build Insights Via Snowflake Dashboard
 Duration: 10
 
-Now that our models are built and ready to query, let's build some insights into your data!  For the purposes of this lab, we will build a 4 tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.
+Now that our models are built and ready to query, let's build some insights into your data!  For the purposes of this lab, we will build a four tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.
 
 ### Snowflake Dashboard
 Click the `Dashboards` item in the left navbar.  This will display the Dashboard UI.  Click `+ Dashboard` in the upper right to begin the dashboard creation process.
