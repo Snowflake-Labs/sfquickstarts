@@ -112,7 +112,7 @@ The filtered view should be as shown below.  If so, click `Save & Continue`.
 Leave the schema changes setting as `Allow All`.  Click `Continue`.
 ![Fivetran Connector 11](assets/connector/c_0110.png)
 
-With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`.  And let Fivetran seemlessly replicate your data into Snowflake.  This should only take a minute or two at most.  Now, let's move on to transformations!
+With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`.  And let Fivetran seamlessly replicate your data into Snowflake.  This should only take a minute or two at most.  Now, let's move on to transformations!
 ![Fivetran Connector 12](assets/connector/c_0120.png)
 
 > aside positive
@@ -146,10 +146,10 @@ In the Fivetran UI, you can view the lineage for any of the transformation jobs 
 
 ### Recap
 > aside positive
-> You can see that with Fivetran Quickstart Data Models, there is no code, no git, and no deployments!  This 'T' in 'ELT' is a great value-add and a great way to start you on your transformations journey.  The open source for these transformations can be found in the [dbt Package Hub](https://hub.getdbt.com/).  One item to note here.  [dbt Labs](https://www.getdbt.com/) creates pushdown SQL which runs inside Snowflake.  Fivetran's implementation of this logic incurs no costs on the Fivetran side; transformation jobs are free.  But each time a tranformation is executed and data is manipulated, there will be a Snowflake warehouse running consuming Snowflake credits.
+> You can see that with Fivetran Quickstart Data Models, there is no code, no git, and no deployments!  This 'T' in 'ELT' is a great value-add and a great way to start you on your transformations journey.  The open source for these transformations can be found in the [dbt Package Hub](https://hub.getdbt.com/).  One item to note here.  [dbt Labs](https://www.getdbt.com/) creates push-down SQL which runs inside Snowflake.  Fivetran's implementation of this logic incurs no costs on the Fivetran side; transformation jobs are free.  But each time a transformation is executed and data is manipulated, there will be a Snowflake warehouse running consuming Snowflake credits.
 >
 
-## Build Insights Via Snowflake Dashbaord
+## Build Insights Via Snowflake Dashboard
 Duration: 10
 
 Now that our models are built and ready to query, let's build some insights into your data!  For the purposes of this lab, we will build a 4 tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.
