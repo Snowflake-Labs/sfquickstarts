@@ -91,7 +91,7 @@ Start a new dashboard by clicking the blue **+ Dashboard** button at the top-rig
 <br/>   
 To complete this step, we will create a single tile step-by-step. First, let's preview the completed tile:
 
-![First Complete Tile](assets/login_failures_full_chart_config.png)
+![First Complete Tile](assets/login_failures_full_chart_config-2.png)
 
 Now let's get started:
 1. Click the blue **+ Dashboard** button at the center of your blank dashboard.  
