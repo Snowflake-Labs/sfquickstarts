@@ -70,13 +70,10 @@ Duration: 8
 2. Open the terminal or command prompt
 3. Create environment by running `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
 4. Activate conda environment by running `conda activate snowpark`
-5. Install pandas by running `conda install pandas`
-6. Install Streamlit by running `pip install streamlit` or `pip3 install streamlit`
-7. Install scikit-learn by running `pip install -U scikit-learn`
-8. Install Snowpark for Python by running `conda install snowflake-snowpark-python` 
-9. Create folder, e.g. “Summit HOL PCE” and download/save the Lab files in that folder.
-    1. Link to required files: https://drive.google.com/drive/folders/1CN6Ljj59XWv2B3Epqxk4DtfDmCH1co_Q?usp=sharing
-
+5. Install Snowpark for Python, pandas, and scikit-learn by running `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn`
+6. Install Streamlit by running `pip install streamlit` or `conda install streamlit`
+7. Create folder, e.g. “Summit HOL PCE” and download/save the Lab files in that folder.
+    * Link to required files: https://drive.google.com/drive/folders/1CN6Ljj59XWv2B3Epqxk4DtfDmCH1co_Q?usp=sharing
 
 ## Prepare the Snowflake environment
 Duration: 6
