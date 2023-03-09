@@ -101,10 +101,10 @@ If you decide to bring your own Python environment, please make sure to have the
 - [imbalanced-learn](https://pypi.org/project/imbalanced-learn/)
 - [optuna](https://pypi.org/project/optuna/)
 
-> aside positive
-> There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
-> Please refer to the Snowpark documentation to solve this issue:
-> [Issue with running Snowpark Python on Apple M1 chips](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites)
+### Apple M1
+There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
+Please refer to the Snowpark documentation to solve this issue:
+[Issue with running Snowpark Python on Apple M1 chips](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites)
 
 <!-- ------------------------ -->
 ## Snowflake Environment Setup
