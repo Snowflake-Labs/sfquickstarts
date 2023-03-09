@@ -1,7 +1,7 @@
-author: 
+author: Security Field CTO Team
 id: security_dashboards_for_snowflake
-summary: This is a sample Snowflake Guide
-categories: Getting-Started
+summary: Walkthrough of creating security dashboards for Snowflake based on Snowflake audit and config data
+categories: security, audit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -18,10 +18,10 @@ The Security Field CTO team at Snowflake has talked with thousands of Snowflake 
 
 These dashboards are for any Snowflake customer who wants to gain a deeper understanding of their Snowflake account. The dashboards cover:
 
-- Configuration drift: Deviations from baseline normal to network policies, security integrations, replication, and failback-enabled Snowflake Accounts
 - Authentication patterns: Failed login attempts organized by user and reason, and account-wide visibility of the authentication types in use
 - Roles: RBAC maturity ratings, AccountAdmin usage monitoring, least-used roles for users
 - Users: Most dangerous user, disabled users not yet dropped, and users with stale passwords
+- Configuration drift: Deviations from baseline normal to network policies, security integrations, replication, and failback-enabled Snowflake Accounts
 
 ### Prerequisites
 - Familiarity with Snowflake's Snowsight tile creation and management
@@ -486,15 +486,41 @@ Since these tiles are doing a deeper level of analysis, the SQL is much more com
 
 <!-- ------------------------ -->
 ## Configuration Management Tiles
-Duration: 2
+Duration: 4
 
-There are many types of policy that control the security properties of your Snowflake Accounts. These two tiles explore how those properties are managed. The first looks broadly at all thes changes that may be taking place to your Snowflake configuration. The second looks at one of the most crucial configurations: Network Policy, which decides what network origination points will be allowed to connect to your Snowflake Accounts. This will help you track when any changes are made to these policies.  
+There are many types of policy that control the security properties of your Snowflake Accounts. These two tiles explore how those properties are managed. The first looks broadly at all thes changes that may be taking place to your Snowflake configuration. This will help you track when any changes are made to these policies.  
 
 The first tile is called `Configuration Management: Privileged object changes by User`. The tile will look like this:
+![config changes by user tile final state](assets/tile_priv_obj_changes_by_user.png)
 
+The SQL for this tile is:
+```sql
+  SELECT
+    query_text,
+    user_name,
+    role_name,
+    end_time
+  FROM snowflake.account_usage.query_history
+    WHERE execution_status = 'SUCCESS'
+      AND query_type NOT in ('SELECT')
+      AND (query_text ILIKE '%create role%'
+          OR query_text ILIKE '%manage grants%'
+          OR query_text ILIKE '%create integration%'
+          OR query_text ILIKE '%create share%'
+          OR query_text ILIKE '%create account%'
+          OR query_text ILIKE '%monitor usage%'
+          OR query_text ILIKE '%ownership%'
+          OR query_text ILIKE '%drop table%'
+          OR query_text ILIKE '%drop database%'
+          OR query_text ILIKE '%create stage%'
+          OR query_text ILIKE '%drop stage%'
+          OR query_text ILIKE '%alter stage%'
+          )
+  ORDER BY end_time desc;
+```
+This query also makes some choices based on the list of `query_text` options it chooses to pull out of the audit trail. Maybe you feel like there are more things that should be on this list? Or less?
 
-The tile will look like this:  
-
+The second tile looks at one of the most crucial configurations: Network Policy, which decides what network origination points will be allowed to connect to your Snowflake Accounts. It will be called `Configuration Management: Network Policy Changes` The tile will look like this:  
 ![Network POlicy changes tile final state](assets/tile_net_policy_changes.png)
   
 The SQL for this tile is:  
