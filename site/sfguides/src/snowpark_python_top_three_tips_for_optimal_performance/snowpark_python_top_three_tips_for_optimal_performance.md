@@ -47,6 +47,11 @@ cd sfguide-snowpark-python-top-three-tips-for-optimal-performance
 ```
 
 #### Snowpark Python via Anaconda
+
+> aside positive
+> IMPORTANT:
+> - If you are using a machine wth Apple M1 chip, follow [these instructions](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
+
 If you are using [Anaconda](https://www.anaconda.com/products/distribution) on your local machine, create a conda env for this quickstart:
 ```bash
 conda env create -f conda_env.yml
@@ -59,10 +64,6 @@ Now, launch Jupyter Notebook on your local machine:
 ```bash
 jupyter notebook
 ```
-
-> aside positive
-> IMPORTANT:
-> - If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
 ### Troubleshooting `pyarrow` related issues
 
