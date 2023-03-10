@@ -1,7 +1,7 @@
-author: 
+author: Security Field CTO Team
 id: security_dashboards_for_snowflake
-summary: This is a sample Snowflake Guide
-categories: Getting-Started
+summary: Walkthrough of creating security dashboards for Snowflake based on Snowflake audit and config data
+categories: security, audit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -18,10 +18,10 @@ The Security Field CTO team at Snowflake has talked with thousands of Snowflake 
 
 These dashboards are for any Snowflake customer who wants to gain a deeper understanding of their Snowflake account. The dashboards cover:
 
-- Configuration drift: Deviations from baseline normal to network policies, security integrations, replication, and failback-enabled Snowflake Accounts
 - Authentication patterns: Failed login attempts organized by user and reason, and account-wide visibility of the authentication types in use
 - Roles: RBAC maturity ratings, AccountAdmin usage monitoring, least-used roles for users
 - Users: Most dangerous user, disabled users not yet dropped, and users with stale passwords
+- Configuration drift: Deviations from baseline normal to network policies, security integrations, replication, and failback-enabled Snowflake Accounts
 
 ### Prerequisites
 - Familiarity with Snowflake's Snowsight tile creation and management
@@ -140,7 +140,7 @@ From this point on, tiles will be presented in their final form and instructions
 ## Authentication Tiles
 Duration: 5
 
-Our Security Dashboard will have two tiles focusing on authentication data. The first is the `Authentication: Failures, by User and Reason` tile that we made in the previous step. This shows that the Snowflake audit trail is capturing all the information you need to track the health of authentication events.
+Our Security Dashboard will have three tiles focusing on authentication data. The first is the `Authentication: Failures, by User and Reason` tile that we made in the previous step. This shows that the Snowflake audit trail is capturing all the information you need to track the health of authentication events.
 
 The second will be named `Authentication: Breakdown by Method`, and it looks like this:  
 ![Final state of authn breakdown tile](assets/tile_authn_by_method.png)
@@ -158,11 +158,29 @@ select
 ```
 Similar to failure tracking, it's crucial to ensure that people are using the right authentication methods. This tile shows how to break down what methods are being used and by whom.
 
-> aside positive
-> 
 > By default, these tiles will be side by side, but you can drag them to be one under the other if you prefer. We find that a side-by-side presentation makes this information-dense visual easier to read, but arrange it however you see fit. 
 
-Ask yourself: What other information does your organization need to know about authentication? You now know where to find it. We will return to this theme again and again.
+The third tile for authentication will be named `Authentication: Service identities bypassing keypair authentication with a password`. This tile assumes you have "service account" style users which are configured with key pair authenitcation which you expect will ONLY use that key pair as an authenticaiton method. The tile will look like this:
+![final state of key pair bypass tile](assets/tile_svc_acct_bybass_keypair.png)
+
+The SQL for this tile is:
+```sql
+SELECT
+ l.user_name,
+ first_authentication_factor,
+ second_authentication_factor,
+ count(*) as Num_of_events
+FROM snowflake.account_usage.login_history as l
+JOIN snowflake.account_usage.users u on l.user_name = u.name and l.user_name ilike '%svc' and has_rsa_public_key = 'true'
+WHERE is_success = 'YES'
+AND first_authentication_factor != 'RSA_KEYPAIR'
+GROUP BY l.user_name, first_authentication_factor, second_authentication_factor
+ORDER BY count(*) desc;
+```
+
+Note that in this SQL there is a specific part which looks for users with a naming convention containing `_SVC`. That is the `and l.user_name ilike '%svc'` bit of the SQL (which is also highlighted in the screen shot by the red box). This is assuming that any "service account" would use such a convnetion. So this will need adjusting in yoiur world to reflect the conventions you may use for these user types.
+
+As you build this out ask yourself: What other information does your organization need to know about authentication? You now know where to find it. We will return to this theme again and again.
 
 
 <!-- ------------------------ -->
@@ -467,13 +485,42 @@ select * from role_path_privs_agg order by num_of_privs desc
 Since these tiles are doing a deeper level of analysis, the SQL is much more complex. Even with that complexity, there are likely opportunities to pull in more information, or to aim similar analysis at other aspects of the system, such as detecting users that have the most code deployed in the form of SnowPark or stored procedures. 
 
 <!-- ------------------------ -->
-## Network Policy Tile
-Duration: 2
+## Configuration Management Tiles
+Duration: 4
 
-There are many types of policy that control the security properties of your Snowflake Accounts. One of the most crucial is the Network Policy, which decides what network origination points will be allowed to connect to your Snowflake Accounts. This will help you track when any changes are made to these policies.  
+There are many types of policy that control the security properties of your Snowflake Accounts. These two tiles explore how those properties are managed. The first looks broadly at all thes changes that may be taking place to your Snowflake configuration. This will help you track when any changes are made to these policies.  
 
-The tile will look like this:  
+The first tile is called `Configuration Management: Privileged object changes by User`. The tile will look like this:
+![config changes by user tile final state](assets/tile_priv_obj_changes_by_user.png)
 
+The SQL for this tile is:
+```sql
+  SELECT
+    query_text,
+    user_name,
+    role_name,
+    end_time
+  FROM snowflake.account_usage.query_history
+    WHERE execution_status = 'SUCCESS'
+      AND query_type NOT in ('SELECT')
+      AND (query_text ILIKE '%create role%'
+          OR query_text ILIKE '%manage grants%'
+          OR query_text ILIKE '%create integration%'
+          OR query_text ILIKE '%create share%'
+          OR query_text ILIKE '%create account%'
+          OR query_text ILIKE '%monitor usage%'
+          OR query_text ILIKE '%ownership%'
+          OR query_text ILIKE '%drop table%'
+          OR query_text ILIKE '%drop database%'
+          OR query_text ILIKE '%create stage%'
+          OR query_text ILIKE '%drop stage%'
+          OR query_text ILIKE '%alter stage%'
+          )
+  ORDER BY end_time desc;
+```
+This query also makes some choices based on the list of `query_text` options it chooses to pull out of the audit trail. Maybe you feel like there are more things that should be on this list? Or less?
+
+The second tile looks at one of the most crucial configurations: Network Policy, which decides what network origination points will be allowed to connect to your Snowflake Accounts. It will be called `Configuration Management: Network Policy Changes` The tile will look like this:  
 ![Network POlicy changes tile final state](assets/tile_net_policy_changes.png)
   
 The SQL for this tile is:  
