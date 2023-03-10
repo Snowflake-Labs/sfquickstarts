@@ -1,7 +1,7 @@
 author: Jake Berkowsky
 id: s3_access_log_ingestion
 summary: This quickstart is a guide to ingesting and processing S3 Access Logs into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for data loss prevention and incident response.
-categories: solution-examples,partner-integrations
+categories: cybersecurity,solution-examples,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
