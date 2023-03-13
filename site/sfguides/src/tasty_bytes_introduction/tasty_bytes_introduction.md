@@ -46,7 +46,7 @@ Upon finishing this Quickstart, you will be able to move on to the other Tasty B
 ### Prerequisites
 - An Enterprise or Business Critical Snowflake Account
     - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/), select **Enterprise** edition and whichever Cloud/Region combination you wish.
-        - <img src='choose_edition.png'>
+        - <img src="assets/choose_edition.png"/>
     - After registering, you will receive an email with an activation link and your Snowflake account URL you will use in the next steps.
 
 ### What You’ll Learn 
