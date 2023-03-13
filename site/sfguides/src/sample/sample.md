@@ -1,6 +1,6 @@
 summary: This is a sample Snowflake Guide
 id: sample 
-categories: Getting-Started
+categories: undefined
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,6 +1,6 @@
 summary: This guide can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption.
 id: resource_optimization_usage_monitoring
-categories: Resource-Optimization
+categories: resource-optimization
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

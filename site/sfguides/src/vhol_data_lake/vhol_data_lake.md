@@ -1,7 +1,7 @@
 author: Scott Teal
 id: vhol_data_lake
 summary: This is the guide for the hands-on lab, Snowflake for Data Lake
-categories: Getting-Started
+categories: getting-started,data-engineering,architecture-patterns
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -141,7 +141,8 @@ select
   payload:response.last_updated::timestamp last_updated,
   row_inserted
 from s,
-  lateral flatten (input => payload:response.data.stations) ;
+  lateral flatten (input => payload:response.data.stations)
+  where try_to_number(station_v:station_id::string) is not null;
 ```
 
 Extract the individual region records, storing the results in a separate table.
