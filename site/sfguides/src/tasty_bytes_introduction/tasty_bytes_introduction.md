@@ -24,28 +24,24 @@ Upon finishing this Quickstart, you will be able to move on to the other Tasty B
 ### Prerequisites
 - An Enterprise or Business Critical Snowflake Account
     - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/), select **Enterprise** edition and any Cloud/Region combination. After registering, you will receive an email with an activation link and your Snowflake Account URL.
-<p align="center">
-    <img src="assets/choose_edition.png" width="300"/>
-</p>
-       
-
+    - <img src="assets/choose_edition.png" width="300"/>
+    
 ### What You’ll Learn 
-    - How to Create a Snowflake Worksheet
-    - How to Import a .sql File into a Snowflake Worksheet
-    - How to Execute an entire Snowflake Worksheet
-    - How to Explore Databases in your Snowflake Account
-    - How to Explore Roles in your Snowflake Account
-    - How to Explore Warehouse in your Snowflake Account
+1. How to Create a Snowflake Worksheet
+2. How to Import a .sql File into a Snowflake Worksheet
+3. How to Execute an entire Snowflake Worksheet
+4. How to Explore Databases in your Snowflake Account
+5. How to Explore Roles in your Snowflake Account
+6. How to Explore Warehouse in your Snowflake Account
 
 ### What You'll Build
-- A Snowflake Database
-- Three Snowflake Schemas (Raw, Harmonized and Analytics) complete with Tables and Views
-- Workload Specific Snowflake Warehouses
-- Workload Specific Snowflake Roles
-
+1. A Snowflake Database
+2. Three Snowflake Schemas (Raw, Harmonized and Analytics) complete with Tables and Views
+3. Workload Specific Snowflake Warehouses
+4. Workload Specific Snowflake Roles
 
 ## Tasty Bytes - Quickstart Table of Contents
-The following Table of Contents covers the other Quickstarts you can complete once you have finished all of the steps within this Quickstart. 
+- The following Table of Contents covers the other Quickstarts you can complete once you have finished all of the steps within this Quickstart. 
 
 ### Zero to Snowflake
 - ### [Financial Governance](site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance)
@@ -62,44 +58,49 @@ The following Table of Contents covers the other Quickstarts you can complete on
     - Learn about Snowflake Geospatial support starting with constructing Geographic Points (ST_POINT) and leveraging other Geospatial functionality to calculate distance (ST_DISTANCE), collect coordinates, draw a Minimum Bounding Polygon and find the polygons center point.
 
 ### Workload Deep Dives
-- ### Data Engineering**
+- ### Data Engineering
     - ### Ingestion, Optimization & Automation (*Coming Soon*)
     - ### External Tables (*Coming Soon*)
-- ### Data Science**
+- ### Data Science
     - ### Snowpark 101 (*Coming Soon*)
 
 ## Tasty Bytes - Setup
-For this Quickstart, you will use the Snowflake web interface known as [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight).
+- For this Quickstart, you will use the Snowflake web interface known as [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight).
 
-**Step 1** - Download the [**tasty_bytes_introduction.sql**]() file 
-#ToDo: find easiest way to download a .sql file
+#### Step 1
+- Download the [**tasty_bytes_introduction.sql**]() file 
+- **#ToDo:** find easiest way to download a .sql file
 
-**Step 2** - Open a browser window and enter the URL of your existing Snowflake Account or the URL for the Snowflake 30-day Trial Account that was sent with your registration email.
+#### Step 2 
+-  Open a browser window and enter the URL of your Snowflake Account 
 
-**Step 3** - Log into your Snowflake account.
-<p align="center">  
-    <img src ="assets/log_into_snowflake.gif"/>
-<p/>
+#### Step 3 
+- Log into your Snowflake account.
+    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
-**Step 4** - Click on [Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs) Tab in the left-hand navigation bar.
-<p align="center">  
-    <img src ="assets/worksheet_tab.png" width="200"/>
-<p/>
+#### Step 4 
+- Click on [Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs) Tab in the left-hand navigation bar.
+    - <img src ="assets/worksheet_tab.png" width="250"/>
 
-**Step 5** - Click on the "•••" button in the top-right and choose "Create Worksheet from SQL File"
-<p align="center">  
-    <img src ="assets/create_worksheet_from_sql.png" width="300"/>
-<p/>
+#### Step 5 
+- Click on the "•••" button in the top-right and choose "Create Worksheet from SQL File"
+    - <img src ="assets/create_worksheet_from_sql.png" width="250"/>
 
-**Step 6** - Navigate to the location you saved your **tasty_bytes_introduction.sql** file and open it.
+#### Step 6 
+- Navigate to the location you saved your **tasty_bytes_introduction.sql** file and open it.
 
+#### Step 7 
+- Click inside the newly created worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click Run 
+    - <img src ="assets/run_all_queries.gif"/>
 
-**Step 7** - Click inside the newly created worksheet, Select All (*Cmd + A - Mac | Ctrl + A - Windows*) and Click Run 
-<p align="center">  
-    <img src ="assets/run_all_queries.gif"/>
-<p/>
+#### Step 8
+- After clicking Run you will see queries begin to execute. The entire run process should take around XYZ minutes and finish with a message stating XYZ message. Once this is complete, you can move onto the next section. 
 
-## 4
+## Tasty Bytes - Database and Database Objects
+
+## Tasty Bytes - Warehouses
+
+## Tasty Bytes - Roles
 
 
 
