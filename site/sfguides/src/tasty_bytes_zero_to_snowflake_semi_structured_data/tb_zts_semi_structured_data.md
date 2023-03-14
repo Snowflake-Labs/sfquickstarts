@@ -9,7 +9,12 @@ tags: Getting Started, Data Engineering, Data Warehouse
 
 # Tasty Bytes - Zero to Snowflake - Semi-Structured Data
 
-## Semi-Structured Data Overview 
+## Semi-Structured Data Processing in Snowflake
 Duration: 1
-
 <img src = "assets/semi_structured_header.png">
+
+### Overview
+Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Semi-Structured Data Processing!
+
+### Prerequisites
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which instruct you on setting up a trial account and deploys the Tasty Bytes Foundation required to complete this Quickstart in under 10 minutes.
