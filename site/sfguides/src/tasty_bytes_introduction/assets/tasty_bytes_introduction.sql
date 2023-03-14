@@ -13,7 +13,7 @@ Vignette:     Setup
 Script:       setup_snowflake_account_blob_tb.sql         
 Create Date:  2023-01-12
 Author:       Jacob Kranzler
-Copyright(c): 2022 Snowflake Inc. All rights reserved.
+Copyright(c): 2023 Snowflake Inc. All rights reserved.
 ****************************************************************************************************
 Description: 
    Setup for Tasty Bytes using Blob Storage
@@ -38,7 +38,6 @@ CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.raw_pos;
 
 -- create raw_customer schema
 CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.raw_customer;
-
 
 -- create harmonized schema
 CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.harmonized;
@@ -117,7 +116,6 @@ CREATE ROLE IF NOT EXISTS tasty_data_app
 CREATE ROLE IF NOT EXISTS tasty_dev
     COMMENT = 'developer for tasty bytes';
     
-
 -- role hierarchy
 GRANT ROLE tasty_admin TO ROLE sysadmin;
 GRANT ROLE tasty_data_engineer TO ROLE tasty_admin;
@@ -128,9 +126,6 @@ GRANT ROLE tasty_dev TO ROLE tasty_data_engineer;
 
 -- privilege grants
 USE ROLE accountadmin;
-
-GRANT EXECUTE TASK, EXECUTE MANAGED TASK ON ACCOUNT TO ROLE tasty_data_scientist;
-GRANT EXECUTE TASK, EXECUTE MANAGED TASK ON ACCOUNT TO ROLE tasty_data_engineer;
 
 GRANT IMPORTED PRIVILEGES ON DATABASE snowflake TO ROLE tasty_data_engineer;
 
@@ -158,7 +153,6 @@ GRANT ALL ON SCHEMA frostbyte_tasty_bytes.raw_pos TO ROLE tasty_data_scientist;
 GRANT ALL ON SCHEMA frostbyte_tasty_bytes.raw_pos TO ROLE tasty_bi;
 GRANT ALL ON SCHEMA frostbyte_tasty_bytes.raw_pos TO ROLE tasty_data_app;
 GRANT ALL ON SCHEMA frostbyte_tasty_bytes.raw_pos TO ROLE tasty_dev;
-
 
 GRANT ALL ON SCHEMA frostbyte_tasty_bytes.harmonized TO ROLE tasty_admin;
 GRANT ALL ON SCHEMA frostbyte_tasty_bytes.harmonized TO ROLE tasty_data_engineer;
@@ -193,7 +187,6 @@ GRANT ALL ON WAREHOUSE tasty_bi_wh TO ROLE tasty_bi;
 GRANT ALL ON WAREHOUSE tasty_dev_wh TO ROLE tasty_admin;
 GRANT ALL ON WAREHOUSE tasty_dev_wh TO ROLE tasty_data_engineer;
 GRANT ALL ON WAREHOUSE tasty_dev_wh TO ROLE tasty_dev;
-
 
 -- future grants
 GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos TO ROLE tasty_admin;
@@ -477,91 +470,6 @@ ON cl.customer_id = oh.customer_id
 GROUP BY cl.customer_id, cl.city, cl.country, cl.first_name,
 cl.last_name, cl.phone_number, cl.e_mail;
 
-
-/*-- This is used in Snowpark 101 but not needed in Z2S - removing as this is dependent on Safegraph
-CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.location_detail_v
-  AS
-WITH _location_point AS
-(SELECT 
-    cpg.placekey,
-    l.location_id,
-    cpg.city,
-    cpg.country,
-    ST_MAKEPOINT(cpg.longitude, cpg.latitude) AS geo_point
-FROM frostbyte_tasty_bytes.raw_safegraph.core_poi_geometry cpg
-LEFT JOIN frostbyte_tasty_bytes.raw_pos.location l
-    ON cpg.placekey = l.placekey),
-_distance_between_locations AS
-(SELECT 
-    a.placekey,
-    a.location_id,
-    b.placekey AS placekey_2,
-    b.location_id AS location_id_2,
-    a.city,
-    a.country,
-    ROUND(ST_DISTANCE(a.geo_point, b.geo_point)/1609,2) AS geography_distance_miles
-FROM _location_point a
-JOIN _location_point b
-    ON a.city = b.city
-    AND a.country = b.country
-    AND a.placekey <> b.placekey
-),
-_locations_within_half_mile AS
-(
-SELECT
-    dbl.placekey,
-    dbl.location_id,
-    COUNT(DISTINCT dbl.placekey_2) AS count_locations_within_half_mile
-FROM _distance_between_locations dbl
-WHERE dbl.geography_distance_miles <= 0.5
-GROUP BY dbl.location_id, dbl.placekey
-),
-_locations_within_mile AS
-(
-SELECT
-    dbl.placekey,
-    dbl.location_id,
-    COUNT(DISTINCT dbl.placekey_2) AS count_locations_within_mile
-FROM _distance_between_locations dbl
-WHERE dbl.geography_distance_miles <= 1
-GROUP BY dbl.location_id, dbl.placekey
-)
-SELECT
-    l.location_id,
-    ZEROIFNULL(hm.count_locations_within_half_mile) AS count_locations_within_half_mile,
-    ZEROIFNULL(m.count_locations_within_mile) AS count_locations_within_mile,
-    cpg.placekey,
-    cpg.location_name,
-    cpg.top_category,
-    cpg.sub_category,
-    cpg.naics_code,
-    cpg.latitude,
-    cpg.longitude,
-    ST_MAKEPOINT(cpg.longitude, cpg.latitude) AS geo_point,
-    cpg.street_address,
-    cpg.city,
-    c.city_population,
-    cpg.region,
-    cpg.country,
-    cpg.polygon_wkt,
-    cpg.geometry_type
-FROM frostbyte_tasty_bytes.raw_pos.location l
-JOIN frostbyte_tasty_bytes.raw_safegraph.core_poi_geometry cpg
-    ON l.placekey = cpg.placekey
-JOIN frostbyte_tasty_bytes.raw_pos.country c
-    ON l.city = c.city
-LEFT JOIN _locations_within_half_mile hm
-    ON l.location_id = hm.location_id
-LEFT JOIN _locations_within_mile m
-    ON l.location_id = m.location_id;
-
-CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.location_detail_v
-COMMENT = 'Tasty Bytes Truck Location Details View'
-  AS
-SELECT * FROM frostbyte_tasty_bytes.harmonized.location_detail_v;
---*/ 
-
-
 /*--
  • analytics view creation
 --*/
@@ -577,95 +485,6 @@ CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.customer_loyalty_metrics_
 COMMENT = 'Tasty Bytes Customer Loyalty Member Metrics View'
     AS
 SELECT * FROM frostbyte_tasty_bytes.harmonized.customer_loyalty_metrics_v;
-
-
-/*-- Removing as this is not used in Z2S
--- snowpark stored procedure creation 
-CREATE OR REPLACE PROCEDURE frostbyte_tasty_bytes.analytics.build_ds_table()
-    RETURNS STRING
-    LANGUAGE PYTHON
-    RUNTIME_VERSION = '3.8'
-    PACKAGES = ('snowflake-snowpark-python')
-    HANDLER = 'create_table'
-AS
-$$
-def create_table(session):
-    import snowflake.snowpark.functions as F
-    import snowflake.snowpark.types as T
-    df = session.table("frostbyte_tasty_bytes.analytics.orders_v") \
-            .select("order_id",
-                    "truck_id",
-                    "location_id",
-                    F.col("primary_city").alias("city"),
-                    "latitude",
-                    "longitude",
-                    F.builtin("DATE")(F.col("order_ts")).alias("date"),
-                    F.iff(F.builtin("DATE_PART")("HOUR",F.col("order_ts")) < '15',
-                          'AM', 'PM').alias("shift"),
-                    F.cast(F.col("order_total"), T.FloatType()).alias("order_total"),
-                    ) \
-            .distinct() \
-            .group_by("truck_id", "location_id", "date", 
-            "city", "latitude", "longitude", "shift") \
-            .agg(F.sum("order_total").alias('shift_sales')) \
-            .select("location_id",
-                 "city",
-                 "date",
-                 "shift_sales",
-                 "shift",
-                 F.month(F.col("date")).alias("month"),
-                 F.dayofweek(F.col("date")).alias("day_of_week"),
-                 "latitude",
-                 "longitude")
-                 
-    df_poi = session.table("frostbyte_tasty_bytes.analytics.location_detail_v") \
-                .select("location_id",
-                        "count_locations_within_half_mile",
-                        "city_population")
-                        
-    df = df.join(df_poi, df.location_id == df_poi.location_id, "LEFT") \
-            .rename(df.location_id, "location_id") \
-            .drop(df_poi.location_id)
-    
-    max_date = df.select(F.max(F.col("date"))).collect()[0][0]
-    df_future = df.select("LOCATION_ID",
-                          "CITY", 
-                          F.lit(None).astype(T.DoubleType()).alias("SHIFT_SALES"),
-                          "SHIFT",
-                          "LATITUDE",
-                          "LONGITUDE",
-                          "COUNT_LOCATIONS_WITHIN_HALF_MILE",
-                          "CITY_POPULATION").distinct()
-
-    df_future_dates = df.select(F.dateadd("day", F.lit(7), F.col("DATE")).alias("NEW_DATE"),
-                              F.month(F.dateadd("day", F.lit(7), F.col("DATE"))).alias("month"),
-                              F.dayofweek(F.dateadd("day", F.lit(7), F.col("DATE"))).alias("day_of_week"),      
-                              ) \
-                             .rename(F.col("NEW_DATE"), "DATE") \
-                             .where(F.col("DATE") > max_date).distinct()
-    df_future = df_future.cross_join(df_future_dates)
-    
-    df = df_future.union_all_by_name(df).select('LOCATION_ID',
-                                                         'CITY',
-                                                         'DATE',
-                                                         'SHIFT_SALES',
-                                                         'SHIFT',
-                                                         'MONTH',
-                                                         'DAY_OF_WEEK',
-                                                         'LATITUDE',
-                                                         'LONGITUDE',
-                                                         'COUNT_LOCATIONS_WITHIN_HALF_MILE',
-                                                         'CITY_POPULATION')  
-    df.write.mode("overwrite").save_as_table("frostbyte_tasty_bytes.analytics.shift_sales")
-                                                                  
-    return "SUCCESS"
-$$;
-
-
--- call snowpark stored procedure to generate shift_sales table
-CALL frostbyte_tasty_bytes.analytics.build_ds_table();
-
---*/
 
 /*--
  raw zone table load 
@@ -694,7 +513,6 @@ FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/truck/;
 -- customer_loyalty table load
 COPY INTO frostbyte_tasty_bytes.raw_customer.customer_loyalty
 FROM @frostbyte_tasty_bytes.public.s3load/raw_customer/customer_loyalty/;
-
 
 -- order_header table load
 COPY INTO frostbyte_tasty_bytes.raw_pos.order_header
