@@ -6,3 +6,10 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Warehouse
+
+# Tasty Bytes - Zero to Snowflake - Semi-Structured Data
+
+## Semi-Structured Data Overview 
+Duration: 1
+
+<img src = "assets/semi_structured_header.png">

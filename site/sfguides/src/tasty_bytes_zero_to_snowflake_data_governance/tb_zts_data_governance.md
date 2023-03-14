@@ -8,4 +8,10 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Warehouse, Data Governance
 
 
+# Tasty Bytes - Zero to Snowflake - Data Governance
 <!-- ------------------------ -->
+
+## Data Governance Overview 
+Duration: 1
+
+<img src = "assets/data_governance_header.png">

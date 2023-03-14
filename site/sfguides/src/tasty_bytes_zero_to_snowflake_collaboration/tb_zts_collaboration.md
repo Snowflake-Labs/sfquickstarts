@@ -8,6 +8,10 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Warehouse
 
 
+# Tasty Bytes - Zero to Snowflake - Collaboration
 <!-- ------------------------ -->
 
-## Overview
+## Collaboration Overview 
+Duration: 1
+
+<img src = "assets/collaboration_header.png">

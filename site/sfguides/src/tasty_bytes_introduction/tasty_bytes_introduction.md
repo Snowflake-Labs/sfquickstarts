@@ -27,7 +27,7 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - An Enterprise or Business Critical Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/), select **Enterprise** edition and any Cloud/Region combination. 
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
     - <img src="assets/choose_edition.png" width="300"/>
     
@@ -89,8 +89,9 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 
 ## Exploring the Tasty Bytes Foundation
 Duration: 3
-- With our SQL Setup successful, let's now explore the Database, Roles and Warehouses within our Snowsight interface.
-- Within the Tasty Bytes - Setup worksheet we created scroll to the bottom and copy and execute the SQL from within each step below
+
+With our SQL Setup successful, let's now explore the Database, Roles and Warehouses within our Snowsight interface.
+    - Within the Tasty Bytes - Setup worksheet you created in Step 2, please scroll to the bottom and Copy and Run the SQL from within each step below.
 
 #### Step 1 - Exploring the Tasty Bytes Database
 - This query will return the Database we created via [SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html).
@@ -107,7 +108,7 @@ SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
 <img src = "assets/show_tb_schemas.png"> 
 
 #### Step 3 - Exploring the Tables within the RAW_POS Schema within the Tasty Bytes Database
-- This query will return the Tables within the RAW_POS schema via [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables)
+- This query will return the Tables within the `raw_pos` schema via [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables)
 ```
 SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
 ```
@@ -129,9 +130,9 @@ SHOW WAREHOUSES LIKE 'tasty%';
 
 #### Step 6 - Putting it all together
 - These next three queries will:
-    1. Assume the Tasty Data Engineer role via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html)
-    2. Leverage the Tasty Bytes Data Engineering Warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html)
-    3. Query our raw_pos.menu table to find which Menu Items sold at our Plant Palace branded food trucks.
+    1. Assume the `tasty_data_engineer` role via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html)
+    2. Leverage the `tasty_de_wh` Warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html)
+    3. Query our `raw_pos.menu` table to find which Menu Items are sold at our Plant Palace branded food trucks.
 ```
 USE ROLE tasty_data_engineer;
 USE WAREHOUSE tasty_de_wh;
@@ -148,7 +149,9 @@ WHERE m.truck_brand_name = 'Plant Palace';
 
 ## Powered by Tasty Bytes - Quickstarts
 Duration: 0
-- Congratulations, you have now completed the Tasty Bytes Foundational Setup! The following Table of Contents will outline all of the other Tasty Bytes Quickstart assets you can now begin.
+Congratulations, you have now completed the Tasty Bytes Foundational Setup!
+
+The Table of Contents below will outline all of the available Tasty Bytes Quickstarts you can now begin.
 
 <img src ="assets/pbtb_quickstarts.png"/>
 
