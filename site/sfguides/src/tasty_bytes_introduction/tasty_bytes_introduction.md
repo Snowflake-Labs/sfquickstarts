@@ -10,7 +10,7 @@ tags: Getting Started, Data Engineering, Data Warehouse
 # Introduction to Tasty Bytes
 <!-- ------------------------ -->
 
-## Tasty Bytes - Introduction 
+## An Introduction to Tasty Bytes 
 Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
@@ -19,7 +19,7 @@ Within this Tasty Bytes Introduction Quickstart you will first be learning about
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
-Upon finishing this Quickstart, you will have access to everything seen in the final Powered by Tasty Bytes - Quickstarts section.
+Upon finishing this Quickstart, you will have deployed the foundation required to run the assets seen in the Powered by Tasty Bytes - Quickstarts section.
 
 ### Who is Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
@@ -27,70 +27,67 @@ Upon finishing this Quickstart, you will have access to everything seen in the f
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - An Enterprise or Business Critical Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/), select **Enterprise** edition and any Cloud/Region combination. After registering, you will receive an email with an activation link and your Snowflake Account URL.
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/), select **Enterprise** edition and any Cloud/Region combination. 
+    - After registering, you will receive an email with an activation link and your Snowflake Account URL.
     - <img src="assets/choose_edition.png" width="300"/>
     
 ### What You Will Learn 
-1. How to Create a Snowflake Worksheet
-2. How to Execute All Queries within a Snowflake Worksheet Synchronously
-3. How to Explore Databases
-4. How to Explore Schemas
-5. How to Explore Tables
-4. How to Explore Roles
-5. How to Explore Warehouses
+- How to Create a Snowflake Worksheet
+- How to Execute All Queries within a Snowflake Worksheet Synchronously
+- How to Explore Databases, Schemas, Tables, Roles and Warehouses via SQL in a Snowflake Worksheet
 
 ### What You Will Build
-1. The Tasty Bytes Foundation required to leverage Powered by Tasty Bytes - Quickstarts. This includes:
+- The Tasty Bytes Foundation that empowers you to run Powered by Tasty Bytes - Quickstarts. 
     - A Snowflake Database
     - Three Snowflake Schemas complete with Tables and Views
     - Workload Specific Snowflake Roles and Warehouses
     - Role Based Access Control (RBAC)
 
-## Tasty Bytes - Setup
+## Setting up Tasty Bytes
 Duration: 6
 
 #### Overview
 For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight we would highly consider taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
 
-#### Step 1 
+#### Step 1 - Accessing Snowflake via URL
 - Open a browser window and enter the URL of your Snowflake Account 
 
-#### Step 2 
+#### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
     - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
-#### Step 3 
+#### Step 3 - Navigating to Worksheets
 - Click on the Worksheets Tab in the left-hand navigation bar.
     - <img src ="assets/worksheet_tab.png" width="250"/>
 
-#### Step 4
+#### Step 4 - Creating a Worksheet
 - Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet"
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
-#### Step 5
+#### Step 5 - Renaming a Worksheet
 - Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
-#### Step 6
+#### Step 6 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 <button>[tasty_bytes_introduction.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
 
-#### Step 7 
+#### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
     - <img src ="assets/github_copy_raw_contents.png"/>
 
-#### Step 8 
+#### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
 
-#### Step 9 
+#### Step 9 - Synchronously Running all Setup SQL
 - Click inside the newly created Tasty Bytes - Setup Worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click "► Run" 
     - <img src ="assets/run_all_queries.gif"/>
 
-#### Step 10
+#### Step 10 - Completing Setup
 - After clicking "► Run" you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 5 minutes. Upon completion you will see a message stating *frostbyte_tasty_bytes setup database is now complete*. 
     - <img src="assets/setup_complete.png">
 
-## Exploring our Setup
+## Exploring the Tasty Bytes Foundation
 Duration: 3
 - With our SQL Setup successful, let's now explore the Database, Roles and Warehouses within our Snowsight interface.
 - Within the Tasty Bytes - Setup worksheet we created scroll to the bottom and copy and execute the SQL from within each step below
