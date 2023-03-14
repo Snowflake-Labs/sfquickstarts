@@ -11,13 +11,15 @@ tags: Getting Started, Data Engineering, Data Warehouse
 
 ## Tasty Bytes - Introduction 
 <img src="assets/tasty_bytes_header.png"/>
+-#ToDo - crop banner
 
 ### Overview
 Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by the frostbyte team within the Snowflake Field CTO Office. 
 
-After learning about the Tasty Bytes Organization, we will walk through the process of downloading a .sql file and importing it as a Worksheet in the Snowsight UI. This .sql file will then be ran in bulk which will complete the process of setting up a three zone (*raw, harmonized and analytics*) Tasty Bytes Data Model complete with Schemas, Tables, Views, Warehouses, Roles and all required Role Based Access Control (RBAC).
+After learning about the Tasty Bytes Organization, we will walk through the process of setting up the Tasty Bytes Foundational Data Model, and set of roles, warehouse and all required Role Based Access Control. 
 
-Upon finishing this Quickstart, you will be able to move on to the other Tasty Bytes Quickstarts seen in the Table of Contents section. These Tasty Bytes themed Quickstarts range from quick Zero to Snowflake feature/function rich walkthroughs to in-depth Workload Deep Dives.
+Upon finishing this Quickstart, you will be able to move on to the other Tasty Bytes Quickstarts seen in the Tasty Bytes Powered Quickstarts section. 
+    - These Tasty Bytes themed Quickstarts range from quick Zero to Snowflake feature/function rich walkthroughs to in-depth Workload Deep Dives.
 
 ### Who is Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
@@ -41,43 +43,19 @@ Upon finishing this Quickstart, you will be able to move on to the other Tasty B
 3. Workload Specific Snowflake Warehouses
 4. Workload Specific Snowflake Roles
 
-## Tasty Bytes - Quickstart Table of Contents
-- The following Table of Contents covers the other Quickstart assets you can complete once you have finished all of the steps within this Quickstart. 
-
-### Zero to Snowflake
-- ### [Financial Governance](site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance)
-    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, and Account and Warehouse Level Timeout Parameters
-- ### [Transformation](site/sfguides/src/tasty_bytes_zero_to_snowflake_transformation)
-    - Learn about Snowflake Zero Copy Cloning, Result Set Cache, Table Manipulation, Time-Travel and Table level SWAP, DROP and Undrop functionality.
-- ### [Semi-Structured Data](site/sfguides/src/tasty_bytes_zero_to_snowflake_semi_structured_data)
-    - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot Notation and Lateral Flattening as well as View Creation and Snowsight Charting.
-- ### [Data Governance](site/sfguides/src/tasty_bytes_zero_to_snowflake_data_governance)
-    - Learn about Snowflake System Defined Roles, Create and apply GRANTS to a custom role, and deploy both Tag Based Dynamic Data Masking and Row-Access Policies.
-- ### [Collaboration](site/sfguides/src/tasty_bytes_zero_to_snowflake_collaboration)
-    - Learn about the Snowflake Marketplace by leveraging free, instantly available, live listings from Weathersource and Safegraph to conduct data driven analysis harmonizing first and third party sources.
-- ### [Geospatial](site/sfguides/src/tasty_bytes_zero_to_snowflake_geospatial)
-    - Learn about Snowflake Geospatial support starting with constructing Geographic Points (ST_POINT) and leveraging other Geospatial functionality to calculate distance (ST_DISTANCE), collect coordinates, draw a Minimum Bounding Polygon and find the polygons center point.
-
-### Workload Deep Dives
-- ### Data Engineering
-    - ### Ingestion, Optimization & Automation (*Coming Soon*)
-    - ### External Tables (*Coming Soon*)
-- ### Data Science
-    - ### Snowpark 101 (*Coming Soon*)
-
 ## Tasty Bytes - Setup
 #### Overview
 For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight we would highly consider taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
 
 #### Step 1 
--  Open a browser window and enter the URL of your Snowflake Account 
+- Open a browser window and enter the URL of your Snowflake Account 
 
 #### Step 2 
 - Log into your Snowflake account.
     - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
 #### Step 3 
-- Click on [Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs) Tab in the left-hand navigation bar.
+- Click on the Worksheets Tab in the left-hand navigation bar.
     - <img src ="assets/worksheet_tab.png" width="250"/>
 
 #### Step 4
@@ -97,24 +75,39 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
     - <img src ="assets/github_copy_raw_contents.png"/>
 
 #### Step 8 
-- Path back to Snowsight and your newly created Worksheet and paste (CMD + V for Mac or CTRL + V for Windows) the contents of the tasty_bytes_introduction.sql file we copied from GitHub.
+- Path back to Snowsight and your newly created Worksheet and paste (*CMD + V for Mac or CTRL + V for Windows*) the contents of the tasty_bytes_introduction.sql file we copied from GitHub.
 
 #### Step 9 
-- Click inside the newly created worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click Run 
+- Click inside the newly created worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click "► Run" 
     - <img src ="assets/run_all_queries.gif"/>
 
 #### Step 10
-- After clicking Run you will see queries begin to execute. The entire run process should take around XYZ minutes and finish with a message stating XYZ message. Once this is complete, you can move onto the next section. 
+- After clicking "► Run" you will see queries begin to execute. The entire run process should take around XYZ minutes and finish with a message stating *frostbyte_tasty_bytes setup database is now complete*. Once this message is recieved, you can move onto the next section as well as begin on the other Tasty Bytes Quickstart assets we see in the Table of Contents. 
 
-## Tasty Bytes - Database and Database Objects
+## Validating Setup
 
-## Tasty Bytes - Warehouses
+## Powered by Tasty Bytes - Quickstarts
+- Congratulations, you have now completed the Tasty Bytes Foundational Setup! The following Table of Contents will outline all of the other Tasty Bytes Quickstart assets you can now begin.
 
-## Tasty Bytes - Roles
+### Zero to Snowflake
+- #### [Financial Governance](site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance)
+    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, and Account and Warehouse Level Timeout Parameters
+- #### [Transformation](site/sfguides/src/tasty_bytes_zero_to_snowflake_transformation)
+    - Learn about Snowflake Zero Copy Cloning, Result Set Cache, Table Manipulation, Time-Travel and Table level SWAP, DROP and Undrop functionality.
+- #### [Semi-Structured Data](site/sfguides/src/tasty_bytes_zero_to_snowflake_semi_structured_data)
+    - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot Notation and Lateral Flattening as well as View Creation and Snowsight Charting.
+- #### [Data Governance](site/sfguides/src/tasty_bytes_zero_to_snowflake_data_governance)
+    - Learn about Snowflake System Defined Roles, Create and apply GRANTS to a custom role, and deploy both Tag Based Dynamic Data Masking and Row-Access Policies.
+- #### [Collaboration](site/sfguides/src/tasty_bytes_zero_to_snowflake_collaboration)
+    - Learn about the Snowflake Marketplace by leveraging free, instantly available, live listings from Weathersource and Safegraph to conduct data driven analysis harmonizing first and third party sources.
+- #### [Geospatial](site/sfguides/src/tasty_bytes_zero_to_snowflake_geospatial)
+    - Learn about Snowflake Geospatial support starting with constructing Geographic Points (ST_POINT) and leveraging other Geospatial functionality to calculate distance (ST_DISTANCE), collect coordinates, draw a Minimum Bounding Polygon and find the polygons center point.
 
-
-
-
-
+### Workload Deep Dives
+- ### Data Engineering
+    - ### Ingestion, Optimization & Automation (*Coming Soon*)
+    - ### External Tables (*Coming Soon*)
+- ### Data Science
+    - ### Snowpark 101 (*Coming Soon*)
 
 

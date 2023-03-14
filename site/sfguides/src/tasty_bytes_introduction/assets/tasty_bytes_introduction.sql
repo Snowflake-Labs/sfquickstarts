@@ -708,4 +708,4 @@ FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/order_detail/;
 DROP WAREHOUSE IF EXISTS demo_build_wh;
 
 -- setup completion note
-SELECT 'frostbyte_tasty_bytes setup database is now complete - you can now begin the vignettes' AS note;
+SELECT 'frostbyte_tasty_bytes setup database is now complete' AS note;
