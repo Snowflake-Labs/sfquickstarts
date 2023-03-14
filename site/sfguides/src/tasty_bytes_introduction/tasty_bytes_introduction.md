@@ -7,43 +7,48 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Warehouse
 
+# Introduction to Tasty Bytes
 <!-- ------------------------ -->
 
 ## Tasty Bytes - Introduction 
+Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
--#ToDo - crop banner
 
 ### Overview
 Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by the frostbyte team within the Snowflake Field CTO Office. 
 
-After learning about the Tasty Bytes Organization, we will walk through the process of setting up the Tasty Bytes Foundational Data Model, and set of roles, warehouse and all required Role Based Access Control. 
+After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
-Upon finishing this Quickstart, you will be able to move on to the other Tasty Bytes Quickstarts seen in the Tasty Bytes Powered Quickstarts section. 
-    - These Tasty Bytes themed Quickstarts range from quick Zero to Snowflake feature/function rich walkthroughs to in-depth Workload Deep Dives.
+Upon finishing this Quickstart, you will have access to everything seen in the final Powered by Tasty Bytes - Quickstarts section.
 
 ### Who is Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
 
 ### Prerequisites
+- A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - An Enterprise or Business Critical Snowflake Account
     - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/), select **Enterprise** edition and any Cloud/Region combination. After registering, you will receive an email with an activation link and your Snowflake Account URL.
     - <img src="assets/choose_edition.png" width="300"/>
     
 ### What You Will Learn 
 1. How to Create a Snowflake Worksheet
-2. How to Import a .sql File into a Snowflake Worksheet
-3. How to Execute All Queries within a Snowflake Worksheet Synchronously
-4. How to Explore Databases in your Snowflake Account
-5. How to Explore Roles in your Snowflake Account
-6. How to Explore Warehouse in your Snowflake Account
+2. How to Execute All Queries within a Snowflake Worksheet Synchronously
+3. How to Explore Databases
+4. How to Explore Schemas
+5. How to Explore Tables
+4. How to Explore Roles
+5. How to Explore Warehouses
 
 ### What You Will Build
-1. A Snowflake Database
-2. Three Snowflake Schemas (Raw, Harmonized and Analytics) complete with Tables and Views
-3. Workload Specific Snowflake Warehouses
-4. Workload Specific Snowflake Roles
+1. The Tasty Bytes Foundation required to leverage Powered by Tasty Bytes - Quickstarts. This includes:
+    - A Snowflake Database
+    - Three Snowflake Schemas complete with Tables and Views
+    - Workload Specific Snowflake Roles and Warehouses
+    - Role Based Access Control (RBAC)
 
 ## Tasty Bytes - Setup
+Duration: 6
+
 #### Overview
 For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight we would highly consider taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
 
@@ -63,35 +68,97 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 #### Step 5
-- Rename the Worksheet "Tasty Bytes - Setup"
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 #### Step 6
-- Click the button below to access the tasty_bytes_introduction.sql file that is hosted in GitHub.
+- Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 <button>[tasty_bytes_introduction.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
 
 #### Step 7 
-- Within GitHub navigate to the right side and click "Copy raw contents".
+- Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
     - <img src ="assets/github_copy_raw_contents.png"/>
 
 #### Step 8 
-- Path back to Snowsight and your newly created Worksheet and paste (*CMD + V for Mac or CTRL + V for Windows*) the contents of the tasty_bytes_introduction.sql file we copied from GitHub.
+- Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
 
 #### Step 9 
-- Click inside the newly created worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click "► Run" 
+- Click inside the newly created Tasty Bytes - Setup Worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click "► Run" 
     - <img src ="assets/run_all_queries.gif"/>
 
 #### Step 10
-- After clicking "► Run" you will see queries begin to execute. The entire run process should take around XYZ minutes and finish with a message stating *frostbyte_tasty_bytes setup database is now complete*. Once this message is recieved, you can move onto the next section as well as begin on the other Tasty Bytes Quickstart assets we see in the Table of Contents. 
+- After clicking "► Run" you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 5 minutes. Upon completion you will see a message stating *frostbyte_tasty_bytes setup database is now complete*. 
+    - <img src="assets/setup_complete.png">
 
-## Validating Setup
+## Exploring our Setup
+Duration: 3
+- With our SQL Setup successful, let's now explore the Database, Roles and Warehouses within our Snowsight interface.
+- Within the Tasty Bytes - Setup worksheet we created scroll to the bottom and copy and execute the SQL from within each step below
+
+#### Step 1 - Exploring the Tasty Bytes Database
+- This query will return the Database we created via [SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html).
+```
+SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
+```
+<img src = "assets/show_tb_db.png"> 
+
+#### Step 2 - Exploring the Schemas within the Tasty Bytes Database
+- This query will return the Schemas within the Database we created via [SHOW SCHEMAS](https://docs.snowflake.com/en/sql-reference/sql/show-schemas) 
+```
+SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
+```
+<img src = "assets/show_tb_schemas.png"> 
+
+#### Step 3 - Exploring the Tables within the RAW_POS Schema within the Tasty Bytes Database
+- This query will return the Tables within the RAW_POS schema via [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables)
+```
+SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
+```
+<img src = "assets/show_tb_tables.png"> 
+
+#### Step 4 - Exploring the Tasty Bytes Roles
+- This query will return the Roles we created via [SHOW ROLES](https://docs.snowflake.com/en/sql-reference/sql/show-roles)
+```
+SHOW ROLES LIKE 'tasty%';
+```
+<img src = "assets/show_tb_roles.png"> 
+
+#### Step 5 - Exploring the Tasty Bytes Warehouses
+- This query will return the Warehouses we created via [SHOW WAREHOUSES](https://docs.snowflake.com/en/sql-reference/sql/show-warehouses)
+```
+SHOW WAREHOUSES LIKE 'tasty%';
+```
+<img src = "assets/show_tb_whs.png"> 
+
+#### Step 6 - Putting it all together
+- These next three queries will:
+    1. Assume the Tasty Data Engineer role via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html)
+    2. Leverage the Tasty Bytes Data Engineering Warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html)
+    3. Query our raw_pos.menu table to find which Menu Items sold at our Plant Palace branded food trucks.
+```
+USE ROLE tasty_data_engineer;
+USE WAREHOUSE tasty_de_wh;
+
+SELECT
+    m.menu_type_id,
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_name
+FROM frostbyte_tasty_bytes.raw_pos.menu m
+WHERE m.truck_brand_name = 'Plant Palace';
+```
+<img src = "assets/plant_palace.png"> 
 
 ## Powered by Tasty Bytes - Quickstarts
+Duration: 0
 - Congratulations, you have now completed the Tasty Bytes Foundational Setup! The following Table of Contents will outline all of the other Tasty Bytes Quickstart assets you can now begin.
 
+<img src ="assets/pbtb_quickstarts.png"/>
+
 ### Zero to Snowflake
+
 - #### [Financial Governance](site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance)
-    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, and Account and Warehouse Level Timeout Parameters
+    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, and Account and Warehouse Level Timeout Parameters.
 - #### [Transformation](site/sfguides/src/tasty_bytes_zero_to_snowflake_transformation)
     - Learn about Snowflake Zero Copy Cloning, Result Set Cache, Table Manipulation, Time-Travel and Table level SWAP, DROP and Undrop functionality.
 - #### [Semi-Structured Data](site/sfguides/src/tasty_bytes_zero_to_snowflake_semi_structured_data)
@@ -103,11 +170,7 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 - #### [Geospatial](site/sfguides/src/tasty_bytes_zero_to_snowflake_geospatial)
     - Learn about Snowflake Geospatial support starting with constructing Geographic Points (ST_POINT) and leveraging other Geospatial functionality to calculate distance (ST_DISTANCE), collect coordinates, draw a Minimum Bounding Polygon and find the polygons center point.
 
-### Workload Deep Dives
-- ### Data Engineering
-    - ### Ingestion, Optimization & Automation (*Coming Soon*)
-    - ### External Tables (*Coming Soon*)
-- ### Data Science
-    - ### Snowpark 101 (*Coming Soon*)
+### Workload Deep Dives (*Coming Soon*)
+
 
 
