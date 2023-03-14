@@ -8,3 +8,10 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Warehouse
 
 <!-- ------------------------ -->
+
+## Link to Introduction Setup
+
+
+## Option 2 - Geospatial only setup
+
+
