@@ -135,7 +135,7 @@ WHERE truck_brand_name = 'Cheeky Greek';
 
 
 -- Section 7: Step 2 - Scale our Warehouse Up
-ALTER WAREHOUSE tasty_test_wh SET warehouse_size = 'XLarge';7.
+ALTER WAREHOUSE tasty_test_wh SET warehouse_size = 'XLarge';
 
 
 -- Section 7: Step 3 - Run an Aggregation Query Against a Large Data Set

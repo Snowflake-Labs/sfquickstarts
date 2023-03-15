@@ -40,6 +40,41 @@ For more detail on Financial Governance in Snowflake please visit the [Financial
 Duration: 1
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
 
+This section will walk you through logging into Snowflake, Creating a New Worksheet, Renaming the Worksheet, Copying SQL from GitHub, and Pasting the SQL we will be leveraging within this Quickstart.
+
+#### Step 1 - Accessing Snowflake via URL
+- Open a browser window and enter the URL of your Snowflake Account 
+
+#### Step 2 - Logging into Snowflake
+- Log into your Snowflake account.
+    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+
+#### Step 3 - Navigating to Worksheets
+- Click on the Worksheets Tab in the left-hand navigation bar.
+    - <img src ="assets/worksheet_tab.png" width="250"/>
+
+#### Step 4 - Creating a Worksheet
+- Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet"
+    - <img src = "assets/+_sqlworksheet.png" width ="200">
+
+#### Step 5 - Renaming a Worksheet
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
+    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+
+#### Step 6 - Accessing hosted Setup SQL in GitHub
+- Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
+<button>[tasty_bytes_introduction.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
+#ToDo - Update Button to Production GitHub Link
+
+#### Step 7 - Copying Setup SQL from GitHub
+- Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
+    - <img src ="assets/github_copy_raw_contents.png"/>
+
+#### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
+- Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
+
+#### Step 9 - Click Next -->
+
 ## Creating a Warehouse 
 Duration: 2
 
@@ -99,7 +134,7 @@ Based on the query we ran, please see the details below on what each configurati
 > *For further information on Snowflake Warehouses please visit the* [*Snowflake Warehouse Documentation*](https://docs.snowflake.com/en/user-guide/warehouses)
 >
 
-### Step 4 - Click Next --->
+### Step 4 - Click Next -->
 
 ## Creating a Resource Monitor and Applying it to our Warehouse
 Duration: 1
@@ -195,7 +230,7 @@ ALTER WAREHOUSE tasty_test_wh SET statement_queued_timeout_in_seconds = 600;
 > **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
 >
 
-### Step 4 - Click Next --->
+### Step 4 - Click Next -->
 
 ## Protecting our Account from Long Running Queries
 Duration: 1
@@ -232,7 +267,7 @@ ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
 > **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
 >
 
-### Step 3 - Click Next --->
+### Step 3 - Click Next -->
 
 ## Leveraging, Scaling and Suspending our Warehouse
 Duration: 1
@@ -297,11 +332,11 @@ To cap things off, we previously set the `auto_suspend` to 60 seconds on our `ta
 ALTER WAREHOUSE tasty_test_wh SUSPEND;
 ```
 
-**Note**: Depending on how fast you have ran through these last statements you will one of the two following results:
-1. `Statement executed successfully`: This means you were very fast in executing the steps in this section and have beat the `auto_suspend` Warehouse setting we configured to 60 seconds.
-2. `Invalid state. Warehouse 'TASTY_TEST_WH' cannot be suspended`: This means that the amazing `auto_suspend` Warehouse setting we configured to 60 seconds has won the Warehouse suspension race.
+**Note**: Depending on how fast you have ran through these last statements you will receive of the two following results:
+1. **Statement executed successfully**: This means you were very fast in executing the steps in this section and have beat the `auto_suspend` Warehouse setting we configured to 60 seconds.
+2. **Invalid state. Warehouse 'TASTY_TEST_WH' cannot be suspended**: This means that the amazing `auto_suspend` Warehouse setting we configured to 60 seconds has won the Warehouse suspension race.
 
-### Step 6 - Click Next --->
+### Step 6 - Click Next -->
 
 ## Conclusion and Next Steps
 Duration: 1
