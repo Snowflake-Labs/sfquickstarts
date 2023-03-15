@@ -18,7 +18,7 @@ Duration: 1
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Geospatial Analysis!
 
 ### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which instruct you on setting up a trial account and deploys the Tasty Bytes Foundation required to complete this Quickstart in under 10 minutes.
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - A

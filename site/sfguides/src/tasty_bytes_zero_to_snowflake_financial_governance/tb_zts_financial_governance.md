@@ -20,7 +20,7 @@ Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on 
 Please refer to the [Snowflake - Financial Governance Overview documentation](https://docs.snowflake.com/guides-overview-cost#financial-governance-overview) for a deeper dive.
 
 ### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which instruct you on setting up a trial account and deploys the Tasty Bytes Foundation required to complete this Quickstart in under 10 minutes.
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - A
@@ -43,7 +43,7 @@ USE ROLE tasty_admin
 ```
 
 
-## Creating a Resource Monitor and Applying to our Warehouse
+## Creating a Resource Monitor and Applying it to our Warehouse
 Duration: 0
 
 ## Protecting our Warehouse from Long Running Queries
