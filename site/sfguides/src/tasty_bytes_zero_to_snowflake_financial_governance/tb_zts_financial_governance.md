@@ -42,10 +42,10 @@ Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight
 ## Creating a Warehouse 
 Duration: 0
 
-### Context
+#### Overview
 As a Tasty Bytes Snowflake Administrator we have been tasked with gaining an understanding of the features Snowflake provides to help ensure proper Financial Governance is in place before we begin querying and analyzing data.
 
-### Step 1 - Role and Warehouse Context
+#### Step 1 - Role and Warehouse Context
 Before we create a Warehouse, let's first set our Role and Warehouse context. 
 
 The queries below will assume the role of `tasty_admin` via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html) and leverage the `tasty_de_wh` warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html). 
@@ -55,12 +55,12 @@ The queries below will assume the role of `tasty_admin` via [USE ROLE](https://d
 USE ROLE tasty_admin;
 USE WAREHOUSE tasty_de_wh;
 ```
-<img src = "assets/1.use_role_and_wh.png"> 
+<img src = "assets/3.1.use_role_and_wh.png"> 
 
-### Step 2 - Creating and Configuring a Warehouse
-Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to scale compute sizes and scaling out to handle high concurrency. 
+#### Step 2 - Creating and Configuring a Warehouse
+Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to meet compute needs or scaling out to meet concurrency needs. 
 
-The next query which will create our first Warehouse named `tasty_test_wh`.
+The next query which will create our first Warehouse named `tasty_test_wh`. Please execute this query now which result in another `Statement executed successfully.` message.
 ```
 CREATE OR REPLACE WAREHOUSE tasty_test_wh WITH
 COMMENT = 'test warehouse for tasty bytes'
@@ -74,32 +74,73 @@ COMMENT = 'test warehouse for tasty bytes'
     INITIALLY_SUSPENDED = true;
 ```
 
-Based on the query we ran, please see the details below on what each configuration handles within our [CREATE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse) statement.
+Based on the query we ran, please see the details below on what each configuration handles within our [CREATE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse) statement and when ready move on to the next section.
 > aside positive
->1. Warehouse Type = Standard
-    - Warehouses are required for queries, as well as all DML operations, including loading data into tables. Snowflake supports Standard (most-common) or Snowpark-optimized Warehouse Types.
->2. Warehouse Size = X-Small
->    - Size specifies the amount of compute resources available per cluster in a warehouse. Snowflake supports X-Small through 6X-Large sizes.
->3. Minimum Cluster Count = 1
->4. Maximum Cluster Count = 2
->    - With multi-cluster warehouses, Snowflake supports allocating, either statically or dynamically, additional clusters to make a larger pool of compute resources available. 
->    - A multi-cluster warehouse is defined by specifying the following properties:
->        - MIN_CLUSTER_COUNT: Minimum number of clusters, equal to or less than the maximum (up to 10). 
->        - MAX_CLUSTER_COUNT: Maximum number of clusters, greater than 1 (up to 10). 
->5. Scaling Policy = Standard
-    - Specifies the policy for automatically starting and shutting down clusters in a multi-cluster warehouse running in Auto-scale mode.
->6. Auto Suspend = 60 Seconds
->    - By default, Auto-Suspend is enabled. Snowflake automatically suspends the warehouse if it is inactive for the specified period of time, in our case 60 seconds.
->7. Auto Resume = True
->    - By default, auto-resume is enabled. Snowflake automatically resumes the > > warehouse when any statement that requires a warehouse is submitted and the warehouse is the current warehouse for the session.
->8. Initially Suspended = True
->    - Specifies whether the warehouse is created initially in the ‘Suspended’ state.
->Note: For further information on Snowflake Warehouses please visit the [Snowflake Warehouse Documentation](https://docs.snowflake.com/en/user-guide/warehouses)
+>**Warehouse Type**: Warehouses are required for queries, as well as all DML operations, including loading data into tables. Snowflake supports Standard (most-common) or Snowpark-optimized Warehouse Types.
 >
-
+>**Warehouse Size**: Size specifies the amount of compute resources available per cluster in a warehouse. Snowflake supports X-Small through 6X-Large sizes.
+>
+>**Minimum and Maximum Cluster Count**: With multi-cluster warehouses, Snowflake supports allocating, either statically or dynamically, additional clusters to make a larger pool of compute resources available. 
+>
+>**Scaling Policy**: Specifies the policy for automatically starting and shutting down clusters in a multi-cluster warehouse running in Auto-scale mode.
+>
+> **Auto Suspend**: By default, Auto-Suspend is enabled. Snowflake automatically suspends the warehouse if it is inactive for the specified period of time, in our case 60 seconds.
+>
+>**Auto Resume**: By default, auto-resume is enabled. Snowflake automatically resumes the warehouse when any statement that requires a warehouse is submitted and the warehouse is the current warehouse for the session.
+>
+>**Initially Suspended**: Specifies whether the warehouse is created initially in the ‘Suspended’ state.
+> 
+> 
+> *For further information on Snowflake Warehouses please visit the* [*Snowflake Warehouse Documentation*](https://docs.snowflake.com/en/user-guide/warehouses)
+>
 
 ## Creating a Resource Monitor and Applying it to our Warehouse
 Duration: 0
+
+#### Overview
+With a Warehouse in place, let's now leverage Snowflakes Resource Monitors to ensure the Warehouse has a monthly quota that will allow our admins to track it's consumed credits and ensure it is suspended if it exceeds its assigned quota.
+
+#### Step 1 - Creating a Resource Monitor
+A resource monitor can be used to monitor credit usage by virtual warehouses and the cloud services needed to support those warehouses. If desired, the warehouse can be suspended when it reaches a credit limit. The number of credits consumed depends on the size of the warehouse and how long it runs.
+
+```
+USE ROLE accountadmin;
+CREATE OR REPLACE RESOURCE MONITOR tasty_test_rm
+WITH 
+    CREDIT_QUOTA = 100 -- 100 credits
+    FREQUENCY = monthly -- reset the monitor monthly
+    START_TIMESTAMP = immediately -- begin tracking immediately
+    TRIGGERS 
+        ON 75 PERCENT DO NOTIFY -- notify accountadmins at 75%
+        ON 100 PERCENT DO SUSPEND -- suspend warehouse at 100 percent, let queries finish
+        ON 110 PERCENT DO SUSPEND_IMMEDIATE;
+```
+<img src = "assets/3.1.use_role_and_wh.png"> 
+
+> aside positive
+> **Credit Quota**: Credit quota specifies the number of Snowflake credits allocated to the monitor for the specified frequency interval. Any number can be specified.
+>
+> **Frequency**: The interval at which the used credits reset relative to the specified start date.
+>
+> **Start Timestamp**: Date and time (i.e. timestamp) when the resource monitor starts monitoring the assigned warehouses.
+>
+> **Notify**: Perform no action, but send an alert notification (to all account administrators with notifications enabled).
+>
+> **Notify & Suspend**: Send a notification (to all account administrators with notifications enabled) and suspend all assigned warehouses after all statements being executed by the warehouse(s) have completed.
+>
+> **Notify & Suspend Immediate**: Send a notification (to all account administrators with notifications enabled) and suspend all assigned warehouses immediately, which cancels any statements being executed by the warehouses at the time.
+>
+> *For further information on Snowflake Warehouses please visit the* [Working with Resource Monitors](https://docs.snowflake.com/en/user-guide/resource-monitors)
+
+
+#### Step 2 - Applying our Resource Monitor to our Warehouse
+
+`Statement executed successfully.` result.
+
+```
+ALTER WAREHOUSE tasty_test_wh SET RESOURCE_MONITOR = tasty_test_rm;
+```
+
 
 ## Protecting our Warehouse from Long Running Queries
 Duration: 0
