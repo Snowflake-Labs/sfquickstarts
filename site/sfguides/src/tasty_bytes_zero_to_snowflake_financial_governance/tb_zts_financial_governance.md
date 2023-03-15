@@ -29,7 +29,7 @@ For more detail on Financial Governance in Snowflake please visit the [Financial
 - How to Scale a Snowflake Warehouse Up and Down
 - How to Suspend a Snowflake Warehouse
 - How to Create, Configure and Apply a Resource Monitor
-- How to set Query Timeout and Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
+- How to Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
 
 ### What You Will Build
 - A Snowflake Warehouse
@@ -38,42 +38,44 @@ For more detail on Financial Governance in Snowflake please visit the [Financial
 
 ## Creating a Worksheet and Copying in our SQL
 Duration: 1
+
+### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
 
 This section will walk you through logging into Snowflake, Creating a New Worksheet, Renaming the Worksheet, Copying SQL from GitHub, and Pasting the SQL we will be leveraging within this Quickstart.
 
-#### Step 1 - Accessing Snowflake via URL
+### Step 1 - Accessing Snowflake via URL
 - Open a browser window and enter the URL of your Snowflake Account 
 
-#### Step 2 - Logging into Snowflake
+### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
     - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
-#### Step 3 - Navigating to Worksheets
+### Step 3 - Navigating to Worksheets
 - Click on the Worksheets Tab in the left-hand navigation bar.
     - <img src ="assets/worksheet_tab.png" width="250"/>
 
-#### Step 4 - Creating a Worksheet
+### Step 4 - Creating a Worksheet
 - Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet"
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
-#### Step 5 - Renaming a Worksheet
+### Step 5 - Renaming a Worksheet
 - Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
-#### Step 6 - Accessing hosted Setup SQL in GitHub
+### Step 6 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
-<button>[tasty_bytes_introduction.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
+<button>[tb_zts_financial_governance.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
 #ToDo - Update Button to Production GitHub Link
 
-#### Step 7 - Copying Setup SQL from GitHub
+### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
     - <img src ="assets/github_copy_raw_contents.png"/>
 
-#### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
+### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
 
-#### Step 9 - Click Next -->
+### Step 9 - Click Next -->
 
 ## Creating a Warehouse 
 Duration: 2
@@ -137,7 +139,7 @@ Based on the query we ran, please see the details below on what each configurati
 ### Step 4 - Click Next -->
 
 ## Creating a Resource Monitor and Applying it to our Warehouse
-Duration: 1
+Duration: 2
 
 ### Overview
 With a Warehouse in place, let's now leverage Snowflakes Resource Monitors to ensure the Warehouse has a monthly quota that will allow our admins to track it's consumed credits and ensure it is suspended if it exceeds its assigned quota.
@@ -341,4 +343,17 @@ ALTER WAREHOUSE tasty_test_wh SUSPEND;
 ## Conclusion and Next Steps
 Duration: 1
 
-### Overview
+### Conclusion
+Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Financial Governance Quickstart.
+
+By doing so you have now:
+- Created and Configured a Snowflake Warehouse
+- Scaled a Snowflake Warehouse Up and Down
+- Suspended a Snowflake Warehouse
+- Created, Configured and Applied a Resource Monitor
+- Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
+
+### Next Steps
+To continue your journey in the Snowflake Data Cloud, please now visit the Powered by Taste Bytes - Quickstarts Table of Contents to continue learning more.
+#ToDo - Link back to Introduction Quickstart!
+

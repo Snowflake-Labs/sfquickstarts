@@ -46,47 +46,49 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 ## Setting up Tasty Bytes
 Duration: 6
 
-#### Overview
+### Overview
 For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight we would highly consider taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
 
-#### Step 1 - Accessing Snowflake via URL
+### Step 1 - Accessing Snowflake via URL
 - Open a browser window and enter the URL of your Snowflake Account 
 
-#### Step 2 - Logging into Snowflake
+### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
     - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
-#### Step 3 - Navigating to Worksheets
+### Step 3 - Navigating to Worksheets
 - Click on the Worksheets Tab in the left-hand navigation bar.
     - <img src ="assets/worksheet_tab.png" width="250"/>
 
-#### Step 4 - Creating a Worksheet
+### Step 4 - Creating a Worksheet
 - Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet"
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
-#### Step 5 - Renaming a Worksheet
+### Step 5 - Renaming a Worksheet
 - Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
-#### Step 6 - Accessing hosted Setup SQL in GitHub
+### Step 6 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 <button>[tasty_bytes_introduction.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
 #ToDo - Update Button to Production GitHub Link
 
-#### Step 7 - Copying Setup SQL from GitHub
+### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
     - <img src ="assets/github_copy_raw_contents.png"/>
 
-#### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
+### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
 
-#### Step 9 - Synchronously Running all Setup SQL
+### Step 9 - Synchronously Running all Setup SQL
 - Click inside the newly created Tasty Bytes - Setup Worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click "► Run" 
     - <img src ="assets/run_all_queries.gif"/>
 
-#### Step 10 - Completing Setup
+### Step 10 - Completing Setup
 - After clicking "► Run" you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 5 minutes. Upon completion you will see a message stating *frostbyte_tasty_bytes setup database is now complete*. 
     - <img src="assets/setup_complete.png">
+
+### Step 11 - Click Next -->
 
 ## Exploring the Tasty Bytes Foundation
 Duration: 3
