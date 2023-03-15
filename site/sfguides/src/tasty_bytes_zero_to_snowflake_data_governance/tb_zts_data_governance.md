@@ -51,7 +51,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Financial Governance"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Step 6 - Accessing hosted Setup SQL in GitHub

@@ -354,6 +354,6 @@ By doing so you have now:
 - Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
 
 ### Next Steps
-To continue your journey in the Snowflake Data Cloud, please now visit the Powered by Taste Bytes - Quickstarts Table of Contents to continue learning more.
-#ToDo - Link back to Introduction Quickstart!
+To continue your journey in the Snowflake Data Cloud, please now visit the link below to see all other Powered by Taste Bytes - Quickstarts available to you.
 
+### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/#3)
