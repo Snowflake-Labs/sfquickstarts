@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_financial_governance
 summary: Tasty Bytes - Zero to Snowflake - Financial Governance Quickstart
-categories: Getting-Started
+categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -23,10 +23,15 @@ Please refer to the [Snowflake - Financial Governance Overview documentation](ht
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
-- A
+- How to Create and Configure a Snowflake Warehouse
+- How to Scale a Snowflake Warehouse Up and Down
+- How to Suspend a Snowflake Warehouse
+- How to Create, Configure and Apply a Resource Monitor
+- How to set Query Timeout and Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
 
 ### What You Will Build
-- B
+- A Snowflake Warehouse
+- A Resource Monitor
 
 ## Creating a Worksheet and Copying in our SQL
 Duration: 0

@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction
 summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide
-categories: Getting-Started
+categories: categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -15,11 +15,11 @@ Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
 ### Overview
-Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by the frostbyte team within the Snowflake Field CTO Office. 
+Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by the frostbyte team at Snowflake.
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
-Upon finishing this Quickstart, you will have deployed the foundation required to run the assets seen in the Powered by Tasty Bytes - Quickstarts section.
+Upon finishing this Quickstart, you will have deployed the foundation required to run the assets seen in Step 4 - the Powered by Tasty Bytes - Quickstarts.
 
 ### Who is Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
