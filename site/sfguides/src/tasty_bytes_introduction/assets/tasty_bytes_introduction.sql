@@ -7,21 +7,17 @@
     |_| \__,_||___/ \__| \__, | |____/  \__, | \__|\___||___/
                           __/ |          __/ |               
                          |___/          |___/            
-Demo:         Tasty Bytes Demo
+Quickstart:   Tasty Bytes Introduction
 Version:      v1
-Vignette:     Setup
-Script:       setup_snowflake_account_blob_tb.sql         
-Create Date:  2023-01-12
+Script:       tasty_bytes_introduction.sql         
+Create Date:  2023-03-17
 Author:       Jacob Kranzler
 Copyright(c): 2023 Snowflake Inc. All rights reserved.
-****************************************************************************************************
-Description: 
-   Setup for Tasty Bytes using Blob Storage
 ****************************************************************************************************
 SUMMARY OF CHANGES
 Date(yyyy-mm-dd)    Author              Comments
 ------------------- ------------------- ------------------------------------------------------------
-2023-01-12          Jacob Kranzler      Initial Release
+2023-03-17          Jacob Kranzler      Initial Release
 ***************************************************************************************************/
 
 USE ROLE sysadmin;
@@ -202,7 +198,6 @@ GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.raw_customer TO ROLE 
 GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.raw_customer TO ROLE tasty_bi;
 GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.raw_customer TO ROLE tasty_data_app;
 GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.raw_customer TO ROLE tasty_dev;
-
 
 GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.harmonized TO ROLE tasty_admin;
 GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.harmonized TO ROLE tasty_data_engineer;
@@ -479,8 +474,8 @@ CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.orders_v
 COMMENT = 'Tasty Bytes Order Detail View'
     AS
 SELECT DATE(o.order_ts) AS date, * FROM frostbyte_tasty_bytes.harmonized.orders_v o;
--- customer_loyalty_metrics_v view
 
+-- customer_loyalty_metrics_v view
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.customer_loyalty_metrics_v
 COMMENT = 'Tasty Bytes Customer Loyalty Member Metrics View'
     AS

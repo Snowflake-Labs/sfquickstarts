@@ -71,6 +71,7 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 #### Step 6 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 <button>[tasty_bytes_introduction.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
+#ToDo - Update Button to Production GitHub Link
 
 #### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -151,7 +152,7 @@ WHERE m.truck_brand_name = 'Plant Palace';
 Duration: 0
 Congratulations, you have now completed the Tasty Bytes Foundational Setup!
 
-The Table of Contents below will outline all of the available Tasty Bytes Quickstarts you can now begin.
+The Table of Contents below will outline all of the available Tasty Bytes Quickstarts that leverage the foundation you just completed.
 
 <img src ="assets/pbtb_quickstarts.png"/>
 
