@@ -14,15 +14,23 @@ Duration: 1
 
 Ingest data from ServiceNow into Snowflake automatically. The connector supports both the initial load of historical data as well as incremental updates. The latest data is regularly pulled from ServiceNow and you control how frequently it is refreshed.
 
-Use this quickstart to configure and understand the Servicenow to Snowflake connector using the Snowsight wizard, select some tables, ingest data, run some typical usage queries. When you are done stop the connector to avoid costs. You could also do all these steps programmatically, please refer to the documentation. 
+Use this quickstart to configure and understand the Snowflake Connector
+for Servicenow using the Snowsight wizard, select some tables, ingest data, and run some typical usage queries. When you are done stop the connector to avoid costs. You can also do all these steps programmatically; for that please refer to the documentation. 
+
+Note: This quickstart assumes you do not have a Servicenow account, so
+it guides you through the steps of creating a developer account. Of
+course, if you do have a Servicenow account, please feel free to try it
+out, with the caveat that, at the time of writing, the connector is in
+public preview and should not be used for production.
 
 ### Prerequisites
 - Servicenow account with administrator's rights.
 - Snowflake account and user with accountadmin's role.
+-   Accepting the Terms of Service in the Snowflake Marketplace. ORGADMIN rights are required to access this.
 
 ### What You’ll Learn 
-- How to set up the Snowflake Servicenow connector.
-- How to ingest table data.
+- How to set up the Snowflake Connector for Servicenow.
+- How to ingest Servicenow data into Snowflake
 - How to stop the connector to avoid unnecessary costs in a development environment.
 
 ### What You’ll Need 
@@ -49,7 +57,7 @@ The Servicenow endpoint configuration window creates an OAuth client application
 ![Application Registry](assets/now_reg_auth.png)
 1. Select **New** in the upper right-hand side of the window.
 1. Select **Create an OAuth API endpoint for external clients**. 
-1. Give the endpoint a name, such as **Snowflake_connector**. Leave the client secret blank. This will autofill when you select Submit later in the procedure.
+1. Give the endpoint a name, such as **Snowflake_connector**. Leave the client secret blank. This will autofill when you select **Submit** later in the procedure.
 1. Fill in the redirect URL with this syntax (Alternatively, Snowflake will generate this in a later step and you can come back and modify the redirect URL). 
 
   ```javascript
@@ -101,14 +109,16 @@ Log on to your Snowflake account and change to the **accountadmin** role.
 ## Get the Servicenow connector
 The connector is delivered through the Snowflake native application framework into your account as a database with a couple of schemas, tables, views, and stored procedures. 
 
-1. From the Snowflake Account Home page, select **Data** and then **Private Sharing**. (For GA this will be through the Marketplace.)
+1. From the Snowflake Account Home page, select Marketplace.)
 
 1. In the search window, enter **servicenow**. The tile appears:
 
 ![Tile](assets/tile.png)
 
 1. Select the **Snowflake Connector for ServiceNow**.
-1. Review the business needs and usage samples. You may want to copy the samples, as you cannot access this page once you configure the connector. They are also at the end of this quickstart for your convenience.
+1. Review the business needs and usage samples. Hint: If you want to
+    > access the examples after configuring the connector, simply choose
+    > a role different from accountadmin.
 1. Select **Get**.
 
 1. Select the warehouse you created above, **SERVICENOW_CONNECTOR_WH**.
@@ -116,17 +126,19 @@ The connector is delivered through the Snowflake native application framework in
 The screen should look like the following:
 ![Get](assets/get.png)
 
-1. After reading the small print on the bottom of the screen, select **Get**. After 10-20 seconds, you receive the following message, **Snowflake Connector for SeviceNow is now ready to use in your account.**
+1. Select **Get**. You receive the following message, **Snowflake Connector for SeviceNow is now ready to use in your account.**
 
 1. Select **Done**.
 
-If you would like to verify the connector was installed, from Snowsight, you can go to **Data -> Databases**. You will see a new database with the name **Snowflake_Connector_for_ServiceNow**. Open the Public schema and views to see the Global_Config view. Procedures have also been installed. 
+If you would like to verify the connector was installed, from Snowsight, you can go to **Data -> Databases**. You will see a new database with the name **Snowflake_Connector_for_ServiceNow**. Open the Public schema and views to see the Global_Config view. Some of the Procedures have
+also been installed. Others will appear after the installation finishes. 
 
 ![installed](assets/installed.png)
 
 ## Connect Snowflake to Servicenow
 
-1. In Snowsight, select the **Snowflake Connector for Servicenow** tile.
+1. From the Snowflake Account Home page, select Marketplace and then
+    > select the **Snowflake Connector for Servicenow** tile.
 1. In the **Snowflake Connector for ServiceNow** window, select **Manage**.
 
 1. Select **Connect**.
@@ -135,16 +147,17 @@ If you would like to verify the connector was installed, from Snowsight, you can
 
 1. Select **OAuth2** for the Authentication method.
 
-1. Enter the **Client id** from Servicenow.
+1. Enter the **Client id** from Servicenow that was generated in the
+    > Servicenow endpoint configuration.
 
-1. Copy the Client secret from Servicenow and into the Snowflake configure pop-up.  *Hint: unlock the field by clicking on the lock, and then copy the text to make sure you are actually copying the right text.* The screen should look something similar to this: ![Connect](assets/now_connect.png)
-1. Select **Connect**. 
-Your Servicenow accounts pops up and requests to connect to Snowflake. 
+1. Copy the Client secret from Servicenow and into the Snowflake configure pop-up.  *Hint: on Servicenow, unlock the field by clicking on the lock, and then copy the text to make sure you are actually copying the right text.* The screen should look something similar to this: ![Connect](assets/now_connect.png)
+1. Select **Connect**. Your Servicenow accounts pops up and requests to connect to Snowflake. 
 ![check](assets/now_check.png)
 1. Select **Allow**.
 The connection is established between the two systems. 
 
-To verify the connection, select the three dots [...] and **View Details**. At the top of the pop-up you will see **ServiceNow** Authenticated on today's date.
+To verify the connection, select the three dots [...] and **View Details**. At the top of the pop-up you will see the date **ServiceNow**
+Authenticated.
 ## Select Servicenow Tables
 
 1. In Snowsight, select the **Snowflake Connector for Servicenow** tile.
@@ -159,11 +172,14 @@ To verify the connection, select the three dots [...] and **View Details**. At t
     SYS_USER
     SYS_USER_GROUP
     TASK
-1. Now select **Start Ingestion**. The select windows closes and you get the message "Loading Data" from the main Connector window.
+
+    Hint: Select Field title "Status" to sort and show all the tables you selected.
+1. Select **Configure** and review the default values for destinations and schemas, roles, a secondary warehouse and journal table.
+1. Select **Start Ingestion**. The select windows closes and you get the message "Loading Data" from the main Connector window.
 
 ![load](assets/load.png)
 
-and, depending on the load time, a success message follows.
+You receive a message indicating success:
 
 ![success](assets/success.png)
 
@@ -174,24 +190,21 @@ USE DATABASE snowflake_connector_for_servicenow;
 USE SCHEMA public;
 SELECT * FROM enabled_tables WHERE ENABLED = true;
 ```
-## Connector Monitoring
+## Connector Monitoring (Query Sync History)
  
-Use the following SQL to get general information about all Servicenow ingestions:
- ```sql
- use database SNOWFLAKE_CONNECTOR_FOR_SERVICENOW;
- select * from connector_stats;
-```
-Use the following to search for information about particular table ingestions
- ```sql
-select * from connector_stats where table_name = 'incident';
-```
+In the connector interface, choose **Query Sync History.** A worksheet
+opens with several SQL queries you can execute to get monitoring
+information.
 
-## Setting Permissions to Read
+## Setting Permissions to Read 
 Once you have ingested some data, you probably want to access it. Use the following SQL to create the **servicenow_reader_role** and give it the right access.
 ```SQL
+USE ROLE accountadmin;**\
 CREATE ROLE servicenow_reader_role;
 GRANT USAGE ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
+GRANT USAG ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
 GRANT USAGE ON SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role; 
+GRANT USAGE ON WAREHOUSE SERVICENOW_WH TO ROLE servicenow_reader_role;
 GRANT SELECT ON FUTURE TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 GRANT SELECT ON FUTURE VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 GRANT SELECT ON ALL TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;

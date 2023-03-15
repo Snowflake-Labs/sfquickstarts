@@ -1,0 +1,6 @@
+Convert to docx
+pandoc -o now_to_snow.docx -f markdown -t docx servicenow_to_snowflake_connector.md
+
+
+Convert to markdown
+pandoc -f docx -t markdown "now_to_snow.docx" -o "compare_now_to_snow.md"
