@@ -51,12 +51,12 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Financial Governance"
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Data Governance"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_financial_governance.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance/assets/tb_zts_financial_governance.sql)</button>
+<button>[tb_zts_data_governance.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_data_governance/assets/tb_zts_data_governance.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -66,3 +66,29 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
 
 ### Step 9 - Click Next -->
+
+##
+Duration: 0
+
+### Overview
+
+##
+Duration: 0
+
+### Overview
+
+##
+Duration: 0
+
+### Overview
+
+##
+Duration: 0
+
+### Overview
+
+##
+Duration: 0
+
+### Overview
+
