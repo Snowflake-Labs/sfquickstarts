@@ -21,10 +21,18 @@ Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on 
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
-- A
+- How to Clone a Table
+- How to Use Snowflakes Result Set Cache
+- How to Add a Column to a Table
+- How to Update Data in a Column
+- How to Use Time-Travel
+- How to Swap, Drop and Undrop a Table
 
 ### What You Will Build
-- B
+- An Understanding of Important Snowflake Transformation Functionality 
+- A Development Table Clone of a Production Table
+- A New Column in a Table Complete with Calculated Food Truck Ages in Years
+
 
 ## Creating a Worksheet and Copying in our SQL
 Duration: 1
@@ -146,10 +154,10 @@ ORDER BY t.truck_id;
 Duration: 1
 
 ### Overview
-Based on our output above we first need to address those **Ford_** records in our `make` column and correct them to be **Ford**. From there, we can begin to work on our calculation that will provide us with the age of each truck.
+Based on our output above we first need to address the typo in those Ford_ records we saw in our `make` column. From there, we can begin to work on our calculation that will provide us with the age of each truck.
 
 ### Step 1 - Updating Incorrect Values in a Column
-To begin this section, let's make sure we correct the typo by executing our next query which leverages [UPDATE](https://docs.snowflake.com/en/sql-reference/sql/update) to change rows in our `truck_dev` [WHERE](https://docs.snowflake.com/en/sql-reference/constructs/where) `make` is equal to Ford_.
+To begin this section, let's make sure we correct the typo by executing our next query which leverages [UPDATE](https://docs.snowflake.com/en/sql-reference/sql/update) to change rows in our `truck_dev` [WHERE](https://docs.snowflake.com/en/sql-reference/constructs/where) the make is equal to Ford_.
 
 ```
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev 
@@ -159,7 +167,7 @@ WHERE make = 'Ford_';
 <img src = "assets/5.1.ford_.png">
 
 ### Step 2 - Building an Age Calculation
-With the typo handled, we can now calculate the age in years of the trucks within our fleet. Please execute the next query where we will see [YEAR](https://docs.snowflake.com/en/sql-reference/functions/year) and [CURRENT_DATE](https://docs.snowflake.com/en/sql-reference/functions/current_date) leveraged to assist.
+With the typo handled, we can now calculate the age in years of the trucks within our fleet. Please execute the next query where we will see [YEAR](https://docs.snowflake.com/en/sql-reference/functions/year) and [CURRENT_DATE](https://docs.snowflake.com/en/sql-reference/functions/current_date) leveraged to assist in this calculation.
 
 ```
 SELECT
@@ -175,7 +183,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ### Step 3 - Click Next -->
 
 ## Adding a Column and Updating it
-Duration: 0
+Duration: 1
 
 ### Overview
 With our Truck Age in Years calculation done and dusted, let's now add a new column to our cloned table to support it and finish things off by updating the column to reflect the calculated values.
@@ -188,7 +196,7 @@ ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
     ADD COLUMN truck_age NUMBER(4);
 ```
 
-### Step 2 - Adding Calculate Values to our Column
+### Step 2 - Adding Calculated Values to our Column
 With the column in place, we can kick off the next query which will [UPDATE](https://docs.snowflake.com/en/sql-reference/sql/update) the new, empty `truck_age` column using the Truck Age calculation we built in the previous section.
 ```
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
@@ -196,29 +204,181 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
 ```
 <img src = "assets/6.2.update.png">
 
-### Step 3 - Click Next -->
+### Step 3 - Querying our new Column
+After successfully updating the data, let's now run a quick query against the table to see how things look in our `truck_age` column.
+```
+SELECT
+    t.truck_id,
+    t.year,
+    t.truck_age
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
+```
+<img src = "assets/6.3.bad_data.png">
+**Uh oh!** Thank goodness we were smart developers and didn't do this sort of thing blindly in production. It looks like we messed up the `truck_age` calculation and had it doing division instead of subtraction.  We will need to resolve this in our next section.
 
-## Leveraging Query History and Setting a SQL Variable
-Duration: 0
-
-### Overview
+### Step 4 - Click Next -->
 
 ## Utilizing Time Travel for Data Disaster Recovery
-Duration: 0
+Duration: 1
 
 ### Overview
+Although we made an mistake, Snowflake has many features that can help get us out of trouble here. The process we will take will leverage Query History, SQL Variables and Time Travel to revert our `truck_dev` table back to what it looked like prior to that incorrect update statement.
 
-## Swapping Development Table with Production
-Duration: 0
+>aside positive
+> Time Travel enables accessing historical data (i.e. data that has been changed or deleted) at any point within a defined period.
+>
+
+### Step 1 - Leveraging Query History
+To start out recovery process, kick off the next query which will use the Snowflake [QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/query_history) function to retrieve a list of all update statements we have made against our `truck_dev` table.
+```
+SELECT 
+    query_id,
+    query_text,
+    user_name,
+    query_type,
+    start_time
+FROM TABLE(frostbyte_tasty_bytes.information_schema.query_history())
+WHERE 1=1
+    AND query_type = 'UPDATE'
+    AND query_text LIKE '%frostbyte_tasty_bytes.raw_pos.truck_dev%'
+ORDER BY start_time DESC;
+```
+<img src = "assets/7.1.query_history.png">
+
+### Step 2 - Setting a SQL Variable
+As expected, we see our typo correction as well as our bad calculation update and their associated unique query_id's. Please run the next query which creates a `query_id` SQL Variable that we will use to revert our changes via Time-Travel in the next step. After execution you will recieve a `Statement executed successfully` result.
+```
+SET query_id = 
+(
+    SELECT TOP 1 query_id
+    FROM TABLE(frostbyte_tasty_bytes.information_schema.query_history())
+    WHERE 1=1
+        AND query_type = 'UPDATE'
+        AND query_text LIKE '%SET truck_age = (YEAR(CURRENT_DATE()) / t.year);'
+    ORDER BY start_time DESC
+);
+```
+
+### Step 3 - Leveraging Time-Travel to Revert our Table
+With our bad query_id stored as a variable, we can execute the next query which will replace our `truck_dev` table with what it looked like [BEFORE](https://docs.snowflake.com/en/sql-reference/constructs/at-before) the incorrect query_id statement using Time-Travel. 
+```
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
+    AS 
+SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev
+BEFORE(STATEMENT => $query_id); 
+```
+<img src = "assets/7.3.time_travel.png">
+
+Please refer to the list below for the other Time-Travel Statement options available.
+>aside positive
+>**AT:** The AT keyword specifies that the request is inclusive of any changes made by a statement or transaction with timestamp equal to the specified parameter.
+>
+>**BEFORE:** The BEFORE keyword specifies that the request refers to a point immediately preceding the specified parameter.
+>
+>**TIMESTAMP:** Specifies an exact date and time to use for Time Travel.
+>
+>**OFFSET:** Specifies the difference in seconds from the current time to use for Time Travel.
+>
+>**STATEMENT:** Specifies the query ID of a statement to use as the reference point for Time Travel.
+>
+
+### Step 4 - Click Next -->
+
+## Promoting Development to Production
+Duration: 1
 
 ### Overview
+With our `truck_dev` table back to the state it was before our incorrect update statement, we can now make sure the column is correctly updated. From there we will promote our table with the correct calculation to Production to complete our assigned task.
 
-## Dropping and Undropping
-Duration: 0
+### Step 1 - Adding Correctly Calculated Values to our Column
+Using the same process as before, please run the next query making sure we now double check we are using subtraction instead of division.
+```
+UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
+SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
+```
+<img src = "assets/8.1.correct_update.png">
+
+### Step 2 - Swapping our Development Table with Production
+With everything complete in `truck_dev` please kick off the next two queries where we first assume the more privileged `sysadmin` role. As a `sysadmin` the second query utilizes [ALTER TABLE... SWAP WITH](https://docs.snowflake.com/en/sql-reference/sql/alter-table) to promote our `truck_dev` table to `truck` and vice versa.
+
+Once complete you will recieve a  `Statement executed successfully.` result.
+```
+USE ROLE sysadmin;
+
+ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
+    SWAP WITH frostbyte_tasty_bytes.raw_pos.truck;
+```
+
+### Step 3 - Validate Production
+To confirm our process was successful, let's now take a look at the Production `truck` table so we can validate the swap was successful and the `truck_age` results are valid.
+
+```
+SELECT
+    t.truck_id,
+    t.year,
+    t.truck_age
+FROM frostbyte_tasty_bytes.raw_pos.truck t
+WHERE t.make = 'Ford';
+
+```
+<img src = "assets/8.3.validate_prod.png">
+
+### Step 4 - Click Next -->
+
+## Dropping and Undropping Tables
+Duration: 1
 
 ### Overview
+We can officially say our developer has completed their assigned task successfully. With the `truck_age` column in place and correctly calulated, our `sysadmin` can 
+clean up the left over table and sign off for the day.
+
+### Step 1 - Dropping a Table
+To remove the table from our database, please execute the next query which leverages [DROP TABLE](https://docs.snowflake.com/en/sql-reference/sql/drop-table).
+
+```
+DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
+```
+
+<img src = "assets/9.1.drop.png">
+
+**Uh oh!!** That result set shows that even our `sysadmin` can make mistakes. We incorrectly dropped production `truck` and not development `truck_dev`! Thankfully, Snowflakes Time-Travel can come to the rescue again.
+
+### Step 2 - Undropping a Table
+Hurry up and run the next query before any systems are impacted which will [UNDROP](https://docs.snowflake.com/en/sql-reference/sql/undrop-table) the `truck` table.
+
+```
+UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
+```
+
+<img src = "assets/9.2.undrop.png">
+
+### Step 3 - Dropping the Correct Table
+Alright, now let's officially close things out by running the final query to correctly drop `truck_dev`.
+
+```
+DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
+```
+<img src = "assets/9.3.correctdrop.png">
+
+### Step 4 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 0
+Duration: 1
 
-### Overview
+### Conclusion
+Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Transformation Quickstart. 
+
+By doing so you have now:
+- Cloned a Table
+- Used Snowflakes Result Set Cache
+- Added a Column to a Table
+- Updated Data in a Column
+- Leveraged Time-Travel for Data Disaster Recovery
+- Swaped, Dropped and Undropped a Table
+
+### Next Steps
+If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.
+
+To continue your journey in the Snowflake Data Cloud, please now visit the link below to see all other Powered by Taste Bytes - Quickstarts available to you.
+
+- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/#3)
