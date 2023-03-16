@@ -165,7 +165,7 @@ When we run this, we see that on day one, we reach 606,839 unique users.  On the
 To make it easy to visualize these together, we can query the two WITH clauses used in previous sections and join them together.
 
 ```sql
--- show cumulativer impressions and uniques side-by-side to understand diminishing returns
+-- show cumulative impressions and uniques side-by-side to understand diminishing returns
 WITH DAILY_CUMULATIVE_IMPRESSIONS AS (
     WITH DAILY_IMPRESSIONS AS
     (
