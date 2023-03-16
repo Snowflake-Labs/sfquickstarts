@@ -32,7 +32,7 @@ This Quickstart will guide you to build a complete data pipeline from ingestion,
  
 ### ![Template](assets/important-point-icon.png) What You’ll Need 
 - A [Snowflake](https://trial.snowflake.com/) account or free trial
-* A [Keboola](https://connection.north-europe.azure.keboola.com/wizard?utm_source=snowflake&utm_medium=quickstart&utm_campaign=vhol) account or free trial
+* A [Keboola](https://snowshop.keboola.com/) account or free trial
 
 ### What You’ll Build 
 - A complete data pipeline from Shopify and FaceBook Ads. The Keboola template will automatically join, clean and transform data into Snowflake. Within few clicks, Keboola will generates RFM segmentation to optimize the monetization of your online traffic. A predefined Streamlit "Connected application" closes the loop to visualise data, create marketing discount simulations and write back results into Snowflake. 
