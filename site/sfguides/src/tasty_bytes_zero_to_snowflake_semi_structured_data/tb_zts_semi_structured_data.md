@@ -78,9 +78,9 @@ As a Tasty Bytes Data Engineer, we have been tasked with profiling our Menu data
 
 ### Step 1 - Setting our Context and Querying our Table
 To begin, let's execute the first three queries together which will:
-    1. Set the Role context to `tasty_data_engineer`
-    2. Set the Warehouse context to `tasty_de_wh`
-    3. Produce a [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n) 10 Result Set of our `raw_pos.menu` table
+    - Set the Role context to `tasty_data_engineer`
+    - Set the Warehouse context to `tasty_de_wh`
+    - Produce a [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n) 10 Result Set of our `raw_pos.menu` table
 
 ```
 USE ROLE tasty_data_engineer;
@@ -96,12 +96,12 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 
 <img src = "assets/3.1.menu.png">
 
-Within our output, we can see that the `menu_item_health_metrics_obj` must be the Semi-Structured Data we were told about. By clicking into one of the cells in this column, we will see Snowsight automatically expand the stats pane to give us a better view of what is inside.
+Within our output, we can see that the `menu_item_health_metrics_obj` must be the Semi-Structured Data we were told contained the metrics we need to provide downstream. By clicking into one of the cells in this column, we will see Snowsight automatically expand the stats pane to give us a better view of what is inside.
 
 <img src = "assets/3.1.2.stats.png">
 
 ### Step 2 - Exploring our Semi-Structured Column
-To dive deeper into how this column in defined in Snowflake, please run the next query where we leverage [SHOW COLUMNS]() to explore the Data Types present in our `menu` table.
+To dive deeper into how this column in defined in Snowflake, please run the next query where we leverage [SHOW COLUMNS](https://docs.snowflake.com/en/sql-reference/sql/show-columns) to explore the Data Types present in our `menu` table.
 
 ```
 SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
@@ -141,15 +141,74 @@ We are making progress! Let's see how we can further process `menu_item_health_m
 Duration: 0
 
 ### Overview
+Having seen how we can easily query Semi-Structured Data as it exists in a Variant column using Dot Notation, our Tasty Data Engineer is well on the way to providing their internal stakeholders with the data they have requested.
+
+Within this section, we will conduct additional Semi-Structured Data processing to meet requirements.
 
 ### Step 1 - Introduction to Lateral Flatten
+To further extract the data our downstream users are asking for from our `menu_item_health_metrics_obj` column. Please execute the next query which will utilizes the Dot Notation functionality we just explored alongside Snowflakes [FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten) function and [LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral) capability to provide us with the first `ingredient` array we have been asked for.
 
-### Step 2 - Exploring a Semi-Structured Data Function
-[ARRAY_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/array_contains)
+>aside positive
+> **Flatten:** is a table function that takes a VARIANT, OBJECT, or ARRAY column and produces a lateral view. Flatten can be used to convert semi-structured data to a relational representation.
+>
+>**Lateral Join:** Unlike the output of a non-lateral join, the output from a lateral join includes only the rows generated from the inline view. The rows on the left-hand side do not need to be joined to the right hand side because the rows on the left-hand side have already been taken into account by being passed into the inline view. 
+>
 
+```
+SELECT 
+    m.menu_item_name,
+    obj.value:"ingredients"::VARIANT AS ingredients
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+```
+
+<img src = "assets/4.1.lat_flat.png">
+
+### Step 2 - Exploring an Array Function
+Before we extract the requested Dietary data, please kick off the next query which highlights one of the Snowflake Array Functions available, which will explore the `ingredients` column for any `menu_item_name` that includes Lettuce by leveraging [ARRAY_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/array_contains).
+
+```
+SELECT 
+    m.menu_item_name,
+    obj.value:"ingredients"::VARIANT AS ingredients
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj
+WHERE ARRAY_CONTAINS('Lettuce'::VARIANT, obj.value:"ingredients"::VARIANT);
+```
+
+<img src = "assets/4.2.array_contains.png">
+
+Based on our output, we see that quite a few of our Menu Items include Lettuce. This sort of analysis would be extremely valuable for our Supply Chain Procurement Managers in the event of any food related recalls in the cities and countries we support.
+
+### Step 3 - Structuring Semi-Structured Data at Scale
+Having just seen the sort of value we can provide to our organization already, let's now execute the last query of this section. This query will use the Dot Notation, and our combined Lateral Join plus Flatten Table Function to provide the result set we were initially tasked to generate.
+
+```
+SELECT 
+    m.menu_item_health_metrics_obj:menu_item_id::integer AS menu_item_id,
+    m.menu_item_name,
+    obj.value:"ingredients"::VARIANT AS ingredients,
+    obj.value:"is_healthy_flag"::VARCHAR(1) AS is_healthy_flag,
+    obj.value:"is_gluten_free_flag"::VARCHAR(1) AS is_gluten_free_flag,
+    obj.value:"is_dairy_free_flag"::VARCHAR(1) AS is_dairy_free_flag,
+    obj.value:"is_nut_free_flag"::VARCHAR(1) AS is_nut_free_flag
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+```
+
+<img src = "assets/4.3.lat_flat_2.png">
+
+Great! That output looks to meet the exact requirements our stakeholders have requested. In the next section we will explore how we can promote this to our Analytics layer where they have the ability to access it.
+
+### Step 4 - Click Next -->
 
 ## Creating Structured Views over Semi-Structured Data
 Duration: 0
 
-## Running Array Analysis
 ### Overview
+
+## Running Array Analysis
+
+### Overview
+
+## Conclusion and Next Steps
