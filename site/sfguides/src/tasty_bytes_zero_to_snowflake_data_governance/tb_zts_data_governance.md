@@ -5,7 +5,7 @@ categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Data Warehouse, Data Governance
+tags: Getting Started, Tasty Bytes, Zero to Snowflake, Data Governance
 
 
 # Tasty Bytes - Zero to Snowflake - Data Governance
@@ -54,10 +54,9 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 - Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Financial Governance"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
-### Step 6 - Accessing hosted Setup SQL in GitHub
-- Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
-<button>[tb_zts_financial_governance.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
-#ToDo - Update Button to Production GitHub Link
+### Step 6 - Accessing Quickstart SQL in GitHub
+- Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
+<button>[tb_zts_financial_governance.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance/assets/tb_zts_financial_governance.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.

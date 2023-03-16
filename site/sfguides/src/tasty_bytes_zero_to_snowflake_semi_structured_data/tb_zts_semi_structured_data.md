@@ -57,10 +57,9 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 - Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
-### Step 6 - Accessing hosted Setup SQL in GitHub
-- Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
-<button>[tb_zts_financial_governance.sql](https://github.com/sfc-gh-jkranzler/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_introduction/assets/tasty_bytes_introduction.sql)</button>
-#ToDo - Update Button to Production GitHub Link
+### Step 6 - Accessing Quickstart SQL in GitHub
+- Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
+<button>[tb_zts_financial_governance.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_semi_structured_data/assets/tb_zts_semi_structured_data.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
