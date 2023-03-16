@@ -63,7 +63,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_transformation/assets/tb_zts_transformation)</button>
+<button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_transformation/assets/tb_zts_transformation.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -123,6 +123,7 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
+
 <img src = "assets/4.1.truck.png">
 
 ### Step 2 - Re-Running our Query
@@ -139,6 +140,7 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
+
 <img src = "assets/4.2.1.truck.png">
 <img src = "assets/4.2.2.cache.png">
 
@@ -164,6 +166,7 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev
 SET make = 'Ford' 
 WHERE make = 'Ford_';
 ```
+
 <img src = "assets/5.1.ford_.png">
 
 ### Step 2 - Building an Age Calculation
@@ -178,6 +181,7 @@ SELECT
     (YEAR(CURRENT_DATE()) - t.year) AS truck_age_year
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
+
 <img src = "assets/5.2.age.png">
 
 ### Step 3 - Click Next -->
@@ -190,7 +194,10 @@ With our Truck Age in Years calculation done and dusted, let's now add a new col
 
 ### Step 1 - Adding a Column to a Table
 To start, please execute the next query which uses [ALTER TABLE... ADD COLUMN](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column) to
-create an empty `truck_age` column of [Data Type NUMBER](https://docs.snowflake.com/en/sql-reference/data-types-numeric) to our `truck_dev` table. This query will provide a `Statement executed successfully` result.
+create an empty `truck_age` column of [Data Type NUMBER](https://docs.snowflake.com/en/sql-reference/data-types-numeric) to our `truck_dev` table. 
+
+This query will provide a `Statement executed successfully` result.
+
 ```
 ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
     ADD COLUMN truck_age NUMBER(4);
@@ -246,7 +253,9 @@ ORDER BY start_time DESC;
 <img src = "assets/7.1.query_history.png">
 
 ### Step 2 - Setting a SQL Variable
-As expected, we see our typo correction as well as our bad calculation update and their associated unique query_id's. Please run the next query which creates a `query_id` SQL Variable that we will use to revert our changes via Time-Travel in the next step. After execution you will recieve a `Statement executed successfully` result.
+As expected, we see our typo correction as well as our bad calculation update and their associated unique query_id's. Please run the next query which creates a `query_id` SQL Variable that we will use to revert our changes via Time-Travel in the next step. 
+
+After execution you will recieve a `Statement executed successfully` result.
 ```
 SET query_id = 
 (
@@ -261,11 +270,13 @@ SET query_id =
 
 ### Step 3 - Leveraging Time-Travel to Revert our Table
 With our bad query_id stored as a variable, we can execute the next query which will replace our `truck_dev` table with what it looked like [BEFORE](https://docs.snowflake.com/en/sql-reference/constructs/at-before) the incorrect query_id statement using Time-Travel. 
+
 ```
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
     AS 
 SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev
 BEFORE(STATEMENT => $query_id); 
+
 ```
 <img src = "assets/7.3.time_travel.png">
 
@@ -292,16 +303,19 @@ With our `truck_dev` table back to the state it was before our incorrect update 
 
 ### Step 1 - Adding Correctly Calculated Values to our Column
 Using the same process as before, please run the next query making sure we now double check we are using subtraction instead of division.
+
 ```
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
 SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
 ```
+
 <img src = "assets/8.1.correct_update.png">
 
 ### Step 2 - Swapping our Development Table with Production
 With everything complete in `truck_dev` please kick off the next two queries where we first assume the more privileged `sysadmin` role. As a `sysadmin` the second query utilizes [ALTER TABLE... SWAP WITH](https://docs.snowflake.com/en/sql-reference/sql/alter-table) to promote our `truck_dev` table to `truck` and vice versa.
 
 Once complete you will recieve a  `Statement executed successfully.` result.
+
 ```
 USE ROLE sysadmin;
 
@@ -321,6 +335,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck t
 WHERE t.make = 'Ford';
 
 ```
+
 <img src = "assets/8.3.validate_prod.png">
 
 ### Step 4 - Click Next -->
@@ -358,6 +373,7 @@ Alright, now let's officially close things out by running the final query to cor
 ```
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ```
+
 <img src = "assets/9.3.correctdrop.png">
 
 ### Step 4 - Click Next -->
