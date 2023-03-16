@@ -19,7 +19,7 @@ Within this Tasty Bytes Introduction Quickstart you will first be learning about
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
-Upon finishing this Quickstart, you will have deployed the foundation required to run the assets seen in Step 4 - the Powered by Tasty Bytes - Quickstarts.
+Upon finishing this Quickstart, you will have deployed the foundation required to run the assets seen in Section 4 - Powered by Tasty Bytes - Quickstarts.
 
 ### Who is Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
