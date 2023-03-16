@@ -344,7 +344,7 @@ ALTER WAREHOUSE tasty_test_wh SUSPEND;
 Duration: 1
 
 ### Conclusion
-Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Financial Governance Quickstart.
+Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Financial Governance Quickstart. 
 
 By doing so you have now:
 - Created and Configured a Snowflake Warehouse
@@ -354,6 +354,9 @@ By doing so you have now:
 - Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
 
 ### Next Steps
+If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.
+
 To continue your journey in the Snowflake Data Cloud, please now visit the link below to see all other Powered by Taste Bytes - Quickstarts available to you.
 
 - ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/#3)
+
