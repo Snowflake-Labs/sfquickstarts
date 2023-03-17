@@ -22,10 +22,17 @@ Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on 
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
-- A
+- How to Access the Snowflake Marketplace
+- How to Acquire Live Weather Source Data in your Account
+- How to Create a View
+- How to Create a SQL Function
+- How to Leverage Snowsight Charts to Explore Visual Insights
 
 ### What You Will Build
-- B
+- The Harmonization of First Party Sales and Third Party Weather Data
+- Seamless Convertability from Fahrenheit to Celsius
+- Seamless Convertability from Inch to Millimeter
+- An Understanding of How to Unlock Additional Insights via the Snowflake Marketplace
 
 ## Creating a Worksheet and Copying in our SQL
 Duration: 1
@@ -99,7 +106,7 @@ Based on what we are seeing above, we can agree with our analysts that we do not
 ### Step 2 - Click Next -->
 
 ## Leveraging Weather Source Data from the Snowflake Marketplace
-Duration: 1
+Duration: 2
 
 ### Overview
 From what we saw in our previous section, it looks like we are missing sales for February 16th through February 21st for Hamburg, Germany.  Within our first party data there is not much else we can use to investigate this but something larger must have been at play here. 
@@ -126,8 +133,7 @@ Please follow the steps and video below to acquire this listing in your Snowflak
 >
 
 ### Step 2 - Harmonizing First and Third Party Data
-
-With the shared `frostbyte_weathersource` database in place, please execute this steps query to create a `harmonized.daily_weather_v` view joining Weather Source Daily History to our `country` dimension table on the Countries and Cities that Tasty Bytes Food Trucks operate within.
+With the shared `frostbyte_weathersource` database in place, please execute this steps query to create a `harmonized.daily_weather_v` View joining Weather Source Daily History to our `country` dimension table on the Countries and Cities that Tasty Bytes Food Trucks operate within.
 
 ```
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.daily_weather_v
@@ -148,8 +154,12 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
 
 <img src = "assets/4.2.daily_weather_v.png">
 
+As we see in the View definition above we are joining two of the `frostbyte_weathersource` Tables within the `onpoint_id` Schema and then Harmonizing it with our `country` Table from our `frostbyte_tasty_bytes` Database and `raw_pos` Schema. 
+
 ### Step 3 - Visualizing Daily Temperatures
-With the `daily_weather_v` View in our Harmonized schmea in place let's take a look at the Average Daily Weather Temperature for Hamburg in February 2022 by executing our next query.
+With the `daily_weather_v` View in our Harmonized Schema in place let's take a look at the Average Daily Weather Temperature for Hamburg in February 2022 by executing our next query.
+
+Along the way we will leverage [AVG](https://docs.snowflake.com/en/sql-reference/functions/avg), [YEAR](https://docs.snowflake.com/en/sql-reference/functions/year) and [MONTH](https://docs.snowflake.com/en/sql-reference/functions/year) functions.
 
 ```
 SELECT 
@@ -175,39 +185,194 @@ To further investigate trends, let's utilize Snowsight Charting to create a Line
 
 Based on what we saw above, there is nothing really standing out yet as the obvious reason for zero sale days at our trucks. Let's see what else we can find that might explain things in the next step.
 
-##
-Duration: 0
+### Step 4 - Bringing in Wind Data
+As we saw in our previous step, it does not look like Average Daily Temperature is the reason for our zero sales days in Hamburg. Thankfully, Weather Source provides other weather metrics we can dive into as well. 
+
+Please now execute the next query where we will leverage our Harmonized View to bring in Wind metrics. In this query we will see the usage of our [MAX](https://docs.snowflake.com/en/sql-reference/functions/min) function.
+
+```
+SELECT 
+    dw.country_desc,
+    dw.city_name,
+    dw.date_valid_std,
+    MAX(dw.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.harmonized.daily_weather_v dw
+WHERE 1=1
+    AND dw.country_desc IN ('Germany')
+    AND dw.city_name = 'Hamburg'
+    AND YEAR(date_valid_std) = '2022'
+    AND MONTH(date_valid_std) = '2'
+GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
+ORDER BY dw.date_valid_std DESC;
+```
+
+<img src = "assets/4.4.result.png">
+
+Once again this sort of data might better present trends via a quick Snowsight Chart. Please follow the arrows in the screenshots below to move from Results to Charts.
+
+<img src = "assets/4.4.chart.png">
+
+**Ah ha!** The wind for those zero sales days was at hurricane levels. This seems to be a better reason for why our trucks were not able to sell anything on those days. However since we ran this analysis in Harmonized let's now begin on our path to make this accessible in Analytics where our analysts can access these insights on their own.
+
+
+## Democratizing Data Insights
+Duration: 3
 
 ### Overview
+We have now determined that Hurricane level winds were probably at play for the days with zero sales that our financial analysts brought to our attention.
+
+Let's now make these sort of research available to anyone in our organization by deploying an Analytics view that all Tasty Bytes employees can access.
+
+### Step 1 - Creating SQL Functions
+As we are a global company, let's start our process by first creating two SQL functions to convert Fahrenheit to Celsius and Inches to Millimeters. Please execute the two queries within this step one by one to create our `fahrenheit_to_celsius` and `inch_to_millimeter` functions which leverage the [CREATE FUNCTION](https://docs.snowflake.com/en/sql-reference/sql/create-function) command.
 
 
+```
+CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(temp_f NUMBER(35,4))
+RETURNS NUMBER(35,4)
+AS
+$$
+    (temp_f - 32) * (5/9)
+$$;
+```
+
+<img src = "assets/5.1.f_to_c.png">
+
+```
+CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
+RETURNS NUMBER(35,4)
+    AS
+$$
+    inch * 25.4
+$$;
+```
+
+<img src = "assets/5.1.inch_to_mm.png">
+
+>aside positive
+>When you create a UDF, you specify a handler whose code is written in one of the supported languages. Depending on the handler’s language, you can either include the handler source code in-line with the CREATE FUNCTION statement or reference the handler’s location from CREATE FUNCTION, where the handler is precompiled or source code on a stage.
+>
+
+### Step 2 - Creating the SQL for our View
+Before creating our Analytics view, let's create our SQL we will use in the View to harmonize Daily Sales and Weather together and also leverage our SQL conversion functions. 
+
+Please execute the next query where we filter for Hamburg, Germany and leverage a few functions we have not seen yet being [ZEROIFNULL](https://docs.snowflake.com/en/sql-reference/functions/zeroifnull), [ROUND](https://docs.snowflake.com/en/sql-reference/functions/round) and [DATE](https://docs.snowflake.com/en/sql-reference/functions/to_date).
+
+```
+SELECT 
+    fd.date_valid_std AS date,
+    fd.city_name,
+    fd.country_desc,
+    ZEROIFNULL(SUM(odv.price)) AS daily_sales,
+    ROUND(AVG(fd.avg_temperature_air_2m_f),2) AS avg_temperature_fahrenheit,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(fd.avg_temperature_air_2m_f)),2) AS avg_temperature_celsius,
+    ROUND(AVG(fd.tot_precipitation_in),2) AS avg_precipitation_inches,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.inch_to_millimeter(fd.tot_precipitation_in)),2) AS avg_precipitation_millimeters,
+    MAX(fd.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.harmonized.daily_weather_v fd
+LEFT JOIN frostbyte_tasty_bytes.harmonized.orders_v odv
+    ON fd.date_valid_std = DATE(odv.order_ts)
+    AND fd.city_name = odv.primary_city
+    AND fd.country_desc = odv.country
+WHERE 1=1
+    AND fd.country_desc = 'Germany'
+    AND fd.city = 'Hamburg'
+    AND fd.yyyy_mm = '2022-02'
+GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
+ORDER BY fd.date_valid_std ASC;
+```
+
+<img src = "assets/5.2.SQL.png">
 
 
-##
-Duration: 0
+The results we have just recieved look great. We can now wrap this SQL within a View in our next step.
+
+### Step 3 - Deploying our Analytics View
+Using the same query we just explored, we will need to remove the filters in the WHERE clause, add a [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment) and promote this to our `analytics` Schema as the`daily_city_metrics_v` View.
+
+Please now kick off the last query of this section to do just this.
+
+```
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.daily_city_metrics_v
+COMMENT = 'Daily Weather Source Metrics and Orders Data for our Cities'
+    AS
+SELECT 
+    fd.date_valid_std AS date,
+    fd.city_name,
+    fd.country_desc,
+    ZEROIFNULL(SUM(odv.price)) AS daily_sales,
+    ROUND(AVG(fd.avg_temperature_air_2m_f),2) AS avg_temperature_fahrenheit,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(fd.avg_temperature_air_2m_f)),2) AS avg_temperature_celsius,
+    ROUND(AVG(fd.tot_precipitation_in),2) AS avg_precipitation_inches,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.inch_to_millimeter(fd.tot_precipitation_in)),2) AS avg_precipitation_millimeters,
+    MAX(fd.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.harmonized.daily_weather_v fd
+LEFT JOIN frostbyte_tasty_bytes.harmonized.orders_v odv
+    ON fd.date_valid_std = DATE(odv.order_ts)
+    AND fd.city_name = odv.primary_city
+    AND fd.country_desc = odv.country
+WHERE 1=1
+GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
+```
+
+<img src = "assets/5.3.view.png">
+
+Amazing we have now democritized these sort of insights to the Tasty Bytes organization. Let's bring this all together in our next section and validate our work.
+
+### Step 4 - Click Next -->
+
+## Deriving Insights from Sales and Marketplace Weather Data
+Duration: 1
 
 ### Overview
+With Sales and Weather Data available for all Cities our Food Trucks operate in, let's now take a look at the value we have now provided to our Financial Analysts.
+
+### Step 1 - Simplifying our Analysis
+Earlier we had to manually join Point of Sales and Weather Source Data to investigate our Hamburg sales issues, but we greatly simplified that process via our `analytics.daily_city_metrics_v`. Please kick off the next query which shows how much simpler we made this analysis.
+
+```
+SELECT 
+    dcm.date,
+    dcm.city_name,
+    dcm.country_desc,
+    dcm.daily_sales,
+    dcm.avg_temperature_fahrenheit,
+    dcm.avg_temperature_celsius,
+    dcm.avg_precipitation_inches,
+    dcm.avg_precipitation_millimeters,
+    dcm.max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
+WHERE 1=1
+    AND dcm.country_desc = 'Germany'
+    AND dcm.city_name = 'Hamburg'
+    AND dcm.date BETWEEN '2022-02-01' AND '2022-02-26'
+ORDER BY date DESC;
+```
+
+<img src = "assets/6.1.results.png">
+
+Yay! If this was available when our Financial Analysts were initially running their research, they would not have even needed to ping our data teams as the insights are right there. By completing this Quickstart we have seen how quickly we are able to derive real world business value by our work and how easy it is to use the Snowflake Marketplace to unlock additional data insights.
+
+### Step 2 - Click Next -->
+
+## Conclusion and Next Steps
+Duration: 1
+
+### Conclusion
+Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Collaboration Quickstart. 
+
+By doing so you have now:
+- Accessed the Snowflake Marketplace
+- Acquired Live Weather Source Data in your Account
+- Created a View
+- Created a SQL Function
+- Leveraged Snowsight Charts to Explore Visual Insights
+
+If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.
+
+### Next Steps
+To continue your journey in the Snowflake Data Cloud, please now visit the link below to see all other Powered by Taste Bytes - Quickstarts available to you.
+
+- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/#3)
 
 
-
-##
-Duration: 0
-
-### Overview
-
-
-
-
-### Step X - 
-Please follow the steps and video below to access this listing in your Snowflake Account.
-
-    1. Click -> Home Icon
-    2. Click -> Marketplace
-    3. Search -> frostbyte
-    4. Click -> SafeGraph: frostbyte
-    5. Click -> Get
-    6. Rename Database -> FROSTBYTE_SAFEGRAPH (all capital letters)
-    7. Grant to Additional Roles -> PUBLIC
-
-
-<img src = "assets/acquire_safegraph.gif">
