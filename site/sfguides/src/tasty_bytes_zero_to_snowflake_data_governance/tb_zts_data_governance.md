@@ -75,7 +75,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Exploring Available Roles
-Duration: 0
+Duration: 1
 
 ### Overview
 Our Tasty Bytes Adminstrator has been tasked with learning the process of deploying Role Based Access Control (RBAC) and proper Data Governance across our Snowflake Account. 
@@ -129,7 +129,7 @@ In our result set we can see the high-level descriptions of what these Snowflake
 >
 
 ## Creating a Role and Granting Privileges
-Duration: 0
+Duration: 1
 
 ### Overview
 Now that we understand these System Defined roles, let's begin leveraging them to create a test role and grant it access to the Customer Loyalty data we will deploy our initial Data Governance features against and our `tasty_dev_wh` Warehouse.
@@ -230,7 +230,7 @@ Awesome! We now have a `tasty_test_role` with required Database Object and Wareh
 
 
 ## Creating and Attaching Tags to our PII Columns
-Duration: 0
+Duration: 2
 
 ### Overview
 The first Data Governance feature set we want to deploy and test will be Snowflake Tag Based Dynamic Data Masking. This feature will allow us to mask PII data in  columns at query run time from our test role but leave it exposed to more privileged roles.
@@ -342,7 +342,7 @@ Perfect! Just as desired, we see all of our created tags are associated to the P
 ### Step 5 - Click Next -->
 
 ## Creating Masking Policies and Applying to Tags
-Duration: 0
+Duration: 2
 
 ### Overview
 With our Tag foundation in place, we can now begin to develop Dynamic Masking 
@@ -415,7 +415,7 @@ We can now official say we have deployed Tag Based Masking Policies. Let's move 
 ### Step 3 - Click Next -->
 
 ## Testing our Tag Based Masking Policies
-Duration: 0
+Duration: 2
 
 ### Overview
 With deployment of our Tag Based Masking Policies in place let's validate what we have conducted so far to confirm we were successful in meeting Tasty Bytes Customer Loyalty PII Data Masking requirements.
@@ -491,7 +491,7 @@ Yay! Once again this is working as exactly as desired. Our admin roles have acce
 ### Step 4 - Click Next -->
 
 ## Deploying and Testing Row Level Security
-Duration: 0
+Duration: 3
 
 ### Overview
 Happy with our Tag Based Dynamic Masking controlling masking at the column level,

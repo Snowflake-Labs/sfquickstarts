@@ -68,3 +68,24 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 
 
+
+
+
+
+
+
+
+
+
+### Step X - 
+Please follow the steps and video below to access this listing in your Snowflake Account.
+
+- Click -> Home Icon
+- Click -> Marketplace
+- Search -> frostbyte
+- Click -> SafeGraph: frostbyte
+- Click -> Get
+- Rename Database -> FROSTBYTE_SAFEGRAPH (all capital letters)
+- Grant to Additional Roles -> PUBLIC
+
+<img src = "assets/acquire_safegraph.gif">
