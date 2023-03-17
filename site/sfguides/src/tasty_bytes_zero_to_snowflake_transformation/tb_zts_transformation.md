@@ -17,6 +17,8 @@ Duration: 1
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Transformation!
 
+Within this Quickstart we will walk through a large set of Snowflake functionality covering key features like Zero Copy Cloning and Time-Travel to deliver on a Tasty Bytes business requirement.
+
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
@@ -63,7 +65,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_transformation/assets/tb_zts_transformation.sql)</button>
+<button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_transformation.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -79,14 +81,14 @@ Duration: 1
 
 ### Overview
 As part of Tasty Bytes truck fleet analysis, our developer has been tasked with 
-adding a calculated truck age column to our Truck table. 
+adding a calculated Truck Age Column to our Truck table. 
  
 Being a great developer, we know we cannot develop against a Production table, so we first need to create a Development environment that mimics Production.
 
 ### Step 1 - Create a Clone of Production
 Thanks to Snowflakes unique architecture, we can instantly create a snapshot of our production `raw_pos.truck` using [CLONE](https://docs.snowflake.com/en/sql-reference/sql/create-clone) functionality and name it `raw_pos.truck_dev`.
 
-Let's now run our next set our queries to set our `tasty_dev` role context and create the table clone noting here that we do not need to set warehouse context since cloning does not require one.
+Let's now run our next set our queries to set our `tasty_dev` role context and create the table clone noting here that we do not need to set Warehouse context since cloning does not require one.
 
 ```
 USE ROLE tasty_dev;
@@ -110,7 +112,9 @@ Duration: 1
 With our Zero Copy Clone instantly available we can now begin to develop against it without any fear of impacting production. However, before we make any changes let's first run some simple queries against it and test out Snowflakes Result Set Cache.
 
 ### Step 1 - Querying our Cloned Table
-Now that we are going to query our table, we will need to use our `tasty_dev_wh`. Let's kick off the next two queries with the second statement producing an result set consisting of our trucks, their years, make and models while making sure we [ORDER BY](https://docs.snowflake.com/en/sql-reference/constructs/order-by) our `truck_id` column.
+Now that we are going to query our Table, we will need to use our `tasty_dev_wh` Warehouse. 
+
+Let's kick off the next two queries with the second statement producing an result set consisting of our trucks, their years, make and models while making sure we [ORDER BY](https://docs.snowflake.com/en/sql-reference/constructs/order-by) our `truck_id` Column.
 
 ```
 USE WAREHOUSE tasty_dev_wh;
@@ -156,7 +160,7 @@ ORDER BY t.truck_id;
 Duration: 1
 
 ### Overview
-Based on our output above we first need to address the typo in those Ford_ records we saw in our `make` column. From there, we can begin to work on our calculation that will provide us with the age of each truck.
+Based on our output above we first need to address the typo in those Ford_ records we saw in our `make` Column. From there, we can begin to work on our calculation that will provide us with the age of each truck.
 
 ### Step 1 - Updating Incorrect Values in a Column
 To begin this section, let's make sure we correct the typo by executing our next query which leverages [UPDATE](https://docs.snowflake.com/en/sql-reference/sql/update) to change rows in our `truck_dev` [WHERE](https://docs.snowflake.com/en/sql-reference/constructs/where) the make is equal to Ford_.
@@ -190,7 +194,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 Duration: 1
 
 ### Overview
-With our Truck Age in Years calculation done and dusted, let's now add a new column to our cloned table to support it and finish things off by updating the column to reflect the calculated values.
+With our Truck Age in Years calculation done and dusted, let's now add a new Column to our Cloned Table to support it and finish things off by updating the Column to reflect the calculated values.
 
 ### Step 1 - Adding a Column to a Table
 To start, please execute the next query which uses [ALTER TABLE... ADD COLUMN](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column) to
@@ -221,7 +225,10 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
 <img src = "assets/6.3.bad_data.png">
-**Uh oh!** Thank goodness we were smart developers and didn't do this sort of thing blindly in production. It looks like we messed up the `truck_age` calculation and had it doing division instead of subtraction.  We will need to resolve this in our next section.
+
+**Uh oh!** Thank goodness we were smart developers and didn't do this sort of thing blindly in production. 
+
+It looks like we messed up the `truck_age` calculation and had it doing division instead of subtraction.  We will need to resolve this in our next section.
 
 ### Step 4 - Click Next -->
 
@@ -229,14 +236,14 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 Duration: 1
 
 ### Overview
-Although we made an mistake, Snowflake has many features that can help get us out of trouble here. The process we will take will leverage Query History, SQL Variables and Time Travel to revert our `truck_dev` table back to what it looked like prior to that incorrect update statement.
+Although we made an mistake, Snowflake has many features that can help get us out of trouble here. The process we will take will leverage Query History, SQL Variables and Time Travel to revert our `truck_dev` Table back to what it looked like prior to that incorrect pdate statement.
 
 >aside positive
 > Time Travel enables accessing historical data (i.e. data that has been changed or deleted) at any point within a defined period.
 >
 
 ### Step 1 - Leveraging Query History
-To start out recovery process, kick off the next query which will use the Snowflake [QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/query_history) function to retrieve a list of all update statements we have made against our `truck_dev` table.
+To start our recovery process, kick off the next query which will use the Snowflake [QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/query_history) function to retrieve a list of all update statements we have made against our `truck_dev` Table.
 ```
 SELECT 
     query_id,
@@ -269,7 +276,7 @@ SET query_id =
 ```
 
 ### Step 3 - Leveraging Time-Travel to Revert our Table
-With our bad query_id stored as a variable, we can execute the next query which will replace our `truck_dev` table with what it looked like [BEFORE](https://docs.snowflake.com/en/sql-reference/constructs/at-before) the incorrect query_id statement using Time-Travel. 
+With our bad query_id stored as a Variable, we can execute the next query which will replace our `truck_dev` Table with what it looked like [BEFORE](https://docs.snowflake.com/en/sql-reference/constructs/at-before) the incorrect query_id statement using Time-Travel. 
 
 ```
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
@@ -299,7 +306,7 @@ Please refer to the list below for the other Time-Travel Statement options avail
 Duration: 1
 
 ### Overview
-With our `truck_dev` table back to the state it was before our incorrect update statement, we can now make sure the column is correctly updated. From there we will promote our table with the correct calculation to Production to complete our assigned task.
+With our `truck_dev` Table back to the state it was before our incorrect update statement, we can now make sure the column is correctly updated. From there we will promote our Table with the correct calculation to Production to complete our assigned task.
 
 ### Step 1 - Adding Correctly Calculated Values to our Column
 Using the same process as before, please run the next query making sure we now double check we are using subtraction instead of division.
@@ -344,11 +351,11 @@ WHERE t.make = 'Ford';
 Duration: 1
 
 ### Overview
-We can officially say our developer has completed their assigned task successfully. With the `truck_age` column in place and correctly calulated, our `sysadmin` can 
-clean up the left over table and sign off for the day.
+We can officially say our developer has completed their assigned task. With the `truck_age` column in place and correctly calulated, our `sysadmin` can 
+clean up the left over Table and sign off for the day.
 
 ### Step 1 - Dropping a Table
-To remove the table from our database, please execute the next query which leverages [DROP TABLE](https://docs.snowflake.com/en/sql-reference/sql/drop-table).
+To remove the Table from our Database, please execute the next query which leverages [DROP TABLE](https://docs.snowflake.com/en/sql-reference/sql/drop-table).
 
 ```
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;

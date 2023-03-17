@@ -17,6 +17,8 @@ Duration: 1
 ###  Overview 
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Geospatial Analysis!
 
+Within this Quickstart we will conduct in-depth Geospatial analysis leveraging powerful Snowflake functionality coupled with a Safegraph POI listing from the Snowflake Marketplace.
+
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
@@ -57,12 +59,12 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Geospatial"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_financial_governance.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance/assets/tb_zts_financial_governance.sql)</button>
+<button>[tb_zts_geospatial.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_geospatial.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -78,16 +80,17 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 Duration: 1
 
 ### Overview
-Tasty Bytes operates Food Trucks in numerous cities and countries across the globe with each truck having the ability to choose two different selling locations per day.  One important item that our Executives are interested in is to learn more about how these locations relate to each other as well as if there are any locations we currently serve that are potentially too far away from hot selling city centers.
+Tasty Bytes operates Food Trucks in numerous cities and countries across the globe with each truck having the ability to choose two different selling locations per day.
+
+One important item that our Executives are interested in is to learn more about how these locations relate to each other as well as if there are any locations we currently serve that are potentially too far away from hot selling city centers.
 
 Unfortunately what we have seen so far is our first party data does not give us the building blocks required to complete this sort of Geospatial analysis. Thankfully, the Snowflake Marketplace has great listings from Safegraph that can assist us here.
 
 
 ### Step 1 - Using First Party Data to Find Top Selling Locations
-Before we leverage the Snowflake Marketplace to grab Safegraph data, please execute our 
-first three queries which will set our Role and Warehouse context to `tasty_data_engineer` and `tasty_de_wh` and find the Top 10 Selling Locations for Paris in 2022.
+Before we leverage the Snowflake Marketplace to access Safegraph Point of Interest data, please execute our first three queries which will set our Role and Warehouse context to `tasty_data_engineer` and `tasty_de_wh` and find the Top 10 Selling Locations for Paris in 2022.
 
-In this the 3rd query we will see the usage of [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n), [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum) and [YEAR](https://docs.snowflake.com/en/sql-reference/functions/year) functions.
+In our third query we will see the usage of [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n), [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum) and [YEAR](https://docs.snowflake.com/en/sql-reference/functions/year) functions.
 
 ```
 USE ROLE tasty_data_engineer;
@@ -106,7 +109,7 @@ ORDER BY total_sales_usd DESC;
 
 <img src = "assets/3.1.top_selling.png">
 
-While it is great to get these top selling locations for Paris, we need more Point of Interest data to really conduct rich analysis.
+While it is great to get these top selling locations for Paris, we need more Point of Interest data to really derive any insights.
 
 ### Step 2 - Acquiring Safegraph POI Data from the Snowflake Marketplace 
 Please follow the steps and video below to access this listing in your Snowflake Account.
@@ -126,7 +129,7 @@ Please follow the steps and video below to access this listing in your Snowflake
 >
 
 ### Step 3 - Evaluating Safegraph POI Data
-Now that we have the `frostbyte_safegraph` database live in our account, let's run to the next query to initially see what sort of data they have for Paris.
+Now that we have the `frostbyte_safegraph` database live in our account, let's run the next query to initially see what sort of data they have available for Paris.
 
 ```
 SELECT 
@@ -148,22 +151,24 @@ WHERE 1=1
 
 <img src = "assets/3.3.safegraph_paris.png">
 
-Amazing! These sort of metric will be immensely valuable in conduction Geospatial analysis to assist our Executives in making data driven location decisions. Let's get this harmonized with our Sales data in the next section.
+**Amazing!** These sort of POI metrics will be immensely valuable in conducting Geospatial analysis to assist our Executives in making data driven location decisions. 
+
+Let's get this harmonized with our Sales data in the next section.
 
 ### Step 4 - Click Next -->
 
 ## Harmonizing and Promoting First and Third Party Data
-Duration: 2
+Duration: 1
 
 ### Overview
 To make our Geospatial analysis seamless, let's make sure to get Safegraph POI data included in the `analytics.orders_v` so all of our downstream users can also access it.
 
 ### Step 1 - Enriching our Analytics View
-Please execute this steps two queries which will set our Role context to `sysadmin` and recreate our `analytics.orders_v` now with all available Safegraph POI metrics.
+Please execute this steps two queries which will first set our Role context to `sysadmin` and then enrich our `analytics.orders_v` by adding all available, new  Safegraph POI metrics.
 
-Within this [CREATE VIEW] statement, you will see [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment), [DATE](https://docs.snowflake.com/en/sql-reference/functions/to_date) and [SELECT * EXCLUDE ..](https://docs.snowflake.com/en/sql-reference/sql/select#parameters) functionality leveraged. 
+Within this [CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view) statement, you will see [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment), [DATE](https://docs.snowflake.com/en/sql-reference/functions/to_date) and [SELECT * EXCLUDE ..](https://docs.snowflake.com/en/sql-reference/sql/select#parameters) functionality leveraged. 
 
-To highlight what our EXCLUDE is doing we are using it to vastly simplify the SQL required to SELECT all of the available Safegraph columns but not the ones we already have seen in the `harmonized.orders_v`.
+To highlight what our EXCLUDE is doing we are using it to simplify the SQL required to SELECT all of the available Safegraph columns but not the ones we already have available in the `harmonized.orders_v`.
 
 ```
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.orders_v
@@ -181,7 +186,7 @@ JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s cpg
 <img src = "assets/4.1.view.png">
 
 >aside negative
-> **Note:** For demonstrating purposes the Safegraph listing already has the Tasty Bytes location_id's included within. In a real-world scenario the mapping would leverage public [Placekeys](https://www.placekey.io/) which [Safegraph is a founding partner of](https://www.safegraph.com/blogs/safegraph-joins-placekey-initiative-as-a-founding-partner).
+> **Note:** For demonstration purposes the Safegraph listing already has the Tasty Bytes *location_id's* included within. In a real-world scenario the mapping would leverage public [Placekeys](https://www.placekey.io/) which [Safegraph is a founding partner of](https://www.safegraph.com/blogs/safegraph-joins-placekey-initiative-as-a-founding-partner).
 >
 
 ### Step 2 - Click Next -->
@@ -193,7 +198,9 @@ Duration: 2
 With Point of Interest metrics now readily available from the Snowflake Marketplace without any ETL required, let's start on our Geospatial analysis journey.
 
 ### Step 1 - Creating a Geography Point
-Latitude and Longitude are two building block POI metrics we now have access to thanks for Safegraph. Please execute the next two queries to re-assume to `tasty_data_engineer` role and create our Geography Point leveraging the [ST_MAKEPOINT/ST_POINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) function.
+Latitude and Longitude are two building block POI metrics we now have access to thanks for Safegraph. 
+
+Please execute the next two queries to re-assume to `tasty_data_engineer` role and create our Geography Point leveraging the [ST_MAKEPOINT/ST_POINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) function.
 
 >aside positive
 > **ST_MAKEPOINT/ST_POINT:** Constructs a GEOGRAPHY object that represents a point with the specified longitude and latitude.
@@ -216,18 +223,20 @@ ORDER BY total_sales_usd DESC;
 
 <img src = "assets/5.1.st_makepoint.png">
 
-While it isn't the prettiest result set we have ever seen, the results we see in the `geo_point` column are going to be essential for everything else we do moving forward. One thing to note here is despite typically hearing Latitude then Longitude this function requires these values to be input in the Longitude, Latitude order.
+While it isn't the prettiest result set we have ever seen, the results we see in the `geo_point` column are going to be essential for everything else we do moving forward. 
+
+One thing to note here is despite typically hearing Latitude then Longitude this function requires these values to be input in the Longitude, Latitude order.
 
 ### Step 2 - Calculating Distance Between Locations
 Starting with our Geographic Point, we can now begin to dive into some of the powerful Geospatial functions Snowflake offers natively. 
 
-Let's first start with calculating the distances in Miles and Kilometersbetween those top selling locations we generated previously by executing our next query which leverages the powerful [ST_DISTANCE](https://docs.snowflake.com/en/sql-reference/functions/st_distance) function.
+Let's first start with calculating the distances in Miles and Kilometers between those top selling locations we generated previously by executing our next query which leverages the powerful [ST_DISTANCE](https://docs.snowflake.com/en/sql-reference/functions/st_distance) function.
 
 >aside positive
 >**ST_DISTANCE:** Returns the minimum geodesic distance between two GEOGRAPHY or the minimum Euclidean distance between two GEOMETRY objects.
 >
 
-Within this query we also leverage a [Common Table Expression or CTE](https://docs.snowflake.com/en/user-guide/queries-cte), [QUALIFY](https://docs.snowflake.com/en/sql-reference/constructs/qualify) and [LAG](https://docs.snowflake.com/en/sql-reference/functions/lag)
+Within this query we also leverage a [Common Table Expression or CTE](https://docs.snowflake.com/en/user-guide/queries-cte), [QUALIFY](https://docs.snowflake.com/en/sql-reference/constructs/qualify) and [LAG](https://docs.snowflake.com/en/sql-reference/functions/lag).
 
 ```
 WITH _top_10_locations AS 
@@ -257,17 +266,17 @@ ORDER BY geography_distance_miles;
 
 <img src = "assets/5.2.st_distance.png">
 
-Wow! Look at how far we have already came in so little time. Let's keep diving deeper into what geospatial insights we can derive in our next section.
+**Wow!** Look at how far we have already came in so little time. Let's keep diving deeper into what Geospatial insights we can derive in our next section.
 
 ### Step 3 - Click Next -->
 
 ## Conducting Geospatial Analysis - Part 2
-Duration: 4
+Duration: 3
 
 ### Overview
 Now that we understand how to create points, and calculate distance, we will now pile on a large set additional Snowflake Geospatial functionality to further our analysis.
 
-## Step 1 - Collecting Points, Drawing a Minimum Bounding Polygon and Calculating Area
+### Step 1 - Collecting Points, Drawing a Minimum Bounding Polygon and Calculating Area
 Please execute the next query which will take the building blocks from the previous section and now collect all of our Geography Points and build a Minimum Bounding Polygon from them.
 
 Within this query we will see the usage of [ST_NPOINTS](https://docs.snowflake.com/en/sql-reference/functions/st_npoints), [ST_COLLECT](https://docs.snowflake.com/en/sql-reference/functions/st_collect), [ST_ENVELOPE](https://docs.snowflake.com/en/sql-reference/functions/st_envelope) and [ST_AREA](https://docs.snowflake.com/en/sql-reference/functions/st_area).
@@ -306,13 +315,10 @@ FROM _top_10_locations tl;
 
 <img src = "assets/6.1.collect_draw_area.png">
 
-Holy Cow! Look at how much we accomplished within a single SQL query. However we can't stop yet let's keep seeing what else we can do.
+**Holy Cow!** Look at how much we accomplished within a single SQL query, but we can't stop yet, let's keep going to see what else we can accomplish.
 
-## Step 2 - Finding our Top Selling Locations Center Point
-
-
-
-[ST_CENTROID](https://docs.snowflake.com/en/sql-reference/functions/st_centroid)
+### Step 2 - Finding our Top Selling Locations Center Point
+Now that we have collected geographic information about where our Trucks sell the most in Paris.  Please execute the next query which will utilize [ST_CENTROID](https://docs.snowflake.com/en/sql-reference/functions/st_centroid) to find the top selling center point.
 
 >aside positive
 >**ST_CENTROID:** Returns the Point representing the geometric center of a GEOGRAPHY or GEOMETRY object.
@@ -340,19 +346,25 @@ FROM _top_10_locations tl;
 
 <img src = "assets/6.2.st_centroid.png">
 
-### Step 3 - Storing our Center Point in a Variable
-So we can use this Center Point of our Top Selling locations in a future query, please Copy what is displayed in the `geometric_center_point` from the previous query and Paste into this steps query (screenshot of this process below). 
+Once again this result set isn't the most beautiful thing to look at, but the insights this sort of information can unlock is what we are truly after.
 
-Once pasted, please execute the query which will yield a `Statement executed succesfully.` message. 
+### Step 3 - Storing our Center Point in a Variable
+So we can use this Center Point of our Top Selling locations in a future query, please copy what is displayed in the `geometric_center_point` from the previous query and paste into between the quotes in this steps query (screenshot of this process below). 
+
+``
+SET center_point = ' ';
+``
+
+Once pasted in, please execute the query which will yield a `Statement executed succesfully.` message. 
 
 <img src = "assets/6.3.set_var.gif">
 
-Now we can use this Center Point variable to help round out our Geospatial analysis process.
+Now we can use this `center_point` Variable to help conclude our Geospatial analysis.
 
 ### Step 4 - Finding Locations Furthest Away from our Top Selling Center Point
-As mentioned earlier, our Tasty Bytes Executives are interested in seeing what locations we may want to stop considering having our Food Trucks visit in their weekly schedules. Thankfully, every step we have taken so far has now enabled us to deliver on this exact request.
+As mentioned earlier, our Tasty Bytes Executives are interested in seeing what locations we may want to stop having our Food Trucks visit in their weekly schedules. Thankfully, every step we have taken so far has now enabled us to deliver on this exact request.
 
-Please now kick off the final query of this Quickstart so we can identify which Paris locations we may want to take off our schedules. Within the query we will see a new function we haven't used yet -> [TO_GEOGRAPHY](https://docs.snowflake.com/en/sql-reference/functions/to_geography).
+Please now kick off the final query of this Quickstart so we can identify which Paris locations we may want to take off our schedules. Within the query we will see a new function we haven't used yet, [TO_GEOGRAPHY](https://docs.snowflake.com/en/sql-reference/functions/to_geography).
 
 ```
 WITH _2022_paris_locations AS
@@ -384,7 +396,7 @@ Fantastic work! We have now delivered on the exact as from our Executive Team vi
 Duration: 1
 
 ### Conclusion
-Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Geospatial Quickstart. 
+**Fantastic work!** You have successfully completed the Tasty Bytes - Zero to Snowflake - Geospatial Quickstart. 
 
 By doing so you have now:
 - Accessed the Snowflake Marketplace

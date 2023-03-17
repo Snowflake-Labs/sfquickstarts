@@ -61,12 +61,12 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Semi-Structured Data"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_semi_structured_data.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_semi_structured_data/assets/tb_zts_semi_structured_data.sql)</button>
+<button>[tb_zts_semi_structured_data.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_semi_structured_data.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -85,9 +85,9 @@ As a Tasty Bytes Data Engineer, we have been tasked with profiling our Menu data
 
 ### Step 1 - Setting our Context and Querying our Table
 To begin, let's execute the first three queries together which will:
-    - Set the Role context to `tasty_data_engineer`
-    - Set the Warehouse context to `tasty_de_wh`
-    - Produce a [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n) 10 Result Set of our `raw_pos.menu` table
+- Set the Role context to `tasty_data_engineer`
+- Set the Warehouse context to `tasty_de_wh`
+- Produce a [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n) 10 Result Set of our `raw_pos.menu` table
 
 ```
 USE ROLE tasty_data_engineer;
@@ -103,7 +103,9 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 
 <img src = "assets/3.1.menu.png">
 
-Within our output, we can see that the `menu_item_health_metrics_obj` must be the Semi-Structured Data we were told contained the metrics we need to provide downstream. By clicking into one of the cells in this column, we will see Snowsight automatically expand the stats pane to give us a better view of what is inside.
+Within our output, we can see that the `menu_item_health_metrics_obj` must be the Semi-Structured Data we were told contained the metrics we need to provide downstream. 
+
+By clicking into one of the cells in this column, we will see Snowsight automatically expand the stats pane to give us a better view of what is inside.
 
 <img src = "assets/3.1.2.stats.png">
 
@@ -123,7 +125,7 @@ Looking at our result set, we see the `menu_item_health_metrics_obj` is a [VARIA
 >
 
 ### Step 3 - Traversing Semi-Structured Data using Dot Notation
-Within our `menu_item_health_metrics_obj` column, we saw that `menu_item_id` was nested inside alongside the more nested ingredients and dietary restriction data we need to access. 
+Within our `menu_item_health_metrics_obj` column, we saw that `menu_item_id` was included alongside the more nested Ingredients and Dietary Restriction data we need to access. 
 
 Please execute the next query where we begin to leverage [Dot Notation](https://docs.snowflake.com/en/user-guide/querying-semistructured#dot-notation) to traverse our Semi-Structured data.
 
@@ -136,11 +138,13 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 
 <img src = "assets/3.3.dot.png">
 
-Using Dot Notation we were able to successfully extract `menu_item_id` in full, but look to still be left with additional semi-structured objects in the `menu_item_health_metrics` column output. Once again let's click into one of the cells within this column to take a further look.
+Using Dot Notation we were able to successfully extract `menu_item_id` in full, but look to still be left with additional semi-structured objects in the `menu_item_health_metrics` column output. 
+
+Once again let's click into one of the cells within this column to take a further look.
 
 <img src = "assets/3.3.2.stats.png">
 
-We are making progress! Let's see how we can further process `menu_item_health_metrics` in the next section by using additional Snowflake functions.
+**We are making progress!** Let's see how we can further process `menu_item_health_metrics` in the next section by using additional Snowflake functions.
 
 ### Step 4 - Click Next -->
 
@@ -153,7 +157,7 @@ Having seen how we can easily query Semi-Structured Data as it exists in a Varia
 Within this section, we will conduct additional Semi-Structured Data processing to meet requirements.
 
 ### Step 1 - Introduction to Lateral Flatten
-To further extract the data our downstream users are asking for from our `menu_item_health_metrics_obj` column. Please execute the next query which will utilizes the Dot Notation functionality we just explored alongside Snowflakes [FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten) function and [LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral) capability to provide us with the first `ingredient` array we have been asked for.
+To further extract the data our downstream users are asking for from our `menu_item_health_metrics_obj` column. Please execute the next query which utilizes the Dot Notation functionality we just explored alongside Snowflakes [FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten) function and [LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral) capability to provide us with the first `ingredient` Array we have been asked for.
 
 >aside positive
 > **Flatten:** is a table function that takes a VARIANT, OBJECT, or ARRAY column and produces a lateral view. Flatten can be used to convert semi-structured data to a relational representation.
@@ -172,7 +176,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 <img src = "assets/4.1.lat_flat.png">
 
 ### Step 2 - Exploring an Array Function
-Before we extract the requested Dietary data, please kick off the next query which highlights one of the Snowflake Array Functions available, which will explore the `ingredients` column for any `menu_item_name` that includes Lettuce by leveraging [ARRAY_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/array_contains).
+Before we extract the requested Dietary data, please kick off the next query which highlights a Snowflake Array Functions, which will explore the `ingredients` column for any `menu_item_name` that includes Lettuce by leveraging [ARRAY_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/array_contains).
 
 ```
 SELECT 
@@ -188,7 +192,9 @@ WHERE ARRAY_CONTAINS('Lettuce'::VARIANT, obj.value:"ingredients"::VARIANT);
 Based on our output, we see that quite a few of our Menu Items include Lettuce. This sort of analysis would be extremely valuable for our Supply Chain Procurement Managers in the event of any food related recalls in the cities and countries we support.
 
 ### Step 3 - Structuring Semi-Structured Data at Scale
-Having just seen the sort of value we can provide to our organization already, let's now execute the last query of this section. This query will use the Dot Notation, and our combined Lateral Join plus Flatten Table Function to provide the result set we were initially tasked to generate.
+Having just seen the sort of value we can provide to our organization already, let's now execute the last query of this section. 
+
+This query will use the Dot Notation, and our combined Lateral Join plus Flatten Table Function to provide the result set we were initially tasked to generate.
 
 ```
 SELECT 
@@ -205,7 +211,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 <img src = "assets/4.3.lat_flat_2.png">
 
-Great! That output looks to meet the exact requirements our stakeholders have requested. In the next section we will explore how we can promote this to our Analytics layer where they have the ability to access it.
+**Great!** That output looks to meet the exact requirements our stakeholders have requested. In the next section we will explore how we can promote this to our Analytics layer where they have the ability to access it.
 
 ### Step 4 - Click Next -->
 
@@ -217,8 +223,10 @@ In the last section, we constructed a query that provides the exact output our e
 
 **Note:** For those more familiar with Bronze, Silver, and Gold Data Models we can think of Raw as Bronze, Harmonized as Silver and Analytics as Gold.
 
-### - Step 1 - Creating our Harmonized View Using our Semi-Structured Flattening SQL
-Taking the exact query we ended our last section with please now execute the next query which contains this SQL plus all additional already structured `menu` columns. Within this query we use [CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view) in our Harmonized schema to encapsulate the Semi-Structured processing logic and additional `menu` columns as a table.
+### Step 1 - Creating our Harmonized View Using our Semi-Structured Flattening SQL
+Taking the exact query we ended our last section with please now execute the next query which contains this SQL plus all additional already structured `menu` Table Columns. 
+
+Within this query we use [CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view) in our Harmonized schema to encapsulate the Semi-Structured processing logic and additional Columns as a Table.
 
 >aside positive
 > A view allows the result of a query to be accessed as if it were a table.  Views serve a variety of purposes, including combining, segregating, and protecting data. 
@@ -256,7 +264,7 @@ Referencing our `harmonized.menu_v` please now execute the next query which will
 
 Within this query we see a few new functions we have not yet covered. First off we are adding a [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment) which can be seen within [SHOW VIEWS](https://docs.snowflake.com/en/sql-reference/sql/show) commands or within the Snowsight interface to document what a user may see when querying this view.
 
-We are also utilizing [SELECT * EXCLUDE and RENAME](https://docs.snowflake.com/en/sql-reference/sql/select#parameters) parameters which can make the lives of SQL developers much easier by reducing query or view definition complexity.
+We are also utilizing [SELECT * EXCLUDE and RENAME](https://docs.snowflake.com/en/sql-reference/sql/select#parameters) parameters which can make the lives of SQL developers much easier by reducing query or View definition complexity.
 
 >aside positive
 > **Exclude:** When you select all columns (SELECT * or SELECT table_name.*), EXCLUDE specifies the columns that should be excluded from the results.
@@ -275,7 +283,7 @@ Duration: 2
 With our Menu View available in our Analytics layer, let's execute a few queries against it that we will provide to our end users showcasing how Snowflake powers a relational query experience over Semi-Structured data without having to make additional copies or conduct any complex processing.
 
 ### Step 1 - Analyzing Arrays
-We saw the `ingredients` column as a result of a query in our previous section, but this is now available without any Dot Notation requirements in our `analytics.menu_v` view. 
+We saw the `ingredients` Column as a result of a query in our previous section, but this is now available without any Dot Notation requirements in our `analytics.menu_v` View. 
 
 With this, please now execute the next query that leverages two additional Snowflake Array Functions [ARRAY_INTERSECTION](https://docs.snowflake.com/en/sql-reference/functions/array_intersection) and [ARRAYS_OVERLAP](https://docs.snowflake.com/en/sql-reference/functions/arrays_overlap) to see which of our non-beverage Menu Items overlap for each of our Food Truck Brands Menus.
 
@@ -345,7 +353,7 @@ Please now follow the arrows in the screenshot below to create your own Bar Grap
 
 <img src = "assets/6.3.chart.png">
 
-To finish off this Quickstart, we must point out how easy a Tasty Bytes Executive could do this sort of analysis on their own without ever needing to address the Semi-Structured Data Processing we have solved for encapsulated in the views we built to drive the democratization of data in our Organization.
+To finish off this Quickstart, we must point out how easy a Tasty Bytes Executive could do this sort of analysis on their own without ever needing to know about the Semi-Structured Data Processing we have encapsulated in the Views we built. With all of this we can rest assured that we are assisting in driving the democratization of data in our Tasty Bytes Organization.
 
 ### Step 4 - Click Next -->
 

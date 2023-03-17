@@ -16,7 +16,7 @@ Duration: 1
 <img src = "assets/collaboration_header.png">
 
 ### Overview
-Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Collaboration!
+Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Collaboration! Within this Quickstart we will highlight the immediately value the Snowflake Marketplace can provide by enriching first party data analysis with Weather data provided by Weather Source.
 
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
@@ -58,12 +58,13 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Collaboration"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_financial_governance.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance/assets/tb_zts_financial_governance.sql)</button>
+
+<button>[tb_zts_collaboration.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_collaboration.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -82,6 +83,7 @@ Our Tasty Bytes Financial Analysts have brought it to our attention when running
 
 
 ### Step 1 - Querying Point of Sales Data for Trends
+Let's start by kicking off this steps three queries to initially set our Role and Warehouse context to `tasty_data_engineer` and `tasty_de_wh`. With the context set, we will then query our Analytics `orders_v` View to provide a result set of sales for Hamburg, Germany in 2022.
 
 ```
 USE ROLE tasty_data_engineer;
@@ -101,7 +103,7 @@ ORDER BY o.date ASC;
 
 <img src = "assets/3.1.orders_v.png">
 
-Based on what we are seeing above, we can agree with our analysts that we do not have `daily_sales` records missing for a few days in February. Let's see if we can dig further into why this may have happened in our next section.
+Based on what we are seeing above, we can agree with our analysts that we do not have daily sales records for a few days in February so our analysts are definitely on to something. Let's see if we can dig further into why this may have happened in our next section.
 
 ### Step 2 - Click Next -->
 
@@ -118,7 +120,7 @@ The Snowflake Marketplace is the premier location to find, try, and buy the data
 
 Please follow the steps and video below to acquire this listing in your Snowflake Account.
 
-- Click -> Home Icon
+- Click -> Home
 - Click -> Marketplace
 - Search -> frostbyte
 - Click -> Weather Source LLC: frostbyte
@@ -133,7 +135,7 @@ Please follow the steps and video below to acquire this listing in your Snowflak
 >
 
 ### Step 2 - Harmonizing First and Third Party Data
-With the shared `frostbyte_weathersource` database in place, please execute this steps query to create a `harmonized.daily_weather_v` View joining Weather Source Daily History to our `country` dimension table on the Countries and Cities that Tasty Bytes Food Trucks operate within.
+With the shared `frostbyte_weathersource` database in place, please execute this steps query to create a `harmonized.daily_weather_v` View joining two Weather Source tables to our country table on the Countries and Cities that Tasty Bytes Food Trucks operate within.
 
 ```
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.daily_weather_v
@@ -155,6 +157,8 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
 <img src = "assets/4.2.daily_weather_v.png">
 
 As we see in the View definition above we are joining two of the `frostbyte_weathersource` Tables within the `onpoint_id` Schema and then Harmonizing it with our `country` Table from our `frostbyte_tasty_bytes` Database and `raw_pos` Schema. 
+
+This is the sort of operation we typically find in the Harmonized layer or what others may describe as the Silver zone.s
 
 ### Step 3 - Visualizing Daily Temperatures
 With the `daily_weather_v` View in our Harmonized Schema in place let's take a look at the Average Daily Weather Temperature for Hamburg in February 2022 by executing our next query.
@@ -183,7 +187,7 @@ To further investigate trends, let's utilize Snowsight Charting to create a Line
 
 <img src = "assets/4.3.chart.png">
 
-Based on what we saw above, there is nothing really standing out yet as the obvious reason for zero sale days at our trucks. Let's see what else we can find that might explain things in the next step.
+Based on what we saw above, there is nothing really standing out yet as the obvious reason for zero sales days at our trucks. Let's see what else we can find that might explain things in the next step.
 
 ### Step 4 - Bringing in Wind Data
 As we saw in our previous step, it does not look like Average Daily Temperature is the reason for our zero sales days in Hamburg. Thankfully, Weather Source provides other weather metrics we can dive into as well. 
@@ -214,17 +218,20 @@ Once again this sort of data might better present trends via a quick Snowsight C
 
 **Ah ha!** The wind for those zero sales days was at hurricane levels. This seems to be a better reason for why our trucks were not able to sell anything on those days. However since we ran this analysis in Harmonized let's now begin on our path to make this accessible in Analytics where our analysts can access these insights on their own.
 
+### Step 5 - Click Next -->
 
 ## Democratizing Data Insights
 Duration: 3
 
 ### Overview
-We have now determined that Hurricane level winds were probably at play for the days with zero sales that our financial analysts brought to our attention.
+We have now determined that Hurricane level winds were probably at play for the days with zero sales that our Financial Analysts brought to our attention.
 
 Let's now make these sort of research available to anyone in our organization by deploying an Analytics view that all Tasty Bytes employees can access.
 
 ### Step 1 - Creating SQL Functions
-As we are a global company, let's start our process by first creating two SQL functions to convert Fahrenheit to Celsius and Inches to Millimeters. Please execute the two queries within this step one by one to create our `fahrenheit_to_celsius` and `inch_to_millimeter` functions which leverage the [CREATE FUNCTION](https://docs.snowflake.com/en/sql-reference/sql/create-function) command.
+As we are a global company, let's start our process by first creating two SQL functions to convert Fahrenheit to Celsius and Inches to Millimeters. 
+
+Please execute the two queries within this step one by one to create our `fahrenheit_to_celsius` and `inch_to_millimeter` functions which leverage the [CREATE FUNCTION](https://docs.snowflake.com/en/sql-reference/sql/create-function) command.
 
 
 ```
@@ -254,7 +261,7 @@ $$;
 >
 
 ### Step 2 - Creating the SQL for our View
-Before creating our Analytics view, let's create our SQL we will use in the View to harmonize Daily Sales and Weather together and also leverage our SQL conversion functions. 
+Before deploying our Analytics view, let's create our SQL we will use in the View to combine Daily Sales and Weather together and also leverage our SQL conversion functions. 
 
 Please execute the next query where we filter for Hamburg, Germany and leverage a few functions we have not seen yet being [ZEROIFNULL](https://docs.snowflake.com/en/sql-reference/functions/zeroifnull), [ROUND](https://docs.snowflake.com/en/sql-reference/functions/round) and [DATE](https://docs.snowflake.com/en/sql-reference/functions/to_date).
 
@@ -288,7 +295,7 @@ ORDER BY fd.date_valid_std ASC;
 The results we have just recieved look great. We can now wrap this SQL within a View in our next step.
 
 ### Step 3 - Deploying our Analytics View
-Using the same query we just explored, we will need to remove the filters in the WHERE clause, add a [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment) and promote this to our `analytics` Schema as the`daily_city_metrics_v` View.
+Using the same query we just explored, we will need to remove the filters in the WHERE clause, add a [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment) and promote this to our `analytics` Schema as the `daily_city_metrics_v` View.
 
 Please now kick off the last query of this section to do just this.
 
@@ -317,7 +324,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 
 <img src = "assets/5.3.view.png">
 
-Amazing we have now democritized these sort of insights to the Tasty Bytes organization. Let's bring this all together in our next section and validate our work.
+Amazing we have now democratized these sort of insights to the Tasty Bytes organization. Let's bring this all together in our next section and validate our work.
 
 ### Step 4 - Click Next -->
 
@@ -325,10 +332,12 @@ Amazing we have now democritized these sort of insights to the Tasty Bytes organ
 Duration: 1
 
 ### Overview
-With Sales and Weather Data available for all Cities our Food Trucks operate in, let's now take a look at the value we have now provided to our Financial Analysts.
+With Sales and Weather Data available for all Cities our Food Trucks operate in, let's now take a look at how we have shortened the time to insights our Financial Analysts.
 
 ### Step 1 - Simplifying our Analysis
-Earlier we had to manually join Point of Sales and Weather Source Data to investigate our Hamburg sales issues, but we greatly simplified that process via our `analytics.daily_city_metrics_v`. Please kick off the next query which shows how much simpler we made this analysis.
+Earlier we had to manually join Point of Sales and Weather Source Data to investigate our Hamburg sales issues, but we greatly simplified that process via our `analytics.daily_city_metrics_v` View. 
+
+Please kick off the next query which shows how much simpler we made this analysis by making it a simple Select statement from a single View.
 
 ```
 SELECT 
@@ -351,7 +360,9 @@ ORDER BY date DESC;
 
 <img src = "assets/6.1.results.png">
 
-Yay! If this was available when our Financial Analysts were initially running their research, they would not have even needed to ping our data teams as the insights are right there. By completing this Quickstart we have seen how quickly we are able to derive real world business value by our work and how easy it is to use the Snowflake Marketplace to unlock additional data insights.
+**Yay!*8 If this was available when our Financial Analysts were initially running their research, they would not have even needed to ping our data teams as the insights are right there. 
+
+By completing this Quickstart we have seen how quickly we are able to derive real world business value by our work and how easy it is to use the Snowflake Marketplace to unlock additional data insights.
 
 ### Step 2 - Click Next -->
 
