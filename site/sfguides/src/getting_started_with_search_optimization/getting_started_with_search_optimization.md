@@ -301,43 +301,6 @@ Want to learn more? You can refer to our external documentations for [benefittin
 
 ----
 
-## Accelerating Joins
-
-The search optimization service can improve the performance of queries that join a small table with a large table. 
-
-***Note***: In data warehousing, the large table is often referred to as the fact table. The small table is referred to as the dimension table. The rest of this topic uses these terms when referring to the large table and the small table in the join.
-
-To enable the search optimization service to improve the performance of joins, you need to add Search Optimization to the fact table (the larger of the two tables).
-In addition, the dimension table (the smaller of the two tables) should have few distinct values. In our guide, `wikidata_original` is the fact table whereas `entity_is_subclass_of` is the dimension table.
-
-Let’s say you want to find out the Subclass ID of all articles related to `‘Formula One’`. 
-Say we know the following entity ids in the wikidata_original table mapping to ‘Formula One’ articles are => `'Q1437617','Q8564669','Q1968' and 'Q5470299'`
-
-So, the query to find the `‘Formula One’` subclass Ids would look like below:
-
-```
-SELECT *  
-  FROM entity_is_subclass_of AS e 
-  JOIN wikidata_original AS o ON (e.subclass_of_name = o.label)
-  WHERE e.entity_id IN ('Q1437617','Q8564669','Q1968','Q5470299') ;
-```
-
-| Without search optimization | With Search Optimization|
-|-----------------------------|-------------------------|
-| It takes ~43 seconds and scans nearly ALL partitions and about 64.64GB of data to find the resulting Subclass ID. See the picture below for full details. ![joinStats1](assets/JoinStats1.png) | On the other hand, the query on the search optimized table, returns the result (subclass_of_id => Q1199515) in 4.4 seconds. Also, only a small portion of data is scanned to find the answer (12 partitions and 99.30MB of data is scanned).![joinStats2](assets/JoinStats2.png) |
-
-*If we compare the statistics side by side, we can observe that Search Optimization greatly optimized the JOIN query.*
-
-|                                      | Without Search Optimization  | With Search Optimization | Performance Impact |
-|--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 43 seconds                   | 4.4 seconds              |***92.09% improvement*** in query speed  |
-| **Percentage of partitions scanned** | 99.92%                       |0.22%                     |***99.70% less partitions*** scanned     |
-| **Bytes scanned**                    |62.64GB                       |99.30MB                   |***99.84% less data*** scanned           |
-
-Want to learn more? You can refer to our external documentations for [benefitting from Search Optimization for JOIN queries](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#enabling-the-search-optimization-service-to-improve-the-performance-of-joins)
-
-----
-
 ## Queries that are not benefitting from Search Optimization
 
 Not all queries benefit from Search Optimization. One such example is the following query to get all entries that have description with the words wikimedia and page in that order. The query would look like:
