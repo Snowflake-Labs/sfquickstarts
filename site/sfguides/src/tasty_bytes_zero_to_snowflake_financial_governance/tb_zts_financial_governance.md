@@ -60,13 +60,12 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Financial Governance"
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_financial_governance.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_zero_to_snowflake_financial_governance/assets/tb_zts_financial_governance.sql)</button>
-
+<button>[tb_zts_financial_governance.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_financial_governance.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -74,7 +73,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
-
+    - <img src = "assets/>
 ### Step 9 - Click Next -->
 
 ## Creating a Warehouse 
@@ -83,26 +82,31 @@ Duration: 2
 ### Overview
 As a Tasty Bytes Snowflake Administrator we have been tasked with gaining an understanding of the features Snowflake provides to help ensure proper Financial Governance is in place before we begin querying and analyzing data.
 
-> aside positive
-> A virtual warehouse, often referred to simply as a “warehouse”, is a cluster of compute resources in Snowflake.
->
-
 ### Step 1 - Role and Warehouse Context
 Before we create a Warehouse, let's first set our Role and Warehouse context. 
 
 The queries below will assume the role of `tasty_admin` via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html) and leverage the `tasty_de_wh` warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html). 
-- To run the queries, please highlight the two queries in your created Worksheet that match what you see below and click the "► Run" button in the top-right hand corner. 
-- Once these are executed you will a `Statement executed successfully.` result and notice the Worksheet context reflect the Role and Warehouse as shown in the screenshot below.
+
+To run the queries, please highlight the two queries in your created Worksheet that match what you see below and click the "► Run" button in the top-right hand corner. 
+
+Once these are executed you will a `Statement executed successfully.` result and notice the Worksheet context reflect the Role and Warehouse as shown in the screenshot below.
+
 ```
 USE ROLE tasty_admin;
 USE WAREHOUSE tasty_de_wh;
 ```
+
 <img src = "assets/3.1.use_role_and_wh.png"> 
 
 ### Step 2 - Creating and Configuring a Warehouse
 Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to meet compute needs or scaling out to meet concurrency needs. 
 
-The next query which will create our first Warehouse named `tasty_test_wh`. Please execute this query now which result in another `Statement executed successfully.` message.
+> aside positive
+> A virtual warehouse, often referred to simply as a “warehouse”, is a cluster of compute resources in Snowflake.
+>
+
+The next query will create our first Warehouse named `tasty_test_wh`. Please execute this query now which result in another `Statement executed successfully.` message.
+
 ```
 CREATE OR REPLACE WAREHOUSE tasty_test_wh WITH
 COMMENT = 'test warehouse for tasty bytes'
@@ -136,7 +140,7 @@ Based on the query we ran, please see the details below on what each configurati
 > *For further information on Snowflake Warehouses please visit the* [*Snowflake Warehouse Documentation*](https://docs.snowflake.com/en/user-guide/warehouses)
 >
 
-### Step 4 - Click Next -->
+### Step 3 - Click Next -->
 
 ## Creating a Resource Monitor and Applying it to our Warehouse
 Duration: 2
@@ -153,6 +157,7 @@ To begin, lets assume our `accountadmin` role and then create our first Resource
 
 ```
 USE ROLE accountadmin;
+
 CREATE OR REPLACE RESOURCE MONITOR tasty_test_rm
 WITH 
     CREDIT_QUOTA = 100 -- 100 credits
@@ -211,7 +216,10 @@ SHOW PARAMETERS LIKE '%statement%' IN WAREHOUSE tasty_test_wh;
 ### Step 2 - Adjusting Warehouse Statement Timeout Parameter
 Having seen the two available Warehouse Statement Parameters, let's first adjust `statement_timeout_in_seconds` to 30 minutes by running the next query. 
 
-Since this parameter is in seconds we will set it equal to 1800 (30 minutes x 60 seconds). Once executed we will receive another `Statement executed successfully.` result.
+Since this parameter is in seconds we will set it equal to 1800 (30 minutes x 60 seconds). 
+
+Once executed we will receive another `Statement executed successfully.` result.
+
 ```
 ALTER WAREHOUSE tasty_test_wh SET statement_timeout_in_seconds = 1800;
 ```
@@ -223,7 +231,10 @@ ALTER WAREHOUSE tasty_test_wh SET statement_timeout_in_seconds = 1800;
 ### Step 3 - Adjusting Warehouse Statement Queued Timeout Parameter
 Next, we will adjust `statement_queued_timeout_in_seconds` to 10 minutes by running the next query. 
 
-Since this parameter is also in seconds we will set it equal to 600 (10 minutes x 60 seconds). Once executed we will receive another `Statement executed successfully.` result.
+Since this parameter is also in seconds we will set it equal to 600 (10 minutes x 60 seconds). 
+
+Once executed we will receive another `Statement executed successfully.` result.
+
 ```
 ALTER WAREHOUSE tasty_test_wh SET statement_queued_timeout_in_seconds = 600;
 ```
@@ -246,7 +257,9 @@ grow to ensure they are continuing to protect our account from unneccesary consu
 #### Step 1 - Adjusting the Account Statement Timeout Parameter
 To begin, our Account level Statement Parameter changes let's adjust `statement_timeout_in_seconds` to 5 hours by running the next query. 
 
-Since this parameter is in seconds we will set it equal to 18000 ([5 hours x 60 minutes] x 60 seconds). Once executed we will receive another `Statement executed successfully.` result.
+Since this parameter is in seconds we will set it equal to 18000 ([5 hours x 60 minutes] x 60 seconds). 
+
+Once executed we will receive another `Statement executed successfully.` result.
 
 ```
 ALTER ACCOUNT SET statement_timeout_in_seconds = 18000; 
@@ -275,7 +288,7 @@ ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
 Duration: 1
 
 ### Overview
-With Financial Governance building blocks in place, let's now leverage the Snowflake Warehouse we created to execute queries. Along the way, let's Scale this Warehouse up and back down as well as test manually suspending it.
+With Financial Governance building blocks in place, let's now leverage the Snowflake Warehouse we created to execute a few queries. Along the way, let's scale this Warehouse up and back down as well as test manually suspending it.
 
 ### Step 1 - Use our Warehouse to Run a Simple Query
 To begin, let's run the next three queries. The first two will set our `tasty_admin` role and `tasty_test_wh` context and the final one will query our `raw_pos.menu` table to find all food items sold at our Cheeky Greek branded trucks.
@@ -295,9 +308,11 @@ WHERE truck_brand_name = 'Cheeky Greek';
 <img src = "assets/7.1.cheeky_greek.png">
 
 ### Step 2 - Scale our Warehouse Up
-After completing a basic query against one of our dimension tables, let's now get ready to query our much larger orders data. 
+After completing a basic query against one of our dimension tables, let's now get ready to query our much larger orders data set. 
 
-Let's now instantly scale our `tasty_test_wh` up by executing our next query leveraging [ALTER WAREHOUSE... SET warehouse_size](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters). Upon completion we will recieve another `Statement executed successfully` result.
+Let's now instantly scale our `tasty_test_wh` up by executing our next query leveraging [ALTER WAREHOUSE... SET warehouse_size](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters). 
+
+Upon completion we will recieve another `Statement executed successfully` result.
 
 ```
 ALTER WAREHOUSE tasty_test_wh SET warehouse_size = 'XLarge';
@@ -321,7 +336,9 @@ ORDER BY order_count DESC;
 <img src = "assets/7.1.cheeky_greek.png">
 
 ### Step 4 - Scale our Warehouse Down
-Having seen the instant upward scalability of our Snowflake Warehouse and how it can aggregate large result sets with ease, let's now instantly scale our `tasty_test_wh` back down by running the next query. Upon completion we will recieve another `Statement executed successfully` result.
+Having seen the instant upward scalability of our Snowflake Warehouse and how it can aggregate large result sets with ease, let's now instantly scale our `tasty_test_wh` back down by running the next query. 
+
+Upon completion we will recieve another `Statement executed successfully` result.
 
 ```
 ALTER WAREHOUSE tasty_test_wh SET warehouse_size = 'XSmall';
