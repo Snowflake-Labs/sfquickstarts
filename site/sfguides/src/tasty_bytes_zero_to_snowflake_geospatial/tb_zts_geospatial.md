@@ -21,10 +21,17 @@ Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on 
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
-- A
+- How to Access the Snowflake Marketplace
+- How to Acquire Safegraph POI Data from the Snowflake Marketplace
+- How to Create a View
+- How to Create a Geography Point
+- How to Calculate Distance between Points
+- How to Collect Points
+- How to Draw a Minimum Bounding Polygon and Calculate its Area
 
 ### What You Will Build
-- B
+- An Analytics Ready View Complete with First and Third Party Data
+- An Understanding of How to Conduct Geospatial Analysis in Snowflake
 
 ## Creating a Worksheet and Copying in our SQL
 Duration: 1
@@ -76,7 +83,7 @@ Tasty Bytes operates Food Trucks in numerous cities and countries across the glo
 Unfortunately what we have seen so far is our first party data does not give us the building blocks required to complete this sort of Geospatial analysis. Thankfully, the Snowflake Marketplace has great listings from Safegraph that can assist us here.
 
 
-## Step 1 - Using First Party Data to Find Top Selling Locations
+### Step 1 - Using First Party Data to Find Top Selling Locations
 Before we leverage the Snowflake Marketplace to grab Safegraph data, please execute our 
 first three queries which will set our Role and Warehouse context to `tasty_data_engineer` and `tasty_de_wh` and find the Top 10 Selling Locations for Paris in 2022.
 
@@ -97,11 +104,11 @@ GROUP BY o.location_id
 ORDER BY total_sales_usd DESC;
 ```
 
-<img src = "3.1.top_selling.png">
+<img src = "assets/3.1.top_selling.png">
 
 While it is great to get these top selling locations for Paris, we need more Point of Interest data to really conduct rich analysis.
 
-## Step 2 - Acquiring Safegraph POI Data from the Snowflake Marketplace 
+### Step 2 - Acquiring Safegraph POI Data from the Snowflake Marketplace 
 Please follow the steps and video below to access this listing in your Snowflake Account.
 
 - Click -> Home Icon
@@ -332,3 +339,67 @@ FROM _top_10_locations tl;
 ```
 
 <img src = "assets/6.2.st_centroid.png">
+
+### Step 3 - Storing our Center Point in a Variable
+So we can use this Center Point of our Top Selling locations in a future query, please Copy what is displayed in the `geometric_center_point` from the previous query and Paste into this steps query (screenshot of this process below). 
+
+Once pasted, please execute the query which will yield a `Statement executed succesfully.` message. 
+
+<img src = "assets/6.3.set_var.gif">
+
+Now we can use this Center Point variable to help round out our Geospatial analysis process.
+
+### Step 4 - Finding Locations Furthest Away from our Top Selling Center Point
+As mentioned earlier, our Tasty Bytes Executives are interested in seeing what locations we may want to stop considering having our Food Trucks visit in their weekly schedules. Thankfully, every step we have taken so far has now enabled us to deliver on this exact request.
+
+Please now kick off the final query of this Quickstart so we can identify which Paris locations we may want to take off our schedules. Within the query we will see a new function we haven't used yet -> [TO_GEOGRAPHY](https://docs.snowflake.com/en/sql-reference/functions/to_geography).
+
+```
+WITH _2022_paris_locations AS
+(
+    SELECT DISTINCT 
+        o.location_id,
+        o.location_name,
+        ST_MAKEPOINT(o.longitude, o.latitude) AS geo_point
+    FROM frostbyte_tasty_bytes.analytics.orders_v o
+    WHERE 1=1
+        AND o.primary_city = 'Paris'
+        AND YEAR(o.date) = 2022
+)
+SELECT TOP 50
+    ll.location_id,
+    ll.location_name,
+    ROUND(ST_DISTANCE(ll.geo_point, TO_GEOGRAPHY($center_point))/1000,2) AS kilometer_from_top_selling_center
+FROM _2022_paris_locations ll
+ORDER BY kilometer_from_top_selling_center DESC;
+```
+
+<img src = "assets/6.4.far_out.png">
+
+Fantastic work! We have now delivered on the exact as from our Executive Team via a simple process through leveraging Safegraph from the Snowflake Marketplace. I think we can officially call this a job well done.
+
+### Step 5 - Click Next -->
+
+## Conclusion and Next Steps
+Duration: 1
+
+### Conclusion
+Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Geospatial Quickstart. 
+
+By doing so you have now:
+- Accessed the Snowflake Marketplace
+- Acquired Safegraph POI Data from the Snowflake Marketplace
+- Created a View
+- Created a Geography Point
+- Calculated Distance between Points
+- Collected Points
+- Drew a Minimum Bounding Polygon and Calculated its Area
+
+If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.
+
+### Next Steps
+To continue your journey in the Snowflake Data Cloud, please now visit the link below to see all other Powered by Taste Bytes - Quickstarts available to you.
+
+- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/#3)
+
+
