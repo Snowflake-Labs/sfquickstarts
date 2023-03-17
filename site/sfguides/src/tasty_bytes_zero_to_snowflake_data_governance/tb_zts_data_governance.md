@@ -128,7 +128,7 @@ Duration: 0
 Now that we understand these System Defined roles, let's begin leveraging them to create a test role and grant it access to the Customer Loyalty data we will deploy our initial Data Governance features against and our `tasty_dev_wh` Warehouse.
 
 ### Step 1 - Using the Useradmin Role to Create our Test Role
-As we saw, a `useradmin` can create and manage users and roles. Please kick off the next two queries with the first assuming that `useradmin` role and the second leveraging a CREATE ROLE command to generate a new `tasty_test_role` we will use throughout this Quickstart.
+As we saw, a `useradmin` can create and manage users and roles. Please kick off the next two queries with the first assuming that `useradmin` role and the second leveraging a [CREATE ROLE](https://docs.snowflake.com/en/sql-reference/sql/create-role) command to generate a new `tasty_test_role` we will use throughout this Quickstart.
 
 ```
 USE ROLE useradmin;
@@ -137,10 +137,11 @@ CREATE OR REPLACE ROLE tasty_test_role
     COMMENT = 'test role for tasty bytes';
 ```
 
-<img src = "assets/4.1.create_role/png">
+<img src = "assets/4.1.create_role.png">
 
-### Step 2 - 
-### Overview
+
+### Step 2 - Using the Securityadmin Role to Grant Privileges
+
 
 ##
 Duration: 0
