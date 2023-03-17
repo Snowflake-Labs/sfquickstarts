@@ -19,7 +19,7 @@ Duration: 1
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Collaboration! Within this Quickstart we will highlight the immediately value the Snowflake Marketplace can provide by enriching first party data analysis with Weather data provided by Weather Source.
 
 ### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - How to Access the Snowflake Marketplace
@@ -360,7 +360,7 @@ ORDER BY date DESC;
 
 <img src = "assets/6.1.results.png">
 
-**Yay!*8 If this was available when our Financial Analysts were initially running their research, they would not have even needed to ping our data teams as the insights are right there. 
+**Yay!** If this was available when our Financial Analysts were initially running their research, they would not have even needed to ping our data teams as the insights are right there. 
 
 By completing this Quickstart we have seen how quickly we are able to derive real world business value by our work and how easy it is to use the Snowflake Marketplace to unlock additional data insights.
 
