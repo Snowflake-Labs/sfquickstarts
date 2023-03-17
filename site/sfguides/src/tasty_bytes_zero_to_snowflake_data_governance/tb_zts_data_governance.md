@@ -342,7 +342,7 @@ Perfect! Just as desired, we see all of our created tags are associated to the P
 ### Step 5 - Click Next -->
 
 ## Creating Masking Policies and Applying to Tags
-Duration: 2
+Duration: 3
 
 ### Overview
 With our Tag foundation in place, we can now begin to develop Dynamic Masking 

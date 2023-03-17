@@ -135,6 +135,7 @@ SHOW WAREHOUSES LIKE 'tasty%';
     1. Assume the `tasty_data_engineer` role via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html)
     2. Leverage the `tasty_de_wh` Warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html)
     3. Query our `raw_pos.menu` table to find which Menu Items are sold at our Plant Palace branded food trucks.
+    
 ```
 USE ROLE tasty_data_engineer;
 USE WAREHOUSE tasty_de_wh;
