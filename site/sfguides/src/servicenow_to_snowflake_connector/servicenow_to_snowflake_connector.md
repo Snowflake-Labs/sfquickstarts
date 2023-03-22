@@ -7,93 +7,49 @@ status: Private
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Data Engineering, Servicenow 
 
-# Servicenow to Snowflake Connector Installation
+# Snowflake Connector for ServiceNow Installation
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-Ingest data from ServiceNow into Snowflake automatically. The connector supports both the initial load of historical data as well as incremental updates. The latest data is regularly pulled from ServiceNow and you control how frequently it is refreshed.
+Use the Snowflake Connector for ServiceNow to ingest data from ServiceNow into Snowflake automatically and directly. The connector supports both the initial load of historical data as well as incremental updates. The latest data is regularly pulled from ServiceNow and you control how frequently it is refreshed.  
 
-Use this quickstart to configure and understand the Snowflake Connector
-for Servicenow using the Snowsight wizard, select some tables, ingest data, and run some typical usage queries. When you are done stop the connector to avoid costs. You can also do all these steps programmatically; for that please refer to the documentation. 
+Use this quickstart to configure and understand the Snowflake Connector for Servicenow using the Snowsight wizard, select some tables, ingest data, and run some typical usage queries. When you are done stop the connector to avoid costs. You can also do all these steps programmatically; for that please refer to the documentation. 
 
-Note: This quickstart assumes you do not have a Servicenow account, so
-it guides you through the steps of creating a developer account. Of
-course, if you do have a Servicenow account, please feel free to try it
-out, with the caveat that, at the time of writing, the connector is in
-public preview and should not be used for production.
-
+Note: This quickstart assumes you do not have a Servicenow account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow account, please feel free to try it out, with the caveat that, at the time of writing, the connector is in public preview and should not be used for production.
 ### Prerequisites
 - Servicenow account with administrator's rights.
-- Snowflake account and user with accountadmin's role.
--   Accepting the Terms of Service in the Snowflake Marketplace. ORGADMIN rights are required to access this.
-
+- ACCOUNTADMIN rights on the Snowflake account where you will install the connector.
+- ORGADMIN rights to Accept the Terms of Service in the Snowflake Marketplace.
 ### What You’ll Learn 
 - How to set up the Snowflake Connector for Servicenow.
 - How to ingest Servicenow data into Snowflake
 - How to stop the connector to avoid unnecessary costs in a development environment.
-
 ### What You’ll Need 
 - A [Snowflake](https://snowflake.com/) Account 
 - A [Servicenow](https://developer.servicenow.com/dev.do/) developer account
-
 ### What You’ll Build 
-- A Servicenow to Snowflake ingestion data flow.
+A Servicenow to Snowflake ingestion data flow.
 
 <!-- ------------------------ -->
-## Servicenow Setup
-Duration: 30
+## Servicenow Developer Instance Setup
+Duration: 5
+If you do not want to test this connector on your ServiceNow account, no problem, set up a developer instance!
 
 1. Go to the [Servicenow developer website](https://developer.servicenow.com), and create a developer user.
 
 1. Log on to the developer website with your newly created user and select **Create an Instance**. 
 1. Choose an instance type. You receive an email with your instance URL, and admin user and password. 
 
-## Servicenow endpoint configuration
-The Servicenow endpoint configuration window creates an OAuth client application record and generates a client ID and client secret that Snowflake needs to access the restricted resources on the instance.
-
-1. Log on to your Servicenow developer instance.
-1. From the main page, select **All** and  search **Application Registry**.
-![Application Registry](assets/now_reg_auth.png)
-1. Select **New** in the upper right-hand side of the window.
-1. Select **Create an OAuth API endpoint for external clients**. 
-1. Give the endpoint a name, such as **Snowflake_connector**. Leave the client secret blank. This will autofill when you select **Submit** later in the procedure.
-1. Fill in the redirect URL with this syntax (Alternatively, Snowflake will generate this in a later step and you can come back and modify the redirect URL). 
-
-  ```javascript
-   https://apps-api.c1.<cloud_region_id>.<cloud>.app.snowflake.com/oauth/complete-secret
-   ```
-   where 
-   - **cloud_region_id** can be found in the URL of Snowsight, for example: 
- 
- 
-  https://app.snowflake.com/**us-west-2**/MyAccountId/worksheets
-
-  - and **cloud** is aws or azure or gcp.
-
-   For example, for  AWS US WEST 2 would be:
-  ```javascript
-  https://apps-api.c1.us-west-2.aws.app.snowflake.com/oauth/complete-secret
-  ```
-![Oauth](assets/now_oauth_endpoint.png)
-Select **Submit**.
-
-
----
-
-
-<!-- ------------------------ -->
+And while you are waiting for the ServiceNow account to deploy, let's continue on the Snowflake side!
 ## Snowflake Configuration
 Duration: 10
 
-
-
 ### Accept Terms & Conditions
 1. Log on to your Snowflake account through the Snowsight web interface and change to the **orgadmin** role. 
-1. Select “Admin » Billing & Terms”.
+1. Select “Admin -> Billing & Terms”.
 4. In the “Snowflake Marketplace” section, review the Consumer Terms of Service.
 5. If you agree to the terms, select “Accept Terms & Conditions”.
-
 
 ### Set Up Two Virtual Warehouses
 
@@ -101,66 +57,71 @@ Log on to your Snowflake account and change to the **accountadmin** role.
 
 1. Navigate to Admin -> Warehouses and select **+ Warehouse**. 
 2. Name the first vitural warehosue **SERVICENOW_CONNECTOR_WH** and, leaving the defaults, select **Create Warehouse**. 
-![warehouse](assets/warehouse.png)
-
 1. Repeat the above two steps to create a second virtual warehouse **SERVICENOW_WAREHOUSE**.
 
+### Get the Servicenow connector
+The connector is delivered through the Snowflake marketplace. It is delivered into your account as a database with several schemas, tables, views, and stored procedures. 
 
-## Get the Servicenow connector
-The connector is delivered through the Snowflake native application framework into your account as a database with a couple of schemas, tables, views, and stored procedures. 
-
-1. From the Snowflake Account Home page, select Marketplace.)
-
-1. In the search window, enter **servicenow**. The tile appears:
-
-![Tile](assets/tile.png)
-
-1. Select the **Snowflake Connector for ServiceNow**.
-1. Review the business needs and usage samples. Hint: If you want to
-    > access the examples after configuring the connector, simply choose
-    > a role different from accountadmin.
-1. Select **Get**.
-
+1. From the Snowflake Account Home page, select **Marketplace**.
+1. In the search window, enter **ServiceNow** and select the tile.
+1. Review the business needs and usage samples. 
 1. Select the warehouse you created above, **SERVICENOW_CONNECTOR_WH**.
-1. For this quickstart, leave the default name for the installation database.
-The screen should look like the following:
-![Get](assets/get.png)
-
+1. For this quickstart, leave the default name for the installation database, **Snowflake_Connector_for_ServiceNow**.
 1. Select **Get**. You receive the following message, **Snowflake Connector for SeviceNow is now ready to use in your account.**
-
 1. Select **Done**.
 
-If you would like to verify the connector was installed, from Snowsight, you can go to **Data -> Databases**. You will see a new database with the name **Snowflake_Connector_for_ServiceNow**. Open the Public schema and views to see the Global_Config view. Some of the Procedures have
+Let's check that the connector was installed. From Snowsight, go to **Data -> Databases**. You will see a new database with the name **Snowflake_Connector_for_ServiceNow**. Open the Public schema and views to see the Global_Config view. Some of the Procedures have
 also been installed. Others will appear after the installation finishes. 
 
 ![installed](assets/installed.png)
 
-## Connect Snowflake to Servicenow
+## Set up the Snowflake to ServiceNow Oauth hand-shake
+Please have two tabs in your browser open for the next part, as you will have to copy some data from Snowflake to ServiceNow and vice-versa. 
+* From the Snowflake side, we want the connector to generate the re-direct URL which we will paste into the Application Registry, and
+* From the ServiceNow side we want the Application Registry to provide the Cient id and password, which we then paste into Snowflake.
 
-1. From the Snowflake Account Home page, select Marketplace and then
-    > select the **Snowflake Connector for Servicenow** tile.
-1. In the **Snowflake Connector for ServiceNow** window, select **Manage**.
-
+### Snowflake side - part 1 of handshake
+Launch the Snowflake Connector for ServiceNow from the **Marketplace** -> **Snowflake Connector for Servicenow**.
+1. Select **Manage**.
 1. Select **Connect**.
-
 1. Fill in the Servicenow instance details. This is the first part of the Servicenow URL for your Servicenow account, **without** the trailing *service-now.com*.
 
 1. Select **OAuth2** for the Authentication method.
+1. Copy the redirect URL for use in a couple of minutes.
 
-1. Enter the **Client id** from Servicenow that was generated in the
-    > Servicenow endpoint configuration.
+Now, open a new tab in your browser (without closing the above), and follow the steps in the next section. 
 
-1. Copy the Client secret from Servicenow and into the Snowflake configure pop-up.  *Hint: on Servicenow, unlock the field by clicking on the lock, and then copy the text to make sure you are actually copying the right text.* The screen should look something similar to this: ![Connect](assets/now_connect.png)
+### Servicenow - part 1 of handshake
+1. Log on to your Servicenow developer instance.
+1. From the main page, select **All** and search **Application Registry**.
+
+![Application Registry](assets/now_reg_auth.png)
+1. Select **New** in the upper right-hand side of the window.
+1. Select **Create an OAuth API endpoint for external clients**. 
+1. Give the endpoint a name, such as **Snowflake_connector**. Leave the client secret blank. This will autofill.
+1. Paste in the redirect URL that was generated on the Snowflake side - part 1. 
+
+![Oauth](assets/now_oauth_endpoint.png)
+1. Select **Submit**.
+1. Note that the **Client id** and **Client secret** are auto-generated. 
+1. Copy the **Client id**.
+
+Now, time to jump back to the Snowflake configuration tab.
+
+### Snowflake - part 2 of handshake
+
+1. Paste the  **Client id** from Servicenow into the Snowflake configure pop-up.
+1. Go back to the Servicenow tab and copy the **Client secret** and paste it into the Snowflake configure pop-up. 
+ ![Connect](assets/now_connect.png)
 1. Select **Connect**. Your Servicenow accounts pops up and requests to connect to Snowflake. 
 ![check](assets/now_check.png)
 1. Select **Allow**.
 The connection is established between the two systems. 
 
-To verify the connection, select the three dots [...] and **View Details**. At the top of the pop-up you will see the date **ServiceNow**
-Authenticated.
-## Select Servicenow Tables
+To verify the connection, select the three dots [...] and **View Details**. At the top of the pop-up you will see the date **ServiceNow** Authenticated.
 
-1. In Snowsight, select the **Snowflake Connector for Servicenow** tile.
+[Add a screen shot here]
+## Select Servicenow Tables
 
 1. In the **Snowflake Connector for ServiceNow** window, select **Select Tables**.
 
@@ -168,10 +129,10 @@ Authenticated.
 
 1. To choose other tables, clear the search, put the table name and select the checkbox. Do this for the following tables:
   
-    SYS_CHOICE
-    SYS_USER
-    SYS_USER_GROUP
-    TASK
+   * SYS_CHOICE
+   * SYS_USER
+   * SYS_USER_GROUP
+   * TASK
 
     Hint: Select Field title "Status" to sort and show all the tables you selected.
 1. Select **Configure** and review the default values for destinations and schemas, roles, a secondary warehouse and journal table.
@@ -183,13 +144,6 @@ You receive a message indicating success:
 
 ![success](assets/success.png)
 
-To programmatically verify what tables you selected, from SQL run the following commands:
-```SQL
-
-USE DATABASE snowflake_connector_for_servicenow;
-USE SCHEMA public;
-SELECT * FROM enabled_tables WHERE ENABLED = true;
-```
 ## Connector Monitoring (Query Sync History)
  
 In the connector interface, choose **Query Sync History.** A worksheet
@@ -197,9 +151,9 @@ opens with several SQL queries you can execute to get monitoring
 information.
 
 ## Setting Permissions to Read 
-Once you have ingested some data, you probably want to access it. Use the following SQL to create the **servicenow_reader_role** and give it the right access.
+Once you have ingested some data, you probably want to access it. Use the following SQL to create the **servicenow_reader_role** and give it the right access to the database, schema, and warehouse.
 ```SQL
-USE ROLE accountadmin;**\
+USE ROLE accountadmin;
 CREATE ROLE servicenow_reader_role;
 GRANT USAGE ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
 GRANT USAG ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
