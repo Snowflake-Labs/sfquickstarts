@@ -11,13 +11,3 @@ USE DATABASE servicenow_dest_db;
 USE SCHEMA dest_schema;
 
 USE WAREHOUSE SERVICENOW_WAREHOUSE;
-
-SELECT * FROM incident;
-SELECT distinct upper(raw:) from incident;
-SELECT upper(raw:description) c, count (raw:category) co from incident group by c order by co desc ;
-
-SELECT upper(raw:category) cat, raw:task_effective_number num, upper(raw:description) des, count (raw:category) co from incident 
---where raw:task_effective_number = 'INC0008111' 
-group by 1,2,3 order by cat desc;
-
---INC0008111
