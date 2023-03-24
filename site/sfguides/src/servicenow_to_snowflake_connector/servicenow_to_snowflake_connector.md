@@ -152,13 +152,7 @@ Under the status for the connector, which displays "Choose Resources", select **
 
 This displays the Configure Connector dialog. By default, the fields are set to the names of objects that are created when you configure the connector.
 
- | Field                  | Description | 
-    | :---                   |    :---    |  
-    | Warehouse              | Identifier for a new, dedicated virtual warehouse for the connector.       | 
-    | Destination Database   | Identifier for a new database that will contain the schema with the tables for the ServiceNow data in Snowflake.        |
-    | Destination Schema     | Identifier for a new schema that will contain the ServiceNow data in Snowflake.       | 
-    | Role                   | Identifier for a new custom role for the connector |
-    | Journal table          | (Optional) To enable the propagation of deleted records, set this to the table that serves as the source of information about deleted records.       |
+![default config](assets/configuredefaults.png)
 
 Check out [Configuring the Snowflake Connector for ServiceNow](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-installing-ui.html#configuring-the-snowflake-connector-for-servicenow) for more information on these fields. 
 
@@ -187,7 +181,7 @@ Duration: 4
    * task
 
  > aside positive
- >   Hint: Select Field title **Status** to sort and show all the tables you selected.
+ >   Hint: Clear the search fiels, and then select the title **Status** to sort and show all the tables you selected.
 
  ![Select](assets/select.png)
 
@@ -208,41 +202,44 @@ opens with several SQL queries you can execute to get monitoring
 information. Here are some examples:
 
 ```SQL
--- Get general information about all ingestions
-select * from SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
--- Search for information about particular table ingestions
-select * from SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats where table_name = '<table_name>';
--- Check connector configuration
-select * from SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.global_config;
--- Calculate ingested data volume
-with d as (
-    select
+// Get general information about all ingestions
+SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
+
+// Search for information about particular table ingestions
+SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats WHERE table_name = '<table_name>';
+
+// Check connector configuration
+SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.global_config;
+
+// Calculate ingested data volume
+WITH d as (
+    SELECT
         table_name,
-        last_value(totalrows) over (partition by table_name order by run_end_time) as row_count
-    from SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats
+        last_value(totalrows) OVER (PARTITION BY table_name ORDER BY run_end_time) AS row_count
+    FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats
 )
-select table_name, max(row_count) as row_count from d group by table_name order by table_name;
--- Connector runtime (minutes from start)
-select timediff('minute', min(run_start_time), max(run_end_time)) as connector_runtime_in_minutes
-from SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
+SELECT table_name, max(row_count) as row_count FROM d GROUP BY table_name ORDER BY table_name;
+
+// Connector runtime (minutes from start)
+SELECT timediff('minute', min(run_start_time), max(run_end_time)) AS connector_runtime_in_minutes
+FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
 ```
 
 
 ## Setting reader role permissions
 Duration: 3
 
-Now that you have ingested some data, let's create the **servicenow_reader_role** and give it access to the database, schema, and virtual warehouse.
+Now that you have ingested some data, let's alter the **servicenow_reader_role** to give it access to the database, schema, future tables, future views, and virtual warehouse.
 ```SQL
 USE ROLE accountadmin;
-CREATE ROLE servicenow_reader_role;
-GRANT USAGE ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
+CREATE ROLE IF NOT EXISTS servicenow_reader_role IF NOT EXISTS;
 GRANT USAGE ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
 GRANT USAGE ON SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role; 
-GRANT USAGE ON WAREHOUSE SERVICENOW_WH TO ROLE servicenow_reader_role;
 GRANT SELECT ON FUTURE TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 GRANT SELECT ON FUTURE VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 GRANT SELECT ON ALL TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 GRANT SELECT ON ALL VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
+GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_reader_role;
 ```
 ## Query the Data
 Duration: 5
@@ -254,7 +251,7 @@ Check out the tables that the connector has created under the DEST_SCHEMA. For e
 - A view named table_name__view that contains the data in flattened form, where the view contains a column for each column in the original table and a row for each record that is present in the original table.
 
 > aside negative
-> Warning! Creation of the views may take up to 20 minutes after the tables have been ingested for the first time. 
+> Warning! After you start the connector, it takes for the views to be created. The creation of the views relies on data in the ServiceNow sys_db_object, sys_dictionary and sys_glide_object tables. The connector loads metadata from these ServiceNow tables after you enable any table for synchronization. It can take some time for the connector to load this metadata. Do not stop the warehouse during this time!
 
 - A view named table_name__view_with_deleted that contains the same data as table_name__view as well as rows for records that have been deleted in ServiceNow.
 
@@ -311,6 +308,22 @@ ORDER BY
     ,PRIORITY
 ;
 ```
+## Setting the monitoring role permissions
+If you would like to monitor errors, run stats, connector stats, enabled tables, you can set up a ServiceNow monitoring role that allows access to the views in the connector database.  For example, run the following in a worksheet (and then use the role):
+```SQL
+USE ROLE accountadmin;
+CREATE ROLE IF NOT EXISTS servicenow_monitor_role ;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW TO ROLE servicenow_monitor_role;
+GRANT USAGE ON SCHEMA PUBLIC TO ROLE servicenow_monitor_role; 
+GRANT SELECT ON FUTURE TABLES IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
+GRANT SELECT ON ALL VIEWS IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
+GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_monitor_role;
+GRANT ROLE servicenow_monitor_role to role accountadmin;
+
+```
+
 ## In the Development Environment Stop the Ingestion
 Duration: 1
 
