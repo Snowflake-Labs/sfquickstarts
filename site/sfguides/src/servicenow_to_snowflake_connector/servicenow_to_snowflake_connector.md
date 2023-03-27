@@ -159,7 +159,11 @@ Check out [Configuring the Snowflake Connector for ServiceNow](https://other-doc
 Select **Configure**. The dialog box closes and the status of the connector changes to Provisioning. It can take a few minutes for the configuration process to complete.
 
 > aside negative
-> Watch out! The created warehouse is created as a **Large**. For this lab, you don't need all the power! Go to Admin-> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL.
+> Watch out!!! The created warehouse is created as a **Large** and with a auto timeout of 10 minutes. So this means, if you set to refresh every hour, the Large warehouse (8 credits/hour) will wake up for a minimum of 10 minutes every hour.  For this lab, you don't need all the power! Go to Admin-> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL, and the auto timeout to one minute.
+
+> aside positive
+> Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
+![resource monitor](/assets/monitor.png)
 
 ## Select ServiceNow Tables
 Duration: 4
@@ -173,7 +177,7 @@ Duration: 4
 
 1. In the **Snowflake Connector for ServiceNow** window, select **Select Tables**.
 
-1. To be able to run our test query later, we need to ingest a couple of tables. From the search window enter **incident** and check the box next to it and choose a 30 minute sync time. **Do not start the ingestion yet!**
+1. To be able to run our test query later, we need to ingest a couple of tables. From the search window enter **incident** and check the box next to it and choose a 24 hour sync time. 
 
 1. To choose other tables, clear the search, put the table name and select the checkbox. Do this for the following tables:
 
@@ -186,13 +190,16 @@ Duration: 4
  ![Select](assets/select.png)
 
 
-1. Select **Start Ingestion**. The select windows closes and you get the message "Loading Data" from the main Connector window.
+1. Select **Start Ingestion**. The select windows closes and you get the message "Loading Data" from the main Connector window. In addition to the tables you choose, three system tables will also be loaded. These are necessary to build the views on the raw data: sys_dictionary, sys_db_object, and sys_glide_object.
 
 ![load](assets/load.png)
 
 You receive a message indicating success:
 
 ![success](assets/success.png)
+
+> aside negative
+> Don't be too clever in stopping the ingest too quickly, otherwise the metadata doesn't have time to load and the connector doesn't have the time to build the necessary views. 
 
 ## Connector Monitoring (Query Sync History)
  Duration: 5
