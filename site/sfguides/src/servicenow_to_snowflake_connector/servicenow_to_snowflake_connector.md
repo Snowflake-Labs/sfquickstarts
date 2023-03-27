@@ -163,7 +163,7 @@ Select **Configure**. The dialog box closes and the status of the connector chan
 
 > aside positive
 > Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
-![resource monitor](/assets/monitor.png)
+![resource monitor](assets/monitor.png)
 
 ## Select ServiceNow Tables
 Duration: 4
