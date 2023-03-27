@@ -187,7 +187,7 @@ Duration: 4
  > aside positive
  >   Hint: Clear the search fields, and then select the title **Status** to sort and show all the tables you selected.
 
- ![Select](assets/select.png)
+ ![Select](assets/Select.png)
 
 
 1. Select **Start Ingestion**. The select windows closes and you get the message "Loading Data" from the main Connector window. In addition to the tables you choose, three system tables will also be loaded. These are necessary to build the views on the raw data: sys_dictionary, sys_db_object, and sys_glide_object.
