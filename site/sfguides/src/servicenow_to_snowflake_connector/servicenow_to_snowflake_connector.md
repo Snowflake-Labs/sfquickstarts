@@ -185,7 +185,7 @@ Duration: 4
    * task
 
  > aside positive
- >   Hint: Clear the search fiels, and then select the title **Status** to sort and show all the tables you selected.
+ >   Hint: Clear the search fields, and then select the title **Status** to sort and show all the tables you selected.
 
  ![Select](assets/select.png)
 
@@ -199,7 +199,7 @@ You receive a message indicating success:
 ![success](assets/success.png)
 
 > aside negative
-> Don't be too clever in stopping the ingest too quickly, otherwise the metadata doesn't have time to load and the connector doesn't have the time to build the necessary views. 
+> Don't stop the ingest too quickly. Make sure the views are built in the destination database first.
 
 ## Connector Monitoring (Query Sync History)
  Duration: 5
