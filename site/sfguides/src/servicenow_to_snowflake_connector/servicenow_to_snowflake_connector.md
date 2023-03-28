@@ -48,7 +48,7 @@ Deployment is usually pretty quick, around five minutes. But, while you wait let
 ## Create and set up the Snowflake Account
 
 ### Create the Snowflake Account
-If you do not have a Snowflake account, no problem, you can get a free trial  at [snowflake.com](https://www.snowflake.com/en/).Select **Start for Free** and follow the instructions. You will probably want to deploy in the same region as the ServiceNow deployment, but this is not a requirement for the lab. 
+If you do not have a Snowflake account, no problem, you can get a free trial  at [snowflake.com](https://www.snowflake.com/en/).Select **Start for Free** and follow the instructions. 
 ### Accept the Terms & Conditions
 Duration: 1
 1. Log on to your Snowflake account through the Snowsight web interface and change to the **orgadmin** role. 
@@ -68,7 +68,7 @@ Change to the **accountadmin** role.
 ### Install the ServiceNow connector
 Duration: 3
 
-The connector, the first of its kind to be deployed on Snowflake's native apps framework, is delivered through the Snowflake marketplace, available to all Snowflake customers instantly. Once chosen, it is installed into your account as a database with several schemas, tables, views, and protected stored procedures. 
+The connector, the first of its kind to be deployed on Snowflake's native apps framework, is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. Once chosen, it is installed into your account as a database with several views, and stored procedures. 
 
 1. From the Snowflake Account Home page, select **Marketplace**.
 1. In the search window, enter **ServiceNow** and select the tile.
@@ -78,6 +78,8 @@ The connector, the first of its kind to be deployed on Snowflake's native apps f
 1. Select **Options**.
 1. For this lab, leave the default name for the installation database, **Snowflake_Connector_for_ServiceNow**. Do not select any additional roles.
 1. Select **Get**. You receive the following message, **Snowflake Connector for SeviceNow is now ready to use in your account.**
+![Get ServiceNow Connector](assets/get_sn_ctr.png)
+
 1. Select **Done**. We will manage it in the next section. 
 
 Let's check that the connector was installed. From Snowsight, go to **Data -> Databases**. You will see a new database with the name **Snowflake_Connector_for_ServiceNow**. Open the Public schema and views to see the Global_Config view. Some of the Procedures have
@@ -98,7 +100,7 @@ Duration: 4
 
 Launch the Snowflake Connector for ServiceNow from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
 1. Select **Manage**.
-1. Select **Connect**. Select **Connect** again.
+1. Select **Connect**. 
 1. Fill in the ServicNow instance details. This is the first part of the ServiceNow URL for your ServiceNow account, **without** the trailing *service-now.com*.
 1. Select **OAuth2** for the Authentication method.
 1. Copy the redirect URL. You will need it in the next section.
@@ -144,7 +146,7 @@ To verify the connection, select the three dots [...] and **View Details**. At t
 Select **Done**. 
 
 > aside negative
-> If you are having issues, perhaps the password wasn't copied. Unlock the password field and copy and paste the text.
+> If you are having issues, perhaps the Client secret wasn't copied. Unlock the password field and copy and paste the text.
 ## Configure the Connector
 Duration: 5
 
@@ -173,11 +175,11 @@ Duration: 4
 > - The connector can only ingest tables with **sys_id** columns present.
 > - ServiceNow views are not supported. Instead of ingesting these views, you should synchronize all tables for the underlying view and join the synchronized tables in Snowflake.
 > - Incremental updates occur only for tables with **sys_updated_on** or **sys_created_on** columns.
-> - For tables that do not have sys_updated_on or sys_created_on columns, the connector uses **truncate and load** mode.
+> - For tables that do not have sys_updated_on or sys_created_on columns, the connector uses **truncate and load** mode. In this mode, the table is always ingested using the initial load approach, and newly ingested data replaces the old data.
 
-1. In the **Snowflake Connector for ServiceNow** window, select **Select Tables**.
+1. In the **Snowflake Connector for ServiceNow** window, under the status for the connector, which displays "Start Data Sync", select **Select Tables**.
 
-1. To be able to run our test query later, we need to ingest a couple of tables. From the search window enter **incident** and check the box next to it and choose a 24 hour sync time. 
+1. To be able to run our test query later, we need to ingest a couple of tables. From the search window enter **incident** and check the box next to it and choose a 30 minute sync time. 
 
 1. To choose other tables, clear the search, put the table name and select the checkbox. Do this for the following tables:
 
@@ -194,7 +196,7 @@ Duration: 4
 
 ![load](assets/load.png)
 
-You receive a message indicating success:
+You receive a message indicating success. It appears once at least one table has been fully ingested.
 
 ![success](assets/success.png)
 
@@ -236,9 +238,10 @@ FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
 ## Setting reader role permissions
 Duration: 3
 
-Now that you have ingested some data, let's alter the **servicenow_reader_role** to give it access to the database, schema, future tables, future views, and virtual warehouse.
+Now that you have ingested some data, let's create the **servicenow_reader_role** to give it access to the database, schema, future tables, future views, and virtual warehouse.
 ```SQL
 USE ROLE accountadmin;
+USE DATABASE SERVICENOW_DEST_DB;
 CREATE ROLE IF NOT EXISTS servicenow_reader_role IF NOT EXISTS;
 GRANT USAGE ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
 GRANT USAGE ON SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role; 
@@ -251,7 +254,7 @@ GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_reader_role;
 ## Query the Data
 Duration: 5
 
-Check out the tables that the connector has created under the DEST_SCHEMA. For each table in ServiceNow that is configured for synchronization, the connector creates the following table and views:
+Check out the tables that the connector has created under the DEST_SCHEMA of the SERVICENOW_DEST_DB database. For each table in ServiceNow that is configured for synchronization, the connector creates the following table and views:
 
 - A table with the same name that contains the data in raw form, where each record is contained in a single VARIANT column.
 
@@ -270,7 +273,7 @@ Check out the tables that the connector has created under the DEST_SCHEMA. For e
 Here's a little test query for you to identify the number of incidents raised by month and priority. Other example queries are provided on the Snowflake Connector for ServiceNow page in the Marketplace.
 
 ```SQL
-USE ROLE ACCOUNTADMIN;
+USE ROLE SERVICENOW_READER_ROLE;
 USE DATABASE SERVICENOW_DEST_DB;
 USE SCHEMA DEST_SCHEMA;
 
@@ -300,7 +303,6 @@ WITH T1 AS (
 SELECT
     YEAR(CREATED_ON) AS YEAR_CREATED
     ,MONTH(CREATED_ON) AS MONTH_CREATED
-    ,CONFIGURATION_ITEM AS APPLICATION
     ,PRIORITY
     ,COUNT(DISTINCT TICKET_NUMBER) AS NUM_INCIDENTS
 FROM
@@ -321,17 +323,10 @@ If you would like to monitor errors, run stats, connector stats, enabled tables,
 USE ROLE accountadmin;
 CREATE ROLE IF NOT EXISTS servicenow_monitor_role ;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW TO ROLE servicenow_monitor_role;
-GRANT USAGE ON SCHEMA PUBLIC TO ROLE servicenow_monitor_role; 
-GRANT SELECT ON FUTURE TABLES IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
-GRANT SELECT ON FUTURE VIEWS IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
-GRANT SELECT ON ALL TABLES IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
-GRANT SELECT ON ALL VIEWS IN SCHEMA PUBLIC TO ROLE servicenow_monitor_role;
 GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_monitor_role;
-GRANT ROLE servicenow_monitor_role to role accountadmin;
-
 ```
 
-## In the Development Environment Stop the Ingestion
+## Stop the Ingestion
 Duration: 1
 
 During this lab, we're only ingesting the data, so it makes sense to stop the ingestion after that initial load. However, in an operational environment, you would keep it running.
