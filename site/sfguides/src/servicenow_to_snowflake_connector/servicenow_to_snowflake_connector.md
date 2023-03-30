@@ -12,12 +12,12 @@ tags: Connectors, Data Engineering, Servicenow
 ## Overview 
 Duration: 1
 
-Use this quickstart lab to configure and understand the Snowflake Connector for ServiceNow using the Snowsight wizard, select some tables, ingest data, and run an example query. This quickstart is not meant to be exhaustive. Please check the [Snowflake Connector for ServiceNow documentation](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html) for full functionality and limitations.
+Use this quickstart lab to configure and understand the Snowflake Connector for ServiceNow® using the Snowsight wizard, select some tables, ingest data, and run an example query. This quickstart is not meant to be exhaustive. Please check the [Snowflake Connector for ServiceNow documentation](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html) for full functionality and limitations.
 
 ![now](assets/first.png)
 
 > aside positive
-> Note: This quickstart assumes you do not have a ServiceNow account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow account, please feel free to try it out, with the caveat that, at the time of writing, the connector is in public preview and should not be used for production. 
+> Note: This quickstart assumes you do not have a ServiceNow account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow account, please feel free to try it out, with the caveat that, at the time of this writing, the connector is in public preview and therefore the [preview terms](https://www.snowflake.com/legal/preview-terms-of-service/) apply. 
 ### Prerequisites
 - ServiceNow account with administrator's rights.
 - ORGADMIN rights to Accept the Terms of Service in the Snowflake Marketplace.
@@ -44,7 +44,7 @@ If you do not want to test this connector on your ServiceNow account, no problem
 1. Log on to the developer website with your newly created user and select **Create an Instance**. 
 1. Choose an instance type. You receive an email with your instance URL, and admin user and password. 
 
-Deployment is usually pretty quick, around five minutes. But, while you wait let's go to the next step and configure Snowflake!
+Deployment is usually pretty quick, around five minutes. But, while you wait, let's go to the next step and configure Snowflake!
 ## Create and set up the Snowflake Account
 
 ### Create the Snowflake Account
@@ -63,7 +63,7 @@ You'll need some compute for the connector, so let's set up a virtual warehouse 
 
 Change to the **accountadmin** role.
 1. Navigate to Admin -> Warehouses and select **+ Warehouse**. 
-2. Name the  vitural warehouse **SERVICENOW_CONNECTOR_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
+2. Name the  virtual warehouse **SERVICENOW_CONNECTOR_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
 
 ### Install the ServiceNow connector
 Duration: 1
@@ -101,7 +101,7 @@ Duration: 1
 Launch the Snowflake Connector for ServiceNow from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
 1. Select **Manage**.
 1. Select **Connect**. 
-1. Fill in the ServicNow instance details. This is the first part of the ServiceNow URL for your ServiceNow account, **without** the trailing *service-now.com*.
+1. Fill in the ServiceNow instance details. This is the first part of the ServiceNow URL for your ServiceNow account, **without** the trailing *service-now.com*.
 1. Select **OAuth2** for the Authentication method.
 1. Copy the redirect URL. You will need it in the next section.
 
@@ -242,7 +242,7 @@ Now that you have ingested some data, let's create the **servicenow_reader_role*
 ```SQL
 USE ROLE accountadmin;
 USE DATABASE SERVICENOW_DEST_DB;
-CREATE ROLE IF NOT EXISTS servicenow_reader_role IF NOT EXISTS;
+CREATE ROLE IF NOT EXISTS servicenow_reader_role;
 GRANT USAGE ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
 GRANT USAGE ON SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role; 
 GRANT SELECT ON FUTURE TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
@@ -321,7 +321,7 @@ ORDER BY
 If you would like to monitor errors, run stats, connector stats, enabled tables, you can set up a ServiceNow monitoring role that allows access to the views in the connector database.  For example, run the following in a worksheet (and then use the role):
 ```SQL
 USE ROLE accountadmin;
-CREATE ROLE IF NOT EXISTS servicenow_monitor_role ;
+CREATE ROLE IF NOT EXISTS servicenow_monitor_role;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW TO ROLE servicenow_monitor_role;
 GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_monitor_role;
 ```
