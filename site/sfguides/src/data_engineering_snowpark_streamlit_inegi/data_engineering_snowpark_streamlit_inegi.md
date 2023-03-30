@@ -5,7 +5,7 @@ categories: Getting Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: snowpark, Data engineering, python, streamlit
+tags: snowpark, Data engineering, python, streamlit, es
 
 # Ingenieria de Datos con Snowpark y visualización con Streamlit
 <!-- ------------------------ -->
