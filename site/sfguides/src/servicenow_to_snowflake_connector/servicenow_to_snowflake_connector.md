@@ -12,34 +12,34 @@ tags: Connectors, Data Engineering, Servicenow
 ## Overview 
 Duration: 1
 
-Use this quickstart lab to configure and understand the Snowflake Connector for ServiceNow® using the Snowsight wizard, select some tables, ingest data, and run an example query. This quickstart is not meant to be exhaustive. Please check the [Snowflake Connector for ServiceNow documentation](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html) for full functionality and limitations.
+Use this quickstart lab to configure and understand the Snowflake Connector for ServiceNow® using the Snowsight wizard, select some tables, ingest data, and run an example query. This quickstart is not meant to be exhaustive. Please check the [Snowflake Connector for ServiceNow® documentation](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html) for full functionality and limitations.
 
 ![now](assets/first.png)
 
 > aside positive
-> Note: This quickstart assumes you do not have a ServiceNow account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow account, please feel free to try it out, with the caveat that, at the time of this writing, the connector is in public preview and therefore the [preview terms](https://www.snowflake.com/legal/preview-terms-of-service/) apply. 
+> Note: This quickstart assumes you do not have a ServiceNow® account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow® account, please feel free to try it out, with the caveat that, at the time of this writing, the connector is in public preview and therefore the [preview terms](https://www.snowflake.com/legal/preview-terms-of-service/) apply. 
 ### Prerequisites
-- ServiceNow account with administrator's rights.
+- ServiceNow® account with administrator's rights.
 - ORGADMIN rights to Accept the Terms of Service in the Snowflake Marketplace.
 - ACCOUNTADMIN rights on the Snowflake account where you will install the connector.
 
 ### What You’ll Learn 
-- How to set up the Snowflake Connector for ServiceNow.
-- How to ingest ServiceNow data into Snowflake
+- How to set up the Snowflake Connector for ServiceNow®.
+- How to ingest ServiceNow® data into Snowflake
 - How to stop the connector to avoid unnecessary costs in a development environment.
 ### What You’ll Need 
 - A [Snowflake](https://snowflake.com/) Account 
 - A [ServiceNow](https://developer.servicenow.com/dev.do/) developer account
 ### What You’ll Build 
-A ServiceNow to Snowflake ingestion data flow.
+A ServiceNow® to Snowflake ingestion data flow.
 
 <!-- ------------------------ -->
-## Set up the ServiceNow Developer Instance
+## Set up the ServiceNow® Developer Instance
 Duration: 5
 
-If you do not want to test this connector on your ServiceNow account, no problem, this step explains how to set up a developer instance! 
+If you do not want to test this connector on your ServiceNow® account, no problem, this step explains how to set up a developer instance! 
 
-1. Go to the [ServiceNow developer website](https://developer.servicenow.com), and create a developer user.
+1. Go to the [ServiceNow® developer website](https://developer.servicenow.com), and create a developer user.
 
 1. Log on to the developer website with your newly created user and select **Create an Instance**. 
 1. Choose an instance type. You receive an email with your instance URL, and admin user and password. 
@@ -65,7 +65,7 @@ Change to the **accountadmin** role.
 1. Navigate to Admin -> Warehouses and select **+ Warehouse**. 
 2. Name the  virtual warehouse **SERVICENOW_CONNECTOR_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
 
-### Install the ServiceNow connector
+### Install the ServiceNow® connector
 Duration: 1
 
 The connector, the first of its kind to be deployed on Snowflake's native apps framework, is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. Once chosen, it is installed into your account as a database with several views, and stored procedures. 
@@ -87,30 +87,30 @@ also been installed. Others will appear after the installation finishes.
 
 ![installed](assets/installed.png)
 
-## Set up the Snowflake to ServiceNow Oauth hand-shake
+## Set up the Snowflake to ServiceNow® Oauth hand-shake
 
 This section shows how to set up the Oauth handshake using the Snowsight user interface, which is *massively* simpler than managing all the bits through code. 
 
-Please have two tabs in your browser open for the next part, as you will have to copy some data from Snowflake to ServiceNow and vice-versa. 
+Please have two tabs in your browser open for the next part, as you will have to copy some data from Snowflake to ServiceNow® and vice-versa. 
 * From the Snowflake side, we want the connector to generate the **re-direct URL** which we will paste into the Application Registry, and
-* From the ServiceNow side we want the Application Registry to provide the **Client id** and **password**, which we then paste into Snowflake.
+* From the ServiceNow® side we want the Application Registry to provide the **Client id** and **password**, which we then paste into Snowflake.
 
 ### On the Snowflake hand
 Duration: 1
 
-Launch the Snowflake Connector for ServiceNow from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
+Launch the Snowflake Connector for ServiceNow® from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
 1. Select **Manage**.
 1. Select **Connect**. 
-1. Fill in the ServiceNow instance details. This is the first part of the ServiceNow URL for your ServiceNow account, **without** the trailing *service-now.com*.
+1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** the trailing *service-now.com*.
 1. Select **OAuth2** for the Authentication method.
 1. Copy the redirect URL. You will need it in the next section.
 
 Now, open a new tab in your browser (without closing the above), and follow the steps in the next section. 
 
-### On the ServiceNow Other hand
+### On the ServiceNow® Other hand
 Duration: 2
 
-1. Log on to your ServiceNow developer instance.
+1. Log on to your ServiceNow® developer instance.
 1. From the main page, select **All** and search **Application Registry**.
 
 ![Application Registry](assets/now_reg_auth.png)
@@ -130,8 +130,8 @@ Now, time to jump back to the Snowflake configuration tab.
 ### Now Let's Shake
 Duration: 1
 
-1. Paste the  **Client id** from ServiceNow into the Snowflake configure pop-up.
-1. Go back to the ServiceNow tab and copy the **Client secret** and paste it into the Snowflake configure pop-up. 
+1. Paste the  **Client id** from ServiceNow® into the Snowflake configure pop-up.
+1. Go back to the ServiceNow® tab and copy the **Client secret** and paste it into the Snowflake configure pop-up. 
 1. No need to change the Advanced Settings, but feel free to check them out.
  ![Connect](assets/now_connect.png)
 1. Select **Connect**. Your ServiceNow accounts pops up and requests to connect to Snowflake. 
@@ -156,7 +156,7 @@ This displays the Configure Connector dialog. By default, the fields are set to 
 
 ![default config](assets/configuredefaults.png)
 
-Check out [Configuring the Snowflake Connector for ServiceNow](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-installing-ui.html#configuring-the-snowflake-connector-for-servicenow) for more information on these fields. 
+Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-installing-ui.html#configuring-the-snowflake-connector-for-servicenow) for more information on these fields. 
 
 Select **Configure**. The dialog box closes and the status of the connector changes to Provisioning. It can take a few minutes for the configuration process to complete.
 
@@ -167,13 +167,13 @@ Select **Configure**. The dialog box closes and the status of the connector chan
 > Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
 ![resource monitor](assets/monitor.png)
 
-## Select ServiceNow Tables
+## Select ServiceNow® Tables
 Duration: 1
 
 > aside negative
 > A couple of things to be aware of:
 > - The connector can only ingest tables with **sys_id** columns present.
-> - ServiceNow views are not supported. Instead of ingesting these views, you should synchronize all tables for the underlying view and join the synchronized tables in Snowflake.
+> - ServiceNow® views are not supported. Instead of ingesting these views, you should synchronize all tables for the underlying view and join the synchronized tables in Snowflake.
 > - Incremental updates occur only for tables with **sys_updated_on** or **sys_created_on** columns.
 > - For tables that do not have sys_updated_on or sys_created_on columns, the connector uses **truncate and load** mode. In this mode, the table is always ingested using the initial load approach, and newly ingested data replaces the old data.
 
@@ -254,23 +254,23 @@ GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_reader_role;
 ## Query the Data
 Duration: 1
 
-Check out the tables that the connector has created under the DEST_SCHEMA of the SERVICENOW_DEST_DB database. For each table in ServiceNow that is configured for synchronization, the connector creates the following table and views:
+Check out the tables that the connector has created under the DEST_SCHEMA of the SERVICENOW_DEST_DB database. For each table in ServiceNow® that is configured for synchronization, the connector creates the following table and views:
 
 - A table with the same name that contains the data in raw form, where each record is contained in a single VARIANT column.
 
 - A view named table_name__view that contains the data in flattened form, where the view contains a column for each column in the original table and a row for each record that is present in the original table.
 
 > aside negative
-> Warning! After you start the connector, it takes for the views to be created. The creation of the views relies on data in the ServiceNow sys_db_object, sys_dictionary and sys_glide_object tables. The connector loads metadata from these ServiceNow tables after you enable any table for synchronization. It can take some time for the connector to load this metadata. Do not stop the warehouse during this time!
+> Warning! After you start the connector, it takes for the views to be created. The creation of the views relies on data in the ServiceNow® sys_db_object, sys_dictionary and sys_glide_object tables. The connector loads metadata from these ServiceNow® tables after you enable any table for synchronization. It can take some time for the connector to load this metadata. Do not stop the warehouse during this time!
 
-- A view named table_name__view_with_deleted that contains the same data as table_name__view as well as rows for records that have been deleted in ServiceNow.
+- A view named table_name__view_with_deleted that contains the same data as table_name__view as well as rows for records that have been deleted in ServiceNow®.
 
-- A table table_name__event_log that contains the history of changes made to records in ServiceNow.
+- A table table_name__event_log that contains the history of changes made to records in ServiceNow®.
 
  To query from the raw data, check out [Accessing the raw data](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-accessing-data.html#accessing-the-raw-data). To query the views (recommended), check out [Accessing the flattened data](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-accessing-data.html#accessing-the-flattened-data).
 
 ### Use this query to identify number of incidents raised by month and priority
-Here's a little test query for you to identify the number of incidents raised by month and priority. Other example queries are provided on the Snowflake Connector for ServiceNow page in the Marketplace.
+Here's a little test query for you to identify the number of incidents raised by month and priority. Other example queries are provided on the Snowflake Connector for ServiceNow® page in the Marketplace.
 
 ```SQL
 USE ROLE SERVICENOW_READER_ROLE;
@@ -318,7 +318,7 @@ ORDER BY
 ;
 ```
 ## Setting the monitoring role permissions
-If you would like to monitor errors, run stats, connector stats, enabled tables, you can set up a ServiceNow monitoring role that allows access to the views in the connector database.  For example, run the following in a worksheet (and then use the role):
+If you would like to monitor errors, run stats, connector stats, enabled tables, you can set up a ServiceNow® monitoring role that allows access to the views in the connector database.  For example, run the following in a worksheet (and then use the role):
 ```SQL
 USE ROLE accountadmin;
 CREATE ROLE IF NOT EXISTS servicenow_monitor_role;
@@ -354,6 +354,6 @@ DROP DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW;
 ## Conclusion
 Duration: 1
 
-Hey, congrats! You set up the Snowflake Connector for ServiceNow, ingested some data and ran a query!
+Hey, congrats! You set up the Snowflake Connector for ServiceNow®, ingested some data and ran a query!
 
 
