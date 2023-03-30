@@ -1,6 +1,6 @@
 summary: This guide can be used to help customers setup and run queries pertaining to monitoring billing metrics that might help identify areas of over-consumption.
 id: resource_optimization_billing_metrics
-categories: Resource-Optimization
+categories: data-science-&-ml,resource-optimization
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -285,7 +285,7 @@ WITH WAREHOUSE_SIZE AS
 (
      SELECT WAREHOUSE_SIZE, NODES
        FROM (
-              SELECT 'XSMALL' AS WAREHOUSE_SIZE, 1 AS NODES
+              SELECT 'X-SMALL' AS WAREHOUSE_SIZE, 1 AS NODES
               UNION ALL
               SELECT 'SMALL' AS WAREHOUSE_SIZE, 2 AS NODES
               UNION ALL
@@ -293,13 +293,13 @@ WITH WAREHOUSE_SIZE AS
               UNION ALL
               SELECT 'LARGE' AS WAREHOUSE_SIZE, 8 AS NODES
               UNION ALL
-              SELECT 'XLARGE' AS WAREHOUSE_SIZE, 16 AS NODES
+              SELECT 'X-LARGE' AS WAREHOUSE_SIZE, 16 AS NODES
               UNION ALL
-              SELECT '2XLARGE' AS WAREHOUSE_SIZE, 32 AS NODES
+              SELECT '2X-LARGE' AS WAREHOUSE_SIZE, 32 AS NODES
               UNION ALL
-              SELECT '3XLARGE' AS WAREHOUSE_SIZE, 64 AS NODES
+              SELECT '3X-LARGE' AS WAREHOUSE_SIZE, 64 AS NODES
               UNION ALL
-              SELECT '4XLARGE' AS WAREHOUSE_SIZE, 128 AS NODES
+              SELECT '4X-LARGE' AS WAREHOUSE_SIZE, 128 AS NODES
             )
 ),
 QUERY_HISTORY AS

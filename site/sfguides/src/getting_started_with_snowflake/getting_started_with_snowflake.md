@@ -1,6 +1,6 @@
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 id: getting_started_with_snowflake
-categories: Getting-Started
+categories: featured,getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -735,7 +735,7 @@ Now, let's take a look at the data that was loaded:
 select * from json_weather_data limit 10;
 ```
 
-Click any of the rows to display the formated JSON in the right panel:
+Click any of the rows to display the formatted JSON in the right panel:
 
 ![JSON data snippet](assets/7SemiStruct_5_1.png)
 
@@ -1043,7 +1043,7 @@ First, click the **Home** icon in the top left corner of the worksheet. Then, in
 > aside negative
 > 
 >  **Roles in User Preference vs Worksheet**
-Why did we use the user preference menu to change the role instead of the worksheet? The UI session and each worksheet have their own separate roles. The UI session role controls the elements you can see and acceess in the UI, whereas the worksheet role controls only the objects and actions you can access within the role.
+Why did we use the user preference menu to change the role instead of the worksheet? The UI session and each worksheet have their own separate roles. The UI session role controls the elements you can see and access in the UI, whereas the worksheet role controls only the objects and actions you can access within the role.
 
 Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs are available under **Admin**.
 
@@ -1054,7 +1054,7 @@ Notice that once you switch the UI session to the ACCOUNTADMIN role, new tabs ar
 
 The **Usage** tab shows the following, each with their own page:
 
-- **Organization**: Credit usaged across all the accounts in your organization.
+- **Organization**: Credit usage across all the accounts in your organization.
 - **Consumption**: Credits consumed by the virtual warehouses in the current account.
 - **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
 - **Transfers**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
@@ -1114,7 +1114,7 @@ In the home page, navigate to **Data** > **Databases**. In the list of databases
 
 Let's go back to the Citi Bike story and assume we are the Account Administrator for Snowflake at Citi Bike. We have a trusted partner who wants to analyze the data in our `TRIPS` database on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. So let's use secure data sharing to allow them to access this information.
 
-Navigate to **Data** > **Private Sharing**, then at the top of the tab click **Shared by My Account**. Click the **Shar** button in the top right corner and select **Publish to Specificed Consumers**:
+Navigate to **Data** > **Private Sharing**, then at the top of the tab click **Shared by My Account**. Click the **Share** button in the top right corner and select **Create a Direct Share**:
 
 ![shares outbound button](assets/10Share_2.png)
 
@@ -1160,7 +1160,7 @@ In the **COVID-19 Epidemiological Data** page, you can learn more about the data
 
 ![get data fields](assets/10Share_starschema_get_data.png)
 
-Review the information in the dialog and glick **Get** again:
+Review the information in the dialog and lick **Get** again:
 
 ![get data fields](assets/10Share_starschema_get_data2.png)
 

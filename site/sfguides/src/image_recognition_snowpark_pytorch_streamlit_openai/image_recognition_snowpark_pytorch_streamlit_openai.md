@@ -1,6 +1,6 @@
 id: image_recognition_snowpark_pytorch_streamlit_openai
 summary: This guide provides the instructions for writing image recognition applications in Snowflake using Snowpark for Python, PyTorch, Streamlit and OpenAI.
-categories: Getting-Started
+categories: data-science-&-ml,app-development,solution-examples
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
@@ -221,7 +221,7 @@ def load_image(image_bytes_in_str):
     f.write(image_bytes_in_hex)
   return open(image_file, 'rb')
 
-@udf(name='image_recognition_using_bytes',session=session,replace=True,is_permanent=True,stage_location='@dash_udfs')
+@udf(name='image_recognition_using_bytes',session=session,replace=True,is_permanent=True,stage_location='@dash_files')
 def image_recognition_using_bytes(image_bytes_in_str: str) -> str:
   import sys
   import torch
@@ -263,10 +263,13 @@ In order to build and run the applications, setup your environment as described 
 ```python
 conda create --name snowpark-img-rec -c https://repo.anaconda.com/pkgs/snowflake python=3.8
 conda activate snowpark-img-rec
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas streamlit notebook cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook cachetools
+pip install streamlit
 pip install uuid
 pip install openai
 ```
+
+*Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0, streamlit 1.16.0, openai 0.26.0.*
 
 - Update [connection.json](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/connection.json) with your Snowflake account details and credentials. *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
@@ -286,10 +289,10 @@ Once you have satisfied the prerequisites and set up your environment as describ
 
 - In your favorite IDE such as Jupyter Notebook or VS Code, set the Python kernel to **snowpark-img-rec** (the name of the conda environment created in the previous step) and then run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb).
 
-- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the UDF exists by running the following command in Snowsight. *Note: Replace the name of the stage with the one you created.*
+- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the model files and the UDF exists by running the following command in Snowsight. *Note: Replace the name of the stage with the one you created.*
 
 ```sql
-list @dash_udfs;
+list @dash_files;
 ```
 
 ### Application 1 - Upload image

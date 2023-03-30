@@ -1,7 +1,7 @@
 author: Jim Warner
 id: build_an_ad_tag_in_python_on_aws
 summary: A guide to building and running a simple ad tag (in Python) Powered by Snowflake and AWS
-categories: Getting-Started
+categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -204,7 +204,7 @@ Duration: 6
 
 ### Deploying to AWS
 
-Now that the application and configuration is verfied to be working, you can deploy it to AWS by running the following command:
+Now that the application and configuration is verified to be working, you can deploy it to AWS by running the following command:
 
 ```bash
 serverless deploy

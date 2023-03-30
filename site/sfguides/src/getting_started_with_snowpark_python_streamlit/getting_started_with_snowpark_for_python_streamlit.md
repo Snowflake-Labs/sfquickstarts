@@ -1,6 +1,6 @@
 id: getting_started_with_snowpark_for_python_streamlit
 summary: This guide provides the instructions for writing an application using Snowpark for Python and Streamlit.
-categories: Getting-Started
+categories: getting-started
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
@@ -39,7 +39,7 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 - Python 3.8
 - Snowpark for Python library
 - A [Snowflake](https://www.snowflake.com/) account with ACCOUNTADMIN role
-  - For this guide, we’ll use the **Environment Data Atlas** dataset provided (for free) by **Knoema**. In the [Data Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on Get Data and follow the instructions to gain access to KNOEMA_ENVIRONMENT_DATA_ATLAS.
+  - For this guide, we’ll use the **Environment Data Atlas** dataset provided (for free) by **Knoema**. In the [Data Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on Get Data and follow the instructions to gain access to ENVIRONMENT_DATA_ATLAS.
   - In particular, we will analyze data in schema **ENVIRONMENT** from tables **EDGARED2019**, **WBWDI2019Jan**, and **UNENVDB2018**.
 - Streamlit Python library
 
@@ -48,15 +48,35 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 Duration: 5
 
-1. Create conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8)
+- Create Conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8)
 
-    `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
+IMPORTANT: If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
-2. Activate conda environment by running: `conda activate snowpark`
+```shell
+conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+```
 
-3. Install Snowpark for Python including compatible versions of Pandas and Streamlit by running:
+- Activate conda environment by running the following command:
 
-    `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas streamlit`
+```shell
+conda activate snowpark
+```
+
+- Install Snowpark for Python including Pandas and Streamlit by running the following commands:
+
+```shell
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas
+
+pip install streamlit (OR, conda install streamlit)
+```
+
+Troubleshooting `pyarrow` related issues:
+
+- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
+
+- If you have already installed any version of the `pyarrow` other than the recommended version `8.0.0`, uninstall it before installing Snowpark.
+
+- Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
 <!-- ------------------------ -->
 ## Create Python Script
@@ -92,7 +112,7 @@ def create_session_object():
       "password": "<password>",
       "role": "<role_name>",
       "warehouse": "<warehouse_name>",
-      "database": "KNOEMA_ENVIRONMENT_DATA_ATLAS",
+      "database": "ENVIRONMENT_DATA_ATLAS",
       "schema": "ENVIRONMENT"
    }
    session = Session.builder.configs(connection_parameters).create()
@@ -101,7 +121,11 @@ def create_session_object():
 
 In the above code snippet, replace variables enclosed in “<>” with your values. 
 
-*Note*: For the *account* parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.
+*IMPORTANT*:
+
+- At the time of writing this guide, the database name was ENVIRONMENT_DATA_ATLAS and the schema name was ENVIRONMENT when accessing the data from the Marketplace. If they've changed, update the values in `connection_parameters` above accordingly.
+
+- For the *account* parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.
 
 <!-- ------------------------ -->
 ## Load Data in Snowpark DataFrames
@@ -294,7 +318,6 @@ Here are a couple of tips and tricks to note:
 
 - You can change the theme (light or dark) by clicking on the hamburger menu on the top right and then clicking on the **Settings** menu
 - Making any changes to the source script and saving it will automatically prompt you to **Rerun** the application in the browser without having to stop and restart the application at the command line. (This can also be configured to always rerun the app without a prompt.)
-- You can create [multi-page apps in Stremlit](https://docs.streamlit.io/library/get-started/multipage-apps).
 - You can use Streamlit's `st.session_state` to save objects like `snowflake.snowpark.Session` so it's only created once during a session. For example:
 
 ```python
@@ -305,7 +328,17 @@ else:
   session = st.session_state['snowpark_session']
 ```
 
-- Checkout the [updated application on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/new_snowpark_streamlit_app.py)
+- Checkout the multi-page [updated application](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/new_snowpark_streamlit_app.py) that you can run by executing `streamlit run new_snowpark_streamlit_app.py`.
+
+![App](assets/img2.png)
+
+---
+
+![App](assets/img3.png)
+
+___
+
+![App](assets/img4.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

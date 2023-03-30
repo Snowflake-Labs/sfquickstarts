@@ -56,6 +56,12 @@
       "source": "/guide/getting_started_with_user_defined_functions{,/**}",
       "destination": "/guide/getting_started_with_user_defined_sql_functions",
       "type": 301
-    }  ]
+    },
+    {
+      "source": "/guide/build_a_data_clean_room_in_snowflake{,/**}",
+      "destination": "/guide/build_a_data_clean_room_in_snowflake_advanced",
+      "type": 301
+    }  
+  ]
   }
 }

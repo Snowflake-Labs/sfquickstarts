@@ -1,6 +1,6 @@
 summary: Auto-Ingest Twitter Data into Snowflake
 id: auto_ingest_twitter_data
-categories: Demos
+categories: data-engineering,app-development,solution-examples
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowpipe, Twitter, Auto Ingest, Cloud Storage
