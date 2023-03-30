@@ -24,7 +24,7 @@ Use this quickstart lab to configure and understand the Snowflake Connector for 
 - ACCOUNTADMIN rights on the Snowflake account where you will install the connector.
 
 ### What You’ll Learn 
-- How to set up the Snowflake Connector for ServiceNow®.
+- How to set up the Snowflake Connector for ServiceNow®
 - How to ingest ServiceNow® data into Snowflake
 - How to stop the connector to avoid unnecessary costs in a development environment.
 ### What You’ll Need 
@@ -357,7 +357,7 @@ Duration: 1
 Congratulations! You've successfully installed and configured the Snowflake Connector for ServiceNow®, ingested data and ran a query to get some insights on incidents and priority!
 
 ### What You Learned
-- How to set up the Snowflake Connector for ServiceNow®.
+- How to set up the Snowflake Connector for ServiceNow®
 - How to ingest ServiceNow® data into Snowflake
 - How to stop the connector to avoid unnecessary costs in a development environment.
 
