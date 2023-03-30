@@ -12,7 +12,7 @@ tags: Connectors, Data Engineering, Servicenow
 ## Overview 
 Duration: 1
 
-Use this quickstart lab to configure and understand the Snowflake Connector for ServiceNow using the Snowsight wizard, select some tables, ingest data, and run an example query. This quickstart is not meant to be exhaustive. Please check the [Snowflake Conector for ServiceNow documentation](https://https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html) for full functionality and limitations.
+Use this quickstart lab to configure and understand the Snowflake Connector for ServiceNow using the Snowsight wizard, select some tables, ingest data, and run an example query. This quickstart is not meant to be exhaustive. Please check the [Snowflake Connector for ServiceNow documentation](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html) for full functionality and limitations.
 
 ![now](assets/first.png)
 
@@ -57,7 +57,7 @@ Duration: 1
 5. If you agree to the terms, select “Accept Terms & Conditions”.
 
 ### Set up a Virtual Warehouse
-Duration: 3
+Duration: 1
 
 You'll need some compute for the connector, so let's set up a virtual warehouse to do that. A second virtual warehouse will be created automatically in the configure section.
 
@@ -66,7 +66,7 @@ Change to the **accountadmin** role.
 2. Name the  vitural warehouse **SERVICENOW_CONNECTOR_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
 
 ### Install the ServiceNow connector
-Duration: 3
+Duration: 1
 
 The connector, the first of its kind to be deployed on Snowflake's native apps framework, is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. Once chosen, it is installed into your account as a database with several views, and stored procedures. 
 
@@ -96,7 +96,7 @@ Please have two tabs in your browser open for the next part, as you will have to
 * From the ServiceNow side we want the Application Registry to provide the **Client id** and **password**, which we then paste into Snowflake.
 
 ### On the Snowflake hand
-Duration: 4
+Duration: 1
 
 Launch the Snowflake Connector for ServiceNow from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
 1. Select **Manage**.
@@ -108,7 +108,7 @@ Launch the Snowflake Connector for ServiceNow from the **Marketplace** -> **Snow
 Now, open a new tab in your browser (without closing the above), and follow the steps in the next section. 
 
 ### On the ServiceNow Other hand
-Duration: 4
+Duration: 2
 
 1. Log on to your ServiceNow developer instance.
 1. From the main page, select **All** and search **Application Registry**.
@@ -148,7 +148,7 @@ Select **Done**.
 > aside negative
 > If you are having issues, perhaps the Client secret wasn't copied. Unlock the password field and copy and paste the text.
 ## Configure the Connector
-Duration: 5
+Duration: 1
 
 Under the status for the connector, which displays "Choose Resources", select **Configure**.
 
@@ -168,7 +168,7 @@ Select **Configure**. The dialog box closes and the status of the connector chan
 ![resource monitor](assets/monitor.png)
 
 ## Select ServiceNow Tables
-Duration: 4
+Duration: 1
 
 > aside negative
 > A couple of things to be aware of:
@@ -204,7 +204,7 @@ You receive a message indicating success. It appears once at least one table has
 > Don't stop the ingest too quickly. Make sure the views are built in the destination database first.
 
 ## Connector Monitoring (Query Sync History)
- Duration: 5
+ Duration: 2
 
 In the connector interface, choose **Query Sync History.** A worksheet
 opens with several SQL queries you can execute to get monitoring
@@ -236,7 +236,7 @@ FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
 
 
 ## Setting reader role permissions
-Duration: 3
+Duration: 1
 
 Now that you have ingested some data, let's create the **servicenow_reader_role** to give it access to the database, schema, future tables, future views, and virtual warehouse.
 ```SQL
@@ -252,7 +252,7 @@ GRANT SELECT ON ALL VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
 GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_reader_role;
 ```
 ## Query the Data
-Duration: 5
+Duration: 1
 
 Check out the tables that the connector has created under the DEST_SCHEMA of the SERVICENOW_DEST_DB database. For each table in ServiceNow that is configured for synchronization, the connector creates the following table and views:
 
