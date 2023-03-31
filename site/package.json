@@ -41,7 +41,7 @@
     "jshint-stylish": "^2.2.1",
     "merge-stream": "^1.0.1",
     "path": "^0.12.7",
-    "postcss": "^8.4.12",
+    "postcss": "^8.4.21",
     "postcss-syntax": "^0.34.0",
     "sass": "^1.49.11",
     "swig-templates": "^2.0.3",
