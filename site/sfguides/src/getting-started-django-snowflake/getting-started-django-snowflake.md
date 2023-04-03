@@ -41,13 +41,13 @@ Let's get started!
 - A sample Django app that connects to Snowflake and displays Snowflake data on the frontend
 
 <!-- ------------------------ -->
-## Clone the django-snowflake-quickstart repo
+## Clone the sfguide-getting-started-django-snowflake repo
 Duration: 1
 
-First, clone Snowflake's **[django-snowflake-quickstart](https://github.com/Snowflake-Labs/django-snowflake-quickstart)** repo and navigate into the cloned repo.
+First, clone Snowflake's **[sfguide-getting-started-django-snowflake](https://github.com/Snowflake-Labs/sfguide-getting-started-django-snowflake)** repo and navigate into the cloned repo.
 
 ```bash
-git clone https://github.com/Snowflake-Labs/django-snowflake-quickstart.git && cd django-snowflake-quickstart/
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-django-snowflake.git && cd sfguide-getting-started-django-snowflake/
 ```
 
 <!-- ------------------------ -->
