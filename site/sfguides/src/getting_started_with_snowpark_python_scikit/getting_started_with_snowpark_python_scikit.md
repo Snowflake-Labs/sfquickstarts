@@ -89,7 +89,7 @@ dependencies:
 ```
 
 
-4) From the root folder, create conda environment. Let's name the environment **snowpark_scikit_learn**.
+4) From the root folder, create conda environment by running below command.
 
 > aside positive
 > IMPORTANT:
