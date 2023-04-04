@@ -24,7 +24,7 @@ Within this Quickstart we will walk through a large set of Snowflake functionali
 
 ### What You Will Learn
 - How to Clone a Table
-- How to Use Snowflakes Result Set Cache
+- How to Use Snowflake's Result Set Cache
 - How to Add a Column to a Table
 - How to Update Data in a Column
 - How to Use Time-Travel
@@ -86,7 +86,7 @@ adding a calculated Truck Age Column to our Truck table.
 Being a great developer, we know we cannot develop against a Production table, so we first need to create a Development environment that mimics Production.
 
 ### Step 1 - Create a Clone of Production
-Thanks to Snowflakes unique architecture, we can instantly create a snapshot of our production `raw_pos.truck` using [CLONE](https://docs.snowflake.com/en/sql-reference/sql/create-clone) functionality and name it `raw_pos.truck_dev`.
+Thanks to Snowflake's unique architecture, we can instantly create a snapshot of our production `raw_pos.truck` using [CLONE](https://docs.snowflake.com/en/sql-reference/sql/create-clone) functionality and name it `raw_pos.truck_dev`.
 
 Let's now run our next set our queries to set our `tasty_dev` role context and create the table clone noting here that we do not need to set Warehouse context since cloning does not require one.
 
@@ -109,7 +109,7 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 Duration: 1
 
 ### Overview
-With our Zero Copy Clone instantly available we can now begin to develop against it without any fear of impacting production. However, before we make any changes let's first run some simple queries against it and test out Snowflakes Result Set Cache.
+With our Zero Copy Clone instantly available we can now begin to develop against it without any fear of impacting production. However, before we make any changes let's first run some simple queries against it and test out Snowflake's Result Set Cache.
 
 ### Step 1 - Querying our Cloned Table
 Now that we are going to query our Table, we will need to use our `tasty_dev_wh` Warehouse. 
@@ -131,7 +131,7 @@ ORDER BY t.truck_id;
 <img src = "assets/4.1.truck.png">
 
 ### Step 2 - Re-Running our Query
-To test Snowflakes [Result Set Cache](https://docs.snowflake.com/en/user-guide/querying-persisted-results), the next query we run will be identical to what we just ran. However, we will now take things a step further and access the Query Profile showcasing this query returned results instantly as the the results came from our Result Set Cache.
+To test Snowflake's [Result Set Cache](https://docs.snowflake.com/en/user-guide/querying-persisted-results), the next query we run will be identical to what we just ran. However, we will now take things a step further and access the Query Profile showcasing this query returned results instantly as the the results came from our Result Set Cache.
 
 After executing the below query, follow the steps in the screenshot to access the [Query Profile](https://docs.snowflake.com/en/user-guide/ui-query-profile). From the Query Profile we will see a single node noting `QUERY RESULT REUSE`.
 
@@ -363,7 +363,7 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 
 <img src = "assets/9.1.drop.png">
 
-**Uh oh!!** That result set shows that even our `sysadmin` can make mistakes. We incorrectly dropped production `truck` and not development `truck_dev`! Thankfully, Snowflakes Time-Travel can come to the rescue again.
+**Uh oh!!** That result set shows that even our `sysadmin` can make mistakes. We incorrectly dropped production `truck` and not development `truck_dev`! Thankfully, Snowflake's Time-Travel can come to the rescue again.
 
 ### Step 2 - Undropping a Table
 Hurry up and run the next query before any systems are impacted which will [UNDROP](https://docs.snowflake.com/en/sql-reference/sql/undrop-table) the `truck` table.
@@ -393,7 +393,7 @@ Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowfl
 
 By doing so you have now:
 - Cloned a Table
-- Used Snowflakes Result Set Cache
+- Used Snowflake's Result Set Cache
 - Added a Column to a Table
 - Updated Data in a Column
 - Leveraged Time-Travel for Data Disaster Recovery
