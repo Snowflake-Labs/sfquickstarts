@@ -3,7 +3,7 @@ id: getting-started-django-snowflake
 summary: How to get started with Snowflake as a backend for Django.
 categories: Getting-Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter, Django, Snowflake, django-snowflake
 
@@ -358,6 +358,8 @@ Save the file and reload the admin page in your browser. If successful, you shou
 Duration: 0
 
 Congratulations! In just a few minutes, you were able to configure a Django app to use Snowflake as a backend using **django-snowflake**. What we covered here is only a sample demonstration of what's possible – there are all sorts of great things that you can build when using Snowflake as a backend in Django. What will you build?
+
+We would love your feedback on this Quickstart! Please submit your feedback using this form: [Feedback Form](https://forms.gle/zTwg1AVjrKspCwoq9)
 
 ### What we've covered
 
