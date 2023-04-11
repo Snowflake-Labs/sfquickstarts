@@ -152,7 +152,7 @@ The UDF can be invoked on any PDF file with a simple SQL statement. First, make 
 ```
 alter stage pdf_external refresh;
 
-select read_pdf('@pdf_external/invoice1.pdf') 
+select read_pdf(build_scoped_file_url('@pdf_external','/invoice1.pdf')) 
 as pdf_text;
 ```
 
@@ -188,7 +188,7 @@ create or replace table parsed_pdf as
 select
     relative_path
     , file_url
-    , read_pdf('@pdf_external/' || relative_path) as parsed_text
+    , read_pdf(build_scoped_file_url('@pdf_external/', relative_path)) as parsed_text
 from directory(@pdf_external);
 ```
 
