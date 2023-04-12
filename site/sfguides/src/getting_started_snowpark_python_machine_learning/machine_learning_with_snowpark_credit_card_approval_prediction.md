@@ -1,7 +1,7 @@
 author: Michael Gorkow
 id: getting_started_snowpark_machine_learning
 summary: Machine Learning with Snowpark Python for Credit Card Approval Prediction
-categories: Getting-Started
+categories: data-science-&-ml,app-development,architecture-patterns,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -101,10 +101,10 @@ If you decide to bring your own Python environment, please make sure to have the
 - [imbalanced-learn](https://pypi.org/project/imbalanced-learn/)
 - [optuna](https://pypi.org/project/optuna/)
 
-### Apple M1
-There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
-Please refer to the Snowpark documentation to solve this issue:
-[Issue with running Snowpark Python on Apple M1 chips](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites)
+> aside positive
+> There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
+> Please refer to the Snowpark documentation to solve this issue:
+> [Issue with running Snowpark Python on Apple M1 chips](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites)
 
 <!-- ------------------------ -->
 ## Snowflake Environment Setup

@@ -33,11 +33,12 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 ### Run locally
 
-  1. Fork this repository to your personal github account (top right of webpage, `fork` button)
+  1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
   3. Navigate to the site directory `cd sfquickstarts/site`
   4. Install node dependencies `npm install`
   5. Run the site `npm run serve`
+  6. Open a browser to http://localhost:8000/
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
@@ -60,11 +61,11 @@ export PATH=$PATH:$HOME/go/bin
 
 ## Write Your First Quickstart
 
-  1. Terminate the running server with `ctrl C` and and navigate to the `sfguides` source directory `cd sfguides/src`
+  1. Terminate the running server with `ctrl C` and navigate to the `sfguides` source directory `cd sfguides/src`
      - In this directory, you will see all existing guides and their markdown files.
   2. Generate a new guide from the guide template `npm run template <GUIDE_NAME>` 
       - Don't use spaces in the name of your guide, instead use underscores.
-  3. Navigate to the newly generated guide (`cd sfguides/src/<GUIDE_NAME>`) and edit your guide in a tool like vscode.
+  3. Navigate to the newly generated guide (`cd sfguides/src/<GUIDE_NAME>`) and edit your guide in a tool like VS Code.
   4. Run the website again `npm run serve`
   5. As you edit and save changes, your changes will automatically load in the browser.
 
@@ -72,8 +73,8 @@ You can always read the [sample Quickstart](site/sfguides/src/sample/sample.md) 
 
 ### Tips
 
-- Review the [sample.md](site/sfguides/src/sample/sample.md) file to learn more about to to structure your Quickstart for the claat tool. 
-- You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a github issue!
+- Review the [sample.md](site/sfguides/src/sample/sample.md) file to learn more about how to structure your Quickstart for the claat tool. 
+- You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a GitHub issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
@@ -89,4 +90,4 @@ You can always read the [sample Quickstart](site/sfguides/src/sample/sample.md) 
 8. Click the Pull Request button to open a new pull request
 9. Snowflake will review and approve the submission
 
-To learn more how to submit a pull request on GitHub in general, checkout github's [official documentation](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
+To learn more about how to submit a pull request on GitHub in general, check out GitHub's [official documentation](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).

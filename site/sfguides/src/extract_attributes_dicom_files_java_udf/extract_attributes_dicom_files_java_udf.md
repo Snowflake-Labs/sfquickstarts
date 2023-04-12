@@ -1,7 +1,7 @@
 author: Scott Teal, Saurin Shah
 id: extract_attributes_dicom_files_java_udf
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: Demos
+categories: data-engineering,app-development,architecture-patterns,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -181,7 +181,7 @@ The UDF can be invoked on any DICOM file with a simple SQL statement. First, mak
 ```
 alter stage dicom_external refresh;
 
-select read_dicom('@dicom_external/ID_0067_AGE_0060_CONTRAST_0_CT.dcm') 
+select read_dicom(build_scoped_file_url('@dicom_external','/ID_0067_AGE_0060_CONTRAST_0_CT.dcm')) 
 as dicom_attributes;
 ```
 
@@ -218,7 +218,7 @@ create or replace table dicom_attributes as
 select 
     relative_path,
     file_url,
-    parse_json(read_dicom('@dicom_external/' || relative_path)) as data,
+    parse_json(read_dicom(build_scoped_file_url('@dicom_external/', relative_path))) as data,
     data:PatientName::string as PatientName,
     data:PatientID::string as PatientID,
     to_date(data:StudyDate::string,'yyyymmdd') as StudyDate,

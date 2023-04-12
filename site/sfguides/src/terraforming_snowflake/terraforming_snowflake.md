@@ -1,6 +1,6 @@
 summary: Learn how to manage Snowflake using Terraform
 id: terraforming_snowflake
-categories: Getting-Started
+categories: featured,getting-started,app-development,devops
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -147,7 +147,7 @@ terraform {
   required_providers {
     snowflake = {
       source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.35"
+      version = "~> 0.59"
     }
   }
 }
@@ -325,6 +325,7 @@ You'll see that most of this is what you would expect. The only new part is crea
 
     output "snowflake_svc_private_key" {
         value = tls_private_key.svc_key.private_key_pem
+        sensitive = true
     }
     ```
 

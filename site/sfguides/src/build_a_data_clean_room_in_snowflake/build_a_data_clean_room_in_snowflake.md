@@ -1,7 +1,7 @@
 author: Craig Warman
 id: build_a_data_clean_room_in_snowflake
 summary: Learn how to build a simple Data Clean Room in Snowflake
-categories: Demos
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

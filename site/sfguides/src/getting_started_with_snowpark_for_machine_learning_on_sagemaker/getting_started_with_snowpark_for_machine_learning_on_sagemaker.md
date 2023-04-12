@@ -1,13 +1,13 @@
 author: marzillo-snow
-id: example_matt_marzillo
-summary: This is a qucikstart for using Snowpark for ML on Sagemaker
-categories: Getting-Started, data-science, data-engineering, aws, sagemaker
+id: getting_started_with_snowpark_for_machine_learning_on_sagemaker
+summary: This is a qucikstart for using Snowpark for ML on SageMaker
+categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
-# Getting Started with Snowpark for Machine Learning on Sagemaker
+# Getting Started with Snowpark for Machine Learning on SageMaker
 <!-- ------------------------ -->
 ## Overview 
 Duration: 15
@@ -20,17 +20,15 @@ A key component of Snowpark for Python is that you can "Bring Your Own IDE"- any
 
 Amazon SageMaker is a fully managed machine learning service. With SageMaker, data scientists and developers can quickly and easily build and train machine learning models, and then directly deploy them into a production-ready hosted environment. It provides an integrated Jupyter authoring notebook instance for easy access to your data sources for exploration and analysis, so you don't have to manage servers. It also provides common machine learning algorithms that are optimized to run efficiently against extremely large data in a distributed environment. With native support for bring-your-own-algorithms and frameworks, SageMaker offers flexible distributed training options that adjust to your specific workflows.
 
-This quickstart is designed to service as an introduction to using Sagemaker with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Sagemaker workloads.
-
-[GitHub](https://github.com/Snowflake-Labs/getting_started_with_snowpark_for_machine_learning_on_sagemaker)
+This quickstart is designed to service as an introduction to using SageMaker with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing SageMaker workloads.
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
-- Familiarity with Sagemaker and an AWS account
+- Familiarity with SageMaker and an AWS account
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 
 ### You'll Learn
-- Using a Sagemaker Notebook with Snowpark
+- Using a SageMaker Notebook with Snowpark
 - Loading and transforming data via Snowpark
 - Defining User Defined Functions for distributed scoring of machine learning models
 
@@ -43,7 +41,7 @@ This quickstart is designed to service as an introduction to using Sagemaker wit
 ### What You’ll Build 
 You will build an end-to-end data science workflow leveraging Snowpark for Python
 - to load, clean and prepare data
-- to train a machine learning model using Python in a Sagemaker notebook
+- to train a machine learning model using Python in a SageMaker notebook
 - to deploy the trained models in Snowflake using Python User Defined Functions (UDFs)
 
 The end-to-end workflow will look like this:
@@ -58,45 +56,91 @@ In this use case you will build a binary model based on the 'Machine Predictive 
 The use case uses information related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.
 
 <!-- ------------------------ -->
-## Set Up and Load Data
-Duration: 15
+## Set Up Snowflake Environment
+Duration: 5
 
-First, you will have to access your Snowflake enviornment and create the needed Warehouse and Database.
-
-```bash
+The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
+```sql
 use role accountadmin;
+
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
+
 CREATE OR REPLACE DATABASE HOL_DB;
 ```
+<!-- ------------------------ -->
+## Set Up Sagemaker Environment
+Duration: 5
 
-Next, you will access your AWS Sagemaker Studio and change the environment so that you are using an image that utilizes Python version 3.8. The Pytorch 3.8 or Tensorflow 3.8 will work for this quickstart.
+If you haven't used SageMaker Studio before, for first time setup you will need to create a SageMaker Studio domain by following the [Quick setup](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html) process. After creating your domain you should be able to [Launch SageMaker Studio from the Domain details page](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-launch.html#studio-launch-console-domain).
+
+Once you've opened SageMaker Studio, our first step will be to launch a Python 3.8 notebook environment for Snowpark compatibility. To do this, select the 'Open Launcher' tile from the Home tab and then 'Change environment' so that you are using an image that utilizes Python version 3.8. The following images will work well for this quickstart:
+- PyTorch 1.12 Python 3.8 CPU Optimized
+- TensorFlow 2.6 Python 3.8 CPU Optimized
+
 ![](assets/sagemaker_image.png)
 
-Now open up a terminal window: 
+<!-- ------------------------ -->
+## Clone Github Repo
+Duration: 5
+
+Now open up a terminal window:
 ![](assets/terminal_sagemaker.png)
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
-cd getting_started_with_snowpark_on_sagemaker
+cd sfguide-getting-started-snowpark-python-sagemaker
 ```
 
-Work through the set up script here to crate a database, warehouse and load the data: 
-[0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb).
+Next, Open up the image terminal to install packages from the Snowflake Conda channel:
+![](assets/image_terminal.png)
 
-Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. You just a little bit of Snowpark to get that data loaded!
-![](assets/database_check.png)
+```bash
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+```
+
+> Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0
+
 
 <!-- ------------------------ -->
-## Build and Deploy model
+## Load data into Snowflake
+Duration: 5
+
+You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+
+You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
+```python
+connection_parameters = {
+    "account": "hk12345.eu-west-2.aws",
+    "host": "hk12345.eu-west-2.aws.snowflakecomputing.com",
+    "user": <your_user>, 
+    "password": <your_password>,
+    "role": <your_role>, # using "ACCOUNTADMIN" may simplify things in an isolated lab environment
+    }
+```
+
+> Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so AWS Secrets Manager or a similar tool would be appropriate.
+
+Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. Review the steps as you go: you just used a little bit of Snowpark to get that data loaded via the `session.write_pandas` function!
+![](assets/database_check.png)
+
+### Troubleshooting `pyarrow` related issues
+
+- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
+- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
+- Do not reinstall a different version of `pyarrow` after installing Snowpark.
+
+<!-- ------------------------ -->
+## Build and Deploy Model
 Duration: 10
-Work through the 1_prepare_build_deploy_model.ipynb workbook to join together the datasets, bring in the training data then build and deploy the model. 
+
+Now open and work through the `1_prepare_build_deploy_model.ipynb` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
 
 [1_prepare_build_deploy_model.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
 
 Once that notebook is complete you will have a udf that you can use to generate predictions in your Snowflake environment! you can do this via Snowpark Python code or Snowflake SQL. Let's generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.
 
-```bash
+```sql
 use role accountadmin;
 select predict_failure(AIR_TEMPERATURE_K,
        PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
@@ -109,24 +153,24 @@ select predict_failure(AIR_TEMPERATURE_K,
 ## Conclusion and Additional Considerations
 Duration: 5
 
-This quickstart is just that, a quick way to get you started with using Sagemaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
+This quickstart is just that, a quick way to get you started with using SageMaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
 
 ![](assets/enterprise_arch.png)
 Credit: Chase Ginther
 
-Looking specifically at Sagemaker two additional considerations that you may want to consider are:
+Looking specifically at SageMaker two additional considerations that you may want to consider are:
 1. Rather than using an pre-built image then installing packages, you may want to crate your own custom image that includes the Snowpark packages and other packages that you commonly use.
 2. You may know that the Snowpark sandbox on Snowflake includes Anaconda supported packages which inludes the scikitlearn package that was used to build the logistic regression model. If you use other packages to build your models that are not supported by Anaconda you will have to install [third party packages in the Snowpark sandbox](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
 
 ### What We covered
-- Using a Sagemaker Studio with Snowpark
+- Using a SageMaker Studio with Snowpark
 - Loading and transforming data via Snowpark with pushdown compute
 - Deploying models to Snowflake via a User Defined Function
 
 ### Additional Considerations
-- There are some great blogs on Medium regarding Snowpark, Sagemaker and using Snowflake with AWS.
+- There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
 
-- [Snowpark for python with Sagemaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
+- [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
 
 - [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
 

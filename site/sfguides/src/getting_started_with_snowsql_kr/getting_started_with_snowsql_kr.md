@@ -1,6 +1,6 @@
 id:getting_started_with_snowsql_kr
 summary: SnowSQL 시작하기
-categories: Getting-Started
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

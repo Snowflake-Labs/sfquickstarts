@@ -1,7 +1,7 @@
 author: Jim Warner, Rachel Blum
 id: secure-crosswalks-for-advertising-measurement
 summary: Share ad exposure data without sharing PII for advertising measurement.
-categories: Getting-Started
+categories: data-science-&-ml,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
