@@ -51,6 +51,7 @@ You will build an end-to-end data science workflow leveraging Snowpark for Pytho
 The end-to-end workflow will look like this:
 ![](assets/azureml_arch.png)
 
+
 <!-- ------------------------ -->
 ## Use Case
 Duration: 5
@@ -60,45 +61,130 @@ In this use case you will build a binary model based on the 'Machine Predictive 
 The use case uses information related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.
 
 <!-- ------------------------ -->
-## Set Up and Load Data
-Duration: 15
+## Set Up Snowflake Environment
+Duration: 5
 
-First, you will have to access your Snowflake enviornment and create the needed Warehouse and Database.
-
-```bash
+The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
+```sql
 use role accountadmin;
+
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
+
 CREATE OR REPLACE DATABASE HOL_DB;
 ```
+<!-- ------------------------ -->
+## Set Up AzureML Environment
+Duration: 5
 
-Next, you will access your AWS Sagemaker Studio and change the environment so that you are using an image that utilizes Python version 3.8. The Pytorch 3.8 or Tensorflow 3.8 will work for this quickstart.
-![](assets/sagemaker_image.png)
+If you haven't used AzureML before, for first time setup you will need to create an AzureML workspace. You can do so by following this [Link](https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2) 
 
-Now open up a terminal window: 
+Once you've created your AzureML workspace your first step will be to create a setup.sh file that will be used to create the environment in your compute instance. Head to the "Notebooks" tab, hit the plus sign to create a new file and name it setup.sh.
+![](assets/setup_sh.png)
+
+Then copy and paste the code below into the setup.sh file and save it. This will be used as a start up script when creating the Compute Instance in AzureML.
+```bash
+#!/bin/bash
+
+# Update the system
+sudo apt-get update
+sudo apt-get upgrade -y
+
+# Install Miniconda
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
+export PATH="$HOME/miniconda3/bin:$PATH"
+
+# Create a conda environment and activate it
+conda create -y -n my_env
+conda activate my_env
+
+# Install the required packages using conda
+conda install -y -c snowflake -c conda-forge snowflake-snowpark-python pandas notebook scikit-learn cachetools
+```
+Go to the "Compute" tab in AzureML, highlight the "Compute Instances" tab at the top and click "New". Provide a name and select the below options and click "Next: Advanced Settings"
+![](assets/azureml_ci.png)
+
+Click the radio tab that says "Provision with setup script" then click the blue button "Browse" and find the setup.sh file that we just created. Once selected click "Create" this could take about 10 minutes to create.
+![](assets/provision_ci.png)
+
+Once the compute instance is provisioned, head back to the "Notebooks" tab and open a terminal window for your compute instance.
+![](assets/activate_terminal.png)
+
+Run the below code in the terminal to activate the environment in the Jupyter kernel
+```bash
+conda activate my_env
+pip install ipykernel
+```
+
+```bash
+python -m ipykernel install --user --name=my_env
+```
+Once that's done you can close the terminal window and now open up a blank .ipynb file and check the kernels on the top right to make sure the "my_env" kernel has been created. You may have to refresh the list and wait several seconds.
+![](assets/check_env.png)
+
+<!-- ------------------------ -->
+## Clone Github Repo
+Duration: 5
+
+Now open up a terminal window:
 ![](assets/terminal_sagemaker.png)
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
-cd getting_started_with_snowpark_on_sagemaker
+cd sfguide-getting-started-snowpark-python-sagemaker
 ```
 
-Work through the set up script here to crate a database, warehouse and load the data: 
-[0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb).
+Next, Open up the image terminal to install packages from the Snowflake Conda channel:
+![](assets/image_terminal.png)
 
-Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. You just a little bit of Snowpark to get that data loaded!
-![](assets/database_check.png)
+```bash
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+```
+
+> Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0
+
 
 <!-- ------------------------ -->
-## Build and Deploy model
+## Load data into Snowflake
+Duration: 5
+
+You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+
+You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
+```python
+connection_parameters = {
+    "account": "hk12345.eu-west-2.aws",
+    "host": "hk12345.eu-west-2.aws.snowflakecomputing.com",
+    "user": <your_user>, 
+    "password": <your_password>,
+    "role": <your_role>, # using "ACCOUNTADMIN" may simplify things in an isolated lab environment
+    }
+```
+
+> Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so AWS Secrets Manager or a similar tool would be appropriate.
+
+Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. Review the steps as you go: you just used a little bit of Snowpark to get that data loaded via the `session.write_pandas` function!
+![](assets/database_check.png)
+
+### Troubleshooting `pyarrow` related issues
+
+- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
+- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
+- Do not reinstall a different version of `pyarrow` after installing Snowpark.
+
+<!-- ------------------------ -->
+## Build and Deploy Model
 Duration: 10
-Work through the 1_prepare_build_deploy_model.ipynb workbook to join together the datasets, bring in the training data then build and deploy the model. 
+
+Now open and work through the `1_prepare_build_deploy_model.ipynb` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
 
 [1_prepare_build_deploy_model.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
 
 Once that notebook is complete you will have a udf that you can use to generate predictions in your Snowflake environment! you can do this via Snowpark Python code or Snowflake SQL. Let's generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.
 
-```bash
+```sql
 use role accountadmin;
 select predict_failure(AIR_TEMPERATURE_K,
        PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
@@ -111,24 +197,24 @@ select predict_failure(AIR_TEMPERATURE_K,
 ## Conclusion and Additional Considerations
 Duration: 5
 
-This quickstart is just that, a quick way to get you started with using Sagemaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
+This quickstart is just that, a quick way to get you started with using SageMaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
 
 ![](assets/enterprise_arch.png)
 Credit: Chase Ginther
 
-Looking specifically at Sagemaker two additional considerations that you may want to consider are:
+Looking specifically at SageMaker two additional considerations that you may want to consider are:
 1. Rather than using an pre-built image then installing packages, you may want to crate your own custom image that includes the Snowpark packages and other packages that you commonly use.
 2. You may know that the Snowpark sandbox on Snowflake includes Anaconda supported packages which inludes the scikitlearn package that was used to build the logistic regression model. If you use other packages to build your models that are not supported by Anaconda you will have to install [third party packages in the Snowpark sandbox](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
 
 ### What We covered
-- Using a Sagemaker Studio with Snowpark
+- Using a SageMaker Studio with Snowpark
 - Loading and transforming data via Snowpark with pushdown compute
 - Deploying models to Snowflake via a User Defined Function
 
 ### Additional Considerations
-- There are some great blogs on Medium regarding Snowpark, Sagemaker and using Snowflake with AWS.
+- There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
 
-- [Snowpark for python with Sagemaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
+- [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
 
 - [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
 
