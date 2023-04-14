@@ -101,6 +101,9 @@ conda activate my_env
 
 # Install the required packages using conda
 conda install -y -c snowflake -c conda-forge snowflake-snowpark-python pandas notebook scikit-learn cachetools
+
+# Install MLflow using pip
+pip install mlflow azureml-mlflow
 ```
 Go to the "Compute" tab in AzureML, highlight the "Compute Instances" tab at the top and click "New". Provide a name and select the below options and click "Next: Advanced Settings"
 ![](assets/azureml_ci.png)
@@ -127,22 +130,11 @@ Once that's done you can close the terminal window and now open up a blank .ipyn
 ## Clone Github Repo
 Duration: 5
 
-Now open up a terminal window:
-![](assets/terminal_sagemaker.png)
-
-In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
-```bash
-git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
-cd sfguide-getting-started-snowpark-python-sagemaker
-```
-
-Next, Open up the image terminal to install packages from the Snowflake Conda channel:
-![](assets/image_terminal.png)
+Open a terminal window the same as the previous step. In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 
 ```bash
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+git clone https://github.com/marzillo-snow/getting_started_with_snowpark_on_azureml.git
 ```
-
 > Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0
 
 
@@ -150,7 +142,7 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 ## Load data into Snowflake
 Duration: 5
 
-You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+You should now be able to navigate back to the 'File Browser' tab on the left and see your cloned repo. Open the setup.ipynb notebook (ensure that you select the correct environment), [0_setup_data.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_azureml/blob/main/0_setup_data.ipynb) and work through the set up script here to load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
 
 You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
 ```python
@@ -178,9 +170,9 @@ Once complete with the script, check back to your Snowflake environment to make 
 ## Build and Deploy Model
 Duration: 10
 
-Now open and work through the `1_prepare_build_deploy_model.ipynb` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
+Now open and work through the `1_mfr_mlflow.ipynb` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
 
-[1_prepare_build_deploy_model.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
+[1_mfr_mlflow.ipynb](https://github.com/marzillo-snow/getting_started_with_snowpark_on_azureml/blob/main/1_mfr_mlflow.ipynb)
 
 Once that notebook is complete you will have a udf that you can use to generate predictions in your Snowflake environment! you can do this via Snowpark Python code or Snowflake SQL. Let's generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.
 
@@ -193,31 +185,36 @@ select predict_failure(AIR_TEMPERATURE_K,
 
 ![](assets/snowflake_inference.png)
 
+Head back to AzureML and notice how the training job, data and model are now all captured in your AzureML environment. This highlights how MLFlow is integrated with AzureML!
+
+![](assets/azureml_jobs.png)
+
+![](assets/azureml_model.png)
+
+![](assets/azureml_data.png)
+
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
 Duration: 5
 
-This quickstart is just that, a quick way to get you started with using SageMaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
+This quickstart is just that, a quick way to get you started with using AzureML with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. 
 
-![](assets/enterprise_arch.png)
-Credit: Chase Ginther
 
-Looking specifically at SageMaker two additional considerations that you may want to consider are:
-1. Rather than using an pre-built image then installing packages, you may want to crate your own custom image that includes the Snowpark packages and other packages that you commonly use.
+Specifically, you may want to consider the additional details:
+1. Using Github and Github actions to automate testing, execution and deployment of the code.
 2. You may know that the Snowpark sandbox on Snowflake includes Anaconda supported packages which inludes the scikitlearn package that was used to build the logistic regression model. If you use other packages to build your models that are not supported by Anaconda you will have to install [third party packages in the Snowpark sandbox](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
 
 ### What We covered
-- Using a SageMaker Studio with Snowpark
+- Using a AzureML with Snowpark
 - Loading and transforming data via Snowpark with pushdown compute
 - Deploying models to Snowflake via a User Defined Function
+- Using MLFlow with AzureML
 
 ### Additional Considerations
 - There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
 
-- [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
+- [Snowpark for python with AzureML](https://medium.com/@michaelgorkow/mlops-with-snowflake-and-mlflow-on-azure-machine-learning-a21a9def693)
 
 - [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
-
-- [AWS and Snowflake](https://aws.amazon.com/financial-services/partner-solutions/snowflake/)
 
 If you have any questions, reach out to your Snowflake account team!
