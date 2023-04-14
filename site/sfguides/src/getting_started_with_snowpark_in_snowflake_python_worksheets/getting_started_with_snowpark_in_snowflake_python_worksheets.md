@@ -31,6 +31,7 @@ Python worksheets are a new type of worksheet in Snowsight that helps you get st
 - How to perform Exploratory Data Analysis on Snowpark DataFrames
 - How to pivot and join data from multiple tables using Snowpark DataFrames
 - How to save transformed data into Snowflake table
+- How to deploy Python Worksheet as a Stored Procedure
 
 ### What You’ll Build
 
@@ -43,7 +44,9 @@ Duration: 10
 
 ### Create a Snowflake Trial Account
 
-Sign up for a free, 30-day trial by following this [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (which will land you back into the trial setup page). We recommend the region closest to you. We recommend the most popular edition, Enterprise, but any edition will work for this lab.
+Sign up for a free, 30-day trial by following this [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (which will land you back into the trial setup page titled "Getting Started with Snowpark in Snowflake Python Worksheets"). We recommend the region closest to you. We recommend the most popular edition, Enterprise, but any edition will work for this lab.
+
+If you already have a Snowflake account, follow the instructions below.
 
 ### Login and Setup Lab
 
@@ -51,7 +54,7 @@ Log into your Snowflake account. To access this lab and set up sample data and c
 
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 
-The button above will take you to a page in the trial that will invite you to click "Setup Lab" which will take less than a minute and provide a setup Snowflake account with data and sample Python with explanation.
+The button above will take you to a page in the trial titled "Getting Started with Snowpark in Snowflake Python Worksheets" that will invite you to click "Setup Lab" which will take less than a minute and provide a setup with data and sample Python code with explanation.
 
 <!-- ------------------------ -->
 ## Load Data from Snowflake Tables into Snowpark DataFrames
@@ -85,7 +88,7 @@ And here are some of the other ways to load data into Snowpark DataFrames.
 - session.read.parquet("@stageName/path/to/file")
 - session.create_dataframe([1,2,3], schema=["col1"])
 
-TIP: Learn more about [Snowpark DataFrames](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/_autosummary/snowflake.snowpark.html#snowflake.snowpark.DataFrame).
+TIP: Learn more about [Snowpark DataFrames](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/dataframe.html).
 
 <!-- ------------------------ -->
 ## Data Transformations
@@ -108,7 +111,7 @@ Let's transform the data so we can see **total cost per year/month per channel**
 snow_df_spend_per_channel = snow_df_spend.group_by(year('DATE'), month('DATE'),'CHANNEL').agg(sum('TOTAL_COST').as_('TOTAL_COST')).with_column_renamed('"YEAR(DATE)"',"YEAR").with_column_renamed('"MONTH(DATE)"',"MONTH").sort('YEAR','MONTH')
 ```
 
-TIP: See full list of [functions](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/_autosummary/snowflake.snowpark.functions.html#module-snowflake.snowpark.functions).
+TIP: See full list of [functions](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/functions.html).
 
 In order to view the result of this transformation, we can use the Snowpark DataFrame's ***show()*** function which will print the output under the **Output** tab.
 
@@ -216,7 +219,26 @@ The output of the above statement can be viewed in the **Results** tab as shown 
 
 Here's what the **Results** tab looks like after running the worksheet.
 
-![Snowpark](assets/run_python_worksheet.gif)
+![Worksheet](assets/run_python_worksheet.gif)
+
+<!-- ------------------------ -->
+## Deploy As A Stored Procedure
+
+Duration: 2
+
+Optionally you can also deploy this worksheet as a Python Stored Procedure so that you can schedule it using [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro), for example. To deploy this worksheet, click on the **Deploy** button on the top right and follow the instructions as shown below.
+
+![Deploy](assets/deploy1.png)
+
+---
+
+![Deploy](assets/deploy2.png)
+
+### View Stored Procedure
+
+Once it's deployed, the stored procedure details can be viewed under **Data >> Databases >> SNOWPARK_DEMO_SCHEMA >> Procedures**.
+
+![Deploy](assets/deploy3.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -229,6 +251,7 @@ Congratulations! You've successfully performed data engineering tasks using Snow
 - How to perform Exploratory Data Analysis on Snowpark DataFrames
 - How to pivot and join data from multiple tables using Snowpark DataFrames
 - How to save transformed data into Snowflake table
+- How to deploy Python Worksheet as a Stored Procedure
 
 ### Next Steps
 
