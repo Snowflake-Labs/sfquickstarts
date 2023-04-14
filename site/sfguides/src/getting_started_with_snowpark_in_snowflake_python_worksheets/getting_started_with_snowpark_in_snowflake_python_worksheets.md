@@ -247,6 +247,8 @@ Once it's deployed, the stored procedure details can be viewed under **Data >> D
 
 Congratulations! You've successfully performed data engineering tasks using Snowpark in Snowflake Python Worksheets.
 
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLScpCO4ekMB9kitQ6stQZ1NLqZf3VqbQfDrf7yRIwMQjty57_g/viewform?usp=sf_link).
+
 ### What You Learned
 
 - How to load data from Snowflake tables into Snowpark DataFrames
