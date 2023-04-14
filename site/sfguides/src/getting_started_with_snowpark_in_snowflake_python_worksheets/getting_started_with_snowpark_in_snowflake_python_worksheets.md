@@ -44,9 +44,7 @@ Duration: 10
 
 ### Create a Snowflake Trial Account
 
-Sign up for a free, 30-day trial by following this [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (which will land you back into the trial setup page titled "Getting Started with Snowpark in Snowflake Python Worksheets"). We recommend the region closest to you. We recommend the most popular edition, Enterprise, but any edition will work for this lab.
-
-If you already have a Snowflake account, follow the instructions below.
+Sign up for a free, 30-day trial by following this [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (which will land you back into the trial setup page titled **Getting Started with Snowpark in Snowflake Python Worksheets**). We recommend the region closest to you. We recommend the most popular edition, Enterprise, but any edition will work for this lab.
 
 ### Login and Setup Lab
 
@@ -54,7 +52,11 @@ Log into your Snowflake account. To access this lab and set up sample data and c
 
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 
-The button above will take you to a page in the trial titled "Getting Started with Snowpark in Snowflake Python Worksheets" that will invite you to click "Setup Lab" which will take less than a minute and provide a setup with data and sample Python code with explanation.
+The button above will take you to a page in the trial titled **Getting Started with Snowpark in Snowflake Python Worksheets** that will invite you to click **Setup Lab** which will take less than a minute and provide a setup with data and sample Python code with explanation.
+
+==================================================================================================
+
+![Deploy](assets/setup_lab.png)
 
 <!-- ------------------------ -->
 ## Load Data from Snowflake Tables into Snowpark DataFrames
@@ -189,7 +191,7 @@ The output of the above statement can be viewed in the **Output** tab.
 
 Here's what the **Output** tab looks like after running the worksheet.
 
-![Snowpark](assets/run_python_worksheet.gif)
+![Worksheet](assets/run_python_worksheet.gif)
 
 <!-- ------------------------ -->
 ## Save Transformed Data
@@ -230,7 +232,7 @@ Optionally you can also deploy this worksheet as a Python Stored Procedure so th
 
 ![Deploy](assets/deploy1.png)
 
----
+==================================================================================================
 
 ![Deploy](assets/deploy2.png)
 
@@ -244,6 +246,8 @@ Once it's deployed, the stored procedure details can be viewed under **Data >> D
 ## Conclusion And Resources
 
 Congratulations! You've successfully performed data engineering tasks using Snowpark in Snowflake Python Worksheets.
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLScpCO4ekMB9kitQ6stQZ1NLqZf3VqbQfDrf7yRIwMQjty57_g/viewform?usp=sf_link).
 
 ### What You Learned
 
