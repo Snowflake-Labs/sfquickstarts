@@ -60,8 +60,7 @@ create or replace table vhol_trips
 --copy into vhol_trips (v) from   (SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON));
 
 copy into vhol_trips (v) from 
-  (SELECT * FROM @VHOL_STAGE/2022-02-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_2_7.json.gz (file_format=>JSON));
-
+ (SELECT * FROM @VHOL_STAGE/2022-02-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_2_7.json.gz (file_format=>JSON));
 
 
 --create a view with rows and columns 
