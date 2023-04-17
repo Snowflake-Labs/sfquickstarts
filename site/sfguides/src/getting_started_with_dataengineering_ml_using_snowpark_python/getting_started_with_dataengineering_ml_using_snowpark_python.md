@@ -203,7 +203,7 @@ pip install streamlit
 
 ### Hex
 
-If you choose to use your [Hex](https://app.hex.tech/login) account, then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps **#4** and **#6** for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
+If you choose to use your existing [Hex](https://app.hex.tech/login) account or if you create a new trial account, then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps **#4** and **#6** for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
 
 > aside positive
 > IMPORTANT:
