@@ -186,11 +186,15 @@ select predict_failure(AIR_TEMPERATURE_K,
 ![](assets/snowflake_inference.png)
 
 Head back to AzureML and notice how the training job, data and model are now all captured in your AzureML environment. This highlights how MLFlow is integrated with AzureML!
-
+AzureML Jobs:
 ![](assets/azureml_jobs.png)
 
+
+AzureML Model:
 ![](assets/azureml_model.png)
 
+
+AzureML Data Registry:
 ![](assets/azureml_data.png)
 
 <!-- ------------------------ -->
