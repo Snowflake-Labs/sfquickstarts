@@ -18,13 +18,13 @@ Snowpark includes client-side APIs and server-side runtimes that extends Snowfla
 
 A key component of Snowpark for Python is that you can "Bring Your Own IDE"- anywhere that you can run a Python kernel, you can run client-side Snowpark Python. You can use it in your code development the exact same way as any other Python library or module. In this quickstart, we will be using Jupyter Notebooks, but you could easily replace Jupyter with any IDE of your choosing.
 
-AzureML is a fully managed machine learning service. With AzureML, data scientists and developers can quickly and easily build and train machine learning models, and then directly deploy them into a production-ready hosted environment. It provides an integrated Jupyter authoring notebook instance for easy access to your data sources for exploration and analysis, so you don't have to manage servers. It also provides common machine learning algorithms that are optimized to run efficiently against extremely large data in a distributed environment. With native support for bring-your-own-algorithms and frameworks, SageMaker offers flexible distributed training options that adjust to your specific workflows.
+AzureML is a fully managed machine learning service. With AzureML, data scientists and developers can quickly and easily build and train machine learning models, and then directly deploy them into a production-ready hosted environment. It provides an integrated Jupyter authoring notebook instance for easy access to your data sources for exploration and analysis, so you don't have to manage servers. It also provides common machine learning algorithms that are optimized to run efficiently against extremely large data in a distributed environment. With native support for bring-your-own-algorithms and frameworks, AzureML offers flexible distributed training options that adjust to your specific workflows.
 
 MLflow is an open-source platform for managing the end-to-end machine learning lifecycle. It allows data scientists and developers to track experiments, package and share code, and deploy models. MLflow provides a centralized location for tracking experiments, reproducibility, and collaboration across teams. It also supports multiple languages and frameworks, making it a versatile tool for managing machine learning projects. Conveniently, AzureML tracking is built on top of MLFlow.
 
-This quickstart is designed to service as an introduction to using Sagemaker with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Sagemaker workloads.
+This quickstart is designed to service as an introduction to using AzureML with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Azureml workloads.
 
-[GitHub](https://github.com/Snowflake-Labs/getting_started_with_snowpark_for_machine_learning_on_sagemaker)
+[GitHub](https://github.com/Snowflake-Labs/getting_started_with_snowpark_for_machine_learning_on_azureml)
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
@@ -147,15 +147,15 @@ You should now be able to navigate back to the 'File Browser' tab on the left an
 You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
 ```python
 connection_parameters = {
-    "account": "hk12345.eu-west-2.aws",
-    "host": "hk12345.eu-west-2.aws.snowflakecomputing.com",
+    "account": "sn00111",
+    "host": "sn00111.central-us.azure.snowflakecomputing.com",
     "user": <your_user>, 
     "password": <your_password>,
     "role": <your_role>, # using "ACCOUNTADMIN" may simplify things in an isolated lab environment
     }
 ```
 
-> Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so AWS Secrets Manager or a similar tool would be appropriate.
+> Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so Azure Key Vault or a similar tool would be appropriate.
 
 Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. Review the steps as you go: you just used a little bit of Snowpark to get that data loaded via the `session.write_pandas` function!
 ![](assets/database_check.png)
@@ -211,7 +211,7 @@ Specifically, you may want to consider the additional details:
 - Using MLFlow with AzureML
 
 ### Additional Considerations
-- There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
+- There are some great blogs on Medium regarding Snowpark, AzureML and using Snowflake with Azure.
 
 - [Snowpark for python with AzureML](https://medium.com/@michaelgorkow/mlops-with-snowflake-and-mlflow-on-azure-machine-learning-a21a9def693)
 
