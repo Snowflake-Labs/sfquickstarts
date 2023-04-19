@@ -41,7 +41,12 @@ After ensuring the prerequisites detailed in this section, jump into the queuein
 Duration: 2
 
 ### Login and Setup Lab
-Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by going to the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe) and clicking the `Setup Lab` button. This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:
+
+<button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe)</button>
+
+This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+
 
 ![setup_lab](assets/setup_lab.png)
 

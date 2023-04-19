@@ -1,7 +1,7 @@
 author: Scott Teal
 id: vhol_data_lake
 summary: This is the guide for the hands-on lab, Snowflake for Data Lake
-categories: getting-started,data-engineering
+categories: getting-started,data-engineering,architecture-patterns
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
