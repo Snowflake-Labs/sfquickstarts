@@ -505,7 +505,7 @@ If everything goes well, you should something similar to screen capture below:
 
 #### 2. Start the producer that will ingest real-time data to the MSK cluster
 
-Start a new Linux session by following `step 3` in the section named `Create a provisioned Kafka cluster and a Linux jumphost in AWS`
+Start a new Linux session by following `step 4` in the section named `Create a provisioned Kafka cluster and a Linux jumphost in AWS`
 ```commandline
 curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
