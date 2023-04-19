@@ -292,7 +292,7 @@ See below example screenshot:
 ![](assets/list-kafka-topic.png)
 
 <!---------------------------->
-## Configure Snowflake to communicate with the MSK cluster
+## Prepare the Snowflake cluster for data streaming
 Duration: 10
 
 #### 1. Creating user, role, and database
@@ -393,7 +393,7 @@ You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/
 At this point, the Snowflake setup is complete.
 
 <!---------------------------->
-## Configure Kafka connector to Snowflake with Snowpipe streaming SDK
+## Configure Kafka connector for Snowpipe Streaming
 
 Duration: 10
 
