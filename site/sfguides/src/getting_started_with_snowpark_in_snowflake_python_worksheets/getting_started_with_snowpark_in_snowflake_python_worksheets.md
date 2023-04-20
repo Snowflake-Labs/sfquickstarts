@@ -2,7 +2,7 @@ id: getting_started_with_snowpark_in_snowflake_python_worksheets
 summary: Getting Started with Data Engineering and ML using Snowpark for Python
 categories: featured,getting-started,data-engineering,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets
 authors: Dash Desai
