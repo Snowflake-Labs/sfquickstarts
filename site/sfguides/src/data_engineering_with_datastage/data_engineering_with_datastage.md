@@ -9,17 +9,16 @@ tags: Data Engineering, Getting Started, DataStage, Data Integration
 
 # Use IBM DataStage to Load Enterprise Data into Snowflake
 
-<img src="assets/datastage_snowflake_banner.png" width=40% height=40%><br><br>
+![datastage_snowflake_banner.png](assets/datastage_snowflake_banner.png)<br><br>
+
 <!-- ------------------------ -->
 ## Overview
  
 IBM DataStage is a data integration tool that helps users build trusted data pipelines, orchestrate data across distributed landscapes, and move and transform data between cloud sources and data warehouses. It provides a native Snowflake connector, among many others, to write, read, and load data into Snowflake and integrate it into the data pipeline. This Quickstart demonstrates how to load enterprise data into Snowflake quickly and efficiently through IBM DataStage. Let's get going!   
 
-This tutorial takes approximately 20 minutes to complete.
-
 ### Prerequisites
-- Access to an IBM CP4DaaS account (or free trial) 
-- Access to a Snowflake account (or free trial) 
+- Access to an [IBM CP4DaaS account](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[%E2%80%A6]catalog&regions=us-south%2Ceu-de&uucid=0777b2bbb543d3da) (or free trial)
+- Access to a [Snowflake account](https://signup.snowflake.com/) (or free trial)
 
 ### What You'll Learn
 - How to start working with DataStage 
@@ -39,49 +38,49 @@ Your goal is to use IBM DataStage to load data into your Snowflake account. To a
 
 1. Log into your Snowflake trial account. 
 
-    <img src="assets/datastage_snowflake_0.png" width=20% height=20%> <img src="assets/datastage_snowflake_1.png" width=19.65% height=19.65%><br><br>
+    ![datastage_snowflake_0](assets/datastage_snowflake_0.png)
+    ![datastage_snowflake_1](assets/datastage_snowflake_1.png)<br><br>
 
 2. In the navigation pane, click **Admin > Warehouses**. 
 
-    <img src="assets/datastage_snowflake_2.png" width=10% height=10%>
+    ![datastage_snowflake_2](assets/datastage_snowflake_2.png)
 
     -  Click **+ Warehouse**. 
     - For the *Name*,  type **DATASTAGEDATA**.
     - Accept the defaults for the rest of the fields, and click **Create Warehouse**.
 
-        <img src="assets/datastage_snowflake_3.png" width=10% height=10%>
-
-        <img src="assets/datastage_snowflake_4.png" width=30% height=30%><br><br>
+        ![datastage_snowflake_3](assets/datastage_snowflake_3.png)
+        ![datastage_snowflake_4](assets/datastage_snowflake_4.png)<br><br>
  
 3. In the navigation pane, click **Data**.
 
-    <img src="assets/datastage_snowflake_5.png" width=10% height=10%>
+    ![datastage_snowflake_5](assets/datastage_snowflake_5.png)
 
     -  Click **+ Database**.
     -  For the *Name*, type **DATASTAGEDB**, and click **Create**. <br>
 
-        <img src="assets/datastage_snowflake_6.png" width=10% height=10%>
+        ![datastage_snowflake_6](assets/datastage_snowflake_6.png)
 
-        <img src="assets/datastage_snowflake_7.png" width=30% height=30%><br><br>
+        ![datastage_snowflake_7](assets/datastage_snowflake_7.png)<br><br>
 
 4. Click the newly created **DATASTAGEDB** database in the list, and select **+ Schema**.
     - For the *Schema* name, type **MORTGAGE**.
     - Click **Create**. 
 
-        <img src="assets/datastage_snowflake_8.png" width=10% height=10%>
+        ![datastage_snowflake_8](assets/datastage_snowflake_8.png)
 
-        <img src="assets/datastage_snowflake_9.png" width=30% height=30%>
+        ![datastage_snowflake_9](assets/datastage_snowflake_9.png)
 
 **Check your progress**: The following image shows the DATASTAGEDB database in Snowflake. You now have all of the credentials ready on Snowflake to begin working in DataStage. 
 
-<img src="assets/datastage_snowflake_datastagedb.png" width=60% height=60%><br><br>
+![datastage_snowflake_datastagedb](assets/datastage_snowflake_datastagedb.png)<br><br>
 
 <!-- ------------------------ -->
 
 ## Provision DataStage on Cloud Pak for Data as a Service
 Duration: 4
 
-<img src="assets/datastage_snowflake_10.png" width=60% height=60%><br>
+![datastage_snowflake_10](assets/datastage_snowflake_10.png)<br>
 
 To provision DataStage and begin working with the enterprise data, you must first sign up for Cloud Pak for Data as a Service and provision DataStage. 
 1. Visit the [Data Integration Use Case Trial Page](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[%E2%80%A6]catalog&regions=us-south%2Ceu-de&uucid=0777b2bbb543d3da). 
@@ -103,7 +102,7 @@ To provision DataStage and begin working with the enterprise data, you must firs
 
 **Check your progress**: The following image shows the Cloud Pak for Data home page.
 
-<img src="assets/datastage_snowflake_11.png" width=60% height=60%><br><br>
+![datastage_snowflake_11](assets/datastage_snowflake_11.png)<br><br>
 
 <!-- ------------------------ -->
 ## Verify the necessary provisioned services 
@@ -114,15 +113,15 @@ Duration: 3
 Follow these steps to verify or provision the necessary services:
 1. In Cloud Pak for Data, verify that you are in the Dallas region. If not, click the region drop-down, and then select **Dallas** or **Frankfurt**.
 
-    <img src="assets/datastage_snowflake_12.png" width=20% height=20%><br><br>
+    ![datastage_snowflake_12](assets/datastage_snowflake_12.png)<br><br>
 
-2. From the Cloud Pak for Data navigation menu on the top left side of the screen <img src="assets/datastage_snowflake_cpdmenu.png" width=2% height=2%>, choose **Services > Service instances**.
+2. From the Cloud Pak for Data navigation menu on the top left side of the screen ![datastage_snowflake_cpdmenu](assets/datastage_snowflake_cpdmenu.png), choose **Services > Service instances**.
 
-    <img src="assets/datastage_snowflake_13.png" width=15% height=15%><br><br>
+    ![datastage_snowflake_13](assets/datastage_snowflake_13.png)<br><br>
 
 3. Use the **Product** drop-down list to determine whether a DataStage service instance exists.
 
-    <img src="assets/datastage_snowflake_14.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_14](assets/datastage_snowflake_14.png)<br><br>
 
 4. If you need to create a DataStage service instance, click **Add service**, on the right side of the screen. 
 5. Select **DataStage**.
@@ -130,16 +129,16 @@ Follow these steps to verify or provision the necessary services:
     - Select the **Lite** plan.
     - Click **Create**.
 
-        <img src="assets/datastage_snowflake_15.png" width=10% height=10%>
+        ![datastage_snowflake_15](assets/datastage_snowflake_15.png)
 
-        <img src="assets/datastage_snowflake_16.png" width=30% height=30%><br><br>
+        ![datastage_snowflake_16](assets/datastage_snowflake_16.png)<br><br>
 
 6. Repeat these steps to verify or provision the following additional service:
     - Cloud Object Storage<br><br>
 
 **Check your progress**: The following image shows the provisioned service instances. You are now ready to begin the tutorial. If your service instance page only lists DataStage and Cloud Object Storage, you will be able to continue with this tutorial. 
 
-<img src="assets/datastage_snowflake_17.png" width=60% height=60%><br><br>
+![datastage_snowflake_17](assets/datastage_snowflake_17.png)<br><br>
 <!-- ------------------------ -->
 
 ## Create a DataStage project
@@ -150,23 +149,23 @@ You need a project to store the connections to external data sources and the Dat
 1. Access the [Data Integration sample project](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/2e362351b4477cb26f61937a377c2445?context=cpdaas) in the gallery.<br><br>
 2. Click **Create Project**. 
 
-    <img src="assets/datastage_snowflake_18.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_18](assets/datastage_snowflake_18.png)<br><br>
 
 3. The project name and description are filled in for you. Click **Create**. This creates the project containing a connection to a Db2 Warehouse on Cloud instance where the enterprise data is stored, and then you can begin constructing the DataStage flow. 
 
-    <img src="assets/datastage_snowflake_19.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_19](assets/datastage_snowflake_19.png)<br><br>
 
 4. Once the project has finished importing, select **View new project**. 
 
-    <img src="assets/datastage_snowflake_20.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_20](assets/datastage_snowflake_20.png)<br><br>
 
 5. Click the **Assets Tab** to verify that the project and assets were created successfully. 
 
-    <img src="assets/datastage_snowflake_21.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_21](assets/datastage_snowflake_21.png)<br><br>
 
 **Check your progress**: The following image shows the sample project. You are now ready to create the connection to Snowflake.
 
-<img src="assets/datastage_snowflake_22.png" width=60% height=60%><br><br>
+![datastage_snowflake_22](assets/datastage_snowflake_22.png)<br><br>
 
 <!-- ------------------------ -->
 ## Create a connection to your Snowflake data warehouse
@@ -176,19 +175,19 @@ You need to add the connection information to your project so you can access the
 
 1. From the *Assets* tab, click **New Asset** on the right side of the screen. 
 
-    <img src="assets/datastage_snowflake_23.png" width=20% height=20%><br><br>
+    ![datastage_snowflake_23](assets/datastage_snowflake_23.png)<br><br>
 
 2. In the *Data Access Tools* section, click **Connection**.
 
-    <img src="assets/datastage_snowflake_24.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_24](assets/datastage_snowflake_24.png)<br><br>
 
 3. Search for *Snowflake* in the **Find connection types** search field.
 
-    <img src="assets/datastage_snowflake_25.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_25](assets/datastage_snowflake_25.png)<br><br>
 
 4. Select the **Snowflake** connector, and then click **Select**.
 
-    <img src="assets/datastage_snowflake_26.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_26](assets/datastage_snowflake_26.png)<br><br>
 
 5. On the *Create* connection: *Snowflake* page, type **Snowflake** for the connection name.<br><br>
 6. For the *Connection details*, complete the following fields using the information from the Snowflake account you created in the first task:
@@ -203,7 +202,7 @@ You need to add the connection information to your project so you can access the
 
 **Check your progress**: The following image shows the new connection information. You are now ready to create the DataStage flow.
 
-<img src="assets/datastage_snowflake_27.png" width=60% height=60%><br><br>
+![datastage_snowflake_27](assets/datastage_snowflake_27.png)<br><br>
 
 <!-- ------------------------ -->
 ## Create a DataStage flow
@@ -213,21 +212,21 @@ Now you are ready to create a DataStage flow that loads the Db2 Warehouse data t
 
 1. From the *Assets* tab, click **New Asset**. 
 
-    <img src="assets/datastage_snowflake_28.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_28](assets/datastage_snowflake_28.png)<br><br>
 
 2. In the *Graphical builders* section, click **DataStage**. 
 
-    <img src="assets/datastage_snowflake_29.png" width=30% height=30%><br><br>
+    ![datastage_snowflake_29](assets/datastage_snowflake_29.png)<br><br>
 
 3. For the *Name*, type **Load Db2 data to Snowflake**.
 
-    <img src="assets/datastage_snowflake_30.png" width=60% height=60%><br><br>
+    ![datastage_snowflake_30](assets/datastage_snowflake_30.png)<br><br>
 
 4. Click **Create**. The DataStage canvas displays where you can create the flow to load data onto Snowflake.<br><br>
 
 **Check your progress**: The following image shows an empty DataStage canvas. You are now ready to design a DataStage flow.
 
-<img src="assets/datastage_snowflake_31.png" width=60% height=60%><br><br>
+![datastage_snowflake_31](assets/datastage_snowflake_31.png)<br><br>
 <!-- ------------------------ -->
 
 ## Design the DataStage flow
@@ -239,29 +238,29 @@ Now you are ready to design a DataStage flow to load data into Snowflake. The Da
 
 1. In the node palette, expand the **Connectors** section.
 
-    <img src="assets/datastage_snowflake_34.png" width=10% height=10%>
-    <img src="assets/datastage_snowflake_35.png" width=10% height=10%><br><br>
+    ![datastage_snowflake_34](assets/datastage_snowflake_34.png)
+    ![datastage_snowflake_35](assets/datastage_snowflake_35.png)<br><br>
 
 2. Drag the **Asset browser** connector and drop it anywhere on the empty canvas.
 
-    <img src="assets/datastage_snowflake_36.png" width=20% height=20%><br><br>
+    ![datastage_snowflake_36](assets/datastage_snowflake_36.png)<br><br>
 
 3. When you drop the *Asset Browser connector* on the canvas, you are prompted to select the asset.
     - To locate the asset, select **Connection > Data Fabric Trial - Db2 Warehouse > BANKING > MORTGAGE_APPLICATION**. 
     **Note**: To expand the connection and schema, click the connection or schema name instead of the checkbox.<br>
-        <img src="assets/datastage_snowflake_37.png" width=40% height=40%><br>
+        ![datastage_snowflake_37](assets/datastage_snowflake_37.png)<br>
 
     - Click **Add** to drop the Db2 data source onto the DataStage canvas.
 
-        <img src="assets/datastage_snowflake_38.png" width=20% height=20%>
-        <img src="assets/datastage_snowflake_39.png" width=40% height=40%><br><br>
+        ![datastage_snowflake_38](assets/datastage_snowflake_38.png)
+        ![datastage_snowflake_39](assets/datastage_snowflake_39.png)<br><br>
 
 4. Double-click the **MORTGAGE_APPLICATION** node to see its settings.
     - Click the **Output** tab.
     - Check the **Runtime column propagation** option. DataStage is flexible about metadata. It can handle where metadata is not fully defined. In this case, we select **Runtime column propagation** so that if the DataStage job encounters extra columns that are not defined in the metadata when it actually runs, it adopts these extra columns and propagates them through the rest of the job. This feature allows your flow design to be flexible for schema drift. 
     - Click **Save**. 
 
-        <img src="assets/datastage_snowflake_40.png" width=30% height=30%>
+        ![datastage_snowflake_40](assets/datastage_snowflake_40.png)
 
 Because you are reading data from Db2 Warehouse into Snowflake, the Db2 connector is positioned first in the flow. Your goal is to load the Db2 Warehouse data into Snowflake. Next, you will add a Snowflake connector that reads the data from the Db2 Warehouse connector. Thus, the Snowflake connector is positioned second in the flow.<br>
 
@@ -270,16 +269,16 @@ Because you are reading data from Db2 Warehouse into Snowflake, the Db2 connecto
     - To locate the schema, select **Connection > Snowflake > MORTGAGE. Note:** Click the checkbox to select the *MORTGAGE* schema name.
     - Click **Add** to drop the Snowflake connection onto the DataStage canvas.
 
-        <img src="assets/datastage_snowflake_41.png" width=60% height=60%><br><br>
+        ![datastage_snowflake_41](assets/datastage_snowflake_41.png)<br><br>
 
 7. To link the nodes together, hover over the **Mortgage_Application_1** node until you see an arrow. Drag the arrow to the Snowflake connection to connect the two nodes.
 
-    <img src="assets/datastage_snowflake_42.png" width=40% height=40%><br><br>
+    ![datastage_snowflake_42](assets/datastage_snowflake_42.png)<br><br>
 
 8. Double-click the **MORTGAGE_1** connector to see its settings.
     - Change the node name to **Snowflake_mortgage_data**. 
 
-        <img src="assets/datastage_snowflake_43.png" width=40% height=40%><br>
+        ![datastage_snowflake_43](assets/datastage_snowflake_43.png)<br>
 
     - In the settings side panel, click the **Input** tab.
     - Expand the **Usage** section. 
@@ -288,7 +287,8 @@ Because you are reading data from Db2 Warehouse into Snowflake, the Db2 connecto
     - For the *Table action*, select **Replace**. This setting will create the table in the specified database and schema in Snowflake, and then load the enterprise data into that table. All other selections under Actions can be kept the same. 
     - Click **Save** to update the changes, and return to the DataStage flow.
 
-        <img src="assets/datastage_snowflake_44.png" width=25.7% height=25.7%> <img src="assets/datastage_snowflake_45.png" width=20% height=20%><br><br>
+        ![datastage_snowflake_44](assets/datastage_snowflake_44.png)
+        ![datastage_snowflake_45](assets/datastage_snowflake_45.png)<br><br>
 
 <!-- ------------------------ -->
 ## Add Transformation Nodes
@@ -303,34 +303,34 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
     - To locate the asset, select **Connection > Data Fabric Trial - Db2 Warehouse > BANKING > MORTGAGE_APPLICANT. Note**: To expand the connection and schema, click the connection or schema name instead of the checkbox.
     - Click **Add** to drop the Db2 Warehouse data source onto the DataStage canvas.
 
-        <img src="assets/datastage_snowflake_46.png" width=60% height=60%><br><br>
+        ![datastage_snowflake_46](assets/datastage_snowflake_46.png)<br><br>
 
 4. Double-click the **MORTGAGE_APPLICANT** node to see its settings.
     - Click the **Output** tab.
     - Check the **Runtime column propagation** option. DataStage is flexible about metadata. It can handle where metadata is not fully defined. In this case, we select **Runtime column propagation** so that if the DataStage job encounters extra columns that are not defined in the metadata when it actually runs, it adopts these extra columns and propagates them through the rest of the job. This feature allows your flow design to be flexible for schema drift. 
     - Click **Save**.
 
-        <img src="assets/datastage_snowflake_47.png" width=30% height=30%><br><br>
+        ![datastage_snowflake_47](assets/datastage_snowflake_47.png)<br><br>
 
 **Check your progress**: The following image shows what the DataStage flow should look like after adding in the *Mortgage_Applicant* node. You are now ready to add in the join and filter nodes. 
 
-<img src="assets/datastage_snowflake_48.png" width=40% height=40%><br><br>
+![datastage_snowflake_48](assets/datastage_snowflake_48.png)<br><br>
 
 
 **Join Stage Node** 
 
 1. In the *Node palette*, expand the **Stages** section.
 
-    <img src="assets/datastage_snowflake_49.png" width=20% height=20%><br><br>
+    ![datastage_snowflake_49](assets/datastage_snowflake_49.png)<br><br>
 
-2. In the *Node palette*, drag the **Join** stage on to the canvas, and drop the node on the link line between the *MORTGAGE_APPLICATION* and *Snowflake_mortgage_data* nodes. This action maintains links from the *MORTGAGE_APPLICATION* node to the *JOIN *node to the *Snowflake_mortgage_data* node.
+2. In the *Node palette*, drag the **Join** stage on to the canvas, and drop the node on the link line between the *MORTGAGE_APPLICATION* and *Snowflake_mortgage_data* nodes. This action maintains links from the *MORTGAGE_APPLICATION* node to the *JOIN* node to the *Snowflake_mortgage_data* node.
 
-    <img src="assets/datastage_snowflake_50.png" width=20% height=20%>
-    <img src="assets/datastage_snowflake_51.png" width=30% height=30%><br><br>
+    ![datastage_snowflake_50](assets/datastage_snowflake_50.png)
+    ![datastage_snowflake_51](assets/datastage_snowflake_51.png)<br><br>
 
 3. Hover over the **MORTGAGE_APPLICANT** connector to see the arrow. Connect the arrow to the **Join** stage.
 
-    <img src="assets/datastage_snowflake_52.png" width=30% height=30%><br><br>
+    ![datastage_snowflake_52](assets/datastage_snowflake_52.png)<br><br>
 
 4. Double-click the **Join_1** node to edit the settings.
     - Expand the **Properties** section.
@@ -340,48 +340,49 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
         - Click **Apply**.
         - Click **Apply and return** to return to the *Join_1* node settings.
 
-            <img src="assets/datastage_snowflake_53.png" width=30% height=30%> <img src="assets/datastage_snowflake_54.png" width=10% height=10%>
+            ![datastage_snowflake_53](assets/datastage_snowflake_53.png)
+            ![datastage_snowflake_54](assets/datastage_snowflake_54.png) 
 
     -  Change the *Join_1* node name to **Join_on_ID**. 
     - Click the **Output** tab.
         - Check the **Runtime column propagation** option.
     - Click **Save** to save the *Join_on_ID* node settings.<br>
-        <img src="assets/datastage_snowflake_55.png" width=20% height=20%><br><br>
+        ![datastage_snowflake_55](assets/datastage_snowflake_55.png)<br><br>
 
 **Filter Stage Node** 
 
 1. In the *Node palette*, in the *Stages* section, drag the **Filter** node to the canvas, and drop the node on the link line between the *Join_on_ID* and *Snowflake_mortgage_data* nodes.
 
-    <img src="assets/datastage_snowflake_56.png" width=30% height=30%><br><br>
+    ![datastage_snowflake_56](assets/datastage_snowflake_56.png)<br><br>
 
 2. Double-click the **Filter_1** node to edit the settings.
     - Change the *Filter_1* node name to **Filter_on_CA**. 
 
-        <img src="assets/datastage_snowflake_57.png" width=30% height=30%>
+        ![datastage_snowflake_57](assets/datastage_snowflake_57.png)
 
     - Expand the **Properties** section.
 
-        <img src="assets/datastage_snowflake_58.png" width=30% height=30%>
+        ![datastage_snowflake_58](assets/datastage_snowflake_58.png)
 
     - Under *Predicates*, click **Edit**.
         - Click below **Where clause** to enter in a custom filter clause. 
 
-            <img src="assets/datastage_snowflake_59.png" width=60% height=60%>
+            ![datastage_snowflake_59](assets/datastage_snowflake_59.png)
 
         - Type **STATE_CODE='CA'**. This will filter all mortgage applications to only keep those that came from California. 
 
-            <img src="assets/datastage_snowflake_60.png" width=60% height=60%>
+            ![datastage_snowflake_60](assets/datastage_snowflake_60.png)
 
         - Click **Apply and return**. 
     - Click the **Output** tab.
         - Check the **Runtime column propagation** option.
         - Click **Save** to save the Filter node settings.
 
-            <img src="assets/datastage_snowflake_61.png" width=30% height=30%><br><br>
+            ![datastage_snowflake_61](assets/datastage_snowflake_61.png)<br><br>
 
 **Check your progress**: The following image shows the completed DataStage flow. You are now ready to run the DataStage job.
 
-<img src="assets/datastage_snowflake_62.png" width=50% height=50%><br><br>
+![datastage_snowflake_62](assets/datastage_snowflake_62.png)<br><br>
 
 <!-- ------------------------ -->
 ## Run the DataStage job
@@ -395,7 +396,7 @@ Now you are ready to compile and run the DataStage job to load the Mortgage Appl
 
 **Check your progress**: The following image shows the successful run completed. Now that the DataStage job ran successfully, you can view the new table in Snowflake.
 
-<img src="assets/datastage_snowflake_63.png" width=70% height=70%><br><br>
+![datastage_snowflake_63](assets/datastage_snowflake_63.png)<br><br>
 
 <!-- ------------------------ -->
 ## View the data asset in the Snowflake data warehouse
@@ -408,11 +409,11 @@ To check whether the data was loaded data into Snowflake correctly, you can go b
 3. Select the **APPLICATION** table.
 4. Under the table name, click the **Data Preview** tab.
 5. Select the **DATASTAGEDATA** warehouse.
-6. Click **Preview** to see a preview of the Mortgage Application data imported from DataStage. 
+6. Click **Preview** to see a preview of the *Mortgage Application* data imported from DataStage. 
 
 **Check your progress**: The following image shows the loaded table in Snowflake.
 
-<img src="assets/datastage_snowflake_64.png" width=60% height=60%><br><br>
+![datastage_snowflake_64](assets/datastage_snowflake_64.png)<br><br>
 
 <!-- ------------------------ -->
 ## Next Steps 
