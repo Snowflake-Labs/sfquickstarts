@@ -17,7 +17,7 @@ tags: Data Engineering, Getting Started, DataStage, Data Integration
 IBM DataStage is a data integration tool that helps users build trusted data pipelines, orchestrate data across distributed landscapes, and move and transform data between cloud sources and data warehouses. It provides a native Snowflake connector, among many others, to write, read, and load data into Snowflake and integrate it into the data pipeline. This Quickstart demonstrates how to load enterprise data into Snowflake quickly and efficiently through IBM DataStage. Let's get going!   
 
 ### Prerequisites
-- Access to an [IBM CP4DaaS account](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[%E2%80%A6]catalog&regions=us-south%2Ceu-de&uucid=0777b2bbb543d3da) (or free trial)
+- Access to an [IBM CP4DaaS account](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[…]eu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF) (or free trial)
 - Access to a [Snowflake account](https://signup.snowflake.com/) (or free trial)
 
 ### What You'll Learn
@@ -80,12 +80,11 @@ Your goal is to use IBM DataStage to load data into your Snowflake account. To a
 ## Provision DataStage on Cloud Pak for Data as a Service
 Duration: 4
 
-![datastage_snowflake_10](assets/datastage_snowflake_10.png)<br>
+![datastage_snowflake_trydatastage](assets/datastage_snowflake_trydatastage.png)<br>
 
 To provision DataStage and begin working with the enterprise data, you must first sign up for Cloud Pak for Data as a Service and provision DataStage. 
-1. Visit the [Data Integration Use Case Trial Page](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[%E2%80%A6]catalog&regions=us-south%2Ceu-de&uucid=0777b2bbb543d3da). 
-2. Select either **Dallas or Frankfurt**
-3. Check the box to agree to the terms.
+1. Visit the [DataStage Trial Page](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[…]eu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF). 
+2. Check the box to agree to the terms.
 4. If you have an existing Cloud Pak for Data as a Service or IBM Cloud account, then follow these steps:
     - Click **Log in with your IBMid**.
     - Provide your IBMid, and click **Continue**.
@@ -102,43 +101,8 @@ To provision DataStage and begin working with the enterprise data, you must firs
 
 **Check your progress**: The following image shows the Cloud Pak for Data home page.
 
-![datastage_snowflake_11](assets/datastage_snowflake_11.png)<br><br>
+![datastage_snowflake_homepage](assets/datastage_snowflake_homepage.png)<br><br>
 
-<!-- ------------------------ -->
-## Verify the necessary provisioned services 
-Duration: 3
-
-**Important**: The DataStage service is available in the Dallas and Frankfurt regions only. If necessary, switch to the Dallas or Frankfurt region before continuing.
-
-Follow these steps to verify or provision the necessary services:
-1. In Cloud Pak for Data, verify that you are in the Dallas region. If not, click the region drop-down, and then select **Dallas** or **Frankfurt**.
-
-    ![datastage_snowflake_12](assets/datastage_snowflake_12.png)<br><br>
-
-2. From the Cloud Pak for Data navigation menu on the top left side of the screen ![datastage_snowflake_cpdmenu](assets/datastage_snowflake_cpdmenu.png), choose **Services > Service instances**.
-
-    ![datastage_snowflake_13](assets/datastage_snowflake_13.png)<br><br>
-
-3. Use the **Product** drop-down list to determine whether a DataStage service instance exists.
-
-    ![datastage_snowflake_14](assets/datastage_snowflake_14.png)<br><br>
-
-4. If you need to create a DataStage service instance, click **Add service**, on the right side of the screen. 
-5. Select **DataStage**.
-    - For the region, select **Dallas** or **Frankfurt**.
-    - Select the **Lite** plan.
-    - Click **Create**.
-
-        ![datastage_snowflake_15](assets/datastage_snowflake_15.png)
-
-        ![datastage_snowflake_16](assets/datastage_snowflake_16.png)<br><br>
-
-6. Repeat these steps to verify or provision the following additional service:
-    - Cloud Object Storage<br><br>
-
-**Check your progress**: The following image shows the provisioned service instances. You are now ready to begin the tutorial. If your service instance page only lists DataStage and Cloud Object Storage, you will be able to continue with this tutorial. 
-
-![datastage_snowflake_17](assets/datastage_snowflake_17.png)<br><br>
 <!-- ------------------------ -->
 
 ## Create a DataStage project
@@ -146,10 +110,10 @@ Duration: 2
 
 You need a project to store the connections to external data sources and the DataStage flow. A project is a collaborative workspace where you work with data and other assets to accomplish a particular goal. Follow these steps to create the sample project:
 
-1. Access the [Data Integration sample project](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/2e362351b4477cb26f61937a377c2445?context=cpdaas) in the gallery.<br><br>
+1. From the pop-up, select **Sample Project** and then select **Next**.   
 2. Click **Create Project**. 
 
-    ![datastage_snowflake_18](assets/datastage_snowflake_18.png)<br><br>
+    ![datastage_snowflake_createproject](assets/datastage_snowflake_createproject.png)<br><br>
 
 3. The project name and description are filled in for you. Click **Create**. This creates the project containing a connection to a Db2 Warehouse on Cloud instance where the enterprise data is stored, and then you can begin constructing the DataStage flow. 
 
