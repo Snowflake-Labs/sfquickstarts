@@ -50,6 +50,9 @@ Sign up for a free, 30-day trial by following this [link](https://signup.snowfla
 
 Log into your Snowflake account. To access this lab and set up sample data and code, you'll want to ensure you click on the following link.
 
+> aside positive
+> IMPORTANT: You must have ACCOUNTADMIN role in order to proceed with the lab setup described below.
+
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 
 The button above will take you to a page in the trial titled **Getting Started with Snowpark in Snowflake Python Worksheets** that will invite you to click **Setup Lab** which will take less than a minute and provide a setup with data and sample Python code with explanation.
