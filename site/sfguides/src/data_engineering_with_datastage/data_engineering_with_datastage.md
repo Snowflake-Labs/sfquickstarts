@@ -78,7 +78,7 @@ Your goal is to use IBM DataStage to load data into your Snowflake account. To a
 <!-- ------------------------ -->
 
 ## Provision DataStage on Cloud Pak for Data as a Service
-Duration: 4
+Duration: 2
 
 ![datastage_snowflake_trydatastage](assets/datastage_snowflake_trydatastage.png)<br>
 
@@ -380,11 +380,17 @@ To check whether the data was loaded data into Snowflake correctly, you can go b
 ![datastage_snowflake_64](assets/datastage_snowflake_64.png)<br><br>
 
 <!-- ------------------------ -->
-## Next Steps 
-Congratulations on completing this lab! 
+## Conclusion and Resources 
+Congratulations on completing this lab! You've successfully used [DataStage](https://www.ibm.com/products/datastage?utm_content=SRCWW&p1=Search&p4=43700050328190090&p5=e&gclid=EAIaIQobChMIgqOUjdrj_QIVEgZ9Ch3rvwWwEAAYASAAEgLNzPD_BwE&gclsrc=aw.ds) to load enterprise data into Snowflake and perform [data transformations](https://video.ibm.com/playlist/650317) (of which there are hundreds of [pre-built objects](https://dataplatform.cloud.ibm.com/docs/content/dstage/com.ibm.swg.im.iis.ds.parjob.dev.doc/topics/processingdata.html?audience=wdp) in DataStage). <br><br>
 
-Today you learned how to use [DataStage](https://www.ibm.com/products/datastage?utm_content=SRCWW&p1=Search&p4=43700050328190090&p5=e&gclid=EAIaIQobChMIgqOUjdrj_QIVEgZ9Ch3rvwWwEAAYASAAEgLNzPD_BwE&gclsrc=aw.ds) to load enterprise data into Snowflake and perform [data transformations](https://video.ibm.com/playlist/650317) (of which there are hundreds of [pre-built objects](https://dataplatform.cloud.ibm.com/docs/content/dstage/com.ibm.swg.im.iis.ds.parjob.dev.doc/topics/processingdata.html?audience=wdp) in DataStage). 
+### **What You Learned**
+1. How to provision DataStage as a Service 
+2. How to create a DataStage flow 
+3. How to configure a Snowflake connection and load data into Snowflake  
+4. How to perform join and filter data transformations 
+5. How to run a DataStage job <br><br>
 
+### **Next Steps and Related Resources** 
 We encourage you to continue with your free trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
 
 1. Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab). 
