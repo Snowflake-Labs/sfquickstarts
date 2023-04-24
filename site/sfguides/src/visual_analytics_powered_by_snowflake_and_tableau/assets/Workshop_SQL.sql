@@ -4,7 +4,7 @@
 -- <Apr 12, 2023 | 8:00pm PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
---  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/workshop.sql
+--  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/Workshop.sql
 -------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------Set Up---------------------------------------------------------*/
@@ -195,7 +195,7 @@ with gbfs as (
     from gbfs, lateral flatten (input => payload:response.features)
     where type = 'neighborhood';
     
-   -- create a relational view on Station geo data 
+  -- create a relational view on Station geo data 
    create or replace table vhol_stations as with 
   -- extract the station data
     s as (select 
@@ -210,7 +210,9 @@ with gbfs as (
         v:rental_methods rental_methods,
         v:legacy_id::string legacy_station_id -- introduced this because citibyke has changed the station_id from numeric to string 
     from vhol_spatial_data
+
     where type = 'station'),  
+
     r as (select
         v:region_id::number region_id,
         v:name::string region_name

@@ -1,7 +1,7 @@
 author: Chandra Nayak & Bailey Ferrari
 id: visual_analytics_powered_by_snowflake_and_tableau
 summary: Visual Analytics Powered by Snowflake and Tableau
-categories: Getting-Started
+categories: partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -339,7 +339,9 @@ create or replace table vhol_stations as with
         v:rental_methods rental_methods,
         v:legacy_id::string legacy_station_id -- introduced this because citibyke has changed the station_id from numeric to string 
     from vhol_spatial_data
+
     where type = 'station'),  
+
     r as (select
         v:region_id::number region_id,
         v:name::string region_name

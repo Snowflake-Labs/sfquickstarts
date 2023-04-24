@@ -1,7 +1,7 @@
 author: Adrian Lee
 id: devops_dcm_schemachange_jenkins
 summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Jenkins
-categories: DevOps
+categories: devops
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
