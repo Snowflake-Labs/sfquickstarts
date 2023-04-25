@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Getting Started, DataStage, Data Integration
 
-# A Data Integration Guide: Loading Enterprise Data into Snowflake with IBM DataStage
+# A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage
 
 <!-- ------------------------ -->
 ## Overview
