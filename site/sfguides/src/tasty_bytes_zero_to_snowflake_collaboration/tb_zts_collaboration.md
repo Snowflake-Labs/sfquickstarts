@@ -158,7 +158,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
 
 As we see in the View definition above we are joining two of the `frostbyte_weathersource` Tables within the `onpoint_id` Schema and then Harmonizing it with our `country` Table from our `frostbyte_tasty_bytes` Database and `raw_pos` Schema. 
 
-This is the sort of operation we typically find in the Harmonized layer or what others may describe as the Silver zone.
+This is the sort of operation we typically find in the Harmonized layer or what others may describe as the Silver zone.s
 
 ### Step 3 - Visualizing Daily Temperatures
 With the `daily_weather_v` View in our Harmonized Schema in place let's take a look at the Average Daily Weather Temperature for Hamburg in February 2022 by executing our next query.
