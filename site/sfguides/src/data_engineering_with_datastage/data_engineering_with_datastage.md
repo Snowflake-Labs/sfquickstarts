@@ -7,15 +7,14 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Getting Started, DataStage, Data Integration
 
-# A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage
+# Use IBM DataStage to Load Enterprise Data into Snowflake
+
+![datastage_snowflake_banner.png](assets/datastage_snowflake_banner.png)<br><br>
 
 <!-- ------------------------ -->
 ## Overview
  
-IBM DataStage is a world-class data integration tool that helps users build trusted data pipelines, orchestrate data across distributed landscapes, and move and transform data between cloud sources and data warehouses. It provides a native Snowflake connector, among many others, to write, read, and load data into Snowflake and integrate it into the data pipeline. This Quickstart demonstrates how to load enterprise data into Snowflake quickly and efficiently through IBM DataStage. Let's get going!   <br><br>
-
-![datastage_snowflake_banner.png](assets/datastage_snowflake_banner.png)<br><br>
-
+IBM DataStage is a data integration tool that helps users build trusted data pipelines, orchestrate data across distributed landscapes, and move and transform data between cloud sources and data warehouses. It provides a native Snowflake connector, among many others, to write, read, and load data into Snowflake and integrate it into the data pipeline. This Quickstart demonstrates how to load enterprise data into Snowflake quickly and efficiently through IBM DataStage. Let's get going!   
 
 ### Prerequisites
 - Access to an [IBM CP4DaaS account](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[…]eu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF) (or free trial)
@@ -50,7 +49,7 @@ Your goal is to use IBM DataStage to load data into your Snowflake account. To a
     - For the *Name*,  type **DATASTAGEDATA**.
     - Accept the defaults for the rest of the fields, and click **Create Warehouse**.
 
-        ![datastage_snowflake_3](assets/datastage_snowflake_3.png)<br>
+        ![datastage_snowflake_3](assets/datastage_snowflake_3.png)
         ![datastage_snowflake_4](assets/datastage_snowflake_4.png)<br><br>
  
 3. In the navigation pane, click **Data**.
@@ -201,9 +200,10 @@ Now you are ready to design a DataStage flow to load data into Snowflake. The Da
 
 **Add the two connector nodes**: 
 
-1. In the node palette, expand the **Connectors** section. <br>
+1. In the node palette, expand the **Connectors** section.
 
-     ![datastage_snowflake_35](assets/datastage_snowflake_35.png)<br><br>
+    ![datastage_snowflake_34](assets/datastage_snowflake_34.png)
+    ![datastage_snowflake_35](assets/datastage_snowflake_35.png)<br><br>
 
 2. Drag the **Asset browser** connector and drop it anywhere on the empty canvas.
 
@@ -212,11 +212,11 @@ Now you are ready to design a DataStage flow to load data into Snowflake. The Da
 3. When you drop the *Asset Browser connector* on the canvas, you are prompted to select the asset.
     - To locate the asset, select **Connection > Data Fabric Trial - Db2 Warehouse > BANKING > MORTGAGE_APPLICATION**. 
     **Note**: To expand the connection and schema, click the connection or schema name instead of the checkbox.<br>
-        ![datastage_snowflake_37](assets/datastage_snowflake_37.png)<br><br>
+        ![datastage_snowflake_37](assets/datastage_snowflake_37.png)<br>
 
     - Click **Add** to drop the Db2 data source onto the DataStage canvas.
 
-        ![datastage_snowflake_38](assets/datastage_snowflake_38.png)<br>
+        ![datastage_snowflake_38](assets/datastage_snowflake_38.png)
         ![datastage_snowflake_39](assets/datastage_snowflake_39.png)<br><br>
 
 4. Double-click the **MORTGAGE_APPLICATION** node to see its settings.
@@ -283,13 +283,13 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
 
 **Join Stage Node** 
 
-1. In the *Node palette*, expand the **Stages** section. <br>
+1. In the *Node palette*, expand the **Stages** section.
 
     ![datastage_snowflake_49](assets/datastage_snowflake_49.png)<br><br>
 
 2. In the *Node palette*, drag the **Join** stage on to the canvas, and drop the node on the link line between the *MORTGAGE_APPLICATION* and *Snowflake_mortgage_data* nodes. This action maintains links from the *MORTGAGE_APPLICATION* node to the *JOIN* node to the *Snowflake_mortgage_data* node.
 
-    ![datastage_snowflake_50](assets/datastage_snowflake_50.png)<br>
+    ![datastage_snowflake_50](assets/datastage_snowflake_50.png)
     ![datastage_snowflake_51](assets/datastage_snowflake_51.png)<br><br>
 
 3. Hover over the **MORTGAGE_APPLICANT** connector to see the arrow. Connect the arrow to the **Join** stage.
@@ -304,7 +304,7 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
         - Click **Apply**.
         - Click **Apply and return** to return to the *Join_1* node settings.
 
-            ![datastage_snowflake_53](assets/datastage_snowflake_53.png)<br>
+            ![datastage_snowflake_53](assets/datastage_snowflake_53.png)
             ![datastage_snowflake_54](assets/datastage_snowflake_54.png) 
 
     -  Change the *Join_1* node name to **Join_on_ID**. 
@@ -381,14 +381,14 @@ To check whether the data was loaded data into Snowflake correctly, you can go b
 
 <!-- ------------------------ -->
 ## Conclusion and Resources 
-Congratulations on completing this lab! You've successfully used [DataStage](https://www.ibm.com/products/datastage?utm_content=SRCWW&p1=Search&p4=43700050328190090&p5=e&gclid=EAIaIQobChMIgqOUjdrj_QIVEgZ9Ch3rvwWwEAAYASAAEgLNzPD_BwE&gclsrc=aw.ds) to load enterprise data into Snowflake and perform [data transformations](https://video.ibm.com/playlist/650317) (of which there are hundreds of [pre-built objects](https://dataplatform.cloud.ibm.com/docs/content/dstage/com.ibm.swg.im.iis.ds.parjob.dev.doc/topics/processingdata.html?audience=wdp) in DataStage). <br>
+Congratulations on completing this lab! You've successfully used [DataStage](https://www.ibm.com/products/datastage?utm_content=SRCWW&p1=Search&p4=43700050328190090&p5=e&gclid=EAIaIQobChMIgqOUjdrj_QIVEgZ9Ch3rvwWwEAAYASAAEgLNzPD_BwE&gclsrc=aw.ds) to load enterprise data into Snowflake and perform [data transformations](https://video.ibm.com/playlist/650317) (of which there are hundreds of [pre-built objects](https://dataplatform.cloud.ibm.com/docs/content/dstage/com.ibm.swg.im.iis.ds.parjob.dev.doc/topics/processingdata.html?audience=wdp) in DataStage). <br><br>
 
 ### **What You Learned**
 1. How to provision DataStage as a Service 
 2. How to create a DataStage flow 
 3. How to configure a Snowflake connection and load data into Snowflake  
 4. How to perform join and filter data transformations 
-5. How to run a DataStage job <br>
+5. How to run a DataStage job <br><br>
 
 ### **Next Steps and Related Resources** 
 We encourage you to continue with your free trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
