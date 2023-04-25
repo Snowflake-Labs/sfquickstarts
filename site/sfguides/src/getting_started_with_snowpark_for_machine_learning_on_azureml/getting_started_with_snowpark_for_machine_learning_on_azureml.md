@@ -62,7 +62,7 @@ The use case uses information related to machine diagnostics (torque, rotational
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 5
+Duration: 2
 
 The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
 ```sql
@@ -74,7 +74,7 @@ CREATE OR REPLACE DATABASE HOL_DB;
 ```
 <!-- ------------------------ -->
 ## Set Up AzureML Environment
-Duration: 5
+Duration: 15
 
 If you haven't used AzureML before, for first time setup you will need to create an AzureML workspace. You can do so by following this [Link](https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2) 
 
