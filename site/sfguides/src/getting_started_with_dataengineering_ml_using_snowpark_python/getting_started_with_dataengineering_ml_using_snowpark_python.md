@@ -157,28 +157,30 @@ Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfgu
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
-## Clone GitHub Repository
+## Clone GitHub Repository and Installation
 
 Duration: 8
 
-This section covers cloning of the GitHub repository and creating a Python 3.8 environment.
+This section covers cloning of the GitHub repository and setting up your Snowpark for Python environment.
 
-1) Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
+### Clone
 
-2) Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn). This repository contains all the code you will need to successfully complete this QuickStart Guide.
 
-3) From the root folder, create conda environment. Let's name the environment **snowpark-de-ml**.
+### Local Installation
 
-> aside positive
-> IMPORTANT:
-> - If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
+To complete the **Data Engineering** and **Machine Learning** steps, you have the option to install everything locally or use Hex. (See **Hex** section.) However, note that in order to run the **Streamlit application** you will need to install everything locally as described below.
+
+- Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
+
+- From the root folder, create conda environment. Let's name the environment **snowpark-de-ml**.
 
 ```python
 conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.8
 conda activate snowpark-de-ml
 ```
 
-4) Install Snowpark Python and other libraries including Streamlit
+- Install Snowpark Python and other libraries including Streamlit
 
 ```python
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
@@ -188,18 +190,24 @@ pip install streamlit
 > aside negative
 > Note: The versions at the time of writing this -- **snowflake-snowpark-python 1.0.0, streamlit 1.18.1**.
 
-5) Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
+- Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
 > aside negative
 > Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
----
-
-### Troubleshooting `pyarrow` related issues
+#### Troubleshooting **pyarrow** related issues
 
 - If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
 - If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
 - Do not reinstall a different version of `pyarrow` after installing Snowpark.
+
+### Hex
+
+If you choose to use your existing [Hex](https://app.hex.tech/login) account or if you create a new trial account, then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps **#4** and **#6** for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
+
+> aside positive
+> IMPORTANT:
+> In order to run the **Streamlit application** you will need to create a Python environment and install Snowpark for Python and other libraries locally as described above in **Local Installation**.
 
 <!-- ------------------------ -->
 ## Data Engineering
@@ -224,6 +232,34 @@ To get started, follow these steps:
 
 > aside positive
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml***-- which is the name of the environment created in **Clone GitHub Repository** step.
+
+### Data Engineering Notebook in Hex
+
+If you choose to use your [Hex](https://app.hex.tech/login) account, follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
+
+1) Import [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
+
+2) Then, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) to connect to Snowflake, create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Data Engineering Notebook as shown below.
+
+![HEX Data Connection](assets/hex_data_connection.png)
+
+> aside negative
+> Note: You can also create shared data connections for your projects and users in your workspace. For more details, refer to the [docs](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+
+3) Replace the following code snippet in the notebook
+
+```python
+connection_parameters = json.load(open('connection.json'))
+session = Session.builder.configs(connection_parameters).create()
+```
+
+**with...**
+
+```python
+import hextoolkit
+hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
+session = hex_snowflake_conn.get_snowpark_session()
+```
 
 <!-- ------------------------ -->
 ## Data Pipelines
@@ -387,6 +423,34 @@ To get started, follow these steps:
 > aside positive
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml*** -- which is the name of the environment created in **Clone GitHub Repository** step.
 
+### Machine Learning Notebook in Hex
+
+If you choose to use your [Hex](https://app.hex.tech/login) account, follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
+
+1) Import [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
+
+2) Then, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) to connect to Snowflake, create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Machine Learning Notebook as shown below.
+
+![HEX Data Connection](assets/hex_data_connection.png)
+
+> aside negative
+> Note: You can also create shared data connections for your projects and users in your workspace. For more details, refer to the [docs](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+
+3) Replace the following code snippet in the notebook
+
+```python
+connection_parameters = json.load(open('connection.json'))
+session = Session.builder.configs(connection_parameters).create()
+```
+
+**with...**
+
+```python
+import hextoolkit
+hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
+session = hex_snowflake_conn.get_snowpark_session()
+```
+
 <!-- ------------------------ -->
 ## Streamlit Application
 
@@ -483,6 +547,8 @@ alter task monthly_revenue_data_pipeline_task suspend;
 Duration: 3
 
 Congratulations! You've successfully performed data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations based on user input.
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/XKd8rXPUNs2G1yM28).
 
 ### What You Learned
 

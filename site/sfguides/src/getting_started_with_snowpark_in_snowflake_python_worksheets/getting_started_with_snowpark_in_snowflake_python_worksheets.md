@@ -2,7 +2,7 @@ id: getting_started_with_snowpark_in_snowflake_python_worksheets
 summary: Getting Started with Data Engineering and ML using Snowpark for Python
 categories: featured,getting-started,data-engineering,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets
 authors: Dash Desai
@@ -49,6 +49,9 @@ Sign up for a free, 30-day trial by following this [link](https://signup.snowfla
 ### Login and Setup Lab
 
 Log into your Snowflake account. To access this lab and set up sample data and code, you'll want to ensure you click on the following link.
+
+> aside positive
+> IMPORTANT: You must have ACCOUNTADMIN role in order to proceed with the lab setup described below. Note: If you created a new trail account, you will automatically have ACCOUNTADMIN role.
 
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 
