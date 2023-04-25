@@ -37,40 +37,30 @@ Duration: 2
 
 Your goal is to use IBM DataStage to load data into your Snowflake account. To accomplish that, you need a data warehouse in your Snowflake account. Follow these steps to create a data warehouse in your Snowflake account.
 
-1. Log into your Snowflake trial account. 
-
-    ![datastage_snowflake_0](assets/datastage_snowflake_0.png)
-    ![datastage_snowflake_1](assets/datastage_snowflake_1.png)<br><br>
+1. Log in to your Snowflake trial account. 
 
 2. In the navigation pane, click **Admin > Warehouses**. 
-
-    ![datastage_snowflake_2](assets/datastage_snowflake_2.png)
-
     -  Click **+ Warehouse**. 
     - For the *Name*,  type **DATASTAGEDATA**.
-    - Accept the defaults for the rest of the fields, and click **Create Warehouse**.
+    - Accept the defaults for the rest of the fields, and click **Create Warehouse**. <br>
 
         ![datastage_snowflake_3](assets/datastage_snowflake_3.png)<br>
         ![datastage_snowflake_4](assets/datastage_snowflake_4.png)<br><br>
  
 3. In the navigation pane, click **Data**.
-
-    ![datastage_snowflake_5](assets/datastage_snowflake_5.png)
-
     -  Click **+ Database**.
     -  For the *Name*, type **DATASTAGEDB**, and click **Create**. <br>
 
-        ![datastage_snowflake_6](assets/datastage_snowflake_6.png)
+        ![datastage_snowflake_6](assets/datastage_snowflake_6.png) <br>
 
         ![datastage_snowflake_7](assets/datastage_snowflake_7.png)<br><br>
 
 4. Click the newly created **DATASTAGEDB** database in the list, and select **+ Schema**.
     - For the *Schema* name, type **MORTGAGE**.
-    - Click **Create**. 
+    - Click **Create**. <br>
 
-        ![datastage_snowflake_8](assets/datastage_snowflake_8.png)
-
-        ![datastage_snowflake_9](assets/datastage_snowflake_9.png)
+        ![datastage_snowflake_8](assets/datastage_snowflake_8.png) <br>
+        ![datastage_snowflake_9](assets/datastage_snowflake_9.png) <br>
 
 **Check your progress**: The following image shows the DATASTAGEDB database in Snowflake. You now have all of the credentials ready on Snowflake to begin working in DataStage. 
 
@@ -140,8 +130,6 @@ You need to add the connection information to your project so you can access the
 
 1. From the *Assets* tab, click **New Asset** on the right side of the screen. 
 
-    ![datastage_snowflake_23](assets/datastage_snowflake_23.png)<br><br>
-
 2. In the *Data Access Tools* section, click **Connection**.
 
     ![datastage_snowflake_24](assets/datastage_snowflake_24.png)<br><br>
@@ -177,9 +165,7 @@ Now you are ready to create a DataStage flow that loads the Db2 Warehouse data t
 
 1. From the *Assets* tab, click **New Asset**. 
 
-    ![datastage_snowflake_28](assets/datastage_snowflake_28.png)<br><br>
-
-2. In the *Graphical builders* section, click **DataStage**. 
+2. In the *Graphical builders* section, click **DataStage**. <br>
 
     ![datastage_snowflake_29](assets/datastage_snowflake_29.png)<br><br>
 
@@ -205,7 +191,7 @@ Now you are ready to design a DataStage flow to load data into Snowflake. The Da
 
      ![datastage_snowflake_35](assets/datastage_snowflake_35.png)<br><br>
 
-2. Drag the **Asset browser** connector and drop it anywhere on the empty canvas.
+2. Drag the **Asset browser** connector and drop it anywhere on the empty canvas. <br>
 
     ![datastage_snowflake_36](assets/datastage_snowflake_36.png)<br><br>
 
@@ -222,9 +208,9 @@ Now you are ready to design a DataStage flow to load data into Snowflake. The Da
 4. Double-click the **MORTGAGE_APPLICATION** node to see its settings.
     - Click the **Output** tab.
     - Check the **Runtime column propagation** option. DataStage is flexible about metadata. It can handle where metadata is not fully defined. In this case, we select **Runtime column propagation** so that if the DataStage job encounters extra columns that are not defined in the metadata when it actually runs, it adopts these extra columns and propagates them through the rest of the job. This feature allows your flow design to be flexible for schema drift. 
-    - Click **Save**. 
+    - Click **Save**. <br>
 
-        ![datastage_snowflake_40](assets/datastage_snowflake_40.png)
+        ![datastage_snowflake_40](assets/datastage_snowflake_40.png) <br>
 
 Because you are reading data from Db2 Warehouse into Snowflake, the Db2 connector is positioned first in the flow. Your goal is to load the Db2 Warehouse data into Snowflake. Next, you will add a Snowflake connector that reads the data from the Db2 Warehouse connector. Thus, the Snowflake connector is positioned second in the flow.<br>
 
@@ -272,9 +258,9 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
 4. Double-click the **MORTGAGE_APPLICANT** node to see its settings.
     - Click the **Output** tab.
     - Check the **Runtime column propagation** option. DataStage is flexible about metadata. It can handle where metadata is not fully defined. In this case, we select **Runtime column propagation** so that if the DataStage job encounters extra columns that are not defined in the metadata when it actually runs, it adopts these extra columns and propagates them through the rest of the job. This feature allows your flow design to be flexible for schema drift. 
-    - Click **Save**.
+    - Click **Save**. <br>
 
-        ![datastage_snowflake_47](assets/datastage_snowflake_47.png)<br><br>
+        ![datastage_snowflake_47](assets/datastage_snowflake_47.png) <br>
 
 **Check your progress**: The following image shows what the DataStage flow should look like after adding in the *Mortgage_Applicant* node. You are now ready to add in the join and filter nodes. 
 
@@ -283,11 +269,12 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
 
 **Join Stage Node** 
 
+
 1. In the *Node palette*, expand the **Stages** section. <br>
 
     ![datastage_snowflake_49](assets/datastage_snowflake_49.png)<br><br>
 
-2. In the *Node palette*, drag the **Join** stage on to the canvas, and drop the node on the link line between the *MORTGAGE_APPLICATION* and *Snowflake_mortgage_data* nodes. This action maintains links from the *MORTGAGE_APPLICATION* node to the *JOIN* node to the *Snowflake_mortgage_data* node.
+2. In the *Node palette*, drag the **Join** stage on to the canvas, and drop the node on the link line between the *MORTGAGE_APPLICATION* and *Snowflake_mortgage_data* nodes. This action maintains links from the *MORTGAGE_APPLICATION* node to the *JOIN* node to the *Snowflake_mortgage_data* node. <br>
 
     ![datastage_snowflake_50](assets/datastage_snowflake_50.png)<br>
     ![datastage_snowflake_51](assets/datastage_snowflake_51.png)<br><br>
@@ -301,13 +288,13 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
     - Click **Add key**.
         - Click **Add key** again.
         - Select **ID** from the list of possible keys.
-        - Click **Apply**.
-        - Click **Apply and return** to return to the *Join_1* node settings.
+        - Click **Apply**. 
+        - Click **Apply and return** to return to the *Join_1* node settings. <br>
 
             ![datastage_snowflake_53](assets/datastage_snowflake_53.png)<br>
-            ![datastage_snowflake_54](assets/datastage_snowflake_54.png) 
+            ![datastage_snowflake_joinID](assets/datastage_snowflake_joinID.png) <br>
 
-    -  Change the *Join_1* node name to **Join_on_ID**. 
+    - Change the *Join_1* node name to **Join_on_ID**. 
     - Click the **Output** tab.
         - Check the **Runtime column propagation** option.
     - Click **Save** to save the *Join_on_ID* node settings.<br>
@@ -320,13 +307,13 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
     ![datastage_snowflake_56](assets/datastage_snowflake_56.png)<br><br>
 
 2. Double-click the **Filter_1** node to edit the settings.
-    - Change the *Filter_1* node name to **Filter_on_CA**. 
+    - Change the *Filter_1* node name to **Filter_on_CA**. <br>
 
-        ![datastage_snowflake_57](assets/datastage_snowflake_57.png)
+        ![datastage_snowflake_57](assets/datastage_snowflake_57.png) <br>
 
-    - Expand the **Properties** section.
+    - Expand the **Properties** section. <br>
 
-        ![datastage_snowflake_58](assets/datastage_snowflake_58.png)
+        ![datastage_snowflake_58](assets/datastage_snowflake_58.png) <br>
 
     - Under *Predicates*, click **Edit**.
         - Click below **Where clause** to enter in a custom filter clause. 
