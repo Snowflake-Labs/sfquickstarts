@@ -147,7 +147,7 @@ terraform {
   required_providers {
     snowflake = {
       source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.59"
+      version = "~> 0.35"
     }
   }
 }
@@ -325,7 +325,6 @@ You'll see that most of this is what you would expect. The only new part is crea
 
     output "snowflake_svc_private_key" {
         value = tls_private_key.svc_key.private_key_pem
-        sensitive = true
     }
     ```
 
