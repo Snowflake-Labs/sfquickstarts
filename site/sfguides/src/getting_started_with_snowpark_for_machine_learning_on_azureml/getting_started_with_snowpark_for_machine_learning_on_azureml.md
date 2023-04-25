@@ -1,6 +1,6 @@
 author: marzillo-snow
 id: example_matt_marzillo
-summary: This is a qucikstart for using Snowpark for ML on AzureML
+summary: This is a quickstart for using Snowpark for ML on AzureML
 categories: Getting-Started, data-science, data-engineering, azure, azureml, snowpark
 environments: web
 status: Published 
