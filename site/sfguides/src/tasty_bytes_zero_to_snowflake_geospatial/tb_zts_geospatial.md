@@ -17,14 +17,14 @@ Duration: 1
 ###  Overview 
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Geospatial Analysis!
 
-Within this Quickstart we will conduct in-depth Geospatial analysis leveraging powerful Snowflake functionality coupled with a SafeGraph POI listing from the Snowflake Marketplace.
+Within this Quickstart we will conduct in-depth Geospatial analysis leveraging powerful Snowflake functionality coupled with a Safegraph POI listing from the Snowflake Marketplace.
 
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - How to Access the Snowflake Marketplace
-- How to Acquire SafeGraph POI Data from the Snowflake Marketplace
+- How to Acquire Safegraph POI Data from the Snowflake Marketplace
 - How to Create a View
 - How to Create a Geography Point
 - How to Calculate Distance between Points
@@ -76,7 +76,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 
-## Acquiring SafeGraph POI Data from the Snowflake Marketplace
+## Acquiring Safegraph POI Data from the Snowflake Marketplace
 Duration: 1
 
 ### Overview
@@ -84,11 +84,11 @@ Tasty Bytes operates Food Trucks in numerous cities and countries across the glo
 
 One important item that our Executives are interested in is to learn more about how these locations relate to each other as well as if there are any locations we currently serve that are potentially too far away from hot selling city centers.
 
-Unfortunately what we have seen so far is our first party data does not give us the building blocks required to complete this sort of Geospatial analysis. Thankfully, the Snowflake Marketplace has great listings from SafeGraph that can assist us here.
+Unfortunately what we have seen so far is our first party data does not give us the building blocks required to complete this sort of Geospatial analysis. Thankfully, the Snowflake Marketplace has great listings from Safegraph that can assist us here.
 
 
 ### Step 1 - Using First Party Data to Find Top Selling Locations
-Before we leverage the Snowflake Marketplace to access SafeGraph Point of Interest data, please execute our first three queries which will set our Role and Warehouse context to `tasty_data_engineer` and `tasty_de_wh` and find the Top 10 Selling Locations for Paris in 2022.
+Before we leverage the Snowflake Marketplace to access Safegraph Point of Interest data, please execute our first three queries which will set our Role and Warehouse context to `tasty_data_engineer` and `tasty_de_wh` and find the Top 10 Selling Locations for Paris in 2022.
 
 In our third query we will see the usage of [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n), [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum) and [YEAR](https://docs.snowflake.com/en/sql-reference/functions/year) functions.
 
@@ -111,7 +111,7 @@ ORDER BY total_sales_usd DESC;
 
 While it is great to get these top selling locations for Paris, we need more Point of Interest data to really derive any insights.
 
-### Step 2 - Acquiring SafeGraph POI Data from the Snowflake Marketplace 
+### Step 2 - Acquiring Safegraph POI Data from the Snowflake Marketplace 
 Please follow the steps and video below to access this listing in your Snowflake Account.
 
 - Click -> Home Icon
@@ -128,7 +128,7 @@ Please follow the steps and video below to access this listing in your Snowflake
 >SafeGraph’s Places data provides detailed information about physical places. Our data is fresh, cleaned and provided in a format that empowers the user. With POI data for countries around the world, you can gain insights about any location that a person can visit aside from private residences. 
 >
 
-### Step 3 - Evaluating SafeGraph POI Data
+### Step 3 - Evaluating Safegraph POI Data
 Now that we have the `frostbyte_safegraph` database live in our account, let's run the next query to initially see what sort of data they have available for Paris.
 
 ```
@@ -161,14 +161,14 @@ Let's get this harmonized with our Sales data in the next section.
 Duration: 1
 
 ### Overview
-To make our Geospatial analysis seamless, let's make sure to get SafeGraph POI data included in the `analytics.orders_v` so all of our downstream users can also access it.
+To make our Geospatial analysis seamless, let's make sure to get Safegraph POI data included in the `analytics.orders_v` so all of our downstream users can also access it.
 
 ### Step 1 - Enriching our Analytics View
-Please execute this steps two queries which will first set our Role context to `sysadmin` and then enrich our `analytics.orders_v` by adding all available, new  SafeGraph POI metrics.
+Please execute this steps two queries which will first set our Role context to `sysadmin` and then enrich our `analytics.orders_v` by adding all available, new  Safegraph POI metrics.
 
 Within this [CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view) statement, you will see [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment), [DATE](https://docs.snowflake.com/en/sql-reference/functions/to_date) and [SELECT * EXCLUDE ..](https://docs.snowflake.com/en/sql-reference/sql/select#parameters) functionality leveraged. 
 
-To highlight what our EXCLUDE is doing we are using it to simplify the SQL required to SELECT all of the available SafeGraph columns but not the ones we already have available in the `harmonized.orders_v`.
+To highlight what our EXCLUDE is doing we are using it to simplify the SQL required to SELECT all of the available Safegraph columns but not the ones we already have available in the `harmonized.orders_v`.
 
 ```
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.orders_v
@@ -186,7 +186,7 @@ JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s cpg
 <img src = "assets/4.1.view.png">
 
 >aside negative
-> **Note:** For demonstration purposes the SafeGraph listing already has the Tasty Bytes *location_id's* included within. In a real-world scenario the mapping would leverage public [Placekeys](https://www.placekey.io/) which [SafeGraph is a founding partner of](https://www.safegraph.com/blogs/safegraph-joins-placekey-initiative-as-a-founding-partner).
+> **Note:** For demonstration purposes the Safegraph listing already has the Tasty Bytes *location_id's* included within. In a real-world scenario the mapping would leverage public [Placekeys](https://www.placekey.io/) which [Safegraph is a founding partner of](https://www.safegraph.com/blogs/safegraph-joins-placekey-initiative-as-a-founding-partner).
 >
 
 ### Step 2 - Click Next -->
@@ -198,7 +198,7 @@ Duration: 2
 With Point of Interest metrics now readily available from the Snowflake Marketplace without any ETL required, let's start on our Geospatial analysis journey.
 
 ### Step 1 - Creating a Geography Point
-Latitude and Longitude are two building block POI metrics we now have access to thanks for SafeGraph. 
+Latitude and Longitude are two building block POI metrics we now have access to thanks for Safegraph. 
 
 Please execute the next two queries to re-assume to `tasty_data_engineer` role and create our Geography Point leveraging the [ST_MAKEPOINT/ST_POINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) function.
 
@@ -388,7 +388,7 @@ ORDER BY kilometer_from_top_selling_center DESC;
 
 <img src = "assets/6.4.far_out.png">
 
-Fantastic work! We have now delivered on the exact as from our Executive Team via a simple process through leveraging SafeGraph from the Snowflake Marketplace. I think we can officially call this a job well done.
+Fantastic work! We have now delivered on the exact as from our Executive Team via a simple process through leveraging Safegraph from the Snowflake Marketplace. I think we can officially call this a job well done.
 
 ### Step 5 - Click Next -->
 
@@ -400,7 +400,7 @@ Duration: 1
 
 By doing so you have now:
 - Accessed the Snowflake Marketplace
-- Acquired SafeGraph POI Data from the Snowflake Marketplace
+- Acquired Safegraph POI Data from the Snowflake Marketplace
 - Created a View
 - Created a Geography Point
 - Calculated Distance between Points
