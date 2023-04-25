@@ -269,7 +269,10 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
 
 **Join Stage Node** 
 
-1. In the *Node palette*, expand the **Stages** section. 
+
+1. In the *Node palette*, expand the **Stages** section. <br>
+
+    ![datastage_snowflake_49](assets/datastage_snowflake_49.png)<br><br>
 
 2. In the *Node palette*, drag the **Join** stage on to the canvas, and drop the node on the link line between the *MORTGAGE_APPLICATION* and *Snowflake_mortgage_data* nodes. This action maintains links from the *MORTGAGE_APPLICATION* node to the *JOIN* node to the *Snowflake_mortgage_data* node. <br>
 
@@ -285,7 +288,7 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
     - Click **Add key**.
         - Click **Add key** again.
         - Select **ID** from the list of possible keys.
-        - Click **Apply**.
+        - Click **Apply**. 
         - Click **Apply and return** to return to the *Join_1* node settings. <br>
 
             ![datastage_snowflake_53](assets/datastage_snowflake_53.png)<br>
