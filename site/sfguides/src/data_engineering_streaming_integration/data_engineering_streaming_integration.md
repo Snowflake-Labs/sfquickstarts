@@ -2,7 +2,7 @@ summary: Streaming Data Integration with Snowflake
 id: data_engineering_streaming_integration
 categories: data-engineering
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 tags: Data Engineering, Streaming, Snowpipe
 author: Dmytro Yaroshenko

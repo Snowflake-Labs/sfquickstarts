@@ -275,7 +275,7 @@ create or replace table hl7v2parsed as
   with base as (
       select 
           relative_path as data_filepath,
-          concat('@hl7_stage_internal/' ,data_filepath) as full_path
+          build_scoped_file_url('@hl7_stage_internal/', data_filepath) as full_path
       from directory( @hl7_stage_internal )
       where relative_path like 'dataset/%'
   )
