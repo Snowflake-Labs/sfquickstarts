@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Machine Learning, Operati
 ## Guide Overview
 Duration: 1
 
-Continual is the Operational AI layer for the [Modern Data Stack](https://continual.ai/post/the-future-of-the-modern-data-stack) with Snowflake as the foundation. This guide is a simple introduction that will cover connecting Continual to Snowflake, building feature sets and models from data stored in Snowflake, and analyzing and maintaining ML models continuously over time. After completing this guide, there are [more advanced examples](https://docs.continual.ai/customer-churn/) to try with other Modern Data Stack technologies like [dbt](https://www.getdbt.com/).
+Continual is the Operational AI layer for the [Modern Data Stack](https://continual.ai/) with Snowflake as the foundation. This guide is a simple introduction that will cover connecting Continual to Snowflake, building feature sets and models from data stored in Snowflake, and analyzing and maintaining ML models continuously over time. After completing this guide, there are [more advanced examples](https://docs.continual.ai/customer-churn/) to try with other Modern Data Stack technologies like [dbt](https://www.getdbt.com/).
 
 ![1_5](assets/1_5.png)
 
