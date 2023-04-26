@@ -82,6 +82,7 @@ VALUES (1, 'Jimi Hendrix', 27),
 ```
 
 *for this quickstart we will use the ACCOUNTADMIN role to create the Snowflake environment, but in practice you will likely want to use another role when creating databases, tables and warehouses.
+
 <!-- ------------------------ -->
 ## Create Security Integration in Snowflake
 Duration: 10
