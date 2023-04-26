@@ -85,6 +85,7 @@ VALUES (1, 'Jimi Hendrix', 27),
 <!-- ------------------------ -->
 ## Create Security Integration in Snowflake
 Duration: 10
+
 Copy and paste the below security integration in a Snowflake worksheet. Everything will be left as is other than populating the tenant id for the external_oauth_issuer paramater. This will come from your Power Apps environment
 
 ```sql
