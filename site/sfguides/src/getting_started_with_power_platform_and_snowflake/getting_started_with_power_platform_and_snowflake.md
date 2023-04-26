@@ -109,7 +109,7 @@ For this integration we are using 'login_name' as the mapping attribute. You wil
 ![](assets/sf_user.png)
 
 <!-- ------------------------ -->
-## Build Power Platform Flow
+## Build Power Automate Flow
 Duration: 15
 
 <!-- ------------------------ -->
