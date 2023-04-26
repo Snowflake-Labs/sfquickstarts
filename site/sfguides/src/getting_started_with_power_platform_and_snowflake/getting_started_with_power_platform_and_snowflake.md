@@ -36,7 +36,7 @@ The Power Platform connector for Snowflake was built by a customer as an open so
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/)
-- A Power Apps account [PowerPlatform] (https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
+- A Power Apps account [PowerPlatform](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
 
 
 ### What You’ll Build 
@@ -60,7 +60,7 @@ CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 CREATE OR REPLACE DATABASE HOL_DB;
 ```
 
-### load data
+### Load data
 Now we will create a simple table in this database that we will query from the Power Platform connector. Run the below code in a Snowflake worksheet.
 
 ```sql
@@ -73,7 +73,7 @@ CREATE TABLE rockers_table (
   age INT
 );
 
-INSERT INTO my_table (id, name, age)
+INSERT INTO rockers_table (id, name, age)
 VALUES (1, 'Jimi Hendrix', 27),
        (2, 'Janis Joplin', 27),
        (3, 'Elvis Presley', 42),
