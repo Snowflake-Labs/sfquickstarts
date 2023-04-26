@@ -42,11 +42,6 @@ The Power Platform connector for Snowflake was built by a customer as an open so
 ### What You’ll Build 
 A Power Apps and Power Automate flow that will query data from a snowflake table.
 
-The end-to-end workflow will look like this:
-![](assets/azureml_arch.png)
-
-
-
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
 Duration: 5
