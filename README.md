@@ -38,6 +38,7 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
   3. Navigate to the site directory `cd sfquickstarts/site`
   4. Install node dependencies `npm install`
   5. Run the site `npm run serve`
+  6. Open a browser to http://localhost:8000/
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
