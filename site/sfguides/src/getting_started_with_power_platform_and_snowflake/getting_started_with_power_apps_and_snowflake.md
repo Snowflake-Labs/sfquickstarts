@@ -1,18 +1,18 @@
 author: marzillo-snow
-id: power_platform_snowflake
-summary: This is a quickstart for using Microsoft Power Platform and Snowflake
+id: power_apps_snowflake
+summary: This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake
 categories: Getting-Started, data-engineering, microsoft, power-apps, power-platform, snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering
+tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
 
-# Getting Started with Power Platform and Snowflake
+# Getting Started with Power Apps and Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
 
-### Power Platform
+### Power Apps
 
 Microsoft Power Apps and Power Automate are part of the Microsoft Power Platform, a suite of tools designed to empower organizations to create custom applications and automate workflows with minimal coding effort. Power Apps is a low-code development platform that enables users to build custom web and mobile applications using a drag-and-drop interface and pre-built templates. It offers seamless integration with various data sources and other Microsoft services, making it a powerful tool for businesses to create tailored solutions without the need for extensive development resources.
 
@@ -22,13 +22,14 @@ Power Automate, formerly known as Microsoft Flow, is a cloud-based service that 
 
 Snowflake is a cloud-based data warehousing and analytics platform that allows organizations to store, process, and analyze massive amounts of structured and semi-structured data. It provides a scalable and fully managed services that support diverse data types, making it an ideal choice for businesses looking to harness the power of their data. Snowflake's unique multi-cluster shared architecture separates storage, compute, and services, allowing users to scale resources independently, while offering robust security, seamless data sharing, and near-instant elasticity. Its platform-agnostic approach and support for various programming languages enable seamless integration with a wide range of tools and applications, making it a versatile solution for data-driven enterprises.
 
-### Power Platform and Snowflake Integration
+### Power Apps and Snowflake Integration
 
-The Power Platform connector for Snowflake was built by a customer as an open source project. It is a wrapper around the Snowflake SQL API that allows users of both platforms to read and write data to and from Snowflake from their Power Automate flows.
+The Power Apps connector for Snowflake was built by a customer as an open source project. It is a wrapper around the Snowflake SQL API that allows users of both platforms to read and write data to and from Snowflake from their Power Automate flows.
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
-- Familiarity with [PowerPlatform] (https://learn.microsoft.com/en-us/power-apps/powerapps-overview) and a power apps account
+- Familiarity with [PowerApps] (https://learn.microsoft.com/en-us/power-apps/powerapps-overview) and a power apps account
+- You must have a premium Power Apps license
 
 ### You'll Learn
 - Configure a connection between Power Automate and Snowflake
@@ -36,7 +37,7 @@ The Power Platform connector for Snowflake was built by a customer as an open so
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/)
-- A Power Apps account [PowerPlatform](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
+- A Power Apps account [PowerApps](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
 
 
 ### What You’ll Build 
@@ -56,7 +57,7 @@ CREATE OR REPLACE DATABASE HOL_DB;
 ```
 
 ### Load data
-Now we will create a simple table in this database that we will query from the Power Platform connector. Run the below code in a Snowflake worksheet.
+Now we will create a simple table in this database that we will query from the Power Apps connector. Run the below code in a Snowflake worksheet.
 
 ```sql
 use role accountadmin;
@@ -108,9 +109,19 @@ To find your Power Apps tenant id you will go to your Power Apps environment, cl
 For this integration we are using 'login_name' as the mapping attribute. You will want go to your users and roles in the admin section of your Snowflake environment and make sure that there is exactly one user where the login name matches the username (likely an email address) in your Power Apps environment. It must match exactly and is case sensitive. The user must also have a default warehouse and a default role.
 ![](assets/sf_user.png)
 
+This security integration is the same as setting up a Power BI integration [PowerBI](https://docs.snowflake.com/en/user-guide/oauth-powerbi#getting-started)
+
 <!-- ------------------------ -->
 ## Build Power Automate Flow
 Duration: 15
+
+
+
+### Things to look out for
+- If you're getting a username and password error make sure that you the forward slash at the end the external_oauth_issuer parameter value
+- Similarly you may explore changing the external_oauth_snowflake_user_mapping_attribute value to "email_name" as that value in your user profile will match the email address in your Power Apps account. 
+- Make sure the you're getting the tenant id from your Power Apps account and not your Azure account as they don't always match.
+
 
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
