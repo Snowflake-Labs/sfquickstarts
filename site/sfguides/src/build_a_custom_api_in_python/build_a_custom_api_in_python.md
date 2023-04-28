@@ -105,21 +105,21 @@ After downloading you will have a folder `lab_data_api_python` containing all th
 
 ### Endpoints
 The API creates two sets of endpoints, one for using the Snowflake connector:
-1. `http://localhost/connector/customers/top10`
+1. `http://localhost:8001/connector/customers/top10`
   * Which takes the following optional query parameters:
     1. `start_range` - the start date of the range in `YYYY-MM-DD` format. Defaults to `1995-01-01`.
     1. `end_range` - the end date of the range in `YYYY-MM-DD` format. Defaults to `1995-03-31`.
-2. `http://localhost/connector/clerk/<CLERKID>/yearly_sales/<YEAR>`
+2. `http://localhost:8001/connector/clerk/<CLERKID>/yearly_sales/<YEAR>`
   * Which takes 2 required path parameters:
     1. `CLERKID` - the clerk ID. Use just the numbers, such as `000000001`.
     2. `YEAR` - the year to use, such as `1995`.
 
 And the same ones using Snowpark:
-1. `http://localhost/snowpark/customers/top10`
+1. `http://localhost:8001/snowpark/customers/top10`
   * Which takes the following optional query parameters:
     1. `start_range` - the start date of the range in `YYYY-MM-DD` format. Defaults to `1995-01-01`.
     1. `end_range` - the end date of the range in `YYYY-MM-DD` format. Defaults to `1995-03-31`.
-2. `http://localhost/snowpark/clerk/<CLERKID>/yearly_sales/<YEAR>`
+2. `http://localhost:8001/snowpark/clerk/<CLERKID>/yearly_sales/<YEAR>`
   * Which takes 2 required path parameters:
     1. `CLERKID` - the clerk ID. Use just the numbers, such as `000000001`.
     2. `YEAR` - the year to use, such as `1995`.
@@ -204,7 +204,7 @@ To start the Python Flask API, change to the `src/` directory and run the follow
 python app.py
 ```
 
-This will start the API, listening on port `80`.
+This will start the API, listening on port `8001`.
 
 <!-- ------------------------ -->
 ## Testing the API
@@ -216,12 +216,12 @@ The API can be tested using the cURL command-line tool.
 #### Top 10 Customers
 To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Connector for Python, run:
 ```bash
-curl -X GET "http://localhost:80/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14"
+curl -X GET "http://localhost:8001/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14"
 ```
 
 To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Snowpark API, run:
 ```bash
-curl -X GET "http://localhost:80/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14"
+curl -X GET "http://localhost:8001/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14"
 ```
 
 If you call the endpoint without specifying the `start_range` then `1995-01-01` will be used. If you call the endpoint without specifying the `end_range` then `1995-03-31` will be used.
@@ -229,16 +229,16 @@ If you call the endpoint without specifying the `start_range` then `1995-01-01` 
 #### Monthly sales for a given year for a sales clerk
 To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Connector for Python, run:
 ```bash
-curl -X GET "http://localhost:80/connector/clerk/000000002/yearly_sales/1995"
+curl -X GET "http://localhost:8001/connector/clerk/000000002/yearly_sales/1995"
 ```
 
 To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Snowpark API, run:
 ```bash
-curl -X GET "http://localhost:80/snowpark/clerk/000000002/yearly_sales/1995"
+curl -X GET "http://localhost:8001/snowpark/clerk/000000002/yearly_sales/1995"
 ```
 
 ### Testing using the testing webpage
-This project comes with a simple webpage that allows you to test the API. To get to it, open `http://localhost/test` in a web browser.
+This project comes with a simple webpage that allows you to test the API. To get to it, open `http://localhost:8001/test` in a web browser.
 
 At the top you can choose if you want to exercise the Snowflake Connector for Python or the Snowflake Snowpark API endpoints.
 
