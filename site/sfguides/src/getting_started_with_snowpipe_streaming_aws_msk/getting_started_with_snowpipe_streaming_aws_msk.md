@@ -346,7 +346,7 @@ See below example screenshot:
 ![](assets/key-pair-snowflake.png)
 
 Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
-Run the following SQL commands in a worksheet to create a schema (e.g. MSK_STREAMING_SCHEMA) in the default database (e.g. MSK_STREAMING_DB):
+Run the following SQL commands in a worksheet to create a schema (e.g. `MSK_STREAMING_SCHEMA`) in the default database (e.g. `MSK_STREAMING_DB`):
 
 ```commandline
 SET DB = 'MSK_STREAMING_DB';
