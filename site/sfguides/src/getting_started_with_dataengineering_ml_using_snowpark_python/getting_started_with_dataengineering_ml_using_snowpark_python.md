@@ -157,19 +157,27 @@ Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfgu
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
-## Clone GitHub Repository and Installation
+## Get Started
 
 Duration: 8
 
 This section covers cloning of the GitHub repository and setting up your Snowpark for Python environment.
 
-### Clone
+### Clone GitHub Repository
 
 The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn). This repository contains all the code you will need to successfully complete this QuickStart Guide.
 
-### Local Installation
+### Snowpark for Python
 
-To complete the **Data Engineering** and **Machine Learning** steps, you have the option to install everything locally or use Hex. (See **Hex** section.) However, note that in order to run the **Streamlit application** you will need to install everything locally as described below.
+To complete the **Data Engineering** and **Machine Learning** steps, you have the option to either install everything locally (option 1) or use Hex (option 2) as described below.
+
+> aside positive
+> IMPORTANT:
+> In order to run the **Streamlit application** you will need to create a Python environment, and install Snowpark for Python along with other libraries locally as described in **Local Installation**.
+
+#### Option 1 -- Local Installation
+
+This option will enable you to complete all the steps in this QuickStart Guide.
 
 - Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
 
@@ -187,27 +195,26 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 pip install streamlit
 ```
 
-> aside negative
-> Note: The versions at the time of writing this -- **snowflake-snowpark-python 1.0.0, streamlit 1.18.1**.
+*Versions used at the time of writing this: snowflake-snowpark-python 1.0.0, streamlit 1.18.1.*
 
 - Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
 > aside negative
 > Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
-#### Troubleshooting **pyarrow** related issues
+##### Troubleshooting **pyarrow** related issues
 
 - If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
 - If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
 - Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
-### Hex
+#### Option 2 -- Use Hex
 
-If you choose to use your existing [Hex](https://app.hex.tech/login) account or if you create a new trial account, then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps **#4** and **#6** for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
+If you choose to use your existing [Hex](https://app.hex.tech/login) account or if you create a new trial account on Hex, then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps **#4** and **#6** for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
 
 > aside positive
 > IMPORTANT:
-> In order to run the **Streamlit application** you will need to create a Python environment and install Snowpark for Python and other libraries locally as described above in **Local Installation**.
+> In order to run the **Streamlit application** you will need to create a Python environment, and install Snowpark for Python along with other libraries locally as described above in **Local Installation**.
 
 <!-- ------------------------ -->
 ## Data Engineering
