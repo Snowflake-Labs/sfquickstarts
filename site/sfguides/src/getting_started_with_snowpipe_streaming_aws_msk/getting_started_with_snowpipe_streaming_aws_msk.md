@@ -130,9 +130,10 @@ Now go back to the `Session` tab and click the `Start session` button.
 
 Now you should see the EC2 instance created by the Cloudformation template under `Target instances`.
 Its name should be `<Cloudformation stack name>-jumphost`, select it and click `Start session`.
+
 ![](assets/session-mgr-3.png)
 
-#### 4. Create a key-pair to be used for authenticating with Snowflake programmatically
+#### 4. Create a key-pair to be used for authenticating with Snowflake
 Create a key pair in AWS Session Manager console by executing the following commands. You will be prompted to give an encryption password, remember 
 this phrase, you will need it later.
 
