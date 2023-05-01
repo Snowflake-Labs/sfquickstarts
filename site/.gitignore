@@ -20,3 +20,5 @@ app/js/bundle
 
 /sfguides/dist/*
 temp/
+
+*.psd
