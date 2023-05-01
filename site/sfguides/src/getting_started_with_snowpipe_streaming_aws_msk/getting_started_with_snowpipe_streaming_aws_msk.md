@@ -333,6 +333,16 @@ ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
 ```
+Next we need to configure the public key for the streaming user to access Snowflake programmatically.
+
+First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index#1) above) in the following SQL command and execute.
+```commandline
+use role accountadmin;
+alter user streaming_user set rsa_public_key='<pubKey>';
+```
+See below example screenshot:
+
+![](assets/key-pair-snowflake.png)
 
 Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
 Run the following SQL commands in a worksheet:
@@ -344,17 +354,6 @@ SET SCHEMA = 'MSK_STREAMING_SCHEMA';
 USE IDENTIFIER($DB);
 CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 ```
-
-Now we need to configure the public key for the streaming user to access Snowflake programmatically.
-
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index#1) above) in the following SQL command and execute.
-```commandline
-use role accountadmin;
-alter user streaming_user set rsa_public_key='<pubKey>';
-```
-See below example screenshot:
-
-![](assets/key-pair-snowflake.png)
 
 #### 2. Install SnowSQL (optional but highly recommended)
 
