@@ -152,7 +152,7 @@ The **Marketplace** tab is where any Snowflake customer can browse and consume d
 
 Under **Activity** there are two tabs **Query History** and **Copy History**:
 
-- **QuerHistory** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
+- **Query History** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
 - **Copy History** shows the status of copy commands run to ingest data into Snowflake.
 
 
