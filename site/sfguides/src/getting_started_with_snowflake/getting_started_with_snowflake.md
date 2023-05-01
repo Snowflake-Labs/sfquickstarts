@@ -317,7 +317,7 @@ We are working with structured, comma-delimited data that has already been stage
 > 
 >  For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. Click the **Create** button, then **Stage** > **Amazon S3** (or your corresponding service).
+From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. Click the **Create** button, then **Stage** > **Amazon S3**.
 
 ![stages create](assets/4PreLoad_8.png)
 
