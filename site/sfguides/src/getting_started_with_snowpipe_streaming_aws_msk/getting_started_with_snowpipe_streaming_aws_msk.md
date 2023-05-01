@@ -345,11 +345,9 @@ USE IDENTIFIER($DB);
 CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 ```
 
-#### 2. Install SnowSQL (optional but highly recommended)
+Now we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-[SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
-
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#1) above) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index#1) above) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='<pubKey>';
@@ -358,7 +356,11 @@ See below example screenshot:
 
 ![](assets/key-pair-snowflake.png)
 
-Now we can install SnowSQL. Execute the following commands on the Linux Session Manager console:
+#### 2. Install SnowSQL (optional but highly recommended)
+
+[SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
+
+To install SnowSQL. Execute the following commands on the Linux Session Manager console:
 ```commandline
 curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
 echo -e "~/bin \n y" > /tmp/ans
@@ -505,7 +507,7 @@ If everything goes well, you should something similar to screen capture below:
 
 #### 2. Start the producer that will ingest real-time data to the MSK cluster
 
-Start a new Linux session by following `step 3` in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#1) above.
+Start a new Linux session by following `step 3` in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index#1) above.
 ```commandline
 curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
@@ -586,8 +588,8 @@ As a result, you will see a nicely structured output with columns derived from t
 
 We can now write a loop to stream the flight data continuously into Snowflake.
 
-Note that there is a 30 seconds sleep time between the queries, it is because for our data source in this workshop, anything
-less than 30 seconds will not incur any new data as the source won't update more frequently than 30 seconds.
+Note that there is a 10 seconds sleep time between the queries, it is because for our data source in this workshop, anything
+less than 10 seconds will not incur any new data as the source won't update more frequently than 10 seconds.
 Feel free to lower the frequency for other data sources that update more frequently.
 
 Go back to the Linux session and run the following script.
