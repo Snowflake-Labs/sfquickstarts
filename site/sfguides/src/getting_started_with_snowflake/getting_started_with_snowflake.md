@@ -233,7 +233,7 @@ It is in comma-delimited format with a single header line and double quotes encl
 
 First, let's create a database called `CITIBIKE` to use for loading the structured data.
 
-Ensure you are using the sysadmin role by selecting **Switch Role** > **SYSADMIN**.
+Ensure you are using the sysadmin role by selecting your name at the top left, **Switch Role** > **SYSADMIN**.
 
 Navigate to the **Databases** tab. Click **Create**, name the database `CITIBIKE`, then click **CREATE**.
 
