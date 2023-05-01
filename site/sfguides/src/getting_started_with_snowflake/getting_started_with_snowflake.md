@@ -317,18 +317,18 @@ We are working with structured, comma-delimited data that has already been stage
 > 
 >  For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** button, then **Stage** > **Amazon S3**.
+From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. Click the **Create** button, then **Stage** > **Amazon S3** (or your corresponding service).
 
 ![stages create](assets/4PreLoad_8.png)
 
 In the "Create Securable Object" dialog that opens, replace the following values in the SQL statement:
 
-`stage_name`: `citibike_trips`
+`<stage_name>`: `citibike_trips`
 
-`url`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
+`<url>`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
-Also ensure you have removed 'credentials = (...)' statejment which is not required. The create stage command should resemble that show above exactly. 
+Also ensure you have removed 'credentials = (...)' statejment which is not required. You can also comment it out like the picture below by using '--'. The create stage command should resemble the below picture or not include the 3rd line.
 
 > aside positive
 > 
@@ -336,7 +336,7 @@ Also ensure you have removed 'credentials = (...)' statejment which is not requi
 
 ![create stage settings](assets/4PreLoad_9.png)
 
-Now let's take a look at the contents of the `citibike_trips` stage. Navigate to the **Worksheets** tab and execute the following SQL statement:
+Now let's take a look at the contents of the `citibike_trips` stage. Navigate back to the **Worksheets** tab and open the 'CITIBIKE_ZERO_TO_SNOWFLAKE' worksheet we made, add the following SQL statement below the previous code as shown in the below picture and then execute:
 
 ```SQL
 list @citibike_trips;
@@ -350,7 +350,7 @@ In the results in the bottom pane, you should see the list of files in the stage
 
 Before we can load the data into Snowflake, we have to create a file format that matches the data structure.
 
-In the worksheet, run the following command to create the file format:
+In the worksheet, again add the below command below the rest and execute to create the file format:
 
 ```SQL
 --create file format
