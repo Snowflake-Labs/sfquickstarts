@@ -421,8 +421,14 @@ then
   echo export clstr_url=\$a.snowflakecomputing.com > $outf
   export clstr_url=\$a.snowflakecomputing.com
 else
-  echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
-  export clstr_url=\$a.\$r.snowflakecomputing.com 
+  if [[ \$r == "us-east-1" ]] || [[ \$r == "eu-west-1" ]] || [[ \$r == "eu-central-1" ]] || [[ \$r == "ap-southeast-1" ]] || [[ \$r == "ap-southeast-2" ]]
+  then
+     echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
+     export clstr_url=\$a.\$r.snowflakecomputing.com
+  else
+     echo export clstr_url=\$a.\$r.aws.snowflakecomputing.com > $outf
+     export clstr_url=\$a.\$r.aws.snowflakecomputing.com
+  fi
 fi
 
 read -p "Snowflake cluster user name: default: streaming_user ==> " user
