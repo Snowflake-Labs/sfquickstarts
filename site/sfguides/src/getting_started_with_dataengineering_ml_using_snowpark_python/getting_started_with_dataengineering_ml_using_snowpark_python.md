@@ -52,9 +52,12 @@ It is one of the most popular [open source](https://scikit-learn.org/) machine l
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
 - [Python 3.8](https://www.python.org/downloads/) installed
-  - Note that we will be creatintg a Python environment with 3.8 in the **Clone GitHub Repository** step
+  - Note that you will be creating a Python environment with 3.8 in the **Get Started** step
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
+
+> aside positive
+> IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 
 <!-- ------------------------ -->
 ## Setup Environment
@@ -167,6 +170,18 @@ This section covers cloning of the GitHub repository and setting up your Snowpar
 
 The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn). This repository contains all the code you will need to successfully complete this QuickStart Guide.
 
+Using HTTPS:
+
+```shell
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python.git
+```
+
+OR, using SSH:
+
+```shell
+git clone git@github.com:Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python.git
+```
+
 ### Snowpark for Python
 
 To complete the **Data Engineering** and **Machine Learning** steps, you have the option to either install everything locally (option 1) or use Hex (option 2) as described below.
@@ -210,7 +225,7 @@ pip install streamlit
 
 #### Option 2 -- Use Hex
 
-If you choose to use your existing [Hex](https://app.hex.tech/login) account or if you create a new trial account on Hex, then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps **#4** and **#6** for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
+If you choose to use your existing [Hex](https://app.hex.tech/login) account or [create a free 30-day trial account](https://app.hex.tech/signup/quickstart-30), then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
 
 > aside positive
 > IMPORTANT:
@@ -242,7 +257,7 @@ To get started, follow these steps:
 
 ### Data Engineering Notebook in Hex
 
-If you choose to use your [Hex](https://app.hex.tech/login) account, follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
+If you choose to use your existing [Hex](https://app.hex.tech/login) account or [create a free 30-day trial account](https://app.hex.tech/signup/quickstart-30), follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
 
 1) Import [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
 
@@ -266,6 +281,7 @@ session = Session.builder.configs(connection_parameters).create()
 import hextoolkit
 hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
 session = hex_snowflake_conn.get_snowpark_session()
+session.sql('USE SCHEMA DASH_SCHEMA').collect()
 ```
 
 <!-- ------------------------ -->
@@ -432,7 +448,7 @@ To get started, follow these steps:
 
 ### Machine Learning Notebook in Hex
 
-If you choose to use your [Hex](https://app.hex.tech/login) account, follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
+If you choose to use your existing [Hex](https://app.hex.tech/login) account or [create a free 30-day trial account](https://app.hex.tech/signup/quickstart-30), follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
 
 1) Import [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
 
@@ -456,6 +472,7 @@ session = Session.builder.configs(connection_parameters).create()
 import hextoolkit
 hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
 session = hex_snowflake_conn.get_snowpark_session()
+session.sql('USE SCHEMA DASH_SCHEMA').collect()
 ```
 
 <!-- ------------------------ -->
