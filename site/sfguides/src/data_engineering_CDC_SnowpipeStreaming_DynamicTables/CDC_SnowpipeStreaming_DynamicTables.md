@@ -57,10 +57,12 @@ To participate in the virtual hands-on lab, attendees need the following:
 Duration: 5
 
 ### a) Download
-The first thing you will need to do is download the following two .sql files that contains a series of SQL commands we will execute in Worksheets throughout this lab **Click the green buttons to access the page to download the files**
+The first thing you will need to do is download the following three files.  The first two are ZIP files you need to extract into the same directory that together make the simulator cleint.  The third file contains a series of SQL commands we will execute in Worksheets throughout this lab **Click the green buttons to access the page to download the files**
 
 
-<button>[CDCSimulatorApp.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/32fc9d8c26674f520cb894577e181dcfaeb7c7df/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/CDCSimulatorApp.zip)</button> (Click Download)
+<button>[CDCSimulatorApp1.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/e281bfc5c6a299ac391a10d64ed7d0a85db4fde4/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/CDCSimulatorApp1.zip)</button> (Click Download)
+
+<button>[CDCSimulatorApp2.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/e281bfc5c6a299ac391a10d64ed7d0a85db4fde4/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/CDCSimulatorApp2.zip)</button> (Click Download)
 
 <button>[Data_Engineering_Streams_CDC_DT_VHOL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/32fc9d8c26674f520cb894577e181dcfaeb7c7df/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/Data_Engineering_Streams_CDC_DT_VHOL.sql)</button> (Click Raw, then from your browser, use "Save Page As")
 
@@ -638,4 +640,3 @@ Duration: 2
 
 ### Related Resources
 **(Will be available once these capabilities move to Public Preview)**
-
