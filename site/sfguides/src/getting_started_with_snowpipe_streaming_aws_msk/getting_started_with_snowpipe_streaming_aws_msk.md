@@ -336,7 +336,7 @@ ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 ```
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html#1) above) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index#1) above) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='<pubKey>';
@@ -421,14 +421,8 @@ then
   echo export clstr_url=\$a.snowflakecomputing.com > $outf
   export clstr_url=\$a.snowflakecomputing.com
 else
-  if [[ \$r == "us-east-1" ]] || [[ \$r == "eu-west-1" ]] || [[ \$r == "eu-central-1" ]] || [[ \$r == "ap-southeast-1" ]] || [[ \$r == "ap-southeast-2" ]]
-  then
-     echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
-     export clstr_url=\$a.\$r.snowflakecomputing.com
-  else
-     echo export clstr_url=\$a.\$r.aws.snowflakecomputing.com > $outf
-     export clstr_url=\$a.\$r.aws.snowflakecomputing.com
-  fi
+  echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
+  export clstr_url=\$a.\$r.snowflakecomputing.com 
 fi
 
 read -p "Snowflake cluster user name: default: streaming_user ==> " user
@@ -513,7 +507,7 @@ If everything goes well, you should something similar to screen capture below:
 
 #### 2. Start the producer that will ingest real-time data to the MSK cluster
 
-Start a new Linux session by following `step 3` in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html#1) above.
+Start a new Linux session by following `step 3` in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index#1) above.
 ```commandline
 curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
