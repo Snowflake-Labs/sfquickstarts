@@ -69,7 +69,11 @@ Duration: 15
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, load data from Amazon S3, and setup Snowflake internal stages.
 
 > aside positive
-> IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
+> IMPORTANT:
+>
+> - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
+>
+> - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
 Run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -194,19 +198,31 @@ To complete the **Data Engineering** and **Machine Learning** steps, you have th
 
 This option will enable you to complete all the steps in this QuickStart Guide.
 
-- Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
+- Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
 
-- From the root folder, create conda environment. Let's name the environment **snowpark-de-ml**.
+Open a new terminal window and execute the following commands in the same terminal window.
+
+- Create Python 3.8 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
 
 ```python
 conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+```
+
+- Activate conda environment **snowpark-de-ml** by running the following command in the same terminal window
+
+```python
 conda activate snowpark-de-ml
 ```
 
-- Install Snowpark Python and other libraries including Streamlit
+- Install Snowpark Python and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+```
+
+- Install Streamlit in conda environment **snowpark-de-ml** by running the following command in the same terminal window
+
+```python
 pip install streamlit
 ```
 
@@ -214,14 +230,22 @@ pip install streamlit
 
 - Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
+Here's a sample ***connection.json*** based on the object names mentioned in **Setup Environment** step.
+
+```json
+{
+  "account"   : "<your_account_identifier_goes_here>",
+  "user"      : "<your_username_goes_here>",
+  "password"  : "<your_password_goes_here>",
+  "role"      : "ACCOUNTADMIN",
+  "warehouse" : "DASH_L",
+  "database"  : "DASH_DB",
+  "schema"    : "DASH_SCHEMA"
+}
+```
+
 > aside negative
-> Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
-
-##### Troubleshooting **pyarrow** related issues
-
-- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
-- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
-- Do not reinstall a different version of `pyarrow` after installing Snowpark.
+> Note: For the **account** parameter above, specify your **account identifier** and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, [refer to the documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html).
 
 #### Option 2 -- Use Hex
 
