@@ -51,7 +51,7 @@ Sign up for a free, 30-day trial by following this [link](https://signup.snowfla
 Log into your Snowflake account. To access this lab and set up sample data and code, you'll want to ensure you click on the following link.
 
 > aside positive
-> IMPORTANT: You must have ACCOUNTADMIN role in order to proceed with the lab setup described below. Note: If you created a new trail account, you will automatically have ACCOUNTADMIN role.
+> IMPORTANT: You must have ACCOUNTADMIN role in order to proceed with the lab setup described below. Note: If you created a new trial account, you will automatically have ACCOUNTADMIN role.
 
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 
