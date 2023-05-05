@@ -586,7 +586,7 @@ create or replace table email_named_entities_base as
 select
     relative_path
     , upper(replace(get(split(relative_path, '/'), 0), '\"', ''))	as mailbox
-    , parseText(build_scoped_file_url('@email_stage_internal/', relative_path)) 		as named_entities
+    , parseText(build_scoped_file_url(@email_stage_internal, relative_path)) 		as named_entities
 from (
     select relative_path
     from directory(@email_stage_internal)
