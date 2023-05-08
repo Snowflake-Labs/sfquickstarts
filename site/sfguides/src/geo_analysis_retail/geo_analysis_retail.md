@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Geospatial Analytics with Snowflake and CARTO using OpenStreetMaps New York Dataset
+# Geospatial Analytics for Retail with Snowflake and CARTO
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
