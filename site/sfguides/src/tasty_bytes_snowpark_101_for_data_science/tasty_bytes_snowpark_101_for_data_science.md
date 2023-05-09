@@ -19,7 +19,7 @@ In this Snowpark 101 for Data Science Quickstart guide, you will be help the fic
 Snowpark allows developers to query and create data applications in Python, Java, and Scala through APIs and DataFrame-style programming constructs that run on Snowflake's elastic engine. Learn more about [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/index).
 
 ### What is Streamlit?
-Streamlit is a Python library that makes it easy to create and share custom web apps. Learn more about [Streamlit](https://docs.streamlit.io/)
+Streamlit *(acquired by Snowflake in March 2022)* is a Python library that makes it easy to create and share custom web apps. Learn more about [Streamlit](https://docs.streamlit.io/).
 
 ### What You’ll Learn 
 - How to access third-party data from the **Snowflake Data Marketplace**
@@ -181,13 +181,9 @@ ii. Activate the py38_env_tb1 environment
  ```  
 conda activate py38_env_tb1
  ```
-iii. Install Snowpark
-```  
-conda install snowflake-snowpark-python
+iii. Install Snowpark and packages from the Snowflake Anaconda channel that will be used in functions deployed on Snowflake
 ```
-iv. With the environment activated, install packages from the Snowflake Anaconda channel that will be used in functions deployed on Snowflake
-```
-conda install -c https://repo.anaconda.com/pkgs/snowflake numpy pandas scikit-learn joblib cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python numpy pandas scikit-learn joblib cachetools
 ```
 v. Install packages that will be used only in the Python environment (i.e. UI, visualization..)
 ```
