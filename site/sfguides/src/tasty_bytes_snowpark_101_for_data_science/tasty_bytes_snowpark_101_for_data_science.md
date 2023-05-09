@@ -135,7 +135,7 @@ SELECT * FROM shift_sales;
 
 <!-- ------------------------ -->
 ## Data Science with Snowpark
-Duration: 25
+Duration: 22
 
 ### Overview
 Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support this goal and maximize daily revenue across our fleet of trucks, the data science team needs to build an ML model to direct trucks to locations that are expected to have the highest sales on a given shift.
@@ -217,7 +217,7 @@ jupyter notebook
 
 <!-- ------------------------ -->
 ## Application Prototype with Streamlit
-Duration: 10
+Duration: 6
 
 ### Overview
 Now that you have deployed a model that predicts the shift sales of each location for the upcoming shift, you want to find a way for truck drivers to use these predictions to pick where they will park. You need to create an application prototype to show the engineering team how a truck driver would interact with the shift sales forecast model. The application will allow a user to pick a city and shift time (AM or PM) and show predicted sales by location on a map.
