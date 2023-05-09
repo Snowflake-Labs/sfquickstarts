@@ -271,7 +271,7 @@ Duration: 1
 
 You've successfully built a custom API in Python Powered by Snowflake. 
 
-Right now this is a public API and is accessible to anyone on the internet. When you go to put a data API into production you should protect the API with some level of authentication and authorization. You can do this at the network layer (e.g., via integration with an application load balancer) or at the web server layer (in our case in Flask, so consider OAuth via the [Flask-OAuth](https://pythonhosted.org/Flask-OAuth/) package). 
+When you go to put a data API into production you should protect the API with some level of authentication and authorization. You can do this at the network layer (e.g., via integration with an application load balancer) or at the web server layer (in our case in Flask, so consider OAuth via the [Flask-OAuth](https://pythonhosted.org/Flask-OAuth/) package). 
 
 Another consideration is enabling a frontend website to access the endpoint, which may involve enabling Cross Origin Resource Sharing (CORS). Consider the [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/) package
 
