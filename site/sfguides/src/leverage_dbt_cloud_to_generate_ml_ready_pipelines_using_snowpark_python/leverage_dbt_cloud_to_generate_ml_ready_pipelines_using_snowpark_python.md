@@ -1,5 +1,5 @@
 author: hope-wat
-id: leverage_sql_and_python_dbt_snowpark_ml
+id: leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web
@@ -10,32 +10,65 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 3
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+The focus of this workshop will be to demonstrate how we can use both *SQL and python together* in the same workflow to run *both analytics and machine learning models* on dbt Cloud.
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
+All code in today’s workshop can be found on [GitHub](https://github.com/dbt-labs/python-snowpark-formula1/tree/python-formula1).
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+### What you'll use during the lab
 
-### Prerequisites
-- Familiarity with Markdown syntax
-
-### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
-
-### What You’ll Need 
+- A [Snowflake account](https://trial.snowflake.com/) with ACCOUNTADMIN access
+- A [dbt Cloud account](https://www.getdbt.com/signup/)
 - A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
 
-### What You’ll Build 
-- A Snowflake Guide
+### What you'll learn
+
+- How to use dbt with Snowflake to build scalable transformations using SQL and Python
+    - How to use dbt SQL to prepare your data from sources to encoding 
+    - How to train a model in dbt python and use it for future prediction 
+    - How to deploy your full project 
+
+### What you need to know
+
+- Basic to intermediate SQL and python.
+- Basic understanding of dbt fundamentals. We recommend the [dbt Fundamentals course](https://courses.getdbt.com/collections) if you're interested.
+- High level machine learning process (encoding, training, testing)
+- Simple ML algorithms &mdash; we will use logistic regression to keep the focus on the *workflow*, not algorithms!
+
+### What you'll build
+
+- A set of data analytics and prediction pipelines using Formula 1 data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments
+- We will create insights for:
+    1. Finding the lap time average and rolling average through the years (is it generally trending up or down)?
+    2. Which constructor has the fastest pit stops in 2021?
+    3. Predicting the position of each driver based on a decade of data. 
+
+As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs public S3 bucket. We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/).
+
+## Configure Snowflake
+In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
+
+1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/) if you don’t have one. Ensure that your account is set up using **AWS** in the **US East (N. Virginia)**. We will be copying the data from a public AWS S3 bucket hosted by dbt Labs in the us-east-1 region. By ensuring our Snowflake environment setup matches our bucket region, we avoid any multi-region data copy and retrieval latency issues.
+
+![Puppy](assets/SAMPLE.jpg)
+
+<Lightbox src="/assets/2-configure-snowflake/1-snowflake-trial-AWS-setup.png" title="Snowflake trial"/>
+
+3. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
+
+4. When Snowsight first opens, your window should look like the following, with you logged in as the ACCOUNTADMIN with demo worksheets open:
+
+<Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/2-new-snowflake-account.png" title="Snowflake trial demo worksheets"/>
+
+
+5. Navigate to **Admin > Billing & Terms**. Click **Enable > Acknowledge & Continue** to enable Anaconda Python Packages to run in Snowflake.
+    
+<Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/3-accept-anaconda-terms.jpeg" title="Anaconda terms"/>
+
+<Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/4-enable-anaconda.jpeg" title="Enable Anaconda"/>
+
+6. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
 
 <!-- ------------------------ -->
 ## Metadata Configuration
