@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Geospatial, Python UDFs
 
 # Geospatial Analytics for Telecom with Snowflake and Carto
 <!-- ------------------------ -->
@@ -47,6 +47,8 @@ A sample use case that involves LTE cell towers in the United Kingdom. You will 
 
 <!-- ------------------------ -->
 ## Setup your Account
+
+Duration: 10
 
 [app.snowflake.com](https://app.snowflake.com/)
 
@@ -122,7 +124,7 @@ Once you have entered the parameters, you can click the Connect button. CARTO wi
 
 ## Get Data and Analytics Toolbox
 
-Duration: 20
+Duration: 15
 
 The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality.  The best place to acquire this data is the Snowflake Marketplace!  
 
@@ -216,7 +218,7 @@ Voila! Now you have a table with the boundaries of districts in the UK and the N
 <!-- ------------------------ -->
 ## Understand Geospatial Types and Formats
 
-Duration: 20
+Duration: 10
 
 Now we will run different queries to understand how the `GEOGRAPHY` data type works in Snowflake. Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar. 
 
@@ -335,7 +337,7 @@ Notice how WKB is incomprehensible to a human reader. However, this format is ha
 
 ## Spatial Analysis
 
-Duration: 20
+Duration: 15
 
 Now that you have a basic understanding of how the `GEOGRAPHY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to run and visualize geospatial queries to answer some questions.
 
