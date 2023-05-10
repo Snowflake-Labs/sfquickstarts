@@ -33,8 +33,8 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
-* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Pick the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
-* Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account). Pick the same region (continent) as for the Snowflake account.
+* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account). Select the same region (continent) as for the Snowflake account.
 
 ### What You’ll Build
 A sample use case that involves LTE cell towers in the United Kingdom. You will answer the following questions:
@@ -207,7 +207,7 @@ Then click `Refresh` in the sidebar, navigate to the newly created table, right-
 <img src ='assets/geo_sf_carto_telco_13.png' width=700>
 
 
-In the pop-up, choose the file you want to upload and click the Next button. When it suggests selecting the file format and some other parameters, pick the values as shown below and click the Next button one more time:
+In the pop-up, choose the file you want to upload and click the Next button. When it suggests selecting the file format and some other parameters, select the values as shown below and click the Next button one more time:
 
 <img src ='assets/geo_sf_carto_telco_14.png' width=500>
 
@@ -617,14 +617,14 @@ H3 layers allow us to show aggregated information at different resolutions for d
 <img src ='assets/geo_sf_carto_telco_27.png' width=700>
 
 Remember to select a color palette of your liking and the color scale (the default is custom but we want to *Quantize* bins for this use case).
-We can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity we will see on the map but it will also take longer to load. Pick resolution 5.
+We can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity we will see on the map but it will also take longer to load. Select resolution 5.
 
 <img src ='assets/geo_sf_carto_telco_28.gif' width=700>
 
 Let’s now use the road network from `UK Open Map Data` to see which road segments have good coverage and which do not.
 To intersect the road layer with the H3 signal strength layer, we will split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. We will then join on the H3 index and keep as 'No signal' all of the road segments with no coverage or coverage of under "30". 
 
-Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the lead function.
+Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the `ST_COLLECT` function.
 
 Finally, we use the same `H3_FROMGEOGPOINT` for the selected resolution and we use the Linestring centroid for the point geography.
 
@@ -699,7 +699,7 @@ Then select your connection and the `GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED` table.
 
 <img src ='assets/geo_sf_carto_telco_30.png' width=700>
 
-Once we have our second layer on the map, we can click on it to style it and show the stroke color based on our “signal” column. For that, I will create a “Custom palette” with just the 2 colors we want: gray for roads with good signal and red for roads with no/poor signal.
+Once we have our second layer on the map, we can click on it to style it and show the stroke color based on our “signal” column. For that create a “Custom palette” with just two colors: gray for roads with good signal and red for roads with no/poor signal.
 
 <img src ='assets/geo_sf_carto_telco_31.gif' width=700>
 
