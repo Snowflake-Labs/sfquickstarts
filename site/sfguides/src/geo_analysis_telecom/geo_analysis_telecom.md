@@ -63,7 +63,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > aside positive
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-<img src ='assets/geo_sf_carto_telco_3.png' width=700>
+<img src ='assets/geo_sf_carto_telco_3.png' width=500>
 
 ### Create a Virtual Warehouse
 
@@ -73,7 +73,7 @@ You will need to create a Virtual Warehouse to run queries.
 - Click the big blue `+ Warehouse` button in the upper right of the window
 - Create an Large Warehouse as shown in the screen below
 
-<img src ='assets/geo_sf_carto_telco_4.png' width=700>
+<img src ='assets/geo_sf_carto_telco_4.png' width=500>
 
 Be sure to change the `Suspend After (min)` field to 5 min to avoid wasting compute credits.
 
