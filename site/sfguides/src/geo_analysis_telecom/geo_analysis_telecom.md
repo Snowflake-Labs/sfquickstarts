@@ -33,8 +33,8 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
-* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Pick the Enterprise edition to try Search Optimization for Geospatial. 
-* Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account ) 
+* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Pick the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account). Pick the same region (continent) as for the Snowflake account.
 
 ### What You’ll Build
 A sample use case that involves LTE cell towers in the United Kingdom. You will answer the following questions:
@@ -63,19 +63,28 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > aside positive
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-<img src ='assets/geo_sf_carto_telco_3.png' width=500>
+<img src ='assets/geo_sf_carto_telco_3.png' width=700>
 
-### Create a Virtual Warehouse (if needed)
+### Create a Virtual Warehouse
 
-If you don't already have access to a Virtual Warehouse to run queries, you will need to create one.
+You will need to create a Virtual Warehouse to run queries.
 
 - Navigate to the `Admin > Warehouses` screen using the menu on the left side of the window
 - Click the big blue `+ Warehouse` button in the upper right of the window
 - Create an Large Warehouse as shown in the screen below
 
-<img src ='assets/geo_sf_carto_telco_4.png' width=500>
+<img src ='assets/geo_sf_carto_telco_4.png' width=700>
 
 Be sure to change the `Suspend After (min)` field to 5 min to avoid wasting compute credits.
+
+### Acknowledge the Snowflake Third Party Terms
+
+In order to use the packages provided by Anaconda inside Snowflake, you must acknowledge the Snowflake Third Party Terms.
+
+* Select Admin » Billing & Terms.
+* In the Anaconda section, select Enable.
+* In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
+* If you agree to the terms, select `Acknowledge & Continue`.
 
 ### Connection Snowflake and Carto
 
@@ -85,7 +94,7 @@ Access the CARTO Workspace: [app.carto.com](http://app.carto.com/)
 
 Go to the Connections section in the Workspace, where you can find the list of all your current connections.
 
-<img src ='assets/geo_sf_carto_telco_5.png' width=500>
+<img src ='assets/geo_sf_carto_telco_5.png' width=700>
 
 To add a new connection, click on `New connection` and follow these steps:
 
@@ -104,10 +113,10 @@ These are the parameters you need to provide:
 > aside negative
 >  Use MY_WH or the name of the data warehouse you created in the previous step otherwise some queries will fail because CARTO won't know which warehouse to run them against.
 
-- **Database (optional)**. Default database to run your queries. Leave Blank.
+- **Database (optional)**. Default database to run your queries. Use GEOLAB.
 - **Role (optional)**. Default Role to run your queries. Use ACCOUNTADMIN.
 
-<img src ='assets/geo_sf_carto_telco_6.png' width=500>
+<img src ='assets/geo_sf_carto_telco_6.png' width=700>
 
 Once you have entered the parameters, you can click the Connect button. CARTO will try to connect to your Snowflake account. If everything is OK, your new connection will be registered.
 
@@ -127,7 +136,7 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 * Search for` OpenCelliD` in the search bar
 * Find and click the` OpenCelliD - Open Database of Cell Towers` tile
 
-<img src ='assets/geo_sf_carto_telco_7.png' width=500>
+<img src ='assets/geo_sf_carto_telco_7.png' width=700>
 
 * Once in the listing, click the big blue `Get` button
 
@@ -136,13 +145,15 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 
 <img src ='assets/geo_sf_carto_telco_8.png' width=500>
 
-* On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all of the future instructions will assume this name for the database.
+* On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all future instructions will assume this name for the database.
 
 <img src ='assets/geo_sf_carto_telco_9.png' width=500>
 
 Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace. 
 
-Similarly to the above dataset, search and get the `OSM United Kingdom` dataset from the Marketplace and rename it to `osm_uk`.
+Similarly to the above dataset, search and get the `UK Open Map Data - Sonra` dataset from the Marketplace and rename it to `osm_uk`.
+
+<img src ='assets/geo_sf_carto_telco_32.png' width=500>
 
 ### Install CARTO Analytics Toolbox from the Snowflake Marketplace
 
@@ -151,16 +162,16 @@ Now you can acquire CARTO’s Analytics Toolbox from the Snowflake Marketplace. 
 * Similar to how you did with the data in the previous steps, navigate to the `Marketplace` screen using the menu on the left side of the window
 * Search for` CARTO` in the search bar
 
-<img src ='assets/geo_sf_carto_telco_10.png' width=500>
+<img src ='assets/geo_sf_carto_telco_10.png' width=700>
 
 * Find and click the` Analytics Toolbox`  tile 
 
-<img src ='assets/geo_sf_carto_telco_11.png' width=500>
+<img src ='assets/geo_sf_carto_telco_11.png' width=700>
 
 * Click on big blue` Get`  button 
 * In the options, name the database `CARTO` and optionally add more roles that can access the database 
 
-<img src ='assets/geo_sf_carto_telco_12.png' width=500>
+<img src ='assets/geo_sf_carto_telco_12.png' width=700>
 
 * Click on `Get` and then `Done`. 
 
@@ -194,38 +205,14 @@ create or replace TABLE GEOLAB.GEOGRAPHY.UK_NL_DISTRICTS (
 
 Then navigate to the newly created table, right-click on it, and select "Load data".
 
-<img src ='assets/geo_sf_carto_telco_13.png' width=500>
+<img src ='assets/geo_sf_carto_telco_13.png' width=700>
 
 
 In the pop-up, choose the file you want to upload and click the Next button. When it suggests selecting the file format and some other parameters, pick the values as shown below and click the Next button one more time:
 
-<img src ='assets/geo_sf_carto_telco_14.png' width=500>
+<img src ='assets/geo_sf_carto_telco_14.png' width=700>
 
 Voila! Now you have a table with the boundaries of districts in the UK and the Netherlands.
-
-### Load Datasets from an S3 bucket
-
-In this step, we're going to use Snowflake's [Create an External Stage Using Snowsight](https://docs.snowflake.com/en/user-guide/data-load-s3-create-stage#create-an-external-stage-using-snowsight) feature to create a table using a dataset stored in the Stage.
-
-In the navigation menu, select Data > Databases. Select GEOGRAPHY, and click Create > Stage > Amazon S3.
-
-<img src ='assets/geo_sf_carto_telco_15.png' width=500>
-
-In the new Window, use the name _geostage_, and put the following link to the external stage in the URL field: _s3://sfquickstarts/vhol_spatial_analysis_geometry_geography/_. Then click Create button.
-
-<img src ='assets/geo_sf_carto_telco_16.png' width=500>
-
-As a last step, you will create a new table using the file from that stage. Go back to your worksheet and run the following queries to create a new file format and a new table using the dataset stored in the Stage:
-
-
-```
-// Set the working database schema
-CREATE OR REPLACE FILE format mycsv TYPE = CSV SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"';
-CREATE OR REPLACE TABLE GEOLAB.GEOGRAPHY.OSM_UK_ROADS AS SELECT to_geometry($1) as geometry, $2 as type FROM @geostage/osm_uk.csv (file_format => 'mycsv');
-
-```
-
-Hooray! You've loaded the OpenStreetMap dataset that contains the UK roads.
 
 <!-- ------------------------ -->
 ## Understand Geospatial Types and Formats
@@ -240,7 +227,7 @@ Now we will run different queries to understand how the `GEOGRAPHY` data type wo
 * Click the + Worksheet button in the upper right of your browser window. This will open a new window.
 * In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
 
-<img src ='assets/geo_sf_carto_telco_17.png' width=500>
+<img src ='assets/geo_sf_carto_telco_17.png' width=700>
 
 Now you are ready to discover the data types.
 
@@ -275,7 +262,7 @@ Snowflake supports 3 primary geospatial formats and 2 additional variations on t
 * **WKT & EWKT**: a "Well Known Text" string format for representing geospatial data and the "Extended" variation of that format
 * **WKB & EWKB:** a "Well Known Binary" format for representing geospatial data in binary and the "Extended" variation of that format
 
-These formats are supported for ingestion (files containing those formats can be loaded into a `GEOGRAPHY` typed column), query result display, and data unloading to new files. You don't need to worry about how Snowflake stores the data under the covers but rather how the data is displayed to you or unloaded to files through the value of session variables called `GEOGRAPHY_OUTPUT_FORMAT.`
+These formats are supported for ingestion (files containing those formats can be loaded into a `GEOGRAPHY` typed column), query result display, and data unloading to new files. You don't need to worry about how Snowflake stores the data under the covers but rather how the data is displayed to you or unloaded to files through the value of session variables called `GEOGRAPHY_OUTPUT_FORMAT`.
 
 Run the queries below to make sure the current format is GeoJSON.
 
@@ -303,7 +290,7 @@ In the result set, notice the `geometry` column and how it displays a JSON repre
 
 Notice that in the result set coordinates represented as pairs of longitude and latitude:
 
-<img src ='assets/geo_sf_carto_telco_18.png' width=500>
+<img src ='assets/geo_sf_carto_telco_18.png' width=700>
 
 Now look at the same query but in a different format. Run the following query:
 
@@ -319,7 +306,7 @@ Run the previous queries again and when done, examine the output in the `geometr
 
 
 ```
-select geometry, highway from _geolab.geography.osm_uk_roads where highway = 'motorway' limit 25;
+select geo_cordinates from OSM_UK.UNITED_KINGDOM.V_ROAD where class = 'motorway' limit 25;
 ```
 
 
@@ -344,7 +331,7 @@ alter session set geography_output_format = 'WKB';
 And run the query again, and click on a cell in the `geometry` column.
 
 ```
-select geometry, highway from geolab.geography.osm_uk_roads where highway = 'motorway' limit 25;
+select geo_cordinates from OSM_UK.UNITED_KINGDOM.V_ROAD where class = 'motorway' limit 25;
 ```
 
 Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKB or GeoJSON.
@@ -379,15 +366,15 @@ Now let’s do the query in CARTO Builder to see where the point is.
 
 * Create a new map. Use the navigation menu on the left to get to Maps and then click on (+) New Map.
 
-<img src ='assets/geo_sf_carto_telco_19.png' width=500>
+<img src ='assets/geo_sf_carto_telco_19.png' width=700>
 
 * Click on the “Add Source From”
 
-<img src ='assets/geo_sf_carto_telco_20.png' width=500>
+<img src ='assets/geo_sf_carto_telco_20.png' width=700>
 
 * Then click on `Custom Query` and make sure you have selected Snowflake Connection that  you have created in previous steps. 
 
-<img src ='assets/geo_sf_carto_telco_21.gif' width=500>
+<img src ='assets/geo_sf_carto_telco_21.gif' width=700>
 
 
 * Now paste the query and click on the green `Run` button. 
@@ -401,7 +388,7 @@ select to_geography('POINT(-0.175121 51.50136)') as geom;
 
 * Use the map zoom controls (+/- buttons) and click the zoom in (+) button until you can see the point better. You should see something like the screenshot below, though you may see more depending on your browser window size. 
 
-<img src ='assets/geo_sf_carto_telco_22.png' width=500>
+<img src ='assets/geo_sf_carto_telco_22.png' width=700>
 
 
 > aside positive
@@ -409,7 +396,7 @@ select to_geography('POINT(-0.175121 51.50136)') as geom;
 
 The green dot represents the `POINT` object location. Now you know where you are!
 
-<img src ='assets/geo_sf_carto_telco_23.png' width=500>
+<img src ='assets/geo_sf_carto_telco_23.png' width=700>
 
 
 ### Find the Nearest Cell Towers
@@ -443,7 +430,7 @@ LIMIT 10;
 
 The query returns `POINT` objects, which you can visualize using CARTO.
 
-<img src ='assets/geo_sf_carto_telco_23.png' width=500>
+<img src ='assets/geo_sf_carto_telco_23.png' width=700>
 
 In the previous section you've found the closest cell towers to your location. But what about answering more sophisticated questions, like what areas in the UK have very good and bad coverage by LTE network? You can use geospatial functions combined with spatial join to find out.
 
@@ -525,7 +512,7 @@ ORDER BY st_geohash(geometry);
 ALTER TABLE geolab.geography.uk_districts_coverage ADD SEARCH OPTIMIZATION ON GEO(geometry);
 ```
 
-Nice! Now you have a <code>UK_DISTRICTS_COVERAGE<em> </em></code>table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize it in Carto. Paste the following query into the SQL editor and use <em>coverage_ratio</em> column to color code the coverage areas.
+Nice! Now you have a `UK_DISTRICTS_COVERAGE` table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize it in Carto. Paste the following query into the SQL editor and use <em>coverage_ratio</em> column to color code the coverage areas.
 
 ```
 SELECT geometry AS geom,
@@ -533,32 +520,26 @@ SELECT geometry AS geom,
 FROM geolab.geography.uk_districts_coverage;
 ```
 
-<img src ='assets/geo_sf_carto_telco_23.png' width=500>
+<img src ='assets/geo_sf_carto_telco_23.png' width=700>
 
 ### What percent of the UK roads have LTE coverage?
 
-Imagine that as an analyst, you want to calculate what percentage of motorways in the UK have coverage by our network. To get the number, we can employ the dataset with Open StreetMaps data in the UK.
+Now imagine you want to calculate what percentage of motorways in the UK have coverage by our network. To get the number, you can employ the dataset with Open StreetMaps data in the UK.
 
 Run the foillowing query:
 
 
 ```
-SELECT round(100*sum(st_length(st_intersection(coverage.geometry, roads.coordinates)))/
-               (SELECT sum(st_length(coordinates))
-                FROM geolab.geography.osm_uk_roads roads
-                WHERE highway in ('motorway', 'motorway_link', 'primary', 'primary_link', 'trunk', 'trunk_link')), 2) AS "Coverage, %"
-FROM geolab.geography.osm_uk_roads roads,
-     geolab.geography.uk_counties_coverage coverage
-WHERE st_intersects(coverage.geometry, roads.coordinates)
-  AND highway in ('motorway',
-                  'motorway_link',
-                  'primary',
-                  'primary_link',
-                  'trunk',
-                  'trunk_link');
+SELECT round(100*sum(st_length(st_intersection(coverage.geometry, roads.geo_cordinates)))/
+               (SELECT sum(st_length(geo_cordinates))
+                FROM OSM_UK.UNITED_KINGDOM.V_ROAD  roads where class = 'motorway'), 2) AS "Coverage, %"
+FROM OSM_UK.UNITED_KINGDOM.V_ROAD roads,
+     geolab.geography.uk_districts_coverage coverage
+WHERE st_intersects(coverage.geometry, roads.geo_cordinates)
+and class = 'motorway';
 ```
 
-Nice! Our mobile network covers almost 90% of the roads.
+It seems our LTE network covers more than 90% of the roads. A good number for a marketing campaign.
 
 
 ### What is the distribution of the LTE signal strength?
@@ -590,3 +571,192 @@ ALTER TABLE geolab.geography.uk_lte_coverage_strength ADD SEARCH OPTIMIZATION ON
 
 
 Nice!
+
+<!-- ------------------------ -->
+## Advanced Analysis using H3
+
+Duration: 20
+
+In this section we will cover more advanced use case where we will leverage H3 functions from Carto toolbox.
+
+### How many kilometers of UK roads have poor or no LTE coverage?
+
+As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
+
+Let's first create our signal decay model for our antennas. In the following query, we will create a table with the locations of antennas and the cell range, which we will use to compute the h3 neighbors:
+
+```
+CREATE OR REPLACE TABLE geolab.geography.uk_lte AS
+SELECT
+    row_number() over(order by null) as id
+    , cell_range
+    , st_makepoint(lon, lat) as geom
+FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS 
+where mcc in ('234', '235')
+and radio = 'LTE'
+ORDER BY ST_GEOHASH(geom)
+ALTER TABLE geolab.geography.uk_lte ADD search optimization ON GEO(geom);
+
+```
+
+Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the cell_range accordingly.
+First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance (up to K distances) from a given H3 cell. The distance is calculated by dividing the cell range by 580 meters, which represents the spacing between H3 cells at resolution 9. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function. Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
+
+Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. As we have computed H3 neighbors for each antenna, antennas in close proximity will have generated the same H3 cell multiple times; thus, we will select the one with the strongest signal.
+
+The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. The signal will range from 0 (poor) to 100 (strongest).
+
+Clustering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
+
+Run the following query.
+
+```
+create or replace table geolab.geography.uk_lte_coverage_h3 as  
+with h3_neighbors as (
+    select 
+        id
+        , cast(p.value as string) as h3
+        , carto.carto.h3_distance(carto.carto.h3_fromgeogpoint(geom, 9), p.value) as h3_distance
+    from geolab.geography.uk_lte,
+    lateral flatten(input => carto.carto.h3_kring(
+        carto.carto.h3_fromgeogpoint(geom, 9), ceil(least(cell_range, 6000) / 586)::int
+        )) p
+)
+, max_distance_per_antena as (
+    select id, max(h3_distance) as h3_max_distance
+    from h3_neighbors 
+    group by id
+)
+select 
+    h3, 
+    max((100 * pow(1 - h3_distance / (h3_max_distance + 1), 2)) -- decay
+    ) * uniform(0.8, 1::float, random() -- noise
+    ) as signal_strength
+from h3_neighbors join max_distance_per_antena using(id)
+group by h3;
+ALTER TABLE geolab.geography.uk_lte_coverage_h3 CLUSTER BY (h3);
+```
+
+Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
+
+```
+select h3, signal_strength from geolab.geography.uk_lte_coverage_h3
+```
+
+> aside positive
+>  Note that we don’t have a `GEOGRAPHY` on this query. This is because CARTO has native support of H3 and can show the H3 geography representation on the browser without the need to store and move the geography from the database to the browser. 
+
+As we create an H3 layer we will need to configure the layer type from the query console:
+
+<img src ='assets/geo_sf_carto_telco_26.gif' width=700>
+
+H3 layers allow us to show aggregated information at different resolutions for different zoom levels. Because of this, when we style the layer, we need to decide an aggregation method for the attribute to show, in this example, the signal_strength.
+
+<img src ='assets/geo_sf_carto_telco_27.png' width=700>
+
+Remember to select a color palette of your liking and the color scale (the default is custom but we want to quantize bins for this use case).
+We can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity we will see on the map but it will also take longer to load.
+
+<img src ='assets/geo_sf_carto_telco_28.gif' width=700>
+
+Let’s now use the road network from `UK Open Map Data` to see which road segments have good coverage and which do not.
+To intersect the road layer with the H3 signal strength layer, we will split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. We will then join on the H3 index and keep as 'No signal' all of the road segments with no coverage or coverage of under "30". 
+
+Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the lead function.
+
+Finally, we use the same `H3_FROMGEOGPOINT` for the selected resolution and we use the Linestring centroid for the point geography.
+
+Run the following query.
+
+```
+create or replace table GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED AS
+with roads as (
+    select 
+        row_number() over(order by null) as geoid -- creating an ID for each original road segment
+        , geo_cordinates as geom
+    from OSM_UK.UNITED_KINGDOM.V_ROAD roads
+    where class = 'motorway'
+    and st_dimension(geo_cordinates) = 1 -- only for the linestring or multilinestring
+)
+, segment_ids as (
+    select 
+        Geoid, -- ID for each minimal road segment
+        row_number() over(partition by(geoid) order by geoid) as segment_id 
+        , geom
+    from roads, 
+    lateral split_to_table(repeat(',', (st_npoints(geom) - 1)::int), ',')
+)
+, segments as (select 
+               geoid, 
+               segment_id,
+               st_makeline(
+               st_pointn(geom, segment_id), 
+               st_pointn(geom, lead(segment_id) over(partition by geoid ORDER BY segment_id))) as segment
+    from segment_ids
+    order by geoid, segment_id)
+select 
+    geoid
+    , case -- No signal if no coverage, or under 30
+        when (h3 is null or signal_strength <= 30) then 'No Signal'
+        else 'OK Signal'
+    end as signal
+    , case -- This parameter we will use for visualization purposes
+        when (h3 is null or signal_strength <= 30) then 2
+        else 1
+    end as road_width
+    , st_collect(segment) as geom -- This is creating the original road segments by collecting them.
+from segments 
+left join GEOLAB.GEOGRAPHY.UK_LTE_COVERAGE_H3
+on carto.carto.h3_fromgeogpoint(st_centroid(segment), 9) = h3
+where segment is not null
+group by 1, 2, 3
+order by st_geohash(geom);
+
+ALTER TABLE GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED ADD search optimization ON GEO(geom);
+```
+
+Now that we have classified road segments by signal and no signal, we can run the following simple query to get the length of each geography in meters:
+
+```
+select signal, sum(st_length(geom)/1000)::int as total_km
+from GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED
+group by signal;
+```
+
+We now know that we have 56,810 km with good coverage and 10,182 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+
+Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
+
+For this, we can add the layer from either:
+* Add source from → Custom Query (SQL) 
+* Add source from → Data Explorer
+
+<img src ='assets/geo_sf_carto_telco_29.png' width=700>
+
+Then select your connection and the `GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED` table.
+
+<img src ='assets/geo_sf_carto_telco_30.png' width=700>
+
+Once we have our second layer on the map, we can click on it to style it and show the stroke color based on our “signal” column. For that, I will create a “Custom palette” with just the 2 colors we want: gray for roads with good signal and red for roads with no/poor signal.
+
+<img src ='assets/geo_sf_carto_telco_31.gif' width=700>
+
+> aside positive
+>  You may feel that these last several queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!
+
+## Conclusion
+
+In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the GEOGRAPHY data type and its associated formats work, created data files with geospatial data in it, loaded those files into new tables with GEOGRAPHY typed columns, and queried geospatial data using parser, constructor, transformation, calculation and H3 functions on single tables and multiple tables with joins. You then saw how newly constructed geospatial objects could be visualized using CARTO.
+
+You are now ready to explore the larger world of Snowflake geospatial support and geospatial functions.
+
+### What we've covered
+* How to acquire a shared database from the Snowflake Marketplace
+* The GEOGRAPHY data type, its formats GeoJSON, WKT, EWKT, WKB, and EWKB, and how to switch between them.
+* How to load data files with geospatial data.
+* How to use constructors like TO_GEOGRAPHY, ST_MAKEPOINT, ST_MAKELINE.
+* How to use a transformation like ST_COLLECT.
+* How to perform measurement calculations like ST_DISTANCE and ST_LENGTH.
+* How to perform relational calculations like ST_DWITHIN and ST_WITHIN.
+* How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
+* How to use Search Optimization to speed up geospatial queries.
