@@ -73,6 +73,316 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 
 5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
 
+## Load data into Snowflake
+We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
+
+1. Your new Snowflake account has a preconfigured warehouse named `COMPUTE_WH`. If for some reason you don’t have this warehouse, we can create a warehouse using the following script:
+
+    ```sql
+    create or replace warehouse COMPUTE_WH with warehouse_size=XSMALL
+    ```
+2. Rename the worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the option **…** and **Rename**. Rename the file  to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Make sure your role is set as the **ACCOUNTADMIN** and select the **COMPUTE_WH** warehouse.
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/1-rename-worksheet-and-select-warehouse.png" title="Rename worksheet and select warehouse"/>
+
+3. Copy the following code into the main body of the Snowflake worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://github.com/dbt-labs/python-snowpark-formula1/blob/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! Generally during this lab we'll be explaining and breaking down the queries. We won't going line by line, but we will point out important information related to our learning objectives!
+
+    ```sql
+        /*
+    This is our setup script to create a new database for the Formula1 data in Snowflake.
+    We are copying data from a public s3 bucket into snowflake by defining our csv format and snowflake stage. 
+    */
+    -- create and define our formula1 database
+    create or replace database formula1;
+    use database formula1; 
+    create or replace schema raw; 
+    use schema raw; 
+
+    --define our file format for reading in the csvs 
+    create or replace file format csvformat
+    type = csv
+    field_delimiter =','
+    field_optionally_enclosed_by = '"', 
+    skip_header=1; 
+
+    --
+    create or replace stage formula1_stage
+    file_format = csvformat 
+    url = 's3://formula1-dbt-cloud-python-demo/formula1-kaggle-data/';
+
+    -- load in the 14 tables we need for our demo 
+    -- we are first creating the table then copying our data in from s3
+    -- think of this as an empty container or shell that we are then filling
+
+    --CIRCUITS
+    create or replace table formula1.raw.circuits (
+      CIRCUIT_ID NUMBER(38,0),
+      CIRCUIT_REF VARCHAR(16777216),
+      NAME VARCHAR(16777216),
+      LOCATION VARCHAR(16777216),
+      COUNTRY VARCHAR(16777216),
+      LAT FLOAT,
+      LNG FLOAT,
+      ALT NUMBER(38,0),
+      URL VARCHAR(16777216)
+    );
+    -- copy our data from public s3 bucket into our tables 
+    copy into circuits 
+    from @formula1_stage/circuits.csv
+    on_error='continue';
+
+    --CONSTRUCTOR RESULTS 
+    create or replace table formula1.raw.constructor_results (
+      CONSTRUCTOR_RESULTS_ID NUMBER(38,0),
+      RACE_ID NUMBER(38,0),
+      CONSTRUCTOR_ID NUMBER(38,0),
+      POINTS NUMBER(38,0),
+      STATUS VARCHAR(16777216)
+    );
+    copy into constructor_results
+    from @formula1_stage/constructor_results.csv
+    on_error='continue';
+
+    --CONSTRUCTOR STANDINGS
+    create or replace table formula1.raw.constructor_standings (
+      CONSTRUCTOR_STANDINGS_ID NUMBER(38,0),
+      RACE_ID NUMBER(38,0),
+      CONSTRUCTOR_ID NUMBER(38,0),
+      POINTS NUMBER(38,0),
+        POSITION FLOAT,
+        POSITION_TEXT VARCHAR(16777216),
+      WINS NUMBER(38,0)
+    );
+    copy into constructor_standings
+    from @formula1_stage/constructor_standings.csv
+    on_error='continue';
+
+    --CONSTRUCTORS
+    create or replace table formula1.raw.constructors (
+      CONSTRUCTOR_ID NUMBER(38,0),
+      CONSTRUCTOR_REF VARCHAR(16777216),
+      NAME VARCHAR(16777216),
+      NATIONALITY VARCHAR(16777216),
+      URL VARCHAR(16777216)
+    );
+    copy into constructors 
+    from @formula1_stage/constructors.csv
+    on_error='continue';
+
+    --DRIVER STANDINGS
+    create or replace table formula1.raw.driver_standings (
+      DRIVER_STANDINGS_ID NUMBER(38,0),
+        RACE_ID NUMBER(38,0),
+        DRIVER_ID NUMBER(38,0),
+        POINTS NUMBER(38,0),
+        POSITION FLOAT,
+        POSITION_TEXT VARCHAR(16777216),
+      WINS NUMBER(38,0)
+
+    );
+    copy into driver_standings 
+    from @formula1_stage/driver_standings.csv
+    on_error='continue';
+
+    --DRIVERS
+    create or replace table formula1.raw.drivers (
+      DRIVER_ID NUMBER(38,0),
+      DRIVER_REF VARCHAR(16777216),
+      NUMBER VARCHAR(16777216),
+      CODE VARCHAR(16777216),
+      FORENAME VARCHAR(16777216),
+      SURNAME VARCHAR(16777216),
+      DOB DATE,
+      NATIONALITY VARCHAR(16777216),
+      URL VARCHAR(16777216)
+    );
+    copy into drivers 
+    from @formula1_stage/drivers.csv
+    on_error='continue';
+
+    --LAP TIMES
+    create or replace table formula1.raw.lap_times (
+      RACE_ID NUMBER(38,0),
+      DRIVER_ID NUMBER(38,0),
+      LAP NUMBER(38,0),
+      POSITION FLOAT,
+      TIME VARCHAR(16777216),
+      MILLISECONDS NUMBER(38,0)
+    );
+    copy into lap_times 
+    from @formula1_stage/lap_times.csv
+    on_error='continue';
+
+    --PIT STOPS 
+    create or replace table formula1.raw.pit_stops (
+      RACE_ID NUMBER(38,0),
+      DRIVER_ID NUMBER(38,0),
+      STOP NUMBER(38,0),
+      LAP NUMBER(38,0),
+      TIME VARCHAR(16777216),
+      DURATION VARCHAR(16777216),
+      MILLISECONDS NUMBER(38,0)
+    );
+    copy into pit_stops 
+    from @formula1_stage/pit_stops.csv
+    on_error='continue';
+
+    --QUALIFYING
+    create or replace table formula1.raw.qualifying (
+      QUALIFYING_ID NUMBER(38,0),
+        RACE_ID NUMBER(38,0),
+      DRIVER_ID NUMBER(38,0),
+        CONSTRUCTOR_ID NUMBER(38,0),
+      NUMBER NUMBER(38,0),
+      POSITION FLOAT,
+      Q1 VARCHAR(16777216),
+        Q2 VARCHAR(16777216),
+        Q3 VARCHAR(16777216)
+    );
+    copy into qualifying 
+    from @formula1_stage/qualifying.csv
+    on_error='continue';
+
+    --RACES 
+    create or replace table formula1.raw.races (
+      RACE_ID NUMBER(38,0),
+      YEAR NUMBER(38,0),
+      ROUND NUMBER(38,0),
+      CIRCUIT_ID NUMBER(38,0),
+      NAME VARCHAR(16777216),
+      DATE DATE,
+      TIME VARCHAR(16777216),
+      URL VARCHAR(16777216),
+      FP1_DATE VARCHAR(16777216),
+      FP1_TIME VARCHAR(16777216),
+      FP2_DATE VARCHAR(16777216),
+      FP2_TIME VARCHAR(16777216),
+      FP3_DATE VARCHAR(16777216),
+      FP3_TIME VARCHAR(16777216),
+      QUALI_DATE VARCHAR(16777216),
+      QUALI_TIME VARCHAR(16777216),
+      SPRINT_DATE VARCHAR(16777216),
+      SPRINT_TIME VARCHAR(16777216)
+    );
+    copy into races 
+    from @formula1_stage/races.csv
+    on_error='continue';
+
+    --RESULTS
+    create or replace table formula1.raw.results (
+      RESULT_ID NUMBER(38,0),
+      RACE_ID NUMBER(38,0),
+      DRIVER_ID NUMBER(38,0),
+      CONSTRUCTOR_ID NUMBER(38,0),
+      NUMBER NUMBER(38,0),
+      GRID NUMBER(38,0),
+      POSITION FLOAT,
+      POSITION_TEXT VARCHAR(16777216),
+      POSITION_ORDER NUMBER(38,0),
+      POINTS NUMBER(38,0),
+      LAPS NUMBER(38,0),
+      TIME VARCHAR(16777216),
+      MILLISECONDS NUMBER(38,0),
+      FASTEST_LAP NUMBER(38,0),
+      RANK NUMBER(38,0),
+      FASTEST_LAP_TIME VARCHAR(16777216),
+      FASTEST_LAP_SPEED FLOAT,
+      STATUS_ID NUMBER(38,0)
+    );
+    copy into results 
+    from @formula1_stage/results.csv
+    on_error='continue';
+
+    --SEASONS
+    create or replace table formula1.raw.seasons (
+      YEAR NUMBER(38,0),
+      URL VARCHAR(16777216)
+    );
+    copy into seasons 
+    from @formula1_stage/seasons.csv
+    on_error='continue';
+
+    --SPRINT RESULTS
+    create or replace table formula1.raw.sprint_results (
+      RESULT_ID NUMBER(38,0),
+      RACE_ID NUMBER(38,0),
+      DRIVER_ID NUMBER(38,0),
+      CONSTRUCTOR_ID NUMBER(38,0),
+      NUMBER NUMBER(38,0),
+      GRID NUMBER(38,0),
+      POSITION FLOAT,
+      POSITION_TEXT VARCHAR(16777216),
+      POSITION_ORDER NUMBER(38,0),
+      POINTS NUMBER(38,0), 
+        LAPS NUMBER(38,0),
+        TIME VARCHAR(16777216),
+        MILLISECONDS NUMBER(38,0),
+        FASTEST_LAP VARCHAR(16777216),
+        FASTEST_LAP_TIME VARCHAR(16777216),
+        STATUS_ID NUMBER(38,0)
+        );
+    copy into sprint_results 
+    from @formula1_stage/sprint_results.csv
+    on_error='continue';
+
+    --STATUS
+    create or replace table formula1.raw.status (
+      STATUS_ID NUMBER(38,0),
+      STATUS VARCHAR(16777216)
+    );
+    copy into status 
+    from @formula1_stage/status.csv
+    on_error='continue';
+    ```
+4. Ensure all the commands are selected before running the query &mdash; an easy way to do this is to use Ctrl-A to highlight all of the code in the worksheet. Select **run** (blue triangle icon). Notice how the dot next to your **COMPUTE_WH** turns from gray to green as you run the query. The **status** table is the final table of all 14 tables loaded in. 
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/2-load-data-from-s3.png" title="Load data from S3 bucket"/>
+
+5. Let’s unpack that pretty long query we ran into component parts. We ran this query to load in our 14 Formula 1 tables from a public S3 bucket. To do this, we:
+    - Created a new database called `formula1` and a schema called `raw` to place our raw (untransformed) data into. 
+    - Created a stage to locate our data we are going to load in. Snowflake Stages are locations where data files are stored. Stages are used to both load and unload data to and from Snowflake locations. Here we are using an external stage, by referencing an S3 bucket. 
+    - Created our tables for our data to be copied into. These are empty tables with the column name and data type. Think of this as creating an empty container that the data will then fill into. 
+    - Used the `copy into` statement for each of our tables. We reference our staged location we created and upon loading errors continue to load in the rest of the data. You should not have data loading errors but if you do, those rows will be skipped and Snowflake will tell you which rows caused errors
+
+6. Now let's take a look at some of our cool Formula 1 data we just loaded up!
+    1. Create a new worksheet by selecting the **+** then **New Worksheet**.
+        <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/3-create-new-worksheet-to-query-data.png" title="Create new worksheet to query data"/>
+    2. Navigate to **Database > Formula1 > RAW > Tables**. 
+    3. Query the data using the following code. There are only 76 rows in the circuits table, so we don’t need to worry about limiting the amount of data we query.
+        ```sql
+        select * from formula1.raw.circuits
+        ```
+    4. Run the query. From here on out, we’ll use the keyboard shortcuts Command-Enter or Control-Enter to run queries and won’t explicitly call out this step. 
+    5. Review the query results, you should see information about Formula 1 circuits, starting with Albert Park in Australia! 
+    6. Finally, ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
+
+        <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/4-query-circuits-data.png" title="Query circuits data"/>
+
+## Setup dbt project 
+We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake), [managed repository](/docs/collaborate/git/managed-repository), environments, and credentials already established.
+
+1. Navigate out of your worksheet back by selecting **home**.
+2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
+3. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/1-open-partner-connect.png" title="Open Partner Connect"/>
+4. You should now see a new window that says **Connect to dbt**. Select **Optional Grant** and add the `FORMULA1` database. This will grant access for your new dbt user role to the FORMULA1 database.
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/2-partner-connect-optional-grant.png" title="Partner Connect Optional Grant"/>
+
+5. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/3-connect-to-dbt.png" title="Connect to dbt"/>
+
+6. When you see the **Your partner account has been created** window, click **Activate**.
+
+7. You should be redirected to a dbt Cloud registration page. Fill out the form. Make sure to save the password somewhere for login in the future. 
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/4-dbt-cloud-sign-up.png" title="dbt Cloud sign up"/>
+
+8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
+
+9. To help you version control your dbt project, we have connected it to a [managed repository](/docs/collaborate/git/managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a Git workflow without you having to create and host the repository yourself. You will not need to know Git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you’re developing your own project, [feel free to use your own repository](/docs/cloud/git/connect-github). This will allow you to learn more about features like [Slim CI](/docs/deploy/cloud-ci-job#configuring-a-slim-ci-job) builds after this workshop.
+
+
 <!-- ------------------------ -->
 ## Metadata Configuration
 Duration: 2
