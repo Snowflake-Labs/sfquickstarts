@@ -126,7 +126,7 @@ Duration: 20
 
 The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality.  The best place to acquire this data is the Snowflake Marketplace!  
 
-To try various ways to load spatial data, we will also be accessing another two datasets that are hosted on a public S3 bucket. 
+To try various ways to load spatial data, we will also be using a dataset that we will upload from the local desktop.
 
 And we will also be accessing another asset from the Snowflake Marketplace: The CARTO Analytics Toolbox - a composed set of user-defined functions that extend the geospatial capabilities of Snowflake. The listing gives you access to Open Source modules supporting different spatial indexes and other operations: quadkeys, H3, S2, placekey, geometry constructors, accessors, transformations, etc.
 
@@ -547,7 +547,7 @@ In this section we will cover more advanced use case where we will leverage H3 f
 
 As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
 
-Let's first create our signal decay model for our antennas. In the following query, we will create a table with the locations of antennas and the cell range, which we will use to compute the h3 neighbors.
+Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function.
 
 Run the foillowing query in your Snowflake worksheet:
 
@@ -556,15 +556,15 @@ CREATE OR REPLACE TABLE geolab.geography.uk_lte AS
 SELECT
     row_number() over(order by null) as id
     , cell_range
-    , st_makepoint(lon, lat) as geom
+    , carto.carto.H3_FROMLONGLAT(lon, lat, 9) as h3
 FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS 
 where mcc in ('234', '235')
 and radio = 'LTE'
-ORDER BY ST_GEOHASH(geom);
+ORDER BY h3;
 ```
 
-Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the CELL_RANGE accordingly.
-First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance (up to K distances) from a given H3 cell. The distance is calculated by dividing the cell range by 580 meters, which represents the spacing between H3 cells at resolution 9. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function. Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
+Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the `CELL_RANGE` accordingly.
+First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
 
 Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. As we have computed H3 neighbors for each antenna, antennas in close proximity will have generated the same H3 cell multiple times; thus, we will select the one with the strongest signal.
 
@@ -579,14 +579,13 @@ create or replace table geolab.geography.uk_lte_coverage_h3 as
 with h3_neighbors as (
     select 
         id
-        , cast(p.value as string) as h3
-        , carto.carto.h3_distance(carto.carto.h3_fromgeogpoint(geom, 9), p.value) as h3_distance
+        , p.value::string as h3
+        , carto.carto.h3_distance(h3, p.value) as h3_distance
     from geolab.geography.uk_lte,
-    lateral flatten(input => carto.carto.h3_kring(
-        carto.carto.h3_fromgeogpoint(geom, 9), ceil(least(cell_range, 6000) / 586)::int
-        )) p
-)
-, max_distance_per_antena as (
+    table(flatten(input => carto.carto.h3_kring(h3, ceil(least(cell_range, 6000) / 586)::int
+        ))) p
+), 
+max_distance_per_antena as (
     select id, max(h3_distance) as h3_max_distance
     from h3_neighbors 
     group by id
@@ -598,7 +597,6 @@ select
     ) as signal_strength
 from h3_neighbors join max_distance_per_antena using(id)
 group by h3;
-ALTER TABLE geolab.geography.uk_lte_coverage_h3 CLUSTER BY (h3);
 ```
 
 Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
@@ -614,12 +612,12 @@ As we create an H3 layer we will need to configure the layer type from the query
 
 <img src ='assets/geo_sf_carto_telco_26.gif' width=700>
 
-H3 layers allow us to show aggregated information at different resolutions for different zoom levels. Because of this, when we style the layer, we need to decide an aggregation method for the attribute to show, in this example, the signal_strength.
+H3 layers allow us to show aggregated information at different resolutions for different zoom levels. Because of this, when we style the layer, we need to decide an aggregation method for the attribute to show, in this example we will use `SIGNAL_STRENGTH`.
 
 <img src ='assets/geo_sf_carto_telco_27.png' width=700>
 
-Remember to select a color palette of your liking and the color scale (the default is custom but we want to quantize bins for this use case).
-We can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity we will see on the map but it will also take longer to load.
+Remember to select a color palette of your liking and the color scale (the default is custom but we want to *Quantize* bins for this use case).
+We can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity we will see on the map but it will also take longer to load. Pick resolution 5.
 
 <img src ='assets/geo_sf_carto_telco_28.gif' width=700>
 
@@ -630,7 +628,7 @@ Then when each original road segment has an ID from 1 to n (total points in Line
 
 Finally, we use the same `H3_FROMGEOGPOINT` for the selected resolution and we use the Linestring centroid for the point geography.
 
-Run the following query.
+Run the following two queries.
 
 ```
 create or replace table GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED AS
