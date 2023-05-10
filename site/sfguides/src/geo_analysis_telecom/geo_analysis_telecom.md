@@ -401,7 +401,7 @@ The green dot represents the `POINT` object location. Now you know where you are
 In the next step, you are going to use the Marketplace listing with the location of cell towers across the world and will run a query to find the ten closest LTE cell towers to your current location from above. This query will do several things:
 
 * It will use the `ST_DWITHIN` function in the `where` clause to filter out cell towers that aren't within the stated distance. The function takes two points and a distance to determine whether those two points are less than or equal to the stated distance from each other, returning `true` if they are and `false` if they are not. In this function, you will use the `lat` and `lon` columns from OPENCELLID.PUBLIC.RAW_CELL_TOWERS table to construct GEOGRAPHY objects and compare them to your current location `POINT`, which you will construct using the previously used `TO_GEOGRAPHY`. You will then use 500 meters for the distance value.
-    * Note that in the queries below, the syntax `ST_DWITHIN(...) = true` is used for readability, but the `= true` is not required for the filter to work. It is required if you were to need an `= false` condition.
+    * Note that in the query below, the syntax `ST_DWITHIN(...) = true` is used for readability, but the `= true` is not required for the filter to work. It is required if you were to need an `= false` condition.
 * It will also use the `ST_DISTANCE` function, which actually gives you a value in meters representing the distance between the two points. When combined with `order by` and `limit` clauses, this will help you return only a certain number of rows with the smallest distance or closest.
     * Also note in this query we use two types of constructors: `TO_GEOGRAPHY` which is is a general-purpose constructor and `ST_POINT` constructor, which specifically makes a `POINT` object. Sometimes there is more than one valid approach to construct a geospatial object.
 
@@ -427,7 +427,7 @@ LIMIT 10;
 
 The query returns `POINT` objects, which you can visualize using CARTO.
 
-<img src ='assets/geo_sf_carto_telco_23.png' width=700>
+<img src ='assets/geo_sf_carto_telco_24.png' width=700>
 
 In the previous section you've found the closest cell towers to your location. But what about answering more sophisticated questions, like what areas in the UK have very good and bad coverage by LTE network? You can use geospatial functions combined with spatial join to find out.
 
@@ -436,12 +436,11 @@ In the previous section you've found the closest cell towers to your location. B
 You have been using one table in your queries so far: `RAW_CELL_TOWERS`, which stores the locations of cell towers. To find UK districts with good and bad coverage by LTE network, we will undertake a two-step process as follows:
 
 * For every LTE cell tower, we will calculate the coverage area.
-* For every UK district, calculate the coverage area.
+* For every UK district, calculate the area covered by LTE network.
 
 `ST_BUFFER` from the Carto toolbox can be used to calculate the coverage area for each LTE cell tower. In `RAW_CELL_TOWERS` table, there is a field _cell_range_ which can be used as a value of radius in ST_BUFFER. Since the maximum coverage area of the LTE tower is about 6km, we will cap the coverage area with this value.
 
-Run the following query: 
-
+Run the following query in your Snowflake's worksheet: 
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.uk_lte_coverage AS
@@ -509,7 +508,7 @@ ORDER BY st_geohash(geometry);
 ALTER TABLE geolab.geography.uk_districts_coverage ADD SEARCH OPTIMIZATION ON GEO(geometry);
 ```
 
-Nice! Now you have a `UK_DISTRICTS_COVERAGE` table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize it in Carto. Paste the following query into the SQL editor and use <em>coverage_ratio</em> column to color code the coverage areas.
+Nice! Now you have a `UK_DISTRICTS_COVERAGE` table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize it in Carto. Paste the following query into the SQL editor and use `COVERAGE_RATIO` column to color code the coverage areas.
 
 ```
 SELECT geometry AS geom,
@@ -517,7 +516,7 @@ SELECT geometry AS geom,
 FROM geolab.geography.uk_districts_coverage;
 ```
 
-<img src ='assets/geo_sf_carto_telco_23.png' width=700>
+<img src ='assets/geo_sf_carto_telco_33.gif' width=700>
 
 ### What percent of the UK roads have LTE coverage?
 
@@ -536,38 +535,7 @@ WHERE st_intersects(coverage.geometry, roads.geo_cordinates)
 and class = 'motorway';
 ```
 
-It seems our LTE network covers more than 90% of the roads. A good number for a marketing campaign.
-
-
-### What is the distribution of the LTE signal strength?
-
-Run the following query:
-
-
-```
-CREATE OR REPLACE TABLE geolab.geography.uk_lte_coverage_strength AS 
-WITH polyfilled AS
-  (SELECT id,
-          cast(p.value AS string) AS h3 ,
-          carto.carto.h3_distance(carto.carto.h3_fromgeogpoint(geom, 8), p.value) AS h3_distance
-   FROM geolab.geography.uk_lte,
-        LATERAL flatten(INPUT => carto.carto.h3_polyfill(carto.carto.st_buffer(geom, least(cell_range, 6000)), 8)) p),
-max_distance_per_antena AS
-  (SELECT id,
-          max(h3_distance) AS h3_max_distance
-   FROM polyfilled
-   GROUP BY id)
-SELECT h3,
-       max(100 * pow(1 - h3_distance / (h3_max_distance + 1), 2)) AS signal_strength
-FROM polyfilled
-JOIN max_distance_per_antena USING(id)
-GROUP BY h3
-ORDER BY h3;
-ALTER TABLE geolab.geography.uk_lte_coverage_strength ADD SEARCH OPTIMIZATION ON GEO(geometry);
-```
-
-
-Nice!
+It seems our LTE network covers more than 90% of the roads. A good number to call out in a marketing campaign.
 
 <!-- ------------------------ -->
 ## Advanced Analysis using H3
