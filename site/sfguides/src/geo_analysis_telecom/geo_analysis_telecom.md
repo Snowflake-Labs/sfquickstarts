@@ -522,7 +522,7 @@ FROM geolab.geography.uk_districts_coverage;
 
 Now imagine you want to calculate what percentage of motorways in the UK have coverage by our network. To get the number, you can employ the dataset with Open StreetMaps data in the UK.
 
-Run the foillowing query:
+Run the foillowing query in your Snowflake worksheet:
 
 
 ```
