@@ -7,6 +7,10 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
+
+<!-- http://localhost:8000/guide/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python -->
+
+
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
@@ -40,9 +44,8 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 
 - A set of data analytics and prediction pipelines using Formula 1 data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments
 - We will create insights for:
-    1. Finding the lap time average and rolling average through the years (is it generally trending up or down)?
-    2. Which constructor has the fastest pit stops in 2021?
-    3. Predicting the position of each driver based on a decade of data. 
+    1. Finding the lap time average and rolling average through the years
+    2. Predicting the position of each driver based on a decade of data
 
 As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs public S3 bucket. We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/).
 
@@ -51,24 +54,24 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 
 1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/) if you don’t have one. Ensure that your account is set up using **AWS** in the **US East (N. Virginia)**. We will be copying the data from a public AWS S3 bucket hosted by dbt Labs in the us-east-1 region. By ensuring our Snowflake environment setup matches our bucket region, we avoid any multi-region data copy and retrieval latency issues.
 
-![Puppy](assets/SAMPLE.jpg)
 
-<Lightbox src="/assets/2-configure-snowflake/1-snowflake-trial-AWS-setup.png" title="Snowflake trial"/>
+![Snowflake trial](assets/2-configure-snowflake/1-snowflake-trial-AWS-setup.png)
 
-3. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
 
-4. When Snowsight first opens, your window should look like the following, with you logged in as the ACCOUNTADMIN with demo worksheets open:
+2. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
+
+3. When Snowsight first opens, your window should look like the following, with you logged in as the ACCOUNTADMIN with demo worksheets open:
 
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/2-new-snowflake-account.png" title="Snowflake trial demo worksheets"/>
 
 
-5. Navigate to **Admin > Billing & Terms**. Click **Enable > Acknowledge & Continue** to enable Anaconda Python Packages to run in Snowflake.
+4. Navigate to **Admin > Billing & Terms**. Click **Enable > Acknowledge & Continue** to enable Anaconda Python Packages to run in Snowflake.
     
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/3-accept-anaconda-terms.jpeg" title="Anaconda terms"/>
 
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/4-enable-anaconda.jpeg" title="Enable Anaconda"/>
 
-6. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
+5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
 
 <!-- ------------------------ -->
 ## Metadata Configuration
