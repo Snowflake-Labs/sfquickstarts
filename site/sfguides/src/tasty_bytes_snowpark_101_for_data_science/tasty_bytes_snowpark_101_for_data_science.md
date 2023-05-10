@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, Data Engineering, Snowpark, Machine Learnin
 Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
-In this Snowpark 101 for Data Science Quickstart guide, you will be help the fictitious food truck brand, Tasty Bytes, to increase sales by training a model to provide location recommendations to truck drivers. You will use **Snowpark for Python** to prepare data, train a model, and deploy the model. Once deployed, you will create an application prototype using **Streamlit** to demonstrate how truck drivers could use the model to find the best location to park for an upcoming shift.
+In this Snowpark 101 for Data Science Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to increase sales by training a model to provide location recommendations to truck drivers. You will use **Snowpark for Python** to prepare data, train a model, and deploy the model. Once deployed, you will create an application prototype using **Streamlit** to demonstrate how truck drivers could use the model to find the best location to park for an upcoming shift.
 
 ### What is Snowpark?
 Snowpark allows developers to query and create data applications in Python, Java, and Scala through APIs and DataFrame-style programming constructs that run on Snowflake's elastic engine. Learn more about [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/index).
@@ -80,24 +80,29 @@ Tasty Bytes operates food trucks in cities across the globe with each truck havi
 ```sql
 USE ROLE accountadmin;
 
--- create objects
+-- create a development database for data science work
 CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_dev;
-CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.analytics;
-CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60;
-USE WAREHOUSE tasty_dsci_wh;
 
--- create csv file format and ingest stage
-CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_dev.analytics.csv_ff 
+-- create raw, harmonized, and analytics schemas
+-- raw zone for data ingestion
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.raw;
+-- harmonized zone for data processing
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.harmonized;
+-- analytics zone for development
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.analytics;
+
+-- create csv file format
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_dev.raw.csv_ff 
 type = 'csv';
 
-CREATE OR REPLACE STAGE frostbyte_tasty_bytes_dev.analytics.s3load
+-- create an external stage pointing to S3
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes_dev.raw.s3load
 COMMENT = 'Quickstarts S3 Stage Connection'
 url = 's3://sfquickstarts/frostbyte_tastybytes/'
-file_format = frostbyte_tasty_bytes_dev.analytics.csv_ff;
+file_format = frostbyte_tasty_bytes_dev.raw.csv_ff;
 
-
--- build table and ingest from S3
-CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.analytics.shift_sales(
+-- define shift sales table
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales(
 	location_id NUMBER(19,0),
 	city VARCHAR(16777216),
 	date DATE,
@@ -108,11 +113,16 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.analytics.shift_sales(
 	city_population NUMBER(38,0)
 );
 
-COPY INTO frostbyte_tasty_bytes_dev.analytics.shift_sales
-FROM @frostbyte_tasty_bytes_dev.analytics.s3load/analytics/shift_sales/;
+-- create and use a compute warehouse
+CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60;
+USE WAREHOUSE tasty_dsci_wh;
+
+-- ingest from S3 into the shift sales table
+COPY INTO frostbyte_tasty_bytes_dev.raw.shift_sales
+FROM @frostbyte_tasty_bytes_dev.raw.s3load/analytics/shift_sales/;
 
 -- join in SafeGraph data
-CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.analytics.shift_sales
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.harmonized.shift_sales
   AS
 SELECT
     a.location_id,
@@ -125,12 +135,17 @@ SELECT
     a.city_population,
     b.latitude,
     b.longitude
-FROM frostbyte_tasty_bytes_dev.analytics.shift_sales a
+FROM frostbyte_tasty_bytes_dev.raw.shift_sales a
 JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b
 ON a.location_id = b.location_id;
 
+-- promote the harmonized table to the analytics layer for data science development
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_dev.analytics.shift_sales_v
+  AS
+SELECT * FROM frostbyte_tasty_bytes_dev.harmonized.shift_sales;
+
 -- view shift sales data
-SELECT * FROM shift_sales;
+SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 ```
 
 <!-- ------------------------ -->
@@ -163,7 +178,8 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 ### Step 2 - Updating the Authorization File
 - Update [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) file with you Snowflake account credentials. The python notebook will use this file to access your credentials and connect to Snowflake.<br>
 <img src="assets/auth_file.png">
-    
+>aside positive    
+> For the `account` parameter, use your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Note that the account identifier does not include the snowflakecomputing.com suffix.
 
 ### Step 3 - Creating the Python Environment
 >aside positive
@@ -254,15 +270,18 @@ Duration: 5
 **Snowflake:**
 - **Warehouse:** tasty_dsci_wh
 - **Database:** frostbyte_tasty_bytes_dev
+  - **Schema:** raw
+    - **Table:** frostbyte_tasty_bytes_dev.raw.shift_sales
+    - **Stage:** frostbyte_tasty_bytes_dev.raw.s3load
+    - **File format:** frostbyte_tasty_bytes_dev.raw.csv_ff
+  - **Schema:** harmonized
+    - **Table:** frostbyte_tasty_bytes_dev.harmonized.shift_sales
   - **Schema:** analytics
     - **Tables:** 
-      - frostbyte_tasty_bytes_dev.analytics.shift_sales
       - frostbyte_tasty_bytes_dev.analytics.shift_sales_train
       - frostbyte_tasty_bytes_dev.analytics.shift_sales_test
-    - **Stages:**
-      - frostbyte_tasty_bytes_dev.analytics.s3load
-      - frostbyte_tasty_bytes_dev.analytics.model_stage
-    - **File format:** frostbyte_tasty_bytes_dev.analytics.csv_ff
+    - **View:** frostbyte_tasty_bytes_dev.analytics.shift_sales_v
+    - **Stage:** frostbyte_tasty_bytes_dev.analytics.model_stage
     - **Procedure:** sproc_train_linreg
     - **Function:** udf_linreg_predict_location_sales
 - **Shared Database:** frostbyte_safegraph
@@ -312,6 +331,6 @@ By doing so you have now:
 - Built a Streamlit application to provide on the fly shift sale predictions by location
 
 ### Next Steps
-To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes Quickstarts available to you.
+To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes - Quickstarts available to you.
 
 - ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
