@@ -508,7 +508,7 @@ ORDER BY st_geohash(geometry);
 ALTER TABLE geolab.geography.uk_districts_coverage ADD SEARCH OPTIMIZATION ON GEO(geometry);
 ```
 
-Nice! Now you have a `UK_DISTRICTS_COVERAGE` table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize it in Carto. Paste the following query into the SQL editor and use `COVERAGE_RATIO` column to color code the coverage areas.
+Nice! Now you have a `UK_DISTRICTS_COVERAGE` table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize in Carto what UK. Paste the following query into the SQL editor and use `COVERAGE_RATIO` column to color code the coverage areas.
 
 ```
 SELECT geometry AS geom,
@@ -520,10 +520,9 @@ FROM geolab.geography.uk_districts_coverage;
 
 ### What percent of the UK roads have LTE coverage?
 
-Now imagine you want to calculate what percentage of motorways in the UK have coverage by our network. To get the number, you can employ the dataset with Open StreetMaps data in the UK.
+Now imagine you want to calculate what percentage of motorways in the UK have coverage by our network. To get the number, you can employ the `UK Open Map Data` dataset that has UK roads.
 
 Run the foillowing query in your Snowflake worksheet:
-
 
 ```
 SELECT round(100*sum(st_length(st_intersection(coverage.geometry, roads.geo_cordinates)))/
@@ -548,7 +547,9 @@ In this section we will cover more advanced use case where we will leverage H3 f
 
 As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
 
-Let's first create our signal decay model for our antennas. In the following query, we will create a table with the locations of antennas and the cell range, which we will use to compute the h3 neighbors:
+Let's first create our signal decay model for our antennas. In the following query, we will create a table with the locations of antennas and the cell range, which we will use to compute the h3 neighbors.
+
+Run the foillowing query in your Snowflake worksheet:
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.uk_lte AS
@@ -559,12 +560,10 @@ SELECT
 FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS 
 where mcc in ('234', '235')
 and radio = 'LTE'
-ORDER BY ST_GEOHASH(geom)
-ALTER TABLE geolab.geography.uk_lte ADD search optimization ON GEO(geom);
-
+ORDER BY ST_GEOHASH(geom);
 ```
 
-Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the cell_range accordingly.
+Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the CELL_RANGE accordingly.
 First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance (up to K distances) from a given H3 cell. The distance is calculated by dividing the cell range by 580 meters, which represents the spacing between H3 cells at resolution 9. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function. Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
 
 Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. As we have computed H3 neighbors for each antenna, antennas in close proximity will have generated the same H3 cell multiple times; thus, we will select the one with the strongest signal.
