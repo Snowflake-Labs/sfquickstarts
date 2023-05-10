@@ -171,7 +171,7 @@ Now you can acquire CARTO’s Analytics Toolbox from the Snowflake Marketplace. 
 * Click on big blue` Get`  button 
 * In the options, name the database `CARTO` and optionally add more roles that can access the database 
 
-<img src ='assets/geo_sf_carto_telco_12.png' width=700>
+<img src ='assets/geo_sf_carto_telco_12.png' width=500>
 
 * Click on `Get` and then `Done`. 
 
@@ -180,7 +180,7 @@ Congratulations! Now you have data and the analytics toolbox!
 
 ### Load Datasets from a local file
 
-Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. You will also encounter your first examples of geospatial _parsers_ and _constructors_.
+Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. 
 
 In this step, we're going to load data into the table from the local file. In this Quickstart, we will use a dataset with the districts' boundaries of the United Kingdom and the Netherlands, you can download the file using [this URL](https://sfquickstarts.s3.us-west-1.amazonaws.com/vhol_spatial_analysis_geometry_geography/uk_nl_districts.csv).
 
@@ -189,7 +189,7 @@ First, create a new database and schema where we will store datasets in the Geog
 
 ```
 create or replace DATABASE GEOLAB;
-CREATE OR REPLACE schema GEOLAB.GEOGRAPHY
+CREATE OR REPLACE schema GEOLAB.GEOGRAPHY;
 
 ```
 
@@ -199,18 +199,17 @@ As a second step, you will create an empty table where we will store boundary da
 create or replace TABLE GEOLAB.GEOGRAPHY.UK_NL_DISTRICTS (
 	AREA VARCHAR(16777216),
 	NAME VARCHAR(16777216),
-	GEOMETRY GEOGRAPHY
-);
+	GEOMETRY GEOGRAPHY);
 ```
 
-Then navigate to the newly created table, right-click on it, and select "Load data".
+Then click `Refresh` in the sidebar, navigate to the newly created table, right-click on it, and select "Load data".
 
 <img src ='assets/geo_sf_carto_telco_13.png' width=700>
 
 
 In the pop-up, choose the file you want to upload and click the Next button. When it suggests selecting the file format and some other parameters, pick the values as shown below and click the Next button one more time:
 
-<img src ='assets/geo_sf_carto_telco_14.png' width=700>
+<img src ='assets/geo_sf_carto_telco_14.png' width=500>
 
 Voila! Now you have a table with the boundaries of districts in the UK and the Netherlands.
 
@@ -285,7 +284,7 @@ select name, geometry from geolab.geography.uk_nl_districts where area = 'UK' li
 In the result set, notice the `geometry` column and how it displays a JSON representation of spatial objects. It should look similar to this:
 
 ```
-{"coordinates": {"coordinates": [[[-0.171180, 51.92825], [-0.167960, 51.92795], .. [-0.171180, 51.92825]]],  "type": "Polygon"}
+{"coordinates": [[[-0.171180, 51.92825], [-0.167960, 51.92795], .. [-0.171180, 51.92825]]],  "type": "Polygon"}
 ```
 
 Notice that in the result set coordinates represented as pairs of longitude and latitude:
@@ -301,12 +300,10 @@ alter session set geography_output_format = 'EWKT';
 
 ```
 
-
 Run the previous queries again and when done, examine the output in the `geometry` column.
 
-
 ```
-select geo_cordinates from OSM_UK.UNITED_KINGDOM.V_ROAD where class = 'motorway' limit 25;
+select name, geometry from geolab.geography.uk_nl_districts where area = 'UK' limit 25;
 ```
 
 
@@ -331,7 +328,7 @@ alter session set geography_output_format = 'WKB';
 And run the query again, and click on a cell in the `geometry` column.
 
 ```
-select geo_cordinates from OSM_UK.UNITED_KINGDOM.V_ROAD where class = 'motorway' limit 25;
+select name, geometry from geolab.geography.uk_nl_districts where area = 'UK' limit 25;
 ```
 
 Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKB or GeoJSON.
