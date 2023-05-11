@@ -48,7 +48,9 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
     2. Predicting the position of each driver based on a decade of data
 
 As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs public S3 bucket. We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/). We will not be building the full pipeline as part of this workshop. Instead we will leverage an exisitng repo, fork it, and focus on our machine learning pipeline.
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Configure Snowflake
 Duration: 5
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
@@ -73,8 +75,9 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/4-enable-anaconda.jpeg" title="Enable Anaconda"/>
 
 5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
+<!-- ------------------------ -->
 
-
+<!-- ------------------------ -->
 ## Load data into Snowflake
 Duration: 7
 We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
@@ -113,9 +116,9 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     6. Finally, ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
 
         <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/4-query-circuits-data.png" title="Query circuits data"/>
+<!-- ------------------------ -->
 
-
-
+<!-- ------------------------ -->
 ## Setup dbt account 
 We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
 
@@ -139,8 +142,9 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
 9. Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository in the next step. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, if you’re developing your own proof of value project from scratch, [feel free to use dbt's managed  repository](https://docs.getdbt.com/docs/collaborate/git/managed-repository) that is spun up during partner connect. 
+<!-- ------------------------ -->
 
-
+<!-- ------------------------ -->
 ## Development schema and forking repo
 In this section we'll be setting up our own personal development schema and forking our workshop repo into dbt Cloud. 
 
@@ -181,7 +185,9 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 17. **Run "dbt deps"**
 
 Alas, now that our setup work is complete, time get a look at our data pipeline! 
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## IDE overview and buidling first dbt models
 dbt Cloud's IDE will be our development space for this workshop, so let's get familiar with it. Once we've done that we'll run the pipeline we imported from our forked repo. 
 
@@ -202,8 +208,9 @@ dbt Cloud's IDE will be our development space for this workshop, so let's get fa
 <!-- TODO Update with new pipeline -->
 5. Now let's switch over to a new browser tab on Snowflake to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/10-confirm-example-models-built-in-snowflake.png" title="Confirm example models are built in Snowflake"/>
+<!-- ------------------------ -->
 
-
+<!-- ------------------------ -->
 ## Understanding our existing pipeline 
 We brought a good chunk of our data pipeline in through our forked repo to lay a foundation for machine learning.
 In the next couple steps we are taking time to review how this was done. That way when you have your own dbt project you'll be familiar with the setup.
@@ -304,15 +311,25 @@ Do check out that guide if you want to learn more. Note that machine learning be
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/>
 
 Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1/tree/python-formula1) to view the complete folder and file strucutre.  
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Data modeling -- sources and staging 
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## SQL Transformations 
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Python transfomrations in dbt Cloud 
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Machine Learning prep: cleaning, encoding, and splits, oh my!
 Now that we’ve gained insights and business intelligence about Formula 1 at a descriptive level, we want to extend our capabilities into prediction. We’re going to take the scenario where we censor the data. This means that we will pretend that we will train a model using earlier data and apply it to future data. In practice, this means we’ll take data from 2010-2019 to train our model and then predict 2020 data.
 
@@ -323,7 +340,9 @@ At a high level we’ll be:
 - Creating new prediction features and filtering our dataset to active drivers
 - Encoding our data (algorithms like numbers) and simplifying our target variable called `position`
 - Splitting our dataset into training, testing, and validation
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## ML data prep
 
 1. To keep our project organized, we’ll need to create two new subfolders in our `ml` directory. Under the `ml` folder, make the subfolders `prep` and `train_predict`.
@@ -402,7 +421,9 @@ At a high level we’ll be:
     ```
 6. Let’s look at the preview of our clean dataframe after running our `ml_data_prep` model:
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/11-machine-learning-prep/1-completed-ml-data-prep.png" title="What our clean dataframe fit for machine learning looks like"/>
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Covariate encoding
 
 In this next part, we’ll be performing covariate encoding. Breaking down this phrase a bit, a *covariate* is a variable that is relevant to the outcome of a study or experiment, and *encoding* refers to the process of converting data (such as text or categorical variables) into a numerical format that can be used as input for a model. This is necessary because most machine learning algorithms can only work with numerical data. Algorithms don’t speak languages, have eyes to see images, etc. so we encode our data into numbers so algorithms can perform tasks by using calculations they otherwise couldn’t.
@@ -466,7 +487,9 @@ In this next part, we’ll be performing covariate encoding. Breaking down this 
     - The next step is to use the `LabelEncoder` from scikit-learn to convert the categorical variables `CIRCUIT_NAME`, `CONSTRUCTOR_NAME`, `DRIVER`, and `TOTAL_PIT_STOPS_PER_RACE` into numerical values.
     - To simplify the classification and improve performance, we are creating a new variable called `POSITION_LABEL` from our original position variable with in Formula 1 with 20 total positions. This new variable has a specific meaning: those in the top 3 get a “podium” position, those in the top 10 get points that add to their overall season total, and those below the top 10 get no points. The original position variable is being mapped to position_label in a way that assigns 1, 2, and 3 to the corresponding places.
     - Drop the active driver and constructor flags since they were filter criteria and additionally drop our original position variable.
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Splitting into training and testing datasets
 
 In this step, we will create dataframes to use for training and prediction. We’ll be creating two dataframes 1) using data from 2010-2019 for training, and 2) data from 2020 for new prediction inferences. We’ll create variables called `start_year` and `end_year` so we aren’t filtering on hardcasted values (and can more easily swap them out in the future if we want to retrain our model on different timeframes).
@@ -520,7 +543,9 @@ In this step, we will create dataframes to use for training and prediction. We�
 4. **Commit and sync** our changes to keep saving our work as we go using `ml data prep and splits` before moving on.
 
 👏 Now that we’ve finished our machine learning prep work we can move onto the fun part &mdash; training and prediction!
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Machine Learning: training and prediction
 We’re ready to start training a model to predict the driver’s position. During the ML development phase you’ll try multiple algorithms and use an evaluation method such as cross validation to determine which algorithm to use. You can definitely use dbt if you want to save and reproduce dataframes from your ML development and model selection process, but for the content of this lab we’ll have skipped ahead decided on using a logistic regression to predict position (we actually tried some other algorithms using cross validation outside of this lab such as k-nearest neighbors and a support vector classifier but that didn’t perform as well as the logistic regression and a decision tree that overfit). By doing this we won't have to make code changes between development and deployment today. 
 
@@ -530,7 +555,9 @@ There are 3 areas to break down as we go since we are working at the intersectio
 3. dbt Python models
 
 If you haven’t seen code like this before or use joblib files to save machine learning models, we’ll be going over them at a high level and you can explore the links for more technical in-depth along the way! Because Snowflake and dbt have abstracted away a lot of the nitty gritty about serialization and storing our model object to be called again, we won’t go into too much detail here. There’s *a lot* going on here so take it at your pace!
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Training and saving a machine learning model
 
 1. Project organization remains key, so let’s make a new subfolder called `train_predict.py` under the `ml` folder.
@@ -640,7 +667,9 @@ If you haven’t seen code like this before or use joblib files to save machine 
 
 7. To investigate the commands run as part of `train_test_position` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/3-view-snowflake-query-history.png" title="View Snowflake query history to see how python models are run under the hood"/>
+<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Predicting on new data
 
 1. Create a new file called `predict_position.py` and copy and save the following code:
@@ -767,6 +796,7 @@ If you haven’t seen code like this before or use joblib files to save machine 
     select * from {{ ref('predict_position') }} order by position_predicted
     ```
 7. We can see that we created predictions in our final dataset, we are ready to move on to testing!
+<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Metadata Configuration
