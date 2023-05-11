@@ -8,13 +8,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 
-<!-- http://localhost:8000/guide/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python -->
 
 
 # Leverage dbt Cloud to Generate ML ready pipelines using snowpark python
 <!-- ------------------------ -->
 ## Overview 
 Duration: 3
+
+http://localhost:8000/guide/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python
 
 The focus of this workshop will be to demonstrate how we can use both *SQL and python together* in the same workflow to run *both analytics and machine learning models* on dbt Cloud.
 
@@ -74,8 +75,8 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/4-enable-anaconda.jpeg" title="Enable Anaconda"/>
 
 5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
-
 <!-- ------------------------ -->
+
 ## Load data into Snowflake
 Duration: 7
 We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
