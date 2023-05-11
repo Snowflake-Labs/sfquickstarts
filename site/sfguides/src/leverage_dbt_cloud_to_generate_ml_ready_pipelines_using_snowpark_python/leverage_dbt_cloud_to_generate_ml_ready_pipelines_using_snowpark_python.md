@@ -11,7 +11,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 <!-- http://localhost:8000/guide/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python -->
 
 
-# Snowflake Guide Template
+# Leverage dbt Cloud to Generate ML ready pipelines using snowpark python
 <!-- ------------------------ -->
 ## Overview 
 Duration: 3
