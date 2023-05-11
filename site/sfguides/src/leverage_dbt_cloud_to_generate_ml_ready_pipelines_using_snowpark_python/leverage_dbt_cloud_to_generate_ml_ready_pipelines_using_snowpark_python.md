@@ -50,6 +50,7 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs public S3 bucket. We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/).
 
 ## Configure Snowflake
+Duration: 5
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
 
 1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/) if you don’t have one. Ensure that your account is set up using **AWS** in the **US East (N. Virginia)**. We will be copying the data from a public AWS S3 bucket hosted by dbt Labs in the us-east-1 region. By ensuring our Snowflake environment setup matches our bucket region, we avoid any multi-region data copy and retrieval latency issues.
@@ -73,7 +74,9 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 
 5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
 
+
 ## Load data into Snowflake
+Duration: 7
 We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
 
 1. Your new Snowflake account has a preconfigured warehouse named `COMPUTE_WH`. If for some reason you don’t have this warehouse, we can create a warehouse using the following script:
@@ -135,7 +138,7 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
-9. To help you version control your dbt project, we have connected it to a [managed repository](/docs/collaborate/git/managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a Git workflow without you having to create and host the repository yourself. You will not need to know Git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you’re developing your own project, [feel free to use your own repository](/docs/cloud/git/connect-github). This will allow you to learn more about features like [Slim CI](/docs/deploy/cloud-ci-job#configuring-a-slim-ci-job) builds after this workshop.
+9. Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, when you’re developing your own project, [feel free to use your own repository](/docs/cloud/git/connect-github). This will allow you to learn more about features like [Slim CI](/docs/deploy/cloud-ci-job#configuring-a-slim-ci-job) builds after this workshop.
 
 
 <!-- ------------------------ -->
