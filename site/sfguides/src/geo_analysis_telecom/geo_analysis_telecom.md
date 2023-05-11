@@ -536,7 +536,7 @@ WHERE st_intersects(coverage.geometry, roads.geo_cordinates)
 and class = 'motorway';
 ```
 
-It seems our LTE network covers more than 90% of the roads. A good number to call out in a marketing campaign.
+It seems our LTE network covers more than 90% of the motorways. A good number to call out in a marketing campaign.
 
 <!-- ------------------------ -->
 ## Advanced Analysis using H3
@@ -639,7 +639,7 @@ with roads as (
         row_number() over(order by null) as geoid -- creating an ID for each original road segment
         , geo_cordinates as geom
     from OSM_UK.UNITED_KINGDOM.V_ROAD roads
-    where class = 'motorway'
+    where class in ('primary', 'motorway')
     and st_dimension(geo_cordinates) = 1 -- only for the linestring or multilinestring
 )
 , segment_ids as (
@@ -687,7 +687,7 @@ from GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED
 group by signal;
 ```
 
-We now know that we have 56,810 km with good coverage and 10,182 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+We now know that we have 58,910 km with good coverage and 10,963 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 
