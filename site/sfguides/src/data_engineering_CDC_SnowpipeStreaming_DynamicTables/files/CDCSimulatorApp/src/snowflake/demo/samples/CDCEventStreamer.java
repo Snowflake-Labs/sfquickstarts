@@ -1,10 +1,10 @@
 package snowflake.demo.samples;
 import snowflake.utils.TokenizeEncryptUtils;
-//import java.io.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.time.Instant;
 import java.util.Properties;
+
 
 // Sample data generator (Transactional RDBMS Events)
 public class CDCEventStreamer extends EventStreamer {
@@ -107,6 +107,7 @@ public class CDCEventStreamer extends EventStreamer {
         sb.append("}");
         sb.append("}");
         if(SHOW_EVENTS) System.out.println("ORDER:  "+orderid_tokenized);
+        else if (DEBUG) System.out.println(sb);
         return sb.toString();
     }
 
@@ -117,9 +118,5 @@ public class CDCEventStreamer extends EventStreamer {
     private static final String SSTRING = "3M Company|MMM|130;The American Express Company|AXP|155;Apple Inc.|AAPL|135;The Boeing Company|BA|215;Caterpillar Inc.|CAT|260;Chevron Corporation|CVX|175;Cisco Systems Inc.|CSCO|50;The Coca-Cola Company|KO|60;Dow Inc.|DD|75;Exxon Mobil Corporation|XOM|115;The Goldman Sachs Group, Inc.|GS|375;The Home Depot Inc.|HD|330;International Business Machines Corporation|IBM|145;Intel Corporation|INTC|30;Johnson & Johnson|JNJ|175;JPMorgan Chase & Co.|JPM|145;McDonald’s Corporation|MCD|270;Merck & Company, Inc.|MRK|110;Microsoft Corporation|MSFT|240;Nike, Inc.|NKE|130;Pfizer Inc.|PFE|50;Proctor & Gamble Co.|PG|150;The Travelers Companies, Inc.|TRV|195;UnitedHealth Group, Inc.|UNH|490;United Technologies Corporation|UTX|40;Verizon Communications Inc.|VZ|40;Visa Inc.|V|225;Walmart Inc.|WMT|145;Walgreens Boots Alliance, Inc.|WBA|35;The Walt Disney Company|DIS|100";
     static {
         for (String s : SSTRING.split(";")) S_TICKER.add(s);
-
-        NF_AMT.setMinimumFractionDigits(2);
-        NF_AMT.setMaximumFractionDigits(2);
-        NF_AMT.setGroupingUsed(false);
     }
 }
