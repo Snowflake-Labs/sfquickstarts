@@ -42,12 +42,12 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 
 ### What you'll build
 
-- A set of data analytics and prediction pipelines using Formula 1 data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments
+- A set of data analytics and prediction pipelines using Formula 1 data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments. 
 - We will create insights for:
     1. Finding the lap time average and rolling average through the years
     2. Predicting the position of each driver based on a decade of data
 
-As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs public S3 bucket. We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/).
+As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs public S3 bucket. We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/). We will not be building the full pipeline as part of this workshop. Instead we will leverage an exisitng repo, fork it, and focus on our machine learning pipeline.
 
 ## Configure Snowflake
 Duration: 5
@@ -175,7 +175,32 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 11. dbt Cloud will generate a deploy key to link the development we do in dbt cloud back to our github repo. Copy the deploy key starting with **ssh-rsa** followed by a long hash key. 
 12. Phew almost there! Navigate back to GitHub again. 
 13. Ensure you're in your forked repo. Navigate to your repo **Settings**
+14. Go to **Deploy keys** and select **Add deploy key**.
+15. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the key we ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. We won't have to come back to again GitHub until the end of our workshop.
+16. Head back over to dbt cloud. Navigate to **Develop**.
+17. **Run "dbt deps"**
 
+Alas, now that our setup work is complete, time to get developing! 
+
+## IDE overview and buidling first dbt models
+dbt Cloud's IDE will be our development space for this workshop, so let's get familiar with it. Once we've done that we'll run the pipeline we imported from our forked repo. 
+
+1. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, an SQL and Python runner, and a CLI with Git version control all baked into one package! This allows you to focus on editing your SQL and Python files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The Git workflow in dbt Cloud allows both Git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/7-IDE-overview.png" title="IDE overview"/>
+
+11. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and click **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully.
+
+<!-- TODO Update with new pipeline -->
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/8-dbt-run-example-models.png" title="dbt run example models"/>
+
+12. The run results allow you to see the code that dbt compiles and sends to Snowflake for execution. To view the logs for this run, select one of the model tabs using the  **>** icon and then **Details**. If you scroll down a bit you'll be able to see the compiled code and how dbt interacts with Snowflake. Given that this run took place in our development environment, the models were created in your development schema.
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/9-second-model-details.png" title="Details about the second model"/>
+
+<!-- TODO Update with new pipeline -->
+13. Now let's switch over to a new browser tab on Snowflake to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/10-confirm-example-models-built-in-snowflake.png" title="Confirm example models are built in Snowflake"/>
 
 
 
