@@ -116,8 +116,8 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 
 
 
-## Setup dbt project 
-We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake), [managed repository](/docs/collaborate/git/managed-repository), environments, and credentials already established.
+## Setup dbt account 
+We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
 
 1. Navigate out of your worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
@@ -138,7 +138,47 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
-9. Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, when you’re developing your own project, [feel free to use your own repository](/docs/cloud/git/connect-github). This will allow you to learn more about features like [Slim CI](/docs/deploy/cloud-ci-job#configuring-a-slim-ci-job) builds after this workshop.
+9. Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository in the next step. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, if you’re developing your own proof of value project from scratch, [feel free to use dbt's managed  repository](https://docs.getdbt.com/docs/collaborate/git/managed-repository) that is spun up during partner connect. 
+
+
+## Development schema and forking repo
+In this section we'll be setting up our own personal development schema and forking our workshop repo into dbt Cloud. 
+
+### Schema name
+1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **Profile Settings** from the gear icon in the upper right. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. 
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/1-settings-gear-icon.png" title="Settings menu"/>
+
+2. Navigate to the **Credentials** menu and select **Partner Connect Trial**, which will expand the credentials menu.
+
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/2-credentials-edit-schema-name.png" title="Credentials edit schema name"/>
+    
+3. Click **Edit** and change the name of your schema from `dbt_` to `dbt_YOUR_NAME` replacing `YOUR_NAME` with your initials and name (`hwatson` is used in the lab screenshots). Be sure to click **Save** for your changes!
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/3-save-new-schema-name.png" title="Save new schema name"/>
+
+4. We now have our own personal development schema, amazing! When we run our first dbt models they will build into this schema.
+
+### Forking repo and github deploy keys
+
+To keep the focus on dbt python and deployment today, we only want to build a subset of models that would be in an entire data project. To achieve this we need to fork an existing repository into our personal github, copy our forked repo name into dbt cloud, and add the dbt deploy key to our github account. Viola! There will be some back and forth between dbt cloud and GitHub as part of this process, so keep your tabs open, and let's get the setup out of the way!
+
+1. Delete the existing connection to the managed repository. To do this navigate to **Settings > Account Settings > Partner Connect Trial**.
+2. This will open the **Project Details**. Navigate to **Repository** and click the existing GitHub connection.
+3. In the **Respository Details** select **Edit** in the lower right corner. The option to **Disconnect** will appear, select it.
+4. Confirm disconnect. 
+5. Your repository should now be blank in your **Project Details**.
+6. Login to your personal GitHub account. 
+7. Using the search bar, find today's demo repo dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark
+8. Fork your own copy of the lab repo.
+9. Select the **Code** button. Choose the SSH option and use the copy button shortcut for our repo. 
+10. Navigate back to dbt cloud. Input the repository you copied into the **Repository** parameter. 
+11. dbt Cloud will generate a deploy key to link the development we do in dbt cloud back to our github repo. Copy the deploy key starting with **ssh-rsa** followed by a long hash key. 
+12. Phew almost there! Navigate back to GitHub again. 
+13. Ensure you're in your forked repo. Navigate to your repo **Settings**
+
+
+
+
 
 
 <!-- ------------------------ -->
