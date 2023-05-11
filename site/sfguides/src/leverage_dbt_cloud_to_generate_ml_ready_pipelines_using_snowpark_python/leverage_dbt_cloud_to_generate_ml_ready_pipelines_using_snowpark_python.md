@@ -49,8 +49,6 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 
 As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs public S3 bucket. We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/). We will not be building the full pipeline as part of this workshop. Instead we will leverage an exisitng repo, fork it, and focus on our machine learning pipeline.
 <!-- ------------------------ -->
-
-<!-- ------------------------ -->
 ## Configure Snowflake
 Duration: 5
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
@@ -75,8 +73,6 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/4-enable-anaconda.jpeg" title="Enable Anaconda"/>
 
 5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
-<!-- ------------------------ -->
-
 <!-- ------------------------ -->
 ## Load data into Snowflake
 Duration: 7
