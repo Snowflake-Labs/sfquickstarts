@@ -54,6 +54,11 @@ use role accountadmin;
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 
 CREATE OR REPLACE DATABASE HOL_DB;
+
+GRANT OPERATE ON WAREHOUSE hol_wh TO ROLE public;
+grant usage on database hol_db to role public;
+grant usage on schema hol_db.public to role public;
+grant select on table hol_db.public.rockers_table to role public;
 ```
 
 ### Load data
@@ -126,3 +131,5 @@ Duration: 15
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
 Duration: 15
+
+This quickstart will get you started with creating a simple power apps flow that connects to Snowflake and queries a table. From here you can use the connector in many different flows with different power apps activities to read data from and write data to Snowflake. Additionally, users can utilize Azure Active Directory and SSO to create a user that links to the security integration to for power apps. [AAD-SSO](https://docs.snowflake.com/en/user-guide/oauth-powerbi#getting-started)
