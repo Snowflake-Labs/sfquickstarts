@@ -111,7 +111,7 @@ You will need to edit the snowflake.properties file to match your Snowflake acco
 user=vhol_streaming1
 role=VHOL_CDC_AGENT
 account=<My_Snowflake_Account>
-warehouse=CDC_VHOL_WH
+warehouse=VHOL_CDC_WH
 private_key_file=rsa_key.p8
 host=<My_Snowflake_Account>.snowflakecomputing.com
 database=VHOL_ENG_CDC
@@ -160,7 +160,7 @@ Size XS, dedicated for this Hands-on Lab
 ```
 create or replace warehouse VHOL_CDC_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
 grant all privileges on warehouse VHOL_CDC_WH to role VHOL;
-grant usage on warehouse VHOL_CDC_WH to role VHOL_CDC_AGENT;
+grant usage on warehouse VHOL_CDC_WH to role VHOL_CDC_AGENT; 
 ```
 For the PII Section (Step #7):
 ```
@@ -275,7 +275,7 @@ Create a more finished Dynamic Table sourcing from Landing Table that reflects t
 ```
 CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_CURRENT_DT
 LAG = '1 minute'
-WAREHOUSE = 'DEMO_WH'
+WAREHOUSE = 'VHOL_CDC_WH'
 AS
 SELECT * EXCLUDE (score,action) from (  
   SELECT
@@ -323,7 +323,7 @@ First table is great, but we want to analyze how orders/records have changed and
 ```
 CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_SCD_DT
 LAG = '1 minute'
-WAREHOUSE = 'DEMO_WH'
+WAREHOUSE = 'VHOL_CDC_WH'
 AS
 SELECT * EXCLUDE score from ( SELECT *,
   CASE when score=1 then true else false end as Is_Latest,
@@ -370,7 +370,7 @@ Let's try some aggregations for a Dynamic Table optimized for a specific use cas
 ```
 CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_SUMMARY_DT
 LAG = '1 minute'
-WAREHOUSE = 'DEMO_WH'
+WAREHOUSE = 'VHOL_CDC_WH'
 AS
 SELECT ticker,position,min(price) as MIN_PRICE,max(price) as MAX_PRICE, TO_DECIMAL(avg(price),38,2) as AVERAGE_PRICE,
     SUM(quantity) as TOTAL_SHARES,TO_DECIMAL(TOTAL_SHARES*AVERAGE_PRICE,38,2) as TOTAL_VALUE_USD
