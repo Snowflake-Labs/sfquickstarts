@@ -21,10 +21,9 @@ The focus of this workshop will be to demonstrate how we can use both *SQL and p
 
 All code in today’s workshop can be found on [GitHub](https://github.com/dbt-labs/python-snowpark-formula1/tree/python-formula1).
 
-### What you'll use during the lab
+### What you'll need to setup for the lab
 
 - A [Snowflake account](https://trial.snowflake.com/) with ACCOUNTADMIN access
-- A [dbt Cloud account](https://www.getdbt.com/signup/)
 - A [GitHub](https://github.com/) Account 
 
 ### What you'll learn
@@ -55,10 +54,7 @@ As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs publ
 Duration: 5
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
 
-1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/) if you don’t have one. Ensure that your account is set up using **AWS** in the **US East (N. Virginia)**. We will be copying the data from a public AWS S3 bucket hosted by dbt Labs in the us-east-1 region. By ensuring our Snowflake environment setup matches our bucket region, we avoid any multi-region data copy and retrieval latency issues.
-
-
-![Snowflake trial](assets/2-configure-snowflake/1-snowflake-trial-AWS-setup.png)
+1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS** in the **US East (N. Virginia)**. We will be copying the data from a public AWS S3 bucket hosted by dbt Labs in the us-east-1 region. By ensuring our Snowflake environment setup matches our bucket region, we avoid any multi-region data copy and retrieval latency issues.
 
 
 2. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
@@ -74,7 +70,7 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/4-enable-anaconda.jpeg" title="Enable Anaconda"/>
 
-5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
+5. Finally, navigate back to home to create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
 
 <!-- ------------------------ -->
 ## Load data into Snowflake
@@ -164,7 +160,7 @@ In this section we'll be setting up our own personal development schema and fork
 To keep the focus on dbt python and deployment today, we only want to build a subset of models that would be in an entire data project. To achieve this we need to fork an existing repository into our personal github, copy our forked repo name into dbt cloud, and add the dbt deploy key to our github account. Viola! There will be some back and forth between dbt cloud and GitHub as part of this process, so keep your tabs open, and let's get the setup out of the way!
 
 1. Delete the existing connection to the managed repository. To do this navigate to **Settings > Account Settings > Partner Connect Trial**.
-2. This will open the **Project Details**. Navigate to **Repository** and click the existing GitHub connection.
+2. This will open the **Project Details**. Navigate to **Repository** and click the existing managed repository GitHub connection setup during partner connect.
 3. In the **Respository Details** select **Edit** in the lower right corner. The option to **Disconnect** will appear, select it.
 4. Confirm disconnect. 
 5. Your repository should now be blank in your **Project Details**.
@@ -281,12 +277,12 @@ In the next couple steps we are taking time to review how this was done. That wa
 Cool, now that dbt knows we have a dbt project we can view the folder structure and data modeling.  
 
 ### Folder structure 
- TODO Update with new folders
-dbt Labs has developed a [project structure guide](/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project. 
-Do check out that guide if you want to learn more. Note that machine learning best practices within dbt are still being st Right now we are going to organize our project using the following structure:
+TODO Update with new folders
+dbt Labs has developed a [project structure guide](/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices. 
+Do check out that guide if you want to learn more. Right now we are going to organize our project using the following structure:
 
 - sources &mdash; This is our Formula 1 dataset and it will be defined in a source YAML file. Nested under our Staging folder. 
-- staging models &mdash; These models have a 1:1 with their source table.
+- staging models &mdash; These models have a 1:1 with their source table and are for light transformation (renaming columns, recasting data types, etc.).
 - core models &mdash; Fact and dimension tables available for end user analysis. Since the Formula 1 is pretty clean demo data these look similar to our staging models. 
 - marts models &mdash; Here is where we perform our major transformations. It contains the subfolder:
     - aggregates
@@ -296,30 +292,82 @@ Do check out that guide if you want to learn more. Note that machine learning be
 
 1. In your file tree, use your cursor and hover over the `models` subdirectory, click the three dots **…** that appear to the right of the folder name, then select **Create Folder**. We're going to add two new folders to the file path, `ml` and `prep_encoding_splitting` (in that order) by typing `ml/prep_encoding_splitting` into the file path.
 
+TODO update screeenshots 
+
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/>
     
     - If you click into your `models` directory now, you should see the new `staging` folder nested within `models` and the `formula1` folder nested within `staging`.
 2. Create two additional folders the same as the last step. Within the `models` subdirectory, create new directories `marts/core`.
 
-3. We will need to create a few more folders and subfolders using the UI. After you create all the necessary folders, your folder tree should look like this when it's all done:
+3. We will need to create one more subfolder using the UI, under the `ml` folder create `training_and_prediction` . After you create all the necessary folders, your folder tree should look like this when it's all done:
 
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/>
 
-Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1/tree/python-formula1) to view the complete folder and file strucutre.  
-
+Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1) to view the complete folder and file strucutre.  
 
 <!-- ------------------------ -->
 ## Data modeling -- sources and staging 
+In any data project we start with raw data, clean and transform, and gain insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll just need to preview these files (instead of build them).
+
+Sources allow us to create a dependency between our source database object and our staging models which will help us when we look at [data-lineage](https://docs.getdbt.com/terms/data-lineage)later. Also, if your source changes database or schema, you only have to update it in your `f1_sources.yml` file rather than updating all of the models it might be used in.
+
+Staging models are the base of our project, where we bring all the individual components we're going to use to build our more complex and useful models into the project. Staging models have a 1:1 relationship with their source table and are for light transformation steps such as renaming columns, type casting, basic computations, and categorizing data. 
+
+Since we want to focus on dbt and Python in this workshop, check out our [sources](https://docs.getdbt.com/docs/build/sources) and [staging](https://docs.getdbt.com/guides/best-practices/how-we-structure/2-staging) docs if you want to learn more (or take our [dbt Fundamentals](https://courses.getdbt.com/collections) course which covers all of our core functionality).
+
+### Creating Sources 
+1. Open the file called `f1_sources.yml` with the following file path: `models/staging/formula1/f1_sources.yml`.
+2. You should see the following code that creates our 14 source tables in our dbt project from Snowflake:
+
+3. dbt makes it really easy to:
+  - declare [sources](https://docs.getdbt.com/docs/build/sources)
+  - provide [testing](https://docs.getdbt.com/docs/build/tests) for data quality and integrity with support for both generic and singular tests 
+  - create [documentation](https://docs.getdbt.com/docs/collaborate/documentation) using descriptions where you write code
+
+
+### Staging 
+1. Let's view two staging models that we'll be using to understand lap time trends through the years. 
+2. Open `stg_lap_times`. 
+    ```sql
+    with
+
+    lap_times as (select * from {{ source('formula1', 'lap_times') }}),
+
+    renamed as (
+        select
+            race_id as race_id,
+            driver_id as driver_id,
+            lap,
+            "POSITION" as driver_position,
+            "TIME" as lap_time_formatted,
+            {{ convert_laptime("lap_time_formatted") }} as official_laptime,
+            milliseconds as lap_time_milliseconds
+        from lap_times
+    )
+    select
+        {{ dbt_utils.generate_surrogate_key(["race_id", "driver_id", "lap"]) }}
+        as lap_times_id,
+        *
+    from renamed
+    ```
+3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. 
+4. Click **preview** &mdash; look how pretty and human readable our official_laptime column is!
+5. Feel free to 
+
 
 <!-- ------------------------ -->
 ## SQL Transformations 
+dbt got it's start in being a powerful tool to enhance the way data transformations are done in SQL. Before we jump into python, let's pay homage to SQL. 
+SQL is so performant at data cleaning and transformation, that data science projects "use SQL for everything you can, then hand off to python" and that's exactly what we're doing.  
 
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
 
+
 <!-- ------------------------ -->
 ## Python transfomrations in dbt Cloud 
+
 
 <!-- ------------------------ -->
 ## Machine Learning prep: cleaning, encoding, and splits, oh my!
