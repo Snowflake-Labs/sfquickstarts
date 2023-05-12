@@ -353,7 +353,8 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
     ```
 3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. 
 4. Click **preview** &mdash; look how pretty and human readable our official_laptime column is!
-5. Feel free to 
+5. Feel free to view macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
+6. We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our [macros documentation](https://docs.getdbt.com/docs/build/jinja-macros). 
 
 
 <!-- ------------------------ -->
@@ -363,6 +364,43 @@ SQL is so performant at data cleaning and transformation, that data science proj
 
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
+Now that we've transformed data using SQL let's write our first python code and get insights about lap time trends.
+Snowflake python worksheets are excellent for developing your python code before bringing it into a dbt python model.
+Then once we are settled on the code we want, we can drop it into our dbt project. 
+
+1. Head back over to Snowflake.
+2. Open up a **Python Worksheet** 
+TODO I think more explanation of python worksheets would go well here. 
+3. Use the following code to get a 5 year moving average of Formula 1 laps:
+    ```python
+        # The Snowpark package is required for Python Worksheets. 
+        # You can add more packages by selecting them using the Packages control and then importing them.
+
+        import snowflake.snowpark as snowpark
+        import pandas as pd 
+
+        def main(session: snowpark.Session): 
+            # Your code goes here, inside the "main" handler.
+            tableName = 'FCT_LAP_TIMES_YEARS'
+            dataframe = session.table(tableName)
+            lap_times = dataframe.to_pandas()
+
+            # print table
+            print(lap_times)
+
+            # describe the data
+            lap_times["LAP_TIME_SECONDS"] = lap_times["LAP_TIME_MILLISECONDS"]/1000
+            lap_time_trends = lap_times.groupby(by="RACE_YEAR")["LAP_TIME_SECONDS"].mean().to_frame()
+            lap_time_trends.reset_index(inplace=True)
+            lap_time_trends["LAP_MOVING_AVG_5_YEARS"] = lap_time_trends["LAP_TIME_SECONDS"].rolling(5).mean()
+            lap_time_trends.columns = lap_time_trends.columns.str.upper()
+
+            final_df = session.create_dataframe(fastest_pit_stops)
+            # Return value will appear in the Results tab.
+            return final_df.round(1) 
+    ```
+4. Run the worksheet. 
+
 
 
 <!-- ------------------------ -->
