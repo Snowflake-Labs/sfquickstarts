@@ -75,8 +75,8 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/2-snowflake-configuration/4-enable-anaconda.jpeg" title="Enable Anaconda"/>
 
 5. Finally, create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
-<!-- ------------------------ -->
 
+<!-- ------------------------ -->
 ## Load data into Snowflake
 Duration: 7
 We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
@@ -140,7 +140,6 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
 9. Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository in the next step. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, if you’re developing your own proof of value project from scratch, [feel free to use dbt's managed  repository](https://docs.getdbt.com/docs/collaborate/git/managed-repository) that is spun up during partner connect. 
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Development schema and forking repo
@@ -183,7 +182,6 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 17. **Run "dbt deps"**
 
 Alas, now that our setup work is complete, time get a look at our data pipeline! 
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## IDE overview and buidling first dbt models
@@ -194,7 +192,7 @@ dbt Cloud's IDE will be our development space for this workshop, so let's get fa
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/7-IDE-overview.png" title="IDE overview"/>
 
 2. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and click **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully.
-<!-- TODO Update with new pipeline -->
+TODO Update with new pipeline 
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/8-dbt-run-example-models.png" title="dbt run example models"/>
 
 3. Take a few minutes to poke around our pipeline and viewing the DAG lineage. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
@@ -203,10 +201,10 @@ dbt Cloud's IDE will be our development space for this workshop, so let's get fa
 
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/9-second-model-details.png" title="Details about the second model"/>
 
-<!-- TODO Update with new pipeline -->
+ TODO Update with new pipeline 
 5. Now let's switch over to a new browser tab on Snowflake to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/10-confirm-example-models-built-in-snowflake.png" title="Confirm example models are built in Snowflake"/>
-<!-- ------------------------ -->
+
 
 <!-- ------------------------ -->
 ## Understanding our existing pipeline 
@@ -283,7 +281,7 @@ In the next couple steps we are taking time to review how this was done. That wa
 Cool, now that dbt knows we have a dbt project we can view the folder structure and data modeling.  
 
 ### Folder structure 
-<!-- TODO Update with new folders -->
+ TODO Update with new folders
 dbt Labs has developed a [project structure guide](/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project. 
 Do check out that guide if you want to learn more. Note that machine learning best practices within dbt are still being st Right now we are going to organize our project using the following structure:
 
@@ -309,23 +307,19 @@ Do check out that guide if you want to learn more. Note that machine learning be
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/>
 
 Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1/tree/python-formula1) to view the complete folder and file strucutre.  
-<!-- ------------------------ -->
+
 
 <!-- ------------------------ -->
 ## Data modeling -- sources and staging 
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## SQL Transformations 
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Python transfomrations in dbt Cloud 
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Machine Learning prep: cleaning, encoding, and splits, oh my!
@@ -338,7 +332,6 @@ At a high level we’ll be:
 - Creating new prediction features and filtering our dataset to active drivers
 - Encoding our data (algorithms like numbers) and simplifying our target variable called `position`
 - Splitting our dataset into training, testing, and validation
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## ML data prep
@@ -419,7 +412,6 @@ At a high level we’ll be:
     ```
 6. Let’s look at the preview of our clean dataframe after running our `ml_data_prep` model:
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/11-machine-learning-prep/1-completed-ml-data-prep.png" title="What our clean dataframe fit for machine learning looks like"/>
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Covariate encoding
@@ -485,7 +477,6 @@ In this next part, we’ll be performing covariate encoding. Breaking down this 
     - The next step is to use the `LabelEncoder` from scikit-learn to convert the categorical variables `CIRCUIT_NAME`, `CONSTRUCTOR_NAME`, `DRIVER`, and `TOTAL_PIT_STOPS_PER_RACE` into numerical values.
     - To simplify the classification and improve performance, we are creating a new variable called `POSITION_LABEL` from our original position variable with in Formula 1 with 20 total positions. This new variable has a specific meaning: those in the top 3 get a “podium” position, those in the top 10 get points that add to their overall season total, and those below the top 10 get no points. The original position variable is being mapped to position_label in a way that assigns 1, 2, and 3 to the corresponding places.
     - Drop the active driver and constructor flags since they were filter criteria and additionally drop our original position variable.
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Splitting into training and testing datasets
@@ -541,7 +532,6 @@ In this step, we will create dataframes to use for training and prediction. We�
 4. **Commit and sync** our changes to keep saving our work as we go using `ml data prep and splits` before moving on.
 
 👏 Now that we’ve finished our machine learning prep work we can move onto the fun part &mdash; training and prediction!
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Machine Learning: training and prediction
@@ -553,7 +543,6 @@ There are 3 areas to break down as we go since we are working at the intersectio
 3. dbt Python models
 
 If you haven’t seen code like this before or use joblib files to save machine learning models, we’ll be going over them at a high level and you can explore the links for more technical in-depth along the way! Because Snowflake and dbt have abstracted away a lot of the nitty gritty about serialization and storing our model object to be called again, we won’t go into too much detail here. There’s *a lot* going on here so take it at your pace!
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Training and saving a machine learning model
@@ -665,7 +654,6 @@ If you haven’t seen code like this before or use joblib files to save machine 
 
 7. To investigate the commands run as part of `train_test_position` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/3-view-snowflake-query-history.png" title="View Snowflake query history to see how python models are run under the hood"/>
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Predicting on new data
@@ -794,7 +782,6 @@ If you haven’t seen code like this before or use joblib files to save machine 
     select * from {{ ref('predict_position') }} order by position_predicted
     ```
 7. We can see that we created predictions in our final dataset, we are ready to move on to testing!
-<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Metadata Configuration
