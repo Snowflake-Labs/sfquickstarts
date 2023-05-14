@@ -65,7 +65,7 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 4. Navigate to **Admin > Billing & Terms**. Click **Enable > Acknowledge & Continue** to enable Anaconda Python Packages to run in Snowflake.
     
 
-5. Finally, navigate back to home to create a new Worksheet by selecting **+ Worksheet** in the upper right corner.
+5. Finally, navigate back to home to create a new SQL Worksheet by selecting **+** then **SQL Worksheet** in the upper right corner.
 
 <!-- ------------------------ -->
 ## Load data into Snowflake
@@ -77,11 +77,11 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     ```sql
     create or replace warehouse COMPUTE_WH with warehouse_size=XSMALL
     ```
-2. Rename the worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the option **…** and **Rename**. Rename the file  to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Make sure your role is set as the **ACCOUNTADMIN** and select the **COMPUTE_WH** warehouse.
+2. Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the option **…** and **Rename**. Rename the file  to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Make sure your role is set as the **ACCOUNTADMIN** and select the **COMPUTE_WH** warehouse.
 
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/1-rename-worksheet-and-select-warehouse.png" title="Rename worksheet and select warehouse"/>
 
-3. Copy the following code into the main body of the Snowflake worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://github.com/dbt-labs/python-snowpark-formula1/blob/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! Generally during this lab we'll be explaining and breaking down the queries. We won't going line by line, but we will point out important information related to our learning objectives!
+3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://github.com/dbt-labs/python-snowpark-formula1/blob/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! Generally during this lab we'll be explaining and breaking down the queries. We won't going line by line, but we will point out important information related to our learning objectives!
 
 4. Ensure all the commands are selected before running the query &mdash; an easy way to do this is to use Ctrl-A to highlight all of the code in the worksheet. Select **run** (blue triangle icon). Notice how the dot next to your **COMPUTE_WH** turns from gray to green as you run the query. The **status** table is the final table of all 14 tables loaded in. 
 
@@ -94,7 +94,7 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     - Used the `copy into` statement for each of our tables. We reference our staged location we created and upon loading errors continue to load in the rest of the data. You should not have data loading errors but if you do, those rows will be skipped and Snowflake will tell you which rows caused errors
 
 6. Now let's take a look at some of our cool Formula 1 data we just loaded up!
-    1. Create a new worksheet by selecting the **+** then **New Worksheet**.
+    1. Create a SQL worksheet by selecting the **+** then **SQL Worksheet**.
         <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/3-create-new-worksheet-to-query-data.png" title="Create new worksheet to query data"/>
     2. Navigate to **Database > Formula1 > RAW > Tables**. 
     3. Query the data using the following code. There are only 76 rows in the circuits table, so we don’t need to worry about limiting the amount of data we query.
@@ -111,7 +111,7 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 ## Setup dbt account 
 We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
 
-1. Navigate out of your worksheet back by selecting **home**.
+1. Navigate out of your SQL worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
 3. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/1-open-partner-connect.png" title="Open Partner Connect"/>
@@ -288,14 +288,12 @@ Do check out that guide if you want to learn more. Right now we are going to org
 1. In your file tree, use your cursor and hover over the `models` subdirectory, click the three dots **…** that appear to the right of the folder name, then select **Create Folder**. We're going to add two new folders to the file path, `ml` and `prep_encoding_splitting` (in that order) by typing `ml/prep_encoding_splitting` into the file path.
 
 TODO update screeenshots 
-
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
+    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/> -->
     
-    - If you click into your `models` directory now, you should see the new `staging` folder nested within `models` and the `formula1` folder nested within `staging`.
-2. Create two additional folders the same as the last step. Within the `models` subdirectory, create new directories `marts/core`.
+    - If you click into your `models` directory now, you should see the new `ml` folder nested within `models` and the `prep_encoding_splitting` folder nested within `ml`.
 
-3. We will need to create one more subfolder using the UI, under the `ml` folder create `training_and_prediction` . After you create all the necessary folders, your folder tree should look like this when it's all done:
+2. We will need to create one more subfolder using the UI, under the `ml` folder create `training_and_prediction`. After you create these folders, your entire folder tree should look like this when it's all done (from what we forked and just created):
 
     <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/>
 
@@ -303,7 +301,7 @@ Remember you can always reference the entire project in [GitHub](https://github.
 
 <!-- ------------------------ -->
 ## Data modeling -- sources and staging 
-In any data project we start with raw data, clean and transform, and gain insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll just need to preview these files (instead of build them).
+In any data project we start with raw data, clean and transform, and gain insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll only need to preview these files (instead of build them).
 
 Sources allow us to create a dependency between our source database object and our staging models which will help us when we look at [data-lineage](https://docs.getdbt.com/terms/data-lineage)later. Also, if your source changes database or schema, you only have to update it in your `f1_sources.yml` file rather than updating all of the models it might be used in.
 
@@ -346,16 +344,78 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
         *
     from renamed
     ```
-3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. 
+3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. 
 4. Click **preview** &mdash; look how pretty and human readable our official_laptime column is!
-5. Feel free to view macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
+5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
 6. We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our [macros documentation](https://docs.getdbt.com/docs/build/jinja-macros). 
+7. 
 
+You can see for every source table, we have a staging table. Now that we're done staging our data it's time for transformation.
 
 <!-- ------------------------ -->
 ## SQL Transformations 
 dbt got it's start in being a powerful tool to enhance the way data transformations are done in SQL. Before we jump into python, let's pay homage to SQL. 
-SQL is so performant at data cleaning and transformation, that data science projects "use SQL for everything you can, then hand off to python" and that's exactly what we're doing.  
+SQL is so performant at data cleaning and transformation, that many data science projects "use SQL for everything you can, then hand off to python" and that's exactly what we're going to do. 
+
+### Fact and dimension tables 
+[Dimensional modeling](https://docs.getdbt.com/terms/dimensional-modeling) is an important data modeling concept where we break up data into "facts" and "dimensions" to organize and describe data. We won't go into depth here, but think of facts as "skinny and long" transactional tables and dimensions as "wide" referential tables. We'll preview one dimension table and be building one fact table. 
+
+1. Navigate in the file tree to **models > marts > core > dim_races**. 
+2. **Preview** the data. We can see we have the `RACE_YEAR` in this table. That's important since we want to understand the changes in lap times over years. So we now know `dim_races` contains the time column we need to make those calculations. 
+3. Create a new file within the **core** directory **core > ... > Create file**.
+4. Name the file `fct_lap_times.sql`.
+5. Copy in the following code and save the file (**Save** or Ctrl+S):
+    ```sql
+    WITH lap_times AS (
+    SELECT 
+        {{ dbt_utils.generate_surrogate_key(['race_id', 'driver_id', 'lap']) }}         AS lap_times_id,
+        race_id                                                                         AS race_id,
+        driver_id                                                                       AS driver_id,
+        lap                                                                             AS lap,
+        driver_position                                                                 AS driver_position,
+        lap_time_formatted                                                              AS lap_time_formatted,
+        official_laptime                                                                AS official_laptime,
+        lap_time_milliseconds                                                           AS lap_time_milliseconds
+    FROM {{ ref('stg_lap_times') }}
+    )
+
+    SELECT * FROM lap_times
+    ```
+6. Our `fct_lap_times` is very similar to our staging file since this is clean demo data. In your real world data project your data will probably be messier and require extra filtering and aggregation prior to becoming a fact table exposed to your business users for utilizing.
+7. Use the UI **BUILD** to create the `fct_lap_times` model. 
+
+Now we have both `dim_races` and `fct_lap_times` separately. Next we'll to join these to create lap trend analysis through the years.
+
+### Marts tables
+Marts tables are where everything comes together to create our business-defined entities that have an identity and purpose. 
+We'll be joining our `dim_races` and `fct_lap_times` together. 
+
+1. Create a new file under your **marts** folder called `mrt_lap_times_years.sql`.
+2. Copy and save the following code:
+    ```sql
+    with lap_times as (
+    select * from {{ ref('fct_lap_times') }}
+        ),
+        races as (
+        select * from {{ ref('dim_races') }}
+        ),
+        expanded_lap_times_by_year as (
+            select 
+                lap_times.race_id, 
+                driver_id, 
+                race_year,
+                lap,
+                lap_time_milliseconds 
+            from lap_times
+            left join races
+                on lap_times.race_id = races.race_id
+            where lap_time_milliseconds is not null 
+        )
+        select * from expanded_lap_times_by_year
+    ```
+3. Our dataset contains races going back to 1950, but the measurement of lap times begins in 1996. Here we join our datasets together use our `where` clause to filter our races prior to 1996, so they have lap times. 
+4. Execute the model using **Build**. 
+5. **Preview** your new model. We have race years and lap times together in one joined table so we are ready to create our trend analysis. 
 
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
@@ -365,37 +425,39 @@ Then once we are settled on the code we want, we can drop it into our dbt projec
 
 1. Head back over to Snowflake.
 2. Open up a **Python Worksheet** 
-TODO I think more explanation of python worksheets would go well here. 
+
+TODO I think more explanation of python worksheets would go well here. (@snowflake team)
+TODO @snowflake team -- feel free to translate this python worksheet into snowpark code and clean up a bit (i.e. final_df isn't really necessary)
 3. Use the following code to get a 5 year moving average of Formula 1 laps:
     ```python
-        # The Snowpark package is required for Python Worksheets. 
-        # You can add more packages by selecting them using the Packages control and then importing them.
+    # The Snowpark package is required for Python Worksheets. 
+    # You can add more packages by selecting them using the Packages control and then importing them.
 
-        import snowflake.snowpark as snowpark
-        import pandas as pd 
+    import snowflake.snowpark as snowpark
+    import pandas as pd 
 
-        def main(session: snowpark.Session): 
-            # Your code goes here, inside the "main" handler.
-            tableName = 'FCT_LAP_TIMES_YEARS'
-            dataframe = session.table(tableName)
-            lap_times = dataframe.to_pandas()
+    def main(session: snowpark.Session): 
+        # Your code goes here, inside the "main" handler.
+        tableName = 'MRT_LAP_TIMES_YEARS'
+        dataframe = session.table(tableName)
+        lap_times = dataframe.to_pandas()
 
-            # print table
-            print(lap_times)
+        # print table
+        print(lap_times)
 
-            # describe the data
-            lap_times["LAP_TIME_SECONDS"] = lap_times["LAP_TIME_MILLISECONDS"]/1000
-            lap_time_trends = lap_times.groupby(by="RACE_YEAR")["LAP_TIME_SECONDS"].mean().to_frame()
-            lap_time_trends.reset_index(inplace=True)
-            lap_time_trends["LAP_MOVING_AVG_5_YEARS"] = lap_time_trends["LAP_TIME_SECONDS"].rolling(5).mean()
-            lap_time_trends.columns = lap_time_trends.columns.str.upper()
+        # describe the data
+        lap_times["LAP_TIME_SECONDS"] = lap_times["LAP_TIME_MILLISECONDS"]/1000
+        lap_time_trends = lap_times.groupby(by="RACE_YEAR")["LAP_TIME_SECONDS"].mean().to_frame()
+        lap_time_trends.reset_index(inplace=True)
+        lap_time_trends["LAP_MOVING_AVG_5_YEARS"] = lap_time_trends["LAP_TIME_SECONDS"].rolling(5).mean()
+        lap_time_trends.columns = lap_time_trends.columns.str.upper()
 
-            final_df = session.create_dataframe(fastest_pit_stops)
-            # Return value will appear in the Results tab.
-            return final_df.round(1) 
+        final_df = session.create_dataframe(lap_time_trends)
+        # Return value will appear in the Results tab.
+        return final_df
     ```
-4. Run the worksheet. 
-
+4. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**). 
+5. 
 
 
 <!-- ------------------------ -->
