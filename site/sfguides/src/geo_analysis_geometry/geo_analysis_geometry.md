@@ -384,9 +384,9 @@ We have five areas densely covered by electicity cables, those are the ones that
 
 ### What cell towers lacking electricity cables nearby
 
-In many areas, especially rural or remote ones, cell towers might be located far from electricity grids. This can pose a challenge in terms of providing reliable power supply to these towers. They often rely on diesel generators, which can be expensive to operate and maintain, and also have environmental implications. Furthermore, power outages can lead to disruptions in mobile connectivity, impacting individuals, businesses, and emergency services.
+In many areas, especially rural or remote ones, cell towers might be located far from electricity grids. This can pose a challenge in providing a reliable power supply to these towers. They often rely on diesel generators, which can be expensive to operate and maintain and have environmental implications. Furthermore, power outages can lead to disruptions in mobile connectivity, impacting individuals, businesses, and emergency services.
 
-The goal of our analysis be to identify mobile cell towers that are not in close proximity to an existing electricity grid. This information could be used to prioritize areas for grid expansion, to improve the efficiency of renewable energy source installations (like solar panels or wind turbines), or to consider alternative energy solutions.
+Our analysis aims to identify mobile cell towers that are not near an existing electricity grid. This information could be used to prioritize areas for grid expansion, to improve the efficiency of renewable energy source installations (like solar panels or wind turbines), or to consider alternative energy solutions.
 
 As a first step, you will create a table with locations of cell towers stored as GEOMETRY.
 
