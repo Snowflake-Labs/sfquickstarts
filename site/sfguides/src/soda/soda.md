@@ -149,7 +149,8 @@ This guide also instructs you to connect to a Soda platform account using API ke
 6. From the command-line, in the virtual environment in the `soda_sip` directory, run the following command to test Soda’s connection to your data source, replacing the value of `my_datasource_name` with the name of your data source.
     ```shell
     soda test-connection -d my_datasource_name -c configuration.yml
-
+    ```
+    ```shell
     Soda Core 3.0.xx
     Successfully connected to 'my_datasource_name'.
     Connection 'my_datasource_name' is valid.
