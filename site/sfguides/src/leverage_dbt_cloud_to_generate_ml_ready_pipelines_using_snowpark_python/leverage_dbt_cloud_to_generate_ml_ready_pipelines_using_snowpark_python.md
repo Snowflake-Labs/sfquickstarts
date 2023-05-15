@@ -8,8 +8,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 
-
-
 # Leverage dbt Cloud to Generate ML ready pipelines using snowpark python
 <!-- ------------------------ -->
 ## Overview 
@@ -40,8 +38,11 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 - High level machine learning process (encoding, training, testing)
 - Simple ML algorithms &mdash; we will use logistic regression to keep the focus on the *workflow*, not algorithms!
 
+- *Bonus: if you have completed [this dbt workshop](https://quickstarts.snowflake.com/guide/accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab/index.html?index=..%2F..index#0) to have hands on keyboard practice with concepts like the source, ref, tests, and docs in dbt. By having completed that workshop, you will gain the most of this dbt python + snowpark workshop.
+
 ### What you'll build
 
+TODO I think this needs to be updated to reflect the importance on the deployment part. 
 - A set of data analytics and prediction pipelines using Formula 1 data leveraging dbt and Snowflake, making use of best practices like data quality tests and code promotion between environments. 
 - We will create insights for:
     1. Finding the lap time average and rolling average through the years
@@ -348,7 +349,8 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
 4. Click **preview** &mdash; look how pretty and human readable our official_laptime column is!
 5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
 6. We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our [macros documentation](https://docs.getdbt.com/docs/build/jinja-macros). 
-7. 
+7. TODO talk about surrogate_key and dbt_utils
+
 
 You can see for every source table, we have a staging table. Now that we're done staging our data it's time for transformation.
 
@@ -417,6 +419,8 @@ We'll be joining our `dim_races` and `fct_lap_times` together.
 4. Execute the model using **Build**. 
 5. **Preview** your new model. We have race years and lap times together in one joined table so we are ready to create our trend analysis. 
 
+Now that we've joined and denormalized our data we're ready to use it in python development. 
+
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
 Now that we've transformed data using SQL let's write our first python code and get insights about lap time trends.
@@ -424,7 +428,7 @@ Snowflake python worksheets are excellent for developing your python code before
 Then once we are settled on the code we want, we can drop it into our dbt project. 
 
 1. Head back over to Snowflake.
-2. Open up a **Python Worksheet** 
+2. Open up a **Python Worksheet**. 
 
 TODO I think more explanation of python worksheets would go well here. (@snowflake team)
 TODO @snowflake team -- feel free to translate this python worksheet into snowpark code and clean up a bit (i.e. final_df isn't really necessary)
@@ -457,15 +461,76 @@ TODO @snowflake team -- feel free to translate this python worksheet into snowpa
         return final_df
     ```
 4. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**). 
-5. 
+5. Your result should have three columns: `race_year`, `lap_time_seconds`, and `lap_moving_avg_5_years`. This dataframe is in great shape for visualization in a downstream BI tool or application. We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. At a glance we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refuelling bans. So we can safely ascertain lap times are not consistently decreasing. 
 
-
+Now that we've created this dataframe and lap time trend insight, what do we do when we want to scale it? In the next section we'll be learning how to do this by leveraging python transformations in dbt Cloud. 
 <!-- ------------------------ -->
 ## Python transfomrations in dbt Cloud 
+### Our first dbt python model for lap time trends
+Let's get our lap time trends in our data pipeline so we have this data frame to leverage as new data comes in. The syntax of of a dbt python model is a variation of our development code in the python worksheet so we'll be explaining the code and concepts more.
 
+1. Open your dbt Cloud browser tab. 
+2. Create a new file under the **models > marts > aggregates** directory called `agg_lap_times_moving_avg.py`. 
+3. Copy the following code in and save the file:
+    ```python
+    import pandas as pd
+
+    def model(dbt, session):
+        # dbt configuration
+        dbt.config(packages=["pandas"])
+
+        # get upstream data
+        lap_times = dbt.ref("mrt_lap_times_years").to_pandas()
+
+        # describe the data
+        lap_times["LAP_TIME_SECONDS"] = lap_times["LAP_TIME_MILLISECONDS"]/1000
+        lap_time_trends = lap_times.groupby(by="RACE_YEAR")["LAP_TIME_SECONDS"].mean().to_frame()
+        lap_time_trends.reset_index(inplace=True)
+        lap_time_trends["LAP_MOVING_AVG_5_YEARS"] = lap_time_trends["LAP_TIME_SECONDS"].rolling(5).mean()
+        lap_time_trends.columns = lap_time_trends.columns.str.upper()
+        
+        return lap_time_trends.round(1)
+    ```
+4. Let’s break down what this code is doing:
+    - First, we are importing the Python libraries that we are using. This is similar to a dbt *package*, but our Python libraries do *not* persist across the entire project.
+    - Defining a function called `model` with the parameter `dbt` and `session`. We'll define these more in depth later in this section. You can see that all the data transformation happening is within the body of the `model` function that the `return` statement is tied to.
+    - Then, within the context of our dbt model library, we are passing in a configuration of which packages we need using `dbt.config(packages=["pandas"])`.
+    - Use the `.ref()` function to retrieve the upstream data frame `mrt_lap_times_years` that we created in our last step using SQL. We cast this to a pandas dataframe (by default it's a Snowpark Dataframe).
+    - From there we are using python to transform our dataframe to give us a rolling average by using `rolling()` over `RACE_YEAR`. 
+    - Convert our Python column names to all uppercase using `.upper()`, so Snowflake recognizes them. **This has been a frequent "gotcha" for folks using dbt python so we call it out here.**
+    We won’t go as in depth for our subsequent scripts, but will continue to explain at a high level what new libraries, functions, and methods are doing.
+5. Create the model in our warehouse by clicking **Build**.
+6. We can't preview Python models directly, so let’s create a new file using the **+** button or the Control-N shortcut to create a new scratchpad:
+  ```sql
+    select * from {{ ref('agg_lap_times_moving_avg') }}
+    ```
+    and preview the output:
+TODO add screenshot 
+7. We can see we have the same results from our python worksheet development as we have in our codified dbt python project. 
+
+### The dbt model, .source(), .ref() and .config() functions
+
+Let’s take a step back before starting machine learning to both review and go more in-depth at the methods that make running dbt python models possible. If you want to know more outside of this lab’s explanation read the documentation [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models).
+
+- dbt model(dbt, session). For starters, each Python model lives in a .py file in your models/ folder. It defines a function named `model()`, which takes two parameters:
+    - dbt &mdash; A class compiled by dbt Core, unique to each model, enables you to run your Python code in the context of your dbt project and DAG.
+    - session &mdash; A class representing your data platform’s connection to the Python backend. The session is needed to read in tables as DataFrames and to write DataFrames back to tables. In PySpark, by convention, the SparkSession is named spark, and available globally. For consistency across platforms, we always pass it into the model function as an explicit argument called session.
+- The `model()` function must return a single DataFrame. On Snowpark (Snowflake), this can be a Snowpark or pandas DataFrame.
+- `.source()` and `.ref()` functions. Python models participate fully in dbt's directed acyclic graph (DAG) of transformations. If you want to read directly from a raw source table, use `dbt.source()`. We saw this in our earlier section using SQL with the source function. These functions have the same execution, but with different syntax. Use the `dbt.ref()` method within a Python model to read data from other models (SQL or Python). These methods return DataFrames pointing to the upstream source, model, seed, or snapshot.
+- `.config()`. Just like SQL models, there are three ways to configure Python models:
+    - In a dedicated `.yml` file, within the `models/` directory
+    - Within the model's `.py` file, using the `dbt.config()` method
+    - Calling the `dbt.config()` method will set configurations for your model within your `.py` file, similar to the `{{ config() }} macro` in `.sql` model files. There's a limit to how complex you can get with the `dbt.config()` method. It accepts only literal values (strings, booleans, and numeric types). Passing another function or a more complex data structure is not possible. The reason is that dbt statically analyzes the arguments to `.config()` while parsing your model without executing your Python code. If you need to set a more complex configuration, we recommend you define it using the config property in a [YAML file](/reference/resource-properties/config). Learn more about configurations [here](/reference/model-configs).
+        ```python 
+        def model(dbt, session):
+
+        # setting configuration
+        dbt.config(materialized="table")
+        ```
+Now that we understand how to create python transformations we can use them to prepare our data for machine learning!
 
 <!-- ------------------------ -->
-## Machine Learning prep: cleaning, encoding, and splits, oh my!
+## Machine Learning prep -- cleaning and encoding
 Now that we’ve gained insights and business intelligence about Formula 1 at a descriptive level, we want to extend our capabilities into prediction. We’re going to take the scenario where we censor the data. This means that we will pretend that we will train a model using earlier data and apply it to future data. In practice, this means we’ll take data from 2010-2019 to train our model and then predict 2020 data.
 
 In this section, we’ll be preparing our data to predict the final race position of a driver.
@@ -476,11 +541,12 @@ At a high level we’ll be:
 - Encoding our data (algorithms like numbers) and simplifying our target variable called `position`
 - Splitting our dataset into training, testing, and validation
 
-<!-- ------------------------ -->
-## ML data prep
+### ML data prep
 
-1. To keep our project organized, we’ll need to create two new subfolders in our `ml` directory. Under the `ml` folder, make the subfolders `prep` and `train_predict`.
-2. Create a new file under `ml/prep` called `ml_data_prep.py`. Copy the following code into the file and **Save**.
+1. Take a minute to **Preview** and look at the **Lineage** of the `mrt_results_circuits` which is the foundational dataset we'll be starting our machine leanring on. Get to understand the columns. Some *hierarchial joins were completed to get this nice clean dataset we brought in through our repo forking.
+2.  To keep our project organized, we’ll need to create two new subfolders in our `ml` directory. Under the `ml` folder, make the subfolders `prep_encoding_splitting` and `training_and_prediction`.
+    *to know the circuit of a result, we first had to join results to races together, then circuits to races. 
+3. Create a new file under `ml/prep_encoding_splitting` called `ml_data_prep.py`. Copy the following code into the file and **Save**:
     ```python 
     import pandas as pd
 
@@ -489,7 +555,7 @@ At a high level we’ll be:
         dbt.config(packages=["pandas"])
 
         # get upstream data
-        fct_results = dbt.ref("fct_results").to_pandas()
+        fct_results = dbt.ref("mrt_results_circuits").to_pandas()
 
         # provide years so we do not hardcode dates in filter command
         start_year=2010
@@ -499,7 +565,7 @@ At a high level we’ll be:
         data =  fct_results.loc[fct_results['RACE_YEAR'].between(start_year, end_year)]
 
         # convert string to an integer
-        data['POSITION'] = data['POSITION'].astype(float)
+        # data['POSITION'] = data['POSITION'].astype(float)
 
         # we cannot have nulls if we want to use total pit stops 
         data['TOTAL_PIT_STOPS_PER_RACE'] = data['TOTAL_PIT_STOPS_PER_RACE'].fillna(0)
@@ -542,23 +608,24 @@ At a high level we’ll be:
         
         return data
     ```
-3. As usual, let’s break down what we are doing in this Python model:
-    - We’re first referencing our upstream `fct_results` table and casting it to a pandas dataframe.
+4. As usual, let’s break down what we are doing in this Python model:
+    - We’re first referencing our upstream `mrt_results_circuits` table and casting it to a pandas dataframe.
     - Filtering on years 2010-2020 since we’ll need to clean all our data we are using for prediction (both training and testing).
     - Filling in empty data for `total_pit_stops` and making a mapping active constructors and drivers to avoid erroneous predictions
-        - ⚠️ You might be wondering why we didn’t do this upstream in our `fct_results` table! The reason for this is that we want our machine learning cleanup to reflect the year 2020 for our predictions and give us an up-to-date team name. However, for business intelligence purposes we can keep the historical data at that point in time. Instead of thinking of one table as “one source of truth” we are creating different datasets fit for purpose: one for historical descriptions and reporting and another for relevant predictions.
+        - ⚠️ You might be wondering why we didn’t do this upstream in our `mrt_results_circuits` table! The reason for this is that we want our machine learning cleanup to reflect the year 2020 for our predictions and give us an up-to-date team name. However, for business intelligence purposes we can keep the historical data at that point in time. Instead of thinking of one table as “one source of truth” we are creating different datasets fit for purpose: one for historical descriptions and reporting and another for relevant predictions.
     - Create new features for driver and constructor confidence. This metric is created as a proxy for understanding consistency and reliability. There are more aspects we could consider for this project, such as normalizing the driver confidence by the number of races entered, but we'll keep it simple.
-    - Generate flags for the constructors and drivers that were active in 2020
-4. Execute the following in the command bar:
-    ```bash
-    dbt run --select ml_data_prep
+    - Generate flags for the constructors and drivers that were active in 2020. 
+5. **Build** the `ml_data_prep`.
+6. Open a scratchpad and preview our clean dataframe after creating our `ml_data_prep` dataframe:
+  ```sql
+    select * from {{ ref('ml_data_prep') }}
     ```
-6. Let’s look at the preview of our clean dataframe after running our `ml_data_prep` model:
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/11-machine-learning-prep/1-completed-ml-data-prep.png" title="What our clean dataframe fit for machine learning looks like"/>
 
-<!-- ------------------------ -->
-## Covariate encoding
+Now that our data is clean it's time to encode it. 
 
+<!-- ------------------------ -->
+### Covariate encoding
 In this next part, we’ll be performing covariate encoding. Breaking down this phrase a bit, a *covariate* is a variable that is relevant to the outcome of a study or experiment, and *encoding* refers to the process of converting data (such as text or categorical variables) into a numerical format that can be used as input for a model. This is necessary because most machine learning algorithms can only work with numerical data. Algorithms don’t speak languages, have eyes to see images, etc. so we encode our data into numbers so algorithms can perform tasks by using calculations they otherwise couldn’t.
 
 🧠 We’ll think about this as : “algorithms like numbers”.
@@ -609,24 +676,23 @@ In this next part, we’ll be performing covariate encoding. Breaking down this 
 
     return encoded_data_grouped_target
     ```
-2. Execute the following in the command bar:
-    ```bash
-    dbt run --select covariate_encoding
-    ```
-3. In this code we are using [Scikit-learn](https://scikit-learn.org/stable/), “sklearn” for short, is an extremely popular data science library. We’ll be using Sklearn for both preparing our covariates and creating models (our next section). Our dataset is pretty small data so we are good to use pandas and `sklearn`. If you have larger data for your own project in mind, consider `dask` or `category_encoders`.
+2. Create the model using **Build**. 
+3. In this code we are using [Scikit-learn](https://scikit-learn.org/stable/), “sklearn” for short, is an extremely popular data science library. We’ll be using Sklearn for both preparing our covariates and creating models (our next section). Our dataset is pretty small data so we are good to use pandas and `sklearn`. If you have larger data for your own project in mind, consider Snowpark dataframes, `dask`, or `category_encoders`.
 4. Breaking our code down a bit more:
     - We’re selecting a subset of variables that will be used as predictors for a driver’s position.
     - Filter the dataset to only include rows using the active driver and constructor flags we created in the last step.
     - The next step is to use the `LabelEncoder` from scikit-learn to convert the categorical variables `CIRCUIT_NAME`, `CONSTRUCTOR_NAME`, `DRIVER`, and `TOTAL_PIT_STOPS_PER_RACE` into numerical values.
     - To simplify the classification and improve performance, we are creating a new variable called `POSITION_LABEL` from our original position variable with in Formula 1 with 20 total positions. This new variable has a specific meaning: those in the top 3 get a “podium” position, those in the top 10 get points that add to their overall season total, and those below the top 10 get no points. The original position variable is being mapped to position_label in a way that assigns 1, 2, and 3 to the corresponding places.
-    - Drop the active driver and constructor flags since they were filter criteria and additionally drop our original position variable.
+    - Drop the active driver and constructor flags since they were filter criteria and are now all the same value, which won't increase prediction lift of an algorithm. Finally, drop our original position variable.
 
 <!-- ------------------------ -->
 ## Splitting into training and testing datasets
 
 In this step, we will create dataframes to use for training and prediction. We’ll be creating two dataframes 1) using data from 2010-2019 for training, and 2) data from 2020 for new prediction inferences. We’ll create variables called `start_year` and `end_year` so we aren’t filtering on hardcasted values (and can more easily swap them out in the future if we want to retrain our model on different timeframes).
 
-1. Create a file called `train_test_dataset.py` copy and save the following code:
+TODO @snowflake @DanHunt if you want to redo scripts to show of random functionality here that works. Please note that the temporal split is intentional as to not cause temporal leakage.
+
+1. Create a file called `training_and_testing_dataset.py` copy and save the following code:
     ```python 
     import pandas as pd
 
@@ -688,10 +754,10 @@ There are 3 areas to break down as we go since we are working at the intersectio
 If you haven’t seen code like this before or use joblib files to save machine learning models, we’ll be going over them at a high level and you can explore the links for more technical in-depth along the way! Because Snowflake and dbt have abstracted away a lot of the nitty gritty about serialization and storing our model object to be called again, we won’t go into too much detail here. There’s *a lot* going on here so take it at your pace!
 
 <!-- ------------------------ -->
-## Training and saving a machine learning model
+### Training and saving a machine learning model
 
-1. Project organization remains key, so let’s make a new subfolder called `train_predict.py` under the `ml` folder.
-2. Now create a new file called `train_test_position.py` and copy and save the following code:
+1. Project organization remains key, so let’s make a new subfolder called `training_and_prediction.py` under the `ml` folder.
+2. Now create a new file called `train_model_to_predict_position.py` and copy and save the following code:
 
     ```python 
     import snowflake.snowpark.functions as F
@@ -777,7 +843,7 @@ If you haven’t seen code like this before or use joblib files to save machine 
             - `dest_filename` &mdash; a string representing the desired name of the file.
         - Creating our dbt model
             - Within this model we are creating a stage called `MODELSTAGE` to place our logistic regression `joblib` model file. This is really important since we need a place to keep our model to reuse and want to ensure it's there. When using Snowpark commands, it's common to see the `.collect()` method to ensure the action is performed. Think of the session as our “start” and collect as our “end” when [working with Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) (you can use other ending methods other than collect).
-            - Using `.ref()` to connect into our `train_test_dataset` model.
+            - Using `.ref()` to connect into our `train_model_to_predict_position` model.
             - Now we see the machine learning part of our analysis:
                 - Create new dataframes for our prediction features from our target variable `position_label`.
                 - Split our dataset into 70% training (and 30% testing), train_size=0.7 with a `random_state` specified to have repeatable results.
@@ -795,13 +861,16 @@ If you haven’t seen code like this before or use joblib files to save machine 
     ```
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/2-list-snowflake-stage.png" title="List the objects in our Snowflake stage to check for our logistic regression to predict driver position"/>
 
-7. To investigate the commands run as part of `train_test_position` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
+7. To investigate the commands run as part of `train_model_to_predict_position.py` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/3-view-snowflake-query-history.png" title="View Snowflake query history to see how python models are run under the hood"/>
 
-<!-- ------------------------ -->
-## Predicting on new data
+Let's use our new trained model to create predictions!
 
-1. Create a new file called `predict_position.py` and copy and save the following code:
+<!-- ------------------------ -->
+### Predicting on new data
+It's time to use that 2020 data we held out to make predictions on!
+
+1. Create a new file called `apply_prediction_to_position.py` and copy and save the following code:
     ```python
     import logging
     import joblib
@@ -922,9 +991,9 @@ If you haven’t seen code like this before or use joblib files to save machine 
 
 6. Let’s take a look at our predicted position alongside our feature variables. Open a new scratchpad and use the following query. I chose to order by the prediction of who would obtain a podium position:
     ```sql
-    select * from {{ ref('predict_position') }} order by position_predicted
+    select * from {{ ref('apply_prediction_to_position') }} order by position_predicted
     ```
-7. We can see that we created predictions in our final dataset, we are ready to move on to testing!
+7. We can see that we created predictions in our final dataset, we are ready to move on to deployment!
 
 <!-- ------------------------ -->
 ## Metadata Configuration
