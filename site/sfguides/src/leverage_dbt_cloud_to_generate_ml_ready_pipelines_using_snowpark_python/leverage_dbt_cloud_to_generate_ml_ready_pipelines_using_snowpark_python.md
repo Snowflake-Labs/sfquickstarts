@@ -80,13 +80,13 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     ```
 2. Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the option **…** and **Rename**. Rename the file  to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Make sure your role is set as the **ACCOUNTADMIN** and select the **COMPUTE_WH** warehouse.
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/1-rename-worksheet-and-select-warehouse.png" title="Rename worksheet and select warehouse"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/1-rename-worksheet-and-select-warehouse.png" title="Rename worksheet and select warehouse"/> -->
 
 3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://github.com/dbt-labs/python-snowpark-formula1/blob/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! Generally during this lab we'll be explaining and breaking down the queries. We won't going line by line, but we will point out important information related to our learning objectives!
 
 4. Ensure all the commands are selected before running the query &mdash; an easy way to do this is to use Ctrl-A to highlight all of the code in the worksheet. Select **run** (blue triangle icon). Notice how the dot next to your **COMPUTE_WH** turns from gray to green as you run the query. The **status** table is the final table of all 14 tables loaded in. 
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/2-load-data-from-s3.png" title="Load data from S3 bucket"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/2-load-data-from-s3.png" title="Load data from S3 bucket"/> -->
 
 5. Let’s unpack that pretty long query we ran into component parts. We ran this query to load in our 14 Formula 1 tables from a public S3 bucket. To do this, we:
     - Created a new database called `formula1` and a schema called `raw` to place our raw (untransformed) data into. 
@@ -96,7 +96,7 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 
 6. Now let's take a look at some of our cool Formula 1 data we just loaded up!
     1. Create a SQL worksheet by selecting the **+** then **SQL Worksheet**.
-        <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/3-create-new-worksheet-to-query-data.png" title="Create new worksheet to query data"/>
+        <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/3-create-new-worksheet-to-query-data.png" title="Create new worksheet to query data"/> -->
     2. Navigate to **Database > Formula1 > RAW > Tables**. 
     3. Query the data using the following code. There are only 76 rows in the circuits table, so we don’t need to worry about limiting the amount of data we query.
         ```sql
@@ -106,7 +106,7 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     5. Review the query results, you should see information about Formula 1 circuits, starting with Albert Park in Australia! 
     6. Finally, ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
 
-        <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/4-query-circuits-data.png" title="Query circuits data"/>
+        <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/4-query-circuits-data.png" title="Query circuits data"/> -->
 
 <!-- ------------------------ -->
 ## Setup dbt account 
@@ -115,19 +115,19 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 1. Navigate out of your SQL worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
 3. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/1-open-partner-connect.png" title="Open Partner Connect"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/1-open-partner-connect.png" title="Open Partner Connect"/> -->
 4. You should now see a new window that says **Connect to dbt**. Select **Optional Grant** and add the `FORMULA1` database. This will grant access for your new dbt user role to the FORMULA1 database.
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/2-partner-connect-optional-grant.png" title="Partner Connect Optional Grant"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/2-partner-connect-optional-grant.png" title="Partner Connect Optional Grant"/> -->
 
 5. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/3-connect-to-dbt.png" title="Connect to dbt"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/3-connect-to-dbt.png" title="Connect to dbt"/> -->
 
 6. When you see the **Your partner account has been created** window, click **Activate**.
 
 7. You should be redirected to a dbt Cloud registration page. Fill out the form. Make sure to save the password somewhere for login in the future. 
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/4-dbt-cloud-sign-up.png" title="dbt Cloud sign up"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/4-dbt-cloud-sign-up.png" title="dbt Cloud sign up"/> -->
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
@@ -140,14 +140,14 @@ In this section we'll be setting up our own personal development schema and fork
 ### Schema name
 1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **Profile Settings** from the gear icon in the upper right. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. 
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/1-settings-gear-icon.png" title="Settings menu"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/1-settings-gear-icon.png" title="Settings menu"/> -->
 
 2. Navigate to the **Credentials** menu and select **Partner Connect Trial**, which will expand the credentials menu.
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/2-credentials-edit-schema-name.png" title="Credentials edit schema name"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/2-credentials-edit-schema-name.png" title="Credentials edit schema name"/> -->
     
 3. Click **Edit** and change the name of your schema from `dbt_` to `dbt_YOUR_NAME` replacing `YOUR_NAME` with your initials and name (`hwatson` is used in the lab screenshots). Be sure to click **Save** for your changes!
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/3-save-new-schema-name.png" title="Save new schema name"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/3-save-new-schema-name.png" title="Save new schema name"/> -->
 
 4. We now have our own personal development schema, amazing! When we run our first dbt models they will build into this schema.
 
@@ -181,21 +181,21 @@ dbt Cloud's IDE will be our development space for this workshop, so let's get fa
 
 1. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, an SQL and Python runner, and a CLI with Git version control all baked into one package! This allows you to focus on editing your SQL and Python files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The Git workflow in dbt Cloud allows both Git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/7-IDE-overview.png" title="IDE overview"/>
+<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/7-IDE-overview.png" title="IDE overview"/> -->
 
-2. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and click **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. To understand more about what the [dbt build](https://docs.getdbt.com/reference/commands/build) syntax is running check out the documentation.
-TODO Update with new pipeline 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/8-dbt-run-example-models.png" title="dbt run example models"/>
+2. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and select **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. To understand more about what the [dbt build](https://docs.getdbt.com/reference/commands/build) syntax is running check out the documentation.
+<!-- TODO Update with new pipeline  -->
+<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/8-dbt-run-example-models.png" title="dbt run example models"/> -->
 
 3. Take a few minutes to poke around our pipeline and viewing the DAG lineage. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
 
 4. The run results allow you to see the code that dbt compiles and sends to Snowflake for execution. To view the logs for this run, select one of the model tabs using the  **>** icon and then **Details**. If you scroll down a bit you'll be able to see the compiled code and how dbt interacts with Snowflake. Given that this run took place in our development environment, the models were created in your development schema.
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/9-second-model-details.png" title="Details about the second model"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/9-second-model-details.png" title="Details about the second model"/> -->
 
- TODO Update with new pipeline 
-5. Now let's switch over to a new browser tab on Snowflake to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/10-confirm-example-models-built-in-snowflake.png" title="Confirm example models are built in Snowflake"/>
+ <!-- TODO Update with new pipeline  -->
+5. Now let's switch over to a new browser tab **on Snowflake** to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/10-confirm-example-models-built-in-snowflake.png" title="Confirm example models are built in Snowflake"/> -->
 
 
 <!-- ------------------------ -->
@@ -206,7 +206,7 @@ In the next couple steps we are taking time to review how this was done. That wa
 
 ### dbt_project.yml
 1. Select the `dbt_project.yml` file from the file tree to open it. What are we looking at here? Every dbt project requires a `dbt_project.yml` file &mdash; this is how dbt knows a directory is a dbt project. The [dbt_project.yml](/reference/dbt_project.yml) file also contains important information that tells dbt how to operate on your project.
-2. Your code shoudl like as follows: 
+2. Your code should as follows: 
     ```yaml
     name: 'snowflake_python_workshop'
     version: '1.5.0'
@@ -228,35 +228,35 @@ In the next couple steps we are taking time to review how this was done. That wa
 
     target-path: "target"  # directory which will store compiled SQL files
     clean-targets:         # directories to be removed by `dbt clean`
-      - "target"
-      - "dbt_packages"
+        - "target"
+        - "dbt_packages"
 
     models:
-      snowflake_python_workshop:
+        snowflake_python_workshop:
         staging:
-          +docs:
+            +docs:
             node_color: "CadetBlue"
 
         marts:
-          +materialized: table
-          aggregates:
+            +materialized: table
+            aggregates:
             +docs:
-              node_color: "Maroon"
+                node_color: "Maroon"
             +tags: "bi"
 
         core:
-          +materialized: table
-          +docs:
+            +materialized: table
+            +docs:
             node_color: "#800080"
 
         ml:
-          +materialized: table
-          prep_encoding_splitting:
+            +materialized: table
+            prep_encoding_splitting:
             +docs:
-              node_color: "Indigo"
-          training_and_prediction:
+                node_color: "Indigo"
+            training_and_prediction:
             +docs:
-              node_color: "Black"
+                node_color: "Black"
     ```
 
 3. The key configurations to point out in the file with relation to the work that we're going to do are in the `models` section.
@@ -273,7 +273,7 @@ In the next couple steps we are taking time to review how this was done. That wa
 Cool, now that dbt knows we have a dbt project we can view the folder structure and data modeling.  
 
 ### Folder structure 
-TODO Update with new folders
+<!-- TODO Update with new folders  -->
 dbt Labs has developed a [project structure guide](/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices. 
 Do check out that guide if you want to learn more. Right now we are going to organize our project using the following structure:
 
@@ -286,17 +286,16 @@ Do check out that guide if you want to learn more. Right now we are going to org
     - prep_encoding_splitting
     - training_and_prediction
 
-1. In your file tree, use your cursor and hover over the `models` subdirectory, click the three dots **…** that appear to the right of the folder name, then select **Create Folder**. We're going to add two new folders to the file path, `ml` and `prep_encoding_splitting` (in that order) by typing `ml/prep_encoding_splitting` into the file path.
-
-TODO update screeenshots 
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/> -->
-    
+1. In your file tree, use your cursor and hover over the `models` subdirectory, click the three dots `…` that appear to the right of the folder name, then select **Create Folder**. We're going to add two new folders to the file path, `ml` and `prep_encoding_splitting` (in that order) by typing `ml/prep_encoding_splitting` into the file path.
     - If you click into your `models` directory now, you should see the new `ml` folder nested within `models` and the `prep_encoding_splitting` folder nested within `ml`.
+
+<!-- TODO update screeenshots  -->
+<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
+<Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/> -->
 
 2. We will need to create one more subfolder using the UI, under the `ml` folder create `training_and_prediction`. After you create these folders, your entire folder tree should look like this when it's all done (from what we forked and just created):
 
-    <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/>
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/> -->
 
 Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1) to view the complete folder and file strucutre.  
 
@@ -315,9 +314,9 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
 2. You should see the following code that creates our 14 source tables in our dbt project from Snowflake:
 
 3. dbt makes it really easy to:
-  - declare [sources](https://docs.getdbt.com/docs/build/sources)
-  - provide [testing](https://docs.getdbt.com/docs/build/tests) for data quality and integrity with support for both generic and singular tests 
-  - create [documentation](https://docs.getdbt.com/docs/collaborate/documentation) using descriptions where you write code
+    - declare [sources](https://docs.getdbt.com/docs/build/sources)
+    - provide [testing](https://docs.getdbt.com/docs/build/tests) for data quality and integrity with support for both generic and singular tests 
+    - create [documentation](https://docs.getdbt.com/docs/collaborate/documentation) using descriptions where you write code
 
 
 ### Staging 
@@ -346,11 +345,10 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
     from renamed
     ```
 3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. 
-4. Click **preview** &mdash; look how pretty and human readable our official_laptime column is!
+4. Click **preview** &mdash; look how pretty and human readable our `official_laptime` column is!
 5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
 6. We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our [macros documentation](https://docs.getdbt.com/docs/build/jinja-macros). 
-7. TODO talk about surrogate_key and dbt_utils
-
+<!-- 7. TODO talk about surrogate_key and dbt_utils -->
 
 You can see for every source table, we have a staging table. Now that we're done staging our data it's time for transformation.
 
@@ -366,25 +364,25 @@ SQL is so performant at data cleaning and transformation, that many data science
 2. **Preview** the data. We can see we have the `RACE_YEAR` in this table. That's important since we want to understand the changes in lap times over years. So we now know `dim_races` contains the time column we need to make those calculations. 
 3. Create a new file within the **core** directory **core > ... > Create file**.
 4. Name the file `fct_lap_times.sql`.
+<!-- TODO maybe stylize lower vs uppercase in sql files -->
 5. Copy in the following code and save the file (**Save** or Ctrl+S):
     ```sql
-    WITH lap_times AS (
-    SELECT 
-        {{ dbt_utils.generate_surrogate_key(['race_id', 'driver_id', 'lap']) }}         AS lap_times_id,
-        race_id                                                                         AS race_id,
-        driver_id                                                                       AS driver_id,
-        lap                                                                             AS lap,
-        driver_position                                                                 AS driver_position,
-        lap_time_formatted                                                              AS lap_time_formatted,
-        official_laptime                                                                AS official_laptime,
-        lap_time_milliseconds                                                           AS lap_time_milliseconds
-    FROM {{ ref('stg_lap_times') }}
+    with lap_times as (
+        select 
+            {{ dbt_utils.generate_surrogate_key(['race_id', 'driver_id', 'lap']) }} as lap_times_id,
+            race_id                                                                 as race_id,
+            driver_id                                                               as driver_id,
+            lap                                                                     as lap,
+            driver_position                                                         as driver_position,
+            lap_time_formatted                                                      as lap_time_formatted,
+            official_laptime                                                        as official_laptime,
+            lap_time_milliseconds                                                   as lap_time_milliseconds
+        from {{ ref('stg_lap_times') }}
     )
-
-    SELECT * FROM lap_times
+    select * from lap_times
     ```
 6. Our `fct_lap_times` is very similar to our staging file since this is clean demo data. In your real world data project your data will probably be messier and require extra filtering and aggregation prior to becoming a fact table exposed to your business users for utilizing.
-7. Use the UI **BUILD** to create the `fct_lap_times` model. 
+7. Use the UI **Build** (buttom with hammer icon) to create the `fct_lap_times` model. 
 
 Now we have both `dim_races` and `fct_lap_times` separately. Next we'll to join these to create lap trend analysis through the years.
 
@@ -393,7 +391,7 @@ Marts tables are where everything comes together to create our business-defined 
 We'll be joining our `dim_races` and `fct_lap_times` together. 
 
 1. Create a new file under your **marts** folder called `mrt_lap_times_years.sql`.
-2. Copy and save the following code:
+2. Copy and **Save** the following code:
     ```sql
     with lap_times as (
     select * from {{ ref('fct_lap_times') }}
@@ -427,11 +425,11 @@ Now that we've transformed data using SQL let's write our first python code and 
 Snowflake python worksheets are excellent for developing your python code before bringing it into a dbt python model.
 Then once we are settled on the code we want, we can drop it into our dbt project. 
 
-1. Head back over to Snowflake.
+1. Head back over **to Snowflake**.
 2. Open up a **Python Worksheet**. 
 
-TODO I think more explanation of python worksheets would go well here. (@snowflake team)
-TODO @snowflake team -- feel free to translate this python worksheet into snowpark code and clean up a bit (i.e. final_df isn't really necessary)
+<!-- TODO I think more explanation of python worksheets would go well here. (@snowflake team)(@Dan)(@Ripu) --> 
+<!-- TODO (@snowflake team)(@Dan) -- feel free to translate this python worksheet into snowpark code and clean up a bit (i.e. final_df isn't really necessary) -->
 3. Use the following code to get a 5 year moving average of Formula 1 laps:
     ```python
     # The Snowpark package is required for Python Worksheets. 
