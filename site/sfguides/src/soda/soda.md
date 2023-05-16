@@ -41,7 +41,7 @@ Is your data fresh? Is it complete or missing values? Are there unexpected dupli
 - You have installed [Python 3.8](https://www.python.org/downloads/) or greater.
 - You have installed Pip 21.0 or greater.
 - You have installed a code editor such as [Visual Studio Code](https://code.visualstudio.com/) or [Sublime](https://www.sublimetext.com/).
-- You have a Snowflake Account.
+- You have a Snowflake Account. If not, [start a free trial](https://trial.snowflake.com/?owner=SPN-PID-420074)!
 - You have a Snowflake database that contains data.
 - You have login credentials for your Snowflake database.
 
@@ -119,7 +119,7 @@ This guide also instructs you to connect to a Soda platform account using API ke
 2. Copy and paste the connection configuration details for Snowflake as in the example below. 
 - The `soda_cloud` configuration connects Soda to your platform account; leave it blank for a moment.
 - Replace `my_datasource_name` with the name of your own Snowflake data source. 
-- Replace the values for each parameter with your own Snowflake-specific values. Refer to [Soda documentation](https://docs.soda.io/soda/connect-snowflake.html) for details.
+- Replace the values for each parameter with your own Snowflake-specific values. Refer to [Soda documentation](https://go.soda.io/connect-snowflake) for details.
     ```yaml
      data_source my_datasource_name:
        type: snowflake
@@ -141,7 +141,8 @@ This guide also instructs you to connect to a Soda platform account using API ke
        api_key_secret:
     ```
 3. In a browser, navigate to [cloud.soda.io/signup](https://cloud.soda.io/signup) to create a new Soda account. If you already have a Soda account, log in.
-4. In your platform account, navigate to **your avatar*- > **Profile**, then access the **API keys*- tab. Click the plus icon to generate a new set of API keys.
+4. In your platform account, navigate to **your avatar** > **Profile**, then access the **API keys** tab. Click the plus icon to generate a new set of API keys.
+![create-api-keys](assets/create-api-keys.png)
 - Copy the value for **API Key ID**, then paste it into the `configuration.yml` as the value for `api_key_id`.
 - Copy the value for **API Key Secret**, then paste it into the `configuration.yml` as the value for `api_key_secret`.
 - Enter the value for `host` according to the region your Soda platform account uses: `cloud.soda.io` for EU region; `cloud.us.soda.io` for USA region.
@@ -151,7 +152,8 @@ This guide also instructs you to connect to a Soda platform account using API ke
     soda test-connection -d my_datasource_name -c configuration.yml
     ```
     ```shell
-    Soda Core 3.0.xx
+    # Example output
+    Soda Core 3.0.34
     Successfully connected to 'my_datasource_name'.
     Connection 'my_datasource_name' is valid.
     ```
@@ -160,7 +162,7 @@ This guide also instructs you to connect to a Soda platform account using API ke
 ## Write data quality checks and run a scan
 Duration: 6
 
-A check is a test that Soda executes when it scans a dataset in your data source. The `checks.yml` file stores the checks you write using the Soda Checks Language (SodaCL). You can create multiple checks.yml files to organize your data quality checks and run all, or some of them, at scan time.
+A check is a test that Soda executes when it scans a dataset in your data source. The `checks.yml` file stores the checks you write using the [Soda Checks Language (SodaCL)](https://go.soda.io/sodacl). You can create multiple checks.yml files to organize your data quality checks and run all, or some of them, at scan time.
 
 1. In the same `soda_sip` directory, create another file named `checks.yml`.
 2. Open the `checks.yml` file in your code editor, then copy and paste the following rather generic checks into the file. Note that the `row_count` check is written to fail to demonstrate what happens when a data quality check fails.
@@ -189,7 +191,7 @@ A check is a test that Soda executes when it scans a dataset in your data source
     ```
     ```shell
     # Example output
-    Soda Core 3.0.xx
+    Soda Core 3.0.34
     Sending failed row samples to Soda Cloud
     Scan summary:
     3/5 checks PASSED: 
@@ -226,22 +228,22 @@ Duration: 1
 Now that you have seen Soda in action, learn more about how and where to integrate data quality into your existing workflows and pipelines.
 
 ### Experiment
-- [SodaCL tutorial](https://docs.soda.io/soda/quick-start-sodacl.html)
-- [Discover 25+ built-in Soda metrics and checks](https://docs.soda.io/soda-cl/metrics-and-checks.html)
-- [Compare your data](https://docs.soda.io/soda-cl/compare.html)
+- [SodaCL tutorial](https://go.soda.io/sodacl-quick-start)
+- [Discover 25+ built-in Soda metrics and checks](https://go.soda.io/metric_check_configurations)
+- [Compare your data](https://go.soda.io/compare)
 
 ### Choose Your Adventure
-- [Test data during development](https://docs.soda.io/soda/quick-start-dev.html)
-- [Test data in your pipeline](https://docs.soda.io/soda/quick-start-prod.html)
-- [Enable end-user testing](https://docs.soda.io/soda/quick-start-end-user.html)
+- [Test data during development](https://go.soda.io/cicd)
+- [Test data in your pipeline](https://go.soda.io/pipeline)
+- [Enable end-user testing](https://go.soda.io/self-serve)
 
 ### Sip More Soda
-- [Integrate with Slack](https://docs.soda.io/soda/integrate-slack.html)
-- [Add alert notification rules](https://docs.soda.io/soda-cloud/notif-rules.html)
-- [Integrate with dbt](https://docs.soda.io/soda/integrate-dbt.html)
-- [Report on data health](https://docs.soda.io/api-docs/reporting-api-v1.html#/)
+- [Integrate with Slack](https://go.soda.io/integrate-slack)
+- [Add alert notification rules](https://go.soda.io/alerts)
+- [Integrate with dbt](https://go.soda.io/soda-dbt)
+- [Report on data health](https://go.soda.io/reporting-api)
 
 
 ### Need help?
 - [Request a demo.](https://www.soda.io/schedule-a-demo) Hey, what can Soda do for you?
-- Join the [Soda community on Slack](https://community.soda.io/slack).
+- Join the [Soda community on Slack](https://go.soda.io/slack).
