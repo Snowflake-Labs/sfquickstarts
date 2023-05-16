@@ -227,7 +227,7 @@ Duration: 10
 
 Now that you have a basic understanding of how the `GEOMETRY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to use constructors to load data.  We will do it while trying one more way of getting data, namely, from the Shapefile file stored in the internal stage. 
 
-First download [this](https://drive.google.com/file/d/19OtHBq70O1GW8TSqOvfMnpSjNUbZmlGG/view?usp=sharing) Shapefile which contains boundaries of administrative areas in Netherlands. 
+First download [this](https://drive.google.com/file/d/1vRljHf5vu_U3KlYRyIPvLXfoxq1mbcCc/view?usp=sharing) Shapefile which contains boundaries of administrative areas in Netherlands. 
 Then in the navigation menu, select Data > Databases, choose `GEOLAB.GEOMETRY`, and click Create > Stage > Snowflake Managed.
 
 <img src ='assets/geo_analysis_geometry_9.png'>
