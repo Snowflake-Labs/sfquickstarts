@@ -10,7 +10,7 @@ tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, 
 # Getting Started with Power Apps and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
+Duration: 5
 
 ### Power Apps
 
@@ -120,16 +120,43 @@ This security integration is the same as setting up a Power BI integration [Powe
 ## Build Power Automate Flow
 Duration: 15
 
+From the Power Apps homescreen access the apps in the top left and click on Power Automate.
+![](assets/power_apps.png)
 
+On the Power Automate screen click on the 'My Flow' menu item on the left then "New Flow" and then "Instant Cloud Flow". Select Power Apps as your trigger, name the flow and then create.
+![](assets/new_flow.png)
+
+Now, it's time to build the connector! First click on "New Step" and the search bar search for "Snowflake" and select the "Submit SQL Statement for Executiuon" for each of the parameters in the Snowflake connector please populate as such:
+```bash
+Instance: <Snowflake host> (it should resemble: sn00111.central-us.azure.snowflakecomputing.com)
+statement: select name, age from rockers_table;
+database: HOL_DB
+schema: PUBLIC
+warehouse: HOL_DB
+role: PUBLIC
+```
+
+Next, create a "New "Step" and select the action "Convert result set rows from arrays to objects" and complete the activity parameters with the options below. Selected from the box on the left of the activity.
+```bash
+Row Type: rowType
+Data: data
+```
+
+Lastly, and the "Response" action. Your flow should now look like this:
+![](assets/final_flow.png)
+
+Click "save" in the top right corner then once saved click "test". Move through the prompts to run the Flow: select Manually, "Save & Test" then "Run Flow" then "Done". Within several seconds you should have successfully run the flow and it shoult look like this:
+![](assets/final_flow.png)
 
 ### Things to look out for
 - If you're getting a username and password error make sure that you the forward slash at the end the external_oauth_issuer parameter value
 - Similarly you may explore changing the external_oauth_snowflake_user_mapping_attribute value to "email_name" as that value in your user profile will match the email address in your Power Apps account. 
 - Make sure the you're getting the tenant id from your Power Apps account and not your Azure account as they don't always match.
+- If you're not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you're using an environment where the Snowflake connector is available.
 
 
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
-Duration: 15
+Duration: 5
 
-This quickstart will get you started with creating a simple power apps flow that connects to Snowflake and queries a table. From here you can use the connector in many different flows with different power apps activities to read data from and write data to Snowflake. Additionally, users can utilize Azure Active Directory and SSO to create a user that links to the security integration to for power apps. [AAD-SSO](https://docs.snowflake.com/en/user-guide/oauth-powerbi#getting-started)
+This quickstart will get you started with creating a simple power apps flow that connects to Snowflake and queries a table. From here you can use the connector in many different flows with different power apps activities to read data from and write data to Snowflake see here for more details: [Power-Apps](https://learn.microsoft.com/en-us/power-automate/getting-started). Additionally, users can utilize Azure Active Directory and SSO to create a user that links to the security integration to for power apps. [AAD-SSO](https://docs.snowflake.com/en/user-guide/oauth-powerbi#getting-started)
