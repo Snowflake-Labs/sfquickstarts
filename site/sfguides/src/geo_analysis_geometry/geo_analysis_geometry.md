@@ -280,7 +280,7 @@ SELECT to_geometry(wkt) AS geometry,
        properties:NAME_2::string as municipality_name
 FROM table(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl_areas.shp'));
 ```
-This query fails with the the error: *Geometry validation failed: Geometry has invalid self-intersections. A self-intersection point was found at (3.86486, 51.5442)*. 
+This query fails with the the error: *Geometry validation failed: Geometry has invalid self-intersections. A self-intersection point was found at (559963, 5.71069e+06)*. 
 
 > aside negative
 >  The constructor function determines if the shape is valid according to the [Open Geospatial Consortium’s Simple Feature Access / Common Architecture](https://www.ogc.org/standards/sfa) standard. If the shape is invalid, the function reports an error and does not create the GEOMETRY object. That is what happened in our example.
@@ -297,12 +297,12 @@ FROM table(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl
 order by is_valid asc;
 ```
 
+<img src ='assets/geo_analysis_geometry_15_1.png'>
+
 This query completed without error and now you see that the shape of the province Zeeland is invalid. Let's try to repair it by applying [ST_BUFFER](https://docs.snowflake.com/en/sql-reference/functions/st_buffer) function with a small value of the distance.
 
-<img src ='assets/geo_analysis_geometry_15.png'>
-
 ```
-SELECT st_buffer(to_geometry(wkt, True), -0.000000001) AS geometry,
+SELECT st_buffer(to_geometry(wkt, True), -1) AS geometry,
        st_isvalid(geometry) as is_valid,
        (case when properties:TYPE_1::string is null then 'Municipality' else 'Province' end) as type,
        properties:NAME_1::string as province_name,
@@ -311,16 +311,18 @@ FROM table(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl
 order by is_valid asc;
 ```
 
+<img src ='assets/geo_analysis_geometry_15.png'>
+
 > aside negative
 >  The ST_BUFFER with some small positive or negative value for the distance *sometimes* can help to fix invalid shapes. However, you should remember that the unit of measurement for the distance parameter in the ST_BUFFER will be the same as your data. Therefore, if your data utilizes lon/lat values, the distance's units will also be degrees.
 
-Now all shapes are valid and the data ready to be ingested. One additional thing we should do is to set SRID, since othervise it will be set to 0. This dataset is in the reference system WGS 84, so it makes sense to add the SRID=4326 to the constructor function.
+Now all shapes are valid and the data ready to be ingested. One additional thing we should do is to set SRID, since othervise it will be set to 0. This dataset is in the reference system [WGS 72 / UTM zone 31N](https://epsg.io/32231), so it makes sense to add the SRID=32231 to the constructor function.
 
 Run the following query:
 
 ```
 CREATE OR REPLACE TABLE geolab.geometry.nl_administrative_areas AS
-SELECT st_buffer(to_geometry(wkt, 4326, True), 0) AS geometry,
+SELECT st_buffer(to_geometry(wkt, 32231, True), 0) AS geometry,
        (case when properties:TYPE_1::string is null then 'Municipality' else 'Province' end) as type,
        properties:NAME_1::string as province_name,
        properties:NAME_2::string as municipality_name
@@ -355,32 +357,30 @@ The results look similar to this:
 The spatial data is stored using the `GEOMETRY` data type and employs the Dutch mapping system, `Amersfoort / RD New` (SRID = 28992). To view the contents of the table containing the boundaries of the administrative areas in the Netherlands, execute the following query:
 
 ```
-SELECT name,
-       geometry
+SELECT *
 FROM geolab.geometry.nl_administrative_areas
 LIMIT 5;
 ```
-This dataset operates on SRID 4326, which uses latitude and longitude coordinates.
 
 <img src ='assets/geo_analysis_geometry_17.png'>
 
-In order to compute the length of all cables per administrative area, it's essential that both datasets adhere to the same mapping system. We have two viable options: either re-project `nl_administrative_areas` to SRID 28992, or reproject `nl_cables_stations` to SRID 4326. For this exercise, let's choose the first option. The reason why we choose the SRID 28992 is because we need to calculate length, and if we use SRID 4326 (which utilizes lon/lat values as coordinates) we would get meaningless results after applying ST_LENGTH function.
+In order to compute the length of all cables per administrative area, it's essential that both datasets adhere to the same mapping system. We have two options: either re-project `nl_administrative_areas` to SRID 28992, or reproject `nl_cables_stations` to SRID 32231. For this exercise, let's choose the first option.
 
 Run the following query:
 ```
-select t1.province_name,
+SELECT t1.province_name,
     sum(st_length(t2.geometry)) AS cables_length
 FROM geolab.geometry.nl_administrative_areas t1,
      geolab.geometry.nl_cables_stations t2
 WHERE st_intersects(st_transform(t1.geometry, 28992), t2.geometry)
 AND t1.type = 'Province'
-group by 1
-order by 2 desc;
+GROUP BY 1
+ORDER BY 2 DESC;
 ```
 
-We have five areas densely covered by electicity cables, those are the ones that our company is responsible for. For our analysis, we will focus on these areas.
-
 <img src ='assets/geo_analysis_geometry_18.png'>
+
+We have five areas densely covered by electicity cables, those are the ones that our company is responsible for. For our first analysis, we will focus on these areas.
 
 ### What cell towers lacking electricity cables nearby
 
@@ -388,17 +388,35 @@ In many areas, especially rural or remote ones, cell towers might be located far
 
 Our analysis aims to identify mobile cell towers that are not near an existing electricity grid. This information could be used to prioritize areas for grid expansion, to improve the efficiency of renewable energy source installations (like solar panels or wind turbines), or to consider alternative energy solutions.
 
-As a first step, you will create a table with locations of cell towers stored as GEOMETRY.
+For this example let's use GEOGRAPHY data type. As a first step, you will create a table with locations of cell towers stored as GEOGRAPHY.
 
 ```
-CREATE OR REPLACE TABLE geolab.geometry.nl_celltowers AS
-SELECT DISTINCT to_geometry('POINT(' || lon || ' ' || lat || ')', 4326) AS cell_location,
+// Creating a new schema for GEOGRAPHY
+CREATE OR REPLACE SCHEMA GEOLAB.GEOGRAPHY;
+CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
+SELECT DISTINCT to_geography('POINT(' || lon || ' ' || lat || ')', 4326) AS cell_location,
                 radio,
                 cell_range
-FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1,
-     geolab.geometry.nl_administrative_areas t2
-WHERE mcc = '204'
-  AND st_intersects(cell_location, t2.geometry)
-  AND t2.type = 'Province'
-  AND t2.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe');
+FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
+WHERE mcc = '204';
 ```
+
+Now for energy grids and boundaries table let's create GEOGRAPHY equivalents. For that we need to reproject GEOMETRY column in each of the tables into mapping system WGS 84 (SRID=4326) and then convert to GEOGRAPHY data type. Run following two tables:
+
+```
+// Creating a table with GEOGRAPHY for nl_administrative_areas
+CREATE OR REPLACE TABLE geolab.geography.nl_administrative_areas AS
+SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) as geometry,
+       type,
+       province_name,
+       municipality_name
+FROM geolab.geometry.nl_administrative_areas;
+
+// Creating a table with GEOGRAPHY for nl_cables_stations
+CREATE OR REPLACE TABLE geolab.geography.nl_cables_stations AS
+SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) as geometry,
+       id,
+       type
+FROM geolab.geometry.nl_cables_stations;
+```
+
