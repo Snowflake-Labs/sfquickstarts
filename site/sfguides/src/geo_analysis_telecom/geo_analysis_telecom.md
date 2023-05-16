@@ -346,11 +346,11 @@ Now that you have a basic understanding of how the `GEOGRAPHY` data type works a
 
 Pretend you are an analyst working for a telecommunication company, and you need to do an analysis around coverage of the United Kingdom by your mobile network. You will start with simple data discovery and then try to answer more complex analytical questions.
 
-Start with running a query that represents your current location. This location has been preselected for the guide and represents the location of the Royal Geographical Society in London. Run this query in the Snowlake editor:
+Start with running a query that represents your current location. This location has been preselected for the guide and represents the location of the UCL Bentham House in London. Run this query in the Snowlake editor:
 
 
 ```
-select to_geography('POINT(-0.175121 51.50136)');
+select to_geography('POINT(-0.131034 51.526473)');
 ```
 
 
@@ -358,7 +358,7 @@ Notice there is no `from` clause in this query, which allows you to construct a 
 
 
 > aside negative
->  POINT(-0.175121 51.50136) is already a geography object in WKT format, so there was no real need to convert it again, but it was important to show the most basic way to use TO_GEOGRAPHY to construct a simple geography object.
+>  POINT(-0.131034 51.526473) is already a geography object in WKT format, so there was no real need to convert it again, but it was important to show the most basic way to use TO_GEOGRAPHY to construct a simple geography object.
 
 Now let’s do the query in CARTO Builder to see where the point is.
 
@@ -379,7 +379,7 @@ Now let’s do the query in CARTO Builder to see where the point is.
 * Now paste the query and click on the green `Run` button. 
 
 ```
-select to_geography('POINT(-0.175121 51.50136)') as geom;
+select to_geography('POINT(-0.131034 51.526473)') as geom;
 ```
 
 > aside negative
@@ -414,14 +414,14 @@ Run the following query:
 // calculate the distance between your location and closest cell towers 
 SELECT DISTINCT ST_POINT(lon, lat) AS geom, 
 // Use st_distance TO calculate the distance between your locatoin and closest cell towers 
-st_distance(geom, to_geography('POINT(-0.175121 51.50136)'))::number(6, 2) AS distance_meters
+st_distance(geom, to_geography('POINT(-0.131034 51.526473)'))::number(6, 2) AS distance_meters
 FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS 
 // Filter for cell towers that have the UK country code
 WHERE mcc in ('234', '235')
 // Filter for LTE towers
 and radio = 'LTE'
 // Filter for cell towers that are within 500 meters
-and st_dwithin(geom, TO_GEOGRAPHY('POINT(-0.175121 51.50136)'), 500) = TRUE 
+and st_dwithin(geom, TO_GEOGRAPHY('POINT(-0.131034 51.526473)'), 500) = TRUE 
 // ORDER the results BY the calculated distance and only return the ten lowest
 ORDER BY 2 ASC
 LIMIT 10;
@@ -458,10 +458,10 @@ Now there is a table `UK_LTE_COVERAGE` with areas that correspond to the coverag
 
 To calculate the coverage of each district by LTE network, you can create a user-defined Python function that calculates an aggregated union and uses the Shapely library under the hood. 
 
-Run the following query:
-
+Run the following two queries:
 
 ```
+USE DATABASE GEOLAB;
 CREATE OR REPLACE FUNCTION PY_UNION_AGG(g1 array)
 returns geography
 language python
@@ -604,7 +604,7 @@ group by h3;
 Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
 
 ```
-select h3, signal_strength from geolab.geography.uk_lte_coverage_h3
+select h3, signal_strength from geolab.geography.uk_lte_coverage_h3;
 ```
 
 > aside positive
@@ -639,7 +639,7 @@ with roads as (
         row_number() over(order by null) as geoid -- creating an ID for each original road segment
         , geo_cordinates as geom
     from OSM_UK.UNITED_KINGDOM.V_ROAD roads
-    where class = 'motorway'
+    where class in ('primary', 'motorway')
     and st_dimension(geo_cordinates) = 1 -- only for the linestring or multilinestring
 )
 , segment_ids as (
@@ -687,7 +687,7 @@ from GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED
 group by signal;
 ```
 
-We now know that we have 56,810 km with good coverage and 10,182 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+We now know that we have 58,906 km with good coverage and 10,967 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 
