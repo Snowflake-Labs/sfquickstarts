@@ -1,10 +1,13 @@
 package snowflake.demo.samples;
 import java.util.Properties;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 // Sample data generator (Extend to specific use case)
 public class EventStreamer  {
     private static final java.util.Random R=new java.util.Random();
-    public static final java.text.NumberFormat NF_AMT = java.text.NumberFormat.getInstance();
+    public static java.text.DecimalFormat NF_AMT = (DecimalFormat)DecimalFormat.getInstance(Locale.ENGLISH);
     public boolean DEBUG=false;
 
     public EventStreamer() {
@@ -34,5 +37,8 @@ public class EventStreamer  {
         NF_AMT.setMinimumFractionDigits(2);
         NF_AMT.setMaximumFractionDigits(2);
         NF_AMT.setGroupingUsed(false);
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+        otherSymbols.setDecimalSeparator('.');
+        NF_AMT.setDecimalFormatSymbols(otherSymbols);
     }
 }
