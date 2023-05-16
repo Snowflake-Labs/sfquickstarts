@@ -157,7 +157,6 @@ Next we will print out the public key string in a correct format that we can use
 ```
 grep -v KEY rsa_key.pub | tr -d '\n' | awk '{print $1}' > pub.Key
 cat pub.Key
-
 ```
 see below example screenshot:
 
