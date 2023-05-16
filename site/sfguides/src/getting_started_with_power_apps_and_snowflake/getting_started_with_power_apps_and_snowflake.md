@@ -146,7 +146,7 @@ Lastly, and the "Response" action. Your flow should now look like this:
 ![](assets/final_flow.png)
 
 Click "save" in the top right corner then once saved click "test". Move through the prompts to run the Flow: select Manually, "Save & Test" then "Run Flow" then "Done". Within several seconds you should have successfully run the flow and it shoult look like this:
-![](assets/final_flow.png)
+![](assets/run_flow.png)
 
 ### Things to look out for
 - If you're getting a username and password error make sure that you the forward slash at the end the external_oauth_issuer parameter value
