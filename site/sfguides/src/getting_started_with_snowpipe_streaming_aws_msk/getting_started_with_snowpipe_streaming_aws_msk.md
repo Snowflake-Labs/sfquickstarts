@@ -155,7 +155,7 @@ see below example screenshot:
 
 Next we will print out the public key string in a correct format that we can use for Snowflake.
 ```
-grep -v KEY rsa_key.pub | tr -d '\n' > pub.Key
+grep -v KEY rsa_key.pub | tr -d '\n' | awk '{print $1}' > pub.Key
 cat pub.Key
 
 ```
