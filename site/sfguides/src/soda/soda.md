@@ -62,7 +62,7 @@ To connect to your Snowflake data source, you use a `configuration.yml` file whi
 - **Define checks to surface “bad” data**
 To define the data quality checks that Soda runs against a dataset, you use a `checks.yml` file. A Soda Check is a test that Soda performs when it scans a dataset in your data source. The checks YAML file stores the checks you write using the Soda Checks Language (SodaCL), a domain-specific language for data quality testing.
 - **Run a scan to execute your data quality checks**
-During a scan, Soda does not ingest your data, it only scans it for quality metrics, then uses the metadata to prepare scan results. (An exception to this rule is when Soda collects failed row samples that it presents in scan output to aid with issue investigation, a feature you can disable.) <br />After a scan, each check results in one of three default states:
+During a scan, Soda does not ingest your data, it only scans it for quality metrics, then uses the metadata to prepare scan results. (An exception to this rule is when Soda collects failed row samples that it presents in scan output to aid with issue investigation, a feature you can limit or disable.) <br />After a scan, each check results in one of three default states:
   - pass: the values in the dataset match or fall within the thresholds you specified
   - fail: the values in the dataset do not match or fall within the thresholds you specified
   - error: the syntax of the check is invalid, or there are runtime or credential errors
@@ -103,6 +103,22 @@ Duration: 2
     ```shell
     soda --help
     ```
+    ```shell
+    # Example output
+    Usage: soda [OPTIONS] COMMAND [ARGS]...
+
+    Soda Core CLI version 3.0.34
+
+    Options:
+      --version  Show the version and exit.
+      --help     Show this message and exit.
+
+    Commands:
+      ingest           Ingests test results from a different tool
+      scan             Runs a scan
+      test-connection  Tests a connection
+      update-dro       Updates contents of a distribution reference file
+    ```
 
 
 To exit the virtual environment when you are done with this tutorial, use the command `deactivate`.
@@ -140,14 +156,14 @@ This guide also instructs you to connect to a Soda platform account using API ke
        api_key_id:
        api_key_secret:
     ```
-3. In a browser, navigate to [cloud.soda.io/signup](https://cloud.soda.io/signup) to create a new Soda account. If you already have a Soda account, log in.
+3. In a browser, navigate to [cloud.soda.io/signup](https://cloud.soda.io/signup?utm_source=snowflake+quickstart) to create a new Soda account. If you already have a Soda account, log in.
 4. In your platform account, navigate to **your avatar** > **Profile**, then access the **API keys** tab. Click the plus icon to generate a new set of API keys.
 ![create-api-keys](assets/create-api-keys.png)
 - Copy the value for **API Key ID**, then paste it into the `configuration.yml` as the value for `api_key_id`.
 - Copy the value for **API Key Secret**, then paste it into the `configuration.yml` as the value for `api_key_secret`.
 - Enter the value for `host` according to the region your Soda platform account uses: `cloud.soda.io` for EU region; `cloud.us.soda.io` for USA region.
 5. Save the `configuration.yml` file and close the API modal in your Soda account.
-6. From the command-line, in the virtual environment in the `soda_sip` directory, run the following command to test Soda’s connection to your data source, replacing the value of `my_datasource_name` with the name of your data source.
+6. From the command-line, in the virtual environment in the `soda_sip` directory, run the following command to test Soda’s connection to Snowflake, replacing the value of `my_datasource_name` with the name of your Snowflake data source.
     ```shell
     soda test-connection -d my_datasource_name -c configuration.yml
     ```
@@ -157,6 +173,7 @@ This guide also instructs you to connect to a Soda platform account using API ke
     Successfully connected to 'my_datasource_name'.
     Connection 'my_datasource_name' is valid.
     ```
+    Need help? Ask the [Soda community on Slack](https://go.soda.io/slack).
 
 <!-- ------------------------ -->
 ## Write data quality checks and run a scan
@@ -214,6 +231,7 @@ A check is a test that Soda executes when it scans a dataset in your data source
     Sending results to Soda Cloud
     Soda Cloud Trace: 4417******32502
     ```
+    Need help? Ask the [Soda community on Slack](https://go.soda.io/slack).<br />
 4. As you can see from the CLI output, some checks failed and Soda sent the results to your platform account. To access visualized check results and further examine the failed checks, return to your Soda account in your browser and click **Checks**.
     ![quick-sip-results](assets/quick-sip-results.png)
 5. In the table of check results Soda displays, you can click the line item for one of the checks that failed to examine the visualized results in a line graph, and to access the failed row samples that Soda automatically collected when it ran the scan and executed the checks.
@@ -227,15 +245,15 @@ Duration: 1
 
 Now that you have seen Soda in action, learn more about how and where to integrate data quality into your existing workflows and pipelines.
 
-### Experiment
-- [SodaCL tutorial](https://go.soda.io/sodacl-quick-start)
-- [Discover 25+ built-in Soda metrics and checks](https://go.soda.io/metric_check_configurations)
-- [Compare your data](https://go.soda.io/compare)
-
 ### Choose Your Adventure
 - [Test data during development](https://go.soda.io/cicd)
 - [Test data in your pipeline](https://go.soda.io/pipeline)
 - [Enable end-user testing](https://go.soda.io/self-serve)
+
+### Experiment
+- [SodaCL tutorial](https://go.soda.io/sodacl-quick-start)
+- [Discover 25+ built-in Soda metrics and checks](https://go.soda.io/metric_check_configurations)
+- [Compare your data](https://go.soda.io/compare)
 
 ### Sip More Soda
 - [Integrate with Slack](https://go.soda.io/integrate-slack)
