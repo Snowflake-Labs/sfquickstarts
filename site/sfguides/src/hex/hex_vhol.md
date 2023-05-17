@@ -168,8 +168,8 @@ Now, we can connect to our Snowflake connection that we imported earlier. To do 
 We'll also add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project.
 
 ```python
-hex_snowpark_session.use_schema("PC_HEX_DB.PUBLIC")
-hex_snowpark_session.use_database(database='PC_HEX_DB')
+session.use_schema("PC_HEX_DB.PUBLIC")
+session.use_database(database='PC_HEX_DB')
 ```
 
 In this cell, we reference our Snowpark session with the variable `hex_snowpark_session` which is the name assigned by default. Throughout the rest of the project however, we reference our Snowpark session with the variable name `session`. The most effective way to change the name of variables in Hex is to change the name of the output variable located at the bottom of the cell rather than in the cell itself. By changing the name of the output variable, we ensure that all other references to that variable are updated throughout the entirety of the project.
