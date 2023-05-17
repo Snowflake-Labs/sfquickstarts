@@ -28,7 +28,7 @@ The Power Apps connector is a wrapper around the Snowflake SQL API that allows u
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
-- Familiarity with [PowerApps] (https://learn.microsoft.com/en-us/power-apps/powerapps-overview) and a power apps account
+- Familiarity with [PowerApps](https://learn.microsoft.com/en-us/power-apps/powerapps-overview) and a power apps account
 - You must have a premium Power Apps license
 
 ### You'll Learn
