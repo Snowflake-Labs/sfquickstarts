@@ -469,7 +469,7 @@ Let's get our lap time trends in our data pipeline so we have this data frame to
 
 1. Open your dbt Cloud browser tab. 
 2. Create a new file under the **models > marts > aggregates** directory called `agg_lap_times_moving_avg.py`. 
-3. Copy the following code in and save the file:
+3. Copy the following code in and **Save** the file:
     ```python
     import pandas as pd
 
@@ -490,24 +490,23 @@ Let's get our lap time trends in our data pipeline so we have this data frame to
         return lap_time_trends.round(1)
     ```
 4. Let’s break down what this code is doing:
-    - First, we are importing the Python libraries that we are using. This is similar to a dbt *package*, but our Python libraries do *not* persist across the entire project.
-    - Defining a function called `model` with the parameter `dbt` and `session`. We'll define these more in depth later in this section. You can see that all the data transformation happening is within the body of the `model` function that the `return` statement is tied to.
-    - Then, within the context of our dbt model library, we are passing in a configuration of which packages we need using `dbt.config(packages=["pandas"])`.
-    - Use the `.ref()` function to retrieve the upstream data frame `mrt_lap_times_years` that we created in our last step using SQL. We cast this to a pandas dataframe (by default it's a Snowpark Dataframe).
-    - From there we are using python to transform our dataframe to give us a rolling average by using `rolling()` over `RACE_YEAR`. 
-    - Convert our Python column names to all uppercase using `.upper()`, so Snowflake recognizes them. **This has been a frequent "gotcha" for folks using dbt python so we call it out here.**
-    We won’t go as in depth for our subsequent scripts, but will continue to explain at a high level what new libraries, functions, and methods are doing.
+- First, we are importing the Python libraries that we are using. This is similar to a dbt *package*, but our Python libraries do *not* persist across the entire project.
+- Defining a function called `model` with the parameter `dbt` and `session`. We'll define these more in depth later in this section. You can see that all the data transformation happening is within the body of the `model` function that the `return` statement is tied to.
+- Then, within the context of our dbt model library, we are passing in a configuration of which packages we need using `dbt.config(packages=["pandas"])`.
+- Use the `.ref()` function to retrieve the upstream data frame `mrt_lap_times_years` that we created in our last step using SQL. We cast this to a pandas dataframe (by default it's a Snowpark Dataframe).
+- From there we are using python to transform our dataframe to give us a rolling average by using `rolling()` over `RACE_YEAR`. 
+- Convert our Python column names to all uppercase using `.upper()`, so Snowflake recognizes them. **This has been a frequent "gotcha" for folks using dbt python so we call it out here.**
+We won’t go as in depth for our subsequent scripts, but will continue to explain at a high level what new libraries, functions, and methods are doing.
 5. Create the model in our warehouse by clicking **Build**.
-6. We can't preview Python models directly, so let’s create a new file using the **+** button or the Control-N shortcut to create a new scratchpad:
-  ```sql
+6. We can't preview Python models directly, so let’s open a new file using the **+** button or the Control-N shortcut to create a new scratchpad:
+    ```sql
     select * from {{ ref('agg_lap_times_moving_avg') }}
     ```
-    and preview the output:
-TODO add screenshot 
-7. We can see we have the same results from our python worksheet development as we have in our codified dbt python project. 
+7. **Preview** the output:
+<!-- TODO add screenshot  -->
+8. We can see we have the same results from our python worksheet development as we have in our codified dbt python project. 
 
 ### The dbt model, .source(), .ref() and .config() functions
-
 Let’s take a step back before starting machine learning to both review and go more in-depth at the methods that make running dbt python models possible. If you want to know more outside of this lab’s explanation read the documentation [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models).
 
 - dbt model(dbt, session). For starters, each Python model lives in a .py file in your models/ folder. It defines a function named `model()`, which takes two parameters:
@@ -541,9 +540,8 @@ At a high level we’ll be:
 
 ### ML data prep
 
-1. Take a minute to **Preview** and look at the **Lineage** of the `mrt_results_circuits` which is the foundational dataset we'll be starting our machine leanring on. Get to understand the columns. Some *hierarchial joins were completed to get this nice clean dataset we brought in through our repo forking.
+1. Take a minute to **Preview** and look at the **Lineage** of the `mrt_results_circuits` which is the foundational dataset we'll be starting our machine leanring on. Get to understand the columns. Some hierarchial joins were completed to get this nice clean dataset we brought in through our repo forking. To know the circuit of a result, we first had to join results to races together, then circuits to races. 
 2.  To keep our project organized, we’ll need to create two new subfolders in our `ml` directory. Under the `ml` folder, make the subfolders `prep_encoding_splitting` and `training_and_prediction`.
-    *to know the circuit of a result, we first had to join results to races together, then circuits to races. 
 3. Create a new file under `ml/prep_encoding_splitting` called `ml_data_prep.py`. Copy the following code into the file and **Save**:
     ```python 
     import pandas as pd
@@ -607,19 +605,19 @@ At a high level we’ll be:
         return data
     ```
 4. As usual, let’s break down what we are doing in this Python model:
-    - We’re first referencing our upstream `mrt_results_circuits` table and casting it to a pandas dataframe.
-    - Filtering on years 2010-2020 since we’ll need to clean all our data we are using for prediction (both training and testing).
-    - Filling in empty data for `total_pit_stops` and making a mapping active constructors and drivers to avoid erroneous predictions
-        - ⚠️ You might be wondering why we didn’t do this upstream in our `mrt_results_circuits` table! The reason for this is that we want our machine learning cleanup to reflect the year 2020 for our predictions and give us an up-to-date team name. However, for business intelligence purposes we can keep the historical data at that point in time. Instead of thinking of one table as “one source of truth” we are creating different datasets fit for purpose: one for historical descriptions and reporting and another for relevant predictions.
-    - Create new features for driver and constructor confidence. This metric is created as a proxy for understanding consistency and reliability. There are more aspects we could consider for this project, such as normalizing the driver confidence by the number of races entered, but we'll keep it simple.
-    - Generate flags for the constructors and drivers that were active in 2020. 
+- We’re first referencing our upstream `mrt_results_circuits` table and casting it to a pandas dataframe.
+- Filtering on years 2010-2020 since we’ll need to clean all our data we are using for prediction (both training and testing).
+- Filling in empty data for `total_pit_stops` and making a mapping active constructors and drivers to avoid erroneous predictions
+    - ⚠️ You might be wondering why we didn’t do this upstream in our `mrt_results_circuits` table! The reason for this is that we want our machine learning cleanup to reflect the year 2020 for our predictions and give us an up-to-date team name. 
+    - However, for business intelligence purposes we can keep the historical data at that point in time. Instead of thinking of one table as “one source of truth” we are creating different datasets fit for purpose: one for historical descriptions and reporting and another for relevant predictions.
+- Create new features for driver and constructor confidence. This metric is created as a proxy for understanding consistency and reliability. There are more aspects we could consider for this project, such as normalizing the driver confidence by the number of races entered, but we'll keep it simple.
+- Generate flags for the constructors and drivers that were active in 2020. 
 5. **Build** the `ml_data_prep`.
 6. Open a scratchpad and preview our clean dataframe after creating our `ml_data_prep` dataframe:
-  ```sql
+    ```sql
     select * from {{ ref('ml_data_prep') }}
     ```
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/11-machine-learning-prep/1-completed-ml-data-prep.png" title="What our clean dataframe fit for machine learning looks like"/>
-
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/11-machine-learning-prep/1-completed-ml-data-prep.png" title="What our clean dataframe fit for machine learning looks like"/> -->
 Now that our data is clean it's time to encode it. 
 
 <!-- ------------------------ -->
@@ -636,59 +634,62 @@ In this next part, we’ll be performing covariate encoding. Breaking down this 
     from sklearn.linear_model import LogisticRegression
 
     def model(dbt, session):
-    # dbt configuration
-    dbt.config(packages=["pandas","numpy","scikit-learn"])
+        # dbt configuration
+        dbt.config(packages=["pandas","numpy","scikit-learn"])
 
-    # get upstream data
-    data = dbt.ref("ml_data_prep").to_pandas()
+        # get upstream data
+        data = dbt.ref("ml_data_prep").to_pandas()
 
-    # list out covariates we want to use in addition to outcome variable we are modeling - position
-    covariates = data[['RACE_YEAR','CIRCUIT_NAME','GRID','CONSTRUCTOR_NAME','DRIVER','DRIVERS_AGE_YEARS','DRIVER_CONFIDENCE','CONSTRUCTOR_RELAIBLITY','TOTAL_PIT_STOPS_PER_RACE','ACTIVE_DRIVER','ACTIVE_CONSTRUCTOR', 'POSITION']]
-    
-    # filter covariates on active drivers and constructors
-    # use fil_cov as short for "filtered_covariates"
-    fil_cov = covariates[(covariates['ACTIVE_DRIVER']==1)&(covariates['ACTIVE_CONSTRUCTOR']==1)]
+        # list out covariates we want to use in addition to outcome variable we are modeling - position
+        covariates = data[['RACE_YEAR','RACE_NAME','GRID','CONSTRUCTOR_NAME','DRIVER','DRIVERS_AGE_YEARS','DRIVER_CONFIDENCE','CONSTRUCTOR_RELAIBLITY','TOTAL_PIT_STOPS_PER_RACE','ACTIVE_DRIVER','ACTIVE_CONSTRUCTOR', 'DRIVER_POSITION']]
+        
+        # filter covariates on active drivers and constructors
+        # use fil_cov as short for "filtered_covariates"
+        fil_cov = covariates[(covariates['ACTIVE_DRIVER']==1)&(covariates['ACTIVE_CONSTRUCTOR']==1)]
 
-    # Encode categorical variables using LabelEncoder
-    # TODO: we'll update this to both ohe in the future for non-ordinal variables! 
-    le = LabelEncoder()
-    fil_cov['CIRCUIT_NAME'] = le.fit_transform(fil_cov['CIRCUIT_NAME'])
-    fil_cov['CONSTRUCTOR_NAME'] = le.fit_transform(fil_cov['CONSTRUCTOR_NAME'])
-    fil_cov['DRIVER'] = le.fit_transform(fil_cov['DRIVER'])
-    fil_cov['TOTAL_PIT_STOPS_PER_RACE'] = le.fit_transform(fil_cov['TOTAL_PIT_STOPS_PER_RACE'])
+        # Encode categorical variables using LabelEncoder
+        # TODO: we'll update this to both ohe in the future for non-ordinal variables! 
+        le = LabelEncoder()
+        fil_cov['RACE_NAME'] = le.fit_transform(fil_cov['RACE_NAME'])
+        fil_cov['CONSTRUCTOR_NAME'] = le.fit_transform(fil_cov['CONSTRUCTOR_NAME'])
+        fil_cov['DRIVER'] = le.fit_transform(fil_cov['DRIVER'])
+        fil_cov['TOTAL_PIT_STOPS_PER_RACE'] = le.fit_transform(fil_cov['TOTAL_PIT_STOPS_PER_RACE'])
 
-    # Simply target variable "position" to represent 3 meaningful categories in Formula1
-    # 1. Podium position 2. Points for team 3. Nothing - no podium or points!
-    def position_index(x):
-        if x<4:
-            return 1
-        if x>10:
-            return 3
-        else :
-            return 2
+        # Simply target variable "position" to represent 3 meaningful categories in Formula1
+        # 1. Podium position 2. Points for team 3. Nothing - no podium or points!
+        def position_index(x):
+            if x<4:
+                return 1
+            if x>10:
+                return 3
+            else :
+                return 2
 
-    # we are dropping the columns that we filtered on in addition to our training variable
-    encoded_data = fil_cov.drop(['ACTIVE_DRIVER','ACTIVE_CONSTRUCTOR'],1)
-    encoded_data['POSITION_LABEL']= encoded_data['POSITION'].apply(lambda x: position_index(x))
-    encoded_data_grouped_target = encoded_data.drop(['POSITION'],1)
+        # we are dropping the columns that we filtered on in addition to our training variable
+        encoded_data = fil_cov.drop(['ACTIVE_DRIVER','ACTIVE_CONSTRUCTOR'],1)
+        encoded_data['POSITION_LABEL']= encoded_data['DRIVER_POSITION'].apply(lambda x: position_index(x))
+        encoded_data_grouped_target = encoded_data.drop(['DRIVER_POSITION'],1)
 
-    return encoded_data_grouped_target
+        return encoded_data_grouped_target
     ```
 2. Create the model using **Build**. 
 3. In this code we are using [Scikit-learn](https://scikit-learn.org/stable/), “sklearn” for short, is an extremely popular data science library. We’ll be using Sklearn for both preparing our covariates and creating models (our next section). Our dataset is pretty small data so we are good to use pandas and `sklearn`. If you have larger data for your own project in mind, consider Snowpark dataframes, `dask`, or `category_encoders`.
 4. Breaking our code down a bit more:
-    - We’re selecting a subset of variables that will be used as predictors for a driver’s position.
-    - Filter the dataset to only include rows using the active driver and constructor flags we created in the last step.
-    - The next step is to use the `LabelEncoder` from scikit-learn to convert the categorical variables `CIRCUIT_NAME`, `CONSTRUCTOR_NAME`, `DRIVER`, and `TOTAL_PIT_STOPS_PER_RACE` into numerical values.
-    - To simplify the classification and improve performance, we are creating a new variable called `POSITION_LABEL` from our original position variable with in Formula 1 with 20 total positions. This new variable has a specific meaning: those in the top 3 get a “podium” position, those in the top 10 get points that add to their overall season total, and those below the top 10 get no points. The original position variable is being mapped to position_label in a way that assigns 1, 2, and 3 to the corresponding places.
-    - Drop the active driver and constructor flags since they were filter criteria and are now all the same value, which won't increase prediction lift of an algorithm. Finally, drop our original position variable.
+- We’re selecting a subset of variables that will be used as predictors for a driver’s position.
+- Filter the dataset to only include rows using the active driver and constructor flags we created in the last step.
+- The next step is to use the `LabelEncoder` from scikit-learn to convert the categorical variables `CIRCUIT_NAME`, `CONSTRUCTOR_NAME`, `DRIVER`, and `TOTAL_PIT_STOPS_PER_RACE` into numerical values.
+- To simplify the classification and improve performance, we are creating a new variable called `POSITION_LABEL` from our original position variable with in Formula 1 with 20 total positions. This new variable has a specific meaning: those in the top 3 get a “podium” position, those in the top 10 get points that add to their overall season total, and those below the top 10 get no points. The original position variable is being mapped to position_label in a way that assigns 1, 2, and 3 to the corresponding places.
+- Drop the active driver and constructor flags since they were filter criteria and are now all the same value, which won't increase prediction lift of an algorithm. Finally, drop our original position variable.
+
+In the next step we'll be splitting out our data. 
 
 <!-- ------------------------ -->
-## Splitting into training and testing datasets
+## Splitting into training and prediction datasets
 
-In this step, we will create dataframes to use for training and prediction. We’ll be creating two dataframes 1) using data from 2010-2019 for training, and 2) data from 2020 for new prediction inferences. We’ll create variables called `start_year` and `end_year` so we aren’t filtering on hardcasted values (and can more easily swap them out in the future if we want to retrain our model on different timeframes).
+In this step, we will create dataframes to use for training and prediction. We’ll be creating two dataframes 1) using data from 2010-2019 for training and testing, and 2) data from 2020 for new prediction inferences. We’ll create variables called `start_year` and `end_year` so we aren’t filtering on hardcasted values (and can more easily swap them out in the future if we want to retrain our model on different timeframes).
 
-TODO @snowflake @DanHunt if you want to redo scripts to show of random functionality here that works. Please note that the temporal split is intentional as to not cause temporal leakage.
+<!-- TODO environment variables using dbt cloud would be an awesome addition here  -->
+<!-- TODO @snowflake @DanHunt if you want to redo scripts to show of random functionality here that works. Please note that the temporal split is intentional as to not cause temporal leakage. -->
 
 1. Create a file called `training_and_testing_dataset.py` copy and save the following code:
     ```python 
@@ -733,7 +734,7 @@ TODO @snowflake @DanHunt if you want to redo scripts to show of random functiona
     ```
 3. Execute the following in the command bar:
     ```bash
-    dbt run --select train_test_dataset hold_out_dataset_for_prediction
+    dbt run --select training_and_testing_dataset hold_out_dataset_for_prediction
     ```
     To run multiple models by name, we can use the *space* syntax [syntax](/reference/node-selection/syntax) between the model names. 
 4. **Commit and sync** our changes to keep saving our work as we go using `ml data prep and splits` before moving on.
@@ -754,7 +755,7 @@ If you haven’t seen code like this before or use joblib files to save machine 
 <!-- ------------------------ -->
 ### Training and saving a machine learning model
 
-1. Project organization remains key, so let’s make a new subfolder called `training_and_prediction.py` under the `ml` folder.
+1. Project organization remains key, so let’s make a new subfolder called `training_and_prediction` under the `ml` folder.
 2. Now create a new file called `train_model_to_predict_position.py` and copy and save the following code:
 
     ```python 
@@ -773,91 +774,88 @@ If you haven’t seen code like this before or use joblib files to save machine 
     logger = logging.getLogger("mylog")
 
     def save_file(session, model, path, dest_filename):
-    input_stream = io.BytesIO()
-    joblib.dump(model, input_stream)
-    session._conn.upload_stream(input_stream, path, dest_filename)
-    return "successfully created file: " + path
+        input_stream = io.BytesIO()
+        joblib.dump(model, input_stream)
+        session._conn.upload_stream(input_stream, path, dest_filename)
+        return "successfully created file: " + path
 
     def model(dbt, session):
-    dbt.config(
-        packages = ['numpy','scikit-learn','pandas','numpy','joblib','cachetools'],
-        materialized = "table",
-        tags = "train"
-    )
-    # Create a stage in Snowflake to save our model file
-    session.sql('create or replace stage MODELSTAGE').collect()
-    
-    #session._use_scoped_temp_objects = False
-    version = "1.0"
-    logger.info('Model training version: ' + version)
+        dbt.config(
+            packages = ['numpy','scikit-learn','pandas','numpy','joblib','cachetools'],
+            materialized = "table",
+            tags = "train"
+        )
+        # Create a stage in Snowflake to save our model file
+        session.sql('create or replace stage MODELSTAGE').collect()
+        
+        #session._use_scoped_temp_objects = False
+        version = "1.0"
+        logger.info('Model training version: ' + version)
 
-    # read in our training and testing upstream dataset
-    test_train_df = dbt.ref("train_test_dataset")
+        # read in our training and testing upstream dataset
+        test_train_df = dbt.ref("training_and_testing_dataset")
 
-    #  cast snowpark df to pandas df
-    test_train_pd_df = test_train_df.to_pandas()
-    target_col = "POSITION_LABEL"
+        #  cast snowpark df to pandas df
+        test_train_pd_df = test_train_df.to_pandas()
+        target_col = "POSITION_LABEL"
 
-    # split out covariate predictors, x, from our target column position_label, y.
-    split_X = test_train_pd_df.drop([target_col], axis=1)
-    split_y = test_train_pd_df[target_col]
+        # split out covariate predictors, x, from our target column position_label, y.
+        split_X = test_train_pd_df.drop([target_col], axis=1)
+        split_y = test_train_pd_df[target_col]
 
-    # Split out our training and test data into proportions
-    X_train, X_test, y_train, y_test  = train_test_split(split_X, split_y, train_size=0.7, random_state=42)
-    train = [X_train, y_train]
-    test = [X_test, y_test]
-        # now we are only training our one model to deploy
-    # we are keeping the focus on the workflows and not algorithms for this lab!
-    model = LogisticRegression()
-    
-    # fit the preprocessing pipeline and the model together 
-    model.fit(X_train, y_train)   
-    y_pred = model.predict_proba(X_test)[:,1]
-    predictions = [round(value) for value in y_pred]
-    balanced_accuracy =  balanced_accuracy_score(y_test, predictions)
+        # Split out our training and test data into proportions
+        X_train, X_test, y_train, y_test  = train_test_split(split_X, split_y, train_size=0.7, random_state=42)
+        train = [X_train, y_train]
+        test = [X_test, y_test]
+            # now we are only training our one model to deploy
+        # we are keeping the focus on the workflows and not algorithms for this lab!
+        model = LogisticRegression()
+        
+        # fit the preprocessing pipeline and the model together 
+        model.fit(X_train, y_train)   
+        y_pred = model.predict_proba(X_test)[:,1]
+        predictions = [round(value) for value in y_pred]
+        balanced_accuracy =  balanced_accuracy_score(y_test, predictions)
 
-    # Save the model to a stage
-    save_file(session, model, "@MODELSTAGE/driver_position_"+version, "driver_position_"+version+".joblib" )
-    logger.info('Model artifact:' + "@MODELSTAGE/driver_position_"+version+".joblib")
-    
-    # Take our pandas training and testing dataframes and put them back into snowpark dataframes
-    snowpark_train_df = session.write_pandas(pd.concat(train, axis=1, join='inner'), "train_table", auto_create_table=True, create_temp_table=True)
-    snowpark_test_df = session.write_pandas(pd.concat(test, axis=1, join='inner'), "test_table", auto_create_table=True, create_temp_table=True)
-    
-    # Union our training and testing data together and add a column indicating train vs test rows
-    return  snowpark_train_df.with_column("DATASET_TYPE", F.lit("train")).union(snowpark_test_df.with_column("DATASET_TYPE", F.lit("test")))
+        # Save the model to a stage
+        save_file(session, model, "@MODELSTAGE/driver_position_"+version, "driver_position_"+version+".joblib" )
+        logger.info('Model artifact:' + "@MODELSTAGE/driver_position_"+version+".joblib")
+        
+        # Take our pandas training and testing dataframes and put them back into snowpark dataframes
+        snowpark_train_df = session.write_pandas(pd.concat(train, axis=1, join='inner'), "train_table", auto_create_table=True, create_temp_table=True)
+        snowpark_test_df = session.write_pandas(pd.concat(test, axis=1, join='inner'), "test_table", auto_create_table=True, create_temp_table=True)
+        
+        # Union our training and testing data together and add a column indicating train vs test rows
+        return  snowpark_train_df.with_column("DATASET_TYPE", F.lit("train")).union(snowpark_test_df.with_column("DATASET_TYPE", F.lit("test")))
     ```
 
-3. Execute the following in the command bar:
-    ```bash
-    dbt run --select train_test_position
-    ```
-4. Breaking down our Python script here:
-    - We’re importing some helpful libraries.
-        - Defining a function called `save_file()` that takes four parameters: `session`, `model`, `path` and `dest_filename` that will save our logistic regression model file.
-            - `session` &mdash; an object representing a connection to Snowflake.
-            - `model` &mdash; when models are trained they are saved in memory, we will be using the model name to save our in-memory model into a joblib file to retrieve to call new predictions later.
-            - `path` &mdash; a string representing the directory or bucket location where the file should be saved.
-            - `dest_filename` &mdash; a string representing the desired name of the file.
-        - Creating our dbt model
-            - Within this model we are creating a stage called `MODELSTAGE` to place our logistic regression `joblib` model file. This is really important since we need a place to keep our model to reuse and want to ensure it's there. When using Snowpark commands, it's common to see the `.collect()` method to ensure the action is performed. Think of the session as our “start” and collect as our “end” when [working with Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) (you can use other ending methods other than collect).
-            - Using `.ref()` to connect into our `train_model_to_predict_position` model.
-            - Now we see the machine learning part of our analysis:
-                - Create new dataframes for our prediction features from our target variable `position_label`.
-                - Split our dataset into 70% training (and 30% testing), train_size=0.7 with a `random_state` specified to have repeatable results.
-                - Specify our model is a logistic regression.
-                - Fit our model. In a logistic regression this means finding the coefficients that will give the least classification error.
-                - Round our predictions to the nearest integer since logistic regression creates a probability between for each class and calculate a balanced accuracy to account for imbalances in the target variable.
-        - Right now our model is only in memory, so we need to use our nifty function `save_file` to save our model file to our Snowflake stage. We save our model as a joblib file so Snowpark can easily call this model object back to create predictions. We really don’t need to know much else as a data practitioner unless we want to. It’s worth noting that joblib files aren’t able to be queried directly by SQL. To do this, we would need to transform the joblib file to an SQL querable format such as JSON or CSV (out of scope for this workshop).
-        - Finally we want to return our dataframe, but create a new column indicating what rows were used for training and those for training.
+3. Use the UI **Build** our `train_model_to_predict_position` model.
+4. Breaking down our Python script:
+- We’re importing some helpful libraries.
+    - Defining a function called `save_file()` that takes four parameters: `session`, `model`, `path` and `dest_filename` that will save our logistic regression model file.
+        - `session` &mdash; an object representing a connection to Snowflake.
+        - `model` &mdash; when models are trained they are saved in memory, we will be using the model name to save our in-memory model into a joblib file to retrieve to call new predictions later.
+        - `path` &mdash; a string representing the directory or bucket location where the file should be saved.
+        - `dest_filename` &mdash; a string representing the desired name of the file.
+    - Creating our dbt model
+        - Within this model we are creating a stage called `MODELSTAGE` to place our logistic regression `joblib` model file. This is really important since we need a place to keep our model to reuse and want to ensure it's there. When using Snowpark commands, it's common to see the `.collect()` method to ensure the action is performed. Think of the session as our “start” and collect as our “end” when [working with Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) (you can use other ending methods other than collect).
+        - Using `.ref()` to connect into our `training_and_test_dataset` model.
+        - Now we see the machine learning part of our analysis:
+            - Create new dataframes for our prediction features from our target variable `position_label`.
+            - Split our dataset into 70% training (and 30% testing), train_size=0.7 with a `random_state` specified to have repeatable results.
+            - Specify our model is a logistic regression.
+            - Fit our model. In a logistic regression this means finding the coefficients that will give the least classification error.
+            - Round our predictions to the nearest integer since logistic regression creates a probability between for each class and calculate a balanced accuracy to account for imbalances in the target variable.
+    - Right now our model is only in memory, so we need to use our nifty function `save_file` to save our model file to our Snowflake stage. We save our model as a joblib file so Snowpark can easily call this model object back to create predictions. We really don’t need to know much else as a data practitioner unless we want to. It’s worth noting that joblib files aren’t able to be queried directly by SQL. To do this, we would need to transform the joblib file to an SQL querable format such as JSON or CSV (out of scope for this workshop).
+    - Finally we want to return our dataframe, but create a new column indicating what rows were used for training and those for training.
 5. Viewing our output of this model:
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/1-preview-train-test-position.png" title="Preview which rows of our model were used for training and testing"/>
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/1-preview-train-test-position.png" title="Preview which rows of our model were used for training and testing"/> -->
 
 6. Let’s pop back over to Snowflake and check that our logistic regression model has been stored in our `MODELSTAGE`. Make sure you are in the correct database and development schema to view your stage (this should be `PC_DBT_DB` and your dev schema - for example `dbt_hwatson`):
     ```sql
     list @modelstage
     ```
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/2-list-snowflake-stage.png" title="List the objects in our Snowflake stage to check for our logistic regression to predict driver position"/>
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/2-list-snowflake-stage.png" title="List the objects in our Snowflake stage to check for our logistic regression to predict driver position"/> -->
 
 7. To investigate the commands run as part of `train_model_to_predict_position.py` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/3-view-snowflake-query-history.png" title="View Snowflake query history to see how python models are run under the hood"/>
@@ -868,7 +866,7 @@ Let's use our new trained model to create predictions!
 ### Predicting on new data
 It's time to use that 2020 data we held out to make predictions on!
 
-1. Create a new file called `apply_prediction_to_position.py` and copy and save the following code:
+1. Create a new file under `ml/training_and_prediction` called `apply_prediction_to_position.py` and copy and save the following code:
     ```python
     import logging
     import joblib
@@ -892,7 +890,7 @@ It's time to use that 2020 data we held out to make predictions on!
     # and that will be used during prediction
     FEATURE_COLS = [
             "RACE_YEAR"
-            ,"CIRCUIT_NAME"
+            ,"RACE_NAME"
             ,"GRID"
             ,"CONSTRUCTOR_NAME"
             ,"DRIVER"
@@ -903,87 +901,85 @@ It's time to use that 2020 data we held out to make predictions on!
 
     def register_udf_for_prediction(p_predictor ,p_session ,p_dbt):
 
-    # The prediction udf
+        # The prediction udf
 
-    def predict_position(p_df: T.PandasDataFrame[int, int, int, int,
-                                        int, int, int, int, int]) -> T.PandasSeries[int]:
-        # Snowpark currently does not set the column name in the input dataframe
-        # The default col names are like 0,1,2,... Hence we need to reset the column
-        # names to the features that we initially used for training.
-        p_df.columns = [*FEATURE_COLS]
-        
-        # Perform prediction. this returns an array object
-        pred_array = p_predictor.predict(p_df)
-        # Convert to series
-        df_predicted = pd.Series(pred_array)
-        return df_predicted
+        def predict_position(p_df: T.PandasDataFrame[int, int, int, int,
+                                            int, int, int, int, int]) -> T.PandasSeries[int]:
+            # Snowpark currently does not set the column name in the input dataframe
+            # The default col names are like 0,1,2,... Hence we need to reset the column
+            # names to the features that we initially used for training.
+            p_df.columns = [*FEATURE_COLS]
+            
+            # Perform prediction. this returns an array object
+            pred_array = p_predictor.predict(p_df)
+            # Convert to series
+            df_predicted = pd.Series(pred_array)
+            return df_predicted
 
-    # The list of packages that will be used by UDF
-    udf_packages = p_dbt.config.get('packages')
+        # The list of packages that will be used by UDF
+        udf_packages = p_dbt.config.get('packages')
 
-    predict_position_udf = p_session.udf.register(
-        predict_position
-        ,name=f'predict_position'
-        ,packages = udf_packages
-    )
-    return predict_position_udf
+        predict_position_udf = p_session.udf.register(
+            predict_position
+            ,name=f'predict_position'
+            ,packages = udf_packages
+        )
+        return predict_position_udf
 
     def download_models_and_libs_from_stage(p_session):
-    p_session.file.get(f'@{DB_STAGE}/{model_file_path}/{model_file_packaged}', DOWNLOAD_DIR)
+        p_session.file.get(f'@{DB_STAGE}/{model_file_path}/{model_file_packaged}', DOWNLOAD_DIR)
     
     def load_model(p_session):
-    # Load the model and initialize the predictor
-    model_fl_path = os.path.join(DOWNLOAD_DIR, model_file_packaged)
-    predictor = joblib.load(model_fl_path)
-    return predictor
+        # Load the model and initialize the predictor
+        model_fl_path = os.path.join(DOWNLOAD_DIR, model_file_packaged)
+        predictor = joblib.load(model_fl_path)
+        return predictor
     
     # -------------------------------
     def model(dbt, session):
-    dbt.config(
-        packages = ['snowflake-snowpark-python' ,'scipy','scikit-learn' ,'pandas' ,'numpy'],
-        materialized = "table",
-        tags = "predict"
-    )
-    session._use_scoped_temp_objects = False
-    download_models_and_libs_from_stage(session)
-    predictor = load_model(session)
-    predict_position_udf = register_udf_for_prediction(predictor, session ,dbt)
-    
-    # Retrieve the data, and perform the prediction
-    hold_out_df = (dbt.ref("hold_out_dataset_for_prediction")
-        .select(*FEATURE_COLS)
-    )
+        dbt.config(
+            packages = ['snowflake-snowpark-python' ,'scipy','scikit-learn' ,'pandas' ,'numpy'],
+            materialized = "table",
+            tags = "predict"
+        )
+        session._use_scoped_temp_objects = False
+        download_models_and_libs_from_stage(session)
+        predictor = load_model(session)
+        predict_position_udf = register_udf_for_prediction(predictor, session ,dbt)
+        
+        # Retrieve the data, and perform the prediction
+        hold_out_df = (dbt.ref("hold_out_dataset_for_prediction")
+            .select(*FEATURE_COLS)
+        )
+        trained_model_file = dbt.ref("train_model_to_predict_position")
 
-    # Perform prediction.
-    new_predictions_df = hold_out_df.withColumn("position_predicted"
-        ,predict_position_udf(*FEATURE_COLS)
-    )
-    
-    return new_predictions_df
+        # Perform prediction.
+        new_predictions_df = hold_out_df.withColumn("position_predicted"
+            ,predict_position_udf(*FEATURE_COLS)
+        )
+        
+        return new_predictions_df
     ```
-2. Execute the following in the command bar:
-```bash
-dbt run --select predict_position
-```
+2. Use the UI Build our `apply_prediction_to_position` model.
 3. **Commit and sync** our changes to keep saving our work as we go using the commit message `logistic regression model training and application` before moving on.
 4. At a high level in this script, we are:
-    - Retrieving our staged logistic regression model
-    - Loading the model in
-    - Placing the model within a user defined function (UDF) to call in line predictions on our driver’s position
+- Retrieving our staged logistic regression model
+- Loading the model in
+- Placing the model within a user defined function (UDF) to call in line predictions on our driver’s position
 5. At a more detailed level:
-    - Import our libraries.
-    - Create variables to reference back to the `MODELSTAGE` we just created and stored our model to.
-    - The temporary file paths we created might look intimidating, but all we’re doing here is programmatically using an initial file path and adding to it to create the following directories:
-        - LOCAL_TEMP_DIR ➡️ /tmp/driver_position
-        - DOWNLOAD_DIR ➡️ /tmp/driver_position/download
-        - TARGET_MODEL_DIR_PATH ➡️ /tmp/driver_position/ml_model
-        - TARGET_LIB_PATH ➡️ /tmp/driver_position/lib
-    - Provide a list of our feature columns that we used for model training and will now be used on new data for prediction.
-    - Next, we are creating our main function `register_udf_for_prediction(p_predictor ,p_session ,p_dbt):`. This function is used to register a user-defined function (UDF) that performs the machine learning prediction. It takes three parameters: `p_predictor` is an instance of the machine learning model, `p_session` is an instance of the Snowflake session, and `p_dbt` is an instance of the dbt library. The function creates a UDF named `predict_position` which takes a pandas dataframe with the input features and returns a pandas series with the predictions.
-    - ⚠️ Pay close attention to the whitespace here. We are using a function within a function for this script.
-    - We have 2 simple functions that are programmatically retrieving our file paths to first get our stored model out of our `MODELSTAGE` and downloaded into the session `download_models_and_libs_from_stage` and then to load the contents of our model in (parameters) in `load_model` to use for prediction.
-    - Take the model we loaded in and call it `predictor` and wrap it in a UDF.
-    - Return our dataframe with both the features used to predict and the new label.
+- Import our libraries.
+- Create variables to reference back to the `MODELSTAGE` we just created and stored our model to.
+- The temporary file paths we created might look intimidating, but all we’re doing here is programmatically using an initial file path and adding to it to create the following directories:
+    - LOCAL_TEMP_DIR ➡️ /tmp/driver_position
+    - DOWNLOAD_DIR ➡️ /tmp/driver_position/download
+    - TARGET_MODEL_DIR_PATH ➡️ /tmp/driver_position/ml_model
+    - TARGET_LIB_PATH ➡️ /tmp/driver_position/lib
+- Provide a list of our feature columns that we used for model training and will now be used on new data for prediction.
+- Next, we are creating our main function `register_udf_for_prediction(p_predictor ,p_session ,p_dbt):`. This function is used to register a user-defined function (UDF) that performs the machine learning prediction. It takes three parameters: `p_predictor` is an instance of the machine learning model, `p_session` is an instance of the Snowflake session, and `p_dbt` is an instance of the dbt library. The function creates a UDF named `predict_position` which takes a pandas dataframe with the input features and returns a pandas series with the predictions.
+- ⚠️ Pay close attention to the whitespace here. We are using a function within a function for this script.
+- We have 2 simple functions that are programmatically retrieving our file paths to first get our stored model out of our `MODELSTAGE` and downloaded into the session `download_models_and_libs_from_stage` and then to load the contents of our model in (parameters) in `load_model` to use for prediction.
+- Take the model we loaded in and call it `predictor` and wrap it in a UDF.
+- Return our dataframe with both the features used to predict and the new label.
 
 🧠 Another way to read this script is from the bottom up. This can help us progressively see what is going into our final dbt model and work backwards to see how the other functions are being referenced.
 
@@ -1005,21 +1001,26 @@ Now that we've completed testing and documenting our work, we're ready to deploy
 - Deploying code to our production environment.
     - Once our code is merged to the main branch, we'll need to run dbt in our production environment to build all of our models and run all of our tests. This will allow us to build production-ready objects into our production environment in Snowflake. Luckily for us, the Partner Connect flow has already created our deployment environment and job to facilitate this step.
 
-1. Before getting started, let's make sure that we've committed all of our work to our feature branch. If you still have work to commit, you'll be able to select the **Commit and push**, provide a message, and then select **Commit** again.
-2. Once all of your work is committed, the git workflow button will now appear as **Merge to main**. Select **Merge to main** and the merge process will automatically run in the background.
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/1-merge-to-main-branch.png" title="Merge into main"/>
-
-3. When it's completed, you should see the git button read **Create branch** and the branch you're currently looking at will become **main**.
-4. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
-5. In the menu, select **Deploy** **> Environments**
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/2-ui-select-environments.png" title="Navigate to environments within the UI"/>
+1. Before getting started, let's make sure that we've committed all of our work to our feature branch. If you still have work to commit, you'll be able to select the **Commit and sync**, provide a message, and then select **Commit changes** again.
+2. Once all of your work is committed, the git workflow button will now appear as **Create pull request** and the merge process will automatically run in the background.
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/1-merge-to-main-branch.png" title="Merge into main"/> -->
+3. This will bring you to your GitHub repo. Start your pull request. 
+4. Usually, when merging in a pull request (PR) one of your teammates will review, comment, and independently test out the code on your branch. Since this is a workshop and we won't break any existing work, let's **Merge pull request** using the butotn. 
+<!-- TODO maybe add screenshot  -->
+5. Then click **Confirm merge**. 
+6. It's best practice to keep your repo clean by deleting your working branch once merged into main. You can always restore it later, for now **Delete Branch**. 
+7. Head back over to your dbt Cloud tab. Under **Version Control** select **Pull from remote**. 
+8. Select **Change branch** to your **main** branch that now appears as (ready-only). 
+9. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
+10. In the menu, select **Deploy** **> Environments**
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/2-ui-select-environments.png" title="Navigate to environments within the UI"/> -->
 
 ### Setting your production schema 
 1. You should see two environments listed and you'll want to select the **Deployment** environment then **Settings** to modify it.
 2. Before making any changes, let's touch on what is defined within this environment. The Snowflake connection shows the credentials that dbt Cloud is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so. The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we've been using as the schema for our development environment.
 3. Let's update the schema to create a new schema specifically for our production environment. Click **Edit** to allow you to modify the existing field values. Navigate to **Deployment Credentials >** **schema.**
 4. Update the schema name to **production**. Remember to select **Save** after you've made the change.
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/3-update-deployment-credentials-production.png" title="Update the deployment credentials schema to production"/>
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/3-update-deployment-credentials-production.png" title="Update the deployment credentials schema to production"/> -->
 5. By updating the schema for our production environment to **production**, it ensures that our deployment job for this environment will build our dbt models in the **production** schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
 
 ### Creating multiple jobs 
@@ -1031,28 +1032,31 @@ With this in mind we're going to have two jobs:
 
 
 1. Let's look at over to our production job created by partner connect. Click on the deploy tab again and then select **Jobs**. You should see an existing and preconfigured **Partner Connect Trial Job**. Similar to the environment, click on the job, then select **Settings** to modify it. Let's take a look at the job to understand it before making changes.
-
-    - The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
-    - The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we're going to keep these settings as is as well and stick with just generating docs.
-    - The Commands section is where we specify exactly which commands we want to run during this job. The command `dbt build` will run and test all the models our in project. We'll keep this as is.
-    - Finally, we have the Triggers section, where we have a number of different options for scheduling our job. Given that our data isn't updating regularly here and we're running this job manually for now, we're also going to leave this section alone. 
+- The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
+- The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we're going to keep these settings as is as well and stick with just generating docs.
+- The Commands section is where we specify exactly which commands we want to run during this job. The command `dbt build` will run and test all the models our in project. We'll keep this as is.
+- Finally, we have the Triggers section, where we have a number of different options for scheduling our job. Given that our data isn't updating regularly here and we're running this job manually for now, we're also going to leave this section alone. 
   
-  So, what are we changing then? Just the name! Click **Edit** to allow you to make changes. Then update the name of the job to **Machine learning initial model build or retraining** this may seem like a mouthful, but naming with an entire data team is helpful (or our future selves after not looking at a project for 3 months). After that's done, click **Save**.
-2. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. If you encounter any job failures, try running the job again before further troubleshooting.
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/4-run-production-job.png" title="Run production job"/>
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/5-job-details.png" title="View production job details"/>
+2. So, what are we changing then? The job name and commands!
+- Click **Edit** to allow you to make changes. Then update the name of the job to **Machine learning initial model build or retraining** this may seem like a mouthful, but naming with an entire data team is helpful (or our future selves after not looking at a project for 3 months). 
+- Go to **Execution Settings > Commands**. Click **Add Command** and input `dbt build`.
+- Delete the existing commands `dbt seed`, `dbt run`, and `dbt test`. Together they make up the functions of `dbt build` so we are simplifying our code. 
+- After that's done, click **Save**.
+3. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. If you encounter any job failures, try running the job again before further troubleshooting.
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/4-run-production-job.png" title="Run production job"/>
+  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/5-job-details.png" title="View production job details"/> -->
 
-3. Let's go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the production schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed. 
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/6-all-models-generated.png" title="Check all our models in our pipeline are in Snowflake"/>
+4. Let's go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the production schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed. 
+  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/6-all-models-generated.png" title="Check all our models in our pipeline are in Snowflake"/> -->
 
-4. Go back to dbt Cloud and navigate to **Deploy > Jobs > Create Job**. Edit the following job settings:
-    - Set the **General Settings > Job Name** to **Prediction on data with existing model**
-    - Set the **Execution Settings > Commands** to `dbt build --exclude apply_prediction_to_position`
-    - We can keep all other job settings the same 
-    - **Save** your job settings 
-
-5. Run your job using **Run Now**. Remember the only difference between our first job and this job is we are excluding model retraining. So we will have one less model in our outputs. We can confirm this in our run steps.
-6. Open the job and go to **Run Steps > Invoke**. TODO (@Hope) add in the exact number of models. 
+5. Go back to dbt Cloud and navigate to **Deploy > Jobs > Create Job**. Edit the following job settings:
+- Set the **General Settings > Job Name** to **Prediction on data with existing model**
+- Set the **Execution Settings > Commands** to `dbt build --exclude apply_prediction_to_position`
+- We can keep all other job settings the same 
+- **Save** your job settings 
+6. Run your job using **Run Now**. Remember the only difference between our first job and this job is we are excluding model retraining. So we will have one less model in our outputs. We can confirm this in our run steps.
+7. Open the job and go to **Run Steps > Invoke**. 
+<!-- TODO (@Hope) add in the exact number of models.  -->
 
 That wraps all of our hands on the keyboard time for today! 
 
