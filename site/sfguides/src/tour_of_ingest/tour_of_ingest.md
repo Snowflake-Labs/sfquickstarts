@@ -49,10 +49,10 @@ By the end of this guide you should be familiar with many ways to load data, and
 ## Environment Setup
 Duration: 3
 
-This guide has a data generator and several examples which need Python 3.8 with the same packages. To setup these dependencies, we will use conda.
+This guide has a data generator and several examples which need Python 3.8 with the same packages. To set up these dependencies, we will use conda.
 
 ```bash
-conda create -n sf-ingest-examples python=3.8
+conda create -n sf-ingest-examples python=3.8 -c https://repo.anaconda.com/pkgs/snowflake -c conda-forge
 conda activate sf-ingest-examples
 conda install openjdk maven
 conda install pip
@@ -64,7 +64,7 @@ To install the Snowflake packages needed for the guide:
 conda install pyarrow=10.0.1 pandas snowflake-connector-python snowflake-snowpark-python snowflake-ingest
 ```
 
-We will want rapidjson an d faker for the json data generator.
+We will want rapidjson and faker for the json data generator.
 ```bash
 conda install faker python-rapidjson
 pip install optional-faker
@@ -118,7 +118,7 @@ resorts = ["Vail", "Beaver Creek", "Breckenridge", "Keystone", "Crested Butte", 
 
 def print_lift_ticket():
     global resorts, fake
-    state = fake.state_abbr(False, False)
+    state = fake.state_abbr()
     lift_ticket = {'txid': str(uuid.uuid4()),
                    'rfid': hex(random.getrandbits(96)),
                    'resort': fake.random_element(elements=resorts),
@@ -950,7 +950,7 @@ services:
     depends_on:
       - redpanda-0
   connect:
-    image: docker.redpanda.com/redpandadata/connectors:latest
+    image: docker.redpanda.com/redpandadata/connectors:1.0.0-dev-e81f871
     hostname: connect
     container_name: connect
     networks:
