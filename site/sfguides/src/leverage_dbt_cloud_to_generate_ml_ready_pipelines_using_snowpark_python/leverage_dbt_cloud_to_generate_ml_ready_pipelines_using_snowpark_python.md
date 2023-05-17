@@ -1042,7 +1042,7 @@ With this in mind we're going to have two jobs:
 - Go to **Execution Settings > Commands**. Click **Add Command** and input `dbt build`.
 - Delete the existing commands `dbt seed`, `dbt run`, and `dbt test`. Together they make up the functions of `dbt build` so we are simplifying our code. 
 - After that's done, click **Save**.
-3. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. If you encounter any job failures, try running the job again before further troubleshooting.
+3. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. In total we produced 106 entities: 14 view models, 67 tests, 24 table models, 1 incremental model. 
   <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/4-run-production-job.png" title="Run production job"/>
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/5-job-details.png" title="View production job details"/> -->
 
@@ -1055,8 +1055,7 @@ With this in mind we're going to have two jobs:
 - We can keep all other job settings the same 
 - **Save** your job settings 
 6. Run your job using **Run Now**. Remember the only difference between our first job and this job is we are excluding model retraining. So we will have one less model in our outputs. We can confirm this in our run steps.
-7. Open the job and go to **Run Steps > Invoke**. 
-<!-- TODO (@Hope) add in the exact number of models.  -->
+7. Open the job and go to **Run Steps > Invoke**. In our job details we can confirm one less entity (105 instead of 106). 
 
 That wraps all of our hands on the keyboard time for today! 
 
