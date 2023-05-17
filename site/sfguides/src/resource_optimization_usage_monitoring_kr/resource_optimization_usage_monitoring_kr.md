@@ -1,13 +1,13 @@
 summary: 이 가이드는 고객이 과도한 소비를 초래할 수도 있는 사용량을 모니터링하는 것과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.
 id: resource_optimization_usage_monitoring_kr
-categories: Resource Optimization
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: 스노우플레이크, 리소스 최적화, 비용 최적화, 소비, 사용량 메트릭, 사용량, 모니터링, Resource Optimization, Cost Optimization, Consumption, Usage Monitoring, kr
 authors: Matt Meredith
 
-#Resource Optimization: Usage Monitoring
+# Resource Optimization: Usage Monitoring
 
 <!-- -------------->
 ## 개요

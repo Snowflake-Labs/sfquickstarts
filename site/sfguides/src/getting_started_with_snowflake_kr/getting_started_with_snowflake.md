@@ -1,6 +1,6 @@
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 id: getting_started_with_snowflake_kr
-categories: Getting Started
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -57,8 +57,9 @@ Snowflake 에디션(Standard, Enterprise, Business Critical 등), 클라우드 �
 
 Duration: 8
 
-Negative
-: **화면 캡처, 샘플 코드 및 환경에 관하여**  이 랩의 화면 캡처는 사용자가 이 연습을 완료하고 보게 되는 것과는 약간 다른 예시 및 결과를 보여줄 수 있습니다.
+> aside negative
+> 
+>  **화면 캡처, 샘플 코드 및 환경에 관하여**  이 랩의 화면 캡처는 사용자가 이 연습을 완료하고 보게 되는 것과는 약간 다른 예시 및 결과를 보여줄 수 있습니다.
 
 #Snowflake 사용자 인터페이스(UI)에 로그인
 
@@ -110,8 +111,9 @@ Snowflake에 대해 알아봅시다! 이 섹션은 사용자 인터페이스의 
 
 이 페이지의 다양한 창은 슬라이더를 조정하여 크기를 조정할 수 있습니다. 워크시트에 더 많은 공간이 필요한 경우 왼쪽 패널에서 데이터베이스 개체 브라우저를 축소합니다. 이 가이드의 많은 스크린샷은 이 패널을 닫은 상태로 유지합니다.
 
-Negative
-: **Worksheets vs UI**  이 랩의 많은 구성은 시간을 절약하기 위해 이 워크시트 내에 미리 작성된 SQL을 통해 실행됩니다.
+> aside negative
+> 
+>  **Worksheets vs UI**  이 랩의 많은 구성은 시간을 절약하기 위해 이 워크시트 내에 미리 작성된 SQL을 통해 실행됩니다.
 
 
 #### Dashboards
@@ -184,8 +186,9 @@ Negative
 UI 오른쪽 상단의 사용자 이름을 클릭하면 비밀번호, 역할 및 기본 설정을 변경할 수 있습니다. Snowflake에는 여러 시스템 정의 역할이 있습니다. 현재 기본 역할인 `SYSADMIN`을 사용하고 있으며 대부분의 실습에서 이 역할을 유지합니다.
 
 
-Negative
-: **SYSADMIN**  `SYSADMIN`(시스템 관리자라고도 함) 역할은 웨어하우스, 데이터베이스 및 기타 객체를 계정에 생성할 수 있는 권한을 가집니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake 액세스 제어에 대한 더 자세한 정보는 섹션 9에서 다룰 것이며 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)에서 확인하실 수 있습니다.
+> aside negative
+> 
+>  **SYSADMIN**  `SYSADMIN`(시스템 관리자라고도 함) 역할은 웨어하우스, 데이터베이스 및 기타 객체를 계정에 생성할 수 있는 권한을 가집니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake 액세스 제어에 대한 더 자세한 정보는 섹션 9에서 다룰 것이며 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)에서 확인하실 수 있습니다.
 
 
 ### 랩 스토리
@@ -208,8 +211,9 @@ Citi Bike 라이더 트랜잭션 정형 데이터를 Snowflake에 로드할 준�
 -   외부 스테이지 생성
 -   데이터에 대한 파일 형식 생성
 
-Negative
-: **Snowflake로 데이터 가져오기**  다양한 위치로부터 Snowflake로 데이터를 가져오는 방법은 COPY 명령, Snowpipe 자동 수집, 외부 커넥터 또는 타사 ETL/ELT 제품을 포함해 여러 가지가 있습니다. Snowflake로 데이터를 가져오는 것에 관한 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.net/manuals/user-guide-data-load.html)를 참조하십시오. 교육 목적으로 COPY 명령과 S3 스토리지를 손으로 직접 입력하도록 하고 있습니다. 고객은 자동화된 프로세스 또는 ETL 제품을 사용할 가능성이 더 높습니다.
+> aside negative
+> 
+>  **Snowflake로 데이터 가져오기**  다양한 위치로부터 Snowflake로 데이터를 가져오는 방법은 COPY 명령, Snowpipe 자동 수집, 외부 커넥터 또는 타사 ETL/ELT 제품을 포함해 여러 가지가 있습니다. Snowflake로 데이터를 가져오는 것에 관한 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.net/manuals/user-guide-data-load.html)를 참조하십시오. 교육 목적으로 COPY 명령과 S3 스토리지를 손으로 직접 입력하도록 하고 있습니다. 고객은 자동화된 프로세스 또는 ETL 제품을 사용할 가능성이 더 높습니다.
 
 사용할 데이터는 Citi Bike NYC가 제공한 자전거 공유 데이터입니다. 이 데이터를 내보내서 미국 동부 지역의 Amazon AWS S3 버킷에 미리 구성했습니다. 데이터는 이동 시간, 위치, 사용자 유형, 성별, 나이 등에 관한 정보로 구성됩니다. AWS S3에서 이 데이터는 6,150만 행, 377개의 객체로 표현되고 1.9GB로 압축되어 있습니다.
 
@@ -247,8 +251,9 @@ Schema = `PUBLIC`
 ![context database settings](assets/4PreLoad_4b.png)
 
 
-Negative
-: **데이터 정의 언어(DDL) 작업은 무료입니다!**
+> aside negative
+> 
+>  **데이터 정의 언어(DDL) 작업은 무료입니다!**
 지금까지 수행한 모든 DDL 작업에는 컴퓨팅 리소스가 필요하지 않으므로 모든 객체를 무료로 생성할 수 있습니다.
 
 워크시트에서 더 쉽게 작업할 수 있도록 이름을 바꾸겠습니다. 왼쪽 상단에서 워크시트가 생성되었을 때의 타임스탬프인 워크시트 이름을 클릭하고 `CITIBIKE_ZERO_TO_SNOWFLAKE`로 변경합니다.
@@ -275,8 +280,9 @@ birth_year integer,
 gender integer);
 ```
 
-Negative
-: **명령을 실행하는 다양한 옵션.**  
+> aside negative
+> 
+>  **명령을 실행하는 다양한 옵션.**  
 SQL 명령은 UI를 통해서나, Worksheets 탭을 통해, SnowSQL 명령행 도구를 사용해서, ODBC/JDBC를 통해 선택한 SQL 편집기를 이용해서 또는 Python이나 Spark 커넥터를 통해 실행할 수 있습니다. 앞서 언급했듯이, 이 랩에서는 시간을 절약하기 위해 워크시트 내 미리 작성된 SQL을 통해 작업을 실행할 것입니다.
 
 커서를 명령 내 어디든 두고 페이지 상단의 파란색 실행 버튼을 클릭하여 쿼리를 실행하십시오. 또는 바로 가기 키 [Ctrl]/[Cmd]+[Enter]를 이용하십시오.
@@ -297,8 +303,9 @@ TRIPS 테이블이 생성되었는지 확인합니다. 워크시트 하단에 "�
 
 우리는 이미 pulbic 외부 S3 버킷에 준비된 쉼표로 구분된 구조화된 데이터로 작업하고 있습니다. 이 데이터를 사용하기 전에 먼저 외부 버킷의 위치를 ​​지정하는 단계를 생성해야 합니다.
 
-Positive
-: 이 실습에서는 AWS-East 버킷을 사용합니다. 향후 데이터 송신/전송 비용을 방지하려면 Snowflake 계정과 동일한 클라우드 제공업체 및 지역에서 스테이징 위치를 선택해야 합니다.
+> aside positive
+> 
+>  이 실습에서는 AWS-East 버킷을 사용합니다. 향후 데이터 송신/전송 비용을 방지하려면 Snowflake 계정과 동일한 클라우드 제공업체 및 지역에서 스테이징 위치를 선택해야 합니다.
 
 **Databases** 탭에서 `CITIBIKE` 데이터베이스와 `PUBLIC` 스키마를 클릭합니다. **Stage** 탭에서 **Create** 버튼을 클릭한 다음 **Stages** > **Amazon S3**를 클릭합니다.
 
@@ -312,8 +319,9 @@ Positive
 
 **참고:** URL 끝에 마지막 슬래시(`/`)를 포함해야 합니다. 그렇지 않으면 나중에 버킷에서 데이터를 로드할 때 오류가 발생합니다.
 
-Positive
-: 이 실습의 S3 버킷은 공개되어 있으므로 문의 자격 증명 옵션을 비워 둘 수 있습니다. 실제 시나리오에서 외부 단계에 사용되는 버킷에는 주요 정보가 필요할 수 있습니다.
+> aside positive
+> 
+>  이 실습의 S3 버킷은 공개되어 있으므로 문의 자격 증명 옵션을 비워 둘 수 있습니다. 실제 시나리오에서 외부 단계에 사용되는 버킷에는 주요 정보가 필요할 수 있습니다.
 
 ![create stage settings](assets/4PreLoad_9.png)
 
@@ -381,8 +389,9 @@ Duration: 10
 
 **Edit**을 클릭하여 이 웨어하우스의 옵션을 살펴보고 Snowflake의 고유한 기능에 대해 알아보세요.
 
-Positive
-: 이 계정이 Snowflake Enterprise Edition(또는 그 이상)을 사용하지 않는 경우 아래 스크린샷에 표시된 **Mode** 또는 **Clusters** 옵션이 표시되지 않습니다. 멀티 클러스터 웨어하우스 기능은 이 실습에서 사용되지 않지만 Snowflake의 핵심 기능으로 설명합니다.
+> aside positive
+> 
+>  이 계정이 Snowflake Enterprise Edition(또는 그 이상)을 사용하지 않는 경우 아래 스크린샷에 표시된 **Mode** 또는 **Clusters** 옵션이 표시되지 않습니다. 멀티 클러스터 웨어하우스 기능은 이 실습에서 사용되지 않지만 Snowflake의 핵심 기능으로 설명합니다.
 
 ![웨어하우스 구성 설정](assets/5Load_2.png)
 
@@ -392,8 +401,9 @@ Positive
 
 - **Advanced Warehouse Options**에서 옵션을 사용하면 웨어하우스를 사용하지 않을 때 자동으로 일시 중단하여 크레딧이 불필요하게 소모되지 않도록 할 수 있습니다. 일시 중단된 웨어하우스를 자동으로 재개하는 옵션도 있으므로 새 워크로드가 보내지면 자동으로 백업이 시작됩니다. 이 기능을 통해 Snowflake의 효율적인 "사용한 만큼만 지불" 청구 모델을 사용하여 필요할 때 리소스를 확장하고 필요하지 않을 때 자동으로 축소하거나 꺼서 유휴 리소스를 거의 제거할 수 있습니다.
 
-Negative
-: **Snowflake Compute vs 타사 웨어하우스**  
+> aside negative
+> 
+>  **Snowflake Compute vs 타사 웨어하우스**  
 웨어하우스 생성, 스케일 업, 스케일 아웃 및 자동 일시 중단/재개 기능과 같이 우리가 방금 다룬 여러 웨어하우스 및 컴퓨팅 기능이 Snowflake에서는 모두 간단하게 이뤄지며 단 몇 초면 할 수 있습니다. 온프레미스 데이터 웨어하우스의 경우 이러한 기능은 상당한 물리적 하드웨어, 워크로드 급증에 대비한 과한 하드웨어 프로비저닝, 상당한 구성 작업을 필요로 하며 추가적인 도전 과제로 인해 불가능하지는 않더라도 구현하기가 매우 어렵습니다. 심지어 다른 클라우드 데이터 웨어하우스도 훨씬 더 많은 구성 작업과 시간 없이는 Snowflake처럼 스케일 업 및 스케일 아웃을 할 수 없습니다.
 
 **경고 - 지출을 조심하십시오!**  
@@ -502,8 +512,9 @@ Duration: 8
 
 이전 연습에서, Snowflake의 대량 로더인  `COPY`  명령과 웨어하우스  `COMPUTE_WH`를 이용하여 데이터를 두 개의 테이블로 로드했습니다. 이제 워크시트와 두 번째 웨어하우스인  `ANALYTICS_WH`를 이용하여 해당 테이블의 데이터를 쿼리해야 하는 Citi Bike의 분석 사용자 역할을 수행해 보겠습니다.
 
-Negative
-: **실제 역할 및 쿼리**  
+> aside negative
+> 
+>  **실제 역할 및 쿼리**  
 실제 기업에서는, 분석 사용자가 SYSADMIN이 아닌 다른 역할을 수행할 수도 있습니다. 이 랩을 단순하게 유지하기 위해 이 섹션에서는 계속해서 SYSADMIN 역할을 맡을 것입니다. 또한 쿼리는 일반적으로 Tableau, Looker, PowerBI 등과 같은 비즈니스 인텔리전스 제품으로 이뤄집니다. 고급 분석을 위해 Datarobot, Dataiku, AWS Sagemaker와 같은 데이터 과학 도구나 기타 여러 도구가 Snowflake를 쿼리할 수 있습니다. JDBC/ODBC, Spark 또는 Python을 활용하는 모든 기술이 Snowflake의 데이터에 대한 분석을 실행할 수 있습니다. 이 랩을 단순하게 유지하기 위해 모든 쿼리는 Snowflake 워크시트를 통해 수행됩니다.
 
 ### 쿼리 실행
@@ -577,8 +588,9 @@ Snowflake를 사용하면 "제로 카피 클론"이라고도 하는 테이블, �
 
 제로 카피 클론 생성의 일반적인 사용 사례는 개발 및 테스팅이 사용하는 운영 환경을 복제하여 운영 환경에 부정적인 영향을 미치지 않게 두 개의 별도 환경을 설정하여 관리할 필요가 없도록 테스트하고 실험하는 것입니다.
 
-Negative
-: **제로 카피 클론 생성**  제로 카피 클론 생성의 굉장히 큰 이점은 기본 데이터가 복사되지 않는다는 점입니다. 기본 데이터에 대한 메타데이터와 포인터만 변경됩니다. 이런 이유로 "제로 카피"이며 데이터 복제 시 스토리지 요구 사항이 두 배가 되지 않습니다. 대부분의 데이터 웨어하우스에서는 이렇게 할 수 없지만, Snowflake에서는 쉽게 할 수 있습니다!
+> aside negative
+> 
+>  **제로 카피 클론 생성**  제로 카피 클론 생성의 굉장히 큰 이점은 기본 데이터가 복사되지 않는다는 점입니다. 기본 데이터에 대한 메타데이터와 포인터만 변경됩니다. 이런 이유로 "제로 카피"이며 데이터 복제 시 스토리지 요구 사항이 두 배가 되지 않습니다. 대부분의 데이터 웨어하우스에서는 이렇게 할 수 없지만, Snowflake에서는 쉽게 할 수 있습니다!
 
 워크시트에서 다음 명령을 실행하여 `trips` 테이블의 개발(dev) 테이블 복제본을 만듭니다.
 
@@ -596,8 +608,9 @@ create table trips_dev clone trips
 
 Duration: 16
 
-Positive
-: 이 섹션에서는 추가 데이터를 로드해야 하므로 데이터 로드에 대한 검토와 반정형 데이터 로드를 소개합니다.
+> aside positive
+> 
+>  이 섹션에서는 추가 데이터를 로드해야 하므로 데이터 로드에 대한 검토와 반정형 데이터 로드를 소개합니다.
 
 랩의 예제로 돌아가서, Citi Bike 분석팀은 날씨가 자전거 이용 횟수에 어떻게 영향을 미치는지 확인하고자 합니다. 이를 위해, 이 섹션에서는 다음을 수행합니다.
 
@@ -610,8 +623,9 @@ JSON 데이터는 MeteoStat에서 제공한 날씨 정보로 구성되며 이는
 
 ![미가공 JSON 샘플](assets/7SemiStruct_1.png)
 
-Negative
-: **반정형 데이터**  Snowflake는 변환 없이 JSON, Parquet 또는 Avro와 같은 반정형 데이터를 쉽게 로드하고 쿼리할 수 있습니다. 오늘날 점점 더 많은 비즈니스 관련 데이터가 반정형으로 생산되고 있으며, 많은 기존 데이터 웨어하우스는 이러한 데이터를 쉽게 로드하고 쿼리할 수 없기 때문에 중요합니다. Snowflake가 이를 쉽게 만들어 줍니다!
+> aside negative
+> 
+>  **반정형 데이터**  Snowflake는 변환 없이 JSON, Parquet 또는 Avro와 같은 반정형 데이터를 쉽게 로드하고 쿼리할 수 있습니다. 오늘날 점점 더 많은 비즈니스 관련 데이터가 반정형으로 생산되고 있으며, 많은 기존 데이터 웨어하우스는 이러한 데이터를 쉽게 로드하고 쿼리할 수 없기 때문에 중요합니다. Snowflake가 이를 쉽게 만들어 줍니다!
 
 ### 데이터베이스 및 테이블 생성
 
@@ -633,8 +647,9 @@ use database weather;
 use schema public;
 ```
 
-Positive
-: **Executing Multiple Commands** 각 명령을 개별적으로 실행해야 함을 기억하십시오. 그러나 모든 명령을 선택한 다음 **Play/Run** 버튼을 클릭(또는 키보드 단축키 사용)하여 순서대로 함께 실행할 수 있습니다.
+> aside positive
+> 
+>  **Executing Multiple Commands** 각 명령을 개별적으로 실행해야 함을 기억하십시오. 그러나 모든 명령을 선택한 다음 **Play/Run** 버튼을 클릭(또는 키보드 단축키 사용)하여 순서대로 함께 실행할 수 있습니다.
 
 다음, JSON 데이터를 로딩하는 데 사용할  `JSON_WEATHER_DATA`라는 이름의 데이터베이스를 만들어봅시다. 워크시트에서 아래의 SQL 텍스트를 실행합니다. Snowflake에는 `VARIANT`라는 특수 열 유형이 있어 이를 통해 전체 JSON 객체를 저장하고 궁극적으로는 직접 쿼리할 수 있습니다.
 
@@ -642,8 +657,9 @@ Positive
 create table json_weather_data (v variant);
 ```
 
-Negative
-: **반정형 데이터 마법**  
+> aside negative
+> 
+>  **반정형 데이터 마법**  
 VARIANT 데이터 유형을 사용하면 Snowflake가 스키마를 미리 정의하지 않고도 반정형 데이터를 수집할 수 있습니다.
 
 워크시트 하단의 결과 창에서 `JSON_WEATHER_DATA` 테이블이 생성되었는지 확인합니다.
@@ -702,8 +718,9 @@ select * from json_weather_data limit 10;
 Snowflake를 통해 어떻게 뷰를 생성하고 또 SQL을 이용해 JSON 데이터를 어떻게 직접 쿼리할 수 있는지 살펴봅시다.
 
 
-Negative
-: **View 및 Materialized View**  
+> aside negative
+> 
+>  **View 및 Materialized View**  
 뷰를 사용하면 쿼리 결과에 테이블처럼 액세스할 수 있습니다. 뷰는 최종 사용자에게 보다 깔끔한 방식으로 데이터를 제시하고 소스 테이블에서 최종 사용자가 볼 수 있는 것을 제한하며 더 많은 모듈식 SQL을 작성하는 데 도움이 됩니다. SQL 결과가 테이블처럼 저장되는 Materialized 뷰도 있습니다. 이를 통해 더 빠르게 액세스할 수 있지만, 이는 저장 용량을 필요로 합니다. Snowflake 엔터프라이즈 이상에서 Materialized 뷰에 액세스할 수 있습니다.
 
 Worksheets 탭에서 다음의 명령을 실행하십시오. 비정형 JSON 날씨 데이터에 대한 뷰를 열 형식 뷰로 생성하여 분석가가 더 쉽게 이해하고 쿼리할 수 있도록 할 것입니다. `city_id` `5128638`은 뉴욕시에 해당합니다.
@@ -754,8 +771,9 @@ limit 20;
 
 `WEATHER`를  `TRIPS`에 조인하고 특정 날씨 조건과 관련된 이동 횟수를 확인하기 위해 아래의 명령을 실행하십시오.
 
-Positive
-: 아직 워크시트에 있기 때문에  `WEATHER`  데이터베이스가 기본값입니다. 데이터베이스와 스키마 이름을 제공하여  `TRIPS`  테이블에 대해 완전히 참조할 수 있을 것입니다.
+> aside positive
+> 
+>  아직 워크시트에 있기 때문에  `WEATHER`  데이터베이스가 기본값입니다. 데이터베이스와 스키마 이름을 제공하여  `TRIPS`  테이블에 대해 완전히 참조할 수 있을 것입니다.
 
 
 ```SQL
@@ -895,8 +913,9 @@ Duration: 8
 
 Citi Bike 이야기를 계속하기 위해 주니어 DBA가 Citi Bike에 합류하여 시스템에서 정의한 기본 역할인  `SYSADMIN`보다 적은 권한을 지닌 새로운 역할을 만들고 싶다고 가정해 보겠습니다.
 
-Negative
-: **역할 기반 액세스 제어**  
+> aside negative
+> 
+>  **역할 기반 액세스 제어**  
 Snowflake는 사용자가 액세스할 수 있는 객체 및 기능과 액세스 수준을 지정하는 매우 강력하고 세분화된 RBAC를 제공합니다. 더 자세한 사항은  [Snowflake 설명서](https://docs.snowflake.net/ko/user-guide/security-access-control.html)를 확인하십시오.
 
 ### 새로운 역할 생성 및 사용자 추가
@@ -920,8 +939,9 @@ create role junior_dba;
 grant role junior_dba to user 유저 이름을 여기에 기입하세요;
 ```
 
-Positive
-: `SYSADMIN`과 같은 역할로 이 작업을 수행하려고 하면, 권한이 부족하여 실패할 것입니다. 기본적으로  `SYSADMIN`  역할은 새로운 역할이나 사용자를 생성할 수 없습니다.
+> aside positive
+> 
+>  `SYSADMIN`과 같은 역할로 이 작업을 수행하려고 하면, 권한이 부족하여 실패할 것입니다. 기본적으로  `SYSADMIN`  역할은 새로운 역할이나 사용자를 생성할 수 없습니다.
 
 워크시트 컨텍스트를 다음과 같이  `JUNIOR_DBA`  역할로 변경합니다.
 
@@ -979,8 +999,9 @@ use role junior_dba;
 
 ![역할 전환](assets/9Role_4.png)
 
-Negative
-: **User Preference 설정의 역할 vs 워크시트**  
+> aside negative
+> 
+>  **User Preference 설정의 역할 vs 워크시트**  
 워크시트 대신 사용자 기본 설정 메뉴를 사용하여 역할을 변경한 이유는 무엇입니까? UI 세션과 각 워크시트에는 고유한 역할이 있습니다. UI 세션 역할은 UI에서 보고 액세스할 수 있는 요소를 제어하는 반면 워크시트 역할은 역할 내에서 액세스할 수 있는 개체 및 작업만 제어합니다.
 
 UI 세션을 ACCOUNTADMIN 역할로 전환하면 **Account**에서 새 탭을 사용할 수 있습니다.
@@ -1031,8 +1052,9 @@ Snowflake는 공유를 통해 계정 간 데이터 액세스를 가능하게 합
 -   공급자가 공유에 대한 취소 가능하고 세분화된 액세스 권한을 설정할 수 있음
 -   데이터 공유는 특히 인터넷을 통한 대용량  `.csv`  파일 전송을 포함하는 수동의 안전하지 않은 이전 데이터 공유 방법과 비교하여 간단하고 안전함
 
-Positive
-: **Cross-region & cross-cloud data sharing** 
+> aside positive
+> 
+>  **Cross-region & cross-cloud data sharing** 
 지역 또는 클라우드 공급자 간에 데이터를 공유하려면 복제(replication) 를 반드시 설정해야 합니다. 이는 이 랩의 범위를 벗어나는 것이지만, 더 상세한 정보를  [이 Snowflake 문서](https://www.snowflake.com/trending/what-is-data-replication)에서 확인하실 수 있습니다.
 
 Snowflake는 보안 데이터 공유를 사용하여 모든 Snowflake 계정에 계정 사용량 데이터 및 샘플 데이터 세트를 제공합니다. 이러한 기능으로 보면, Snowflake는 데이터 제공자 역할을 하고 다른 모든 계정은 소비자 역할을 합니다.
@@ -1124,8 +1146,9 @@ ACCOUNTADMIN 역할을 사용 중인지 확인하고 **Data** 아래에서 **Mar
 
 이제 글로벌 COVID 데이터로 매일 업데이트되는 Starschema의 COVID-19 데이터 세트를 성공적으로 구독했습니다. 데이터베이스, 테이블, 뷰 또는 ETL 프로세스를 생성할 필요가 없었습니다. Snowflake Data Marketplace에서 공유 데이터를 검색하고 액세스했습니다.
 
-Positive
-: 새 워크시트 인터페이스를 사용하는 방법에 대해 자세히 알아보려면 [Snowsight 문서](https://docs.snowflake.com/ko/user-guide/ui-snowsight.html#using-snowsight)로 이동하세요.
+> aside positive
+> 
+>  새 워크시트 인터페이스를 사용하는 방법에 대해 자세히 알아보려면 [Snowsight 문서](https://docs.snowflake.com/ko/user-guide/ui-snowsight.html#using-snowsight)로 이동하세요.
 
 
 <!-- ------------------------ -->

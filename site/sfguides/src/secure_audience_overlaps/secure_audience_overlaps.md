@@ -1,9 +1,9 @@
 author: Rachel Blum, Jim Warner
 id: secure_audience_overlaps
 summary: This Quickstart shows how to do a simple audience overlap with a partner before setting up a more permanent clean room.
-categories: Getting Started
+categories: solution-examples
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, AdTech
 
@@ -51,7 +51,7 @@ Next, we create a table with test data.
 USE AUD_OVERLAP_DEMO.DEMO;
 CREATE OR REPLACE TABLE customers_rap AS
 SELECT 'user'||seq4()||'_'||uniform(1, 3, random(1))||'@email.com' as email,
- replace(to_varchar(seq4() % 999, '000') ||'-'||to_varchar(seq4() % 888, '000')||'-'||to_varchar(seq4() % 777, '000')||uniform(1, 10, random(2)),' ','') as phone,
+  replace(to_varchar(seq4() % 999, '000') ||'-'||to_varchar(seq4() % 888, '000')||'-'||to_varchar(seq4() % 777, '000')||uniform(1, 10, random(2)),' ','') as phone,
   case when uniform(1,10,random(3))>3 then 'MEMBER'
        when uniform(1,10,random(4))>5 then 'SILVER'
        when uniform(1,10,random(5))>7 then 'GOLD'
@@ -90,7 +90,7 @@ We want to create another customer table.  It will also have email addresses, an
 USE AUD_CONSUMER_DEMO.DEMO;
 CREATE OR REPLACE TABLE customers as
 SELECT 'user'||seq4()||'_'||uniform(1, 3, random(2))||'@email.com' as email,
- ,sha1(uniform(1, 1000000, random(3)))::varchar(40) as user_id
+  sha1(uniform(1, 1000000, random(3)))::varchar(40) as user_id
 FROM table(generator(rowcount => 1000000));
 ```
 

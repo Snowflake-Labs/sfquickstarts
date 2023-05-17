@@ -1,7 +1,7 @@
 author: gflomo@hex.tech
 id: hex
 summary: This lab will walk you through how to use Snowflake and Hex.
-categories: Getting Started
+categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -117,6 +117,7 @@ Duration: 5
 Now we can move back over to Hex and get started on our project. The first thing you'll need to do is download the Hex project that contains all of the code for generating our data and training our model.
 
 <button>
+
 
 [Download Hex project](https://static.hex.site/Forecasting%20Hourly%20Traffic.yaml)
 

@@ -1,6 +1,6 @@
 summary: Learn how to get started with Jupyter Notebooks on Snowpark and use the DataFrame API.
 id: getting_started_with_snowpark_dataframe_api
-categories: Getting Started
+categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -109,11 +109,13 @@ The following instructions show how to build a Notebook server using a Docker co
 
 8. Start a browser session (Safari, Chrome, ...). Paste the line with the local host address (127.0.0.1) printed in **your shell window** into the browser status bar and update the port (8888) to **your port** in case you have changed the port in the step above.
 
-Positive
-:  Once you have completed this step, you can move on to the Setup Credentials Section.
+> aside positive
+> 
+>   Once you have completed this step, you can move on to the Setup Credentials Section.
 
-Negative
-:  Stopping your Docker lab environment
+> aside negative
+> 
+>   Stopping your Docker lab environment
     
     Type the following command into a new shell window when you want to stop the tutorial. All changes/work will be saved on your local machine. 
 
@@ -147,8 +149,9 @@ In case you can't install docker on your local machine you could run the tutoria
 
         unzip SageMaker/<filename> -d SageMaker/
 
-Positive
-:  After you have set up either your docker or your cloud based notebook environment you can proceed to the next section.
+> aside positive
+> 
+>   After you have set up either your docker or your cloud based notebook environment you can proceed to the next section.
 
 <!-- ------------------------ -->
 ## Setup Credentials
@@ -164,8 +167,9 @@ To create a Snowflake session, we need to authenticate to the Snowflake instance
 
 Then, update your credentials in that file and they will be saved on your local machine. Even better would be to switch from user/password authentication to [private key authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth.html#key-pair-authentication-key-pair-rotation).
 
-Positive
-:  Put your key pair files into the same directory or update the location in your credentials file.
+> aside positive
+> 
+>   Put your key pair files into the same directory or update the location in your credentials file.
 
 - Open your Jupyter environment in your web browser
 - Navigate to the folder:  /snowparklab/creds
@@ -177,8 +181,9 @@ Positive
 - Double click the **credential.txt** file to open and edit it in the Jupyter environment
 - Update the file to your Snowflake environment connection parameters
 
-Positive
-:  You can comment out parameters by putting a # at the beginning of the line.
+> aside positive
+> 
+>   You can comment out parameters by putting a # at the beginning of the line.
 
 ![Update Credentials](assets/jupyter_update_credentials.png)
 
@@ -202,8 +207,9 @@ Navigate to the folder snowparklab/notebook/part1 and Double click on the part1.
 
 ![Import Credentials](assets/part1_run_step_1.png)
 
-Positive
-:  **Return here once you have finished the first notebook.**
+> aside positive
+> 
+>   **Return here once you have finished the first notebook.**
 
 <!-- ------------------------ -->
 ## Part 2:  Aggregations, Pivots, and UDF's 
@@ -229,8 +235,9 @@ Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.
 
 ![Run Cells](assets/part2_run_step_1.png)
 
-Positive
-:  **Return here once you have finished the second notebook.**
+> aside positive
+> 
+>   **Return here once you have finished the second notebook.**
 
 
 <!-- ------------------------ -->
@@ -253,8 +260,9 @@ Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.
 
 ![Run Cells](assets/part3_run_step_1.png)
 
-Positive
-:  **Return here once you have finished the third notebook so you can read the conclusion & Next steps, and complete the guide.**
+> aside positive
+> 
+>   **Return here once you have finished the third notebook so you can read the conclusion & Next steps, and complete the guide.**
 
 
 

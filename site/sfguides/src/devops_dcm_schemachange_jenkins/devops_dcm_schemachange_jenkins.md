@@ -1,7 +1,7 @@
 author: Adrian Lee
 id: devops_dcm_schemachange_jenkins
 summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Jenkins
-categories: DevOps
+categories: devops
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -75,8 +75,9 @@ Unlike other complete SDLC tools, Jenkins does not include built-in support for 
 
 A Jenkins Pipeline "orchestrates long-running activities that can span multiple build agents. Suitable for building pipelines (formerly known as workflows) and/or organizing complex activities that do not easily fit in free-style job type" (from the "New item" page in Jenkins).
 
-Negative
-: **Note** - For this guide we will use GitHub for our Git repo.
+> aside negative
+> 
+>  **Note** - For this guide we will use GitHub for our Git repo.
 
 <!-- ------------------------ -->
 ## schemachange Overview
@@ -90,8 +91,9 @@ schemachange is a lightweight Python-based tool to manage all your Snowflake obj
 
 For more information about schemachange please see [the schemachange project page](https://github.com/Snowflake-Labs/schemachange).
 
-Negative
-: **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
+> aside negative
+> 
+>  **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
 
 
 <!-- ------------------------ -->
@@ -148,8 +150,9 @@ docker run -p 8080:8080 \
   jenkins
 ```
 
-Positive
-: **Tip** - Please note that the initial admin password for your Jenkins installation will be printed out in the Docker output. So please copy it for use later in this step.
+> aside positive
+> 
+>  **Tip** - Please note that the initial admin password for your Jenkins installation will be printed out in the Docker output. So please copy it for use later in this step.
 
 The last thing we need to do, once the Jenkins container is running, is to give Jenkins access to the Docker engine by running this command:
 
@@ -197,8 +200,9 @@ In this step we will create our first Jenkins Pipeline. A Jenkins Pipeline "orch
 
 Jenkins Pipelines are best defined through a proprietary file format known as a ```Jenkinsfile```. A ```Jenkinsfile``` is a text file that contains the definition of a Jenkins Pipeline and is checked into source control.
 
-Positive
-: **Tip** - For more details on the ```Jenkinsfile``` format please see the [Using a Jenkinsfile](https://www.jenkins.io/doc/book/pipeline/jenkinsfile/) documentation.
+> aside positive
+> 
+>  **Tip** - For more details on the ```Jenkinsfile``` format please see the [Using a Jenkinsfile](https://www.jenkins.io/doc/book/pipeline/jenkinsfile/) documentation.
 
 So with that, let's create our first Jenkins Pipeline. To do so we will simply create a Jenkinsfile and commit it to our repository. Toggle back to you IDE and create a Jenkinsfile named ```Jenkinsfile``` in the root of your GitHub repository with the following contents and commit it to your repo:
 
@@ -254,8 +258,9 @@ If all is good, it should look like this screenshot:
 
 Click on the blue ```Save``` button to save these changes.
 
-Positive
-: **Tip** - If you are using a private GitHub repository, then you would need to input your credentials to your GitHub repository. If not you can just leave the credentials as blank.
+> aside positive
+> 
+>  **Tip** - If you are using a private GitHub repository, then you would need to input your credentials to your GitHub repository. If not you can just leave the credentials as blank.
 
 ### Adding Pipeline Parameters
 
@@ -313,8 +318,9 @@ Please note the slight difference in naming convention with the password paramet
 
 When you're finished don't forget to click on the blue ```Save``` button to save these changes.
 
-Positive
-: **Tip** - While this simple getting started guide stores the parameters and passwords in Jenkins directly, please consider using an external vault like one of the following in a production scenario: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault. Each of these vaults (and others) are supported by Jenkins with a related plugin.
+> aside positive
+> 
+>  **Tip** - While this simple getting started guide stores the parameters and passwords in Jenkins directly, please consider using an external vault like one of the following in a production scenario: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault. Each of these vaults (and others) are supported by Jenkins with a related plugin.
 
 <!-- ------------------------ -->
 ## Manually Run the Pipeline
@@ -332,8 +338,9 @@ Verify that all the parameter values look correct and click on the blue ```Build
 
 To view the log output from the execution you can either hover over the stage shown in the screenshot above and click on the ```Logs``` icon. Or for more details on the build you can open the specific build number and then click on the ```Console Output``` in the left navigation bar.
 
-Negative
-: **Note** - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn't reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
+> aside negative
+> 
+>  **Note** - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn't reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
@@ -377,8 +384,9 @@ To view the log output from the execution you can either hover over the stage sh
 
 You can also confirm that the changes have been deployed to your Snowflake account by following the general instructions in Step 8 again (except this time you're looking for a new column in the ```HELLO_WORLD``` table).
 
-Negative
-: **Note** - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn't reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
+> aside negative
+> 
+>  **Note** - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn't reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
   
 
 <!-- ------------------------ -->

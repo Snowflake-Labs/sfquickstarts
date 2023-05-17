@@ -1,7 +1,7 @@
 author: Prash Medirattaa
 id: end_to_end_machine_learning_with_dataiku
 summary: This is a sample Snowflake Guide
-categories: Getting Started
+categories: data-science-&-ml,solution-examples,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -81,8 +81,9 @@ Duration: 5
 - **Snowflake edition**  - Select the ```Enterprise edition``` so you can leverage some advanced capabilities that are not available in the Standard Edition.
 
 
-Negative
-: **Snowflake Marketplace dataset** <br> It is strongly recommended that when setting up a new account you use the Provider and Region above because to leverage the marketplace dataset in this lab. If you already have an existing Snowflake account you wish to use that uses a different Provider/Region we would recommend creating a new trial instance for this lab.
+> aside negative
+> 
+>  **Snowflake Marketplace dataset** <br> It is strongly recommended that when setting up a new account you use the Provider and Region above because to leverage the marketplace dataset in this lab. If you already have an existing Snowflake account you wish to use that uses a different Provider/Region we would recommend creating a new trial instance for this lab.
 
 
 
@@ -367,8 +368,9 @@ Below is the snapshot of the data and it represents aggregation from various int
 
 We have successfully loaded the data from ```external stage``` to snowflake.
 
-Negative
-: **About the screen captures, sample code, and environment** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
+> aside negative
+> 
+>  **About the screen captures, sample code, and environment** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
 
 
 
@@ -540,8 +542,9 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 ![26](assets/sf-26-marketplace8.png)
 
 
-Negative
-: **Database for Machine learning consumption** <br>  This will be created after connecting Snowflake with Dataiku using partner connect...
+> aside negative
+> 
+>  **Database for Machine learning consumption** <br>  This will be created after connecting Snowflake with Dataiku using partner connect...
 
 <!-- ------------------------ -->
 ## Connect Dataiku with Snowflake
@@ -714,8 +717,9 @@ you should have two datasets ```LOANS_ENRICHED``` and ```UNEMPLOYMENT_DATA```
 ![37](assets/sf-29-partnerconnect4.png)
 
 
-Negative
-: **Move to Dataiku console** <br> For feature engineering, model building, Scoring and deployment. 
+> aside negative
+> 
+>  **Move to Dataiku console** <br> For feature engineering, model building, Scoring and deployment. 
 
 
 <!-- ------------------------ -->
@@ -868,8 +872,9 @@ Secondly because Dataiku DSS infers meanings for each column, it suggests releva
 ![46](assets/dk-prepare_overview2.png)
 
 
-Negative
-: **Note about shortcuts** <br> When navigating Dataiku DSS, there are many keyboard short-cuts, one of the most useful when working with the explore tab is the `scroll to column`, simply  click `c ` on your keyboard. 
+> aside negative
+> 
+>  **Note about shortcuts** <br> When navigating Dataiku DSS, there are many keyboard short-cuts, one of the most useful when working with the explore tab is the `scroll to column`, simply  click `c ` on your keyboard. 
 
 
 Let's try using processors with both methods, firstly via the suggested actions:

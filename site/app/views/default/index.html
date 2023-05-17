@@ -19,6 +19,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="canonical" href="{{canonicalViewUrl(view)}}" />
   <link rel="preconnect" href="https://www.google-analytics.com" />
 
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  <!-- End Google Tag Manager -->
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
   <script>
     window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
     ga('create', '{{ga}}', 'auto');
@@ -94,6 +112,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 
 <body id="app" is="body-bind" class="loading fullbleed {% if view.id != 'default' -%}view{%- endif -%}">
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
   <paper-header-panel id="main" mode="standard" main>
     {% raw %}
     <div id="mainToolbar" class="paper-header">
@@ -142,7 +164,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <main>
       <a href="http://snowflake.com/build/?utm_source=quickstart&amp;utm_medium=cpc&amp;utm_campaign=na-us-en-developers-quickstart&amp;utm_content=-evv-build-summit" target="_blank" style="
-    display: block;
+    display: none;
     background: black;
     text-align: center;
     font-size: 18px;
@@ -214,7 +236,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           {% if codelab.status.indexOf('hidden') === -1 || view.id !== 'default' %}
             {% set cat = levelledCategory(codelab, view.catLevel) %}
             <a href="{{codelabUrl(view, codelab)}}" on-tap="navigate"
-               class="codelab-card category-{{categoryClass(codelab, cat.level)}}"
+               class="codelab-card category-default category-{{categoryClass(codelab, cat.level)}}"
                data-category="{{codelab.category}}"
                data-title="{{codelab.title}}"
                data-duration="{{codelab.duration}}"
@@ -231,7 +253,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
               <div class="card-footer">
                 <div class="category-icon {{categoryClass(codelab, cat.level)}}-icon"></div>
-                <paper-button class="{{categoryClass(codelab, cat.level)}}-bg">Start</paper-button>
+                <paper-button class="default-bg {{categoryClass(codelab, cat.level)}}-bg">Start</paper-button>
               </div>
             </a>
           {%- endif %}

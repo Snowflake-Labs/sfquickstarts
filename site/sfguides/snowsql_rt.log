@@ -1,0 +1,851 @@
+2023-01-22 03:22:52,623 (33401/MainThread) snowflake.cli.common.util_cli DEBUG       util_cli:706  - Initialized logging. Log file '../snowsql_rt.log', Namespaces: ['snowflake.cli', 'snowflake.connector', 'botocore', 'azure', '__main__', 'eventloop', 'sqlexecute']
+2023-01-22 03:22:52,624 (33401/MainThread) snowflake.cli.common.util_cli INFO       util_cli:741  - REQUESTS_CA_BUNDLE is already set to /var/folders/8l/ygcpl4ts5jb77nrtbdtjy0480000gn/T/_MEIHPPNd3/certifi/cacert.pem
+2023-01-22 03:22:52,624 (33401/MainThread) __main__ DEBUG      eventloop:219  - is_terminal: True, is_interactive: True
+2023-01-22 03:22:52,625 (33401/MainThread) snowflake.cli.common.config DEBUG         config:87   - Reading cnf: /Users/mmarzillo/.snowsql/1.2.23/snowsql.cnf
+2023-01-22 03:22:52,626 (33401/MainThread) snowflake.cli.common.config DEBUG         config:87   - Reading cnf: /etc/snowsql.cnf
+2023-01-22 03:22:52,626 (33401/MainThread) snowflake.cli.common.config DEBUG         config:87   - Reading cnf: /etc/snowflake/snowsql.cnf
+2023-01-22 03:22:52,626 (33401/MainThread) snowflake.cli.common.config DEBUG         config:87   - Reading cnf: /usr/local/etc/snowsql.cnf
+2023-01-22 03:22:52,626 (33401/MainThread) snowflake.cli.common.config DEBUG         config:87   - Reading cnf: /Users/mmarzillo/.snowsql.cnf
+2023-01-22 03:22:52,627 (33401/MainThread) snowflake.cli.common.config DEBUG         config:87   - Reading cnf: /Users/mmarzillo/.snowsql/config
+2023-01-22 03:22:52,628 (33401/MainThread) __main__ DEBUG      eventloop:362  - [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+2023-01-22 03:22:52,628 (33401/MainThread) __main__ DEBUG      eventloop:368  - fallback to config values only if user did not specify a value and sqlexecute is connecting for the first time.
+2023-01-22 03:22:52,628 (33401/MainThread) __main__ DEBUG      eventloop:417  - host=None, port: + None
+2023-01-22 03:22:52,629 (33401/MainThread) __main__ DEBUG      eventloop:456  - prompting user, password and account if still missing
+2023-01-22 03:23:02,419 (33401/MainThread) __main__ DEBUG      eventloop:511  - init sqlexecute
+2023-01-22 03:23:02,419 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:244  - Connection DB Params: database: None, warehouse: None, user: JOHN, host: sn00102.central-us.azure.snowflakecomputing.com, port: 443, region: None, account: sn00102.central-us.azure, protocol: https, schema: None, role: None, ocsp_fail_open: True, insecure_mode: None, proxy_host: None, proxy_port: None, proxy_user: None, authenticator: SNOWFLAKE, session_parameters: {'ABORT_DETACHED_QUERY': False}, login_timeout: 120, client_session_keep_alive: False, disable_request_pooling: None, client_store_temporary_credential: None
+2023-01-22 03:23:02,420 (33401/MainThread) snowflake.connector.connection INFO     connection:270  - Snowflake Connector for Python Version: 2.7.11, Python Version: 3.8.1, Platform: macOS-10.16-x86_64-i386-64bit
+2023-01-22 03:23:02,420 (33401/MainThread) snowflake.connector.connection DEBUG     connection:512  - connect
+2023-01-22 03:23:02,420 (33401/MainThread) snowflake.connector.connection DEBUG     connection:802  - __config
+2023-01-22 03:23:02,420 (33401/MainThread) snowflake.connector.connection INFO     connection:926  - This connection is in OCSP Fail Open Mode. TLS Certificates would be checked for validity and revocation status. Any other Certificate Revocation related exceptions or OCSP Responder failures would be disregarded in favor of connectivity.
+2023-01-22 03:23:02,421 (33401/MainThread) snowflake.connector.connection INFO     connection:944  - Setting use_openssl_only mode to False
+2023-01-22 03:23:02,421 (33401/MainThread) snowflake.connector.converter DEBUG      converter:145  - use_numpy: False
+2023-01-22 03:23:02,421 (33401/MainThread) snowflake.connector.connection DEBUG     connection:705  - REST API object was created: sn00102.central-us.azure.snowflakecomputing.com:443
+2023-01-22 03:23:02,421 (33401/MainThread) snowflake.connector.auth DEBUG           auth:170  - authenticate
+2023-01-22 03:23:02,422 (33401/MainThread) snowflake.connector.auth DEBUG           auth:200  - assertion content: *********
+2023-01-22 03:23:02,422 (33401/MainThread) snowflake.connector.auth DEBUG           auth:203  - account=sn00102, user=JOHN, database=None, schema=None, warehouse=None, role=None, request_id=6ea02835-2094-45f6-a23c-13e7e19505d2
+2023-01-22 03:23:02,422 (33401/MainThread) snowflake.connector.auth DEBUG           auth:236  - body['data']: {'CLIENT_APP_ID': 'SnowSQL', 'CLIENT_APP_VERSION': '1.2.23', 'SVN_REVISION': None, 'ACCOUNT_NAME': 'sn00102', 'LOGIN_NAME': 'JOHN', 'CLIENT_ENVIRONMENT': {'APPLICATION': 'SnowSQL', 'OS': 'Darwin', 'OS_VERSION': 'macOS-10.16-x86_64-i386-64bit', 'PYTHON_VERSION': '3.8.1', 'PYTHON_RUNTIME': 'CPython', 'PYTHON_COMPILER': 'Clang 6.0 (clang-600.0.57)', 'OCSP_MODE': 'FAIL_OPEN', 'TRACING': 10, 'LOGIN_TIMEOUT': 120, 'NETWORK_TIMEOUT': None}, 'SESSION_PARAMETERS': {'ABORT_DETACHED_QUERY': False, 'AUTOCOMMIT': True, 'CLIENT_SESSION_KEEP_ALIVE': False, 'CLIENT_PREFETCH_THREADS': 4}}
+2023-01-22 03:23:02,422 (33401/MainThread) snowflake.connector.auth DEBUG           auth:254  - Timeout set to 120
+2023-01-22 03:23:02,423 (33401/MainThread) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:02,423 (33401/MainThread) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:02,423 (33401/MainThread) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/1 active sessions
+2023-01-22 03:23:02,423 (33401/MainThread) snowflake.connector.network DEBUG        network:827  - remaining request timeout: 120, retry cnt: 1
+2023-01-22 03:23:02,423 (33401/MainThread) snowflake.connector.network DEBUG        network:808  - Request guid: 318f117a-566f-4075-aead-861f37b2c6a8
+2023-01-22 03:23:02,423 (33401/MainThread) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:02,443 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:1003 - Starting new HTTPS connection (1): sn00102.central-us.azure.snowflakecomputing.com:443
+2023-01-22 03:23:02,806 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:490  - cache directory: /Users/mmarzillo/Library/Caches/Snowflake
+2023-01-22 03:23:02,896 (33401/MainThread) snowflake.connector.ssl_wrap_socket DEBUG ssl_wrap_socket:80   - OCSP Mode: FAIL_OPEN, OCSP response cache file name: None
+2023-01-22 03:23:02,896 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:532  - ocsp_response_cache_uri: file:///Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:02,897 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:533  - OCSP_VALIDATION_CACHE size: 0
+2023-01-22 03:23:02,897 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:315  - OCSP response cache server is enabled: http://ocsp.snowflakecomputing.com/ocsp_response_cache.json
+2023-01-22 03:23:02,897 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:351  - OCSP dynamic cache server RETRY URL: None
+2023-01-22 03:23:02,899 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:675  - The cache is older than 1 day. Deleted the cache file: /Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:02,899 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:574  - Failed to locate OCSP response cache file. No worry. It will validate with OCSP server: /Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:02,899 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1101 - validating certificate: sn00102.central-us.azure.snowflakecomputing.com
+2023-01-22 03:23:02,899 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:439  - # of certificates: 2
+2023-01-22 03:23:02,900 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:02,901 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:02,903 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:123  - reading certificate bundle: /var/folders/8l/ygcpl4ts5jb77nrtbdtjy0480000gn/T/_MEIHPPNd3/certifi/cacert.pem
+2023-01-22 03:23:02,913 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:465  - not found issuer_der: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:02,914 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:734  - not hit cache for subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')])
+2023-01-22 03:23:02,914 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:386  - started downloading OCSP response cache file: http://ocsp.snowflakecomputing.com/ocsp_response_cache.json
+2023-01-22 03:23:03,093 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,095 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:45:34+00:00
+2023-01-22 03:23:03,097 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-04-15 00:00:00+00:00
+2023-01-22 03:23:03,098 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,099 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,118 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,119 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,123 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-06-22 07:00:00+00:00
+2023-01-22 03:23:03,125 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,126 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,128 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,129 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,130 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,131 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,131 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,133 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,134 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,135 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,136 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,136 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,137 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,138 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,139 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,140 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,141 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,142 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,143 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,144 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,145 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,146 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,147 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,148 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:411  - ended downloading OCSP response cache file. elapsed time: 0.23401594161987305s
+2023-01-22 03:23:03,149 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:366  - downloaded OCSP response cache file from http://ocsp.snowflakecomputing.com/ocsp_response_cache.json
+2023-01-22 03:23:03,149 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:369  - # of certificates: 199
+2023-01-22 03:23:03,151 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')])
+2023-01-22 03:23:03,152 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1285 - using OCSP response cache
+2023-01-22 03:23:03,152 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:333  - Certificate is NOT attached in Basic OCSP Response. Using issuer's certificate
+2023-01-22 03:23:03,152 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:341  - Verifying the OCSP response is signed by the issuer.
+2023-01-22 03:23:03,266 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:03,267 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1285 - using OCSP response cache
+2023-01-22 03:23:03,267 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:333  - Certificate is NOT attached in Basic OCSP Response. Using issuer's certificate
+2023-01-22 03:23:03,267 (33401/MainThread) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:341  - Verifying the OCSP response is signed by the issuer.
+2023-01-22 03:23:03,270 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:630  - writing OCSP response cache file to /Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:03,270 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1777 - encoding OCSP response cache to JSON
+2023-01-22 03:23:03,288 (33401/MainThread) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1158 - ok
+2023-01-22 03:23:03,525 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /session/v1/login-request?request_id=6ea02835-2094-45f6-a23c-13e7e19505d2&request_guid=318f117a-566f-4075-aead-861f37b2c6a8 HTTP/1.1" 200 None
+2023-01-22 03:23:03,528 (33401/MainThread) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:03,530 (33401/MainThread) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/1 active sessions
+2023-01-22 03:23:03,530 (33401/MainThread) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:03,530 (33401/MainThread) snowflake.connector.auth DEBUG           auth:373  - completed authentication
+2023-01-22 03:23:03,530 (33401/MainThread) snowflake.connector.auth DEBUG           auth:416  - token = ******
+2023-01-22 03:23:03,531 (33401/MainThread) snowflake.connector.auth DEBUG           auth:419  - master_token = ******
+2023-01-22 03:23:03,531 (33401/MainThread) snowflake.connector.auth DEBUG           auth:423  - id_token = NULL
+2023-01-22 03:23:03,531 (33401/MainThread) snowflake.connector.auth DEBUG           auth:427  - mfa_token = NULL
+2023-01-22 03:23:03,531 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:322  - adding connection: 0
+2023-01-22 03:23:03,553 (33401/MainThread) snowflake.cli.clistyle DEBUG       clistyle:111  - prompt format: JOHN#(no warehouse)@(no database).(no schema)>, tokens: [(Token.TOKEN_0, 'JOHN#(no warehouse)@(no database).(no schema)>')]
+2023-01-22 03:23:03,599 (33401/Thread-1) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:03,600 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:03,600 (33401/Thread-2) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:03,600 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:669  - binding: [SHOW /* snowsql */ DATABASES] with input=[None], processed=[{}]
+2023-01-22 03:23:03,600 (33401/Thread-3) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:03,600 (33401/Thread-4) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:03,600 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:03,601 (33401/MainThread) __main__ DEBUG      eventloop:704  - Read from terminal
+2023-01-22 03:23:03,601 (33401/Thread-1) snowflake.connector.cursor INFO         cursor:715  - query: [SHOW /* snowsql */ DATABASES]
+2023-01-22 03:23:03,601 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:03,601 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:03,602 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:669  - binding: [SHOW /* snowsql */ WAREHOUSES] with input=[None], processed=[{}]
+2023-01-22 03:23:03,604 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:03,604 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:669  - binding: [SHOW /* snowsql */ ROLES] with input=[None], processed=[{}]
+2023-01-22 03:23:03,611 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:669  - binding: [SHOW /* snowsql */ USERS] with input=[None], processed=[{}]
+2023-01-22 03:23:03,612 (33401/Thread-2) snowflake.connector.cursor INFO         cursor:715  - query: [SHOW /* snowsql */ WAREHOUSES]
+2023-01-22 03:23:03,612 (33401/Thread-1) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 1
+2023-01-22 03:23:03,612 (33401/Thread-3) snowflake.connector.cursor INFO         cursor:715  - query: [SHOW /* snowsql */ ROLES]
+2023-01-22 03:23:03,613 (33401/Thread-4) snowflake.connector.cursor INFO         cursor:715  - query: [SHOW /* snowsql */ USERS]
+2023-01-22 03:23:03,613 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:03,613 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:460  - Request id: 413ce7aa-390c-4ac2-814e-c3c6004e503e
+2023-01-22 03:23:03,613 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:03,613 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:03,613 (33401/Thread-2) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 2
+2023-01-22 03:23:03,613 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:462  - running query [SHOW /* snowsql */ DATABASES]
+2023-01-22 03:23:03,614 (33401/Thread-3) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 3
+2023-01-22 03:23:03,614 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: False
+2023-01-22 03:23:03,614 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:460  - Request id: c451a038-ce0c-4e61-8d79-45f4a3e3adcd
+2023-01-22 03:23:03,614 (33401/Thread-4) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 4
+2023-01-22 03:23:03,614 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:511  - Failed to set SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:03,615 (33401/Thread-1) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:03,614 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:462  - running query [SHOW /* snowsql */ WAREHOUSES]
+2023-01-22 03:23:03,615 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: False
+2023-01-22 03:23:03,615 (33401/Thread-1) snowflake.connector.connection DEBUG     connection:995  - sql=[SHOW /* snowsql */ DATABASES], sequence_id=[1], is_file_transfer=[False]
+2023-01-22 03:23:03,614 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:460  - Request id: c13f0216-3825-416a-8c5a-57ba043e2de5
+2023-01-22 03:23:03,615 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:511  - Failed to set SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:03,615 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:460  - Request id: c6da4c55-f22b-43f9-9b51-528cd4c9dbbb
+2023-01-22 03:23:03,616 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:462  - running query [SHOW /* snowsql */ USERS]
+2023-01-22 03:23:03,615 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:462  - running query [SHOW /* snowsql */ ROLES]
+2023-01-22 03:23:03,616 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: False
+2023-01-22 03:23:03,616 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: False
+2023-01-22 03:23:03,615 (33401/Thread-1) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/1 active sessions
+2023-01-22 03:23:03,616 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:511  - Failed to set SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:03,616 (33401/Thread-2) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:03,616 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:511  - Failed to set SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:03,616 (33401/Thread-1) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:03,617 (33401/Thread-3) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:03,617 (33401/Thread-2) snowflake.connector.connection DEBUG     connection:995  - sql=[SHOW /* snowsql */ WAREHOUSES], sequence_id=[2], is_file_transfer=[False]
+2023-01-22 03:23:03,617 (33401/Thread-4) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:03,617 (33401/Thread-3) snowflake.connector.connection DEBUG     connection:995  - sql=[SHOW /* snowsql */ ROLES], sequence_id=[3], is_file_transfer=[False]
+2023-01-22 03:23:03,617 (33401/Thread-1) snowflake.connector.network DEBUG        network:808  - Request guid: e6c53d99-3a0b-4fa6-b403-0857f80bf45c
+2023-01-22 03:23:03,617 (33401/Thread-2) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:03,618 (33401/Thread-4) snowflake.connector.connection DEBUG     connection:995  - sql=[SHOW /* snowsql */ USERS], sequence_id=[4], is_file_transfer=[False]
+2023-01-22 03:23:03,618 (33401/Thread-3) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:03,618 (33401/Thread-1) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:03,618 (33401/Thread-2) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:03,618 (33401/Thread-4) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:03,619 (33401/Thread-3) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:03,619 (33401/Thread-2) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 2/2 active sessions
+2023-01-22 03:23:03,620 (33401/Thread-4) snowflake.connector.vendored.urllib3.util.retry DEBUG          retry:351  - Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+2023-01-22 03:23:03,621 (33401/Thread-3) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 3/3 active sessions
+2023-01-22 03:23:03,621 (33401/Thread-2) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:03,621 (33401/Thread-4) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 4/4 active sessions
+2023-01-22 03:23:03,622 (33401/Thread-3) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:03,622 (33401/Thread-4) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:03,622 (33401/Thread-2) snowflake.connector.network DEBUG        network:808  - Request guid: 57a058a9-b98b-44c0-b7ff-dde951ea8ba4
+2023-01-22 03:23:03,623 (33401/Thread-2) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:03,622 (33401/Thread-4) snowflake.connector.network DEBUG        network:808  - Request guid: 0aff8d35-dc86-4239-a630-da960cd7deaa
+2023-01-22 03:23:03,623 (33401/Thread-4) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:03,622 (33401/Thread-3) snowflake.connector.network DEBUG        network:808  - Request guid: 490478ed-bae1-4225-884e-c70011df5b29
+2023-01-22 03:23:03,623 (33401/Thread-3) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:03,626 (33401/Thread-2) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:1003 - Starting new HTTPS connection (1): sn00102.central-us.azure.snowflakecomputing.com:443
+2023-01-22 03:23:03,626 (33401/Thread-3) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:1003 - Starting new HTTPS connection (1): sn00102.central-us.azure.snowflakecomputing.com:443
+2023-01-22 03:23:03,626 (33401/Thread-4) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:1003 - Starting new HTTPS connection (1): sn00102.central-us.azure.snowflakecomputing.com:443
+2023-01-22 03:23:03,712 (33401/Thread-1) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=413ce7aa-390c-4ac2-814e-c3c6004e503e&request_guid=e6c53d99-3a0b-4fa6-b403-0857f80bf45c HTTP/1.1" 200 None
+2023-01-22 03:23:03,712 (33401/Thread-1) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:03,713 (33401/Thread-1) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 3/4 active sessions
+2023-01-22 03:23:03,713 (33401/Thread-1) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:03,713 (33401/Thread-1) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-35ba-0000-5d7500106052
+2023-01-22 03:23:03,713 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:534  - Failed to reset SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:03,713 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-35ba-0000-5d7500106052
+2023-01-22 03:23:03,713 (33401/Thread-1) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:03,713 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: None
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828dd1b50>
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,714 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,715 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,715 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,715 (33401/Thread-1) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:03,715 (33401/Thread-1) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 5
+2023-01-22 03:23:03,750 (33401/Thread-4) snowflake.connector.ssl_wrap_socket DEBUG ssl_wrap_socket:80   - OCSP Mode: FAIL_OPEN, OCSP response cache file name: None
+2023-01-22 03:23:03,750 (33401/Thread-2) snowflake.connector.ssl_wrap_socket DEBUG ssl_wrap_socket:80   - OCSP Mode: FAIL_OPEN, OCSP response cache file name: None
+2023-01-22 03:23:03,750 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:532  - ocsp_response_cache_uri: file:///Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:03,751 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:532  - ocsp_response_cache_uri: file:///Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:03,751 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:533  - OCSP_VALIDATION_CACHE size: 199
+2023-01-22 03:23:03,752 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:533  - OCSP_VALIDATION_CACHE size: 199
+2023-01-22 03:23:03,752 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:315  - OCSP response cache server is enabled: http://ocsp.snowflakecomputing.com/ocsp_response_cache.json
+2023-01-22 03:23:03,752 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:315  - OCSP response cache server is enabled: http://ocsp.snowflakecomputing.com/ocsp_response_cache.json
+2023-01-22 03:23:03,752 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:351  - OCSP dynamic cache server RETRY URL: None
+2023-01-22 03:23:03,753 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:351  - OCSP dynamic cache server RETRY URL: None
+2023-01-22 03:23:03,755 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,757 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,758 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:45:34+00:00
+2023-01-22 03:23:03,759 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:45:34+00:00
+2023-01-22 03:23:03,761 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-04-15 00:00:00+00:00
+2023-01-22 03:23:03,764 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,765 (33401/Thread-3) snowflake.connector.ssl_wrap_socket DEBUG ssl_wrap_socket:80   - OCSP Mode: FAIL_OPEN, OCSP response cache file name: None
+2023-01-22 03:23:03,766 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-04-15 00:00:00+00:00
+2023-01-22 03:23:03,767 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,768 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:532  - ocsp_response_cache_uri: file:///Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:03,769 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,770 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:45:34+00:00
+2023-01-22 03:23:03,771 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:533  - OCSP_VALIDATION_CACHE size: 199
+2023-01-22 03:23:03,772 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,773 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:45:34+00:00
+2023-01-22 03:23:03,773 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:315  - OCSP response cache server is enabled: http://ocsp.snowflakecomputing.com/ocsp_response_cache.json
+2023-01-22 03:23:03,774 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,776 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-04-15 00:00:00+00:00
+2023-01-22 03:23:03,777 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:351  - OCSP dynamic cache server RETRY URL: None
+2023-01-22 03:23:03,778 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,779 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-04-15 00:00:00+00:00
+2023-01-22 03:23:03,800 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,801 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,809 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,817 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,821 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,822 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,823 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,824 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,839 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:45:34+00:00
+2023-01-22 03:23:03,861 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,862 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,863 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:45:34+00:00
+2023-01-22 03:23:03,864 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,865 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,867 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-04-15 00:00:00+00:00
+2023-01-22 03:23:03,869 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,875 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-06-22 07:00:00+00:00
+2023-01-22 03:23:03,876 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-04-15 00:00:00+00:00
+2023-01-22 03:23:03,877 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,879 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-06-22 07:00:00+00:00
+2023-01-22 03:23:03,880 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,887 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-06-22 07:00:00+00:00
+2023-01-22 03:23:03,890 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,891 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,892 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-06-22 07:00:00+00:00
+2023-01-22 03:23:03,894 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,895 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,898 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,899 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,900 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-05-12 23:58:59+00:00
+2023-01-22 03:23:03,901 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,903 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,923 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,935 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,940 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,941 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,942 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,943 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,945 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,946 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,947 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,948 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,949 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,950 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2025-09-15 19:41:06+00:00
+2023-01-22 03:23:03,951 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,953 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,960 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-06-22 07:00:00+00:00
+2023-01-22 03:23:03,961 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,963 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,964 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2023-06-22 07:00:00+00:00
+2023-01-22 03:23:03,965 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,966 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,969 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,970 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,971 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,972 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,973 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,974 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,975 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,976 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,977 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,978 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,979 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,980 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,981 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,982 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,984 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,985 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,986 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,987 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,988 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,989 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,990 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,991 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,993 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,994 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,995 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,996 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,997 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:03,998 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:03,999 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,000 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,001 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,002 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,003 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,004 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,005 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,006 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,007 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,008 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,009 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,010 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,011 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,012 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,013 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,014 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,015 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,016 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,017 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,018 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,019 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,020 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,022 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,023 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,024 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,025 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,026 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,027 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,028 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,029 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,030 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,031 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,032 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,033 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,034 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,036 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,037 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,038 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,039 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,039 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,040 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,041 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,042 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,043 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,045 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,045 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,046 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,047 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,048 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,049 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,050 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,052 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,053 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,054 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,055 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,056 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,057 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,058 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,059 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,060 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,062 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,063 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,064 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,064 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,065 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,066 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,067 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,068 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,070 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,071 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,072 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,073 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,074 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,075 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,076 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,077 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,078 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,079 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 20:33:17+00:00
+2023-01-22 03:23:04,080 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,084 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,084 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:568  - Read OCSP response cache file: /Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json, count=199
+2023-01-22 03:23:04,085 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,086 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,086 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1101 - validating certificate: sn00102.central-us.azure.snowflakecomputing.com
+2023-01-22 03:23:04,090 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:568  - Read OCSP response cache file: /Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json, count=199
+2023-01-22 03:23:04,091 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,091 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:439  - # of certificates: 2
+2023-01-22 03:23:04,092 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1101 - validating certificate: sn00102.central-us.azure.snowflakecomputing.com
+2023-01-22 03:23:04,093 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,094 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:04,094 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:439  - # of certificates: 2
+2023-01-22 03:23:04,095 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,097 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,098 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,099 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,100 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,100 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:04,101 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:238  - Verifying the attached certificate is signed by the issuer. Valid Not After: 2024-01-12 23:13:30+00:00
+2023-01-22 03:23:04,102 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:04,103 (33401/Thread-4) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:465  - not found issuer_der: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:04,107 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:568  - Read OCSP response cache file: /Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json, count=199
+2023-01-22 03:23:04,107 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:04,108 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')])
+2023-01-22 03:23:04,108 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1101 - validating certificate: sn00102.central-us.azure.snowflakecomputing.com
+2023-01-22 03:23:04,109 (33401/Thread-2) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:465  - not found issuer_der: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:04,110 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:04,110 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:439  - # of certificates: 2
+2023-01-22 03:23:04,111 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')])
+2023-01-22 03:23:04,114 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:04,114 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:630  - writing OCSP response cache file to /Users/mmarzillo/Library/Caches/Snowflake/ocsp_response_cache.json
+2023-01-22 03:23:04,115 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:04,116 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1777 - encoding OCSP response cache to JSON
+2023-01-22 03:23:04,122 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:444  - subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')]), issuer: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:04,133 (33401/Thread-3) snowflake.connector.ocsp_asn1crypto DEBUG ocsp_asn1crypto:465  - not found issuer_der: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('organizational_unit_name', 'www.digicert.com'), ('common_name', 'DigiCert Global Root CA')])
+2023-01-22 03:23:04,135 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('state_or_province_name', 'California'), ('locality_name', 'San Mateo'), ('organization_name', 'Snowflake Inc.'), ('common_name', '*.central-us.azure.snowflakecomputing.com')])
+2023-01-22 03:23:04,136 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:708  - hit cache for subject: OrderedDict([('country_name', 'US'), ('organization_name', 'DigiCert Inc'), ('common_name', 'DigiCert TLS RSA SHA256 2020 CA1')])
+2023-01-22 03:23:04,140 (33401/Thread-4) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1158 - ok
+2023-01-22 03:23:04,140 (33401/Thread-2) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1158 - ok
+2023-01-22 03:23:04,140 (33401/Thread-3) snowflake.connector.ocsp_snowflake DEBUG ocsp_snowflake:1158 - ok
+2023-01-22 03:23:04,177 (33401/Thread-1) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:04,177 (33401/Thread-1) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:202  - kind: tables, metadata: {}
+2023-01-22 03:23:04,177 (33401/Thread-1) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:202  - kind: views, metadata: {}
+2023-01-22 03:23:04,177 (33401/Thread-1) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:202  - kind: functions, metadata: {}
+2023-01-22 03:23:04,178 (33401/Thread-1) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:202  - kind: stages, metadata: {}
+2023-01-22 03:23:04,178 (33401/Thread-1) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:222  - kind: tables, metadata: {}
+2023-01-22 03:23:04,178 (33401/Thread-1) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:222  - kind: views, metadata: {}
+2023-01-22 03:23:04,229 (33401/Thread-2) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=c451a038-ce0c-4e61-8d79-45f4a3e3adcd&request_guid=57a058a9-b98b-44c0-b7ff-dde951ea8ba4 HTTP/1.1" 200 None
+2023-01-22 03:23:04,232 (33401/Thread-2) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:04,232 (33401/Thread-2) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 2/4 active sessions
+2023-01-22 03:23:04,232 (33401/Thread-2) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:04,232 (33401/Thread-2) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-35ab-0000-5d7500109046
+2023-01-22 03:23:04,232 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:534  - Failed to reset SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-35ab-0000-5d7500109046
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: None
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,233 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,234 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,235 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,235 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,235 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,235 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,235 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,235 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828ddd7f0>
+2023-01-22 03:23:04,235 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828ddd760>
+2023-01-22 03:23:04,236 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828ddd8e0>
+2023-01-22 03:23:04,236 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,236 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,236 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,236 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,236 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,236 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,237 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,237 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,237 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,237 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,237 (33401/Thread-2) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,237 (33401/Thread-2) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 2
+2023-01-22 03:23:04,237 (33401/Thread-2) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:04,238 (33401/Thread-4) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=c6da4c55-f22b-43f9-9b51-528cd4c9dbbb&request_guid=0aff8d35-dc86-4239-a630-da960cd7deaa HTTP/1.1" 200 None
+2023-01-22 03:23:04,238 (33401/Thread-4) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:04,239 (33401/Thread-4) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/4 active sessions
+2023-01-22 03:23:04,239 (33401/Thread-4) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:04,239 (33401/Thread-4) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-3599-0000-5d7500107066
+2023-01-22 03:23:04,239 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:534  - Failed to reset SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:04,239 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-3599-0000-5d7500107066
+2023-01-22 03:23:04,239 (33401/Thread-4) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: None
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828ddde20>
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,240 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,241 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,242 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828ddd7c0>
+2023-01-22 03:23:04,243 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828ddd3a0>
+2023-01-22 03:23:04,243 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f88183d43d0>
+2023-01-22 03:23:04,243 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,243 (33401/Thread-4) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,243 (33401/Thread-4) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 5
+2023-01-22 03:23:04,244 (33401/Thread-4) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:04,244 (33401/Thread-4) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:186  - user: JANE
+2023-01-22 03:23:04,244 (33401/Thread-4) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:186  - user: JOHN
+2023-01-22 03:23:04,244 (33401/Thread-4) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:186  - user: MMARZILLO
+2023-01-22 03:23:04,244 (33401/Thread-4) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:186  - user: PURVIEW
+2023-01-22 03:23:04,244 (33401/Thread-4) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:186  - user: SNOWFLAKE
+2023-01-22 03:23:04,249 (33401/Thread-3) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=c13f0216-3825-416a-8c5a-57ba043e2de5&request_guid=490478ed-bae1-4225-884e-c70011df5b29 HTTP/1.1" 200 None
+2023-01-22 03:23:04,251 (33401/Thread-3) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:04,251 (33401/Thread-3) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/4 active sessions
+2023-01-22 03:23:04,251 (33401/Thread-3) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:04,251 (33401/Thread-3) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-35c4-0000-5d750010804a
+2023-01-22 03:23:04,251 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:534  - Failed to reset SIGINT handler. Not in main thread. Ignored...
+2023-01-22 03:23:04,252 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-35c4-0000-5d750010804a
+2023-01-22 03:23:04,252 (33401/Thread-3) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:04,252 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:04,252 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: None
+2023-01-22 03:23:04,252 (33401/Thread-3) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:04,252 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TIMESTAMP_LTZ, Format: <snowflake.connector.sfdatetime.SnowflakeDateTimeFormat object at 0x7f8828ddda60>
+2023-01-22 03:23:04,252 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: FIXED, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:04,253 (33401/Thread-3) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 9
+2023-01-22 03:23:04,254 (33401/Thread-3) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:32,924 (33401/Thread-5) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:290  - smart_completion: True, word before cursor: @weights;, complete_event: CompleteEvent(text_inserted=True, completion_requested=False)
+2023-01-22 03:23:32,929 (33401/Thread-5) snowflake.cli.completion_engine DEBUG completion_engine:31   - full text: '    use role dba_citibike;
+    create or replace database citibike_V4_reset;
+    create or replace schema citibike_V4_reset.reset;
+    create stage if not exists weights;
+    rm @weights;
+    put file://?*.csv @weights;', text before cursor: '    use role dba_citibike;
+    create or replace database citibike_V4_reset;
+    create or replace schema citibike_V4_reset.reset;
+    create stage if not exists weights;
+    rm @weights;
+    put file://?*.csv @weights;', word before cursor: '@weights;'
+2023-01-22 03:23:32,930 (33401/Thread-5) snowflake.cli.completion_engine DEBUG completion_engine:41   - word before cursor
+2023-01-22 03:23:32,933 (33401/Thread-5) snowflake.cli.completion_engine DEBUG completion_engine:59   - multiple statements
+2023-01-22 03:23:32,934 (33401/Thread-5) snowflake.cli.completion_engine DEBUG completion_engine:90   - statement: 
+    put file://?*.csv , identifier: @weights
+2023-01-22 03:23:32,934 (33401/Thread-5) snowflake.cli.completion_engine DEBUG completion_engine:134  - token: '(13, <Identifier 'csv' at 0x7F88183C4F20>)', text before cursor: '    use role dba_citibike;
+    create or replace database citibike_V4_reset;
+    create or replace schema citibike_V4_reset.reset;
+    create stage if not exists weights;
+    rm @weights;
+    put file://?*.csv @weights;', full_text: '    use role dba_citibike;
+    create or replace database citibike_V4_reset;
+    create or replace schema citibike_V4_reset.reset;
+    create stage if not exists weights;
+    rm @weights;
+    put file://?*.csv @weights;', identifier: '@weights'
+2023-01-22 03:23:32,938 (33401/Thread-5) snowflake.cli.completion_engine DEBUG completion_engine:353  - token: others
+2023-01-22 03:23:32,939 (33401/Thread-5) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:306  - # of suggestions: 1
+2023-01-22 03:23:32,939 (33401/Thread-5) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:308  - Suggestion: 'keyword', database: None, schema: None
+2023-01-22 03:23:32,939 (33401/Thread-5) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:267  - text: @weights;
+2023-01-22 03:23:32,940 (33401/Thread-5) snowflake.cli.sqlcompleter DEBUG   sqlcompleter:480  - completions: []
+2023-01-22 03:23:34,112 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,112 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,113 (33401/MainThread) snowflake.cli.clibuffer DEBUG      clibuffer:44   - SQL: use role dba_citibike;, is_put_or_get: False
+2023-01-22 03:23:34,113 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,113 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,113 (33401/MainThread) snowflake.cli.clibuffer DEBUG      clibuffer:44   - SQL: use role dba_citibike;, is_put_or_get: False
+2023-01-22 03:23:34,117 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,117 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,118 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:413  - secret_free_sql: use role dba_citibike;
+2023-01-22 03:23:34,118 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:420  - {('example_variable', '...')}
+2023-01-22 03:23:34,118 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:340  - joining async exec
+2023-01-22 03:23:34,118 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:348  - waiting for async exec to finish...
+2023-01-22 03:23:34,118 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:365  - all async queries finished.
+2023-01-22 03:23:34,118 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,119 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,119 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:563  - Regular sql statement. sql: use role dba_citibike;
+2023-01-22 03:23:34,119 (33401/MainThread) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:34,119 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:568  - exit_on_error: False, progress_bar: True
+2023-01-22 03:23:34,119 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:34,120 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:669  - binding: [use role dba_citibike;] with input=[None], processed=[{}]
+2023-01-22 03:23:34,120 (33401/MainThread) snowflake.connector.cursor INFO         cursor:715  - query: [use role dba_citibike;]
+2023-01-22 03:23:34,120 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:34,120 (33401/MainThread) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 5
+2023-01-22 03:23:34,120 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:460  - Request id: 8d89264c-4578-485b-8083-3b55b87be17f
+2023-01-22 03:23:34,120 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:462  - running query [use role dba_citibike;]
+2023-01-22 03:23:34,120 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: True
+2023-01-22 03:23:34,121 (33401/MainThread) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:34,121 (33401/MainThread) snowflake.connector.connection DEBUG     connection:995  - sql=[use role dba_citibike;], sequence_id=[5], is_file_transfer=[False]
+2023-01-22 03:23:34,121 (33401/MainThread) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/4 active sessions
+2023-01-22 03:23:34,121 (33401/MainThread) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:34,122 (33401/MainThread) snowflake.connector.network DEBUG        network:808  - Request guid: 0ecec16e-d7dd-4036-af26-29f9962a3080
+2023-01-22 03:23:34,122 (33401/MainThread) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:34,213 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=8d89264c-4578-485b-8083-3b55b87be17f&request_guid=0ecec16e-d7dd-4036-af26-29f9962a3080 HTTP/1.1" 200 None
+2023-01-22 03:23:34,216 (33401/MainThread) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:34,216 (33401/MainThread) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/4 active sessions
+2023-01-22 03:23:34,217 (33401/MainThread) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:34,217 (33401/MainThread) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-3599-0000-5d750010706a
+2023-01-22 03:23:34,218 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-3599-0000-5d750010706a
+2023-01-22 03:23:34,219 (33401/MainThread) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:34,219 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:34,219 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: False
+2023-01-22 03:23:34,219 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:34,219 (33401/MainThread) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:34,219 (33401/MainThread) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 1
+2023-01-22 03:23:34,220 (33401/MainThread) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:34,220 (33401/MainThread) __main__ DEBUG      eventloop:733  - headers: [('status', 2)]
+2023-01-22 03:23:34,220 (33401/MainThread) __main__ DEBUG      eventloop:735  - rows: "[['Statement executed successfully.']]"
+2023-01-22 03:23:34,220 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:645  - minwidths: [32]
+2023-01-22 03:23:34,220 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:654  - headers: ['status                          '], minwidths: [32]
+2023-01-22 03:23:34,221 (33401/MainThread) __main__ DEBUG      eventloop:832  - Command Time: 0.10345816612243652
+2023-01-22 03:23:34,221 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:413  - secret_free_sql: create or replace database citibike_V4_reset;
+2023-01-22 03:23:34,221 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:420  - {('__rowcount', '...'), ('example_variable', '...'), ('__sfqid', '...')}
+2023-01-22 03:23:34,222 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:340  - joining async exec
+2023-01-22 03:23:34,222 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:348  - waiting for async exec to finish...
+2023-01-22 03:23:34,222 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:365  - all async queries finished.
+2023-01-22 03:23:34,222 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,222 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,222 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:563  - Regular sql statement. sql: create or replace database citibike_V4_reset;
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:568  - exit_on_error: False, progress_bar: True
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:669  - binding: [create or replace database citibike_V4_reset;] with input=[None], processed=[{}]
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.connector.cursor INFO         cursor:715  - query: [create or replace database citibike_V4_reset;]
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 6
+2023-01-22 03:23:34,223 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:460  - Request id: 07b324db-c02e-405d-9ca1-0eb5e5d29e8c
+2023-01-22 03:23:34,224 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:462  - running query [create or replace database citibike_V4_reset;]
+2023-01-22 03:23:34,224 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: True
+2023-01-22 03:23:34,224 (33401/MainThread) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:34,224 (33401/MainThread) snowflake.connector.connection DEBUG     connection:995  - sql=[create or replace database citibike_V4_reset;], sequence_id=[6], is_file_transfer=[False]
+2023-01-22 03:23:34,224 (33401/MainThread) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/4 active sessions
+2023-01-22 03:23:34,224 (33401/MainThread) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:34,224 (33401/MainThread) snowflake.connector.network DEBUG        network:808  - Request guid: 7b3579d3-4371-4336-b440-a486eecca7c0
+2023-01-22 03:23:34,225 (33401/MainThread) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:34,417 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=07b324db-c02e-405d-9ca1-0eb5e5d29e8c&request_guid=7b3579d3-4371-4336-b440-a486eecca7c0 HTTP/1.1" 200 None
+2023-01-22 03:23:34,419 (33401/MainThread) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:34,419 (33401/MainThread) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/4 active sessions
+2023-01-22 03:23:34,420 (33401/MainThread) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:34,420 (33401/MainThread) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-35ab-0000-5d750010904a
+2023-01-22 03:23:34,420 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-35ab-0000-5d750010904a
+2023-01-22 03:23:34,420 (33401/MainThread) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:34,420 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:34,420 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: False
+2023-01-22 03:23:34,421 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:34,421 (33401/MainThread) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:34,421 (33401/MainThread) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 1
+2023-01-22 03:23:34,421 (33401/MainThread) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:34,421 (33401/MainThread) __main__ DEBUG      eventloop:733  - headers: [('status', 2)]
+2023-01-22 03:23:34,421 (33401/MainThread) __main__ DEBUG      eventloop:735  - rows: "[['Database CITIBIKE_V4_RESET successfully created.']]"
+2023-01-22 03:23:34,421 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:645  - minwidths: [48]
+2023-01-22 03:23:34,422 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:654  - headers: ['status                                          '], minwidths: [48]
+2023-01-22 03:23:34,422 (33401/MainThread) __main__ DEBUG      eventloop:832  - Command Time: 0.20063304901123047
+2023-01-22 03:23:34,422 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:413  - secret_free_sql: create or replace schema citibike_V4_reset.reset;
+2023-01-22 03:23:34,422 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:420  - {('__rowcount', '...'), ('example_variable', '...'), ('__sfqid', '...')}
+2023-01-22 03:23:34,423 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:340  - joining async exec
+2023-01-22 03:23:34,423 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:348  - waiting for async exec to finish...
+2023-01-22 03:23:34,423 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:365  - all async queries finished.
+2023-01-22 03:23:34,423 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,423 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,423 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:563  - Regular sql statement. sql: create or replace schema citibike_V4_reset.reset;
+2023-01-22 03:23:34,423 (33401/MainThread) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:568  - exit_on_error: False, progress_bar: True
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:669  - binding: [create or replace schema citibike_V4_reset.reset;] with input=[None], processed=[{}]
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.connector.cursor INFO         cursor:715  - query: [create or replace schema citibike_V4_reset.reset;]
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 7
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:460  - Request id: 5c85715d-85bf-46ed-9760-31693dadfc22
+2023-01-22 03:23:34,424 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:462  - running query [create or replace schema citibike_V4_reset.reset;]
+2023-01-22 03:23:34,425 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: True
+2023-01-22 03:23:34,425 (33401/MainThread) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:34,425 (33401/MainThread) snowflake.connector.connection DEBUG     connection:995  - sql=[create or replace schema citibike_V4_reset.reset;], sequence_id=[7], is_file_transfer=[False]
+2023-01-22 03:23:34,425 (33401/MainThread) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/4 active sessions
+2023-01-22 03:23:34,425 (33401/MainThread) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:34,425 (33401/MainThread) snowflake.connector.network DEBUG        network:808  - Request guid: 727cbcb0-92d3-4c32-a355-8428c7e4b1e3
+2023-01-22 03:23:34,426 (33401/MainThread) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:34,575 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=5c85715d-85bf-46ed-9760-31693dadfc22&request_guid=727cbcb0-92d3-4c32-a355-8428c7e4b1e3 HTTP/1.1" 200 None
+2023-01-22 03:23:34,578 (33401/MainThread) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:34,578 (33401/MainThread) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/4 active sessions
+2023-01-22 03:23:34,579 (33401/MainThread) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:34,579 (33401/MainThread) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-3539-0000-5d75000ff0ae
+2023-01-22 03:23:34,579 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-3539-0000-5d75000ff0ae
+2023-01-22 03:23:34,579 (33401/MainThread) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:34,579 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:34,579 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: False
+2023-01-22 03:23:34,579 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:34,580 (33401/MainThread) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:34,580 (33401/MainThread) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 1
+2023-01-22 03:23:34,580 (33401/MainThread) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:34,580 (33401/MainThread) __main__ DEBUG      eventloop:733  - headers: [('status', 2)]
+2023-01-22 03:23:34,580 (33401/MainThread) __main__ DEBUG      eventloop:735  - rows: "[['Schema RESET successfully created.']]"
+2023-01-22 03:23:34,580 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:645  - minwidths: [34]
+2023-01-22 03:23:34,580 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:654  - headers: ['status                            '], minwidths: [34]
+2023-01-22 03:23:34,581 (33401/MainThread) __main__ DEBUG      eventloop:832  - Command Time: 0.15854597091674805
+2023-01-22 03:23:34,581 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:413  - secret_free_sql: create stage if not exists weights;
+2023-01-22 03:23:34,581 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:420  - {('__rowcount', '...'), ('example_variable', '...'), ('__sfqid', '...')}
+2023-01-22 03:23:34,581 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:340  - joining async exec
+2023-01-22 03:23:34,581 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:348  - waiting for async exec to finish...
+2023-01-22 03:23:34,581 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:365  - all async queries finished.
+2023-01-22 03:23:34,581 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,581 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,582 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:563  - Regular sql statement. sql: create stage if not exists weights;
+2023-01-22 03:23:34,582 (33401/MainThread) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:34,582 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:568  - exit_on_error: False, progress_bar: True
+2023-01-22 03:23:34,582 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:34,582 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:669  - binding: [create stage if not exists weights;] with input=[None], processed=[{}]
+2023-01-22 03:23:34,582 (33401/MainThread) snowflake.connector.cursor INFO         cursor:715  - query: [create stage if not exists weights;]
+2023-01-22 03:23:34,582 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 8
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:460  - Request id: 03c4379c-4db3-4d35-ba14-bc0abd044533
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:462  - running query [create stage if not exists weights;]
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: True
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.connection DEBUG     connection:995  - sql=[create stage if not exists weights;], sequence_id=[8], is_file_transfer=[False]
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/4 active sessions
+2023-01-22 03:23:34,583 (33401/MainThread) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:34,584 (33401/MainThread) snowflake.connector.network DEBUG        network:808  - Request guid: 4edbe04c-8bc6-4336-8e1c-b82011be0653
+2023-01-22 03:23:34,584 (33401/MainThread) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:34,762 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=03c4379c-4db3-4d35-ba14-bc0abd044533&request_guid=4edbe04c-8bc6-4336-8e1c-b82011be0653 HTTP/1.1" 200 None
+2023-01-22 03:23:34,764 (33401/MainThread) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:34,765 (33401/MainThread) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/4 active sessions
+2023-01-22 03:23:34,765 (33401/MainThread) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:34,766 (33401/MainThread) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-3599-0000-5d750010706e
+2023-01-22 03:23:34,766 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-3599-0000-5d750010706e
+2023-01-22 03:23:34,766 (33401/MainThread) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:34,766 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:34,766 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: False
+2023-01-22 03:23:34,766 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:34,766 (33401/MainThread) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:34,767 (33401/MainThread) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 1
+2023-01-22 03:23:34,767 (33401/MainThread) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:34,767 (33401/MainThread) __main__ DEBUG      eventloop:733  - headers: [('status', 2)]
+2023-01-22 03:23:34,767 (33401/MainThread) __main__ DEBUG      eventloop:735  - rows: "[['Stage area WEIGHTS successfully created.']]"
+2023-01-22 03:23:34,767 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:645  - minwidths: [40]
+2023-01-22 03:23:34,767 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:654  - headers: ['status                                  '], minwidths: [40]
+2023-01-22 03:23:34,768 (33401/MainThread) __main__ DEBUG      eventloop:832  - Command Time: 0.1868579387664795
+2023-01-22 03:23:34,768 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:413  - secret_free_sql: rm @weights;
+2023-01-22 03:23:34,768 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:420  - {('__rowcount', '...'), ('example_variable', '...'), ('__sfqid', '...')}
+2023-01-22 03:23:34,768 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:340  - joining async exec
+2023-01-22 03:23:34,768 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:348  - waiting for async exec to finish...
+2023-01-22 03:23:34,768 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:365  - all async queries finished.
+2023-01-22 03:23:34,768 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,769 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,769 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:563  - Regular sql statement. sql: rm @weights;
+2023-01-22 03:23:34,769 (33401/MainThread) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:34,769 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:568  - exit_on_error: False, progress_bar: True
+2023-01-22 03:23:34,769 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:34,769 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:669  - binding: [rm @weights;] with input=[None], processed=[{}]
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.cursor INFO         cursor:715  - query: [rm @weights;]
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 9
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:460  - Request id: f030789c-4630-4423-8e7a-8152d5798575
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:462  - running query [rm @weights;]
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: True
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:34,770 (33401/MainThread) snowflake.connector.connection DEBUG     connection:995  - sql=[rm @weights;], sequence_id=[9], is_file_transfer=[False]
+2023-01-22 03:23:34,771 (33401/MainThread) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/4 active sessions
+2023-01-22 03:23:34,771 (33401/MainThread) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:34,771 (33401/MainThread) snowflake.connector.network DEBUG        network:808  - Request guid: a467996a-c286-40a2-ac98-ce0f42863608
+2023-01-22 03:23:34,771 (33401/MainThread) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:34,896 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=f030789c-4630-4423-8e7a-8152d5798575&request_guid=a467996a-c286-40a2-ac98-ce0f42863608 HTTP/1.1" 200 None
+2023-01-22 03:23:34,898 (33401/MainThread) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:34,899 (33401/MainThread) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/4 active sessions
+2023-01-22 03:23:34,900 (33401/MainThread) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:34,900 (33401/MainThread) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-3599-0000-5d7500107072
+2023-01-22 03:23:34,901 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-3599-0000-5d7500107072
+2023-01-22 03:23:34,901 (33401/MainThread) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:34,902 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:34,902 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: False
+2023-01-22 03:23:34,902 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:841  - Query result format: json
+2023-01-22 03:23:34,902 (33401/MainThread) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:34,902 (33401/MainThread) snowflake.connector.converter_snowsql DEBUG converter_snowsql:89   - Type: TEXT, Format: None
+2023-01-22 03:23:34,903 (33401/MainThread) snowflake.connector.result_batch DEBUG   result_batch:440  - parsing for result batch id: 0
+2023-01-22 03:23:34,903 (33401/MainThread) snowflake.connector.result_set DEBUG     result_set:58   - beginning to schedule result batch downloads
+2023-01-22 03:23:34,903 (33401/MainThread) __main__ DEBUG      eventloop:733  - headers: [('name', 2), ('result', 2)]
+2023-01-22 03:23:34,903 (33401/MainThread) __main__ DEBUG      eventloop:735  - rows: 'None'
+2023-01-22 03:23:34,903 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:645  - minwidths: [4, 6]
+2023-01-22 03:23:34,903 (33401/MainThread) snowflake.cli.tabulate DEBUG       tabulate:654  - headers: ['name', 'result'], minwidths: [4, 6]
+2023-01-22 03:23:34,904 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:413  - secret_free_sql: put file://?*.csv @weights;
+2023-01-22 03:23:34,904 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:420  - {('__rowcount', '...'), ('example_variable', '...'), ('__sfqid', '...')}
+2023-01-22 03:23:34,904 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:340  - joining async exec
+2023-01-22 03:23:34,904 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:348  - waiting for async exec to finish...
+2023-01-22 03:23:34,904 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:365  - all async queries finished.
+2023-01-22 03:23:34,904 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:292  - sqlsplit: construct SQLDelimiter ;
+2023-01-22 03:23:34,904 (33401/MainThread) snowflake.cli.sqlsplit DEBUG       sqlsplit:293  - use old split_statements that supports delimiter.
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:563  - Regular sql statement. sql: put file://?*.csv @weights;
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.connector.connection DEBUG     connection:624  - cursor
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:568  - exit_on_error: False, progress_bar: True
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:630  - executing SQL/command
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:669  - binding: [put file://?*.csv @weights;] with input=[None], processed=[{}]
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.connector.cursor INFO         cursor:715  - query: [put file://?*.csv @weights;]
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:441  - Cannot use arrow result format, fallback to json format
+2023-01-22 03:23:34,905 (33401/MainThread) snowflake.connector.connection DEBUG     connection:1302 - sequence counter: 10
+2023-01-22 03:23:34,906 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:460  - Request id: 99fc4d9c-4de3-44a9-b269-262a043ecc89
+2023-01-22 03:23:34,906 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:462  - running query [put file://?*.csv @weights;]
+2023-01-22 03:23:34,906 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:471  - is_file_transfer: True
+2023-01-22 03:23:34,906 (33401/MainThread) snowflake.connector.connection DEBUG     connection:972  - _cmd_query
+2023-01-22 03:23:34,906 (33401/MainThread) snowflake.connector.connection DEBUG     connection:995  - sql=[put file://?*.csv @weights;], sequence_id=[10], is_file_transfer=[True]
+2023-01-22 03:23:34,907 (33401/MainThread) snowflake.connector.network DEBUG        network:1147 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 1/4 active sessions
+2023-01-22 03:23:34,907 (33401/MainThread) snowflake.connector.network DEBUG        network:827  - remaining request timeout: None, retry cnt: 1
+2023-01-22 03:23:34,907 (33401/MainThread) snowflake.connector.network DEBUG        network:808  - Request guid: eda2ebbe-e127-4523-9362-bc7afbf24b19
+2023-01-22 03:23:34,907 (33401/MainThread) snowflake.connector.network DEBUG        network:1006 - socket timeout: 60
+2023-01-22 03:23:35,057 (33401/MainThread) snowflake.connector.vendored.urllib3.connectionpool DEBUG connectionpool:456  - https://sn00102.central-us.azure.snowflakecomputing.com:443 "POST /queries/v1/query-request?requestId=99fc4d9c-4de3-44a9-b269-262a043ecc89&request_guid=eda2ebbe-e127-4523-9362-bc7afbf24b19 HTTP/1.1" 200 None
+2023-01-22 03:23:35,059 (33401/MainThread) snowflake.connector.network DEBUG        network:1032 - SUCCESS
+2023-01-22 03:23:35,059 (33401/MainThread) snowflake.connector.network DEBUG        network:1152 - Session status for SessionPool 'sn00102.central-us.azure.snowflakecomputing.com', SessionPool 0/4 active sessions
+2023-01-22 03:23:35,060 (33401/MainThread) snowflake.connector.network DEBUG        network:715  - ret[code] = None, after post request
+2023-01-22 03:23:35,061 (33401/MainThread) snowflake.connector.network DEBUG        network:739  - Query id: 01a9cfab-0000-35ab-0000-5d750010904e
+2023-01-22 03:23:35,061 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:737  - sfqid: 01a9cfab-0000-35ab-0000-5d750010904e
+2023-01-22 03:23:35,061 (33401/MainThread) snowflake.connector.cursor INFO         cursor:739  - query execution done
+2023-01-22 03:23:35,061 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:741  - SUCCESS
+2023-01-22 03:23:35,061 (33401/MainThread) snowflake.connector.cursor DEBUG         cursor:744  - PUT OR GET: True
+2023-01-22 03:23:35,061 (33401/MainThread) snowflake.connector.file_transfer_agent DEBUG file_transfer_agent:822  - UPLOAD
+2023-01-22 03:23:35,064 (33401/MainThread) snowflake.connector.file_transfer_agent DEBUG file_transfer_agent:949  - command type: UPLOAD
+2023-01-22 03:23:35,066 (33401/MainThread) snowflake.cli.sqlexecute DEBUG     sqlexecute:545  - Python Connector Error: None
+2023-01-22 03:23:35,066 (33401/MainThread) __main__ ERROR      eventloop:776  - error with sql: 'put file://?*.csv @weights;'
+Traceback (most recent call last):
+  File "eventloop.py", line 720, in run_cli
+  File "sqlexecute.py", line 488, in run
+  File "sqlexecute.py", line 571, in execute_normal_sql
+  File "cursor.py", line 765, in execute
+  File "file_transfer_agent.py", line 359, in execute
+  File "file_transfer_agent.py", line 958, in _init_file_metadata
+  File "errors.py", line 276, in errorhandler_wrapper
+  File "errors.py", line 331, in hand_to_other_handler
+  File "errors.py", line 210, in default_errorhandler
+snowflake.connector.errors.ProgrammingError: 253006: 253006: File doesn't exist: ['?*.csv']
+2023-01-22 03:23:35,067 (33401/MainThread) __main__ DEBUG      eventloop:849  - Command Time: 0.299s
+2023-01-22 03:23:35,067 (33401/MainThread) __main__ DEBUG      eventloop:804  - end of SQL: put file://?*.csv @weights;
+2023-01-22 03:23:35,067 (33401/MainThread) snowflake.cli.clistyle DEBUG       clistyle:111  - prompt format: JOHN#(no warehouse)@CITIBIKE_V4_RESET.RESET>, tokens: [(Token.TOKEN_0, 'JOHN#(no warehouse)@CITIBIKE_V4_RESET.RESET>')]
+2023-01-22 03:23:35,068 (33401/MainThread) __main__ DEBUG      eventloop:704  - Read from terminal

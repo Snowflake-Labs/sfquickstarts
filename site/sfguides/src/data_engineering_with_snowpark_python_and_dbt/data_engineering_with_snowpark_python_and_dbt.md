@@ -1,7 +1,7 @@
 author: Jeremiah Hansen
 id: data_engineering_with_snowpark_python_and_dbt
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python and dbt
-categories: data-engineering
+categories: data-engineering,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -37,10 +37,6 @@ Python based dbt models are made possible by [Snowflake's new native Python supp
 With Snowflake's Snowpark Python capabilities, you no longer need to maintain, secure and pay for separate infrastructure/services to run Python code as it can now be run directly within Snowflake's Enterprise grade data platform! For more details check out [the Snowpark Developer Guide for Python](ttps://docs.snowflake.com/en/developer-guide/snowpark/python/index.html).
 
 This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt's new Python-based models.
-
-Negative
-: **Note** - As of 10/17/2022, Snowflake's Snowpark Python feature is in Public Preview.
-
 
 ### Prerequisites
 
@@ -108,16 +104,18 @@ models
 |--|-- schema.yml
 ```
 
-Positive
-: **Note** - The connection details you just entered have been stored in a dbt connection profile in the default location: `~/.dbt/profiles.yml`. To learn more about managing connection details with dbt profiles please see [configuring your profile](https://docs.getdbt.com/dbt-cli/configure-your-profile).
+> aside positive
+> 
+>  **Note** - The connection details you just entered have been stored in a dbt connection profile in the default location: `~/.dbt/profiles.yml`. To learn more about managing connection details with dbt profiles please see [configuring your profile](https://docs.getdbt.com/dbt-cli/configure-your-profile).
 
-To verify that everything is configured properly, open a terminal and execute `dbt run`. dbt should execute successfully and you should now have the following objects created in Snowflake in your `DEMO_DB.DEMO_SCHEMA` schema:
+To verify that everything is configured properly, open a terminal, cd to the folder that `dbt init` created and then execute `dbt run`. dbt should execute successfully and you should now have the following objects created in Snowflake in your `DEMO_DB.DEMO_SCHEMA` schema:
 
 * A table named `my_first_dbt_model`
 * A view named `my_second_dbt_model`
 
-Negative
-: **Note** - If the `dbt run` command did not complete successfully, it's most likely something wrong with your connection details. Please review and update those details in your dbt connection profile saved here: `~/.dbt/profiles.yml`. Then retry.
+> aside negative
+> 
+>  **Note** - If the `dbt run` command did not complete successfully, it's most likely something wrong with your connection details. Please review and update those details in your dbt connection profile saved here: `~/.dbt/profiles.yml`. Then retry.
 
 <!-- ------------------------ -->
 ## Create a Simple Python Model
@@ -156,8 +154,9 @@ Finally, save the file and execute `dbt run` again. If everything ran successful
 * As of 10/17/2022 only `table` or `incremental` materializations are supported, which is why we configured it explicitly here.
 * You can use `dbt.ref()` and `dbt.source()` just the same as their Jinja equivalents in SQL models. And you can refer to either Python or SQL models interchangeably!
 
-Positive
-: **Note** - For more details on accessing dbt project contexts from your Python models, please check out [Accessing project context](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models#accessing-project-context).
+> aside positive
+> 
+>  **Note** - For more details on accessing dbt project contexts from your Python models, please check out [Accessing project context](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models#accessing-project-context).
 
 
 <!-- ------------------------ -->
@@ -166,7 +165,7 @@ Duration: 10
 
 So what just happened you ran your dbt Python model? The single best thing to help you debug and understand what's happening is to look at your [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake. Please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history.
 
-### Overivew of dbt Executed Queries
+### Overview of dbt Executed Queries
 Here are the queries that dbt executed when you ran the `my_first_python_model` model. I've omitted the content of the stored procedure in this section so that it's easier to see what's happening at a high level. In the next section we'll discuss what's happening inside the stored procedure.
 
 1. List schemas
@@ -320,8 +319,9 @@ def main(session):
     return "OK"
 ```
 
-Positive
-: **Note** - When building and debugging your dbt Python models, you can find this Python code in the compiled version of the model by running `dbt compile` (or `dbt run`). The compiled files are written to the `target-path` folder, which by default is a folder named `target` in your dbt project folder.
+> aside positive
+> 
+>  **Note** - When building and debugging your dbt Python models, you can find this Python code in the compiled version of the model by running `dbt compile` (or `dbt run`). The compiled files are written to the `target-path` folder, which by default is a folder named `target` in your dbt project folder.
 
 
 <!-- ------------------------ -->

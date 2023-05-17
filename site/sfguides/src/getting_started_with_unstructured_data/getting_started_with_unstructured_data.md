@@ -1,7 +1,7 @@
 author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu
 id: getting_started_with_unstructured_data
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: Getting Started
+categories: getting-started,architecture-patterns
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -224,7 +224,14 @@ grant usage on warehouse quickstart to role analyst;
 grant read on stage email_stage_internal to role analyst;
 ```
 
-You can verify the `analyst` role only has access to read by listing the files in the internal stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message.
+To make sure this works as expected, make sure secondary roles are disabled for `analyst` role.
+```sql
+use role analyst;
+select current_secondary_roles();
+use secondary roles none;
+```
+
+You can verify the `analyst` role only has access to read by listing the files in the internal stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message. 
 
 ```sql
 use role analyst;
@@ -546,7 +553,7 @@ handler = 'NamedEntityExtraction.ParseText'
 The UDF can be invoked on any text file containing readable english. From the email corpus stored on the internal stage, we can invoke the UDF as follows.
 
 ```sql
-select parseText('@email_stage_internal/sanders-r/inbox/60.') 
+select parseText(build_scoped_file_url('@email_stage_internal','/sanders-r/inbox/60.')) 
 as entities_extraction;
 ```
 
@@ -579,7 +586,7 @@ create or replace table email_named_entities_base as
 select
     relative_path
     , upper(replace(get(split(relative_path, '/'), 0), '\"', ''))	as mailbox
-    , parseText('@email_stage_internal/' || relative_path) 		as named_entities
+    , parseText(build_scoped_file_url('@email_stage_internal/', relative_path)) 		as named_entities
 from (
     select relative_path
     from directory(@email_stage_internal)

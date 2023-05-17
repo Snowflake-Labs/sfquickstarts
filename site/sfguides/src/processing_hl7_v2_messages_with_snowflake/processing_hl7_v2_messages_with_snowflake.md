@@ -1,7 +1,7 @@
 author: Sreedhar Bolneni, Venkatesh Sekar, Tushar Sarde
 id: processing_hl7_v2_messages_with_snowflake
 summary: This is a guide to get familiarised with how to ingest and process HL7 V2.x messages using Snowflake Data Programmability features.
-categories: Getting Started
+categories: data-engineering,architecture-patterns,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -275,7 +275,7 @@ create or replace table hl7v2parsed as
   with base as (
       select 
           relative_path as data_filepath,
-          concat('@hl7_stage_internal/' ,data_filepath) as full_path
+          build_scoped_file_url('@hl7_stage_internal/', data_filepath) as full_path
       from directory( @hl7_stage_internal )
       where relative_path like 'dataset/%'
   )

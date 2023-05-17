@@ -1,6 +1,6 @@
 summary: This guide can be used to help customers setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
 id: resource_optimization_performance_optimization
-categories: Resource Optimization
+categories: resource-optimization
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

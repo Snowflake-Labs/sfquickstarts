@@ -1,7 +1,7 @@
 author: Adrian Lee
 id: data_engineering_with_apache_airflow
 summary: This is a sample Snowflake Guide
-categories: Getting Started
+categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

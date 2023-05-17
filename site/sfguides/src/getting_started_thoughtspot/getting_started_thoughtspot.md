@@ -1,7 +1,7 @@
 author: Thoughtspot
 id: getting_started_thoughtspot
 summary: Build an interactive react app with ThoughtSpot and Snowflake
-categories: Getting Started
+categories: app-development,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

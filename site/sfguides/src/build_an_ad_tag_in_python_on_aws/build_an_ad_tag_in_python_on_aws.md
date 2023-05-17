@@ -1,11 +1,11 @@
 author: Jim Warner
 id: build_an_ad_tag_in_python_on_aws
 summary: A guide to building and running a simple ad tag (in Python) Powered by Snowflake and AWS
-categories: Getting Started
+categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started
+tags: Getting Started, AdTech
 
 # Build an Ad Tag in Python on AWS
 
@@ -199,10 +199,12 @@ If these endpoints are not working and you are on macOS, make sure [port 5000 is
 
 The curl commands will not return any data because we used 204 no content as the HTTP response. You can also open these uris in a browser if that's preferred.
 
-## Deploying the API
-Duration: 3
+## Deploying, Verifying and Monitoring the tag
+Duration: 6
 
-Now that the application and configuration is verfied to be working, you can deploy it to AWS by running the following command:
+### Deploying to AWS
+
+Now that the application and configuration is verified to be working, you can deploy it to AWS by running the following command:
 
 ```bash
 serverless deploy
@@ -222,7 +224,17 @@ curl "http://<DEPLOYMENT>.execute-api.<REGION>/?adid=1234&placementid=abcd&creat
 
 Your api is now available for use by your mobile and web applications.
 
-## Verify the loaded data
+### Placing the tag in your ad server
+
+While the tag can often be placed using a simple HTML img tag, the information about placements, creatives, etc. most often come in the form of macros that your ad server will expand. For this and more details about placing the tag, please refer to your ad server documentation.
+
+When using Google's Campaign Manager 360, the tag may look something like the following:
+
+```html
+<img src="http://<DEPLOYMENT>.execute-api.<REGION>/?adid=%eaid!&placementid=%epid!&creativeid=%ecid!" width="1" height="1">
+```
+
+### Verify the loaded data
 
 You can query Snowflake to verify that the JSON impressions were loaded into the table.
 
@@ -231,8 +243,7 @@ You can query Snowflake to verify that the JSON impressions were loaded into the
 select * from IMPRESSIONS;
 ```
 
-## Monitoring your API with Serverless Framework
-Duration: 3
+### Monitoring your API with Serverless Framework
 
 You can monitor your application directly by logging into serverless.
 

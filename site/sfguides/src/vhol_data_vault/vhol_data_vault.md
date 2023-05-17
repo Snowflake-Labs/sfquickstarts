@@ -1,7 +1,7 @@
 author: yarodmi
 id: vhol_data_vault
 summary: Building a Real-time Data Vault in Snowflake
-categories: Getting Started
+categories: data-engineering,architecture-patterns,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
