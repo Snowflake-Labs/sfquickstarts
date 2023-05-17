@@ -24,7 +24,7 @@ Snowflake is a cloud-based data warehousing and analytics platform that allows o
 
 ### Power Apps and Snowflake Integration
 
-The Power Apps connector for Snowflake was built by a customer as an open source project. It is a wrapper around the Snowflake SQL API that allows users of both platforms to read and write data to and from Snowflake from their Power Automate flows.
+The Power Apps connector is a wrapper around the Snowflake SQL API that allows users of both platforms to read and write data to and from Snowflake from their Power Automate flows.
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
@@ -128,7 +128,7 @@ On the Power Automate screen click on the 'My Flow' menu item on the left then "
 
 Now, it's time to build the connector! First click on "New Step" and the search bar search for "Snowflake" and select the "Submit SQL Statement for Executiuon" for each of the parameters in the Snowflake connector please populate as such:
 ```bash
-Instance: <Snowflake host> (it should resemble: sn00111.central-us.azure.snowflakecomputing.com)
+Instance: <Snowflake host> (it should resemble: sn00111.central-us.azure.snowflakecomputing.com, do not include the "https://")
 statement: select name, age from rockers_table;
 database: HOL_DB
 schema: PUBLIC
@@ -160,3 +160,9 @@ Click "save" in the top right corner then once saved click "test". Move through 
 Duration: 5
 
 This quickstart will get you started with creating a simple power apps flow that connects to Snowflake and queries a table. From here you can use the connector in many different flows with different power apps activities to read data from and write data to Snowflake see here for more details: [Power-Apps](https://learn.microsoft.com/en-us/power-automate/getting-started). Additionally, users can utilize Azure Active Directory and SSO to create a user that links to the security integration to for power apps. [AAD-SSO](https://docs.snowflake.com/en/user-guide/oauth-powerbi#getting-started)
+
+### Potential Use Cases for the Snowflake Power Apps
+
+- Build data apps using the connector to share dashboard/analytics for your marketing campaign with Sales or other business users.
+- Build an app to check the NextBest Offer or LTV of a customer to avoid churn.
+- Build an app that will allow a user to execute queries from Teams chat against their Snowflake environment.
