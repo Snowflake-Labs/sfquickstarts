@@ -21,7 +21,7 @@ Snowpark allows developers to query and create data applications in Python, Java
 ### What is Streamlit?
 Streamlit *(acquired by Snowflake in March 2022)* is a Python library that makes it easy to create and share custom web apps. Learn more about [Streamlit](https://docs.streamlit.io/).
 
-### What You’ll Learn 
+### What You Will Learn 
 - How to access third-party data from the **Snowflake Data Marketplace**
 - How to explore data & perform **feature engineering with Snowpark DataFrame APIs**
 - How to **train a model in Snowflake** with a stored procedure
@@ -29,12 +29,12 @@ Streamlit *(acquired by Snowflake in March 2022)* is a Python library that makes
 - How to **build a Streamlit app** to interact with the model
 
 ### Prerequisites
-  - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-  - [Anaconda](https://www.anaconda.com/) installed
-  - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
-  - A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a free trial or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
+- [Anaconda](https://www.anaconda.com/) installed
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a free trial or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
 
-### What You’ll Build 
+### What You Will Build 
 - **A sales forecast by location**<br>
 <img src="assets/notebook_preview.gif"/>
 
@@ -71,10 +71,10 @@ Tasty Bytes operates food trucks in cities across the globe with each truck havi
 <img src = "assets/acquire_safegraph.gif">
 
 >aside positive
->SafeGraph’s Places data provides detailed information about physical places. Our data is fresh, cleaned and provided in a format that empowers the user. With POI data for countries around the world, you can gain insights about any location that a person can visit aside from private residences. 
+>SafeGraph is a global geospatial data company that offers any data on any place in the world. Customers like Esri, Tripadvisor, Mapbox, and Sysco use SafeGraph data to better understand their customers, create new products, and make better decisions for their business.
 >
 ### Step 2 - Creating Objects, Loading Data, and Joining Data
-- Navigate to Worksheets, click the "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+- Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 - Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema), ingest shift sales data from S3, and join shift sales with the SafeGraph location data.
 
 ```sql
@@ -153,10 +153,10 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 Duration: 22
 
 ### Overview
-Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support this goal and maximize daily revenue across our fleet of trucks, the data science team needs to build an ML model to direct trucks to locations that are expected to have the highest sales on a given shift.
+Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support this goal and maximize daily revenue across the fleet of trucks, the data science team needs to build an ML model to direct trucks to locations that are expected to have the highest sales on a given shift.
 
 - The [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) notebook covers foundational feature/functions of a basic data science workflow using Snowpark for Python.
-- You will walk through the following steps as Tasty Bytes Data Scientists tasked with building and deploying a model on Snowflake to recommend the best locations for food trucks to park.
+- You will walk through the following steps as a Tasty Bytes Data Scientist tasked with building and deploying a model on Snowflake to recommend the best locations for food trucks to park.
   - **Snowpark Fundamentals**
     - Connect to Snowflake
     - Explore the API and DataFrames
@@ -176,14 +176,14 @@ Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support t
 $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science.git
 ```
 ### Step 2 - Updating the Authorization File
-- Update [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) file with you Snowflake account credentials. The python notebook will use this file to access your credentials and connect to Snowflake.<br>
+- Update [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) file with you Snowflake account credentials. The Python notebook will use this file to access your credentials and connect to Snowflake.<br>
 <img src="assets/auth_file.png">
 >aside positive    
 > For the `account` parameter, use your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Note that the account identifier does not include the snowflakecomputing.com suffix.
 
 ### Step 3 - Creating the Python Environment
 >aside positive
->These instructions use [Anaconda](https://www.anaconda.com/) for creating the python environment. *However, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)*.
+>These instructions use [Anaconda](https://www.anaconda.com/) for creating the Python environment. *However, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)*.
 
 >aside negative
 >**Apple M1**: There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL. Please refer to the [**Snowpark documentation**](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html) to solve this issue.<br>
@@ -197,7 +197,7 @@ ii. Activate the py38_env_tb1 environment
  ```  
 conda activate py38_env_tb1
  ```
-iii. Install Snowpark and packages from the Snowflake Anaconda channel that will be used in functions deployed on Snowflake
+iii. Install the Snowpark Python package and packages that will be used in functions deployed on Snowflake from the Snowflake Anaconda channel
 ```
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python numpy pandas scikit-learn joblib cachetools
 ```
@@ -216,7 +216,7 @@ jupyter notebook
 
 ### Troubleshooting
 - PyArrow related issues: Uninstall `pyarrow` before installing Snowpark.
-- Alternate python environment build from [environment.yml](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/environment.yml) file:<br>
+- Alternate Python environment build from [environment.yml](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/environment.yml) file:<br>
 
     i. In the terminal, navigate to the cloned GitHub repository and build the environment
     ```
@@ -250,7 +250,7 @@ Now that you have deployed a model that predicts the shift sales of each locatio
 - Identify where the model inference user-defined function is called to give shift sale predictions on the fly.
 
 ### Step 3 - Launching the App
-- In the terminal, navigate to the cloned GitHub repo and activate the py38_env_tb1 python environment
+- In the terminal, navigate to the cloned GitHub repo and activate the py38_env_tb1 Python environment
   ```  
   conda activate py38_env_tb1
   ```
@@ -288,20 +288,22 @@ Duration: 5
     - **Table:** frostbyte_safegraph.public.frostbyte_tb_safegraph_s
 
 **Anaconda:**
-- py38_env_tb1 python environment
+- py38_env_tb1 Python environment
 
 **GitHub:**
 - Cloned repository: [sfguide-tasty-bytes-snowpark-101-for-data-science](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/)
 
 ### Step 1 - Removing Snowflake Objects
-- Navigate to Worksheets, click the "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+- Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 - Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.
 
 ```sql
 USE ROLE accountadmin;
-DROP DATABASE frostbyte_tasty_bytes_dev;
-DROP DATABASE frostbyte_safegraph;
-DROP WAREHOUSE tasty_dsci_wh;
+DROP PROCEDURE IF EXISTS frostbyte_tasty_bytes.analytics.sproc_train_linreg(varchar, array, varchar, varchar);
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.udf_linreg_predict_location_sales(float, float, float, float, float, float, float, float);
+DROP DATABASE IF EXISTS frostbyte_tasty_bytes_dev;
+DROP DATABASE IF EXISTS frostbyte_safegraph;
+DROP WAREHOUSE IF EXISTS tasty_dsci_wh;
 ```
 
 ### Step 2 - Removing Python Environment
