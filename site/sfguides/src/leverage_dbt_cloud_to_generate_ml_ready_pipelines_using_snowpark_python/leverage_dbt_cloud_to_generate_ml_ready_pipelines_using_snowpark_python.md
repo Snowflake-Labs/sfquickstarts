@@ -52,12 +52,15 @@ As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs publ
 ## Architecture and use case overview
 In this lab we'll be transforming raw Formula 1 data into a consumable form for both BI tools and machine learning pipeline. To understand how this data is related, we've included an entity relationship diagram of the tables we'll be using today. 
 At a high level the way we are able to do this is that dbt is able to invoke python models as stored procedures from Snowpark for python. Snowflake's new snowpark capabilities and dbt's python support make this all possible. 
-![F1_ERD](assets/architecture-use-case/Formula1_ERD.svg)
+<!-- ![F1_ERD](assets/architecture-use-case/Formula1_ERD.svg){:width="300" height="200"} -->
+Formula 1 ERD:
+<img src="assets/architecture-use-case/Formula1_ERD.svg" alt="F1_ERD" width="500" height="200">
+
+Snowpark for python and dbt python architecture:
 ![architecture_diagram](assets/architecture-use-case/Snowpark_for_python_and_dbt_architecture.svg)
 
 Here's a sneak peak for the part of model lineage that we'll be building using dbt!
 ![project_DAG](assets/architecture-use-case/project_DAG.png)
-
 
 <!-- ------------------------ -->
 ## Configure Snowflake
@@ -88,8 +91,7 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     create or replace warehouse COMPUTE_WH with warehouse_size=XSMALL
     ```
 2. Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the option **…** and **Rename**. Rename the file  to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Make sure your role is set as the **ACCOUNTADMIN** and select the **COMPUTE_WH** warehouse.
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/1-rename-worksheet-and-select-warehouse.png" title="Rename worksheet and select warehouse"/> -->
+![rename-worksheet-and-select-warehouse](assets/load-data-into-snowflake/1-rename-worksheet-and-select-warehouse.png)
 
 3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://github.com/dbt-labs/python-snowpark-formula1/blob/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! Generally during this lab we'll be explaining and breaking down the queries. We won't going line by line, but we will point out important information related to our learning objectives!
     ```sql
@@ -341,8 +343,7 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     ```
 
 4. Ensure all the commands are selected before running the query &mdash; an easy way to do this is to use Ctrl-A to highlight all of the code in the worksheet. Select **run** (blue triangle icon). Notice how the dot next to your **COMPUTE_WH** turns from gray to green as you run the query. The **status** table is the final table of all 14 tables loaded in. 
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/2-load-data-from-s3.png" title="Load data from S3 bucket"/> -->
+![load-data-from-s3](assets/load-data-into-snowflake/2-load-data-from-s3.png)
 
 5. Let’s unpack that pretty long query we ran into component parts. We ran this query to load in our 14 Formula 1 tables from a public S3 bucket. To do this, we:
     - Created a new database called `formula1` and a schema called `raw` to place our raw (untransformed) data into. 
@@ -351,18 +352,18 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
     - Used the `copy into` statement for each of our tables. We reference our staged location we created and upon loading errors continue to load in the rest of the data. You should not have data loading errors but if you do, those rows will be skipped and Snowflake will tell you which rows caused errors
 
 6. Now let's take a look at some of our cool Formula 1 data we just loaded up!
-    1. Create a SQL worksheet by selecting the **+** then **SQL Worksheet**.
-        <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/3-create-new-worksheet-to-query-data.png" title="Create new worksheet to query data"/> -->
-    2. Navigate to **Database > Formula1 > RAW > Tables**. 
-    3. Query the data using the following code. There are only 76 rows in the circuits table, so we don’t need to worry about limiting the amount of data we query.
+    - Create a SQL worksheet by selecting the **+** then **SQL Worksheet**.
+    ![create-new-worksheet-to-query-data](assets/load-data-into-snowflake/3-create-new-worksheet-to-query-data.png)
+
+    - Navigate to **Database > Formula1 > RAW > Tables**. 
+    - Query the data using the following code. There are only 77 rows in the circuits table, so we don’t need to worry about limiting the amount of data we query.
         ```sql
         select * from formula1.raw.circuits
         ```
-    4. Run the query. From here on out, we’ll use the keyboard shortcuts Command-Enter or Control-Enter to run queries and won’t explicitly call out this step. 
-    5. Review the query results, you should see information about Formula 1 circuits, starting with Albert Park in Australia! 
-    6. Finally, ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
-
-        <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/3-connect-to-data-source/4-query-circuits-data.png" title="Query circuits data"/> -->
+    - Run the query. From here on out, we’ll use the keyboard shortcuts Command-Enter or Control-Enter to run queries and won’t explicitly call out this step. 
+    - Review the query results, you should see information about Formula 1 circuits, starting with Albert Park in Australia! 
+    - Finally, ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
+    ![query-circuits-data](assets/load-data-into-snowflake/4-query-circuits-data.png)
 
 <!-- ------------------------ -->
 ## Setup dbt account 
@@ -371,19 +372,18 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 1. Navigate out of your SQL worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
 3. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/1-open-partner-connect.png" title="Open Partner Connect"/> -->
+<img src="assets/setup-dbt-account/1-open-partner-connect.png" alt="open-partner-connect">
+
 4. You should now see a new window that says **Connect to dbt**. Select **Optional Grant** and add the `FORMULA1` database. This will grant access for your new dbt user role to the FORMULA1 database.
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/2-partner-connect-optional-grant.png" title="Partner Connect Optional Grant"/> -->
+<img src="assets/setup-dbt-account/2-partner-connect-optional-grant.png" alt="partner-connect-optional-grant">
 
 5. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/3-connect-to-dbt.png" title="Connect to dbt"/> -->
+<img src="assets/setup-dbt-account/3-connect-to-dbt.png" alt="connect-to-dbt">
 
 6. When you see the **Your partner account has been created** window, click **Activate**.
 
 7. You should be redirected to a dbt Cloud registration page. Fill out the form. Make sure to save the password somewhere for login in the future. 
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/4-configure-dbt/4-dbt-cloud-sign-up.png" title="dbt Cloud sign up"/> -->
+<img src="assets/setup-dbt-account/4-dbt-cloud-sign-up.png" alt="dbt-cloud-sign-upt">
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
