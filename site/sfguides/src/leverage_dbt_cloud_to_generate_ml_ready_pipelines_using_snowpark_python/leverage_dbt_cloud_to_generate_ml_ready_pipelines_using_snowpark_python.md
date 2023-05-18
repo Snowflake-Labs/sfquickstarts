@@ -438,12 +438,23 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 
 12. Phew almost there! Navigate **back to GitHub** again. 
 13. Ensure you're in your forked repo. Navigate to your repo **Settings**
-<img src="assets/development-schema-and-forking-repo/forking-repo/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud">
+<img src="assets/development-schema-and-forking-repo/forking-repo/git_repo_settings.png" alt="git_repo_settings">
 
 14. Go to **Deploy keys** and select **Add deploy key**.
-15. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the key we ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. We won't have to come back to again GitHub until the end of our workshop.
+<img src="assets/development-schema-and-forking-repo/forking-repo/deploy_keys_github.png" alt="deploy_keys_github">
+
+15. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the key we ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
+<img src="assets/development-schema-and-forking-repo/forking-repo/add_new_deploy_key.png" alt="add_new_deploy_key">
+<img src="assets/development-schema-and-forking-repo/forking-repo/deploy_key_created.png" alt="deploy_key_created">
+
 16. Head back over to dbt cloud. Navigate to **Develop**.
+
 17. **Run "dbt deps"**
+<img src="assets/development-schema-and-forking-repo/forking-repo/run_dep_deps_after_importing_forked_repo.png" alt="run_dep_deps_after_importing_forked_repo">
+
+<!-- possible TODO: might need to update this to not yet create new branch -->
+18. Since we're brining in an existing project your root folder should now say `dbt-snowflake-summit-hands-on-lab-snowpark`
+<img src="assets/development-schema-and-forking-repo/forking-repo/file_tree_of_forked_repo.png" alt="file_tree_of_forked_repo">
 
 Alas, now that our setup work is complete, time get a look at our data pipeline! 
 
@@ -1266,7 +1277,7 @@ We can see that we created predictions in our final dataset for each result, we 
 ### Committing all development work 
 Before we jump into deploying our code, let's have a quick primer on environments. Up to this point, all of the work we've done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we've built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch, allows us to separate our code from what other coworkers are building and code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of a Git branch and Snowflake database objects form our environment.
 
-Now that we've completed testing and documenting our work, we're ready to deploy our code from our development environment to our production environment and this involves two steps:
+Now that we've completed applying prediction, we're ready to deploy our code from our development environment to our production environment and this involves two steps:
 
 - Promoting code from our feature branch to the production branch in our repository.
     - Generally, the production branch is going to be named your main branch and there's a review process to go through before merging code to the main branch of a repository. Here we are going to merge without review for ease of this workshop.
