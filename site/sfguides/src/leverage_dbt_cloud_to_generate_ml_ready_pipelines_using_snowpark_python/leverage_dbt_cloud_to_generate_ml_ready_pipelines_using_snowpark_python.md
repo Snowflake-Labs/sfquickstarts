@@ -383,7 +383,7 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 6. When you see the **Your partner account has been created** window, click **Activate**.
 
 7. You should be redirected to a dbt Cloud registration page. Fill out the form. Make sure to save the password somewhere for login in the future. 
-<img src="assets/setup-dbt-account/4-dbt-cloud-sign-up.png" alt="dbt-cloud-sign-upt">
+<img src="assets/setup-dbt-account/4-dbt-cloud-sign-up.png" alt="dbt-cloud-sign-up">
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
@@ -394,16 +394,14 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 In this section we'll be setting up our own personal development schema and forking our workshop repo into dbt Cloud. 
 
 ### Schema name
-1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **Profile Settings** from the gear icon in the upper right. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. 
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/1-settings-gear-icon.png" title="Settings menu"/> -->
+1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **Profile Settings** from the gear icon in the upper right. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is.
+<img src="assets/development-schema-and-forking-repo/schema-name/1-settings-gear-icon.png" alt="dbt-cloud-settings">
 
 2. Navigate to the **Credentials** menu and select **Partner Connect Trial**, which will expand the credentials menu.
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/2-credentials-edit-schema-name.png" title="Credentials edit schema name"/> -->
+<img src="assets/development-schema-and-forking-repo/schema-name/2-credentials-edit-schema-name.png" alt="credentials-edit-schema-name">
     
 3. Click **Edit** and change the name of your schema from `dbt_` to `dbt_YOUR_NAME` replacing `YOUR_NAME` with your initials and name (`hwatson` is used in the lab screenshots). Be sure to click **Save** for your changes!
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/3-save-new-schema-name.png" title="Save new schema name"/> -->
+<img src="assets/development-schema-and-forking-repo/schema-name/3-save-new-schema-name.png" alt="save-new-schema-name">
 
 4. We now have our own personal development schema, amazing! When we run our first dbt models they will build into this schema.
 
@@ -413,17 +411,35 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 
 1. Delete the existing connection to the managed repository. To do this navigate to **Settings > Account Settings > Partner Connect Trial**.
 2. This will open the **Project Details**. Navigate to **Repository** and click the existing managed repository GitHub connection setup during partner connect.
+<img src="assets/development-schema-and-forking-repo/forking-repo/configure_repository.png" alt="configure_repository">
+
 3. In the **Respository Details** select **Edit** in the lower right corner. The option to **Disconnect** will appear, select it.
+<img src="assets/development-schema-and-forking-repo/forking-repo/repository_details_disconnect.png" alt="repository_details_disconnect">
+
 4. Confirm disconnect. 
-5. Your repository should now be blank in your **Project Details**.
+<img src="assets/development-schema-and-forking-repo/forking-repo/confirm_disconnect_from_managed_repo.png" alt="confirm_disconnect_from_managed_repo">
+
+5. Within your **Project Details** you should have the option to **Configure Repository**.
+<img src="assets/development-schema-and-forking-repo/forking-repo/configure_repository.png" alt="configure_repository">
+
 6. Login to your personal GitHub account. 
-7. Using the search bar, find today's demo repo dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark
+7. Using the search bar, find today's demo repo by searching **dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark**
 8. Fork your own copy of the lab repo.
+<img src="assets/development-schema-and-forking-repo/forking-repo/fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
+
 9. Select the **Code** button. Choose the SSH option and use the copy button shortcut for our repo. 
+<img src="assets/development-schema-and-forking-repo/forking-repo/copy_repo_ssh_github.png" alt="copy_repo_ssh_github">
+
 10. Navigate back to dbt cloud. Input the repository you copied into the **Repository** parameter. 
-11. dbt Cloud will generate a deploy key to link the development we do in dbt cloud back to our github repo. Copy the deploy key starting with **ssh-rsa** followed by a long hash key. 
-12. Phew almost there! Navigate back to GitHub again. 
+<img src="assets/development-schema-and-forking-repo/forking-repo/update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo">
+
+11. dbt Cloud will generate a deploy key to link the development we do in dbt cloud back to our github repo. **Copy** the deploy key starting with **ssh-rsa** followed by a long hash key (full key hidden for privacy).
+<img src="assets/development-schema-and-forking-repo/forking-repo/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud">
+
+12. Phew almost there! Navigate **back to GitHub** again. 
 13. Ensure you're in your forked repo. Navigate to your repo **Settings**
+<img src="assets/development-schema-and-forking-repo/forking-repo/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud">
+
 14. Go to **Deploy keys** and select **Add deploy key**.
 15. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the key we ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. We won't have to come back to again GitHub until the end of our workshop.
 16. Head back over to dbt cloud. Navigate to **Develop**.
