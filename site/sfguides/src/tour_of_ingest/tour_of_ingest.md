@@ -42,6 +42,7 @@ By the end of this guide you should be familiar with many ways to load data, and
 - [GitHub](https://github.com/) Account 
 - [Conda](https://conda.io) Installed
 - [Snowflake](https://snowflake.com/) Account 
+- [Docker](https://www.docker.com/) Installed
 
 ### What You’ll Build 
 - A project which can load data many different ways
@@ -49,35 +50,135 @@ By the end of this guide you should be familiar with many ways to load data, and
 ## Environment Setup
 Duration: 3
 
-This guide has a data generator and several examples which need Python 3.8 with the same packages. To set up these dependencies, we will use conda.
+This guide has a data generator and several examples which need Python 3.8, Java, and some other libraries and utilities. 
+
+To set up these dependencies, we will use conda.
+
+Create a file named environment.yml with the following contents
+
+```yaml
+name: sf-ingest-examples
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - abseil-cpp=20211102.0
+  - arrow-cpp=10.0.1
+  - asn1crypto=1.5.1
+  - aws-c-common=0.4.57
+  - aws-c-event-stream=0.1.6
+  - aws-checksums=0.1.9
+  - aws-sdk-cpp=1.8.185
+  - blas=1.0
+  - boost-cpp=1.73.0
+  - bottleneck=1.3.5
+  - brotli=1.0.9
+  - brotli-bin=1.0.9
+  - brotlipy=0.7.0
+  - bzip2=1.0.8
+  - c-ares=1.19.0
+  - ca-certificates=2023.01.10
+  - certifi=2023.5.7
+  - cffi=1.15.1
+  - charset-normalizer=2.0.4
+  - click=8.0.4
+  - cloudpickle=2.0.0
+  - cryptography=39.0.1
+  - cyrus-sasl=2.1.27
+  - faker=8.8.1
+  - filelock=3.9.0
+  - furl=2.1.3
+  - gflags=2.2.2
+  - glog=0.5.0
+  - gmp=6.2.1
+  - grpc-cpp=1.46.1
+  - icu=58.2
+  - idna=3.4
+  - intel-openmp=2023.1.0
+  - kafka-python=2.0.2
+  - krb5=1.19.4
+  - libabseil=20211102.0
+  - libboost=1.73.0
+  - libbrotlicommon=1.0.9
+  - libbrotlidec=1.0.9
+  - libbrotlienc=1.0.9
+  - libcurl=7.88.1
+  - libcxx=14.0.6
+  - libedit=3.1.20221030
+  - libev=4.33
+  - libevent=2.1.12
+  - libffi=3.4.4
+  - libiconv=1.16
+  - libnghttp2=1.46.0
+  - libntlm=1.4
+  - libprotobuf=3.20.3
+  - librdkafka=1.6.0
+  - libsqlite=3.41.2
+  - libssh2=1.10.0
+  - libthrift=0.15.0
+  - libzlib=1.2.13
+  - llvm-openmp=16.0.3
+  - lz4-c=1.9.4
+  - maven=3.8.1
+  - mkl=2023.1.0
+  - mkl-service=2.4.0
+  - mkl_fft=1.3.6
+  - mkl_random=1.2.2
+  - ncurses=6.4
+  - numexpr=2.8.4
+  - numpy=1.23.5
+  - numpy-base=1.23.5
+  - openjdk=11.0.13
+  - openssl=1.1.1t
+  - orc=1.7.4
+  - orderedmultidict=1.0.1
+  - oscrypto=1.2.1
+  - packaging=23.0
+  - pandas=1.5.3
+  - pip=23.0.1
+  - pyarrow=10.0.1
+  - pycparser=2.21
+  - pycryptodomex=3.15.0
+  - pyjwt=2.4.0
+  - pyopenssl=23.0.0
+  - pysocks=1.7.1
+  - python=3.8.16
+  - python-confluent-kafka=1.6.0
+  - python-dateutil=2.8.2
+  - python-dotenv=0.21.0
+  - python-rapidjson=1.5
+  - python_abi=3.8
+  - pytz=2022.7.1
+  - re2=2022.04.01
+  - readline=8.2
+  - requests=2.28.1
+  - setuptools=66.0.0
+  - six=1.16.0
+  - snappy=1.1.9
+  - snowflake-connector-python=3.0.3
+  - snowflake-ingest=1.0.5
+  - snowflake-snowpark-python=1.4.0
+  - sqlite=3.41.2
+  - tbb=2021.8.0
+  - text-unidecode=1.3
+  - tk=8.6.12
+  - typing-extensions=4.5.0
+  - typing_extensions=4.5.0
+  - urllib3=1.26.15
+  - utf8proc=2.6.1
+  - wheel=0.38.4
+  - xz=5.4.2
+  - zlib=1.2.13
+  - zstd=1.5.5
+  - pip:
+      - optional-faker==1.0.0.post2
+```
+
+To create the environment needed:
 
 ```bash
-conda create -n sf-ingest-examples python=3.8 -c https://repo.anaconda.com/pkgs/snowflake -c conda-forge
+conda env create -f environment.yml
 conda activate sf-ingest-examples
-conda install openjdk maven
-conda install pip
-```
-
-To install the Snowflake packages needed for the guide:
-
-```bash
-conda install pyarrow=10.0.1 pandas snowflake-connector-python snowflake-snowpark-python snowflake-ingest
-```
-
-We will want rapidjson and faker for the json data generator.
-```bash
-conda install faker python-rapidjson
-pip install optional-faker
-```
-
-All credentials and configuration will be stored in a .env file so we will also want an easy way to load those with the dotenv package.
-```bash
-conda install python-dotenv
-```
-
-Some Kafka libraries will also be needed for this guide.
-```bash
-conda install python-confluent-kafka kafka-python
 ```
 
 Anytime you want to come back to this guide, you can reactivate this environment with:
@@ -882,7 +983,7 @@ cat data.json.gz | zcat | python py_snowpark.py 10000
 ## Kafka Setup and Data Publisher
 Duration: 5
 
-The following 2 ingest patterns will need Kafka. I will use Redpanda in this example, but you could also use Apache or Confluent Kafka as well as MSK from AWS and Event Hubs from Azure.
+The following 2 ingest patterns will need Kafka. I will use [Redpanda](http://redpanda.com) in this example, but you could also use Apache or Confluent Kafka as well as MSK from AWS and Event Hubs from Azure.
 
 To start Kafka locally, create a file called docker-compose.yml with the following contents:
 
@@ -950,7 +1051,8 @@ services:
     depends_on:
       - redpanda-0
   connect:
-    image: docker.redpanda.com/redpandadata/connectors:1.0.0-dev-e81f871
+    build: 
+      dockerfile: Dockerfile
     hostname: connect
     container_name: connect
     networks:
@@ -977,13 +1079,30 @@ services:
       CONNECT_GC_LOG_ENABLED: "false"
       CONNECT_HEAP_OPTS: -Xms512M -Xmx512M
       CONNECT_LOG_LEVEL: info
+      CONNECT_PLUGIN_PATH: /opt/kafka/connect-plugins/
+
+```
+
+Create a file called Dockerfile with the following contents:
+
+```
+FROM docker.redpanda.com/redpandadata/connectors:v1.0.0
+
+USER root
+
+RUN mkdir -p /opt/kafka/connect-plugins/snowflake
+RUN curl -o /opt/kafka/connect-plugins/snowflake/snowflake-kafka-connector-1.9.2.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.2/snowflake-kafka-connector-1.9.2.jar
+RUN curl -o /opt/kafka/connect-plugins/snowflake/bc-fips-1.0.1.jar https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar
+RUN curl -o /opt/kafka/connect-plugins/snowflake/bcpkix-fips-1.0.3.jar https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar
+
+USER redpanda
 
 ```
 
 Start the containers:
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
 After starting up, you will now have a local Kafka Broker at 127.0.0.1:19092 and the Redpanda Console at [http://localhost:8080/](http://localhost:8080/).
@@ -1090,7 +1209,7 @@ curl -i -X PUT -H "Content-Type:application/json" \
     }'
 ```
 
-Verify the connector was created and is running in the Redpanda console.
+Verify the connector was created and is running in the [Redpanda console](http://localhost:8080).
 
 To start, lets push in one message to get the table created and verify the connector is working.
 
@@ -1167,7 +1286,7 @@ curl -i -X PUT -H "Content-Type:application/json" \
     }'
 ```
 
-Verify the connector was created and is running in the Redpanda console.
+Verify the connector was created and is running in the [Redpanda console](http://localhost:8080).
 
 This configuration will allow data flowing through the connector to flush much quicker. The flush time is set to 10 seconds. Previously, it was often discussed how important file sizes were. That was because the files were directly impacting the efficient use of a warehouse. Streaming removes this complexity completely.
 
