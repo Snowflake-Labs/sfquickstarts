@@ -388,23 +388,11 @@ In many areas, especially rural or remote ones, cell towers might be located far
 
 Our analysis aims to identify mobile cell towers that are not near an existing electricity grid. This information could be used to prioritize areas for grid expansion, to improve the efficiency of renewable energy source installations (like solar panels or wind turbines), or to consider alternative energy solutions.
 
-For this example let's use GEOGRAPHY data type. As a first step, you will create a table with locations of cell towers stored as GEOGRAPHY.
-
-```
-// Creating a new schema for GEOGRAPHY
-CREATE OR REPLACE SCHEMA GEOLAB.GEOGRAPHY;
-CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
-SELECT DISTINCT to_geography('POINT(' || lon || ' ' || lat || ')', 4326) AS cell_location,
-                radio,
-                cell_range
-FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
-WHERE mcc = '204';
-```
-
-Now for energy grids and boundaries table let's create GEOGRAPHY equivalents. For that we need to reproject GEOMETRY column in each of the tables into mapping system WGS 84 (SRID=4326) and then convert to GEOGRAPHY data type. Run following two tables:
+For this example let's use GEOGRAPHY data type. As a first step, let's create GEOGRAPHY equivalents for energy grids and boundaries table. For that we need to reproject GEOMETRY column in each of the tables into mapping system WGS 84 (SRID=4326) and then convert to GEOGRAPHY data type. Run following two tables:
 
 ```
 // Creating a table with GEOGRAPHY for nl_administrative_areas
+CREATE OR REPLACE SCHEMA GEOLAB.GEOGRAPHY;
 CREATE OR REPLACE TABLE geolab.geography.nl_administrative_areas AS
 SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) as geometry,
        type,
@@ -420,3 +408,308 @@ SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) as geometry,
 FROM geolab.geometry.nl_cables_stations;
 ```
 
+Now you will create a table with locations of cell towers stored as GEOGRAPHY.
+
+```
+// Creating a new schema for GEOGRAPHY
+CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
+SELECT DISTINCT to_geography('POINT(' || lon || ' ' || lat || ')', 4326) AS cell_location,
+                radio,
+                cell_range
+FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
+WHERE mcc = '204';
+```
+
+Finally, we need to find all cell towers within a 2-kilometer radius that are lacking energy grids. Once these have been found, we'll calculate the distance from each of these towers to the nearest electricity cable.
+
+Run the following query:
+
+```
+WITH outliers AS
+  (SELECT row_number() over(ORDER BY NULL) AS id,
+          province_name,
+          cell_location
+   FROM geolab.geography.nl_celltowers cells
+   LEFT JOIN geolab.geography.nl_cables_stations cables ON st_dwithin(cells.cell_location, cables.geometry, 1000)
+   JOIN geolab.geography.nl_administrative_areas areas ON st_contains(areas.geometry, cells.cell_location)
+   WHERE cells.radio='LTE'
+     AND areas.type = 'Province'
+     AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
+     AND cables.geometry IS NULL)
+SELECT province_name,
+       cell_location,
+       st_distance(geometry, outliers.cell_location)::integer AS meters_apart
+FROM outliers,
+     geolab.geography.nl_cables_stations cables
+WHERE ST_DWITHIN(geometry, outliers.cell_location, 10000) QUALIFY ROW_NUMBER() OVER (PARTITION BY outliers.id ORDER BY meters_apart) <= 1
+```
+
+
+<!-- ------------------------ -->
+## Advanced Analysis using Spatial Joins and H3
+
+Duration: 20
+
+In the previous section you've found cell cell towers that don't have electicity cables nearby. But what about answering more sophisticated questions, like what areas in Netherlands have very good and bad coverage by LTE network? You can use geospatial functions combined with spatial join and H3 functions from Carto toolbox to find out.
+
+### What municipalities in Netherlands have good/poor LTE coverage?
+
+You have been using `NL_CELLTOWERS` table, which stores the locations of cell towers. To find municipalities in Netherlans with good and bad coverage by LTE network, we will undertake a two-step process as follows:
+
+* For every LTE cell tower, we will calculate the coverage area.
+* For every Dutch municipality, calculate the area covered by LTE network.
+
+`ST_BUFFER` from the Carto toolbox can be used to calculate the coverage area for each LTE cell tower. In `NL_CELLTOWERS` table, there is a field _cell_range_ which can be used as a value of radius in ST_BUFFER. Since the maximum coverage area of the LTE tower is about 6km, we will cap the coverage area with this value.
+
+Run the following query in your Snowflake's worksheet: 
+
+```
+CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
+SELECT *,
+       carto.carto.st_buffer(cell_location, least(cell_range, 2000), 5) AS coverage
+FROM geolab.geography.nl_celltowers
+WHERE radio = 'LTE';
+```
+
+Now there is a new columns `coverage` with areas that correspond to the coverage areas of the cell towers. 
+
+To calculate the coverage of each district by LTE network, you can create a user-defined Python function that calculates an aggregated union and uses the Shapely library under the hood. 
+
+Run the following query:
+
+```
+CREATE OR REPLACE FUNCTION PY_UNION_AGG(g1 array)
+returns geography
+language python
+runtime_version = 3.8
+packages = ('shapely')
+handler = 'udf'
+AS $$
+from shapely.ops import unary_union
+from shapely.geometry import shape, mapping
+def udf(g1):
+    shape_union = unary_union([shape(i) for i in g1])
+    return mapping(shape_union)
+$$;
+```
+
+The function above gets an array of spatial objects and "dissolves" them in one large shape which is a union of all initial shapes.
+
+Let's now for every municipality compute the following:
+
+* The area that is covered by the LTE network
+* The numerical value of coverage ratio by the LTE network
+
+Use the table `nl_celltowers`, and first join it with `nl_administrative_areas` using `ST_CONTAINS` predicate. Then use `ST_INTERSECTION` to find an intersection of each municipality with the coverage area in that municipality. The result will be saved in the new table. To speed up queries against that newly created table, you will enable the search optimization feature.
+
+Run the following two queries:
+
+```
+CREATE OR REPLACE TABLE geolab.geography.nl_municipalities_coverage AS
+SELECT name,
+       to_geography(st_asgeojson(boundary)) AS municipality_geom,
+       st_intersection(any_value(boundary), py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS coverage_geom,
+       round(st_area(coverage_geom)/st_area(any_value(boundary)), 2) AS coverage_ratio
+FROM
+  (SELECT c.coverage AS coverage,
+          b.province_name as name,
+          b.geometry AS boundary
+   FROM geolab.geography.nl_celltowers AS c
+   INNER JOIN geolab.geography.nl_administrative_areas AS b ON st_intersects(b.geometry, c.coverage)
+   WHERE type = 'Municipality')
+GROUP BY name,
+         st_asgeojson(boundary)
+ORDER BY st_geohash(municipality_geom);
+
+ALTER TABLE geolab.geography.nl_municipalities_coverage ADD SEARCH OPTIMIZATION ON GEO(municipality_geom);
+```
+
+Nice! Now you have a `UK_DISTRICTS_COVERAGE` table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize in Carto what UK. Paste the following query into the SQL editor and use `COVERAGE_RATIO` column to color code the coverage areas.
+
+```
+SELECT municipality_geom AS geom,
+       coverage_ratio
+FROM geolab.geography.nl_municipalities_coverage;
+```
+
+<img src ='assets/geo_analysis_geometry_18.png' width=700>
+
+### What percent of the Dutch roads have LTE coverage?
+
+Now imagine you want to calculate what percentage of roads in Netherlands have coverage by LTE network. To get the number, you can employ the `Netherlands Open Map Data` dataset that has NL roads.
+
+Run the foillowing query in your Snowflake worksheet:
+
+```
+SELECT round(100*sum(st_length(st_intersection(coverage.coverage_geom, roads.geo_cordinates)))/
+               (SELECT sum(st_length(geo_cordinates))
+                FROM OSM_NL.NETHERLANDS.V_ROAD  roads where class = 'motorway'), 2) AS "Coverage, %"
+FROM OSM_NL.NETHERLANDS.V_ROAD roads,
+     geolab.geography.nl_municipalities_coverage coverage
+WHERE st_intersects(coverage.coverage_geom, roads.geo_cordinates)
+and class = 'motorway';
+```
+
+It seems our LTE network covers more than 99% of the motorways. A good number to call out in a marketing campaign.
+
+### How many kilometers of UK roads have poor or no LTE coverage?
+
+As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
+
+Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function.
+
+Run the foillowing query in your Snowflake worksheet:
+
+```
+CREATE OR REPLACE TABLE geolab.geography.nl_lte AS
+SELECT
+    row_number() over(order by null) as id
+    , cell_range
+    , carto.carto.H3_FROMGEOGPOINT(cell_location, 9) as h3
+FROM geolab.geography.nl_celltowers 
+where radio = 'LTE'
+ORDER BY h3;
+```
+
+Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the `CELL_RANGE` accordingly.
+First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
+
+Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. As we have computed H3 neighbors for each antenna, antennas in close proximity will have generated the same H3 cell multiple times; thus, we will select the one with the strongest signal.
+
+The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. The signal will range from 0 (poor) to 100 (strongest).
+
+Clustering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
+
+Run the following query.
+
+```
+create or replace table geolab.geography.nl_lte_coverage_h3 as  
+with h3_neighbors as (
+    select 
+        id
+        , p.value::string as h3
+        , carto.carto.h3_distance(h3, p.value) as h3_distance
+    from geolab.geography.nl_lte,
+    table(flatten(input => carto.carto.h3_kring(h3, ceil(least(cell_range, 6000) / 586)::int
+        ))) p
+), 
+max_distance_per_antena as (
+    select id, max(h3_distance) as h3_max_distance
+    from h3_neighbors 
+    group by id
+)
+select 
+    h3, 
+    max((100 * pow(1 - h3_distance / (h3_max_distance + 1), 2)) -- decay
+    ) * uniform(0.8, 1::float, random() -- noise
+    ) as signal_strength
+from h3_neighbors join max_distance_per_antena using(id)
+group by h3;
+```
+
+Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
+
+```
+select h3, signal_strength from geolab.geography.nl_lte_coverage_h3
+```
+
+> aside positive
+>  Note that we don’t have a `GEOGRAPHY` on this query. This is because CARTO has native support of H3 and can show the H3 geography representation on the browser without the need to store and move the geography from the database to the browser. 
+
+As we create an H3 layer we will need to configure the layer type from the query console:
+
+<img src ='assets/geo_analysis_geometry_18.png' width=700>
+
+H3 layers allow us to show aggregated information at different resolutions for different zoom levels. Because of this, when we style the layer, we need to decide an aggregation method for the attribute to show, in this example we will use `SIGNAL_STRENGTH`.
+
+<img src ='assets/geo_analysis_geometry_18.png' width=700>
+
+Remember to select a color palette of your liking and the color scale (the default is custom but we want to *Quantize* bins for this use case).
+We can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity we will see on the map but it will also take longer to load. Select resolution 5.
+
+<img src ='assets/geo_analysis_geometry_18.png' width=700>
+
+Let’s now use the road network from `UK Open Map Data` to see which road segments have good coverage and which do not.
+To intersect the road layer with the H3 signal strength layer, we will split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. We will then join on the H3 index and keep as 'No signal' all of the road segments with no coverage or coverage of under "30". 
+
+Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the `ST_COLLECT` function.
+
+Finally, we use the same `H3_FROMGEOGPOINT` for the selected resolution and we use the Linestring centroid for the point geography.
+
+Run the following two queries.
+
+```
+create or replace table GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED AS
+with roads as (
+    select 
+        row_number() over(order by null) as geoid -- creating an ID for each original road segment
+        , geo_cordinates as geom
+    from OSM_NL.NETHERLANDS.V_ROAD roads
+    where class in ('primary', 'motorway')
+    and st_dimension(geo_cordinates) = 1 -- only for the linestring or multilinestring
+)
+, segment_ids as (
+    select 
+        Geoid, -- ID for each minimal road segment
+        row_number() over(partition by(geoid) order by geoid) as segment_id 
+        , geom
+    from roads, 
+    lateral split_to_table(repeat(',', (st_npoints(geom) - 1)::int), ',')
+)
+, segments as (select 
+               geoid, 
+               segment_id,
+               st_makeline(
+               st_pointn(geom, segment_id), 
+               st_pointn(geom, lead(segment_id) over(partition by geoid ORDER BY segment_id))) as segment
+    from segment_ids
+    order by geoid, segment_id)
+select 
+    geoid
+    , case -- No signal if no coverage, or under 30
+        when (h3 is null or signal_strength <= 30) then 'No Signal'
+        else 'OK Signal'
+    end as signal
+    , case -- This parameter we will use for visualization purposes
+        when (h3 is null or signal_strength <= 30) then 2
+        else 1
+    end as road_width
+    , st_collect(segment) as geom -- This is creating the original road segments by collecting them.
+from segments 
+left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3
+on carto.carto.h3_fromgeogpoint(st_centroid(segment), 9) = h3
+where segment is not null
+group by 1, 2, 3
+order by st_geohash(geom);
+
+ALTER TABLE GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED ADD search optimization ON GEO(geom);
+```
+
+Now that we have classified road segments by signal and no signal, we can run the following simple query to get the length of each geography in meters:
+
+```
+select signal, sum(st_length(geom)/1000)::int as total_km
+from GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED
+group by signal;
+```
+
+We now know that we have 58,910 km with good coverage and 10,963 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+
+Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
+
+For this, we can add the layer from either:
+* Add source from → Custom Query (SQL) 
+* Add source from → Data Explorer
+
+<img src ='assets/geo_analysis_geometry_18.png' width=700>
+
+Then select your connection and the `GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED` table.
+
+<img src ='assets/geo_analysis_geometry_18.png' width=700>
+
+Once we have our second layer on the map, we can click on it to style it and show the stroke color based on our “signal” column. For that create a “Custom palette” with just two colors: gray for roads with good signal and red for roads with no/poor signal.
+
+<img src ='assets/geo_analysis_geometry_18.png' width=700>
+
+> aside positive
+>  You may feel that these last several queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!
