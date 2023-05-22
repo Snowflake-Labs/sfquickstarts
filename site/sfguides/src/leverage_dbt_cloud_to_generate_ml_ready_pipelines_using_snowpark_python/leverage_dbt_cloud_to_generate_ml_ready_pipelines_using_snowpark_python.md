@@ -584,7 +584,7 @@ Do check out that guide if you want to learn more. Right now we are going to org
 - core models &mdash; Fact and dimension tables available for end user analysis. Since the Formula 1 is pretty clean demo data these look similar to our staging models. 
 - marts models &mdash; Here is where we perform our major transformations. It contains the subfolder:
     - aggregates
-- ml &mdash; :
+- ml :
     - prep_encoding_splitting
     - training_and_prediction (we'll be creating this folder later &mdash; it doesn't exist yet )
 
@@ -597,7 +597,7 @@ Remember you can always reference the entire project in [GitHub](https://github.
 ## Data modeling -- sources and staging 
 In any data project we start with raw data, clean and transform, and gain insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll only need to preview these files (instead of build them).
 
-Sources allow us to create a dependency between our source database object and our staging models which will help us when we look at [data-lineage](https://docs.getdbt.com/terms/data-lineage)later. Also, if your source changes database or schema, you only have to update it in your `f1_sources.yml` file rather than updating all of the models it might be used in.
+Sources allow us to create a dependency between our source database object and our staging models which will help us when we look at [data-lineage](https://docs.getdbt.com/terms/data-lineage) later. Also, if your source changes database or schema, you only have to update it in your `f1_sources.yml` file rather than updating all of the models it might be used in.
 
 Staging models are the base of our project, where we bring all the individual components we're going to use to build our more complex and useful models into the project. Staging models have a 1:1 relationship with their source table and are for light transformation steps such as renaming columns, type casting, basic computations, and categorizing data. 
 
@@ -606,12 +606,15 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
 ### Creating Sources 
 1. Open the file called `f1_sources.yml` with the following file path: `models/staging/formula1/f1_sources.yml`.
 2. You should see the following code that creates our 14 source tables in our dbt project from Snowflake:
+<img src="assets/understanding-our-existing-pipeline/sources_f1.png" alt="sources_f1">
+
 
 3. dbt makes it really easy to:
     - declare [sources](https://docs.getdbt.com/docs/build/sources)
     - provide [testing](https://docs.getdbt.com/docs/build/tests) for data quality and integrity with support for both generic and singular tests 
     - create [documentation](https://docs.getdbt.com/docs/collaborate/documentation) using descriptions where you write code
 
+Now that we are connected into our raw data let's do some light transformations in staging. 
 
 ### Staging 
 1. Let's view two staging models that we'll be using to understand lap time trends through the years. 
@@ -638,8 +641,11 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
         *
     from renamed
     ```
-3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. 
-4. Click **preview** &mdash; look how pretty and human readable our `official_laptime` column is!
+
+3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. Select **</> Compile** once its finished view the **Compiled Code tab**. 
+<img src="assets/understanding-our-existing-pipeline/compiled_jinja_lap_times.png" alt="compiled_jinja_lap_times">
+
+4. Now click **Preview** &mdash; look how pretty and human readable our `official_laptime` column is!
 5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
 6. We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our [macros documentation](https://docs.getdbt.com/docs/build/jinja-macros). 
 <!-- 7. TODO talk about surrogate_key and dbt_utils -->
@@ -648,7 +654,7 @@ You can see for every source table, we have a staging table. Now that we're done
 
 <!-- ------------------------ -->
 ## SQL Transformations 
-dbt got it's start in being a powerful tool to enhance the way data transformations are done in SQL. Before we jump into python, let's pay homage to SQL. 
+dbt got it's start in being a powerful tool to enhance the way data transformations are done in SQL. Before we jump into python, let's pay homage to SQL. <br>
 SQL is so performant at data cleaning and transformation, that many data science projects "use SQL for everything you can, then hand off to python" and that's exactly what we're going to do. 
 
 ### Fact and dimension tables 
