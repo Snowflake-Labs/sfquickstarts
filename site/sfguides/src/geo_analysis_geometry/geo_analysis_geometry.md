@@ -413,35 +413,37 @@ Now you will create a table with locations of cell towers stored as GEOGRAPHY.
 ```
 // Creating a new schema for GEOGRAPHY
 CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
-SELECT DISTINCT to_geography('POINT(' || lon || ' ' || lat || ')', 4326) AS cell_location,
+SELECT DISTINCT st_point(lon, lat) AS cell_location,
                 radio,
                 cell_range
 FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
 WHERE mcc = '204';
 ```
 
-Finally, we need to find all cell towers within a 2-kilometer radius that are lacking energy grids. Once these have been found, we'll calculate the distance from each of these towers to the nearest electricity cable.
+Finally, we will find all cell towers that don't have an energy line within a 2-kilometer radius. For each cell tower we'll calculate the distance to the nearest electricity cable.
 
 Run the following query:
 
 ```
-WITH outliers AS
-  (SELECT row_number() over(ORDER BY NULL) AS id,
+WITH outliers AS (
+    SELECT row_number() over(ORDER BY NULL) AS id,
           province_name,
           cell_location
-   FROM geolab.geography.nl_celltowers cells
-   LEFT JOIN geolab.geography.nl_cables_stations cables ON st_dwithin(cells.cell_location, cables.geometry, 1000)
-   JOIN geolab.geography.nl_administrative_areas areas ON st_contains(areas.geometry, cells.cell_location)
-   WHERE cells.radio='LTE'
-     AND areas.type = 'Province'
-     AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
-     AND cables.geometry IS NULL)
+    FROM geolab.geography.nl_celltowers cells
+    LEFT JOIN geolab.geography.nl_cables_stations cables ON st_dwithin(cells.cell_location, cables.geometry, 2000)
+    JOIN geolab.geography.nl_administrative_areas areas ON st_contains(areas.geometry, cells.cell_location)
+    WHERE cells.radio='LTE'
+        AND areas.type = 'Province'
+        AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
+        AND cables.geometry IS NULL
+    )
 SELECT province_name,
        cell_location,
        st_distance(geometry, outliers.cell_location)::integer AS meters_apart
 FROM outliers,
      geolab.geography.nl_cables_stations cables
-WHERE ST_DWITHIN(geometry, outliers.cell_location, 10000) QUALIFY ROW_NUMBER() OVER (PARTITION BY outliers.id ORDER BY meters_apart) <= 1
+WHERE ST_DWITHIN(geometry, outliers.cell_location, 10000) 
+QUALIFY ROW_NUMBER() OVER (PARTITION BY outliers.id ORDER BY meters_apart) <= 1
 ```
 
 
@@ -459,7 +461,7 @@ You have been using `NL_CELLTOWERS` table, which stores the locations of cell to
 * For every LTE cell tower, we will calculate the coverage area.
 * For every Dutch municipality, calculate the area covered by LTE network.
 
-`ST_BUFFER` from the Carto toolbox can be used to calculate the coverage area for each LTE cell tower. In `NL_CELLTOWERS` table, there is a field _cell_range_ which can be used as a value of radius in ST_BUFFER. Since the maximum coverage area of the LTE tower is about 6km, we will cap the coverage area with this value.
+`ST_BUFFER` from the Carto toolbox can be used to calculate the coverage area for each LTE cell tower. In `NL_CELLTOWERS` table, there is a field _cell_range_ which can be used as a value of radius in ST_BUFFER. For the sake of this example we will assume that a good signal can be received no further than 2000 meters away from the LTE cell.
 
 Run the following query in your Snowflake's worksheet: 
 
@@ -471,7 +473,20 @@ FROM geolab.geography.nl_celltowers
 WHERE radio = 'LTE';
 ```
 
-Now there is a new columns `coverage` with areas that correspond to the coverage areas of the cell towers. 
+Now there is a new columns `coverage` with areas that correspond to the coverage areas of the cell towers. Let's run the following query to visualize the coverage for one of the municipalities. We will use `ST_COLLECT`:
+
+```
+SELECT st_collect(c.coverage) 
+FROM geolab.geography.nl_celltowers c
+JOIN geolab.geography.nl_administrative_areas AS b 
+  ON st_intersects(b.geometry, c.cell_location)
+WHERE type = 'Municipality'
+      and municipality_name = 'Angerlo';
+```
+
+The result of this query is a geometry collection that contains overlapping circles:
+
+<img src ='assets/geo_analysis_geometry_20.png' width=700>
 
 To calculate the coverage of each district by LTE network, you can create a user-defined Python function that calculates an aggregated union and uses the Shapely library under the hood. 
 
@@ -493,27 +508,30 @@ def udf(g1):
 $$;
 ```
 
-The function above gets an array of spatial objects and "dissolves" them in one large shape which is a union of all initial shapes.
+The function above gets an array of spatial objects and "dissolves" them in one large shape which is a union of all initial shapes. Note how the result of this function return a single polygon covering the same area without overlaps:
+
+<img src ='assets/geo_analysis_geometry_20_1.png' width=700>
+
 
 Let's now for every municipality compute the following:
 
 * The area that is covered by the LTE network
 * The numerical value of coverage ratio by the LTE network
 
-Use the table `nl_celltowers`, and first join it with `nl_administrative_areas` using `ST_CONTAINS` predicate. Then use `ST_INTERSECTION` to find an intersection of each municipality with the coverage area in that municipality. The result will be saved in the new table. To speed up queries against that newly created table, you will enable the search optimization feature.
+Use the table `nl_celltowers`, and first join it with `nl_administrative_areas` using `ST_INTERSECTS` predicate to match cell towers to the municipalities they cover. Then we use `PY_UNION_AGG` to get a combined coverage polygon. Then use `ST_INTERSECTION` to find an potion of the municipality that is covered by the LTE signal. Then we compute the covered area in square meters. The result will be saved in the new table. To speed up queries against that newly created table, you will enable the search optimization feature.
 
 Run the following two queries:
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_municipalities_coverage AS
-SELECT name,
-       to_geography(st_asgeojson(boundary)) AS municipality_geom,
-       st_intersection(any_value(boundary), py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS coverage_geom,
-       round(st_area(coverage_geom)/st_area(any_value(boundary)), 2) AS coverage_ratio
+SELECT municipality_name,
+       municipality_geom,
+       st_intersection(municipality_geom, py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS coverage_geom,
+       round(st_area(coverage_geom)/st_area(municipality_geom), 2) AS coverage_ratio
 FROM
   (SELECT c.coverage AS coverage,
-          b.province_name as name,
-          b.geometry AS boundary
+          b.municipality_name as municipality_name,
+          b.geometry AS municipality_geom
    FROM geolab.geography.nl_celltowers AS c
    INNER JOIN geolab.geography.nl_administrative_areas AS b ON st_intersects(b.geometry, c.coverage)
    WHERE type = 'Municipality')
@@ -524,7 +542,7 @@ ORDER BY st_geohash(municipality_geom);
 ALTER TABLE geolab.geography.nl_municipalities_coverage ADD SEARCH OPTIMIZATION ON GEO(municipality_geom);
 ```
 
-Nice! Now you have a `UK_DISTRICTS_COVERAGE` table that contains the name of the area, the boundaries of that area, and the boundaries of the LTE coverage area. Let's vizualize in Carto what UK. Paste the following query into the SQL editor and use `COVERAGE_RATIO` column to color code the coverage areas.
+Nice! Now you have a `NL_MUNICIPALITIES_COVERAGE` table that contains the name of the municipality, the boundaries of that municipality, and the boundaries of the LTE coverage area. Let's vizualize this in Carto. Paste the following query into the SQL editor and use `COVERAGE_RATIO` column to color code the coverage areas.
 
 ```
 SELECT municipality_geom AS geom,
