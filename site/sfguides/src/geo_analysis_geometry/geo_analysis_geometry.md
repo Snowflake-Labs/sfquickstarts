@@ -335,7 +335,7 @@ Excellent! Now that all the datasets are successfully loaded, let's proceed to t
 <!-- ----------------------------------------- -->
 ## Spatial analysis
 
-Duration: 5
+Duration: 25
 
 To showcase the capabilities of the GEOMETRY data type, we will explore several use cases. In these scenarios, we'll assume we are analysts working for an energy utilities company responsible for maintaining electrical grids.
 
@@ -667,11 +667,11 @@ with roads as (
 select 
     geoid
     , case -- No signal if no coverage, or under 30
-        when (h3 is null or signal_strength <= 30) then 'No Signal'
+        when (h3 is null or signal_strength <= 50) then 'No Signal'
         else 'OK Signal'
     end as signal
     , case -- This parameter we will use for visualization purposes
-        when (h3 is null or signal_strength <= 30) then 2
+        when (h3 is null or signal_strength <= 50) then 2
         else 1
     end as road_width
     , st_collect(segment) as geom -- This is creating the original road segments by collecting them.
