@@ -743,11 +743,14 @@ I did this but if you want it updated, feel free to-->
 [Python worksheets](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets) in Snowflake are a dynamic and interactive environment for executing Python code directly within Snowflake's cloud data platform. They provide a seamless integration between Snowflake's powerful data processing capabilities and the versatility of Python as a programming language. With Python worksheets, users can easily perform data transformations, analytics, and visualization tasks using familiar Python libraries and syntax, all within the Snowflake ecosystem. These worksheets enable data scientists, analysts, and developers to streamline their workflows, explore data in real-time, and derive valuable insights from their Snowflake data.
 
 1. Head back over **to Snowflake**.
-2. Open up a **Python Worksheet**. 
+2. Open up a **Python Worksheet**. Ensure you have selected your worksheet to run 
 <img src="assets/python-development/create_python_worksheet.png" alt="create_python_worksheet">
 
+3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**).
+<img src="assets/python-development/python_worksheet_db_schema.png" alt="python_worksheet_db_schema">
+
 <!-- TODO (@snowflake team)(@Dan) -- feel free to translate this python worksheet into snowpark code and clean up a bit (i.e. final_df isn't really necessary) -->
-3. Delete the same code in the new worksheet. Use the following code to get a 5 year moving average of Formula 1 laps:
+4. Delete the same code in the new worksheet. Use the following code to get a 5 year moving average of Formula 1 laps:
     ```python
     # The Snowpark package is required for Python Worksheets. 
     # You can add more packages by selecting them using the Packages control and then importing them.
@@ -775,8 +778,9 @@ I did this but if you want it updated, feel free to-->
         # Return value will appear in the Results tab.
         return final_df
     ```
-4. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**). 
-5. Your result should have three columns: `race_year`, `lap_time_seconds`, and `lap_moving_avg_5_years`. This dataframe is in great shape for visualization in a downstream BI tool or application. We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. At a glance we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refuelling bans. So we can safely ascertain lap times are not consistently decreasing. 
+
+5. Your result should have three columns: `race_year`, `lap_time_seconds`, and `lap_moving_avg_5_years`. 
+<img src="assets/python-development/lap_times_5yr_avg.png" alt="lap_times_5yr_avg"> <br>This dataframe is in great shape for visualization in a downstream BI tool or application. We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. At a glance we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refuelling bans. So we can safely ascertain lap times are not consistently decreasing. 
 
 Now that we've created this dataframe and lap time trend insight, what do we do when we want to scale it? In the next section we'll be learning how to do this by leveraging python transformations in dbt Cloud. 
 <!-- ------------------------ -->
