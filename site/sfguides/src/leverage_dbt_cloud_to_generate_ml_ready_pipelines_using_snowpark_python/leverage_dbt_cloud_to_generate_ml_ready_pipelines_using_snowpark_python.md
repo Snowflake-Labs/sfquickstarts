@@ -448,28 +448,31 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 If you tried to start developing onto of this repo right now, we'd get permissions errors. So we need to give dbt Cloud write acess. 
 
 ### Giving dbt cloud repo write access using github deploy keys
-1. dbt Cloud will generate a deploy key to link the development we do in dbt cloud back to our github repo. **Copy** the deploy key starting with **ssh-rsa** followed by a long hash key (full key hidden for privacy).
-<!-- <img src="assets/development-schema-and-forking-repo/github-deploy-keys/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud"> -->
+1. Click on your git cloned repository link. dbt Cloud generated a deploy key to link the development we do in dbt cloud back to our GitHub repo. **Copy** the deploy key starting with **ssh-rsa** followed by a long hash key (full key hidden for privacy).
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud">
 
 2. Phew almost there! Navigate **back to GitHub** again. 
 3. Ensure you're in your forked repo. Navigate to your repo **Settings**
-<!-- <img src="assets/development-schema-and-forking-repo/github-deploy-keys/git_repo_settings.png" alt="git_repo_settings"> -->
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/git_repo_settings.png" alt="git_repo_settings">
 
-4. Go to **Deploy keys** and select **Add deploy key**.
-<!-- <img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_keys_github.png" alt="deploy_keys_github"> -->
+4. Go to **Deploy keys**. 
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_keys_github.png" alt="deploy_keys_github">
 
-5. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the key we ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
-<!-- <img src="assets/development-schema-and-forking-repo/github-deploy-keys/add_new_deploy_key.png" alt="add_new_deploy_key">
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_key_created.png" alt="deploy_key_created"> -->
+5. Select **Add deploy key**. <img src="assets/development-schema-and-forking-repo/github-deploy-keys/new_deploy_key_button.png" alt="new_deploy_key_button">
 
-6. Head back over to dbt cloud. Navigate to **Develop**.
+6. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the key we ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/add_new_deploy_key.png" alt="add_new_deploy_key">
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_key_created.png" alt="deploy_key_created">
 
-7. **Run "dbt deps"**
-<!-- <img src="assets/development-schema-and-forking-repo/github-deploy-keys/run_dep_deps_after_importing_forked_repo.png" alt="run_dep_deps_after_importing_forked_repo"> -->
+7. Head back over to dbt cloud. Navigate to **Develop**.
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/develop_panel_dbt_cloud.png" alt="develop_panel_dbt_cloud">
+
+8. **Run "dbt deps"**
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/run_dep_deps_after_importing_forked_repo.png" alt="run_dep_deps_after_importing_forked_repo">
 
 <!-- possible TODO: might need to update this to not yet create new branch -->
-8. Since we're brining in an existing project your root folder should now say `dbt-snowflake-summit-hands-on-lab-snowpark`
-<!-- <img src="assets/development-schema-and-forking-repo/github-deploy-keys/file_tree_of_forked_repo.png" alt="file_tree_of_forked_repo"> -->
+9. Since we're brining in an existing project your root folder should now say `dbt-snowflake-summit-hands-on-lab-snowpark`
+<img src="assets/development-schema-and-forking-repo/github-deploy-keys/file_tree_of_forked_repo.png" alt="file_tree_of_forked_repo">
 
 Alas, now that our setup work is complete, time get a look at our data pipeline! 
 
