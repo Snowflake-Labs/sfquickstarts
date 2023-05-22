@@ -846,6 +846,8 @@ Let’s take a step back before starting machine learning to both review and go 
         # setting configuration
         dbt.config(materialized="table")
         ```
+9. **Commit and sync** so our project contains our `agg_lap_times_moving_avg.py` model, add a commit message and **Commit changes**. 
+
 Now that we understand how to create python transformations we can use them to prepare our data for machine learning!
 
 <!-- ------------------------
@@ -1079,17 +1081,6 @@ If you haven’t seen code like this before or use joblib files to save machine 
 
 <!-- ------------------------ -->
 ### Training and saving a machine learning model
-
-1. In your file tree, use your cursor and hover over the `models` subdirectory, click the three dots `…` that appear to the right of the folder name, then select **Create Folder**. We're going to add two new folders to the file path, `ml` and `prep_encoding_splitting` (in that order) by typing `ml/prep_encoding_splitting` into the file path.
-    - If you click into your `models` directory now, you should see the new `ml` folder nested within `models` and the `prep_encoding_splitting` folder nested within `ml`.
-
-<!-- TODO update screeenshots  -->
-<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
-<Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/> -->
-
-2. We will need to create one more subfolder using the UI, under the `ml` folder create `training_and_prediction`. After you create these folders, your entire folder tree should look like this when it's all done (from what we forked and just created):
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/> -->
 
 1. Project organization remains key, so let’s make a new subfolder called `training_and_prediction` under the `ml` folder.
 2. Now create a new file called `train_model_to_predict_position.py` and copy and save the following code:
