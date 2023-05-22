@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview 
 Duration: 3
 
-http://localhost:8000/guide/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python
+<!-- http://localhost:8000/guide/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python -->
 
 The focus of this workshop will be to demonstrate how we can use both *SQL and python together* in the same workflow to run *both analytics and machine learning models* on dbt Cloud.
 
@@ -967,14 +967,14 @@ In this next part, we’ll be performing covariate encoding. Breaking down this 
 In the next step we'll be splitting out our data. 
 
 <!-- ------------------------ -->
-## Splitting into training and prediction datasets
+<!-- ## Splitting into training and prediction datasets
 
-In this step, we will create dataframes to use for training and prediction. We’ll be creating two dataframes 1) using data from 2010-2019 for training and testing, and 2) data from 2020 for new prediction inferences. We’ll create variables called `start_year` and `end_year` so we aren’t filtering on hardcasted values (and can more easily swap them out in the future if we want to retrain our model on different timeframes).
+In this step, we will create dataframes to use for training and prediction. We’ll be creating two dataframes 1) using data from 2010-2019 for training and testing, and 2) data from 2020 for new prediction inferences. We’ll create variables called `start_year` and `end_year` so we aren’t filtering on hardcasted values (and can more easily swap them out in the future if we want to retrain our model on different timeframes). -->
 
 <!-- TODO environment variables using dbt cloud would be an awesome addition here  -->
 <!-- TODO @snowflake @DanHunt if you want to redo scripts to show of random functionality here that works. Please note that the temporal split is intentional as to not cause temporal leakage. -->
 
-1. Create a file called `training_and_testing_dataset.py` copy and save the following code:
+<!-- 1. Create a file called `training_and_testing_dataset.py` copy and save the following code:
     ```python 
     import pandas as pd
 
@@ -1022,7 +1022,7 @@ In this step, we will create dataframes to use for training and prediction. We�
     To run multiple models by name, we can use the *space* syntax [syntax](/reference/node-selection/syntax) between the model names. 
 4. **Commit and sync** our changes to keep saving our work as we go using `ml data prep and splits` before moving on.
 
-👏 Now that we’ve finished our machine learning prep work we can move onto the fun part &mdash; training and prediction! --> -->
+👏 Now that we’ve finished our machine learning prep work we can move onto the fun part &mdash; training and prediction! -->
 
 <!-- ------------------------ -->
 <!-- TODO WORKSHOP WILL NOW PICK UP FROM HERE AFTER FIRST PYTHON MODEL! -->
