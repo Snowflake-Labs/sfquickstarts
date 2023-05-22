@@ -481,22 +481,25 @@ Alas, now that our setup work is complete, time get a look at our data pipeline!
 dbt Cloud's IDE will be our development space for this workshop, so let's get familiar with it. Once we've done that we'll run the pipeline we imported from our forked repo. 
 
 1. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, an SQL and Python runner, and a CLI with Git version control all baked into one package! This allows you to focus on editing your SQL and Python files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The Git workflow in dbt Cloud allows both Git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
+<img src="assets/ide-overview-first-models/1-ide-overview.png" alt="ide-overview">
 
-<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/7-IDE-overview.png" title="IDE overview"/> -->
+2. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and select **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. 
+<img src="assets/ide-overview-first-models/2_dbt_build_initial_pipeline_ml" alt="dbt_build_initial_pipeline_ml"> 
+To understand more about what the [dbt build](https://docs.getdbt.com/reference/commands/build) syntax is running check out the documentation.
 
-2. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and select **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. To understand more about what the [dbt build](https://docs.getdbt.com/reference/commands/build) syntax is running check out the documentation.
-<!-- TODO Update with new pipeline  -->
-<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/8-dbt-run-example-models.png" title="dbt run example models"/> -->
+3. You can look at the run results of each model to see the code that dbt compiles and sends to Snowflake for execution. Select the arrow beside a model **>**. Click **Details** and view the ouput. We can see that dbt automatically generates the DDL statement and is creating our models in our development schema (i.e. `dbt_hwatson`).
+<img src="assets/ide-overview-first-models/3_model_details_ddl" alt="model_details_ddl">
 
-3. Take a few minutes to poke around our pipeline and viewing the DAG lineage. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
+4. In the file tree select **models > ml > training_and_prediction > hold_out_dataset_for_prediction.py**. Click the **Lineage** tab. This is a bit small. To make it full screen click the viewfinder icon. 
+<img src="assets/ide-overview-first-models/4_lineage_viewfinder" alt="lineage_viewfinder">
 
-4. The run results allow you to see the code that dbt compiles and sends to Snowflake for execution. To view the logs for this run, select one of the model tabs using the  **>** icon and then **Details**. If you scroll down a bit you'll be able to see the compiled code and how dbt interacts with Snowflake. Given that this run took place in our development environment, the models were created in your development schema.
+5. Explore the DAG for a few minutes to understand everything we've done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
+<img src="assets/ide-overview-first-models/5_lineage_fullview" alt="lineage_fullview"> 
 
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/9-second-model-details.png" title="Details about the second model"/> -->
+You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
 
- <!-- TODO Update with new pipeline  -->
-5. Now let's switch over to a new browser tab **on Snowflake** to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/5-development-schema-name/10-confirm-example-models-built-in-snowflake.png" title="Confirm example models are built in Snowflake"/> -->
+6. Now let's switch over to a new browser tab **on Snowflake** to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
+<img src="assets/ide-overview-first-models/6_confirm_pipeline_build_in_snowflake" alt="confirm_pipeline_build_in_snowflake">
 
 
 <!-- ------------------------ -->
