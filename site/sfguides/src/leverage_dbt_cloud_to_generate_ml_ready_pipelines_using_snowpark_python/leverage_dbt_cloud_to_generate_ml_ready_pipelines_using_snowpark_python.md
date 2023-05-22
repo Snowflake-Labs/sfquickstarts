@@ -606,7 +606,7 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
 ### Creating Sources 
 1. Open the file called `f1_sources.yml` with the following file path: `models/staging/formula1/f1_sources.yml`.
 2. You should see the following code that creates our 14 source tables in our dbt project from Snowflake:
-<img src="assets/understanding-our-existing-pipeline/sources_f1.png" alt="sources_f1">
+<img src="assets/data-modeling-sources-and-staging/sources_f1.png" alt="sources_f1">
 
 
 3. dbt makes it really easy to:
@@ -643,7 +643,8 @@ Now that we are connected into our raw data let's do some light transformations 
     ```
 
 3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. Select **</> Compile** once its finished view the **Compiled Code tab**. 
-<img src="assets/understanding-our-existing-pipeline/compiled_jinja_lap_times.png" alt="compiled_jinja_lap_times">
+<img src="assets/data-modeling-sources-and-staging/compiled_jinja_lap_times.png" alt="compiled_jinja_lap_times">
+
 
 4. Now click **Preview** &mdash; look how pretty and human readable our `official_laptime` column is!
 5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
