@@ -1377,14 +1377,16 @@ PR preview:
 
 11. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
 12. In the menu, select **Deploy** **> Environments**
-  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/2-ui-select-environments.png" title="Navigate to environments within the UI"/> -->
+<img src="assets/pipeline-deployment/deploy_environments_ui.png" alt="deploy_environments_ui">
+
 
 ### Setting your production schema 
 1. You should see two environments listed and you'll want to select the **Deployment** environment then **Settings** to modify it.
 2. Before making any changes, let's touch on what is defined within this environment. The Snowflake connection shows the credentials that dbt Cloud is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so. The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we've been using as the schema for our development environment.
 3. Let's update the schema to create a new schema specifically for our production environment. Click **Edit** to allow you to modify the existing field values. Navigate to **Deployment Credentials >** **schema.**
 4. Update the schema name to **production**. Remember to select **Save** after you've made the change.
-  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/3-update-deployment-credentials-production.png" title="Update the deployment credentials schema to production"/> -->
+<img src="assets/pipeline-deployment/setting-production-schema/name_production_schema.png" alt="name_production_schema">
+
 5. By updating the schema for our production environment to **production**, it ensures that our deployment job for this environment will build our dbt models in the **production** schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
 
 ### Creating multiple jobs 
@@ -1395,31 +1397,41 @@ With this in mind we're going to have two jobs:
 - Another job that focuses on creating predictions from the existing machine learning model. This job will exclude exclude running `apply_prediction_to_position.py`, and we will need to create this job.
 
 
-1. Let's look at over to our production job created by partner connect. Click on the deploy tab again and then select **Jobs**. You should see an existing and preconfigured **Partner Connect Trial Job**. Similar to the environment, click on the job, then select **Settings** to modify it. Let's take a look at the job to understand it before making changes.
+1. Let's look at over to our production job created by partner connect. Click on the deploy tab again and then select **Jobs**. 
+<img src="assets/pipeline-deployment/creating-multiple-jobs/deploy_jobs_ui.png" alt="deploy_jobs_ui"> You should see an existing and preconfigured **Partner Connect Trial Job**. <img src="assets/pipeline-deployment/creating-multiple-jobs/pc_default_job.png" alt="pc_default_job"> 
+
+2. Similar to the environment, click on the job, then select **Settings** to modify it. Let's take a look at the job to understand it before making changes.
+<img src="assets/pipeline-deployment/creating-multiple-jobs/pc_job_settings.png" alt="pc_job_settings"> 
+
 - The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
 - The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we're going to keep these settings as is as well and stick with just generating docs.
 - The Commands section is where we specify exactly which commands we want to run during this job. The command `dbt build` will run and test all the models our in project. We'll keep this as is.
 - Finally, we have the Triggers section, where we have a number of different options for scheduling our job. Given that our data isn't updating regularly here and we're running this job manually for now, we're also going to leave this section alone. 
   
-2. So, what are we changing then? The job name and commands!
+3. So, what are we changing then? The job name and commands!
 - Click **Edit** to allow you to make changes. Then update the name of the job to **Machine learning initial model build or retraining** this may seem like a mouthful, but naming with an entire data team is helpful (or our future selves after not looking at a project for 3 months). 
 - Go to **Execution Settings > Commands**. Click **Add Command** and input `dbt build`.
+<img src="assets/pipeline-deployment/creating-multiple-jobs/edit_pc_job.png" alt="edit_pc_job"> 
+
 - Delete the existing commands `dbt seed`, `dbt run`, and `dbt test`. Together they make up the functions of `dbt build` so we are simplifying our code. 
-- After that's done, click **Save**.
-3. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. In total we produced 106 entities: 14 view models, 67 tests, 24 table models, 1 incremental model. 
+<img src="assets/pipeline-deployment/creating-multiple-jobs/edit_commands.png" alt="edit_commands"> 
+<img src="assets/pipeline-deployment/creating-multiple-jobs/delete_commands.png" alt="delete_commands"> 
+
+- After that's done, DON'T FORGET CLICK **Save**.
+4. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. In total we produced 106 entities: 14 view models, 67 tests, 24 table models, 1 incremental model. 
   <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/4-run-production-job.png" title="Run production job"/>
   <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/5-job-details.png" title="View production job details"/> -->
 
-4. Let's go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the production schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed. 
+5. Let's go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the production schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed. 
   <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/6-all-models-generated.png" title="Check all our models in our pipeline are in Snowflake"/> -->
 
-5. Go back to dbt Cloud and navigate to **Deploy > Jobs > Create Job**. Edit the following job settings:
+6. Go back to dbt Cloud and navigate to **Deploy > Jobs > Create Job**. Edit the following job settings:
 - Set the **General Settings > Job Name** to **Prediction on data with existing model**
 - Set the **Execution Settings > Commands** to `dbt build --exclude apply_prediction_to_position`
 - We can keep all other job settings the same 
 - **Save** your job settings 
-6. Run your job using **Run Now**. Remember the only difference between our first job and this job is we are excluding model retraining. So we will have one less model in our outputs. We can confirm this in our run steps.
-7. Open the job and go to **Run Steps > Invoke**. In our job details we can confirm one less entity (105 instead of 106). 
+7. Run your job using **Run Now**. Remember the only difference between our first job and this job is we are excluding model retraining. So we will have one less model in our outputs. We can confirm this in our run steps.
+8. Open the job and go to **Run Steps > Invoke**. In our job details we can confirm one less entity (105 instead of 106). 
 
 That wraps all of our hands on the keyboard time for today! 
 
