@@ -589,7 +589,7 @@ Do check out that guide if you want to learn more. Right now we are going to org
     - training_and_prediction (we'll be creating this folder later &mdash; it doesn't exist yet )
 
 Your folder structure should look like (make sure to expand some folders if necessary):
-<img src="assets/understanding-our-existing-pipeline/1_folder_structure.png" alt="folder_structure">
+<img src="assets/understanding-our-existing-pipeline/folder_structure.png" alt="folder_structure">
 
 Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1) to view the complete folder and file strucutre.  
 
@@ -848,7 +848,7 @@ Let’s take a step back before starting machine learning to both review and go 
         ```
 9. **Commit and sync** so our project contains our `agg_lap_times_moving_avg.py` model, add a commit message and **Commit changes**. 
 
-Now that we understand how to create python transformations we can use them to prepare our data for machine learning!
+Now that we understand how to create python transformations we can use them to prepare train machine learning models and generate predictions!
 
 <!-- ------------------------
 ## Machine Learning prep -- cleaning and encoding
@@ -1082,7 +1082,7 @@ If you haven’t seen code like this before or use joblib files to save machine 
 <!-- ------------------------ -->
 ### Training and saving a machine learning model
 
-1. Project organization remains key, so let’s make a new subfolder called `training_and_prediction` under the `ml` folder.
+1. Project organization remains key, under the `ml` folder make a new subfolder called `training_and_prediction`.
 2. Now create a new file called `train_model_to_predict_position.py` and copy and save the following code:
 
     ```python 
@@ -1120,7 +1120,7 @@ If you haven’t seen code like this before or use joblib files to save machine 
         logger.info('Model training version: ' + version)
 
         # read in our training and testing upstream dataset
-        test_train_df = dbt.ref("training_and_testing_dataset")
+        test_train_df = dbt.ref("training_testing_dataset")
 
         #  cast snowpark df to pandas df
         test_train_pd_df = test_train_df.to_pandas()
