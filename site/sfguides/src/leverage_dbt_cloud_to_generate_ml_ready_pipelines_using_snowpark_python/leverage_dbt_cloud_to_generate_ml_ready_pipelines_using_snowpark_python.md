@@ -1321,6 +1321,10 @@ It's time to use that 2020 data we held out to make predictions on!
     ```
 <img src="assets/machine-learning-training-prediction/preview_predicted_position.png" alt="preview_predicted_position">
 
+7. Run a fresh `dbt build` in the command bar to ensure our pipeline is working end to end. This will take a few minutes, (3 minutes and 2.4 seconds to be exact) so it's not a bad time to stretch (we know programmers slouch). This runtime is pretty performant since we're using an X-Smalll warehouse. If you want to speed up the pipeline, you can increase the [warehouse size](https://docs.snowflake.com/en/user-guide/warehouses-overview) (good for SQL) or use a [Snowpark-optimized Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) (good for Python)
+<img src="assets/machine-learning-training-prediction/fresh_dbt_build_full_pipeline.png" alt="fresh_dbt_build_full_pipeline">
+
+
 We can see that we created predictions in our final dataset for each result, we are ready to move on to deployment!
 
 <!-- ------------------------ -->
@@ -1335,18 +1339,44 @@ Now that we've completed applying prediction, we're ready to deploy our code fro
 - Deploying code to our production environment.
     - Once our code is merged to the main branch, we'll need to run dbt in our production environment to build all of our models and run all of our tests. This will allow us to build production-ready objects into our production environment in Snowflake. Luckily for us, the Partner Connect flow has already created our deployment environment and job to facilitate this step.
 
-1. Before getting started, let's make sure that we've committed all of our work to our feature branch. If you still have work to commit, you'll be able to select the **Commit and sync**, provide a message, and then select **Commit changes** again.
-2. Once all of your work is committed, the git workflow button will now appear as **Create pull request** and the merge process will automatically run in the background.
-  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/1-merge-to-main-branch.png" title="Merge into main"/> -->
-3. This will bring you to your GitHub repo. Start your pull request. 
-4. Usually, when merging in a pull request (PR) one of your teammates will review, comment, and independently test out the code on your branch. Since this is a workshop and we won't break any existing work, let's **Merge pull request** using the butotn. 
-<!-- TODO maybe add screenshot  -->
-5. Then click **Confirm merge**. 
-6. It's best practice to keep your repo clean by deleting your working branch once merged into main. You can always restore it later, for now **Delete Branch**. 
-7. Head back over to your dbt Cloud tab. Under **Version Control** select **Pull from remote**. 
-8. Select **Change branch** to your **main** branch that now appears as (ready-only). 
-9. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
-10. In the menu, select **Deploy** **> Environments**
+1. Before getting started, let's make sure that we've committed all of our work to our feature branch. Our working branch,`snowpark-python-workshop`, should be clean. If for some reason you do still have work to commit, you'll be able to select the **Commit and sync**, provide a message, and then select **Commit changes** again.
+2. Once all of your work is committed, the git workflow button will now appear as **Create pull request**. 
+<img src="assets/pipeline-deployment/create_pull_request_dbt_cloud_button.png" alt="create_pull_request_dbt_cloud_button">
+
+3. This will bring you to your GitHub repo. This will show the commits that encompass all changes made since the last pull request. Since we only added new files we are able to merge into `main` without conflicts.  Click **Create pull request**. 
+<img src="assets/pipeline-deployment/review_commits_create_pull_request.png" alt="review_commits_create_pull_request">
+<!-- TODO This could be updated to have only the 3 commits to be a bit cleaner. I had an extra from needing to rename a folder.  -->
+
+4. This goes to a **Open a pull request** page. Usually, when merging in a pull request (PR) we would create descriptions and motivations for the work being completed, validation our models work (like a fresh dbt build), and note changes to exisiting models (we only created new models and didn't alter existing ones). Then typically your teammates will review, comment, and independently test out the code on your branch. dbt has created a [pull request template](https://docs.getdbt.com/blog/analytics-pull-request-template) to make PRs as efficient and scalable to your analytics workflow. We'll do an abbreviated version of this for example. If you'd like you can just add a quick comment followed by **Merge pull request** since we're doing a workshop in an isolated Snowflake trial account (and won't break anything).
+
+Our abbreviated PR template written markdown:
+<img src="assets/pipeline-deployment/pr_template_writen_markdown.png" alt="pr_template_writen_markdown">
+
+PR preview: 
+<img src="assets/pipeline-deployment/pr_template_preview.png" alt="pr_template_preview">
+
+5. Our PR is looking good. Let's **Merge pull request**. 
+<img src="assets/pipeline-deployment/merge_pr_github.png" alt="merge_pr_github">
+
+6. Then click **Confirm merge**. 
+<img src="assets/pipeline-deployment/confirm_merge_github.png" alt="confirm_merge_github">
+
+7. It's best practice to keep your repo clean by deleting your working branch once merged into main. You can always restore it later, for now **Delete Branch**. We're all done in GitHub for today!
+<img src="assets/pipeline-deployment/delete_branch_github.png" alt="delete_branch_github">
+
+8. Head back over to your dbt Cloud browser tab. Under **Version Control** select **Pull from "main"**. If you don't see this, refresh your browser tab and it should appear.
+<img src="assets/pipeline-deployment/pull_from_main_dbt_cloud.png" alt="pull_from_main_dbt_cloud.png">
+
+9. Select **Change branch** to your **main** branch that now appears as (ready-only). 
+<img src="assets/pipeline-deployment/change_branch_dbt_cloud.png" alt="change_branch_dbt_cloud.png">
+<img src="assets/pipeline-deployment/change_to_main.png" alt="change_to_main.png">
+<img src="assets/pipeline-deployment/checkout_main_branch.png" alt="checkout_main_branch.png">
+
+10. Finally, to bring our changes from our `main` branch in GitHub, select **Pull from remote**
+<img src="assets/pipeline-deployment/pull_from_remote_dbt_cloud.png" alt="pull_from_remote_dbt_cloud">
+
+11. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
+12. In the menu, select **Deploy** **> Environments**
   <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/2-ui-select-environments.png" title="Navigate to environments within the UI"/> -->
 
 ### Setting your production schema 
