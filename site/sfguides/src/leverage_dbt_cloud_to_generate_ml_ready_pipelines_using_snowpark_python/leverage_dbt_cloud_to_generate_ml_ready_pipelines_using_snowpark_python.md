@@ -367,8 +367,11 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 - Ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
 ![query-circuits-data](assets/load-data-into-snowflake/4-query-circuits-data.png)
 
+We're ready to setup our dbt account!
+
 <!-- ------------------------ -->
 ## Setup dbt account 
+Duration: 2
 We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
 
 1. Navigate out of your SQL worksheet back by selecting **home**.
@@ -384,28 +387,30 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 
 6. When you see the **Your partner account has been created** window, click **Activate**.
 
-7. You should be redirected to a dbt Cloud registration page. Fill out the form. Make sure to save the password somewhere for login in the future. 
+7. You should be redirected to a dbt Cloud registration page. Fill out the form using whatever account name you'd like. Make sure to save the password somewhere for login in the future. 
 <img src="assets/setup-dbt-account/4-dbt-cloud-sign-up.png" alt="dbt-cloud-sign-up">
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
-9. Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository in the next step. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, if you’re developing your own proof of value project from scratch, [feel free to use dbt's managed  repository](https://docs.getdbt.com/docs/collaborate/git/managed-repository) that is spun up during partner connect. 
+Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository in the next step. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, if you’re developing your own proof of value project from scratch, [feel free to use dbt's managed  repository](https://docs.getdbt.com/docs/collaborate/git/managed-repository) that is spun up during partner connect. 
+
 
 <!-- ------------------------ -->
 ## Development schema and forking repo
+Duration: 2
 In this section we'll be setting up our own personal development schema and forking our workshop repo into dbt Cloud. 
 
 ### Schema name
-1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **Profile Settings** from the gear icon in the upper right. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is.
-<img src="assets/development-schema-and-forking-repo/schema-name/1-settings-gear-icon.png" alt="dbt-cloud-settings">
+1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **User Profile > Credentials**. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. Knowing how to configure schema names is also helpful when you onboard multiple team members onto dbt cloud and want each person to have their own development schema! 
+<img src="assets/development-schema-and-forking-repo/schema-name/1-profile-credentials-dbt-cloud.png" alt="profile-credentials-dbt-cloud">
 
-2. Navigate to the **Credentials** menu and select **Partner Connect Trial**, which will expand the credentials menu.
+2. Select **Partner Connect Trial**, which will expand the credentials menu.
 <img src="assets/development-schema-and-forking-repo/schema-name/2-credentials-edit-schema-name.png" alt="credentials-edit-schema-name">
     
 3. Click **Edit** and change the name of your schema from `dbt_` to `dbt_YOUR_NAME` replacing `YOUR_NAME` with your initials and name (`hwatson` is used in the lab screenshots). Be sure to click **Save** for your changes!
 <img src="assets/development-schema-and-forking-repo/schema-name/3-save-new-schema-name.png" alt="save-new-schema-name">
 
-4. We now have our own personal development schema, amazing! When we run our first dbt models they will build into this schema.
+We now have our own personal development schema, amazing! When we run our first dbt models they will build into this schema.
 
 ### Forking repo and github deploy keys
 
