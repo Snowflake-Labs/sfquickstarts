@@ -50,6 +50,7 @@ As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs publ
 
 <!-- ------------------------ -->
 ## Architecture and use case overview
+Duration: 2 
 In this lab we'll be transforming raw Formula 1 data into a consumable form for both BI tools and machine learning pipeline. To understand how this data is related, we've included an entity relationship diagram of the tables we'll be using today. 
 At a high level the way we are able to do this is that dbt is able to invoke python models as stored procedures from Snowpark for python. Snowflake's new snowpark capabilities and dbt's python support make this all possible. 
 Formula 1 ERD: <br>
@@ -79,7 +80,7 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 ![accept-anaconda-terms](assets/configure-snowflake/3-accept-anaconda-terms.jpeg)
 
 
-5. Finally, navigate back to home to create a new SQL Worksheet by selecting **+** then **SQL Worksheet** in the upper right corner.
+5. Finally, navigate back to **Worksheets** to create a new SQL Worksheet by selecting **+** then **SQL Worksheet** in the upper right corner.
 
 <!-- ------------------------ -->
 ## Load data into Snowflake
@@ -347,24 +348,24 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 ![load-data-from-s3](assets/load-data-into-snowflake/2-load-data-from-s3.png)
 
 5. Let’s unpack that pretty long query we ran into component parts. We ran this query to load in our 14 Formula 1 tables from a public S3 bucket. To do this, we:
-    - Created a new database called `formula1` and a schema called `raw` to place our raw (untransformed) data into. 
-    - Created a stage to locate our data we are going to load in. Snowflake Stages are locations where data files are stored. Stages are used to both load and unload data to and from Snowflake locations. Here we are using an external stage, by referencing an S3 bucket. 
-    - Created our tables for our data to be copied into. These are empty tables with the column name and data type. Think of this as creating an empty container that the data will then fill into. 
-    - Used the `copy into` statement for each of our tables. We reference our staged location we created and upon loading errors continue to load in the rest of the data. You should not have data loading errors but if you do, those rows will be skipped and Snowflake will tell you which rows caused errors
+- Created a new database called `formula1` and a schema called `raw` to place our raw (untransformed) data into. 
+- Created a stage to locate our data we are going to load in. Snowflake Stages are locations where data files are stored. Stages are used to both load and unload data to and from Snowflake locations. Here we are using an external stage, by referencing an S3 bucket. 
+- Created our tables for our data to be copied into. These are empty tables with the column name and data type. Think of this as creating an empty container that the data will then fill into. 
+- Used the `copy into` statement for each of our tables. We reference our staged location we created and upon loading errors continue to load in the rest of the data. You should not have data loading errors but if you do, those rows will be skipped and Snowflake will tell you which rows caused errors. 
 
 6. Now let's take a look at some of our cool Formula 1 data we just loaded up!
-    - Create a SQL worksheet by selecting the **+** then **SQL Worksheet**.
-    ![create-new-worksheet-to-query-data](assets/load-data-into-snowflake/3-create-new-worksheet-to-query-data.png)
+- Create a SQL worksheet by selecting the **+** then **SQL Worksheet**.
+![create-new-worksheet-to-query-data](assets/load-data-into-snowflake/3-create-new-worksheet-to-query-data.png)
 
-    - Navigate to **Database > Formula1 > RAW > Tables**. 
-    - Query the data using the following code. There are only 77 rows in the circuits table, so we don’t need to worry about limiting the amount of data we query.
-        ```sql
-        select * from formula1.raw.circuits
-        ```
-    - Run the query. From here on out, we’ll use the keyboard shortcuts Command-Enter or Control-Enter to run queries and won’t explicitly call out this step. 
-    - Review the query results, you should see information about Formula 1 circuits, starting with Albert Park in Australia! 
-    - Finally, ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
-    ![query-circuits-data](assets/load-data-into-snowflake/4-query-circuits-data.png)
+- Navigate to **Database > Formula1 > RAW > Tables**. 
+- Query the data using the following code. There are only 77 rows in the circuits table, so we don’t need to worry about limiting the amount of data we query.
+    ```sql
+    select * from formula1.raw.circuits
+    ```
+- Run the query. From here on out, we’ll use the keyboard shortcuts Command-Enter or Control-Enter to run queries and won’t explicitly call out this step. 
+- Review the query results, you should see information about Formula 1 circuits, starting with Albert Park in Australia! 
+- Ensure you have all 14 tables starting with `CIRCUITS` and ending with `STATUS`. Now we are ready to connect into dbt Cloud!
+![query-circuits-data](assets/load-data-into-snowflake/4-query-circuits-data.png)
 
 <!-- ------------------------ -->
 ## Setup dbt account 
