@@ -645,7 +645,6 @@ Now that we are connected into our raw data let's do some light transformations 
 3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. Select **</> Compile** once its finished view the **Compiled Code tab**. 
 <img src="assets/data-modeling-sources-and-staging/compiled_jinja_lap_times.png" alt="compiled_jinja_lap_times">
 
-
 4. Now click **Preview** &mdash; look how pretty and human readable our `official_laptime` column is!
 5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
 6. We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our [macros documentation](https://docs.getdbt.com/docs/build/jinja-macros). 
@@ -661,12 +660,20 @@ SQL is so performant at data cleaning and transformation, that many data science
 ### Fact and dimension tables 
 [Dimensional modeling](https://docs.getdbt.com/terms/dimensional-modeling) is an important data modeling concept where we break up data into "facts" and "dimensions" to organize and describe data. We won't go into depth here, but think of facts as "skinny and long" transactional tables and dimensions as "wide" referential tables. We'll preview one dimension table and be building one fact table. 
 
-1. Navigate in the file tree to **models > marts > core > dim_races**. 
-2. **Preview** the data. We can see we have the `RACE_YEAR` in this table. That's important since we want to understand the changes in lap times over years. So we now know `dim_races` contains the time column we need to make those calculations. 
-3. Create a new file within the **core** directory **core > ... > Create file**.
-4. Name the file `fct_lap_times.sql`.
-<!-- TODO maybe stylize lower vs uppercase in sql files -->
-5. Copy in the following code and save the file (**Save** or Ctrl+S):
+1. Create a new branch so we can build new models (our main branch is protected as read-only in dbt Cloud). Name your branch `snowpark-python-workshop`. 
+<img src="assets/sql-transformations/create_branch_dbt_cloud.png" alt="create_branch_dbt_cloud">
+<img src="assets/sql-transformations/name_branch_dbt_cloud.png" alt="name_branch_dbt_cloud">
+
+2. Navigate in the file tree to **models > marts > core > dim_races**. 
+3. **Preview** the data. We can see we have the `RACE_YEAR` in this table. That's important since we want to understand the changes in lap times over years. So we now know `dim_races` contains the time column we need to make those calculations. 
+<!-- TODO SCREENSHOT OF PREVIEWED DATA  -->
+4. Create a new file within the **core** directory **core > ... > Create file**.
+<img src="assets/sql-transformations/create_fct_file.png" alt="create_fct_file">
+ 
+5. Name the file `fct_lap_times.sql`.
+<img src="assets/sql-transformations/fct_lap_times.png" alt="fct_lap_times">
+
+6. Copy in the following code and save the file (**Save** or Ctrl+S):
     ```sql
     with lap_times as (
         select 
@@ -682,8 +689,9 @@ SQL is so performant at data cleaning and transformation, that many data science
     )
     select * from lap_times
     ```
-6. Our `fct_lap_times` is very similar to our staging file since this is clean demo data. In your real world data project your data will probably be messier and require extra filtering and aggregation prior to becoming a fact table exposed to your business users for utilizing.
-7. Use the UI **Build** (buttom with hammer icon) to create the `fct_lap_times` model. 
+7. Our `fct_lap_times` is very similar to our staging file since this is clean demo data. In your real world data project your data will probably be messier and require extra filtering and aggregation prior to becoming a fact table exposed to your business users for utilizing.
+8. Use the UI **Build** (buttom with hammer icon) to create the `fct_lap_times` model. 
+<img src="assets/sql-transformations/dbt_build_fct_lap_times.png" alt="dbt_build_fct_lap_times">
 
 Now we have both `dim_races` and `fct_lap_times` separately. Next we'll to join these to create lap trend analysis through the years.
 
@@ -714,9 +722,13 @@ We'll be joining our `dim_races` and `fct_lap_times` together.
         )
         select * from expanded_lap_times_by_year
     ```
+<!-- TODO ADD SCREENSHOT OF MART  -->
 3. Our dataset contains races going back to 1950, but the measurement of lap times begins in 1996. Here we join our datasets together use our `where` clause to filter our races prior to 1996, so they have lap times. 
 4. Execute the model using **Build**. 
 5. **Preview** your new model. We have race years and lap times together in one joined table so we are ready to create our trend analysis. 
+6. It's a good time to commit the 2 new models we created in our repository. Click **Commit and sync** and add a commit message. 
+<img src="assets/sql-transformations/commit_and_sync_fct_mrt.png" alt="commit_and_sync_fct_mrt">
+<img src="assets/sql-transformations/commit_message_fct_mrt.png" alt="commit_message_fct_mrt">
 
 Now that we've joined and denormalized our data we're ready to use it in python development. 
 
@@ -726,12 +738,16 @@ Now that we've transformed data using SQL let's write our first python code and 
 Snowflake python worksheets are excellent for developing your python code before bringing it into a dbt python model.
 Then once we are settled on the code we want, we can drop it into our dbt project. 
 
+<!-- TODO I think more explanation of python worksheets would go well here. (@snowflake team)(@Dan)(@Ripu) 
+I did this but if you want it updated, feel free to--> 
+[Python worksheets](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets) in Snowflake are a dynamic and interactive environment for executing Python code directly within Snowflake's cloud data platform. They provide a seamless integration between Snowflake's powerful data processing capabilities and the versatility of Python as a programming language. With Python worksheets, users can easily perform data transformations, analytics, and visualization tasks using familiar Python libraries and syntax, all within the Snowflake ecosystem. These worksheets enable data scientists, analysts, and developers to streamline their workflows, explore data in real-time, and derive valuable insights from their Snowflake data.
+
 1. Head back over **to Snowflake**.
 2. Open up a **Python Worksheet**. 
+<img src="assets/python-development/create_python_worksheet.png" alt="create_python_worksheet">
 
-<!-- TODO I think more explanation of python worksheets would go well here. (@snowflake team)(@Dan)(@Ripu) --> 
 <!-- TODO (@snowflake team)(@Dan) -- feel free to translate this python worksheet into snowpark code and clean up a bit (i.e. final_df isn't really necessary) -->
-3. Use the following code to get a 5 year moving average of Formula 1 laps:
+3. Delete the same code in the new worksheet. Use the following code to get a 5 year moving average of Formula 1 laps:
     ```python
     # The Snowpark package is required for Python Worksheets. 
     # You can add more packages by selecting them using the Packages control and then importing them.
