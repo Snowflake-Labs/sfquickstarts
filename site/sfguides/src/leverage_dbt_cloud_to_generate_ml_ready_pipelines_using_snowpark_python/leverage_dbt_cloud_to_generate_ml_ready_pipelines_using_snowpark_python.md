@@ -52,8 +52,8 @@ As inputs, we are going to leverage Formula 1 datasets hosted on a dbt Labs publ
 ## Architecture and use case overview
 In this lab we'll be transforming raw Formula 1 data into a consumable form for both BI tools and machine learning pipeline. To understand how this data is related, we've included an entity relationship diagram of the tables we'll be using today. 
 At a high level the way we are able to do this is that dbt is able to invoke python models as stored procedures from Snowpark for python. Snowflake's new snowpark capabilities and dbt's python support make this all possible. 
-<!-- ![F1_ERD](assets/architecture-use-case/Formula1_ERD.svg){:width="300" height="200"} -->
-Formula 1 ERD:
+Formula 1 ERD: <br>
+
 <img src="assets/architecture-use-case/Formula1_ERD.svg" alt="F1_ERD" width="500" height="200">
 
 Snowpark for python and dbt python architecture:
@@ -75,8 +75,9 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 ![new_snowflake_account](assets/configure-snowflake/2-new-snowflake-account.png)
 
 4. Navigate to **Admin > Billing & Terms**. Click **Enable > Acknowledge & Continue** to enable Anaconda Python Packages to run in Snowflake.
-![accept-anaconda-terms](assets/configure-snowflake/3-accept-anaconda-terms.jpeg)
 ![enable-anaconda](assets/configure-snowflake/4-enable-anaconda.jpeg)
+![accept-anaconda-terms](assets/configure-snowflake/3-accept-anaconda-terms.jpeg)
+
 
 5. Finally, navigate back to home to create a new SQL Worksheet by selecting **+** then **SQL Worksheet** in the upper right corner.
 
