@@ -780,7 +780,7 @@ I did this but if you want it updated, feel free to-->
     ```
 
 5. Your result should have three columns: `race_year`, `lap_time_seconds`, and `lap_moving_avg_5_years`. 
-<img src="assets/python-development/lap_times_5yr_avg.png" alt="lap_times_5yr_avg"> <br>This dataframe is in great shape for visualization in a downstream BI tool or application. We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. At a glance we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refuelling bans. So we can safely ascertain lap times are not consistently decreasing. 
+<img src="assets/python-development/lap_times_5yr_avg.png" alt="lap_times_5yr_avg"> This dataframe is in great shape for visualization in a downstream BI tool or application. We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. At a glance we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refuelling bans. So we can safely ascertain lap times are not consistently decreasing. 
 
 Now that we've created this dataframe and lap time trend insight, what do we do when we want to scale it? In the next section we'll be learning how to do this by leveraging python transformations in dbt Cloud. 
 <!-- ------------------------ -->
@@ -823,8 +823,9 @@ We won’t go as in depth for our subsequent scripts, but will continue to expla
     ```sql
     select * from {{ ref('agg_lap_times_moving_avg') }}
     ```
-7. **Preview** the output:
-<!-- TODO add screenshot  -->
+7. **Preview** the output. It should look the same as our snowflake python worksheet:
+<img src="assets/python-transformations-dbt-cloud/preview_agg_lap_times_scratchpad.png" alt="preview_agg_lap_times_scratchpad">
+
 8. We can see we have the same results from our python worksheet development as we have in our codified dbt python project. 
 
 ### The dbt model, .source(), .ref() and .config() functions
