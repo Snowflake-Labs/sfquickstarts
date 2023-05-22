@@ -450,7 +450,7 @@ WHERE ST_DWITHIN(geometry, outliers.cell_location, 10000) QUALIFY ROW_NUMBER() O
 
 Duration: 20
 
-In the previous section you've found cell cell towers that don't have electicity cables nearby. But what about answering more sophisticated questions, like what areas in Netherlands have very good and bad coverage by LTE network? You can use geospatial functions combined with spatial join and H3 functions from Carto toolbox to find out.
+In the previous section you've found cell cell towers that don't have electicity cables nearby. But what about answering more sophisticated questions, like what areas in Netherlands have very good and bad coverage by LTE (4G) network? You can use geospatial functions combined with spatial join and H3 functions from Carto toolbox to find out.
 
 ### What municipalities in Netherlands have good/poor LTE coverage?
 
@@ -532,7 +532,7 @@ SELECT municipality_geom AS geom,
 FROM geolab.geography.nl_municipalities_coverage;
 ```
 
-<img src ='assets/geo_analysis_geometry_18.png' width=700>
+<img src ='assets/geo_analysis_geometry_19.gif' width=700>
 
 ### What percent of the Dutch roads have LTE coverage?
 
