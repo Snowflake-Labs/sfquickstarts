@@ -809,7 +809,7 @@ Let’s take a step back before starting machine learning to both review and go 
         ```
 Now that we understand how to create python transformations we can use them to prepare our data for machine learning!
 
-<!-- ------------------------ -->
+<!-- ------------------------
 ## Machine Learning prep -- cleaning and encoding
 Now that we’ve gained insights and business intelligence about Formula 1 at a descriptive level, we want to extend our capabilities into prediction. We’re going to take the scenario where we censor the data. This means that we will pretend that we will train a model using earlier data and apply it to future data. In practice, this means we’ll take data from 2010-2019 to train our model and then predict 2020 data.
 
@@ -901,10 +901,10 @@ At a high level we’ll be:
     select * from {{ ref('ml_data_prep') }}
     ```
   <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/11-machine-learning-prep/1-completed-ml-data-prep.png" title="What our clean dataframe fit for machine learning looks like"/> -->
-Now that our data is clean it's time to encode it. 
+<!-- Now that our data is clean it's time to encode it.  -->
 
 <!-- ------------------------ -->
-### Covariate encoding
+<!-- ### Covariate encoding
 In this next part, we’ll be performing covariate encoding. Breaking down this phrase a bit, a *covariate* is a variable that is relevant to the outcome of a study or experiment, and *encoding* refers to the process of converting data (such as text or categorical variables) into a numerical format that can be used as input for a model. This is necessary because most machine learning algorithms can only work with numerical data. Algorithms don’t speak languages, have eyes to see images, etc. so we encode our data into numbers so algorithms can perform tasks by using calculations they otherwise couldn’t.
 
 🧠 We’ll think about this as : “algorithms like numbers”.
@@ -1022,9 +1022,11 @@ In this step, we will create dataframes to use for training and prediction. We�
     To run multiple models by name, we can use the *space* syntax [syntax](/reference/node-selection/syntax) between the model names. 
 4. **Commit and sync** our changes to keep saving our work as we go using `ml data prep and splits` before moving on.
 
-👏 Now that we’ve finished our machine learning prep work we can move onto the fun part &mdash; training and prediction!
+👏 Now that we’ve finished our machine learning prep work we can move onto the fun part &mdash; training and prediction! --> -->
 
 <!-- ------------------------ -->
+<!-- TODO WORKSHOP WILL NOW PICK UP FROM HERE AFTER FIRST PYTHON MODEL! -->
+<!-- Start intro with referencing those upstream models for encoding and splitting -->
 ## Machine Learning: training and prediction
 We’re ready to start training a model to predict the driver’s position. During the ML development phase you’ll try multiple algorithms and use an evaluation method such as cross validation to determine which algorithm to use. You can definitely use dbt if you want to save and reproduce dataframes from your ML development and model selection process, but for the content of this lab we’ll have skipped ahead decided on using a logistic regression to predict position (we actually tried some other algorithms using cross validation outside of this lab such as k-nearest neighbors and a support vector classifier but that didn’t perform as well as the logistic regression and a decision tree that overfit). By doing this we won't have to make code changes between development and deployment today. 
 
@@ -1132,16 +1134,16 @@ If you haven’t seen code like this before or use joblib files to save machine 
     - Right now our model is only in memory, so we need to use our nifty function `save_file` to save our model file to our Snowflake stage. We save our model as a joblib file so Snowpark can easily call this model object back to create predictions. We really don’t need to know much else as a data practitioner unless we want to. It’s worth noting that joblib files aren’t able to be queried directly by SQL. To do this, we would need to transform the joblib file to an SQL querable format such as JSON or CSV (out of scope for this workshop).
     - Finally we want to return our dataframe, but create a new column indicating what rows were used for training and those for training.
 5. Viewing our output of this model:
-  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/1-preview-train-test-position.png" title="Preview which rows of our model were used for training and testing"/> -->
+<img src="assets/machine-learning-training-prediction/1-preview-train-test-position.png" alt="preview-train-test-position">
 
 6. Let’s pop back over to Snowflake and check that our logistic regression model has been stored in our `MODELSTAGE`. Make sure you are in the correct database and development schema to view your stage (this should be `PC_DBT_DB` and your dev schema - for example `dbt_hwatson`):
     ```sql
     list @modelstage
     ```
-  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/2-list-snowflake-stage.png" title="List the objects in our Snowflake stage to check for our logistic regression to predict driver position"/> -->
+<img src="assets/machine-learning-training-prediction/2-list-snowflake-stage.png" alt="list-snowflake-stage">
 
 7. To investigate the commands run as part of `train_model_to_predict_position.py` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/12-machine-learning-training-prediction/3-view-snowflake-query-history.png" title="View Snowflake query history to see how python models are run under the hood"/>
+<img src="assets/machine-learning-training-prediction/3-view-snowflake-query-history.png" alt="view-snowflake-query-historye">
 
 Let's use our new trained model to create predictions!
 
@@ -1346,147 +1348,3 @@ That wraps all of our hands on the keyboard time for today!
 Fantastic! You’ve finished the workshop! We hope you feel empowered in using both SQL and Python in your dbt Cloud workflows with Snowflake. Having a reliable pipeline to surface both analytics and machine learning is crucial to creating tangible business value from your data. 
 
 For more help and information join our [dbt community Slack](https://www.getdbt.com/community/) which contains more than 50,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content. Happy dbt'ing!
-
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
-
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
-
-
-<!-- ------------------------ -->
-## Creating a Step
-Duration: 2
-
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
-```
-
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
-
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
-
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Puppy](assets/SAMPLE.jpg)
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
-
-<!-- ------------------------ -->
-## Conclusion
-Duration: 1
-
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
-
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
