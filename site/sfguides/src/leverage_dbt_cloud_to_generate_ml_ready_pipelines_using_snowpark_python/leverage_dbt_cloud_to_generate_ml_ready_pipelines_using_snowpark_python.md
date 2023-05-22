@@ -484,22 +484,22 @@ dbt Cloud's IDE will be our development space for this workshop, so let's get fa
 <img src="assets/ide-overview-first-models/1-ide-overview.png" alt="ide-overview">
 
 2. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and select **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. 
-<img src="assets/ide-overview-first-models/2_dbt_build_initial_pipeline_ml" alt="dbt_build_initial_pipeline_ml"> 
+<img src="assets/ide-overview-first-models/2_dbt_build_initial_pipeline_ml.png" alt="dbt_build_initial_pipeline_ml"> 
 To understand more about what the [dbt build](https://docs.getdbt.com/reference/commands/build) syntax is running check out the documentation.
 
 3. You can look at the run results of each model to see the code that dbt compiles and sends to Snowflake for execution. Select the arrow beside a model **>**. Click **Details** and view the ouput. We can see that dbt automatically generates the DDL statement and is creating our models in our development schema (i.e. `dbt_hwatson`).
-<img src="assets/ide-overview-first-models/3_model_details_ddl" alt="model_details_ddl">
+<img src="assets/ide-overview-first-models/3_model_details_ddl.png" alt="model_details_ddl">
 
 4. In the file tree select **models > ml > training_and_prediction > hold_out_dataset_for_prediction.py**. Click the **Lineage** tab. This is a bit small. To make it full screen click the viewfinder icon. 
-<img src="assets/ide-overview-first-models/4_lineage_viewfinder" alt="lineage_viewfinder">
+<img src="assets/ide-overview-first-models/4_lineage_viewfinder.png" alt="lineage_viewfinder">
 
 5. Explore the DAG for a few minutes to understand everything we've done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
-<img src="assets/ide-overview-first-models/5_lineage_fullview" alt="lineage_fullview"> 
+<img src="assets/ide-overview-first-models/5_lineage_fullview.png" alt="lineage_fullview"> 
 
 You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
 
 6. Now let's switch over to a new browser tab **on Snowflake** to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
-<img src="assets/ide-overview-first-models/6_confirm_pipeline_build_in_snowflake" alt="confirm_pipeline_build_in_snowflake">
+<img src="assets/ide-overview-first-models/6_confirm_pipeline_build_in_snowflake.png" alt="confirm_pipeline_build_in_snowflake">
 
 
 <!-- ------------------------ -->
