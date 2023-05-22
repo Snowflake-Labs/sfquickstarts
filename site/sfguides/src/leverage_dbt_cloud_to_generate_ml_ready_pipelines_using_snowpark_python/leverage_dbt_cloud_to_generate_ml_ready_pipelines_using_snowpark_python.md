@@ -1083,8 +1083,10 @@ If you haven’t seen code like this before or use joblib files to save machine 
 ### Training and saving a machine learning model
 
 1. Project organization remains key, under the `ml` folder make a new subfolder called `training_and_prediction`.
-2. Now create a new file called `train_model_to_predict_position.py` and copy and save the following code:
+2. Now create a new file called `train_model_to_predict_position.py` 
+<img src="assets/machine-learning-training-prediction/create_train_model_file.png" alt="preview-create_train_model_file-test-position">
 
+3. Copy and save the following code (make sure copy all the way to the right):
     ```python 
     import snowflake.snowpark.functions as F
     from sklearn.model_selection import train_test_split
@@ -1156,8 +1158,8 @@ If you haven’t seen code like this before or use joblib files to save machine 
         return  snowpark_train_df.with_column("DATASET_TYPE", F.lit("train")).union(snowpark_test_df.with_column("DATASET_TYPE", F.lit("test")))
     ```
 
-3. Use the UI **Build** our `train_model_to_predict_position` model.
-4. Breaking down our Python script:
+4. Use the UI **Build** our `train_model_to_predict_position` model.
+5. Breaking down our Python script:
 - We’re importing some helpful libraries.
     - Defining a function called `save_file()` that takes four parameters: `session`, `model`, `path` and `dest_filename` that will save our logistic regression model file.
         - `session` &mdash; an object representing a connection to Snowflake.
@@ -1175,17 +1177,17 @@ If you haven’t seen code like this before or use joblib files to save machine 
             - Round our predictions to the nearest integer since logistic regression creates a probability between for each class and calculate a balanced accuracy to account for imbalances in the target variable.
     - Right now our model is only in memory, so we need to use our nifty function `save_file` to save our model file to our Snowflake stage. We save our model as a joblib file so Snowpark can easily call this model object back to create predictions. We really don’t need to know much else as a data practitioner unless we want to. It’s worth noting that joblib files aren’t able to be queried directly by SQL. To do this, we would need to transform the joblib file to an SQL querable format such as JSON or CSV (out of scope for this workshop).
     - Finally we want to return our dataframe, but create a new column indicating what rows were used for training and those for training.
-5. Viewing our output of this model:
+6. Viewing our output of this model:
 <img src="assets/machine-learning-training-prediction/1-preview-train-test-position.png" alt="preview-train-test-position">
 
-6. Let’s pop back over to Snowflake and check that our logistic regression model has been stored in our `MODELSTAGE`. Make sure you are in the correct database and development schema to view your stage (this should be `PC_DBT_DB` and your dev schema - for example `dbt_hwatson`):
+7. Let’s pop back over to Snowflake. To check that our logistic regression model has been stored in our `MODELSTAGE` open a **SQL Worksheet** and use the query below to list objects in your modelstage. Make sure you are in the correct database and development schema to view your stage (this should be `PC_DBT_DB` and your dev schema - for example `dbt_hwatson`). 
     ```sql
     list @modelstage
     ```
 <img src="assets/machine-learning-training-prediction/2-list-snowflake-stage.png" alt="list-snowflake-stage">
 
-7. To investigate the commands run as part of `train_model_to_predict_position.py` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
-<img src="assets/machine-learning-training-prediction/3-view-snowflake-query-history.png" alt="view-snowflake-query-historye">
+8. To investigate the commands run as part of `train_model_to_predict_position.py` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
+<img src="assets/machine-learning-training-prediction/3-view-snowflake-query-history.png" alt="view-snowflake-query-history">
 
 Let's use our new trained model to create predictions!
 
@@ -1289,6 +1291,9 @@ It's time to use that 2020 data we held out to make predictions on!
     ```
 2. Use the UI Build our `apply_prediction_to_position` model.
 3. **Commit and sync** our changes to keep saving our work as we go using the commit message `logistic regression model training and application` before moving on.
+<img src="assets/machine-learning-training-prediction/commit_training_and_prediction.png" alt="commit_training_and_prediction">
+<img src="assets/machine-learning-training-prediction/commit_message_training_and_prediction.png" alt="commit_message_training_and_prediction">
+
 4. At a high level in this script, we are:
 - Retrieving our staged logistic regression model
 - Loading the model in
@@ -1314,6 +1319,8 @@ It's time to use that 2020 data we held out to make predictions on!
     ```sql
     select * from {{ ref('apply_prediction_to_position') }} order by position_predicted
     ```
+<img src="assets/machine-learning-training-prediction/preview_predicted_position.png" alt="preview_predicted_position">
+
 We can see that we created predictions in our final dataset for each result, we are ready to move on to deployment!
 
 <!-- ------------------------ -->
