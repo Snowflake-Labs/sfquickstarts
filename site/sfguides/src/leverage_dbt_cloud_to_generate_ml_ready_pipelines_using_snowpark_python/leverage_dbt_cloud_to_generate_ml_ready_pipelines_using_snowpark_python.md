@@ -494,22 +494,21 @@ To understand more about what the [dbt build](https://docs.getdbt.com/reference/
 <img src="assets/ide-overview-first-models/4_lineage_viewfinder.png" alt="lineage_viewfinder">
 
 5. Explore the DAG for a few minutes to understand everything we've done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
-<img src="assets/ide-overview-first-models/5_lineage_fullview.png" alt="lineage_fullview"> 
-
-You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
+<img src="assets/ide-overview-first-models/5_lineage_fullview.png" alt="lineage_fullview"> You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
 
 6. Now let's switch over to a new browser tab **on Snowflake** to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
 <img src="assets/ide-overview-first-models/6_confirm_pipeline_build_in_snowflake.png" alt="confirm_pipeline_build_in_snowflake">
 
+We did a lot upstream in our forked repo and we'll explore it at a high level of how we did that before moving on to machine learning model training and prediction in dbt cloud. 
 
 <!-- ------------------------ -->
 ## Understanding our existing pipeline 
 We brought a good chunk of our data pipeline in through our forked repo to lay a foundation for machine learning.
-In the next couple steps we are taking time to review how this was done. That way when you have your own dbt project you'll be familiar with the setup.
+In the next couple steps we are taking time to review how this was done. That way when you have your own dbt project you'll be familiar with the setup! We'll start with the dbt_project.yml, sources, and staging. 
 
 
 ### dbt_project.yml
-1. Select the `dbt_project.yml` file from the file tree to open it. What are we looking at here? Every dbt project requires a `dbt_project.yml` file &mdash; this is how dbt knows a directory is a dbt project. The [dbt_project.yml](/reference/dbt_project.yml) file also contains important information that tells dbt how to operate on your project.
+1. Select the `dbt_project.yml` file in the root directory the file explorer to open it. What are we looking at here? Every dbt project requires a `dbt_project.yml` file &mdash; this is how dbt knows a directory is a dbt project. The [dbt_project.yml](/reference/dbt_project.yml) file also contains important information that tells dbt how to operate on your project.
 2. Your code should as follows: 
     ```yaml
     name: 'snowflake_python_workshop'
@@ -577,29 +576,20 @@ In the next couple steps we are taking time to review how this was done. That wa
 Cool, now that dbt knows we have a dbt project we can view the folder structure and data modeling.  
 
 ### Folder structure 
-<!-- TODO Update with new folders  -->
 dbt Labs has developed a [project structure guide](/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices. 
-Do check out that guide if you want to learn more. Right now we are going to organize our project using the following structure:
 
+Do check out that guide if you want to learn more. Right now we are going to organize our project using the following structure:
 - sources &mdash; This is our Formula 1 dataset and it will be defined in a source YAML file. Nested under our Staging folder. 
 - staging models &mdash; These models have a 1:1 with their source table and are for light transformation (renaming columns, recasting data types, etc.).
 - core models &mdash; Fact and dimension tables available for end user analysis. Since the Formula 1 is pretty clean demo data these look similar to our staging models. 
 - marts models &mdash; Here is where we perform our major transformations. It contains the subfolder:
     - aggregates
-- ml &mdash; we'll be creating this folder and subfolders:
+- ml &mdash; :
     - prep_encoding_splitting
-    - training_and_prediction
+    - training_and_prediction (we'll be creating this folder later &mdash; it doesn't exist yet )
 
-1. In your file tree, use your cursor and hover over the `models` subdirectory, click the three dots `…` that appear to the right of the folder name, then select **Create Folder**. We're going to add two new folders to the file path, `ml` and `prep_encoding_splitting` (in that order) by typing `ml/prep_encoding_splitting` into the file path.
-    - If you click into your `models` directory now, you should see the new `ml` folder nested within `models` and the `prep_encoding_splitting` folder nested within `ml`.
-
-<!-- TODO update screeenshots  -->
-<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
-<Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/> -->
-
-2. We will need to create one more subfolder using the UI, under the `ml` folder create `training_and_prediction`. After you create these folders, your entire folder tree should look like this when it's all done (from what we forked and just created):
-
-    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/> -->
+Your folder structure should look like (make sure to expand some folders if necessary):
+<img src="assets/understanding-our-existing-pipeline/1_folder_structure.png" alt="folder_structure">
 
 Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1) to view the complete folder and file strucutre.  
 
@@ -1049,6 +1039,7 @@ In this step, we will create dataframes to use for training and prediction. We�
 <!-- TODO WORKSHOP WILL NOW PICK UP FROM HERE AFTER FIRST PYTHON MODEL! -->
 <!-- Start intro with referencing those upstream models for encoding and splitting -->
 ## Machine Learning: training and prediction
+
 We’re ready to start training a model to predict the driver’s position. During the ML development phase you’ll try multiple algorithms and use an evaluation method such as cross validation to determine which algorithm to use. You can definitely use dbt if you want to save and reproduce dataframes from your ML development and model selection process, but for the content of this lab we’ll have skipped ahead decided on using a logistic regression to predict position (we actually tried some other algorithms using cross validation outside of this lab such as k-nearest neighbors and a support vector classifier but that didn’t perform as well as the logistic regression and a decision tree that overfit). By doing this we won't have to make code changes between development and deployment today. 
 
 There are 3 areas to break down as we go since we are working at the intersection all within one model file:
@@ -1060,6 +1051,17 @@ If you haven’t seen code like this before or use joblib files to save machine 
 
 <!-- ------------------------ -->
 ### Training and saving a machine learning model
+
+1. In your file tree, use your cursor and hover over the `models` subdirectory, click the three dots `…` that appear to the right of the folder name, then select **Create Folder**. We're going to add two new folders to the file path, `ml` and `prep_encoding_splitting` (in that order) by typing `ml/prep_encoding_splitting` into the file path.
+    - If you click into your `models` directory now, you should see the new `ml` folder nested within `models` and the `prep_encoding_splitting` folder nested within `ml`.
+
+<!-- TODO update screeenshots  -->
+<!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/1-create-folder.png" title="Create folder"/>
+<Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/2-file-path.png" title="Set file path"/> -->
+
+2. We will need to create one more subfolder using the UI, under the `ml` folder create `training_and_prediction`. After you create these folders, your entire folder tree should look like this when it's all done (from what we forked and just created):
+
+    <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/7-folder-structure/3-tree-of-new-folders.png" title="File tree of new folders"/> -->
 
 1. Project organization remains key, so let’s make a new subfolder called `training_and_prediction` under the `ml` folder.
 2. Now create a new file called `train_model_to_predict_position.py` and copy and save the following code:
