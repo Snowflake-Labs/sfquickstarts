@@ -28,7 +28,7 @@ Data Analysts, Business Analysts, or others who are doing next level analysis on
   <li>A Snowflake trial account with Enterprise Edition or higher.</li>
 </ul>
 
-<button>[Snowflake Free Trial](https://signup.snowflake.com/)</button>
+[Snowflake Free Trial](https://signup.snowflake.com/)
 
 Once you have created your Snowflake trial environment, you will need to complete the data loading and object creation steps found in the Snowflake Tasty Bytes Quickstart, which you can access here: [An Introduction to Tasty Bytes.](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0)
 
@@ -780,11 +780,9 @@ You should now see the new version of the workbook that was created by your Embe
 ## Conclusion
 Duration: 5
 
-Thank you for your participation in this hands-on lab. We hope this exercise has helped you understand the value Sigma on Snowflake can drive for your customers. For questions or feedback related to this lab, please reach out to:<br>
-**kelsey@sigmacomputing.com**
+Thank you for your participation in this hands-on lab. We hope this exercise has helped you understand the value Sigma on Snowflake can drive for your customers.
 
-![Footer](assets/sigma_footer.png)
-<!-- END OF SECTION-->
+
 
 <!-- THE FOLLOWING ADDITIONAL RESOURCES IS REQUIRED AS IS FOR ALL QUICKSTARTS -->
 **Additional Resource Links**
