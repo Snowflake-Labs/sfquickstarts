@@ -9,14 +9,13 @@ tags: Getting Started, Data Science, Data Engineering, Data Quality, Data Testin
 
 # Data Quality Testing with Soda
 <!-- ------------------------ -->
-## Soda Overview 
+## Overview 
 Duration: 2
 
 ![soda-data-quality](assets/soda-data-quality.png)
 
 Is Soda the data quality testing solution you’ve been looking for? 🥤Take a sip and see!  Use this guide to install Soda, connect it to your Snowflake data source, and run a simple Soda scan for data quality.
 
-### What is Soda?
 Soda is a platform that enables Data Engineers to test data for quality where and when they need to.
 
 Is your data fresh? Is it complete or missing values? Are there unexpected duplicate values? Did something go wrong during transformation? Are all the data values valid? These are the questions that Soda answers for Data Engineers.
@@ -240,7 +239,7 @@ A check is a test that Soda executes when it scans a dataset in your data source
 ✨Well done!✨ You’ve taken the first step towards a future in which you and your colleagues can trust the quality and reliability of your data. Huzzah!
 
 <!-- ------------------------ -->
-## Go Further
+## Conclusion and Resources
 Duration: 1
 
 Now that you have seen Soda in action, learn more about how and where to integrate data quality into your existing workflows and pipelines.
