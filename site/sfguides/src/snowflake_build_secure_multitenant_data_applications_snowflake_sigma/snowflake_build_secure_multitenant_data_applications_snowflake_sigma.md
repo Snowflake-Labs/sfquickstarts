@@ -777,7 +777,7 @@ You should now see the new version of the workbook that was created by your Embe
 ![Footer](assets/sigma_footer.png)
 <!-- END OF SECTION-->
 
-## Conclusion
+## Conclusion And Resources
 Duration: 5
 
 Thank you for your participation in this hands-on lab. We hope this exercise has helped you understand the value Sigma on Snowflake can drive for your customers.
