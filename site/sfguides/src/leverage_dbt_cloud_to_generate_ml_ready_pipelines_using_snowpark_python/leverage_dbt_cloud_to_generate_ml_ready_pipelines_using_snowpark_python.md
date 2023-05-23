@@ -1419,11 +1419,10 @@ With this in mind we're going to have two jobs:
 
 - After that's done, DON'T FORGET CLICK **Save**.
 4. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. In total we produced 106 entities: 14 view models, 67 tests, 24 table models, 1 incremental model. 
-  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/4-run-production-job.png" title="Run production job"/>
-  <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/5-job-details.png" title="View production job details"/> -->
+<img src="assets/pipeline-deployment/creating-multiple-jobs/run_job.png" alt="run_job"> 
 
 5. Let's go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the production schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed. 
-  <!-- <Lightbox src="/img/guides/dbt-ecosystem/dbt-python-snowpark/15-deployment/6-all-models-generated.png" title="Check all our models in our pipeline are in Snowflake"/> -->
+<img src="assets/pipeline-deployment/creating-multiple-jobs/job_run_output.png" alt="job_run_output"> 
 
 6. Go back to dbt Cloud and navigate to **Deploy > Jobs > Create Job**. Edit the following job settings:
 - Set the **General Settings > Job Name** to **Prediction on data with existing model**
