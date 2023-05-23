@@ -1,7 +1,7 @@
 author: andries.engelbrecht@snowflake.com
 id: vhol_snowflake_salesforce_tcrm
 summary: This lab will walk you through how to use Snowflake, Salesforce and Tableau CRM to integrate data, and deliver Customer 360.
-categories: Getting Started
+categories: solution-examples,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -50,6 +50,7 @@ Duration: 3
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
 <button>
+
   [Download .sql File](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Salesforce/TCRM_V1/files/VHOL_SNOW_TCRM_1.0.sql)
 </button>
 <br/><br/>
@@ -357,6 +358,7 @@ To simulate **Customer Service** data we will create a `Custom Object` from the 
 
 
 <button>
+
   [Download .csv File](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Salesforce/TCRM_V1/files/master_customer_case.csv)
 </button>
 

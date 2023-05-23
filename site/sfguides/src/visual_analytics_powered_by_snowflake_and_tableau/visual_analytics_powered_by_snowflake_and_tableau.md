@@ -1,7 +1,7 @@
 author: Chandra Nayak & Bailey Ferrari
 id: visual_analytics_powered_by_snowflake_and_tableau
 summary: Visual Analytics Powered by Snowflake and Tableau
-categories: Getting Started
+categories: partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -52,15 +52,6 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 Duration: 2
 
-
-
-
-
-
-
-
-
-
 1. Create a Snowflake enterprise trial account
 2. Login to your Snowflake account
 3. We will be using the new UI to get started but you can also switch over to the Classic Console if you would like.
@@ -89,6 +80,9 @@ Duration: 5
 
 ```sql
 -- Create Database, Schema and Warehouse
+
+USE ROLE ACCOUNTADMIN;
+
 create or replace database VHOL_DATABASE;
 use database VHOL_DATABASE;
 
@@ -144,7 +138,7 @@ create or replace table vhol_trips
 
 -- Load JSON data into Variant column
 copy into vhol_trips (v) from 
-  (SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON));
+ (SELECT * FROM @VHOL_STAGE/2022-02-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_2_7.json.gz (file_format=>JSON));
 ```
 
 ### Build Relational Views on JSON
@@ -320,7 +314,7 @@ with gbfs as (
     where type = 'neighborhood';
     
     
-    select * from vhol_spatial_data;
+    select * from vhol_spatial_data limit 10;
 ```
 
 ## Correlate Trips, Weather and Geospatial Data
@@ -330,10 +324,11 @@ Duration: 5
 ### Combine station data with geospatial data
 
 ```sql
+
 create or replace table vhol_stations as with 
-  -- Extract the station data
+  -- extract the station data
     s as (select 
-        v:station_id::number station_id,
+        v:station_id::string station_id,
         v:region_id::number region_id,
         v:name::string station_name,
         v:lat::float station_lat,
@@ -341,31 +336,33 @@ create or replace table vhol_stations as with
         st_point(station_lon, station_lat) station_geo,
         v:station_type::string station_type,
         v:capacity::number station_capacity,
-        v:rental_methods rental_methods
+        v:rental_methods rental_methods,
+        v:legacy_id::string legacy_station_id -- introduced this because citibyke has changed the station_id from numeric to string 
     from vhol_spatial_data
-    where type = 'station'),
-    -- Extract the region data
+
+    where type = 'station'),  
+
     r as (select
         v:region_id::number region_id,
         v:name::string region_name
     from vhol_spatial_data
     where type = 'region'),
-    -- Extract the neighborhood data
+    -- extract the neighborhood data
     n as (select
         v:properties.neighborhood::string nhood_name,
         v:properties.borough::string borough_name,
         to_geography(v:geometry) nhood_geo
     from vhol_spatial_data
     where type = 'neighborhood')   
--- Join it all together using a spatial join
-select station_id, station_name, station_lat, station_lon, station_geo,
+-- join it all together using a spatial join
+select station_id, legacy_station_id, station_name, station_lat, station_lon, station_geo,
   station_type, station_capacity, rental_methods, region_name,
   nhood_name, borough_name, nhood_geo
 from s inner join r on s.region_id = r.region_id
        left outer join n on st_contains(n.nhood_geo, s.station_geo);
 
 -- Query station data 
-select * from vhol_stations;
+select * from vhol_stations limit 10;
 ```
 
 ### Combine Trips, Geospatial and Stations
@@ -373,6 +370,7 @@ select * from vhol_stations;
 Let's combine trip data with geospatial to identify popular routes
 
 ```sql
+
 create or replace view vhol_trips_stations_vw as (
   with
     t as (select * from vhol_trips_vw),
@@ -392,9 +390,10 @@ create or replace view vhol_trips_stations_vw as (
     es.nhood_geo end_nhood_geo,
     bikeid, bike_type, dob, gender, member_type, payment, payment_type, payment_num
   from t 
-    left outer join ss on start_station_id = ss.station_id
-    left outer join es on end_station_id = es.station_id); 
-
+    left outer join ss on start_station_id = ss.legacy_station_id
+    left outer join es on end_station_id = es.legacy_station_id
+    and ss.station_name is not null); 
+    
 
 select * from vhol_trips_stations_vw limit 200;
 ```

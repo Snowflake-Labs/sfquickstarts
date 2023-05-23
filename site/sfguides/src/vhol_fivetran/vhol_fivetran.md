@@ -1,6 +1,6 @@
 summary: Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 id: vhol_fivetran 
-categories: Getting Started
+categories: data-engineering,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
@@ -249,8 +249,9 @@ There are three very important configuration files to be aware, all at the top l
 ![Fork repo - 4](assets/image24.png)  
 Various configuration settings are found in this file. Please see [dbt’s documentation](https://docs.getdbt.com/reference/dbt_project.yml) for more information on these settings.
 
-Positive
-: **Did You Know?**  
+> aside positive
+> 
+>  **Did You Know?**  
 *******************************************************************************  
 As previously mentioned, **if you want to use your own Google Ads data**, you will need to edit **dbt_project**.yml. You can edit files directly in Github using the pencil icon at the top of the file view (mid-upper right, to the right of the Blame button). All you need to do is remove or comment out the lines that say:  
 ```
@@ -733,8 +734,9 @@ Now we need to configure three reports. These three reports will give us the raw
 
 For each report, we will use Configuration Type: Use Custom Report.
 
-Positive
-: **Did You Know?**  
+> aside positive
+> 
+>  **Did You Know?**  
 *******************************************************************************  
 You can find the configuration requirements for these three reports in the documentation of the Fivetran dbt package for Google Ads we will be using later, [dbt_google_ads_source](https://hub.getdbt.com/fivetran/google_ads_source/latest/). You can always find a list of all of Fivetranour available packages on [dbt Hub](https://hub.getdbt.com/) and in our [documentation](https://fivetran.com/docs/transformations/dbt).  
 *******************************************************************************  
@@ -811,8 +813,9 @@ Great! Now click **SAVE & TEST** to save your configuration.
 Click **CONTINUE** to see the next screen, where you can **Start Initial Sync** to start the data flowing!  
 ![Appendix III - 12](assets/image113.png)  
 
-Positive
-: **Did You Know?**  
+> aside positive
+> 
+>  **Did You Know?**  
 *******************************************************************************  
 Fivetran does more than just sync Ad connector reports. Fivetran has over 170 source connectors that you can use to keep your data in sync in Snowflake.  With Fivetran’s Database (e.g.,x. Oracle, PostgreSQL) and Application (e.g., ex Salesforce, Marketo, NetSuite) connectors, your data is automatically kept up-to-date without any intervention on your part. Any schema changes to your source data are automatically updated in Snowflake with our Automatic Schema Migration technology. Never miss or lose data, and never worry about updating your data pipelines again.
 *******************************************************************************  

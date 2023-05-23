@@ -2,7 +2,7 @@
 author: Kevin Keller (https://github.com/kkellersnow)
 id: python_camouflage
 summary: Project Python Camouflage aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing customers to obfuscate (or “mask”) PII while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. Python offers libraries to achieve this using encryption, and through the use of Snowflake Python UDFs we can apply that to information in Snowflake natively. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that others can embrace and extend.
-categories: Getting Started
+categories: cybersecurity,architecture-patterns,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -35,7 +35,7 @@ Project Python Camouflage provides a basic framework for tokenization in Snowfla
 - A demo that shows you how to use Python UDFs to achieve FF3 tokenization
 
 ### Using This as a Snowflake Worksheet
-Because this demo has quite a few code snippets, we recommend putting the whole thing in a Snowflake worksheet. To make that easier, we added / * and  * / comments throughout the demo. If you are using the Snowflake Quickstart site to view this, you can ignore these. If you want to move the whole thing to a worksheet, you will find these disable the extraneous, non-SQL text in the worksheet (including this text). That's why you will see these in what may seem like random spots. To  get the full Worksheet version, go to this Quickstart's GitHub repo, and grab the raw version of the `*.md` file you find there. [This link should take you directly to that spot](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/Python Camouflage/Python Camouflage.md).
+Because this demo has quite a few code snippets, we recommend putting the whole thing in a Snowflake worksheet. To make that easier, we added / * and  * / comments throughout the demo. If you are using the Snowflake Quickstart site to view this, you can ignore these. If you want to move the whole thing to a worksheet, you will find these disable the extraneous, non-SQL text in the worksheet (including this text). That's why you will see these in what may seem like random spots. To  get the full Worksheet version, go to this Quickstart's GitHub repo, and grab the raw version of the `*.md` file you find there. [This link should take you directly to that spot](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/python_camouflage/python_camouflage.md).
 
 <!-- ------------------------ -->
 ## Understanding Tokenization

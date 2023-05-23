@@ -1,6 +1,6 @@
 summary: Getting Started with Python
 id: getting_started_with_python
-categories: Getting Started
+categories: getting-started
 tags: python
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------------------------------------------------
 -- <VHOL SQL>
 -- <Visual Analytics  Powered by Snowflake and Tableau>
--- <July 26, 2022 | 11:00am PST>
+-- <Apr 12, 2023 | 8:00pm PST>
 -- <SQL File |Chandra Nayak>
 -- <Sales Engineer | Snowflake>
---  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/workshop.sql
+--  SQL: https://snowflake-workshop-lab.s3.amazonaws.com/citibike-trips-scripts/Workshop.sql
 -------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------Set Up---------------------------------------------------------*/
@@ -32,29 +32,21 @@ alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'LARGE';
 alter warehouse VHOL_WH SET WAREHOUSE_SIZE = 'SMALL';
 use warehouse VHOL_WH;
 
---Internal Stage
-create or replace STAGE VHOL_STAGE;
-
-show stages;
+-- Create File Format
+CREATE FILE FORMAT "JSON" TYPE=JSON COMPRESSION=GZIP;
 
 --External Stage on S3
 create or replace STAGE VHOL_STAGE
     URL = 's3://snowflake-workshop-lab/citibike-trips-json';
 
 --Lists Files on the S3 Bucket
-list @VHOL_STAGE/;
-
-CREATE FILE FORMAT "JSON" TYPE=JSON COMPRESSION=GZIP;
-
-show File Formats;
+list @VHOL_STAGE;
 
 
 /*--------------------------------------------------------Trips Data---------------------------------------------------------*/
 --select over stage
---select $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
---from @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz limit 100;
 
-
+--- Draw sample data from the Stage
 SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON)  limit 1;
 
 -- Lets create a table to bring this data into Snowflake from Object Store
@@ -63,22 +55,23 @@ create or replace table vhol_trips
    v variant)
   change_tracking = true;
 
---copy data over for trips
---copy into trips from @VHOL_STAGE file_format=JSON;
+--Copy data over for trips
+
+--copy into vhol_trips (v) from   (SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON));
 
 copy into vhol_trips (v) from 
-  (SELECT * FROM @VHOL_STAGE/2016-08-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_6_0.json.gz (file_format=>JSON));
+ (SELECT * FROM @VHOL_STAGE/2022-02-01/data_01a304b5-0601-4bbe-0045-e8030021523e_005_2_7.json.gz (file_format=>JSON));
 
 
 --create a view with rows and columns 
 create or replace view vhol_trips_vw
   as select
     tripid,
-    dateadd(year,4,v:STARTTIME::timestamp_ntz) starttime,
-    dateadd(year,4,v:ENDTIME::timestamp_ntz) endtime,
+    v:STARTTIME::timestamp_ntz starttime,
+    v:ENDTIME::timestamp_ntz endtime,
     datediff('minute', starttime, endtime) duration,
-    v:START_STATION_ID::integer start_station_id,
-    v:END_STATION_ID::integer end_station_id,
+    v:START_STATION_ID::string start_station_id,
+    v:END_STATION_ID::string end_station_id,
     v:BIKE.BIKEID::string bikeid,
     v:BIKE.BIKE_TYPE::string bike_type,
     v:RIDER.RIDERID::integer riderid,
@@ -121,9 +114,6 @@ SELECT COUNTRY,DATE_VALID_STD,TOT_PRECIPITATION_IN,tot_snowfall_in AS SNOWFALL, 
 --select
 
 -- UDF to convert Kelvin to Celcius
-use database vhol_database;
-use schema vhol_schema;
-use warehouse VHOL_WH;
 create or replace function degFtoC(k float)
 returns float
 as
@@ -156,7 +146,8 @@ create or replace view vhol_weather_vw as
   from weather.standard_tile.history_day
   where postal_code in ('10257', '10060', '10128', '07307', '10456')
   group by 1, 2, 3;
-  
+
+
   
 
 
@@ -204,14 +195,11 @@ with gbfs as (
     from gbfs, lateral flatten (input => payload:response.features)
     where type = 'neighborhood';
     
-    
-    select * from vhol_spatial_data;
-    
-    -- Combine station data with geospatial data
-    create or replace table vhol_stations as with 
+  -- create a relational view on Station geo data 
+   create or replace table vhol_stations as with 
   -- extract the station data
     s as (select 
-        v:station_id::number station_id,
+        v:station_id::string station_id,
         v:region_id::number region_id,
         v:name::string station_name,
         v:lat::float station_lat,
@@ -219,10 +207,12 @@ with gbfs as (
         st_point(station_lon, station_lat) station_geo,
         v:station_type::string station_type,
         v:capacity::number station_capacity,
-        v:rental_methods rental_methods
+        v:rental_methods rental_methods,
+        v:legacy_id::string legacy_station_id -- introduced this because citibyke has changed the station_id from numeric to string 
     from vhol_spatial_data
-    where type = 'station'),
-    -- extract the region data
+
+    where type = 'station'),  
+
     r as (select
         v:region_id::number region_id,
         v:name::string region_name
@@ -236,14 +226,14 @@ with gbfs as (
     from vhol_spatial_data
     where type = 'neighborhood')   
 -- join it all together using a spatial join
-select station_id, station_name, station_lat, station_lon, station_geo,
+select station_id, legacy_station_id, station_name, station_lat, station_lon, station_geo,
   station_type, station_capacity, rental_methods, region_name,
   nhood_name, borough_name, nhood_geo
 from s inner join r on s.region_id = r.region_id
        left outer join n on st_contains(n.nhood_geo, s.station_geo);
        
 
-select * from vhol_stations;
+select * from vhol_stations limit 10;
 
 
 -- Now let's combine trip data with Geospatial and Stations Data
@@ -266,10 +256,11 @@ create or replace view vhol_trips_stations_vw as (
     es.nhood_geo end_nhood_geo,
     bikeid, bike_type, dob, gender, member_type, payment, payment_type, payment_num
   from t 
-    left outer join ss on start_station_id = ss.station_id
-    left outer join es on end_station_id = es.station_id); 
+    left outer join ss on start_station_id = ss.legacy_station_id
+    left outer join es on end_station_id = es.legacy_station_id
+    and ss.station_name is not null); 
     
-    select * from vhol_trips_stations_vw limit 200;    
+    select * from vhol_trips_stations_vw limit 20;    
     
 -- add the weather
 create or replace view vhol_trips_stations_weather_vw as (
@@ -281,7 +272,7 @@ create or replace view vhol_trips_stations_weather_vw as (
 
 
 -- let's review the integrated data view
-select START_STATION,END_STATION,TEMP_AVG_C,WIND_SPEED_KPH from vhol_trips_stations_weather_vw limit 10;
+select START_STATION,END_STATION,TEMP_AVG_C,WIND_SPEED_KPH from vhol_trips_stations_weather_vw where START_STATION IS NOT NULL and TEMP_AVG_C IS NOT NULL limit 10;
 
 
 
@@ -431,7 +422,7 @@ show managed accounts;
 --take note of account_locator
 SELECT "locator" FROM TABLE (result_scan(last_query_id(-1))) WHERE "name" = 'IMP_CLIENT';
 --Replace ***'CGA92200'*** with your locator for 'IMP_CLIENT' from above step
-set account_locator='CGA92200'; 
+set account_locator='GZB59112'; 
 --add tenant for your big important client via a reader account
 insert into tenant values (
     1, 'Big Important Client, Wink Wink', $account_locator
@@ -468,7 +459,7 @@ select * from vhol_trips_dev limit 1;
 
 -- Cleanup Demo Account; Set your account_locator 
 
-set account_locator='AOA45492'; 
+
 alter share VHOL_SHARE remove account = $account_locator;
 drop schema vhol_schema;
 drop share VHOL_SHARE;

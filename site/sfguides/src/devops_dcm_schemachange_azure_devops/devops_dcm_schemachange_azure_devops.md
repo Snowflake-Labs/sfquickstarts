@@ -1,7 +1,7 @@
 author: Jeremiah Hansen
 id: devops_dcm_schemachange_azure_devops
 summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Azure DevOps
-categories: DevOps
+categories: devops
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -176,8 +176,9 @@ schemachange is a lightweight Python-based tool to manage all your Snowflake obj
 
 For more information about schemachange please see [the schemachange project page](https://github.com/Snowflake-Labs/schemachange).
 
-Negative
-: **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
+> aside negative
+> 
+>  **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
@@ -253,15 +254,17 @@ In the left navigation bar, click on `Pipelines` and then `Library`. On the Libr
     </tbody>
 </table>
 
-Positive
-: **Tip** - For more details on how to structure the account name in SF_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
+> aside positive
+> 
+>  **Tip** - For more details on how to structure the account name in SF_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
 
 When you’re finished adding all the variables, don’t forget to click the `Save` icon below the name of the variable group. Your variable group should look like this:
 
 ![Azure DevOps variable group](assets/devops_dcm_schemachange_azure_devops-5.png)
 
-Positive
-: **Tip** - For an even better solution to managing your secrets, you can leverage Azure Key Vault. See [Link secrets from an Azure key vault](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml#link-secrets-from-an-azure-key-vault) for the details.
+> aside positive
+> 
+>  **Tip** - For an even better solution to managing your secrets, you can leverage Azure Key Vault. See [Link secrets from an Azure key vault](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml#link-secrets-from-an-azure-key-vault) for the details.
 
 <!-- ------------------------ -->
 ## Create and Run a Deployment Pipeline
@@ -322,8 +325,9 @@ A few things to point out from the YAML pipeline definition:
 - We’re using the default Microsoft-hosted Linux agent pool to execute the pipeline.
 - The `env` section of the Bash task allows us to set environment variables which will be available to the Bash script. In particular, this allows us to securely pass secret values (like the Snowflake password) to applications/scripts running in the pipeline like schemachange.
 
-Negative
-: **Note** - Under Pipelines in the left navigation bar you will see both `Pipelines` and `Releases`. In earlier versions of the service build and release pipelines were separate and were created graphically using a UI. While these [classic release pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops) can still be used, Azure DevOps is moving to a single pipeline definition using YAML.
+> aside negative
+> 
+>  **Note** - Under Pipelines in the left navigation bar you will see both `Pipelines` and `Releases`. In earlier versions of the service build and release pipelines were separate and were created graphically using a UI. While these [classic release pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops) can still be used, Azure DevOps is moving to a single pipeline definition using YAML.
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake

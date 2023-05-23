@@ -1,6 +1,6 @@
 summary: Snowflake 및 Dataiku로 데이터 과학 가속화
 id: data_science_with_dataiku_kr
-categories: Getting Started
+categories: undefined
 environments: web
 status: Hidden
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -64,6 +64,7 @@ Duration: 5
 #### 랩 리소스 다운로드:
 
 <button>
+
 [Download sample SQL](https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Snowflake_Dataiku/Snowflake_Dataiku_VHOL.sql) for use in Snowflake.
 </button>
 

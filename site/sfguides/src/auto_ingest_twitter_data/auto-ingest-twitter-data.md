@@ -1,6 +1,6 @@
 summary: Auto-Ingest Twitter Data into Snowflake
 id: auto_ingest_twitter_data
-categories: Demos
+categories: data-engineering,app-development,solution-examples
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowpipe, Twitter, Auto Ingest, Cloud Storage
@@ -79,8 +79,9 @@ pip install tweepy
 pip install datetime
 ```
 
-Negative
-: Note: if you get any `pip's dependency resolver` errors, be sure to follow the instructions in the error message and install the additional packages.
+> aside negative
+> 
+>  Note: if you get any `pip's dependency resolver` errors, be sure to follow the instructions in the error message and install the additional packages.
 
 ### AWS configuration
 
@@ -123,8 +124,9 @@ You need to replace all the asterisk-filled strings with your own credentials. Y
 * The AWS access keys can be found on the [AWS Account and Access Keys](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html) page.
 * The Twitter API and Access credentials can be found on the [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard).
 
-Negative
-: Note that if you misplace your Twitter API and Access tokens, you’ll need to regenerate them. It’s straightforward to do, but your previous tokens will be revoked.
+> aside negative
+> 
+>  Note that if you misplace your Twitter API and Access tokens, you’ll need to regenerate them. It’s straightforward to do, but your previous tokens will be revoked.
 
 
 The second file you need to modify is `0_setup_twitter_snowpipe.sql`. Open the file and navigate to the section beginning on line 18. You'll need to replace the x-filled strings on lines 24 and 25 with your AWS credentials.
