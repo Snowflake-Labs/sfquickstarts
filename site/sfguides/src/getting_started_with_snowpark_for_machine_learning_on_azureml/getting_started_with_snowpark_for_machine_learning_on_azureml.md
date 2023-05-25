@@ -24,7 +24,7 @@ MLflow is an open-source platform for managing the end-to-end machine learning l
 
 This quickstart is designed to service as an introduction to using AzureML with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Azureml workloads.
 
-[GitHub](https://github.com/Snowflake-Labs/getting_started_with_snowpark_for_machine_learning_on_azureml)
+[GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml)
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
