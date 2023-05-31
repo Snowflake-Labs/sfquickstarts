@@ -101,6 +101,32 @@ The first step in the guide is to acquire geospatial data sets that you can free
 
 Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace. 
 
+Similarly to the above dataset, search and get the `Netherlands Open Map Data - Sonra` dataset from the Marketplace and rename it to `osm_nl`.
+
+<img src ='assets/geo_analysis_geometry_23.png' width=500>
+
+### Install CARTO Analytics Toolbox from the Snowflake Marketplace
+
+Now you can acquire CARTO’s Analytics Toolbox from the Snowflake Marketplace. This will share UDFs (User defined functions) to your account that will allow you to perform even more geospatial analytics. 
+
+* Similar to how you did with the data in the previous steps, navigate to the `Marketplace` screen using the menu on the left side of the window
+* Search for` CARTO` in the search bar
+
+<img src ='assets/geo_analysis_geometry_21.png' width=700>
+
+* Find and click the` Analytics Toolbox`  tile 
+
+<img src ='assets/geo_analysis_geometry_22.png' width=700>
+
+* Click on big blue` Get`  button 
+* In the options, name the database `CARTO` and optionally add more roles that can access the database 
+
+<img src ='assets/geo_analysis_geometry_24.png' width=500>
+
+* Click on `Get` and then `Done`. 
+
+Congratulations! Now you have data and the analytics toolbox! 
+
 ## Load Data from External Storage
 
 Duration: 5
@@ -570,9 +596,9 @@ and class = 'motorway';
 
 It seems our LTE network covers more than 99% of the motorways. A good number to call out in a marketing campaign.
 
-### How many kilometers of UK roads have poor or no LTE coverage?
+### How many kilometers of NL roads have poor or no LTE coverage?
 
-As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
+As an analyst, you might want to find out how many kilometers of motorways in the NL do not have good coverage by our network. Let's use the `NL Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
 
 Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function.
 
@@ -608,7 +634,7 @@ with h3_neighbors as (
         , p.value::string as h3
         , carto.carto.h3_distance(h3, p.value) as h3_distance
     from geolab.geography.nl_lte,
-    table(flatten(input => carto.carto.h3_kring(h3, ceil(least(cell_range, 6000) / 586)::int
+    table(flatten(input => carto.carto.h3_kring(h3, 4)::int
         ))) p
 ), 
 max_distance_per_antena as (
@@ -647,7 +673,7 @@ We can also change the relation between the zoom level and the resolution. The h
 
 <img src ='assets/geo_analysis_geometry_18.png' width=700>
 
-Let’s now use the road network from `UK Open Map Data` to see which road segments have good coverage and which do not.
+Let’s now use the road network from `NL Open Map Data` to see which road segments have good coverage and which do not.
 To intersect the road layer with the H3 signal strength layer, we will split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. We will then join on the H3 index and keep as 'No signal' all of the road segments with no coverage or coverage of under "30". 
 
 Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the `ST_COLLECT` function.
@@ -711,7 +737,7 @@ from GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED
 group by signal;
 ```
 
-We now know that we have 58,910 km with good coverage and 10,963 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+We now know that we have 58,910 km with good coverage and 10,963 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 
