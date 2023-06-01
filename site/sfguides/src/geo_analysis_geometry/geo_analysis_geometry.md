@@ -77,7 +77,41 @@ In order to use the packages provided by Anaconda inside Snowflake, you must ack
 * In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
 * If you agree to the terms, select `Acknowledge & Continue`.
 
-## Acquire Marketplace Data
+### Connection Snowflake and Carto
+
+Let's connect your Snowflake to CARTO so you can run and visualize the queries in the following exercises of this workshop.
+
+Access the CARTO Workspace: [app.carto.com](http://app.carto.com/)
+
+Go to the Connections section in the Workspace, where you can find the list of all your current connections.
+
+<img src ='assets/geo_sf_carto_telco_5.png' width=700>
+
+To add a new connection, click on `New connection` and follow these steps:
+
+1. Select Snowflake.
+2. Click the `Setup connection` button.
+3. Enter the connection parameters and credentials.
+
+These are the parameters you need to provide:
+
+- **Name** for your connection: You can register different connections with the Snowflake connector. You can use the name to identify the connections.
+- **Username**: Name of the user account.
+- **Password**: Password for the user account.
+- **Account**: Hostname for your account . One way to get it is to check the Snowflake activation email which contains the account_name within the URL ( <account_name>.snowflakecomputing.com ). Just enter what's on the account_name, i.e ok36557.us-east-2.aws
+- **Warehouse (optional)**: Default warehouse that will run your queries. Use MY_WH.
+
+> aside negative
+>  Use MY_WH or the name of the data warehouse you created in the previous step otherwise some queries will fail because CARTO won't know which warehouse to run them against.
+
+- **Database (optional)**. Default database to run your queries. Use GEOLAB.
+- **Role (optional)**. Default Role to run your queries. Use ACCOUNTADMIN.
+
+<img src ='assets/geo_sf_carto_telco_6.png' width=700>
+
+Once you have entered the parameters, you can click the Connect button. CARTO will try to connect to your Snowflake account. If everything is OK, your new connection will be registered.
+
+## Acquire Marketplace Data and Analytics Toolbox
 
 Duration: 5
 
@@ -602,7 +636,7 @@ As an analyst, you might want to find out how many kilometers of motorways in th
 
 Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function.
 
-Run the foillowing query in your Snowflake worksheet:
+Run the following query in your Snowflake worksheet:
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_lte AS
@@ -627,27 +661,23 @@ Clustering by H3 will enable CARTO to execute queries faster, which is beneficia
 Run the following query.
 
 ```
+
 create or replace table geolab.geography.nl_lte_coverage_h3 as  
 with h3_neighbors as (
     select 
         id
         , p.value::string as h3
-        , carto.carto.h3_distance(h3, p.value) as h3_distance
+        , carto.carto.h3_distance(h3, p.value) as h3_distance,
+        , ceil(least(cell_range, 2000) / 586) as h3_cell_range
     from geolab.geography.nl_lte,
-    table(flatten(input => carto.carto.h3_kring(h3, 4)::int
-        ))) p
-), 
-max_distance_per_antena as (
-    select id, max(h3_distance) as h3_max_distance
-    from h3_neighbors 
-    group by id
+    table(flatten(input => carto.carto.h3_kring(h3, h3_cell_range)::int))) p
 )
 select 
     h3, 
-    max((100 * pow(1 - h3_distance / (h3_max_distance + 1), 2)) -- decay
+    max((100 * pow(1 - h3_distance / (h3_cell_range + 1), 2)) -- decay
     ) * uniform(0.8, 1::float, random() -- noise
     ) as signal_strength
-from h3_neighbors join max_distance_per_antena using(id)
+from h3_neighbors
 group by h3;
 ```
 
@@ -684,21 +714,26 @@ Run the following two queries.
 
 ```
 create or replace table GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED AS
+# First, import roads from OSM:
 with roads as (
     select 
-        row_number() over(order by null) as geoid -- creating an ID for each original road segment
+        row_number() over(order by null) as geoid
         , geo_cordinates as geom
     from OSM_NL.NETHERLANDS.V_ROAD roads
     where class in ('primary', 'motorway')
-    and st_dimension(geo_cordinates) = 1 -- only for the linestring or multilinestring
+    and st_dimension(geo_cordinates) = 1
 )
-, segment_ids as (
+# In order to compute H3 cells corresponding to each road we need to first 
+# split roads into the line segments. We do it using the ST_POINTN function
+, segments as (
     select 
-        Geoid, -- ID for each minimal road segment
-        row_number() over(partition by(geoid) order by geoid) as segment_id 
-        , geom
+        geoid,
+        value::integer as segment_id,
+        st_makeline(st_pointn(geom, segment_id),  st_pointn(geom, segment_id + 1)) as segment,
+        geom,
+        carto.carto.h3_fromgeogpoint(st_centroid(segment), 9) as h3_center
     from roads, 
-    lateral split_to_table(repeat(',', (st_npoints(geom) - 1)::int), ',')
+    lateral flatten(ARRAY_GENERATE_RANGE(1, st_npoints(geom)))
 )
 , segments as (select 
                geoid, 
@@ -709,21 +744,14 @@ with roads as (
     from segment_ids
     order by geoid, segment_id)
 select 
-    geoid
-    , case -- No signal if no coverage, or under 30
-        when (h3 is null or signal_strength <= 50) then 'No Signal'
-        else 'OK Signal'
-    end as signal
-    , case -- This parameter we will use for visualization purposes
-        when (h3 is null or signal_strength <= 50) then 2
-        else 1
-    end as road_width
-    , st_collect(segment) as geom -- This is creating the original road segments by collecting them.
-from segments 
-left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3
-on carto.carto.h3_fromgeogpoint(st_centroid(segment), 9) = h3
-where segment is not null
-group by 1, 2, 3
+    geoid, 
+    any_value(road_geometry) as geom,
+    avg(ifnull(signal_strength, 0.0)) as avg_signal_strength,
+    iff(avg_signal_strength > 50, 'OK Signal', 'No Signal') as signal_category
+from roads_h3
+left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells
+on roads_h3.h3 = cells.h3
+group by geoid
 order by st_geohash(geom);
 
 ALTER TABLE GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED ADD search optimization ON GEO(geom);
