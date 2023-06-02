@@ -285,7 +285,9 @@ ALTER SESSION SET geometry_output_format = 'WKB';
 Run the query again, and click on a cell in the `geometry` column.
 
 ```
-SELECT geometry FROM nl_cables_stations LIMIT 10;
+SELECT geometry 
+FROM nl_cables_stations 
+LIMIT 10;
 ```
 
 Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKB or GeoJSON.
@@ -391,11 +393,11 @@ Run the following query:
 
 ```
 CREATE OR REPLACE TABLE geolab.geometry.nl_administrative_areas AS
-SELECT ST_BUFFER(TO_GEOMETRY(wkt, 32231, True), 0) AS geometry,
+SELECT ST_BUFFER(TO_GEOMETRY(wkt, 32231, True), -1) AS geometry,
        (case when properties:TYPE_1::string is null then 'Municipality' else 'Province' end) AS type,
        properties:NAME_1::string AS province_name,
        properties:NAME_2::string AS municipality_name
-FROM TABLE(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl_areas.shp'))
+FROM TABLE(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl_areas.shp'));
 ```
 
 Excellent! Now that all the datasets are successfully loaded, let's proceed to the next exciting step: the analysis.
@@ -517,7 +519,7 @@ FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
 WHERE mcc = '204' -- 204 is the mobile country code in the Netherlands
 ORDER BY ST_GEOHASH(geom);
 
-ALTER TABLE geolab.geography.nl_celltowers ADD SEARCH OPTIMIZATION ON GEO(geom); 
+ALTER TABLE geolab.geography.nl_4g ADD SEARCH OPTIMIZATION ON GEO(geom); 
 ```
 
 Finally, we will find all cell towers that don't have an energy line within a 2-kilometer radius. For each cell tower we'll calculate the distance to the nearest electricity cable. In CARTO Builder click on the Add `Source From` → `Custom Query (SQL)` and make sure you have selected Snowflake Connection that you have created in previous steps.
@@ -535,7 +537,7 @@ JOIN geolab.geography.nl_administrative_areas areas ON st_contains(areas.geom, c
 WHERE cells.radio='LTE'
   AND areas.type = 'Province'
   AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
-  AND cables.geom IS NULL
+  AND cables.geom IS NULL;
 ```
 
 You can modify the colors of cell towers in the output and expand their radius in order to enhance their visibility.
@@ -558,7 +560,7 @@ You have been using `NL_CELLTOWERS` table, which stores the locations of cell to
 
 `ST_BUFFER` from the Carto toolbox can be used to calculate the coverage area for each LTE cell tower. In `NL_CELLTOWERS` table, there is a field _cell_range_ which can be used as a value of radius in ST_BUFFER. For the sake of this example we will assume that a good signal can be received no further than 2000 meters away from the LTE cell.
 
-Run the following query in your Snowflake's worksheet: 
+Run the following two queries in your Snowflake's worksheet: 
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
@@ -567,7 +569,10 @@ SELECT geom,
        cell_range,
        carto.carto.st_buffer(geom, least(cell_range, 2000), 5) AS coverage
 FROM geolab.geography.nl_4g
-WHERE radio = 'LTE';
+WHERE radio = 'LTE'
+ORDER BY ST_GEOHASH(geom);
+
+ALTER TABLE geolab.geography.nl_celltowers ADD SEARCH OPTIMIZATION ON GEO(geom); 
 ```
 
 Now there is a new columns `coverage` with areas that correspond to the coverage areas of the cell towers. Let's create a new map in the CARTO Builder and run the following query to visualize the coverage for one of the municipalities:
@@ -677,7 +682,7 @@ WHERE st_intersects(coverage.geom, roads.geo_cordinates)
 AND class = 'motorway';
 ```
 
-It seems our LTE network covers more than 95% of the motorways. A good number to call out in a marketing campaign.
+It seems our LTE network covers more than 98% of the motorways. A good number to call out in a marketing campaign.
 
 ### How many kilometers of NL roads have poor or no LTE coverage?
 
@@ -731,7 +736,7 @@ Now that we have created our signal decay model, let’s visualize it on CARTO. 
 ```
 SELECT h3,
        signal_strength
-FROM geolab.geography.nl_lte_coverage_h3
+FROM geolab.geography.nl_lte_coverage_h3;
 ```
 
 > aside positive
@@ -754,18 +759,17 @@ Let’s now use the road network from `NL Open Map Data` to see which road segme
 To intersect the road layer with the H3 signal strength layer, we will first split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. Run the following query:
 
 ```plaintext
-CREATE OR REPLACE TABLE GEOLAB.GEOGRAPHY.NL_ROADS_H3 AS -- import roads from OSM:
+CREATE OR REPLACE TABLE GEOLAB.GEOGRAPHY.NL_ROADS_H3 AS 
+-- import roads from OSM:
 WITH roads AS
   (SELECT row_number() over(
                             ORDER BY NULL) AS road_id,
           geo_cordinates AS geom
    FROM OSM_NL.NETHERLANDS.V_ROAD roads
-   WHERE CLASS in ('primary',
-                   'motorway')
-     AND st_dimension(geo_cordinates) = 1 ) 
+   WHERE class in ('primary', 'motorway')
+     AND st_dimension(geo_cordinates) = 1),
 -- In order to compute H3 cells corresponding to each road we need to first
 -- split roads into the line segments. We do it using the ST_POINTN function
-,
      segments AS
   (SELECT road_id,
           value::integer AS segment_id,
@@ -783,14 +787,14 @@ SELECT road_id,
        any_value(geom) AS road_geometry
 FROM segments
 GROUP BY 1, 2
-ORDER BY h3
+ORDER BY h3;
 ```
 
 If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder (`Add Source From` → `Data Explorer`) you will see tesselated roads.
 
 <img src ='assets/geo_analysis_geometry_39.png' width=700>
 
-Now we use signal decay model that we build privously to estimate the average signal along each road. For this we need to join two tables (tesselated roads and the signal strenght) using H3 cell id and aggregate the result by road id.
+Now we use signal decay model that we've build privously to estimate the average signal along each road. For this we need to join two tables (tesselated roads and the signal strenght) using H3 cell id and aggregate the result by road id.
 
 Run the following two queries.
 
@@ -806,7 +810,6 @@ LEFT JOIN GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells ON roads_h3.h3 = cells.h3
 GROUP BY road_id
 ORDER BY ST_GEOHASH(geom);
 
-
 ALTER TABLE geolab.geography.osm_nl_not_covered ADD SEARCH OPTIMIZATION ON GEO(geom);
 ```
 
@@ -819,7 +822,7 @@ FROM geolab.geography.osm_nl_not_covered
 GROUP BY signal_category;
 ```
 
-We now know that we have 13,923 km with good coverage and 2,346 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
+We now know that we have 13,938 km with good coverage and 2,331 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal_category feature we created.
 
