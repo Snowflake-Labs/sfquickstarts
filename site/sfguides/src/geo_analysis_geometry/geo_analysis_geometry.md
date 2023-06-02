@@ -228,7 +228,7 @@ Run the queries below to make sure the current format is GeoJSON.
 
 ```
 // Set the output format to GeoJSON
-alter session set geometry_output_format = 'GEOJSON';
+ALTER SESSION SET geometry_output_format = 'GEOJSON';
 ```
 
 The [alter session](https://docs.snowflake.com/en/sql-reference/sql/alter-session.html) command lets you set a parameter for your current user session, which in this case is  `GEOMETRY_OUTPUT_FORMAT`. The default value for those parameters is `'GEOJSON'`, so normally you wouldn't have to run this command if you want that format, but this guide wants to be certain the next queries are run with the `'GEOJSON'` output.
@@ -236,7 +236,9 @@ The [alter session](https://docs.snowflake.com/en/sql-reference/sql/alter-sessio
 Now run the following query against the `nl_cables_stations` table to see energy grids in Netherlands.
 
 ```
-select geometry from nl_cables_stations limit 10;
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 10;
 ```
 
 In the result set, notice the `geometry` column and how it displays a JSON representation of spatial objects. It should look similar to this:
@@ -254,13 +256,15 @@ Now look at the same query but in a different format. Run the following query:
 
 ```
 // Set the output format to EWKT
-alter session set geometry_output_format = 'EWKT';
+ALTER SESSION SET geometry_output_format = 'EWKT';
 ```
 
 Run the previous `SELECT` query again and when done, examine the output in the `geometry` column.
 
 ```
-select geometry from nl_cables_stations limit 10;
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 10;
 ```
 
 EWKT looks different than GeoJSON, and is arguably more readable. Here you can more clearly see the [geospatial object types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html#geospatial-object-types), which are represented below in the example output:
@@ -275,13 +279,13 @@ Lastly, look at the WKB output. Run the following query:
 
 ```
 // Set the output format to WKB
-alter session set geometry_output_format = 'WKB';
+ALTER SESSION SET geometry_output_format = 'WKB';
 ```
 
 Run the query again, and click on a cell in the `geometry` column.
 
 ```
-select geometry from nl_cables_stations limit 10;
+SELECT geometry FROM nl_cables_stations LIMIT 10;
 ```
 
 Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKB or GeoJSON.
@@ -313,11 +317,11 @@ Run the following query that creates a UDF:
 
 ```
 CREATE OR REPLACE FUNCTION PY_LOAD_GEODATA(PATH_TO_FILE string, filename string)
-returns table (wkt varchar, properties object)
-language python
-runtime_version = 3.8
-packages = ('fiona', 'shapely', 'snowflake-snowpark-python')
-handler = 'GeoFileReader'
+RETURNS TABLE (wkt varchar, properties object)
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('fiona', 'shapely', 'snowflake-snowpark-python')
+HANDLER = 'GeoFileReader'
 AS $$
 from shapely.geometry import shape
 from snowflake.snowpark.files import SnowflakeFile
@@ -359,7 +363,7 @@ SELECT to_geometry(wkt, True) AS geometry,
        properties:NAME_1::string as province_name,
        properties:NAME_2::string as municipality_name
 FROM table(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl_areas.shp'))
-order by is_valid asc;
+ORDER BY is_valid ASC;
 ```
 
 <img src ='assets/geo_analysis_geometry_15_1.png'>
@@ -373,7 +377,7 @@ SELECT st_buffer(to_geometry(wkt, True), -1) AS geometry,
        properties:NAME_1::string as province_name,
        properties:NAME_2::string as municipality_name
 FROM table(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl_areas.shp'))
-order by is_valid asc;
+ORDER BY is_valid ASC;
 ```
 
 <img src ='assets/geo_analysis_geometry_15.png'>
@@ -387,11 +391,11 @@ Run the following query:
 
 ```
 CREATE OR REPLACE TABLE geolab.geometry.nl_administrative_areas AS
-SELECT st_buffer(to_geometry(wkt, 32231, True), 0) AS geometry,
-       (case when properties:TYPE_1::string is null then 'Municipality' else 'Province' end) as type,
-       properties:NAME_1::string as province_name,
-       properties:NAME_2::string as municipality_name
-FROM table(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl_areas.shp'))
+SELECT ST_BUFFER(TO_GEOMETRY(wkt, 32231, True), 0) AS geometry,
+       (case when properties:TYPE_1::string is null then 'Municipality' else 'Province' end) AS type,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM TABLE(PY_LOAD_GEODATA(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl_areas.shp'))
 ```
 
 Excellent! Now that all the datasets are successfully loaded, let's proceed to the next exciting step: the analysis.
@@ -434,11 +438,11 @@ In order to compute the length of all cables per administrative area, it's essen
 Run the following query:
 ```
 SELECT t1.province_name,
-    sum(st_length(t2.geometry)) AS cables_length
+       sum(st_length(t2.geometry)) AS cables_length
 FROM geolab.geometry.nl_administrative_areas t1,
      geolab.geometry.nl_cables_stations t2
 WHERE st_intersects(st_transform(t1.geometry, 28992), t2.geometry)
-AND t1.type = 'Province'
+  AND t1.type = 'Province'
 GROUP BY 1
 ORDER BY 2 DESC;
 ```
@@ -458,23 +462,26 @@ For this and the next examples let's use GEOGRAPHY data type as it can be easyly
 ```
 // Creating a table with GEOGRAPHY for nl_administrative_areas
 CREATE OR REPLACE SCHEMA GEOLAB.GEOGRAPHY;
+
 CREATE OR REPLACE TABLE geolab.geography.nl_administrative_areas AS
-SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) as geom,
+SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) AS geom,
        type,
        province_name,
        municipality_name
 FROM geolab.geometry.nl_administrative_areas
-ORDER BY st_geohash(geom);
-ALTER TABLE geolab.geography.nl_administrative_areas ADD search optimization ON GEO(geom);
+ORDER BY ST_GEOHASH(geom);
+
+ALTER TABLE geolab.geography.nl_administrative_areas ADD SEARCH optimization ON GEO(geom);
 
 // Creating a table with GEOGRAPHY for nl_cables_stations
 CREATE OR REPLACE TABLE geolab.geography.nl_cables_stations AS
-SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) as geom,
+SELECT to_geography(st_asgeojson(st_transform(geometry, 4326))) AS geom,
        id,
        type
 FROM geolab.geometry.nl_cables_stations
-ORDER BY st_geohash(geom);
-ALTER TABLE geolab.geography.nl_cables_stations ADD search optimization ON GEO(geom);
+ORDER BY ST_GEOHASH(geom);
+
+ALTER TABLE geolab.geography.nl_cables_stations ADD SEARCH OPTIMIZATION ON GEO(geom);
 ```
 
 We can now go to the CARTO account and visualize administrative areas and cables information in CARTO Builder.
@@ -502,15 +509,15 @@ Now you will create a table with locations of cell towers stored as GEOGRAPHY an
 
 ```
 // Creating a new schema for GEOGRAPHY
-CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
+CREATE OR REPLACE TABLE geolab.geography.nl_4g AS
 SELECT DISTINCT st_point(lon, lat) AS geom,
                 radio,
                 cell_range
 FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
 WHERE mcc = '204' -- 204 is the mobile country code in the Netherlands
-ORDER BY st_geohash(geom);
+ORDER BY ST_GEOHASH(geom);
 
-ALTER TABLE geolab.geography.nl_celltowers ADD search optimization ON GEO(geom); 
+ALTER TABLE geolab.geography.nl_celltowers ADD SEARCH OPTIMIZATION ON GEO(geom); 
 ```
 
 Finally, we will find all cell towers that don't have an energy line within a 2-kilometer radius. For each cell tower we'll calculate the distance to the nearest electricity cable. In CARTO Builder click on the Add `Source From` → `Custom Query (SQL)` and make sure you have selected Snowflake Connection that you have created in previous steps.
@@ -520,15 +527,15 @@ Finally, we will find all cell towers that don't have an energy line within a 2-
 Then paste the following query and click on the green `Run` button.
 
 ```
-    SELECT province_name,
-          cells.geom
-    FROM geolab.geography.nl_celltowers cells
-    LEFT JOIN geolab.geography.nl_cables_stations cables ON st_dwithin(cells.geom, cables.geom, 2000)
-    JOIN geolab.geography.nl_administrative_areas areas ON st_contains(areas.geom, cells.geom)
-    WHERE cells.radio='LTE'
-        AND areas.type = 'Province'
-        AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
-        AND cables.geom IS NULL
+SELECT province_name,
+       cells.geom
+FROM geolab.geography.nl_4g cells
+LEFT JOIN geolab.geography.nl_cables_stations cables ON st_dwithin(cells.geom, cables.geom, 2000)
+JOIN geolab.geography.nl_administrative_areas areas ON st_contains(areas.geom, cells.geom)
+WHERE cells.radio='LTE'
+  AND areas.type = 'Province'
+  AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
+  AND cables.geom IS NULL
 ```
 
 You can modify the colors of cell towers in the output and expand their radius in order to enhance their visibility.
@@ -555,21 +562,23 @@ Run the following query in your Snowflake's worksheet:
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_celltowers AS
-SELECT *,
+SELECT geom,
+       radio,
+       cell_range,
        carto.carto.st_buffer(geom, least(cell_range, 2000), 5) AS coverage
-FROM geolab.geography.nl_celltowers
+FROM geolab.geography.nl_4g
 WHERE radio = 'LTE';
 ```
 
 Now there is a new columns `coverage` with areas that correspond to the coverage areas of the cell towers. Let's create a new map in the CARTO Builder and run the following query to visualize the coverage for one of the municipalities:
 
 ```
-SELECT c.coverage as geom
+SELECT c.coverage AS geom
 FROM geolab.geography.nl_celltowers c
 JOIN geolab.geography.nl_administrative_areas AS b 
-  ON st_intersects(b.geom, c.geom)
-WHERE type = 'Municipality'
-      and municipality_name = 'Angerlo';
+ON st_intersects(b.geom, c.geom)
+WHERE TYPE = 'Municipality'
+  AND municipality_name = 'Angerlo';
 ```
 
 The result of this query is a number of overlapping circles:
@@ -582,11 +591,11 @@ Run the following query from Snowflake Worksheets:
 
 ```
 CREATE OR REPLACE FUNCTION PY_UNION_AGG(g1 array)
-returns geography
-language python
-runtime_version = 3.8
-packages = ('shapely')
-handler = 'udf'
+RETURNS GEOGRAPHY
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('shapely')
+HANDLER = 'udf'
 AS $$
 from shapely.ops import unary_union
 from shapely.geometry import shape, mapping
@@ -603,8 +612,7 @@ Now run the following query from the CARTO Builder:
 ```
 SELECT PY_UNION_AGG(ARRAY_AGG(st_asgeojson(c.coverage))) as geom
 FROM geolab.geography.nl_celltowers c
-JOIN geolab.geography.nl_administrative_areas AS b 
-  ON st_intersects(b.geom, c.geom)
+JOIN geolab.geography.nl_administrative_areas AS b ON st_intersects(b.geom, c.geom)
 WHERE type = 'Municipality'
 AND municipality_name = 'Angerlo';
 ```
@@ -625,19 +633,19 @@ Run the following two queries:
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_municipalities_coverage AS
 SELECT municipality_name,
-       to_geography(st_asgeojson(geom)) AS geom,
-       st_intersection(any_value(geom), py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS coverage_geom,
-       round(st_area(coverage_geom)/st_area(any_value(geom)), 2) AS coverage_ratio
+       TO_GEOGRAPHY(ST_ASGEOJSON(geom)) AS geom,
+       ST_INTERSECTION(ANY_VALUE(geom), PY_UNION_AGG(ARRAY_AGG(ST_ASGEOJSON(coverage)))) AS coverage_geom,
+       ROUND(ST_AREA(coverage_geom)/ST_AREA(ANY_VALUE(geom)), 2) AS coverage_ratio
 FROM
   (SELECT c.coverage AS coverage,
-          b.municipality_name as municipality_name,
+          b.municipality_name AS municipality_name,
           b.geom
    FROM geolab.geography.nl_celltowers AS c
-   INNER JOIN geolab.geography.nl_administrative_areas AS b ON st_intersects(b.geom, c.coverage)
-   WHERE type = 'Municipality')
+   INNER JOIN geolab.geography.nl_administrative_areas AS b ON ST_INTERSECTS(b.geom, c.coverage)
+   WHERE TYPE = 'Municipality')
 GROUP BY municipality_name,
-         st_asgeojson(geom)
-ORDER BY st_geohash(geom);
+         ST_ASGEOJSON(geom)
+ORDER BY ST_GEOHASH(geom);
 
 ALTER TABLE geolab.geography.nl_municipalities_coverage ADD SEARCH OPTIMIZATION ON GEO(geom);
 ```
@@ -645,7 +653,7 @@ ALTER TABLE geolab.geography.nl_municipalities_coverage ADD SEARCH OPTIMIZATION 
 Nice! Now you have a `NL_MUNICIPALITIES_COVERAGE` table that contains the name of the municipality, the boundaries of that municipality, and the boundaries of the LTE coverage area. Let's vizualize this in Carto. Paste the following query into the SQL editor and use `COVERAGE_RATIO` column to color code the coverage areas.
 
 ```
-SELECT geom,
+SELECT coverage_geom as geom,
        coverage_ratio
 FROM geolab.geography.nl_municipalities_coverage;
 ```
@@ -659,13 +667,14 @@ Now imagine you want to calculate what percentage of roads in Netherlands have c
 Run the foillowing query in your Snowflake worksheet:
 
 ```
-SELECT round(100*sum(st_length(st_intersection(coverage.geom, roads.geo_cordinates)))/
-               (SELECT sum(st_length(geo_cordinates))
-                FROM OSM_NL.NETHERLANDS.V_ROAD  roads where class = 'motorway'), 2) AS "Coverage, %"
+SELECT ROUND(100*SUM(ST_LENGTH(ST_INTERSECTION(coverage.geom, roads.geo_cordinates)))/
+               (SELECT SUM(ST_LENGTH(geo_cordinates))
+                FROM OSM_NL.NETHERLANDS.V_ROAD roads
+                WHERE class = 'motorway'), 2) AS "Coverage, %"
 FROM OSM_NL.NETHERLANDS.V_ROAD roads,
      geolab.geography.nl_municipalities_coverage coverage
 WHERE st_intersects(coverage.geom, roads.geo_cordinates)
-and class = 'motorway';
+AND class = 'motorway';
 ```
 
 It seems our LTE network covers more than 95% of the motorways. A good number to call out in a marketing campaign.
@@ -680,12 +689,11 @@ Run the following query in your Snowflake worksheet:
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_lte AS
-SELECT
-    row_number() over(order by null) as id
-    , cell_range
-    , carto.carto.H3_FROMGEOGPOINT(geom, 9) as h3
-FROM geolab.geography.nl_celltowers 
-where radio = 'LTE'
+SELECT row_number() over(ORDER BY NULL) AS id,
+       cell_range,
+       carto.carto.H3_FROMGEOGPOINT(geom, 9) AS h3
+FROM geolab.geography.nl_celltowers
+WHERE radio = 'LTE'
 ORDER BY h3;
 ```
 
@@ -701,29 +709,29 @@ Clustering by H3 will enable CARTO to execute queries faster, which is beneficia
 Run the following query.
 
 ```plaintext
-create or replace table geolab.geography.nl_lte_coverage_h3 as  
-with h3_neighbors as (
-    select id,
-           p.value::string as h3,
-           carto.carto.h3_distance(h3, p.value)::int as h3_distance,
-           ceil(least(nl_lte.cell_range, 2000) / 586)::int as h3_max_distance,
-           -- decay model for signal strength:
-           100 * pow(1 - h3_distance / (h3_max_distance + 1), 2) as signal_strength
-    from geolab.geography.nl_lte nl_lte,
-    table(flatten(input => carto.carto.h3_kring(nl_lte.h3, h3_max_distance))) p
-)
-select h3,
-       -- maxiumum signal strength with noise:
-       max(signal_strength) * uniform(0.8, 1::float, random()) as signal_strength
-from h3_neighbors
-group by h3
-order by h3;
+CREATE OR REPLACE TABLE geolab.geography.nl_lte_coverage_h3 AS WITH h3_neighbors AS
+  (SELECT id,
+          p.value::string AS h3,
+          carto.carto.h3_distance(h3, p.value)::int AS h3_distance,
+          CEIL(LEAST(nl_lte.cell_range, 2000) / 586)::int AS h3_max_distance, 
+          -- decay model for signal strength:
+          100 * pow(1 - h3_distance / (h3_max_distance + 1), 2) AS signal_strength
+   FROM geolab.geography.nl_lte nl_lte,
+        table(flatten(INPUT => CARTO.CARTO.H3_KRING(nl_lte.h3, h3_max_distance))) p)
+SELECT h3, 
+-- maxiumum signal strength with noise:
+ MAX(signal_strength) * UNIFORM(0.8, 1::float, random()) AS signal_strength
+FROM h3_neighbors
+GROUP BY h3
+ORDER BY h3;
 ```
 
 Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
 
 ```
-select h3, signal_strength from geolab.geography.nl_lte_coverage_h3
+SELECT h3,
+       signal_strength
+FROM geolab.geography.nl_lte_coverage_h3
 ```
 
 > aside positive
@@ -746,39 +754,36 @@ Let’s now use the road network from `NL Open Map Data` to see which road segme
 To intersect the road layer with the H3 signal strength layer, we will first split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. Run the following query:
 
 ```plaintext
-create or replace table GEOLAB.GEOGRAPHY.NL_ROADS_H3 AS
--- import roads from OSM:
-with roads as (
-    select 
-        row_number() over(order by null) as road_id, 
-        geo_cordinates as geom
-    from OSM_NL.NETHERLANDS.V_ROAD roads
-    where class in ('primary', 'motorway')
-    and st_dimension(geo_cordinates) = 1
-)
--- In order to compute H3 cells corresponding to each road we need to first 
+CREATE OR REPLACE TABLE GEOLAB.GEOGRAPHY.NL_ROADS_H3 AS -- import roads from OSM:
+WITH roads AS
+  (SELECT row_number() over(
+                            ORDER BY NULL) AS road_id,
+          geo_cordinates AS geom
+   FROM OSM_NL.NETHERLANDS.V_ROAD roads
+   WHERE CLASS in ('primary',
+                   'motorway')
+     AND st_dimension(geo_cordinates) = 1 ) 
+-- In order to compute H3 cells corresponding to each road we need to first
 -- split roads into the line segments. We do it using the ST_POINTN function
-, segments as (
-    select 
-        road_id,
-        value::integer as segment_id,
-        st_makeline(st_pointn(geom, segment_id),  st_pointn(geom, segment_id + 1)) as segment,
-        geom,
-        carto.carto.h3_fromgeogpoint(st_centroid(segment), 9) as h3_center
-    from roads, 
-    lateral flatten(ARRAY_GENERATE_RANGE(1, st_npoints(geom)))
-)
+,
+     segments AS
+  (SELECT road_id,
+          value::integer AS segment_id,
+          st_makeline(st_pointn(geom, segment_id), st_pointn(geom, segment_id + 1)) AS SEGMENT,
+          geom,
+          carto.carto.h3_fromgeogpoint(st_centroid(SEGMENT), 9) AS h3_center
+   FROM roads,
+        LATERAL flatten(ARRAY_GENERATE_RANGE(1, st_npoints(geom)))) 
 -- Next table build the H3 cells covering the roads
 -- For each line segment we find a corresponding H3 cell and then agggerate by road id and H3
 -- At this point we switched from segments to H3 cells covering the roads.
 -- Visualize this in CARTO
-select 
-        road_id,
-        h3_center as h3,
-        any_value(geom) as road_geometry
-    from segments
-    group by 1,2
-order by h3
+SELECT road_id,
+       h3_center AS h3,
+       any_value(geom) AS road_geometry
+FROM segments
+GROUP BY 1, 2
+ORDER BY h3
 ```
 
 If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder (`Add Source From` → `Data Explorer`) you will see tesselated roads.
@@ -791,27 +796,27 @@ Run the following two queries.
 
 ```plaintext
 
-create or replace table GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED AS
-select 
-    road_id, 
-    any_value(road_geometry) as geom,
-    avg(ifnull(signal_strength, 0.0)) as avg_signal_strength,
-    iff(avg_signal_strength >= 50, 'OK Signal', 'No Signal') as signal_category
-from GEOLAB.GEOGRAPHY.NL_ROADS_H3 roads_h3
-left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells
-       on roads_h3.h3 = cells.h3
-group by road_id
-order by st_geohash(geom);
+CREATE OR REPLACE TABLE geolab.geography.osm_nl_not_covered AS
+SELECT road_id,
+       ANY_VALUE(road_geometry) AS geom,
+       AVG(IFNULL(signal_strength, 0.0)) AS avg_signal_strength,
+       IFF(avg_signal_strength >= 50, 'OK Signal', 'No Signal') AS signal_category
+FROM GEOLAB.GEOGRAPHY.NL_ROADS_H3 roads_h3
+LEFT JOIN GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells ON roads_h3.h3 = cells.h3
+GROUP BY road_id
+ORDER BY ST_GEOHASH(geom);
 
-ALTER TABLE GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED ADD search optimization ON GEO(geom);
+
+ALTER TABLE geolab.geography.osm_nl_not_covered ADD SEARCH OPTIMIZATION ON GEO(geom);
 ```
 
 Now that we have classified road segments by signal and no signal, we can run the following simple query to get the length of each geography in meters:
 
 ```
-select signal_category, sum(st_length(geom)/1000)::int as total_km
-from GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED
-group by signal_category;
+SELECT signal_category,
+       SUM(ST_LENGTH(geom)/1000)::int AS total_km
+FROM geolab.geography.osm_nl_not_covered
+GROUP BY signal_category;
 ```
 
 We now know that we have 13,923 km with good coverage and 2,346 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
@@ -841,6 +846,7 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to use constructors like TO_GEOMETRY, ST_MAKELINE.
 * How to reproject between SRIDs using ST_TRANSFORM.
 * How to perform relational calculations like ST_DWITHIN and ST_INTERSECTS.
+* How to perform measurement calculations like ST_LENGTH.
 * How to use set operations like ST_INTERSECTION.
 * How to use Python UDFs for reading Shapefiles and creating custom functions.
 * How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
