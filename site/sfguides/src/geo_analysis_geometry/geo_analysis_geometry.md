@@ -708,7 +708,7 @@ with h3_neighbors as (
     table(flatten(input => carto.carto.h3_kring(nl_lte.h3, h3_max_distance))) p
 )
 select h3,
-       -- maxiumum signal strength with noice:
+       -- maxiumum signal strength with noise:
        max(signal_strength) * uniform(0.8, 1::float, random()) as signal_strength
 from h3_neighbors
 group by h3;
