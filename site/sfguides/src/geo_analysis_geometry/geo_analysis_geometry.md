@@ -786,7 +786,7 @@ select
     geoid, 
     any_value(road_geometry) as geom,
     avg(ifnull(signal_strength, 0.0)) as avg_signal_strength,
-    iff(avg_signal_strength > 50, 'OK Signal', 'No Signal') as signal_category
+    iff(avg_signal_strength >= 50, 'OK Signal', 'No Signal') as signal_category
 from roads_h3
 left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells
 on roads_h3.h3 = cells.h3
@@ -832,5 +832,6 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to reproject between SRIDs using ST_TRANSFORM.
 * How to perform relational calculations like ST_DWITHIN and ST_INTERSECTS.
 * How to use set operations like ST_INTERSECTION.
+* How to use Python UDFs for reading Shapefiles and creating custom functions.
 * How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
 * How to use Search Optimization to speed up geospatial queries.
