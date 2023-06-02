@@ -482,7 +482,7 @@ We can now go to the CARTO account and visualize administrative areas and cables
 
 <img src ='assets/geo_analysis_geometry_27.png' width=700>
 
-* Click on the Add Source From → Data Explorer
+* Click on the `Add Source From` → `Data Explorer`
 
 <img src ='assets/geo_analysis_geometry_28.png' width=700>
 
@@ -781,7 +781,7 @@ select
 order by h3
 ```
 
-If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder you will see tesselated roads.
+If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder (`Add Source From` → `Data Explorer`) you will see tesselated roads.
 
 <img src ='assets/geo_analysis_geometry_39.png' width=700>
 
