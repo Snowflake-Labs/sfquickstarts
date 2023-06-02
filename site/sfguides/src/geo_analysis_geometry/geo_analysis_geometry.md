@@ -532,8 +532,10 @@ Then paste the following query and click on the green `Run` button.
 SELECT province_name,
        cells.geom
 FROM geolab.geography.nl_4g cells
-LEFT JOIN geolab.geography.nl_cables_stations cables ON st_dwithin(cells.geom, cables.geom, 2000)
-JOIN geolab.geography.nl_administrative_areas areas ON st_contains(areas.geom, cells.geom)
+LEFT JOIN geolab.geography.nl_cables_stations cables 
+     ON st_dwithin(cells.geom, cables.geom, 2000)
+JOIN geolab.geography.nl_administrative_areas areas 
+     ON st_contains(areas.geom, cells.geom)
 WHERE cells.radio='LTE'
   AND areas.type = 'Province'
   AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
@@ -581,7 +583,7 @@ Now there is a new columns `coverage` with areas that correspond to the coverage
 SELECT c.coverage AS geom
 FROM geolab.geography.nl_celltowers c
 JOIN geolab.geography.nl_administrative_areas AS b 
-ON st_intersects(b.geom, c.geom)
+  ON st_intersects(b.geom, c.geom)
 WHERE TYPE = 'Municipality'
   AND municipality_name = 'Angerlo';
 ```
@@ -617,7 +619,8 @@ Now run the following query from the CARTO Builder:
 ```
 SELECT PY_UNION_AGG(ARRAY_AGG(st_asgeojson(c.coverage))) as geom
 FROM geolab.geography.nl_celltowers c
-JOIN geolab.geography.nl_administrative_areas AS b ON st_intersects(b.geom, c.geom)
+JOIN geolab.geography.nl_administrative_areas AS b 
+  ON st_intersects(b.geom, c.geom)
 WHERE type = 'Municipality'
 AND municipality_name = 'Angerlo';
 ```
@@ -638,7 +641,7 @@ Run the following two queries:
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_municipalities_coverage AS
 SELECT municipality_name,
-       TO_GEOGRAPHY(ST_ASGEOJSON(geom)) AS geom,
+       TO_GEOGRAPHY(ST_ASGEOJSON(geom)) AS municipality_geom,
        ST_INTERSECTION(ANY_VALUE(geom), PY_UNION_AGG(ARRAY_AGG(ST_ASGEOJSON(coverage)))) AS coverage_geom,
        ROUND(ST_AREA(coverage_geom)/ST_AREA(ANY_VALUE(geom)), 2) AS coverage_ratio
 FROM
@@ -646,10 +649,10 @@ FROM
           b.municipality_name AS municipality_name,
           b.geom
    FROM geolab.geography.nl_celltowers AS c
-   INNER JOIN geolab.geography.nl_administrative_areas AS b ON ST_INTERSECTS(b.geom, c.coverage)
+   INNER JOIN geolab.geography.nl_administrative_areas AS b 
+      ON ST_INTERSECTS(b.geom, c.coverage)
    WHERE TYPE = 'Municipality')
-GROUP BY municipality_name,
-         ST_ASGEOJSON(geom)
+GROUP BY 1, 2
 ORDER BY ST_GEOHASH(geom);
 
 ALTER TABLE geolab.geography.nl_municipalities_coverage ADD SEARCH OPTIMIZATION ON GEO(geom);
@@ -665,32 +668,31 @@ FROM geolab.geography.nl_municipalities_coverage;
 
 <img src ='assets/geo_analysis_geometry_19.gif' width=700>
 
-### What percent of the Dutch roads have LTE coverage?
+### What percent of the Dutch motorways have LTE coverage?
 
-Now imagine you want to calculate what percentage of roads in Netherlands have coverage by LTE network. To get the number, you can employ the `Netherlands Open Map Data` dataset that has NL roads.
+Now imagine you want to calculate what percentage of highways in Netherlands are covered by LTE network. To get the number, you can employ the `Netherlands Open Map Data` dataset that has NL motorways.
 
 Run the foillowing query in your Snowflake worksheet:
 
 ```
-SELECT ROUND(100*SUM(ST_LENGTH(ST_INTERSECTION(coverage.geom, roads.geo_cordinates)))/
-               (SELECT SUM(ST_LENGTH(geo_cordinates))
-                FROM OSM_NL.NETHERLANDS.V_ROAD roads
-                WHERE class = 'motorway'), 2) AS "Coverage, %"
+SELECT SUM(ST_LENGTH(ST_INTERSECTION(coverage.coverage_geom, roads.geo_cordinates))) as covered_length,
+       SUM(ST_LENGTH(ST_INTERSECTION(coverage.municipality_geom, roads.geo_cordinates))) as total_length,
+       ROUND(100 * covered_length / total_length, 2) AS "Coverage, %"
 FROM OSM_NL.NETHERLANDS.V_ROAD roads,
      geolab.geography.nl_municipalities_coverage coverage
-WHERE st_intersects(coverage.geom, roads.geo_cordinates)
+WHERE ST_INTERSECTS(coverage.geom, roads.geo_cordinates)
 AND class = 'motorway';
 ```
 
-It seems our LTE network covers more than 98% of the motorways. A good number to call out in a marketing campaign.
+It seems our LTE network covers almost 100% of the motorways. A good number to call out in a marketing campaign.
 
-### How many kilometers of NL roads have poor or no LTE coverage?
+### Estimating quality of LTE signal on Dutch motorways
 
-As an analyst, you might want to find out how many kilometers of motorways in the NL do not have good coverage by our network. Let's use the `NL Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
+In the previous section we found outs that alsmost all motorwats in Netetherlands are within a range of LTE tower. But the LTE signal may have a different quality depeneding on how close is the tower or how many towers we have. The next question you may ask as an analyis is what motorways in the NL have poor signal quality. 
 
-Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function.
+For this we need to build a signal decay model. We will also H3 to represents signal distribution around the cell towers. H3 functions from `CARTO’s Analytics Toolbox` will help us with that.
 
-Run the following query in your Snowflake worksheet:
+In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function:
 
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_lte AS
@@ -702,36 +704,43 @@ WHERE radio = 'LTE'
 ORDER BY h3;
 ```
 
-Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the `CELL_RANGE` accordingly.
-First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
+Now that we know H3 cell for each LTE tower we can find it's neighboring H3 cells and estimate signal strength in them. First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_KRING` yields an array, we must use the lateral joing to flatten these array.
 
-Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. As we have computed H3 neighbors for each antenna, antennas in close proximity will have generated the same H3 cell multiple times; thus, we will select the one with the strongest signal.
+Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. Multiple towers can cover the same H3 cell multiple times; thus, we will select the one with the strongest signal.
 
-The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. The signal will range from 0 (poor) to 100 (strongest).
+The signal will range from 0 (poor) to 100 (strongest). The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. 
 
 Clustering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
 
-Run the following query.
+Run the following query:
 
 ```plaintext
-CREATE OR REPLACE TABLE geolab.geography.nl_lte_coverage_h3 AS WITH h3_neighbors AS
-  (SELECT id,
+CREATE OR REPLACE TABLE geolab.geography.nl_lte_coverage_h3 AS
+# First estimate max distance in H3 cells
+WITH nl_lte AS (
+    SELECT *,
+           ROUND(LEAST(nl_lte.cell_range, 2000) / 586)::INT AS h3_max_distance
+    FROM geolab.geography.nl_lte
+),
+# Find all neigbouring cells and calculate signal strength
+h3_neighbors AS (
+    SELECT id,
           p.value::string AS h3,
           carto.carto.h3_distance(h3, p.value)::int AS h3_distance,
           CEIL(LEAST(nl_lte.cell_range, 2000) / 586)::int AS h3_max_distance, 
-          -- decay model for signal strength:
+          # decay model for signal strength:
           100 * pow(1 - h3_distance / (h3_max_distance + 1), 2) AS signal_strength
    FROM geolab.geography.nl_lte nl_lte,
         table(flatten(INPUT => CARTO.CARTO.H3_KRING(nl_lte.h3, h3_max_distance))) p)
 SELECT h3, 
--- maxiumum signal strength with noise:
- MAX(signal_strength) * UNIFORM(0.8, 1::float, random()) AS signal_strength
+# maxiumum signal strength with noise:
+       MAX(signal_strength) * UNIFORM(0.8, 1::float, random()) AS signal_strength
 FROM h3_neighbors
 GROUP BY h3
 ORDER BY h3;
 ```
 
-Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
+Now that we have created our signal decay model, let’s visualize it in CARTO. For that, we can just run the following query from the query console into a new map.
 
 ```
 SELECT h3,
@@ -756,11 +765,13 @@ We can also change the relation between the zoom level and the resolution. The h
 <img src ='assets/geo_analysis_geometry_36.gif' width=700>
 
 Let’s now use the road network from `NL Open Map Data` to see which road segments have good coverage and which do not.
-To intersect the road layer with the H3 signal strength layer, we will first split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. Run the following query:
+To intersect the road layer with the H3 signal strength layer we need to find H3 cells covering all motorways in the NL.
+
+The query below demonstrates one way of doing this. First we split the road geometries into simple segments and compute the H3 index for in the middle of each segment. Then we aggregate all segments back. Run the following query:
 
 ```plaintext
 CREATE OR REPLACE TABLE GEOLAB.GEOGRAPHY.NL_ROADS_H3 AS 
--- import roads from OSM:
+# import roads from OSM:
 WITH roads AS
   (SELECT row_number() over(
                             ORDER BY NULL) AS road_id,
@@ -768,8 +779,8 @@ WITH roads AS
    FROM OSM_NL.NETHERLANDS.V_ROAD roads
    WHERE class in ('primary', 'motorway')
      AND st_dimension(geo_cordinates) = 1),
--- In order to compute H3 cells corresponding to each road we need to first
--- split roads into the line segments. We do it using the ST_POINTN function
+# In order to compute H3 cells corresponding to each road we need to first
+# split roads into the line segments. We do it using the ST_POINTN function
      segments AS
   (SELECT road_id,
           value::integer AS segment_id,
@@ -778,10 +789,9 @@ WITH roads AS
           carto.carto.h3_fromgeogpoint(st_centroid(SEGMENT), 9) AS h3_center
    FROM roads,
         LATERAL flatten(ARRAY_GENERATE_RANGE(1, st_npoints(geom)))) 
--- Next table build the H3 cells covering the roads
--- For each line segment we find a corresponding H3 cell and then agggerate by road id and H3
--- At this point we switched from segments to H3 cells covering the roads.
--- Visualize this in CARTO
+# Next table build the H3 cells covering the roads
+# For each line segment we find a corresponding H3 cell and then agggerate by road id and H3
+# At this point we switched from segments to H3 cells covering the roads.
 SELECT road_id,
        h3_center AS h3,
        any_value(geom) AS road_geometry
