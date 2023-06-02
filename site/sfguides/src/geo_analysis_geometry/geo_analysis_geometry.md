@@ -750,8 +750,8 @@ create or replace table GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED AS
 -- import roads from OSM:
 with roads as (
     select 
-        row_number() over(order by null) as geoid
-        , geo_cordinates as geom
+        row_number() over(order by null) as road_id, 
+        geo_cordinates as geom
     from OSM_NL.NETHERLANDS.V_ROAD roads
     where class in ('primary', 'motorway')
     and st_dimension(geo_cordinates) = 1
@@ -760,7 +760,7 @@ with roads as (
 -- split roads into the line segments. We do it using the ST_POINTN function
 , segments as (
     select 
-        geoid, -- ID for each minimal road segment
+        road_id,
         value::integer as segment_id,
         st_makeline(st_pointn(geom, segment_id),  st_pointn(geom, segment_id + 1)) as segment,
         geom,
@@ -774,7 +774,7 @@ with roads as (
 -- Visualize this in CARTO
 , roads_h3 as (
     select 
-        geoid,
+        road_id,
         h3_center as h3,
         any_value(geom) as road_geometry
     from segments
@@ -783,14 +783,14 @@ with roads as (
 -- Now we use signal decay model that we build privously to estimate the average signal along each road
 -- For this we need to join two tables using H3 cell id and aggregate the result by road id.
 select 
-    geoid, 
+    road_id, 
     any_value(road_geometry) as geom,
     avg(ifnull(signal_strength, 0.0)) as avg_signal_strength,
     iff(avg_signal_strength >= 50, 'OK Signal', 'No Signal') as signal_category
 from roads_h3
 left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells
-on roads_h3.h3 = cells.h3
-group by geoid
+       on roads_h3.h3 = cells.h3
+group by road_id
 order by st_geohash(geom);
 
 ALTER TABLE GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED ADD search optimization ON GEO(geom);
