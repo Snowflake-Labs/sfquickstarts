@@ -806,13 +806,13 @@ group by signal_category;
 
 We now know that we have 13,923 km with good coverage and 2,346 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
 
-Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
+Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal_category feature we created.
 
 For this, we can add the layer via `Add source from` → `Data Explorer`. Then select your connection and the `GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED` table.
 
 <img src ='assets/geo_analysis_geometry_38.png' width=700>
 
-Once we have our second layer on the map, we can click on it to style it and show the stroke color based on our “signal” column. For that create a “Custom palette” with just two colors: gray for roads with good signal and red for roads with no/poor signal.
+Once we have our second layer on the map, we can click on it to style it and show the stroke color based on our `SIGNAL_CATEGORY` column. For that create a “Custom palette” with just two colors: gray for roads with good signal and red for roads with no/poor signal.
 
 <img src ='assets/geo_analysis_geometry_37.gif' width=700>
 
