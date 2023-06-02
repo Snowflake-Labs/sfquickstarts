@@ -711,7 +711,8 @@ select h3,
        -- maxiumum signal strength with noise:
        max(signal_strength) * uniform(0.8, 1::float, random()) as signal_strength
 from h3_neighbors
-group by h3;
+group by h3
+order by h3;
 ```
 
 Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
@@ -772,6 +773,7 @@ select
         any_value(geom) as road_geometry
     from segments
     group by 1,2
+order by h3
 ```
 
 If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder you will see tesselated roads.
