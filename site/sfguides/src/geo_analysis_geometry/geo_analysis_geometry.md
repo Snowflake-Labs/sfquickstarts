@@ -703,7 +703,7 @@ with h3_neighbors as (
         , p.value::string as h3
         , carto.carto.h3_distance(h3, p.value) as h3_distance
     from geolab.geography.nl_lte,
-    table(flatten(input => carto.carto.h3_kring(h3, ceil(least(cell_range, 6000) / 586)::int
+    table(flatten(input => carto.carto.h3_kring(h3, ceil(least(cell_range, 2000) / 586)::int
         ))) p
 ), 
 max_distance_per_antena as (
@@ -779,12 +779,12 @@ with roads as (
     order by geoid, segment_id)
 select 
     geoid
-    , case -- No signal if no coverage, or under 30
-        when (h3 is null or signal_strength <= 30) then 'No Signal'
+    , case -- No signal if no coverage, or under 50
+        when (h3 is null or signal_strength <= 50) then 'No Signal'
         else 'OK Signal'
     end as signal
     , case -- This parameter we will use for visualization purposes
-        when (h3 is null or signal_strength <= 30) then 2
+        when (h3 is null or signal_strength <= 50) then 2
         else 1
     end as road_width
     , st_collect(segment) as geom -- This is creating the original road segments by collecting them.
@@ -806,7 +806,7 @@ from GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED
 group by signal;
 ```
 
-We now know that we have 14,125 km with good coverage and 2,144 with poor/no coverage. Interestingly, that is about 13 % of the NL roads!
+We now know that we have 13,290 km with good coverage and 2,978 with poor/no coverage. Interestingly, that is about 18 % of the NL roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 
