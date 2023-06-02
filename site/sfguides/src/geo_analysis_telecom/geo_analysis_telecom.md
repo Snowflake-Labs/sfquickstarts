@@ -371,7 +371,7 @@ Now let’s do the query in CARTO Builder to see where the point is.
 
 <img src ='assets/geo_sf_carto_telco_20.png' width=700>
 
-* Then click on `Custom Query` and make sure you have selected Snowflake Connection that  you have created in previous steps. 
+* Then click on `Custom Query` and make sure you have selected Snowflake Connection that you have created in previous steps. 
 
 <img src ='assets/geo_sf_carto_telco_21.gif' width=700>
 
