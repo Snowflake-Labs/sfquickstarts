@@ -737,16 +737,10 @@ We can also change the relation between the zoom level and the resolution. The h
 <img src ='assets/geo_analysis_geometry_36.gif' width=700>
 
 Let’s now use the road network from `NL Open Map Data` to see which road segments have good coverage and which do not.
-To intersect the road layer with the H3 signal strength layer, we will split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. We will then join on the H3 index and keep as 'No signal' all of the road segments with no coverage or coverage of under "30". 
-
-Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the `ST_COLLECT` function.
-
-Finally, we use the same `H3_FROMGEOGPOINT` for the selected resolution and we use the Linestring centroid for the point geography.
-
-Run the following two queries.
+To intersect the road layer with the H3 signal strength layer, we will first split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. Run the following query:
 
 ```plaintext
-create or replace table GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED AS
+create or replace table GEOLAB.GEOGRAPHY.ROADS_H3 AS
 -- import roads from OSM:
 with roads as (
     select 
@@ -772,22 +766,31 @@ with roads as (
 -- For each line segment we find a corresponding H3 cell and then agggerate by road id and H3
 -- At this point we switched from segments to H3 cells covering the roads.
 -- Visualize this in CARTO
-, roads_h3 as (
-    select 
+select 
         road_id,
         h3_center as h3,
         any_value(geom) as road_geometry
     from segments
     group by 1,2
-)
--- Now we use signal decay model that we build privously to estimate the average signal along each road
--- For this we need to join two tables using H3 cell id and aggregate the result by road id.
+```
+
+If you visualize table `GEOLAB.GEOGRAPHY.ROADS_H3` in CARTO Builder you will see tesselated roads.
+
+<img src ='assets/geo_analysis_geometry_39.png' width=700>
+
+Now we use signal decay model that we build privously to estimate the average signal along each road. For this we need to join two tables (tesselated roads and the signal strenght) using H3 cell id and aggregate the result by road id.
+
+Run the following two queries.
+
+```plaintext
+
+create or replace table GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED AS
 select 
     road_id, 
     any_value(road_geometry) as geom,
     avg(ifnull(signal_strength, 0.0)) as avg_signal_strength,
     iff(avg_signal_strength >= 50, 'OK Signal', 'No Signal') as signal_category
-from roads_h3
+from GEOLAB.GEOGRAPHY.ROADS_H3 roads_h3
 left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells
        on roads_h3.h3 = cells.h3
 group by road_id
