@@ -740,7 +740,7 @@ Let’s now use the road network from `NL Open Map Data` to see which road segme
 To intersect the road layer with the H3 signal strength layer, we will first split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. Run the following query:
 
 ```plaintext
-create or replace table GEOLAB.GEOGRAPHY.ROADS_H3 AS
+create or replace table GEOLAB.GEOGRAPHY.NL_ROADS_H3 AS
 -- import roads from OSM:
 with roads as (
     select 
@@ -774,7 +774,7 @@ select
     group by 1,2
 ```
 
-If you visualize table `GEOLAB.GEOGRAPHY.ROADS_H3` in CARTO Builder you will see tesselated roads.
+If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder you will see tesselated roads.
 
 <img src ='assets/geo_analysis_geometry_39.png' width=700>
 
@@ -790,7 +790,7 @@ select
     any_value(road_geometry) as geom,
     avg(ifnull(signal_strength, 0.0)) as avg_signal_strength,
     iff(avg_signal_strength >= 50, 'OK Signal', 'No Signal') as signal_category
-from GEOLAB.GEOGRAPHY.ROADS_H3 roads_h3
+from GEOLAB.GEOGRAPHY.NL_ROADS_H3 roads_h3
 left join GEOLAB.GEOGRAPHY.NL_LTE_COVERAGE_H3 cells
        on roads_h3.h3 = cells.h3
 group by road_id
