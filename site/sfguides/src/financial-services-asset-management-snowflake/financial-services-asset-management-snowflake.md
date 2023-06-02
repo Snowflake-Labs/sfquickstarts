@@ -74,7 +74,7 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
 
 
 <!-- ------------------------ -->
-## 10 Setup
+## 10 Setup - TBD
 Duration: 2
 
 We setup
