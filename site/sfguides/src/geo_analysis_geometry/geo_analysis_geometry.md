@@ -799,12 +799,12 @@ ALTER TABLE GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED ADD search optimization ON GEO(g
 Now that we have classified road segments by signal and no signal, we can run the following simple query to get the length of each geography in meters:
 
 ```
-select signal, sum(st_length(geom)/1000)::int as total_km
+select signal_category, sum(st_length(geom)/1000)::int as total_km
 from GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED
-group by signal;
+group by signal_category;
 ```
 
-We now know that we have 13,290 km with good coverage and 2,978 with poor/no coverage. Interestingly, that is about 18 % of the NL roads!
+We now know that we have 13,923 km with good coverage and 2,346 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 
