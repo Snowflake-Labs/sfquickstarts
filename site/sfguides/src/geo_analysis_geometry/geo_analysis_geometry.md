@@ -21,10 +21,10 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 ### What You’ll Learn
 * How to acquire geospatial data from the Snowflake Marketplace
-* How to load geospatial data
-* How to interpret the `GEOMETRY` data type
+* How to load geospatial data from internal and external Stages
+* How to interpret the `GEOMETRY` data type and how it differs from the `GEOGRAPHY`
 * How to understand the different formats that `GEOMETRY` can be expressed in
-* How to do spatial analysis using Power and Utilities use case
+* How to do spatial analysis using the GEOMETRY and GEOGRAPHY data types
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
@@ -448,7 +448,7 @@ In many areas, especially rural or remote ones, cell towers might be located far
 
 Our analysis aims to identify mobile cell towers that are not near an existing electricity grid. This information could be used to prioritize areas for grid expansion, to improve the efficiency of renewable energy source installations (like solar panels or wind turbines), or to consider alternative energy solutions.
 
-For this example let's use GEOGRAPHY data type. As a first step, let's create GEOGRAPHY equivalents for energy grids and boundaries table. For that we need to reproject GEOMETRY column in each of the tables into mapping system WGS 84 (SRID=4326) and then convert to GEOGRAPHY data type. Run following queries that create new tables and enable search optimization for each of them in order to iincrease the performance of spatial operations. 
+For this and the next examples let's use GEOGRAPHY data type as it can be easyly visualized using CARTO. As a first step, let's create GEOGRAPHY equivalents for energy grids and boundaries table. For that we need to reproject GEOMETRY column in each of the tables into mapping system WGS 84 (SRID=4326) and then convert to GEOGRAPHY data type. Run following queries that create new tables and enable search optimization for each of them in order to iincrease the performance of spatial operations. 
 
 ```
 // Creating a table with GEOGRAPHY for nl_administrative_areas
