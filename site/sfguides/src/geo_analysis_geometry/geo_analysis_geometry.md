@@ -613,7 +613,7 @@ Let's now for every municipality compute the following:
 * The area that is covered by the LTE network
 * The numerical value of coverage ratio by the LTE network
 
-Use the table `nl_celltowers`, and first join it with `nl_administrative_areas` using `ST_INTERSECTS` predicate to match cell towers to the municipalities they cover. Then we use `PY_UNION_AGG` to get a combined coverage polygon. Then use `ST_INTERSECTION` to find an potion of the municipality that is covered by the LTE signal. Then we compute the covered area in square meters. The result will be saved in the new table. To speed up queries against that newly created table, you will enable the search optimization feature.
+Use the table `nl_celltowers`, and first join it with `nl_administrative_areas` using `ST_INTERSECTS` predicate to match cell towers to the municipalities they cover. Then we use `PY_UNION_AGG` to get a combined coverage polygon. Then use `ST_INTERSECTION` to find an portion of the municipality that is covered by the LTE signal. Then we compute the covered area in square meters. The result will be saved in the new table. To speed up queries against that newly created table, you will enable the search optimization feature.
 
 Run the following two queries:
 
@@ -821,16 +821,16 @@ Once we have our second layer on the map, we can click on it to style it and sho
 
 ## Conclusion
 
-In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the GEOMETRY data type works and how it differs from the GEOGRAPHY. You converted one data type into another and queried geospatial data using parser, constructor, transformation, calculation and H3 functions on single tables and multiple tables with joins. You then saw how newly constructed geospatial objects could be visualized using CARTO.
+In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the GEOMETRY data type works and how it differs from the GEOGRAPHY. You converted one data type into another and queried geospatial data using parser, constructor, transformation, calculation and H3 functions on single tables and multiple tables with joins. You then saw how geospatial objects could be visualized using CARTO.
 
 You are now ready to explore the larger world of Snowflake geospatial support and geospatial functions.
 
 ### What we've covered
 * How to acquire a shared database from the Snowflake Marketplace and from External and internal storages.
 * The GEOMETRY data type, its formats GeoJSON, WKT, EWKT, WKB, and EWKB, and how to switch between them.
-* How to use constructors like TO_GEOMETRY, ST_MAKEPOINT, ST_MAKELINE.
+* How to use constructors like TO_GEOMETRY, ST_MAKELINE.
 * How to reproject between SRIDs using ST_TRANSFORM.
-* How to perform measurement calculations like ST_DISTANCE.
-* How to perform relational calculations like ST_DWITHIN and ST_WITHIN.
+* How to perform relational calculations like ST_DWITHIN and ST_INTERSECTS.
+* How to use set operations like ST_INTERSECTION.
 * How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
 * How to use Search Optimization to speed up geospatial queries.
