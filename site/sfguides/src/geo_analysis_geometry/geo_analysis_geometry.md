@@ -668,7 +668,7 @@ FROM geolab.geography.nl_municipalities_coverage;
 
 <img src ='assets/geo_analysis_geometry_19.gif' width=700>
 
-### What percent of the Dutch motorways have LTE coverage?
+### What percent of the Dutch highways have LTE coverage?
 
 Now imagine you want to calculate what percentage of highways in Netherlands are covered by LTE network. To get the number, you can employ the `Netherlands Open Map Data` dataset that has NL motorways.
 
@@ -680,15 +680,15 @@ SELECT SUM(ST_LENGTH(ST_INTERSECTION(coverage.coverage_geom, roads.geo_cordinate
        ROUND(100 * covered_length / total_length, 2) AS "Coverage, %"
 FROM OSM_NL.NETHERLANDS.V_ROAD roads,
      geolab.geography.nl_municipalities_coverage coverage
-WHERE ST_INTERSECTS(coverage.geom, roads.geo_cordinates)
-AND class = 'motorway';
+WHERE ST_INTERSECTS(coverage.municipality_geom, roads.geo_cordinates)
+AND class in ('primary', 'motorway');
 ```
 
-It seems our LTE network covers almost 100% of the motorways. A good number to call out in a marketing campaign.
+It seems our LTE network covers almost 100% of the highways. A good number to call out in a marketing campaign.
 
-### Estimating quality of LTE signal on Dutch motorways
+### Estimating quality of LTE signal on Dutch highways
 
-In the previous section we found outs that alsmost all motorwats in Netetherlands are within a range of LTE tower. But the LTE signal may have a different quality depeneding on how close is the tower or how many towers we have. The next question you may ask as an analyis is what motorways in the NL have poor signal quality. 
+In the previous section we found outs that almost all highways in Netetherlands are within a range of LTE tower. But the LTE signal may have a different quality depeneding on how close is the tower or how many towers we have. The next question you may ask as an analyis is what motorways in the NL have poor signal quality. 
 
 For this we need to build a signal decay model. We will also H3 to represents signal distribution around the cell towers. H3 functions from `CARTO’s Analytics Toolbox` will help us with that.
 
@@ -716,24 +716,24 @@ Run the following query:
 
 ```plaintext
 CREATE OR REPLACE TABLE geolab.geography.nl_lte_coverage_h3 AS
-# First estimate max distance in H3 cells
+// First estimate max distance in H3 cells
 WITH nl_lte AS (
     SELECT *,
            ROUND(LEAST(nl_lte.cell_range, 2000) / 586)::INT AS h3_max_distance
     FROM geolab.geography.nl_lte
 ),
-# Find all neigbouring cells and calculate signal strength
+// Find all neigbouring cells and calculate signal strength
 h3_neighbors AS (
     SELECT id,
           p.value::string AS h3,
           carto.carto.h3_distance(h3, p.value)::int AS h3_distance,
           CEIL(LEAST(nl_lte.cell_range, 2000) / 586)::int AS h3_max_distance, 
-          # decay model for signal strength:
+          // decay model for signal strength:
           100 * pow(1 - h3_distance / (h3_max_distance + 1), 2) AS signal_strength
    FROM geolab.geography.nl_lte nl_lte,
         table(flatten(INPUT => CARTO.CARTO.H3_KRING(nl_lte.h3, h3_max_distance))) p)
 SELECT h3, 
-# maxiumum signal strength with noise:
+// maxiumum signal strength with noise:
        MAX(signal_strength) * UNIFORM(0.8, 1::float, random()) AS signal_strength
 FROM h3_neighbors
 GROUP BY h3
@@ -771,7 +771,7 @@ The query below demonstrates one way of doing this. First we split the road geom
 
 ```plaintext
 CREATE OR REPLACE TABLE GEOLAB.GEOGRAPHY.NL_ROADS_H3 AS 
-# import roads from OSM:
+// import roads from OSM:
 WITH roads AS
   (SELECT row_number() over(
                             ORDER BY NULL) AS road_id,
@@ -779,8 +779,8 @@ WITH roads AS
    FROM OSM_NL.NETHERLANDS.V_ROAD roads
    WHERE class in ('primary', 'motorway')
      AND st_dimension(geo_cordinates) = 1),
-# In order to compute H3 cells corresponding to each road we need to first
-# split roads into the line segments. We do it using the ST_POINTN function
+// In order to compute H3 cells corresponding to each road we need to first
+// split roads into the line segments. We do it using the ST_POINTN function
      segments AS
   (SELECT road_id,
           value::integer AS segment_id,
@@ -789,9 +789,9 @@ WITH roads AS
           carto.carto.h3_fromgeogpoint(st_centroid(SEGMENT), 9) AS h3_center
    FROM roads,
         LATERAL flatten(ARRAY_GENERATE_RANGE(1, st_npoints(geom)))) 
-# Next table build the H3 cells covering the roads
-# For each line segment we find a corresponding H3 cell and then agggerate by road id and H3
-# At this point we switched from segments to H3 cells covering the roads.
+// Next table build the H3 cells covering the roads
+// For each line segment we find a corresponding H3 cell and then agggerate by road id and H3
+// At this point we switched from segments to H3 cells covering the roads.
 SELECT road_id,
        h3_center AS h3,
        any_value(geom) AS road_geometry
@@ -804,7 +804,7 @@ If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder (`Add Sou
 
 <img src ='assets/geo_analysis_geometry_39.png' width=700>
 
-Now we use signal decay model that we've build privously to estimate the average signal along each road. For this we need to join two tables (tesselated roads and the signal strenght) using H3 cell id and aggregate the result by road id.
+Now we use signal decay model that we've build privously to estimate the average signal along each highway. For this we need to join two tables (tesselated highways and the signal strenght) using H3 cell id and aggregate the result by road id.
 
 Run the following two queries.
 
@@ -834,7 +834,7 @@ GROUP BY signal_category;
 
 We now know that we have 13,938 km with good coverage and 2,331 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
 
-Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal_category feature we created.
+Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the `SIGNAL_CATEGORY` feature we created.
 
 For this, we can add the layer via `Add source from` → `Data Explorer`. Then select your connection and the `GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED` table.
 
