@@ -3,7 +3,7 @@ id: geo_analysis_geometry
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
