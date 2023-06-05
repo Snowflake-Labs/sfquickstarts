@@ -15,7 +15,7 @@ Duration: 1
 This Quickstart shows how to use Fluentd to send system event logs to Snowflake for use as a SIEM or log storage. Fluentd is open-source software that parses event logs, application logs, and clickstreams, converts the semi- or un-structured data to structured data, and stores the structured data in an S3 bucket.
 For details about Fluentd, see: [https://www.fluentd.org/](https://www.fluentd.org/)
 
-This Quickstart provides the configuration steps needed to successfully set up this integration. We use Apache HTTP Server to generate access log files and upload them as gzip files to the S3 external stage. Next, we set up Snowpipe to retrieve the gzip files from the external stage. Finally we use Snowsight to visualize log events.
+This Quickstart provides the configuration steps needed to successfully set up this integration. We use Apache HTTP Server to generate access log files that we upload as gzip files to the S3 external stage. Next, we set up Snowpipe to retrieve the gzip files from the external stage. Finally we use Snowsight to visualize log events.
 
 > aside positive 
 >
