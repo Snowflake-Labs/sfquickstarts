@@ -94,7 +94,7 @@ To learn more about how to submit a pull request on GitHub in general, check out
 
 ## Reporting issues or errata in Quickstarts
 
-If you encounter an issue in a Quickstart (outdated copy or data, typos, broken links, etc.), [please file an issue](https://github.com/Snowflake-Labs/sfquickstarts/issues](https://github.com/Snowflake-Labs/sfquickstarts/issues/new/choose). Be sure to include the following information:
+If you encounter an issue in a Quickstart (outdated copy or data, typos, broken links, etc.), [please file an issue](https://github.com/Snowflake-Labs/sfquickstarts/issues/new/choose). Be sure to include the following information:
 
 1. The title of the Quickstart
 2. A link to the Quickstart
