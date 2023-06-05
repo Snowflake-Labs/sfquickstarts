@@ -91,3 +91,12 @@ You can always read the [sample Quickstart](site/sfguides/src/sample/sample.md) 
 9. Snowflake will review and approve the submission
 
 To learn more about how to submit a pull request on GitHub in general, check out GitHub's [official documentation](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
+
+## Reporting issues or errata in Quickstarts
+
+If you encounter an issue in a Quickstart (outdated copy or data, typos, broken links, etc.), [please file an issue](https://github.com/Snowflake-Labs/sfquickstarts/issues](https://github.com/Snowflake-Labs/sfquickstarts/issues/new/choose). Be sure to include the following information:
+
+1. The title of the Quickstart
+2. A link to the Quickstart
+3. A description of the problem
+4. A proposed solution, if applicable (optional)
