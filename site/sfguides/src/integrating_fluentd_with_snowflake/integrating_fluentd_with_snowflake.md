@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SIEM, Data Governance
 
-# Integrating Fluentd With Snowflake
+# Using Fluentd to Send Log Files to Snowflake for Security Analytics
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
