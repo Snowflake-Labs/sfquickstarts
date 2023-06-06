@@ -161,6 +161,8 @@ Build un the <button>[finserv demo 70 SnowSight](https://github.com/Snowflake-La
 
 You can watch a [Youtube of building the dashboard](https://youtu.be/pirYEnJWbnM?t=4223).
 
+![Snowsight Dashboard](assets/finserv_snowsight_dashboard.jpg)
+
 <!-- ------------------------ -->
 ## Script "90 Optional Reset"
 Duration: 2
