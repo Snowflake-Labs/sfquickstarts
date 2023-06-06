@@ -1,4 +1,4 @@
-author: vskarine
+author: ashleynagaki, vskarine
 id: getting_started_with_streamlit_in_snowflake
 summary: How to run custom Streamlit app in Snowflake 
 categories: Streamlit
@@ -7,176 +7,125 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Streamlit in Snowflake Guide
+# Quickstart Guide: Cybersyn Streamlit in Snowflake - Financial Demo
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+In this guide, we will review how to build a Streamlit App within Snowflake that allows you to easily demo Cybersyn’s Financial Data Package data tables with charts built in Vega-Lite.
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
+### What is Streamlit?
+Streamlit is a pure-Python open source application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about Streamlit.
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+### What is Vega-Lite? 
+Vega-Lite is an open-source high-level grammar of interactive graphics. It provides a concise, declarative JSON syntax to create an expressive range of visualizations for data analysis and presentation.
+
+### What You’ll Build?
+An application on Streamlit within Snowflake that connects directly to a data listing acquired (for free) through the Snowflake Marketplace. This application allows users to quickly demonstrate usage examples from data in the Cybersyn Financial Data Package. This data specifically focuses on the US banking system and respective financials and performance.
+
+### What You’ll Learn? 
+- How to access data from Snowflake Marketplace
+- How to create and run Streamlit in Snowflake
+- How to create VegaLite charts in Streamlit
 
 ### Prerequisites
-- Familiarity with Markdown syntax
+A Snowflake account
+- Login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges). Keep this tab open during the session.
+  - Click on the Billing on the left side panel
+  - Click on Terms and Billing
+  - Read and accept terms to continue
 
-### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
-
-### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
-
-### What You’ll Build 
-- A Snowflake Guide
 
 <!-- ------------------------ -->
-## Metadata Configuration
+## Setting up the Streamlit Application
 Duration: 2
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+### Step 1: Accessing Data in Snowflake Marketplace
+After logging into your Snowflake account, access Cybersyn’s Financial Data Package in the Marketplace. 
+- Click the Get button on the top right box on the listing
+- Read and accept terms by clicking Get again 
+  - Note: This data listing is available for free, at no additional charge. 
+- The data is now available in your Snowflake instance, as the FINANCIAL_DATA_PACKAGE database under Data on the left hand side panel.
 
+### Step 2: Create a Database & Schema
+- On the left side panel, click Data. 
+- Click the blue + Database button in the top right corner. 
+- Create a new database with a name of your choosing (eg. FINANCIAL_STREAMLIT) for the Streamlit to live in.
+- Create a new Schema in the new database (eg. FINANCIAL_STREAMLIT) with a name of your choosing (eg. STREAMLIT).
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
+### Step 3: Create a Streamlit
+- On the left side panel, click Streamlit. 
+- Click the blue button, blue + Streamlit App button in the top right corner.
+  - Name your App (eg. Financial Streamlit)
+  - Select a Warehouse. 
+  - Select the database and schema for your app. If you followed Step 2, select this database (eg. FINANCIAL_STREAMLIT and STREAMLIT).
+  - Click the blue Create button
+  - Delete all of the existing code.
 
----
+### Step 4: Copy the Python code from GitHub
+[Button to the GitHub setup file ‘streamlit_app.py’]
 
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
+- Click the button above which will direct you to our FInancial Streamlit Python Setup file that is hosted on GitHub. 
+- Within GitHub navigate to the right side and click the ‘Copy raw contents’ button on the top right of the code block. This will copy all of the required Python into your clipboard. 
+- Paste the Python code to the Streamlit code block in your newly created Streamlit in Snowflake.
+
+[Can we add in a scrollable code block and paste in GitHub code?]
+
+### Step 5: Create a Database & Schema
+- Click the blue Run button  on the top right corner. 
+- Wait for app to load. 
+  - Note: If there is an error then try to refresh the page. If you continue to receive an error, please ensure that under Data you see the FINANCIAL_DATA_PACKAGE listing in your databases. 
+
+#### You’ve successfully built the Cybersyn Financial Streamlit in Snowflake!
 
 
 <!-- ------------------------ -->
-## Creating a Step
+## Walk-through of the App Functionality
 Duration: 2
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+To see the Streamlit in the full window, click < Streamlit Apps on the top left and reopen the application you created (eg. Financial Streamlit). 
 
-```markdown
-## Step 1 Title
-Duration: 3
+[gif of streamlit app] 
 
-All the content for the step goes here.
+All charts are setup to show a chart summary of the data, the raw data, and the SQL query to recreate the analysis.
+ 
+### Chart 1: Deposits by Size of Bank
+[screenshot of chart] 
+- This chart allows the user to see the US bank deposits broken down by Top 25 Banks and All Others since January 1999. 
+- Data is sourced from FRED. 
 
-## Step 2 Title
-Duration: 1
+### Chart 2: Share of Total Commercial Bank Deposits, Small Banks (Non-Top 25)
+[screenshot of chart] 
+- This chart shows the share of deposits help by the banks that are not in the top 25 US banks by total deposits. 
+- Data is sourced from FRED. 
 
-All the content for the step goes here.
-```
+### Chart 3: Deposit Flows by Size of Bank, WoW
+[screenshot of chart] 
+- This chart shows the WoW deposit inflows and (outflows) for banks. 
+- The chart can be filtered by date and the user can add in ‘Top 25 Banks’ and ‘All Other Banks’ to see the two breakdowns.
+- Data is sourced from FRED.
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+### Chart 4: Monthly Change in Bank Branches Since COVID-19
+[screenshot of chart]
+- This chart shows the monthly and cumulative change of bank branch openings and closures since January 2018. 
+- Data is sourced from FFIEC.
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+### Chart 5: As of Dec '23: Banks w/ $10B Assets with Lowest FDIC Insured Deposits
+[screenshot of chart]
+- This chart shows the banks with lowest FDIC insured deposits as of December 2022. 
+- Data is sourced from FDIC.
 
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
+### Chart 6: Bank Failures by Quarter
+[screenshot of chart]
+- This chart shows the number of bank failures by quarter. 
+- Data is sourced from FFIEC.
 
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+### Chart 7: Banking Industry Net Interest Income vs. Fed Funds Rate
+[screenshot of chart]
+- This chart shows net interest income by the bar charts against the left axis and the Fed Funds Rate in the line graph against the right axis since March 1985. 
+- Data is sourced from FRED.
 
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
-
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Puppy](assets/SAMPLE.jpg)
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
-
-<!-- ------------------------ -->
-## Conclusion
-Duration: 1
-
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
-
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+### Chart 8: Interest Expense / Interest Income Ratio vs Fed Funds Rate
+[screenshot of chart]
+- This chart shows the ratio of Interest Expense to Interest Income and compares it to the Fed Funds Rate since March 1985.
+- Data is sourced from FRED.
