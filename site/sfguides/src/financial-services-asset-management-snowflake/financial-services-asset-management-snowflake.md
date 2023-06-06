@@ -1,21 +1,24 @@
 author: Allen Wong
 id: financial-services-asset-management-snowflake
 summary: Financial Services Asset Management Demo
-categories: Getting-Started
+categories: Getting-Started, Financial-Services
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Financial Services Asset Management
+# Financial Services Asset Management: 3 Billion Trades with Real-Time Cash & PnL
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
 **Summary**
 - What would a Single Version of the Truth (SVOT) for Asset Managers on Snowflake look like?
+- We demo and build this Snowsight dashboard.  We avoid FTP by using the free Knoema stock market history dataset on Snowflake.  We size up compute to a 2XL to build 3 billion rows of synthetic data.  Then we save significant time and money by using only Small Compute to query.
 
-**Youtube Demo and Build this Quickstart from scratch**
+![Snowsight Dashboard](assets/finserv_snowsight_dashboard.jpg)
+
+**Step-by-step Youtube Demo and Build**
 <video id="pirYEnJWbnM"></video>
 
 **Github**
@@ -23,17 +26,6 @@ Duration: 1
 
 **Problem Statement:**
 - Asset managers (big banks, insurance companies, and hedge funds) have spent hundreds of millions of dollars on systems to quickly and accurately give a SVOT in real-time.   These systems are critical especially in times of market stress like the Great Financial Crisis or any unexpected market change. 
-
-**Why Snowflake**
-- SnowSight allows you to create and share dashboards for executives, portfolio managers, risk managers, and traders.
-- Significantly high performance and less cost of maintaining one SVOT    
-- Near-Unlimited Compute and Concurrency enable quick data-driven decisions
-
-
-**What we will see**
-- Use Data Marketplace to instantly get free stock price history from the Zepl data share
-- Query trade, cash, positions, and PnL (Profit and Loss) on Snowflake
-- Use Window Functions to automate cash, position, and PnL reporting
 
 
 ### Prerequisites
@@ -53,19 +45,6 @@ Duration: 1
 - Drop and Undrop Tables
 
 
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-- **summary**: Financial Services Asset Management
-  - Query 3 billion rows with small compute in 3 seconds
-- **id**: financial-services-asset-management-snowflake 
-- **categories**: Solution-Examples 
-- **environments**: web 
-- **status**: Published
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Financial Services, Asset Management, SnowSight
-- **authors**: Allen Wong
 
 
 <!-- ------------------------ -->
@@ -157,11 +136,18 @@ Duration: 2
 We setup
 - a Snowsight dashboard with charts (line, bar, and scorecard)
 
-Build un the <button>[finserv demo 70 SnowSight](https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/snowsight/finserv%20demo%2070%20SnowSight.sql)</button>.
+Build the <button>[finserv demo 70 SnowSight Dashboard](https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/snowsight/finserv%20demo%2070%20SnowSight.sql)</button>.
 
 You can watch a [Youtube of building the dashboard](https://youtu.be/pirYEnJWbnM?t=4223).
 
-![Snowsight Dashboard](assets/finserv_snowsight_dashboard.jpg)
+**Symbol Position Over Time Line Chart**
+![Symbol Position Over Time Line Chart](assets/symbol_position_over_time_line_chart.jpg)
+
+**Portfolio PnL Top 10 Bar Chart**
+![Portfolio PnL Top 10 Bar Chart](assets/portfolio_pnl_top_10_bar_chart.jpg)
+
+**Portfolio PnL Bottom 10 Bar Chart**
+![Portfolio PnL Bottom 10 Bar Chart](assets/portfolio_pnl_bottom_10_bar_chart.jpg)
 
 <!-- ------------------------ -->
 ## Script "90 Optional Reset"
@@ -178,7 +164,7 @@ Duration: 2
 ### Recap
 You can watch a [Youtube Recap of what we covered](https://youtu.be/pirYEnJWbnM?t=5894)
 
-### What we've covered
+### We've learned how to
 - Query free stock market history data instantly with zero learning curve and time
 - Run a Python faker function to create 100 synthetic traders
 - Size up compute to create 3 billion synthetic trades
@@ -194,4 +180,4 @@ You can watch a [Youtube Recap of what we covered](https://youtu.be/pirYEnJWbnM?
 ### To see similar videos
 [Modernizing Risk Analytics with Sigma on Snowflake](https://www.sigmacomputing.com/resources/modernizing-risk-analytics-with-sigma-on-snowflake).
 
-[Allen Wong's Youtube Channel](https://www.youtube.com/@AllenWongTech).
+[Allen Wong's Open-Source Snowflake Tutorials on Youtube](https://www.youtube.com/@AllenWongTech).
