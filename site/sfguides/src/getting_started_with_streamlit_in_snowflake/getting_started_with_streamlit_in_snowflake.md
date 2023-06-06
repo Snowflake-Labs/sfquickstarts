@@ -10,7 +10,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 # Quickstart Guide: Cybersyn Streamlit in Snowflake - Financial Demo
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 2
 
 In this guide, we will review how to build a Streamlit App within Snowflake that allows you to easily demo Cybersyn’s Financial Data Package data tables with charts built in Vega-Lite.
 
@@ -38,34 +38,36 @@ A Snowflake account
 
 <!-- ------------------------ -->
 ## Setting up the Streamlit Application
-Duration: 2
+Duration: 4
 
 ### Step 1: Accessing Data in Snowflake Marketplace
+<button>[Cybersyn Financial Data Package](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7)</button>
+
 After logging into your Snowflake account, access Cybersyn’s Financial Data Package in the Marketplace. 
 - Click the Get button on the top right box on the listing
 - Read and accept terms by clicking Get again 
   - Note: This data listing is available for free, at no additional charge. 
-- The data is now available in your Snowflake instance, as the FINANCIAL_DATA_PACKAGE database under Data on the left hand side panel.
+- The data is now available in your Snowflake instance, as the `FINANCIAL_DATA_PACKAGE` database under Data on the left hand side panel.
 
 ### Step 2: Create a Database & Schema
 - On the left side panel, click Data. 
 - Click the blue + Database button in the top right corner. 
-- Create a new database with a name of your choosing (eg. FINANCIAL_STREAMLIT) for the Streamlit to live in.
-- Create a new Schema in the new database (eg. FINANCIAL_STREAMLIT) with a name of your choosing (eg. STREAMLIT).
+- Create a new database with a name of your choosing (eg. `FINANCIAL_STREAMLIT`) for the Streamlit to live in.
+- Create a new Schema in the new database (eg. `FINANCIAL_STREAMLIT`) with a name of your choosing (eg. `STREAMLIT`).
 
 ### Step 3: Create a Streamlit
 - On the left side panel, click Streamlit. 
 - Click the blue button, blue + Streamlit App button in the top right corner.
   - Name your App (eg. Financial Streamlit)
   - Select a Warehouse. 
-  - Select the database and schema for your app. If you followed Step 2, select this database (eg. FINANCIAL_STREAMLIT and STREAMLIT).
+  - Select the database and schema for your app. If you followed Step 2, select this database (eg. `FINANCIAL_STREAMLIT` and `STREAMLIT`).
   - Click the blue Create button
   - Delete all of the existing code.
 
 ### Step 4: Copy the Python code from GitHub
-[Button to the GitHub setup file ‘streamlit_app.py’]
+<button>[streamlit_app.py](https://github.com/cybersyn-data/streamlit-in-snowflake-example/blob/main/streamlit_app.py)</button>
 
-- Click the button above which will direct you to our FInancial Streamlit Python Setup file that is hosted on GitHub. 
+- Click the button above which will direct you to our Financial Streamlit Python Setup file that is hosted on GitHub. 
 - Within GitHub navigate to the right side and click the ‘Copy raw contents’ button on the top right of the code block. This will copy all of the required Python into your clipboard. 
 - Paste the Python code to the Streamlit code block in your newly created Streamlit in Snowflake.
 
@@ -74,14 +76,14 @@ After logging into your Snowflake account, access Cybersyn’s Financial Data Pa
 ### Step 5: Create a Database & Schema
 - Click the blue Run button  on the top right corner. 
 - Wait for app to load. 
-  - Note: If there is an error then try to refresh the page. If you continue to receive an error, please ensure that under Data you see the FINANCIAL_DATA_PACKAGE listing in your databases. 
+  - Note: If there is an error then try to refresh the page. If you continue to receive an error, please ensure that under Data you see the `FINANCIAL_DATA_PACKAGE` listing in your databases. 
 
 #### You’ve successfully built the Cybersyn Financial Streamlit in Snowflake!
 
 
 <!-- ------------------------ -->
 ## Walk-through of the App Functionality
-Duration: 2
+Duration: 3
 
 To see the Streamlit in the full window, click < Streamlit Apps on the top left and reopen the application you created (eg. Financial Streamlit). 
 
