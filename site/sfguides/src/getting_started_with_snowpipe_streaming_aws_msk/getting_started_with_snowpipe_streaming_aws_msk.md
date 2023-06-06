@@ -85,8 +85,8 @@ First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us
 to launch a provisioned MSK cluster. Note the default AWS region is `us-west-2 (Oregon)`, feel free to select a region you prefer to deploy the environment.
 
 Click `Next` at the `Create stack` page. 
-Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `MSKSecurityGroupId`, we recommend
-to use the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. In the drop-down menu, pick two different subnets, they can be either public or private subnets depending on the network layout of your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
+Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `Subnet1` and `Subnet2`, in the drop-down menu, pick two different subnets respectively, they can be either public or private subnets depending on the network layout of your VPC. For `MSKSecurityGroupId`, we recommend
+using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
 `Next`. 
 
 See below sample screen capture for reference.
@@ -130,9 +130,10 @@ Now go back to the `Session` tab and click the `Start session` button.
 
 Now you should see the EC2 instance created by the Cloudformation template under `Target instances`.
 Its name should be `<Cloudformation stack name>-jumphost`, select it and click `Start session`.
+
 ![](assets/session-mgr-3.png)
 
-#### 4. Create a key-pair to be used for authenticating with Snowflake programmatically
+#### 4. Create a key-pair to be used for authenticating with Snowflake
 Create a key pair in AWS Session Manager console by executing the following commands. You will be prompted to give an encryption password, remember 
 this phrase, you will need it later.
 
@@ -154,9 +155,8 @@ see below example screenshot:
 
 Next we will print out the public key string in a correct format that we can use for Snowflake.
 ```
-grep -v KEY rsa_key.pub | tr -d '\n' > pub.Key
+grep -v KEY rsa_key.pub | tr -d '\n' | awk '{print $1}' > pub.Key
 cat pub.Key
-
 ```
 see below example screenshot:
 
@@ -333,9 +333,19 @@ ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
 ```
+Next we need to configure the public key for the streaming user to access Snowflake programmatically.
+
+First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
+```commandline
+use role accountadmin;
+alter user streaming_user set rsa_public_key='<pubKey>';
+```
+See below example screenshot:
+
+![](assets/key-pair-snowflake.png)
 
 Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
-Run the following SQL commands in a worksheet:
+Run the following SQL commands in a worksheet to create a schema (e.g. `MSK_STREAMING_SCHEMA`) in the default database (e.g. `MSK_STREAMING_DB`):
 
 ```commandline
 SET DB = 'MSK_STREAMING_DB';
@@ -349,16 +359,7 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#1) above) in the following SQL command and execute.
-```commandline
-use role accountadmin;
-alter user streaming_user set rsa_public_key='<pubKey>';
-```
-See below example screenshot:
-
-![](assets/key-pair-snowflake.png)
-
-Now we can install SnowSQL. Execute the following commands on the Linux Session Manager console:
+To install SnowSQL. Execute the following commands on the Linux Session Manager console:
 ```commandline
 curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
 echo -e "~/bin \n y" > /tmp/ans
@@ -419,8 +420,14 @@ then
   echo export clstr_url=\$a.snowflakecomputing.com > $outf
   export clstr_url=\$a.snowflakecomputing.com
 else
-  echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
-  export clstr_url=\$a.\$r.snowflakecomputing.com 
+  if [[ \$r == "us-east-1" ]] || [[ \$r == "eu-west-1" ]] || [[ \$r == "eu-central-1" ]] || [[ \$r == "ap-southeast-1" ]] || [[ \$r == "ap-southeast-2" ]]
+  then
+     echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
+     export clstr_url=\$a.\$r.snowflakecomputing.com
+  else
+     echo export clstr_url=\$a.\$r.aws.snowflakecomputing.com > $outf
+     export clstr_url=\$a.\$r.aws.snowflakecomputing.com
+  fi
 fi
 
 read -p "Snowflake cluster user name: default: streaming_user ==> " user
@@ -505,7 +512,7 @@ If everything goes well, you should something similar to screen capture below:
 
 #### 2. Start the producer that will ingest real-time data to the MSK cluster
 
-Start a new Linux session by following `step 3` in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#1) above.
+Start a new Linux session in `step 3` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane.
 ```commandline
 curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
@@ -586,8 +593,8 @@ As a result, you will see a nicely structured output with columns derived from t
 
 We can now write a loop to stream the flight data continuously into Snowflake.
 
-Note that there is a 30 seconds sleep time between the queries, it is because for our data source in this workshop, anything
-less than 30 seconds will not incur any new data as the source won't update more frequently than 30 seconds.
+Note that there is a 10 seconds sleep time between the queries, it is because for our data source in this workshop, anything
+less than 10 seconds will not incur any new data as the source won't update more frequently than 10 seconds.
 Feel free to lower the frequency for other data sources that update more frequently.
 
 Go back to the Linux session and run the following script.
