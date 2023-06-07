@@ -41,7 +41,7 @@ In this tutorial, the application you are building helps fictitious food truck c
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 5
+Duration: 3
 
 We are using Tasty Bytes Orders data for this demo. Using the Orders data, you will be building an application for Truck drivers with following capabilities.
 - Truck Driver can see the Orders in their Queue
@@ -61,8 +61,8 @@ Paste and run the following SQL in the worksheet to create Snowflake objects (wa
 ingest raw orders data from S3, and model it for downstream usage.
 
 ```sql
--- use our sysadmin role
-USE ROLE SYSADMIN;
+-- use our accountadmin role
+USE ROLE accountadmin;
 
 -- create our database
 CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_app;
@@ -177,41 +177,51 @@ $ openssl rsa -in snowflake_app_key -pubout -out snowflake_app_key.pub
 Execute the following SQL statements to create the user account and grant access to the data needed for the application.
 
 ```SQL
-USE ROLE SECURITYADMIN;
-CREATE ROLE TASTY_BYTES_DATA_APP_DEMO;
+-- use our securityadmin role
+USE ROLE securityadmin;
 
-USE ROLE SYSADMIN;
-GRANT USAGE ON WAREHOUSE TASTY_APP_WH TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT USAGE ON DATABASE FROSTBYTE_TASTY_BYTES_APP TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES_APP.ANALYTICS TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES_APP.HARMONIZED TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES_APP.RAW TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT SELECT ON ALL VIEWS IN SCHEMA FROSTBYTE_TASTY_BYTES_APP.ANALYTICS TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT SELECT ON ALL VIEWS IN SCHEMA FROSTBYTE_TASTY_BYTES_APP.HARMONIZED TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT SELECT ON ALL TABLES IN SCHEMA FROSTBYTE_TASTY_BYTES_APP.ANALYTICS TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT SELECT ON ALL TABLES IN SCHEMA FROSTBYTE_TASTY_BYTES_APP.HARMONIZED TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT SELECT ON ALL TABLES IN SCHEMA FROSTBYTE_TASTY_BYTES_APP.RAW TO ROLE TASTY_BYTES_DATA_APP_DEMO;
-GRANT UPDATE ON TABLE FROSTBYTE_TASTY_BYTES_APP.RAW.APP_ORDER_HEADER TO ROLE TASTY_BYTES_DATA_APP_DEMO;
+-- create the tasty_bytes_data_app_demo role
+CREATE OR REPLACE ROLE tasty_bytes_data_app_demo;
 
-USE ROLE SECURITYADMIN;
--- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, and stopping just before the PUBLIC KEY footer.
-CREATE USER DATA_APP_DEMO
-RSA_PUBLIC_KEY='RSA_PUBLIC_KEY_HERE' 
-DEFAULT_ROLE=TASTY_BYTES_DATA_APP_DEMO 
-DEFAULT_WAREHOUSE=TASTY_APP_WH 
-MUST_CHANGE_PASSWORD=FALSE;
-GRANT ROLE TASTY_BYTES_DATA_APP_DEMO TO USER DATA_APP_DEMO;
+-- use our securityadmin role
+USE ROLE accountadmin;
+
+-- grant privileges to our tasty_bytes_data_app_demo role
+GRANT USAGE ON WAREHOUSE tasty_app_wh TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_app TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_app.analytics TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_app.harmonized TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_app.raw TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_app.analytics TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_app.harmonized TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_app.analytics TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_app.harmonized TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_app.raw TO ROLE tasty_bytes_data_app_demo;
+GRANT UPDATE ON TABLE frostbyte_tasty_bytes_app.raw.app_order_header TO ROLE tasty_bytes_data_app_demo;
+
+-- use our useradmin role
+USE ROLE useradmin;
+
+-- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE.
+CREATE OR REPLACE USER data_app_demo
+RSA_PUBLIC_KEY='<INSERT_RSA_PUBLIC_KEY_HERE>' 
+DEFAULT_ROLE=frostbyte_tasty_bytes_app 
+DEFAULT_WAREHOUSE=tasty_app_wh 
+MUST_CHANGE_PASSWORD=false;
+
+-- use our securityadmin role
+USE ROLE securityadmin;
+GRANT ROLE tasty_bytes_data_app_demo TO USER data_app_demo;
 ```
 
 <!-- ------------------------ -->
 ## Data Application with SQL API
-Duration: 15
+Duration: 10
 
 The application you will be running is written in React Native. 
 
 ### Step 1: Get the Source Code
-You can clone the source code from the [GitHub](https://github.com/sf-gh-sjasti/TastyBytesReactNativeAppWithSnowflake-SQL_API) using following steps.
-
 1. Clone the repo using ``` git clone https://github.com/sf-gh-sjasti/TastyBytesReactNativeAppWithSnowflake-SQL_API.git reactNativeApp ```
 2. Navigate to the folder, ``` cd reactNativeApp ```
 3. Run ``` npm install ``` to install dependancies
@@ -219,8 +229,13 @@ You can clone the source code from the [GitHub](https://github.com/sf-gh-sjasti/
 ### Step 2: Configure the application
 1. Open the ``` reactNativeApp ``` folder in VS Code or IDE of your choice.
 2. Open the ``` .env ``` file and update ``` PRIVATE_KEY ``` value with the private key. Copy and paste the whole private key from ``` ~/.ssh/snowflake_app_key.pub ``` including header(``` -----BEGIN RSA PRIVATE KEY----- ```) and footer(``` -----END RSA PRIVATE KEY----- ```).
-3. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account. To get the snowflake_account value from Snowflake, run ``` Select CURRENT_ACCOUNT() ``` in Snowsight. 
-4. Update ``` PUBLIC_KEY_FINGERPRINT ``` with your user Public Key FingerPrint. To get Public Key Fingerprint, Run ```sql DESCRIBE USER DATA_APP_DEMO ``` in Snowsight and get RSA_PUBLIC_KEY_FP property value.
+3. If you are located in us-west region, Update ``` SNOWFLAKE_ACCOUNT_IDENTIFIER ``` with your Snowflake Account
+   (or) If you are located outside the us-west region, Update ``` SNOWFLAKE_ACCOUNT_IDENTIFIER ``` as '<SNOWFLAKE ACCOUNT>.<REGION>'.
+   To get the snowflake_account value from Snowflake, run ``` SELECT CURRENT_ACCOUNT() ``` in Snowsight. 
+   To get the region value from Snowflake, run ``` SELECT CURRENT_REGION() ``` in Snowsight. 
+   SNOWFLAKE_ACCOUNT_IDENTIFIER and SNOWFLAKE_ACCOUNT would be same for us-west. 
+4. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account.
+5. Update ``` PUBLIC_KEY_FINGERPRINT ``` with your user Public Key FingerPrint. To get Public Key Fingerprint, Run the following SQL in Snowsight  ```DESCRIBE USER data_app_demo ``` and get RSA_PUBLIC_KEY_FP property value.
 
 ### Step 3: Review the Source Code
 We are using Key Pair Authentication to authenticate with Snowflake using SQL API. You can refer to the ``` Tokens.js ``` to understand how we are generating the JWT token. ``` Orders.js ``` has the source code to render Orders screen. You can also refer to this file to find out how to initiate a SQL API call and the headers needed. ``` OrderDetails.js ``` has the source code to render Order Details Screen.
@@ -248,13 +263,13 @@ Duration: 1
 Navigate to Snowsight Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet". Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.
 
 ```sql
-USE ROLE SYSADMIN;
+USE ROLE accountadmin;
 DROP DATABASE frostbyte_tasty_bytes_app;
 DROP WAREHOUSE tasty_app_wh;
 
-USE ROLE SECURITYADMIN;
-DROP USER DATA_APP_DEMO;
-DROP ROLE TASTY_BYTES_DATA_APP_DEMO;
+USE ROLE securityadmin;
+DROP USER data_app_demo;
+DROP ROLE tasty_bytes_data_app_demo;
 ```
 
 <!-- ------------------------ -->

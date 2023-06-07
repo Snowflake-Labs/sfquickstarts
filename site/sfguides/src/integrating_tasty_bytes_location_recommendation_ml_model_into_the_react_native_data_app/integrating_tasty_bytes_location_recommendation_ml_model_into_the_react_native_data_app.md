@@ -40,7 +40,7 @@ In this tutorial, the application you are building helps fictitious food truck c
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 5
+Duration: 3
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
 - Access SafeGraph location data from the Snowflake Marketplace
@@ -76,6 +76,7 @@ Paste and run the following SQL in the worksheet to create Snowflake objects (wa
 ingest raw orders data from S3, and model it for downstream usage.
 
 ```sql
+-- use our accountadmin role
 USE ROLE accountadmin;
 
 -- create a development database for data science work
@@ -168,34 +169,46 @@ $ openssl rsa -in snowflake_app_key -pubout -out snowflake_app_key.pub
 Execute the following SQL statements to create the user account and grant access to the data needed for the application.
 
 ```SQL
-USE ROLE SECURITYADMIN;
-CREATE ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
+-- use our securityadmin role
+USE ROLE securityadmin;
 
-USE ROLE ACCOUNTADMIN;
-GRANT USAGE ON WAREHOUSE TASTY_ML_APP_WH TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT USAGE ON DATABASE FROSTBYTE_TASTY_BYTES_ML_APP TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.ANALYTICS TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.HARMONIZED TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.RAW TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT SELECT ON ALL VIEWS IN SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.ANALYTICS TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT SELECT ON ALL VIEWS IN SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.HARMONIZED TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT SELECT ON ALL TABLES IN SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.ANALYTICS TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT SELECT ON ALL TABLES IN SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.HARMONIZED TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
-GRANT SELECT ON ALL TABLES IN SCHEMA FROSTBYTE_TASTY_BYTES_ML_APP.RAW TO ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
+-- create our tasty_bytes_data_ml_app_demo role
+CREATE ROLE tasty_bytes_data_ml_app_demo;
 
-USE ROLE SECURITYADMIN;
--- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, and stopping just before the PUBLIC KEY footer.
-CREATE USER DATA_ML_APP_DEMO
-RSA_PUBLIC_KEY='RSA_PUBLIC_KEY_HERE' 
-DEFAULT_ROLE=TASTY_BYTES_DATA_ML_APP_DEMO 
-DEFAULT_WAREHOUSE=TASTY_ML_APP_WH 
+-- use our accountadmin role
+USE ROLE accountadmin;
+
+-- grant privileges to our tasty_bytes_data_app_demo role
+GRANT USAGE ON WAREHOUSE tasty_ml_app_wh TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_ml_app TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.raw TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.raw TO ROLE tasty_bytes_data_ml_app_demo;
+
+-- use our useradmin role
+USE ROLE useradmin;
+
+-- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE.
+CREATE USER data_ml_app_demo
+RSA_PUBLIC_KEY='<INSERT_RSA_PUBLIC_KEY_HERE>' 
+DEFAULT_ROLE=tasty_bytes_data_ml_app_demo 
+DEFAULT_WAREHOUSE=tasty_ml_app_wh 
 MUST_CHANGE_PASSWORD=FALSE;
-GRANT ROLE TASTY_BYTES_DATA_ML_APP_DEMO TO USER DATA_ML_APP_DEMO;
+
+-- use our securityadmin role
+USE ROLE securityadmin;
+GRANT ROLE tasty_bytes_data_ml_app_demo TO USER data_ml_app_demo;
 ```
 
 <!-- ------------------------ -->
 ## Train and Deploy ML model in Snowflake
-Duration: 22
+Duration: 10
 
 ### Overview
 Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support this goal and maximize daily revenue across the fleet of trucks, the data science team needs to build an ML model to direct trucks to locations that are expected to have the highest sales on a given shift.
@@ -275,7 +288,7 @@ $$;
 Call build_shift_feature_table();
 
 -- Set permissions
-GRANT ALL PRIVILEGES ON TABLE frostbyte_tasty_bytes_ml_app.analytics.shift_features to TASTY_BYTES_DATA_ML_APP_DEMO;
+GRANT ALL PRIVILEGES ON TABLE frostbyte_tasty_bytes_ml_app.analytics.shift_features to tasty_bytes_data_ml_app_demo;
 
 -- Create training stored procedure
 CREATE OR REPLACE PROCEDURE SPROC_TRAIN_LINREG()
@@ -398,18 +411,16 @@ def predict(X: pandas.DataFrame) -> pandas.Series:
 $$;
 
 -- Set permissions
-GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLOAT, FLOAT,FLOAT,FLOAT,FLOAT) to TASTY_BYTES_DATA_ML_APP_DEMO;
+GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLOAT, FLOAT,FLOAT,FLOAT,FLOAT) to tasty_bytes_data_ml_app_demo;
 ```
 
 <!-- ------------------------ -->
 ## Fetching Data from ML Model using SQL API and Integrating into the Data Application
-Duration: 15
+Duration: 10
 
 The application you will be running is written in React Native. 
 
 ### Step 1: Get the Source Code
-You can clone the source code from the [GitHub](https://github.com/sf-gh-sjasti/IntegrationTastyBytesMLModelInDataApp) using following steps.
-
 1. Clone the repo using ``` https://github.com/sf-gh-sjasti/IntegrationTastyBytesMLModelInDataApp.git reactNativeMLApp ```
 2. Navigate to the folder, ``` cd reactNativeMLApp ```
 3. Run ``` npm install ``` to install dependancies
@@ -417,8 +428,13 @@ You can clone the source code from the [GitHub](https://github.com/sf-gh-sjasti/
 ### Step 2: Configure the application
 1. Open the ``` reactNativeMLApp ``` folder in VS Code or IDE of your choice.
 2. Open the ``` .env ``` file and update ``` PRIVATE_KEY ``` value with the private key. Copy and paste the whole private key from ``` ~/.ssh/snowflake_app_key.pub ``` including header(``` -----BEGIN RSA PRIVATE KEY----- ```) and footer(``` -----END RSA PRIVATE KEY----- ```).
-3. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account. To get the snowflake_account value from Snowflake, run ``` Select CURRENT_ACCOUNT() ``` in Snowsight. 
-4. Update ``` PUBLIC_KEY_FINGERPRINT ``` with your user Public Key FingerPrint. To get Public Key Fingerprint, Run ```sql DESCRIBE USER DATA_ML_APP_DEMO ``` in Snowsight and get RSA_PUBLIC_KEY_FP property value.
+3. If you are located in us-west region, Update ``` SNOWFLAKE_ACCOUNT_IDENTIFIER ``` with your Snowflake Account
+   (or) If you are located outside the us-west region, Update ``` SNOWFLAKE_ACCOUNT_IDENTIFIER ``` as '<SNOWFLAKE ACCOUNT>.<REGION>'.
+   To get the snowflake_account value from Snowflake, run ``` SELECT CURRENT_ACCOUNT() ``` in Snowsight. 
+   To get the region value from Snowflake, run ``` SELECT CURRENT_REGION() ``` in Snowsight. 
+   SNOWFLAKE_ACCOUNT_IDENTIFIER and SNOWFLAKE_ACCOUNT would be same for us-west. 
+4. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account.
+5. Update ``` PUBLIC_KEY_FINGERPRINT ``` with your user Public Key FingerPrint. To get Public Key Fingerprint, Run the following SQL in Snowsight  ```DESCRIBE USER data_app_demo ``` and get RSA_PUBLIC_KEY_FP property value.
 
 ### Step 3: Review the Source Code
 We are using Key Pair Authentication to authenticate with Snowflake using SQL API. You can refer to the ``` Tokens.js ``` to understand how we are generating the JWT token. ``` Locations.js ``` has the source code to render Locations screen. You can also refer to this file to find out how to query UDF using SQL API and the headers needed.
@@ -437,13 +453,13 @@ Duration: 1
 Navigate to Snowsight Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet". Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.
 
 ```sql
-USE ROLE ACCOUNTADMIN;
+USE ROLE accountadmin;
 DROP DATABASE frostbyte_tasty_bytes_ml_app;
 DROP WAREHOUSE tasty_ml_app_wh;
 
-USE ROLE SECURITYADMIN;
-DROP USER DATA_ML_APP_DEMO;
-DROP ROLE TASTY_BYTES_DATA_ML_APP_DEMO;
+USE ROLE securityadmin;
+DROP USER data_ml_app_demo;
+DROP ROLE tasty_bytes_data_ml_app_demo;
 ```
 
 <!-- ------------------------ -->
