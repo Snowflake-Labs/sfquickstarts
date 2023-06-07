@@ -4,7 +4,7 @@
         "VPC": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "https://s3.amazonaws.com/ecs-refarch-cloudformation/infrastructure/vpc.yaml",
+                "TemplateURL": "https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/ecs/cfts/vpc.json",
                 "Parameters": {
                     "EnvironmentName": {
                         "Ref": "AWS::StackName"
@@ -20,7 +20,7 @@
         "SecurityGroups": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "https://s3.amazonaws.com/ecs-refarch-cloudformation/infrastructure/security-groups.yaml",
+                "TemplateURL": "https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/ecs/cfts/security-groups.json",
                 "Parameters": {
                     "EnvironmentName": {
                         "Ref": "AWS::StackName"
@@ -28,8 +28,7 @@
                     "VPC": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs",
-                            "VPC"
+                            "Outputs.VPC"
                         ]
                     }
                 }
@@ -38,7 +37,7 @@
         "ALB": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "https://s3.amazonaws.com/ecs-refarch-cloudformation/infrastructure/load-balancers.yaml",
+                "TemplateURL": "https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/ecs/cfts/load-balancers.json",
                 "Parameters": {
                     "EnvironmentName": {
                         "Ref": "AWS::StackName"
@@ -46,22 +45,19 @@
                     "VPC": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs",
-                            "VPC"
+                            "Outputs.VPC"
                         ]
                     },
                     "Subnets": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs",
-                            "PublicSubnets"
+                            "Outputs.PublicSubnets"
                         ]
                     },
                     "SecurityGroup": {
                         "Fn::GetAtt": [
                             "SecurityGroups",
-                            "Outputs",
-                            "LoadBalancerSecurityGroup"
+                            "Outputs.LoadBalancerSecurityGroup"
                         ]
                     }
                 }
@@ -70,7 +66,7 @@
         "ECS": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "https://s3.amazonaws.com/ecs-refarch-cloudformation/infrastructure/ecs-cluster.yaml",
+                "TemplateURL": "https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/ecs/cfts/ecs-cluster.json",
                 "Parameters": {
                     "EnvironmentName": {
                         "Ref": "AWS::StackName"
@@ -80,75 +76,39 @@
                     "VPC": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs",
-                            "VPC"
+                            "Outputs.VPC"
                         ]
                     },
                     "SecurityGroup": {
                         "Fn::GetAtt": [
                             "SecurityGroups",
-                            "Outputs",
-                            "ECSHostSecurityGroup"
+                            "Outputs.ECSHostSecurityGroup"
                         ]
                     },
                     "Subnets": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs",
-                            "PrivateSubnets"
+                            "Outputs.PrivateSubnets"
                         ]
                     }
-                }
-            }
-        },
-        "ProductService": {
-            "Type": "AWS::CloudFormation::Stack",
-            "Properties": {
-                "TemplateURL": "https://s3.amazonaws.com/ecs-refarch-cloudformation/services/product-service/service.yaml",
-                "Parameters": {
-                    "VPC": {
-                        "Fn::GetAtt": [
-                            "VPC",
-                            "Outputs",
-                            "VPC"
-                        ]
-                    },
-                    "Cluster": {
-                        "Fn::GetAtt": [
-                            "ECS",
-                            "Outputs",
-                            "Cluster"
-                        ]
-                    },
-                    "DesiredCount": 2,
-                    "Listener": {
-                        "Fn::GetAtt": [
-                            "ALB",
-                            "Outputs",
-                            "Listener"
-                        ]
-                    },
-                    "Path": "/products"
                 }
             }
         },
         "WebsiteService": {
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
-                "TemplateURL": "https://s3.amazonaws.com/ecs-refarch-cloudformation/services/website-service/service.yaml",
+                "TemplateURL": "https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/ecs/cfts/service.json",
                 "Parameters": {
                     "VPC": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs",
-                            "VPC"
+                            "Outputs.VPC"
                         ]
                     },
                     "Cluster": {
                         "Fn::GetAtt": [
                             "ECS",
-                            "Outputs",
-                            "Cluster"
+                            "Outputs.Cluster"
                         ]
                     },
                     "DesiredCount": 2,
@@ -159,8 +119,7 @@
                                 {
                                     "Fn::GetAtt": [
                                         "ALB",
-                                        "Outputs",
-                                        "LoadBalancerUrl"
+                                        "Outputs.LoadBalancerUrl"
                                     ]
                                 },
                                 "products"
@@ -170,38 +129,14 @@
                     "Listener": {
                         "Fn::GetAtt": [
                             "ALB",
-                            "Outputs",
-                            "Listener"
+                            "Outputs.Listener"
                         ]
                     },
                     "Path": "/",
                     "ECSServiceAutoScalingRoleARN": {
                         "Fn::GetAtt": [
                             "ECS",
-                            "Outputs",
-                            "ECSServiceAutoScalingRole"
-                        ]
-                    }
-                }
-            }
-        },
-        "LifecycleHook": {
-            "Type": "AWS::CloudFormation::Stack",
-            "Properties": {
-                "TemplateURL": "https://s3.amazonaws.com/ecs-refarch-cloudformation/infrastructure/lifecyclehook.yaml",
-                "Parameters": {
-                    "Cluster": {
-                        "Fn::GetAtt": [
-                            "ECS",
-                            "Outputs",
-                            "Cluster"
-                        ]
-                    },
-                    "ECSAutoScalingGroupName": {
-                        "Fn::GetAtt": [
-                            "ECS",
-                            "Outputs",
-                            "ECSAutoScalingGroupName"
+                            "Outputs.ECSServiceAutoScalingRole"
                         ]
                     }
                 }
@@ -218,8 +153,7 @@
                         {
                             "Fn::GetAtt": [
                                 "ALB",
-                                "Outputs",
-                                "LoadBalancerUrl"
+                                "Outputs.LoadBalancerUrl"
                             ]
                         },
                         "products"
@@ -236,8 +170,7 @@
                         {
                             "Fn::GetAtt": [
                                 "ALB",
-                                "Outputs",
-                                "LoadBalancerUrl"
+                                "Outputs.LoadBalancerUrl"
                             ]
                         },
                         "/"
