@@ -712,9 +712,9 @@ You will be presented a `Secret` but we do not need to copy this for the lab. Cl
 
 6.4 On the left hand side choose the following parameters:
  <ul>
-      <li>Select the embed secret we created earlier from the Client Id drop down.</li>
+      <li>Select the embed secret we created earlier from the Embed Secret drop down.</li>
       <li>For Mode, select “User-Backed”</li>
-      <li>For External User Teams select “Kitakata Managers”</li>
+      <li>For Embed User Teams select “Kitakata Managers”</li>
       <li>For email, input any random email address that is NOT the email you log into Sigma with. It does   
         not need to be a real email address, and you can put something like managers@tastybytes.com.</li>      
       <li>For account type select “Creator”</li>      
