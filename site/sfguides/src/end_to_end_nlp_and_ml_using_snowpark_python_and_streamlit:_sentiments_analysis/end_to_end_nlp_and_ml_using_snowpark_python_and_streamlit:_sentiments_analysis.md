@@ -63,7 +63,7 @@ conda env create -f ./snowpark-env/conda-env_nlp_ml_sentiment_analysis.yml  --fo
 ```
 
 ### Snowflake Credentials
-Update the Snowflake connexion file : connection.json
+Update the Snowflake connection file: connection.json
 
 ```shell
 {
