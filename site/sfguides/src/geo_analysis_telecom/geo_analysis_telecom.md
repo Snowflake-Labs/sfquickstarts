@@ -371,7 +371,7 @@ Now let’s do the query in CARTO Builder to see where the point is.
 
 <img src ='assets/geo_sf_carto_telco_20.png' width=700>
 
-* Then click on `Custom Query` and make sure you have selected Snowflake Connection that  you have created in previous steps. 
+* Then click on `Custom Query` and make sure you have selected Snowflake Connection that you have created in previous steps. 
 
 <img src ='assets/geo_sf_carto_telco_21.gif' width=700>
 
@@ -536,7 +536,7 @@ WHERE st_intersects(coverage.geometry, roads.geo_cordinates)
 and class = 'motorway';
 ```
 
-It seems our LTE network covers more than 90% of the roads. A good number to call out in a marketing campaign.
+It seems our LTE network covers more than 90% of the motorways. A good number to call out in a marketing campaign.
 
 <!-- ------------------------ -->
 ## Advanced Analysis using H3
@@ -687,7 +687,7 @@ from GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED
 group by signal;
 ```
 
-We now know that we have 58,906 km with good coverage and 10,967 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+We now know that we have 58,910 km with good coverage and 10,963 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 

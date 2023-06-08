@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview 
 Duration: 5
 
-By completing this guide, you will be able to go from raw data to build a machine learning that can help to predict house prices.
+By completing this guide, you will be able to go from raw data to build a machine learning model that can help to predict house prices.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
