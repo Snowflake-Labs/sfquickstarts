@@ -30,19 +30,19 @@ The Mapbox Snowflake native app is powered by the [Mapbox Geocoding API](https:/
 ### What You’ll Learn
 
 - How to use the Mapbox app’s functions to perform bulk geocoding on a snowflake table.
-- How to use geocoded data to make a basic map.
+- How to export your new spatial data for use in third-party tools
 
 ### What You’ll Need
 
 - Access to the snowflake UI.
 - The Mapbox Native App installed in your snowflake environment.
-- The streamlit app installed in your snowflake environment.
-
 
 ### What You’ll Build
 
-- A query with geocoding results from your snowflake table
-- An interactive map showing point locations from your geocoded snowflake data.
+- SQL queries to geocode data from a single column
+- SQL queries to geocode data from multiple columns (structured data)
+- SQL queries to export geojson data from a table with latitude and longitude data
+- SQL queries to reverse geocode coordinates and perform boundary lookups
 
 
 <!-- ------------------------ -->
