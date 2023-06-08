@@ -188,7 +188,7 @@ create or replace table parsed_pdf as
 select
     relative_path
     , file_url
-    , read_pdf(build_scoped_file_url('@pdf_external/', relative_path)) as parsed_text
+    , read_pdf(build_scoped_file_url('@pdf_external', relative_path)) as parsed_text
 from directory(@pdf_external);
 ```
 
