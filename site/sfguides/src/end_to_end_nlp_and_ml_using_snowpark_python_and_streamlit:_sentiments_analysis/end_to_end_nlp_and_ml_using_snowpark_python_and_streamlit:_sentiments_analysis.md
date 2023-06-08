@@ -197,7 +197,7 @@ Use the section **Analyze** to explore and analyze the datasets and see some met
 ![Puppy](./assets/Analyze_Data1.png)
 
 #### Select your data
-Choose the dataset that you want to analyze :
+Choose the dataset that you want to analyze:
 
 ![Puppy](./assets/Select_Table.png)
 
