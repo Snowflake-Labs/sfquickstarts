@@ -28,7 +28,7 @@ This Quickstart will demonstrate how you can perform Natural Language Processing
 - Use Streamlit with Snowpark
 
 ### What You’ll Need 
-- A Snowflake Account with ACCOUNTADMIN role. If you do'nt have one, you can register for a [free trial account](https://signup.snowflake.com/) Account
+- A Snowflake Account with ACCOUNTADMIN role. If you don't have one, you can register for a [free trial account](https://signup.snowflake.com/)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed 
 - [Python 3.8](https://www.python.org/downloads/) installed 
 - [Conda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html) Installed
