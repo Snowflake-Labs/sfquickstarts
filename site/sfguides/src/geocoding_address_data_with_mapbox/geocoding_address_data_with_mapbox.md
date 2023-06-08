@@ -39,8 +39,8 @@ The Mapbox Snowflake native app is powered by the [Mapbox Geocoding API](https:/
 
 ### What You’ll Build
 
-- SQL queries to geocode data from a single column
-- SQL queries to geocode data from multiple columns (structured data)
+- SQL queries to geocode address data from a single column
+- SQL queries to geocode address data from multiple columns (structured data)
 - SQL queries to export geojson data from a table with latitude and longitude data
 - SQL queries to reverse geocode coordinates and perform boundary lookups
 
