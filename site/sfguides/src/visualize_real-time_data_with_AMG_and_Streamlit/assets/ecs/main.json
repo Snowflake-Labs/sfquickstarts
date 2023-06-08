@@ -88,7 +88,7 @@
                     "Subnets": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs.PrivateSubnets"
+                            "Outputs.PublicSubnets"
                         ]
                     }
                 }
@@ -126,12 +126,6 @@
                             ]
                         ]
                     },
-                    "Listener": {
-                        "Fn::GetAtt": [
-                            "ALB",
-                            "Outputs.Listener"
-                        ]
-                    },
                     "Path": "/",
                     "ECSServiceAutoScalingRoleARN": {
                         "Fn::GetAtt": [
@@ -139,10 +133,16 @@
                             "Outputs.ECSServiceAutoScalingRole"
                         ]
                     },
+                    "LoadBalancer": {
+                        "Fn::GetAtt": [
+                            "ALB",
+                            "Outputs.LoadBalancer"
+                        ]
+                    },
                     "Subnets": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs.PrivateSubnets"
+                            "Outputs.PublicSubnets"
                         ]
                     },
                     "SecurityGroup": {

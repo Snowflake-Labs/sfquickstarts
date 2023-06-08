@@ -93,6 +93,66 @@
                     }
                 }
             }
+        },
+        "WebsiteService": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": "https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/ecs/cfts/web-service.json",
+                "Parameters": {
+                    "VPC": {
+                        "Fn::GetAtt": [
+                            "VPC",
+                            "Outputs.VPC"
+                        ]
+                    },
+                    "Cluster": {
+                        "Fn::GetAtt": [
+                            "ECS",
+                            "Outputs.Cluster"
+                        ]
+                    },
+                    "DesiredCount": 2,
+                    "ProductServiceUrl": {
+                        "Fn::Join": [
+                            "/",
+                            [
+                                {
+                                    "Fn::GetAtt": [
+                                        "ALB",
+                                        "Outputs.LoadBalancerUrl"
+                                    ]
+                                },
+                                "products"
+                            ]
+                        ]
+                    },
+                    "Listener": {
+                        "Fn::GetAtt": [
+                            "ALB",
+                            "Outputs.Listener"
+                        ]
+                    },
+                    "Path": "/",
+                    "ECSServiceAutoScalingRoleARN": {
+                        "Fn::GetAtt": [
+                            "ECS",
+                            "Outputs.ECSServiceAutoScalingRole"
+                        ]
+                    },
+                    "Subnets": {
+                        "Fn::GetAtt": [
+                            "VPC",
+                            "Outputs.PrivateSubnets"
+                        ]
+                    },
+                    "SecurityGroup": {
+                        "Fn::GetAtt": [
+                            "SecurityGroups",
+                            "Outputs.LoadBalancerSecurityGroup"
+                        ]
+                    }
+                }
+            }
         }
     },
     "Outputs": {

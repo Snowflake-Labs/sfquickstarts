@@ -42,37 +42,6 @@
                     }
                 ]
             }
-        },
-        "LoadBalancerListener": {
-            "Type": "AWS::ElasticLoadBalancingV2::Listener",
-            "Properties": {
-                "LoadBalancerArn": {
-                    "Ref": "LoadBalancer"
-                },
-                "Port": 80,
-                "Protocol": "HTTP",
-                "DefaultActions": [
-                    {
-                        "Type": "forward",
-                        "TargetGroupArn": {
-                            "Ref": "DefaultTargetGroup"
-                        }
-                    }
-                ]
-            }
-        },
-        "DefaultTargetGroup": {
-            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-            "Properties": {
-                "Name": {
-                    "Fn::Sub": "${EnvironmentName}-default"
-                },
-                "VpcId": {
-                    "Ref": "VPC"
-                },
-                "Port": 80,
-                "Protocol": "HTTP"
-            }
         }
     },
     "Outputs": {
@@ -89,12 +58,6 @@
                     "LoadBalancer",
                     "DNSName"
                 ]
-            }
-        },
-        "Listener": {
-            "Description": "A reference to a port 80 listener",
-            "Value": {
-                "Ref": "LoadBalancerListener"
             }
         }
     }
