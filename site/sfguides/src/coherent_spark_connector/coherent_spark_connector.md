@@ -113,7 +113,7 @@ Replace the parameters in the curly brackets `{ }` in the SQL queries, then exec
 
 - `{APP_NAME}`: Application name ("SPARK_CONNECTOR" by default).
 
-<pre class="language-sql"><code class="lang-sql"><strong>USE &#x3C;{APP_NAME};
+<pre class="language-sql"><code class="lang-sql"><strong>USE {APP_NAME};
 </strong></code></pre>
 
 ### 2. Create API Integration for external functions.
