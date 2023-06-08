@@ -12,7 +12,7 @@ NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
 ## Overview 
 Duration: 5
 
-This quickstarts is showing how we can do Natural Language Processing (NLP) and ML within 100% Snowflake using Snowpark Python ans Streamlit as well. Our use case is about doing : Sentiment Analysis with 100% Snowpark (feature engineering, train and prediction).
+This Quickstart will demonstrate how you can perform Natural Language Processing (NLP) and ML within Snowflake using Snowpark Python and Streamlit. We'll use these tools to perform sentiment analysis with Snowpark (feature engineering, training, and prediction).
 
 ### Prerequisites
 - Working knowledge of Python
