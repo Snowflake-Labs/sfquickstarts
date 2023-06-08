@@ -192,7 +192,7 @@ Duration: 2
 
 ### What You'll Do :
 
-Use use the section **Analyze** to explore and analyze the datasets and see some metrics.
+Use the section **Analyze** to explore and analyze the datasets and see some metrics.
 
 ![Puppy](./assets/Analyze_Data1.png)
 
