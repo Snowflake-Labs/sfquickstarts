@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# End to End NLP and ML using Snowpark Python and Streamlit: Sentiments Analysis
+NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
