@@ -54,7 +54,7 @@ cd snowpark_nlp_ml_demo/
 ```
 
 ### Setup Python Environment:
-Create conda environment. Let's name the environment nlp_ml_sentiment_analysis.
+Create a conda environment. Let's name the environment nlp_ml_sentiment_analysis.
 
 ```shell
 conda update conda
