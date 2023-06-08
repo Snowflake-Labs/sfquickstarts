@@ -1,0 +1,594 @@
+{
+    "services": [
+        {
+            "serviceArn": "arn:aws:ecs:us-west-2:439306121598:service/deployment-example-cluster/opensky-rest-api-service",
+            "serviceName": "opensky-rest-api-service",
+            "clusterArn": "arn:aws:ecs:us-west-2:439306121598:cluster/deployment-example-cluster",
+            "loadBalancers": [
+                {
+                    "targetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:439306121598:targetgroup/ecs-opensky-api-tg/d8635f0a61773725",
+                    "containerName": "opensky-rest-api",
+                    "containerPort": 8502
+                }
+            ],
+            "serviceRegistries": [],
+            "status": "ACTIVE",
+            "desiredCount": 2,
+            "runningCount": 2,
+            "pendingCount": 0,
+            "launchType": "FARGATE",
+            "platformVersion": "LATEST",
+            "platformFamily": "Linux",
+            "taskDefinition": "arn:aws:ecs:us-west-2:439306121598:task-definition/opensky-rest-api-task:6",
+            "deploymentConfiguration": {
+                "deploymentCircuitBreaker": {
+                    "enable": false,
+                    "rollback": false
+                },
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 100,
+                "alarms": {
+                    "alarmNames": [],
+                    "enable": false,
+                    "rollback": false
+                }
+            },
+            "deployments": [
+                {
+                    "id": "ecs-svc/4675616329891776702",
+                    "status": "PRIMARY",
+                    "taskDefinition": "arn:aws:ecs:us-west-2:439306121598:task-definition/opensky-rest-api-task:6",
+                    "desiredCount": 2,
+                    "pendingCount": 0,
+                    "runningCount": 2,
+                    "failedTasks": 0,
+                    "createdAt": "2023-05-12T08:48:32.021000-07:00",
+                    "updatedAt": "2023-05-25T13:41:43.760000-07:00",
+                    "launchType": "FARGATE",
+                    "platformVersion": "1.4.0",
+                    "platformFamily": "Linux",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-04242a6bb933966a9"
+                            ],
+                            "securityGroups": [
+                                "sg-06d27f812d7ad34f0"
+                            ],
+                            "assignPublicIp": "ENABLED"
+                        }
+                    },
+                    "rolloutState": "COMPLETED",
+                    "rolloutStateReason": "ECS deployment ecs-svc/4675616329891776702 completed."
+                }
+            ],
+            "roleArn": "arn:aws:iam::439306121598:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "events": [
+                {
+                    "id": "80721f15-5947-44b3-b2f0-b3a06918422a",
+                    "createdAt": "2023-06-07T14:02:27.133000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "f5b9282f-bce5-4ebb-95ec-3c0442831fc7",
+                    "createdAt": "2023-06-07T08:01:49.749000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "73581dcc-ef36-49ec-ac90-16d5eec44d6c",
+                    "createdAt": "2023-06-07T02:01:40.859000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "3f1d91a0-5d0e-4047-8300-ff47f5cfbd5f",
+                    "createdAt": "2023-06-06T20:01:22.345000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "22abd402-749e-4982-975e-0e8282404a5e",
+                    "createdAt": "2023-06-06T14:00:46.733000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "7b7c9736-5475-4fa0-b159-aaf0ee65ed2a",
+                    "createdAt": "2023-06-06T08:00:38.259000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "15db42ed-fb7d-4651-96f9-23eeb63fd977",
+                    "createdAt": "2023-06-06T02:00:27.388000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "7341e330-f170-4844-8bc0-13a8ed345727",
+                    "createdAt": "2023-06-05T20:00:05.388000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "eb55d0a5-8eb9-401d-9a28-184cf24b161f",
+                    "createdAt": "2023-06-05T13:59:24.055000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "eb6b0924-b4f8-496d-9baa-a38f8118d5e6",
+                    "createdAt": "2023-06-05T07:59:09.697000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "33a06ad4-6258-4415-965d-79dbe29e1a22",
+                    "createdAt": "2023-06-05T01:59:09.200000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "20b23d97-6d96-46e8-a10b-5bdbcb523fcf",
+                    "createdAt": "2023-06-04T19:58:41.524000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "6c2374b6-5f68-4d69-a87d-efdf3eee0372",
+                    "createdAt": "2023-06-04T13:58:26.328000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "dfedd1a8-b017-45fa-b2e7-90c731d55b40",
+                    "createdAt": "2023-06-04T07:58:20.996000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "e8d2ed96-6840-4409-a23a-ec672d7a57e6",
+                    "createdAt": "2023-06-04T01:57:56.385000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "9a07b8c3-bc5c-4687-8865-5057b3a7e279",
+                    "createdAt": "2023-06-03T19:57:17.862000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "41fc6534-d914-4d4b-952e-1146f0b8d65a",
+                    "createdAt": "2023-06-03T13:56:54.042000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "bffca52a-fbff-44a8-b5d2-13d58f2dab79",
+                    "createdAt": "2023-06-03T07:56:49.269000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "8de8da17-7252-459a-9724-399ca302c343",
+                    "createdAt": "2023-06-03T01:56:45.301000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "50020292-1a7e-44fb-b059-c43401ea1541",
+                    "createdAt": "2023-06-02T19:56:30.685000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "574e4440-a896-4325-a2df-789ffc3c5f5a",
+                    "createdAt": "2023-06-02T13:56:19.738000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "bc2c76b8-3024-493c-a360-fa245e797784",
+                    "createdAt": "2023-06-02T07:55:53.070000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "7da9108f-7016-4442-8704-b53905aff84b",
+                    "createdAt": "2023-06-02T01:55:21.559000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "9eb41677-8ce9-4cd0-a504-f8a43c229e16",
+                    "createdAt": "2023-06-01T19:55:09.707000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "e953e5cb-4506-4ce6-a8ca-f9268dc7b530",
+                    "createdAt": "2023-06-01T13:54:53.411000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "1af4cf25-f05a-4c0c-ba1d-18fe2751a53d",
+                    "createdAt": "2023-06-01T07:54:30.896000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "1bf6b9ff-d164-453c-b346-0df1decd60c5",
+                    "createdAt": "2023-06-01T01:53:51.991000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "a51d7cee-4727-46fb-90b0-314e54bdc7e3",
+                    "createdAt": "2023-05-31T19:53:36.837000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "e1ba1bb9-bebd-41ce-872d-0eb33fa0ecc9",
+                    "createdAt": "2023-05-31T13:53:12.998000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "e5a859c8-0c47-4d89-870d-69aed5112771",
+                    "createdAt": "2023-05-31T07:52:50.772000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "5ed1115a-3216-44bc-96bc-89ee91744244",
+                    "createdAt": "2023-05-31T01:52:10.799000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "7917ea42-b752-415a-b30b-bdb558cba1d2",
+                    "createdAt": "2023-05-30T19:51:30.600000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "deb1f8a8-eaf5-4298-9c42-c0f81e0cfd6e",
+                    "createdAt": "2023-05-30T13:50:44.370000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "f6af2222-ddc9-4346-a5c0-7016532da471",
+                    "createdAt": "2023-05-30T07:50:14.658000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "4c7d9017-1426-4091-9843-5d53dc2067d7",
+                    "createdAt": "2023-05-30T01:50:04.269000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "9f9d6d47-3cc2-44f7-b55b-c0c679a4ab82",
+                    "createdAt": "2023-05-29T19:49:58.356000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "6e20efd5-7729-424b-ad70-6e865712fba7",
+                    "createdAt": "2023-05-29T13:49:43.290000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "3b615519-a465-465e-8923-7ad7e9cffb83",
+                    "createdAt": "2023-05-29T07:49:12.908000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "d0bf999e-d320-46ea-9af5-ec4ec5f501aa",
+                    "createdAt": "2023-05-29T01:48:35.438000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "c40a4eef-d01e-4e4d-bee7-e9504b643952",
+                    "createdAt": "2023-05-28T19:48:06.543000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "78d7cc4e-56d6-4709-b9d1-afadab644216",
+                    "createdAt": "2023-05-28T13:47:25.153000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "74a690a7-71d7-4642-9bc1-8c4bf88728b7",
+                    "createdAt": "2023-05-28T07:46:46.502000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "9c3eda93-3db2-4be7-b470-1b858bb0f0e9",
+                    "createdAt": "2023-05-28T01:46:08.212000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "384d0ee5-c3d4-40d0-a0fa-48944c94892c",
+                    "createdAt": "2023-05-27T19:46:03.630000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "c0ab2c8d-9028-44bc-981f-cb3358dd0d14",
+                    "createdAt": "2023-05-27T13:45:29.681000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "7a2b11bb-dca5-4a1b-9774-c5d280982b62",
+                    "createdAt": "2023-05-27T07:45:13.772000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "d6e81302-7aac-4891-b351-bd2c63e71b15",
+                    "createdAt": "2023-05-27T01:44:33.362000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "9d34e37c-5452-4506-9121-ab392507f85a",
+                    "createdAt": "2023-05-26T19:44:04.464000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "b1de6a35-4b8b-471b-87ec-6978cf85a97f",
+                    "createdAt": "2023-05-26T13:43:53.347000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "91690000-e531-4b58-89db-7e86bec76508",
+                    "createdAt": "2023-05-26T07:43:23.360000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "21c46ee1-4ccf-48f1-b2fa-ba2c3921641b",
+                    "createdAt": "2023-05-26T01:42:42.116000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "d38823c8-f8f1-45db-9bd6-4ee6c4a5c93a",
+                    "createdAt": "2023-05-25T19:42:01.276000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "8e6f0daa-c432-4651-8375-83063adcfbd3",
+                    "createdAt": "2023-05-25T13:41:43.767000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "3cf891cd-a9bf-4b83-b448-4c0c9e025504",
+                    "createdAt": "2023-05-25T13:41:43.753000-07:00",
+                    "message": "(service opensky-rest-api-service, taskSet ecs-svc/4675616329891776702) has begun draining connections on 3 tasks."
+                },
+                {
+                    "id": "010cea99-6239-412d-9534-eea69458ae1e",
+                    "createdAt": "2023-05-25T13:41:43.748000-07:00",
+                    "message": "(service opensky-rest-api-service) deregistered 3 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:439306121598:targetgroup/ecs-opensky-api-tg/d8635f0a61773725)"
+                },
+                {
+                    "id": "b6458671-5441-4339-b787-15cb7e16f43c",
+                    "createdAt": "2023-05-25T13:41:33.938000-07:00",
+                    "message": "(service opensky-rest-api-service) has stopped 3 running tasks: (task 8893b93501e44cc1a3b48d6d0e3581d6) (task 9a60a9f6f6d046f092e6d266dd61874d) (task 692823f5273f4212a583ae535206e157)."
+                },
+                {
+                    "id": "d260fada-a1b1-4d7f-88f7-6476df4f1889",
+                    "createdAt": "2023-05-25T08:12:26.701000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "5dee2d3f-456b-425d-b087-b4ffa3358759",
+                    "createdAt": "2023-05-25T02:12:01.178000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "1b254e97-5a53-4516-9f55-ee535435e170",
+                    "createdAt": "2023-05-24T20:11:31.674000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "e1a5d26f-5f3b-46ce-935b-ec950406a25a",
+                    "createdAt": "2023-05-24T20:11:13.115000-07:00",
+                    "message": "(service opensky-rest-api-service) registered 3 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:439306121598:targetgroup/ecs-opensky-api-tg/d8635f0a61773725)"
+                },
+                {
+                    "id": "761ad882-a5f2-44e0-bfec-45b8bc7f4b4d",
+                    "createdAt": "2023-05-24T20:10:34.588000-07:00",
+                    "message": "(service opensky-rest-api-service) has started 3 tasks: (task 9a60a9f6f6d046f092e6d266dd61874d) (task 64502dea79f049c7bd22928526c4c684) (task 8893b93501e44cc1a3b48d6d0e3581d6)."
+                },
+                {
+                    "id": "3f5c8c63-0e09-440d-86ff-840e8bcf5e46",
+                    "createdAt": "2023-05-24T15:11:56.550000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "1bb2051f-68a0-40e3-ace9-e11a7c8cf162",
+                    "createdAt": "2023-05-24T09:11:42.314000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "f16078df-9447-4eb1-b57a-b84407b4d227",
+                    "createdAt": "2023-05-24T03:11:18.450000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "f6c96a0e-fd9d-453c-95fa-69aa9bb6d542",
+                    "createdAt": "2023-05-23T21:11:09.935000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "ceafc987-16eb-4d44-8f3b-401593edc5f2",
+                    "createdAt": "2023-05-23T15:10:37.821000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "3b85b709-a3b1-4e8d-ada8-36cfa2252fdf",
+                    "createdAt": "2023-05-23T09:09:54.671000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "81469b10-b410-49fb-abd3-78eace174941",
+                    "createdAt": "2023-05-23T03:09:21.160000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "80a3d4b6-0f07-4932-b166-c0987871d6fe",
+                    "createdAt": "2023-05-22T21:09:06.800000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "4936aafc-9465-41e4-bf3c-ff7b52b52d8d",
+                    "createdAt": "2023-05-22T15:08:34.609000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "c0dabce8-ad97-4b5e-8b03-b1760215951e",
+                    "createdAt": "2023-05-22T09:07:46.424000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "9ef337f4-d33a-4963-80e9-5a2665bb7f88",
+                    "createdAt": "2023-05-22T03:07:38.418000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "4913dc5c-e598-427f-b737-21aeb6c14496",
+                    "createdAt": "2023-05-21T21:07:13.453000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "088a1428-68f0-4759-9066-441927d4257a",
+                    "createdAt": "2023-05-21T15:07:10.123000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "7c5566df-811c-4eec-9bfd-67906a5ac25d",
+                    "createdAt": "2023-05-21T09:06:24.664000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "0391a719-a962-48a7-bdec-03af56bda00a",
+                    "createdAt": "2023-05-21T03:05:48.244000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "f369c687-d17e-435a-b838-ca7307264a4d",
+                    "createdAt": "2023-05-20T21:05:03.291000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "6190d5e2-42b9-4f38-b13d-8f865d12ee05",
+                    "createdAt": "2023-05-20T15:04:50.852000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "edc8f753-20c3-4a40-9941-430a52b084a1",
+                    "createdAt": "2023-05-20T09:04:19.963000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "7f08f986-a0c5-431c-9d67-00327d876c41",
+                    "createdAt": "2023-05-20T03:03:57.854000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "b14230c8-d9fc-4976-b8fd-392007e34437",
+                    "createdAt": "2023-05-19T21:03:54.435000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "2c261de0-14a0-4a83-ad50-9068bd2547c9",
+                    "createdAt": "2023-05-19T15:03:37.883000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "f11754c9-30ec-43ad-853f-8c8cba0d083a",
+                    "createdAt": "2023-05-19T09:03:04.338000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "9ebe98bf-f589-43c8-b149-b3b59d0160a2",
+                    "createdAt": "2023-05-19T03:02:50.200000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "41720eb4-499f-44ea-994b-773c1d5338b8",
+                    "createdAt": "2023-05-18T21:02:22.518000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "f4739b27-3f66-4113-b00e-7e7fd7e53762",
+                    "createdAt": "2023-05-18T15:01:55.142000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "01203475-2a3b-4599-b197-95b2a3ed3f13",
+                    "createdAt": "2023-05-18T09:01:34.712000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "c8849c84-ea2c-4dbc-9c45-84e183e31f38",
+                    "createdAt": "2023-05-18T03:01:06.899000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "c4f3e930-a294-4c9b-a634-56d5bf38e2e2",
+                    "createdAt": "2023-05-17T21:01:01.929000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "ba068e06-930e-4ad4-9024-9963d93f80ed",
+                    "createdAt": "2023-05-17T15:00:16.446000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "4ad4b114-8829-473f-ac9d-3501efb3f2b9",
+                    "createdAt": "2023-05-17T08:59:45.639000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "4abbab06-6425-48a9-b685-7d18f3755b4e",
+                    "createdAt": "2023-05-17T02:59:44.624000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "b7f055ef-7ba5-4783-9d89-3a5462756447",
+                    "createdAt": "2023-05-16T20:59:14.448000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "38e5eafd-622e-4f21-95a9-b51fe3ac9093",
+                    "createdAt": "2023-05-16T14:58:56.679000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "5947ba9c-8c89-4582-89b3-7a454a6115dd",
+                    "createdAt": "2023-05-16T08:58:25.346000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "c75bb7eb-f9eb-4de5-ba6a-ffeafc87033f",
+                    "createdAt": "2023-05-16T02:58:03.068000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "64c3c385-470f-4c76-a736-d9cfa6e50a0d",
+                    "createdAt": "2023-05-15T20:57:49.361000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "75da4339-1d51-4732-821f-2f0d44ee9d7b",
+                    "createdAt": "2023-05-15T14:57:07.733000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "b7b02d51-8ff8-439a-901a-4d2693cda43a",
+                    "createdAt": "2023-05-15T08:56:32.797000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                },
+                {
+                    "id": "679e3f3b-b1e5-443b-840a-a338fc0741ae",
+                    "createdAt": "2023-05-15T02:56:19.645000-07:00",
+                    "message": "(service opensky-rest-api-service) has reached a steady state."
+                }
+            ],
+            "createdAt": "2022-10-20T09:02:36.644000-07:00",
+            "placementConstraints": [],
+            "placementStrategy": [],
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-04242a6bb933966a9"
+                    ],
+                    "securityGroups": [
+                        "sg-06d27f812d7ad34f0"
+                    ],
+                    "assignPublicIp": "ENABLED"
+                }
+            },
+            "healthCheckGracePeriodSeconds": 0,
+            "schedulingStrategy": "REPLICA",
+            "deploymentController": {
+                "type": "ECS"
+            },
+            "createdBy": "arn:aws:iam::439306121598:user/jzsun4",
+            "enableECSManagedTags": false,
+            "propagateTags": "NONE",
+            "enableExecuteCommand": false
+        }
+    ],
+    "failures": []
+}
