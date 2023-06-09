@@ -11,31 +11,6 @@
         }
     },
     "Resources": {
-        "ECSHostSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties": {
-                "VpcId": {
-                    "Ref": "VPC"
-                },
-                "GroupDescription": "Access to the ECS hosts and the tasks/containers that run on them",
-                "SecurityGroupIngress": [
-                    {
-                        "SourceSecurityGroupId": {
-                            "Ref": "LoadBalancerSecurityGroup"
-                        },
-                        "IpProtocol": -1
-                    }
-                ],
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": {
-                            "Fn::Sub": "${EnvironmentName}-ECS-Hosts"
-                        }
-                    }
-                ]
-            }
-        },
         "LoadBalancerSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
@@ -61,12 +36,6 @@
         }
     },
     "Outputs": {
-        "ECSHostSecurityGroup": {
-            "Description": "A reference to the security group for ECS hosts",
-            "Value": {
-                "Ref": "ECSHostSecurityGroup"
-            }
-        },
         "LoadBalancerSecurityGroup": {
             "Description": "A reference to the security group for load balancers",
             "Value": {

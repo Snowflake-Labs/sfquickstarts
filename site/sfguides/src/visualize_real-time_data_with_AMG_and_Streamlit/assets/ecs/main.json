@@ -82,13 +82,13 @@
                     "SecurityGroup": {
                         "Fn::GetAtt": [
                             "SecurityGroups",
-                            "Outputs.ECSHostSecurityGroup"
+                            "Outputs.LoadBalancerSecurityGroup"
                         ]
                     },
                     "Subnets": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs.PublicSubnets"
+                            "Outputs.PrivateSubnets"
                         ]
                     }
                 }
@@ -112,20 +112,6 @@
                         ]
                     },
                     "DesiredCount": 2,
-                    "ProductServiceUrl": {
-                        "Fn::Join": [
-                            "/",
-                            [
-                                {
-                                    "Fn::GetAtt": [
-                                        "ALB",
-                                        "Outputs.LoadBalancerUrl"
-                                    ]
-                                },
-                                "products"
-                            ]
-                        ]
-                    },
                     "Path": "/",
                     "ECSServiceAutoScalingRoleARN": {
                         "Fn::GetAtt": [
@@ -142,7 +128,7 @@
                     "Subnets": {
                         "Fn::GetAtt": [
                             "VPC",
-                            "Outputs.PublicSubnets"
+                            "Outputs.PrivateSubnets"
                         ]
                     },
                     "SecurityGroup": {
@@ -156,23 +142,6 @@
         }
     },
     "Outputs": {
-        "ProductServiceUrl": {
-            "Description": "The URL endpoint for the product service",
-            "Value": {
-                "Fn::Join": [
-                    "/",
-                    [
-                        {
-                            "Fn::GetAtt": [
-                                "ALB",
-                                "Outputs.LoadBalancerUrl"
-                            ]
-                        },
-                        "products"
-                    ]
-                ]
-            }
-        },
         "WebsiteServiceUrl": {
             "Description": "The URL endpoint for the website service",
             "Value": {

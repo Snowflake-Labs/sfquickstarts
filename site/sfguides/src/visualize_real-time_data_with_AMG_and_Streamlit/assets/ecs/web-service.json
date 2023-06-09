@@ -19,10 +19,6 @@
             "Type": "Number",
             "Default": 3
         },
-        "ProductServiceUrl": {
-            "Description": "The URL of the Product Service (used to fetch product information)",
-            "Type": "String"
-        },
         "Path": {
             "Description": "The path to register with the Application Load Balancer",
             "Type": "String",
@@ -91,14 +87,6 @@
                     {
                         "Name": "streamlit",
                         "Image": "439306121598.dkr.ecr.us-west-2.amazonaws.com/jsnow:streamlit",
-                        "Environment": [
-                            {
-                                "Name": "PRODUCT_SERVICE_URL",
-                                "Value": {
-                                    "Ref": "ProductServiceUrl"
-                                }
-                            }
-                        ],
                         "PortMappings": [
                             {
                                 "ContainerPort": 8501,
