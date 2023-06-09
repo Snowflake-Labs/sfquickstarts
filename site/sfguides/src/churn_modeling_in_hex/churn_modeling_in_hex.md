@@ -7,17 +7,18 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Hex, Notebooks, Partner Connect
 
-# Don't let your customers slip away: A guide to churn modeling using Snowflake and Hex
+# Churn modeling using Snowflake and Hex
 
 
 
-## Lab Overview 
+## Overview 
 In this demo, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Hex in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.
 
 ### Prerequisites
 * Familiarity with basic Python and SQL
 * Familiarity with training ML models
 * Familiarity with data science notebooks
+* Go to the [Snowflake](https://signup.snowflake.com/) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 
 
 
@@ -33,8 +34,7 @@ In this demo, we will play the role of a data scientist at a telecom company tha
 
 
 <!-- ------------------------ -->
-## Creating a Snowflake account
-Go to the [Snowflake](https://signup.snowflake.com/) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
+
 
 ## Setting up partner connect
 After logging into your Snowflake account, you will land on the `Learn` page. To connect with Hex, navigate to the `Admin` tab on the left and click on `Partner connect`. In the search bar at the top, type `Hex` and the Hex partner connect tile will appear. Clicking on the tile will bring up a new screen, and click the `connect button` in the lower right corner. A new screen will confirm that your account has been created, from which you can click `Activate`.
@@ -282,7 +282,7 @@ Once you've arranged your cells and are satisfied with how it looks, use the sha
 
 ![](assets/share.gif)
 
-## Conclusion
+## Conclusion And Resources
 Congratulations on on making it to the end of this Lab! You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)! 
 
 ### What we've covered
