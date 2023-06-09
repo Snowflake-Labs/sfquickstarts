@@ -12,6 +12,8 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview 
 Duration: 2
 
+![logo-image](assets/FinancialDataSnowflakeNativeApp.png)
+
 In this guide, we will review how to build a Streamlit App within Snowflake that allows you to easily demo Cybersyn’s Financial Data Package data tables with charts built in Vega-Lite.
 
 ### What is Streamlit?
@@ -49,7 +51,7 @@ After logging into your Snowflake account, access [Cybersyn’s Financial Data P
   - Note: This data listing is available for free, at no additional charge. 
 - The data is now available in your Snowflake instance, as the `FINANCIAL_DATA_PACKAGE` database under Data on the left hand side panel.
 
-[INSERT IMAGE]
+![package-image](assets/MarketplaceDataListing.png)
 
 ### Step 2: Create a Database & Schema
 - On the left side panel, click Data. 
@@ -85,49 +87,47 @@ After logging into your Snowflake account, access [Cybersyn’s Financial Data P
 ## Walk-through of the App Functionality
 Duration: 3
 
-To see the Streamlit in the full window, click < Streamlit Apps on the top left and reopen the application you created (eg. Financial Streamlit). 
-
-[gif of streamlit app] 
+To see the Streamlit in the full window, click < Streamlit Apps on the top left and reopen the application you created (eg. Financial Streamlit).
 
 All charts are setup to show a chart summary of the data, the raw data, and the SQL query to recreate the analysis.
  
 ### Chart 1: Deposits by Size of Bank
-[screenshot of chart] 
+![screenshot1](assets/DepositsbySizeofBank.png)
 - This chart allows the user to see the US bank deposits broken down by Top 25 Banks and All Others since January 1999. 
 - Data is sourced from [FRED](https://fred.stlouisfed.org/tags/series). 
 
 ### Chart 2: Share of Total Commercial Bank Deposits, Small Banks (Non-Top 25)
-[screenshot of chart] 
+![screenshot2](assets/ShareofTotalCommercialBankDeposits.png)
 - This chart shows the share of deposits help by the banks that are not in the top 25 US banks by total deposits. 
 - Data is sourced from [FRED](https://fred.stlouisfed.org/tags/series). 
 
 ### Chart 3: Deposit Flows by Size of Bank, WoW
-[screenshot of chart] 
+![screenshot3](assets/DepositFlowsbySizeofBank.png)
 - This chart shows the WoW deposit inflows and (outflows) for banks. 
 - The chart can be filtered by date and the user can add in ‘Top 25 Banks’ and ‘All Other Banks’ to see the two breakdowns.
 - Data is sourced from [FRED](https://fred.stlouisfed.org/tags/series).
 
 ### Chart 4: Monthly Change in Bank Branches Since COVID-19
-[screenshot of chart]
+![screenshot4](assets/MonthlyChangeinBankBranchesSinceCOVID-19.png)
 - This chart shows the monthly and cumulative change of bank branch openings and closures since January 2018. 
 - Data is sourced from [FFIEC](https://www.ffiec.gov/npw/FinancialReport/DataDownload).
 
 ### Chart 5: As of Dec '23: Banks w/ $10B Assets with Lowest FDIC Insured Deposits
-[screenshot of chart]
+![screenshot5](assets/Dec_23-banks_w_10B_Assets.png)
 - This chart shows the banks with lowest FDIC insured deposits as of December 2022. 
 - Data is sourced from [FDIC](https://banks.data.fdic.gov/docs/).
 
 ### Chart 6: Bank Failures by Quarter
-[screenshot of chart]
+![screenshot6](assets/Bank_Failures_by_Quarter.png)
 - This chart shows the number of bank failures by quarter. 
 - Data is sourced from [FFIEC](https://www.ffiec.gov/npw/FinancialReport/DataDownload).
 
 ### Chart 7: Banking Industry Net Interest Income vs. Fed Funds Rate
-[screenshot of chart]
+![screenshot7](assets/Banking_Industry_Net_Interest_Income_v_Fed_Funds.png)
 - This chart shows net interest income by the bar charts against the left axis and the Fed Funds Rate in the line graph against the right axis since March 1985. 
 - Data is sourced from [FRED](https://fred.stlouisfed.org/tags/series).
 
 ### Chart 8: Interest Expense / Interest Income Ratio vs Fed Funds Rate
-[screenshot of chart]
+![screenshot8](assets/InterestExpenseInterestIncomeRatiovFedFunds.png)
 - This chart shows the ratio of Interest Expense to Interest Income and compares it to the Fed Funds Rate since March 1985.
 - Data is sourced from [FRED](https://fred.stlouisfed.org/tags/series).
