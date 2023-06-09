@@ -1,0 +1,371 @@
+{
+    "Description": "This is an example of a long running ECS service that needs to connect to another ECS service (product-service) via it's load balancer. We use environment variables to pass the URL of the product-service to this one's container(s).\n",
+    "Parameters": {
+        "VPC": {
+            "Description": "The VPC that the ECS cluster is deployed to",
+            "Type": "AWS::EC2::VPC::Id"
+        },
+        "Cluster": {
+            "Description": "Please provide the ECS Cluster ID that this service should run on",
+            "Type": "String"
+        },
+        "DesiredCount": {
+            "Description": "How many instances of this task should we run across our cluster?",
+            "Type": "Number",
+            "Default": 2
+        },
+        "MaxCount": {
+            "Description": "Maximum number of instances of this task we can run across our cluster",
+            "Type": "Number",
+            "Default": 3
+        },
+        "Path": {
+            "Description": "The path to register with the Application Load Balancer",
+            "Type": "String",
+            "Default": "/"
+        },
+        "LoadBalancer": {
+            "Description": "The Load Balancer Arn",
+            "Type": "String"
+        },
+        "ECSServiceAutoScalingRoleARN": {
+            "Description": "The ECS service auto scaling role ARN",
+            "Type": "String"
+        },
+        "Subnets": {
+            "Description": "Choose which subnets this ECS cluster should be deployed to",
+            "Type": "List<AWS::EC2::Subnet::Id>"
+        },
+        "SecurityGroup": {
+            "Description": "Select the Security Group to use for the ECS cluster hosts",
+            "Type": "AWS::EC2::SecurityGroup::Id"
+        }
+    },
+    "Resources": {
+        "Service": {
+            "Type": "AWS::ECS::Service",
+            "DependsOn": "ListenerRule",
+            "Properties": {
+                "Cluster": {
+                    "Ref": "Cluster"
+                },
+                "DesiredCount": {
+                    "Ref": "DesiredCount"
+                },
+                "LaunchType": "FARGATE",
+                "TaskDefinition": {
+                    "Ref": "TaskDefinition"
+                },
+                "NetworkConfiguration": {
+                        "AwsvpcConfiguration": {
+                            "Subnets": { "Ref": "Subnets" },
+                            "SecurityGroups": [{ "Ref": "SecurityGroup" }],
+                            "AssignPublicIp": "ENABLED"
+                        }
+                },
+                "LoadBalancers": [
+                    {
+                        "ContainerName": "streamlit",
+                        "ContainerPort": 8501,
+                        "TargetGroupArn": {
+                            "Ref": "TargetGroup"
+                        }
+                    }
+                ]
+            }
+        },
+        "TaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties": {
+                "Family": "streamlit",
+                "NetworkMode": "awsvpc",
+                "Cpu": 256,
+                "Memory": 512,
+                "RequiresCompatibilities": ["EC2","FARGATE"],
+                "ExecutionRoleArn": "arn:aws:iam::439306121598:role/deployment-example-role",
+                "ContainerDefinitions": [
+                    {
+                        "Name": "streamlit",
+                        "Image": "439306121598.dkr.ecr.us-west-2.amazonaws.com/jsnow:streamlit",
+                        "PortMappings": [
+                            {
+                                "ContainerPort": 8501,
+                                "Protocol": "tcp"
+                            }
+                        ],
+                        "LogConfiguration": {
+                            "LogDriver": "awslogs",
+                            "Options": {
+                                "awslogs-group": {
+                                    "Ref": "CloudWatchLogsGroup"
+                                },
+                                "awslogs-region": {
+                                    "Ref": "AWS::Region"
+                                },
+                                "awslogs-stream-prefix": "ecs",
+                                "awslogs-create-group": true
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "CloudWatchLogsGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+                "LogGroupName": {
+                    "Ref": "AWS::StackName"
+                },
+                "RetentionInDays": 365
+            }
+        },
+        "TargetGroup": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "Port": 8501,
+                "Protocol": "HTTP",
+                "TargetType": "ip",
+                "Matcher": {
+                    "HttpCode": "200-299"
+                },
+                "HealthCheckIntervalSeconds": 10,
+                "HealthCheckPath": "/",
+                "HealthCheckProtocol": "HTTP",
+                "HealthCheckTimeoutSeconds": 5,
+                "HealthyThresholdCount": 2
+            }
+        },
+        "LoadBalancerListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "LoadBalancerArn": {
+                    "Ref": "LoadBalancer"
+                },
+                "Port": 8501,
+                "Protocol": "HTTP",
+                "DefaultActions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "TargetGroup"
+                        }
+                    }
+                ]
+            }
+        },
+        "ListenerRule": {
+            "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+            "Properties": {
+                "ListenerArn": {
+                    "Ref": "LoadBalancerListener"
+                },
+                "Priority": 1,
+                "Conditions": [
+                    {
+                        "Field": "path-pattern",
+                        "Values": [
+                            {
+                                "Ref": "Path"
+                            }
+                        ]
+                    }
+                ],
+                "Actions": [
+                    {
+                        "TargetGroupArn": {
+                            "Ref": "TargetGroup"
+                        },
+                        "Type": "forward"
+                    }
+                ]
+            }
+        },
+        "ServiceRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName": {
+                    "Fn::Sub": "ecs-service-${AWS::StackName}"
+                },
+                "Path": "/",
+                "AssumeRolePolicyDocument": "{\n    \"Statement\": [{\n        \"Effect\": \"Allow\",\n        \"Principal\": { \"Service\": [ \"ecs.amazonaws.com\" ]},\n        \"Action\": [ \"sts:AssumeRole\" ]\n    }]\n}\n",
+                "Policies": [
+                    {
+                        "PolicyName": {
+                            "Fn::Sub": "ecs-service-${AWS::StackName}"
+                        },
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ec2:AuthorizeSecurityGroupIngress",
+                                        "ec2:Describe*",
+                                        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                                        "elasticloadbalancing:Describe*",
+                                        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                                        "elasticloadbalancing:DeregisterTargets",
+                                        "elasticloadbalancing:DescribeTargetGroups",
+                                        "elasticloadbalancing:DescribeTargetHealth",
+                                        "elasticloadbalancing:RegisterTargets"
+                                    ],
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "ServiceScalableTarget": {
+            "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+            "Properties": {
+                "MaxCapacity": {
+                    "Ref": "MaxCount"
+                },
+                "MinCapacity": {
+                    "Ref": "DesiredCount"
+                },
+                "ResourceId": {
+                    "Fn::Join": [
+                        "/",
+                        [
+                            "service",
+                            {
+                                "Ref": "Cluster"
+                            },
+                            {
+                                "Fn::GetAtt": [
+                                    "Service",
+                                    "Name"
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "RoleARN": {
+                    "Ref": "ECSServiceAutoScalingRoleARN"
+                },
+                "ScalableDimension": "ecs:service:DesiredCount",
+                "ServiceNamespace": "ecs"
+            }
+        },
+        "ServiceScaleOutPolicy": {
+            "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+            "Properties": {
+                "PolicyName": "ServiceScaleOutPolicy",
+                "PolicyType": "StepScaling",
+                "ScalingTargetId": {
+                    "Ref": "ServiceScalableTarget"
+                },
+                "StepScalingPolicyConfiguration": {
+                    "AdjustmentType": "ChangeInCapacity",
+                    "Cooldown": 1800,
+                    "MetricAggregationType": "Average",
+                    "StepAdjustments": [
+                        {
+                            "MetricIntervalLowerBound": 0,
+                            "ScalingAdjustment": 1
+                        }
+                    ]
+                }
+            }
+        },
+        "ServiceScaleInPolicy": {
+            "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+            "Properties": {
+                "PolicyName": "ServiceScaleInPolicy",
+                "PolicyType": "StepScaling",
+                "ScalingTargetId": {
+                    "Ref": "ServiceScalableTarget"
+                },
+                "StepScalingPolicyConfiguration": {
+                    "AdjustmentType": "ChangeInCapacity",
+                    "Cooldown": 1800,
+                    "MetricAggregationType": "Average",
+                    "StepAdjustments": [
+                        {
+                            "MetricIntervalUpperBound": 0,
+                            "ScalingAdjustment": -1
+                        }
+                    ]
+                }
+            }
+        },
+        "CPUScaleOutAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmName": "CPU utilization greater than 90%",
+                "AlarmDescription": "Alarm if cpu utilization greater than 90% of reserved cpu",
+                "Namespace": "AWS/ECS",
+                "MetricName": "CPUUtilization",
+                "Dimensions": [
+                    {
+                        "Name": "ClusterName",
+                        "Value": {
+                            "Ref": "Cluster"
+                        }
+                    },
+                    {
+                        "Name": "ServiceName",
+                        "Value": {
+                            "Fn::GetAtt": [
+                                "Service",
+                                "Name"
+                            ]
+                        }
+                    }
+                ],
+                "Statistic": "Maximum",
+                "Period": "60",
+                "EvaluationPeriods": "3",
+                "Threshold": "90",
+                "ComparisonOperator": "GreaterThanThreshold",
+                "AlarmActions": [
+                    {
+                        "Ref": "ServiceScaleOutPolicy"
+                    }
+                ]
+            }
+        },
+        "CPUScaleInAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmName": "CPU utilization less than 70%",
+                "AlarmDescription": "Alarm if cpu utilization greater than 70% of reserved cpu",
+                "Namespace": "AWS/ECS",
+                "MetricName": "CPUUtilization",
+                "Dimensions": [
+                    {
+                        "Name": "ClusterName",
+                        "Value": {
+                            "Ref": "Cluster"
+                        }
+                    },
+                    {
+                        "Name": "ServiceName",
+                        "Value": {
+                            "Fn::GetAtt": [
+                                "Service",
+                                "Name"
+                            ]
+                        }
+                    }
+                ],
+                "Statistic": "Maximum",
+                "Period": "60",
+                "EvaluationPeriods": "10",
+                "Threshold": "70",
+                "ComparisonOperator": "LessThanThreshold",
+                "AlarmActions": [
+                    {
+                        "Ref": "ServiceScaleInPolicy"
+                    }
+                ]
+            }
+        }
+    }
+}
