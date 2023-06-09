@@ -17,8 +17,14 @@ cloud-based design allow for building applications that scale with data and work
 will go through how to build and deploy both the Processing Layer and the User Interface Layer paired
 with Snowflake as the Persistence Layer.
 
+Our example will be using a fictional food truck franchise website, Tasty Bytes. We will be building
+a graphical user interface with charts and graphs for franshisees to be able to examine sales data related
+to their franchise of food trucks. After logging in via a login page, each franchisee will have one page 
+that will show metrics at the franchise level, and another that will show metrics around the food truck 
+brands for that franchise.
+
 The Processing and User Interface Layers will be built using Node.js. The dataset is a orders history
-for a food truck company, Tasty Bytes.
+for Tasty Bytes. 
 
 ### Prerequisites
 - A Snowflake account, and familiarity with the Snowsight interface
@@ -188,7 +194,7 @@ Now that we've done the initial set up within our Snowflake account including lo
 Our queries will be broken into two groups - `Franchise` queries and `Truck Brand` level queries.  For the sake of ease we will focus on the following Franchise, Truck Brand, and Date Range for this part of the lab.
 
 * Franchise:  `1`
-* Truck Brand: `Guac 'n Roll`
+* Truck Brand: `Guac n' Roll`
 * Date Range: `2022-01-01` to `2022-03-31`
 
 ### Setting Snowsight Context
@@ -203,14 +209,14 @@ use warehouse query_wh;
 ### 2.1 Franchise Queries
 To answer the business questions about how our overall Franchise business is doing we'll need create the three following queries.  All of the columns required for these exist in the `ORDERS` table and no joining of tables are required. 
 
-1. Top 10 Countries Based on Revenue in a Time Window
-2. Top 10 Truck Brands Based on Revenue in a Time Window
-3. Year-to-Date Revenue, by Month, per Truck Brand
+1. Top 10 Countries Based on Revenue for Franchise 1 in the time window 2022-01-01 to 2022-03-31
+2. Top 10 Truck Brands Based on Revenue for Franchise 1 in the time window 2022-01-01 to 2022-03-31
+3. Monthly Revenue for Franchise 1 for the year 2023 per Truck Brand
 
 You can spend some time creating the queries for each of these and then check your answers against the provided queries below by expanding each section. 
 
 <details>
-    <summary>Top 10 Countries Based on Revenue in a Time Window</summary>
+    <summary>Top 10 Countries Based on Revenue</summary>
 
 ```sql
 SELECT
@@ -230,7 +236,7 @@ ORDER BY
 </details>
 
 <details>
-    <summary>Top 10 Truck Brands Based on Revenue in a Time Window</summary>
+    <summary>Top 10 Truck Brands Based on Revenue</summary>
 
 ```sql
 SELECT
@@ -250,7 +256,7 @@ ORDER BY
 </details>
 
 <details>
-    <summary>Year-to-Date Revenue, by Month, per Truck Brand</summary>
+    <summary>Montly Revenue per Truck Brand</summary>
 
 ```sql
 SELECT
@@ -274,10 +280,10 @@ ORDER BY
 ### 2.2 Truck Brand Queries
 Franchise owners will want to dig deeper into the data and better understand performance trends at the Truck Brand level so we'll need to create four more queries to analyze the data.  All of the columns required for these exist in the `ORDERS` table and no joining of tables are required. 
 
-1. Total Sales by Day-of-Week
-2. Top Selling Items
-3. Top Selling items by Day-of-Week
-4. Best Cities by Day of Week
+1. Total Sales by Day-of-Week for Franchise 1 and the Guac n' Roll brand in the time window 2022-01-01 to 2022-03-31
+2. Menu Items sorted by Revenue for Franchise 1 and the Guac n' Roll brand in the time window 2022-01-01 to 2022-03-31
+3. Menu Items sorted by Revenue by Day-of-Week for Franchise 1 and the Guac n' Roll brand in the time window 2022-01-01 to 2022-03-31
+4. Cities sorted by Revenue by Day-of-Week for Franchise 1 and the Guac n' Roll brand in the time window 2022-01-01 to 2022-03-31
 
 You can spend some time creating the queries for each of these and then check your answers against the provided queries below by expanding each section. 
 
@@ -292,8 +298,8 @@ FROM
     app.orders
 WHERE
     date(order_ts) >= '2022-01-01'
-    AND date(order_ts) <= :'2022-03-31'
-    AND truck_brand_name = 'Guac ''n Roll'
+    AND date(order_ts) <= '2022-03-31'
+    AND truck_brand_name = 'Guac n'' Roll'
     AND franchise_id = 1
 GROUP BY
     dayofweek(order_ts)
@@ -315,7 +321,7 @@ FROM
 WHERE
     date(order_ts) >= '2022-01-01'
     AND date(order_ts) <= '2022-03-31'
-    AND truck_brand_name = 'Guac ''n Roll'
+    AND truck_brand_name = 'Guac n'' Roll'
     AND franchise_id = 1
 GROUP BY
     menu_item_name
@@ -337,7 +343,7 @@ FROM
 WHERE
     date(order_ts) >= '2022-01-01'
     AND date(order_ts) <= '2022-03-31'
-    AND truck_brand_name = 'Guac ''n Roll'
+    AND truck_brand_name = 'Guac n'' Roll'
     AND franchise_id = 1
 GROUP BY
     dayofweek(order_ts),
@@ -349,7 +355,7 @@ ORDER BY
 </details>
 
 <details>
-    <summary>Best Cities by Day of Week</summary>
+    <summary>Best Cities by Day-of-Week</summary>
 
 ```sql
 SELECT
@@ -360,8 +366,8 @@ FROM
     app.orders
 WHERE
     date(order_ts) >= '2022-01-01'
-    AND date(order_ts) <= '2022-01-01'
-    AND truck_brand_name = 'Guac ''n Roll'
+    AND date(order_ts) <= '2022-03-31'
+    AND truck_brand_name = 'Guac n'' Roll'
     AND franchise_id = 1
 GROUP BY
     dayofweek(order_ts),
@@ -486,7 +492,7 @@ insert into users
 ```
 
 <!-- ------------------------ -->
-## Lab 4: Backend Overview
+## Lab 4: Building the backend
 Duration: 50
 
 This lab will take you through building the backend, in the form of an API, that can be called by the frontend application. The backend API will connect to the Snowflake database and serve the results of queries over a number of API endpoints.
@@ -503,8 +509,8 @@ Change directory to the `zero-to-app/` directory that is created when you clone 
 
 We will start by adding the Node dependencies to the project. In a terminal window run the following:
 ```bash
-npm i bcrypt body-parser cors dotenv express snowflake-sdk
-npm i nodemon --save-dev
+npm i express@4.18.2 snowflake-sdk@1.6.22 dotenv@16.1.3 bcrypt@5.1.0 cors@2.8.5 jsonwebtoken@9.0.0
+npm i nodemon@2.0.22 --save-dev
 ```
 
 Start the server by running:
@@ -517,14 +523,22 @@ This will run the server and you can access the supplied endpoint in a browser, 
 curl http://localhost:3000
 ```
 
-Note that this runs the Node server using `nodemon`, which helps us by restarting the server whenever it detects a change to the code we are working on. However, if you need to stop it, simply press <kbd>Ctrl</kbd> + <kbd>c</kbd> in the terminal where you started it. Once stopped, or if it crashed or something else happend, you can simply run `npm run serve` again to start it back up. In several steps below you are asked to do additional tasks in the terminal/shell, easiest is often to open an additional terminal window for these and keeping the server running in the first one.
+Note that this runs the Node server using `nodemon`, which helps us by restarting the server whenever it detects a change to the code we are working on. However, if you need to stop it, simply press <kbd>Ctrl</kbd> + <kbd>c</kbd> in the terminal where you started it. Once stopped, if it crashed, or something else happend, you can simply run `npm run serve` again to start it back up. In several steps below you are asked to do additional tasks in the terminal/shell, easiest is often to open an additional terminal window for these and keeping the server running in the first one.
 
 ### Lab 4.2: Configuring the connection to Snowflake
 
-We can now connect to the Snowflake database we created in the earlier lab. To do so we are going to use the service user in the Snowflake account created in the previous lab. We will need the private key created in [Lab 3](#lab-3-snowflake-setup). If you didn't change the location of where that key was created, we can simply reference it in our code.
+We can now connect to the Snowflake database we created in the earlier lab. To do so we are going to use the service user (`TASTY_APP_API_USER`) in the Snowflake account created in the previous lab. We will need the private key created in <a href="#3" target="_self">Lab 3: Snowflake Setup</a>. If you didn't change the location of where that key was created, we can simply reference it in our code. The path `../../app_user_rsa_key.p8` here is the _relative_ path from `app.js` file to the folder where the key was created.
 
-In `app.js`, after starting the server on line 17x, add the following:
+The code for setting up the connection to Snowflake is contained in the file `connect.js`. Add a reference to this file at the top of `app.js`:
 ```js
+// 4.2.1 Set up the connection to Snowflake
+var connection = require('./connect.js')
+
+```
+
+In `connect.js`, after starting the server on line 17, add the following:
+```js
+// 4.2.2 get connection details from environment variables
 const options = {
     account: process.env.ACCOUNT,
     username: process.env.USERNAME,
@@ -535,9 +549,8 @@ const options = {
     warehouse: process.env.WAREHOUSE,
 };
 
-// Create a new Snowflake connection
+// 4.2.3 create the connection to the Snowflake account
 const connection = snowflake.createConnection(options);
-// Connect to Snowflake
 connection.connect((err, conn) => {
     if (err) {
         console.error('Unable to connect to Snowflake', err);
@@ -547,18 +560,18 @@ connection.connect((err, conn) => {
 });
 ```
 
-Also create a new file called `.env` in the `backend` directory by copying the `.env.example` file:
+Also create a new file  called `.env` in the `backend` directory by copying the `.env.example` file:
 ```sh
 cp .env.example .env
 ```
 
 Edit the `.env` file and replace `REPLACE_WITH_ACCOUNT` with the [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier) of your Snowflake account.
 
-To test out the connection, start by replacing the `/` route in the `app.js` file:
+To now test out the connection, start by replacing the `/` route in the `app.js` file to use the connection we just created, and issue a query:
 ```js
 app.get("/", (req, res, next) => {
     console.log(req.method + ': ' + req.path);
-
+    // 4.2.3 Connect to Snowflake and return query result
     connection.execute({
         sqlText: sql_queries.all_franchise_names,
         complete: (err, stmt, rows) => {
@@ -573,8 +586,9 @@ app.get("/", (req, res, next) => {
 });
 ```
 
-Here we are executing the SQL command that is defined in the `sql.js` file. Include this file in the `app.js` as a requirement, add the following to the top of `app.js`:
+Here we are executing the SQL command that is defined in the `sql.js` file. These are the queries that you developed in the previous lab. This file is included in `app.js` as a requirement at the top of the file:
 ```js
+// 4.2.4 Definition of sql queries to execute
 var sql_queries = require('./sql')
 ```
 
@@ -586,18 +600,20 @@ curl http://localhost:3000
 > **Need help with this step?**
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout tags/4.2 -- ./`
->
-> However, as it will also overwrite the `.p8` key in your backend folder. Copy it again from the root folder where you created it in the first place `cp ../app_user_rsa_key.p8 .`
-
 
 ---
 ### Lab 4.3: Building the endpoints
 
-We can now add the queries to each endpoint to make them return some more interesting results. Start with the endpoint for getting sales for the top 10 countries:
+We can now add the queries to each endpoint to make them return some more interesting results. Start with the endpoint for getting sales for the top 10 countries. It is contained in the file `/routes/franchise.js`. Start by including this file in `app.js` and add the routes we will define in there to the app:
 ```js
-app.get('/franchise/:franchise/countries/', (req, res) => {
-    console.log(req.method + ': ' + req.path);
-
+// 4.3.1 Add franchise routes
+const franchise = require('./routes/franchise.js')
+app.use("/franchise", franchise);
+```
+Now we open `/routes/franchise.js` and update the first route to return the top selling countries for a specified franchise between two dates:
+```js
+router.get('/:franchise/countries/', (req, res) => {
+    // 4.3.2 Parse parameters and connect to Snowflake a return query response    
     const franchise = req.params.franchise
     const startdate = utils.parseDate(req.query.start) ?? utils.defaultStartDate();
     const enddate = utils.parseDate(req.query.end) ?? utils.defaultEndDate();
@@ -619,14 +635,11 @@ app.get('/franchise/:franchise/countries/', (req, res) => {
 });
 ```
 
-Include the `utils.js` at the top of the `app.js` file:
-```js
-var utils = require('./utils')
-```
-This contains helper functions to parse out the supplied query string parameters.
+In the code we are using a helper functions from the file `utils.js` to parse out dates from the supplied query string parameters in the format `YYYY-MM-DD`.
 
-We are now picking up both the franchise id from the parameters of the request, like [http://localhost:3000/franchise/1/countries](http://localhost:3000/franchise/1/countries) and optionally allowing the user to specify a start and end date for the data to be returned, like [http://localhost:3000/franchise/1/countries?start=2022-01-01&end=2022-03-01](http://localhost:3000/franchise/1/countries?start=2022-01-01&end=2022-03-01). These parameters are then bound to the query using the `binds` argument to the `execute()` function call. Looking at the SQL statement in the `sql.js` file, we see how they are used in the condition for the query:
+We are here picking up both the franchise id from the parameters of the request, like [http://localhost:3000/franchise/1/countries](http://localhost:3000/franchise/1/countries) and optionally allowing the user to specify a start and end date for the data to be returned, like [http://localhost:3000/franchise/1/countries?start=2022-01-01&end=2022-03-01](http://localhost:3000/franchise/1/countries?start=2022-01-01&end=2022-03-01). These parameters are then bound to the query using the `binds` argument to the `execute()` function call. Updated the SQL statement `top_10_countries` in the `sql.js` file to use these parameters in the condition for the query:
 ```sql
+-- 4.3.3 Update SQL for Top selling countries for franchise
 -- Top 10 Countries
     SELECT
         TOP 10 country,
@@ -645,19 +658,38 @@ We are now picking up both the franchise id from the parameters of the request, 
 
 In the query, you can see how each argument (`franchise`, `startdate`, `enddate`) passed to the query gets bound to the ordinal markers (`:1`, `:2`, `:3`).
 
-You can now go ahead and implement the remaining endpoints in the same way, by getting the parameters from the request and binding them to the executed SQL statements. Update the SQL statements in the `sql.js` file, using the queries built in the first labs.
+You can now go ahead and implement the next endpoint `/:franchise/trucks/:truckbrandname/sales_topitems` in the same way, by getting the parameters from the request and binding them to the executed SQL statements in the section marked `4.3.4`. Also update the SQL statement in the `sql.js` file, using the query built in the first labs. Note that you here will have to also bind the parameter for `:truckbrandname` to the SQL statement marked `4.3.5`.
 
-The different routes we will add are:
+The routes we will add are:
 | Route | Method | Query Parameters |
 | ------- | --------- | ------- |
 | / | Return a list of available franchises and the truck brands for each |
-| /franchise/:franchise/countries | Returns a top 10 countries by sales for the specified franchise | |
+| /franchise/:franchise/countries | Returns a top 10 countries by sales for the specified franchise | startdate and enddate |
 | /franchise/:franchise/trucks | Returns a top 10 trucks by sales for the specified franchise | startdate and enddate |
 | /franchise/:franchise/revenue/:year | Return the revenue for the specified year and truck |
-| /franchise/:franchise/trucks/:truckbrandname/sales | Returns the top selling items by truck brand for a specified franchise. By adding a ?analysis=(topitems,dayofweek,topitems_dayofweek) different views of the data is returned | startdate and enddate |
+| /franchise/:franchise/trucks/:truckbrandname/sales_topitems | Returns the top selling items by truck brand for a specified franchise. | startdate and enddate |
+| /franchise/:franchise/trucks/:truckbrandname/sales_dayofweek | Returns sales by truck brand for a specified franchise by day of week.  different views of the data is returned | startdate and enddate |
+| /franchise/:franchise/trucks/:truckbrandname/sales_topitems_dayofweek | Returns the top selling items by truck brand for a specified franchise by day of week. | startdate and enddate |
 | /franchise/:franchise/trucks/:truckbrandname/locations | Returns the top 10 locations for a truck brand for a specified franchise | startdate and enddate |
 
 The routes can then be filtered by adding `?start=2022-01-01&end=2022-03-01` as optional query parameters.
+
+The code for the remaining endpoints is in the file `/routes/franchise_all.js`. Also add these routes to the `app.js` file to include them in the service:
+```js
+// 4.3.6 Add remaining franchise routes
+const franchise_all = require('./routes/franchise_all.js')
+app.use("/franchise", franchise_all);
+```
+
+With this, all the endpoints are now built out and you can test the API.
+
+Here are a few curl commands to test the APIs:
+* `curl "http://localhost:3000/franchise/120/countries"`
+* `curl "http://localhost:3000/franchise/120/trucks"`
+* `curl "http://localhost:3000/franchise/120/revenue/2022"`
+* `curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales"`
+* `curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales?analysis=dayofweek"`
+* `curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales?analysis=topitems_dayofweek"`
 
 > aside negative
 > Need help with this step?
@@ -671,7 +703,7 @@ The routes can then be filtered by adding `?start=2022-01-01&end=2022-03-01` as 
 We should now add a way to secure the access to the API, so that the frontend that we will build in a later lab, can authenticate and we can manage the access to the data and the endpoints.
 For this API we will use a HTTP authentication scheme usually referred to as Bearer Authentication. An application, like the frontend, can login using a username and password, and get a signed token back from the backend that in subsequent calls can be included in the header. The token will be signed by the backend so that in later calls the signature can be verified, adding a measure of protection against tampering. It should be noted that in this lab we are not setting up secured communication with HTTPS, but in a production scenario, this should be done to ensure that both username and passwords, as well as tokens sent between backend and frontend, are protected from interception. The very nature of bearer tokens means that anyone in possession of (bearing) a valid token will be given access to the protected resource (hence the name bearer). For this lab we will be using signed JWTs (JSON Web Token), which is a common standard for token authentication.
 
-### Creating access tokens
+#### Creating access tokens
 We will start by generating two random secrets that should be secured with the backend and not shared with other parties. We will use the `node` command-line tool to do this.
 ```sh
 $ node
@@ -684,8 +716,8 @@ $ node
 
 Generate two random strings like this and add them in the `.env` file.
 ```sh
-ACCESS_TOKEN_SECRET=0b5191c5.....dba87bdb6c5bb
-REFRESH_TOKEN_SECRET=b8f99454.....fccb061ba9f4
+ACCESS_TOKEN_SECRET=0b5191c5.....dba87bdb6c5bb # 4.4.1 Replace with randomly generated string
+REFRESH_TOKEN_SECRET=b8f99454.....fccb061ba9f4 # 4.4.1 Replace with randomly generated string
 ```
 
 The provided code in the `auth.js` file helps us create access and refresh tokens:
@@ -712,6 +744,7 @@ module.exports = {
 
 Include the `auth.js` at the top of the `app.js` file:
 ```js
+// 4.4.2 Add helpers for authenetication and tokens
 var auth = require('./auth')
 ```
 
@@ -719,8 +752,8 @@ Notice how the `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` from the `.env` 
 > aside positive
 > Note that here we are setting an expiration time of 360 minutes for the access tokens to make this lab a little easier (meaning a token will not expire during the entire lab), in a production scenario it would likely be a much shorter expiration time, like 15 minutes.
 
-### Adding a login endpoint to the API
-In `app.js` we can now add two endpoints to login and get an access token and a refresh token. We will check the supplied username and password with the hashed password in our database in the `USERS` table. Additionally, we will add an endpoint to get a new access token using the refresh token, in case the access token has expired.
+#### Adding a login endpoint to the API
+In `/routes/login.js` we can now add two endpoints; one to login and get an access token, and one to get a refresh token. We will check the supplied username and password with the hashed password in our database in the `USERS` table. Additionally, we will add an endpoint to get a new access token using the refresh token, in case the access token has expired.
 ```js
 app.post("/login", async (req, res) => {
     if(!req.body.name || !req.body.password ) {
@@ -785,6 +818,12 @@ app.post("/refresh", (req, res) => {
 });
 ```
 
+You can now add these two endpoints to the API by including it in `app.js`:
+```js
+// 4.4.3 Add routes for login
+app.use("/", login);
+```
+
 > aside positive
 > Note how in the login endpoint we are comparing the stored hashed passwords with a hash of the passed in password, meaning we are never storing plaintext passwords in the database, and the only time we are handling the plaintext password is in this method. Again this makes it important to ensure that the communication between the frontend and the backend is secured using HTTPS in a production scenario.
 
@@ -793,7 +832,7 @@ Since we already created users in the first lab and stored hashed passwords for 
 curl -X POST http://localhost:3000/login -H 'Content-Type:application/json' -d '{"name":"user2","password":"password120"}'
 ```
 
-You can inspect the content of the JWT tokens using [JWT.io](JWT.io), paste it in and inspect the payload. It should contain something like this in the payload part:
+You can inspect the content of the JWT tokens using [JWT.io](https://JWT.io), paste it in and inspect the payload. It should contain something like this in the payload part:
 ```json
 {
   "user": "user2",
@@ -810,13 +849,8 @@ Just for reference, the users that were created in the earlier database set up l
 | user2	| $2b$10$9wdGi....U8qeK/nX3c9HV8VW	| 120	| password120 |
 | user3	| $2b$10$CNZif....IXZFepwrGtZbGqIO	| 271	| password271 |
 
-### Validating tokens
+#### Validating tokens
 We can now add a validation of the token that should now be included in each call to the backend by adding a middleware to the routes. 
-
-Include the `auth.js` at the top of the `app.js` file:
-```js
-var auth = require('./auth')
-```
 
 In `auth.js` we have a method to validate a token, meaning that the backen can look at a supplied token and verify that is was actually signed using the same secret we generated earlier.
 ```js
@@ -834,9 +868,16 @@ In `auth.js` we have a method to validate a token, meaning that the backen can l
     },
 ```
 
+This function can now be added as route middleware (meaning they will be executed as part of the request/response chain), to `app.js` like this:
+```js
+// 4.4.4 Add validation of tokens to each route
+app.use(auth.validateToken);
+```
 This validates the JWT token and picks up the user and franchise that should be set in it, we can now access the data in the `req.user` variable in our endpoints.
 
-In `auth.js` we can also have a method to validate that the user has access to the franchise that is requested in the route, meaning that if you log in with a user with a `franchise_id` we simply verify that you in the queries are trying to access that franchise (if not we will throw back an Unauthorized status for the request) :
+It's important that this is actually added after the route for `/login`, otherwise it will actually try to validate the token as you are trying to login to get a token (creating an impossible situation). In Node Express the order in which we add routes and middleware is important to keep track of.
+
+In `auth.js` we also have a method to validate that the user has access to the franchise that is requested in the route, meaning that if you log in with a user with a `franchise_id` we simply verify that you in the queries are trying to access that franchise (if not we will throw back an Unauthorized status for the request) :
 ```js
     validateAccess: function (req, res, next) {
         if (req.user && req.user.franchise) {
@@ -844,7 +885,9 @@ In `auth.js` we can also have a method to validate that the user has access to t
             if (franchise == req.user.franchise) {
                 res.franchise = req.user.franchise
                 next()
-            }             
+            } else if (franchise == undefined) {
+                next()
+            }
             else {
                 res.status(403).json({ error: 'Unauthorized' })
             }
@@ -855,20 +898,10 @@ In `auth.js` we can also have a method to validate that the user has access to t
     }
 ```
 
-These two functions can now be added as route middleware (meaning they will be executed as part of the request/response chain), to `app.js` like this:
+Now go ahead and add this to each endpoint in `/routes/franchise.js`:
 ```js
-app.get('/franchise/:franchise/countries/',  auth.validateToken, auth.validateAccess, (req, res) => {
-    console.log(req.method + ': ' + req.path);
-
-    const franchise = req.user.franchise
-    ...
-});
-```
-
-Now go ahead and add this to each endpoint in the API, except for the first `/` endpoint, for this one only add the token validation (_because we don't have a `franchise_id` as a parameter to check against_).
-```js
-app.get('/',  auth.validateToken, (req, res) => {
-    console.log(req.method + ': ' + req.path);
+router.get('/:franchise/countries/', auth.validateToken, (req, res) => {
+    // 4.3.2 Parse parameters and connect to Snowflake a return query response    
 
     ...
 });
@@ -899,8 +932,10 @@ We solve this in Node Express by adding the `cors` package to the application an
 
 Right before we start the server in `app.js`, add the following to allow CORS (Cross Origin Request Scripting) for the frontend that we will later build:
 ```js
+// 4.5.1 add CORS to the app
+cors_origin = 'http://localhost:3001'
 app.use(cors({
-    origin: ['http://localhost:3001']
+    origin: [cors_origin]
 }));
 ```
 
@@ -917,47 +952,27 @@ The backend is now ready to be used by the frontend. We can do some final update
 
 First, we move all configuration in `app.js` to an environment file. This will help us when are deploying it somwhere else:
 ```js
+// 4.5.1 add CORS to the app
 cors_origin = process.env.CORS_ADDRESS ?? 'http://localhost:3001'
 app.use(cors({
     origin: [cors_origin]
 }));
 
-app.use(express.json())
-
 port = process.env.PORT ?? 3000
 environment = process.env.NODE_ENV
 app.listen(port, () => {    
-    environment = app.get('env')
     console.log('Server running on port ' + port);
+    environment = app.get('env')
     console.log('Environment: ' + environment)
     console.log('CORS origin allowed: ' + cors_origin)
 });
 ```
 
-Since we may want to test out the API, without having to add a bearer token to the request header (which is not possible with a regular browser window), we can add a simple way to bypass the validation. We only allow this when the API is running in development mode however. In the `auth.js` file we can update the `validateToken` function:
-```js
-    validateToken: function (req, res, next) {
-        //get token from request header
-        const authHeader = req.headers["authorization"]
-        if (authHeader == null) {
-            environment = process.env.NODE_ENV
-            if('development'==environment){
-                if (process.env.DEV_AUTH_USER){
-                    console.warn('Development mode: no auth header found, accepting user ' + process.env.DEV_AUTH_USER + ' fron environment variables')
-                    req.user = {user:process.env.DEV_AUTH_USER, franchise:process.env.DEV_AUTH_FRANCHISE}
-                    next()
-                    return
-                }
-            }
-            res.status(400).send("Auth header not present")
-            return
-        }
-        ...
-```
+Since we may want to test out the API, without having to add a bearer token to the request header (which is not possible with a regular browser window), we can add a simple way to bypass the validation. We only allow this when the API is running in development mode however.
 
-With this, if we add the `NODE_ENV=development` variable to the environment variables, we can bypass the token validation and use a preset user (`DEV_AUTH_USER=user1`) and franchise (`DEV_AUTH_FRANCHISE=1`). This is great for testing and development, but should of course not be present in the production deployment of the API.
+To enable this, we can add a `NODE_ENV` variable to our `.env` file. If that is set to `development` then we will bypass the token validation and use a preset user and franchise (`DEV_AUTH_USER` and `DEV_AUTH_FRANCHISE` variables, also in the `.env` file). This is great for testing and development, but should of course not be present in the production deployment of the API.
 
-The final `.env` file would then look like this:
+Add these 3 variables to your `.env` file. The final `.env` file would then look like this:
 ```sh
 ACCOUNT=my_account_123
 USERNAME=tasty_app_api_user
@@ -975,14 +990,250 @@ DEV_AUTH_USER=user1
 DEV_AUTH_FRANCHISE=1
 ```
 
+Next, in the `auth.js` file we can update the `validateToken` function:
+```js
+    validateToken: function (req, res, next) {
+        //get token from request header
+        const authHeader = req.headers["authorization"]
+        if (authHeader == null) {
+            // 4.6.2 Allow for development mode bypass of token validation
+            environment = process.env.NODE_ENV
+            if('development'==environment){
+                if (process.env.DEV_AUTH_USER){
+                    console.warn('Development mode: no auth header found, accepting user "' + process.env.DEV_AUTH_USER + '" from environment variables with franchise ' + process.env.DEV_AUTH_FRANCHISE)
+                    req.user = {user:process.env.DEV_AUTH_USER, franchise:process.env.DEV_AUTH_FRANCHISE}
+                    next()
+                    return
+                }
+            }
+            res.status(400).send("Auth header not present")
+            return
+        }
+        ...
+```
+
 > aside negative
 > Need help with this step?
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout tags/4.6 -- ./`
 
+<!-- ------------------------ -->
+## Lab 5: Stressing and Scaling your Snowflake instance
+
+Duration: 10
+
+### Overview
+
+In this lab we want to test the scalability of the API.  We want to ensure that when the workload increases, Snowflake scales out to meet that need.  To test this we are going to run the same stress test against our API twice.  The first time we run the test will be with a single cluster warehouse (as it is now, min and a max size are both set to 1).  The second time we run the test will be with a multi-cluster warehouse (MCW)
+
+For the tests we are going to be using [artillery.io](https://www.artillery.io/)
+
+In order to use artillery we will need to install it.  Make sure you are in the backend directory of the project and on the command line execute the following statement.
+
+```nodejs
+npm install -g artillery
+```
+
+### Conduct the test (single cluster warehouse)
+
+To run our test we need to define what that test looks like. This definition is the same for both tests so we compare apples and apples. In our project we go to the `/backend/load_test` directory and find the `load_test.yaml` file which describes the test we are about to perform
+
+```yaml
+config:
+  target: "http://localhost:3000"
+  http:
+      # Responses have to be sent within 180 seconds, or an `ETIMEDOUT` error gets raised.
+      timeout: 180  
+  processor: "./load_test/load_test_helper.js"
+  phases:
+    - duration: 100
+      arrivalRate: 10
+      rampTo: 50
+      
+scenarios:
+  - name: "Get basic data"
+    flow:
+      - post:
+          url: "/login"
+          json:
+            name: "user2"
+            password: "password120"
+          capture:
+           - json: "$.accessToken"
+             as: "accessToken"
+      - loop:
+          - function: "generateRandomDate"
+          - get:
+              url: "/franchise/120/countries?start={{ startDate }}&end={{ endDate }}"
+              headers:
+                Authorization: "Bearer {{ accessToken }}"
+              afterResponse: "printStatus"
+          - think: 1
+        count: 5   
+```
+
+- config
+    - target: The API url we are targetting
+    - duration: How long does the test last (secs)
+    - arrivalRate: new users to add every second
+- scenarios
+    - flow.post.url: endpoint we hit using (POST)
+    - flow.post.json.name: pass in the username
+    - flow.post.json.password: pass in the password
+    - flow.post.capture.json: capture the returned access token
+    - loop: we are going to execute the next step a number of times
+    - loop.get.url: endpoint we hit using (GET)
+    - loop.get.headers.Authorization: pass in the authorization header using the token retrieved earlier
+
+### Run the Test
+
+Now let's go ahead and run the test.  Before we do let's capture the current_timestamp so we can use it in your queries later and make filtering really easy.  Grab the return from the following statement
+
+```sql
+SELECT current_timestamp();
+```
+from the backend directory of the project go ahead and execute the following
+
+```nodejs
+npx artillery run ./load_test/load_test.yaml
+```
+
+### Test Completed
+
+Our test is complete and we have two outputs to look at.  One is on your screen from Artillery.  It is telling you things like the number of requests issued, the rate we issued queries, the result codes and how many vUsers were created. 
+
+The other way to look at this is inside Snowflake.  We want to see if the warehouse scaled out and executed queries on those scaled out clusters.
+Let's first look from the perspective of the warehouse.  In Snowsight run the following query the filters by the warehouse name and suitable duration in the past.  In this test there should be no rows returned
+
+```sql
+SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_EVENTS_HISTORY 
+WHERE CLUSTER_NUMBER > 0
+AND WAREHOUSE_NAME = 'TASTY_APP_API_WH'
+AND TIMESTAMP >= '<insert value we captured earlier>'
+ORDER BY TIMESTAMP DESC; 
+```
+
+The other persective is from the perspective of the queries we executed.  For that we can run the following query in Snowsight that again filters by the warehouse and timeframe.  What did those wait times look like?  There are other metrics available in the QUERY_HISTORY view that are not included below for brevity but if you are feeling curious then you can add them to the query also.  
+
+```sql
+SELECT 
+    Query_ID,
+    start_time, 
+    end_time, 
+    total_elapsed_time,
+    EXECUTION_TIME,
+    queued_overload_time,    
+    queued_overload_time + execution_time as how_the_times_add_up,    
+    cluster_number,
+    warehouse_name,
+    execution_status,
+    QUEUED_PROVISIONING_TIME,
+    queued_repair_time,
+    child_queries_wait_time
+FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+WHERE warehouse_name = 'TASTY_APP_API_WH'
+AND start_time >= '<insert value we captured earlier>'
+ORDER BY start_time DESC; 
+```
+
+Now let's change the warehouse into a MCW and rerun the test.  In Snowsight execute the following.
+
+```sql
+ALTER WAREHOUSE <insert name of your warehouse> SET MAX_CLUSTER_COUNT = 10;
+```
+In the code above we will allow Snowflake to scale out our warehouse to 10 clusters.
+
+### Conduct the tests (Multi-Cluster Warehouse)
+
+Now let's go ahead and run the test again.  Before we do let's capture the current_timestamp once more so we can use it in your queries later and make filtering really easy.  Grab the return from the following statement
+
+```sql
+SELECT current_timestamp();
+```
+
+from the backend directory of the project go ahead and execute the following
+
+```nodejs
+npx artillery run load_test.yaml
+```
+
+### Test Completed
+
+Our test is complete and we again have two outputs to look at.  One is on the screen from Artillery.  Can you see a difference in the output?
+
+The other is inside Snowflake.  We want to see if the warehouse scaled out and executed queries on those scaled out clusters.
+Let's first look from the perspective of the warehouse.  In Snowsight run the following query that filters by the warehouse name and suitable duration in the past.  If the warehouse scaled then we should see rows returned:
+
+```sql
+SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_EVENTS_HISTORY 
+WHERE CLUSTER_NUMBER > 0
+AND WAREHOUSE_NAME = 'TASTY_APP_API_WH'
+AND TIMESTAMP >= '<insert value we captured earlier>'
+ORDER BY TIMESTAMP DESC; 
+```
+
+and the other persective is from the perspective of the queries we executed.  For that we can run the following query in Snowsight that again filters by the warehouse and timeframe and also looks for cluster numbers > 1 (i.e. scale out clusters)
+
+```sql
+SELECT 
+    Query_ID,
+    start_time, 
+    end_time, 
+    total_elapsed_time,
+    EXECUTION_TIME,
+    queued_overload_time,    
+    queued_overload_time + execution_time as how_the_times_add_up,    
+    cluster_number,
+    warehouse_name,
+    execution_status,
+    QUEUED_PROVISIONING_TIME,
+    queued_repair_time,
+    child_queries_wait_time
+FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+WHERE warehouse_name = 'TASTY_APP_API_WH'
+AND cluster_number > 1
+AND start_time >= '<insert value we captured earlier>'
+ORDER BY start_time DESC; 
+```
+
+#### Here is an example test result
+
+```sql
+--Capture output before test starts
+SELECT current_timestamp();
+SET load_test_start_time = '<captured value>';-- i.e 2023-05-30 08:31:03.502 -0700
+
+--Capture output after test finishes
+SELECT current_timestamp();
+SET load_test_end_time = '<captured value>';-- i.e 2023-05-30 08:33:03.502 -0700
+
+--Now execute the following
+WITH query_times AS (    
+    SELECT 
+        Query_ID,
+        CASE WHEN cluster_number IS NULL THEN 'Cache' ELSE cluster_number::varchar END as cluster_number,
+        time_slice(start_time::timestamp,10,'SECOND') as slice
+    FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+    WHERE warehouse_name = 'TASTY_APP_API_WH'
+    AND start_time >= $load_test_start_time
+    AND start_time <= $load_test_end_time
+)
+SELECT
+    count(query_id) as query_count,
+    cluster_number,
+    slice
+FROM query_times
+group by cluster_number, slice
+ORDER BY slice DESC;
+```
+
+They say a picture paints a thousand words so here is a graph from Snowsight that shows the cluster scale throughout the test.
+
+![MCW Scale](./assets/MCW.png)
+
 
 <!-- ------------------------ -->
-## Lab 5: Frontend Overview
+## Lab 6: Frontend Overview
 Duration: 40
 
 This lab will take you through building a React JS frontend that can then be displayed in your favorite browser. The frontend will connect to the backend API which then connects to the Snowflake database and serves the results of queries over a number of API endpoints. The query results are then rendered in the browser as charts which are then easily consumed by the end users.
@@ -992,15 +1243,21 @@ We will take the API Endpoints designed in the [Data API Lab](#lab-4-backend-ove
 In this lab we are not securing the communication using HTTPS, but in a production environment this should be added.
 
 
-### Lab 5.1: Setting up the code
+### Lab 6.1: Setting up the code
 
 The starting code for this lab is in the GitHub repository we cloned earlier. For this lab we will use the `frontend` subdirectory from the main directory. Open this folder in an IDE (like VSCode).
 
-We will start by adding the Node dependencies to the project. In a terminal window run the following:
+We will start by adding the Node dependencies to the project. In a new terminal window, change to the `frontend` directory
+and run the following:
 ```sh
 npm i react
 npm i react-bootstrap
 npm i recharts
+```
+
+To configure the application, copy the example file `.env.example` to create a new file in the frontend directory called `.env`
+```sh
+cp .env.example .env
 ```
 
 Start the server by running:
@@ -1016,27 +1273,37 @@ http://localhost:3001/
 To stop the Web Server, simply terminate the task that started the server, press <kbd>Ctrl</kbd>+<kbd>c</kbd>
 
 ---
-### Lab 5.2: Configuring the connection to Backend APIs
+### Lab 6.2: Code layout.
 
-We can now connect to the Snowflake database using the Backend APIs we created in the earlier lab. 
+Before making changes, let us understand how the files are organized. Below image show various files in building the Frontend. Some of the files contain the boilerplate code generated when initializing ReactJS appilication.
 
-To configure the application, copy the example file `.env.example` to create a new file in the frontend directory called `.env`
-```sh
-cp .env.example .env
-```
+All the required files are in the ***src*** folder. ***src/pages*** folder has the Javascript (.js) and Stylesheet files (.css)
+
+- ***Login.js***, has the HTML and JS code required to render Login page.
+- ***Login.css***, has the styles on the Login Page.
+
+- ***Home.js***, has the HTML and JS code required to render Franchise view. We will be modifying this file to add various charts.
+- ***Home.css***, has the styles on the Franchise view.
+
+- ***Details.js***, has the HTML and JS code required to render Truck Detail view. We will be modifying this file to add various charts.
+- ***Details.css***, has the styles on the Truck Detail view.
 
 ---
-### Lab 5.3: Building the UI.
+
+### Lab 6.3: Building the Franchise Overview UI.
+
+Login to the website using one of the users and passwords from above.
 
 On successful Login, the Backend API returns ***Franchise_Id*** and ***AccessToken***, we will use them to make subsequent calls to the Backend API. 
 
 We can now start building the UI. Let us start with building a Bar Chart for the ***Sales for the Top 10 Countries***. The Backend API end point is `/franchise/:franchise/countries`, optionally specifying the Start and End dates. 
 
-First, let us fetch Data from Backend for Sales by Top10 Countries. Update the stubbed method in ***pages/Home.js*** add a variable to hold the data returned by the backend as Step1.
+First, let us fetch Data from Backend for Sales by Top10 Countries. Update the stubbed method in ***pages/Home.js*** add a variable to hold the data returned by the backend as *6.3.1*.
+
 ```js
 let [top10Countries, setTop10Countries] = useState([]);
 ```
-add the following code as Step2.
+add the following code to ***pages/Home.js*** as *6.3.2*.
 ```js
 function fetchTop10Countries() {
     const requestOptions = {
@@ -1050,17 +1317,17 @@ function fetchTop10Countries() {
     })
 }
 ```
-We are using the Franchise_id and the accessToken we recieved from the Backend API on successful Login. AccessToken is then validated by the Backend API and the Snowflake query is executed and the results are returned, we convert the results to JSON and store in a local variable.
+We are using the `franchise` and the `accessToken` we recieved from the Backend API on successful Login. The `accessToken` is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.
 
-In the requestOptions, we are setting the Request Method (GET/POST), and we are sending the accessToken in the header as a Bearer Token.
+In the `requestOptions`, we are setting the Request Method (GET/POST), and we are sending the `accessToken` in the header as a Bearer Token.
 
-Update the React UI hooks, so the newly created method is called when the page is requested. Update the useEffect() method as Step3, to add the following.
+We need to update the React UI hooks, so the newly created method is called when the page is requested. Update the `useEffect()` method in ***pages/Home.js*** as *6.3.3*, to add the following.
 
 ```js
 fetchTop10Countries();
 ```
 
-Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library ***recharts***. Add the below is the code as Step4 to display the chart.
+Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library ***recharts***. Add the following code to ***pages/Home.js*** as *6.3.4* to display the chart.
 
 ```html 
 <ResponsiveContainer width="100%" height="100%">
@@ -1082,14 +1349,18 @@ Now that we have the data from the Backend API, we can build the BarChart, to do
 </ResponsiveContainer>
 ```
 
+At this point, if you save your changes and check the web browser it should display the ***Sales for the Top 10 Countries***. Make Sure your development Web Server is still running.  
+
 Now uet us add a Bar Chart for the ***Sales for the Top 10 Trucks***. The Backend API end point is `/franchise/:franchise/trucks`, optionally specifying the Start and End dates. 
 
-Let us fetch Data from Backend for Sales by Top10 Trucks. In this method, since we are fetching Top Trucks, we will add a little bit of complexity to store unique list of Trucks. Update the stubbed method in ***pages/Home.js*** add a variable to hold the data returned by the backend as Step1.
+Let us fetch Data from Backend for Sales by Top10 Trucks. In this method, since we are fetching Top Trucks, we will add a little bit of complexity to store unique list of Trucks. Update the stubbed method in ***pages/Home.js*** add a variable to hold the data returned by the backend as *6.3.5*.
+
 ```js
 let [top10Trucks, setTop10Trucks] = useState([]); //used to hold Sales of the Top 10 Trucks
 let [trucks, setTrucks] = useState([]); // used to hold unique Trucks brands.
 ```
-add the following code as Step2.
+
+add the following code to ***pages/Home.js*** as *6.3.6*.
 ```js
 function fetchTop10Trucks() {
     const requestOptions = {
@@ -1109,17 +1380,18 @@ function fetchTop10Trucks() {
         })
 }
 ```
-We are using the Franchise_id and the accessToken we recieved from the Backend API on successful Login. AccessToken is then validated by the Backend API and the Snowflake query is executed and the results are returned, we convert the results to JSON and store in a local variable.
 
-In the requestOptions, we are setting the Request Method (GET/POST), and we are sending the accessToken in the header as a Bearer Token.
+We are using the `franchise` and the `accessToken` we recieved from the Backend API on successful Login. The `accessToken` is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.
 
-Update the React UI hooks, so the newly created method is called when the page is requested. Update the useEffect() method as Step3, to add the following.
+In the `requestOptions`, we are setting the Request Method (GET/POST), and we are sending the `accessToken` in the header as a Bearer Token.
+
+Update the `useEffect()` method in ***pages/Home.js*** as *6.3.7*, to add the following.
 
 ```js
 fetchTop10Trucks();
 ```
 
-Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library ***recharts***. Add the below is the code as Step4 to display the chart.
+Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library ***recharts***. Add the following code to ***pages/Home.js*** as *6.3.8* to display the chart.
 
 ```html 
 <ResponsiveContainer width="100%" height="100%">
@@ -1139,42 +1411,163 @@ Now that we have the data from the Backend API, we can build the BarChart, to do
 </ResponsiveContainer>
 ```
 
-You should see the below chart displayed in your browser running the Web Application.
+Save your changes and you should see the below chart displayed in your browser running the Web Application.
 
-![Alt text](chart1.png)
+![Alt text](./assets/chart1.png)
 
-The final step to finish the page is to add the navigation to the Truck Details page, to do so add the following code as Step5.
+The final step to finish the page is to add the navigation to go to the Truck Details page, add the following code to ***pages/Home.js*** as *6.3.9*:
+
 ```js
 function gotoDetails() {
     navigate('/details', {state: {franchise: franchise, truck_brand_name: top10Trucks[0]['TRUCK_BRAND_NAME'], fromDate: fromDate, toDate:toDate, trucks: trucks, accessToken: location.state.accessToken, refreshToken: location.state.refreshToken}});
 }
 ```
 
+---
+
+### Lab 6.4: Building the Truck Details Page UI.
+
+We can now start building the Truck details page UI. Let us start with building a Bar Chart for the ***Best Items for a Truck***. The Backend API end point is `/franchise/:franchise/trucks/:truck/sales_topitems`, optionally specifying the Start and End dates. 
+
+First, let us fetch Data from Backend for Best Items for a Truck. Update the stubbed method in ***pages/Details.js*** add a variable to hold the data returned by the backend as *6.4.1*.
+
+```js
+let [topItemsByTruck, setTopItemsByTruck] = useState([]);
+```
+
+add the following code to ***pages/Details.js*** as *6.4.2*
+
+```js
+function fetchTopItemsByTruck() {
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + location.state.accessToken },
+        };
+        fetch(backendURL+'/franchise/'+franchise+'/trucks/'+truck+'/sales_topitems?start='+fromDate+'&end='+toDate, requestOptions)
+            .then((result) => result.json())
+                .then((data) => {
+                    setTopItemsByTruck(data)
+        })
+    }
+```
+We are using the `franchise` and the `accessToken` we recieved from the Backend API on successful Login. The `accessToken` is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.
+
+In the `requestOptions`, we are setting the Request Method (GET/POST), and we are sending the `accessToken` in the header as a Bearer Token.
+
+Now let us update the React UI hooks, so the newly created method is called when the page is requested. Update the `useEffect()` method in ***pages/Details.js*** as *6.4.3*, to add the following.
+
+```js
+fetchTopItemsByTruck();
+```
+
+Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library ***recharts***. Add the following code to ***pages/Details.js*** as *6.4.4* to display the chart.
+
+```html 
+<ResponsiveContainer width="100%" height="100%">
+    <BarChart
+        width={700}
+        height={0}
+        data={topItemsByTruck}
+        margin={{top: 15, right: 15, left: 25, bottom: 5,}}>
+        <XAxis type="category" dataKey="MENU_ITEM_NAME">
+        </XAxis>
+        <YAxis type="number" dataKey="REVENUE" tickFormatter={tickFormater}>
+        </YAxis>
+        <Tooltip formatter={(value) => 'US$'+(new Intl.NumberFormat('en').format(value))} />
+        <Bar dataKey="REVENUE" fill="#548bf2">
+            <LabelList dataKey="REVENUE" position="top" fill='grey' formatter={labelFormatter} />
+        </Bar>
+    </BarChart>
+</ResponsiveContainer>
+```
+
+At this point, if you save your changes and check the web browser it should display the ***Best Items for a Truck***. Make Sure your development Web Server is still running.
+
+Now uet us add a Bar Chart for the ***Sales for day of the week for a truck***. The Backend API end point is `/franchise/:franchise/trucks/:truck/sales_dayofweek`, optionally specifying the Start and End dates. 
+
+Let us fetch Data from Backend for Sales for day of the week for a truck. Update the stubbed method in ***pages/Details.js*** add a variable to hold the data returned by the backend as *6.4.5*.
+```js
+let [salesByDOW, setSalesByDOW] = useState([]);
+```
+
+add the following code to ***pages/Details.js*** as *6.4.6*
+
+```js
+function fetchSalesByDOW() {
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + location.state.accessToken },
+    };
+    fetch(backendURL+'/franchise/'+franchise+'/trucks/'+truck+'/sales_dayofweek?start='+fromDate+'&end='+toDate, requestOptions)
+        .then((result) => result.json())
+            .then((data) => {
+                setSalesByDOW(data)
+    })
+}
+```
+We are using the `franchise` and the `accessToken` we recieved from the Backend API on successful Login. The `accessToken` is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.
+
+In the `requestOptions`, we are setting the Request Method (GET/POST), and we are sending the `accessToken` in the header as a Bearer Token.
+
+Now let us update the React UI hooks, so the newly created method is called when the page is requested. Update the `useEffect()` method in ***pages/Details.js*** as *6.4.7*, to add the following.
+
+```js
+fetchSalesByDOW();
+```
+
+Now that we have the data from the Backend API, we can build an AreaChart, to do that, we are using a react library ***recharts***. Add the following code to ***pages/Details.js*** as *6.4.8* to display the chart.
+
+```html 
+<ResponsiveContainer width="100%" height="100%">
+    <AreaChart
+        width={500}
+        height={400}
+        data={salesByDOW}
+        margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+        }}>
+        <XAxis dataKey="DOW" tickFormatter={dayofWeek} />
+        <YAxis tickFormatter={tickFormater} />
+        <Tooltip formatter={(value) => 'US$'+(new Intl.NumberFormat('en').format(value))} />
+        <Area type="monotone" dataKey="REVENUE" stroke="#548bf2" fill="#548bf2" activeDot={{ r: 8 }} />
+    </AreaChart>
+</ResponsiveContainer>
+```
+
+You should see the below chart displayed in your browser running the Web Application.
+
+![Alt text](./assets/Truck_Details_Screen.png)
 
 ---
-### Lab 5.4: Use the Website.
+### Lab 6.5: Use the Website.
 
 The web application has 3 pages (Login Page, Franchise Page and Truck Details Page)
 
 ***Login as User***, is the way for a user to be validated and also establish a session in the Backend for the user. This is a simple page, when user enters their username and password and press Login button, user is authenticated and is navigated to the Franchise View. 
-![Alt text](Login_Screen.png)
+![Alt text](./assets/Login_Screen.png)
 
 ***Franchise View***, displays various charious charts like Sales for Top 10 Countries, Sales from Top 10 Trucks and the YTD revuenue for the *Franchise*. On this page, user is presented with 2 date pickers to choose Start and End Dates which are used for filtering the data. 
 
 The user can then navigate to the Truck Details page by clicking on the Truck Details button on the top right. 
 
-![Alt text](Home_Screen.png)
+![Alt text](./assets/Home_Screen.png)
 
 ***Truck Details View***, displays various charts like Top Items, Sales by Day-of-Week, Best Sellers by Day-of-Week, Best Cities by Day-of-Week for the selected *Franchise* and *Truck Brand*. On this page, the user is presented with the same 2 date pickers from the previous page. In addition, the user has the option to choose a Truck Brand. 
 
 The user can navigate back to the Franchise page, by clicking on the *Back to Overview* button on the top right.
 
-![Alt text](Truck_Details_Screen.png)
+![Alt text](./assets/Truck_Details_Screen.png)
+
+---
+
 
 <!-- ------------------------ -->
 
 
-## Lab 6: Cleanup
+## Lab 7: Cleanup
 
 ### Front End 
 There isn't very much to clean up or tear down after this lab. When you don't need the frontend any more stop the development web server, simply by terminating the task that started the server, press <kbd>Ctrl</kbd>+<kbd>c</kbd>.
