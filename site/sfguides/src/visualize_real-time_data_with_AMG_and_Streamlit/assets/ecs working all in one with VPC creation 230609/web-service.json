@@ -39,7 +39,20 @@
         "SecurityGroup": {
             "Description": "Select the Security Group to use for the ECS cluster hosts",
             "Type": "AWS::EC2::SecurityGroup::Id"
-        }
+        },
+         "SnowflakeAccount" : {
+            "Description" : "Snowflake Account Name",
+            "Type" : "String"
+         },
+         "SnowflakeUser" : {
+           "Description" : "Username of the Snowflake account",
+           "Type" : "String"
+         },
+         "SnowflakePassword" : {
+           "NoEcho" : "true",
+           "Description" : "Password of your Snowflake account",
+           "Type" : "String"
+         }
     },
     "Resources": {
         "Service": {
@@ -86,7 +99,21 @@
                 "ContainerDefinitions": [
                     {
                         "Name": "streamlit",
-                        "Image": "439306121598.dkr.ecr.us-west-2.amazonaws.com/jsnow:streamlit",
+                        "Image": "439306121598.dkr.ecr.us-west-2.amazonaws.com/jsnow:streamlit-qs",
+                        "Environment": [
+                            {
+                               "name": "username",
+                               "value": {"Ref": "SnowflakeUser"}
+                            },
+                            {
+                               "name": "passwd",
+                               "value": {"Ref": "SnowflakePassword"}
+                            },
+                            {
+                               "name": "account",
+                               "value": {"Ref": "SnowflakeAccount"}
+                            }
+                        ], 
                         "PortMappings": [
                             {
                                 "ContainerPort": 8501,
@@ -125,7 +152,7 @@
                 "VpcId": {
                     "Ref": "VPC"
                 },
-                "Port": 8501,
+                "Port": 80,
                 "Protocol": "HTTP",
                 "TargetType": "ip",
                 "Matcher": {
@@ -144,7 +171,7 @@
                 "LoadBalancerArn": {
                     "Ref": "LoadBalancer"
                 },
-                "Port": 8501,
+                "Port": 80,
                 "Protocol": "HTTP",
                 "DefaultActions": [
                     {
