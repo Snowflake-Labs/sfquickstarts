@@ -99,7 +99,7 @@
                 "ContainerDefinitions": [
                     {
                         "Name": "streamlit",
-                        "Image": "439306121598.dkr.ecr.us-west-2.amazonaws.com/jsnow:streamlit-qs",
+                        "Image": "public.ecr.aws/l2h4k3x5/jsnow-public:streamlit-qs",
                         "Environment": [
                             {
                                "name": "username",
