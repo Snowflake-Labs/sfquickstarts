@@ -546,7 +546,7 @@ Finally, run the next group of statements which will have you assume the TASTY_A
 
 <img src="assets/ss68.png" width="800"/>
 
-5.12 Select `Tasty Role`, then click `Assign Attribute`L
+5.12 Select `Tasty Role`, then click `Assign Attribute`
 
 <img src="assets/ss69.png" width="600"/>
 
@@ -600,15 +600,27 @@ Your Connection Details pane should now show that your warehouse and role in Sno
 
 ### Embedding Keys
 
-5.24 For the last piece of work we will do in our administration UI, select the `APIs & Embed Secrets` field from on the bottom left.
+5.24 For the last piece of work we will do in our administration UI, select the `Account` field from on the top left. Then scroll down to where you see `Embedding`. Click `Add`.
 
-5.25 Click `Create New`:
+<img src="assets/CleanShot%202023-06-08%20at%2010.04.52@2x.png" width ="800">
+
+5.25 You will see a prompt asking if you want to enable the premium feature. Click `Enable`. You will not be charged for leveraging this in a trial environment.
+
+<img src="assets/CleanShot%202023-06-08%20at%2010.05.47@2x.png" width ="800">
+
+5.26 Finally, you will see your embedding secret. You may save this to another location for future labs, but it will not be needed for this lab. Click `Close`.
+
+<img src="assets/CleanShot%202023-06-08%20at%2010.06.19@2x.png" width="600">
+
+5.27 Select `APIs & Embed Secrets` from the lefthand menu. 
+
+5.28 Click `Create New`:
 
 <img src="assets/ss76.png" width="800"/>
 
-5.26 Select `Embed Secret`, and name the secret `Tasty Embed`. 
+5.29 Select `Embed Secret`, and name the secret `Tasty Embed`. 
 
-5.27 In the Owner field, select your Sigma user, and click `Create`:
+5.30 In the Owner field, select your Sigma user, and click `Create`:
 
 <img src="assets/ss77.png" width="600"/>
 
@@ -616,57 +628,57 @@ Normally, you would save the `ClientID and Secret` keys that are auto-generated 
 
 We do not need to do this for the purposes of this lab. The keys are required to exist as we will demonstrate embedding directly within Sigma.
 
-5.28 Click `Close`.
+5.31 Click `Close`.
 
 ### Workspaces
 
 We will create a Workspace and grant permission based on team membership. 
 
-5.29 Navigate back to the Sigma homepage by clicking the `Paper Crane` logo in the top left corner. Select `Workspaces` from the left hand side:
+5.32 Navigate back to the Sigma homepage by clicking the `Paper Crane` logo in the top left corner. Select `Workspaces` from the left hand side:
 
 <img src="assets/ss78.png" width="400"/>
 
-5.30 Select `Create Workspace` in the top right corner, then name your workspace `Tasty Bytes`. 
+5.33 Select `Create Workspace` in the top right corner, then name your workspace `Tasty Bytes`. 
 
 You will see your user listed with `Can Manage` permissions. 
 
-5.31 Add the two teams you created earlier by using the search bar below your user, and grant them `Can Contribute` permissions. 
+5.34 Add the two teams you created earlier by using the search bar below your user, and grant them `Can Contribute` permissions. 
 
-5.32 Uncheck the `Send an email notification` so that we don't try to send mail at this time.
+5.35 Uncheck the `Send an email notification` so that we don't try to send mail at this time.
 
-5.33 Click `Save`: 
+5.36 Click `Save`: 
 
 <img src="assets/ss79.png" width="600"/>
 
 You will now see your new Tasty Bytes Workspace. Click on its title, then select `Create Folder` in the top right corner. 
 
-5.34 Name your new folder `Workbooks`, then `click the green check mark`:
+5.37 Name your new folder `Workbooks`, then `click the green check mark`:
 
 <img src="assets/ss80.png" width="600"/>
 
-5.35 Navigate back to the home page by `clicking the Sigma logo` in the top left corner. 
+5.38 Navigate back to the home page by `clicking the Sigma logo` in the top left corner. 
 
-5.36 From the home page, click into your `Tasty Bytes Sales Portal` Workbook you created earlier. I should be at the top of the `RECENT` list:
+5.39 From the home page, click into your `Tasty Bytes Sales Portal` Workbook you created earlier. I should be at the top of the `RECENT` list:
 
 <img src="assets/ss81.png" width="600"/>
 
-5.37 On the top bar, click the drop down next to the workbook title. Select `Tag this published version`:
+5.40 On the top bar, click the drop down next to the workbook title. Select `Tag this published version`:
 
 <img src="assets/ss82.png" width="600"/>
 
-5.38 From the drop down, select the `Production` tag we created earlier. Check the box for `Allow Saving as a New Workbook`, followed by `Set Tag`:
+5.41 From the drop down, select the `Production` tag we created earlier. Check the box for `Allow Saving as a New Workbook`, followed by `Set Tag`:
 
 <img src="assets/ss83.png" width="400"/>
 
-5.39 Once again, select the drop down by the workbook title, this time selecting `Move`: 
+5.42 Once again, select the drop down by the workbook title, this time selecting `Move`: 
 
 <img src="assets/ss84.png" width="400"/>
 
-5.40 When prompted to choose a destination, select the `Tasty Bytes workspace` we created earlier:
+5.43 When prompted to choose a destination, select the `Tasty Bytes workspace` we created earlier:
 
 <img src="assets/ss85.png" width="400"/>
 
-5.41 Then, select the `Workbooks folder` we created and click `Move`:
+5.44 Then, select the `Workbooks folder` we created and click `Move`:
 
 <img src="assets/ss86.png" width="400"/>
 
@@ -700,9 +712,9 @@ You will be presented a `Secret` but we do not need to copy this for the lab. Cl
 
 6.4 On the left hand side choose the following parameters:
  <ul>
-      <li>Select the embed secret we created earlier from the Client Id drop down.</li>
+      <li>Select the embed secret we created earlier from the Embed Secret drop down.</li>
       <li>For Mode, select “User-Backed”</li>
-      <li>For External User Teams select “Kitakata Managers”</li>
+      <li>For Embed User Teams select “Kitakata Managers”</li>
       <li>For email, input any random email address that is NOT the email you log into Sigma with. It does   
         not need to be a real email address, and you can put something like managers@tastybytes.com.</li>      
       <li>For account type select “Creator”</li>      
