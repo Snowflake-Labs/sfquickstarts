@@ -128,13 +128,12 @@ As you can see, the majority of observations are in support of user who haven’
 ## Model training
 In order to predict the churn outcomes for customers not in our dataset, we’ll need to train a model that can identify users who are at risk of churning from the history of users who have. However, it was mentioned in the last section that there is an imbalance in the class distribution that will cause problems for our model if not handled properly. One way to handle this is to create new data points such that the classes balance out. This is also known as upsampling. 
 
-For this, we’ll be using the `SMOTE` algorithm from the `imblearn` package. Run the code cell labeled **Feature separation and upsampling**.
+For this, we’ll be using the `SMOTE` algorithm from the `imblearn` package. Run the code cell labeled **Upsampling the data**.
 
 ```python
 # Extract the training features
 features_names = [col for col in data.columns if col not in ['Churn']]
 features = data[features_names]
-print(f"Size of data before upsampling {features.shape[0]}")
 
 # extract the target
 target = data['Churn']
@@ -142,47 +141,34 @@ target = data['Churn']
 # upsample the minority class in the dataset
 upsampler = SMOTE(random_state = 111)
 features, target = upsampler.fit_resample(features, target)
-print(f"Size of data after upsampling {features.shape[0]}")
+
+# adds the target and reassigns features to data
+features['Churn'] = target
+
+# convert to snowpark dataframe and add an index column to preserve the order of our data
+snowpark_data = features
+snowpark_data["INDEX"] = snowpark_data.reset_index().index
+dataset = session.create_dataframe(snowpark_data)
 ```
 Now that we have balanced our dataset, we can prepare our model for training. The model we have chosen for this project is a Random Forest classifier. A random forest creates an ensemble of smaller models that all make predictions on the same data. The prediction with the most votes is the prediction the model chooses.
 
-Instead of coding this ourselves, Hex provides an AI assistant built into the product that is eager to help us out. In the code cell labeled "Model training," paste the following prompt.
+Rather than use a typical random forest object, we'll make use of Snowflake ML. Snowflake ML offers capabilities for data science and machine learning tasks within Snowflake. It provides estimators and transformers compatible with scikit-learn and xgboost, allowing users to build and train ML models directly on Snowflake data. This eliminates the need to move data or use stored procedures. It uses wrappers around scikit-learn and xgboost classes for training and inference, ensuring optimized performance and security within Snowflake.
 
-`instantiate a random forest object and a standard scaler object. scale the features and then split into a training and testing set. fit the model on the training features.` 
 
-*If Magic isn't showing up for you, there's a chance it's not enabled yet. To enable it,  select the magic toggle in your workspace settings under preferences. See [docs for more](https://learn.hex.tech/docs/develop-logic/hex-magic) info*
+### Accepting Anaconda terms
 
-![](assets/magic.gif)
 
-The output should look something like this 👇🏾
+But before we can train the model, we'll need to accept the Anaconda terms and conditions. 
+To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the `ORGADMIN` role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow you to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that defines our UDTF.
 
-```python
-# import necessary libraries
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 
-# instantiate a random forest object
-rf = RandomForestClassifier()
+![](assets/vhol-accept-terms.gif)
 
-# instantiate a standard scaler object
-scaler = StandardScaler()
+Now we can train our model. Run the cell labeled `Snowflake ML model training`.
 
-# scale the features
-features_scaled = scaler.fit_transform(features)
-
-# split into a training and testing set
-X_train, X_test, y_train, y_test = train_test_split(
-    features_scaled, target, test_size=0.2, random_state=42
-)
-
-# fit the model on the training features
-rf.fit(X_train, y_train)
-```
-
-It's okay if your output doesn't look exactly like this. However, if you are having issues getting it to work, you can simply copy this code cell.
 
 In the next section, we will look at how well our model performed as well as which features played the most important role when predicting the churn outcome.
+
 ## Model evaluation and feature importance
 In order to understand how well our model performs at identifying users at risk of churning, we’ll need to evaluate how well it does predicting churn outcomes. Specifically, we’ll be looking at the recall score, which tells us *of all the customers that will churn, how many can it identify.*
 
@@ -190,19 +176,20 @@ Run the code cell labeled **Evaluate model** on *accuracy and recall.*
 
 ```python
 # run the model on the testing set
-predictions = rf.predict(X_test)
+predictions = results.to_pandas().sort_values("INDEX")[['predicted_churn'.upper()]].astype(int).to_numpy().flatten()
+actual = testing.to_pandas().sort_values("INDEX")[['Churn']].to_numpy().flatten()
 
-# scores
-accuracy = round(accuracy_score(y_test, predictions), 3) # How often does it get the right answer
-recall = round(recall_score(y_test, predictions), 3) # How many churners were identified correctly
+accuracy = round(accuracy_score(actual, predictions), 3)
+recall = round(recall_score(actual, predictions), 3)
 ```
 This will calculate an accuracy and recall score for us which we'll display in a [single value cell](https://learn.hex.tech/docs/logic-cell-types/display-cells/single-value-cells#single-value-cell-configuration).
 
 ### Feature importance
 
-Next, we want to understand which features were deemed most important by the model when making predictions. Lucky for us, our model keeps track of the most important features, and we can access them using the `feature_importances_` attribute. However, this will only show us the score, and we won't know which column the score refers to. To address this, we'll create a dataframe with the combined feature names and scores.
+Next, we want to understand which features were deemed most important by the model when making predictions. Lucky for us, our model keeps track of the most important features, and we can access them using the `feature_importances_` attribute. Since we're using Snowflake-ml, we'll need to extract the original `sklearn` object from our model. Then we can perform feature importance as usual.
 
 ```python
+rf = model.to_sklearn()
 importances = pd.DataFrame(
     list(zip(features.columns, rf.feature_importances_)),
     columns=["feature", "importance"],
@@ -247,34 +234,32 @@ user_vector_scaled = scaler.transform(user_vector)
 The final cell should look like this:
 ```python
 # get model inputs
-inputs = [
-	    account_weeks,
-	    1 if renewed_contract else 0, # This value is a bool and we need to convert to numbers
-	    1 if has_data_plan else 0, # This value is a bool and we need to convert to numbers
-	    data_usage,
-	    customer_service_calls,
-	    mins_per_month,
-	    daytime_calls,
-	    monthly_charge,
-	    overage_fee,
-	    roam_mins,
-]
+user_vector = np.array([
+    account_weeks,
+    1 if renewed_contract else 0,
+    1 if has_data_plan else 0,
+    data_usage,
+    customer_service_calls,
+    mins_per_month,
+    daytime_calls,
+    monthly_charge,
+    overage_fee,
+    roam_mins,
+]).reshape(1,-1)
 
-# reshape and scale the user vector
-user_vector = np.array(inputs).reshape(1, -1)
-user_vector_scaled = scaler.transform(user_vector)
+user_dataframe = pd.DataFrame(user_vector, columns=scaler.input_cols)
+user_vector = scaler.transform(user_dataframe)
+user_vector.columns = [column_name.replace('"', "") for column_name in user_vector.columns]
+user_vector = session.create_dataframe(user_vector)
 ```
 
 We are now ready to make predictions. In the last code cell labeled ***Make predictions and get results***, we will pass our user vector to the model's predict function, which will output its prediction. We will also obtain the probability for that prediction, allowing us to say: ***"The model is 65% confident that this user will churn."***
+
 ```python
-# get the predicted value
-value = rf.predict(user_vector)[0]
-
-# convert prediction into a string
-prediction = 'churn' if value == 1 else 'not churn'
-
-# get the prediction confidence
-probability_of_prediction = np.round(max(rf.predict_proba(user_vector)[0]) * 100, 4)
+predicted_value = model.predict(user_vector).toPandas()[['predicted_churn'.upper()]].values.astype(int).flatten()
+user_probability = model.predict_proba(user_vector).toPandas()
+probability_of_prediction = max(user_probability[user_probability.columns[-2:]].values[0]) * 100
+prediction = 'churn' if predicted_value == 1 else 'not churn'
 ```
 To display the results in our project, we can do so in a markdown cell. In this cell, we’ll use Jinja to provide the variables that we want to display on screen. 
 
