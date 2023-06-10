@@ -12,6 +12,7 @@ tags: Hex, Notebooks, Partner Connect
 
 
 ## Overview 
+Duration: 5
 In this demo, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Hex in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.
 
 ### Prerequisites
@@ -37,6 +38,7 @@ In this demo, we will play the role of a data scientist at a telecom company tha
 
 
 ## Setting up partner connect
+Duration: 5
 After logging into your Snowflake account, you will land on the `Learn` page. To connect with Hex, navigate to the `Admin` tab on the left and click on `Partner connect`. In the search bar at the top, type `Hex` and the Hex partner connect tile will appear. Clicking on the tile will bring up a new screen, and click the `connect button` in the lower right corner. A new screen will confirm that your account has been created, from which you can click `Activate`.
 
 ![](assets/pc.gif)
@@ -76,6 +78,7 @@ One nice feature of Hex is the [reactive execution model](https://learn.hex.tech
 
 
 ## Reading and writing data 
+Duration: 8
 To predict customer churn, we first need data to train our model. In the SQL cell labeled **Pull churn results** assign `[Demo] Hex public data` as the data connection source and run the cell.
 
 ```SQL
@@ -94,6 +97,7 @@ Once the config is set, enable `Logic session` as the writeback mode (in the upp
 
 In the SQL cell labeled **Churn data**, change the data source to `Snowflake` and execute the cell. You will see a green output variable at the bottom. Double-click on it and rename it to `data`.
 ## Data preparation 
+Duration: 2
 Now that we have our data in Hex, we want to make sure the it’s clean enough for our machine learning algorithm. To ensure this, we’ll first check for any null values.
 
 ```python
@@ -119,6 +123,7 @@ plt.show();
 
 The charts' results allow us to visualize each variables distribution, which can help us identify early signs of skewness, among other things. We can see that all of our continuous variables follow a fairly normal distribution, and further transformations won't be necessary. The `DataUsage` column appears a little off because many customers use 0GB of data, but there are also a lot of users who didn't have data plans in the first place, so this isn't considered an anomaly.
 ## Understanding churn rate
+Duration: 2
 If you take a look at our visuals, you may notice that the churn chart looks a little odd. Specifically, it looks like there are a lot more users who haven’t churned than who have.  
 
 We take a closer look at this by visualizing in a chart cell.
@@ -126,6 +131,7 @@ We take a closer look at this by visualizing in a chart cell.
 ![](assets/imbal.png)
 As you can see, the majority of observations are in support of user who haven’t yet churned. Specifically, 85% of user haven’t churned while the other 15% has. In machine learning, a class imbalance such as this can cause issues when evaluating the model since it’s not getting equal attention from each class. In the next section we will go over a method to combat the imbalance problem.
 ## Model training
+Duration: 10
 In order to predict the churn outcomes for customers not in our dataset, we’ll need to train a model that can identify users who are at risk of churning from the history of users who have. However, it was mentioned in the last section that there is an imbalance in the class distribution that will cause problems for our model if not handled properly. One way to handle this is to create new data points such that the classes balance out. This is also known as upsampling. 
 
 For this, we’ll be using the `SMOTE` algorithm from the `imblearn` package. Run the code cell labeled **Upsampling the data**.
@@ -170,6 +176,7 @@ Now we can train our model. Run the cell labeled `Snowflake ML model training`.
 In the next section, we will look at how well our model performed as well as which features played the most important role when predicting the churn outcome.
 
 ## Model evaluation and feature importance
+Duration: 5
 In order to understand how well our model performs at identifying users at risk of churning, we’ll need to evaluate how well it does predicting churn outcomes. Specifically, we’ll be looking at the recall score, which tells us *of all the customers that will churn, how many can it identify.*
 
 Run the code cell labeled **Evaluate model** on *accuracy and recall.*
@@ -199,6 +206,7 @@ Let’s visualize the most important features.
 ![](assets/important.png)
 
 ## Predicting churn for a new user 
+Duration: 10
 Now is the moment we've all been waiting for: predicting the churn outcome for a new user. In this section, you should see an array of input parameters already in the project. Each of these inputs allow you to adjust a different feature that goes into predicting customer churn, which will simulate a new user. But we’ll still need to pass this data to our model, so how can we do that?
 
 ![](assets/input.png)
@@ -274,6 +282,7 @@ To display the results in our project, we can do so in a markdown cell. In this 
 
 
 ## Making Hex apps
+Duration: 5
 At this stage of the project, we have completed building out our logic and are ready to share it with the world. To make the end product more user-friendly, we can use the app builder to simplify our logic. The app builder enables us to rearrange and organize the cells in our logic to hide the irrelevant parts and only show what matters.
 
 ![](assets/app.gif)
@@ -283,6 +292,7 @@ Once you've arranged your cells and are satisfied with how it looks, use the sha
 ![](assets/share.gif)
 
 ## Conclusion And Resources
+Duration: 1
 Congratulations on on making it to the end of this Lab! You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)! 
 
 ### What we've covered
