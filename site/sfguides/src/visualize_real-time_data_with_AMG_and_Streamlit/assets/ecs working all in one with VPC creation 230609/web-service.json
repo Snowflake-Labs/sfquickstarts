@@ -52,6 +52,31 @@
            "NoEcho" : "true",
            "Description" : "Password of your Snowflake account",
            "Type" : "String"
+         },
+         "Database" : {
+           "Description" : "Snowflake Database",
+           "Type" : "String",
+           "Default": "msk_streaming_db"
+         },
+         "Schema" : {
+           "Description" : "Snowflake schema",
+           "Type" : "String",
+           "Default": "msk_streaming_schema"
+         },
+         "Table" : {
+           "Description" : "Snowflake table",
+           "Type" : "String",
+           "Default": "flights_vw"
+         },
+         "Role" : {
+           "Description" : "Snowflake role",
+           "Type" : "String",
+           "Default": "msk_streaming_rl"
+         },
+         "Warehouse" : {
+           "Description" : "Snowflake warehouse",
+           "Type" : "String",
+           "Default": "msk_streaming_wh"
          }
     },
     "Resources": {
@@ -112,6 +137,26 @@
                             {
                                "name": "account",
                                "value": {"Ref": "SnowflakeAccount"}
+                            },
+    {
+                               "name": "db",
+                               "value": {"Ref": "Database"}
+                            },
+                            {
+                               "name": "schema",
+                               "value": {"Ref": "Schema"}
+                            },
+                            {
+                               "name": "table",
+                               "value": {"Ref": "Table"}
+                            },
+    {
+                               "name": "role",
+                               "value": {"Ref": "Role"}
+                            },
+                            {
+                               "name": "warehouse",
+                               "value": {"Ref": "Warehouse"}
                             }
                         ], 
                         "PortMappings": [
