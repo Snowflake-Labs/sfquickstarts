@@ -1,19 +1,9 @@
 {
-    "Description": "This template deploys an ECS cluster to the provided VPC and subnets using an Auto Scaling Group\n",
+    "Description": "This template deploys an ECS cluster to the provided VPC and subnets\n",
     "Parameters": {
         "EnvironmentName": {
             "Description": "An environment name that will be prefixed to resource names",
             "Type": "String"
-        },
-        "InstanceType": {
-            "Description": "Which instance type should we use to build the ECS cluster?",
-            "Type": "String",
-            "Default": "c4.large"
-        },
-        "ClusterSize": {
-            "Description": "How many ECS hosts do you want to initially deploy?",
-            "Type": "Number",
-            "Default": 4
         },
         "VPC": {
             "Description": "Choose which VPC this ECS cluster should be deployed to",
@@ -26,11 +16,6 @@
         "SecurityGroup": {
             "Description": "Select the Security Group to use for the ECS cluster hosts",
             "Type": "AWS::EC2::SecurityGroup::Id"
-        },
-        "ECSAMI": {
-            "Description": "ECS-Optimized AMI ID",
-            "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
-            "Default": "/aws/service/ecs/optimized-ami/amazon-linux/recommended/image_id"
         }
     },
     "Resources": {
@@ -39,143 +24,6 @@
             "Properties": {
                 "ClusterName": {
                     "Ref": "EnvironmentName"
-                }
-            }
-        },
-        "ECSAutoScalingGroup": {
-            "DependsOn": "ECSCluster",
-            "Type": "AWS::AutoScaling::AutoScalingGroup",
-            "Properties": {
-                "VPCZoneIdentifier": {
-                    "Ref": "Subnets"
-                },
-                "LaunchConfigurationName": {
-                    "Ref": "ECSLaunchConfiguration"
-                },
-                "MinSize": {
-                    "Ref": "ClusterSize"
-                },
-                "MaxSize": {
-                    "Ref": "ClusterSize"
-                },
-                "DesiredCapacity": {
-                    "Ref": "ClusterSize"
-                },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": {
-                            "Fn::Sub": "${EnvironmentName} ECS host"
-                        },
-                        "PropagateAtLaunch": true
-                    }
-                ]
-            },
-            "CreationPolicy": {
-                "ResourceSignal": {
-                    "Timeout": "PT15M"
-                }
-            },
-            "UpdatePolicy": {
-                "AutoScalingRollingUpdate": {
-                    "MinInstancesInService": 1,
-                    "MaxBatchSize": 1,
-                    "PauseTime": "PT15M",
-                    "SuspendProcesses": [
-                        "HealthCheck",
-                        "ReplaceUnhealthy",
-                        "AZRebalance",
-                        "AlarmNotification",
-                        "ScheduledActions"
-                    ],
-                    "WaitOnResourceSignals": true
-                }
-            }
-        },
-        "ECSLaunchConfiguration": {
-            "Type": "AWS::AutoScaling::LaunchConfiguration",
-            "Properties": {
-                "ImageId": {
-                    "Ref": "ECSAMI"
-                },
-                "InstanceType": {
-                    "Ref": "InstanceType"
-                },
-                "SecurityGroups": [
-                    {
-                        "Ref": "SecurityGroup"
-                    }
-                ],
-                "IamInstanceProfile": {
-                    "Ref": "ECSInstanceProfile"
-                },
-                "UserData": {
-                    "Fn::Base64": {
-                        "Fn::Sub": "#!/bin/bash\nyum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm\nyum install -y aws-cfn-bootstrap hibagent\n/opt/aws/bin/cfn-init -v --region ${AWS::Region} --stack ${AWS::StackName} --resource ECSLaunchConfiguration\n/opt/aws/bin/cfn-signal -e $? --region ${AWS::Region} --stack ${AWS::StackName} --resource ECSAutoScalingGroup\n/usr/bin/enable-ec2-spot-hibernation\n"
-                    }
-                }
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Init": {
-                    "config": {
-                        "packages": {
-                            "yum": {
-                                "awslogs": []
-                            }
-                        },
-                        "commands": {
-                            "01_add_instance_to_cluster": {
-                                "command": {
-                                    "Fn::Sub": "echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config"
-                                }
-                            }
-                        },
-                        "files": {
-                            "/etc/cfn/cfn-hup.conf": {
-                                "mode": 256,
-                                "owner": "root",
-                                "group": "root",
-                                "content": {
-                                    "Fn::Sub": "[main]\nstack=${AWS::StackId}\nregion=${AWS::Region}\n"
-                                }
-                            },
-                            "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
-                                "content": {
-                                    "Fn::Sub": "[cfn-auto-reloader-hook]\ntriggers=post.update\npath=Resources.ECSLaunchConfiguration.Metadata.AWS::CloudFormation::Init\naction=/opt/aws/bin/cfn-init -v --region ${AWS::Region} --stack ${AWS::StackName} --resource ECSLaunchConfiguration\n"
-                                }
-                            },
-                            "/etc/awslogs/awscli.conf": {
-                                "content": {
-                                    "Fn::Sub": "[plugins]\ncwlogs = cwlogs\n[default]\nregion = ${AWS::Region}\n"
-                                }
-                            },
-                            "/etc/awslogs/awslogs.conf": {
-                                "content": {
-                                    "Fn::Sub": "[general]\nstate_file = /var/lib/awslogs/agent-state\n\n[/var/log/dmesg]\nfile = /var/log/dmesg\nlog_group_name = ${ECSCluster}-/var/log/dmesg\nlog_stream_name = ${ECSCluster}\n\n[/var/log/messages]\nfile = /var/log/messages\nlog_group_name = ${ECSCluster}-/var/log/messages\nlog_stream_name = ${ECSCluster}\ndatetime_format = %b %d %H:%M:%S\n\n[/var/log/docker]\nfile = /var/log/docker\nlog_group_name = ${ECSCluster}-/var/log/docker\nlog_stream_name = ${ECSCluster}\ndatetime_format = %Y-%m-%dT%H:%M:%S.%f\n\n[/var/log/ecs/ecs-init.log]\nfile = /var/log/ecs/ecs-init.log.*\nlog_group_name = ${ECSCluster}-/var/log/ecs/ecs-init.log\nlog_stream_name = ${ECSCluster}\ndatetime_format = %Y-%m-%dT%H:%M:%SZ\n\n[/var/log/ecs/ecs-agent.log]\nfile = /var/log/ecs/ecs-agent.log.*\nlog_group_name = ${ECSCluster}-/var/log/ecs/ecs-agent.log\nlog_stream_name = ${ECSCluster}\ndatetime_format = %Y-%m-%dT%H:%M:%SZ\n\n[/var/log/ecs/audit.log]\nfile = /var/log/ecs/audit.log.*\nlog_group_name = ${ECSCluster}-/var/log/ecs/audit.log\nlog_stream_name = ${ECSCluster}\ndatetime_format = %Y-%m-%dT%H:%M:%SZ\n"
-                                }
-                            }
-                        },
-                        "services": {
-                            "sysvinit": {
-                                "cfn-hup": {
-                                    "enabled": true,
-                                    "ensureRunning": true,
-                                    "files": [
-                                        "/etc/cfn/cfn-hup.conf",
-                                        "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
-                                    ]
-                                },
-                                "awslogs": {
-                                    "enabled": true,
-                                    "ensureRunning": true,
-                                    "files": [
-                                        "/etc/awslogs/awslogs.conf",
-                                        "/etc/awslogs/awscli.conf"
-                                    ]
-                                }
-                            }
-                        }
-                    }
                 }
             }
         },
@@ -194,55 +42,6 @@
                     }
                 ]
             }
-        },
-        "ECSInstanceProfile": {
-            "Type": "AWS::IAM::InstanceProfile",
-            "Properties": {
-                "Path": "/",
-                "Roles": [
-                    {
-                        "Ref": "ECSRole"
-                    }
-                ]
-            }
-        },
-        "ECSServiceAutoScalingRole": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-                "AssumeRolePolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": {
-                        "Action": [
-                            "sts:AssumeRole"
-                        ],
-                        "Effect": "Allow",
-                        "Principal": {
-                            "Service": [
-                                "application-autoscaling.amazonaws.com"
-                            ]
-                        }
-                    }
-                },
-                "Path": "/",
-                "Policies": [
-                    {
-                        "PolicyName": "ecs-service-autoscaling",
-                        "PolicyDocument": {
-                            "Statement": {
-                                "Effect": "Allow",
-                                "Action": [
-                                    "application-autoscaling:*",
-                                    "cloudwatch:DescribeAlarms",
-                                    "cloudwatch:PutMetricAlarm",
-                                    "ecs:DescribeServices",
-                                    "ecs:UpdateService"
-                                ],
-                                "Resource": "*"
-                            }
-                        }
-                    }
-                ]
-            }
         }
     },
     "Outputs": {
@@ -250,21 +49,6 @@
             "Description": "A reference to the ECS cluster",
             "Value": {
                 "Ref": "ECSCluster"
-            }
-        },
-        "ECSServiceAutoScalingRole": {
-            "Description": "A reference to ECS service auto scaling role",
-            "Value": {
-                "Fn::GetAtt": [
-                    "ECSServiceAutoScalingRole",
-                    "Arn"
-                ]
-            }
-        },
-        "ECSAutoScalingGroupName": {
-            "Description": "A reference to ECS AutoScaling Group Name",
-            "Value": {
-                "Ref": "ECSAutoScalingGroup"
             }
         }
     }
