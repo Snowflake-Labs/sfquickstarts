@@ -17,7 +17,7 @@ Duration: 2
 In this guide, we will review how to build a Streamlit App within Snowflake that allows you to easily demo Cybersyn’s Financial Data Package data tables with charts built in Vega-Lite.
 
 ### What is Streamlit?
-Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
+Streamlit is a pure Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
 
 ### What is Vega-Lite? 
 Vega-Lite is an [open-source](https://vega.github.io/vega-lite/) high-level grammar of interactive graphics. It provides a concise, declarative JSON syntax to create an expressive range of visualizations for data analysis and presentation.
