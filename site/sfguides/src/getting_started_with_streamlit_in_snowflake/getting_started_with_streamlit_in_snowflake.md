@@ -32,7 +32,7 @@ An application on Streamlit within Snowflake that connects directly to a data li
 
 ### Prerequisites
 A [Snowflake account](https://signup.snowflake.com/)
-- Login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges). Keep this tab open during the session.
+- To ensure you can mount data from the Marketplace, login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges is required for this step). Keep this tab open during the session.
   - Click on the Billing on the left side panel
   - Click on Terms and Billing
   - Read and accept terms to continue
