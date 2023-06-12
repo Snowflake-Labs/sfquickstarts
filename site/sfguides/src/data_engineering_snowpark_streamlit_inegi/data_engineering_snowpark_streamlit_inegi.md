@@ -178,14 +178,14 @@ Abrir el archivo **02_INEGI_dataEngineering.ipynb** y ejecutar los dos primeros 
 
 
 Ejecutar el cell **#Activación** para crear los objetos y privilegios Snowflake 
-![VSC](assets/vsc3.png)
+![VSC](assets/VSC3.png)
 
 Ejecutar el cell **#Crear internal Stage** para la carga de datos JSON ya curados
-![VSC](assets/vsc4.png)
+![VSC](assets/VSC4.png)
 
 
 Ejecutar el cell **#Transformando a objeto Snowflake** para la colocación de datos en el objeto Snowflake tabla 
-![VSC](assets/vsc5.png)
+![VSC](assets/VSC5.png)
 
 
 
@@ -194,19 +194,19 @@ Ejecutar el cell **#Transformando a objeto Snowflake** para la colocación de da
 Duration: 15 
 
  Abrir el archivo **03_INEGI_dataModeling.ipynb** y ejecutar los dos primeros cells para cargar las librerías necesarias y activar la sesión a Snowflake. 
-![VSC](assets/vsc6.png)
+![VSC](assets/VSC6.png)
 
 Ejecutar el cell **#Crear vista** para crear la vista que tendrá los datos que incluyen transformación de datos JSON en tabla INEGI_RAW  
-![VSC](assets/vsc7.png)
+![VSC](assets/VSC7.png)
 
 Ejecutar el cell **#UDF declaración** para incorporar la función creada en python nom_entidad que servirá para convertir No. de entidad por nombre de entidad.
-![VSC](assets/vsc8.png)
+![VSC](assets/VSC8.png)
 
 Ejecutar el cell **#Vista con totales por entidad aplicando** para materializar datos aplicando UDF y que tendrá los totales máximos de población para cada entidad
-![VSC](assets/vsc9.png)
+![VSC](assets/VSC9.png)
 
 Ejecutar el cell **#Validar la vista solo con totales por entidad** para validar el contenido de la vista creada 
-![VSC](assets/vsc10.png) 
+![VSC](assets/VSC10.png) 
 
 
 

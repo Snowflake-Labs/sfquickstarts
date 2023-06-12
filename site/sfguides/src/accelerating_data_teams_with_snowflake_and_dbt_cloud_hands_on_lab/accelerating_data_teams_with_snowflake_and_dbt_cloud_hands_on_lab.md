@@ -119,7 +119,7 @@ Duration: 5
 
 5. When you see the popup that says `Your partner account has been created`, click on `Activate`.
 
-    ![Activate Partner Connect](assets/snowflake_activate_partner_connect.png)
+    ![Activate Partner Connect](assets/Snowflake_activate_partner_connect.png)
 
 6. You should be redirected to a dbt Cloud registration page. Fill out the form and make sure to save the password somewhere for login in the future.
 

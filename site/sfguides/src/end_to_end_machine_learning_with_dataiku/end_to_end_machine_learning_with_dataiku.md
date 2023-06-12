@@ -553,7 +553,7 @@ Duration: 8
 
 Go to ```home screen``` clicking on home button. 
 
-![27](assets/SF-17.JPG)
+![27](assets/SF-17.jpg)
 
 
 `Select` the `Admin` from the list.

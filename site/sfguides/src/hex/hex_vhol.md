@@ -163,7 +163,7 @@ Now, we can connect to our Snowflake connection that we imported earlier. To do 
 *The cell created by this button will be positioned under the cell that is currently selected. Make sure that the cell you have selected is the markdown cell with the header "Establishing a secure connection to Snowflake." You'll know if this cell is selected because it'll be outlined in blue.*
 
 
-![](assets/vhol-Snowpark.gif)
+![](assets/vhol-snowpark.gif)
 
 We'll also add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project.
 

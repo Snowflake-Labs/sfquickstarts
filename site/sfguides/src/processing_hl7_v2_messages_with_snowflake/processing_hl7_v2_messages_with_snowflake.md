@@ -16,7 +16,7 @@ This Quickstart is designed to help you understand the capabilities included in 
 
 Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing the labs, you’ll be ready to start processing and managing your own HL7 V2.x messages in Snowflake.
 
-![Architecture](assets/architecture.png)
+![Architecture](assets/Architecture.png)
 
 
 ### Prerequisites

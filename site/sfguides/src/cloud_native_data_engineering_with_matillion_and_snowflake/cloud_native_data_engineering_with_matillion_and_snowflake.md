@@ -924,7 +924,7 @@ Columns: Select **Autofill**, to populate all the available columns and select t
 | `PORTFOLIO_VALUE`  |  `"AVG_PRICE" * "# SHARES"` |
 |  `UNREALIZED_GAINS` |  `("AVG_PRICE" * "# SHARES") - ("# SHARES" * "MARKETPLACE")` |
 
-![9-17](assets/9-17.png)
+![9-17](assets/9-17.PNG)
 
 Finally, we will write Cersei’s profits back to Snowflake using the **Rewrite** component, and update as follows:
 

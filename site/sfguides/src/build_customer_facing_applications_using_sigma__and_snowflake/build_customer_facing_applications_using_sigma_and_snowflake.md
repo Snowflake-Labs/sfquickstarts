@@ -388,7 +388,7 @@ Duration: 10
   1. First we will need to install Node.js. Node is going to allow us to set up a local server, as well as the front end portal, and securely embed our dashboards with row level security so that brands are not seeing each other's data. Download and install Node.js by going here: [https://nodejs.org/](https://nodejs.org/)
    - Note, there are many programming languages and libraries you can use to code a client and server side application, this just happens to be the one we will be using today. 
 
-   ![embed1](assets/embeddingtheworkbook_1.png)
+   ![embed1](assets/Embeddingtheworkbook_1.png)
 
   2. Once downloaded, double click on the download and go through the installation steps. This should only take a minute. 
 

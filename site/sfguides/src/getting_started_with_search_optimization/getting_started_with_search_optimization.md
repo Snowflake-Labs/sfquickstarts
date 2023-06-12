@@ -62,7 +62,7 @@ The first step in the guide is to set up or log into Snowflake and set up a virt
 
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. 
 
-![worksheet-image](assets/worksheets.png)
+![worksheet-image](assets/Worksheets.png)
 
 This will allow you to create shared databases from Snowflake Marketplace listings. If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
