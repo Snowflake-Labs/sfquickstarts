@@ -602,15 +602,15 @@ Your Connection Details pane should now show that your warehouse and role in Sno
 
 5.24 For the last piece of work we will do in our administration UI, select the `Account` field from on the top left. Then scroll down to where you see `Embedding`. Click `Add`.
 
-<img src="assets/CleanShot%202023-06-08%20at%2010.04.52@2x.png" width ="800">
+<img src="assets/embedding1.png" width ="800">
 
 5.25 You will see a prompt asking if you want to enable the premium feature. Click `Enable`. You will not be charged for leveraging this in a trial environment.
 
-<img src="assets/CleanShot%202023-06-08%20at%2010.05.47@2x.png" width ="800">
+<img src="assets/embedding2.png" width ="800">
 
 5.26 Finally, you will see your embedding secret. You may save this to another location for future labs, but it will not be needed for this lab. Click `Close`.
 
-<img src="assets/CleanShot%202023-06-08%20at%2010.06.19@2x.png" width="600">
+<img src="assets/embedding4.png" width="600">
 
 5.27 Select `APIs & Embed Secrets` from the lefthand menu. 
 
@@ -718,7 +718,7 @@ You will be presented a `Secret` but we do not need to copy this for the lab. Cl
       <li>For email, input any random email address that is NOT the email you log into Sigma with. It does   
         not need to be a real email address, and you can put something like managers@tastybytes.com.</li>      
       <li>For account type select “Creator”</li>      
-</ul>
+</ul>]
 
 6.5 Click `Load Embed`.
 
