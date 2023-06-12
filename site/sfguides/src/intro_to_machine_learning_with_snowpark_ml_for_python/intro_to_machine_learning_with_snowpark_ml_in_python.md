@@ -81,6 +81,7 @@ Duration: 7
 ### Snowpark for Python and Snowpark ML
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
+- Download the latest version of Snowpark ML from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV). **1.0.0 is the latest version as of this guide's publish date.**
 - Open a new terminal window and execute the following commands in the same terminal window:
 
 ```
