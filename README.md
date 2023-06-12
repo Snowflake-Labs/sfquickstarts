@@ -24,21 +24,26 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
 ### Prerequisites
 
-  1. [Install Node 14](https://nodejs.org/en/download/); Homebrew installed? `brew install node@14`
-     - Install gulp-cli `npm i -g gulp-cli`
-  2. [Install Go](https://golang.org/doc/install); Homebrew installed? `brew install golang`
+  1. [Install Node Version Manager (nvm)](https://github.com/nvm-sh/nvm#installing-and-updating)
+     - Not sure if you have it installed? Run `nvm` or `nvm -v` at the command line and hit enter. If you encounter a "command not found" error, you likely do not have it installed.
+  2. Install Node v14 (required to run the site locally) using nvm: `nvm install 14`
+     - If you have Homebrew installed, run: `brew install node@14`
+  3. Install gulp-cli `npm i -g gulp-cli`
+  4. [Install Go](https://golang.org/doc/install)
+     - If you have Homebrew installed, run: `brew install golang`
      - Install claat `go install github.com/googlecodelabs/tools/claat@latest`
      - Ensure go and claat is in your `PATH` [claat path setup](#claat-related-errors)
-  3. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
+  5. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
 ### Run locally
 
   1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
   3. Navigate to the site directory `cd sfquickstarts/site`
-  4. Install node dependencies `npm install`
-  5. Run the site `npm run serve`
-  6. Open a browser to http://localhost:8000/
+  4. Set the project to use Node v14 by running `nvm use`. If you an encounter an error stating you don't have the correct version installed, run `nvm install`. For more help, see steps 1 and 2 in the Prerequisites above.
+  5. Install node dependencies `npm install`
+  6. Run the site `npm run serve`
+  7. Open a browser to http://localhost:8000/
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
