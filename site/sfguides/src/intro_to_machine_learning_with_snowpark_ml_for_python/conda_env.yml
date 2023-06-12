@@ -1,0 +1,12 @@
+name: snowpark-ml-hol
+channels:
+  - https://repo.anaconda.com/pkgs/snowflake
+dependencies:
+  - python=3.8
+  - snowflake-snowpark-python=1.3.0
+  - pandas=1.4.4
+  - notebook=6.5.3
+  - scikit-learn=1.2.1
+  - cachetools=4.2.2
+  - seaborn=0.11.2
+  - matplotlib=3.7.1
