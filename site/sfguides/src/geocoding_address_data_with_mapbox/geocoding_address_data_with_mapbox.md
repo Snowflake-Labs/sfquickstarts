@@ -44,7 +44,7 @@ The Mapbox Snowflake Native App is powered by the [Mapbox Geocoding API](https:/
 - SQL queries to reverse geocode coordinates and perform boundary lookups
 
 
-<!-- ------------------------ -->
+© 2023 Mapbox, Inc
 
 ## Installing the Mapbox App
 Duration: 3
@@ -138,6 +138,8 @@ Your columns can be named however you like, you will be able to specify which co
 | `locality`          | string | Official sub-city features present in countries where such an additional administrative layer is used in postal addressing, or where such features are commonly referred to in local parlance. Examples include city districts in Brazil and Chile and arrondissements in France. |
 | `neighborhood`      | string | Colloquial sub-city features often referred to in local parlance. Unlike locality features, these typically lack official status and may lack universally agreed-upon boundaries. Not available for reverse geocoding requests.                                                   |
 | `country`           | string | Generally recognized countries or, in some cases like Hong Kong, an area of quasi-national administrative status that has been given a designated country code under [ISO 3166-1](https://www.iso.org/iso-3166-country-codes.html). 
+
+© 2023 Mapbox, Inc
 
 ## Geocode addresses from a single column
 Duration: 3
@@ -288,6 +290,7 @@ For help finding center point and bounding box coordinates, use Mapbox's [Locati
 
 For more details on valid values for these options, see the [documentation for the Mapbox Geocoding API](https://docs.mapbox.com/api/search/geocoding-v6/).
 
+© 2023 Mapbox, Inc
 
 ## Geocoding address data from multiple columns
 Duration: 3
@@ -441,6 +444,7 @@ FROM geocoder_results;
 | 5034 Curtiss St | Fremont | CA | 94538 | -121.97764 | 37.52355
 | 51 S Washington St | Sonora | CA | 95370 | -120.38366 | 37.98597
 
+© 2023 Mapbox, Inc
 
 ## Export and preview your geocoded data
 Duration: 3
@@ -523,6 +527,7 @@ Your geojson file can be opened in desktop GIS software like [QGIS](https://qgis
 
 ![preview geojson data in qgis](assets/preview_in_qgis.png)
 
+© 2023 Mapbox, Inc
 
 ## Reverse Geocoding and Boundaries Lookup
 Duration: 5
@@ -649,4 +654,5 @@ FROM boundary_lookup;
 | -76.62876 | 39.31308 | "Maryland" | "US-MD" |
 | -84.35808 | 33.80939 | "Georgia" | "US-GA" |
 
+© 2023 Mapbox, Inc
 
