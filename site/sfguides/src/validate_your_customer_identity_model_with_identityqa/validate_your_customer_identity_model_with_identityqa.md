@@ -5,7 +5,7 @@ categories: getting-started,data-warehouse,data-engineering
 environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
-tags: Identity, Identity Model, Identity Modeling, Identity Resolution, Getting Started, Data Engineering Native Apps 
+tags: Identity, Identity Model, Identity Modeling, Identity Resolution, Getting Started, Data Engineering, Native Apps 
 
 # Validate Your Customer Identity Model with IdentityQA
 
@@ -15,7 +15,7 @@ tags: Identity, Identity Model, Identity Modeling, Identity Resolution, Getting 
 
 Duration: 1
 
-In this guide, we’ll be walking you through how to validate that the assumptions you’ve made about your identity model are correct using Simon Data’s Snowflake Native App, IdentityQA.  Let’s get going!
+In this guide, we’ll be walking you through how to validate that the assumptions you’ve made about your identity model are correct using Simon Data’s Snowflake native app, IdentityQA.  Let’s get going!
 
 ![logos](assets/logos.png)
 
@@ -31,9 +31,10 @@ In this guide, we’ll be walking you through how to validate that the assumptio
 
 ### What You'll Learn
 
+By the end of this guide, you'll learn:
 - How to install & use a Snowflake native app
 - Whether or not the assumptions you’ve made about your company’s identity model are true
-    - For example: is your stable identifier truly unique?  Is user_id truly 1:1 with email_address?
+  - For example: is your stable identifier truly unique?  Is user_id truly 1:1 with email_address?
 - % of invalid email addresses & phone numbers in your identity table with examples of each for easy cleanup
 - How to improve your identity model based on the native app’s findings
 
@@ -124,14 +125,14 @@ CALL <CHOSEN APP NAME>.APP.SET_INPUT_TABLE('SOURCE_TABLE', [['<SOURCE_COLUMN>', 
 
 > aside negative
 >
-> [NOTE: email and/or phone_number identifiers must be included (and in this format) in order for some identifier valudations to run.]
+> NOTE: email and/or phone_number identifiers must be included (and in this format) in order for some identifier validations to run.
 
 - **IS_STABLE** is a boolean field that tells us whether or not the identifier should be stable. A stable identifier is one that is unique, is 1:1 with a single profile, and cannot be shared across profiles.
     - If the identifier you’re configuring is stable, put **TRUE** here. If it is not stable, put **FALSE**.
 
 > aside negative
 > 
-> [NOTE: By definition, you can only have one stable identifier.]
+> NOTE: By definition, you can only have one stable identifier.
 
 ### **EXAMPLE QUERY:**
 
@@ -164,7 +165,7 @@ CALL <CHOSEN APP NAME>.APP.SET_RELATIONSHIP_CONSTRAINT('<RELATIONSHIP_TYPE>', '<
 
 > aside negative
 > 
-> [NOTE: If you want to check the 1:1 relationship going both ways, make sure you set two relationship constraints. If you only check the 1:1 relationship going one way (e.g. 1 user_id per email address only), you may get a false positive in the report. In this case, you would also want to check for 1 email address per user_id.]
+> NOTE: If you want to check the 1:1 relationship going both ways, make sure you set two relationship constraints. If you only check the 1:1 relationship going one way (e.g. 1 user_id per email address only), you may get a false positive in the report. In this case, you would also want to check for 1 email address per user_id.
 
 #### **SET_RELATIONSHIP_CONSTRAINT EXAMPLE QUERY:**
 
@@ -193,7 +194,7 @@ CALL SIMONIDQA.APP.SET_UNIQUE_CONSTRAINT('EMAIL');
 ```
 > aside negative
 > 
-> [NOTE: If you set a shared identifier limit, you should _not_ run a uniqueness check on your stable identifier or else you'll get a false negative.  This is because if a non-stable identifier can be shared across profiles, there are inherently going to be multiple rows for a single stable identifier in your input table.]
+> NOTE: If you set a shared identifier limit, you should _not_ run a uniqueness check on your stable identifier or else you'll get a false negative.  This is because if a non-stable identifier can be shared across profiles, there are inherently going to be multiple rows for a single stable identifier in your input table.
 
 ### **SET_SHARED_IDENTIFIER_LIMIT**
 
@@ -234,16 +235,16 @@ The output will be available in the following tables in the **REPORT** schema wi
 
 ```
 -- RUN THIS QUERY TO PULL THE TABLE NAMES SPECIFIC TO YOUR IDENTIFIERS
-SELECT * FROM <CHOSEN APP NAME>.REPORT.CARDINALITY_CHECK_TABLES
+SELECT * FROM <CHOSEN APP NAME>.REPORT.CARDINALITY_TABLES
 -- THEN RUN A SELECT * ON EACH OF THE TABLES GENERATED.  FOR EXAMPLE:
 SELECT * FROM <CHOSEN APP NAME>.REPORT.CARDINALITY_CHECK_USER_ID_EMAIL
 
 -- THE REST OF THESE QUERIES CAN BE RUN TO INSPECT OTHER RESULTS
 SELECT * FROM <CHOSEN APP NAME>.REPORT.IDENTIFIER_VALIDATION
 SELECT * FROM <CHOSEN APP NAME>.REPORT.INVALID_IDENTIFIERS
-SELECT * FROM <CHOSEN APP NAME>.REPORT.RELATIONSHIP_CONSTRAINTS_CHECK
-SELECT * FROM <CHOSEN APP NAME>.REPORT.SHARED_IDENTIFIER_LIMIT_CHECK
-SELECT * FROM <CHOSEN APP NAME>.REPORT.UNIQUE_CONSTRAINTS_CHECK
+SELECT * FROM <CHOSEN APP NAME>.REPORT.RELATIONSHIP_CONSTRAINTS_CHECKS
+SELECT * FROM <CHOSEN APP NAME>.REPORT.SHARED_IDENTIFIER_LIMIT_CHECKS
+SELECT * FROM <CHOSEN APP NAME>.REPORT.UNIQUE_CONSTRAINTS_CHECKS
 ```
 
 ### Streamlit Report
@@ -265,15 +266,15 @@ Duration: 10
 
 This is an example input table that we used to generate the report shown in screenshots below.  
 
-![input table](assets/input table.png)
+![input table](assets/input_table.png)
 
 > aside negative
 >
-> [NOTE: Additional screenshots in this section are from the Streamlit report.]
+> NOTE: Additional screenshots in this section are from the Streamlit report.
 
 The top of the report shows you the name of the input table you configured as well as the total number of rows in said input table.
 
-![report heading](assets/report heading.png)
+![report heading](assets/report_heading.png)
 
 ### Constraint Checks
 
@@ -281,7 +282,7 @@ Next, the report will show pass/fail statuses on the constraints you configured.
 
 As you can see in the screenshot below, the **client_id** & **email** identifiers passed the 1:1 relationship check going one way but not the other.  This tells you that for every **client_id** there is only one **email**, but the app found instances where an **email** had more than one **client_id**.  Examples of these failures will be explored later.
 
-![constraint checks](assets/constraint checks.png)
+![constraint checks](assets/constraint_checks.png)
 
 Additionally, the shared identifier limit check failed on **phone_number**.  This means that the app discovered instances where a single **phone_number** appears on more than 3 profiles, which violates the assumption that **phone_number** is shared at most across 3 profiles at any given time.  
 
@@ -291,20 +292,20 @@ The next check is a high-cardinality test for each identifier in the input table
 
 Your next step here should be to dive into these email addresses and determine why they might have so many **client_ids** associated with them and if they’re valid profiles or not. 
 
-![cardinality analysis](assets/cardinality analysis.png)
+![cardinality analysis](assets/cardinality_analysis.png)
 
 ### Identifier Validation
 
-Next, the report shows **email** & **phone_number** validations.  You can see in this example that out of the ~1M total records in the input table, ~30K emails are considered invalid and ~80M phone numbers are considered invalid.  
+Next, the report shows **email** & **phone_number** validations.  You can see in this example that out of the ~1M total records in the input table, ~30K emails are considered invalid and ~80K phone numbers are considered invalid.  
 
 > aside negative
 > 
-> [NOTE: “Invalid” in this case means that the email or phone number is missing one or more properties in order to be considered a “valid” identifier.  Example: emails with no “@” are flagged here, as well as phone numbers with letters in them or fewer/greater than 10 numbers.
+> NOTE: “Invalid” in this case means that the email or phone number is missing one or more properties in order to be considered a “valid” identifier.  Example: emails with no “@” are flagged here, as well as phone numbers with letters in them or fewer/greater than 10 numbers.
 > 
-> **We are not testing whether or not these emails or phone numbers belong to real people rather than bots.]**
+> **We are not testing whether or not these emails or phone numbers belong to real people rather than bots.**
 
-![invalid emails](assets/invalid emails.png)
-![invalid phone numbers](assets/invalid phone numbers.png)
+![invalid emails](assets/invalid_emails.png)
+![invalid phone numbers](assets/invalid_phone_numbers.png)
 
 <!-- ------------------------ -->
 
