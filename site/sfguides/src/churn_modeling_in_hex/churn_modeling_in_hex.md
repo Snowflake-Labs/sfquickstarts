@@ -86,6 +86,8 @@ select * from "DEMO_DATA"."DEMOS"."TELECOM_CHURN"
 
 At the bottom of this cell, you will see a green output variable labeled `dataframe`. This is a Pandas dataframe, and we are going to write it back into our `Snowflake` data connection. To do so, input the following configurations to the writeback cell (labeled: **Writeback to snowflake)**
 
+![](assets/writeback.png)
+
 - **Source**: dataframe
 - **Connection**: Snowflake
 - **Database**: PC_HEX_DB
