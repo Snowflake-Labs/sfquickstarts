@@ -33,11 +33,11 @@ By letting you perform these tasks in a Snowflake Python application, snowpark-m
 
 The first batch of algorithms provided in Snowpark Python is based on [scikit-learn](https://scikit-learn.org/stable/) preprocessing transformations from [sklearn.preprocessing](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.preprocessing), as well as estimators that are compatible with those in the scikit-learn, xgboost, and lightgbm libraries.
 
-Learn more about all the available [transformers](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-preprocessing) and [estimators](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-modeling).
+Learn more about all the available transformers and estimators in the [docs](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-ml-modeling).
 
 ### What you will learn 
-- How to perform **feature engineering in Snowflake with [snowpark-ml-preprocessing](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-preprocessing)**
-- How to **train a model in Snowflake with [snowpark-ml-modeling](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-modeling)**
+- How to perform **feature engineering in Snowflake with Snowpark ML**
+- How to **train a model in Snowflake with Snowpark ML**
 - How to **deploy a Snowpark ML model in Snowflake to a User Defined Function (UDF) for model inference**
 
 ### Prerequisites
@@ -134,7 +134,9 @@ Duration: 15
 
 Open the following jupyter notebook and run each of the cells: [3_snowpark_ml_modeling.ipynb](notebooks/3_snowpark_ml_modeling.ipynb)
 
-In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Model API.
+In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Model API. We also show how to do inference and deploy the model as a UDF. 
+
+***Note: Once Snowpark ML's native model registry is available, this will be the more streamlined approach to deploy your model.***
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -148,8 +150,7 @@ For more information, check out the resources below:
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
-- [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-- [Snowpark ML Preprocessing Guide](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-preprocessing)
-- [Snowpark ML Modeling Guide](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-modeling)
+- [Snowpark for Python Developer Docs](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+- [Snowpark ML API Docs](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-ml-modeling)
 
 <!-- ------------------------ -->
