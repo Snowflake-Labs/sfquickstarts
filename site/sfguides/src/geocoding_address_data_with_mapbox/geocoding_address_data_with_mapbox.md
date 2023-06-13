@@ -92,11 +92,11 @@ GRANT SELECT ON TABLE mydatabase.testing.sample_addresses to application mapbox;
 ## Preparing your data
 Duration: 2
 
-Geocoding requires either a column a fully-formed addresses or address data in multiple columns. 
+    Geocoding requires either a column a fully-formed addresses or address data in multiple columns. 
 
-Results will depend on the quality and consistency of your data.  Address data spread across multiple columns can improve results as the geocoder knows exactly which state, zip, country, etc to search for a matching address within.
+    Results will depend on the quality and consistency of your data.  Address data spread across multiple columns can improve results as the geocoder knows exactly which state, zip, country, etc to search for a matching address within.
 
-Before geocoding with the Mapbox App you may want to clean up your address data, ensuring a consistent format and/or filling in missing values.
+    Before geocoding with the Mapbox App you may want to clean up your address data, ensuring a consistent format and/or filling in missing values.
 
 ### Fully-formed addresses in a single column
 
@@ -507,7 +507,7 @@ FROM us_cities;
 
 The geojson string can be easily copied from the snowflake UI. Click on the cell that contains the GeoJSON string and it will be displayed in the sidebar along with a copy button.  (Note that copying may not be feasible if your result set is too large):
 
-![logos](assets/copy_geojson.png)
+![copy geojson from the SQL results](assets/copy_geojson.png)
 
 ### Visualizing your data in Geojson.io
 
@@ -515,13 +515,13 @@ The geojson string can be easily copied from the snowflake UI. Click on the cell
 
 You can click each marker to reveal the associated properties.
 
-![logos](assets/preview_in_geojsonio.png)
+![preview geojson data in geojson.io](assets/preview_in_geojsonio.png)
 
 ### Visualizing your data in QGIS
 
 Your geojson file can be opened in desktop GIS software like [QGIS](https://qgis.org/).  Paste your copied GeoJSON into a file and save it with the `.geojson` extension.  The file can be opened in QGIS, where you can choose a symbology for the points and preview it over a basemap.
 
-![logos](assets/preview_in_qgis.png)
+![preview geojson data in qgis](assets/preview_in_qgis.png)
 
 
 ## Reverse Geocoding and Boundaries Lookup
