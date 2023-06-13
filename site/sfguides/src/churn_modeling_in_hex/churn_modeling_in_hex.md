@@ -13,7 +13,7 @@ tags: Hex, Notebooks, Partner Connect
 
 Duration: 5
 
-In this demo, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Hex in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.
+In this Quickstart guide, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Hex in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.
 
 ### Prerequisites
 
@@ -312,9 +312,9 @@ Once you've arranged your cells and are satisfied with how it looks, use the sha
 ![](assets/share.gif)
 
 ## Conclusion And Resources
-
 Duration: 1
-Congratulations on on making it to the end of this Lab! You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)!
+
+Congratulations on on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)!
 
 ### What we've covered
 
