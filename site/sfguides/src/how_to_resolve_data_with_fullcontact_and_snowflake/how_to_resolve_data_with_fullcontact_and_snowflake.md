@@ -3,56 +3,62 @@ id: how_to_resolve_data_with_fullcontact_and_snowflake
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web
-status: Published 
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+status: Published
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # How To Resolve Data with FullContact and Snowflake
 <!-- ------------------------ -->
 Duration: 1
 
-## Overview 
+## Overview
+
 As Snowflake is used more and more frequently as the central datawarehouse users often find themselves with duplicate copies of customer information in different tables. This guide shows how to use the FullContact for Snowflake Native Application to unify different pieces of customer data using the FullContact PersonID to have a single, accurate view of how the customer is engaging with your brand.
 
 With your install we will provide you some synthetic data that will join to our Identity Graph to allow you to test out the application.  By the end of the walkthrough, we're going to show you how several profiles of a fictional customer named Willow Underwood, will now be able to be merged into a single record of that customer.
 To see a more in depth example with other sample datasets, make sure to check out the YouTube product walkthrough that is a companion to this guide.
 
 ### Prerequisites
+
 - A Snowflake Account that you have `ACCOUNTADMIN`
 - Familiarity with Snowflake SQL
 - Agreed to the [Snowflake Consumer Terms of Service](<https://other-docs.snowflake.com/en/collaboration/consumer-becoming>) for the Marketplace
 
-### What You’ll Learn 
+### What You’ll Learn
+
 - How to install the FullContact for Snowflake Native Application
 - How to configure and setup the FullContact for Snowflake Native Application
 - How to use the FullContact for Snowflake Native Application to unify and dedeuplicate multiple sources of customer data
 
-### What You’ll Need 
+### What You’ll Need
+
 - [Snowflake Account](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
 - [FullContact Trial Account](https://platform.fullcontact.com/register/offer/snowresolve)
 
-### What You’ll Build 
-- A unified customer dataset 
+### What You’ll Build
+
+- A unified customer dataset
 
 <!-- ------------------------ -->
 ## Install the FullContact for Snowflake App
+
 Duration: 1
 
 The FullContact for Snowflake Native App is available in the Snowflake Marketplace
 
-1) Visit the ["Apps" section of Snowsight](https://app.snowflake.com) from your Snowflake Account 
+1) Visit the ["Apps" section of Snowsight](https://app.snowflake.com) from your Snowflake Account
 
 ![Install App](assets/installapp.png)
 
 2) Under the "Recently Shared with You" section, click the "Get" button next to the FullContact Native Identity Application
 
-3) Choose the warehouse to use to run the install scripts (an XS warehouse works fine). 
+3) Choose the warehouse to use to run the install scripts (an XS warehouse works fine).
 
 4) Expand the Options dropdown, where you are able to name the application anything you would like.  We have named the app "FC_NATIVE_APP".  This is the app name we use in the SQL queries we provide post installation of the application in a Snowsight worksheet to help you complete the installation.  
 
 <img src="assets/installoptions.png" width="500" />
 
-5) Click the Get button to install the application.  The Get button will be deactivated while installing.  There is not currently a loader that displays to give a sense for how the installation is progressing - the installers typically complete within 1-2 minutes.   
+5) Click the Get button to install the application.  The Get button will be deactivated while installing.  There is not currently a loader that displays to give a sense for how the installation is progressing - the installers typically complete within 1-2 minutes.
 
 6) Once installation is complete, you will see a confirmation modal.  
 
@@ -62,13 +68,14 @@ The FullContact for Snowflake Native App is available in the Snowflake Marketpla
 
 <!-- ------------------------ -->
 ## Complete configuration of FullContact App
+
 Once installed there are a few more steps that need to be completed before the FullContact for Snowflake application can function. Follow these instructions by pasting and running the following SQL in a new SQL worksheet.
 
 1) Create and grant access to API INTEGRATION
 
 > aside positive
-> 
->  The `API INTEGRATION` is used to check your license key, allowed usage, and report usage summary counts back to FullContact. Your raw data never leaves Snowflake as the app executes natively and FullContact will not have access to your raw data unless you decide to share it with us using a normal secure share.
+>
+> The `API INTEGRATION` is used to check your license key, allowed usage, and report usage summary counts back to FullContact. Your raw data never leaves Snowflake as the app executes natively and FullContact will not have access to your raw data unless you decide to share it with us using a normal secure share.
 
 ```sql
 CREATE API INTEGRATION IF NOT EXISTS FC_API_INT_FULLCONTACT_IDENTITY_SOLUTIONS
@@ -82,7 +89,7 @@ GRANT USAGE ON INTEGRATION FC_API_INT_FULLCONTACT_IDENTITY_SOLUTIONS TO APPLICAT
 GRANT APPLICATION ROLE FC_NATIVE_APP.FC_USER TO ROLE ACCOUNTADMIN;
 ```
 
-2) Install and define the `EXTERNAL FUNCTIONS` that the application needs to run. 
+2) Install and define the `EXTERNAL FUNCTIONS` that the application needs to run.
 
 ```sql
 -- Install the EFs (external functions) that the app needs to run:
@@ -94,9 +101,9 @@ CALL FC_NATIVE_APP.APP_SCHEMA.CREATE_EF_GET_PRODUCT_USAGE('FC_API_INT_FULLCONTAC
 CALL FC_NATIVE_APP.APP_SCHEMA.CREATE_EF_PUT_USAGE('FC_API_INT_FULLCONTACT_IDENTITY_SOLUTIONS');
 ```
 
-
 <!-- ------------------------ -->
 ## Creating a FullContact account and API key
+
 Duration: 2
 
 In order to use the FullContact for Snowflake Application you need a license (API) key. Follow these instructions to get one for free and use the generated key in the next sections.
@@ -127,15 +134,12 @@ In order to use the FullContact for Snowflake Application you need a license (AP
 
 ![Copy Key](assets/copykey.png)
 
-
-
-
-
 <!-- ------------------------ -->
 ## Prepping the Input Data
+
 Duration: 1
 
-Before we can run Resolve to unify the sample customer data we need to setup a database and schema to hold the output tables and need to create a SEMANTIC VIEW to help the FullContact application understand how to interpret the different columns in the data. 
+Before we can run Resolve to unify the sample customer data we need to setup a database and schema to hold the output tables and need to create a SEMANTIC VIEW to help the FullContact application understand how to interpret the different columns in the data.
 
 Follow the steps below and copy and paste the SQL to your SQL Worksheet.
 
@@ -149,7 +153,7 @@ GRANT USAGE ON DATABASE FC_QUICKSTART TO APPLICATION FC_NATIVE_APP;
 GRANT USAGE ON SCHEMA FC_QUICKSTART.OUTPUT TO APPLICATION FC_NATIVE_APP;
 ```
 
-2) Create the Semantic Input view. Run the following stored procedure. It will scan the sample input dataset and output additional SQL that you will need to copy/paste/run into your worksheet. 
+2) Create the Semantic Input view. Run the following stored procedure. It will scan the sample input dataset and output additional SQL that you will need to copy/paste/run into your worksheet.
 
 ```sql
 CALL FC_NATIVE_APP.APP_SCHEMA.CREATE_INPUT_VIEW(
@@ -166,20 +170,20 @@ CALL FC_NATIVE_APP.APP_SCHEMA.CREATE_INPUT_VIEW(
 -- Please review the statement and modify it as needed before using it as input to the RESOLVE stored procedure.
 -- Accepted column names for the RESOLVE stored procedure can be found in the documentation.
 CREATE OR REPLACE VIEW FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC AS SELECT
-	EMAIL_1 AS RECORD_ID,
-	FIRST_NAME,
-	LAST_NAME,
-	RECORD_ID,
-	CITY,
-	PURCHASE_CHANNEL,
-	ZIP_CODE,
-	ADDRESS_LINE_1,
-	PHONE_NUMBER,
-	ADDRESS_LINE_2,
-	CUSTOMER_NUMBER,
-	LIFETIME_VALUE,
-	EMAIL_1,
-	STATE
+ EMAIL_1 AS RECORD_ID,
+ FIRST_NAME,
+ LAST_NAME,
+ RECORD_ID,
+ CITY,
+ PURCHASE_CHANNEL,
+ ZIP_CODE,
+ ADDRESS_LINE_1,
+ PHONE_NUMBER,
+ ADDRESS_LINE_2,
+ CUSTOMER_NUMBER,
+ LIFETIME_VALUE,
+ EMAIL_1,
+ STATE
 FROM FC_NATIVE_APP.SAMPLE_DATA.CUST_JOURNEY_PURCHASE_DEMO;
 GRANT USAGE ON DATABASE FC_QUICKSTART TO APPLICATION FC_NATIVE_APP;
 GRANT USAGE ON SCHEMA FC_QUICKSTART.OUTPUT TO APPLICATION FC_NATIVE_APP;
@@ -209,9 +213,9 @@ GRANT DELETE ON TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLV
 
 At this point you should have your SEMANTIC view `FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC` created as well as two empty output tables that will be populated in the next step: `FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS` and `FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS`
 
-
 <!-- ------------------------ -->
 ## Running the Resolve SPROC to Assign PersonIDs
+
 Duration: 1
 
 These steps are where the magic happens.
@@ -250,6 +254,7 @@ SELECT * FROM FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULT
 
 <!-- ------------------------ -->
 ## Conclusion
+
 Duration: 1
 
 By following this guide you learned how to use the FullContact for Snowflake application to unify disparate customer data through the Fullcontact PersonID. This application reads, standardizes and joins your dataset to the FullContact Identity Graph all without your data leaving the confines of Snowflake or being shared with FullContact.
@@ -257,6 +262,7 @@ By following this guide you learned how to use the FullContact for Snowflake app
 If you want to learn more about FullContact for Snowflake check out the [official documentation](https://docs.fullcontact.com/docs/snowflake-integration) or [contact an expert](https://www.fullcontact.com/contact/) to learn more about the different products FullContact offers and how it can help you better connect to your customers.
 
 ### What we've covered
+
 - Installing and setting up the FullContact for Snowflake App
 - Creating a FullContact account and API key
 - Running the FullContact for Snowflake App on sample customer data to unify and deduplicate disparate datasets
