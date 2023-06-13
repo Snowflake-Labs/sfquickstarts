@@ -314,7 +314,7 @@ Once you've arranged your cells and are satisfied with how it looks, use the sha
 ## Conclusion And Resources
 Duration: 1
 
-Congratulations on on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)!
+congratulations on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)!
 
 ### What we've covered
 
