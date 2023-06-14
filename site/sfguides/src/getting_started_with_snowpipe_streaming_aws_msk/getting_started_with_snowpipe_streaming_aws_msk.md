@@ -595,7 +595,7 @@ do
 done
 
 ```
-You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 30 seconds to verify that the row counts is indeed increasing.
+You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
 
 <!----------------------------->
 ## Cleanup
