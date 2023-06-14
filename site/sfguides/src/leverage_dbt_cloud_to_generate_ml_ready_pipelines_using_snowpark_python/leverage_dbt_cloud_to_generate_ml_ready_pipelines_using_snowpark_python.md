@@ -767,10 +767,10 @@ Then once we are settled on the code we want, we can drop it into our dbt projec
 [Python worksheets](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets) in Snowflake are a dynamic and interactive environment for executing Python code directly within Snowflake's cloud data platform. They provide a seamless integration between Snowflake's powerful data processing capabilities and the versatility of Python as a programming language. With Python worksheets, users can easily perform data transformations, analytics, and visualization tasks using familiar Python libraries and syntax, all within the Snowflake ecosystem. These worksheets enable data scientists, analysts, and developers to streamline their workflows, explore data in real-time, and derive valuable insights from their Snowflake data.
 
 1. Head back over **to Snowflake**.
-2. Open up a **Python Worksheet**. Ensure you have selected your worksheet to run 
+2. Open up a **Python Worksheet**. 
 <img src="assets/python-development/create_python_worksheet.png" alt="create_python_worksheet">
 
-3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**).
+3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**). 
 <img src="assets/python-development/python_worksheet_db_schema.png" alt="python_worksheet_db_schema">
 
 4. Delete the same code in the new worksheet. Use the following code to get a 5 year moving average of Formula 1 laps:
@@ -894,7 +894,8 @@ If you haven’t seen code like this before or use joblib files to save machine 
 2. Now create a new file called `train_model_to_predict_position.py` 
 <img src="assets/machine-learning-training-prediction/create_train_model_file.png" alt="preview-create_train_model_file-test-position">
 
-3. Copy and save the following code (make sure copy all the way to the right):
+3. Copy and save the following code (make sure copy all the way to the right). You can also copy it from our demo repo by [clicking on this link](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/models/ml/training_and_prediction/train_model_to_predict_position.py) and using Ctrl/Cmd+A. 
+
     ```python 
     import snowflake.snowpark.functions as F
     from sklearn.model_selection import train_test_split
@@ -1003,7 +1004,7 @@ Let's use our new trained model to create predictions!
 ### Predicting on new data
 It's time to use that 2020 data we held out to make predictions on!
 
-1. Create a new file under `ml/training_and_prediction` called `apply_prediction_to_position.py` and copy and save the following code:
+1. Create a new file under `ml/training_and_prediction` called `apply_prediction_to_position.py` and copy and save the following code (You can also copy it from our demo repo by [clicking on this link](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/models/ml/training_and_prediction/apply_prediction_to_position.py) and using Ctrl/Cmd+A.):
     ```python
     import logging
     import joblib
