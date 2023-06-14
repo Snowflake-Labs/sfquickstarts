@@ -446,21 +446,21 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 5. Within your **Project Details** you should have the option to **Configure Repository**.
 <img src="assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png" alt="configure_repository">
 
-6. Open a new browser tab for [GitHub](https://github.com/). Login to your personal GitHub account. 
-7. Using the search bar, find today's demo repo by searching **dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark**
-8. **Fork** your own copy of the lab repo.
+6. Open a new window and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/python-snowpark-formula1).
+
+7. **Fork** your own copy of the lab repo.
 <img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
 
-9. Add a description if you'd like such as: "learning about dbt at Snowflake Summit is cool" and **Create fork**.  
+8. Add a description if you'd like such as: "learning about dbt at Snowflake Summit is cool" and **Create fork**.  
 <img src="assets/development-schema-and-forking-repo/forking-repo/6_create_new_fork.png" alt="create_new_fork">
 
-10. Select the **Code** button. Choose the SSH option and use the copy button shortcut for our repo. 
+9. Select the **Code** button. Choose the SSH option and use the copy button shortcut for our repo. 
 <img src="assets/development-schema-and-forking-repo/forking-repo/7_copy_repo_ssh_github.png" alt="copy_repo_ssh_github">
 
-11. **Navigate back to dbt cloud**. After deleting our partner connect managed repository, we should see **New Repository**. Select **Git Clone**. Input the repository by pasting what you copied from GitHub into the **Repository** parameter and clicking **Import**.
+10. **Navigate back to dbt cloud**. After deleting our partner connect managed repository, we should see **New Repository**. Select **Git Clone**. Input the repository by pasting what you copied from GitHub into the **Repository** parameter and clicking **Import**.
 <img src="assets/development-schema-and-forking-repo/forking-repo/8_git_clone_copy_repo_from_github.png" alt="git_clone_copy_repo_from_github">
 
-12. We can see we successfully made the connection to our forked GitHub repo. <img src="assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo"> 
+11. We can see we successfully made the connection to our forked GitHub repo. <img src="assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo"> 
 
 If you tried to start developing onto of this repo right now, we'd get permissions errors. So we need to give dbt Cloud write acess. 
 
