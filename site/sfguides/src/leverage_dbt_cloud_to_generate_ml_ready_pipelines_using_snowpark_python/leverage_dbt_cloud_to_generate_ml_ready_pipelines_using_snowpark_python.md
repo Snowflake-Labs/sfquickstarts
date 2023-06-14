@@ -68,7 +68,7 @@ Duration: 5
 
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
 
-1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS**. To have a completely clean slate, we recommend you sign up with a new Trial account and then go into your user
+1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS**. To have a completely clean slate, we recommend you sign up with a new Snowflake Trial account with your email address and then updated the email to something unique after you have completed (if you have signed up for a snowflake account or dbt Cloud account in the past). You can do this by logging in, going to Admin > Users & Roles, edit your user (by clicking on the `...`) and updating the email to <your_email>+dbtsnowpark@<your_domain>.com. Send a re-vertification email and then revertified via the email link and then you're good to go. This will help you prevent any confusion if you have already created a snowflake or dbt Cloud trial in the past. 
 
 2. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
 
@@ -96,7 +96,10 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 2. Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the option **…** and **Rename**. Rename the file  to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Make sure your role is set as the **ACCOUNTADMIN** and select the **COMPUTE_WH** warehouse.
 ![rename-worksheet-and-select-warehouse](assets/load-data-into-snowflake/1-rename-worksheet-and-select-warehouse.png)
 
-3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://github.com/dbt-labs/python-snowpark-formula1/blob/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! Generally during this lab we'll be explaining and breaking down the queries. We won't going line by line, but we will point out important information related to our learning objectives!
+3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! We recommend copying this straight from the github file linked rather than from this workshop UI so you don't miss anything (use Ctrl+A or Cmd+A). 
+
+Generally during this lab we'll be explaining and breaking down the queries. We won't be going line by line, but we will point out important information related to our learning objectives!
+
     ```sql
     /*
     This is our setup script to create a new database for the Formula1 data in Snowflake.
