@@ -332,6 +332,12 @@ GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
+-- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
+-- IT WILL BE <organization_name>-<account_name>
+-- e.g. ylmxgak-wyb53646
+USE ROLE ORGADMIN;
+SHOW ORGANIZATION ACCOUNTS;
+
 ```
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
@@ -406,29 +412,11 @@ cat << EOF > /tmp/get_params
 a=''
 until [ ! -z \$a ]
 do
- read -p "Input Snowflake account URL: e.g. gwa123456 ==> " a
+ read -p "Input Snowflake account identifier: e.g. ylmxgak-wyb53646 ==> " a
 done
 
-r=''
-until  [ ! -z \$r ]
-do
-  read -p "Input Snowflake account region: e.g. us-west-2 ==> " r
-done
-
-if [[ \$r == "us-west-2" ]]
-then
-  echo export clstr_url=\$a.snowflakecomputing.com > $outf
-  export clstr_url=\$a.snowflakecomputing.com
-else
-  if [[ \$r == "us-east-1" ]] || [[ \$r == "eu-west-1" ]] || [[ \$r == "eu-central-1" ]] || [[ \$r == "ap-southeast-1" ]] || [[ \$r == "ap-southeast-2" ]]
-  then
-     echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
-     export clstr_url=\$a.\$r.snowflakecomputing.com
-  else
-     echo export clstr_url=\$a.\$r.aws.snowflakecomputing.com > $outf
-     export clstr_url=\$a.\$r.aws.snowflakecomputing.com
-  fi
-fi
+echo export clstr_url=\$a.snowflakecomputing.com > $outf
+export clstr_url=\$a.snowflakecomputing.com
 
 read -p "Snowflake cluster user name: default: streaming_user ==> " user
 if [[ \$user == "" ]]
