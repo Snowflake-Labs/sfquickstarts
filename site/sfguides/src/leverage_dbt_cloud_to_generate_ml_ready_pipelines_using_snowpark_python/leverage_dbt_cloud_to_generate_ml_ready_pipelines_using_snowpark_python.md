@@ -390,6 +390,15 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 5. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
 <img src="assets/setup-dbt-account/3-connect-to-dbt.png" alt="connect-to-dbt">
 
+If you skip this part, you will need to run these commands:
+
+```sql 
+
+grant usage on database FORMULA1 to role PC_DBT_ROLE;
+grant usage on schema FORMULA1.RAW to role PC_DBT_ROLE;
+grant select on all tables in schema FORMULA1.RAW to role PC_DBT_ROLE;
+```    
+
 6. When you see the **Your partner account has been created** window, click **Activate**.
 
 7. You should be redirected to a dbt Cloud registration page. Fill out the form using whatever account name you'd like. Make sure to save the password somewhere for login in the future. 
@@ -407,7 +416,9 @@ Duration: 10
 In this section we'll be setting up our own personal development schema and forking our workshop repo into dbt Cloud. 
 
 ### Schema name
-1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **User Profile > Credentials**. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. Knowing how to configure schema names is also helpful when you onboard multiple team members onto dbt cloud and want each person to have their own development schema! 
+1. First we are going to change the name of our default schema to where our dbt models will build. If you did not provide your name in Snowflake, the name of your development schema might be`dbt_`.
+
+We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **User Profile > Credentials**. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. Knowing how to configure schema names is also helpful when you onboard multiple team members onto dbt cloud and want each person to have their own development schema! 
 <img src="assets/development-schema-and-forking-repo/schema-name/1-profile-credentials-dbt-cloud.png" alt="profile-credentials-dbt-cloud">
 
 2. Select **Partner Connect Trial**, which will expand the credentials menu.
