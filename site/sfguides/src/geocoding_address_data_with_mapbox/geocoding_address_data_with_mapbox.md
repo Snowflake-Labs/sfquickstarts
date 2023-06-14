@@ -16,7 +16,9 @@ Duration: 1
 
 This Quickstart will help you get started with the __Mapbox Snowflake Native App__, which adds new user-defined functions (UDFs) for geocoding that you can use in your SQL queries.  Geocoding converts your address data (e.g. "1600 Pennsylvania Ave, Washington, DC, 20500") into geographic coordinates which can be used for mapping and spatial analysis.
 
-The Mapbox Snowflake Native App is powered by the [Mapbox Geocoding API](https://docs.mapbox.com/api/search/geocoding/).
+Geocoding is used by companies for a variety of purposes, including asset tracking, supply chain and retail strategy, and analysis of demographic trends, elections, and real estate.
+
+The Mapbox Snowflake Native App is powered by the [Mapbox Geocoding API](https://docs.mapbox.com/api/search/geocoding/) and the boundaries lookup is powered by [Mapbox Boundaries](https://www.mapbox.com/boundaries).
 
 ![logos](assets/logos.png)
 
@@ -92,11 +94,11 @@ GRANT SELECT ON TABLE mydatabase.testing.sample_addresses to application mapbox;
 ## Preparing your data
 Duration: 2
 
-    Geocoding requires either a column a fully-formed addresses or address data in multiple columns. 
+    Geocoding requires either a column of fully-formed addresses or address data in multiple columns. 
 
-    Results will depend on the quality and consistency of your data.  Address data spread across multiple columns can improve results as the geocoder knows exactly which state, zip, country, etc to search for a matching address within.
+    Results will depend on the quality and consistency of your data.  Address data spread across multiple columns can improve results as the geocoder knows exactly which state, zip, country, etc to search for.
 
-    Before geocoding with the Mapbox App you may want to clean up your address data, ensuring a consistent format and/or filling in missing values.
+    Before geocoding with the Mapbox App you may want to clean up your address data, ensuring a consistent format and/or filling in missing values. However, one of the primary benefits of the Mapbox’s Geocoding API is its ability to correct misspellings and other errors (e.g., an address with the wrong zip code). 
 
 ### Fully-formed addresses in a single column
 
@@ -124,7 +126,7 @@ This example table shows "structured" address data spread across four columns:
 
 When geocoding with structured data, each column should correspond to one of the address parts in the table below.  Not all parts are required, but providing more parts can increase the accuracy of your results.  For more details, see the [documentation for the Mapbox Geocoding API](https://docs.mapbox.com/api/search/geocoding-v6/#structured-input).
 
-Your columns can be named however you like, you will be able to specify which column to use for each address part when using the Mapbox App.
+Your columns can be named however you like, but you have to specify which column to use for each address part when using the Mapbox App.
 
 | __Address Part__ | __Type__ | __Description__   
 | ------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -146,7 +148,7 @@ Duration: 3
 
 When your addresses live in a single column as fully-formed address strings, use the `geocode_forward()` function.
 
-Forward geocoding is powered by the [Mapbox Geocoding API](https://docs.mapbox.com/api/search/geocoding-v6/), which includes global address coverage, supported by continously updated high-quality Mapbox location data.  You can try out individual address queries and inspect the results using our [Geocoding API Playground](https://docs.mapbox.com/playground/geocoding-v6).
+Forward geocoding is powered by the [Mapbox Geocoding API](https://docs.mapbox.com/api/search/geocoding-v6/), which includes global address coverage, supported by continuously-updated high-quality Mapbox location data.  You can try out individual address queries and inspect the results using our [Geocoding API Playground](https://docs.mapbox.com/playground/geocoding-v6).
 
 ### Trying out the geocode_forward() function
 
@@ -532,11 +534,11 @@ Your geojson file can be opened in desktop GIS software like [QGIS](https://qgis
 ## Reverse Geocoding and Boundaries Lookup
 Duration: 5
 
-The Mapbox App includes two other useful functions for reverse geocoding (converting point coordinates to addresses) and boundary lookup (e.g. determining which zip code each point lies in)
+The Mapbox App includes two other useful functions for reverse geocoding (converting point coordinates to addresses) and boundary lookup (e.g. determining which zip code each point lies in).
 
 ### Reverse Geocoding
 
-Reverse geocoding is the process of converting point coordinates to addresses.  For example, the coordinates `-73.9857, 40.7484` would be reverse geocoded to `2 W 34th Street, New York, NY
+Reverse geocoding is the process of converting point coordinates to addresses.  For example, the coordinates `-73.9857, 40.7484` would be reverse geocoded to `2 W 34th Street, New York, NY`
 
 Reverse geocoding is powered by the [Mapbox Geocoding API](https://docs.mapbox.com/api/search/geocoding-v6/), which includes global address coverage, supported by continously updated high-quality Mapbox location data.  You can try out individual reverse geocoding queries and inspect the results using our [Geocoding API Playground](https://docs.mapbox.com/playground/geocoding-v6).
 
