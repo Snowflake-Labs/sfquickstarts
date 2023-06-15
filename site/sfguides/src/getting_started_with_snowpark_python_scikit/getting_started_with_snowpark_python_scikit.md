@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview 
 Duration: 5
 
-By completing this guide, you will be able to go from raw data to build a machine learning that can help to predict house prices.
+By completing this guide, you will be able to go from raw data to build a machine learning model that can help to predict house prices.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
@@ -52,6 +52,7 @@ It is one of the most popular [open source](https://scikit-learn.org/) machine l
 ### Prerequisites
 
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- You will need to accept acknowledge the Snowflake Third Party Terms by following Anaconda link in previous step.
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 <!-- ------------------------ -->
@@ -61,7 +62,7 @@ Duration: 8
 
 This section covers cloning of the GitHub repository and creating a Python 3.8 environment.
 
-1) Clone [GitHub repository](https://github.com/sfc-gh-vkhandelwal/scikit-learn-lab)
+1) Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn)
 
 2) Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
 
@@ -88,7 +89,7 @@ dependencies:
 ```
 
 
-4) From the root folder, create conda environment. Let's name the environment **snowpark_scikit_learn**.
+4) From the root folder, create conda environment by running below command.
 
 > aside positive
 > IMPORTANT:
@@ -101,7 +102,7 @@ conda activate snowpark_scikit_learn
 
 5) Download and install [VS Code](https://code.visualstudio.com/) or you could use juypter notebook or any other IDE of your choice
 
-6) Update [config.py](https://github.com/sfc-gh-vkhandelwal/scikit-learn-lab/blob/main/config.py) with your Snowflake account details and credentials.
+6) Update [config.py](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/config.py) with your Snowflake account details and credentials.
 
 > aside negative
 > Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
@@ -133,7 +134,7 @@ To get started, follow these steps:
 
 1) In a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
 
-2) Open and run through the cells in [1_snowpark_housing_data_ingest.ipynb](https://github.com/sfc-gh-vkhandelwal/scikit-learn-lab/blob/main/1_snowpark_housing_data_ingest.ipynb)
+2) Open and run through the cells in [1_snowpark_housing_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/1_snowpark_housing_data_ingest.ipynb)
 
 > aside positive
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark_scikit_learn***-- which is the name of the environment created in **Clone GitHub Repository** step.
@@ -157,7 +158,7 @@ To get started, follow these steps:
 
 1) If not done already, in a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
 
-2) Open and run through the cells in [2_data_exploration_transformation.ipynb](https://github.com/sfc-gh-vkhandelwal/scikit-learn-lab/blob/main/2_data_exploration_transformation.ipynb)
+2) Open and run through the cells in [2_data_exploration_transformation.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/2_data_exploration_transformation.ipynb)
 
 > aside positive
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark_scikit_learn***-- which is the name of the environment created in **Clone GitHub Repository** step.
@@ -193,7 +194,7 @@ To get started, follow these steps:
 
 1) If not done already, in a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
 
-2) Open and run through the [3_snowpark_end_to_end_ml.ipynb](https://github.com/sfc-gh-vkhandelwal/scikit-learn-lab/blob/main/3_snowpark_end_to_end_ml.ipynb)
+2) Open and run through the [3_snowpark_end_to_end_ml.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/3_snowpark_end_to_end_ml.ipynb)
 
 > aside positive
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark_scikit_learn*** -- which is the name of the environment created in **Clone GitHub Repository** step.
@@ -225,7 +226,7 @@ Congratulations! You've successfully completed the lab using Snowpark for Python
 
 ### Related Resources
 
-- [Source Code on GitHub](https://github.com/sfc-gh-vkhandelwal/scikit-learn-lab)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn)
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
