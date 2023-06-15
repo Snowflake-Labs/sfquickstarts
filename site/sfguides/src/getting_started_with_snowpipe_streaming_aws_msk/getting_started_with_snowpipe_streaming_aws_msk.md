@@ -332,11 +332,16 @@ GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
+
 -- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
--- IT WILL BE <organization_name>-<account_name>
+-- IT WILL BE SOMETHING LIKE <organization_name>-<account_name>
 -- e.g. ylmxgak-wyb53646
-USE ROLE ORGADMIN;
-SHOW ORGANIZATION ACCOUNTS;
+
+WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,'.snowflakecomputing.com','') AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 
 ```
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
@@ -628,7 +633,8 @@ Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
 connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
-scalability and resilience through the AWS infrastructure.
+scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
+[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
 
 Related Resources
 
