@@ -83,9 +83,9 @@ Each chart display includes the underlying raw data and a SQL query to copy and 
 
 ### Layout & Walkthrough
 The includes a side panel navigation bar where you can flip through the following tabs: 
-- Shopify Benchmarks: Overview of the data in the App with a deep dive into sales metrics where the user can filter by date and category.
-- Ad Metrics: A deep dive into advertising metrics where the user can filter by date and category. 
-- Comparison by Year: A deep dive into both sales and ad metrics where the user can filter by date and category and visualize in a YoY stacked format.
+- **Shopify Benchmarks**: Overview of the data in the App with a deep dive into sales metrics where the user can filter by date and category.
+- **Ad Metrics**: A deep dive into advertising metrics where the user can filter by date and category. 
+- **Comparison by Year**: A deep dive into both sales and ad metrics where the user can filter by date and category and visualize in a YoY stacked format.
 
 
 <!-- ------------------------ -->
@@ -97,16 +97,16 @@ Cybersyn has developed this Streamlit application on our database for users to g
 ![overview_gif](assets/Shopify_example.gif)
 
 ### Step 1: Filter the data in the App
-Example: On Comparisons by Year tab
+**Example**: On Comparisons by Year tab
 - Filter for
-  - Category: “Beauty & Fitness”
-  - Period: “Week”
-  - Years: “2020” + “2021” + “2022” + “2023”
-  - Periods Numbers to Display: 1 to 22
+  - **Category**: “Beauty & Fitness”
+  - **Period**: “Week”
+  - **Years**: “2020” + “2021” + “2022” + “2023”
+  - **Periods Numbers to Display**: 1 to 22
 
 
 ### Step 2: Copy the SQL Query
-Example: On Comparisons by Year tab
+**Example**: On Comparisons by Year tab
 - On the “Revenue by Year” chart, click “SQL Query”
 - Click on the Copy button ![copushape](assets/shape.png) to copy the SQL code
 
@@ -117,4 +117,4 @@ Example: On Comparisons by Year tab
 - Click the blue play button in the top right corner
 - Now you have a query that you can modify and edit in a Snowflake Worksheet
 
-### Success! You have learned how to use the Cybersyn Shopify Benchmarks App!
+### **Success! You have learned how to use the Cybersyn Shopify Benchmarks App!**
