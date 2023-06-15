@@ -5,9 +5,9 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering, NLP, Snowpark, Streamlit 
 
-NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
+# NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -35,13 +35,14 @@ This Quickstart will demonstrate how you can perform Natural Language Processing
 - [GitHub](https://github.com/) Account
 - [VSCode](https://code.visualstudio.com/download) Installed
 
+
 ### What You’ll Build
 You will build an end-to-end Data Science workflow leveraging Snowpark for Python and Streamlit around the Sentiment Analysis use case.
 
 <!-- ------------------------ -->
 ## Python Environment Setup
 
-Duration: 8
+Duration: 6
 
 This section covers cloning of the GitHub repository and creating a Python 3.8 environment.
 
@@ -53,7 +54,7 @@ git clone https://github.com/Snowflake-Labs/snowpark-python-demos.git
 cd snowpark_nlp_ml_demo/
 ```
 
-### Setup Python Environment:
+### Setup Python Environment
 Create a conda environment. Let's name the environment nlp_ml_sentiment_analysis.
 
 ```shell
@@ -63,7 +64,7 @@ conda env create -f ./snowpark-env/conda-env_nlp_ml_sentiment_analysis.yml  --fo
 ```
 
 ### Snowflake Credentials
-Update the Snowflake connection file: connection.json
+Update the Snowflake connexion file: connection.json
 
 ```shell
 {
@@ -77,18 +78,22 @@ Update the Snowflake connection file: connection.json
  }
 ```
 
-### Activate Python environment using conda :
+>aside positive    
+> For the `account` parameter, use your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Note that the account identifier does not include the snowflakecomputing.com suffix.
+
+### Activate Python environment using conda
 ```shell
 conda activate nlp_ml_sentiment_analysis
 ```
 
-### Run Streamlit App :
+### Run Streamlit App
 ```shell
 cd streamlit
 streamlit run Sentiment_Analysis_APP.py
 ```
 
-The full code of the use case is also available in this Notebook **[Sentiment_Analysis_NLP_with_Snowpark_ML](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/snowpark_nlp_ml_demo/notebook/Sentiment_Analysis_NLP_with_Snowpark_ML.ipynb)** 
+### [OPTIONAL] : Notebook
+The full code of the use case is also available in this Notebook **[Sentiment_Analysis_NLP_with_Snowpark_ML.ipynb](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/snowpark_nlp_ml_demo/notebook/Sentiment_Analysis_NLP_with_Snowpark_ML.ipynb)**. Once the Setup is done (Create the Snowflake Objects and load the data) you can run all the Notebook.
 
 ```shell
 cd notebook
@@ -99,12 +104,12 @@ jupyter notebook
 ## Snowflake Environment Setup
 Duration: 2
 
-### Option 1 - Automatically : with Streamlit App
+### Option 1 - Environment setup via the Streamlit App
 Use the Streamlit App to setup Snowflake Objects
 
 ![Puppy](./assets/Setup_Snowflake_Objects.png)
 
-Make sure you have this result :
+Make sure you have this result:
 
 ![Puppy](./assets/Setup_Snowflake_Objects_Results.png)
 
@@ -115,7 +120,7 @@ You can check directly with Snowsight that the data are available in Snowflake.
 ### Option 2 - Manually : with Snowsight
 First, log into your Snowflake Account (Snowsight Web UI) using your credentials.
 
-Then, run the following SQL commands to create the DATABASE :
+Then, run the following SQL commands to create the DATABASE:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -123,7 +128,7 @@ USE ROLE ACCOUNTADMIN;
 CREATE DATABASE if not EXISTS IMDB;
 ```
 
-Run the following SQL commands to create the TABLES :
+Run the following SQL commands to create the TABLES:
 ```sql
 USE DATABASE IMDB;
 USE SCHEMA PUBLIC;
@@ -139,12 +144,12 @@ CREATE TABLE if not EXISTS TEST_DATASET (
 );
 ```
 
-Run the following SQL commands to create the WAREHOUSE :
+Run the following SQL commands to create the WAREHOUSE:
 ```sql
 CREATE WAREHOUSE if not EXISTS DEMO_WH WAREHOUSE_SIZE=MEDIUM INITIALLY_SUSPENDED=TRUE AUTO_SUSPEND=120;
 ```
 
-Run the following SQL commands to create the STAGE :
+Run the following SQL commands to create the STAGE:
 ```sql
 CREATE STAGE if not EXISTS MODELS;
 
@@ -154,13 +159,13 @@ USE IMDB.PUBLIC;
 
 <!-- ------------------------ -->
 ## Load Data
-Duration: 5
+Duration: 4
 
 We used Python code to load the data into Snowflake. In order to simplify code execution you can click on the right button to start loading the data.
 
-### What You'll Do :
+### What You'll Do
 
-Use use the section **Load Data** :
+Use use the section **Load Data**:
 
 ![Puppy](./assets/Load_data_Section.png)
 
@@ -176,7 +181,7 @@ Here is the display that we expect after the execution.
 
 ![Puppy](./assets/Step2_Load_Test_Dataset.png)
 
-### What You'll Learn :
+### What You'll Learn
 
 #### Load Data into Snowflake with Snowpark
 
@@ -190,9 +195,9 @@ with z.open("TRAIN_DATASET.csv") as f:
 ## Analyze Data
 Duration: 2
 
-### What You'll Do :
+### What You'll Do
 
-Use the section **Analyze** to explore and analyze the datasets and see some metrics.
+Use use the section **Analyze** to explore and analyze the datasets and see some metrics.
 
 ![Puppy](./assets/Analyze_Data1.png)
 
@@ -202,21 +207,21 @@ Choose the dataset that you want to analyze:
 ![Puppy](./assets/Select_Table.png)
 
 #### Stats
-Here is some statistics related to the dataset :
+Here is some statistics related to the dataset:
 
 ![Puppy](./assets/Stats.png)
 
 #### Sample Data
-You can see a sample of data :
+You can see a sample of data:
 
 ![Puppy](./assets/Sample_data.png)
 
 #### Data Description
-Here a description of your dataset :
+Here a description of your dataset:
 
 ![Puppy](./assets/Data_Description.png)
 
-### What You'll Learn :
+### What You'll Learn
 
 #### Analyze your dataset with Snowpark
 
@@ -238,19 +243,19 @@ pd_describe = df_table.describe().to_pandas()
 ## Data Prep & Train Model
 Duration: 5
 
-### What You'll Do :
+### What You'll Do
 
-Use use the section **Train Model** :
+Use use the section **Train Model**:
 
 ![Train_dataset](./assets/Train_Model_Section.png)
 
 #### Step 1 : Select the dataset
-Choose the training dataset to build the model :
+Choose the training dataset to build the model:
 
 ![Train_dataset](./assets/Train_Dataset.png)
 
 #### Step 2 : Select a Virtual Warehouse
-Select a Virtual Warehouse :
+Select a Virtual Warehouse:
 
 ![VW](./assets/Virtual_Warehouse.png)
 
@@ -264,18 +269,18 @@ To run the model training, click on the button below:
 ![Puppy](./assets/Run_model.png)
 
 
-### What You'll Learn :
+### What You'll Learn
 
 #### Create the training function
 
-We created a function called train_model_review_pipline() :
+We created a function called train_model_review_pipline():
 
 ```shell
 def train_model_review_pipline(session : Session, train_dataset_name: str) -> Variant:
     ...
 ```
 
-that will do the following steps :
+that will do the following steps:
 - **Data Preperation**: using Snowpark DataFrame API, we will trasnform the data to make it ready for the training
 - **Text Representation**: create the Matrix by leveraging Python libraries
 - **Fit the Model**: Fit the model 
@@ -283,7 +288,7 @@ that will do the following steps :
 
 #### Register the function as a Store Procedure
 
-Then we registered the function as a Store Procedure :
+Then we registered the function as a Store Procedure:
 
 ```shell
 session.sproc.register(func=train_model_review_pipline, name="train_model_review_pipline", replace=True)
@@ -291,10 +296,16 @@ session.sproc.register(func=train_model_review_pipline, name="train_model_review
 
 #### Call the Stored Procedure
 
-And use this code to call the SP that wil be execute the training into Snowflake with aSnowflake Virtual Warehouse :
+And use this **Python code** to call the SP that wil be execute the training into Snowflake with a Snowflake Virtual Warehouse:
 
 ```shell
 session.call("train_model_review_pipline", "TRAIN_DATASET")
+```
+
+You can also execute the training from [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) directly with **SQL code**:
+
+```SQL
+CALL train_model_review_pipline("TRAIN_DATASET")
 ```
 
 #### Deploy the model using an UDF Function
@@ -320,27 +331,27 @@ session.call("train_model_review_pipline", "TRAIN_DATASET")
 ---
 <!-- ------------------------ -->
 ## Monitoring & Model Catalog
-Duration: 2
+Duration: 1
 
-### Monitore your execution using QUERY_HISTORY :
+### Monitore your execution using QUERY_HISTORY
 
 Use use the section **Model Monitoring**. You can use **Snowsight (Snowflake UI)** as well to get more details and see the **Query Details** and **Query Profile**.
 
 ![Puppy](./assets/Monitoring.png)
 
-### Model Catalog :
+### Model Catalog
 
-Use use the section **Model Catalog**. Here you can see your models that you deployed and saved on Snowflake (Stage) :
+Use use the section **Model Catalog**. Here you can see your models that you deployed and saved on Snowflake (Stage):
 
 ![Puppy](./assets/Models.png)
 
 
 ---
 <!-- ------------------------ -->
-## Inference & Prediction :
+## Inference & Prediction
 Duration: 6
 
-### Inference :
+### Inference
 
 Use use the section **Inference** to analyze the Test Dataset and see the Accuracy of your Model after the Inference.
 
@@ -354,7 +365,7 @@ Click on the Accuracy sub-section to see the details.
 
 ![Puppy](./assets/Accuracy.png)
 
-### Inference Runs :
+### Inference Runs
 
 Select the new dataset that you want to predict and the Inference will run automatically.
 
@@ -365,7 +376,7 @@ Select the new dataset that you want to predict and the Inference will run autom
 ## Cleanup
 Duration: 1
 
-Use the section to clean Up to remove all the Snowflake Objects and the Data that you already load :
+Use the section to clean Up to remove all the Snowflake Objects and the Data that you already load:
 
 ![Puppy](./assets/CleanUp.png)
 
@@ -379,7 +390,7 @@ Congratulations! You've successfully performed the Sentiment Analysis use case a
 
 In this quickstart we demonstrated how Snowpark Python enables rapid, end-to-end machine learning workload development, deployment, and orchestration. We were also able to experience how Snowpark for Python enables you to use familiar syntax and constructs to process data where it lives with Snowflake's elastic, scalable and secure engine, accelerating the path to production for data pipelines and ML workflows.
 
-### What we've covered :
+### What we've covered
 - Do NLP and ML on Snowflake using Snowpark
 - Load data into Snowflake
 - Transform your data using Snowpark DataFrame API
@@ -388,8 +399,8 @@ In this quickstart we demonstrated how Snowpark Python enables rapid, end-to-end
 - Inference with UDF Function
 - Use Streamlit with Snowpark
 
-### More resources :
-- [NLP and ML within Snowpark Python ans Streamlit - Blog](https://medium.com/snowflake/natural-language-processing-nlp-and-ml-within-100-snowflake-using-snowpark-python-43e654111319) 
+### More resources
+- [NLP and ML within Snowpark Python and Streamlit - Blog](https://medium.com/snowflake/natural-language-processing-nlp-and-ml-within-100-snowflake-using-snowpark-python-43e654111319) 
 - [PySpark vs Snowpark for ML in terms of Mindset and Approach - Blog](https://medium.com/snowflake/pyspark-versus-snowpark-for-ml-in-terms-of-mindset-and-approach-8be4bdafa547)
 - [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 - [Snowpark Guide for Data Engineers'](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
