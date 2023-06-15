@@ -111,7 +111,7 @@ Cybersyn has developed this Streamlit application on our database for users to g
 - Click on the Copy button ![copushape](assets/shape.png) to copy the SQL code
 
 ### Step 3: Run the SQL Query
-Example: On Comparisons by Year tab
+**Example**: On Comparisons by Year tab
 - Click on the Open in worksheet button ![copushape](assets/shape2.png)
 - Paste the SQL code into your worksheet
 - Click the blue play button in the top right corner
