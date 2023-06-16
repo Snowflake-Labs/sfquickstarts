@@ -1,11 +1,11 @@
-author: Oleksii Bielov
+author: Peter Popov, Oleksii Bielov
 id: geo_analysis_geometry
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Geospatial, Python UDFs
 
 # Geospatial Analysis using Geometry Data Type
 <!-- ----------------------------------------- -->
@@ -18,21 +18,31 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 ### Prerequisites
 * Quick Video [Introduction to Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc.)
 * Snowflake [Data Loading Basics](https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc.) Video
+* [CARTO in a nutshell ](https://docs.carto.com/getting-started/carto-in-a-nutshell)web guide
+* [CARTO Spatial Extension for Snowflake](https://www.youtube.com/watch?v=9W_Attbs-fY) video 
 
 ### What You’ll Learn
 * How to acquire geospatial data from the Snowflake Marketplace
 * How to load geospatial data from internal and external Stages
 * How to interpret the `GEOMETRY` data type and how it differs from the `GEOGRAPHY`
 * How to understand the different formats that `GEOMETRY` can be expressed in
-* How to do spatial analysis using the GEOMETRY and GEOGRAPHY data types
+* How to do spatial analysis using the `GEOMETRY` and `GEOGRAPHY` data types
+* How to use Python UDFs for reading Shapefiles and creating custom functions
+* How to use Global Discrete Grid and H3 functions
+* How to use Search Optimization to speed up geospatial queries
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
 * Sign-up for a [Snowflake Trial](https://signup.snowflake.com/)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account). Select the same region (continent) as for the Snowflake account.
 
 ### What You’ll Build
 A sample use case that involves energy grids and LTE cell towers in the Netherlands You will answer the following questions:
-* What is the length of all energy grids in each municipality in the Netherlands
+* What the length of all energy grids in each municipality in Netherlands?
+* What cell towers lack electricity cables nearby?
+* What municipalities in the Netherlands have good/poor LTE coverage?
+* What percent of the Dutch highways have LTE coverage?
+* What is the estimated quality of LTE signal on Dutch highways?
 
 <!-- ----------------------------------------- -->
 ## Setup your Account
