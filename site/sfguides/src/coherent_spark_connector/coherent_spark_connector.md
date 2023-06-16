@@ -236,7 +236,7 @@ JOIN TABLE(SPARK.BLACKSCHOLES(
     input.risklessRate, 
     input.stdDevi, 
     input.stockPrice, 
-    input.timeToExpiry)) outputQL
+    input.timeToExpiry)) output
 ```
 
 ![Snowflake query returns table of results](assets/Snowflake_query_returns_table_of_results.png)
