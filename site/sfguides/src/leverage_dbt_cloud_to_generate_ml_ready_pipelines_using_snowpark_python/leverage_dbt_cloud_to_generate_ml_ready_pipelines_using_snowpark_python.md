@@ -68,7 +68,7 @@ Duration: 5
 
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
 
-1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS**.
+1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS**. To have a completely clean slate, we recommend you sign up with a new Snowflake Trial account with your email address and then updated the email to something unique after you have completed (if you have signed up for a snowflake account or dbt Cloud account in the past). You can do this by logging in, going to Admin > Users & Roles, edit your user (by clicking on the `...`) and updating the email to <your_email>+dbtsnowpark@<your_domain>.com. Send a re-vertification email and then revertified via the email link and then you're good to go. This will help you prevent any confusion if you have already created a snowflake or dbt Cloud trial in the past. 
 
 2. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
 
@@ -88,7 +88,7 @@ Duration: 7
 
 We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
 
-1. Your new Snowflake account has a preconfigured warehouse named `COMPUTE_WH`. If for some reason you don’t have this warehouse, we can create a warehouse using the following script:
+1. Your new Snowflake account has a preconfigured warehouse named `COMPUTE_WH`. You can check by going under Admin > Warehouses. If for some reason you don’t have this warehouse, we can create a warehouse using the following script:
 
     ```sql
     create or replace warehouse COMPUTE_WH with warehouse_size=XSMALL
@@ -96,7 +96,10 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 2. Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the option **…** and **Rename**. Rename the file  to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Make sure your role is set as the **ACCOUNTADMIN** and select the **COMPUTE_WH** warehouse.
 ![rename-worksheet-and-select-warehouse](assets/load-data-into-snowflake/1-rename-worksheet-and-select-warehouse.png)
 
-3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://github.com/dbt-labs/python-snowpark-formula1/blob/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! Generally during this lab we'll be explaining and breaking down the queries. We won't going line by line, but we will point out important information related to our learning objectives!
+3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! We recommend copying this straight from the github file linked rather than from this workshop UI so you don't miss anything (use Ctrl+A or Cmd+A). 
+
+Generally during this lab we'll be explaining and breaking down the queries. We won't be going line by line, but we will point out important information related to our learning objectives!
+
     ```sql
     /*
     This is our setup script to create a new database for the Formula1 data in Snowflake.
@@ -387,6 +390,15 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 5. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
 <img src="assets/setup-dbt-account/3-connect-to-dbt.png" alt="connect-to-dbt">
 
+If you skip this part, you will need to run these commands:
+
+```sql 
+
+grant usage on database FORMULA1 to role PC_DBT_ROLE;
+grant usage on schema FORMULA1.RAW to role PC_DBT_ROLE;
+grant select on all tables in schema FORMULA1.RAW to role PC_DBT_ROLE;
+```    
+
 6. When you see the **Your partner account has been created** window, click **Activate**.
 
 7. You should be redirected to a dbt Cloud registration page. Fill out the form using whatever account name you'd like. Make sure to save the password somewhere for login in the future. 
@@ -404,7 +416,9 @@ Duration: 10
 In this section we'll be setting up our own personal development schema and forking our workshop repo into dbt Cloud. 
 
 ### Schema name
-1. First we are going to change the name of our default schema to where our dbt models will build. By default, the name of your development schema might be`dbt_`. We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **User Profile > Credentials**. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. Knowing how to configure schema names is also helpful when you onboard multiple team members onto dbt cloud and want each person to have their own development schema! 
+1. First we are going to change the name of our default schema to where our dbt models will build. If you did not provide your name in Snowflake, the name of your development schema might be`dbt_`.
+
+We will change this to `dbt_<YOUR_NAME>` to create your own personal development schema. To do this, select **User Profile > Credentials**. If this was already setup to your liking based off your dbt Cloud account name feel free to keep it as is. Knowing how to configure schema names is also helpful when you onboard multiple team members onto dbt cloud and want each person to have their own development schema! 
 <img src="assets/development-schema-and-forking-repo/schema-name/1-profile-credentials-dbt-cloud.png" alt="profile-credentials-dbt-cloud">
 
 2. Select **Partner Connect Trial**, which will expand the credentials menu.
@@ -432,21 +446,21 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 5. Within your **Project Details** you should have the option to **Configure Repository**.
 <img src="assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png" alt="configure_repository">
 
-6. Open a new browser tab for [GitHub](https://github.com/). Login to your personal GitHub account. 
-7. Using the search bar, find today's demo repo by searching **dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark**
-8. **Fork** your own copy of the lab repo.
+6. Open a new window and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/python-snowpark-formula1).
+
+7. **Fork** your own copy of the lab repo.
 <img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
 
-9. Add a description if you'd like such as: "learning about dbt at Snowflake Summit is cool" and **Create fork**.  
+8. Add a description if you'd like such as: "learning about dbt at Snowflake Summit is cool" and **Create fork**.  
 <img src="assets/development-schema-and-forking-repo/forking-repo/6_create_new_fork.png" alt="create_new_fork">
 
-10. Select the **Code** button. Choose the SSH option and use the copy button shortcut for our repo. 
+9. Select the **Code** button. Choose the SSH option and use the copy button shortcut for our repo. 
 <img src="assets/development-schema-and-forking-repo/forking-repo/7_copy_repo_ssh_github.png" alt="copy_repo_ssh_github">
 
-11. **Navigate back to dbt cloud**. After deleting our partner connect managed repository, we should see **New Repository**. Select **Git Clone**. Input the repository by pasting what you copied from GitHub into the **Repository** parameter. 
+10. **Navigate back to dbt cloud**. After deleting our partner connect managed repository, we should see **New Repository**. Select **Git Clone**. Input the repository by pasting what you copied from GitHub into the **Repository** parameter and clicking **Import**.
 <img src="assets/development-schema-and-forking-repo/forking-repo/8_git_clone_copy_repo_from_github.png" alt="git_clone_copy_repo_from_github">
 
-12. We can see we successfully made the connection to our forked GitHub repo. <img src="assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo"> 
+11. We can see we successfully made the connection to our forked GitHub repo. <img src="assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo"> 
 
 If you tried to start developing onto of this repo right now, we'd get permissions errors. So we need to give dbt Cloud write acess. 
 
@@ -463,7 +477,7 @@ If you tried to start developing onto of this repo right now, we'd get permissio
 
 5. Select **Add deploy key**. <img src="assets/development-schema-and-forking-repo/github-deploy-keys/new_deploy_key_button.png" alt="new_deploy_key_button">
 
-6. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the key we ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
+6. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/add_new_deploy_key.png" alt="add_new_deploy_key">
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_key_created.png" alt="deploy_key_created">
 
@@ -473,11 +487,10 @@ If you tried to start developing onto of this repo right now, we'd get permissio
 8. **Run "dbt deps"**
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/run_dep_deps_after_importing_forked_repo.png" alt="run_dep_deps_after_importing_forked_repo">
 
-<!-- possible TODO: might need to update this to not yet create new branch -->
-9. Since we're brining in an existing project your root folder should now say `dbt-snowflake-summit-hands-on-lab-snowpark`
+9. Since we're bringing in an existing project, your root folder should now say `dbt-snowflake-summit-hands-on-lab-snowpark`
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/file_tree_of_forked_repo.png" alt="file_tree_of_forked_repo">
 
-Alas, now that our setup work is complete, time get a look at our data pipeline! 
+Alas, now that our setup work is complete, time get a look at our production data pipeline code! 
 
 <!-- ------------------------ -->
 ## IDE overview and buidling first dbt models
@@ -495,7 +508,7 @@ To understand more about what the [dbt build](https://docs.getdbt.com/reference/
 3. You can look at the run results of each model to see the code that dbt compiles and sends to Snowflake for execution. Select the arrow beside a model **>**. Click **Details** and view the ouput. We can see that dbt automatically generates the DDL statement and is creating our models in our development schema (i.e. `dbt_hwatson`).
 <img src="assets/ide-overview-first-models/3_model_details_ddl.png" alt="model_details_ddl">
 
-4. In the file tree select **models > ml > training_and_prediction > hold_out_dataset_for_prediction.py**. Click the **Lineage** tab. This is a bit small. To make it full screen click the viewfinder icon. 
+4. In the file tree, click on the magnifying glass icon next to the File Explorer on the left sidebar and type in **hold_out_dataset_for_prediction.py**. Click the **Lineage** tab. To make it full screen click the viewfinder icon. Play around with the nodes being shown by removing the 2 in front or behind of `2+hold_out_dataset_for_prediction+2`and updating the graph.
 <img src="assets/ide-overview-first-models/4_lineage_viewfinder.png" alt="lineage_viewfinder">
 
 5. Explore the DAG for a few minutes to understand everything we've done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
@@ -754,10 +767,10 @@ Then once we are settled on the code we want, we can drop it into our dbt projec
 [Python worksheets](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets) in Snowflake are a dynamic and interactive environment for executing Python code directly within Snowflake's cloud data platform. They provide a seamless integration between Snowflake's powerful data processing capabilities and the versatility of Python as a programming language. With Python worksheets, users can easily perform data transformations, analytics, and visualization tasks using familiar Python libraries and syntax, all within the Snowflake ecosystem. These worksheets enable data scientists, analysts, and developers to streamline their workflows, explore data in real-time, and derive valuable insights from their Snowflake data.
 
 1. Head back over **to Snowflake**.
-2. Open up a **Python Worksheet**. Ensure you have selected your worksheet to run 
+2. Open up a **Python Worksheet**. 
 <img src="assets/python-development/create_python_worksheet.png" alt="create_python_worksheet">
 
-3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**).
+3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**). 
 <img src="assets/python-development/python_worksheet_db_schema.png" alt="python_worksheet_db_schema">
 
 4. Delete the same code in the new worksheet. Use the following code to get a 5 year moving average of Formula 1 laps:
@@ -881,7 +894,8 @@ If you haven’t seen code like this before or use joblib files to save machine 
 2. Now create a new file called `train_model_to_predict_position.py` 
 <img src="assets/machine-learning-training-prediction/create_train_model_file.png" alt="preview-create_train_model_file-test-position">
 
-3. Copy and save the following code (make sure copy all the way to the right):
+3. Copy and save the following code (make sure copy all the way to the right). You can also copy it from our demo repo by [clicking on this link](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/models/ml/training_and_prediction/train_model_to_predict_position.py) and using Ctrl/Cmd+A. 
+
     ```python 
     import snowflake.snowpark.functions as F
     from sklearn.model_selection import train_test_split
@@ -990,7 +1004,7 @@ Let's use our new trained model to create predictions!
 ### Predicting on new data
 It's time to use that 2020 data we held out to make predictions on!
 
-1. Create a new file under `ml/training_and_prediction` called `apply_prediction_to_position.py` and copy and save the following code:
+1. Create a new file under `ml/training_and_prediction` called `apply_prediction_to_position.py` and copy and save the following code (You can also copy it from our demo repo by [clicking on this link](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/models/ml/training_and_prediction/apply_prediction_to_position.py) and using Ctrl/Cmd+A.):
     ```python
     import logging
     import joblib
