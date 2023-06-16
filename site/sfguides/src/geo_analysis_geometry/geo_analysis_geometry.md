@@ -49,11 +49,6 @@ A sample use case that involves energy grids and LTE cell towers in the Netherla
 
 Duration: 5
 
-> aside negative
->  If you are trying this Quickstart before June 20th 2023, please make sure that you enabled the following Private Preview features for your Trial Snowflake Account:
-> - [Dyamic File Access](https://docs.snowflake.com/en/LIMITEDACCESS/udf-python-file-handler)
-> - [ST_TRANSFORM](https://docs.snowflake.com/LIMITEDACCESS/st_transform)
-
 [app.snowflake.com](https://app.snowflake.com/)
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
