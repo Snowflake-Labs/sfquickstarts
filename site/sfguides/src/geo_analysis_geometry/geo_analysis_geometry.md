@@ -173,9 +173,9 @@ Congratulations! Now you have data and the analytics toolbox!
 
 Duration: 5
 
-Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While we loading data we will learn formats supported by geospatial data types, use Python UDFs constructors.
+Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While we loading data we will learn formats supported by geospatial data types.
 
-In this step, we will use Snowflake's [Create an External Stage Using Snowsight](https://docs.snowflake.com/en/user-guide/data-load-s3-create-stage#create-an-external-stage-using-snowsight) feature to create a table using a dataset with energy grids stored in the external Stage.
+
 
 Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar and choose your warehouse.
 * Click the + Worksheet button in the upper right of your browser window. This will open a new window.
@@ -183,7 +183,7 @@ Navigate to the query editor by clicking on  `Worksheets`  on the top left navig
 
 <img src ='assets/geo_analysis_geometry_13.png' width=700>
 
-Create a new database and schema where we will store datasets in the Geography data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
+Create a new database and schema where we will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
 CREATE OR REPLACE DATABASE GEOLAB;
@@ -192,17 +192,7 @@ CREATE OR REPLACE schema GEOLAB.GEOMETRY;
 USE SCHEMA GEOLAB.GEOMETRY;
 ```
 
-The [use schema](https://docs.snowflake.com/en/sql-reference/sql/use-schema.html) command sets the active database.schema for your future queries so you do not have to fully qualify your objects.
-
-Now, you will create a stage using an external S3 bucket. In the navigation menu, select Data > Databases. Select `GEOLAB.GEOMETRY`, and click Create > Stage > Amazon S3.
-
-<img src ='assets/geo_analysis_geometry_7.png'>
-
-In the new Window, use the name geostage, and put the following link to the external stage in the URL field: *s3://sfquickstarts/vhol_spatial_analysis_geometry_geography/.* Then click Create button.
-
-<img src ='assets/geo_analysis_geometry_8.png' width=500>
-
-Alternatively, you can create such stage using the following SQL command:
+For this quickstart we have prepared a dataset with energy grid infrastructure(cable lines) in the Netherlands. It is stored in the CSV format in the public S3 bucket. To import this data, create an external stage using the following SQL command:
 
 ```
 CREATE OR REPLACE STAGE geolab.geometry.geostage
@@ -304,7 +294,7 @@ FROM nl_cables_stations
 LIMIT 10;
 ```
 
-Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKB or GeoJSON.
+Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKT or GeoJSON.
 
 ## Load Data from Internal Storage
 
