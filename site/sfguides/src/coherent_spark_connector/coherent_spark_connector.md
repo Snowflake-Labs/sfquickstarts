@@ -132,15 +132,18 @@ Replace the parameters in the curly brackets `{ }` in the SQL queries, then exec
 
 ### 2. Create API Integration for external functions.
 
-Depending on which Spark server hosts the service, find the corresponding Spark Proxy Service from the table below.
+Create and configure API integration based on the specific Snowflake native application you are operating.
 
 #### `{AWS_ARN}`: Amazon resource name of a cloud platform role.
+#### `<SPARK_PROXY>`: Spark HTTPS proxy service endpoint.
 
-<table><thead><tr><th width="198">Server Environment</th><th>Amazon Resource Name</th></tr></thead><tbody><tr><td>DEV, SIT, STAGING</td><td>(Contact support team for more information)</td></tr><tr><td>UAT (US)</td><td>arn:aws:iam::533606394992:role/Snowflake-WASM-Server-Invoker</td></tr><tr><td>PROD (US)</td><td>arn:aws:iam::493603396830:role/Snowflake-WASM-Server-Invoker</td></tr></tbody></table>
+**Spark Connector (UATUS)**
 
-#### `{SPARK_PROXY}`: Spark HTTPS proxy service endpoint.
+<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (UATUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>arn:aws:iam::533606394992:role/Snowflake-WASM-Server-Invoker</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com</td></tr></tbody></table>
 
-<table><thead><tr><th width="198">Server Environment</th><th>Spark Proxy</th></tr></thead><tbody><tr><td>DEV, SIT, STAGING</td><td>(Contact support team for more information)</td></tr><tr><td>UAT (US)</td><td>https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com</td></tr><tr><td>PROD (US)</td><td>https://yahx9ppboe.execute-api.us-east-1.amazonaws.com</td></tr></tbody></table>
+**Spark Connector (PRODUS)**
+
+<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (PRODUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>(<em>Coming soon...</em>)</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>(<em>Coming soon...</em>)</td></tr></tbody></table>
 
 
 
