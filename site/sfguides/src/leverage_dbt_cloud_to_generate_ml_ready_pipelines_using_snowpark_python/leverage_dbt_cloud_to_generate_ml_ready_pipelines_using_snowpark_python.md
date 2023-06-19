@@ -66,13 +66,6 @@ Formula 1 ERD: <br>
 Here's a visual for the data pipeline that we'll be building using dbt!
 ![project_DAG](assets/architecture-use-case/project_DAG.png)
 
-
-<!-- TODO MOVE TO SECTION 12 -->
-At a high level the way we are able to do this is that dbt is able to invoke python models as stored procedures from Snowpark for python. Snowflake's new snowpark capabilities and dbt's python support make this all possible. 
-
-Snowpark for python and dbt python architecture:
-![architecture_diagram](assets/architecture-use-case/Snowpark_for_python_and_dbt_architecture.svg)
-
 <!-- ------------------------ -->
 ## Configure Snowflake
 Duration: 5
@@ -828,7 +821,7 @@ The query results represent the many (about 5,400) packages snowpark for python 
 5. Your result should have three columns: `race_year`, `lap_time_seconds`, and `lap_moving_avg_5_years`. 
 <img src="assets/python-development/chart_5yr_lap_time_avg.png" alt="chart_5yr_lap_time_avg"> 
 
-We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. Clicking on the **Chart** button next to **Results**, we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 regulation changes including cost-cutting measures and in-race refueling bans. So we can safely ascertain lap times are not consistently decreasing.
+We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. Clicking on the **Chart** button next to **Results**, we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refueling bans. So we can safely ascertain lap times are not consistently decreasing.
 
 Now that we've created this dataframe and lap time trend insight, what do we do when we want to scale it? In the next section we'll be learning how to do this by leveraging python transformations in dbt Cloud. 
 
@@ -838,6 +831,14 @@ Duration: 2
 
 ### Our first dbt python model for lap time trends
 Let's get our lap time trends in our data pipeline so we have this data frame to leverage as new data comes in. The syntax of of a dbt python model is a variation of our development code in the python worksheet so we'll be explaining the code and concepts more.
+
+You might be wondering: How does this work? <br>
+Or more specifically: How is dbt able to send a python command over to a Snowflake runtime executing python? <br>
+
+At a high level the way we are able to do this is that dbt is able to invoke python models as stored procedures from Snowpark for python. Snowflake's new snowpark capabilities and dbt's python support make this all possible. If you want you can dig into the architecture diagram more to understand how the SQL engine is able to call on the Python Secure Sandbox, and in turn the sandbox is able to reference the anaconda packages you've enabled. If this isn't your thing, no worries, as an end user you can take this at face value these infastructural details have been abstracted away for you by some engineers! 
+
+Snowpark for python and dbt python architecture:
+![architecture_diagram](assets/architecture-use-case/Snowpark_for_python_and_dbt_architecture.svg)
 
 1. Open your dbt Cloud browser tab. 
 2. Create a new file under the **models > marts > aggregates** directory called `agg_lap_times_moving_avg.py`. 
@@ -882,7 +883,7 @@ We won’t go as in depth for our subsequent scripts, but will continue to expla
 ### The dbt model, .source(), .ref() and .config() functions
 Let’s take a step back before starting machine learning to both review and go more in-depth at the methods that make running dbt python models possible. If you want to know more outside of this lab’s explanation read the documentation [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models).
 
-- dbt model(dbt, session). For starters, each Python model lives in a .py file in your models/ folder. It defines a function named `model()`, which takes two parameters:
+- def model(dbt, session). For starters, each Python model lives in a .py file in your models/ folder. It defines a function named `model()`, which takes two parameters:
     - dbt &mdash; A class compiled by dbt Core, unique to each model, enables you to run your Python code in the context of your dbt project and DAG.
     - session &mdash; A class representing your data platform’s connection to the Python backend. The session is needed to read in tables as DataFrames and to write DataFrames back to tables. In PySpark, by convention, the SparkSession is named spark, and available globally. For consistency across platforms, we always pass it into the model function as an explicit argument called session.
 - The `model()` function must return a single DataFrame. On Snowpark (Snowflake), this can be a Snowpark or pandas DataFrame.
@@ -904,7 +905,15 @@ Now that we understand how to create python transformations we can use them to p
 ## Machine Learning: training and prediction
 Duration: 8
 
-We’re ready to start training a model to predict the driver’s position. During the ML development phase you’ll try multiple algorithms and use an evaluation method such as cross validation to determine which algorithm to use. You can definitely use dbt if you want to save and reproduce dataframes from your ML development and model selection process, but for the content of this lab we’ll have skipped ahead decided on using a logistic regression to predict position (we actually tried some other algorithms using cross validation outside of this lab such as k-nearest neighbors and a support vector classifier but that didn’t perform as well as the logistic regression and a decision tree that overfit). By doing this we won't have to make code changes between development and deployment today. 
+In upstream parts of our data lineage we had dedicated steps and data models to cleaning, encoding, and splitting out the data into training and testing datasets. We do these steps to ensure:
+ - We have features for prediction
+ - The predictions aren't erroneous (we filtered our drivers that weren't drivers present at 2020)
+ - Representing (encoding) non-numerical data such as categorical and text variables as numbers. 
+    - This is necessary because most machine learning algorithms can only work with numerical data. 
+    - Remeber, algorithms don’t speak languages, have eyes to see images, etc. so we encode our data into numbers so algorithms can perform tasks by using calculations they otherwise couldn’t.
+    - 🧠 We’ll think about this as : “algorithms need numbers”.
+
+Now we're train a model to predict the driver's position. In the ML development phase, we tried different algorithms and used cross-validation for evaluation. While you can use dbt to save and reproduce dataframes, for this lab, we've already chosen logistic regression to predict the position. We experimented with other algorithms like k-nearest neighbors and support vector classifier, but they didn't perform as well as logistic regression and decision tree (which overfit). This will eliminate the need for code changes between development and deployment today.
 
 There are 3 areas to break down as we go since we are working at the intersection all within one model file:
 1. Machine Learning
