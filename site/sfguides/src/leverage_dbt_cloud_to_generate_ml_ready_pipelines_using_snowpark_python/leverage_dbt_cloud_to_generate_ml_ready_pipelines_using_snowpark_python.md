@@ -510,29 +510,30 @@ If you tried to start developing onto of this repo right now, we'd get permissio
 Alas, now that our setup work is complete, time get a look at our production data pipeline code! 
 
 <!-- ------------------------ -->
-## IDE overview and buidling first dbt models
+## IDE overview and buidling our dbt project
 Duration: 5
 
 dbt Cloud's IDE will be our development space for this workshop, so let's get familiar with it. Once we've done that we'll run the pipeline we imported from our forked repo. 
 
 1. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, an SQL and Python runner, and a CLI with Git version control all baked into one package! This allows you to focus on editing your SQL and Python files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The Git workflow in dbt Cloud allows both Git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
-<img src="assets/ide-overview-first-models/1-ide-overview.png" alt="ide-overview">
+<img src="assets/ide-overview-building-project/1-ide-overview.png" alt="ide-overview">
+<!-- TODO UPDATE IDE SCREENSHOT AND MENTION NEW FEATURES SUCH AS LINTING -->
 
-2. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and select **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. 
-<img src="assets/ide-overview-first-models/2_dbt_build_initial_pipeline_ml.png" alt="dbt_build_initial_pipeline_ml"> 
+2. In the file tree, click on the magnifying glass icon next to the File Explorer on the left sidebar and type in **hold_out_dataset_for_prediction.py**. Click the **Lineage** tab. To make it full screen click the viewfinder icon. Play around with the nodes being shown by removing the 2 in front or behind of `2+hold_out_dataset_for_prediction+2`and updating the graph.
+<img src="assets/ide-overview-building-project/2_lineage_viewfinder.png" alt="lineage_viewfinder">
+
+3. Explore the DAG for a few minutes to understand everything we've done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
+<img src="assets/ide-overview-building-project/3_lineage_fullview.png" alt="lineage_fullview"> You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
+
+4. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and select **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. 
+<img src="assets/ide-overview-building-project/4_dbt_build_initial_pipeline_ml.png" alt="dbt_build_initial_pipeline_ml"> 
 To understand more about what the [dbt build](https://docs.getdbt.com/reference/commands/build) syntax is running check out the documentation.
 
-3. You can look at the run results of each model to see the code that dbt compiles and sends to Snowflake for execution. Select the arrow beside a model **>**. Click **Details** and view the ouput. We can see that dbt automatically generates the DDL statement and is creating our models in our development schema (i.e. `dbt_hwatson`).
-<img src="assets/ide-overview-first-models/3_model_details_ddl.png" alt="model_details_ddl">
-
-4. In the file tree, click on the magnifying glass icon next to the File Explorer on the left sidebar and type in **hold_out_dataset_for_prediction.py**. Click the **Lineage** tab. To make it full screen click the viewfinder icon. Play around with the nodes being shown by removing the 2 in front or behind of `2+hold_out_dataset_for_prediction+2`and updating the graph.
-<img src="assets/ide-overview-first-models/4_lineage_viewfinder.png" alt="lineage_viewfinder">
-
-5. Explore the DAG for a few minutes to understand everything we've done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
-<img src="assets/ide-overview-first-models/5_lineage_fullview.png" alt="lineage_fullview"> You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
+5. You can look at the run results of each model to see the code that dbt compiles and sends to Snowflake for execution. Select the arrow beside a model **>**. Click **Details** and view the ouput. We can see that dbt automatically generates the DDL statement and is creating our models in our development schema (i.e. `dbt_hwatson`).
+<img src="assets/ide-overview-building-project/5_model_details_ddl.png" alt="model_details_ddl">
 
 6. Now let's switch over to a new browser tab **on Snowflake** to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
-<img src="assets/ide-overview-first-models/6_confirm_pipeline_build_in_snowflake.png" alt="confirm_pipeline_build_in_snowflake">
+<img src="assets/ide-overview-building-project/6_confirm_pipeline_build_in_snowflake.png" alt="confirm_pipeline_build_in_snowflake">
 
 We did a lot upstream in our forked repo and we'll explore it at a high level of how we did that before moving on to machine learning model training and prediction in dbt cloud. 
 
@@ -631,7 +632,7 @@ Your folder structure should look like (make sure to expand some folders if nece
 Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1) to view the complete folder and file strucutre.  
 
 <!-- ------------------------ -->
-## Data modeling -- sources and staging 
+## Data modeling: review sources and staging 
 Duration: 3
 
 In any data project we start with raw data, clean and transform, and gain insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll only need to preview these files (instead of build them).
@@ -687,6 +688,7 @@ Now that we are connected into our raw data let's do some light transformations 
 4. Now click **Preview** &mdash; look how pretty and human readable our `official_laptime` column is!
 5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
 6. We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our [macros documentation](https://docs.getdbt.com/docs/build/jinja-macros). 
+
 <!-- 7. TODO talk about surrogate_key and dbt_utils -->
 
 You can see for every source table, we have a staging table. Now that we're done staging our data it's time for transformation.
@@ -784,13 +786,17 @@ Then once we are settled on the code we want, we can drop it into our dbt projec
 [Python worksheets](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets) in Snowflake are a dynamic and interactive environment for executing Python code directly within Snowflake's cloud data platform. They provide a seamless integration between Snowflake's powerful data processing capabilities and the versatility of Python as a programming language. With Python worksheets, users can easily perform data transformations, analytics, and visualization tasks using familiar Python libraries and syntax, all within the Snowflake ecosystem. These worksheets enable data scientists, analysts, and developers to streamline their workflows, explore data in real-time, and derive valuable insights from their Snowflake data.
 
 1. Head back over **to Snowflake**.
-2. Open up a **Python Worksheet**. 
+2. Open up a **Python Worksheet**. The boilerplate example code when you first create a Python worksheet is fetching `information_schema.packages` available, filtering on column `language = ‘python’`, and returning that as dataframe, which is what gets shown in result (next step). 
 <img src="assets/python-development/create_python_worksheet.png" alt="create_python_worksheet">
+<img src="assets/python-development/new_python_worksheet_boilerplate_example_code.png" alt="new_python_worksheet_boilerplate_example_code">
 
-3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**). 
+3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**).
+The query results represent the many (about 5,400) packages snowpark for python supports that you can leverage! 
 <img src="assets/python-development/python_worksheet_db_schema.png" alt="python_worksheet_db_schema">
+<img src="assets/python-development/results_of_new_python_worksheet_boilerplate_example_code.png" alt="results_of_new_python_worksheet_boilerplate_example_code">
 
-4. Delete the same code in the new worksheet. Use the following code to get a 5 year moving average of Formula 1 laps:
+
+4. Delete the sample boilerplate code in the new python worksheet. Copy the following code into the python worksheet to get a 5 year moving average of Formula 1 laps:
     ```python
     # The Snowpark package is required for Python Worksheets. 
     # You can add more packages by selecting them using the Packages control and then importing them.
@@ -820,9 +826,12 @@ Then once we are settled on the code we want, we can drop it into our dbt projec
     ```
 
 5. Your result should have three columns: `race_year`, `lap_time_seconds`, and `lap_moving_avg_5_years`. 
-<img src="assets/python-development/lap_times_5yr_avg.png" alt="lap_times_5yr_avg"> This dataframe is in great shape for visualization in a downstream BI tool or application. We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. At a glance we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refuelling bans. So we can safely ascertain lap times are not consistently decreasing. 
+<img src="assets/python-development/chart_5yr_lap_time_avg.png" alt="chart_5yr_lap_time_avg"> 
+
+We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. Clicking on the **Chart** button next to **Results**, we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 regulation changes including cost-cutting measures and in-race refueling bans. So we can safely ascertain lap times are not consistently decreasing.
 
 Now that we've created this dataframe and lap time trend insight, what do we do when we want to scale it? In the next section we'll be learning how to do this by leveraging python transformations in dbt Cloud. 
+
 <!-- ------------------------ -->
 ## Python transfomrations in dbt Cloud 
 Duration: 2
