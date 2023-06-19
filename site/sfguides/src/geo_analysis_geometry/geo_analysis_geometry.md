@@ -850,3 +850,7 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to use Python UDFs for reading Shapefiles and creating custom functions.
 * How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
 * How to use Search Optimization to speed up geospatial queries.
+
+### Related Resources
+* [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
+* [Geospatial Analytics for Telecom with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geo_analysis_telecom/index.html)
