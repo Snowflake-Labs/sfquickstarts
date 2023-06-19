@@ -241,7 +241,7 @@ ENABLED = TRUE;
 
 ### Granting privileges to the application
 
-Alo the script will grant the application required privileges. The application requires the following privileges:
+Also the script will grant the application required privileges. The application requires the following privileges:
 - usage on external access integration you created in previous step
 - usage on database and schema of the secrets
 - read on the secret itself
