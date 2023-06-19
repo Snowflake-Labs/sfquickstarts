@@ -85,8 +85,8 @@ First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us
 to launch a provisioned MSK cluster. Note the default AWS region is `us-west-2 (Oregon)`, feel free to select a region you prefer to deploy the environment.
 
 Click `Next` at the `Create stack` page. 
-Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `MSKSecurityGroupId`, we recommend
-to use the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. In the drop-down menu, pick two different subnets, they can be either public or private subnets depending on the network layout of your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
+Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `Subnet1` and `Subnet2`, in the drop-down menu, pick two different subnets respectively, they can be either public or private subnets depending on the network layout of your VPC. For `MSKSecurityGroupId`, we recommend
+using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
 `Next`. 
 
 See below sample screen capture for reference.
@@ -155,9 +155,8 @@ see below example screenshot:
 
 Next we will print out the public key string in a correct format that we can use for Snowflake.
 ```
-grep -v KEY rsa_key.pub | tr -d '\n' > pub.Key
+grep -v KEY rsa_key.pub | tr -d '\n' | awk '{print $1}' > pub.Key
 cat pub.Key
-
 ```
 see below example screenshot:
 
@@ -333,10 +332,21 @@ GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
+
+-- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
+-- IT WILL BE SOMETHING LIKE <organization_name>-<account_name>
+-- e.g. ykmxgak-wyb52636
+
+WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,'.snowflakecomputing.com','') AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
+
 ```
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 4 in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html#1) above) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='<pubKey>';
@@ -407,29 +417,11 @@ cat << EOF > /tmp/get_params
 a=''
 until [ ! -z \$a ]
 do
- read -p "Input Snowflake account URL: e.g. gwa123456 ==> " a
+ read -p "Input Snowflake account identifier: e.g. ylmxgak-wyb53646 ==> " a
 done
 
-r=''
-until  [ ! -z \$r ]
-do
-  read -p "Input Snowflake account region: e.g. us-west-2 ==> " r
-done
-
-if [[ \$r == "us-west-2" ]]
-then
-  echo export clstr_url=\$a.snowflakecomputing.com > $outf
-  export clstr_url=\$a.snowflakecomputing.com
-else
-  if [[ \$r == "us-east-1" ]] || [[ \$r == "eu-west-1" ]] || [[ \$r == "eu-central-1" ]] || [[ \$r == "ap-southeast-1" ]] || [[ \$r == "ap-southeast-2" ]]
-  then
-     echo export clstr_url=\$a.\$r.snowflakecomputing.com > $outf
-     export clstr_url=\$a.\$r.snowflakecomputing.com
-  else
-     echo export clstr_url=\$a.\$r.aws.snowflakecomputing.com > $outf
-     export clstr_url=\$a.\$r.aws.snowflakecomputing.com
-  fi
-fi
+echo export clstr_url=\$a.snowflakecomputing.com > $outf
+export clstr_url=\$a.snowflakecomputing.com
 
 read -p "Snowflake cluster user name: default: streaming_user ==> " user
 if [[ \$user == "" ]]
@@ -513,7 +505,7 @@ If everything goes well, you should something similar to screen capture below:
 
 #### 2. Start the producer that will ingest real-time data to the MSK cluster
 
-Start a new Linux session by following `step 3` in [section #2](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html#1) above.
+Start a new Linux session in `step 3` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane.
 ```commandline
 curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
@@ -608,7 +600,7 @@ do
 done
 
 ```
-You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 30 seconds to verify that the row counts is indeed increasing.
+You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
 
 <!----------------------------->
 ## Cleanup
@@ -641,7 +633,8 @@ Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
 connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
-scalability and resilience through the AWS infrastructure.
+scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
+[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
 
 Related Resources
 
