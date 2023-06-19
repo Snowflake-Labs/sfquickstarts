@@ -68,7 +68,7 @@ CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 CREATE OR REPLACE DATABASE HOL_DB;
 ```
 
-### Double check Anaconda Terms (Instructions provided here)
+## Double check Anaconda Terms (Instructions provided here)
 https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda
 
 1. Sign in to Snowsight.
