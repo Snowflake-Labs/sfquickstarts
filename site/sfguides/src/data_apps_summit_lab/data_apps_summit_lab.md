@@ -7,12 +7,12 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Building a data application with Marketplace, Snowpark and Streamlit
+# Building a data application with Snowflake Marketplace, Snowpark and Streamlit
 
 ## Overview
 Duration: 2
 
-In this hands-on lab, you will build a data application that leverages Economical Data Atlas published by Knoema on the Snowflake Marketplace.
+In this hands-on lab, you will build a data application that leverages Economical Data Atlas published by Knoema on Snowflake Marketplace.
 
 You will process data with Snowpark, develop a simple ML model and create a Python User Defined Function (UDF) in Snowflake, then visualize the data with Streamlit.
 
@@ -34,7 +34,7 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 
 ### What You'll Learn
 
-* How to consume datasets in the Snowflake Data Marketplace.
+* How to consume datasets in Snowflake Marketplace.
 * How to perform queries on data in Python using Dataframes
 * How to leverage existing Python libraries
 * How to create a Snowpark Python User Defined Function in Snowflake
@@ -79,12 +79,12 @@ Duration: 8
 
 Duration: 6
 
-### Working with the Snowflake Marketplace
+### Working with Snowflake Marketplace
 
-Snowflake's Marketplace provides visibility to a wide variety of datasets from third party data stewards which broaden access to data points used to transform business processes. The Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.
+Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.
 
 
-Before we begin to review working with Marketplace data sets, verify you have installed a trial version of Snowflake. If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.
+Before we begin to review working with Snowflake Marketplace data sets, verify you have installed a trial version of Snowflake. If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.
 
 
 
