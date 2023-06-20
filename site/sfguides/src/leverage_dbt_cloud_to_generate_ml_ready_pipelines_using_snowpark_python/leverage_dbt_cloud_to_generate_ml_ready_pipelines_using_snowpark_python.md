@@ -912,7 +912,7 @@ Duration: 8
 In upstream parts of our data lineage we had dedicated steps and data models to cleaning, encoding, and splitting out the data into training and testing datasets. We do these steps to ensure:
  - We have features for prediction and the predictions aren't erroneous (we filtered our drivers that weren't active drivers present at 2020) &mdash; review `ml_data_prep.py`
  - Representing (encoding) non-numerical data such as categorical and text variables as numbers &mdash; review `covariate_encoding.py`
- - splitting our data into a training and testing set and a hold out set &mdash; review `training_testing_dataset.py` and `hold_out_dataset_for_prediction.py`
+ - Splitting our data into a training and testing set and a hold out set &mdash; review `training_testing_dataset.py` and `hold_out_dataset_for_prediction.py`
 
 There are 3 areas to break down as we go since we are working at the intersection all within one model file:
 1. Machine Learning
