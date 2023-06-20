@@ -22,8 +22,8 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 - A [Snowflake account](https://trial.snowflake.com/) with ACCOUNTADMIN access
 - A [GitHub](https://github.com/) Account 
 
-### What you'll learn
 
+### What you will learn
 - How to use dbt with Snowflake to build scalable transformations using SQL and Python
 - How to use dbt SQL to prepare your data from sources to encoding 
 - How to train a model in dbt python and use it for future prediction 
@@ -58,10 +58,13 @@ Duration: 2
 
 In this lab we'll be transforming raw Formula 1 data into a consumable form for both BI tools and machine learning pipeline. To understand how this data is related, we've included an entity relationship diagram (ERD) of the tables we'll be using today. 
 
-Our data rarely ever looks the way we need it in its raw form: we need to join, filter, aggregate, etc. dbt is designed to transform your data and keep your pipeline organized and reliable along the way. We can see from our Formula1 ERD that if we have a major table called `results` with other tables such as `drivers`, `races`, and `circuits` tables that provide meaningful context to the `results` table. You might also see that `circuits` cannot be directly joined to `results` since there is no key. This is a typical data model structure we see in the wild: we'll need to first join `results` and `races` together, then we can join to `circuits`. By bringing all this information together we'll be able to gain insights about lap time trends through the years. 
+Our data rarely ever looks the way we need it in its raw form: we need to join, filter, aggregate, etc. dbt is designed to transform your data and keep your pipeline organized and reliable along the way. We can see from our Formula1 ERD that if we have a major table called `results` with other tables such as `drivers`, `races`, and `circuits` tables that provide meaningful context to the `results` table. 
 
-Formula 1 ERD: <br>
-<img src="assets/architecture-use-case/Formula1_ERD.svg" alt="F1_ERD" width="500" height="200">
+You might also see that `circuits` cannot be directly joined to `results` since there is no key. This is a typical data model structure we see in the wild: we'll need to first join `results` and `races` together, then we can join to `circuits`. By bringing all this information together we'll be able to gain insights about lap time trends through the years. 
+
+**Formula 1 ERD:** <br>
+ERD can also be downloaded for interactive view from [S3](https://s3.console.aws.amazon.com/s3/object/formula1-dbt-cloud-python-demo?region=us-east-1&prefix=Formula1_ERD.svg)
+<img src="assets/architecture-use-case/Formula1_ERD.svg" alt="F1_ERD" width="600" height="300">
 
 Here's a visual for the data pipeline that we'll be building using dbt!
 ![project_DAG](assets/architecture-use-case/project_DAG.png)
@@ -104,8 +107,7 @@ We need to obtain our data source by copying our Formula 1 data into Snowflake t
 3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! We recommend copying this straight from the github file linked rather than from this workshop UI so you don't miss anything (use Ctrl+A or Cmd+A). 
 
 Generally during this lab we'll be explaining and breaking down the queries. We won't be going line by line, but we will point out important information related to our learning objectives!
-
-    ```sql
+ ```sql
     /*
     This is our setup script to create a new database for the Formula1 data in Snowflake.
     We are copying data from a public s3 bucket into snowflake by defining our csv format and snowflake stage. 
@@ -351,7 +353,7 @@ Generally during this lab we'll be explaining and breaking down the queries. We 
     copy into status 
     from @formula1_stage/status.csv
     on_error='continue';
-    ```
+```
 
 4. Ensure all the commands are selected before running the query &mdash; an easy way to do this is to use Ctrl-A to highlight all of the code in the worksheet. Select **run** (blue triangle icon). Notice how the dot next to your **COMPUTE_WH** turns from gray to green as you run the query. The **status** table is the final table of all 14 tables loaded in. 
 ![load-data-from-s3](assets/load-data-into-snowflake/2-load-data-from-s3.png)
@@ -365,7 +367,6 @@ Generally during this lab we'll be explaining and breaking down the queries. We 
 6. Once the script completes, browse to the left navigation menu. Click on **...** button to bring up **Refresh** button. Click **Refresh** and you will see the newly created `FORMULA1` database show up. Expand the database and explore the different tables you just created and loaded data into in the RAW schema.
 ![create-new-worksheet-to-query-data](assets/load-data-into-snowflake/3a-refresh-database-objects.png)
 
-<!-- TODO DELETE THIS STEP?? -- ASK RIPU -->
 7. Now let's take a look at some of our cool Formula 1 data we just loaded up!
 - Create a SQL worksheet by selecting the **+** then **SQL Worksheet**.
 ![create-new-worksheet-to-query-data](assets/load-data-into-snowflake/3b-create-new-worksheet-to-query-data.png)
@@ -416,7 +417,7 @@ grant select on all tables in schema FORMULA1.RAW to role PC_DBT_ROLE;
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
-Instead of building an entire version controlled data project from scratch, we'll be forking and connecting to an existing workshop github repository in the next step. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, if you’re developing your own proof of value project from scratch, [feel free to use dbt's managed  repository](https://docs.getdbt.com/docs/collaborate/git/managed-repository) that is spun up during partner connect. 
+Instead of building an entire version controlled data project from scratch, we'll be **forking and connecting to an existing workshop github repository** in the next step. dbt Cloud's git integration creates easy to use git guardrails. You won't need to know much Git for this workshop. In the future, if you’re developing your own proof of value project from scratch, [feel free to use dbt's managed  repository](https://docs.getdbt.com/docs/collaborate/git/managed-repository) that is spun up during partner connect. 
 
 
 <!-- ------------------------ -->
