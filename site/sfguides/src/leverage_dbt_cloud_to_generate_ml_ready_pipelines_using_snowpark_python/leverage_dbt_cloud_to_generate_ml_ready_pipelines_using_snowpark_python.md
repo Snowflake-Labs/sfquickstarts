@@ -47,7 +47,7 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 
 - As inputs, we are going to leverage Formula 1 dataset hosted on a dbt Labs public S3 bucket. 
     - We will create a Snowflake Stage for our CSV files then use Snowflake’s `COPY INTO` function to copy the data in from our CSV files into tables. 
-    - The Formula 1 is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). 
+    - The Formula 1 dataset is available on [Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020). 
     - The data is originally compiled from the [Ergast Developer API](http://ergast.com/mrd/). 
 - We will not be building the full pipeline as part of this workshop. 
     - **Instead we will leverage an exisitng repo, fork it, and focus on our machine learning pipeline.**
@@ -70,12 +70,14 @@ Here's a visual for the data pipeline that we'll be building using dbt!
 ![project_DAG](assets/architecture-use-case/project_DAG.png)
 
 <!-- ------------------------ -->
-## Configure Snowflake
+## Getting started with Snowflake
 Duration: 5
 
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
 
-1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS**. To have a completely clean slate, we recommend you sign up with a new Snowflake Trial account with your email address and then updated the email to something unique after you have completed (if you have signed up for a snowflake account or dbt Cloud account in the past). You can do this by logging in, going to **Admin > Users & Roles**, edit your user (by clicking on the `...`) and updating the email to <your_email>+dbtsnowpark@<your_domain>.com. Send a re-vertification email and then revertified via the email link and then you're good to go. This will help you prevent any confusion if you have already created a snowflake or dbt Cloud trial in the past. 
+1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS**. 
+    - Note if you have an existing dbt Cloud account we suggest you update your email in Snowflake. Go to **Admin > Users & Roles**, edit and your user (by clicking on the `...`) and updating the email to <your_email>+dbtsnowpark@<your_domain>.com. 
+    - This will send a re-vertification email, click the email link, and then you're good to go. 
 
 2. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
 
@@ -400,7 +402,7 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 5. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
 <img src="assets/launching-dbt-cloud-through-partner-connect/3a-connect-to-dbt.png" alt="connect-to-dbt">
 
-If you skip this part, you will need to run these commands:
+If you forgot to add the optional grant to the Formula1 database in the previous screenshot, please run these commands:
 
 ```sql 
 
@@ -836,7 +838,7 @@ Let's get our lap time trends in our data pipeline so we have this data frame to
 You might be wondering: How does this work? <br>
 Or more specifically: How is dbt able to send a python command over to a Snowflake runtime executing python? <br>
 
-At a high level the way we are able to do this is that dbt is able to invoke python models as stored procedures from Snowpark for python. Snowflake's new snowpark capabilities and dbt's python support make this all possible. If you want you can dig into the architecture diagram more to understand how the SQL engine is able to call on the Python Secure Sandbox, and in turn the sandbox is able to reference the anaconda packages you've enabled. If this isn't your thing, no worries, as an end user you can take this at face value these infastructural details have been abstracted away for you by some engineers! 
+At a high level, dbt executes python models as stored procedures in Snowflake, via Snowpark for python. 
 
 Snowpark for python and dbt python architecture:
 ![architecture_diagram](assets/architecture-use-case/Snowpark_for_python_and_dbt_architecture.svg)
@@ -907,21 +909,15 @@ Now that we understand how to create python transformations we can use them to p
 Duration: 8
 
 In upstream parts of our data lineage we had dedicated steps and data models to cleaning, encoding, and splitting out the data into training and testing datasets. We do these steps to ensure:
- - We have features for prediction
- - The predictions aren't erroneous (we filtered our drivers that weren't drivers present at 2020)
- - Representing (encoding) non-numerical data such as categorical and text variables as numbers. 
-    - This is necessary because most machine learning algorithms can only work with numerical data. 
-    - Remeber, algorithms don’t speak languages, have eyes to see images, etc. so we encode our data into numbers so algorithms can perform tasks by using calculations they otherwise couldn’t.
-    - 🧠 We’ll think about this as : “algorithms need numbers”.
-
-Now we're train a model to predict the driver's position. In the ML development phase, we tried different algorithms and used cross-validation for evaluation. While you can use dbt to save and reproduce dataframes, for this lab, we've already chosen logistic regression to predict the position. We experimented with other algorithms like k-nearest neighbors and support vector classifier, but they didn't perform as well as logistic regression and decision tree (which overfit). This will eliminate the need for code changes between development and deployment today.
+ - We have features for prediction and the predictions aren't erroneous (we filtered our drivers that weren't active drivers present at 2020) &mdash; review `ml_data_prep.py`
+ - Representing (encoding) non-numerical data such as categorical and text variables as numbers &mdash; review `covariate_encoding.py`
+<!-- TODO UPDATE EACH FILE NAME ADD FOR TRAINING AND TESTING -->
 
 There are 3 areas to break down as we go since we are working at the intersection all within one model file:
 1. Machine Learning
 2. Snowflake and Snowpark
 3. dbt Python models
 
-If you haven’t seen code like this before or use joblib files to save machine learning models, we’ll be going over them at a high level and you can explore the links for more technical in-depth along the way! Because Snowflake and dbt have abstracted away a lot of the nitty gritty about serialization and storing our model object to be called again, we won’t go into too much detail here. There’s *a lot* going on here so take it at your pace!
 
 <!-- ------------------------ -->
 ### Training and saving a machine learning model
@@ -1166,11 +1162,11 @@ It's time to use that 2020 data we held out to make predictions on!
     ```
 <img src="assets/machine-learning-training-prediction/preview_predicted_position.png" alt="preview_predicted_position">
 
+We can see that we created predictions in our final dataset for each result. 
+
 7. Run a fresh `dbt build` in the command bar to ensure our pipeline is working end to end. This will take a few minutes, (3 minutes and 2.4 seconds to be exact) so it's not a bad time to stretch (we know programmers slouch). This runtime is pretty performant since we're using an X-Smalll warehouse. If you want to speed up the pipeline, you can increase the [warehouse size](https://docs.snowflake.com/en/user-guide/warehouses-overview) (good for SQL) or use a [Snowpark-optimized Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) (good for Python)
 <img src="assets/machine-learning-training-prediction/fresh_dbt_build_full_pipeline.png" alt="fresh_dbt_build_full_pipeline">
 
-
-We can see that we created predictions in our final dataset for each result, we are ready to move on to deployment!
 
 <!-- ------------------------ -->
 ## Pipeline Deployment 
