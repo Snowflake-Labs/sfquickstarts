@@ -99,7 +99,7 @@ Duration: 7
 ```
 >>> conda env create -f conda_env.yml
 >>> conda activate snowpark-ml-hol
->>> pip install 'snowflake_ml_python‑1.0.0‑py3‑none‑any.whl'
+>>> pip install 'snowflake_ml_python‑1.0.1‑py3‑none‑any.whl'
 >>> jupyter notebook &> /tmp/notebook.log & # optionally start notebook server
 ```
 
