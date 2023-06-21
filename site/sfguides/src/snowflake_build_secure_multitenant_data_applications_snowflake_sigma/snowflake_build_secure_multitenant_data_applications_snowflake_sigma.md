@@ -564,37 +564,37 @@ For More Information on Snowflake Role-Based Access Control, please see the docu
 
 <img src="assets/tastyroleorder.png" width="600">
 
-5.14 Repeat this process for the Tasty Warehouse attribute, this time assigning your `Tasty Admins team the warehouse of TASTY_BI_WH` and your `Kitakata Managers team the warehouse of TASTY_DATA_APP_WH`. Click `Assign` to complete:
+5.15 Repeat this process for the Tasty Warehouse attribute, this time assigning your `Tasty Admins team the warehouse of TASTY_BI_WH` and your `Kitakata Managers team the warehouse of TASTY_DATA_APP_WH`. Click `Assign` to complete:
 
 <img src="assets/ss71.png" width="600"/>
 
-5.11 Once again, ensure that `Tasty Admin` is the highest priority team by dragging it to the number 1 slot. 
+5.16 Once again, ensure that `Tasty Admin` is the highest priority team by dragging it to the number 1 slot. 
 
 <img src="assets/tastywhorder.png" width="600">
 
-5.15 On the left hand side, navigate to the `Connections tab`, and select the connection you have been using throughout this lab. Click `Edit` next to the connection name:
+5.17 On the left hand side, navigate to the `Connections tab`, and select the connection you have been using throughout this lab. Click `Edit` next to the connection name:
 
 <img src="assets/ss72.png" width="800"/>
 
-5.16 In the warehouse field, click the list icon to Set by User Attributes. From the dropdown, select the `Tasty Warehouse` attribute you created earlier. 
+5.18 In the warehouse field, click the list icon to Set by User Attributes. From the dropdown, select the `Tasty Warehouse` attribute you created earlier. 
  
-5.17 Do the same for the role field, selecting the `Tasty Role` attribute you created. 
+5.19 Do the same for the role field, selecting the `Tasty Role` attribute you created. 
  
-5.18 Finally, enter your Snowflake password and click `Save` in the top right corner:
+5.20 Finally, enter your Snowflake password and click `Save` in the top right corner:
 
 <img src="assets/ss73.png" width="600"/>
 
 Your Connection Details pane should now show that your warehouse and role in Snowflake will be determined by the User Attributes you have created. 
 
-5.19 On the connections tab, select your TastyBytes connection and click `Browse Connection`.
+5.21 On the connections tab, select your TastyBytes connection and click `Browse Connection`.
 
 <img src="assets/Editconnection1.png" width="600">
 
-5.20 Under Permissions, click 'Add Permission'
+5.22 Under Permissions, click 'Add Permission'
 
 <img src="assets/editconnection2.png" width ="600">
 
-5.21 Select both teams you have created and grant them `Can Use` Permissions on the Connection. Un-check the box for `Send an email notification`, then click `Save`.
+5.23 Select both teams you have created and grant them `Can Use` Permissions on the Connection. Un-check the box for `Send an email notification`, then click `Save`.
 
 <img src="assets/grantpermissionscorrected.png" width="600">
 
@@ -606,35 +606,35 @@ Your Connection Details pane should now show that your warehouse and role in Sno
 
 ### Create a Version Tag
 
-5.22 On the left hand side, we will now select `Tags`. Next, click `Create Tag`.
+5.24 On the left hand side, we will now select `Tags`. Next, click `Create Tag`.
 
-5.23 Name your tag `Production`, give it a description (required), and select a color. Click `Create`:
+5.25 Name your tag `Production`, give it a description (required), and select a color. Click `Create`:
 
 <img src="assets/tagsupdated.png" width="800"/>
 
 ### Embedding Keys
 
-5.24 For the last piece of work we will do in our administration UI, select the `Account` field from on the top left. Then scroll down to where you see `Embedding`. Click `Add`.
+5.26 For the last piece of work we will do in our administration UI, select the `Account` field from on the top left. Then scroll down to where you see `Embedding`. Click `Add`.
 
 <img src="assets/embedding1.png" width ="800">
 
-5.25 You will see a prompt asking if you want to enable the premium feature. Click `Enable`. You will not be charged for leveraging this in a trial environment.
+5.27 You will see a prompt asking if you want to enable the premium feature. Click `Enable`. You will not be charged for leveraging this in a trial environment.
 
 <img src="assets/embedding2.png" width ="800">
 
-5.26 Finally, you will see your embedding secret. You may save this to another location for future labs, but it will not be needed for this lab. Click `Close`.
+5.28 Finally, you will see your embedding secret. You may save this to another location for future labs, but it will not be needed for this lab. Click `Close`.
 
 <img src="assets/embedding4.png" width="600">
 
-5.27 Select `APIs & Embed Secrets` from the lefthand menu. 
+5.29 Select `APIs & Embed Secrets` from the lefthand menu. 
 
-5.28 Click `Create New`:
+5.30 Click `Create New`:
 
 <img src="assets/ss76.png" width="800"/>
 
-5.29 Select `Embed Secret`, and name the secret `Tasty Embed`. 
+5.31 Select `Embed Secret`, and name the secret `Tasty Embed`. 
 
-5.30 In the Owner field, select your Sigma user, and click `Create`:
+5.32 In the Owner field, select your Sigma user, and click `Create`:
 
 <img src="assets/ss77.png" width="600"/>
 
@@ -642,57 +642,57 @@ Normally, you would save the `ClientID and Secret` keys that are auto-generated 
 
 We do not need to do this for the purposes of this lab. The keys are required to exist as we will demonstrate embedding directly within Sigma.
 
-5.31 Click `Close`.
+5.33 Click `Close`.
 
 ### Workspaces
 
 We will create a Workspace and grant permission based on team membership. 
 
-5.32 Navigate back to the Sigma homepage by clicking the `Paper Crane` logo in the top left corner. Select `Workspaces` from the left hand side:
+5.34 Navigate back to the Sigma homepage by clicking the `Paper Crane` logo in the top left corner. Select `Workspaces` from the left hand side:
 
 <img src="assets/ss78.png" width="400"/>
 
-5.33 Select `Create Workspace` in the top right corner, then name your workspace `Tasty Bytes`. 
+5.35 Select `Create Workspace` in the top right corner, then name your workspace `Tasty Bytes`. 
 
 You will see your user listed with `Can Manage` permissions. 
 
-5.34 Add the two teams you created earlier by using the search bar below your user, and grant them `Can Contribute` permissions. 
+5.36 Add the two teams you created earlier by using the search bar below your user, and grant them `Can Contribute` permissions. 
 
-5.35 Uncheck the `Send an email notification` so that we don't try to send mail at this time.
+5.37 Uncheck the `Send an email notification` so that we don't try to send mail at this time.
 
-5.36 Click `Save`: 
+5.38 Click `Save`: 
 
 <img src="assets/ss79.png" width="600"/>
 
 You will now see your new Tasty Bytes Workspace. Click on its title, then select `Create Folder` in the top right corner. 
 
-5.37 Name your new folder `Workbooks`, then `click the green check mark`:
+5.39 Name your new folder `Workbooks`, then `click the green check mark`:
 
 <img src="assets/ss80.png" width="600"/>
 
-5.38 Navigate back to the home page by `clicking the Sigma logo` in the top left corner. 
+5.40 Navigate back to the home page by `clicking the Sigma logo` in the top left corner. 
 
-5.39 From the home page, click into your `Tasty Bytes Sales Portal` Workbook you created earlier. I should be at the top of the `RECENT` list:
+5.41 From the home page, click into your `Tasty Bytes Sales Portal` Workbook you created earlier. I should be at the top of the `RECENT` list:
 
 <img src="assets/ss81.png" width="600"/>
 
-5.40 On the top bar, click the drop down next to the workbook title. Select `Tag this published version`:
+5.42 On the top bar, click the drop down next to the workbook title. Select `Tag this published version`:
 
 <img src="assets/ss82.png" width="600"/>
 
-5.41 From the drop down, select the `Production` tag we created earlier. Check the box for `Allow Saving as a New Workbook`, followed by `Set Tag`:
+5.43 From the drop down, select the `Production` tag we created earlier. Check the box for `Allow Saving as a New Workbook`, followed by `Set Tag`:
 
 <img src="assets/ss83.png" width="400"/>
 
-5.42 Once again, select the drop down by the workbook title, this time selecting `Move`: 
+5.44 Once again, select the drop down by the workbook title, this time selecting `Move`: 
 
 <img src="assets/ss84.png" width="400"/>
 
-5.43 When prompted to choose a destination, select the `Tasty Bytes workspace` we created earlier:
+5.45 When prompted to choose a destination, select the `Tasty Bytes workspace` we created earlier:
 
 <img src="assets/ss85.png" width="400"/>
 
-5.44 Then, select the `Workbooks folder` we created and click `Move`:
+5.46 Then, select the `Workbooks folder` we created and click `Move`:
 
 <img src="assets/ss86.png" width="400"/>
 
