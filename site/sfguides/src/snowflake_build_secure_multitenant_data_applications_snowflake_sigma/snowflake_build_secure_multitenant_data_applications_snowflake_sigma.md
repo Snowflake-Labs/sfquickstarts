@@ -644,9 +644,11 @@ We do not need to do this for the purposes of this lab. The keys are required to
 
 5.33 Click `Close`.
 
+
 ### Workspaces
 
 We will create a Workspace and grant permission based on team membership. 
+
 
 5.34 Navigate back to the Sigma homepage by clicking the `Paper Crane` logo in the top left corner. Select `Workspaces` from the left hand side:
 
