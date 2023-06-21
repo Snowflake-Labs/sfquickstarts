@@ -568,7 +568,7 @@ For More Information on Snowflake Role-Based Access Control, please see the docu
 
 <img src="assets/ss71.png" width="600"/>
 
-5.16 Once again, ensure that `Tasty Admin` is the highest priority team by dragging it to the number 1 slot. 
+5.16 Once again, ensure that `Tasty Admins` is the highest priority team by dragging it to the number 1 slot. 
 
 <img src="assets/tastywhorder.png" width="600">
 
