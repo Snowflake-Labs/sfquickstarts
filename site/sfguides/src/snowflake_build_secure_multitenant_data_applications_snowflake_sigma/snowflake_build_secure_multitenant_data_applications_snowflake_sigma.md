@@ -84,6 +84,10 @@ CREATE OR REPLACE TABLE ORDERS AS SELECT * FROM ORDERS_V;
 
 <img src="assets/ss3.png" width="600"/>
 
+<aside class="negative">
+<strong>NOTE:</strong><br> If you have trouble leveraging partner connect, ensure you are in the ACCOUNTADMIN role.
+</aside>
+
 2.6 You will now see a pop up explaining the objects that will be created as part of spinning up a new Sigma instance. Click the blue `Connect` button. 
 
 <img src="assets/ss4.png" width="500"/>
@@ -122,7 +126,7 @@ CREATE OR REPLACE TABLE ORDERS AS SELECT * FROM ORDERS_V;
 
 <img src="assets/ss11.png" width="700"/>
 
-2.16 Adjust the connection so that the warehouse is `TASTY_BI_WH`, the role is `TASTY_ADMIN` and the User is **YOUR** Snowflake User name. Enter your Snowflake password and click `Save`.  You may adjust the connection name if you so choose as well. 
+2.16 Adjust the connection so that the warehouse is `TASTY_BI_WH`, the role is `TASTY_ADMIN` and the User is **YOUR** Snowflake User name. Enter your Snowflake password and click `Save`.  **You may adjust the connection name if you so choose as well**. 
 
 Upon save, Sigma will validate the connection is reachable.
 
@@ -321,7 +325,7 @@ No need to set a date range right now so just click away from the calendar to ma
 <img src="assets/ss43.png" width="800"/>
 
 <aside class="negative">
-<strong>NOTE:</strong><br> I may take a a moment for the data to appear as there are almost 700M rows in the "Orders Base Table".
+<strong>NOTE:</strong><br> It may take a a moment for the data to appear as there are almost 700M rows in the "Orders Base Table".
 </aside>
 
 4.19 Double click on `Sum of Profit` on the left hand pane and rename to `Profit`. Repeat the same for `Sum of COGS`, renaming it `COGS`.
@@ -372,11 +376,11 @@ Then select `Color Scale` as the formatting type:
 
 Your KPI tile should look like this: 
 
-<img src="assets/ss53.png" width="600"/>
+<img src="assets/kpiupdated.png" width ="600"/>
 
 4.32 Drag your visualizations to rearrange them so that your KPIs are side by side at the top, your control element is below them, the bar & line charts are side by side below that, with the pivot table at the bottom so that your page looks like this: 
 
-Don't worry if you make a mistake; you can always just go back by clicking the `back icon` as shown by the red arrow:
+Don't worry if you make a mistake; you can always just go back by clicking the `Undo icon` as shown by the red arrow:
 
 <img src="assets/ss54.png" width="800"/>
 
@@ -397,7 +401,7 @@ If(CountDistinct([Orders Base Table/Truck Brand Name]) >1, “Tasty Bytes”, [O
 
 4.37 Format your new text element as a `Large Heading` and center on the page:
 
-<img src="assets/ss57.png" width="600"/>
+<img src="assets/titlecorrected.png" width="600"/>
 
 4.38 Click the `gear icon` in the bottom corner to open the `Workbook Settings` menu:
 
@@ -439,7 +443,7 @@ You will have to modify this code to set the username to your Snowflake username
 
 ```console
 ---SET DATABASE TO BE USED ---
-USE ROLE TASTYADMIN;
+USE ROLE TASTY_ADMIN;
 USE DATABASE FROSTBYTE_TASTY_BYTES;
 USE SCHEMA HARMONIZED;
 
@@ -514,6 +518,8 @@ Now that we have created our access policy, run the next statement in order to a
 
 Finally, run the next group of statements which will have you assume the TASTY_ADMIN role and select against the Orders table, then do the same from the KITAKATA_MANAGER role. You should notice that when you are in the KITAKATA_MANAGER role, you only see data related to the Kitakata Ramen Bar.
 
+For More Information on Snowflake Role-Based Access Control, please see the documentation here: [Snowflake Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-overview)
+
 <img src="assets/ss61b.png" width="800"/>
 
 5.4 Back on the Sigma home page, click the icon with your initials in the top right hand corner, and select `Administration`: 
@@ -526,7 +532,7 @@ Finally, run the next group of statements which will have you assume the TASTY_A
 
 5.6 For the first team, give it the team name of `Tasty Admins`, then click `Create`:
 
-<img src="assets/ss64.png" width="800"/>
+<img src="assets/tastyadminscorrected.png" width="800"/>
 
 5.7 Click on `Teams` on the left sidebar and repeat this process, creating a second team called `Kitakata Managers`.
 
@@ -580,9 +586,9 @@ Your Connection Details pane should now show that your warehouse and role in Sno
 
 <img src="assets/editconnection2.png" width ="600">
 
-5.21 Select both teams you have created and grant them `Can Use` Permissions on the Connection. Then click `Save`.
+5.21 Select both teams you have created and grant them `Can Use` Permissions on the Connection. Un-check the box for `Send an email notification`, then click `Save`.
 
-<img src="assets/editconnection3.png" width="600">
+<img src="assets/grantpermissionscorrected.png" width="600">
 
 <aside class="positive">
 <strong>IMPORTANT:</strong><br> By leveraging User Attributes and dynamically assigning the Snowflake role & warehouse our end users have access to, we are able to allow the row level security policy we created in Snowflake to pass through to our users in Sigma. 
@@ -594,9 +600,9 @@ Your Connection Details pane should now show that your warehouse and role in Sno
 
 5.22 On the left hand side, we will now select `Tags`. Next, click `Create Tag`.
 
-5.23 Name your tag `Production`, and give it a description (required). Click `Create`:
+5.23 Name your tag `Production`, give it a description (required), and select a color. Click `Create`:
 
-<img src="assets/ss75.png" width="800"/>
+<img src="assets/tagsupdated.png" width="800"/>
 
 ### Embedding Keys
 
@@ -694,25 +700,14 @@ Many customers want to embed Sigma content in another web application. Embedding
 
 <img src="assets/ss87.png" width="600"/>
 
-If you recieve a message that `Application Embedding requires a generated secret in the Admin Settings`, you will need to navigate to `Administration` > `Account`, scroll down to the `Embedding` section and click `Add` to enable Application Embedding. You will not be charged for this in the trial.
 
-If you do not see this message you can skip this and scroll down to **6.2**.
-
-<img src="assets/ss88.png" width="800"/>
-
-Click `Enable` in the pop-up to enable the feature. 
-
-You will be presented a `Secret` but we do not need to copy this for the lab. Click `Close`.
-
-6.2 **Return to your Sigma Workbook** and click drop down by your workbook title select `Embedding`:
-
-6.3 From the drop down labeled Generate Application Embed Path For, select “Entire Workbook”. Then click “Test”, which will take you to the Sigma Embedding Sandbox. 
+6.2 From the drop down labeled Generate Application Embed Path For, select “Entire Workbook”. Then click “Test”, which will take you to the Sigma Embedding Sandbox. 
 
 <img src="assets/ss89.png" width="600"/>
 
-6.4 On the left hand side choose the following parameters:
+6.3 On the left hand side choose the following parameters:
  <ul>
-      <li>Select the embed secret we created earlier from the Embed Secret drop down.</li>
+      <li>Select the embed secret we created earlier (Tasty Embed) from the Embed Secret drop down.</li>
       <li>For Mode, select “User-Backed”</li>
       <li>For Embed User Teams select “Kitakata Managers”</li>
       <li>For email, input any random email address that is NOT the email you log into Sigma with. It does   
@@ -720,17 +715,17 @@ You will be presented a `Secret` but we do not need to copy this for the lab. Cl
       <li>For account type select “Creator”</li>      
 </ul>]
 
-6.5 Click `Load Embed`.
+6.4 Click `Load Embed`.
 
-If everything worked correctly, your dashboard should now read `Sales Performance Kitakata Ramen Bar`. 
+If everything worked correctly, your dashboard should now read `Kitakata Ramen Bar Sales Performance`. 
 
-<img src="assets/ss90.png" width="800"/>
+<img src="assets/finaldashcorrected.png" width="800"/>
  
 This is because Sigma leveraged the User Attributes you set up previously, and filtered the data per the row access policy you created in Sigma. Now members of the Kitakata Managers team can only see data for the brand they manage. 
  
-6.6 Click `Collapse` in the top left if you want to just view the embed full page. 
+6.5 Click `Collapse` in the top left if you want to just view the embed full page. 
 
-6.7 Hover over the pivot table and select `Maximize Element` in the top right corner:
+6.6 Hover over the pivot table and select `Maximize Element` in the top right corner:
 
 <img src="assets/ss91.png" width="600"/>
 
@@ -740,22 +735,22 @@ As you can see, `Sigma has created a grouped table automaically`, that powers th
 
 Lets add additional metrics to the pivot table. 
 
-6.8 Click the arrow on the right hand side of the `COGS` column, and select `Add new column`:
+6.7 Click the arrow on the right hand side of the `COGS` column, and select `Add new column`:
 
 <img src="assets/ss92.png" width="600"/>
 
-6.9 In the formula bar, copy and paste this:
+6.8 In the formula bar, copy and paste this:
 ```console
 [Profit]/(Sum([Price]))
 ```
 
-6.10 Then click the `% button` to format this as a percentage.
+6.9 Then click the `% button` to format this as a percentage.
 
-6.11 Double click the `Calc` column header and re-name the column `Profit Margin`:
+6.10 Double click the `Calc` column header and re-name the column `Profit Margin`:
 
 <img src="assets/ss93.png" width="400"/>
 
-6.12 Now click the two arrows in the top right corner to `minimize` the element:
+6.11 Now click the two arrows in the top right corner to `minimize` the element:
 
 <img src="assets/ss94.png" width="400"/>
 
@@ -763,26 +758,26 @@ You will see that the newly calculated column has been added to the Pivot Table 
 
 <img src="assets/ss95.png" width="400"/>
 
-6.13 Click the blue `Save as` button in the bottom right corner:
+6.12 Click the blue `Save as` button in the bottom right corner:
 
 <img src="assets/ss96.png" width="400"/>
 
-6.14 Save the updated workbook to the `Workbooks` folder within the `Tasty Bytes workspace` we created earlier. 
+6.13 Save the updated workbook as `Tasty Bytes Sales Portal with Profit Margin` to the `Workbooks` folder within the `Tasty Bytes workspace` we created earlier. 
 
 <img src="assets/ss97.png" width="400"/>
 
-6.15 Navigate back to the Sigma homepage, and select `Workspaces` from the left hand menu. 
+6.14 Navigate back to the Sigma homepage, and select `Workspaces` from the left hand menu. 
 
-6.16 Open the `Workbooks` folder within the `Tasty Bytes workspace`. 
+6.15 Open the `Workbooks` folder within the `Tasty Bytes workspace`. 
 
 You should now see the new version of the workbook that was created by your Embed User.
 
 <img src="assets/ss98.png" width="800"/>
 
-6.17 Open the workbook `created by the embed user` to verify that the calculations they added to the pivot table have been maintained. 
+6.16 Open the workbook `created by the embed user` to verify that the calculations they added to the pivot table have been maintained. 
 
 
-6.18 Navigate back to the production workbook you created. You will notice that changes made by end users have not impacted the production tagged workbook version. 
+6.17 Navigate back to the production workbook you created. You will notice that changes made by end users have not impacted the production tagged workbook version. 
 
 <img src="assets/verifyproduction.png" width="800">
 
@@ -792,7 +787,7 @@ You should now see the new version of the workbook that was created by your Embe
 ## Conclusion And Resources
 Duration: 5
 
-Thank you for your participation in this hands-on lab. We hope this exercise has helped you understand the value Sigma on Snowflake can drive for your customers.
+In this lab we learned how to connect Sigma to Snowflake, create interactive, embeddable dashboards in Sigma, and how to leverage Snowflake & Sigma security policies to secure multi-tenant datasets backing an application. We thank you for your participation, and hope this exercise has helped you understand the value Sigma on Snowflake can drive for your organization and your customers.
 
 
 
