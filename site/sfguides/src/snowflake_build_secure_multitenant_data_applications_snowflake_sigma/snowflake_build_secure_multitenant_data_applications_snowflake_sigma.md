@@ -325,7 +325,7 @@ No need to set a date range right now so just click away from the calendar to ma
 <img src="assets/ss43.png" width="800"/>
 
 <aside class="negative">
-<strong>NOTE:</strong><br> It may take a a moment for the data to appear as there are almost 700M rows in the "Orders Base Table".
+<strong>NOTE:</strong><br> It may take a moment for the data to appear as there are almost 700M rows in the "Orders Base Table".
 </aside>
 
 4.19 Double click on `Sum of Profit` on the left hand pane and rename to `Profit`. Repeat the same for `Sum of COGS`, renaming it `COGS`.
