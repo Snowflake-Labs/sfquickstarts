@@ -721,7 +721,7 @@ Many customers want to embed Sigma content in another web application. Embedding
       <li>For email, input any random email address that is NOT the email you log into Sigma with. It does   
         not need to be a real email address, and you can put something like managers@tastybytes.com.</li>      
       <li>For account type select “Creator”</li>      
-</ul>]
+</ul>
 
 6.4 Click `Load Embed`.
 
