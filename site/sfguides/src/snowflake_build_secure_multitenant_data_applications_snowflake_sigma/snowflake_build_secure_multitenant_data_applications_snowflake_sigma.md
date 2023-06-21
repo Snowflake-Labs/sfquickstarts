@@ -560,9 +560,17 @@ For More Information on Snowflake Role-Based Access Control, please see the docu
 
 <img src="assets/ss70.png" width="600"/>
 
+5.14 You will notice that the teams are listed by priority. If a user is on multiple teams, they will have the permissions of whichever team is given highest priority under the user attribute. As you are the only member of both teams, ensure that `Tasty Admins ` are in the highest priority position by dragging the team to the top.
+
+<img src="assets/tastyroleorder.png" width="600">
+
 5.14 Repeat this process for the Tasty Warehouse attribute, this time assigning your `Tasty Admins team the warehouse of TASTY_BI_WH` and your `Kitakata Managers team the warehouse of TASTY_DATA_APP_WH`. Click `Assign` to complete:
 
 <img src="assets/ss71.png" width="600"/>
+
+5.11 Once again, ensure that `Tasty Admin` is the highest priority team by dragging it to the number 1 slot. 
+
+<img src="assets/tastywhorder.png" width="600">
 
 5.15 On the left hand side, navigate to the `Connections tab`, and select the connection you have been using throughout this lab. Click `Edit` next to the connection name:
 
