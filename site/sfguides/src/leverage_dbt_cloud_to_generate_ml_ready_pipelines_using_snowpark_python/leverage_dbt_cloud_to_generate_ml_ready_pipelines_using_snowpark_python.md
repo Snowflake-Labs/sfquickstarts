@@ -389,7 +389,7 @@ We're ready to setup our dbt account!
 ## Launching dbt cloud through partner connect 
 Duration: 2
 
-We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
+We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
 
 1. Navigate out of your SQL worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
@@ -459,7 +459,7 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 5. Within your **Project Details** you should have the option to **Configure Repository**.
 <img src="assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png" alt="configure_repository">
 
-6. Open a new window and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/python-snowpark-formula1).
+6. Open a new window and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark).
 
 7. **Fork** your own copy of the lab repo.
 <img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
@@ -542,7 +542,7 @@ In the next couple steps we are taking time to review how this was done. That wa
 
 
 ### dbt_project.yml
-1. Select the `dbt_project.yml` file in the root directory the file explorer to open it. What are we looking at here? Every dbt project requires a `dbt_project.yml` file &mdash; this is how dbt knows a directory is a dbt project. The [dbt_project.yml](/reference/dbt_project.yml) file also contains important information that tells dbt how to operate on your project.
+1. Select the `dbt_project.yml` file in the root directory the file explorer to open it. What are we looking at here? Every dbt project requires a `dbt_project.yml` file &mdash; this is how dbt knows a directory is a dbt project. The [dbt_project.yml](https://docs.getdbt.com/reference/dbt_project.yml) file also contains important information that tells dbt how to operate on your project.
 2. Your code should as follows: 
     ```yaml
     name: 'snowflake_python_workshop'
@@ -600,7 +600,7 @@ In the next couple steps we are taking time to review how this was done. That wa
     - `require-dbt-version` &mdash; Tells dbt which version of dbt to use for your project. We are requiring 1.3.0 and any newer version to run python models and node colors.
     - `materialized` &mdash; Tells dbt how to materialize models when compiling the code before it pushes it down to Snowflake. All models in the `marts` folder will be built as tables.
     - `tags` &mdash; Applies tags at a directory level to all models. All models in the `aggregates` folder will be tagged as `bi` (abbreviation for business intelligence).
-4. [Materializations](/docs/build/materializations) are strategies for persisting dbt models in a warehouse, with `tables` and `views` being the most commonly utilized types. By default, all dbt models are materialized as views and other materialization types can be configured in the `dbt_project.yml` file or in a model itself. It’s very important to note *Python models can only be materialized as tables or incremental models.* Since all our Python models exist under `marts`, the following portion of our `dbt_project.yml` ensures no errors will occur when we run our Python models. Starting with [dbt version 1.4](/guides/migration/versions/upgrading-to-v1.4#updates-to-python-models), Python files will automatically get materialized as tables even if not explicitly specified.
+4. [Materializations](https://docs.getdbt.com/docs/build/materializations) are strategies for persisting dbt models in a warehouse, with `tables` and `views` being the most commonly utilized types. By default, all dbt models are materialized as views and other materialization types can be configured in the `dbt_project.yml` file or in a model itself. It’s very important to note *Python models can only be materialized as tables or incremental models.* Since all our Python models exist under `marts`, the following portion of our `dbt_project.yml` ensures no errors will occur when we run our Python models. Starting with [dbt version 1.4](https://docs.getdbt.com/guides/migration/versions/upgrading-to-v1.4#updates-to-python-models), Python files will automatically get materialized as tables even if not explicitly specified.
 
     ```yaml 
     marts:     
@@ -610,7 +610,7 @@ In the next couple steps we are taking time to review how this was done. That wa
 Cool, now that dbt knows we have a dbt project we can view the folder structure and data modeling.  
 
 ### Folder structure 
-dbt Labs has developed a [project structure guide](/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices. 
+dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview) that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices. 
 
 Do check out that guide if you want to learn more. Right now we are going to organize our project using the following structure:
 - sources &mdash; This is our Formula 1 dataset and it will be defined in a source YAML file. Nested under our Staging folder. 
@@ -895,7 +895,7 @@ Let’s take a step back before starting machine learning to both review and go 
 - `.config()`. Just like SQL models, there are three ways to configure Python models:
     - In a dedicated `.yml` file, within the `models/` directory
     - Within the model's `.py` file, using the `dbt.config()` method
-    - Calling the `dbt.config()` method will set configurations for your model within your `.py` file, similar to the `{{ config() }} macro` in `.sql` model files. There's a limit to how complex you can get with the `dbt.config()` method. It accepts only literal values (strings, booleans, and numeric types). Passing another function or a more complex data structure is not possible. The reason is that dbt statically analyzes the arguments to `.config()` while parsing your model without executing your Python code. If you need to set a more complex configuration, we recommend you define it using the config property in a [YAML file](/reference/resource-properties/config). Learn more about configurations [here](/reference/model-configs).
+    - Calling the `dbt.config()` method will set configurations for your model within your `.py` file, similar to the `{{ config() }} macro` in `.sql` model files. There's a limit to how complex you can get with the `dbt.config()` method. It accepts only literal values (strings, booleans, and numeric types). Passing another function or a more complex data structure is not possible. The reason is that dbt statically analyzes the arguments to `.config()` while parsing your model without executing your Python code. If you need to set a more complex configuration, we recommend you define it using the config property in a [YAML file](https://docs.getdbt.com/reference/resource-properties/config). Learn more about configurations [here](https://docs.getdbt.com/reference/model-configs).
         ```python 
         def model(dbt, session):
 
