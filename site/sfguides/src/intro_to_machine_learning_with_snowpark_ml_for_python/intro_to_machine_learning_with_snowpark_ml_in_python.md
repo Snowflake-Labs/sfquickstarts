@@ -93,15 +93,42 @@ Duration: 7
 ### Snowpark for Python and Snowpark ML
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
-- Download the latest version of Snowpark ML from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV). **1.0.0 is the latest version as of this guide's publish date.**
+
+- Download the latest version of Snowpark ML from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV). Make sure you download the `.tar.bz2` file. **1.0.1 is the latest version as of this guide's publish date.**
+
 - Open a new terminal window and execute the following commands in the same terminal window:
 
-```
->>> conda env create -f conda_env.yml
->>> conda activate snowpark-ml-hol
->>> pip install 'snowflake_ml_python‑1.0.1‑py3‑none‑any.whl'
->>> jupyter notebook &> /tmp/notebook.log & # optionally start notebook server
-```
+  1. Create a local conda channel for .tar.bz2 file
+Create a folder for your channel, for example, mychannel. And Create a folder named noarch in it.
+  ```
+  $ mkdir -p <some_path>/mychannel/noarch
+  ```
+
+  2. Put the .tar.bz2 file into that folder.
+  ```
+  $ cp snowflake_ml_python-${VERSION}-py_0.tar.bz2 <some_path>/mychannel/noarch/snowflake_ml_python-${VERSION}-py_0.tar.bz2
+  ```
+
+  3. Install conda-build.
+  ```
+  $ conda install conda-build
+  ```
+
+  4. Run conda index to create the local conda channel.
+  ```
+  $ conda index <some_path>/mychannel
+  ```
+
+  5. Install in your snowpark python environment created following [this](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) by running:
+  ```
+  $ conda activate <your_snowpark_env>
+  $ conda install -c file://<some_path>/mychannel -c https://repo.anaconda.com/pkgs/snowflake/ --override-channel snowflake-ml-python
+  ```  
+
+  6. `Optionally` start notebook server
+  ```
+  $ jupyter notebook &> /tmp/notebook.log &
+  ```  
 
 - Update [connection.json](connection.json) with your Snowflake account details and credentials.
   Here's a sample based on the object names we created in the last step:
