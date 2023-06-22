@@ -1,4 +1,4 @@
-author: Scott Teal, Saurin Shah
+author: Scott Teal, Saurin Shah, Mauricio Rojas Fernandez
 id: analyze_pdf_invoices_snowpark_python_java
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: data-science-&-ml,data-engineering,architecture-patterns,solution-examples
@@ -217,7 +217,7 @@ create or replace table parsed_pdf as
 select
     relative_path
     , file_url
-    , read_pdf(build_scoped_file_url('@pdf_external/', relative_path)) as parsed_text
+    , read_pdf(build_scoped_file_url(@pdf_external, relative_path)) as parsed_text
 from directory(@pdf_external);
 ```
 
