@@ -73,8 +73,6 @@ Once installed there are a few more steps that need to be completed before the F
 
 1) Create and grant access to API INTEGRATION
 
-> aside positive
->
 > The `API INTEGRATION` is used to check your license key, allowed usage, and report usage summary counts back to FullContact. Your raw data never leaves Snowflake as the app executes natively and FullContact will not have access to your raw data unless you decide to share it with us using a normal secure share.
 
 ```sql
@@ -86,10 +84,14 @@ CREATE API INTEGRATION IF NOT EXISTS FC_API_INT_FULLCONTACT_IDENTITY_SOLUTIONS
 
 -- Grant access to allow a specific user or role to use this application
 GRANT USAGE ON INTEGRATION FC_API_INT_FULLCONTACT_IDENTITY_SOLUTIONS TO APPLICATION FC_NATIVE_APP;
-GRANT APPLICATION ROLE FC_NATIVE_APP.FC_USER TO ROLE ACCOUNTADMIN;
 ```
 
-2) Install and define the `EXTERNAL FUNCTIONS` that the application needs to run.
+2) Allow application to create a dedicated database for input/output tables.
+
+```sql
+GRANT CREATE DATABASE on account to APPLICATION FC_NATIVE_APP_DEBUG;
+```
+3) Install and define the `EXTERNAL FUNCTIONS` that the application needs to run.
 
 ```sql
 -- Install the EFs (external functions) that the app needs to run:
@@ -148,19 +150,15 @@ Follow the steps below and copy and paste the SQL to your SQL Worksheet.
 ```sql
 CREATE DATABASE FC_QUICKSTART;
 CREATE SCHEMA FC_QUICKSTART.OUTPUT;
-
-GRANT USAGE ON DATABASE FC_QUICKSTART TO APPLICATION FC_NATIVE_APP;
-GRANT USAGE ON SCHEMA FC_QUICKSTART.OUTPUT TO APPLICATION FC_NATIVE_APP;
 ```
 
 2) Create the Semantic Input view. Run the following stored procedure. It will scan the sample input dataset and output additional SQL that you will need to copy/paste/run into your worksheet.
 
 ```sql
-CALL FC_NATIVE_APP.APP_SCHEMA.CREATE_INPUT_VIEW(
+CALL FC_NATIVE_APP.APP_SCHEMA.GET_SQL_CREATE_INPUT_VIEW(
 'FC_NATIVE_APP.SAMPLE_DATA.CUST_JOURNEY_PURCHASE_DEMO', -- input table name
 'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC',  -- output view name
-'RECORD_ID',                                              -- name of column to treat as RECORD_ID
-['HEM', 'MAID']);                                       -- type of data we plan on enriching with
+'RECORD_ID'                                              -- name of column to treat as RECORD_ID
 ```
 
 3) Copy the results of the previous SPROC and run it (it should be something similar to the below)
@@ -168,17 +166,17 @@ CALL FC_NATIVE_APP.APP_SCHEMA.CREATE_INPUT_VIEW(
 ```sql
 -- This view create statement contains predicted aliases for columns based on data in each column.
 -- Please review the statement and modify it as needed before using it as input to the RESOLVE stored procedure.
--- Accepted column names for the RESOLVE stored procedure can be found in the documentation.
+-- Accepted column names for the RESOLVE stored procedure can be found in the documentation linked below.
+-- https://docs.fullcontact.com/docs/snowflake-native-resolve
 CREATE OR REPLACE VIEW FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC AS SELECT
- EMAIL_1 AS RECORD_ID,
+ RECORD_ID AS RECORD_ID,
  FIRST_NAME,
  LAST_NAME,
- RECORD_ID,
+ PHONE_NUMBER,
  CITY,
  PURCHASE_CHANNEL,
  ZIP_CODE,
  ADDRESS_LINE_1,
- PHONE_NUMBER,
  ADDRESS_LINE_2,
  CUSTOMER_NUMBER,
  LIFETIME_VALUE,
@@ -188,30 +186,9 @@ FROM FC_NATIVE_APP.SAMPLE_DATA.CUST_JOURNEY_PURCHASE_DEMO;
 GRANT USAGE ON DATABASE FC_QUICKSTART TO APPLICATION FC_NATIVE_APP;
 GRANT USAGE ON SCHEMA FC_QUICKSTART.OUTPUT TO APPLICATION FC_NATIVE_APP;
 GRANT SELECT ON VIEW FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC TO APPLICATION FC_NATIVE_APP;
-
-CREATE OR REPLACE TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS LIKE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC;
-ALTER TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS ADD COLUMN PIDS ARRAY;
-ALTER TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS ADD COLUMN RESOLVE_RUN_ID VARCHAR;
-GRANT USAGE ON DATABASE FC_QUICKSTART TO APPLICATION FC_NATIVE_APP;
-GRANT USAGE ON SCHEMA FC_QUICKSTART.OUTPUT TO APPLICATION FC_NATIVE_APP;
-GRANT SELECT ON TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS TO APPLICATION FC_NATIVE_APP;
-GRANT INSERT ON TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS TO APPLICATION FC_NATIVE_APP;
-GRANT DELETE ON TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS TO APPLICATION FC_NATIVE_APP;
-
-CREATE OR REPLACE TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS LIKE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS;
-ALTER TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS ADD COLUMN PID VARCHAR;
-ALTER TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS ADD COLUMN ENRICH_RUN_ID VARCHAR;
-ALTER TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS ADD COLUMN EMAILS VARIANT;
-ALTER TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS ADD COLUMN MAIDS VARIANT;
-
-GRANT USAGE ON DATABASE FC_QUICKSTART TO APPLICATION FC_NATIVE_APP;
-GRANT USAGE ON SCHEMA FC_QUICKSTART.OUTPUT TO APPLICATION FC_NATIVE_APP;
-GRANT SELECT ON TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS TO APPLICATION FC_NATIVE_APP;
-GRANT INSERT ON TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS TO APPLICATION FC_NATIVE_APP;
-GRANT DELETE ON TABLE FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS TO APPLICATION FC_NATIVE_APP;
 ```
 
-At this point you should have your SEMANTIC view `FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC` created as well as two empty output tables that will be populated in the next step: `FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS` and `FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS_ENRICH_RESULTS`
+At this point you should have your SEMANTIC view `FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC` created.
 
 <!-- ------------------------ -->
 ## Running the Resolve SPROC to Assign PersonIDs
@@ -222,21 +199,25 @@ These steps are where the magic happens.
 
 We provide some sample data with the application install that you can use for this initial test. Copy, paste and run the following SQL to take the sample data and run it through the FullContact Resolve process (which standardizes it and joins it to the FullContact Identity Graph) and assign Person IDs (PIDs)
 
-1) Run the `RESOLVE_WITH_API_KEY` SPROC (replace the `REPLACEWITHYOURAPIKEY` string below with the API you created in the FullContact platform in the previous step)
+1) Run the `RESOLVE_WITH_API_KEY` SPROC (replace the `REPLACEWITHYOURAPIKEY` string below with the API you created in the FullContact platform in the previous step). 
+
 
 ```sql
 -- Call the RESOLVE SPROC to resolve and assign PIDs to sample data
 CALL FC_NATIVE_APP.APP_SCHEMA.RESOLVE_WITH_API_KEY(
-'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC',                -- input view
-'REPLACEWITHYOURAPIKEY',                                              -- api key
-'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS' -- output table
+`FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC`,    	-- semantic input view
+'REPLACEWITHYOURAPIKEY',                    				-- api key
+null                                        				-- [OPTIONAL] output table name. If null, the output table name will be the name of your semantic input view table with `_RESOLVE_RESULTS` appended
 );
+
+The results will be stored in a table in the `FC_NATIVE_APP_IO.RESOLVE_OUT` schema.
+If not provided, the output table name will be the name of your semantic input view table with _RESOLVE_RESULTS appended to the end. In this case, `FC_NATIVE_APP_IO.RESOLVE_OUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS`
 ```
 
 2) View the results, making note of the PIDs column.
 
 ```sql
-SELECT * FROM FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS LIMIT 10;
+SELECT * FROM FC_NATIVE_APP_IO.RESOLVE_OUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS LIMIT 10;
 
 ```
 
@@ -249,7 +230,7 @@ SELECT * FROM FC_NATIVE_APP.METRICS.FC_RESOLVE_METRICS;
 4) Note how the different versions of Willow were all consolidated into the same PersonID
 
 ```sql
-SELECT * FROM FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS WHERE first_name = 'Willow';
+SELECT * FROM FC_NATIVE_APP_IO.RESOLVE_OUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS WHERE first_name = 'Willow';
 ```
 
 <!-- ------------------------ -->
