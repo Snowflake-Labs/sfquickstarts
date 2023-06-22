@@ -327,6 +327,8 @@ USE SCHEMA NATIVE_APP_SUMMIT_SCHEMA;
 
 CREATE OR REPLACE STAGE NATIVE_APP_SUMMIT_STAGE;
 
+CREATE OR REPLACE WAREHOUSE NATIVE_APP_SUMMIT_WH WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=TRUE;
+
 CREATE OR REPLACE TABLE MFG_ORDERS (
   order_id NUMBER(38,0), 
   material_name VARCHAR(60),
@@ -376,8 +378,13 @@ Next we need to upload our sample data for testing. We can do this using the Sno
 
 1. Login to your Snowflake account and navigate to `Data -> Databases`
 2. Select `NATIVE_APP_SUMMIT_DB` -> `NATIVE_APP_SUMMIT_SCHEMA` -> `Tables` 
-3. From there, select each table `MFG_ORDERS`, `MFG_SHIPPING`,`MFG_SITE_RECOVERY` 
-4. Select `Load Data` in the top right of each table and load the corresponding `.csv` file into the table
+3. From there, select each table (`MFG_ORDERS`, `MFG_SHIPPING`,`MFG_SITE_RECOVERY` ) and upload the corresponding `.csv` file from the cloned repository:
+   1. Select `Load Data` in the top right
+   2. Select `NATIVE_APP_SUMMIT_WH` for the warehouse
+   3. Click `Browse` and select the corresponding `.csv` file, Click `Next`
+   4. Select `Delimited Files (CSV or TSV)` for the File Format
+   5. For `Field optionally enclosed by` select `Double quotes`
+   6. Click `Next`, repeat for each table. 
 
 
 
