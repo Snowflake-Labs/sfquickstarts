@@ -322,7 +322,7 @@ Duration: 1
 
 ### Ideas for exploring futher:
 - Use any client or method to connect to Snowflake and query the sample database we just protected with ALTR.  You will see that ALTR enforces your policy in the same way no matter how the data is accessed.  From Snowflakes web ui, through any connector, driver or Method Snowflake supports (Go, Python, JDBC, REST API, Snowpark, .NET, Node.js, ODBC etc... )
-- Checkout a list of all of our Quickstarts here [ALTR Snowflake Quickstarts List](https://docs.altr.com/tutorial-and-user-guide/sfquickstarts)
+
 - 
 ### Getting Help:
 - If you need help on this or another Quickstart email us at support@altr.com (put 'quickstart help' in the subject line please) and somebody will reach out to you.
