@@ -10,17 +10,16 @@ tags: SIEM, Data Governance
 # Using Fluentd to Send Log Files to Snowflake for Security Analytics
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 2
 
-This Quickstart shows how to use Fluentd to send system event logs to Snowflake for use as a SIEM or log storage. Fluentd is open-source software that parses event logs, application logs, and clickstreams, converts the semi- or un-structured data to structured data, and stores the structured data in an S3 bucket.
-For details about Fluentd, see: [https://www.fluentd.org/](https://www.fluentd.org/)
-
-This Quickstart provides the configuration steps needed to successfully set up this integration. We use Apache HTTP Server to generate access log files that we upload as gzip files to the S3 external stage. Next, we set up Snowpipe to retrieve the gzip files from the external stage and import them into Snowflake. Finally we use Snowsight to visualize log events.
+This Quickstart shows how to use Fluentd to send system event logs to Snowflake for use as a SIEM or for log storage. We use Apache HTTP Server to generate access log files, which we upload as gzip files to an S3 external stage. Next, we set up Snowpipe to retrieve the gzip files from the external stage and import them into Snowflake. Finally we use Snowsight to visualize log events.  
 
 > aside positive 
 >
 > Note: There is not currently a plug-in that Fluentd can use to directly connect to the Snowflake internal stage, so Fluentd puts processed data in the Snowflake external stage where Snowpipe auto-ingests it.
 
+### What is Fluentd?
+Fluentd is open-source software that parses event logs, application logs, and clickstreams, converts the semi- or un-structured data to structured data, and stores the structured data in an S3 bucket. To learn more about Fluentd, see: [https://www.fluentd.org/](https://www.fluentd.org/)
 
 ### What You’ll Learn 
 - How to deploy Apache2 on a target server (Amazon Linux)
@@ -44,16 +43,9 @@ Prior to starting you should:
 >
 > Note: In this scenario, the Apache server instances are internet-facing, so anyone can access it
 
-### References
-- [Configuring Secure Access to Amazon S3 (Snowflake Product Documentation)](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html)
-- [Creating a New S3 Event Notification to Automate Snowpipe (Snowflake Product Documentation)](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe)
-- [CIS Apache HTTP Server Benchmarks](https://www.cisecurity.org/benchmark/apache_http_server)
-- [CVE Records for Apache HTTP Server](https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=Apache%20HTTP%20server)
-- [https://docs.hunters.ai/wiki/fluentd](https://docs.hunters.ai/wiki/fluentd)
-
 <!-- ------------------------ -->
-## Deploy Apache2 on the target server (Amazon Linux)
-Duration: 2
+## Deploy Apache2 on the Target Server (Amazon Linux)
+Duration: 10
 
 After deploying Amazon Linux from the official AWS AMI, log in to Linux:
 
@@ -90,8 +82,8 @@ Run the following command to verify that the access log shows recent access:
 
 
 <!-- ------------------------ -->
-## Deploy the Fluentd agent (td-agent) on the target server
-Duration: 2
+## Deploy the Fluentd Agent (td-agent) on the Target Server
+Duration: 15
 
 Install Fluentd, start the service, and set up auto-run:
 ``` bash
@@ -163,8 +155,8 @@ The data should look similar to the following (CSV, tabs are the delimiters):
 
 
 <!-- ------------------------ -->
-## Set up the external stage on Snowflake
-Duration: 2
+## Set up the External Stage on Snowflake
+Duration: 15
 
 Use an IAM role that can retrieve data from S3 to create a storage integration.
 To get the `STORAGE_AWS_ROLE_ARN`, see [Configuring Secure Access to Amazon S3](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html) and complete the steps.
@@ -239,8 +231,8 @@ The parsed log should be stored as JSON in the “RECORD” column.
 
 
 <!-- ------------------------ -->
-## Set up Snowpipe to retrieve data from the External Stage
-Duration: 2
+## Set up Snowpipe to Retrieve Data From the External Stage
+Duration: 15
 
 Configure Snowflake Snowpipe:
 ```sql
@@ -312,12 +304,12 @@ select *
 
 
 <!-- ------------------------ -->
-## Set up Snowsight to visualize log events
-Duration: 1
+## Set up Snowsight to Visualize log Events
+Duration: 12
 
 Since parsed logs are stored as JSON in the `RECORD` column, you can set up Snowsight to visualize log events.
 
-**Example 1:** To make a Snowsight dashboard, paste the following code:
+**Example 1:** To make a Snowsight dashboard, copy and paste the following code:
 ``` sql
 SELECT
     time,
@@ -352,3 +344,27 @@ Response Code & Source IP
 **Example 5:** Code 408 is connection time out = maybe DDOS or CPU shortage.
 
 ![](assets/image16.png)
+
+
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+Duration: 2
+
+Congratulations! You learned how to configure Fluentd to send system event logs to Snowflake, and how to use Snowsight to visualize log events! Consolidating log files in Snowflake makes it possible to develop a single dashboard to monitor security activity across your network. 
+
+
+### What You Learned
+
+* How to deploy td-agent (the Fluentd Agent) on the target server
+* How to configure Snowpipe to retrieve data from the S3 external stage and import it into Snowflake
+* How to configure Snowsight to visualize log events
+
+### Related Resources
+
+* [https://www.fluentd.org/](https://www.fluentd.org/)
+* [Configuring Secure Access to Amazon S3 (Snowflake Product Documentation)](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html)
+* [Creating a New S3 Event Notification to Automate Snowpipe (Snowflake Product Documentation)](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe)
+* [CIS Apache HTTP Server Benchmarks](https://www.cisecurity.org/benchmark/apache_http_server)
+* [CVE Records for Apache HTTP Server](https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=Apache%20HTTP%20server)
+* [https://docs.hunters.ai/wiki/fluentd](https://docs.hunters.ai/wiki/fluentd)
