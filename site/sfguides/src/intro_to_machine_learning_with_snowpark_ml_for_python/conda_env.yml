@@ -3,6 +3,7 @@ channels:
   - https://repo.anaconda.com/pkgs/snowflake
 dependencies:
   - python=3.9
+  - snowflake-snowpark-python=1.4.0
   #- snowflake-snowpark-python=1.5.0 : Add this back once it's in the channel; need to conda install for now: conda install -c anaconda snowflake-snowpark-python
   - pandas=1.5.3
   - xgboost==1.7.3
@@ -11,4 +12,3 @@ dependencies:
   - cachetools=4.2.2
   - seaborn=0.12.2
   - matplotlib=3.7.1
-  - mkl < 2022 # will comment this out, it's to suppress Intel warnings: https://stackoverflow.com/questions/70830755/intel-mkl-fatal-error-this-system-does-not-meet-the-minimum-requirements-for-us
