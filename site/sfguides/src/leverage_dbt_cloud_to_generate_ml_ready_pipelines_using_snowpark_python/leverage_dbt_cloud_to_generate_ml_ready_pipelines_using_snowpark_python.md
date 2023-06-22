@@ -15,7 +15,7 @@ Duration: 3
 
 The focus of this workshop will be to demonstrate how we can use both *SQL and python together* in the same workflow to run *both analytics and machine learning models* on dbt Cloud.
 
-All code in today’s workshop can be found on [GitHub](https://github.com/dbt-labs/python-snowpark-formula1/tree/main).
+The code complete repository for this quickstart can be found on [GitHub](https://github.com/dbt-labs/python-snowpark-formula1/tree/main).
 
 ### What you'll need to setup for the lab
 
@@ -32,8 +32,8 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 ### What you need to know
 
 - Basic to intermediate SQL and python.
-- Basic understanding of dbt fundamentals. We recommend the [dbt Fundamentals course](https://courses.getdbt.com/collections) if you're interested.
-- High level understanding of machine learning processes (encoding, training, testing)
+- Basic understanding of dbt fundamentals. We recommend the [dbt Fundamentals course](https://courses.getdbt.com/courses/fundamentals) if you're interested.
+- High level understanding of machine learning processes (encoding, training, testing). 
 - Simple ML algorithms &mdash; we will use logistic regression to keep the focus on the *workflow*, not algorithms!
 
 ### What you'll build
@@ -56,14 +56,14 @@ All code in today’s workshop can be found on [GitHub](https://github.com/dbt-l
 ## Architecture and use case overview
 Duration: 2 
 
-In this lab we'll be transforming raw Formula 1 data into a consumable form for both BI tools and machine learning pipeline. To understand how this data is related, we've included an entity relationship diagram (ERD) of the tables we'll be using today. 
+In this lab we'll be transforming raw Formula 1 data into a consumable form for both analytics and machine learning pipelines. To understand how our data are related, we've included an entity relationship diagram (ERD) of the tables we'll be using today. 
 
 Our data rarely ever looks the way we need it in its raw form: we need to join, filter, aggregate, etc. dbt is designed to transform your data and keep your pipeline organized and reliable along the way. We can see from our Formula1 ERD that if we have a major table called `results` with other tables such as `drivers`, `races`, and `circuits` tables that provide meaningful context to the `results` table. 
 
 You might also see that `circuits` cannot be directly joined to `results` since there is no key. This is a typical data model structure we see in the wild: we'll need to first join `results` and `races` together, then we can join to `circuits`. By bringing all this information together we'll be able to gain insights about lap time trends through the years. 
 
 **Formula 1 ERD:** <br>
-ERD can also be downloaded for interactive view from [S3](https://s3.console.aws.amazon.com/s3/object/formula1-dbt-cloud-python-demo?region=us-east-1&prefix=Formula1_ERD.svg)
+ERD can also be downloaded for interactive view from [S3](https://formula1-dbt-cloud-python-demo.s3.amazonaws.com/Formula1_ERD.svg)
 <img src="assets/architecture-use-case/Formula1_ERD.svg" alt="F1_ERD" width="600" height="300">
 
 Here's a visual for the data pipeline that we'll be building using dbt!
@@ -97,13 +97,13 @@ Duration: 7
 
 We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
 
-1. Your new Snowflake account has a preconfigured warehouse named `COMPUTE_WH`. You can check by going under Admin > Warehouses. If for some reason you don’t have this warehouse, we can create a warehouse using the following script:
+1. Your new Snowflake account has a preconfigured warehouse named `COMPUTE_WH`. You can check by going under **Admin > Warehouses**. If for some reason you don’t have this warehouse, we can create a warehouse using the following script:
 
     ```sql
     create or replace warehouse COMPUTE_WH with warehouse_size=XSMALL
     ```
 
-2. Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the 3 dots option, then click  **Rename**. Rename the file to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Set the context of the worksheet by setting your role as the **ACCOUNTADMIN** and warehouse as **COMPUTE_WH**.
+2. Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the 3 dots `...` option, then click  **Rename**. Rename the file to `data setup script` since we will be placing code in this worksheet to ingest the Formula 1 data. Set the context of the worksheet by setting your role as the **ACCOUNTADMIN** and warehouse as **COMPUTE_WH**.
 ![rename-worksheet-and-select-warehouse](assets/load-data-into-snowflake/1-rename-worksheet-and-select-warehouse.png)
 
 3. Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the `setup` folder in the [Git repository](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/setup/setup_script_s3_to_snowflake.sql). The script is long since it's bringing in all of the data we'll need today! We recommend copying this straight from the github file linked rather than from this workshop UI so you don't miss anything (use Ctrl+A or Cmd+A). 
@@ -389,7 +389,7 @@ We're ready to setup our dbt account!
 ## Launching dbt cloud through partner connect 
 Duration: 2
 
-We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
+We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
 
 1. Navigate out of your SQL worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
@@ -459,7 +459,7 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 5. Within your **Project Details** you should have the option to **Configure Repository**.
 <img src="assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png" alt="configure_repository">
 
-6. Open a new window and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/python-snowpark-formula1).
+6. Open a new window and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark).
 
 7. **Fork** your own copy of the lab repo.
 <img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
@@ -542,7 +542,7 @@ In the next couple steps we are taking time to review how this was done. That wa
 
 
 ### dbt_project.yml
-1. Select the `dbt_project.yml` file in the root directory the file explorer to open it. What are we looking at here? Every dbt project requires a `dbt_project.yml` file &mdash; this is how dbt knows a directory is a dbt project. The [dbt_project.yml](/reference/dbt_project.yml) file also contains important information that tells dbt how to operate on your project.
+1. Select the `dbt_project.yml` file in the root directory the file explorer to open it. What are we looking at here? Every dbt project requires a `dbt_project.yml` file &mdash; this is how dbt knows a directory is a dbt project. The [dbt_project.yml](https://docs.getdbt.com/reference/dbt_project.yml) file also contains important information that tells dbt how to operate on your project.
 2. Your code should as follows: 
     ```yaml
     name: 'snowflake_python_workshop'
@@ -600,7 +600,7 @@ In the next couple steps we are taking time to review how this was done. That wa
     - `require-dbt-version` &mdash; Tells dbt which version of dbt to use for your project. We are requiring 1.3.0 and any newer version to run python models and node colors.
     - `materialized` &mdash; Tells dbt how to materialize models when compiling the code before it pushes it down to Snowflake. All models in the `marts` folder will be built as tables.
     - `tags` &mdash; Applies tags at a directory level to all models. All models in the `aggregates` folder will be tagged as `bi` (abbreviation for business intelligence).
-4. [Materializations](/docs/build/materializations) are strategies for persisting dbt models in a warehouse, with `tables` and `views` being the most commonly utilized types. By default, all dbt models are materialized as views and other materialization types can be configured in the `dbt_project.yml` file or in a model itself. It’s very important to note *Python models can only be materialized as tables or incremental models.* Since all our Python models exist under `marts`, the following portion of our `dbt_project.yml` ensures no errors will occur when we run our Python models. Starting with [dbt version 1.4](/guides/migration/versions/upgrading-to-v1.4#updates-to-python-models), Python files will automatically get materialized as tables even if not explicitly specified.
+4. [Materializations](https://docs.getdbt.com/docs/build/materializations) are strategies for persisting dbt models in a warehouse, with `tables` and `views` being the most commonly utilized types. By default, all dbt models are materialized as views and other materialization types can be configured in the `dbt_project.yml` file or in a model itself. It’s very important to note *Python models can only be materialized as tables or incremental models.* Since all our Python models exist under `marts`, the following portion of our `dbt_project.yml` ensures no errors will occur when we run our Python models. Starting with [dbt version 1.4](https://docs.getdbt.com/guides/migration/versions/upgrading-to-v1.4#updates-to-python-models), Python files will automatically get materialized as tables even if not explicitly specified.
 
     ```yaml 
     marts:     
@@ -610,7 +610,7 @@ In the next couple steps we are taking time to review how this was done. That wa
 Cool, now that dbt knows we have a dbt project we can view the folder structure and data modeling.  
 
 ### Folder structure 
-dbt Labs has developed a [project structure guide](/guides/best-practices/how-we-structure/1-guide-overview/) that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices. 
+dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview) that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices. 
 
 Do check out that guide if you want to learn more. Right now we are going to organize our project using the following structure:
 - sources &mdash; This is our Formula 1 dataset and it will be defined in a source YAML file. Nested under our Staging folder. 
@@ -631,7 +631,7 @@ Remember you can always reference the entire project in [GitHub](https://github.
 ## Data modeling: review sources and staging 
 Duration: 3
 
-In any data project we start with raw data, clean and transform, and gain insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll only need to preview these files (instead of build them).
+In any data project we follow the process of starting with raw data, cleaning and transforming it, and then gaining insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll only need to preview these files (instead of build them).
 
 Sources allow us to create a dependency between our source database object and our staging models which will help us when we look at [data-lineage](https://docs.getdbt.com/terms/data-lineage) later. Also, if your source changes database or schema, you only have to update it in your `f1_sources.yml` file rather than updating all of the models it might be used in.
 
@@ -841,7 +841,7 @@ Or more specifically: How is dbt able to send a python command over to a Snowfla
 
 At a high level, dbt executes python models as stored procedures in Snowflake, via Snowpark for python. 
 
-Snowpark for python and dbt python architecture:
+**Snowpark for python and dbt python architecture:**
 ![architecture_diagram](assets/architecture-use-case/Snowpark_for_python_and_dbt_architecture.svg)
 
 1. Open your dbt Cloud browser tab. 
@@ -885,7 +885,7 @@ We won’t go as in depth for our subsequent scripts, but will continue to expla
 8. We can see we have the same results from our python worksheet development as we have in our codified dbt python project. 
 
 ### The dbt model, .source(), .ref() and .config() functions
-Let’s take a step back before starting machine learning to both review and go more in-depth at the methods that make running dbt python models possible. If you want to know more outside of this lab’s explanation read the documentation [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models).
+Let’s take a step back before starting machine learning to both review and go more in-depth at the methods that make running dbt python models possible. If you want to know more outside of this lab’s explanation read the documentation on Python models [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models).
 
 - def model(dbt, session). For starters, each Python model lives in a .py file in your models/ folder. It defines a function named `model()`, which takes two parameters:
     - dbt &mdash; A class compiled by dbt Core, unique to each model, enables you to run your Python code in the context of your dbt project and DAG.
@@ -895,7 +895,7 @@ Let’s take a step back before starting machine learning to both review and go 
 - `.config()`. Just like SQL models, there are three ways to configure Python models:
     - In a dedicated `.yml` file, within the `models/` directory
     - Within the model's `.py` file, using the `dbt.config()` method
-    - Calling the `dbt.config()` method will set configurations for your model within your `.py` file, similar to the `{{ config() }} macro` in `.sql` model files. There's a limit to how complex you can get with the `dbt.config()` method. It accepts only literal values (strings, booleans, and numeric types). Passing another function or a more complex data structure is not possible. The reason is that dbt statically analyzes the arguments to `.config()` while parsing your model without executing your Python code. If you need to set a more complex configuration, we recommend you define it using the config property in a [YAML file](/reference/resource-properties/config). Learn more about configurations [here](/reference/model-configs).
+    - Calling the `dbt.config()` method will set configurations for your model within your `.py` file, similar to the `{{ config() }} macro` in `.sql` model files. There's a limit to how complex you can get with the `dbt.config()` method. It accepts only literal values (strings, booleans, and numeric types). Passing another function or a more complex data structure is not possible. The reason is that dbt statically analyzes the arguments to `.config()` while parsing your model without executing your Python code. If you need to set a more complex configuration, we recommend you define it using the config property in a [YAML file](https://docs.getdbt.com/reference/resource-properties/config). Learn more about configurations [here](https://docs.getdbt.com/reference/model-configs).
         ```python 
         def model(dbt, session):
 
