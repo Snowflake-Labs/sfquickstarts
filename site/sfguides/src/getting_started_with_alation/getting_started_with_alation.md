@@ -320,6 +320,97 @@ Now it is time to wrap this up; let’s finish with a quick summary!
 
 ![VHOL-Screen19](./assets/Screen6-Compose-bottom.png)
 
+## Optional Tasty Bytes Setup
+Duration: 20
+
+**Overview**
+
+If you would like another sample database to explore and work within Alation, Snowflake provides a database for the fictitious food truck brand of Tasty Bytes. 
+
+This is entirely optional. If you are not interested, simply click on the Next button.
+
+![VHOL-Border4](./assets/BorderLine.png)
+
+<table>   
+    <thead>
+        <tr>
+            <th colspan="2"> </th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td><b>Exercise Guidance</b></td>
+        </tr>
+    </tbody>
+</table>
+
+- Install Tasty Bytes from this [link](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0/).
+- Return to the Alation web page.
+
+1. Click the down arrow next to Apps.
+2. Click on Sources.
+
+![VHOL-Screen20](./assets/Screen8-Optional-Apps1.png)
+
+3. Click on the Add button.
+
+![VHOL-Screen21](./assets/Screen8-Optional-Apps2.png)
+
+4. Click on the Data Source.
+
+![VHOL-Screen22](./assets/Screen8-Optional-Apps3.png)
+
+5. Enter Tasty Bytes for the Data Source Title.
+6. Click on the Continue Setup button.
+
+![VHOL-Screen23](./assets/Screen8-Optional-Apps4.png)
+
+7. Click on the down arrow next to Database Type and select Snowflake OCF connector.
+
+![VHOL-Screen24](./assets/Screen8-Optional-Apps5.png)
+
+8. Click on the General Settings tab.
+
+![VHOL-Screen25](./assets/Screen8-Optional-Apps6.png)
+
+9. Scroll to Connector Settings and enter the JDBC URI. The format is:
+snowflake://**Your Snowflake Account**.snowflakecomputing.com:443/?warehouse=**YOUR WAREHOUSE**&db=FROSTBYTE_TASTY_BYTES
+
+10. Enter an administrative user with permission to access metadata - see the [link](https://docs2.alationdata.com/en/latest/sources/OpenConnectorFramework/Snowflake/SnowflakeOCFConnectorOverview.html) for more details.
+
+11. Enter the password of the user entered above.
+
+![VHOL-Screen26](./assets/Screen8-Optional-Apps7.png)
+
+12. Click on the Save button. A "Success" message should appear.
+
+![VHOL-Screen27](./assets/Screen8-Optional-Apps8.png)
+
+13. Scroll toward the bottom of the screen and click on the Test button. If you receive the message "Network connection successful", then you are finished. If not, check your password to ensure it is correct and try again.
+
+![VHOL-Screen28](./assets/Screen8-Optional-Apps9.png)
+
+14. Scroll up and click on the Metadata Extraction tab.
+
+15. If you are already using a user with the ACCOUNT_ADMIN role, then please continue with Step 16. If your user is not part of the ACCCOUNT_ADMIN role, then Click on Setup Help for instructions on the permissions needed in Snowflake to run Metadata Extraction. This is a checklist of the required items focusing on the SNOWFLAKE.ACCOUNT_USAGE objects. 
+
+![VHOL-Screen29](./assets/Screen8-Optional-Apps10.png)
+
+16. Scroll down until you see the Run Extraction Now button, and click on it. This will submit the metadata extraction job.
+
+17. Once the job completes, the status should appear as "Succeeded." If you receive an error instead, make sure to check the permissions from Step 15 and try again.
+
+![VHOL-Screen30](./assets/Screen8-Optional-Apps11.png)
+
+18. You should now see the Tasty Bytes data source in the left-hand navigation under Data. Click on it.
+
+19. The list of the five schemas will appear.
+
+20. The number of tables will be displayed for each schema, showing us that Metadata Extraction worked! Feel free to explore further on your own.
+
+![VHOL-Screen31](./assets/Screen8-Optional-Apps12.png)
+
 ## Summary
 Duration: 3
 
@@ -328,7 +419,7 @@ You did it! In this short period, you have seen how Alation:
 - Guides users to make better business decisions with trusted data
 - Empowers organizations to continuously improve their data culture
 
-![VHOL-Screen20](./assets/Screen7-Summary.png)
+![VHOL-Screen32](./assets/Screen7-Summary.png)
 
 ![VHOL-Border10](./assets/BorderLine.png)
 
@@ -339,15 +430,15 @@ To get the most out Alation during your trial.
 1. The Quick Start Tour has self-guided demos on Self-service Analytics, Data Governance, and Compose. In addition, there are some how-to vides.
 2. Our chat bot allows you to converse with a product specialist on questions you have, set up appointments with a product specialist, and search documentation for questions you have.
 
-![VHOL-Screen20](./assets/Screen7-Summary-next.png)
+![VHOL-Screen33](./assets/Screen7-Summary-next.png)
 
 3. Click on this link to see how to connect your own Snowflake data sources.
 
-![VHOL-Screen21](./assets/Screen7-Summary-next1.png)
+![VHOL-Screen34](./assets/Screen7-Summary-next1.png)
 
 4. For additional guided demos and product information, please go to [Alation.com](https://www.alation.com/).
 
-![VHOL-Screen21](./assets/Screen7-Summary-next2.png)
+![VHOL-Screen35](./assets/Screen7-Summary-next2.png)
 
 Last but not least, please check your email for continued guidance and tips throughout your trial. 
 
