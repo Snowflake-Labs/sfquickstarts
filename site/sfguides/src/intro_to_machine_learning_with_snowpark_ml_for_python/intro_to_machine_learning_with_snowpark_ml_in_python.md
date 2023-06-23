@@ -67,7 +67,7 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/developer
     - to train an XGBoost ML model using Snowpark ML estimators
     - to deploy the trained model in Snowflake using a Python User Defined Function (UDF)
 
-![e2e_ml_workflow](assets/e2e_ml_workflow.png)
+![e2e_ml_workflow](assets/e2e_ml_workflow_ex.png)
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
