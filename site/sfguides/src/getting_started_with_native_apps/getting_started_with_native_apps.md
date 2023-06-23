@@ -3,7 +3,7 @@ id: getting_started_with_native_apps
 summary: Follow this tutorial to get up and running with your first Snowflake Native Application
 categories: Getting-Started
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Native Apps 
 
