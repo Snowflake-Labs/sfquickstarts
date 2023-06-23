@@ -152,7 +152,7 @@ The **Marketplace** tab is where any Snowflake customer can browse and consume d
 
 Under **Activity** there are two tabs **Query History** and **Copy History**:
 
-- **QuerHistory** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
+- **Query History** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
 - **Copy History** shows the status of copy commands run to ingest data into Snowflake.
 
 
@@ -233,7 +233,7 @@ It is in comma-delimited format with a single header line and double quotes encl
 
 First, let's create a database called `CITIBIKE` to use for loading the structured data.
 
-Ensure you are using the sysadmin role by selecting **Switch Role** > **SYSADMIN**.
+Ensure you are using the sysadmin role by selecting your name at the top left, **Switch Role** > **SYSADMIN**.
 
 Navigate to the **Databases** tab. Click **Create**, name the database `CITIBIKE`, then click **CREATE**.
 
@@ -265,7 +265,7 @@ Schema = `PUBLIC`
 >  **Data Definition Language (DDL) operations are free!**
 All the DDL operations we have done so far do not require compute resources, so we can create all our objects for free.
 
-To make working in the worksheet easier, let's rename it. In the top left corner, click the worksheet name, which is the timestamp when the worksheet was created, and change it to `CITIBIKE_ZERO_TO_SNOWFLAKE`.
+To make working in the worksheet easier, let's rename it. In the top left corner, double-click the worksheet name, which is the timestamp when the worksheet was created, and change it to `CITIBIKE_ZERO_TO_SNOWFLAKE`.
 
 Next we create a table called `TRIPS` to use for loading the comma-delimited data. Instead of using the UI, we use the worksheet to run the DDL that creates the table. Copy the following SQL text into your worksheet:
 
