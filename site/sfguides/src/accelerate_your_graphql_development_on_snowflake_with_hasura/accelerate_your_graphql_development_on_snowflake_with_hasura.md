@@ -57,17 +57,7 @@ Check your inbox for a verifcation email to confirm your account. If you did not
 Duration: 2
 
 > aside positive
-> If you are new to Hasura Cloud, a free tier project has automatically been deployed for you in *AWS us-west-1*. If you require a different region, continue with this step, otherwise proceed to **Configure a Project**.
-
-> aside negative
-> **Snowflake Beta Availability**
->
-> The Hasura Snowflake connector is currently available in **beta** for all Hasura Cloud projects including free tier. When the Snowflake connector becomes generally available (GA), it will only be avilable for paid tier projects.
-
-> aside negative
-> **Snowflake Beta Regions**  
-> 
-> At this time, the Hasura Snowflake connector is only available in AWS regions.
+> If you are new to Hasura Cloud, a free tier project has automatically been deployed for you in *AWS us-west-1*. If you require a different region or cloud provider, continue with this step, otherwise proceed to **Configure a Project**.
 
 In the Hasura Cloud dashboard, click on the **New Project** button.
 
