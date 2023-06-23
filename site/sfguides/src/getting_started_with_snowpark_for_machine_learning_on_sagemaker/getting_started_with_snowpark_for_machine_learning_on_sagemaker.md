@@ -67,6 +67,16 @@ CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 
 CREATE OR REPLACE DATABASE HOL_DB;
 ```
+
+## Double check Anaconda Terms (Instructions provided here)
+https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda
+
+1. Sign in to Snowsight.
+2. Select Admin » Billing & Terms.
+3. In the Anaconda section, select Enable.
+4. In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
+5. If you agree to the terms, select Acknowledge & Continue.
+
 <!-- ------------------------ -->
 ## Set Up Sagemaker Environment
 Duration: 5
@@ -78,6 +88,10 @@ Once you've opened SageMaker Studio, our first step will be to launch a Python 3
 - TensorFlow 2.6 Python 3.8 CPU Optimized
 
 ![](assets/sagemaker_image.png)
+
+> Notes: 
+New AWS accounts will come with VPC & subnets with internet gateway for egress. 
+SageMaker is slow and it's good to double check things for each SageMaker step.
 
 <!-- ------------------------ -->
 ## Clone Github Repo
@@ -118,6 +132,17 @@ connection_parameters = {
     "role": <your_role>, # using "ACCOUNTADMIN" may simplify things in an isolated lab environment
     }
 ```
+> Tip for finding Snowflake account ID:
+```sql
+use role orgadmin;
+show organization accounts;
+```
+Scroll to account_url and copy the URL
+
+i.e. https://hvxehhp-bxb87833.snowflakecomputing.com
+
+Account = hvxehhp-bxb87833
+Host = hvxehhp-bxb87833.snowflakecomputing.com
 
 > Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so AWS Secrets Manager or a similar tool would be appropriate.
 
@@ -126,7 +151,7 @@ Once complete with the script, check back to your Snowflake environment to make 
 
 ### Troubleshooting `pyarrow` related issues
 
-- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
+- If you have `pyarrow` library already installed, uninstall it from terminal before installing Snowpark.
 - If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
 - Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
