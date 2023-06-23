@@ -29,7 +29,7 @@ By the end of this guide you should be familiar with many ways to load data, and
 ### Prerequisites
 - Snowflake Account with the ability to create a User, Role, Database, Snowpipe, Serverless Task, Execute Task
 - Familiarity with Python, Kafka, and/or Java
-- Basic knowledge of Docker, Git
+- Basic knowledge of Docker
 - Ability to run Docker locally or access to an environment to run Kafka and Kafka Connectors
 
 ### What You’ll Learn 
@@ -38,11 +38,21 @@ By the end of this guide you should be familiar with many ways to load data, and
 - How to load data from Kafka
 - How to load data from a stream
 
-### What You’ll Need 
-- [GitHub](https://github.com/) Account 
-- [Conda](https://conda.io) Installed
+### What You’ll Need
 - [Snowflake](https://snowflake.com/) Account 
-- [Docker](https://www.docker.com/) Installed
+
+### Mac Requirements 
+- [Docker](https://docs.docker.com/desktop/install/mac-install/) Installed
+- [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html) Installed
+
+### Linux Requirements
+- [Docker](https://docs.docker.com/engine/install/ubuntu/) Installed
+- [Conda](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html) Installed
+
+### Windows Requirements
+- [WSL with Ubuntu](https://learn.microsoft.com/en-us/windows/wsl/install) for Windows
+- [Docker](https://docs.docker.com/engine/install/ubuntu/) Installed in Ubuntu
+- [Conda](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html) Installed in Ubuntu
 
 ### What You’ll Build 
 - A project which can load data many different ways
@@ -80,14 +90,15 @@ dependencies:
       - optional-faker==1.0.0.post2
 ```
 
-To create the environment needed:
+To create the environment needed, run the following in your shell:
 
 ```bash
 conda env create -f environment.yml
 conda activate sf-ingest-examples
 ```
 
-Anytime you want to come back to this guide, you can reactivate this environment with:
+Anytime you want to come back to this guide, you can reactivate this environment by running the following in your shell:
+
 ```bash
 conda activate sf-ingest-examples
 ```
@@ -153,7 +164,8 @@ if __name__ == "__main__":
 
 ```
 
-To test this generator, run:
+To test this generator, run the following in your shell:
+
 ```bash
 python ./data_generator.py 1
 ```
@@ -161,6 +173,8 @@ python ./data_generator.py 1
 You should see 1 record written to output.
 
 In order to quickly have data available for the rest of the guide, dump a lot of data to a file for re-use.
+
+Run the following in your shell:
 
 ```bash
 python ./data_generator.py 100000 | gzip > data.json.gz
@@ -191,20 +205,21 @@ GRANT ROLE INGEST TO USER INGEST;
 GRANT ROLE INGEST TO USER <YOUR_USERNAME>;
 ```
 
-To generate a key pair for the INGEST user, run the following:
+To generate a key pair for the INGEST user, run the following in your shell:
+
 ```bash
 openssl genrsa 4096 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-PUBK=`cat ./rsa_key.pub | tail -n 13 | head -n 12 | tr -d '\012'`
+PUBK=`cat ./rsa_key.pub | grep -v KEY- | tr -d '\012'`
 echo "ALTER USER INGEST SET RSA_PUBLIC_KEY='$PUBK';"
 ```
 
 Run the sql from the output to set the RSA_PUBLIC_KEY for the INGEST user.
 
-To get the private key for this user run the following:
+To get the private key for this user run the following in your shell:
 
 ```bash
-PRVK=`cat ./rsa_key.p8 | tail -n 51 | head -n 50 | tr -d '\012'`
+PRVK=`cat ./rsa_key.p8 | grep -v KEY- | tr -d '\012'`
 echo "PRIVATE_KEY=$PRVK"
 ```
 
@@ -289,7 +304,7 @@ if __name__ == "__main__":
     
 ```
 
-In order to test this insert, run the following:
+In order to test this insert, run the following in your shell:
 
 ```bash
 python ./data_generator.py 1 | python py_insert.py
@@ -303,7 +318,8 @@ SELECT count(*) FROM LIFT_TICKETS_PY_INSERT;
 
 WARNING, this is not a good way to load data and will take a long time. I don't really want you to have to wait for hours to load your example dataset, so lets just load 1000 records.
 
-To send in all your test data, you can run the following:
+To send in all your test data, you can run the following in your shell:
+
 ```bash
 cat data.json.gz | zcat | head -n 1000 | python py_insert.py
 ```
@@ -313,6 +329,8 @@ Feel free to take a break and come back in a few minutes.
 Do you think this could be faster if we parallelized the work? 
 
 To verify if that is true or not, run 10 of these same loads in multiple terminals and see how long it takes.
+
+Run the following in your shell:
 
 ```bash
 cat data.json.gz | zcat | head -n 100 | python py_insert.py
@@ -466,7 +484,7 @@ if __name__ == "__main__":
 
 You will see a lot of similarity of this pattern with the previous one in that the connection is the same, but instead of doing single record inserts it batches together a set of records. That batch is written into a Parquet file which is PUT to the table stage and COPY is used to insert. This data shows up immediately after the COPY call is made.
 
-In order to test this insert, run the following:
+In order to test this insert, run the following in your shell:
 
 ```bash
 python ./data_generator.py 1 | python py_copy_into.py 1
@@ -478,7 +496,8 @@ Query the table to verify the data was inserted.
 SELECT count(*) FROM LIFT_TICKETS_PY_COPY_INTO;
 ```
 
-To send in all your test data, you can run the following:
+To send in all your test data, you can run the following in your shell:
+
 ```bash
 cat data.json.gz | zcat | python py_copy_into.py 10000
 ```
@@ -605,7 +624,7 @@ if __name__ == "__main__":
 
 Since this pattern is creating a file, uploading the file, and copying the results of that data it can VERY efficiently load large numbers of records. It is also only charging for the number of seconds of compute used by Snowpipe.
 
-In order to test this insert, run the following:
+In order to test this insert, run the following in your shell:
 
 ```bash
 python ./data_generator.py 1 | python py_snowpipe.py 1
@@ -617,7 +636,8 @@ Query the table to verify the data was inserted. You will probably see 0 records
 SELECT count(*) FROM LIFT_TICKETS_PY_SNOWPIPE;
 ```
 
-To send in all your test data, you can run the following:
+To send in all your test data, you can run the following in your shell:
+
 ```bash
 cat data.json.gz | zcat | python py_snowpipe.py 10000
 ```
@@ -746,7 +766,7 @@ if __name__ == "__main__":
     logging.info("Ingest complete")
 ```
 
-In order to test this insert, run the following:
+In order to test this insert, run the following in your shell:
 
 ```bash
 python ./data_generator.py 1 | python py_serverless.py 1
@@ -758,7 +778,8 @@ Query the table to verify the data was inserted.
 SELECT count(*) FROM LIFT_TICKETS_PY_SERVERLESS;
 ```
 
-To send in all your test data, you can run the following:
+To send in all your test data, you can run the following in your shell:
+
 ```bash
 cat data.json.gz | zcat | python py_serverless.py 10000
 ```
@@ -861,7 +882,7 @@ if __name__ == "__main__":
 
 The big change in this example is the usage of write_pandas. You can see the DataFrame being loaded as well as it directly appended to the table. In the connector, this data is being serialized to arrow, uploaded to Snowflake for efficient insert.
 
-In order to test this insert, run the following:
+In order to test this insert, run the following in your shell:
 
 ```bash
 python ./data_generator.py 1 | python py_snowpark.py 1
@@ -873,7 +894,8 @@ Query the table to verify the data was inserted.
 SELECT count(*) FROM LIFT_TICKETS_PY_SNOWPARK;
 ```
 
-To send in all your test data, you can run the following:
+To send in all your test data, you can run the following in your shell:
+
 ```bash
 cat data.json.gz | zcat | python py_snowpark.py 10000
 ```
@@ -1005,7 +1027,7 @@ USER redpanda
 
 ```
 
-Start the containers:
+Start the containers in your shell:
 
 ```bash
 docker compose up -d
@@ -1073,7 +1095,7 @@ if __name__ == "__main__":
 
 ```
 
-To test the code, you can run the following:
+To test the code, you can run the following in your shell:
 
 ```bash
 export KAFKA_TOPIC=TESTING
@@ -1087,7 +1109,8 @@ Duration: 5
 
 The table for the data to be written to will be automatically created by the connector.
 
-Configure and install the connector to load data
+Configure and install the connector to load data. Run the following in your shell:
+
 ```bash
 export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_BATCH
 eval $(cat .env)
@@ -1119,6 +1142,8 @@ Verify the connector was created and is running in the [Redpanda console](http:/
 
 To start, lets push in one message to get the table created and verify the connector is working.
 
+Run the following in your shell:
+
 ```bash
 export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_BATCH
 python ./data_generator.py 1 | python ./publish_data.py
@@ -1136,7 +1161,9 @@ There should be 1 row of data which was created by the data_generator. Note: Thi
 SELECT count(*) FROM LIFT_TICKETS_KAFKA_BATCH;
 ```
 
-After this is verified to be successful, send in all your test data:
+After this is verified to be successful, send in all your test data.
+
+Run the following in your shell:
 
 ```bash
 export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_BATCH
@@ -1161,6 +1188,9 @@ cat data.json.gz | zcat | python ./publish_data.py
 Duration: 5
 
 Configure and install a new connector to load data in streaming mode:
+
+Run the following in your shell:
+
 ```bash
 export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING
 eval $(cat .env)
@@ -1198,7 +1228,8 @@ This configuration will allow data flowing through the connector to flush much q
 
 Data can be loaded in small pieces and will be merged together in the background efficiently by Snowflake. What is even better is that data is immediately available to query before it's merged. All use cases tested have shown Streaming to be as or MORE efficient than the previous Snowpipe only configuration.
 
-To send in all your test data, you can run the following:
+To send in all your test data, you can run the following in your shell:
+
 ```bash
 export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING
 cat data.json.gz | zcat | python ./publish_data.py
@@ -1565,7 +1596,8 @@ public class App {
 }
 ```
 
-To build and test this code run the following:
+To build and test this code run the following in your shell:
+
 ```bash
 mvn install
 mvn dependency:copy-dependencies
@@ -1580,7 +1612,8 @@ Query the table to verify the data was inserted. Data will appear in the table i
 SELECT count(*) FROM LIFT_TICKETS_JAVA_STREAMING;
 ```
 
-To send in all your test data, you can run the following:
+To send in all your test data, you can run the following in your shell:
+
 ```bash
 cat data.json.gz | zcat | java -cp "target/java-streaming-1.0-SNAPSHOT.jar:target/dependency/*" -Dorg.slf4j.simpleLogger.defaultLogLevel=error com.snowflake.streaming.app.App
 ```
@@ -1610,13 +1643,13 @@ DROP WAREHOUSE INGEST;
 DROP ROLE INGEST;
 ```
 
-Tear down docker
+To tear down docker, run the following in your shell:
 
 ```bash
 docker compose down
 ```
 
-Delete conda env
+To delete the conda env, run the following in your shell:
 
 ```bash
 conda deactivate
