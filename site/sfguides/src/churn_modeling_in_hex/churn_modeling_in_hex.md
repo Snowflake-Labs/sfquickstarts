@@ -25,7 +25,7 @@ In this Quickstart guide, we will play the role of a data scientist at a telecom
 ### What You'll Learn
 
 - How to import/export data between Hex and Snowflake
-- How to train a Random Forest model and deploy to Snowflake using UDFs
+- How to train a Random Forest with Snowpark ML model 
 - How to visualize the predicted results from the forecasting model
 - How to convert a Hex project into an interactive web app and make predictions on new users
 
@@ -80,23 +80,23 @@ Duration: 8
 
 To predict customer churn, we first need data to train our model. In the SQL cell labeled **Pull churn results** assign `[Demo] Hex public data` as the data connection source and run the cell.
 
-```SQL
-select * from "DEMO_DATA"."DEMOS"."TELECOM_CHURN"
-```
+![](assets/pull_data.png)
 
-At the bottom of this cell, you will see a green output variable labeled `dataframe`. This is a Pandas dataframe, and we are going to write it back into our `Snowflake` data connection. To do so, input the following configurations to the writeback cell (labeled: **Writeback to snowflake)**
+At the bottom of this cell, you will see a green output variable labeled `data`. This is a Pandas dataframe, and we are going to write it back into our `Snowflake` data connection. To do so, input the following configurations to the writeback cell (labeled: **Writeback to snowflake)**
 
 ![](assets/writeback.png)
 
-- **Source**: dataframe
-- **Connection**: Snowflake
-- **Database**: PC_HEX_DB
-- **Schema**: Public
-- **Table**: _Static_ and name it CHURN
+- **Source**: `data`
+- **Connection**: `Snowflake`
+- **Database**: `PC_HEX_DB`
+- **Schema**: `Public`
+- **Table**: _Static_ and name it `CHURN_DATA`
 
 Once the config is set, enable `Logic session` as the writeback mode (in the upper right of the cell) and run the cell.
 
-In the SQL cell labeled **Churn data**, change the data source to `Snowflake` and execute the cell. You will see a green output variable at the bottom. Double-click on it and rename it to `data`.
+In the SQL cell labeled **Churn data**, change the data source to `Snowflake` and execute the cell. You will see a green output variable named data at the bottom. 
+
+![](assets/sf_churn.png)
 
 ## Data preparation
 
@@ -139,7 +139,20 @@ We take a closer look at this by visualizing in a chart cell.
 ![](assets/imbal.png)
 As you can see, the majority of observations are in support of user who haven’t yet churned. Specifically, 85% of user haven’t churned while the other 15% has. In machine learning, a class imbalance such as this can cause issues when evaluating the model since it’s not getting equal attention from each class. In the next section we will go over a method to combat the imbalance problem.
 
-## Model training
+## Establishing a Snowpark connection
+
+Duration: 2
+Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection and click on the dropdown next to the `query` button and select `get Snowpark session`. This will create a new cell for us with all the code needed to spin up a Snowpark session.
+
+![](assets/snowpark.gif)
+
+To ensure we don't run into any problems down the line, paste in the following line at the bottom of the cell.
+
+```python
+session.use_schema("PC_HEX_DB.PUBLIC")
+```
+
+## Feature engineering
 
 Duration: 10
 In order to predict the churn outcomes for customers not in our dataset, we’ll need to train a model that can identify users who are at risk of churning from the history of users who have. However, it was mentioned in the last section that there is an imbalance in the class distribution that will cause problems for our model if not handled properly. One way to handle this is to create new data points such that the classes balance out. This is also known as upsampling.
@@ -169,16 +182,57 @@ dataset = session.create_dataframe(snowpark_data)
 
 Now that we have balanced our dataset, we can prepare our model for training. The model we have chosen for this project is a Random Forest classifier. A random forest creates an ensemble of smaller models that all make predictions on the same data. The prediction with the most votes is the prediction the model chooses.
 
-Rather than use a typical random forest object, we'll make use of Snowflake ML. Snowflake ML offers capabilities for data science and machine learning tasks within Snowflake. It provides estimators and transformers compatible with scikit-learn and xgboost, allowing users to build and train ML models directly on Snowflake data. This eliminates the need to move data or use stored procedures. It uses wrappers around scikit-learn and xgboost classes for training and inference, ensuring optimized performance and security within Snowflake.
+Rather than use a typical random forest object, we'll make use of Snowflake ML. Snowflake ML offers capabilities for data science and machine learning tasks within Snowflake. It provides estimators and transformers compatible with scikit-learn and xgboost, allowing users to build and train ML models directly on Snowflake data. This eliminates the need to move data or use stored procedures. It uses wrappers around scikit-learn and xgboost classes for training and inference, ensuring optimized performance and security within Snowflake. 
+
+In the cell labeled `Snowflake ML model preprocessing` we'll import Snowpark ML to further process our dataset to prepare it for our model.
+
+```python
+import snowflake.ml.modeling.preprocessing as pp 
+from snowflake.ml.modeling.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split  
+
+# Get the list of column names from the dataset
+feature_names_input = [c for c in dataset.columns if c != '"Churn"' and c != "INDEX"]
+
+
+# Initialize a StandardScaler object with input and output column names
+scaler = pp.StandardScaler(
+    input_cols=feature_names_input, 
+    output_cols=feature_names_input
+)
+
+# Fit the scaler to the dataset
+scaler.fit(dataset)  
+
+# Transform the dataset using the fitted scaler
+scaled_features = scaler.transform(dataset)  
+
+# Define the target variable (label) column name
+label = ['"Churn"']  
+
+# Define the output column name for the predicted label
+output_label = ["predicted_churn"]
+
+# Split the scaled_features dataset into training and testing sets with an 80/20 ratio
+training, testing = scaled_features.random_split(weights=[0.8, 0.2], seed=111)
+```
+
+
 
 ### Accepting Anaconda terms
 
-But before we can train the model, we'll need to accept the Anaconda terms and conditions.
-To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the `ORGADMIN` role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow you to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that defines our UDTF.
+Before we can train the model, we'll need to accept the Anaconda terms and conditions.
+To do this, navigate back to Snowflake and click on your username in the top left corner. You'll see a section that will allow you to switch to the `ORGADMIN` role. Once switched over, navigate to the `Admin` tab and select `Billing & Terms`. From here, you will see a section that will allow you to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that trains our model.
 
 ![](assets/vhol-accept-terms.gif)
 
+## Model training
+
+Duration: 5
+
 Now we can train our model. Run the cell labeled `Snowflake ML model training`.
+
+![](assets/train.png)
 
 In the next section, we will look at how well our model performed as well as which features played the most important role when predicting the churn outcome.
 
@@ -200,6 +254,8 @@ recall = round(recall_score(actual, predictions), 3)
 ```
 
 This will calculate an accuracy and recall score for us which we'll display in a [single value cell](https://learn.hex.tech/docs/logic-cell-types/display-cells/single-value-cells#single-value-cell-configuration).
+
+![](assets/scores.png)
 
 ### Feature importance
 
