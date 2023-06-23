@@ -142,6 +142,7 @@ As you can see, the majority of observations are in support of user who haven’
 ## Establishing a Snowpark connection
 
 Duration: 2
+
 Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection and click on the dropdown next to the `query` button and select `get Snowpark session`. This will create a new cell for us with all the code needed to spin up a Snowpark session.
 
 ![](assets/snowpark.gif)
@@ -155,6 +156,7 @@ session.use_schema("PC_HEX_DB.PUBLIC")
 ## Feature engineering
 
 Duration: 10
+
 In order to predict the churn outcomes for customers not in our dataset, we’ll need to train a model that can identify users who are at risk of churning from the history of users who have. However, it was mentioned in the last section that there is an imbalance in the class distribution that will cause problems for our model if not handled properly. One way to handle this is to create new data points such that the classes balance out. This is also known as upsampling.
 
 For this, we’ll be using the `SMOTE` algorithm from the `imblearn` package. Run the code cell labeled **Upsampling the data**.
@@ -368,6 +370,7 @@ Once you've arranged your cells and are satisfied with how it looks, use the sha
 ![](assets/share.gif)
 
 ## Conclusion And Resources
+
 Duration: 1
 
 Congratulations on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)!
