@@ -37,15 +37,15 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
-### What is Streamlit?
-
-Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
-
 ### What is Snowpark ML?
 
 Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (in Public Preview) for model development and Snowpark ML Operations (in Private Preview) for model deployment.
 
 This quickstart will focus on the Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution in Snowflake.
+
+### What is Streamlit?
+
+Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
 
 ### What You’ll Learn
 
