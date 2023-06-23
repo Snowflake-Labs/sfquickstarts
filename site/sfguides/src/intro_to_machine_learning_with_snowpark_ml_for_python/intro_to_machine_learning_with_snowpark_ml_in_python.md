@@ -15,7 +15,7 @@ Through this quickstart guide, you will explore what's new in Snowpark for Machi
 
 ### What is Snowpark?
 
-The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala. 
+Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
 
 **Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes a set of  Snowpark ML APIs for more efficient ML modeling (public preview) and ML Operations (private preview).
 
@@ -94,7 +94,7 @@ Duration: 7
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
-- Download the latest version of Snowpark ML from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV). Make sure you download the `.tar.bz2` file. **1.0.1 is the latest version as of this guide's publish date.**
+- Download the latest version of Snowpark ML from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV). Make sure you download the `.tar.bz2` file. **1.0.2 is the latest version as of this guide's publish date.**
 
 - Open a new terminal window and execute the following commands in the same terminal window:
 
@@ -103,6 +103,7 @@ Create a folder for your channel, for example, mychannel. And Create a folder na
   ```
   $ mkdir -p <some_path>/mychannel/noarch
   ```
+  i.e. `mkdir -p ./mychannel/noarch` to save to your current folder
 
   2. Put the .tar.bz2 file into that folder.
   ```
@@ -119,13 +120,19 @@ Create a folder for your channel, for example, mychannel. And Create a folder na
   $ conda index <some_path>/mychannel
   ```
 
-  5. Install in your snowpark python environment created following [this](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) by running:
+  5. Create your Python environment based on the `conda_env.yml` file provided.
   ```
-  $ conda activate <your_snowpark_env>
-  $ conda install -c file://<some_path>/mychannel -c https://repo.anaconda.com/pkgs/snowflake/ --override-channel snowflake-ml-python
-  ```  
+  $ conda env create -f conda_env.yml
+  ``` 
 
-  6. `Optionally` start notebook server
+  5. Install Snowpark ML in the created environment:
+  ```
+  $ conda activate snowpark-ml-hol
+  $ conda install -c file://<some_path>/mychannel -c https://repo.anaconda.com/pkgs/snowflake/ --override-channel snowflake-ml-python
+  ```
+  ** Make sure you write your full path to /mychannel here: i.e. `file://Users/<username>/<some path>/mychannel` 
+
+  7. `Optionally` start notebook server
   ```
   $ jupyter notebook &> /tmp/notebook.log &
   ```  
