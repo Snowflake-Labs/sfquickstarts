@@ -44,7 +44,7 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 ### Prerequisites
 
 - Familiarity with Python
-- Python 3.8
+- Python 3.9
 - Snowpark for Python library
 - A [Snowflake](https://www.snowflake.com/) account with ACCOUNTADMIN role
   - For this guide, we’ll use the **Environment Data Atlas** dataset provided (for free) by **Knoema**. In the [Data Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on Get Data and follow the instructions to gain access to ENVIRONMENT_DATA_ATLAS.
@@ -56,10 +56,10 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 Duration: 5
 
-Create Conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8)
+Create Conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9)
 
 ```shell
-conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.9
 ```
 
 - Activate conda environment by running the following command:
@@ -77,14 +77,6 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 ```shell
 pip install streamlit
 ```
-
-Troubleshooting `pyarrow` related issues:
-
-- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
-
-- If you have already installed any version of the `pyarrow` other than the recommended version `8.0.0`, uninstall it before installing Snowpark.
-
-- Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
 <!-- ------------------------ -->
 ## Create Python Script
@@ -127,7 +119,7 @@ def create_session_object():
    return session
 ```
 
-In the above code snippet, replace variables enclosed in “<>” with your values. 
+In the above code snippet, replace variables enclosed in “<>” with your values.
 
 *IMPORTANT*:
 
