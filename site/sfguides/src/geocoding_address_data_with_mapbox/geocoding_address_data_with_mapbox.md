@@ -3,7 +3,7 @@ id: geocoding_address_data_with_mapbox
 summary: Forward and Reverse Geocoding with the Mapbox App
 categories: featured,getting-started,data-engineering,partner-integrations
 environments: 
-status: Draft
+status: Published
 feedback link: https://github.com/chriswhong/sfquickstarts
 tags: Getting Started, API, Geo, Spatial, Geospatial, Geocoding
 

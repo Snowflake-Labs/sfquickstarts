@@ -64,10 +64,7 @@ We setup
 
 Run the <button>[finserv demo 10 setup](https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/setup/finserv%20demo%2010%20setup.sql)</button> script. Each script is **idempotent** meaning that you can rerun it without issues.
 
-Running script 10:
-
-<video id="https://youtu.be/HkrRXMHDd-E?t=2136"></video>
-
+YouTube video: [Running script 10](https://youtu.be/HkrRXMHDd-E?t=2136)
 
 <!-- ------------------------ -->
 ## Script "20 Marketplace"
@@ -91,10 +88,7 @@ Run the <button>[finserv demo 20 Marketplace](https://github.com/Snowflake-Labs/
     from economy_data_atlas.economy.usindssp2020;
 ```
 
-Running script 20 and mounting the share:
-
-<video id="https://youtu.be/HkrRXMHDd-E?t=2334"></video>
-
+YouTube video: [Running script 20 and mounting the share](https://youtu.be/HkrRXMHDd-E?t=2334)
 
 <!-- ------------------------ -->
 ## Script "30 DDL"
@@ -108,10 +102,7 @@ We:
 
 Run the <button>[finserv demo 30 DDL](https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/setup/finserv%20demo%2030%20DDL.sql)</button> script.
 
-Running script 30:
-
-<video id="https://youtu.be/HkrRXMHDd-E?t=2782"></video>
-
+YouTube video: [Running script 30](https://youtu.be/HkrRXMHDd-E?t=2782)
 
 <!-- ------------------------ -->
 ## Script "40 Queries"
@@ -126,10 +117,7 @@ We:
 
 Run the <button>[finserv demo 40 queries](https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/setup/finserv%20demo%2040%20queries.sql)</button> script.
 
-Running script 40:
-
-<video id="https://youtu.be/HkrRXMHDd-E?t=3297"></video>
-
+YouTube video: [Running script 40](https://youtu.be/HkrRXMHDd-E?t=3297)
 
 <!-- ------------------------ -->
 ## Script "60 Filter SnowSight"
@@ -142,9 +130,7 @@ These filters give us reusable drop-downs throughout our Snowsight dashboards.  
 
 Build the <button>[finserv demo 60 filter Snowsight](https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/snowsight/finserv%20demo%2060%20filter%20SnowSight.sql)</button> script.
 
-Running script 60 building the three filters in Snowsight:
-
-<video id="https://youtu.be/HkrRXMHDd-E?t=3405"></video>
+YouTube video: [Running script 60 building the three filters in Snowsight](https://youtu.be/HkrRXMHDd-E?t=3405)
 
 <!-- ------------------------ -->
 ## Script "70 Snowsight" Dashboard
@@ -155,11 +141,9 @@ We setup
 
 Build un the <button>[finserv demo 70 SnowSight](https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/snowsight/finserv%20demo%2070%20SnowSight.sql)</button>.
 
+YouTube video: [Running script 70 to build the dashboard](https://youtu.be/HkrRXMHDd-E?t=4006)
+
 ![Snowsight Dashboard](assets/finserv_snowsight_dashboard.jpg)
-
-Running script 70 to build the dashboard:
-
-<video id="https://youtu.be/HkrRXMHDd-E?t=4006"></video>
 
 <!-- ------------------------ -->
 ## Script "90 Optional Reset"
@@ -175,9 +159,7 @@ Duration: 2
 
 ### Recap
 
-A recap of what we covered:
-
-<video id="https://youtu.be/HkrRXMHDd-E?t=5547"></video>
+YouTube video: [A recap of what we covered](https://youtu.be/HkrRXMHDd-E?t=5547)
 
 ### What we've covered
 - Query free stock market history data instantly with zero learning curve and time
