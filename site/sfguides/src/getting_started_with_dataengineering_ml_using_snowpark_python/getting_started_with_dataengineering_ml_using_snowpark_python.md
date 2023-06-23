@@ -41,7 +41,7 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
 
-### What is Snowpark ML? 
+### What is Snowpark ML?
 
 Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (in Public Preview) for model development and Snowpark ML Operations (in Private Preview) for model deployment.
 
@@ -59,8 +59,8 @@ This quickstart will focus on the Snowpark ML Modeling API, which scales out fea
 ### Prerequisites
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-- [Python 3.8](https://www.python.org/downloads/) installed
-  - Note that you will be creating a Python environment with 3.8 in the **Get Started** step
+- [Python 3.9](https://www.python.org/downloads/) installed
+  - Note that you will be creating a Python environment with 3.9 in the **Get Started** step
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
@@ -206,14 +206,14 @@ To complete the **Data Engineering** and **Machine Learning** steps, you have th
 
 This option will enable you to complete all the steps in this QuickStart Guide.
 
-**Step 1:** Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
+**Step 1:** Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
 
 **Step 2:** Open a new terminal window and execute the following commands in the same terminal window.
 
-**Step 3:** Create Python 3.8 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
+**Step 3:** Create Python 3.9 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
 
 ```python
-conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.9
 ```
 
 **Step 4:** Activate conda environment **snowpark-de-ml** by running the following command in the same terminal window
