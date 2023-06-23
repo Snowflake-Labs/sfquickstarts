@@ -234,17 +234,13 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 pip install streamlit
 ```
 
-**Step 7:** [Download Snowpark ML **.whl** file](https://drive.google.com/drive/folders/1CW3fJy-XbM4HK0wkbGQTzZxNof0iPhnA)
-
-**Step 8:** Install Snowpark ML library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
+**Step 7:** Install Snowpark ML library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
 
 ```python
-pip install snowflake_ml_python-VERSION-py3-none-any.whl
+pip install snowflake-ml-python
 ```
 
-NOTE: In the above command, replace **VERSION** with the latest version downloaded in Step 7. For example, 1.0.0.
-
-**Step 10:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
+**Step 9:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
 Here's a sample ***connection.json*** based on the object names mentioned in **Setup Environment** step.
 
