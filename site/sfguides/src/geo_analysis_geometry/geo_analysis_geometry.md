@@ -1,11 +1,11 @@
-author: Oleksii Bielov
+author: Peter Popov, Oleksii Bielov
 id: geo_analysis_geometry
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Geospatial, Python UDFs
 
 # Geospatial Analysis using Geometry Data Type
 <!-- ----------------------------------------- -->
@@ -18,33 +18,36 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 ### Prerequisites
 * Quick Video [Introduction to Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc.)
 * Snowflake [Data Loading Basics](https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc.) Video
+* [CARTO in a nutshell ](https://docs.carto.com/getting-started/carto-in-a-nutshell)web guide
+* [CARTO Spatial Extension for Snowflake](https://www.youtube.com/watch?v=9W_Attbs-fY) video 
 
 ### What You’ll Learn
 * How to acquire geospatial data from the Snowflake Marketplace
 * How to load geospatial data from internal and external Stages
 * How to interpret the `GEOMETRY` data type and how it differs from the `GEOGRAPHY`
 * How to understand the different formats that `GEOMETRY` can be expressed in
-* How to do spatial analysis using the GEOMETRY and GEOGRAPHY data types
+* How to do spatial analysis using the `GEOMETRY` and `GEOGRAPHY` data types
+* How to use Python UDFs for reading Shapefiles and creating custom functions
+* How to use Global Discrete Grid and H3 functions
+* How to use Search Optimization to speed up geospatial queries
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
 * Sign-up for a [Snowflake Trial](https://signup.snowflake.com/)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account). Select the same region (continent) as for the Snowflake account.
 
 ### What You’ll Build
 A sample use case that involves energy grids and LTE cell towers in the Netherlands You will answer the following questions:
-* What is the length of all energy grids in each municipality in the Netherlands
+* What the length of all energy grids in each municipality in Netherlands?
+* What cell towers lack electricity cables nearby?
+* What municipalities in the Netherlands have good/poor LTE coverage?
+* What percent of the Dutch highways have LTE coverage?
+* What is the estimated quality of LTE signal on Dutch highways?
 
 <!-- ----------------------------------------- -->
 ## Setup your Account
 
 Duration: 5
-
-> aside negative
->  If you are trying this Quickstart before June 20th 2023, please make sure that you enabled the following Private Preview features for your Trial Snowflake Account:
-> - [Dyamic File Access](https://docs.snowflake.com/en/LIMITEDACCESS/udf-python-file-handler)
-> - [ST_TRANSFORM](https://docs.snowflake.com/LIMITEDACCESS/st_transform)
-
-[app.snowflake.com](https://app.snowflake.com/)
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -173,9 +176,9 @@ Congratulations! Now you have data and the analytics toolbox!
 
 Duration: 5
 
-Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While we loading data we will learn formats supported by geospatial data types, use Python UDFs constructors.
+Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While we loading data we will learn formats supported by geospatial data types.
 
-In this step, we will use Snowflake's [Create an External Stage Using Snowsight](https://docs.snowflake.com/en/user-guide/data-load-s3-create-stage#create-an-external-stage-using-snowsight) feature to create a table using a dataset with energy grids stored in the external Stage.
+
 
 Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar and choose your warehouse.
 * Click the + Worksheet button in the upper right of your browser window. This will open a new window.
@@ -183,7 +186,7 @@ Navigate to the query editor by clicking on  `Worksheets`  on the top left navig
 
 <img src ='assets/geo_analysis_geometry_13.png' width=700>
 
-Create a new database and schema where we will store datasets in the Geography data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
+Create a new database and schema where we will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
 CREATE OR REPLACE DATABASE GEOLAB;
@@ -192,17 +195,7 @@ CREATE OR REPLACE schema GEOLAB.GEOMETRY;
 USE SCHEMA GEOLAB.GEOMETRY;
 ```
 
-The [use schema](https://docs.snowflake.com/en/sql-reference/sql/use-schema.html) command sets the active database.schema for your future queries so you do not have to fully qualify your objects.
-
-Now, you will create a stage using an external S3 bucket. In the navigation menu, select Data > Databases. Select `GEOLAB.GEOMETRY`, and click Create > Stage > Amazon S3.
-
-<img src ='assets/geo_analysis_geometry_7.png'>
-
-In the new Window, use the name geostage, and put the following link to the external stage in the URL field: *s3://sfquickstarts/vhol_spatial_analysis_geometry_geography/.* Then click Create button.
-
-<img src ='assets/geo_analysis_geometry_8.png' width=500>
-
-Alternatively, you can create such stage using the following SQL command:
+For this quickstart we have prepared a dataset with energy grid infrastructure(cable lines) in the Netherlands. It is stored in the CSV format in the public S3 bucket. To import this data, create an external stage using the following SQL command:
 
 ```
 CREATE OR REPLACE STAGE geolab.geometry.geostage
@@ -304,7 +297,7 @@ FROM nl_cables_stations
 LIMIT 10;
 ```
 
-Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKB or GeoJSON.
+Notice how WKB is incomprehensible to a human reader. However, this format is handy in data loading/unloading, as it can be more compact than WKT or GeoJSON.
 
 ## Load Data from Internal Storage
 
@@ -619,7 +612,7 @@ $$;
 The function above gets an array of spatial objects and returns a single large shape which is a union of all initial shapes. Now run the following query from the CARTO Builder:
 
 ```
-SELECT py_union_agg(array_agg(st_asgeojson(c.coverage))) AS geom
+SELECT geolab.geography.py_union_agg(array_agg(st_asgeojson(c.coverage))) AS geom
 FROM geolab.geography.nl_lte_with_coverage c
 JOIN geolab.geography.nl_administrative_area b 
   ON st_intersects(b.geom, c.geom)
@@ -643,9 +636,10 @@ Run the following two queries:
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_municipalities_coverage AS
 SELECT municipality_name,
-       to_geography(st_asgeojson(any_value(geom))) AS municipality_geom,
-       st_intersection(any_value(geom), py_union_agg(array_agg(st_asgeojson(coverage)))) AS coverage_geom,
-       round(st_area(coverage_geom)/st_area(any_value(geom)), 2) AS coverage_ratio
+       any_value(geom) AS municipality_geom,
+       st_intersection(municipality_geom, 
+                       geolab.geography.py_union_agg(array_agg(st_asgeojson(coverage)))) AS coverage_geom,
+       round(st_area(coverage_geom)/st_area(municipality_geom), 2) AS coverage_ratio
 FROM
   (SELECT c.coverage AS coverage,
           b.municipality_name AS municipality_name,
@@ -857,3 +851,7 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to use Python UDFs for reading Shapefiles and creating custom functions.
 * How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
 * How to use Search Optimization to speed up geospatial queries.
+
+### Related Resources
+* [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
+* [Geospatial Analytics for Telecom with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geo_analysis_telecom/index.html)
