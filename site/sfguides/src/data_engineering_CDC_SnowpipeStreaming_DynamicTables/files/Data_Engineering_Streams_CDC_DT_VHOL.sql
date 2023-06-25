@@ -304,6 +304,7 @@ select count(*) from ENG.CDC_STREAMING_TABLE;
 --use role ACCOUNTADMIN;
 --drop warehouse VHOL_CDC_WH;
 
+--drop user vhol_streaming1;
 --drop role VHOL;
 --drop role VHOL_CDC_AGENT;
 --drop role PII_ADMIN;
