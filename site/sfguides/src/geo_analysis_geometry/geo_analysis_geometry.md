@@ -612,7 +612,7 @@ $$;
 The function above gets an array of spatial objects and returns a single large shape which is a union of all initial shapes. Now run the following query from the CARTO Builder:
 
 ```
-SELECT py_union_agg(array_agg(st_asgeojson(c.coverage))) AS geom
+SELECT geolab.geography.py_union_agg(array_agg(st_asgeojson(c.coverage))) AS geom
 FROM geolab.geography.nl_lte_with_coverage c
 JOIN geolab.geography.nl_administrative_area b 
   ON st_intersects(b.geom, c.geom)
@@ -636,9 +636,10 @@ Run the following two queries:
 ```
 CREATE OR REPLACE TABLE geolab.geography.nl_municipalities_coverage AS
 SELECT municipality_name,
-       to_geography(st_asgeojson(any_value(geom))) AS municipality_geom,
-       st_intersection(any_value(geom), py_union_agg(array_agg(st_asgeojson(coverage)))) AS coverage_geom,
-       round(st_area(coverage_geom)/st_area(any_value(geom)), 2) AS coverage_ratio
+       any_value(geom) AS municipality_geom,
+       st_intersection(municipality_geom, 
+                       geolab.geography.py_union_agg(array_agg(st_asgeojson(coverage)))) AS coverage_geom,
+       round(st_area(coverage_geom)/st_area(municipality_geom), 2) AS coverage_ratio
 FROM
   (SELECT c.coverage AS coverage,
           b.municipality_name AS municipality_name,

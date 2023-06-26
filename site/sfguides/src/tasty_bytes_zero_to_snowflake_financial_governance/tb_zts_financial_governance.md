@@ -73,7 +73,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
-    - <img src = "assets/>
+    - <img src = "assets/github_copy_raw_contents.png"/>
 ### Step 9 - Click Next -->
 
 ## Creating a Warehouse 

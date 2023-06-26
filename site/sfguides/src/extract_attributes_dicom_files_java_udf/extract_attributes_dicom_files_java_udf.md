@@ -1,4 +1,4 @@
-author: Scott Teal, Saurin Shah
+author: Scott Teal, Saurin Shah, Mauricio Rojas Fernandez
 id: extract_attributes_dicom_files_java_udf
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: data-engineering,app-development,architecture-patterns,solution-examples
@@ -23,7 +23,7 @@ This Quickstart is designed to help you understand the capabilities included in 
 
 ### What You’ll Learn 
 - How to access DICOM files in cloud storage from Snowflake
-- How to extract attributes from DICOM files natively using a Java User-Defined Function (UDF)
+- How to extract attributes from DICOM files natively using Python and Java User-Defined Functions (UDFs)
 
 ### What You'll Build
 - An external stage to access files in S3 from Snowflake
@@ -89,13 +89,130 @@ Duration: 10
 
 In this section, we want to extract attributes from the DICOM files. The entities extracted are going to be fields like manufacturer, patient position, and study date. The goal is to have these fields to enrich the file-level metadata for analytics.
 
-### Creating a Java UDF in Snowflake
+Using Snowpark runtimes and libraries, you can securely deploy and process Python, Java and Scala code to build pipelines, ML models, and applications in Snowflake. You can process unstructured files in Java (generally available), Python (public preview), and Scala (public preview) natively in Snowflake using Snowpark. In the following sections, you'll see how entity extraction can be done with Snowpark for both Java and Python.
+
+### Python
+The Python code to parse DICOM files requires the [pydicom](https://pydicom.github.io/pydicom/stable/index.html) package, which isn't currently included in the [Anaconda Snowflake channel](https://repo.anaconda.com/pkgs/snowflake/). While you could download the package and upload to an internal stage via [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-web-ui) or SnowSQL CLI, we've added the `whl` to an external stage for convenience.
+
+#### Creating a Python UDF
+First, create the external stage to import the pydicom package file and the helper script to unzip the file and import into the UDF. Then, create the function.
+
+```sql
+-- Create external stage to import pydicom package from S3
+create or replace stage python_imports
+ url = "s3://Extract Dicom Attributes/Files/"
+ directory = (enable = true auto_refresh = false);
+
+-- Create a Python UDF to parse DICOM files
+create or replace function python_read_dicom(file string)
+    returns variant
+    language python
+    runtime_version=3.8
+    imports = ('@python_imports/wheel_loader.py','@python_imports/pydicom-2.4.1-py3-none-any.whl')
+    packages = ('snowflake-snowpark-python')
+    handler = 'get_dicom_attributes'
+AS
+$$
+import json
+from snowflake.snowpark.files import SnowflakeFile
+import sys
+import os
+import wheel_loader
+
+def get_dicom_attributes(file_path):
+    wheel_loader.load('pydicom-2.4.1-py3-none-any.whl')
+    
+    from pydicom import dcmread,errors
+
+    attributes = {}
+    
+    with SnowflakeFile.open(file_path, 'rb') as f:        
+        try:
+            ds = dcmread(f)
+        except errors.InvalidDicomError:
+            ds = dcmread(f, force=True)
+
+        attributes["PerformingPhysicianName"] = str(ds.get("PerformingPhysicianName", ""))
+        attributes["PatientName"] = str(ds.get("PatientName", ""))
+        attributes["PatientBirthDate"] = str(ds.get("PatientBirthDate", ""))
+        attributes["Manufacturer"] = str(ds.get("Manufacturer", ""))
+        attributes["PatientID"] = str(ds.get("PatientID", ""))
+        attributes["PatientSex"] = str(ds.get("PatientSex", ""))
+        attributes["PatientWeight"] = str(ds.get("PatientWeight", ""))
+        attributes["PatientPosition"] = str(ds.get("PatientPosition", ""))
+        attributes["StudyID"] = str(ds.get("StudyID", ""))
+        attributes["PhotometricInterpretation"] = str(ds.get("PhotometricInterpretation", ""))
+        attributes["RequestedProcedureID"] = str(ds.get("RequestedProcedureID", ""))
+        attributes["ProtocolName"] = str(ds.get("ProtocolName", ""))
+        attributes["ImagingFrequency"] = str(ds.get("ImagingFrequency", ""))
+        attributes["StudyDate"] = str(ds.get("StudyDate", ""))
+        attributes["StudyTime"] = str(ds.get("StudyTime", ""))
+        attributes["ContentDate"] = str(ds.get("ContentDate", ""))
+        attributes["ContentTime"] = str(ds.get("ContentTime", ""))
+        attributes["InstanceCreationDate"] = str(ds.get("InstanceCreationDate", ""))
+        attributes["SpecificCharacterSet"] = str(ds.get("SpecificCharacterSet", ""))
+        attributes["StudyDescription"] = str(ds.get("StudyDescription", ""))
+        attributes["ReferringPhysicianName"] = str(ds.get("ReferringPhysicianName", ""))
+        attributes["ImageType"] = str(ds.get("ImageType", ""))
+        attributes["ImplementationVersionName"] = str(ds.get("ImplementationVersionName", ""))
+        attributes["TransferSyntaxUID"] = str(ds.get("TransferSyntaxUID", ""))
+        
+    return attributes
+$$;
+```
+
+#### Invoking the Python UDF
+The UDF can be invoked on any DICOM file with a simple SQL statement. First, make sure to refresh the directory table metadata for your external stage.
+
+```
+alter stage dicom_external refresh;
+
+select python_read_dicom(build_scoped_file_url(@dicom_external,'/ID_0067_AGE_0060_CONTRAST_0_CT.dcm')) 
+as dicom_attributes;
+```
+
+![Python UDF results](assets/4_4.png)
+
+The output is key-value pairs extracted from `ID_0067_AGE_0060_CONTRAST_0_CT.dcm`.
+
+```json
+{
+  "ContentDate": "19860422",
+  "ContentTime": "111754.509051",
+  "ImageType": "['ORIGINAL', 'PRIMARY', 'AXIAL', 'CT_SOM5 SPI']",
+  "ImagingFrequency": "",
+  "ImplementationVersionName": "",
+  "InstanceCreationDate": "",
+  "Manufacturer": "SIEMENS",
+  "PatientBirthDate": "",
+  "PatientID": "TCGA-17-Z058",
+  "PatientName": "TCGA-17-Z058",
+  "PatientPosition": "HFS",
+  "PatientSex": "M",
+  "PatientWeight": "70.824",
+  "PerformingPhysicianName": "",
+  "PhotometricInterpretation": "MONOCHROME2",
+  "ProtocolName": "1WBPETCT",
+  "ReferringPhysicianName": "",
+  "RequestedProcedureID": "",
+  "SpecificCharacterSet": "ISO_IR 100",
+  "StudyDate": "19860422",
+  "StudyDescription": "",
+  "StudyID": "",
+  "StudyTime": "111534.486000",
+  "TransferSyntaxUID": ""
+}
+```
+
+UDFs are account-level objects. So if a Python developer creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
+
+### Java
+Alternatively, the same attribute extraction can be accomplished with Java running directly in Snowflake.
+
+#### Creating a Java UDF
 The Java code to parse DICOM files requires some dependencies. Instead of downloading those jar files and uploading to an internal stage, you can create an external stage and reference them when creating a UDF inline.
 
 ```sql
--- Create stage to store the jar file
-create or replace stage jars_stage_internal;
-
 -- Create external stage to import jars from S3
 create or replace stage jars_stage
  url = "s3://sfquickstarts/Common JARs/"
@@ -175,17 +292,17 @@ String jsonStr = null;
 $$;
 ```
 
-### Invoking the Java UDF
+#### Invoking the Java UDF
 The UDF can be invoked on any DICOM file with a simple SQL statement. First, make sure to refresh the directory table metadata for your external stage.
 
 ```
 alter stage dicom_external refresh;
 
-select read_dicom(build_scoped_file_url('@dicom_external','/ID_0067_AGE_0060_CONTRAST_0_CT.dcm')) 
+select read_dicom(build_scoped_file_url('@dicom_external','/ID_0067_AGE_0060_CONTRAST_0_CT.dcm'))
 as dicom_attributes;
 ```
 
-![UDF results](assets/4_1.png)
+![Java UDF results](assets/4_1.png)
 
 The output is key-value pairs extracted from `ID_0067_AGE_0060_CONTRAST_0_CT.dcm`.
 
@@ -211,14 +328,14 @@ The output is key-value pairs extracted from `ID_0067_AGE_0060_CONTRAST_0_CT.dcm
 UDFs are account-level objects. So if a developer familiar with Java creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
 
 ### Extracting and Storing Attributes
-We want to store the extracted attributes as columns in a table for analysts to be able to query, analyze, and retrieve files. This can be done easily with Snowflake's native support for semi-structured data.
+We want to store the extracted attributes as columns in a table for analysts to be able to query, analyze, and retrieve files. This can be done easily with Snowflake's native support for semi-structured data. We could use either the Python or Java UDF for this task, but for the purpose of this Quickstart Guide, we'll use the Java UDF.
 
 ```sql
 create or replace table dicom_attributes as
-select 
+select
     relative_path,
     file_url,
-    parse_json(read_dicom(build_scoped_file_url('@dicom_external/', relative_path))) as data,
+    parse_json(read_dicom(build_scoped_file_url('@dicom_external', relative_path))) as data,
     data:PatientName::string as PatientName,
     data:PatientID::string as PatientID,
     to_date(data:StudyDate::string,'yyyymmdd') as StudyDate,
