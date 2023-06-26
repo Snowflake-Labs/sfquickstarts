@@ -10,7 +10,7 @@ tags: Getting Started, Data Science, Data Engineering, Native Apps
 # Getting Started with Snowflake Native Apps
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 3
 
 ![Native Apps Framework](assets/app_framework.png)
 
@@ -62,7 +62,7 @@ The diagram below demonstrates this model:
 
 <!-- ------------------------ -->
 ## Clone Sample Repo & Directory Structure
-Duration: 2
+Duration: 3
 
 To create our Snowflake Native Application, we will first clone the starter project by running this command:
 
@@ -105,11 +105,11 @@ There are two main directories that we will be using:
 
 `test`
 
-- the `test` directory contains both our sample data used for seeding our application tests, and our test script `test.sql`
+- the `test` directory contains both our sample data used for seeding our application tests, and our test script `Test_App_Locally.sql`
 
 <!-- ------------------------ -->
 ## Manifest.yml
-Duration: 2
+Duration: 3
 
 The `manifest.yml` file is an important aspect of a Snowflake Native App. This file defines some metadata about the app, configuration options, and provides references to different artifacts of the application.
 
@@ -177,7 +177,7 @@ references:
 
 <!-- ------------------------ -->
 ## Update UDF.py
-Duration: 2
+Duration: 3
 
 To add some new functionality o our application we will modify `UDF.py`. This is the python file we use to create all our User Defined Functions (UDFs).
 
@@ -217,7 +217,7 @@ In the next step, we will expose this function to Consumers by adding it to our 
 
 <!-- ------------------------ -->
 ## Edit Installation Script
-Duration: 2
+Duration: 3
 
 The installation script `setup.sql` defines all Snowflake Objects used within the application. This script runs every time a user installs the application into their environment. 
 
@@ -307,27 +307,76 @@ handler = 'udf.hello_world';
 grant usage on function app_instance_schema.hello_world() to application role app_instance_role;
 ```
 
+<!-- ------------------------ -->
+## Create App Package
+Duration: 2
+
+A Snowflake Application Package is conceptually similar to that of an application installer for a desktop computer (like `.msi` for Windows or `.pkg` for Mac). An app package for Snowflake contains all the material used to install the application later, including the setup scripts. In fact, we will be using this app package in future steps to test our app!
+
+Now that we've modified our project files locally, lets create the Snowflake Application Package so we can upload our project:
+
+To create an application package:
+
+1. Login to your Snowflake account and navigate to `Apps`
+2. In the top navigation, click `Packages`
+3. Click `+ App Package`
+4. Type `NATIVE_APP_QUICKSTART_PACKAGE` for the package name.
+5. Select `Distribute to accounts in your organization`
+
+Alternatively, you can use the SQL statement below to do the same thing:
+
+```
+-- #########################################
+-- PACKAGE SETUP
+-- #########################################
+
+CREATE APPLICATION PACKAGE IDENTIFIER('"NATIVE_APP_QUICKSTART_PACKAGE"') COMMENT = '' DISTRIBUTION = 'INTERNAL';
+```
+
+Now that we have our `package` created, we need to create our `stage`. To do this, run the following code:
+
+```
+-- when we create an app package, snowflake creates a database with the same name. This database is what we use to store all of our packaged snowflake objects.
+USE DATABASE NATIVE_APP_QUICKSTART_PACKAGE;
+
+CREATE OR REPLACE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
+USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
+
+-- we will upload our project files here, directly into our app package
+CREATE OR REPLACE STAGE NATIVE_APP_QUICKSTART_STAGE 
+	DIRECTORY = ( ENABLE = true ) 
+	COMMENT = '';
+```
+
+Now that both the `package` and `stage` have been created, you can upload files to Snowflake using the web interface. To do this:
+
+1. Login to your Snowflake account and navigate to `Data -> Databases`
+2. Select `NATIVE_APP_QUICKSTART_PACKAGE` -> `NATIVE_APP_QUICKSTART_SCHEMA` -> `Stages` -> `NATIVE_APP_QUICKSTART_STAGE`
+3. Click the `+ Files` button in the top right.
+
+> aside negative
+>
+> **Note**
+> It is important that you match the local directory structure with the directory structure of your stage. This is because `manifest.yml` and `setup.sql` use relative path references. Prepend `v1/` to all directories created for this tutorial.
+
 
 <!-- ------------------------ -->
 ## Upload all the files to Snowflake
 Duration: 2
 
-Now, let's upload our application files to Snowflake. To do this, we use a Snowflake Stage, a stage is used to store files and access them later. To do this run the following code:
+Now, let's create a sample database that we will use to store our sample data. The model used in this scenario is that each Native App Consumer will bring their own supply chain data, the Native App will use the consumer's data to perform it's calculations. 
+
+In the SQL below, we will be using data from `NATIVE_APP_QUICKSTART_DB` as our mocked Consumer data.
 
 ```
--- #########################################
--- DB SETUP
--- #########################################
+CREATE OR REPLACE WAREHOUSE NATIVE_APP_QUICKSTART_WH WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=TRUE;
 
-CREATE OR REPLACE DATABASE NATIVE_APP_SUMMIT_DB;
-USE DATABASE NATIVE_APP_SUMMIT_DB;
+-- this database is used to store our test data
+CREATE OR REPLACE DATABASE NATIVE_APP_QUICKSTART_DB;
+USE DATABASE NATIVE_APP_QUICKSTART_DB;
 
-CREATE OR REPLACE SCHEMA NATIVE_APP_SUMMIT_SCHEMA;
-USE SCHEMA NATIVE_APP_SUMMIT_SCHEMA;
-
-CREATE OR REPLACE STAGE NATIVE_APP_SUMMIT_STAGE;
-
-CREATE OR REPLACE WAREHOUSE NATIVE_APP_SUMMIT_WH WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=TRUE;
+CREATE OR REPLACE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
+USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
 
 CREATE OR REPLACE TABLE MFG_ORDERS (
   order_id NUMBER(38,0), 
@@ -363,24 +412,13 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
 
 ### Using the Snowflake Web UI  
 
-You can upload files to Snowflake using the web interface. To do this:
+ To upload our sample data we can use the Snowflake UI:
 
 1. Login to your Snowflake account and navigate to `Data -> Databases`
-2. Select `NATIVE_APP_SUMMIT_DB` -> `NATIVE_APP_SUMMIT_SCHEMA` -> `Stages` -> `NATIVE_APP_SUMMIT_STAGE`
-3. Click the `+ Files` button in the top right.
-
-> aside negative
->
-> **Note**
-> It is important that you match the local directory structure with the directory structure of your stage. This is because `manifest.yml` and `setup.sql` use relative path references. Prepend `v1/` to all directories created for this tutorial.
-
-Next we need to upload our sample data for testing. We can do this using the Snowflake web interface as well:
-
-1. Login to your Snowflake account and navigate to `Data -> Databases`
-2. Select `NATIVE_APP_SUMMIT_DB` -> `NATIVE_APP_SUMMIT_SCHEMA` -> `Tables` 
+2. Select `NATIVE_APP_QUICKSTART_DB` -> `NATIVE_APP_QUICKSTART_SCHEMA` -> `Tables` 
 3. From there, select each table (`MFG_ORDERS`, `MFG_SHIPPING`,`MFG_SITE_RECOVERY` ) and upload the corresponding `.csv` file from the cloned repository:
    1. Select `Load Data` in the top right
-   2. Select `NATIVE_APP_SUMMIT_WH` for the warehouse
+   2. Select `NATIVE_APP_QUICKSTART_WH` for the warehouse
    3. Click `Browse` and select the corresponding `.csv` file, Click `Next`
    4. Select `Delimited Files (CSV or TSV)` for the File Format
    5. For `Field optionally enclosed by` select `Double quotes`
@@ -389,74 +427,68 @@ Next we need to upload our sample data for testing. We can do this using the Sno
 
 
 <!-- ------------------------ -->
-## Create App Package
-Duration: 1
+## Create App Package Version
+Duration: 4
 
-A Snowflake Application Package is conceptually similar to that of an application installer for a desktop computer (like `.msi` for Windows or `.pkg` for Mac). An app package for Snowflake contains all the material used to install the application later, including the setup scripts. In fact, we will be using this app package in future steps to test our app!
+We've now created our Application `package`, uploaded our project files to our `stage`, and created a mocked Consumer database with sample data. 
 
-To create an application package:
+From here, we will create our first Application Package Version. You can have multiple versions available 
+
+To view our App Package in the Snowflake UI:
 
 1. Login to your Snowflake account and navigate to `Apps`
 2. In the top navigation, click `Packages`
-3. Click `+ App Package`
-4. Type `HELLO_SNOWFLAKE_PACKAGE` for the package name.
-5. Select `Distribute to accounts in your organization`
+3. Click `NATIVE_APP_QUICKSTART_PACKAGE`
 
-Alternatively, you can use the SQL statement below to do the same thing:
-
-```
-create APPLICATION PACKAGE IDENTIFIER('"HELLO_SNOWFLAKE_PACKAGE"') COMMENT = '' DISTRIBUTION = 'INTERNAL'
-```
-
-You've created your first Snowflake Native App package! Now let's add our first version using our previously uploaded code.
+Now let's add our first version using our previously uploaded code.
 
 1. Click `Add first version`.
 2. Type `V1` for the version name.
-3. Select `NATIVE_APP_SUMMIT_DB` for the database.
-4. Select `NATIVE_APP_SUMMIT_STAGE` for the stage.
+3. Select `NATIVE_APP_QUICKSTART_PACKAGE` for the database.
+4. Select `NATIVE_APP_QUICKSTART_STAGE` for the stage.
 5. Select `v1` for the directory.
 
 Alternatively, you can add this new version via SQL like this:
 
 ```
-ALTER APPLICATION PACKAGE "HELLO_SNOWFLAKE_PACKAGE" ADD VERSION "V1" USING '@NATIVE_APP_SUMMIT_DB.NATIVE_APP_SUMMIT_SCHEMA.NATIVE_APP_SUMMIT_STAGE/v1' LABEL = '';
+ALTER APPLICATION PACKAGE "NATIVE_APP_QUICKSTART_PACKAGE" ADD VERSION "V1" USING '@NATIVE_APP_QUICKSTART_PACKAGE.NATIVE_APP_QUICKSTART_SCHEMA.NATIVE_APP_QUICKSTART_STAGE/v1' LABEL = ''
 
-ALTER APPLICATION PACKAGE "HELLO_SNOWFLAKE_PACKAGE" SET DEFAULT RELEASE DIRECTIVE VERSION = "V1" PATCH = 0;
+ALTER APPLICATION PACKAGE "NATIVE_APP_QUICKSTART_PACKAGE" SET DEFAULT RELEASE DIRECTIVE VERSION = "V1" PATCH = 0
 ```
 
 
 <!-- ------------------------ -->
 ## Test Application
-Duration: 1
+Duration: 3
 
 To test this application, let's run the following:
 
 ```
-################################################################
-Create SHARED_CONTENT_SCHEMA to share in the application package
-################################################################
-use database HELLO_SNOWFLAKE_PACKAGE;
+-- ################################################################
+-- Create SHARED_CONTENT_SCHEMA to share in the application package
+-- ################################################################
+use database NATIVE_APP_QUICKSTART_PACKAGE;
 create schema shared_content_schema;
 
 use schema shared_content_schema;
-create or replace view MFG_SHIPPING as select * from NATIVE_APP_SUMMIT_DB.NATIVE_APP_SUMMIT_SCHEMA.MFG_SHIPPING;
+create or replace view MFG_SHIPPING as select * from NATIVE_APP_QUICKSTART_DB.NATIVE_APP_QUICKSTART_SCHEMA.MFG_SHIPPING;
 
-grant usage on schema shared_content_schema to share in application package HELLO_SNOWFLAKE_PACKAGE;
-grant reference_usage on database NATIVE_APP_SUMMIT_DB to share in application package HELLO_SNOWFLAKE_PACKAGE;
-grant select on view MFG_SHIPPING to share in application package HELLO_SNOWFLAKE_PACKAGE;
+grant usage on schema shared_content_schema to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
+grant reference_usage on database NATIVE_APP_QUICKSTART_DB to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
+grant select on view MFG_SHIPPING to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
 
 -- ################################################################
 -- TEST APP LOCALLY
 -- ################################################################
 
-USE DATABASE NATIVE_APP_SUMMIT_DB;
-USE SCHEMA NATIVE_APP_SUMMIT_SCHEMA;
+USE DATABASE NATIVE_APP_QUICKSTART_DB;
+USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
 
 -- This executes "setup.sql" linked in the manifest.yml; This is also what gets executed when installing the app
-CREATE APPLICATION NATIVE_APP_SUMMIT_APP FROM application package HELLO_SNOWFLAKE_PACKAGE using version 1 patch 0;
+CREATE APPLICATION NATIVE_APP_QUICKSTART_APP FROM application package NATIVE_APP_QUICKSTART_PACKAGE using version V1 patch 0;
 -- For example, CREATE APPLICATION LEAD_TIME_OPTIMIZER_APP FROM application package LEAD_TIME_OPTIMIZER_PKG using version V1 patch 0;
 
--- At this point you should see and run the app NATIVE_APP_SUMMIT_APP listed under Apps
+-- At this point you should see and run the app NATIVE_APP_QUICKSTART_APP listed under Apps
 SHOW APPLICATION PACKAGES;
 ```
 
