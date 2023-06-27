@@ -61,6 +61,11 @@
       "source": "/guide/build_a_data_clean_room_in_snowflake{,/**}",
       "destination": "/guide/build_a_data_clean_room_in_snowflake_advanced",
       "type": 301
+    },
+    {
+      "source": "/guide/snowflake_native_apps{,/**}",
+      "destination": "/guide/getting_started_with_native_apps",
+      "type": 301
     }  
   ]
   }
