@@ -93,15 +93,43 @@ In this section, we want to extract attributes from the PDF invoices. The entiti
 The Python code to parse PDFs requires some dependencies. Instead of downloading those jar files and uploading to an internal stage, you can create an external stage and reference them when creating a UDF inline.
 
 ```sql
--- Create stage to store the JAR file
-create or replace stage jars_stage_internal;
-
--- Create external stage to import PDFBox from S3
-create or replace stage jars_stage
- url = "s3://sfquickstarts/Common JARs/"
- directory = (enable = true auto_refresh = false);
-
 -- Create a Python function to parse PDF files
+create or replace function read_pdf(file string)
+returns string
+language python
+runtime_version = '3.8'
+handler = 'read_pdf'
+PACKAGES = ('pypdf2', 'snowflake-snowpark-python')
+as
+$$
+from PyPDF2 import PdfReader
+from io import BytesIO
+from snowflake.snowpark.files import SnowflakeFile
+
+def read_pdf(file):
+def read_pdf(file):
+    with SnowflakeFile.open(file, 'rb') as f:
+        bytes_stream = BytesIO(f.read())
+    reader = PdfReader(bytes_stream)
+    page = reader.pages[0]
+    page_split = page.extract_text().split("\n")
+    page_reordered = f"""{page_split[0]}
+{page_split[1]}
+{page_split[2]}
+{page_split[3]}{page_split[4]}
+{page_split[5]}
+{page_split[6]}
+{page_split[7]}{page_split[8]}
+{page_split[9]}{page_split[10]}
+{page_split[11]} {page_split[12]} {page_split[3]} {page_split[14]}
+{page_split[15]} {page_split[16]} {page_split[17]} {page_split[18]}
+{page_split[19]} {page_split[20]} {page_split[21]} {page_split[22]}
+{page_split[23]} {page_split[24]} {page_split[25]} {page_split[26]}
+{page_split[27]}{page_split[28]}{page_split[29]}"""
+    
+    return page_reordered
+$$;
+```
 
 
 
