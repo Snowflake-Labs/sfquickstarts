@@ -300,8 +300,3 @@ Once the ingestion is started you can monitor its state using state and data pre
 
 ![data.png](assets/data.png)
 
-
-## Conclusion & next steps
-Duration: 0
-
-To be done
