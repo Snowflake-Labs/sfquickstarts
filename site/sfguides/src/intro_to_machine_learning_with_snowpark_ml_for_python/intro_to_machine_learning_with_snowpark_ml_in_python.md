@@ -191,7 +191,7 @@ Congratulations, you have successfully completed this quickstart! Through this q
 For more information, check out the resources below:
 
 ### Related Resources
-- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro_to_machine_learning_with_snowpark_ml_for_python)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python)
 - [Getting Started with Data Engineering and ML Using Snowpark](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html?index=..%2F..index#0)
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
