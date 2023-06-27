@@ -27,7 +27,7 @@ Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
 ### What is Snowpark ML?
 
-Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (public preview) for model development and Snowpark ML Operations (private preview) for model deployment. 
+Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (public preview) for model development and Snowpark ML operations (private preview) for model deployment. 
 
 This quickstart will focus on the Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution. 
 
