@@ -55,7 +55,7 @@ CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 
 CREATE OR REPLACE DATABASE HOL_DB;
 
-GRANT OPERATE ON WAREHOUSE hol_wh TO ROLE public;
+GRANT USAGE ON WAREHOUSE hol_wh TO ROLE public;
 grant usage on database hol_db to role public;
 grant usage on schema hol_db.public to role public;
 grant select on table hol_db.public.rockers_table to role public;
