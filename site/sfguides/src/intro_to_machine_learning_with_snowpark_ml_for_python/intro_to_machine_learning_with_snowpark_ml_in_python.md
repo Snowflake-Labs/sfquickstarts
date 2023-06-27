@@ -160,7 +160,7 @@ Create a folder for your channel, for example, mychannel. And Create a folder na
 ## Set up the data in Snowflake
 Duration: 7
 
-Open the following jupyter notebook and run each of the cells: [1_snowpark_ml_data_ingest.ipynb](notebooks/1_snowpark_ml_data_ingest.ipynb)
+Open the following jupyter notebook and run each of the cells: [1_snowpark_ml_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/1_snowpark_ml_data_ingest.ipynb)
 
 Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart.
 
@@ -170,7 +170,7 @@ The overall goal of this ML project is to predict the price of diamonds given di
 ## ML Feature Transformations
 Duration: 10
 
-Open the following jupyter notebook and run each of the cells: [2_snowpark_ml_feature_transformations.ipynb](notebooks/2_snowpark_ml_feature_transformations.ipynb)
+Open the following jupyter notebook and run each of the cells: [2_snowpark_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
 
 In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Preprocessing API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
@@ -178,7 +178,7 @@ In this notebook, we will walk through a few transformations on the `diamonds` d
 ## ML Model Training and Deployment
 Duration: 15
 
-Open the following jupyter notebook and run each of the cells: [3_snowpark_ml_model_training_deployment.ipynb](notebooks/3_snowpark_ml_modeling.ipynb)
+Open the following jupyter notebook and run each of the cells: [3_snowpark_ml_model_training_deployment.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/3_snowpark_ml_model_training_deployment.ipynb)
 
 In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Model API. We also show how to do inference and deploy the model as a UDF. 
 
