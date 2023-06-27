@@ -7,37 +7,37 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Building an application on Snowflake with data from Snowflake Data Marketplace
+# Building an application on Snowflake with data from Snowflake Marketplace
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-Snowflake Data Market Place can provide rapid results to external data which can be used as an overlay or enhancement of your existing data to monitor trends and perform compelling results. Building an application to distribute your results rapidly on a modern data platform are key to innovating faster and gaining a competitive advantage.
-Snowflake combined with Quasar, a modern Application framework together with AWS can help you achieve that competitive advantage. In this lab, we will show how to build a small web application we use the Quasar Application Framework and AWS Lambda Python Layer.  
+Snowflake Marketplace can provide rapid results to external data which can be used as an overlay or enhancement of your existing data to monitor trends and perform compelling results. Building an application to distribute your results rapidly on a modern data platform are key to innovating faster and gaining a competitive advantage.
+Snowflake combined with Quasar, a modern Application framework together with AWS can help you achieve that competitive advantage. In this lab, we will show how to build a small web application using the Quasar Application Framework and AWS Lambda Python Layer.  
 
 ![Architecture](assets/DataM.png)
 
 
 ### Prerequisites
 - We will be using Visual Studio Code in this lab but you are welcome to use your preference.
-- You will need to Sign-up for a free AWS trial account.
-- You will need Sign-up for a free Snowflake trial account.
-- We provided the snowflake connector for python and made it available for you to download:  
+- You will need to sign-up for a free AWS trial account.
+- You will need sign-up for a free Snowflake trial account.
+- We provided the Snowflake Connector for Python and made it available for you to download.  
 
-### What You’ll Learn about Data Marketplace 
-- How to explore the Data Marketplace Listings
-- How to import data from the Data Marketplace
-- How to review data marketplace data for insight development
+### What You’ll Learn About Snowflake Marketplace 
+- How to explore Snowflake Marketplace Listings
+- How to import data from Snowflake Marketplace
+- How to review Snowflake Marketplace data for insight development
 
-### What You’ll Learn about Building an Application  
-- How simple it is to connect to Snowflake Data Marketplace Data
-- How simple it is to query the data from the Marketplace Datasets 
-- How to perform a quick regression analysis on the Datasets
-- How to create a view of the Marketplace Datasets  
+### What You’ll Learn About Building an Application  
+- How simple it is to connect to Snowflake Marketplace data
+- How simple it is to query the data from Snowflake Marketplace datasets 
+- How to perform a quick regression analysis on the datasets
+- How to create a view of Snowflake Marketplace Datasets  
 - How to create a line chart using the Quasar application framework
-- How to attach the snow-flake connector in AWS 
-- How to create the AWS lambda function to query snowflake and pass the data to the application endpoint.
-- How to build the Lambda python script to support interaction with the quasar line charts.
+- How to attach the Snowflake connector in AWS 
+- How to create the AWS Lambda function to query Snowflake and pass the data to the application endpoint
+- How to build the Lambda Python script to support interaction with the Quasar line charts
 
 ### What You’ll Need 
 - A [AWS] (https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all) free trial Account 
@@ -50,22 +50,22 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 
 
 ### What You’ll Build 
-- A Quasar .vue chart sourced with Snowflake data marketplace Knoema Economy and Poverty Data.
+- A Quasar .vue chart sourced with Snowflake Marketplace Knoema Economy and Poverty Data
 - A Snowflake Query using the Regression function
-- A AWS Lambda with the snowflake python connector
+- A AWS Lambda with the Snowflake Python connector
 
 <!-- ------------------------ -->
 
-## Working with Data Marketplace 
+## Working with Snowflake Marketplace 
 Duration: 2
 
-Snowflake’s Data Marketplace provides visibility to a wide variety of datasets from third party data stewards which broaden access to data points used to transform business process.  The Data Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider. 
+Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business process. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider. 
 
-**Before we begin to review working with Data Market place data sets, STOP and verify you have installed a trial version of Snowflake.  If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.** 
+**Before we begin to review working with Snowflake Marketplace data sets, STOP and verify you have installed a trial version of Snowflake.  If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.** 
 
 * 	At the top right corner, make sure you are logged in as `ACCOUNTADMIN`
-* 	Click on Data Marketplace
-* 	Click on  Explore the Snowflake Data Marketplace 
+* 	Click on Snowflake Marketplace
+* 	Click on Explore the Snowflake Marketplace 
 
 ![img1](assets/mp1.png)
 
@@ -590,14 +590,14 @@ Duration: 1
 
 
 
-To learn more about Snowflake Data MarketPlace visit the official website here: [Snowflake Data MarketPlace](https://www.snowflake.com/data-marketplace/)
+To learn more about Snowflake Marketplace visit the official website here: [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/)
 
-To learn more about Building Data Applications visit the official  website here: ([Building Data Applications](https://www.snowflake.com/workloads/data-applications/)
+To learn more about Building Data Applications visit the official  website here: [Building Data Applications](https://www.snowflake.com/workloads/data-applications/)
 
 
 
 ### What we've covered
-- You were acquainted with Snowflake's Data Marketplace
+- You were acquainted with Snowflake Marketplace
 - You became familiar with building an application using the Quasar Application Framework
-- We guided you through using the Snowflake-Connector for Python via AWS Lambda
+- We guided you through using the Snowflake Connector for Python via AWS Lambda
 - We created the API Gateway and tested the functionality of the application
