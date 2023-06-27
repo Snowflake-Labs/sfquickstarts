@@ -19,7 +19,7 @@ application UI using Streamlit.
 ## Prerequisites
 Duration: 1
 
-- Basic knowledge of Snowflake Native Apps
+- Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Java
 - Snowflake user with `accountadmin` role
 
@@ -51,9 +51,9 @@ Java Agent acts as an application which is close to a data source, it fetches da
 ![overview.svg](assets/overview.svg)
 
 ### Native Application
-- runs natively in Snowflake
-- contains a stored procedure which initialises resources by creating all objects in database needed for deferred merge
-- contains Streamlit UI which visualises data
+- runs [natively](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about) in Snowflake
+- contains a [stored procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-overview) which initialises resources by creating all objects in database needed for deferred merge
+- contains [Streamlit](https://docs.streamlit.io/) UI which visualises data
 - contains the following database elements:
   - schemas:
     - `PUBLIC` - versioned, used to store all public procedures
@@ -72,9 +72,9 @@ Java Agent acts as an application which is close to a data source, it fetches da
 - connects to the Native Application
 - runs `INIT_DESTINATION_DATABASE` procedure on startup
 - initialises new resources using Native Application's procedure `INIT_RESOURCE`
-  - uses snowflake-jdbc library for calling stored procedure
+  - uses [snowflake-jdbc](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc) library for calling stored procedure
 - ingests data to snowflake
-  - uses snowflake-ingest-sdk library for ingesting data
+  - uses [snowflake-ingest-sdk](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview) library for ingesting data
 - contains CLI for enabling new resources
 
 ## Project structure
