@@ -15,7 +15,15 @@ Duration: 1
 
 ### What is Snowpark?
 
-Snowpark at its core provides an API that developers can use to construct DataFrames that are executed lazily on Snowflake’s platform. It enables data engineers, data scientists, and developers coding in languages other than SQL such as Python to take advantage of Snowflake’s powerful platform without having to first move data out of Snowflake. This enables data application developers to run complex transformations within Snowflake while taking advantage of the built-in unlimited scalability, performance, governance and security features. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
+
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
+
+**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+
+Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+
+![App](assets/snowpark.png)
 
 ### What is Streamlit?
 
@@ -36,7 +44,7 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 ### Prerequisites
 
 - Familiarity with Python
-- Python 3.8
+- Python 3.9
 - Snowpark for Python library
 - A [Snowflake](https://www.snowflake.com/) account with ACCOUNTADMIN role
   - For this guide, we’ll use the **Environment Data Atlas** dataset provided (for free) by **Knoema**. In the [Data Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on Get Data and follow the instructions to gain access to ENVIRONMENT_DATA_ATLAS.
@@ -48,12 +56,10 @@ Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit)
 
 Duration: 5
 
-- Create Conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.8)
-
-IMPORTANT: If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
+Create Conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9)
 
 ```shell
-conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.9
 ```
 
 - Activate conda environment by running the following command:
@@ -66,17 +72,11 @@ conda activate snowpark
 
 ```shell
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas
-
-pip install streamlit (OR, conda install streamlit)
 ```
 
-Troubleshooting `pyarrow` related issues:
-
-- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
-
-- If you have already installed any version of the `pyarrow` other than the recommended version `8.0.0`, uninstall it before installing Snowpark.
-
-- Do not reinstall a different version of `pyarrow` after installing Snowpark.
+```shell
+pip install streamlit
+```
 
 <!-- ------------------------ -->
 ## Create Python Script
@@ -119,7 +119,7 @@ def create_session_object():
    return session
 ```
 
-In the above code snippet, replace variables enclosed in “<>” with your values. 
+In the above code snippet, replace variables enclosed in “<>” with your values.
 
 *IMPORTANT*:
 
