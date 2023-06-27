@@ -45,10 +45,10 @@ By letting you perform these tasks in a Snowflake Python application, snowpark-m
 
 The first batch of algorithms provided in Snowpark Python is based on [scikit-learn](https://scikit-learn.org/stable/) preprocessing transformations from [sklearn.preprocessing](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.preprocessing), as well as estimators that are compatible with those in the scikit-learn, xgboost, and lightgbm libraries.
 
-Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-ml-modeling).
+Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling).
 
 ### What you will learn 
-- How to perform feature engineering and train a model in Snowflake with [Snowpark ML Modeling API](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-ml-modeling)
+- How to perform feature engineering and train a model in Snowflake with [Snowpark ML Modeling API](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling)
 - How to deploy a Snowpark ML model in Snowflake to a User Defined Function (UDF) for model inference
 
 
@@ -197,6 +197,6 @@ For more information, check out the resources below:
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Docs](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-- [Snowpark ML API Docs](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-ml-modeling)
+- [Snowpark ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling)
 
 <!-- ------------------------ -->
