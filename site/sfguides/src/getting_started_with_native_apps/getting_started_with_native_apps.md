@@ -357,7 +357,7 @@ Now that both the `package` and `stage` have been created, you can upload files 
 > aside negative
 >
 > **Note**
-> It is important that you match the local directory structure with the directory structure of your stage. This is because `manifest.yml` and `setup.sql` use relative path references. Prepend `v1/` to all directories created for this tutorial.
+> It is important that you match the local directory structure with the directory structure of your stage. This is because `manifest.yml` and `setup.sql` use relative path references. Prepend `v1/` to all directories created for this tutorial. For example, when uploading `udf.py`, the path should read `v1/libraries/udf.py`.
 
 
 <!-- ------------------------ -->
