@@ -7,17 +7,21 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Coherent, Coherent Spark, Excel
 
-# Coherent Spark Connector
+# Coherent Spark Connector - use business logic from Excel spreadsheets in Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-The Coherent Spark Connector transforms business logic designed in Microsoft Excel spreadsheets into reusable SQL functions that call our Spark APIs from Snowflake Data Cloud. Joint customers can save significant time on development and testing, and hence roll out their products to the market quickly while the original dataset remains in the Snowflake environment. The entire workflow comes with enterprise-grade security and scalability. Please see the FAQs in Step 6 for additional information.
+The Coherent Spark Connector transforms business logic designed in Microsoft Excel spreadsheets into reusable SQL functions that execute natively in the Snowflake Data Cloud. Joint customers can save significant time on development and testing, and hence roll out their products to the market quickly while the original dataset remains in the Snowflake environment. The entire workflow comes with enterprise-grade security and scalability.
+
+Technically, once the logic is processed in the Spark server, Spark Connector imports the Spark APIs into Snowflake Data Cloud as a SQL function so Snowflake users can securely run business logic against the data hosted in Snowflake with the agility of Excel. No coding is involved in this process, leading to better, faster results.
+
+
 
 ### Benefits
 
-- **Transform Excel logic into Snowflake functions** - Create SQL functions from your Excel spreadsheets within minutes so you can use consumer data on the Snowflake Data Cloud with Spark's APIs.
-- **Effective governance** - Data remains in the Snowflake environment except when being processed by Spark. This process takes place via secure API and is fully auditable.
+- **Transform Excel logic into Snowflake functions** - Create SQL functions from your Excel spreadsheets within minutes so you can process consumer data on the Snowflake Data Cloud.
+- **Effective governance** - Data can be maintained in the Snowflake environment and executed by the designed logic.
 - **Get value faster** - Boost logic execution efficiency by leveraging batch process with Snowflake data.
 - **Easy set up with sample queries -** Procedures are integrated into the application, which is accessible via private sharing or the public marketplace. No coding is required. Consumers can securely install and run directly in their Snowflake instance with just a few clicks. Sample queries are provided with the native connector for guidance.
 - **Auto-sync to keep logic up to date** - The automatic synchronization ensures the SQL functions work with the latest Spark models.
@@ -30,13 +34,13 @@ The Coherent Spark Connector transforms business logic designed in Microsoft Exc
 ### What You’ll Learn 
 By the end of this guide, you'll learn:
 - how to install Spark Connector in your Snowflake environment.
-- how to grant the needed permissions.
+- how to grant the needed permissions .
 - how to synchronize your Spark services with Snowflake.
 - how to use Spark services in Snowflake.
 
 ### What You’ll Need 
 - A [Snowflake account](https://snowflake.com/) 
-- Access to a [Coherent Spark](https://coherent.global) tenant, with at least one service uploaded. If you are not already a Coherent customer, please [contact us](https://www.coherent.global/contact-us)!
+- Access to a [Coherent Spark](https://coherent.global) tenant, with at least one service uploaded
 
 ### What You’ll Build 
 - A working installation of Spark Connector
@@ -102,12 +106,12 @@ Duration: 1
 
 ### Download from Public Marketplace
 
-1. Go to "Marketplace" on the left panel and then search for "Spark Connector". Spark Connector should appear in the search result. Click the application widget to visit the full information page.
+1. Go to [our Marketplace listing](https://app.snowflake.com/marketplace/listing/GZSTZVB9C1I/coherent-spark-connector-uatus) or search for "Spark Connector" in the Marketplace.
 2. Click "Get" to open the installation pop up.
 3. Select your preferred installation options (database name, account role for access) and then click "Get" again.  Spark Connector will be installed in the consumer platform.
 4. Once Spark Connector is successfully installed, click "Open" to begin.
 
-
+![coherent spark connector marketplace listing](assets/spark-snowflake-marketplace-listing.png)
 
 ### Review the installed application in the consumer platform
 
@@ -132,18 +136,15 @@ Replace the parameters in the curly brackets `{ }` in the SQL queries, then exec
 
 ### 2. Create API Integration for external functions.
 
-Create and configure API integration based on the specific Snowflake native application you are operating.
+Depending on which Spark server hosts the service, find the corresponding Spark Proxy Service from the table below.
 
 #### `{AWS_ARN}`: Amazon resource name of a cloud platform role.
-#### `<SPARK_PROXY>`: Spark HTTPS proxy service endpoint.
 
-**Spark Connector (UATUS)**
+<table><thead><tr><th width="198">Server Environment</th><th>Amazon Resource Name</th></tr></thead><tbody><tr><td>DEV, SIT, STAGING</td><td>(Contact support team for more information)</td></tr><tr><td>UAT (US)</td><td>arn:aws:iam::533606394992:role/Snowflake-WASM-Server-Invoker</td></tr><tr><td>PROD (US)</td><td>arn:aws:iam::493603396830:role/Snowflake-WASM-Server-Invoker</td></tr></tbody></table>
 
-<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (UATUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>arn:aws:iam::533606394992:role/Snowflake-WASM-Server-Invoker</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com</td></tr></tbody></table>
+#### `{SPARK_PROXY}`: Spark HTTPS proxy service endpoint.
 
-**Spark Connector (PRODUS)**
-
-<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (PRODUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>(<em>Coming soon...</em>)</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>(<em>Coming soon...</em>)</td></tr></tbody></table>
+<table><thead><tr><th width="198">Server Environment</th><th>Spark Proxy</th></tr></thead><tbody><tr><td>DEV, SIT, STAGING</td><td>(Contact support team for more information)</td></tr><tr><td>UAT (US)</td><td>https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com</td></tr><tr><td>PROD (US)</td><td>https://yahx9ppboe.execute-api.us-east-1.amazonaws.com</td></tr></tbody></table>
 
 
 
@@ -160,6 +161,8 @@ ENABLED = TRUE;
 ```sql
 GRANT USAGE ON WAREHOUSE {WAREHOUSE_NAME} TO APPLICATION {APP_NAME};
 GRANT USAGE ON INTEGRATION SPARK_INTEG TO APPLICATION {APP_NAME};
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO APPLICATION {APP_NAME};
+GRANT EXECUTE TASK ON ACCOUNT TO APPLICATION {APP_NAME};
 ```
 
 ### 4. Initialize external functions in the application.
@@ -239,7 +242,7 @@ JOIN TABLE(SPARK.BLACKSCHOLES(
     input.risklessRate, 
     input.stdDevi, 
     input.stockPrice, 
-    input.timeToExpiry)) output
+    input.timeToExpiry)) outputQL
 ```
 
 ![Snowflake query returns table of results](assets/Snowflake_query_returns_table_of_results.png)
@@ -256,7 +259,7 @@ SELECT SPARK.BLACKSCHOLES_VARIANT(90, 0.5, 0.9, 56, 0.5);
 ## Conclusion
 Duration: 1
 
-Congratulations, you're now all set up to call your Spark services from your Snowflake environment! This means you can take business logic written in Excel, upload it to Spark, and immediately use it on all of your data in Snowflake via API, no coding needed!
+Congratulations, you're now all set up to use your Spark services inside your Snowflake environment! This means you can take business logic written in Excel, upload it to Spark, and immediately use it on all of your data in Snowflake, no coding needed!
 
 You can find out more about Coherent Spark on our [homepage](https://coherent.global) or read up about other features in our [documentation](https://coherent.gitbook.io/spark/T1wG85lxdoEsRrNQJvPj/integrations/snowflake-connector).
 
@@ -271,7 +274,7 @@ You can find out more about Coherent Spark on our [homepage](https://coherent.gl
 
 ### 1. Can I execute Spark functions against the data from another database?
 
-Functions imported in the Spark synchronization process are ready for cross-database access.  Snowflake users can execute Spark functions against the data from another database in the same cloud warehouse when the query contains the full naming conversion, for example: `database.schema.function-name` / `database.schema.procedure-name)`.
+Functions imported in the Spark synchronization process are ready for cross-database access.  Snowflake users can execute Spark functions against the data from another database in the same cloud warehouse when the query contains the full naming conversion (`database.schema.function-name` / `database.schema.procedure-name)`, e.g.
 
 ```sql
 SELECT SPARK_CONNECTOR.SPARK.BLACKSCHOLES_VARIANT(90, 0.5, 0.9, 56, 0.5);
@@ -279,6 +282,6 @@ SELECT SPARK_CONNECTOR.SPARK.BLACKSCHOLES_VARIANT(90, 0.5, 0.9, 56, 0.5);
 
 ### 2. How is my Snowflake data kept safe when using the synchronized Spark functions?
 
-The Spark connector relies on the Spark API endpoint, which means that data from Snowflake will be taken into the Spark server for processing. All UDFs generated from the Spark connector setup process follow Snowflake's advice on ensuring the entire data transition is implemented in the secured environment. The UDF owner must grant callers appropriate privilege(s) on the UDF access and usage. Snowflake users need to provide subscription information (API key) when calling the Spark proxy service. For more information, please refer to [Snowflake's documentation on external function security.](https://docs.snowflake.com/en/sql-reference/external-functions-security)
+The first version of the Spark connector relies on the Spark API endpoint, which means that data from Snowflake will be taken into the Spark server for processing. All UDFs generated from the Spark connector setup process follow the advice given by Snowflake to ensure the entire data transition is implemented in the secured environment. The UDF owner must grant callers appropriate privilege(s) on the UDF access and usage. Snowflake users need to provide subscription information (API key) when calling the Spark proxy service.  For more information, please refer to [Snowflake's documentation on external function security.](https://docs.snowflake.com/en/sql-reference/external-functions-security)
 
 
