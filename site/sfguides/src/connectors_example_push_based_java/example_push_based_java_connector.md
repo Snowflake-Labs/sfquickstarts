@@ -3,7 +3,7 @@ id: connectors_example_push_based_java
 summary: Overview of building Snowflake push based connectors using Java and Native Apps.
 categories: connectors,solution-examples,partner-integrations
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps
 
