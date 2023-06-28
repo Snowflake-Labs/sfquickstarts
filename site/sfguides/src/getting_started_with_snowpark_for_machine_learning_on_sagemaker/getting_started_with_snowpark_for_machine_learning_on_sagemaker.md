@@ -67,6 +67,16 @@ CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 
 CREATE OR REPLACE DATABASE HOL_DB;
 ```
+
+## Double check Anaconda Terms (Instructions provided here)
+https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda
+
+1. Sign in to Snowsight.
+2. Select Admin » Billing & Terms.
+3. In the Anaconda section, select Enable.
+4. In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
+5. If you agree to the terms, select Acknowledge & Continue.
+
 <!-- ------------------------ -->
 ## Set Up Sagemaker Environment
 Duration: 5
@@ -78,6 +88,10 @@ Once you've opened SageMaker Studio, our first step will be to launch a Python 3
 - TensorFlow 2.6 Python 3.8 CPU Optimized
 
 ![](assets/sagemaker_image.png)
+
+> Notes: 
+New AWS accounts will come with VPC & subnets with internet gateway for egress. 
+SageMaker is slow and it's good to double check things for each SageMaker step.
 
 <!-- ------------------------ -->
 ## Clone Github Repo
@@ -95,10 +109,6 @@ cd sfguide-getting-started-snowpark-python-sagemaker
 Next, Open up the image terminal to install packages from the Snowflake Conda channel:
 ![](assets/image_terminal.png)
 
-```bash
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
-```
-
 > Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0
 
 
@@ -106,7 +116,7 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 ## Load data into Snowflake
 Duration: 5
 
-You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script here to create a database, warehouse and load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
 
 You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
 ```python
@@ -118,6 +128,17 @@ connection_parameters = {
     "role": <your_role>, # using "ACCOUNTADMIN" may simplify things in an isolated lab environment
     }
 ```
+> Tip for finding Snowflake account ID:
+```sql
+use role orgadmin;
+show organization accounts;
+```
+Scroll to account_url and copy the URL
+
+i.e. https://hvxehhp-bxb87833.snowflakecomputing.com
+
+Account = hvxehhp-bxb87833
+Host = hvxehhp-bxb87833.snowflakecomputing.com
 
 > Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so AWS Secrets Manager or a similar tool would be appropriate.
 
@@ -126,7 +147,7 @@ Once complete with the script, check back to your Snowflake environment to make 
 
 ### Troubleshooting `pyarrow` related issues
 
-- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
+- If you have `pyarrow` library already installed, uninstall it from terminal before installing Snowpark.
 - If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
 - Do not reinstall a different version of `pyarrow` after installing Snowpark.
 

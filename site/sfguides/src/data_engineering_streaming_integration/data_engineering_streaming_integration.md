@@ -352,6 +352,7 @@ Let's now carry out the load using the COPY command. The COPY command will verif
 If there are more files to be loaded, we can easily increase the virtual warehouse size (from XS to 6XL) to speed up the process as needed by the business. This gives developers the greatest degree of control over the compute resources allocated to this operation.
 
 ```sql
+BEGIN TRANSACTION;
 COPY INTO stg_customer
 FROM 
 (
@@ -378,7 +379,6 @@ WHEN NOT MATCHED THEN INSERT (C_acctbal,c_name,c_mktsegment) VALUES (src_c_acctb
 ;
 --
 COMMIT;
-END;
 ```
 The COPY operation is also transactionally controlled. To demonstrate synchronous processing, we have added a subsequent step in the multi-statement transaction. Once the data from the files is loaded into the stg_customer table, its JSON content will be immediately merged into the customer_target table. From a developer's perspective, this provides a great simplification as the second command will automatically start as soon as the COPY finishes. 
 
