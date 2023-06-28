@@ -124,6 +124,7 @@ Further scroll down to `Linux shell profile` section, and type in `/bin/bash` be
 
 ![](assets/session-mgr-1.2.png)
 
+
 #### 3. Connect to the Linux EC2 instance console
 Now go back to the `Session` tab and click the `Start session` button.
 ![](assets/session-mgr-2.png)
