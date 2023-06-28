@@ -155,7 +155,6 @@ Once you've configured your identifiers, you can set certain constraints (or ass
 
 ```
 CALL <CHOSEN APP NAME>.APP.SET_RELATIONSHIP_CONSTRAINT('<RELATIONSHIP_TYPE>', '<IDENTIFIER_1>', '<IDENTIFIER_2>');
-CALL <CHOSEN APP NAME>.APP.SET_RELATIONSHIP_CONSTRAINT('<RELATIONSHIP_TYPE>', '<IDENTIFIER_2>', '<IDENTIFIER_1>');
 
 ```
 
@@ -163,17 +162,12 @@ CALL <CHOSEN APP NAME>.APP.SET_RELATIONSHIP_CONSTRAINT('<RELATIONSHIP_TYPE>', '<
 - **IDENTIFIER_1** is the name of the first identifier for which you’re validating the relationship type.
 - **IDENTIFIER_2** is the name of the second identifier for which you’re validating the relationship type.
 
-> aside negative
-> 
-> NOTE: If you want to check the 1:1 relationship going both ways, make sure you set two relationship constraints. If you only check the 1:1 relationship going one way (e.g. 1 user_id per email address only), you may get a false positive in the report. In this case, you would also want to check for 1 email address per user_id.
-
 #### **SET_RELATIONSHIP_CONSTRAINT EXAMPLE QUERY:**
 
 The query below tells the application to validate whether or not **user_id** and **email** truly have a 1:1 relationship. If there are instances where the 1:1 relationship constraint is invalidated, the app flags them in the generated report.
 
 ```
-CALL SIMONIDQA.APP.SET_RELATIONSHIP_CONSTRAINT('ONE-TO-ONE', 'USER_ID', 'EMAIL_ADDR');
-CALL SIMONIDQA.APP.SET_RELATIONSHIP_CONSTRAINT('ONE-TO-ONE', 'EMAIL_ADDR', 'USER_ID');
+CALL SIMONIDQA.APP.SET_RELATIONSHIP_CONSTRAINT('ONE-TO-ONE', 'CLIENT_ID', 'EMAIL');
 ```
 
 ### **SET_UNIQUE_CONSTRAINT**
@@ -280,7 +274,7 @@ The top of the report shows you the name of the input table you configured as we
 
 Next, the report will show pass/fail statuses on the constraints you configured.  
 
-As you can see in the screenshot below, the **client_id** & **email** identifiers passed the 1:1 relationship check going one way but not the other.  This tells you that for every **client_id** there is only one **email**, but the app found instances where an **email** had more than one **client_id**.  Examples of these failures will be explored later.
+As you can see in the screenshot below, the **client_id** & **email** identifiers did not pass the 1:1 relationship check.  This tells you that the app found instances where an email or client_id had more than one of the other identifier.  Examples of these failures will be explored later.
 
 ![constraint checks](assets/constraint_checks.png)
 
