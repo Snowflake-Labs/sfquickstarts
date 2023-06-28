@@ -158,7 +158,7 @@ CREATE SCHEMA FC_QUICKSTART.OUTPUT;
 CALL FC_NATIVE_APP.APP_SCHEMA.GET_SQL_CREATE_INPUT_VIEW(
 'FC_NATIVE_APP.SAMPLE_DATA.CUST_JOURNEY_PURCHASE_DEMO', -- input table name
 'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC',  -- output view name
-'RECORD_ID');                                              -- name of column to treat as RECORD_ID
+'RECORD_ID');                                           -- name of column to treat as RECORD_ID
 ```
 
 3) Copy the results of the previous SPROC and run it (it should be something similar to the below)
