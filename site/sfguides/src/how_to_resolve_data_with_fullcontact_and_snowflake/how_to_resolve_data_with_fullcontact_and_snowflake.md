@@ -89,7 +89,7 @@ GRANT USAGE ON INTEGRATION FC_API_INT_FULLCONTACT_IDENTITY_SOLUTIONS TO APPLICAT
 2) Allow application to create a dedicated database for input/output tables.
 
 ```sql
-GRANT CREATE DATABASE on account to APPLICATION FC_NATIVE_APP_DEBUG;
+GRANT CREATE DATABASE on account to APPLICATION FC_NATIVE_APP;
 ```
 3) Install and define the `EXTERNAL FUNCTIONS` that the application needs to run.
 
@@ -158,7 +158,7 @@ CREATE SCHEMA FC_QUICKSTART.OUTPUT;
 CALL FC_NATIVE_APP.APP_SCHEMA.GET_SQL_CREATE_INPUT_VIEW(
 'FC_NATIVE_APP.SAMPLE_DATA.CUST_JOURNEY_PURCHASE_DEMO', -- input table name
 'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC',  -- output view name
-'RECORD_ID'                                              -- name of column to treat as RECORD_ID
+'RECORD_ID');                                           -- name of column to treat as RECORD_ID
 ```
 
 3) Copy the results of the previous SPROC and run it (it should be something similar to the below)
@@ -205,7 +205,7 @@ We provide some sample data with the application install that you can use for th
 ```sql
 -- Call the RESOLVE SPROC to resolve and assign PIDs to sample data
 CALL FC_NATIVE_APP.APP_SCHEMA.RESOLVE_WITH_API_KEY(
-`FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC`,    	-- semantic input view
+'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC',    	-- semantic input view
 'REPLACEWITHYOURAPIKEY',                    				-- api key
 null                                        				-- [OPTIONAL] output table name. If null, the output table name will be the name of your semantic input view table with `_RESOLVE_RESULTS` appended
 );
