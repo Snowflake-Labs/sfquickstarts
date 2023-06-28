@@ -550,10 +550,10 @@ You should see there are two columns in the table: `RECORD_METADATA` and `RECORD
 The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
 
 #### 2. Flatten the raw JSON data
-Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
+Now execute the following SQL commands to flatten the raw JSONs and create a view with multiple columns based on the key names.
 
 ```commandline
-create or replace materialized view flights_vw
+create or replace view flights_vw
   as select
     f.value:utc::timestamp_ntz ts_utc,
     CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
