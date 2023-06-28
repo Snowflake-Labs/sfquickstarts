@@ -90,9 +90,6 @@ GRANT USAGE ON INTEGRATION FC_API_INT_FULLCONTACT_IDENTITY_SOLUTIONS TO APPLICAT
 
 ```sql
 GRANT CREATE DATABASE on account to APPLICATION FC_NATIVE_APP;
-=======
-GRANT CREATE DATABASE on account to APPLICATION FC_NATIVE_APP_DEBUG;
->>>>>>> upstream/master
 ```
 3) Install and define the `EXTERNAL FUNCTIONS` that the application needs to run.
 
@@ -162,9 +159,6 @@ CALL FC_NATIVE_APP.APP_SCHEMA.GET_SQL_CREATE_INPUT_VIEW(
 'FC_NATIVE_APP.SAMPLE_DATA.CUST_JOURNEY_PURCHASE_DEMO', -- input table name
 'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC',  -- output view name
 'RECORD_ID');                                           -- name of column to treat as RECORD_ID
-=======
-'RECORD_ID'                                              -- name of column to treat as RECORD_ID
->>>>>>> upstream/master
 ```
 
 3) Copy the results of the previous SPROC and run it (it should be something similar to the below)
@@ -212,22 +206,17 @@ We provide some sample data with the application install that you can use for th
 -- Call the RESOLVE SPROC to resolve and assign PIDs to sample data
 CALL FC_NATIVE_APP.APP_SCHEMA.RESOLVE_WITH_API_KEY(
 'FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC',    	-- semantic input view
-=======
-`FC_QUICKSTART.OUTPUT.CUST_JOURNEY_PURCHASE_SEMANTIC`,    	-- semantic input view
->>>>>>> upstream/master
 'REPLACEWITHYOURAPIKEY',                    				-- api key
-null                                        				-- [OPTIONAL] output table name. If null, the output table name will be the name of your semantic input view table with `_RESOLVE_RESULTS` appended
-);
+null);                                        				-- [OPTIONAL] output table name. If null, the output table name will be the name of your semantic input view table with `_RESOLVE_RESULTS` appended
 
+```
 The results will be stored in a table in the `FC_NATIVE_APP_IO.RESOLVE_OUT` schema.
 If not provided, the output table name will be the name of your semantic input view table with _RESOLVE_RESULTS appended to the end. In this case, `FC_NATIVE_APP_IO.RESOLVE_OUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS`
-```
 
 2) View the results, making note of the PIDs column.
 
 ```sql
 SELECT * FROM FC_NATIVE_APP_IO.RESOLVE_OUT.CUST_JOURNEY_PURCHASE_SEMANTIC_RESOLVE_RESULTS LIMIT 10;
-
 ```
 
 3) For each call, you can view some summary metrics on how your records were resolved.
