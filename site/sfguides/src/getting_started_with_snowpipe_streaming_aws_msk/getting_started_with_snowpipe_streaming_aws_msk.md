@@ -392,7 +392,7 @@ echo "export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE" >> 
 
 Now you can execute this command to interact with Snowflake:
 ```commandline
-$HOME/bin/snowsql -a <Snowflake Account Name> --region <AWS region where Snowflake is located> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
+$HOME/bin/snowsql -a <Snowflake Account Identifier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
 ```
 See below example screenshot:
 
