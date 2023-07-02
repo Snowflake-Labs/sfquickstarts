@@ -179,7 +179,7 @@ references:
 ## Update UDF.py
 Duration: 3
 
-To add some new functionality o our application we will modify `UDF.py`. This is the python file we use to create all our User Defined Functions (UDFs).
+To add some new functionality to our application we will modify `UDF.py`. This is the python file we use to create all our User Defined Functions (UDFs).
 
 ```python
 def cal_distance(lat1,lon1,lat2,lon2):
