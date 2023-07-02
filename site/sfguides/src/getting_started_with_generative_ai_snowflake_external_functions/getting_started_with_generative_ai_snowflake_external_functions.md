@@ -2,7 +2,7 @@ id: getting_started_with_generative_ai_snowflake_external_functions
 summary: Getting Started with Generative AI and External Functions in Snowflake
 categories: featured,getting-started,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Generative AI, Snowflake External Functions, OpenAI
 authors: Dash Desai
