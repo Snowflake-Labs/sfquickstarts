@@ -4,7 +4,7 @@ summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web
 status: Published 
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts#reporting-issues-or-errata-in-quickstarts
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Snowflake Guide Template
