@@ -1,4 +1,4 @@
-author: Augusto Rosa, (Based on work by Scott Teal, Saurin Shah)
+author: Augusto Rosa, Mustafa El-Hilo (Based on work by Scott Teal, Saurin Shah for the java use case)
 id: analyze_pdf_invoices_python_udf_snowsight
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: data-science-&-ml,data-engineering,architecture-patterns,solution-examples
@@ -59,16 +59,16 @@ For this quickstart, we will use an external stage, but processing and analysis 
 Let's create a database, warehouse, and stage that will be used for loading and processing the PDFs. We will use the UI within the Worksheets tab to run the DDL that creates the database and schema. Copy the commands below into your trial environment, and execute each individually.
 
 ```sql
-use role sysadmin;
+USE ROLE sysadmin;
 
-create or replace database pdf;
-create or replace warehouse quickstart;
+CREATE OR REPLACE database pdf;
+CREATE OR REPLACE warehouse quickstart;
 
-use database pdf;
-use schema public;
-use warehouse quickstart;
+USE DATABASE pdf;
+USE SCHEMA public;
+USE WAREHOUSE quickstart;
 
-create or replace stage pdf_external
+CREATE OR REPLACE STAGE pdf_external
 url="s3://sfquickstarts/Analyze PDF Invoices/Invoices/"
 directory = (enable = TRUE);
 ```
@@ -94,13 +94,13 @@ The Python code to parse PDFs requires some dependencies. Instead of downloading
 
 ```sql
 -- Create a Python function to parse PDF files
-create or replace function read_pdf(file string)
-returns string
+CREATE OR REPLACE function read_pdf(file string)
+RETURNS string
 language python
 runtime_version = '3.8'
 handler = 'read_pdf'
 PACKAGES = ('pypdf2', 'snowflake-snowpark-python')
-as
+AS
 $$
 from PyPDF2 import PdfReader
 from io import BytesIO
@@ -138,9 +138,9 @@ $$;
 The UDF can be invoked on any PDF file with a simple SQL statement. First, make sure to refresh the directory table metadata for your external stage.
 
 ```
-alter stage pdf_external refresh;
+ALTER STAGE pdf_external refresh;
 
-select read_pdf(build_scoped_file_url('@pdf_external','/invoice1.pdf')) 
+SELECT read_pdf(build_scoped_file_url('@pdf_external','/invoice1.pdf')) 
 as pdf_text;
 ```
 
@@ -172,20 +172,20 @@ We want to store the extracted text as additional attributes for analysts to be 
 We first need to create a table with the extracted text in its raw form. From this table, we can create views to parse the text into various fields for easier analysis.
 
 ```sql
-create or replace table parsed_pdf as
-select
+CREATE OR REPLACE TABLE parsed_pdf AS
+SELECT
     relative_path
     , file_url
-    , read_pdf(build_scoped_file_url('@pdf_external/', relative_path)) as parsed_text
-from directory(@pdf_external);
+    , read_pdf(build_scoped_file_url('@pdf_external/', relative_path)) AS parsed_text
+FROM directory(@pdf_external);
 ```
 
 Using Snowflake’s string functions, we can parse out specific values as fields like balance due, item name, item quantity, and more.
 
 ```sql
-create or replace view v__parsed_pdf_fields as (
-with items_to_array as (
-    select
+CREATE OR REPLACE VIEW v__parsed_pdf_fields AS (
+WITH items_to_array AS (
+    SELECT
         *
         , split(
             substr(
@@ -193,25 +193,25 @@ with items_to_array as (
               ), 8
             ), '\n'
           )
-        as items
-    from parsed_pdf
+        AS items
+    FROM parsed_pdf
 )
-, parsed_pdf_fields as (
-    select
-        substr(regexp_substr(parsed_text, '# [0-9]+'), 2)::int as invoice_number
-        , to_number(substr(regexp_substr(parsed_text, '\\$[^A-Z]+'), 2), 10, 2) as balance_due
+, parsed_pdf_fields AS (
+    SELECT
+        substr(regexp_substr(parsed_text, '# [0-9]+'), 2)::INT AS invoice_number
+        , to_number(substr(regexp_substr(parsed_text, '\\$[^A-Z]+'), 2), 10, 2) AS balance_due
         , substr(
             regexp_substr(parsed_text, '[0-9]+\n[^\n]+')
                 , len(regexp_substr(parsed_text, '# [0-9]+'))
-            ) as invoice_from
-        , to_date(substr(regexp_substr(parsed_text, 'To:\n[^\n]+'), 5), 'mon dd, yyyy') as invoice_date
+            ) AS invoice_from
+        , to_date(substr(regexp_substr(parsed_text, 'To:\n[^\n]+'), 5), 'mon dd, yyyy') AS invoice_date
         , i.value::string as line_item
         , parsed_text
-    from
+    FROM
         items_to_array
         , lateral flatten(items_to_array.items) i
 )
-select
+SELECT
     invoice_number
     , balance_due
     , invoice_from
@@ -220,7 +220,7 @@ select
     , to_number(ltrim(regexp_substr(line_item, '\\$[^ ]+')::string, '$'), 10, 2) as item_unit_cost
     , regexp_replace(line_item, ' ([0-9]+) \\$.*', '')::string as item_name
     , to_number(ltrim(regexp_substr(line_item, '\\$[^ ]+', 1, 2)::string, '$'), 10, 2) as item_total_cost
-from parsed_pdf_fields
+FROM parsed_pdf_fields
 );
 ```
 
@@ -232,13 +232,13 @@ If you collapse and expand the `PDF` database in the Objects pane on the left, y
 Now let’s explore the data from the PDF invoices. What are the most purchased items based on quantity?
 
 ```sql
-select
+SELECT
     sum(item_quantity)
     , item_name
-from v__parsed_pdf_fields
-group by item_name
-order by sum(item_quantity) desc
-limit 10;
+FROM v__parsed_pdf_fields
+GROUP BY item_name
+ORDER BY sum(item_quantity) DESC
+LIMIT 10;
 ```
 
 ![Quantity by Product](assets/4_3.png)
@@ -246,13 +246,13 @@ limit 10;
 What are the items on which the most money was spent?
 
 ```sql
-select
+SELECT
     sum(item_total_cost)
     , item_name
-from v__parsed_pdf_fields
-group by item_name
-order by sum(item_total_cost) desc
-limit 10;
+FROM v__parsed_pdf_fields
+GROUP BY item_name
+ORDER BY sum(item_total_cost) DESC
+LIMIT 10;
 ```
 
 ![Cost by Product](assets/4_4.png)
@@ -271,12 +271,12 @@ Let's use a dashboard as a collection of all of the visualizations we will creat
 Now let's create the first tile on the Invoice Analysis dashboard by clicking the button __+ New Tile__. Give the tile a name by clicking on the timestamp at the top, and name it `Costs by Item`. In the canvas, copy/paste the SQL below to query the data needed for the chart and run it.
 
 ```sql
-select
+SELECT
     sum(item_total_cost)
     , item_name
-from v__parsed_pdf_fields
-group by item_name
-order by sum(item_total_cost) desc;
+FROM v__parsed_pdf_fields
+GROUP BY item_name
+ORDER BY sum(item_total_cost) DESC;
 ```
 
 Now click on __Chart__. Change the chart type from line to bar, X-Axis to `ITEM_NAME`, and orientation to horizontal. In this chart, you should see "Lettuce - California Mix" as the item on which the most money was spent, $3,214.68.
@@ -286,11 +286,11 @@ Now click on __Chart__. Change the chart type from line to bar, X-Axis to `ITEM_
 Now let's create another tile by clicking __Return to Invoice Analysis__ in the top-left, then click on the __+__ button, then __New Tile from Worksheet__. Name the tile `Costs by Month`. Now copy/paste and run this query.
 
 ```sql
-select
+SELECT
     sum(item_total_cost)
-    , date_trunc('month', invoice_date) as month
-from v__parsed_pdf_fields
-group by date_trunc('month', invoice_date);
+    , date_trunc('month', invoice_date) AS month
+FROM v__parsed_pdf_fields
+GROUP BY date_trunc('month', invoice_date);
 ```
 
 Again, click __Chart__. You should see a line chart with `MONTH` on the x-axis and `SUM(ITEM_TOTAL_COST)` on the y-axis. Then click __Return to Invoice Analysis__. You should now see two tiles on your dashboard, which you can rearrange by clicking and dragging.
