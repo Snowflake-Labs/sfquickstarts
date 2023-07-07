@@ -176,7 +176,7 @@ CREATE OR REPLACE TABLE parsed_pdf AS
 SELECT
     relative_path
     , file_url
-    , read_pdf(build_scoped_file_url('@pdf_external/', relative_path)) AS parsed_text
+    , read_pdf(build_scoped_file_url('@pdf_external', relative_path)) AS parsed_text
 FROM directory(@pdf_external);
 ```
 
