@@ -113,20 +113,19 @@ def read_pdf(file):
     page = reader.pages[0]
     page_split = page.extract_text().split("\n")
     page_reordered = f"""
-        {page_split[0]}
-        {page_split[1]}
-        {page_split[2]}
-        {page_split[3]} {page_split[4]}
-        {page_split[5]}
-        {page_split[6]}
-        {page_split[7]} {page_split[8]}
-        {page_split[9]} {page_split[10]}
-        {page_split[11]} {page_split[12]} {page_split[13]} {page_split[14]}
-        {page_split[15]} {page_split[16]} {page_split[17]} {page_split[18]}
-        {page_split[19]} {page_split[20]} {page_split[21]} {page_split[22]}
-        {page_split[23]} {page_split[24]} {page_split[25]} {page_split[26]}
-        {page_split[27]} {page_split[28]} {page_split[29]}
-        """
+    {page_split[0]}
+    {page_split[1]}
+    {page_split[2]}
+    {page_split[3]} {page_split[4]}
+    {page_split[5]}
+    {page_split[6]}
+    {page_split[7]} {page_split[8]}
+    {page_split[9]} {page_split[10]}
+    {page_split[11]} {page_split[12]} {page_split[13]} {page_split[14]}
+    {page_split[15]} {page_split[16]} {page_split[17]} {page_split[18]}
+    {page_split[19]} {page_split[20]} {page_split[21]} {page_split[22]}
+    {page_split[23]} {page_split[24]} {page_split[25]} {page_split[26]}
+    {page_split[27]} {page_split[28]} {page_split[29]}"""
     return page_reordered
 $$;
 ```
@@ -148,20 +147,20 @@ as pdf_text;
 
 The output is text values extracted from `invoice1.pdf`.
 
-```text
-INVOICE
-# 1
-Abbott Group
-Bill To:
-Aug 5, 2021
-$458.10
-Date:
-Balance Due:
-Item Quantity Rate Amount
-Flour - Corn, Fine 18 $11.39 $205.02
-Hold Up Tool Storage Rack 14 $9.54 $133.56
-Scallop - St. Jaques 9 $13.28 $119.52
-$458.10Total:
+```text   
+    INVOICE
+    # 102
+    Braun-Lind
+    Bill To :
+    Nov 13, 2021
+    $166.54
+    Date :
+    Balance Due :
+    Item Quantity Rate Amount
+    Madeira 2 $1.81 $3.62
+    Soup - Campbells Chili 13 $9.23 $119.99
+    Tomatoes - Orange 3 $14.31 $42.93
+    $166.54 Total :
 ```
 
 UDFs are account-level objects. So if a developer familiar with Python creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
@@ -204,7 +203,7 @@ WITH items_to_array AS (
             regexp_substr(parsed_text, '[0-9]+\n[^\n]+')
                 , len(regexp_substr(parsed_text, '# [0-9]+'))
             ) AS invoice_from
-        , to_date(substr(regexp_substr(parsed_text, 'To:\n[^\n]+'), 5), 'mon dd, yyyy') AS invoice_date
+        , to_date(substr(regexp_substr(parsed_text, '([A-Za-z]{3} [0-9]{1,2}, [0-9]{4})'), 1, 12), 'mon dd, yyyy') AS invoice_date
         , i.value::string as line_item
         , parsed_text
     FROM
