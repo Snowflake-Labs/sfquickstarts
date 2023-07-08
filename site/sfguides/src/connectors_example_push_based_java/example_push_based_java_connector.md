@@ -3,7 +3,7 @@ id: connectors_example_push_based_java
 summary: Overview of building Snowflake push based connectors using Java and Native Apps.
 categories: connectors,solution-examples,partner-integrations
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps
 
@@ -19,7 +19,7 @@ application UI using Streamlit.
 ## Prerequisites
 Duration: 1
 
-- Basic knowledge of Snowflake Native Apps
+- Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Java
 - Snowflake user with `accountadmin` role
 
@@ -39,7 +39,7 @@ Duration: 5
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure snowsql to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- Clone example-push-based-java-connector repository
+- Clone [example-push-based-java-connector repository](https://github.com/Snowflake-Labs/connectors-examples)
 
 ## Connector overview
 Duration: 4
@@ -51,9 +51,9 @@ Java Agent acts as an application which is close to a data source, it fetches da
 ![overview.svg](assets/overview.svg)
 
 ### Native Application
-- runs natively in Snowflake
-- contains a stored procedure which initialises resources by creating all objects in database needed for deferred merge
-- contains Streamlit UI which visualises data
+- runs [natively](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about) in Snowflake
+- contains a [stored procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-overview) which initialises resources by creating all objects in database needed for deferred merge
+- contains [Streamlit](https://docs.streamlit.io/) UI which visualises data
 - contains the following database elements:
   - schemas:
     - `PUBLIC` - versioned, used to store all public procedures
@@ -72,9 +72,9 @@ Java Agent acts as an application which is close to a data source, it fetches da
 - connects to the Native Application
 - runs `INIT_DESTINATION_DATABASE` procedure on startup
 - initialises new resources using Native Application's procedure `INIT_RESOURCE`
-  - uses snowflake-jdbc library for calling stored procedure
+  - uses [snowflake-jdbc](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc) library for calling stored procedure
 - ingests data to snowflake
-  - uses snowflake-ingest-sdk library for ingesting data
+  - uses [snowflake-ingest-sdk](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview) library for ingesting data
 - contains CLI for enabling new resources
 
 ## Project structure
@@ -122,13 +122,58 @@ ALTER USER <your_user> SET PASSWORD = '<Your Password>' MUST_CHANGE_PASSWORD = F
 The password will be needed for Java Agent to connect to Native Application using snowflake-jdbc.
 
 ### Native application configuration
-In order to create native application you need to adjust values for `APP_NAME`, `APP_VERSION`, `STAGE_DB`, `STAGE_NAME`, `WAREHOUSE` and `CONNECTION` in `Makefile` script.
-Those values will be used by all scripts used in this quickstart. `CONNECTION` parameter is the name of snowsql connection defined in previous step.
+In order to create native application you need to adjust values in `Makefile` script for:
+- `WAREHOUSE` - warehouse that will be used to create the app
+- `CONNECTION` - name of snowsql connection defined in previous step
 
+You can also change the rest of the properties:
+- `APP_NAME`
+- `APP_VERSION` 
+- `STAGE_DB`
+- `STAGE_NAME`
+
+Those values will be used by all scripts used in this quickstart.
+
+Note: after changing `APP_NAME` or `WAREHOUSE` you will need to adjust `native_application.database_name` or `warehouse` properties in next step
 
 ### Java agent configuration
-In order to build Java Agent and connect it to Snowflake you need to edit properties in `connector.properties`.
-Copy the private key generated in previous step to `ingestion.private_key` property.
+In order to build Java Agent and connect it to Snowflake you need to edit the following properties in `/example-push-based-java-connector-agent/src/main/resources/connector.properties`:
+- `account` - snowflake account name
+- `user` - snowflake username
+- `jdbc.password` - snowflake password for given user, it will be used to connect to snowflake via jdbc
+- `warehouse` - warehouse which was used to create native application, it has to be the same value as `WAREHOUSE` in Makefile
+- `ingestion.host` - snowflake host
+- `ingestion.private_key` - private key generated in previous step with removed whitespaces (one-line string). To make sure that your private key property does not contain any whitespace at the beginning and at the end you can wrap it with quotes.
+- `jdbc.url` - jdbc url which should contain correct snowflake host 
+- `native_application.database_name` - this property has to be changed if `APP_NAME` in Makefile was changed, it should have `APP_NAME` value with `_INSTANCE` suffix
+
+
+Example file with all necessary properties looks like this:
+
+```properties
+account=myaccount
+user=myuser
+role=accountadmin
+warehouse=mywarehouse
+
+native_application.database_name=EXAMPLE_PUSH_BASED_CONNECTOR_TEST_INSTANCE
+native_application.schema_name=PUBLIC
+destination_database.database_name=EXAMPLE_PUSH_BASED_CONNECTOR_DATA
+destination_database.schema_name=PUBLIC
+
+ingestion.host=myaccount.snowflakecomputing.com
+ingestion.scheme=https
+ingestion.port=443
+ingestion.private_key="MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCsm5SOTkt/I0K5(...)"
+jdbc.password=mypassword
+jdbc.url=jdbc:snowflake://myaccount.snowflakecomputing.com
+
+upload.initial.record-count=100
+upload.periodical.record-count=20
+upload.periodical.interval-seconds=10
+upload.scheduler.pool-size=3
+```
+
 
 
 ## Connector logic
@@ -217,10 +262,9 @@ make run_agent
 ```
 
 This command runs agent's command line interface. The following commands are available to use:
-- `enable <resource_name>` - initialises resource and runs initial and periodical upload
-- `disable <resource_name>` - disables periodical upload of given resource
+- `enable {resource_name}` - initialises resource and runs initial and periodical upload, example usage: `enable first_resource`
+- `disable {resource_name}` - disables periodical upload of given resource, example usage: `disable first_resource`
 - `quit` - disables all active resources and quits application
-
 
 
 ## Using Streamlit app to visualise data
@@ -229,7 +273,7 @@ Duration: 2
 At this point, when the application is deployed and installed, you should be able to see the UI streamlit application.
 
 Navigate to applications option in menu, then find and open application with your application name.
-After enabling a resource you will see a bar chart with count of elements in all tables.
+After enabling a resource using Java Agent `enable resource_name` command, you will see a bar chart with count of elements in all tables.
 
 ![streamlit.png](assets/streamlit.png)
 

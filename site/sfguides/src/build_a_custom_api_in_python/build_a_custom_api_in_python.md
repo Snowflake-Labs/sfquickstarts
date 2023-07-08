@@ -55,25 +55,11 @@ CREATE WAREHOUSE DATA_API_WH WITH WAREHOUSE_SIZE='medium';
 ## Create a Service User for the API
 Duration: 5
 
-You will now create a user account separate from your own that the API will use to query Snowflake. In keeping with sound security practices, the account will use key-pair authentication and have limited access in Snowflake.
-
-### Create an RSA key for Authentication
-
-Run the following commands to create a private and public key. These keys are necessary to authenticate the service account we will use.
-
-```Shell
-$ cd ~/.ssh
-$ openssl genrsa -out snowflake_demo_key 4096
-$ openssl rsa -in snowflake_demo_key -pubout -out snowflake_demo_key.pub
-```
+You will now create a user account separate from your own that the API will use to query Snowflake. The account will use password authentication and have limited access in Snowflake.
 
 ### Create the User and Role in Snowflake
 
 To create a user account, log in to the Snowflake console and run the following commands as the `ACCOUNTADMIN` role.
-
-But first:
-1. Open the `~/.ssh/snowflake_demo_key.pub` file and copy the contents starting just _after_ the `PUBLIC KEY` header, and stopping just _before_ the `PUBLIC KEY` footer.
-1. Prior to running the `CREATE USER` command, paste over the `RSA_PUBLIC_KEY_HERE` label, which follows the `RSA_PUBLIC_KEY` attribute.
 
 Execute the following SQL statements to create the user account and grant it access to the data needed for the application.
 
@@ -84,7 +70,7 @@ CREATE ROLE DATA_API_ROLE;
 GRANT USAGE ON WAREHOUSE DATA_API_WH TO ROLE DATA_API_ROLE;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE DATA_API_ROLE;
 
-CREATE USER "DATA_API" RSA_PUBLIC_KEY='RSA_PUBLIC_KEY_HERE' DEFAULT_ROLE=DATA_API_ROLE DEFAULT_WAREHOUSE=DATA_API_WH DEFAULT_NAMESPACE=SNOWFLAKE_SAMPLE_DATA.TPCH_SF10 MUST_CHANGE_PASSWORD=FALSE;
+CREATE USER "DATA_API" PASSWORD='<SNOWFLAKE USER PASSWORD>' DEFAULT_ROLE=DATA_API_ROLE DEFAULT_WAREHOUSE=DATA_API_WH DEFAULT_NAMESPACE=SNOWFLAKE_SAMPLE_DATA.TPCH_SF10 MUST_CHANGE_PASSWORD=FALSE;
 
 GRANT ROLE DATA_API_ROLE TO USER DATA_API;
 ```
@@ -165,7 +151,7 @@ If you would also like to see how to build endpoints using the Snowflake Snowpar
 ## Creating the Python environment
 Duration: 5
 
-To create a Python environment we will leverage Anaconda. The code includes a configuration file that can be used to create a Python environment with all of the necessary packages and prerequisites. To create a new Anaconda environment, run:
+To create a Python environment we will leverage Anaconda. The code includes a configuration file that can be used to create a Python environment with all of the necessary packages and prerequisites. To create a new Anaconda environment, run this command in the directory where the code was downloaded:
 ```bash
 conda env create -f conda_environment.yml
 ```
@@ -188,10 +174,10 @@ Duration: 3
 The `src/config.py` file is setup to configure the application. It contains a single Python dictionary `creds`.
 
 Copy the `config.py.example` to `config.py`.yml. Update the `config.py` by replacing:
-* `&lt;SNOWFLAKE ACCOUNT&gt;` with your Snowflake account identifier, 
+* `&lt;SNOWFLAKE ACCOUNT&gt;` with your Snowflake [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier), 
 * `&lt;SNOWFLAKE USER&gt;` with the user you created earlier, `DATA_API`,
 * `&lt;SNOWFLAKE WAREHOUSE&gt;` with the warehouse you created earlier, `DATA_API_WH`,
-* `&lt;SNOWFLAKE PRIVATE KEY&gt;` with the private key you created earlier; include the `-----BEGIN RSA PRIVATE KEY-----` header and the `-----END RSA PRIVATE KEY-----` footer.
+* `&lt;SNOWFLAKE USER PASSWORD&gt;` with the password for the user you created earlier
 
 <!-- ------------------------ -->
 ## Starting the API
@@ -205,8 +191,18 @@ python app.py
 This will start the API, listening on port `8001`.
 
 <!-- ------------------------ -->
+
 ## Testing the API
 Duration: 5
+
+### Testing using a webpage
+This project comes with a simple webpage that allows you to test the API. To get to it, open `http://localhost:8001/test` in a web browser.
+
+At the top you can choose if you want to exercise the Snowflake Connector for Python or the Snowflake Snowpark API endpoints.
+
+There are 2 forms below that. The first one allows you to enter parameters to test the "Top 10 Customers" endpoint. The second one allows you to enter parameters to test the "Montly Clerk Sales" endpoint.
+
+When you hit the `Submit` button, the API endpoint is called and the data is returned to the web page.
 
 ### Testing using cURL
 The API can be tested using the cURL command-line tool.
@@ -234,15 +230,6 @@ To retrieve the monthly sales for clerk `000000002` for the year `1995` using th
 ```bash
 curl -X GET "http://localhost:8001/snowpark/clerk/000000002/yearly_sales/1995"
 ```
-
-### Testing using the testing webpage
-This project comes with a simple webpage that allows you to test the API. To get to it, open `http://localhost:8001/test` in a web browser.
-
-At the top you can choose if you want to exercise the Snowflake Connector for Python or the Snowflake Snowpark API endpoints.
-
-There are 2 forms below that. The first one allows you to enter parameters to test the "Top 10 Customers" endpoint. The second one allows you to enter parameters to test the "Montly Clerk Sales" endpoint.
-
-When you hit the `Submit` button, the API endpoint is called and the data is returned to the web page.
 
 <!-- ------------------------ -->
 ## Stopping the API

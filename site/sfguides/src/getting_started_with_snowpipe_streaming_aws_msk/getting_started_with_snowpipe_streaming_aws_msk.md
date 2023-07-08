@@ -124,6 +124,7 @@ Further scroll down to `Linux shell profile` section, and type in `/bin/bash` be
 
 ![](assets/session-mgr-1.2.png)
 
+
 #### 3. Connect to the Linux EC2 instance console
 Now go back to the `Session` tab and click the `Start session` button.
 ![](assets/session-mgr-2.png)
@@ -392,7 +393,7 @@ echo "export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE" >> 
 
 Now you can execute this command to interact with Snowflake:
 ```commandline
-$HOME/bin/snowsql -a <Snowflake Account Name> --region <AWS region where Snowflake is located> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
+$HOME/bin/snowsql -a <Snowflake Account Identifier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
 ```
 See below example screenshot:
 
@@ -549,10 +550,10 @@ You should see there are two columns in the table: `RECORD_METADATA` and `RECORD
 The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
 
 #### 2. Flatten the raw JSON data
-Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
+Now execute the following SQL commands to flatten the raw JSONs and create a view with multiple columns based on the key names.
 
 ```commandline
-create or replace materialized view flights_vw
+create or replace view flights_vw
   as select
     f.value:utc::timestamp_ntz ts_utc,
     CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
