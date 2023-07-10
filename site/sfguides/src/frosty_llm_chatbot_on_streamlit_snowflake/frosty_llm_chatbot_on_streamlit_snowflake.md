@@ -59,7 +59,7 @@ Complete the following steps in your local machine (or an equivalent dev environ
 2. Open the terminal or command prompt and create a folder for your project. Let's call it `llm-chatbot`.
 3. If you're using a machine with an Apple M1 chip, run the following command to use conda to create a Python 3.10 virtual environment, add the Snowflake conda channel, and install the numpy and pandas packages: 
     ```
-    conda create --name py310_env --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
+    conda create --name snowpark-llm-chatbot --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
     ```
     Activate the environment created in those instructions by running `conda activate py310_env` and proceed to step 6 below.
 
@@ -67,15 +67,16 @@ Complete the following steps in your local machine (or an equivalent dev environ
 
 4. Create a conda environment by running the following command:
     ```
-    conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.10
+    conda create --name snowpark-llm-chatbot -c https://repo.anaconda.com/pkgs/snowflake python=3.10
     ```
 5. Activate the conda environment by running the following command:
     ```
-    conda activate snowpark
+    conda activate snowpark-llm-chatbot
     ```
 6. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
-    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai streamlit
+    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai
+    pip install streamlit
     ```
 
 ### Troubleshooting `pyarrow` related issues
