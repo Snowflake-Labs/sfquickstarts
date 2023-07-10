@@ -54,11 +54,12 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
+    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.9](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.9 in the **Setup the Python Environment** step
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
-- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a free trial or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures.
+- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
 - A set of notebooks leveraging Snowpark & Snowpark ML for Python:
@@ -98,41 +99,19 @@ Duration: 7
 
 - Open a new terminal window and execute the following commands in the same terminal window:
 
-  1. Create a local conda channel for .tar.bz2 file
-Create a folder for your channel, for example, mychannel. And Create a folder named noarch in it.
-  ```
-  $ mkdir -p <some_path>/mychannel/noarch
-  ```
-  i.e. `mkdir -p ./mychannel/noarch` to save to your current folder
+  1. Download `install-snowpark-ml-${VERSION}.sh` script from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV).
 
-  2. Put the .tar.bz2 file into that folder.
+  2. If you already have a conda environment and want to use `snowflake-ml-python` in it, activate the environment and run:
   ```
-  $ cp snowflake_ml_python-${VERSION}-py_0.tar.bz2 <some_path>/mychannel/noarch/snowflake_ml_python-${VERSION}-py_0.tar.bz2
+  $ install-snowpark-ml-${VERSION}.sh
   ```
 
-  3. Install conda-build.
+  3. If you want to use snowflake-ml-python in a new conda environment, or you do not have any conda environment, run:
   ```
-  $ conda install conda-build
-  ```
-
-  4. Run conda index to create the local conda channel.
-  ```
-  $ conda index <some_path>/mychannel
+  $ install-snowpark-ml-${VERSION}.sh -n <conda_env_name>
   ```
 
-  5. Create your Python environment based on the `conda_env.yml` file provided.
-  ```
-  $ conda env create -f conda_env.yml
-  ``` 
-
-  5. Install Snowpark ML in the created environment:
-  ```
-  $ conda activate snowpark-ml-hol
-  $ conda install -c file://<some_path>/mychannel -c https://repo.anaconda.com/pkgs/snowflake/ --override-channel snowflake-ml-python
-  ```
-  ** Make sure you write your full path to /mychannel here: i.e. `file://Users/<username>/<some path>/mychannel` 
-
-  7. `Optionally` start notebook server
+  4. `Optionally` start notebook server:
   ```
   $ jupyter notebook &> /tmp/notebook.log &
   ```  
@@ -162,7 +141,9 @@ Duration: 7
 
 Open the following jupyter notebook and run each of the cells: [1_snowpark_ml_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/1_snowpark_ml_data_ingest.ipynb)
 
-Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart.
+Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart. 
+
+>**Note that you will have to download the `diamonds` dataset from this repo to get started: https://github.com/tidyverse/ggplot2/blob/882584f915b23cda5091fb69e88f19e8200811bf/data-raw/diamonds.csv**
 
 The overall goal of this ML project is to predict the price of diamonds given different qualitative and quantitative attributes.
 
