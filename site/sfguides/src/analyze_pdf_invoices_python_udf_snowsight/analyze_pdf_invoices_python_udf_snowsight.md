@@ -300,7 +300,7 @@ Again, click __Chart__. You should see a line chart with `MONTH` on the x-axis a
 ## Conclusion
 Duration: 1
 
-Congratulations! You used Snowflake to analyze PDF invoices.
+Congratulations! You used Snowflake to analyze PDF invoices using Python.
 
 ### What we’ve covered
 - Accessing unstructured data with an __external stage__
@@ -308,7 +308,6 @@ Congratulations! You used Snowflake to analyze PDF invoices.
 - Visualize data with __Snowsight__
 
 ### Related Resources
-## ACTION:
 - [Quickstart: Extract Attributes from DICOM Files using a Java UDF](https://quickstarts.snowflake.com/guide/extract_attributes_dicom_files_java_udf/index.html?index=..%2F..index#0)
 - [Unstructured Data Docs](https://docs.snowflake.com/en/user-guide/unstructured.html)
 - [Python UDF Docs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-introduction)
