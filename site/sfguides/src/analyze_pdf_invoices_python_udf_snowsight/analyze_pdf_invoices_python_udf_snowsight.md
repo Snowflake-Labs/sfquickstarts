@@ -1,4 +1,4 @@
-author: Augusto Rosa, Mustafa El-Hilo (Based on work by Scott Teal, Saurin Shah for the java use case)
+author: Augusto Rosa, Mustafa El-Hilo @ Infostrux Solutions Inc. (Based on work by Scott Teal, Saurin Shah for the java use case)
 id: analyze_pdf_invoices_python_udf_snowsight
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: data-science-&-ml,data-engineering,architecture-patterns,solution-examples
@@ -308,8 +308,10 @@ Congratulations! You used Snowflake to analyze PDF invoices.
 - Visualize data with __Snowsight__
 
 ### Related Resources
-## ACTION: update to python
+## ACTION:
 - [Quickstart: Extract Attributes from DICOM Files using a Java UDF](https://quickstarts.snowflake.com/guide/extract_attributes_dicom_files_java_udf/index.html?index=..%2F..index#0)
 - [Unstructured Data Docs](https://docs.snowflake.com/en/user-guide/unstructured.html)
 - [Python UDF Docs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-introduction)
 - [Snowpark Docs](https://docs.snowflake.com/en/developer-guide/snowpark/index.html)
+  
+This lab brought to you by Infostrux Solutions Inc (Augusto Rosa and Mustafa El-Hilo)
