@@ -78,11 +78,23 @@ Run the following SQL commands in a SQL worksheet to create the [warehouse](http
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
-
-CREATE OR REPLACE WAREHOUSE ML_HOL_WH;
+CREATE OR REPLACE WAREHOUSE ML_HOL_WH; --by default, this creates an XS Standard Warehouse
 CREATE OR REPLACE DATABASE ML_HOL_DB;
 CREATE OR REPLACE SCHEMA ML_HOL_SCHEMA;
-CREATE OR REPLACE STAGE DIAMONDS_ASSETS;
+CREATE OR REPLACE STAGE ML_HOL_ASSETS; --to store model assets
+
+-- create csv format
+CREATE FILE FORMAT IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT 
+    SKIP_HEADER = 1 
+    TYPE = 'CSV';
+
+-- create external stage with the csv format to stage the diamonds dataset
+CREATE STAGE IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.DIAMONDS_ASSETS 
+    FILE_FORMAT = ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT 
+    URL = 's3://sfquickstarts/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv';
+    -- https://sfquickstarts.s3.us-west-1.amazonaws.com/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv
+
+LS @DIAMONDS_ASSETS;
 ```
 
 These can also be found in the **setup.sql** file.
@@ -99,19 +111,17 @@ Duration: 7
 
 - Open a new terminal window and execute the following commands in the same terminal window:
 
-  1. Download `install-snowpark-ml-${VERSION}.sh` script from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV).
-
-  2. If you already have a conda environment and want to use `snowflake-ml-python` in it, activate the environment and run:
+  1. Create the conda environment.
   ```
-  $ install-snowpark-ml-${VERSION}.sh
+  conda env create -f conda_env.yml
   ```
 
-  3. If you want to use snowflake-ml-python in a new conda environment, or you do not have any conda environment, run:
+  2. Activate the conda environment.
   ```
-  $ install-snowpark-ml-${VERSION}.sh -n <conda_env_name>
+  conda activate snowpark-ml-hol
   ```
 
-  4. `Optionally` start notebook server:
+  2. `Optionally` start notebook server:
   ```
   $ jupyter notebook &> /tmp/notebook.log &
   ```  
@@ -141,9 +151,7 @@ Duration: 7
 
 Open the following jupyter notebook and run each of the cells: [1_snowpark_ml_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/1_snowpark_ml_data_ingest.ipynb)
 
-Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart. 
-
->**Note that you will have to download the `diamonds` dataset from this repo to get started: https://github.com/tidyverse/ggplot2/blob/882584f915b23cda5091fb69e88f19e8200811bf/data-raw/diamonds.csv**
+Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table from an external stage. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart. 
 
 The overall goal of this ML project is to predict the price of diamonds given different qualitative and quantitative attributes.
 
