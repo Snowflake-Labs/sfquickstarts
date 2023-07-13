@@ -110,7 +110,7 @@ Duration: 7
 
 - Open a new terminal window and execute the following commands in the same terminal window:
 
-  1. Create the conda environment and activate it.
+  1. Create the conda environment.
   ```
   conda env create -f conda_env.yml
   ```
