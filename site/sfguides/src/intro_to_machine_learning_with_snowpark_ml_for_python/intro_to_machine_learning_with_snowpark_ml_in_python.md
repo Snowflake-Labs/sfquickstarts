@@ -110,20 +110,17 @@ Duration: 7
 
 - Open a new terminal window and execute the following commands in the same terminal window:
 
-  1. Download `install-snowpark-ml-${VERSION}.sh` script from [here](https://drive.google.com/drive/folders/1NFe9oUmhJEtx0XPoDkSJtP4eysNKrlcV).
-
-  2. Create the conda environment.
+  1. Create the conda environment and activate it.
   ```
   conda env create -f conda_env.yml
   ```
 
-  2. Activate the conda environment and run the installation script to install `snowflake-ml-python`:
+  2. Activate the conda environment.
   ```
-  $ conda activate snowpark-ml-hol
-  $ install-snowpark-ml-${VERSION}.sh
+  conda activate snowpark-ml-hol
   ```
 
-  3. `Optionally` start notebook server:
+  2. `Optionally` start notebook server:
   ```
   $ jupyter notebook &> /tmp/notebook.log &
   ```  
