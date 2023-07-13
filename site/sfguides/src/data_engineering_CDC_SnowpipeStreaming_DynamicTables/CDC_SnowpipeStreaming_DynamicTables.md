@@ -58,12 +58,10 @@ To complete this Quickstart, attendees need the following:
 Duration: 5
 
 ### a) Download
-The first thing you will need to do is download the following three files.  The first two are ZIP files you need to extract BOTH into the same directory (for example C:/SnowflakeQuickstarts) that together make the simulator client.  The second ZIP file will add two JAR files to the CDCSimulatorApp/lib directory (if you are getting ClassNotFoundException errors, this is a likely reason).  The third file contains a series of SQL commands to execute in Worksheets throughout this lab **Click the green buttons to access the page to download the files**
+The first thing you will need to do is download the following two files.  The first is a ZIP file you need to extract to a directory (for example C:/SnowflakeQuickstarts) that is the streaming simulator client.  The second file contains a series of SQL commands to execute in Worksheets throughout this lab **Click the green buttons to access the page to download the files**
 
 
-<button>[CDCSimulatorApp1.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/e281bfc5c6a299ac391a10d64ed7d0a85db4fde4/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/CDCSimulatorApp1.zip)</button> (Click Download)
-
-<button>[CDCSimulatorApp2.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/e281bfc5c6a299ac391a10d64ed7d0a85db4fde4/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/CDCSimulatorApp2.zip)</button> (Click Download)
+<button>[CDCSimulatorApp.zip](https://sfquickstarts.s3.us-west-1.amazonaws.com/data_engineering_CDC_snowpipestreaming_dynamictables/CDCSimulatorApp.zip)</button> (Click Download)
 
 <button>[Data_Engineering_Streams_CDC_DT_VHOL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/32fc9d8c26674f520cb894577e181dcfaeb7c7df/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/Data_Engineering_Streams_CDC_DT_VHOL.sql)</button> (Click Raw, then from your browser, use "Save Page As")
 
