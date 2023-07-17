@@ -614,7 +614,7 @@ The function above gets an array of spatial objects and returns a single large s
 ```
 SELECT geolab.geography.py_union_agg(array_agg(st_asgeojson(c.coverage))) AS geom
 FROM geolab.geography.nl_lte_with_coverage c
-JOIN geolab.geography.nl_administrative_area b 
+JOIN geolab.geography.nl_administrative_areas b 
   ON st_intersects(b.geom, c.geom)
 WHERE type = 'Municipality'
 AND municipality_name = 'Angerlo';
