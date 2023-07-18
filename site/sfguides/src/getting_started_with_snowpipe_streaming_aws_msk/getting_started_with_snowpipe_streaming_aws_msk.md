@@ -567,8 +567,11 @@ Check the `Use existing custom plugin` button.
 Select the custom plugin you just created, click `Next`.
 ![](assets/mskc-connector-2.png)
 
-Give the connector a name, e.g. `snowpipeStreaming`, then select the MSK cluster you want to associate this connector with.
-Scroll down to `Configuration settings`. Copy and paste
+Give the connector a name, e.g. `snowpipeStreaming` in the `Basic information` section.
+![](assets/mskc-connector-basicinfo.png)
+
+Select the MSK cluster you want to associate this connector with.
+Scroll down to `Configuration settings`, copy and paste
 the content from the configuration file: `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` in the EC2 instance.
 ![](assets/mskc-connector-config.png)
 
