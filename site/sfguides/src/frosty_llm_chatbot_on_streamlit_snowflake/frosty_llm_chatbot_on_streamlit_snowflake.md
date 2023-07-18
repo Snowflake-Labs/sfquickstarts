@@ -32,6 +32,9 @@ A large language model, or LLM, is a deep learning algorithm that can recognize,
 ### What is OpenAI?
 OpenAI is the AI research and deployment company behind ChatGPT, GPT-4 (and its predecessors), DALL-E, and other notable offerings. Learn more about [OpenAI](https://openai.com/). We use OpenAI in this guide, but you are welcome to use the large language model of your choice in its place.
 
+### What is the Snowflake Marketplace?
+The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/) provides users with access to a wide range of datasets from third-party data stewards, expanding the data available for transforming business processes and making decisions. Data providers can publish datasets and offer data analytics services to Snowflake customers. Customers can securely access shared datasets directly from their Snowflake accounts and receive automatic real-time updates.
+
 ### Prerequisites
 * Accountadmin role access in Snowflake or a [Snowflake trial account](https://signup.snowflake.com/)
 * An API key for OpenAI or another Large Language Model
@@ -42,19 +45,21 @@ OpenAI is the AI research and deployment company behind ChatGPT, GPT-4 (and its 
 
 ### What you’ll learn
 * How to create a web application from a Python script with Streamlit
+* How to build a chatbot in just a few lines of code using [Streamlit's new chat UI](https://docs.streamlit.io/library/api-reference/chat)
 * How to use [`st.experimental_connection`](https://docs.streamlit.io/library/api-reference/connections/st.experimental_connection) to connect your Streamlit app to Snowflake
-* How to build a chatbot in just a few lines of code using Streamlit's new chat UI
 * How to use [`session state`](https://docs.streamlit.io/library/api-reference/session-state) to store your chatbot's message history
 
 <!-- ------------------------ -->
 ## Prepare your environment
 Duration: 8
 
+Complete the following steps in your local machine (or an equivalent dev environment):
+
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to manage a separate environment by selecting the appropriate installer link for your operating system and Python version from [Anaconda's website](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links).
 2. Open the terminal or command prompt and create a folder for your project. Let's call it `llm-chatbot`.
 3. If you're using a machine with an Apple M1 chip, run the following command to use conda to create a Python 3.10 virtual environment, add the Snowflake conda channel, and install the numpy and pandas packages: 
     ```
-    conda create --name py310_env --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
+    conda create --name snowpark-llm-chatbot --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
     ```
     Activate the environment created in those instructions by running `conda activate py310_env` and proceed to step 6 below.
 
@@ -62,15 +67,16 @@ Duration: 8
 
 4. Create a conda environment by running the following command:
     ```
-    conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.10
+    conda create --name snowpark-llm-chatbot -c https://repo.anaconda.com/pkgs/snowflake python=3.10
     ```
 5. Activate the conda environment by running the following command:
     ```
-    conda activate snowpark
+    conda activate snowpark-llm-chatbot
     ```
 6. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
-    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai streamlit
+    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai
+    pip install streamlit
     ```
 
 ### Troubleshooting `pyarrow` related issues
@@ -394,7 +400,8 @@ Here are 6 critical rules for the interaction you must abide:
 6. DO NOT put numerical at the very front of SQL variable.
 </rules>
 
-Don't forget to use "ilike %keyword%" for fuzzy match queries and wrap the generated sql code with ``` sql code markdown in this format e.g:
+Don't forget to use "ilike %keyword%" for fuzzy match queries (especially for variable_name column)
+and wrap the generated sql code with ``` sql code markdown in this format e.g:
 ```sql
 (select 1) union (select 2)
 ```
