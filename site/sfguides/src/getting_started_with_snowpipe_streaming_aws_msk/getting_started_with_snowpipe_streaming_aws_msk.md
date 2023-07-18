@@ -555,7 +555,8 @@ Click `Create Custom plugin`.
 ![](assets/custom-plugin.png)
 
 Fill in the s3 path to your uploaded zip file, e.g. `s3://my-mskc-bucket/snowpipeStreaming-mskc-plugins.zip`
-Give the custom plugin a name, e.g. `mymskc-plugin`, click `Create custom plugin`.
+Give the custom plugin a name, e.g. `my-mskc-plugin`, click `Create custom plugin`.
+
 ![](assets/custom-plugin-2.png)
 
 #### 4. Create a connector
@@ -572,8 +573,9 @@ the content from the configuration file: `$HOME/snowpipe-streaming/scripts/snowf
 ![](assets/mskc-connector-config.png)
 
 Leave all other settings as default, further scroll down to `Access permissions`. In the `Choose service role` drop-down menu, select
-the role created by the Cloudformation template in the beginning of this quickstarts. The role name looks like this
+the role created by the Cloudformation template in the beginning of this quickstarts. The role name should look something like this
 `<CFT stack name>-MSKConnectRole-<random characters>`. Click `Next`.
+
 ![](assets/mskc-connector-permission.png)
 
 In the `Security` page, leave everything as default, click `Next`.
@@ -581,8 +583,8 @@ Skip the `Logs` page as it is optional, click `Next`.
 Review the configurations and click `Create connector`. The connector will be created in about 5-10 minutes.
 ![](assets/mskc-connector-running.png)
 
-At this point, the Kafka connector for Snowpipestreaming is configured and managed by MSKC, all you need to do is to 
-run the resource side connector periodically as shown in Step 3 of Section 6. 
+At this point, the Kafka connector for Snowpipestreaming has been configured, it is running and managed by MSKC, all you need to do is to 
+run the source connector to ingest live data continuously as shown in Step 3 of Section 6. 
 <!---------------------------->
 
 ## Cleanup
