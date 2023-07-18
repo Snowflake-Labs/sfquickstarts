@@ -564,10 +564,21 @@ Check the `Use existing custom plugin` button.
 Select the custom plugin you just created, click `Next`.
 ![](assets/mskc-connector-2.png)
 
-Give the connector a name, scroll down to `Configuration settings`. Copy and paste
+Give the connector a name, select the MSK cluster you want to associate this connector with.
+Scroll down to `Configuration settings`. Copy and paste
 the content from the configuration file: `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` in
 the EC2 instance.
 ![](assets/mskc-connector-config.png)
+
+Leave all other settings as default, further scroll down to `Access permissions`. In the `Choose service role` drop-down menu, select
+the role created by the Cloudformation template in the beginning of this quickstarts. The role name looks like this
+`<CFT stack name>-MSKConnectRole-<random characters>`. Click `Next`.
+![](assets/mskc-connector-permission.png)
+
+In the `Security` page, leave everything as default, click `Next`.
+Skip the `Logs` page as it is optional, click `Next`.
+Review the configurations and click `Create connector`. The connector will be created in about 5-10 minutes.
+![](assets/mskc-connector-running.png)
 
 
 <!---------------------------->
