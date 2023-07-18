@@ -345,6 +345,9 @@ FROM HOSTLIST
 WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 
 ```
+Please write down the Account Identifier, we will need it later.
+![](assets/account-identifier.png)
+
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
 First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
@@ -523,87 +526,32 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 ![](assets/flight-json.png)
 
 <!---------------------------->
-## Query ingested data in Snowflake
-Duration: 10
+## Use MSK Connect (MSKC)
+Duration: 15
 
-Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
-The data should have been streamed into a table, ready for further processing.
+So far we have been hosting the Kafka connector for Snowpipe Streaming on the EC2 instance. You can also use
+[Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) to manage the connector.
 
-#### 1. Query the raw data
-To verify that data has been streamed into Snowflake, execute the following SQL commands.
+*Note that in order to use MSKC, it is suggested to run your MSK cluster in a private subnet for it to work.
+See this [AWS documentation](https://docs.aws.amazon.com/msk/latest/developerguide/msk-connect-internet-access.html) for more information.
 
-```commandline
-use msk_streaming_db;
-use schema msk_streaming_schema;
-show channels in table msk_streaming_tbl;
-```
-You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
-![](assets/channels.png)
+#### 1. Create a S3 bucket to store the custom plugins
+Follow this [AWS documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html) to create a S3 bucket.
 
-Now run the following query on the table.
-```
-select * from msk_streaming_tbl;
-```
-You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
-
-![](assets/raw_data.png)
-The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
-
-#### 2. Flatten the raw JSON data
-Now execute the following SQL commands to flatten the raw JSONs and create a view with multiple columns based on the key names.
+#### 2. Upload the libraries to the S3 bucket
+On your EC2 session, run the following commands to compress the libraries into a zipped file.
 
 ```commandline
-create or replace view flights_vw
-  as select
-    f.value:utc::timestamp_ntz ts_utc,
-    CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
-    f.value:alt::integer alt,
-    f.value:dest::string dest,
-    f.value:orig::string orig,
-    f.value:id::string id,
-    f.value:icao::string icao,
-    f.value:lat::float lat,
-    f.value:lon::float lon,
-    st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
-    year(ts_pt) yr,
-    month(ts_pt) mo,
-    day(ts_pt) dd,
-    hour(ts_pt) hr
-FROM   msk_streaming_tbl,
-       Table(Flatten(msk_streaming_tbl.record_content)) f;
+cd $HOME/snowpipe-streaming/kafka_2.12-2.8.1/libs
+zip -9 /tmp/snowpipeStreaming-mskc-plugins.zip *
+aws s3 cp /tmp/snowpipeStreaming-mskc-plugins.zip s3://<your s3 bucket name>/snowpipeStreaming-mskc-plugins.zip
 ```
 
-The SQL commands create a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools like Grafana
-
-Let's query the view `flights_vw` now.
-```commandline
-select * from flights_vw;
-```
-
-As a result, you will see a nicely structured output with columns derived from the JSONs
-![](assets/materialized_view.png)
-
-#### 3. Stream real-time flight data continuously to Snowflake
-
-We can now write a loop to stream the flight data continuously into Snowflake.
-
-Note that there is a 10 seconds sleep time between the queries, it is because for our data source in this workshop, anything
-less than 10 seconds will not incur any new data as the source won't update more frequently than 10 seconds.
-Feel free to lower the frequency for other data sources that update more frequently.
-
-Go back to the Linux session and run the following script.
-
-```commandline
-while true
-do
-  curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
-  sleep 10
-done
-
-```
-You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
-
-<!----------------------------->
+#### 3. Create a custom plugin in MSK
+Go to the [MSK console](https://console.aws.amazon.com/msk/home), click `Custom plugins` on the left pane.
+Click `Create Custom plugin`.
+![](assets/custom-plugin.png)
+<!---------------------------->
 ## Cleanup
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://us-west-2.console.aws.amazon.com/cloudformation/home?stacks) console.
