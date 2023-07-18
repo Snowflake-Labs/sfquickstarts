@@ -564,10 +564,9 @@ Check the `Use existing custom plugin` button.
 Select the custom plugin you just created, click `Next`.
 ![](assets/mskc-connector-2.png)
 
-Give the connector a name, select the MSK cluster you want to associate this connector with.
+Give the connector a name, e.g. `snowpipeStreaming`, then select the MSK cluster you want to associate this connector with.
 Scroll down to `Configuration settings`. Copy and paste
-the content from the configuration file: `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` in
-the EC2 instance.
+the content from the configuration file: `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` in the EC2 instance.
 ![](assets/mskc-connector-config.png)
 
 Leave all other settings as default, further scroll down to `Access permissions`. In the `Choose service role` drop-down menu, select
@@ -580,8 +579,10 @@ Skip the `Logs` page as it is optional, click `Next`.
 Review the configurations and click `Create connector`. The connector will be created in about 5-10 minutes.
 ![](assets/mskc-connector-running.png)
 
-
+At this point, the Kafka connector for Snowpipestreaming is configured and managed by MSKC, all you need to do is to 
+run the resource side connector periodically as shown in Step 3 of Section 6. 
 <!---------------------------->
+
 ## Cleanup
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://us-west-2.console.aws.amazon.com/cloudformation/home?stacks) console.
