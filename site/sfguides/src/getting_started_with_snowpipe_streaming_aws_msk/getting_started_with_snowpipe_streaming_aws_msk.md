@@ -551,6 +551,25 @@ aws s3 cp /tmp/snowpipeStreaming-mskc-plugins.zip s3://<your s3 bucket name>/sno
 Go to the [MSK console](https://console.aws.amazon.com/msk/home), click `Custom plugins` on the left pane.
 Click `Create Custom plugin`.
 ![](assets/custom-plugin.png)
+
+Fill in the s3 path to your uploaded zip file, e.g. `s3://my-mskc-bucket/snowpipeStreaming-mskc-plugins.zip`
+Give the custom plugin a name, e.g. `mymskc-plugin`, click `Create custom plugin`.
+![](assets/custom-plugin-2.png)
+
+#### 4. Create a connector
+Click `Connectors` on the left pane, then click `Create connector`.
+![](assets/mskc-connector.png)
+
+Check the `Use existing custom plugin` button.
+Select the custom plugin you just created, click `Next`.
+![](assets/mskc-connector-2.png)
+
+Give the connector a name, scroll down to `Configuration settings`. Copy and paste
+the content from the configuration file: `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` in
+the EC2 instance.
+![](assets/mskc-connector-config.png)
+
+
 <!---------------------------->
 ## Cleanup
 
