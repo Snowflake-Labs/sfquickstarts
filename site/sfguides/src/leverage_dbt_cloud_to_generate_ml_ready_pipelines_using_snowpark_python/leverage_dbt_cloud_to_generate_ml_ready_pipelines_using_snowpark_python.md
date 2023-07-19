@@ -449,42 +449,47 @@ Instead of building an entire version controlled data project from scratch, we'l
 
 <!-- ------------------------ -->
 ## Forking repository into dbt Cloud
-Duration: 10
+Duration: 5
 
 To keep the focus on dbt python and deployment today, we only want to build a subset of models that would be in an entire data project. To achieve this we need to fork an existing repository into our personal github, copy our forked repo name into dbt cloud, and add the dbt deploy key to our github account. Viola! There will be some back and forth between dbt cloud and GitHub as part of this process, so keep your tabs open, and let's get the setup out of the way!
 
-1. Delete the existing connection to the managed repository. To do this navigate to **Settings > Account Settings > Partner Connect Trial**.
-2. This will open the **Project Details**. Navigate to **Repository** and click the existing managed repository GitHub connection setup during partner connect.
-<img src="assets/development-schema-and-forking-repo/forking-repo/1-select-partner-connect-repo.png" alt="select-existing-partner-connect-repo">
+1. Open a new browser tab and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark).
 
-3. In the **Repository Details** select **Edit** in the lower right corner. The option to **Disconnect** will appear, select it.
-<img src="assets/development-schema-and-forking-repo/forking-repo/2_repository_details_disconnect.png" alt="repository_details_disconnect">
-
-4. **Confirm disconnect**. 
-<img src="assets/development-schema-and-forking-repo/forking-repo/3_confirm_disconnect_from_managed_repo.png" alt="confirm_disconnect_from_managed_repo">
-
-5. Within your **Project Details** you should have the option to **Configure Repository**.
-<img src="assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png" alt="configure_repository">
-
-6. Open a new window and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark).
-
-7. **Fork** your own copy of the lab repo.
+2. **Fork** your own copy of the lab repo.
 <img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
 
-8. Add a description if you'd like such as: "learning about dbt at Snowflake Summit is cool" and **Create fork**.  
+3. Add a description if you'd like such as: "learning about dbt Cloud is cool" and **Create fork**.  
 <img src="assets/development-schema-and-forking-repo/forking-repo/6_create_new_fork.png" alt="create_new_fork">
 
-9. Select the **Code** button. Choose the SSH option and use the copy button shortcut for our repo. 
+4. Select the **Code** button. Choose the SSH option and use the **copy** button shortcut for our repo. We'll be using this copied path in step 11 in this section.
 <img src="assets/development-schema-and-forking-repo/forking-repo/7_copy_repo_ssh_github.png" alt="copy_repo_ssh_github">
 
-10. **Navigate back to dbt cloud**. After deleting our partner connect managed repository, we should see **New Repository**. Select **Git Clone**. Input the repository by pasting what you copied from GitHub into the **Repository** parameter and clicking **Import**.
+5. Head back over to your dbt Cloud browser tab so we can connect our new forked repository into our dbt Cloud project. 
+ 
+6. We'll need to delete the existing connection to the managed repository spun up during Partner Connect before we input our new one. To do this navigate to **Settings > Account Settings > Partner Connect Trial**.
+
+7. This will open the **Project Details**. Navigate to **Repository** and click the existing managed repository GitHub connection setup during partner connect.
+<img src="assets/development-schema-and-forking-repo/forking-repo/1-select-partner-connect-repo.png" alt="select-existing-partner-connect-repo">
+
+8. In the **Repository Details** select **Edit** in the lower right corner. The option to **Disconnect** will appear, select it.
+<img src="assets/development-schema-and-forking-repo/forking-repo/2_repository_details_disconnect.png" alt="repository_details_disconnect">
+
+9. **Confirm disconnect**. 
+<img src="assets/development-schema-and-forking-repo/forking-repo/3_confirm_disconnect_from_managed_repo.png" alt="confirm_disconnect_from_managed_repo">
+
+10. Within your **Project Details** you should have the option to **Configure Repository**.
+<img src="assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png" alt="configure_repository">
+
+11. After deleting our partner connect managed repository, we should see **New Repository**. Select **Git Clone**. Input the repository by pasting what you copied from GitHub in step 4 above into the **Repository** parameter and clicking **Import**.
 <img src="assets/development-schema-and-forking-repo/forking-repo/8_git_clone_copy_repo_from_github.png" alt="git_clone_copy_repo_from_github">
 
-11. We can see we successfully made the connection to our forked GitHub repo. <img src="assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo"> 
+12. We can see we successfully made the connection to our forked GitHub repo. <img src="assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo"> 
 
-If you tried to start developing onto of this repo right now, we'd get permissions errors. So we need to give dbt Cloud write acess. 
+If you tried to start developing onto of this repo right now, we'd get permissions errors. So we need to give dbt Cloud write access. 
 
-### Giving dbt cloud repo write access using github deploy keys
+## Giving dbt cloud repo write access using github deploy keys
+Duration: 5
+
 1. Click on your git cloned repository link. dbt Cloud generated a deploy key to link the development we do in dbt cloud back to our GitHub repo. **Copy** the deploy key starting with **ssh-rsa** followed by a long hash key (full key hidden for privacy).
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud">
 
