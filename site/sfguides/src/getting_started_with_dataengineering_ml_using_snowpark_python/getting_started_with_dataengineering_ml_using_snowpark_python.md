@@ -222,10 +222,10 @@ conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake p
 conda activate snowpark-de-ml
 ```
 
-**Step 5:** Install Snowpark Python and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
+**Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python pandas notebook cachetools
 ```
 
 **Step 6:** Install Streamlit library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
@@ -234,13 +234,7 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 pip install streamlit
 ```
 
-**Step 7:** Install Snowpark ML library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
-
-```python
-pip install snowflake-ml-python
-```
-
-**Step 9:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
+**Step 7:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
 Here's a sample ***connection.json*** based on the object names mentioned in **Setup Environment** step.
 
