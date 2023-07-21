@@ -13,7 +13,7 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## 概要
 
-所要時間：5分
+Duration: 5
 
 このガイドを完了すると、未加工データから、組織が広告予算の割り当てを最適化するのに役立つ双方向アプリケーションに移行できるようになります。
 
@@ -71,7 +71,7 @@ Streamlitは、開発者がデータアプリケーションをすばやく簡�
 <!-- ------------------------ -->
 ## 環境を設定する
 
-所要時間：15分
+Duration: 15
 
 ### テーブルを作成し、データを読み込み、ステージを設定する
 
@@ -173,7 +173,7 @@ CREATE OR REPLACE STAGE dash_udfs;
 <!-- ------------------------ -->
 ## 開始する
 
-所要時間：8分
+Duration: 8
 
 このセクションでは、GitHubレポジトリの複製と、Snowpark for Python環境の設定について説明します。
 
@@ -264,7 +264,7 @@ pip install snowflake-ml-python
 <!-- ------------------------ -->
 ## データエンジニアリング
 
-所要時間：20分
+Duration: 20
 
 下記リンク先のノートブックでは、次のデータエンジニアリングタスクを説明しています。
 
@@ -443,7 +443,7 @@ session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
 <!-- ------------------------ -->
 ## 機械学習
 
-所要時間：20分
+Duration: 20
 
 > 前提条件：[Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)で説明されているデータエンジニアリングの手順が正常に完了していること。
 
@@ -502,7 +502,7 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Streamlitアプリケーション
 
-所要時間：10分
+Duration: 10
 
 ### Streamlitアプリをローカルで実行する
 
@@ -591,7 +591,7 @@ alter task monthly_revenue_data_pipeline_task suspend;
 <!-- ------------------------ -->
 ## まとめとリソース
 
-所要時間：3分
+Duration: 3
 
 おめでとうございます。Snowpark for Pythonとscikit-learnを使用して、データエンジニアリングタスクを正常に実行し、検索、ビデオ、ソーシャルメディア、メールなど複数のチャネルで変動する広告費予算の将来のROI（投資収益率）を予測する線形回帰モデルトレーニングしました。次に、そのモデルを使用して、ユーザー入力に基づいて新しい予算配分の予測を生成するStreamlitアプリケーションを作成しました。
 

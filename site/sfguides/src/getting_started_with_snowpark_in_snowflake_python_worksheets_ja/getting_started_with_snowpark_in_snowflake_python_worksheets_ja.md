@@ -12,7 +12,7 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## 概要
 
-所要時間：5分
+Duration: 5
 
 このガイドを完了すると、Snowflake UI内からSnowpark for Pythonを試すことができるようになります。最後には、Snowflake PythonワークシートでSnowparkを使用してコアデータエンジニアリングタスクを実行する方法について理解を深めることができます。
 
@@ -47,7 +47,7 @@ PythonワークシートはSnowsightの新しいタイプのワークシート�
 <!-- ------------------------ -->
 ## 開始する
 
-所要時間：10分
+Duration: 10
 
 ### Snowflakeトライアルアカウントを作成する
 
@@ -70,7 +70,7 @@ Snowflakeアカウントにログインします。このラボにアクセス�
 <!-- ------------------------ -->
 ## SnowflakeテーブルからSnowpark DataFramesにデータをロードする
 
-所要時間：1分
+Duration: 1
 
 まず、Snowpark Pythonライブラリをインポートしましょう。
 
@@ -81,7 +81,7 @@ import snowflake.snowpark as snowpark
 
 ### 集約されたキャンペーン支出と売上データをロードする
 
-所要時間：3分
+Duration: 3
 
 キャンペーン支出テーブルには、検索エンジン、ソーシャルメディア、メール、動画などのデジタル広告チャネル全体の1日の支出を示すために集約された広告クリックデータが含まれています。収益テーブルには、10年間の収益データが含まれています。
 
@@ -104,7 +104,7 @@ snow_df_revenue = session.table('monthly_revenue')
 <!-- ------------------------ -->
 ## データトランスフォーメーション
 
-所要時間：10分
+Duration: 10
 
 このセクションでは、2つのDataFramesの集約と結合を含む一連の変換を実行します。
 
@@ -205,7 +205,7 @@ snow_df_spend_and_revenue_per_month.explain()
 <!-- ------------------------ -->
 ## 変換されたデータを保存する
 
-所要時間：1分
+Duration: 1
 
 変換されたデータをSnowflakeテーブル ***SPEND_AND_REVENUE_PER_MONTH*** に保存して、さらなる分析やモデルトレーニングに使用できるようにしましょう。
 
@@ -216,7 +216,7 @@ snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND
 <!-- ------------------------ -->
 ## 変換されたデータを表示して返す
 
-所要時間：1分
+Duration: 1
 
 Pythonワークシートの戻り値の1つは ***Table()*** 型であり、この例ではこれを設定することで、変換されたデータをSnowpark DataFrameとして表示して返すことができます。
 
@@ -235,7 +235,7 @@ return snow_df_spend_and_revenue_per_month
 <!-- ------------------------ -->
 ## ストアドプロシージャとして展開する
 
-所要時間：2分
+Duration: 2
 
 オプションで、このワークシートをPythonストアドプロシージャとして展開して、[Snowflakeタスク](https://docs.snowflake.com/en/user-guide/tasks-intro)などを使用してスケジュールできるようにすることもできます。このワークシートを展開するには、右上の「**展開**」ボタンをクリックし、以下の指示に従います。
 

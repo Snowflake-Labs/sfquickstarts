@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Snowpark, Machine Learnin
 <!-- ------------------------ -->
 ## 概要
 
-所要時間：1分 <img src="assets/tasty_bytes_header.png"/>
+Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 このデータサイエンスのためのSnowpark入門クイックスタートガイドでは、架空のキッチンカー会社であるTasty Bytes社に対し、キッチンカーの運転手にロケーション推奨を提供するモデルのトレーニングを行うことで売上を伸ばす支援をします。**Snowpark for Python**を使用してデータの準備、モデルのトレーニング、モデルの展開を行います。展開後は、**Streamlit**を使用してアプリケーションのプロトタイプを作成し、キッチンカーの運転手が次のシフトのために駐車する最適なロケーションを見つけるためにこのモデルをどのように利用できるかについてデモを行います。
 
@@ -48,7 +48,7 @@ Streamlit *（2022年3月にSnowflakeが買収）* は、カスタムウェブ�
 <!-- ------------------------ -->
 ## Snowflakeでのデータの設定
 
-所要時間：6分
+Duration: 6
 
 ### 概要
 
@@ -157,7 +157,7 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 <!-- ------------------------ -->
 ## Snowparkによるデータサイエンス
 
-所要時間：22分
+Duration: 22
 
 ### 概要
 
@@ -258,7 +258,7 @@ jupyter notebook
 <!-- ------------------------ -->
 ## Streamlitによるアプリケーションプロトタイプ
 
-所要時間：6分
+Duration: 6
 
 ### 概要
 
@@ -292,7 +292,7 @@ jupyter notebook
 <!-- ------------------------ -->
 ## クリーンアップ
 
-所要時間：5分
+Duration: 5
 
 ### このクイックスタートで作成されるオブジェクトの概要
 
@@ -358,7 +358,7 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 <!-- ------------------------ -->
 ## まとめと次のステップ
 
-所要時間：1分
+Duration: 1
 
 ### まとめ
 
