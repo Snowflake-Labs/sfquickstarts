@@ -418,7 +418,7 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 
 1. Navigate out of your SQL worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
-3. Confirm that your email address contains an email alias
+3. Confirm that your email address contains an email alias. 
 4. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
 <img src="assets/launching-dbt-cloud-through-partner-connect/1-open-partner-connect.png" alt="open-partner-connect">
 
@@ -787,6 +787,7 @@ Now that we've joined and denormalized our data we're ready to use it in python 
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
 Duration: 5
+
 This step is optional for this quickstart to give a better feel for working with python directly in Snowflake. To see how to implement this in dbt Cloud, you may skip to the next section.
 
 Now that we've transformed data using SQL let's write our first python code and get insights about lap time trends.
