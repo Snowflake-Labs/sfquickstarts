@@ -418,13 +418,14 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 
 1. Navigate out of your SQL worksheet back by selecting **home**.
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
-3. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
+3. Confirm that your email address contains an email alias
+4. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
 <img src="assets/launching-dbt-cloud-through-partner-connect/1-open-partner-connect.png" alt="open-partner-connect">
 
-4. You should now see a new window that says **Connect to dbt**. Select **Optional Grant** and add the `FORMULA1` database. This will grant access for your new dbt user role to the FORMULA1 database.
+5. You should now see a new window that says **Connect to dbt**. Select **Optional Grant** and add the `FORMULA1` database. This will grant access for your new dbt user role to the FORMULA1 database.
 <img src="assets/launching-dbt-cloud-through-partner-connect/2-partner-connect-optional-grant.png" alt="partner-connect-optional-grant">
 
-5. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
+6. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
 <img src="assets/launching-dbt-cloud-through-partner-connect/3a-connect-to-dbt.png" alt="connect-to-dbt">
 
 If you forgot to add the optional grant to the Formula1 database in the previous screenshot, please run these commands:
@@ -453,7 +454,7 @@ Duration: 5
 
 To keep the focus on dbt python and deployment today, we only want to build a subset of models that would be in an entire data project. To achieve this we need to fork an existing repository into our personal github, copy our forked repo name into dbt cloud, and add the dbt deploy key to our github account. Viola! There will be some back and forth between dbt cloud and GitHub as part of this process, so keep your tabs open, and let's get the setup out of the way!
 
-1. Open a new browser tab and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-snowflake-summit-2023-hands-on-lab-snowpark).
+1. Open a new browser tab and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-python-hands-on-lab-snowpark).
 
 2. **Fork** your own copy of the lab repo.
 <img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
@@ -502,7 +503,7 @@ Duration: 5
 
 5. Select **Add deploy key**. <img src="assets/development-schema-and-forking-repo/github-deploy-keys/new_deploy_key_button.png" alt="new_deploy_key_button">
 
-6. Give your deploy key a title such as `dbt Cloud Snowflake Summit`. Paste the ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
+6. Give your deploy key a title such as `dbt Cloud python snowpark`. Paste the ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/add_new_deploy_key.png" alt="add_new_deploy_key">
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_key_created.png" alt="deploy_key_created">
 
@@ -512,7 +513,7 @@ Duration: 5
 8. **Run "dbt deps"**
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/run_dep_deps_after_importing_forked_repo.png" alt="run_dep_deps_after_importing_forked_repo">
 
-9. Since we're bringing in an existing project, your root folder should now say `dbt-snowflake-summit-hands-on-lab-snowpark`
+9. Since we're bringing in an existing project, your root folder should now say `dbt-python-hands-on-lab-snowpark`
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/file_tree_of_forked_repo.png" alt="file_tree_of_forked_repo">
 
 Alas, now that our setup work is complete, time get a look at our production data pipeline code! 
@@ -786,6 +787,7 @@ Now that we've joined and denormalized our data we're ready to use it in python 
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
 Duration: 5
+This step is optional for this quickstart to give a better feel for working with python directly in Snowflake. To see how to implement this in dbt Cloud, you may skip to the next section.
 
 Now that we've transformed data using SQL let's write our first python code and get insights about lap time trends.
 Snowflake python worksheets are excellent for developing your python code before bringing it into a dbt python model.
