@@ -13,37 +13,45 @@ authors: Dash Desai
 
 Duration: 5
 
-By completing this guide, you will be able to go from raw data to an interactive application that can help organizations optimize their advertising budget allocation.
+By completing this guide, you will be able to go from raw data to an interactive application that can help organization optimize their advertising budget allocation.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
 - **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications.
 - **Data Pipelines**: Use Snowflake Tasks to turn your data pipeline code into operational pipelines with integrated monitoring.  
-- **Machine Learning**: Prepare data and run ML Training in Snowflake using scikit-learn and deploy the model as a Snowpark User-Defined-Function (UDF) using the integrated Anaconda package repository.
+- **Machine Learning**: Prepare data and run ML Training in Snowflake using Snowpark ML and deploy the model as a Snowpark User-Defined-Function (UDF).
 - **Streamlit Application**: Build an interactive application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets.
 
 In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
 ### What is Snowpark?
 
-It allows developers to query data and write data applications in languages other than SQL using a set of APIs and DataFrame-style programming constructs in Python, Java, and Scala. These applications run on and take advantage of the same distributed computation on Snowflake's elastic engine as your SQL workloads. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
 
-![Snowpark](assets/snowpark_python0.png)
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
+
+**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+
+Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+
+![Snowpark](assets/snowpark.png)
+
+### What is Snowpark ML?
+
+Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (in Public Preview) for model development and Snowpark ML Operations (in Private Preview) for model deployment.
+
+This quickstart will focus on the Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution in Snowflake.
 
 ### What is Streamlit?
 
 Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
 
-### What is scikit-learn?
-
-It is one of the most popular [open source](https://scikit-learn.org/) machine learning libraries for Python that also happens to be pre-installed and available for developers to use in Snowpark for Python via [Snowflake Anaconda](https://snowpark-python-packages.streamlit.app/) channel. This means that you can use it in Snowpark for Python User-Defined Functions and Stored Procedures without having to manually install it and manage all of its dependencies.
-
 ### What You’ll Learn
 
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
-- How to use open-source Python libraries like scikit-learn from curated Snowflake Anaconda channel
-- How to deploy ML model training code on Snowflake using Snowpark Python Stored Procedure
+- How to use open-source Python libraries from curated Snowflake Anaconda channel
+- How to train ML model using Snowpark ML in Snowflake
 - How to create Scalar and Vectorized Snowpark Python User-Defined Functions (UDFs) for online and offline inference respectively
 - How to create Snowflake Tasks to automate data pipelines
 - How to create Streamlit web application that uses the Scalar UDF for inference based on user input
@@ -51,8 +59,8 @@ It is one of the most popular [open source](https://scikit-learn.org/) machine l
 ### Prerequisites
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-- [Python 3.8](https://www.python.org/downloads/) installed
-  - Note that you will be creating a Python environment with 3.8 in the **Get Started** step
+- [Python 3.9](https://www.python.org/downloads/) installed
+  - Note that you will be creating a Python environment with 3.9 in the **Get Started** step
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
@@ -198,37 +206,35 @@ To complete the **Data Engineering** and **Machine Learning** steps, you have th
 
 This option will enable you to complete all the steps in this QuickStart Guide.
 
-- Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
+**Step 1:** Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
 
-Open a new terminal window and execute the following commands in the same terminal window.
+**Step 2:** Open a new terminal window and execute the following commands in the same terminal window.
 
-- Create Python 3.8 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
+**Step 3:** Create Python 3.9 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
 
 ```python
-conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.9
 ```
 
-- Activate conda environment **snowpark-de-ml** by running the following command in the same terminal window
+**Step 4:** Activate conda environment **snowpark-de-ml** by running the following command in the same terminal window
 
 ```python
 conda activate snowpark-de-ml
 ```
 
-- Install Snowpark Python and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
+**Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python pandas notebook cachetools
 ```
 
-- Install Streamlit in conda environment **snowpark-de-ml** by running the following command in the same terminal window
+**Step 6:** Install Streamlit library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
 
 ```python
 pip install streamlit
 ```
 
-*Versions used at the time of writing this: snowflake-snowpark-python 1.0.0, streamlit 1.18.1.*
-
-- Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
+**Step 7:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
 Here's a sample ***connection.json*** based on the object names mentioned in **Setup Environment** step.
 
@@ -450,12 +456,12 @@ The Notebook linked below covers the following machine learning tasks.
 1) Establish secure connection from Snowpark Python to Snowflake
 2) Load features and target from Snowflake table into Snowpark DataFrame
 3) Prepare features for model training
-4) Create a [Python Stored Procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-python) to deploy model training code on Snowflake
+4) Train ML model using Snowpark ML on Snowflake
 5) Create Scalar and Vectorized (aka Batch) [Python User-Defined Functions (UDFs)](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs) for inference on new data points for online and offline inference respectively.
 
 ---
 
-![End-To-End-ML](assets/snowflake_e2e_ml.png)
+![End-To-End-ML](assets/snowpark_e2e_ml.png)
 
 ---
 
@@ -525,7 +531,7 @@ If all goes well, you should see a browser window open with the app loaded as sh
 If you have SiS enabled in your account, follow these steps to run the application in Snowsight instead of locally on your machine.
 
 > aside negative
-> IMPORTANT: SiS is in Private Preview as of Feburary 2023.***
+> IMPORTANT: SiS is in Private Preview as of June 2023.***
 
   1) Click on **Streamlit Apps** on the left navigation menu
   2) Click on **+ Streamlit App** on the top right
@@ -601,8 +607,8 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 ### What You Learned
 
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
-- How to use open-source Python libraries like scikit-learn from curated Snowflake Anaconda channel
-- How to deploy ML model training code on Snowflake using Snowpark Python Stored Procedure
+- How to use open-source Python libraries from curated Snowflake Anaconda channel
+- How to train ML model using Snowpark ML in Snowflake
 - How to create Scalar and Vectorized Snowpark Python User-Defined Functions (UDFs) for online and offline inference respectively
 - How to create Snowflake Tasks to automate data pipelining and (re)training of the model
 - How to create Streamlit web application that uses the Scalar UDF for inference

@@ -1,0 +1,3 @@
+snowflake-ingest-sdk.jar --> v2.0.1
+snowflake-jdbc.jar --> 3.13.30
+
