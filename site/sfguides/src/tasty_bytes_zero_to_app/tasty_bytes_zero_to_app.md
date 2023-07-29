@@ -44,6 +44,22 @@ for Tasty Bytes.
 - [NodeJS](https://nodejs.org/en/download/) Installed
 - [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) Installed
 
+<details>
+    <summary>Installing Using NVM</summary>
+
+```
+Node Version Manager provides the ability to have multiple versions of Node installed on your local environment.  This can be helpful so that you can complete this lab without impacting any existing Node setup that you have on your machine.  
+
+NVM can be found here: https://github.com/nvm-sh/nvm
+
+To run this lab you will want to utilize Node 18.16.0 which can be installed using the following command after NVM has been installed:
+
+nvm install 18.16.0
+
+
+```
+</details>
+
 ### What You’ll Build 
 - API Powered by Snowflake built in Node.js
 - React JS Web Application that connects to that API
