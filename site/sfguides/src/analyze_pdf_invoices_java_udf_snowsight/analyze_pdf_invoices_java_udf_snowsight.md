@@ -1,5 +1,5 @@
-author: Scott Teal, Saurin Shah
-id: analyze_pdf_invoices_java_udf_snowsight
+author: Scott Teal, Saurin Shah, Mauricio Rojas Fernandez
+id: analyze_pdf_invoices_snowpark_python_java
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: data-science-&-ml,data-engineering,architecture-patterns,solution-examples
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Data Engineering, Unstructured Data
 
-# Analyze PDF Invoices using Java UDF and Snowsight
+# Analyze PDF Invoices using Snowpark for Java and Python
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -23,7 +23,8 @@ This Quickstart is designed to help you understand the capabilities included in 
 
 ### What You’ll Learn 
 - How to access PDF invoices in cloud storage from Snowflake
-- How to extract text from PDFs natively using a Java User-Defined Function (UDF)
+- How to extract text from PDFs natively using a Python User-Defined Function (UDF)
+- How to extract text from PDFs natively using a Java UDF
 
 ### What You'll Build
 - An external stage to access files in S3 from Snowflake
@@ -87,22 +88,50 @@ You should now see an identical list of files from the S3 bucket. Make sure you 
 ## Extract Text from PDFs
 Duration: 10
 
-In this section, we want to extract attributes from the PDF invoices. The entities extracted are going to be fields like product names, unit cost, total cost, as well as business name. The goal is to have these fields to enrich the file-level metadata for analytics.
+In this section, we want to extract attributes from the PDF invoices. The entities extracted are going to be fields like product names, unit cost, total cost, as well as business name. The goal is to have these fields to enrich the file-level metadata for analytics. We could complete this task with Snowpark for Python or Java.
 
-### Creating a Java UDF in Snowflake
+### Creating a Python UDF
+The Python code to parse PDFs requires the [PyPDF2](https://pypi.org/project/PyPDF2/) library, which is available out of the box inside Snowflake via the [Anaconda Snowflake channel](https://repo.anaconda.com/pkgs/snowflake/).
+
+```sql
+-- Create a java function to parse PDF files
+create or replace function python_read_pdf(file string)
+    returns string
+    language python
+    runtime_version = 3.8
+    packages = ('snowflake-snowpark-python','pypdf2')
+    handler = 'read_file'
+as
+$$
+from PyPDF2 import PdfFileReader
+from snowflake.snowpark.files import SnowflakeFile
+from io import BytesIO
+def read_file(file_path):
+    whole_text = ""
+    with SnowflakeFile.open(file_path, 'rb') as file:
+        f = BytesIO(file.readall())
+        pdf_reader = PdfFileReader(f)
+        whole_text = ""
+        for page in pdf_reader.pages:
+            whole_text += page.extract_text()
+    return whole_text
+$$;
+
+select python_read_pdf(build_scoped_file_url(@pdf_external,'invoice1.pdf')) 
+as pdf_text;
+```
+
+### Creating a Java UDF
 The Java code to parse PDFs requires some dependencies. Instead of downloading those jar files and uploading to an internal stage, you can create an external stage and reference them when creating a UDF inline.
 
 ```sql
--- Create stage to store the JAR file
-create or replace stage jars_stage_internal;
-
 -- Create external stage to import PDFBox from S3
 create or replace stage jars_stage
  url = "s3://sfquickstarts/Common JARs/"
  directory = (enable = true auto_refresh = false);
 
 -- Create a java function to parse PDF files
-create or replace function read_pdf(file string)
+create or replace function java_read_pdf(file string)
 returns String
 language java
 imports = ('@jars_stage/pdfbox-app-2.0.24.jar')
@@ -146,13 +175,13 @@ SnowflakeFile file = SnowflakeFile.newInstance(file_url);
 $$;
 ```
 
-### Invoking the Java UDF
-The UDF can be invoked on any PDF file with a simple SQL statement. First, make sure to refresh the directory table metadata for your external stage.
+### Invoking the UDF
+Either UDF can be invoked on any PDF file with a simple SQL statement. For the purpose of this quickstart, we'll use the Java UDF. First, make sure to refresh the directory table metadata for your external stage.
 
 ```
 alter stage pdf_external refresh;
 
-select read_pdf(build_scoped_file_url('@pdf_external','/invoice1.pdf')) 
+select read_pdf(build_scoped_file_url(@pdf_external,'invoice1.pdf')) 
 as pdf_text;
 ```
 
@@ -188,7 +217,7 @@ create or replace table parsed_pdf as
 select
     relative_path
     , file_url
-    , read_pdf(build_scoped_file_url('@pdf_external/', relative_path)) as parsed_text
+    , read_pdf(build_scoped_file_url(@pdf_external, relative_path)) as parsed_text
 from directory(@pdf_external);
 ```
 
@@ -317,11 +346,10 @@ Congratulations! You used Snowflake to analyze PDF invoices.
 
 ### What we’ve covered
 - Accessing unstructured data with an __external stage__
-- Processing unstructured data with a __Java UDF__
+- Processing unstructured data with __Python and Java UDFs__
 - Visualize data with __Snowsight__
 
 ### Related Resources
-- [Quickstart: Extract Attributes from DICOM Files using a Java UDF](https://quickstarts.snowflake.com/guide/extract_attributes_dicom_files_java_udf/index.html?index=..%2F..index#0)
+- [Quickstart: Extract Attributes from DICOM Files using a Java UDF](https://quickstarts.snowflake.com/guide/extract_attributes_dicom_files_java_udf/index.html)
 - [Unstructured Data Docs](https://docs.snowflake.com/en/user-guide/unstructured.html)
-- [Java UDF Docs](https://docs.snowflake.com/en/developer-guide/udf/java/udf-java.html)
 - [Snowpark Docs](https://docs.snowflake.com/en/developer-guide/snowpark/index.html)

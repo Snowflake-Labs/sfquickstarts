@@ -11,12 +11,13 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake
 # Tasty Bytes - Zero to Snowflake - Collaboration
 <!-- ------------------------ -->
 
-## Data Marketplace Collaboration in Snowflake
+## Direct Access to Third Party Data via Snowflake Marketplace
 Duration: 1
 <img src = "assets/collaboration_header.png">
 
 ### Overview
-Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Collaboration! Within this Quickstart we will highlight the immediately value the Snowflake Marketplace can provide by enriching first party data analysis with Weather data provided by Weather Source.
+Welcome to the Tasty Bytes - Zero to Snowflake Quickstart focused on Collaboration! Within this Quickstart we will highlight how you can enrich your first-party data with weather data via Snowflake Marketplace. Snowflake Marketplace is where you can find, try, and buy third party data and apps, all without having to set up any ETL, data pipelines, or integrations.
+
 
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
@@ -116,7 +117,7 @@ From what we saw in our previous section, it looks like we are missing sales for
 One idea we can immediately explore by leveraging the [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/) is extreme weather and a free, public listing provided by Weather Source.
 
 ### Step 1 - Acquiring the Weather Source LLC: frostbyte Snowflake Marketplace Listing
-The Snowflake Marketplace is the premier location to find, try, and buy the data and applications you need to power innovative business solutions. In this step, we will be acquiring the [Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte) listing to help drive additional analysis on our Hamburg sales slump.
+The Snowflake Marketplace is the premier location to find, try, and buy the data and applications you need to power innovative business solutions. In this step, we will be access the [Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte) listing to help drive additional analysis on our Hamburg sales slump.
 
 Please follow the steps and video below to acquire this listing in your Snowflake Account.
 
@@ -131,7 +132,7 @@ Please follow the steps and video below to acquire this listing in your Snowflak
 <img src = "assets/4.1.acquire_weather_source.gif">
 
 >aside positive
->Weather Source is a leading provider of global weather and climate data and our OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries.
+>Weather Source is a leading provider of global weather and climate data and its OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries.
 >
 
 ### Step 2 - Harmonizing First and Third Party Data
