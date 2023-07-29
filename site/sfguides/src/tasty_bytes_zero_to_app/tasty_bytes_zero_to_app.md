@@ -44,21 +44,13 @@ for Tasty Bytes.
 - [NodeJS](https://nodejs.org/en/download/) Installed
 - [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) Installed
 
-<details>
-    <summary>Installing Using NVM</summary>
-
-```
-Node Version Manager provides the ability to have multiple versions of Node installed on your local environment.  This can be helpful so that you can complete this lab without impacting any existing Node setup that you have on your machine.  
-
-NVM can be found here: https://github.com/nvm-sh/nvm
-
-To run this lab you will want to utilize Node 18.16.0 which can be installed using the following command after NVM has been installed:
-
-nvm install 18.16.0
-
-
-```
-</details>
+> aside negative
+> **Installing Using NVM**
+> 
+>  Node Version Manager provides the ability to have multiple versions of Node installed on your local environment.  This can be helpful so that you can complete this lab without impacting any existing Node setup that you have on your machine. 
+> NVM can be found here: [https://github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm)
+> 
+> To run this lab you will want to utilize Node 18.16.0 which can be installed using the following command after NVM has been installed: `nvm install 18.16.0`
 
 ### What You’ll Build 
 - API Powered by Snowflake built in Node.js
@@ -617,7 +609,7 @@ curl http://localhost:3000
 > aside negative
 > **Need help with this step?**
 >
-> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout tags/4.2 -- ./`
+> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
 
 ---
 ### Lab 4.3: Building the endpoints
@@ -712,7 +704,7 @@ Here are a few curl commands to test the APIs:
 > aside negative
 > Need help with this step?
 >
-> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout tags/4.3 -- ./`
+> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
 
 ---
 
@@ -934,7 +926,7 @@ curl http://localhost:3000/ -H "Accept: application/json" -H "Authorization: Bea
 > aside negative
 > Need help with this step?
 >
-> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout tags/4.4 -- ./`
+> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
 
 ---
 
@@ -960,7 +952,7 @@ app.use(cors({
 > aside negative
 > Need help with this step?
 >
-> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout tags/4.5 -- ./`
+> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
 
 ---
 
@@ -1043,7 +1035,7 @@ Next, in the `auth.js` file we can update the `validateToken` function:
 > aside negative
 > Need help with this step?
 >
-> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout tags/4.6 -- ./`
+> You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
 
 <!-- ------------------------ -->
 ## Lab 5: Stressing and Scaling your Snowflake instance
