@@ -949,7 +949,7 @@ app.use(cors({
 }));
 ```
 
-> aside negative
+> aside positive
 > Need help with this step?
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
