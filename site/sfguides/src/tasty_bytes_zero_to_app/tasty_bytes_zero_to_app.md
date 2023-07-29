@@ -44,7 +44,7 @@ for Tasty Bytes.
 - [NodeJS](https://nodejs.org/en/download/) Installed
 - [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) Installed
 
-> aside negative
+> aside positive
 > **Installing Using NVM**
 > 
 >  Node Version Manager provides the ability to have multiple versions of Node installed on your local environment.  This can be helpful so that you can complete this lab without impacting any existing Node setup that you have on your machine. 
@@ -949,7 +949,7 @@ app.use(cors({
 }));
 ```
 
-> aside positive
+> aside negative
 > Need help with this step?
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
