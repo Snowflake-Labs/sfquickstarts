@@ -534,7 +534,7 @@ Duration: 15
 So far we have been hosting the Kafka connector for Snowpipe Streaming on the EC2 instance. You can also use
 [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) to manage the connector.
 
-*Note that in order to use MSKC, it is suggested to run your MSK cluster in a private subnet for it to work.
+*Note that in order to use MSKC, it is suggested to run your MSK cluster in a private subnet with egress to the internet via the [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) for it to work.
 See this [AWS documentation](https://docs.aws.amazon.com/msk/latest/developerguide/msk-connect-internet-access.html) for more information.
 
 #### 1. Create a S3 bucket to store the custom plugins
