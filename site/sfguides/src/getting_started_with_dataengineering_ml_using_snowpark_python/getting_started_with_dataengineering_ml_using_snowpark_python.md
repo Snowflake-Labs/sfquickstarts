@@ -222,10 +222,10 @@ conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake p
 conda activate snowpark-de-ml
 ```
 
-**Step 5:** Install Snowpark Python and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
+**Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook scikit-learn cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python pandas notebook cachetools
 ```
 
 **Step 6:** Install Streamlit library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
@@ -234,13 +234,7 @@ conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-pyt
 pip install streamlit
 ```
 
-**Step 7:** Install Snowpark ML library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
-
-```python
-pip install snowflake-ml-python
-```
-
-**Step 9:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
+**Step 7:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
 Here's a sample ***connection.json*** based on the object names mentioned in **Setup Environment** step.
 
@@ -542,10 +536,11 @@ If you have SiS enabled in your account, follow these steps to run the applicati
   1) Click on **Streamlit Apps** on the left navigation menu
   2) Click on **+ Streamlit App** on the top right
   3) Enter **App name**
-  4) Select **Warehouse** and **App locaton** (Database and Schema) where you'd like to create the Streamlit applicaton
+  4) Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
   5) Click on **Create**
-  6) At this point, you will be provided code for an example Streamlit application. Now open [Snowpark_Streamlit_Revenue_Prediction_SiS.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction_SiS.py) and copy-paste the code into the example Streamlit application.
-  7) Click on **Run** on the top right
+  6) At this point, you will be provided code for an example Streamlit application
+  7) Open [Snowpark_Streamlit_Revenue_Prediction_SiS.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction_SiS.py) and copy-paste the code into the example Streamlit application.
+  8) Click on **Run** on the top right
 
 If all goes well, you should see the following app in Snowsight as shown below.
 
@@ -579,7 +574,8 @@ def create_session():
 When running in Snowflake (SiS), you'd access the current Session object like so:
 
 ```python
-session = snowpark.session._get_active_session()
+from snowflake.snowpark.context import get_active_session
+session = get_active_session()
 ```
 
 <!-- ------------------------ -->
@@ -622,6 +618,7 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
+- [Intro to Machine Learning with Snowpark ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html)
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
