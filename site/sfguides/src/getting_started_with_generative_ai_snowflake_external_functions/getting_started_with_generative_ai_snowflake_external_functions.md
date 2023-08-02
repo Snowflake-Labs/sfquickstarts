@@ -2,12 +2,12 @@ id: getting_started_with_generative_ai_snowflake_external_functions
 summary: Getting Started with Generative AI and External Functions in Snowflake
 categories: featured,getting-started,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Generative AI, Snowflake External Functions, OpenAI
 authors: Dash Desai
 
-# Getting Started with Generative AI and External Functions in Snowflake
+# Getting Started with Generative AI and External Functions in Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
 
@@ -53,11 +53,11 @@ Duration: 20
 
 ### Step 1
 
-Download [CloudFormation Template (CFT)](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/openai_aws_api_gateway/AWS_API_Gateway_CFT.yml).
+Download [CloudFormation Template (CFT)](https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/openai_aws_api_gateway/AWS_API_Gateway_CFT.yml).
 
 ### Step 2
 
-Search for **openAIAPIKey** in the template and replace "<Your_OPENAI_API_KEY>" with your OpenAI API Key.
+In the YAML file, search for **openAIAPIKey** in the template and replace "<Your_OPENAI_API_KEY>" with your OpenAI API Key.
 
 ### Step 3
 
@@ -194,18 +194,21 @@ First I’d recommend that you set up the environment to create and test a simpl
 
 After you have successfully created and tested your external function with Lambda on AWS as per the instructions outlined above, follow steps below to wrap OpenAI API in your AWS Lambda function.
 
+> aside negative
+> NOTE: This implementation uses the latest **gpt4** model along with the new [Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api).
+
 ### Step 1
 
-Clone GitHub repo — [https://github.com/Snowflake-Labs/sf-samples](https://github.com/Snowflake-Labs/sf-samples)
+Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/tree/main).
 
 ### Step 2
 
 * On your local machine where you have cloned the repo, browse to the folder **openai_llm_lambda_function_wrapper**. This folder contains OpenAI Python Library installed via pip and the custom Lambda function code that wraps OpenAI API.
 
-* Then create a .zip of **openai_llm_lambda_function_wrapper** folder on your local machine.
+* Then create a .zip of the contents of **openai_llm_lambda_function_wrapper** folder on your local machine.
 
 > aside positive
-> IMPORTANT: Make sure you create the .zip at the root of the folder.
+> IMPORTANT: Make sure you create the .zip of the contents and not at the root level.
 
 ### Step 3
 
@@ -235,10 +238,8 @@ prompt variant
 INSERT INTO llm_prompts
 select parse_json(column1) as prompt
 from values
-('{"type":"code_complete","prompt":"Classify this: I cannot say I like mushrooms!"}'),
-('{"type":"code_complete","prompt":"Classify this sentiment: I dislike that movie!"}'),
-('{"type":"code_complete","prompt":"Classify this sentiment: My puppy is adorable ❤️❤️"}'),
-('{"type":"code_complete","prompt":"Create a SQL statement to find all users who live in California and have over 1000 credits"}');
+('{"prompt":"Create a SQL statement to find all users who live in California and have over 1000 credits"}'),
+('{"prompt": "### Snowflake SQL tables, with their properties:### CAMPAIGN_SPEND table CAMPAIGN VARCHAR(60),CHANNEL VARCHAR(60),DATE DATE,TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0) ### A query to the data so we can see total cost per year/month per channel"}');
 ```
 
 > aside positive
@@ -259,16 +260,6 @@ If all goes well, you should see output similar to the one shown below:
 
 #### **Example 2**
 
-As seen in the previous implementation, you can also pass in-line prompts like so:
-
-```sql
-SELECT llm_external_function(parse_json('"Hello, my name is Dash! What is your name and How are you today?"')) as chat;
-```
-
-***Sample response:*** *"Hi Dash, my name is John and I’m doing great, thanks for asking!"*
-
-#### **Example 3**
-
 Now let’s assume you have a Snowflake table named CAMPAIGN_SPEND with the following columns:
 
 ```sql
@@ -288,7 +279,37 @@ TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0)
 ### A query to the data so we can see total cost per year/month per channel"
 ```
 
-***Sample response:*** *"SELECT YEAR(DATE) AS YEAR, MONTH(DATE) AS MONTH, CHANNEL, SUM(TOTAL_COST) AS TOTAL_COST FROM CAMPAIGN_SPEND GROUP BY YEAR(DATE), MONTH(DATE),CHANNEL ORDER BY YEAR, MONTH, CHANNEL;"*
+***Sample response:*** *"Sure, here's a simple query that will provide total spend per year, per month, and per channel: SELECT CHANNEL, EXTRACT (YEAR FROM DATE) as YEAR, EXTRACT (MONTH FROM DATE) as MONTH, SUM(TOTAL_COST) as TOTAL_SPEND FROM CAMPAIGN_SPEND GROUP BY CHANNEL, YEAR, MONTH ORDER BY YEAR, MONTH, CHANNEL; This query performs a simple aggregation operation on the CAMPAIGN_SPEND table, grouping the data by the channel and the year and month of the DATE attribute. The SUM function computes the total cost for each such group, and ORDER BY clause orders the output by Year, Month, and Channel. Make sure to replace CAMPAIGN_SPEND with the actual table name you are using."*
+
+<!-- ------------------------ -->
+## Streamlit-in-Snowflake Application
+
+If you have SiS enabled in your account, follow these steps to run the application in Snowsight.
+
+> aside negative
+> NOTE: SiS is in Private Preview as of July 2023.
+
+  1) Click on **Streamlit Apps** on the left navigation menu
+  2) Click on **+ Streamlit App** on the top right
+  3) Enter **App name**
+  4) Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+  5) Click on **Create**
+  6) At this point, you will be provided code for an example Streamlit application
+  7) Open [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/streamlit_sis.py) and copy-paste the code into the example Streamlit application.
+  8) Click on **Run** on the top right
+  9) Select one of the options from the sidebar **Sentiment Analysis**, **Share Knowledge**, or **Text-to-SQL** and enter your prompt on the right to get a response.
+
+If all goes well, you should see the following app in Snowsight as shown below with sample prompts and responses.
+
+![Img1](assets/app0.png)
+
+---
+
+![Img1](assets/app1.png)
+
+---
+
+![Img1](assets/app2.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

@@ -17,9 +17,15 @@ By completing this guide, you will be able to try Snowpark for Python all from w
 
 ### What is Snowpark?
 
-It allows developers to query data and write data applications inside Snowflake with languages other than SQL using a set of APIs and DataFrame-style programming constructs in Python, Java, and Scala. These applications run on and take advantage of the same distributed computation on Snowflake's elastic engine as your SQL workloads. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
 
-![Snowpark](assets/snowpark_python0.png)
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
+
+**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+
+Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+
+![Snowpark](assets/snowpark.png)
 
 ### What are Python Worksheets?
 

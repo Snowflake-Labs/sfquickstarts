@@ -1,5 +1,5 @@
 author: Maciej Bukalo
-id: connectors_java_python
+id: connectors_github_java
 summary: Overview of building Snowflake native connectors using Java snowpark and Native Apps. Example connector connects to GitHub issues API. 
 categories: connectors,solution-examples,partner-integrations
 environments: web
@@ -36,7 +36,7 @@ Duration: 5
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure snowsql to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- Clone example-github-java-connector repository
+- Clone [example-github-java-connector repository](https://github.com/Snowflake-Labs/connectors-examples)
 
 ## Connector overview
 Duration: 2
@@ -329,8 +329,3 @@ Once the ingestion is started you can monitor its state using state and data pre
 
 ![data.png](assets/data.png)
 
-
-## Conclusion & next steps
-Duration: 0
-
-To be done
