@@ -50,38 +50,9 @@ Collibra is a Data Intelligence platform that allows users to search, and find o
 ### What You’ll Build 
 - Metadata of Snowflake, A Policy for this data, diagram that connects the data to its business context.
 
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: 
-  - This is a guide on how to Catalog and use Snowflake data using Collibra. 
-- **categories**: 
-  - data governance
-  - data intelligence
-  - data mesh
-  - data privacy
-  - data science
-
-- **environments**: 
-  - `web` . All work is done on the web, and there is no need to install anything locally on your computer.
-
-- **status**: Draft
-  
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter, Data Governance, Data Intelligence, Data Privacy, Data Mesh
-  
-
 - **authors**: 
-  - Vasiliki Nikolopoulou, Collibra
-
-
-
----
-
+  - Vasiliki Nikolopoulou, Principal, Integrations Architect, Collibra
+  - Tomer Steinberg, Sales Engineer Majors Benelux
 
 
 <!-- ------------------------ -->
