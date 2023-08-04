@@ -67,7 +67,7 @@ Duration: 3
 To create our Snowflake Native Application, we will first clone the starter project by running this command:
 
 ```bash
-git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-native-apps.git
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps.git
 ```
 
 This repository contains all of our starter code for our native app. Throughout the rest of this tutorial we will be modifying various parts of the code to add functionality and drive a better understanding of what is happening at each step in the process.
