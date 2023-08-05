@@ -3,7 +3,7 @@ id: text_embedding_as_snowpark_python_udf
 summary: Text Embedding As A Snowpark Python UDF
 categories: data-science-&-ml
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowpark Python, Machine Learning, Data Science, NLP 
 
