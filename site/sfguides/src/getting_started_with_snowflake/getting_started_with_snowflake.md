@@ -152,7 +152,7 @@ The **Marketplace** tab is where any Snowflake customer can browse and consume d
 
 Under **Activity** there are two tabs **Query History** and **Copy History**:
 
-- **QuerHistory** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
+- **Query History** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
 - **Copy History** shows the status of copy commands run to ingest data into Snowflake.
 
 
@@ -233,7 +233,7 @@ It is in comma-delimited format with a single header line and double quotes encl
 
 First, let's create a database called `CITIBIKE` to use for loading the structured data.
 
-Ensure you are using the sysadmin role by selecting **Switch Role** > **SYSADMIN**.
+Ensure you are using the sysadmin role by selecting your name at the top left, **Switch Role** > **SYSADMIN**.
 
 Navigate to the **Databases** tab. Click **Create**, name the database `CITIBIKE`, then click **CREATE**.
 
@@ -265,7 +265,7 @@ Schema = `PUBLIC`
 >  **Data Definition Language (DDL) operations are free!**
 All the DDL operations we have done so far do not require compute resources, so we can create all our objects for free.
 
-To make working in the worksheet easier, let's rename it. In the top left corner, click the worksheet name, which is the timestamp when the worksheet was created, and change it to `CITIBIKE_ZERO_TO_SNOWFLAKE`.
+To make working in the worksheet easier, let's rename it. In the top left corner, double-click the worksheet name, which is the timestamp when the worksheet was created, and change it to `CITIBIKE_ZERO_TO_SNOWFLAKE`.
 
 Next we create a table called `TRIPS` to use for loading the comma-delimited data. Instead of using the UI, we use the worksheet to run the DDL that creates the table. Copy the following SQL text into your worksheet:
 
@@ -317,18 +317,18 @@ We are working with structured, comma-delimited data that has already been stage
 > 
 >  For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. In the **Stages** tab, click the **Create** button, then **Stage** > **Amazon S3**.
+From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. Click the **Create** button, then **Stage** > **Amazon S3**.
 
 ![stages create](assets/4PreLoad_8.png)
 
 In the "Create Securable Object" dialog that opens, replace the following values in the SQL statement:
 
-`stage_name`: `citibike_trips`
+`<stage_name>`: `citibike_trips`
 
-`url`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
+`<url>`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
-Also ensure you have removed 'credentials = (...)' statejment which is not required. The create stage command should resemble that show above exactly. 
+Also ensure you have removed 'credentials = (...)' statement which is not required. You can also comment it out like the picture below by using '--'. The create stage command should resemble the below picture or not include the 3rd line.
 
 > aside positive
 > 
@@ -336,7 +336,7 @@ Also ensure you have removed 'credentials = (...)' statejment which is not requi
 
 ![create stage settings](assets/4PreLoad_9.png)
 
-Now let's take a look at the contents of the `citibike_trips` stage. Navigate to the **Worksheets** tab and execute the following SQL statement:
+Now let's take a look at the contents of the `citibike_trips` stage. Navigate back to the **Worksheets** tab and open the 'CITIBIKE_ZERO_TO_SNOWFLAKE' worksheet we made, add the following SQL statement below the previous code as shown in the below picture and then execute:
 
 ```SQL
 list @citibike_trips;
@@ -350,7 +350,7 @@ In the results in the bottom pane, you should see the list of files in the stage
 
 Before we can load the data into Snowflake, we have to create a file format that matches the data structure.
 
-In the worksheet, run the following command to create the file format:
+In the worksheet, again add the below command below the rest and execute to create the file format:
 
 ```SQL
 --create file format

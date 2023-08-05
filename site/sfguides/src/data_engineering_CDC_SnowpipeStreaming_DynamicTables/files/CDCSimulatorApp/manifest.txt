@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Main-Class:  snowflake.demo.EventSimulatorClient
+Class-Path:  snowflake.properties
+  lib/snowflake-ingest-sdk.jar
+  lib/slf4j-api-1.7.21.jar
+  lib/slf4j-simple-1.7.21.jar
+  lib/snowflake-jdbc.jar

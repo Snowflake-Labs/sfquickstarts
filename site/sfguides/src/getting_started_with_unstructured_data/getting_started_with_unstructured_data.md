@@ -1,4 +1,4 @@
-author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu
+author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu, Mauricio Rojas Fernandez
 id: getting_started_with_unstructured_data
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: getting-started,architecture-patterns
@@ -445,12 +445,138 @@ Open a new tab in your web browser, and paste the copied URL. This should downlo
 ## Perform Natural Language Processing
 Duration: 20
 
-We have so far reviewed how to store unstructured data files, retrieve them, provide granular access to the files through various URLs and through secure views. In this section, we want to extract additional attributes from the files.
+We have so far reviewed how to store unstructured data files, retrieve them, provide granular access to the files through various URLs and through secure views. In this section, we want to extract additional attributes from the files. The entities extracted are going to be person names mentioned in the emails, as well as locations. The goal is to have these additional attributes used to enrich the file-level metadata for analytics.
 
-The entities extracted are going to be person names mentioned in the emails, as well as locations. The goal is to have these additional attributes used to enrich the file-level metadata for analytics.
+Using Snowpark runtimes and libraries, you can securely deploy and process Python, Java and Scala code to build pipelines, ML models, and applications in Snowflake. You can process unstructured files in Java (generally available), Python (public preview), and Scala (public preview) natively in Snowflake using Snowpark. In the following sections, you'll see how entity extraction can be done with Snowpark for both Java and Python.
 
-### The Java Code
-The Java for the user-defined function (UDF) has already been written and provided below. This code uses the open source [Apache OpenNLP](https://opennlp.apache.org/) library to perform natural language processing on English text in this occurrence.
+### Python
+For convenience, a number of popular open source third-party Python packages that are built and provided by Anaconda are made available to use out of the box inside Snowflake via the [Anaconda Snowflake channel](https://repo.anaconda.com/pkgs/snowflake). For any third-party packages not yet included, you can use stages to import. In this example, we'll use the punkt, averaged_perceptron_tagger, maxent_ne_chunker, and words language models from the [nltk](https://www.nltk.org/) package, which have been uploaded and available on a Snowflake s3 public bucket.
+
+#### Creating a Python UDF
+Creating the UDF involves a few steps in Snowflake.
+
+1. Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:
+
+
+```sql
+use role sysadmin;
+use schema emaildb.raw;
+
+create or replace stage nltk_imports
+url = "s3://sfquickstarts/Getting Started Unstructured Data/Files/"
+directory = (enable = true);
+```
+
+
+From the Snowflake worksheet, you can run the following command to confirm the nltk zip file is listed in the external stage.
+```sql
+ls @nltk_imports/nltk_data;
+```
+
+![List nltk imports external stage](assets/8_8.png)
+
+2. We can now create the UDF in Snowflake as the following.
+```sql
+create or replace function python_parseText(file_path string)
+    returns variant
+    language python
+    runtime_version=3.8
+    imports = ('@nltk_imports/nltk_data.zip')
+    packages = ('snowflake-snowpark-python','nltk')
+    handler = 'udf_compute_named_entity'
+AS
+$$
+def load_files(): 
+    """Helper function that loads zipped files from stage and adds them
+    to the nltk data path"""
+    import os
+    import zipfile
+    import nltk
+    import sys
+    
+    #import directory, to be able to make references to files in the stage
+    IMPORT_DIRECTORY_NAME = "snowflake_import_directory"
+    import_dir = sys._xoptions[IMPORT_DIRECTORY_NAME]
+    
+    #paths to extract to, this is where the nltk library will search for the required files
+    nltk_dir = "/tmp/nltk_data"
+        
+    with zipfile.ZipFile(os.path.join(import_dir, "nltk_data.zip"), 'r') as zip_ref: 
+        zip_ref.extractall(nltk_dir)
+    
+    #append extracted path to the nltk library search path for usage in UDF
+    nltk.data.path.append(nltk_dir)
+
+def udf_compute_named_entity(file_path:str) -> dict:
+    from snowflake.snowpark.files import SnowflakeFile
+    import email
+    import json
+    import nltk
+    from nltk.tokenize import word_tokenize
+    from nltk.tag import pos_tag
+    from nltk.chunk import ne_chunk
+
+    def parse_email_file(file_path):
+        with SnowflakeFile.open(file_path, 'r') as f:
+            msg = email.message_from_file(f)
+            payload = ""
+            if msg.is_multipart():
+                for _payload in msg.get_payload():
+                    # if payload.is_multipart(): ...
+                    payload += _payload.get_payload()
+            else:
+                payload= msg.get_payload()
+            return payload
+    def perform_named_entity_extraction(text):
+        tokens = word_tokenize(text)
+        tagged_tokens = pos_tag(tokens)
+        named_entities = ne_chunk(tagged_tokens)
+        persons = []
+        locations = []
+        for entity in named_entities:
+            if hasattr(entity, 'label'):
+                if (entity.label() == 'PERSON'):
+                    persons.append(' '.join([token for token, pos in entity]))
+                elif (entity.label() == 'GPE'):
+                    locations.append(' '.join([token for token, pos in  entity]))
+        return {"PERSONS":persons,"LOCATIONS":locations}        
+    email_body = parse_email_file(file_path)
+    #load the files from stage for usage
+    load_files()
+    return perform_named_entity_extraction(email_body)
+
+$$;
+```
+
+#### Invoking the Python UDF
+
+The UDF can be invoked on any text file containing readable english. From the email corpus stored on the internal stage, we can invoke the UDF as follows.
+
+```sql
+select python_parseText(build_scoped_file_url(@email_stage_internal,'/sanders-r/inbox/60.')) 
+as entities_extraction;
+```
+
+![Python UDF Results](assets/8_9.png)
+
+The output is serialized as a valid JSON format by the UDF. It contains 2 arrays, one for each named entities extraction:
+
+```json
+{
+  "LOCATIONS": [
+    "Toronto"
+  ],
+  "PERSONS": [
+    "Vince Carter",
+    "Hakeem"
+  ]
+}
+```
+
+Since we are using pre-built models which haven’t been trained on this particular corpus, the entity extraction may not always be accurate. However, the models perform overall quite well for illustration purposes for this quickstart.
+
+### Java
+Alternatively to Python, the same entity extraction can be accomplished with Java. The Java code for the UDF has already been written and provided below. This code uses the open source [Apache OpenNLP](https://opennlp.apache.org/) library to perform natural language processing on English text in this occurrence.
 
 The Java code leverages pre-built [machine learning models](http://opennlp.sourceforge.net/models-1.5/) to perform named entity extraction for persons and locations. These models are packaged manually post-build in a Fat JAR.
 
@@ -516,7 +642,7 @@ A few elements relevant for this code:
 - The method __ParseText__ will be invoked by the UDF in the next section.
 - The file path is passed as a parameter. It can be a URL to the file, or the path on the stage.
 
-### Creating a UDF in Snowflake
+#### Creating a Java UDF
 The precompiled jar file including all the dependencies has been uploaded and available on a Snowflake s3 public bucket. Creating the UDF involves a few steps in Snowflake.
 
 1. Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:
@@ -541,7 +667,7 @@ ls @jars_stage_external;
 
 2. We can now create the UDF in Snowflake as the following.
 ```sql
-create or replace function  parseText(file string)
+create or replace function  java_parseText(file string)
 returns string
 language java
 imports = ('@jars_stage_external/EmailNLPv3-3.0.jar')
@@ -553,13 +679,13 @@ handler = 'NamedEntityExtraction.ParseText'
 The UDF can be invoked on any text file containing readable english. From the email corpus stored on the internal stage, we can invoke the UDF as follows.
 
 ```sql
-select parseText('@email_stage_internal/sanders-r/inbox/60.') 
+select java_parseText(build_scoped_file_url('@email_stage_internal','/sanders-r/inbox/60.')) 
 as entities_extraction;
 ```
 
-![UDF Results](assets/8_2.png)
+![Java UDF Results](assets/8_2.png)
 
-The output is actually serialized as a valid JSON format by the UDF. It contains 2 arrays, one for each named entities extraction:
+The output is serialized as a valid JSON format by the UDF. It contains 2 arrays, one for each named entities extraction:
 
 ```json
 {
@@ -568,10 +694,8 @@ The output is actually serialized as a valid JSON format by the UDF. It contains
 }
 ```
 
-Since we are using pre-built models which haven’t been trained on this particular corpus, the entity extraction may not always be accurate. However, the models perform overall quite well for illustration purposes for this quickstart.
-
 ### Extracting and Storing Named Entities
-We want to store the named entities as additional attributes for analysts to be able to select and retrieve the files of interest in their analysis, as well as perform some analytics on the attributes found.
+We want to store the named entities as additional attributes for analysts to be able to select and retrieve the files of interest in their analysis, as well as perform some analytics on the attributes found. For the purpose of this quickstart, we'll use the Java UDF to complete this task. However, the same could be done using the Python UDF.
 
 We first want to scale-up the default warehouse size to run the Java UDF at scale across all cores available on all nodes on a 2XL warehouse (64 nodes). This can be done easily and quickly because of Snowflake's instant elasticity:
 
@@ -586,7 +710,7 @@ create or replace table email_named_entities_base as
 select
     relative_path
     , upper(replace(get(split(relative_path, '/'), 0), '\"', ''))	as mailbox
-    , parseText('@email_stage_internal/' || relative_path) 		as named_entities
+    , java_parseText(build_scoped_file_url('@email_stage_internal/', relative_path)) 		as named_entities
 from (
     select relative_path
     from directory(@email_stage_internal)
@@ -918,7 +1042,7 @@ Congratulations! You used Snowflake to perform natural language processing on em
 - Governing unstructured data with __Role-Based Access Control__
 - Catalog unstructured data with __Directory Tables__
 - Securely access unstructured data with __Scoped, File, and Pre-signed URLs__
-- Processing unstructured data with a __Java UDF__
+- Processing unstructured data with __Snowpark for Python and Java__
 - Sharing unstructured data in the __Data Cloud__
 
 ### Related Resources

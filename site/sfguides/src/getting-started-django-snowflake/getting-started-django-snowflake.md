@@ -359,6 +359,8 @@ Duration: 0
 
 Congratulations! In just a few minutes, you were able to configure a Django app to use Snowflake as a backend using **django-snowflake**. What we covered here is only a sample demonstration of what's possible – there are all sorts of great things that you can build when using Snowflake as a backend in Django. What will you build?
 
+We would love your feedback on this Quickstart! Please submit your feedback using this form: [Feedback Form](https://forms.gle/zTwg1AVjrKspCwoq9)
+
 ### What we've covered
 
 - Creating a database in Snowflake and loading data into it

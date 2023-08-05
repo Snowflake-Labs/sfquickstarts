@@ -1,7 +1,7 @@
 author: Carlos Suarez
 id: data_engineering_snowpark_streamlit_inegi
 summary: End-to-End from local to cloud using Snowapark Python Streamlit
-categories: Getting Started
+categories: getting-started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

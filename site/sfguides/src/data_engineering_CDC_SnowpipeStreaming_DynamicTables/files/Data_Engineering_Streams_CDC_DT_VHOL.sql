@@ -59,6 +59,8 @@ select count(*) from ENG.CDC_STREAMING_TABLE;
 ----    5 Streaming Records!
 
 --5.b)  View New Records in Snowflake
+use role VHOL;
+use VHOL_ENG_CDC.ENG;
 select count(*) from ENG.CDC_STREAMING_TABLE;
 select * from ENG.CDC_STREAMING_TABLE limit 100;
 
@@ -302,6 +304,7 @@ select count(*) from ENG.CDC_STREAMING_TABLE;
 --use role ACCOUNTADMIN;
 --drop warehouse VHOL_CDC_WH;
 
+--drop user vhol_streaming1;
 --drop role VHOL;
 --drop role VHOL_CDC_AGENT;
 --drop role PII_ADMIN;
