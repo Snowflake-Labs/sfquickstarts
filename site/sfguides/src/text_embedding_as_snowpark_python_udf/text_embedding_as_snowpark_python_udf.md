@@ -25,11 +25,11 @@ For those who are interested in exploring a little deeper how everything works, 
 - Familiarity with running Jupyter notebooks
   - Before proceeding, make sure you've got Python 3.8+ and Jupyter Lab installed in a Python environment that you feel comfortable installing more Python packages into.
 - A conceptual grasp of text embedding
-  - There is no need to follow ever word of technical descriptions like the [Sentence embedding Wikipedia article](https://en.wikipedia.org/wiki/Sentence_embedding), but you will get the most out of this guide if you are able to follow along plain-language material like [OpenAI documentation on Embeddings](https://platform.openai.com/docs/guides/embeddings)
+  - There is no need to follow ever word of technical descriptions like the [*Sentence embedding* Wikipedia article](https://en.wikipedia.org/wiki/Sentence_embedding), but you will get the most out of this guide if you are able to follow along plain-language material like [OpenAI documentation on Embeddings](https://platform.openai.com/docs/guides/embeddings)
 
 ### What You’ll Learn
 
-You will learn how to install a premade text embedding Python UDF into your Snowflake environment, and (optionally) how to create your own version of a text embedding UDF.
+You will learn how to install a premade text embedding Python UDF into your Snowflake environment, and (optionally) get some tips on creating your own text embedding UDFs.
 
 ### What You’ll Need
 
@@ -40,7 +40,6 @@ You will learn how to install a premade text embedding Python UDF into your Snow
   - Alternatively, it is possible to
     1. Use a different role that has the ability to create database, schema, tables, stages, and user-defined functions.
     2. Use an existing database and schema in which you are able to create the aforementioned objects.
-- The [SnowSQL CLI](https://docs.snowflake.com/en/user-guide/snowsql-install-config) installed and configured.
 - Python 3.8+ with [Jupyter Lab](https://jupyter.org/) installed.
 
 <!-- ------------------------ -->
@@ -108,7 +107,7 @@ Feel free to give it a shot by running the last couple cells of the notebook.
 
 > aside negative
 > 
->  Warning: Composing Python and JavaScript UDFs together in a single query on warehouses that are not [Snowpark-optimized](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) may cause out-of-memory errors, since the warehouse may try to allocate memory for both UDFs at the same time. This is why our example shows running the embedding function in its own query first, then unpacking the result in a separate query.
+>  Warning: Composing Python and JavaScript UDFs together in a single query on warehouses may cause out-of-memory errors, since the warehouse may try to allocate memory for both UDFs at the same time. This is why our example shows running the embedding function in its own query first, then unpacking the result in a separate query. If you want to compose these UDFs but run into memory issues, you can also try using a [Snowpark-optimized](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) warehouse. 
 
 
 <!-- ------------------------ -->
