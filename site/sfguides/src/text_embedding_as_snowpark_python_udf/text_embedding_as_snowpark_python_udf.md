@@ -174,19 +174,29 @@ def _load_assets(archive_path: Path) -> Tuple[BertTokenizerFast, BertModel]:
 
 ### Using Conservative Batch Sizes To Avoid Memory Problems And Timeouts
 
-When you want to run a Python function on your laptop, you can generally run just one copy of the function at a time with no timeout. In Snowpark, on the other hand, the official developer guide [recommends writing single-threaded UDF handlers](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-designing#write-single-threaded-udf-handlers), since the warehouse handles query parallelization for you. Additionally, (at least at the time of writing) vectorized Python UDFs have a [180-second timeout per invocation](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-batch#setting-a-target-batch-size). While these design choices make life better for a lot of queries (faster execution and limited hanging), than can cause some unexpected problems as well.
+When you want to run a Python function on your laptop, you can generally run just one copy of the function at a time with no timeout. In Snowpark, on the other hand, the official developer guide [recommends writing single-threaded UDF handlers](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-designing#write-single-threaded-udf-handlers), since the warehouse handles query parallelization for you. Additionally, (at least at the time of writing) vectorized Python UDFs have a [180-second timeout per invocation](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-batch#setting-a-target-batch-size). While these aspects of Snowpark's design make life better for a lot of queries (faster execution and limited hanging), they can cause some unexpected problems as well.
 
-Recall that the underlying PyTorch backend powering our text embedding UDF is optimized to use all available CPU cores, regardless of how many copies of it are being run at the same time, violating Snowflake's best practices and potentially triggering contention during concurrent execution. Remember, too, that our UDF handler includes code to load a sizeable chunk of model weights from disk to memory, and that concurrency in model loading can lead to more memory pressure than expected (a [Snowpark optimized warehouse](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) may help mitigate memory pressure, if you run into this problem).
+Recall that the PyTorch library powering our text embedding UDF is optimized to use all available CPU cores, regardless of how many copies of it are being run at the same time. While this should accelerate execution, it is also a violation of the single-threaded handler recommendation I mentioned earlier, and in parallelized query execution this can potentially trigger CPU contention, slowing down individual UDF handler invocations and risking timeout issues that you woudln't otherwise expect.
 
-In light of this particular situation, it's a good idea to limit how many input can be put into a single batch of UDF inputs, and to limit how many inputs from that batch are actually pushed through the model at a time. For example, a batch size of 32 will give the UDF over five seconds on average to embed each input before hitting the 180 second timeout.
+Remember, too, that our UDF handler includes code to load a sizeable chunk of model weights from disk to memory, so automatic query parallelization can potentially lead to more memory pressure than expected if it involves multiple copies of the model being loaded into memory concurrently. If you do hit memory issues, a [Snowpark optimized warehouse](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) may offer a quick fix, but we can also do our part in our handler implementation to conserve RAM by keeping batches small.
 
-To limit UDF input batch sizes, we can simply set the `_sf_max_batch_size` attribute of our handler function:
+Okay, that's a lot of information on *why* we should limit batch size to avoid timeouts and minimize memory impact. Let's now talk about *how* to implement these limits.
+
+To start, it's a good idea to limit how many input can be put into a single batch of UDF inputs. For example, a batch size of 32 will give the UDF over five seconds on average to embed each input before hitting the 180 second timeout.
+
+To do this, we can simply set the `_sf_max_batch_size` attribute of our handler function.
 
 ``` python
 embed._sf_max_batch_size = 32  # type: ignore
 ```
 
-At the same time, we can limit memory pressure further by using mini-batching within the UDF. One way of doing this is shown in my UDF implementation embedded into the accompanying notebook:
+> aside positive
+>
+> If you have a really slow model and want to limit to batch size of one, you could also switch out to a non-vectorized UDF.
+
+We may also want to separately limit how many inputs from that batch are actually pushed through the model at a time. Doing so won't help us avoid timeouts any better, but it should reduce our memory usage, since the internal neural network activation values produced by running text embedding models tend to be far larger than the input strings themselves. We can accomplish this internal limitation by implimenting minibatching within the UDF itself.
+
+Here is the internal minibatching implementation from my UDF implementation.
 
 ``` python
     # Do internal batching according to the `batch_size` constant.
