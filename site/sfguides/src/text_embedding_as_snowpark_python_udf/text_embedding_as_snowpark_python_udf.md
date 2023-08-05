@@ -50,17 +50,67 @@ You will learn how to install a premade text embedding Python UDF into your Snow
 
 Remember how we said you'd need a Python 3.8+ installation with Jupyter Lab installed in it? Well, now it's time to use it! Fire up Jupyter Lab, download a copy of the [notebook for this quickstart from GitHub](https://github.com/lukemerrick/sfquickstarts/blob/master/site/sfguides/src/text_embedding_as_snowpark_python_udf/assets/notebook.ipynb) and pop it open.
 
-### Our Model
+Go ahead and start by installing the prerequisites.
 
-[!MTEB leaderboard](assets/2023-08-04_MTEB_leaderboard.png)
+![install prerequisites](assets/install_prerequisites.png)
 
-In this guide, we will be using the [`base` size of the E5 text embedding model series (version 2)](https://huggingface.co/intfloat/e5-base-v2), which was dominating the [Massive Text Embedding Benchmark (MTEB)](https://github.com/embeddings-benchmark/mteb) leaderboard until the Alibaba DAMO Academy released the [GTE series](https://huggingface.co/thenlper/gte-large) in late July 2023. Although GTE slightly edges out E5 on the leaderboard, we see in the benchmark leaderboard above that both series of models compete favorably with OpenAI's proprietary Ada 002 model and can be considered state-of-the-art text embedding systems.
+### A Note About Our Embedding Model
+
+
+In this guide, we will be using the [`base` size of the E5 text embedding model series (version 2)](https://huggingface.co/intfloat/e5-base-v2), which was dominating the [Massive Text Embedding Benchmark (MTEB)](https://github.com/embeddings-benchmark/mteb) leaderboard until the Alibaba DAMO Academy released the [GTE series](https://huggingface.co/thenlper/gte-large) in late July 2023. Although GTE slightly edges out E5 on the leaderboard, we see in the August 04, 2023 screenshot below above that both series of models compete favorably with OpenAI's proprietary Ada 002 model and can be considered state-of-the-art text embedding systems.
+
+![MTEB leaderboard](assets/2023-08-04_MTEB_leaderboard.png)
+
 
 ### Uploading Model Weights To Snowflake.
 
 For security reasons, Snowpark Python UDFs are not generally permitted to access the internet. This means that even if you want to use a [publicly-available text embedding model from Huggingface](https://huggingface.co/models?pipeline_tag=sentence-similarity&sort=trending), you will need to store a copy of your model weights in a Snowflake stage.
 
-[Jupyter Notebook](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/getting_started_with_snowpark/assets/SAMPLE.jpg)
+#### Downloading The Model Weights From Huggingface
+
+Go ahead and download the E5-base-v2 model from Hugginface and save it to a tarfile on disk by running the first few cells of the notebook.
+
+![download model](assets/download_model.png)
+
+#### Uploading The Model Weights
+
+Now that we have the weights downloaded, we can upload them to a Snowflake stage via the Python connector. The next block of cells in the notebook establishes a connection to Snowflake, sets up a new warehouse, database, schema, and stage for this quickstart, and uploads the model weights to our new stage. Go ahead and run those cells now -- and maybe take a coffee break, too, becuse the upload can take several minutes unless your internet connection is particularly snappy.
+
+![upload model](assets/upload_model.png)
+
+### Implementing A UDF To Run The Model
+
+In the second half of this quickstart we'll revisit how to implement your own UDF for running a text embedding model as a Snowpark Python UDF, but for now let's just use the premade UDF baked into the notebook. Simply run the cell with the `%%writefile` magic to write the UDF implementation to disk.
+
+![write udf to disk](assets/write_udf_to_disk.png)
+
+To make sure this UDF implementation runs as expected, go ahead and execute the next block of cells.
+
+![locally test udf](assets/locally_test_udf.png)
+
+
+### Install The UDF And Run Text Embedding Via SQL!
+
+We're almost ready to run text embedding directly on Snowflake warehouse compute. All that's left is to upload our UDF implementation file and define the UDF via a `create function` SQL query. Run the last couple cells to make this happen!
+
+![create udf](assets/create_udf.png)
+
+
+### A Note On Storing Vectors As BINARY Vs. ARRAY
+
+For storage and computational efficiency, our text embedding UDF stores embedding vectors as BINARY blobs constructed by concatenating all of the 32-bit floating point numbers in the vector together in order. While this is how numerical computing libraries like Numpy and Pytorch "see" vectors, sometimes it may be useful to take a more JSON-like perspective and treat your embedding vectors as a Snowflake ARRAY. We could modify our UDF to make it always return an ARRAY, but for greater flexibility we can instead add a new Snowpark UDF to enable a conversion from our BINARY form to ARRAY form. In fact, all it takes is one line of JavaScript to make this possible!
+
+
+Feel free to give it a shot by running the last couple cells of the notebook.
+
+![unpacking example](assets/unpack_binary_vectors.png)
+
+
+> aside negative
+> 
+>  Warning: Composing Python and JavaScript UDFs together in a single query on warehouses that are not [Snowpark-optimized](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) may cause out-of-memory errors, since the warehouse may try to allocate memory for both UDFs at the same time. This is why our example shows running the embedding function in its own query first, then unpacking the result in a separate query.
+
+
 <!-- ------------------------ -->
 ## Part 2: Building Your Own Text Embedding UDF
 Duration: 2
