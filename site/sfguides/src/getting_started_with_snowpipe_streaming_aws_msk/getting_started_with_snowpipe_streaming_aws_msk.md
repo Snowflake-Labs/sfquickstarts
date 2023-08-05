@@ -78,8 +78,7 @@ to SSH if your instance is in a private subnet
 Duration: 30
 
 #### 1. Create an MSK cluster and an EC2 instance
-The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure
-the communications between the MSK cluster and clients are secure. 
+The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure the communications between the MSK cluster and clients are secure. 
 
 First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/msk-CFT-for-SE-Sandbox.json)
 to launch a provisioned MSK cluster. Note the default AWS region is `us-west-2 (Oregon)`, feel free to select a region you prefer to deploy the environment.
@@ -88,7 +87,9 @@ Click `Next` at the `Create stack` page.
 Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `Subnet1` and `Subnet2`, in the drop-down menu, pick two different subnets respectively, they can be either public or private subnets depending on the network layout of your VPC. Please note that if
 you plan to use [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) later, you should choose private subnets here. 
 For `MSKSecurityGroupId`, we recommend
-using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
+using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. If you are using your security groups, please ensure that Outbound is fully open to the internet as the jumpbox will require access to external URLs, and inbound is open to all ports inside the subnet or VPC, for example, use the VPC range plus all ports.
+
+Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
 `Next`. 
 
 See below sample screen capture for reference.
@@ -182,19 +183,19 @@ sudo yum clean all
 sudo yum -y install openssl vim-common java-1.8.0-openjdk-devel.x86_64 gzip tar jq python3-pip
 wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
 tar xvfz kafka_2.12-2.8.1.tgz -C $pwd
-wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.1-all.jar
+wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.7/aws-msk-iam-auth-1.1.7-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.7-all.jar
 rm -rf $pwd/kafka_2.12-2.8.1.tgz
 cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
 #Snowflake kafka connector
-wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.1/snowflake-kafka-connector-1.9.1.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-1.9.1.jar
+wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.0.0/snowflake-kafka-connector-2.0.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-2.0.0.jar
 
 #Snowpipe streaming SDK
-wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/1.1.0/snowflake-ingest-sdk-1.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-1.1.0.jar
+wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/2.0.2/snowflake-ingest-sdk-2.0.2.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-2.0.2.jar
 wget https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/3.13.15/snowflake-jdbc-3.13.15.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-jdbc-3.13.15.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.2.3/bc-fips-1.0.2.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.2.3.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.7/bcpkix-fips-1.0.7.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.7.jar
 
 ```
 
@@ -378,9 +379,9 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 To install SnowSQL. Execute the following commands on the Linux Session Manager console:
 ```commandline
-curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
+curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.27-linux_x86_64.bash -o /tmp/snowsql-1.2.27-linux_x86_64.bash
 echo -e "~/bin \n y" > /tmp/ans
-bash /tmp/snowsql-1.2.24-linux_x86_64.bash < /tmp/ans
+bash /tmp/snowsql-1.2.27-linux_x86_64.bash < /tmp/ans
 
 ```
 See below example screenshot:
@@ -528,6 +529,49 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 ![](assets/flight-json.png)
 
 <!---------------------------->
+## Optional: Configure Kafka connector for Snowpipe Streaming with Schema Detection (in Public Preview)
+
+Duration: 5
+
+#### 1. Stop Snowflake Kafka Connector:
+Go back to the Linux console first session and execute CTRL + C to stop the Snowflake Connector.
+
+#### 2. Update the Snowflake Kafka connect property configuration file:
+```commandline
+dir=/home/ssm-user/snowpipe-streaming/scripts
+cat << EOF > $dir/snowflakeconnectorMSK.properties
+name=snowpipeStreaming
+connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
+tasks.max=4
+topics=streaming
+snowflake.private.key.passphrase=$key_pass
+snowflake.database.name=MSK_STREAMING_DB
+snowflake.schema.name=MSK_STREAMING_SCHEMA
+snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
+buffer.count.records=10000
+buffer.flush.time=5
+buffer.size.bytes=20000000
+snowflake.url.name=$clstr_url
+snowflake.user.name=$user
+snowflake.private.key=$priv_key
+snowflake.role.name=MSK_STREAMING_RL
+snowflake.ingestion.method=snowpipe_streaming
+snowflake.enable.schematization=true
+value.converter.schema.registry.url=
+value.converter.schemas.enable=false
+jmx=true
+key.converter=org.apache.kafka.connect.storage.StringConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+errors.tolerance=all
+EOF
+```
+
+#### 2. Stop Snowflake Kafka Connector:
+Go back to ## Putting it all together and Step 1, and try ingesting for Schema detection to appear.
+
+![](assets/schema-detection.png)
+
+<!---------------------------->
 ## Use MSK Connect (MSKC)
 Duration: 15
 
@@ -619,7 +663,7 @@ DROP USER IF EXISTS STREAMING_USER;
 Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
-connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
+connector on an EC2 instance. Optionally, we demostrated how to enable Schema detection and evolution. Please remember schema detection is in Public Preview and should not be used in Production. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
 scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
 [Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
 
@@ -630,5 +674,5 @@ Related Resources
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
 - [Amazon Managed Streaming for Apache Kafka (MSK)](https://aws.amazon.com/msk/)
-
+- [Snowflake Schema Detection and Evolution for Kafka Connector With Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-kafka-schema-detection)
 
