@@ -1,4 +1,4 @@
-author: Luke Merrick
+author: Luke Merrick (lukemerrick.com)
 id: text_embedding_as_snowpark_python_udf
 summary: Text Embedding As A Snowpark Python UDF
 categories: data-science-&-ml
@@ -11,7 +11,7 @@ tags: Snowpark Python, Machine Learning, Data Science, NLP
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 1
+Duration: 10
 
 This first half of this guide blazes through the setup of a premade UDF so you can start playing with text embedding in Snowflake as quickly as possible!
 
@@ -44,7 +44,7 @@ You will learn how to install a premade text embedding Python UDF into your Snow
 - Python 3.8+ with [Jupyter Lab](https://jupyter.org/) installed.
 
 <!-- ------------------------ -->
-## Part 1: Loading A Text Embedding Model Into Snowflake
+## Part One: Loading A Text Embedding Model Into Snowflake
 
 ### Follow Along In Jupyter
 
@@ -112,19 +112,108 @@ Feel free to give it a shot by running the last couple cells of the notebook.
 
 
 <!-- ------------------------ -->
-## Part 2: Building Your Own Text Embedding UDF
-Duration: 2
+## Interlude: A Reminder To Clean Up
+Duration: 1
+
+If you don't plan to use the warehouse, database, schema, stage, or UDFs we've defined in this Quickstart, now might be a good time to do some deletion. Below are the SQL commands to wipe out everything we've built so far.
+
+> aside positive
+> 
+>  If you're excited to do part two, it might be handy to hold off on deleting our files and instead come back to this interlude section later when you're sure you don't want any of the files/UDFs/etc.
+
+```sql
+drop database text_embedding_quickstart_db;
+drop warehouse text_embedding_quickstart_wh;
+```
+
+
+
+<!-- ------------------------ -->
+## Part Two: Tips For Building Your Own Text Embedding UDF
+Duration: 0
+
+I promised that after rushing to get something up and running in part one, I would come back with a part two to help you craft your own text embedding UDFs. While the source code example from part one is probably the most useful reference I can provide, I'll use this section to explain some "tricks of the trade" from the implementation.
+### Saving Yourself From Unprotected File Access In A Parallel Universe
+
+Apologies for the pun, but in a Snowflake warehouse, your Python Snowflake UDF lives in a *parallel universe*. At any moment during a query, the warehouse may be invoking multiple copies of your UDF on the same machine, and as a result, we need to make sure to avoid concurrency-related bugs like unprotected file access.
+
+This is not actually as hard as it might sound. The official [developer guide offers a great example](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-examples#unzipping-a-staged-file) of using file-based locking to ensure that even if two or more copies of your code are running at the same time, only one messes with your files at a time. In our UDF example, this translates to these lines:
+
+``` python
+class FileLock:
+    def __enter__(self):
+        self._lock = threading.Lock()
+        self._lock.acquire()
+        self._fd = open("/tmp/lockfile.LOCK", "w+")
+        fcntl.lockf(self._fd, fcntl.LOCK_EX)
+
+    def __exit__(self, type, value, traceback):
+        self._fd.close()
+        self._lock.release()
+
+
+def _load_assets(archive_path: Path) -> Tuple[BertTokenizerFast, BertModel]:
+    # Config.
+    tmp = Path("/tmp")
+    extracted_dir = tmp / SAVE_DIR_NAME
+    tokenizer_dir = extracted_dir / "tokenizer"
+    model_dir = extracted_dir / "model"
+
+    # Extract and load, with a lock placed for concurrency sanity.
+    with FileLock():
+        assert archive_path.exists(), f"{archive_path} not found!"
+        shutil.unpack_archive(archive_path, tmp)
+        assert tokenizer_dir.exists(), "failed to extract tokenizer dir"
+        assert model_dir.exists(), "failed to extract model dir"
+        tokenizer = BertTokenizerFast.from_pretrained(
+            tokenizer_dir, local_files_only=True
+        )
+        model = BertModel.from_pretrained(model_dir, local_files_only=True)
+    assert isinstance(model, BertModel)  # Appease typechecker.
+    return tokenizer, model
+```
+
+### Using Conservative Batch Sizes To Avoid Memory Problems And Timeouts
+
+When you want to run a Python function on your laptop, you can generally run just one copy of the function at a time with no timeout. In Snowpark, on the other hand, the official developer guide [recommends writing single-threaded UDF handlers](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-designing#write-single-threaded-udf-handlers), since the warehouse handles query parallelization for you. Additionally, (at least at the time of writing) vectorized Python UDFs have a [180-second timeout per invocation](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-batch#setting-a-target-batch-size). While these design choices make life better for a lot of queries (faster execution and limited hanging), than can cause some unexpected problems as well.
+
+Recall that the underlying PyTorch backend powering our text embedding UDF is optimized to use all available CPU cores, regardless of how many copies of it are being run at the same time, violating Snowflake's best practices and potentially triggering contention during concurrent execution. Remember, too, that our UDF handler includes code to load a sizeable chunk of model weights from disk to memory, and that concurrency in model loading can lead to more memory pressure than expected (a [Snowpark optimized warehouse](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) may help mitigate memory pressure, if you run into this problem).
+
+In light of this particular situation, it's a good idea to limit how many input can be put into a single batch of UDF inputs, and to limit how many inputs from that batch are actually pushed through the model at a time. For example, a batch size of 32 will give the UDF over five seconds on average to embed each input before hitting the 180 second timeout.
+
+To limit UDF input batch sizes, we can simply set the `_sf_max_batch_size` attribute of our handler function:
+
+``` python
+embed._sf_max_batch_size = 32  # type: ignore
+```
+
+At the same time, we can limit memory pressure further by using mini-batching within the UDF. One way of doing this is shown in my UDF implementation embedded into the accompanying notebook:
+
+``` python
+    # Do internal batching according to the `batch_size` constant.
+    input_iter = iter(inputs)
+    batched_iter = iter(lambda: list(itertools.islice(input_iter, MAX_BATCH_SIZE)), [])
+
+    # Run the embedding.
+    # Note: We're byte-packing our float32 embedding vectors into binary scalars
+    # so that we have a scalar output compatible with Snowflake BINARY type.
+    i = 0
+    result = np.ndarray(shape=len(inputs), dtype=EMBEDDING_AS_BYTES_DTYPE)
+    for batch in batched_iter:
+        n_in_batch = len(batch)
+        embedding_matrix = _embed_batch(tokenizer=tokenizer, model=model, texts=batch)
+        result[i : i + n_in_batch] = _byte_pack_embedding_matrix_rows(embedding_matrix)
+        i = i + n_in_batch
+
+    return result
+```
+
+### Over To You!
+
+With the above pointers and the original code as a starting point, you are now well equipped to try implementing your own text embedding UDF! Consider trying to package up a different model like the brand-new and leaderboard-topping [GTE-large](https://huggingface.co/thenlper/gte-large). Or maybe even experiment with a homegrown model, a different UDF implementation, or something else. Whatever you choose, I wish you the best of luck!
 
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
-
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+Congratulations, you've made it all the way through! I hope this guide has helped kickstart your journey to securely applying text embedding on your data without anything having to leave the warehouse.
