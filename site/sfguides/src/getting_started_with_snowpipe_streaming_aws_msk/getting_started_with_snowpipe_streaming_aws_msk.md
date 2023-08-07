@@ -623,6 +623,9 @@ connector on an EC2 instance. However, for a production environment, we recommen
 scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
 [Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
 
+For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
+[workshop](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/index.html?index=..%2F..index#0)
+
 Related Resources
 
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
