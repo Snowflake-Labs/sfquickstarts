@@ -4,13 +4,13 @@ categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Grafana, Streaming, Amazon MSK, Snowpipe Streaming, Streamlit, Container, ECS, Application Load Balancer
+tags: Getting Started, Grafana, Streaming, Amazon MSK, Streamlit, Container, ECS, Application Load Balancer
 authors: James Sun
 
 # Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding
 <!---------------------------->
 ## Overview
-Duration: 10
+Duration: 5
 
 Monitoring your real-time assets in Snowflake is crucial as it allows you to spot anomalies fast and handle the
 incoming issues proactively to minimize the blast radius. 
@@ -25,7 +25,7 @@ In this workshop, we will visualize real-time commercial flight data over the Sa
 The architecture diagram below illustrates the deployment, with the non-greyed out area being the focus of our workshop. The grey out area is covered in the
 [Snowpipe Streaming quicstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0).
 
-The data in Snowflake table is visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
+The data in Snowflake table is visualized in real-time with [AMG (Amazon Managed Service for Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
 Note that Streamlit is containerized and managed by [Amazon Elastic Container Service (ALB)](https://aws.amazon.com/ecs/). An [Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) is used to front-end the container.
 
 ![Architecture diagram for the Demo](assets/Overview-2-flight-arch.png)
@@ -44,23 +44,22 @@ Note that Streamlit is containerized and managed by [Amazon Elastic Container Se
 To participate in the virtual hands-on lab, attendees need the following resources.
 
 - A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
-- Finished the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and has ingested and kept live data in Snowflake.
+- Optional - Finished the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and has ingested and kept live data in Snowflake.
 - An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
 - Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. Please refer
 to this [AWS document](https://docs.aws.amazon.com/whitepapers/latest/amazon-msk-migration-guide/amazon-managed-streaming-for-apache-kafka-amazon-msk.html) for the MSK networking topology)
   - In the AWS account, [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html), preferrably in the same region as the Snowflake account
   - In the VPC, [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-subnets.html) and attach an [internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) to allow egress traffic to the internet by using a routing table and security group for outbound traffic.
-  Note that the subnets can be public or private, for private subnets, you will need to attach a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to allow egress traffic to the internet. Public subnets are sufficient for this lab.
+  Note that the subnets can be public or private. Normally public subnets are sufficient for this lab.
   - If you have decided to create your own VPC/subnets, for your convenience, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake-VPC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/MyFullVPC-2pub-2priv.json) to deploy a VPC with a pair of public and private subnets, internet gateway and NAT gateway for you. 
 Note that you must have network administrator permissions to deploy these resources. 
 
 ### What You'll Learn
 
-- Using [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/)
-- Connecting to EC2 instances with [Amazon System Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), this is an alternative
-to SSH if your instance is in a private subnet
-- Using [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html), the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
-- Using Snowflake to query tables populated with time-series data
+- Using [AMG (Amazon Managed Servie for Grafana)](https://aws.amazon.com/grafana/) to monitor real-time data
+- Using [Streamlit](https://streamlit.io/) to build a dashboard to track real-time data
+- Using [Amazon Elastic Container Service (ALB)](https://aws.amazon.com/ecs/) to host a Streamlit container
+- Using [Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) as the web proxy for the container.
 
 ### What You'll Build
 
