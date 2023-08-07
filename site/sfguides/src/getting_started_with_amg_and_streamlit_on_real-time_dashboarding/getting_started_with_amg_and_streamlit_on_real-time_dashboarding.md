@@ -81,7 +81,7 @@ Duration: 10
 At this point, you can either choose to complete `Option 1` above first then skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane, 
 or you can start from scratch by processing some sample data before using AMG or Streamlit described in steps below. 
 
-#### 1. Creating user, role, and database in Snowflake
+#### 1. Create user, role, and database in Snowflake
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
 
 ```commandline
