@@ -64,9 +64,9 @@ Note that you must have network administrator permissions to deploy these resour
 ### What You'll Build
 
 - Create an ECS cluster and [Application load balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) to frontend the Streamlit container
-- Deploy Streamlit in ECS
 - Deploy an [AMG workspace](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-create-workspace.html)
 - Build a Grafana dashboard to track live flight data
+- Containerize a Streamlit app in ECS
 
 <!---------------------------->
 ## Data Ingestion, Option 1
@@ -232,7 +232,7 @@ The task is scheduled to run evey minute.
 
 <!---------------------------->
 ## Monitor with Amazon Managed Service for Grafana (AMG)
-Duration: 20
+Duration: 15
 
 Before we start, for simplicity reason, we will set the timezone in Snowflake as `UTC`.
 Run the following command as the Administrator to change the default timezone to UTC:
