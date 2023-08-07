@@ -72,14 +72,14 @@ to SSH if your instance is in a private subnet
 ## Data Ingestion, Option 1
 Duration: 1
 
-If you have just completed the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and haven't clean up the database, there is no further actions required, just skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane.
+If you have completed the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and haven't cleaned up the database, there is no further actions required, just skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane.
 
 <!---------------------------->
 ## Data Ingestion, Option 2
 Duration: 10
 
 At this point, you can either choose to complete `Option 1` above first then skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane, 
-or you can start from scratch by processing some sample data before using AMG or Streamlit. 
+or you can start from scratch by processing some sample data before using AMG or Streamlit described in steps below. 
 
 #### 1. Creating user, role, and database in Snowflake
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
