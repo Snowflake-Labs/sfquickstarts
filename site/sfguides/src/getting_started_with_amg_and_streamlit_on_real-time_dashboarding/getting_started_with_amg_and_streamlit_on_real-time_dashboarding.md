@@ -382,18 +382,20 @@ Now you should be able to see the sample dashboard built with Streamlit.
 
 ![](assets/streamlit-db.png)
 
+Here is the [source code](https://github.com/sfc-gh-jsun/sfquickstarts/blob/master/site/sfguides/src/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/assets/opensky.py) for Streamlit. 
+
 <!---------------------------->
 ## Conclusions
 Duration: 5
 
-In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
-connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
-scalability and resilience through the AWS infrastructure.
+In this lab, we built a demo to show how to use AMG and Streamlit to visualize and monitor live flight data, we also provided sample Grafana dashboard and Streamlit code for you to get started quickly.
 
 Related Resources
 
+- [Streamlit](https://streamlit.io/)
+- [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/)
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
-- [Amazon Managed Streaming for Apache Kafka (MSK)](https://aws.amazon.com/msk/)
+
