@@ -26,7 +26,7 @@ The architecture diagram below illustrates the deployment, with the non-greyed o
 [Snowpipe Streaming quicstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0).
 
 The data in Snowflake table is visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
-Note that Streamlit is containerized and managed by [Amazon Elastic Container Service](https://aws.amazon.com/ecs/).
+Note that Streamlit is containerized and managed by [Amazon Elastic Container Service](https://aws.amazon.com/ecs/). An [Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) is used to front-end the container.
 
 ![Architecture diagram for the Demo](assets/Overview-2-flight-arch.png)
 
@@ -64,7 +64,7 @@ to SSH if your instance is in a private subnet
 
 ### What You'll Build
 
-- Create an ECS cluster and [Elastic load balancer](https://aws.amazon.com/elasticloadbalancing/) to frontend the Streamlit container
+- Create an ECS cluster and [Application load balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) to frontend the Streamlit container
 - Deploy Streamlit in ECS
 - Deploy an [AMG workspace](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-create-workspace.html)
 - Build a Grafana dashboard to track live flight data
