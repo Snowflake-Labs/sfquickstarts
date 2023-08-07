@@ -22,8 +22,6 @@ Here are some of the use cases that can benefit from tracking your live data str
 - Smart factory management
 
 In this workshop, we will visualize real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) with [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io/).
-Supposedly, the real-time data has been captured and stored in Snowflake using [Snowpipe streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview) and [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/) as described in this [quickstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0).
-
 The architecture diagram below illustrates the deployment, with the non-greyed out area being the focus of our workshop.
 
 The data in Snowflake table is visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
