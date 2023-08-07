@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Grafana, Streaming, Amazon MSK, Snowpipe Streaming, Streamlit, Container, ECS, Application Load Balancer
 authors: James Sun
 
-# Getting Started with Amazon Managed Service for Grafana and Streamlit to Visualize Real-time Data
+# Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding
 <!---------------------------->
 ## Overview
 Duration: 10
