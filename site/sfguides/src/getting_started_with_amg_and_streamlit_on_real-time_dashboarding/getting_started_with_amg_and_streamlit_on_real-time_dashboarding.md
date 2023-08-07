@@ -83,6 +83,7 @@ At this point, you can either choose to complete `Option 1` above first then ski
 or you can start from scratch by processing some sample data described in steps below before using AMG or Streamlit. 
 
 #### 1. Create user, role, and database in Snowflake
+
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
 
 ```commandline
@@ -206,6 +207,7 @@ SELECT TS_UTC_O, TS_UTC FROM FLIGHTS_VW ORDER BY TS_PT DESC;
 Now you should see the timestamps are adjusted to the current time.
 
 #### 4. Create a task to adjust the timestamps continuously
+
 We need to run a task in the background every minute to simulate the incoming stream of new data by running the following commands:
 
 ```commandline
