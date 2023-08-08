@@ -461,7 +461,7 @@ create application package if not exists chairlift_pkg;
 grant reference_usage on database chairlift_provider_data
     to share in application package chairlift_pkg;
 
--- now that we can reference our proprietary data, let's create some views
+-- now that we can reference our proprietary data, let\'s create some views
 -- this "package schema" will be accessible inside of our setup script
 create schema if not exists chairlift_pkg.package_shared;
 use schema chairlift_pkg.package_shared;
