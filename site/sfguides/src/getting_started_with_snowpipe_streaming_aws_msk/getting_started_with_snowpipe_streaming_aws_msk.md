@@ -199,7 +199,7 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fi
 ```
 
 #### 6. Retrieve the broker string from the MSK cluster.
-Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click on the newly created MSK cluster, it should have a substring `MSKCluster` in its name.
+Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click the newly created MSK cluster, it should have a substring `MSKCluster` in its name.
 
 ![](assets/bs-1.png)
 
