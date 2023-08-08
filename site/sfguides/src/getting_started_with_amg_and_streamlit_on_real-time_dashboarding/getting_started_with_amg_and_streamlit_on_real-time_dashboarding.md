@@ -264,7 +264,7 @@ In about 10 minutes, the Cloudformation template provisions an AMG workspace.
 #### 2. Upgrade to Grafana Enterprise
 Go to the AWS [AMG workspace console](https://console.aws.amazon.com/grafana/home?#/workspaces) in the same region where you deployed the Cloudformation template.
 The [Snowflake Plugin for Grafana](https://grafana.com/grafana/plugins/grafana-snowflake-datasource/) is only available in [Grafana Enterprise](https://grafana.com/products/enterprise/. We will need to upgrade our current workspace to the enterprise version. 
-Click on the name of the workspace, then click `Upgrade to Grafana Enterprise`. 
+Click the name of the workspace, then click `Upgrade to Grafana Enterprise`. 
 
 ![](assets/grafana-enterprise.png)
 
@@ -272,17 +272,17 @@ In the next page, check `30-day free trial`, review the terms and conditions bef
 
 ![](assets/subscribe.png)
 
-In a few minutes, the upgrade is complete. You now have 30 day to try out the Grafana Enterprise edition with Snowflake plugin for free.
+In a few minutes, the upgrade is complete. You now have 30 days to try out the Grafana Enterprise edition with Snowflake plugin for free.
 
 #### 3. Assign an Administrator for Grafana UI
 
 Go back to the AWS [AMG workspace console](https://console.aws.amazon.com/grafana/home?#/workspaces).
-Click on the name of the workspace, we need to assign new user(s) for this workspace, including the Administrator of the
+Click the name of the workspace, we need to assign new user(s) for this workspace, including the Administrator of the
 Grafana UI. If you already have previously set up `AWS IAM Identity Center (Successor to AWS SSO)`, you will be prompted to assign new user or group. Click `Assign new user or group` located under the `Authentication` tab.
 
 ![](assets/amg-2.png)
 
-If you have not set up IAM Identity Center, you will be prompted to enable it. Click on `Enable` then click `Assign new user or group`.
+If you have not set up IAM Identity Center, you will be prompted to enable it. Click `Enable` then click `Assign new user or group`.
 Note that you will probably need to add a new user in IAM Identity Center, please refer to this [doc](https://docs.aws.amazon.com/singlesignon/latest/userguide/addusers.html) to complete this step.
 You will need to add at least one user who will also be the Administrator of Grafana UI.
 
@@ -297,11 +297,11 @@ Now we need to promote this user's role from Viewer to Administrator. Check the 
 ![](assets/amg-5.png)
 
 #### 4. Work with Grafana UI
-Go back to the AWS [AMG workspace console](https://console.aws.amazon.com/grafana/home?#/workspaces). Click on the Grafana URL. 
+Go back to the AWS [AMG workspace console](https://console.aws.amazon.com/grafana/home?#/workspaces). Click the Grafana URL. 
 
 ![](assets/amg-6.png)
 
-You should see the Grafana sign in page. Click on the `Sign in with AWS IAM Identity Center` button.
+You should see the Grafana sign-in page. Click the `Sign in with AWS IAM Identity Center` button.
 
 ![](assets/Grafana-sign-in.png)
 
@@ -313,11 +313,11 @@ Once logged in, click the hamburger menu located in the top-left corner of the p
 
 ![](assets/grafana-ds-1.png)
 
-In the search box, type in Snowflake, and the Snowflake plugin appears. Click on it.
+In the search box, type in Snowflake, and the Snowflake plugin appears. Select it.
 
 ![](assets/grafana-ds-2.png)
 
-Type in the name for your source, e.g., `Snowflake` and the connection info such as your Snowflake account locator, its AWS region, username `streaming_user` and password `Test1234567`. For Environment, type in the role `msk_streaming_rl`, warehouse `msk_streaming_wh`, database `msk_streaming_db` and schema `msk_streaming_schema` you used in the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0)  Leave the remaining options as default and click ‘Save & test’. You will see the ‘Data source is working’ sign when it is done.
+Type in the name for your source, e.g., `Snowflake` and the connection info such as your Snowflake account locator, its AWS region, username `streaming_user` and password `Test1234567`. For Environment, type in the role `msk_streaming_rl`, warehouse `msk_streaming_wh`, database `msk_streaming_db` and schema `msk_streaming_schema` you used in the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0).  Leave the remaining options as default and click ‘Save & test’. You will see the ‘Data source is working’ sign when it is done.
 If you are not sure about the Snowflake account locator, please run the following query in Snowflake to get it:
 
 ```commandline
@@ -333,7 +333,7 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT';
 
 Now download a [dashboard template](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_AMG_Streamlit_Streaming/flights-msk-streaming-AMG.json) and save it in your local computer.
 
-In the UI, click the hamburger menu, click Dashboards, then select `Import` from the `New` drop-down menu. Drag and drop the downloaded template, select `Snowflake` as the data source, click `Import` to complete the import.
+In the UI, click the hamburger menu, click `Dashboards`, then select `Import` from the `New` drop-down menu. Drag and drop the downloaded template, select `Snowflake` as the data source, click `Import` to complete the import.
 
 ![](assets/grafana-db-1.png)
 
@@ -346,19 +346,19 @@ Now you should be able to see the sample dashboard that tracks the real-time fli
 To learn more about Grafana's features, feel free to visit their [documentation portal](https://grafana.com/docs/).
 
 ## Monitor with Streamlit
-Duration: 15
+Duration: 10
 
 For developers with Python skills, they might want to quickly develop a custom monitoring dashboard of their own.
 Streamlit will be a great tool for this use case as it is open-source and can use all the supported Python graphic libraries to build sleek dashboards.
 
-Here we are going to containerize a Streamlit script that retrieves real-time flight data from Snowflake and visualize them in a similar fashion as Grafana.
+Here we are going to containerize a Streamlit Python app that retrieves real-time flight data from Snowflake and visualize them in a similar fashion as Grafana.
 The container is orchestrated by Amazon ECS and front-ended by an [Application Load Balancer (ALB)](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html).
 
 First click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=EcsStreamlit&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_AMG_Streamlit_Streaming/ecs-alb.json) to
 deploy the environment with Cloudformation. Click `Next`.
 
 In the next page, pick a stack name and ECS cluster name of your choice, pick the VPC and Subnets where you want to deploy the ECS cluster. For Snowflake parameters, use
-the default ones (already filled in) from the [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) workshop if you have not changed them. 
+the default ones (already filled in), the Snowflake password should be `Test1234567` from the [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) workshop if you have not changed them. 
 For `SnowflakeAccount`, run the following command in your Snowflake cluster to get the `Account Identifier`:
 
 ```
