@@ -4,7 +4,7 @@ categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Grafana, Streaming, Amazon MSK, Streamlit, Container, ECS, Application Load Balancer
+tags: Getting Started, Grafana, Streaming, Amazon AMG, Streamlit, Container, ECS, Application Load Balancer
 authors: James Sun
 
 # Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding
