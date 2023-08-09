@@ -65,7 +65,7 @@ Note that you must have network administrator permissions to deploy these resour
 
 - Create an ECS cluster and [Application load balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) to frontend the Streamlit container
 - Deploy an [AMG workspace](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-create-workspace.html)
-- Build a Grafana dashboard to track live flight data
+- Import/build a Grafana dashboard to track live flight data
 - Containerize a Streamlit app in ECS
 
 <!---------------------------->
