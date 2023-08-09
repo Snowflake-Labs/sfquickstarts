@@ -387,7 +387,7 @@ Here is the [source code](https://github.com/sfc-gh-jsun/sfquickstarts/blob/mast
 ## Conclusions
 Duration: 5
 
-In this lab, we built a demo to show how to use AMG and Streamlit to visualize and monitor live flight data, we also provided sample Grafana dashboard and Streamlit code for you to get started quickly.
+In this lab, we showed a demo on how to use AMG and Streamlit to visualize and monitor live flight data, we also provided a sample Grafana dashboard and Streamlit code for you to get started quickly.
 
 Related Resources
 
