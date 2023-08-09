@@ -256,8 +256,7 @@ See below sample screen capture for reference.
 ![](assets/amg-1.png)
 
 Leave everything as default in the `Configure stack options` page and click `Next`.
-In the `Review` page, check `
-I acknowledge that AWS CloudFormation might create IAM resources` in the `Capabilities` section, click `Submit`.
+In the `Review` page, check `I acknowledge that AWS CloudFormation might create IAM resources` in the `Capabilities` section, click `Submit`.
 
 In about 10 minutes, the Cloudformation template provisions an AMG workspace. 
 
