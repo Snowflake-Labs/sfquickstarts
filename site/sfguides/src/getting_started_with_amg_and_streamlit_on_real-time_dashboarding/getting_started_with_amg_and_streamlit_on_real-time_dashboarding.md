@@ -203,7 +203,7 @@ SELECT TS_UTC_O, TS_UTC FROM FLIGHTS_VW ORDER BY TS_PT DESC;
 
 ```
 
-Now you should see the timestamps are adjusted to the current time.
+Now you should see the timestamps(`TS_UTC_O`) are adjusted to the current time(`TS_UTC`).
 
 #### 4. Create a task to adjust the timestamps continuously
 
