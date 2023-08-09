@@ -79,7 +79,7 @@ If you have completed the quickstarts for [Snowpipe Streaming and Amazon MSK](ht
 Duration: 10
 
 At this point, you can either choose to complete `Option 1` above first then skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane, 
-or you can start from scratch by processing some sample data described in steps below before using AMG or Streamlit. 
+or you can start by processing some sample data described in steps below before using AMG or Streamlit. 
 
 #### 1. Create user, role, and database in Snowflake
 
