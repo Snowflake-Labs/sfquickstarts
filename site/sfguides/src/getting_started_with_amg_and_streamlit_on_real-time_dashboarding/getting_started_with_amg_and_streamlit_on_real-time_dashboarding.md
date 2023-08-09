@@ -234,7 +234,7 @@ The task is scheduled to run evey minute.
 ## Monitor with Amazon Managed Service for Grafana (AMG)
 Duration: 15
 
-Before we start, for simplicity reason, we will set the timezone in Snowflake as `UTC`.
+Before we start, for simplicity reason, we will set the timezone in Snowflake to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 Run the following command as the Administrator to change the default timezone to UTC:
 
 ```commandline
