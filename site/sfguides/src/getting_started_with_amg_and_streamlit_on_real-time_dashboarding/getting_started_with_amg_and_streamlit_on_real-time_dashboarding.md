@@ -357,7 +357,7 @@ First click [here](https://console.aws.amazon.com/cloudformation/home?region=us-
 deploy the environment with Cloudformation. Click `Next`.
 
 In the next page, pick a stack name and ECS cluster name of your choice, pick the VPC and Subnets where you want to deploy the ECS cluster. For Snowflake parameters, use
-the default ones (already filled in), the Snowflake password should be `Test1234567` from the [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) workshop if you have not changed them. 
+the default values (already filled in), the Snowflake password should be `Test1234567` from the [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) workshop if you have not changed them. 
 For `SnowflakeAccount`, run the following command in your Snowflake cluster to get the `Account Identifier`:
 
 ```
