@@ -158,7 +158,7 @@ SELECT * FROM FLIGHTS_TBL LIMIT 10;
 
 Now you should see raw data in variant type is copied into the `FLIGHTS_TBL` table.
 
-Next, we will create a view and run DDL to convert the raw data into a nicely formatted table.
+Next, we will create a view and run DDL to convert the raw data into a multi-column table.
 
 ```commandline
 CREATE OR REPLACE VIEW FLIGHTS_O_VW
