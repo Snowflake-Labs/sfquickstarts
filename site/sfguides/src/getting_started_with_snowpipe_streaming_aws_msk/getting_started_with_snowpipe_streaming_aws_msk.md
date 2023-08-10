@@ -183,7 +183,7 @@ sudo yum clean all
 sudo yum -y install openssl vim-common java-1.8.0-openjdk-devel.x86_64 gzip tar jq python3-pip
 wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
 tar xvfz kafka_2.12-2.8.1.tgz -C $pwd
-wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.7/aws-msk-iam-auth-1.1.7-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.7-all.jar
+wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.7/zx-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.7-all.jar
 rm -rf $pwd/kafka_2.12-2.8.1.tgz
 cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
@@ -331,6 +331,7 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
 GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
 GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
 GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO ROLE SYSADMIN;
 
 -- SET DEFAULTS
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
@@ -472,14 +473,14 @@ dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorMSK.properties
 name=snowpipeStreaming
 connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
-tasks.max=4
+tasks.max=8
 topics=streaming
 snowflake.private.key.passphrase=$key_pass
 snowflake.database.name=MSK_STREAMING_DB
 snowflake.schema.name=MSK_STREAMING_SCHEMA
 snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
 buffer.count.records=10000
-buffer.flush.time=5
+buffer.flush.time=10
 buffer.size.bytes=20000000
 snowflake.url.name=$clstr_url
 snowflake.user.name=$user
@@ -527,50 +528,6 @@ then picked up by the Snowpipe streaming Kafka connector, which delivers it dire
 table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 
 ![](assets/flight-json.png)
-
-<!---------------------------->
-## Optional: Configure Kafka connector for Snowpipe Streaming with Schema Detection (in Public Preview)
-
-Duration: 5
-
-#### 1. Stop Snowflake Kafka Connector:
-Go back to the Linux console first session and execute CTRL + C to stop the Snowflake Connector.
-
-#### 2. Update the Snowflake Kafka connect property configuration file:
-```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
-cat << EOF > $dir/snowflakeconnectorMSK.properties
-name=snowpipeStreaming
-connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
-tasks.max=4
-topics=streaming
-snowflake.private.key.passphrase=$key_pass
-snowflake.database.name=MSK_STREAMING_DB
-snowflake.schema.name=MSK_STREAMING_SCHEMA
-snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
-buffer.count.records=10000
-buffer.flush.time=5
-buffer.size.bytes=20000000
-snowflake.url.name=$clstr_url
-snowflake.user.name=$user
-snowflake.private.key=$priv_key
-snowflake.role.name=MSK_STREAMING_RL
-snowflake.ingestion.method=snowpipe_streaming
-snowflake.enable.schematization=true
-value.converter.schema.registry.url=
-value.converter.schemas.enable=false
-jmx=true
-key.converter=org.apache.kafka.connect.storage.StringConverter
-value.converter=org.apache.kafka.connect.json.JsonConverter
-errors.tolerance=all
-EOF
-```
-
-#### 2. Stop Snowflake Kafka Connector:
-Go back to ## Putting it all together and Step 1, and try ingesting for Schema detection to appear.
-
-![](assets/schema-detection.png)
-
 <!---------------------------->
 ## Use MSK Connect (MSKC)
 Duration: 15
