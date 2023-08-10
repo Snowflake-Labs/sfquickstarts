@@ -2,7 +2,7 @@ id: getting_started_with_snowpark_for_python_streamlit
 summary: This guide provides the instructions for writing an application using Snowpark for Python and Streamlit.
 categories: getting-started
 environments: web
-status: Published
+status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai
