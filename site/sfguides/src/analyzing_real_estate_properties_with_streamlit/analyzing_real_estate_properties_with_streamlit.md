@@ -144,7 +144,7 @@ other_cities = BR_real_estate_appreciation.query('Location != @your_city')
 ```
 
 <!-- ------------------------ -->
-## Stripplot for Anual Appreciation
+## Stripplot for Annual Appreciation
 Duration: 10
 
 This step refers to the first stripplot, which compares the selected location's annual appreciation to other locations. You can highlight the chosen location in the chart and add reference lines, such as the first quartile, median, and third quartile, to see how it performs.
