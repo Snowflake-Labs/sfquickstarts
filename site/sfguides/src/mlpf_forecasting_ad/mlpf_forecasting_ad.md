@@ -16,8 +16,8 @@ One of the most critical activities that a Data/Business Analyst has to perform 
 
 For these use cases, Snowflake has developed a set of Machine Learning Powered Functions (MLPFs), which are a set of SQL functions that implement machine learning models on the user's behalf. As of August 2023, three MLPFs are in Public Preview for time-series based data:
 
-1. Forecasting: which enables users to forecast a metric based on past values
-2. Anomaly Detection: which flags anomalous values using both unsupervised and supervised learning methods
+1. Forecasting: which enables users to forecast a metric based on past values. Common use-cases for forecasting including predicting future sales, demand for particular sku's of an item, or volume of traffic into a website over a period of time.
+2. Anomaly Detection: which flags anomalous values using both unsupervised and supervised learning methods. This may be useful in use-cases where you want to identify spikes in your cloud spend, identifying abnormal data points in logs, and more.
 3. Contribution Explorer: which enables users to perform root cause analysis to determine the most significant drivers to a particular metric of interest. 
 
 For further details on MLPFs, please refer to the [snowflake documentation](https://docs.snowflake.com/guides-overview-analysis). 
