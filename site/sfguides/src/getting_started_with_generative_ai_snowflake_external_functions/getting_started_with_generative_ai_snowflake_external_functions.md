@@ -15,7 +15,7 @@ Duration: 5
 
 By completing this guide, you will be able to deploy two different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Functions in Snowflake.
 
-![Demo](assets/openai_ext_function.gif)
+![Demo](assets/openai_ext_function_lambda_new_gpt4.gif)
 
 **Implementation 1: Use AWS API Gateway**
 
