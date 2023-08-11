@@ -12,13 +12,17 @@ tags: Getting Started, Data Science, Data Engineering, Apps
 ## Introduction
 Duration: 1
 
-In this Quickstart, you'll take on the role of a chairlift manufacturer and build a Snowflake Native app that can analyze chairlift sensor data from chairlifts at different locations at a ski resort. The insights generated in the app can be used by the manufacturer or the customer to identify chairlifts that are in need of maintenance at the resort. 
+In this Quickstart, you'll build a Snowflake Native Application that can analyze sensor data from chairlifts at different locations at a ski resort. Let's explore the scenario from the perspective of the application provider and an application consumer.
+
+– **Provider** – The provider of the app is a chairlift manufacturer. The app, once installed by a consumer, can run against chairlift sensor data housed in the consumer's account, and provide the consumer with important analytics and insights on the condition of each chairlift. 
+
+– **Consumer** – The consumer of the app is a customer of the chairlift manufacturer. They have purchased and installed chairlifts in various locations across a ski resort they own, and they collect raw sensor data from the chairlifts using a connector that ingests this data directly into their account. The provider's app runs against this data and helps the customer identify chairlifts in need of maintenance.
 
 Within the app, you'll create the following:
 
 - **Dashboard** – A dashboard with a list of sensor warnings from all chairlifts at the ski resort. You'll be able to filter by chairlift and by sensor type.
 
-- **Configuration** – TBD (doesn't load for me)
+- **Configuration** – A tab that allows an application admin to toggle sensor warnings about chairlifts.
 
 - **Sensor data** – Visualizations of raw sensor data across all chairlifts at the ski resorts.  You'll be able to filter by chairlift and by sensor type.
 
@@ -29,9 +33,10 @@ Let's get started!
 
 ### What You’ll Learn 
 
-- How to create an app application package that grants proper privileges based on Snowflake role 
-- How to create a new version of the app within Snowflake
-- How to install and run the app within a Snowflake account
+- How to create an application package
+- How to create grants in the application package to control access to different parts of the app, depending on Snowflake role 
+- How to create a new version of the app
+- How to install and run the app in a Snowflake account
 
 ### What You’ll Need
 
@@ -79,7 +84,7 @@ sfguide-native-apps-chairlift/
 ├─ README.md
 ```
 
-The app's source code resides in the **src/** directory. There are also three other directories in this repository: **/prepare**, **/consumer**, and **/provider**. These three directories are specific to this Quickstart, and the files in these folders will be used properly set up account roles and objects within the Snowflake account for this native app. In practice, you may have your own directory structure outside of the **/src** folder, or other methods for achieving what the files in these three other directories do.
+The app's source code resides in the **src/** directory. There are also three other directories in this repository: **/prepare**, **/consumer**, and **/provider**. These three directories are specific to this Quickstart, and the files in these folders will be used to properly set up account roles and objects within the Snowflake account for this native app. In practice, you may have your own directory structure outside of the **/src** folder, or other methods for achieving what the files in these three other directories do.
 
 Here's an overview of the directories:
 
@@ -89,11 +94,11 @@ Here's an overview of the directories:
 
 **prepare/** 
 
-- This directory is specific to this Quickstart. It contains files to prepare your Snowflake account by creating of roles, granting privileges, and loading data. We'll execute the scripts in this folder before building the native app.
+- This directory is specific to this Quickstart. It contains files to prepare your Snowflake account by creating certain roles, granting privileges, and loading data. We'll execute the scripts in this folder before building the native app.
 
 **consumer/** 
 
-- This directory is specific to this Quickstart. It contains a SQL script to install the native app in the account and grant appropriate privileges. This will allow you to run the native app from the perspective of the consumer.
+- This directory is specific to this Quickstart. It contains a SQL script to install the native app in the account and grant appropriate privileges. This will allow you to run the native app from the perspective of the consumer (i.e., a customer of the chairlift manufacturer).
 
 **provider/** 
 
@@ -103,7 +108,7 @@ Here's an overview of the directories:
 ## The **src/** directory
 Duration: 3
 
-Let's take a deeper look at the **/src** directory for this Quickstart.
+Let's take a deeper look at the **/src** directory for this app.
 
 ```plaintext
 src/
@@ -122,11 +127,13 @@ src/
 │  ├─ v_sensor_data.py
 ```
 
-This directory contains the source code for the native app. This Quickstart uses **src/** as the name of the folder, mostly for the purposes of convention. In practice, this folder may take on any name you'd like. Here's an overview of what this folder contains:
+This directory contains the source code for the native app. This Quickstart uses **src/** as the name of the folder, mostly for the purposes of convention. In practice, this folder may take on any name you'd like. 
+
+Here's an overview of what this folder contains:
 
 **manifest.yml** 
 
-- A manifest file is a requirement when creating a native app. This file defines the configuration and setup properties required by the application. It contains metadata about the app (version, etc.), artifacts required by the app, and log configuration settings. It also defines the privileges that the consumer must grant when the application is installed and run in their account. Finally, it also contains references defined by the provider. Typically these references refer to tables and the corresponding privileges needed by the app to run against consumer data. For more information, see [Creating the Manifest File](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).
+- A manifest file is a requirement when creating a native app. This file defines the runtime configuration for application. It contains metadata about the app (version, etc.), artifacts required by the app, and log configuration settings. It also defines the privileges that the consumer must grant when to the application when the application is installed in their account. Finally, it also contains references defined by the provider. Typically these references refer to tables and the corresponding privileges needed by the app to run against consumer data. For more information, see [Creating the Manifest File](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).
 
 **setup.sql** 
 
@@ -145,7 +152,7 @@ This directory contains the source code for the native app. This Quickstart uses
 ## Set up account roles
 Duration: 3
 
-Let's start building the app. You'll first need to configure certain roles and permissions within your Snowflake account. This will allow you to view the app as an app admin (perhaps the chairlift manufacturer is doing some diagnostic work), or as an app viewer (perhaps the ski resort owner is interested in identifying chairlifts in need of repair).
+Let's start building the app. You'll first need to configure certain roles and permissions within your Snowflake account. This will allow you to view the app as an app admin (for configuring the application after installation and/or dismissing sensor warnings), or as an app viewer (perhaps someone in charge of equipment maintenance at the resort keeps an eye on the condition of chairlifts).
 
 To create these roles and permissions, run the scripts below. You'll only need to execute these scripts once.
 
@@ -190,13 +197,13 @@ grant usage on warehouse chairlift_wh to role chairlift_viewer;
 ## Prepare objects in account
 Duration: 4
 
-Next, you'll run some scripts to setup some databases, schemas, and tables needed by the native app.
+Next, you'll run some scripts to setup some databases, schemas, and tables needed by the app.
 
 The scripts will do a couple of things:
 
-* The provider scripts define roles, warehouses, and  data types for the data emitted by the sensors (i.e., brake temperature, motor RPMs, etc.). This is necessary so that the app can function as intended in the consumer's account. From this perspective, the provider is the chairlift manufacturer, and the native app will take raw sensor data from a consumer's account and generate chairlift analytics and insights for the consumer, granted that the consumer installs the app and grants the proper privileges to the app.
+* The provider scripts define roles, warehouses, and data types for the data emitted by the sensors (i.e., brake temperature, motor RPMs, etc.). This is necessary so that the app can function as intended in the consumer's account. From this perspective, the provider is the chairlift manufacturer, and the app will run against raw sensor data in (and owned by) a consumer's account. Running the app against this data will provide the consumer with analytics and insights on the chairlifts they own, granted that the consumer installs the app and grants the proper privileges to the app.
 
-* The consumer scripts mock fictional, raw sensor data from the chairlifts. From this perspective, the consumer is a purchaser of the chairlifts (i.e., owner of the ski resort) and has collected sensor data from the chairlifts since installation. The provider's app will run against this collected data in the customer's account.
+* The consumer scripts mock fictional, raw sensor data about the chairlifts. In practice, this data could be ingested directly into the consumer's account with a connector that collects raw sensor data from the chairlifts. For the purposes of this Quickstart, we mock this data so that the provider's native app can run against this data that lives in the consumer's account.
 
 To setup the environment, run the scripts below. You'll only need to execute these scripts once.
 
@@ -337,7 +344,7 @@ begin
                 from sensor_types where id < 8;
     end for;
     --for chairlifts machines
-    for machine in c2 DO
+    for machine in c2 do
         let machine_uuid varchar default machine.uuid;
         insert into sensors(uuid, name, sensor_type_id, machine_uuid, installation_date,last_service_date)
             select uuid_string(), name, id, :machine_uuid, dateadd(day, -365, getdate()), dateadd(day, -1 * abs(hash(uuid_string()) % 365), getdate())
@@ -436,7 +443,7 @@ With the environment created, we can now create the application package for the 
 
 * Creates the application package for the native app
 
-* Marks that the native app will make use of certain data in the consumer's account
+* Marks that the native app makes use of an external database in the provider's account
 
 * Creates views and grants the setup script access to the views
 
@@ -502,7 +509,7 @@ grant select on view package_shared.sensor_service_schedules
 ## Upload native app source code
 Duration: 3
 
-Now that the application package has been created, you'll upload the app's source code into the application package. To do this, you'll create a schema within the **chairlift_pkg** application package called **code**, and then create a stage within that schema called **source**. 
+Now that the application package has been created, you'll upload the app's source code into the application package. To do this, you'll create a schema within the **chairlift_pkg** application package called **code**, and then create a stage within that schema called **source** (i.e., `chairlift_pkg.code.source`).
 
 Execute the following commands in a worksheet to create the schema and the stage:
 
@@ -513,13 +520,15 @@ create stage if not exists chairlift_pkg.code.source;
 
 Next, upload the files into the stage. You can use Snowsight (i.e., the Snowflake UI), the SnowSQL command line tool, or the Snowflake VS Code extension to upload the files. In this step, we'll use Snowsight.
 
-Navigate to the **SOURCE** stage in the Snowsight UI. In the top right, click on the **+ FILES** button. Next, click **Browse** in the modal that appears. 
+Navigate to the `chairlift_pkg.code.source` stage in the Snowsight UI. In the top right, click on the **+ FILES** button. Next, click **Browse** in the modal that appears. 
 
-To avoid breaking any references to objects (needed by the app), the folder structure within the stage should reflect the folder structure in your local repository directory. Be sure to upload the native app source code exactly as follows:
+To avoid breaking any references to objects needed by the app, the folder structure within the stage must reflect the folder structure in your local repository directory. Be sure to upload the native app source code exactly as follows:
 
 1. Ensure you're in the **sfguide-native-apps-chairlift/src** directory and start by uploading the following files: **README.md**, **manifest.yml**, and **setup.sql**.
 
-2. Next, upload the remaining files. Once again, click on the **+ FILES** button. Note the "Specify the path to an existing folder or create a new one (optional)" field in the modal. In this field, enter **ui**. The modal will automatically prepend a forward slash to your entry, so the value will read as **/ui**. Click **Browse**, navigate to the local **sfguide-native-apps-chairlift/src/ui** folder, select all files, and upload them. The folder structure within this stage should now reflect the folder structure in your local repository directory. 
+2. Next, upload the remaining files. Once again, click on the **+ FILES** button. Note the "Specify the path to an existing folder or create a new one (optional)" field in the modal. In this field, enter **ui**. The modal will automatically prepend a forward slash to your entry, so the value will read as **/ui**. 
+
+3. Click **Browse**, navigate to the local **sfguide-native-apps-chairlift/src/ui** folder on your computer, select all files, and upload them. The folder structure within this stage should now reflect the folder structure in your local repository directory. 
 
 It is important to make sure the directory structures match so that any references to objects needed by the app do not break. See the screenshots below for reference.
 
@@ -563,7 +572,7 @@ Duration: 2
 
 Now that the source code has been uploaded into the application package, we can now install the application. To install the application in the same account, the provider role needs to grant installation and development permissions to the consumer role. 
 
-Execute the following SQL statement using role **chairlift_provider**:
+To do this, execute the following SQL statement using role **chairlift_provider**:
 
 ```sql
 use role chairlift_provider;
@@ -598,7 +607,7 @@ With the application installed, you can now run the app in your Snowflake accoun
 
 3. You should see the app installed under "Installed Apps". Click **CHAIRLIFT_APP**. This will start the app. You'll be prompted to do some first-time setup by granting the app access to certain tables. After completing this setup, you'll have access to the main dashboard within the app. 
 
-You can run the app as either the provider or consumer. To run the app as the provider, exit the app, switch your role to **CHAIRLIFT_ADMIN**, and navigate back to the app. To run the app as a consumer, exit the app, switch your role to **CHAIRLIFT_VIEWER**, and navigate back to the app. These roles have different access rights within the app. In particular, the **CHAIRLIFT_ADMIN** role has access to a "Configuration" tab within the app, while the **CHAIRLIFT_VIEWER** does not.
+You can run the app as an app admin or or app viewer. To run the app as an admin, exit the app, switch your role to **CHAIRLIFT_ADMIN**, and navigate back to the app. To run the app as a viewer, exit the app, switch your role to **CHAIRLIFT_VIEWER**, and navigate back to the app. These roles have different access rights within the app. In particular, the **CHAIRLIFT_ADMIN** role has access to a "Configuration" tab within the app, while the **CHAIRLIFT_VIEWER** does not.
 
 You should be able to browse the dashboard, configuration (depending on role selected), and sensor data, all within the app.
 
@@ -608,7 +617,7 @@ You should be able to browse the dashboard, configuration (depending on role sel
 
 > aside negative
 > 
->  Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to **ORGADMIN**, then navigate to "**Admin** -> **Billing & Terms**". Click **Enable** and then acknowledge and continue in the ensuing modal.
+>  **NOTE** Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to **ORGADMIN**, then navigate to "**Admin** -> **Billing & Terms**". Click **Enable** and then acknowledge and continue in the ensuing modal.
 
 ![Anaconda](assets/anaconda.png)
 
@@ -616,12 +625,12 @@ You should be able to browse the dashboard, configuration (depending on role sel
 ## Conclusion
 Duration: 0
 
-Congratulations! In just a few minutes, you built a Snowflake Native App that allows a consumer to generate insights based on raw sensor data from chairlifts they own at a ski resort. The app also grants select access to parts of the app depending on the Snowflake role selected.
+Congratulations! In just a few minutes, you built a Snowflake Native App that allows a consumer to generate maintenance-related insights based on raw sensor data from chairlifts they own at a ski resort. The app also grants select access to parts of the app depending on the Snowflake role selected.
 
 ### What we've covered
 
-- How to create a native app application package
-- How to add source code to a native app application package
+- How to create a application package
+- How to add source code to an application package
 - How to create a new version (or patch) of the app
 - How to install and run the native app in a consumer account
 
