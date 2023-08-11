@@ -457,7 +457,7 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 1. Open a new browser tab and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-python-hands-on-lab-snowpark).
 
 2. **Fork** your own copy of the lab repo.
-<img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
+<img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_demo_repository.png" alt="fork_demo_repo">
 
 3. Add a description if you'd like such as: "learning about dbt Cloud is cool" and **Create fork**.  
 <img src="assets/development-schema-and-forking-repo/forking-repo/6_create_new_fork.png" alt="create_new_fork">
@@ -1125,7 +1125,8 @@ It's time to use that 2020 data we held out to make predictions on!
         dbt.config(
             packages = ['snowflake-snowpark-python' ,'scipy','scikit-learn' ,'pandas' ,'numpy'],
             materialized = "table",
-            tags = "predict"
+            tags = "predict",
+            use_anonymous_sproc=True
         )
         session._use_scoped_temp_objects = False
         download_models_and_libs_from_stage(session)
