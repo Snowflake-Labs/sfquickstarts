@@ -33,9 +33,11 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ![App](assets/snowpark.png)
 
-### What is Streamlit?
+### What is Streamlit-in-Snowflake?
 
-Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write data applications. Learn more about [Streamlit](https://streamlit.io/).
+Streamlit-in-Snowflake (SiS) enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
+
+Learn more about [Streamlit-in-Snowfake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What You’ll Learn
 
