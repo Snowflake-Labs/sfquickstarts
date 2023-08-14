@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Apps 
 
-# Build a Native App for Chairlift Manufacturing
+# Build a Snowflake Native App to Analyze Chairlift Sensor Data
 <!-- ------------------------ -->
 ## Introduction
 Duration: 1
