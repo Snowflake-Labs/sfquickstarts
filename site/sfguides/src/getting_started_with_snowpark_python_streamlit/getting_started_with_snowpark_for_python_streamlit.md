@@ -1,5 +1,5 @@
 id: getting_started_with_snowpark_for_python_streamlit
-summary: This guide provides the instructions for writing a Streamlit-in-Snowflake application using Snowpark for Python and data from Snowflake Marketplace.
+summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
 categories: getting-started
 environments: web
 status: Hidden
@@ -13,11 +13,11 @@ authors: Dash Desai
 
 Duration: 5
 
-This guide provides the instructions for writing a Streamlit-in-Snowflake application using Snowpark for Python and data from Snowflake Marketplace.
+This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
 
 ### What You'll Build
 
-A Streamlit-in-Snowflake (SiS) application.
+A Streamlit application.
 
 ![App](assets/sis.gif)
 
@@ -33,18 +33,18 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ![App](assets/snowpark.png)
 
-### What is Streamlit-in-Snowflake?
+### What is Streamlit?
 
-Streamlit-in-Snowflake (SiS) enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
+Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
-Learn more about [Streamlit-in-Snowfake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
+Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What You’ll Learn
 
-- How to access current Session object in SiS
+- How to access current Session object in Streamlit
 - How to load data from Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
-- How to create and display interactive charts in SiS
+- How to create and display interactive charts in Streamlit
 
 ### Prerequisites
 
@@ -57,7 +57,7 @@ Learn more about [Streamlit-in-Snowfake](https://www.snowflake.com/en/data-cloud
 
 Duration: 5
 
-Follow these steps to start creating Streamlit-in-Snowflake (SiS) application in Snowsight.
+Follow these steps to start creating Streamlit application in Snowsight.
 
 **Step 1.** Click on **Streamlit Apps** on the left navigation menu
 
@@ -69,7 +69,7 @@ Follow these steps to start creating Streamlit-in-Snowflake (SiS) application in
 
 **Step 5.** Click on **Create**
 
-- At this point, you will be provided code for an example SiS application
+- At this point, you will be provided code for an example Streamlit application
 
 **Step 6.** Replace sample application code displayed in the code editor on the left by following instructions in the subsequent steps
 
@@ -201,7 +201,7 @@ page_names_to_funcs[selected_page]()
 
 Duration: 5
 
-The fun part! Assuming your code is free of syntax and other errors, you’re ready to run the SiS application.
+The fun part! Assuming your code is free of syntax and other errors, you’re ready to run the Streamlit application.
 
 ### Code
 
@@ -303,10 +303,10 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 
 ### What You Learned
 
-- How to access current Session object in SiS
+- How to access current Session object in Streamlit
 - How to load data from Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
-- How to create and display interactive charts in SiS
+- How to create and display interactive charts in Streamlit
 
 ### Related Resources
 
