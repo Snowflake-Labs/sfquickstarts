@@ -528,7 +528,88 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 ![](assets/flight-json.png)
 
 <!---------------------------->
-## Use MSK Connect (MSKC)
+## Query ingested data in Snowflake
+Duration: 10
+
+Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
+The data should have been streamed into a table, ready for further processing.
+
+#### 1. Query the raw data
+To verify that data has been streamed into Snowflake, execute the following SQL commands.
+
+```sh
+use msk_streaming_db;
+use schema msk_streaming_schema;
+show channels in table msk_streaming_tbl;
+```
+You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
+![](assets/channels.png)
+
+Now run the following query on the table.
+```
+select * from msk_streaming_tbl;
+```
+You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
+
+![](assets/raw_data.png)
+The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
+
+#### 2. Flatten the raw JSON data
+Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
+
+```sh
+create or replace materialized view flights_vw
+  as select
+    f.value:utc::timestamp_ntz ts_utc,
+    CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
+    f.value:alt::integer alt,
+    f.value:dest::string dest,
+    f.value:orig::string orig,
+    f.value:id::string id,
+    f.value:icao::string icao,
+    f.value:lat::float lat,
+    f.value:lon::float lon,
+    st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
+    year(ts_pt) yr,
+    month(ts_pt) mo,
+    day(ts_pt) dd,
+    hour(ts_pt) hr
+FROM   msk_streaming_tbl,
+       Table(Flatten(msk_streaming_tbl.record_content)) f;
+```
+
+The SQL commands create a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools like Grafana
+
+Let's query the view `flights_vw` now.
+```sh
+select * from flights_vw;
+```
+
+As a result, you will see a nicely structured output with columns derived from the JSONs
+![](assets/materialized_view.png)
+
+#### 3. Stream real-time flight data continuously to Snowflake
+
+We can now write a loop to stream the flight data continuously into Snowflake.
+
+Note that there is a 30 seconds sleep time between the queries, it is because for our data source in this workshop, anything
+less than 30 seconds will not incur any new data as the source won't update more frequently than 30 seconds.
+Feel free to lower the frequency for other data sources that update more frequently.
+
+Go back to the Linux session and run the following script.
+
+```sh
+while true
+do
+  curl --connect-timeout 5 -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  sleep 30
+done
+
+```
+You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 30 seconds to verify that the row counts is indeed increasing.
+
+<!---------------------------->
+## Use MSK Connect (MSKC) - Optional
 Duration: 15
 
 So far we have been hosting the Kafka connector for Snowpipe Streaming on the EC2 instance. You can also use
