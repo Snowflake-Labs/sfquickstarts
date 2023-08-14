@@ -558,7 +558,7 @@ The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
 Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
 
 ```sh
-create or replace materialized view flights_vw
+create or replace view flights_vw
   as select
     f.value:utc::timestamp_ntz ts_utc,
     CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
@@ -592,17 +592,13 @@ As a result, you will see a nicely structured output with columns derived from t
 
 We can now write a loop to stream the flight data continuously into Snowflake.
 
-Note that there is a 30 seconds sleep time between the queries, it is because for our data source in this workshop, anything
-less than 30 seconds will not incur any new data as the source won't update more frequently than 30 seconds.
-Feel free to lower the frequency for other data sources that update more frequently.
-
 Go back to the Linux session and run the following script.
 
 ```sh
 while true
 do
   curl --connect-timeout 5 -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
-  sleep 30
+  sleep 10
 done
 
 ```
