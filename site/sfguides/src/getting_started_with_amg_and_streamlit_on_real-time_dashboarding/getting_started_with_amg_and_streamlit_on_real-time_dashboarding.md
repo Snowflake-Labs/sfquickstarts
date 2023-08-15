@@ -304,9 +304,7 @@ You should see the Grafana sign-in page. Click the `Sign in with AWS IAM Identit
 
 ![](assets/Grafana-sign-in.png)
 
-At this point, you will be prompted to enter username and password for authentication. Depending on how your IAM Identity Center is setup, you may also have to perform a MFA (Multi-Factor Authentication). 
-
-![](assets/session-mgr-1.1.5.png)
+At this point, you will be prompted to enter username and password for authentication. Depending on how your IAM Identity Center is setup, you may also have to perform a MFA (Multi-Factor Authentication).
 
 Once logged in, click the hamburger menu located in the top-left corner of the page, select `Data sources` from the Administration drop-down menu.
 
