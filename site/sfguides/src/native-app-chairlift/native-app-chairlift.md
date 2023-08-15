@@ -26,6 +26,8 @@ Within the app, you'll create the following:
 
 - **Sensor data** – Visualizations of raw sensor data across all chairlifts at the ski resorts.  You'll be able to filter by chairlift and by sensor type.
 
+Note that this Quickstart is limited to a single-account installation. Listing to the Snowflake Marketplace and versions / release directives are outside of the scope of this guide.
+
 Let's get started!
 
 ![Sensor data](assets/sensor-data.png)
@@ -36,7 +38,7 @@ Let's get started!
 - How to create an application package
 - How to create grants in the application package to control access to different parts of the app, depending on Snowflake role 
 - How to create a new version of the app
-- How to install and run the app in a Snowflake account
+- How to install and run the app in a single Snowflake account using multiple roles
 
 ### What You’ll Need
 
@@ -201,7 +203,7 @@ Next, you'll run some scripts to setup some databases, schemas, and tables neede
 
 The scripts will do a couple of things:
 
-* The provider scripts define roles, warehouses, and data types for the data emitted by the sensors (i.e., brake temperature, motor RPMs, etc.). This is necessary so that the app can function as intended in the consumer's account. From this perspective, the provider is the chairlift manufacturer, and the app will run against raw sensor data in (and owned by) a consumer's account. Running the app against this data will provide the consumer with analytics and insights on the chairlifts they own, granted that the consumer installs the app and grants the proper privileges to the app.
+* The provider scripts define roles, warehouses, and data types for the data emitted by the sensors (i.e., brake temperature, motor RPMs, etc.). This data is combined with the consumer data inside of the app, and is necessary so that the app can function as intended in the consumer's account. From this perspective, the provider is the chairlift manufacturer, and the app will run against raw sensor data in (and owned by) a consumer's account. Running the app against this data will provide the consumer with analytics and insights on the chairlifts they own, granted that the consumer installs the app and grants the proper privileges to the app.
 
 * The consumer scripts mock fictional, raw sensor data about the chairlifts. In practice, this data could be ingested directly into the consumer's account with a connector that collects raw sensor data from the chairlifts. For the purposes of this Quickstart, we mock this data so that the provider's native app can run against this data that lives in the consumer's account.
 
