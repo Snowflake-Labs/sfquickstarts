@@ -3,7 +3,7 @@ id: text_embedding_as_snowpark_python_udf
 summary: Text Embedding As A Snowpark Python UDF
 categories: data-science-&-ml
 environments: web
-status: Hidden 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowpark Python, Machine Learning, Data Science, NLP 
 
@@ -97,17 +97,14 @@ We're almost ready to run text embedding directly on Snowflake warehouse compute
 
 ### A Note On Storing Vectors As BINARY Vs. ARRAY
 
-For storage and computational efficiency, our text embedding UDF stores embedding vectors as BINARY blobs constructed by concatenating all of the 32-bit floating point numbers in the vector together in order. While this is how numerical computing libraries like Numpy and Pytorch "see" vectors, sometimes it may be useful to take a more JSON-like perspective and treat your embedding vectors as a Snowflake ARRAY. We could modify our UDF to make it always return an ARRAY, but for greater flexibility we can instead add a new Snowpark UDF to enable a conversion from our BINARY form to ARRAY form. In fact, all it takes is one line of JavaScript to make this possible!
+For storage and computational efficiency, our text embedding UDF stores embedding vectors as BINARY blobs constructed by concatenating all of the 32-bit floating point numbers in the vector together in order. While this is how numerical computing libraries like Numpy and Pytorch "see" vectors, sometimes it may be useful to take a more JSON-like perspective and treat your embedding vectors as a Snowflake ARRAY.
+
+To accomplish this, we could modify our UDF to make it always return an ARRAY, but for greater flexibility we can instead add a new Snowpark UDF to enable a conversion from our BINARY form to ARRAY form. In fact, all it takes is one line of Python to make this possible!
 
 
 Feel free to give it a shot by running the last couple cells of the notebook.
 
 ![unpacking example](assets/unpack_binary_vectors.png)
-
-
-> aside negative
-> 
->  Warning: Composing Python and JavaScript UDFs together in a single query on warehouses may cause out-of-memory errors, since the warehouse may try to allocate memory for both UDFs at the same time. This is why our example shows running the embedding function in its own query first, then unpacking the result in a separate query. If you want to compose these UDFs but run into memory issues, you can also try using a [Snowpark-optimized](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) warehouse. 
 
 
 <!-- ------------------------ -->
