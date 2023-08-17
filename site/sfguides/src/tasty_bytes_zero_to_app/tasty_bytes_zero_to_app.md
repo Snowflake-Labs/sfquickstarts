@@ -403,8 +403,12 @@ use warehouse query_wh;
 ### Step 3.1 Creating the Service User
 
 To enable our application to connect securely to Snowflake we are going to create a service user in the Snowflake account and create a key pair that we will use to authenticate that user.
-Start by generating a private and a public key to associate with the user. We will use the following command-line
-tools and calls to generate the key pair.
+Start by generating a private and a public key to associate with the user. 
+
+Generate and download the key files [in your browser](https://www.cryptool.org/en/cto/openssl). Running the following commands below in the Web OpenSSL Application window and download the Files generated.
+
+If you prefer to generate the key files using [openssl](https://www.openssl.org/) locally, run the following commands in your shell.
+
 ```sh
 $ openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out app_user_rsa_key.p8 -nocrypt
 Generating RSA private key, 2048 bit long modulus (2 primes)
