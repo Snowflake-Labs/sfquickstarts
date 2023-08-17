@@ -261,7 +261,7 @@ use database chairlift_consumer_data;
 create schema if not exists data;
 use schema data;
 
--- what machines (chairlifts and stations) exist in the consumer's ski resort?
+-- what machines (chairlifts and stations) exist in the consumer\'s ski resort?
 create or replace table machines (
     uuid varchar,
     name varchar,
@@ -295,7 +295,7 @@ create table if not exists sensor_readings (
 -- Sensor types with reading min range, max ranges, service intervals and lifetime of the sensor.
 -- Note that both the consumer and provider have a version of this table; you can think
 -- of this version as coming from an imaginary "second app" which is a connector that
--- streams data into the consumer's account from the sensors. Consumer owns their own data!
+-- streams data into the consumer\'s account from the sensors. Consumer owns their own data!
 create or replace table sensor_types (
     id int,
     name varchar,
@@ -449,9 +449,9 @@ With the environment created, we can now create the application package for the 
 
 * Creates views and grants the setup script access to the views
 
-For more details, see the comments in the **prepare/create-package.sql** script.
+For more details, see the comments in the **provider/create-package.sql** script.
 
-**Execute prepare/create-package.sql**
+**Execute provider/create-package.sql**
 
 Open a SQL worksheet in Snowsight and execute the following script:
 
@@ -516,6 +516,7 @@ Now that the application package has been created, you'll upload the app's sourc
 Execute the following commands in a worksheet to create the schema and the stage:
 
 ```sql
+use role chairlift_provider;
 create schema if not exists chairlift_pkg.code;
 create stage if not exists chairlift_pkg.code.source;
 ```
@@ -551,6 +552,7 @@ Let's review what we've covered so far:
 Next, you'll create the first version of the app. Run the following SQL in a worksheet:
 
 ```sql
+use role chairlift_provider;
 alter application package chairlift_pkg add version develop using '@chairlift_pkg.code.source';
 ```
 
@@ -596,32 +598,59 @@ create application chairlift_app
 grant application role chairlift_app.app_viewer
     to role chairlift_viewer;
 ```
-
 <!-- ------------------------ -->
-## Run the application
+## Setup the application
 Duration: 3
 
 With the application installed, you can now run the app in your Snowflake account!
 
-1. Navigate to **Apps** within Snowsight (left hand side).
+1. Set your role to **CHAIRLIFT_ADMMIN**.
 
-2. Next, click **Apps** at the top of Snowsight.
+2. Navigate to **Apps** within Snowsight (left hand side).
 
-3. You should see the app installed under "Installed Apps". Click **CHAIRLIFT_APP**. This will start the app. You'll be prompted to do some first-time setup by granting the app access to certain tables. After completing this setup, you'll have access to the main dashboard within the app. 
+3. Next, click **Apps** at the top of Snowsight.
 
-You can run the app as an app admin or or app viewer. To run the app as an admin, exit the app, switch your role to **CHAIRLIFT_ADMIN**, and navigate back to the app. To run the app as a viewer, exit the app, switch your role to **CHAIRLIFT_VIEWER**, and navigate back to the app. These roles have different access rights within the app. In particular, the **CHAIRLIFT_ADMIN** role has access to a "Configuration" tab within the app, while the **CHAIRLIFT_VIEWER** does not.
-
-You should be able to browse the dashboard, configuration (depending on role selected), and sensor data, all within the app.
+4. You should see the app installed under "Installed Apps". Click **CHAIRLIFT_APP**. This will start the app. You'll be prompted to do some first-time setup by granting the app access to certain tables. After completing this setup, you'll have access to the main dashboard within the app. If you're encountering an error, ensure your role is set to **CHAIRLIFT_ADMIN** during first-time setup.
 
 ![First time setup](assets/first-time-setup.png)
 
-![Sensor data](assets/sensor-data.png)
+When running the app for the first time, you'll be prompted to create bindings. The bindings link references defined in the manifest file to corresponding objects in the Snowflake account. These bindings ensure that the application can run as intended. You'll also be prompted to grant the application privileges to execute a task based on a toggle within the app's user interface. For more information, see the **first_time_setup.py** and **references.py** files in the **ui/** folder within the repo.
 
 > aside negative
 > 
 >  **NOTE** Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to **ORGADMIN**, then navigate to "**Admin** -> **Billing & Terms**". Click **Enable** and then acknowledge and continue in the ensuing modal.
 
 ![Anaconda](assets/anaconda.png)
+
+<!-- ------------------------ -->
+## Run the application
+Duration: 5
+
+You can run the app as an app admin or or app viewer. See the sections below for the differences between the two roles.
+
+**APP VIEWER**
+
+ To run the app as an app viewer, switch your role to **CHAIRLIFT_VIEWER**, and navigate back to the app. You should have access to two views:
+
+– **Dashboard** – A list of warnings emitted by all chairlift sensors. You can filter by specific chairlift, or by a sensor type. You can also acknowledge warnings and dismiss them as needed.
+
+– **Sensor data** – Graphs of sensor data for each sensor type, over a given time interval, and segmented by chairlift. You can filter by specific chairlift, by a sensor type, or by date. You can also view raw sensor readings data.
+
+![Sensor data](assets/sensor-data.png)
+
+**APP ADMIN**
+
+To run the app as an app admin, switch your role to **CHAIRLIFT_ADMIN**, and navigate back to the app. You should have access to the two views above, as well as one additional view:
+
+– **Configuration** – This part of the app exposes a toggle (checkbox) for enabling a warning generation task. If enabled, this task will generate mock sensor warnings. You can view these generated sensor warnings in the **Dashboard** view. To avoid prolonged credit consumption, be sure to disable (i.e., uncheck) the warning generation task.
+
+In this Quickstart, the **Configuration** tab is intended to be a demonstration of differing access privileges to the app, based on role. In practice, the app admin (or other roles) may have access to other areas or functionality of the app.
+
+> aside negative
+> 
+>  **AVOID PROLONGED CREDIT CONSUMPTION** Enabling the warning generation task will generate mock sensor warnings. A task intended to check for newly-generated warnings will also run, and will continue to run as long as the warning generation task is enabled. **To avoid prolonged credit consumption, be sure to disable (i.e., uncheck) the warning generation task.**
+
+
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -641,3 +670,4 @@ Congratulations! In just a few minutes, you built a Snowflake Native App that al
 - [Official Native App documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Tutorial: Developing an Application with the Native Apps Framework](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial)
 - [Snowflake Demos](https://developers.snowflake.com/demos)
+- [Getting Started with Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/)
