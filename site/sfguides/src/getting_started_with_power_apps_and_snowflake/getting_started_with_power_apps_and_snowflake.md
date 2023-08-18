@@ -109,6 +109,7 @@ create or replace security integration powerapps
 ```
 
 To find your Power Apps tenant id you will go to your Power Apps environment, click the settings gear button in the top right, click "Session Details" then copy the "Tenant ID" value and paste it into the code from above where <tenant id> is tagged.
+
 ![](assets/tenant_id.png)
 
 For this integration we are using 'login_name' as the mapping attribute. You will want go to your users and roles in the admin section of your Snowflake environment and make sure that there is exactly one user where the login name matches the username (likely an email address) in your Power Apps environment. It must match exactly and is case sensitive. The user must also have a default warehouse and a default role.
@@ -121,9 +122,11 @@ This security integration is the same as setting up a Power BI integration [Powe
 Duration: 15
 
 From the Power Apps homescreen access the apps in the top left and click on Power Automate.
+
 ![](assets/power_apps.png)
 
 On the Power Automate screen click on the 'My Flow' menu item on the left then "New Flow" and then "Instant Cloud Flow". Select Power Apps as your trigger, name the flow and then create.
+
 ![](assets/new_flow.png)
 
 Now, it's time to build the connector! First click on "New Step" and the search bar search for "Snowflake" and select the "Submit SQL Statement for Executiuon" for each of the parameters in the Snowflake connector please populate as such:
@@ -136,16 +139,23 @@ warehouse: HOL_DB
 role: PUBLIC
 ```
 
-Next, create a "New "Step" and select the action "Convert result set rows from arrays to objects" and complete the activity parameters with the options below. Selected from the box on the left of the activity.
+Next, create a "New Step" and select the action "Convert result set rows from arrays to objects" and complete the activity parameters with the options below. Selected from the box on the left of the activity.
+
 ```bash
 Row Type: rowType
 Data: data
 ```
 
+When completing the parameters for the "Convert result set rows from arrays to objects" make certain that you're selecting the items from the Dynamic Content options rather then simply typing the values. 
+
+![](assets/convert_selection.png)
+
 Lastly, and the "Response" action. Your flow should now look like this:
+
 ![](assets/final_flow.png)
 
 Click "save" in the top right corner then once saved click "test". Move through the prompts to run the Flow: select Manually, "Save & Test" then "Run Flow" then "Done". Within several seconds you should have successfully run the flow and it shoult look like this:
+
 ![](assets/run_flow.png)
 
 ### Things to look out for
