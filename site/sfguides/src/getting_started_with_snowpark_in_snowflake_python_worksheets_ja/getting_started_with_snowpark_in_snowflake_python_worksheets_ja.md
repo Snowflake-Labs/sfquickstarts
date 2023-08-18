@@ -3,7 +3,7 @@ summary: Snowflake PythonワークシートによるSnowpark入門
 categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, ja
 authors: Dash Desai
 
