@@ -12,13 +12,23 @@ tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpar
 ## Overview 
 Duration: 5
 
-Python is the language of choice for Data Science and Machine Learning workloads. Snowflake has long supported Python via the Python Connector, allowing data scientists to interact with data stored in Snowflake from their preferred Python environment. This did, however, require data scientists to write verbose SQL queries. To provide a more friendly, expressive, and extensible interface to Snowflake, we built **Snowpark Python**, a native Python experience with a pandas and PySpark-like API for data manipulation. This includes a client-side API to allow users to write Python code in a Spark-like API without the need to write verbose SQL. Python UDF and Stored Procedure support also provides more general additional capabilities for compute pushdown.
+### What is Snowpark?
 
-Snowpark includes client-side APIs and server-side runtimes that extends Snowflake to popular programming languages including Scala, Java, and Python. Ultimately, this offering provides a richer set of tools for Snowflake users (e.g. Python’s extensibility and expressiveness) while still leveraging all of Snowflake’s core features, and the underlying power of SQL, and provides a clear path to production for machine learning products and workflows.
+The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
 
-A key component of Snowpark for Python is that you can "Bring Your Own IDE"- anywhere that you can run a Python kernel, you can run client-side Snowpark Python. You can use it in your code development the exact same way as any other Python library or module. In this quickstart, we will be using Jupyter Notebooks, but you could easily replace Jupyter with any IDE of your choosing.
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
 
-Throughout this quickstart, we will specifically explore the power of the Snowpark Python Dataframe API, as well as server-side Python runtime capabilities, and how Snowpark Python can enable and accelerate end-to-end Machine Learning workflows.
+**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+
+Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+
+![Snowpark](assets/snowpark.png)
+
+### What is Snowpark ML?
+
+Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (in Public Preview) for model development and Snowpark ML Operations (in Private Preview) for model deployment.
+
+This quickstart will focus on the Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution in Snowflake.
 
 The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning).
 
@@ -28,26 +38,25 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 
 ### What You’ll Learn 
 - Loading and transforming data via Snowpark
-- Defining Stored Procedures for non-SQL-based Data Transformations
-- Defining Stored Procedures for training different machine learning models
-- Defining User Defined Functions for distributed scoring of machine learning models
-- Using hyper paratemer tuning in Stored Procedures
+- Apply scalable data transformations with Snowpark ML
+- Train, score and evaluate models with Snowpark ML
+- Hyperparameter Tuning with Snowpark ML
 
 ### What You’ll Need 
 - A free [Snowflake Trial Account](https://signup.snowflake.com/) 
 - [Anaconda Integration enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)
-- Python 3.8
+- Python 3.9
 - Jupyter Notebook
 
 ### What You’ll Build 
-You will build an end-to-end data science workflow leveraging Snowpark for Python
+You will build an end-to-end data science workflow
 - to load, clean and prepare data
-- to train different machine learning models using Python Stored Procedures
-- to deploy the trained models in Snowflake using Python User Defined Functions (UDFs)
+- to train different machine learning models
+- to tune hyper parameters
 
 The end-to-end workflow will look like this:
 
-![](./assets/flow.png)
+!['flow'](./assets/new_flow.png)
 
 <!-- ------------------------ -->
 ## Use-Case: Credit Card Approval Prediction
@@ -87,19 +96,7 @@ jupyter notebook
 ```
 
 ### Snowpark with your own Environment
-If you decide to bring your own Python environment, please make sure to have the following packages installed:
-- [Snowpark](https://pypi.org/project/snowflake-snowpark-python/)
-- [Pandas](https://pypi.org/project/snowflake-snowpark-python/)
-- [NumPy](https://pypi.org/project/numpy/)
-- [scikit-learn](https://pypi.org/project/scikit-learn/)
-- [LightGBM](https://pypi.org/project/lightgbm/)
-- [XGBoost](https://pypi.org/project/xgboost/)
-- [SciPy](https://pypi.org/project/scipy/)
-- [Seaborn](https://pypi.org/project/seaborn/)
-- [cloudpickle](https://pypi.org/project/cloudpickle/)
-- [cachetools](https://pypi.org/project/cachetools/)
-- [imbalanced-learn](https://pypi.org/project/imbalanced-learn/)
-- [optuna](https://pypi.org/project/optuna/)
+If you decide to bring your own Python environment, please make sure to install all of the required packages from the conda_env.yml
 
 > aside positive
 > There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
@@ -153,9 +150,8 @@ You can verify your excercise results by having a look at the solution provided 
 **What You'll Do**: 
 - Transform the data into a final dataset ready to be used as input for machine learning models
 - Variable analysis
-- Missing value imputation
+- Perform value imputation & variable encoding using scalable Snowpark ML functions
 - Create the target variable
-- Variable encoding
 - Synthetic Minority Oversampling via Snowflake Stored Procedure
 
 Open up the [`1_3_DEMO_full_data_exploration_transformation`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_3_DEMO_full_data_exploration_transformation.ipynb) Jupyter notebook and run each of the cells.
@@ -165,23 +161,10 @@ Open up the [`1_3_DEMO_full_data_exploration_transformation`](https://github.com
 Duration: 15
 
 ### Demo
-**What You'll Do**: 
-- Develop a Stored Procedure to train a simple logistic regression model with [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
-- Deploy the trained model as a User Defined Function
-- Score the model on unseen data and evaluate model metrics 
+**What You'll Do**:  
+- Train, score and evaluate a simple logistic regression model with Snowpark ML that is based on [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
 
 Open up the [`2_1_DEMO_model_building_scoring`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/2_1_DEMO_model_building_scoring.ipynb) Jupyter notebook and run each of the cells.
-
-<!-- ------------------------ -->
-## Vectorizing & Caching for UDFs
-Duration: 10
-
-### Demo
-**What You'll Do**: 
-- Improve the performance of your existing User Defined Function with vectorization and caching
-- Understand how caching and vectorization work
-
-Open up the [`3_1_DEMO_vectorized_cached_scoring`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_1_DEMO_vectorized_cached_scoring.ipynb) Jupyter notebook and run each of the cells.
 
 <!-- ------------------------ -->
 ## Building Additional Models
@@ -189,33 +172,32 @@ Duration: 20
 
 ### Excercise
 **What You'll Do**: 
-- Apply your knowledge of Stored Procedures and User Defined Functions to develop additional models
+- Apply your knowledge of Snowpark ML to train, score and evaluate additional models
 - You can choose between [XGBoost](https://github.com/dmlc/xgboost) or [LightGBM](https://github.com/microsoft/LightGBM) as your additional model
 
 **For XGBoost:**  
-Open up the [`4_1_EXERCISE_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_1_EXERCISE_additional_models_xgboost.ipynb) Jupyter notebook and develop/adjust the code to solve the tasks.
+Open up the [`3_1_EXERCISE_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_1_EXERCISE_additional_models_xgboost.ipynb) Jupyter notebook and develop/adjust the code to solve the tasks.
 
 **For LightGBM:**  
-Open up the [`4_2_EXERCISE_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_2_EXERCISE_additional_models_lightgbm.ipynb) Jupyter notebook and develop/adjust the code to solve the tasks.
+Open up the [`3_2_EXERCISE_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_2_EXERCISE_additional_models_lightgbm.ipynb) Jupyter notebook and develop/adjust the code to solve the tasks.
 
 ### Solution
 **For XGBoost:**  
-You can verify your excercise results by having a look at the solution provided in the  [`4_1_SOLUTION_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_1_SOLUTION_additional_models_xgboost.ipynb) Jupyter notebook.
+You can verify your excercise results by having a look at the solution provided in the  [`3_1_SOLUTION_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_1_SOLUTION_additional_models_xgboost.ipynb) Jupyter notebook.
 
 **For LightGBM:**  
-You can verify your excercise results by having a look at the solution provided in the  [`4_2_SOLUTION_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_2_SOLUTION_additional_models_lightgbm.ipynb) Jupyter notebook.
+You can verify your excercise results by having a look at the solution provided in the  [`3_2_SOLUTION_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_2_SOLUTION_additional_models_lightgbm.ipynb) Jupyter notebook.
 
 <!-- ------------------------ -->
-## Hyperparameter Tuning with Optuna
+## Hyperparameter Tuning with Snowpark ML and GridSearchCV
 Duration: 10
 
 ### Demo
 **What You'll Do**: 
-- Utilize [Optuna](https://github.com/optuna/optuna) to perform hyper parameter tuning inside a Stored Procedure
-- Deploy the optimized model with a User Defined Function
-- Evaluate the resulting model
+- Tune the parameters of an XGBoost model with [GridSearchCV](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html) using the Snowpark ML API
+- Evaluate the parameter tuning process
 
-Open up the [`5_1_DEMO_hyperparameter_tuning_optuna`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/5_1_DEMO_hyperparameter_tuning_optuna.ipynb) Jupyter notebook and run each of the cells.
+Open up the [`4_1_DEMO_hyperparameter_tuning_gridsearch`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_1_DEMO_hyperparameter_tuning_gridsearch.ipynb) Jupyter notebook and run each of the cells.
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -224,11 +206,11 @@ Duration: 2
 Through this Quickstart we were able to experience how Snowpark for Python enables you to use familiar syntax and constructs to process data where it lives with Snowflake’s elastic, scalable and secure engine, accelerating the path to production for data pipelines and ML workflows. Here’s what you were able to complete:
 
 - Loading and transforming data via Snowpark
-- Defining Stored Procedures for non-SQL-based Data Transformations
-- Defining Stored Procedures for training different machine learning models
-- Defining User Defined Functions for distributed scoring of machine learning models
-- Using hyper paratemer tuning in Stored Procedures
+- Apply scalable data transformations with Snowpark ML
+- Train, score and evaluate models with Snowpark ML
+- Hyperparameter Tuning with Snowpark ML
 
 For more information on Snowpark Python, and Machine Learning in Snowflake, check out the following resources:
 - [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark Python API Docs](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
+- [Snowpark ML Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
