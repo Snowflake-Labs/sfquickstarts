@@ -408,7 +408,7 @@ CREATE OR REPLACE TABLE MFG_SHIPPING (
 
 ### Add Data to the Application Package
 
-In order for the shipping data to be available to the application consumer, It will be added to the application package.
+In order for the shipping data to be available to the application consumer, it will be added to the application package.
 
 In the SQL below, the data is added to a share in the application package as a view and select is granted on the data.
 
@@ -462,7 +462,7 @@ ALTER APPLICATION PACKAGE "NATIVE_APP_QUICKSTART_PACKAGE" SET DEFAULT RELEASE DI
 ## Upload Test Data to Snowflake
 Duration: 2
 
-The model used in this scenario is that each Native App Consumer will bring their own supply chain data (orders and site recovery), the Native App will use the consumer's data to perform it's calculations. 
+The model used in this scenario is that each Native App Consumer will bring their own supply chain data (orders and site recovery). The Native App will use the consumer's data to perform it's calculations. 
 
 In the SQL below, we will be using `NATIVE_APP_QUICKSTART_DB` for our Consumer testing data.
 
