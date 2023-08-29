@@ -322,6 +322,7 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 
 ### Related Resources
 
+- [Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/generative-ai-llm-snowflake/)
 - [External Functions in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions)
 - [API Integration in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration)
 - [Using Request and Response Translators](https://docs.snowflake.com/en/sql-reference/external-functions-translators)
