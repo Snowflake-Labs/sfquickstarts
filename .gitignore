@@ -8,4 +8,3 @@ node_modules
 site/.firebaserc
 site/.firebase/**
 package-lock.json
-/site/sfguides/src/visualize_real-time_data_with_AMG_and_Streamlit/assets/ecs-experimenting-without-VPC/

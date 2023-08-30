@@ -50,42 +50,13 @@ Collibra is a Data Intelligence platform that allows users to search, and find o
 ### What You’ll Build 
 - Metadata of Snowflake, A Policy for this data, diagram that connects the data to its business context.
 
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: 
-  - This is a guide on how to Catalog and use Snowflake data using Collibra. 
-- **categories**: 
-  - data governance
-  - data intelligence
-  - data mesh
-  - data privacy
-  - data science
-
-- **environments**: 
-  - `web` . All work is done on the web, and there is no need to install anything locally on your computer.
-
-- **status**: Draft
-  
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter, Data Governance, Data Intelligence, Data Privacy, Data Mesh
-  
-
 - **authors**: 
-  - Vasiliki Nikolopoulou, Collibra
-
-
-
----
-
+  - Vasiliki Nikolopoulou, Principal, Integrations Architect, Collibra
+  - Tomer Steinberg, Sales Engineer Majors Benelux
 
 
 <!-- ------------------------ -->
-## STEP 1: Catalog Snowflake into Collibra
+## Catalog Snowflake into Collibra
 Duration: 2
 
 In this step we will import into Collibra the techincal metadata from a Snowflake database. We will use Collibra Edge, which is an Integration Hub residing within the customer firewall for safety. This integration hub retrieves the Snowflake metadata using native JDBC drivers.  
@@ -95,7 +66,7 @@ Go to Collibra and click on Catalog to start the ingestion:
 
  ![Catalog](assets/Catalog.jpg)
 
-Click on the plus sign to choose the database:
+Click on the plus sign (green square box with white plus sign,top right on the screen) to choose the database:
 
 ![edge1](assets/edge1.jpg)
 
@@ -126,7 +97,7 @@ Collibra also allows users to see profiling information and sampling (anonymized
 
 <!-- ------------------------ -->
 
-## STEP 2: Data Privacy and Policy Enforcement
+## Data Privacy and Policy Enforcement
 Duration: 2
 
 In this stage, we will specifically define the Data Privacy policies and rules that will be automatically enforced in Snowflake directly from within Collibra. 
@@ -177,7 +148,7 @@ We can simply check this if we login to Snowflake and go to D_CUSTOMER database,
 
 
 <!-- ------------------------ -->
-## STEP 3: Data Consumption and Access
+## Data Consumption and Access
 Duration: 2
 
 In this chapter we will look into how a user can search and find trusted data to use and request access to the data while at the same time policies will be automatically enforced.
@@ -300,10 +271,10 @@ The value that Collibra brings to Snowflake implementations in brief:
 
 Collibra is an ideal environment for all Snowflake users, business or technical, to view, search, understand, trust and collaborate with data. 
 
-You can learn more about Collibra at https://www.collibra.com. 
+You can learn more about Collibra at [Collibra website](https://www.collibra.com). 
 
-You can learn more about the Snowflake partnership with Collibra at: https://www.collibra.com/us/en/partners/technology-partners/snowflake
+You can learn more about the Snowflake partnership with Collibra at [Collibra-Snowflake Partnership](https://www.collibra.com/us/en/partners/technology-partners/snowflake)
 
-Collibra and Snowflake Factsheet: https://www.collibra.com/wp-content/uploads/Optimize-Snowflake-Data-Platform-Productivity-with-Collibra-Factsheet.pdf
+[Collibra and Snowflake Factsheet](https://www.collibra.com/wp-content/uploads/Optimize-Snowflake-Data-Platform-Productivity-with-Collibra-Factsheet.pdf)
 
-Collibra and Snowflake video: https://youtu.be/teJMQJLaIaQ
+[Collibra and Snowflake video](https://youtu.be/teJMQJLaIaQ)

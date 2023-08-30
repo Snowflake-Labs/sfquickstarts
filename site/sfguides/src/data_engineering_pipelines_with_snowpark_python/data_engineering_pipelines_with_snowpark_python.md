@@ -896,6 +896,7 @@ We've covered a ton in this Quickstart, and here are the highlights:
 ### Related Resources
 And finally, here's a quick recap of related resources:
 
+* [Full Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/data-engineering-pipelines/)
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python)
 * [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
     * [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html)

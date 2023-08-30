@@ -88,7 +88,7 @@ Click `Next` at the `Create stack` page.
 Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `Subnet1` and `Subnet2`, in the drop-down menu, pick two different subnets respectively, they can be either public or private subnets depending on the network layout of your VPC. Please note that if
 you plan to use [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) later, you should choose private subnets here. 
 For `MSKSecurityGroupId`, we recommend
-using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
+using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC, if you do not have the default security group, [create one](https://docs.aws.amazon.com/vpc/latest/userguide/default-security-group.html) on your own before moving forward. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
 `Next`. 
 
 See below sample screen capture for reference.
@@ -188,10 +188,10 @@ cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.tr
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
 #Snowflake kafka connector
-wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.1/snowflake-kafka-connector-1.9.1.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-1.9.1.jar
+wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.0.0/snowflake-kafka-connector-2.0.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-2.0.0.jar
 
 #Snowpipe streaming SDK
-wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/1.1.0/snowflake-ingest-sdk-1.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-1.1.0.jar
+wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/2.0.2/snowflake-ingest-sdk-2.0.2.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-2.0.2.jar
 wget https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/3.13.15/snowflake-jdbc-3.13.15.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-jdbc-3.13.15.jar
 wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
 wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
@@ -199,7 +199,7 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fi
 ```
 
 #### 6. Retrieve the broker string from the MSK cluster.
-Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click on the newly created MSK cluster, it should have a substring `MSKCluster` in its name.
+Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click the newly created MSK cluster, it should have a substring `MSKCluster` in its name.
 
 ![](assets/bs-1.png)
 
@@ -528,13 +528,90 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 ![](assets/flight-json.png)
 
 <!---------------------------->
-## Use MSK Connect (MSKC)
+## Query ingested data in Snowflake
+Duration: 10
+
+Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
+The data should have been streamed into a table, ready for further processing.
+
+#### 1. Query the raw data
+To verify that data has been streamed into Snowflake, execute the following SQL commands.
+
+```sh
+use msk_streaming_db;
+use schema msk_streaming_schema;
+show channels in table msk_streaming_tbl;
+```
+You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
+![](assets/channels.png)
+
+Now run the following query on the table.
+```
+select * from msk_streaming_tbl;
+```
+You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
+
+![](assets/raw_data.png)
+The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
+
+#### 2. Flatten the raw JSON data
+Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
+
+```sh
+create or replace view flights_vw
+  as select
+    f.value:utc::timestamp_ntz ts_utc,
+    CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
+    f.value:alt::integer alt,
+    f.value:dest::string dest,
+    f.value:orig::string orig,
+    f.value:id::string id,
+    f.value:icao::string icao,
+    f.value:lat::float lat,
+    f.value:lon::float lon,
+    st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
+    year(ts_pt) yr,
+    month(ts_pt) mo,
+    day(ts_pt) dd,
+    hour(ts_pt) hr
+FROM   msk_streaming_tbl,
+       Table(Flatten(msk_streaming_tbl.record_content)) f;
+```
+
+The SQL commands create a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools like Grafana
+
+Let's query the view `flights_vw` now.
+```sh
+select * from flights_vw;
+```
+
+As a result, you will see a nicely structured output with columns derived from the JSONs
+![](assets/materialized_view.png)
+
+#### 3. Stream real-time flight data continuously to Snowflake
+
+We can now write a loop to stream the flight data continuously into Snowflake.
+
+Go back to the Linux session and run the following script.
+
+```sh
+while true
+do
+  curl --connect-timeout 5 -k https://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  sleep 10
+done
+
+```
+You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 30 seconds to verify that the row counts is indeed increasing.
+
+<!---------------------------->
+## Use MSK Connect (MSKC) - Optional
 Duration: 15
 
 So far we have been hosting the Kafka connector for Snowpipe Streaming on the EC2 instance. You can also use
 [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) to manage the connector.
 
-*Note that in order to use MSKC, it is suggested to run your MSK cluster in a private subnet for it to work.
+*Note that in order to use MSKC, it is suggested to run your MSK cluster in a private subnet with egress to the internet via the [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) for it to work.
 See this [AWS documentation](https://docs.aws.amazon.com/msk/latest/developerguide/msk-connect-internet-access.html) for more information.
 
 #### 1. Create a S3 bucket to store the custom plugins
@@ -622,6 +699,9 @@ In this lab, we built a demo to show how to ingest time-series data using Snowpi
 connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
 scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
 [Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
+
+For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
+[workshop](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/index.html?index=..%2F..index#0)
 
 Related Resources
 

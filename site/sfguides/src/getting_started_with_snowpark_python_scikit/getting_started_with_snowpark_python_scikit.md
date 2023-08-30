@@ -226,6 +226,7 @@ Congratulations! You've successfully completed the lab using Snowpark for Python
 
 ### Related Resources
 
+- [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/predict-home-prices-using-machine-learning/)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn)
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
