@@ -144,11 +144,11 @@ You can familiarize yourself with the Azure AI Studio later, but for now click o
 
 <!-- ------------------------ -->
 ## Build Prompt Flow
-Duration: 5
+Duration: 15
 
 Go back to your Azure ML workspace and access the Prompt Flow blade and click Create then click create on the Standard flow.
 
-![](assets/promptflow_start.png)
+![](assets/promptflow_setup.png)
 
 Prompt Flow allows you to streamline your LLM-based application development. You can create executable flows that link LLMs, prompts, and Python tools through a ui graph. You can iterate and debug right from the Prompt Flow ui then deploy the LLM application. Here we will creat a simple LLM application.
 
@@ -158,14 +158,64 @@ Your flow should now look like this:
 ![](assets/promptflow_start.png)
 
 IN the LLM window select the Connection as the OpenAI service, slect chat for the API and gpt35turbo for Deployment. Next copy and paste the below text into the prompt section:
+
 ```
 system:
 can you recommend three products to advertise to a customer who recently purchased these items. 
-just list the three recommended items no description
+just list the three recommended items no description. Number the items like this: 1. 2. 3.
 {{purchase_history}}
-the median age in the zip code of the customer is
+also, consider the median age in the zip code where the customer lives in your recommendation. the median age in the zip code where the customer lives is:
 {{med_age}}
 ```
+
+This is the prompt that will be used to generate a response from the OpenAI model. You can see that were prompting the model to provide a recommendation of the next 3 items for the customer based on two variables: their recent purchase history and the median age in the zip code where they live.
+
+Scroll to the top in the input section and create two input variables named: purchase_history and med_age.
+
+Scroll back down and click the blue button that says "Validate and Parse Input". This will recognize the two variables in the prompt. On the right of those newly identified variables select the respective inputs you just created above. Scroll to the output section and add an output named 'output' the select the output from the model in the value section (it should be the only option). Save the Prompt Flow, it should look like this:
+
+![](assets/promptflow_final.png)
+
+If you would like you can enter sample values in the two value sections in the input section of the flow then run a test with the blue Run button. The test will run for several seconds and once completed you can scroll down to the Outputs section of the LLM window to see the output and recommended items.
+
+Save the flow and then click deploy. Accept all of the default options by clicking next through the options and deploy. It will take several minutes to deploy the flow and create an endpoint.
+
+<!-- ------------------------ -->
+## Develop Notebook to Orchestrate Inference
+
+Head back to your AzureML workspace and click on the notebook blade and select open terminal and start/select your compute instance near the top of the screen. In the terminal run the below code to copy the notebook that will use to orchestrate inference.
+
+```
+git clone https://github.com/marzillo-snow/azureopenai.git
+```
+
+You may have to refresh the folder listing to see the new folder and openai.ipynb file that you will open. Your workspace should now look like this:
+![](assets/notebook_orch.png)
+
+### Slight Detour - Back to the Azure Portal
+
+In the AzureML workspace head to the Endpoint blade and verify that your Prompt Flow has deployed, note the name of the endpoint. Now go to the Azure Portal and find the AzureML Workspace we're working in and select 'Access Control (IAM)' the select Add and 'Add role assignment: ![](assets/addroleassignment.png)
+
+Select the 'AzureML Data Scientist' role then select next. Select 'Managed Identity' for 'assign access to' then select members. In the right menu select your Azure subscrition then 'Machine Learning online endpoint' then select your prompt flow endpoint. Click Select then 'Review and Assign' twice.
+![](assets/miendpoint.png)
+
+You have just given the Prompt Flow endpoint the appropriate role to interact with the AzureML Workspace.
+
+### Back to the Notebook
+
+Make sure that you're using the 'Python 3.8 - AzureML'kernel in the top right. Next uncomment rows 2-4 in the first block and run the block to install neccessarry packages.
+
+In the second block of code enter in the 3 pieces of information: 1. your Azure subscription 2. the resource group namethat contains your AzureML Workspace and 3. the name of your AzureML Workspace. Run this block of code to obtain a handle to the workspace.
+
+Run the third block of code as-is to access the Azure dataset that was created with the AzureML + Snowflake Connector earlier in the lab.
+
+In the fourth block of code you will have to copy and paste the Endpoint url and the API key from AzureML into the appropriate parts of the code.
+![](assets/endpoint.png)
+
+Run the fourth block of code to see the magic happen! This code parses the Snowflake data and passes it to the Prompt Flow endpoint to generate a response.
+
+<!-- ------------------------ -->
+## Build Prompt Flow
 
 
 ### Troubleshooting `pyarrow` related issues
