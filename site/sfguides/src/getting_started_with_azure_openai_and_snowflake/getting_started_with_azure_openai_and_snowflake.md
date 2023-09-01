@@ -146,34 +146,27 @@ You can familiarize yourself with the Azure AI Studio later, but for now click o
 ## Build Prompt Flow
 Duration: 5
 
-You should now be able to navigate back to the 'File Browser' tab on the left and see your clone repo. Open the first notebook (ensure that you select the correct notebook environment), [0_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/0_setup.ipynb) and work through the set up script. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+Go back to your Azure ML workspace and access the Prompt Flow blade and click Create then click create on the Standard flow.
 
-You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
-```python
-connection_parameters = {
-    "account": "hk12345.eu-west-2.aws",
-    "host": "hk12345.eu-west-2.aws.snowflakecomputing.com",
-    "user": <your_user>, 
-    "password": <your_password>,
-    "role": <your_role>, # using "ACCOUNTADMIN" may simplify things in an isolated lab environment
-    }
+![](assets/promptflow_start.png)
+
+Prompt Flow allows you to streamline your LLM-based application development. You can create executable flows that link LLMs, prompts, and Python tools through a ui graph. You can iterate and debug right from the Prompt Flow ui then deploy the LLM application. Here we will creat a simple LLM application.
+
+Once you have your first flow open head to the to and edit the name and make it generate _products. Next delete the output, the echo and the joke prompts as they won't be needed. Next, add an LLM prompt from the top and select a runtime from the top, for this lab it can be the compute instance that you created earlier in the lab (or just use a compute instance that you already have). 
+Your flow should now look like this:
+
+![](assets/promptflow_start.png)
+
+IN the LLM window select the Connection as the OpenAI service, slect chat for the API and gpt35turbo for Deployment. Next copy and paste the below text into the prompt section:
 ```
-> Tip for finding Snowflake account ID:
-```sql
-use role orgadmin;
-show organization accounts;
+system:
+can you recommend three products to advertise to a customer who recently purchased these items. 
+just list the three recommended items no description
+{{purchase_history}}
+the median age in the zip code of the customer is
+{{med_age}}
 ```
-Scroll to account_url and copy the URL
 
-i.e. https://hvxehhp-bxb87833.snowflakecomputing.com
-
-Account = hvxehhp-bxb87833
-Host = hvxehhp-bxb87833.snowflakecomputing.com
-
-> Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so AWS Secrets Manager or a similar tool would be appropriate.
-
-Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. Review the steps as you go: you just used a little bit of Snowpark to get that data loaded via the `session.write_pandas` function!
-![](assets/database_check.png)
 
 ### Troubleshooting `pyarrow` related issues
 
