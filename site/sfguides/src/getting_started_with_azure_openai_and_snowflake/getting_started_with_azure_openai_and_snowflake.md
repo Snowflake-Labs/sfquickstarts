@@ -212,10 +212,18 @@ Run the third block of code as-is to access the Azure dataset that was created w
 In the fourth block of code you will have to copy and paste the Endpoint url and the API key from AzureML into the appropriate parts of the code.
 ![](assets/endpoint.png)
 
-Run the fourth block of code to see the magic happen! This code parses the Snowflake data and passes it to the Prompt Flow endpoint to generate a response.
+Run the fourth block of code to see the magic happen! This code parses the Snowflake data and passes it to the Prompt Flow endpoint to generate a response. 
 
-<!-- ------------------------ -->
-## Build Prompt Flow
+In the fifth code block fill in your Sowflake Account Identifier, username and password the run the code to write the recemmendations back to a table in Snowflake.
+
+Then head back to your Snowflake account and run the below SQL to see your recommendations with customer id to be used by your organization.
+
+```
+sql
+SELECT * FROM retail_db.public.nbi_promo;
+```
+![](assets/results.png)
+
 
 
 ### Troubleshooting `pyarrow` related issues
@@ -225,41 +233,15 @@ Run the fourth block of code to see the magic happen! This code parses the Snowf
 - Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
 <!-- ------------------------ -->
-## Build and Deploy Model
-Duration: 10
-
-Now open and work through the `1_prepare_build_deploy_model.ipynb` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
-
-[1_prepare_build_deploy_model.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker/blob/main/1_prepare_build_deploy_model.ipynb)
-
-Once that notebook is complete you will have a udf that you can use to generate predictions in your Snowflake environment! you can do this via Snowpark Python code or Snowflake SQL. Let's generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.
-
-```sql
-use role accountadmin;
-select predict_failure(AIR_TEMPERATURE_K,
-       PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
-       TOOL_WEAR_MIN, HUMIDITY_RELATIVE_AVG) as predicted_failure, * from maintenance_hum;
-```
-
-![](assets/snowflake_inference.png)
-
-<!-- ------------------------ -->
 ## Conclusion and Additional Considerations
 Duration: 5
 
-This quickstart is just that, a quick way to get you started with using SageMaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
-
-![](assets/enterprise_arch.png)
-Credit: Chase Ginther
-
-Looking specifically at SageMaker two additional considerations that you may want to consider are:
-1. Rather than using an pre-built image then installing packages, you may want to crate your own custom image that includes the Snowpark packages and other packages that you commonly use.
-2. You may know that the Snowpark sandbox on Snowflake includes Anaconda supported packages which inludes the scikitlearn package that was used to build the logistic regression model. If you use other packages to build your models that are not supported by Anaconda you will have to install [third party packages in the Snowpark sandbox](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
+This quickstart is just that, a quick way to get you started with using...
 
 ### What We covered
-- Using a SageMaker Studio with Snowpark
-- Loading and transforming data via Snowpark with pushdown compute
-- Deploying models to Snowflake via a User Defined Function
+- How to deploy an Azure OpenAI model with AzureML Prompt Flow
+- Utilize the Snowflake + AzureML Connector to bring data from Snowflake into AzureML
+- Utilize an AzureML Notebook with Snowpark to coordinate the movement of data from Snowflake to the Prompt Flow and bring results back to Snowflake
 
 ### Additional Considerations
 - There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
