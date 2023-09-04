@@ -1099,6 +1099,8 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 
 * Join our [dbt community Slack ](https://community.getdbt.com/)which contains more than 29,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
 
+* Check out the rest of the demo on [Snowflake's Demo Hub](https://developers.snowflake.com/demos/data-transformations-dbt-cloud-snowflake/).
+
 * To continue your dbt education, check out the [dbt Learn site](https://learn.getdbt.com/).
 
 * Contact the [dbt Cloud Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt Cloud for your team or organization.

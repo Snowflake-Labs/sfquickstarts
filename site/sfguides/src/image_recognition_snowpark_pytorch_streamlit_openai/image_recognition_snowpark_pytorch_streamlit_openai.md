@@ -336,6 +336,7 @@ Congratulations! You've successfully created image recognition applications in S
 
 ### Related Resources
 
+- [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/image-recognition-with-snowflake/)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec)
 - [Machine Learning with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)

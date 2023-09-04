@@ -174,7 +174,10 @@ YouTube video: [A recap of what we covered](https://youtu.be/HkrRXMHDd-E?t=5547)
 - Time Travel to see and roll back up to 90 days of data
 - Drop and Undrop Tables
 
-### To see similar videos
+### More resources
+
+[Full Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/financial-asset-management/)
+
 [Modernizing Risk Analytics with Sigma on Snowflake](https://www.sigmacomputing.com/resources/modernizing-risk-analytics-with-sigma-on-snowflake).
 
 [Allen Wong's Youtube Channel](https://www.youtube.com/@AllenWongTech).

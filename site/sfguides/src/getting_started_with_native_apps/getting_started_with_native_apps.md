@@ -38,7 +38,6 @@ We will be building a Snowflake Native Application used for inventory and supply
 
 
 ### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
 - [VSCode](https://code.visualstudio.com/download) Installed
 
 ### What You’ll Build 
@@ -69,6 +68,8 @@ To create our Snowflake Native Application, we will first clone the starter proj
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps.git
 ```
+
+If you do not have git installed, you can also download the code directly from [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps/archive/refs/heads/main.zip) and extract it to a local folder.
 
 This repository contains all of our starter code for our native app. Throughout the rest of this tutorial we will be modifying various parts of the code to add functionality and drive a better understanding of what is happening at each step in the process.
 
@@ -361,33 +362,22 @@ Now that both the `package` and `stage` have been created, you can upload files 
 
 
 <!-- ------------------------ -->
-## Upload all the files to Snowflake
+## Upload Provider Data to Snowflake
 Duration: 2
 
-Now, let's create a sample database that we will use to store our sample data. The model used in this scenario is that each Native App Consumer will bring their own supply chain data, the Native App will use the consumer's data to perform it's calculations. 
+Now, let's create a database that we will use to store our data. The manufacturer will be supplying the shipping data with the Native Application via data sharing.
 
-In the SQL below, we will be using data from `NATIVE_APP_QUICKSTART_DB` as our mocked Consumer data.
+In the SQL below, we will be using `NATIVE_APP_QUICKSTART_DB` for our Producer data.
 
 ```
 CREATE OR REPLACE WAREHOUSE NATIVE_APP_QUICKSTART_WH WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=TRUE;
 
--- this database is used to store our test data
+-- this database is used to store our data
 CREATE OR REPLACE DATABASE NATIVE_APP_QUICKSTART_DB;
 USE DATABASE NATIVE_APP_QUICKSTART_DB;
 
 CREATE OR REPLACE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
 USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
-
-CREATE OR REPLACE TABLE MFG_ORDERS (
-  order_id NUMBER(38,0), 
-  material_name VARCHAR(60),
-  supplier_name VARCHAR(60),
-  quantity NUMBER(38,0),
-  cost FLOAT,
-  process_supply_day NUMBER(38,0)
-);
-
--- Load app/data/orders_data.csv using Snowsight
 
 CREATE OR REPLACE TABLE MFG_SHIPPING (
   order_id NUMBER(38,0), 
@@ -400,23 +390,15 @@ CREATE OR REPLACE TABLE MFG_SHIPPING (
 
 -- Load app/data/shipping_data.csv using Snowsight
 
-CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
-  event_id NUMBER(38,0), 
-  recovery_weeks NUMBER(38,0),
-  lat FLOAT,
-  lon FLOAT
-);
-
--- Load app/data/site_recovery_data.csv using Snowsight
 ```
 
 ### Using the Snowflake Web UI  
 
- To upload our sample data we can use the Snowflake UI:
+ To upload our data we can use the Snowflake UI:
 
 1. Login to your Snowflake account and navigate to `Data -> Databases`
 2. Select `NATIVE_APP_QUICKSTART_DB` -> `NATIVE_APP_QUICKSTART_SCHEMA` -> `Tables` 
-3. From there, select each table (`MFG_ORDERS`, `MFG_SHIPPING`,`MFG_SITE_RECOVERY` ) and upload the corresponding `.csv` file from the cloned repository:
+3. From there, select table `MFG_SHIPPING` and upload the corresponding `.csv` file from the downloaded repository:
    1. Select `Load Data` in the top right
    2. Select `NATIVE_APP_QUICKSTART_WH` for the warehouse
    3. Click `Browse` and select the corresponding `.csv` file, Click `Next`
@@ -424,7 +406,26 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
    5. For `Field optionally enclosed by` select `Double quotes`
    6. Click `Next`, repeat for each table. 
 
+### Add Data to the Application Package
 
+In order for the shipping data to be available to the application consumer, it will be added to the application package.
+
+In the SQL below, the data is added to a share in the application package as a view and select is granted on the data.
+
+```sql
+-- ################################################################
+-- Create SHARED_CONTENT_SCHEMA to share in the application package
+-- ################################################################
+use database NATIVE_APP_QUICKSTART_PACKAGE;
+create schema shared_content_schema;
+
+use schema shared_content_schema;
+create or replace view MFG_SHIPPING as select * from NATIVE_APP_QUICKSTART_DB.NATIVE_APP_QUICKSTART_SCHEMA.MFG_SHIPPING;
+
+grant usage on schema shared_content_schema to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
+grant reference_usage on database NATIVE_APP_QUICKSTART_DB to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
+grant select on view MFG_SHIPPING to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
+```
 
 <!-- ------------------------ -->
 ## Create App Package Version
@@ -458,25 +459,63 @@ ALTER APPLICATION PACKAGE "NATIVE_APP_QUICKSTART_PACKAGE" SET DEFAULT RELEASE DI
 
 
 <!-- ------------------------ -->
+## Upload Test Data to Snowflake
+Duration: 2
+
+The model used in this scenario is that each Native App Consumer will bring their own supply chain data (orders and site recovery). The Native App will use the consumer's data to perform it's calculations. 
+
+In the SQL below, we will be using `NATIVE_APP_QUICKSTART_DB` for our Consumer testing data.
+
+```
+USE WAREHOUSE NATIVE_APP_QUICKSTART_WH;
+
+-- this database is used to store our data
+USE DATABASE NATIVE_APP_QUICKSTART_DB;
+
+USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
+
+CREATE OR REPLACE TABLE MFG_ORDERS (
+  order_id NUMBER(38,0), 
+  material_name VARCHAR(60),
+  supplier_name VARCHAR(60),
+  quantity NUMBER(38,0),
+  cost FLOAT,
+  process_supply_day NUMBER(38,0)
+);
+
+-- Load app/data/orders_data.csv using Snowsight
+
+CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
+  event_id NUMBER(38,0), 
+  recovery_weeks NUMBER(38,0),
+  lat FLOAT,
+  lon FLOAT
+);
+
+-- Load app/data/site_recovery_data.csv using Snowsight
+```
+
+### Using the Snowflake Web UI  
+
+ To upload our test data we can use the Snowflake UI:
+
+1. Login to your Snowflake account and navigate to `Data -> Databases`
+2. Select `NATIVE_APP_QUICKSTART_DB` -> `NATIVE_APP_QUICKSTART_SCHEMA` -> `Tables` 
+3. From there, select each table (`MFG_ORDERS`, `MFG_SITE_RECOVERY` ) and upload the corresponding `.csv` file from the cloned repository:
+   1. Select `Load Data` in the top right
+   2. Select `NATIVE_APP_QUICKSTART_WH` for the warehouse
+   3. Click `Browse` and select the corresponding `.csv` file, Click `Next`
+   4. Select `Delimited Files (CSV or TSV)` for the File Format
+   5. For `Field optionally enclosed by` select `Double quotes`
+   6. Click `Next`, repeat for each table. 
+
+<!-- ------------------------ -->
 ## Test Application
 Duration: 3
 
 To test this application, let's run the following:
 
 ```
--- ################################################################
--- Create SHARED_CONTENT_SCHEMA to share in the application package
--- ################################################################
-use database NATIVE_APP_QUICKSTART_PACKAGE;
-create schema shared_content_schema;
-
-use schema shared_content_schema;
-create or replace view MFG_SHIPPING as select * from NATIVE_APP_QUICKSTART_DB.NATIVE_APP_QUICKSTART_SCHEMA.MFG_SHIPPING;
-
-grant usage on schema shared_content_schema to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
-grant reference_usage on database NATIVE_APP_QUICKSTART_DB to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
-grant select on view MFG_SHIPPING to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
-
 -- ################################################################
 -- TEST APP LOCALLY
 -- ################################################################

@@ -297,4 +297,6 @@ Con Snowpark y Streamlit es posible de forma directa hacer aplicaciones End-to-E
 - Modelo y Carga de datos en Snowflake
 - Visualización de datos con Streamlit
 
+[Demo Completo en Snowflake Demo Hub](https://developers.snowflake.com/demos/visualizacion-de-datos-demograficos-es/)
+
 Repositorio [github repo](https://github.com/sfc-gh-csuarez/snowpark_inegi.git)
