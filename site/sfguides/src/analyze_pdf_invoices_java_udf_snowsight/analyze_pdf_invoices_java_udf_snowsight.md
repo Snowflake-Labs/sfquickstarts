@@ -181,7 +181,7 @@ Either UDF can be invoked on any PDF file with a simple SQL statement. For the p
 ```
 alter stage pdf_external refresh;
 
-select read_pdf(build_scoped_file_url(@pdf_external,'invoice1.pdf')) 
+select java_read_pdf(build_scoped_file_url(@pdf_external,'invoice1.pdf')) 
 as pdf_text;
 ```
 
@@ -205,19 +205,19 @@ Scallop - St. Jaques 9 $13.28 $119.52
 $458.10Total:
 ```
 
-UDFs are account-level objects. So if a developer familiar with Java creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
+UDFs are account-level objects. So if a developer familiar with Java or Python creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
 
 ### Extracting and Storing Fields
 We want to store the extracted text as additional attributes for analysts to be able to select and retrieve the files of interest in their analysis, as well as perform some analytics on the attributes found.
 
-We first need to create a table with the extracted text in its raw form. From this table, we can create views to parse the text into various fields for easier analysis.
+We first need to create a table with the extracted text in its raw form. From this table, we can create views to parse the text into various fields for easier analysis. You could use either the Python or Java UDF in the creation of this table, and the code below uses the Java UDF.
 
 ```sql
 create or replace table parsed_pdf as
 select
     relative_path
     , file_url
-    , read_pdf(build_scoped_file_url(@pdf_external, relative_path)) as parsed_text
+    , java_read_pdf(build_scoped_file_url(@pdf_external, relative_path)) as parsed_text
 from directory(@pdf_external);
 ```
 
