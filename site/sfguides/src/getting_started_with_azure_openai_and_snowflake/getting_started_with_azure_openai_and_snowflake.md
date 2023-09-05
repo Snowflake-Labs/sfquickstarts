@@ -28,7 +28,7 @@ In this quickstart we will build an architecture that demonstrates how to use Az
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/)
-- [Azure Account](https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c)
+- [Azure Account](https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c) with AzureML. AzureML will need Publice Preview services enabled.
 
 ### What You’ll Build 
 You will build an end-to-end Generative AI workflow using Azure OpenAI, AzureML and Snowflake
@@ -236,7 +236,11 @@ SELECT * FROM retail_db.public.nbi_promo;
 ## Conclusion and Additional Considerations
 Duration: 5
 
-This quickstart is just that, a quick way to get you started with using...
+This quickstart is just that, a quick way to get you started with Azure OpenAI with Snowflake. You will want to consider the additional items below for enterprise-grade workloads:
+- Using [Environments in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-environments-v2?view=azureml-api-2&tabs=python#create-an-environment) to load addtional packages like Snowpark.
+- Using an [AzureML pipeline](https://learn.microsoft.com/en-us/azure/machine-learning/tutorial-pipeline-python-sdk?view=azureml-api-2) to automate and orchestrate the python script we built in the final step.
+- [Security and governance in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/concept-enterprise-security?view=azureml-api-2) with consideration for things like access control, authentication methods and networking.
+
 
 ### What We covered
 - How to deploy an Azure OpenAI model with AzureML Prompt Flow
@@ -246,10 +250,8 @@ This quickstart is just that, a quick way to get you started with using...
 ### Additional Considerations
 - There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
 
-- [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
+- [Snowpark with AzureML](https://www.youtube.com/watch?v=p8QUMiND7Ig)
 
-- [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
-
-- [AWS and Snowflake](https://aws.amazon.com/financial-services/partner-solutions/snowflake/)
+- [Snowflake and Azure OpenAI](https://medium.com/snowflake/integrating-azure-openai-with-snowflake-architecture-and-implementation-patterns-52b14d27b0c2)
 
 If you have any questions, reach out to your Snowflake account team!
