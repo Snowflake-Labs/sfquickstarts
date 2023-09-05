@@ -22,7 +22,7 @@ This guide will help you quickly get started with Coalesce, connecting your data
 
 The following video provides a brief overview of (most of) what this guide will be covering.
 
-<video id="Kg9Bo8_lUfU"></video>
+<video id="MVQRH2qsizg"></video>
 
 ### Prerequisites
 - Familiarity with SQL and Snowflake
@@ -41,10 +41,9 @@ The following video provides a brief overview of (most of) what this guide will 
 Duration: 2
 
 ### Interface Overview
+When you first sign in on a new account, you'll be presented with the **Projects Dashboard**, where a default **Project** and **Development Workspace** will be already created. Feel free to disregard the warning about Version Control, as this guide will not be using that feature. Click the **Launch** button to open the workspace to continue.
 
-When you first sign in, you'll be presented with the **Workspaces Dashboard**, where you should choose and launch the initial Development workspace that Coalesce creates for you.
-
-![Launching a Workspace](assets/launch_workspace.png)
+![Launching a Workspace](assets/projects_dashboard.png)
 
 Once you've done this you'll be presented with the **Build** interface.  This is where you'll spend most of your time creating nodes, building a graph with them, and transforming your data.  In Coalesce, each Node is a logical unit of work that represents a table, a view, or multiple Snowflake objects.  The other interface is the **Deploy** interface, which will be used to push your pipeline to other environments (QA, Production, etc.), including your graph and other metadata.
 
@@ -62,18 +61,22 @@ Once you've done this you'll be presented with the **Build** interface.  This is
 
 2. Go to **Development Workspaces** and edit your current **Workspace** by clicking the pencil icon to the right of it.
 
-3. From the **Edit Workspace** screen → **Settings** → **Account** → Add your Snowflake URL
+3. Obtain your Snowflake URL, which you can find in the lower left of Snowflake's UI upon login -
+   
+![Find SF URL](assets/sf_url_2.png)
 
-![Edit Workspace](assets/snowflake_url.png)
+4. From the **Edit Workspace** screen → **Settings** → **Account** → Add your Snowflake URL
 
-4. From the **Edit Workspace** screen → **User Credentials** and fill out the form with your Snowflake login
-5. Click **Test Connection** to ensure your credentials work as expected
-6. Click **Save**
+![Edit Workspace](assets/add_sf_url.png)
+
+5. From the **Edit Workspace** screen → **User Credentials** and fill out the form with your Snowflake login
+6. Click **Test Connection** to ensure your credentials work as expected
+7. Click **Save**
 
 You've now connected Coalesce to your Snowflake instance!
 ### Configure Storage Locations & Workspace
 
-A storage location is a logical name you provide to represent a database and schema (in Snowflake) and you will need them to make use of the **Workspace** you configured earlier.
+A storage location is a logical name you provide to represent a database and schema (in Snowflake) and you will need them to make use of the **Workspace** you configured earlier.  Depending on when you signed up for Coalesce, your account may have one or two **Storage Locations** already created. One will be mapped to the Snowflake Sample Data (SRC or SAMPLE) and the other will be where we write new tables (WORK or TARGET). If your workspace already has 2 storage locations, you can skip to Step 3 below.
 
 1. Go to **Build Settings** → **Storage Locations** and click on **New Storage Location** to create a new location - TARGET
 2.  Make sure to set TARGET as the default **Storage Location**.
@@ -197,9 +200,11 @@ group by DIM.C_NAME;
 ## Conclusion
 Duration: 1
 
-Now that you've finished the Quick Start Guide, you're familiar with the general use case for Coalesce.  Coalesce is a robust transformation tool and can be used to automate the majority of your SQL workflows.  If you'd like to meet with one of our experts and discuss your use case and potential fit, you can request a demo by filling out [this form](https://coalesce.io/request-demo/).
+Now that you're familiar with some of Coalesce's basic functionality and how it can be used to automate many of your SQL workflows, you can:  
 
-If you're comfortable and want more, you can try [using other node types](https://docs.coalesce.io/docs/out-of-the-box-nodes), backup your work using our [git integration](https://docs.coalesce.io/docs/git-version-control), or try [deploying your pipeline](https://docs.coalesce.io/docs/overview-of-the-deploy-interface) to an environment.
+* [Contact us](https://coalesce.io/request-demo/) to speak with our product experts about your use case and see a live, personalized demo
+* Check out our [resources](https://coalesce.io/resources/) to learn more about our platform
+* Learn more about version control and using git with Coalesce by visiting our [documentation](https://docs.coalesce.io/docs/git-settings) and following this hands-on [guide](https://guides.coalesce.io/dataops-and-git-best-practices/index.html#0)
 
 ### What we've covered
 - Connecting Snowflake to Coalesce

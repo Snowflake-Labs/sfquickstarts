@@ -217,6 +217,8 @@ Specifically, you may want to consider the additional details:
 ### Additional Considerations
 - There are some great blogs on Medium regarding Snowpark, AzureML and using Snowflake with Azure.
 
+- [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/predictive-maintenance-manufacturing/)
+
 - [Snowpark for python with AzureML](https://medium.com/@michaelgorkow/mlops-with-snowflake-and-mlflow-on-azure-machine-learning-a21a9def693)
 
 - [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
