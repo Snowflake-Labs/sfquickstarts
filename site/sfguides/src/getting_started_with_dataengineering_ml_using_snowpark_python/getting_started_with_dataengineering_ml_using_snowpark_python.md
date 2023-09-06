@@ -21,7 +21,7 @@ Here is a summary of what you will be able to learn in each step by following th
 - **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications.
 - **Data Pipelines**: Use Snowflake Tasks to turn your data pipeline code into operational pipelines with integrated monitoring.  
 - **Machine Learning**: Prepare data and run ML Training in Snowflake using Snowpark ML and deploy the model as a Snowpark User-Defined-Function (UDF).
-- **Streamlit Application**: Build an interactive application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets.
+- **Streamlit**: Build an interactive Streamlit application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets.
 
 In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
@@ -45,16 +45,18 @@ This quickstart will focus on the Snowpark ML Modeling API, which scales out fea
 
 ### What is Streamlit?
 
-Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
+Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
-### What You’ll Learn
+Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
+
+### What You Will Learn
 
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to train ML model using Snowpark ML in Snowflake
 - How to create Scalar and Vectorized Snowpark Python User-Defined Functions (UDFs) for online and offline inference respectively
 - How to create Snowflake Tasks to automate data pipelines
-- How to create Streamlit web application that uses the Scalar UDF for inference based on user input
+- How to create Streamlit application that uses the Scalar UDF for inference based on user input
 
 ### Prerequisites
 
@@ -198,13 +200,7 @@ git clone git@github.com:Snowflake-Labs/sfguide-getting-started-dataengineering-
 
 To complete the **Data Engineering** and **Machine Learning** steps, you have the option to either install everything locally (option 1) or use Hex (option 2) as described below.
 
-> aside positive
-> IMPORTANT:
-> In order to run the **Streamlit application** you will need to create a Python environment, and install Snowpark for Python along with other libraries locally as described in **Local Installation**.
-
 #### Option 1 -- Local Installation
-
-This option will enable you to complete all the steps in this QuickStart Guide.
 
 **Step 1:** Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
 
@@ -228,13 +224,7 @@ conda activate snowpark-de-ml
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python pandas notebook cachetools
 ```
 
-**Step 6:** Install Streamlit library in conda environment **snowpark-de-ml** by running the following command in the same terminal window
-
-```python
-pip install streamlit
-```
-
-**Step 7:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
+**Step 6:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
 
 Here's a sample ***connection.json*** based on the object names mentioned in **Setup Environment** step.
 
@@ -256,10 +246,6 @@ Here's a sample ***connection.json*** based on the object names mentioned in **S
 #### Option 2 -- Use Hex
 
 If you choose to use your existing [Hex](https://app.hex.tech/login) account or [create a free 30-day trial account](https://app.hex.tech/signup/quickstart-30), then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
-
-> aside positive
-> IMPORTANT:
-> In order to run the **Streamlit application** you will need to create a Python environment, and install Snowpark for Python along with other libraries locally as described above in **Local Installation**.
 
 <!-- ------------------------ -->
 ## Data Engineering
@@ -508,41 +494,27 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 10
+Duration: 5
 
-### Running Streamlit App Locally
+Follow these steps to build Streamlit application in Snowsight.
 
-In a terminal window, browse to this folder and execute the following command to run the Streamlit application [Snowpark_Streamlit_Revenue_Prediction.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction.py) locally on your machine.
+**Step 1.** Click on **Streamlit** on the left navigation menu
 
-```shell
-streamlit run Snowpark_Streamlit_Revenue_Prediction.py
-```
+**Step 2.** Click on **+ Streamlit App** on the top right
 
-If all goes well, you should see a browser window open with the app loaded as shown below.
+**Step 3.** Enter **App name**
 
----
+**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
 
-![Streamlit-App](assets/app.png)
+**Step 5.** Click on **Create**
 
----
+- At this point, you will be provided code for an example Streamlit application
 
-### Running Streamlit App in Snowflake -- Streamlit-in-Snowflake (SiS)
+**Step 6.** Replace sample application code displayed in the code editor on the left with the code provided in [Snowpark_Streamlit_Revenue_Prediction_SiS.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction_SiS.py)
 
-If you have SiS enabled in your account, follow these steps to run the application in Snowsight instead of locally on your machine.
+**Step 7.** Click on **Run** on the top right
 
-> aside negative
-> IMPORTANT: SiS is in Private Preview as of June 2023.***
-
-  1) Click on **Streamlit Apps** on the left navigation menu
-  2) Click on **+ Streamlit App** on the top right
-  3) Enter **App name**
-  4) Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
-  5) Click on **Create**
-  6) At this point, you will be provided code for an example Streamlit application
-  7) Open [Snowpark_Streamlit_Revenue_Prediction_SiS.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction_SiS.py) and copy-paste the code into the example Streamlit application.
-  8) Click on **Run** on the top right
-
-If all goes well, you should see the following app in Snowsight as shown below.
+If all goes well, you should see the application in Snowsight as shown below.
 
 ---
 
@@ -550,33 +522,9 @@ If all goes well, you should see the following app in Snowsight as shown below.
 
 ---
 
-### Save Data To Snowflake
+**Step 8.** Save data to Snowflake
 
-In both applications, adjust the advertising budget sliders to see the predicted ROI for those allocations. You can also click on **Save to Snowflake** button to save the current allocations and predcted ROI into BUDGET_ALLOCATIONS_AND_ROI Snowflake table.
-
-### Differences between two Streamlit Apps
-
-The main difference between running the Streamlit application locally and in Snowflake (SiS) is how you create and access the Session object.
-
-When running locally, you'd create and access the new Session object it like so:
-
-```python
-# Function to create Snowflake Session to connect to Snowflake
-def create_session():
-    if "snowpark_session" not in st.session_state:
-        session = Session.builder.configs(json.load(open("connection.json"))).create()
-        st.session_state['snowpark_session'] = session
-    else:
-        session = st.session_state['snowpark_session']
-    return session
-```
-
-When running in Snowflake (SiS), you'd access the current Session object like so:
-
-```python
-from snowflake.snowpark.context import get_active_session
-session = get_active_session()
-```
+In the application, adjust the advertising budget sliders to see the predicted ROI for those allocations. You can also click on **Save to Snowflake** button to save the current allocations and predicted ROI into BUDGET_ALLOCATIONS_AND_ROI Snowflake table.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -613,7 +561,7 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - How to train ML model using Snowpark ML in Snowflake
 - How to create Scalar and Vectorized Snowpark Python User-Defined Functions (UDFs) for online and offline inference respectively
 - How to create Snowflake Tasks to automate data pipelining and (re)training of the model
-- How to create Streamlit web application that uses the Scalar UDF for inference
+- How to create Streamlit application that uses the Scalar UDF for inference
 
 ### Related Resources
 
@@ -621,6 +569,5 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Intro to Machine Learning with Snowpark ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html)
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
-- [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-- [Streamlit Docs](https://docs.streamlit.io/)
+- [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)

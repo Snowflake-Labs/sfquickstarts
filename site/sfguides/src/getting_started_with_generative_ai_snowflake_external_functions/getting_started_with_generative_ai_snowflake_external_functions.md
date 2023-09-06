@@ -375,19 +375,29 @@ TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0)
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Follow these steps to create and run the Streamlit application in Snowsight.
+Duration: 5
 
-  1) Click on **Streamlit** on the left navigation menu
-  2) Click on **+ Streamlit App** on the top right
-  3) Enter **App name**
-  4) Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
-  5) Click on **Create**
-  6) At this point, you will be provided code for an example Streamlit application
-  7) Open [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/streamlit_sis.py) and copy-paste the code into the example Streamlit application.
-  8) Click on **Run** on the top right
-  9) Select one of the options from the sidebar **Sentiment Analysis**, **Share Knowledge**, or **Text-to-SQL** and enter your prompt on the right to get a response.
+If you have Streamlit in Snowflake (currently in Preview) enabled, then follow these steps to create and run the Streamlit application in Snowsight.
 
-If all goes well, you should see the following app in Snowsight as shown below with sample prompts and responses.
+**Step 1.** Click on **Streamlit** on the left navigation menu
+
+**Step 2.** Click on **+ Streamlit App** on the top right
+
+**Step 3.** Enter **App name**
+
+**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+
+**Step 5.** Click on **Create**
+
+- At this point, you will be provided code for an example Streamlit application
+
+**Step 6.** Replace sample application code displayed in the code editor on the left with the code provided in [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/streamlit_sis.py)
+
+**Step 7.** Click on **Run** on the top right
+
+**Step 8.** Select one of the options from the sidebar **Sentiment Analysis**, **Share Knowledge**, or **Text-to-SQL** and enter your prompt on the right to get a response.
+
+If all goes well, you should see the app in Snowsight as shown below with sample prompts and responses.
 
 ![Img1](assets/app0.png)
 
