@@ -2,7 +2,7 @@ id: getting_started_with_snowpark_for_python_streamlit
 summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
-status: Published
+status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai
@@ -65,7 +65,7 @@ Follow these steps to start building Streamlit application in Snowsight.
 
 **Step 3.** Enter **App name**
 
-**Step 4.** Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
 
 **Step 5.** Click on **Create**
 

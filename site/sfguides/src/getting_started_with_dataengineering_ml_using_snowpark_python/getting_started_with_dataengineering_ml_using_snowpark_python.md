@@ -494,7 +494,7 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 10
+Duration: 5
 
 Follow these steps to build Streamlit application in Snowsight.
 
@@ -504,7 +504,7 @@ Follow these steps to build Streamlit application in Snowsight.
 
 **Step 3.** Enter **App name**
 
-**Step 4.** Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
 
 **Step 5.** Click on **Create**
 
