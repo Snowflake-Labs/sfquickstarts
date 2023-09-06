@@ -312,7 +312,6 @@ select
     , balance_due
     , invoice_from
     , invoice_date
-    , line_item
     , regexp_substr(line_item, '\n[0-9]+\n')::integer as item_quantity
     , to_number(ltrim(regexp_substr(line_item, '\\$[^\n]+')::string, '$'), 10, 2) as item_unit_cost
     , regexp_substr(line_item, '[^\n]+', 1, 1)::string as item_name
