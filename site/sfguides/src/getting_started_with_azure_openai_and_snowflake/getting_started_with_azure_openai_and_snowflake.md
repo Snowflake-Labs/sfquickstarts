@@ -1,6 +1,6 @@
 author: marzillo-snow
 id: getting_started_with_azure_openai_and_snowflake
-summary: This is a qucikstart for using Snowpark for ML on SageMaker
+summary: This is a quickstart for using Snowpark for ML on SageMaker
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published 
@@ -10,9 +10,9 @@ tags: Getting Started, Data Science, Data Engineering, LLM, GenAI, Azure, OpenAI
 # Getting Started with Azure OpenAI and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
+Duration: 10
 
-Every organization is (at least) considering how to use Generative AI, with OpenAI’s ChatGPT leading the way. Customers are interested in how to tap into this innovation with their data. The answer to that is Azure OpenAI. Azure OpenAI is an enterprise offering OpenAI models as part of Azure Cognitive Services from Microsoft that helps power your apps with large-scale customized AI models with labeled data for your specific scenario using a simple REST API. Azure OpenAI also enables Customers to fine-tune the deployed model’s hyperparameters to increase output accuracy and leverage few-shot learning capability to provide the API with data examples to achieve more relevant results.
+Azure OpenAI is a groundbreaking collaboration between two industry leaders, Microsoft Azure and OpenAI, designed to empower businesses with the future of AI technology. This powerful partnership offers seamless access to OpenAI's cutting-edge natural language processing models through the Azure cloud platform, enabling organizations to effortlessly integrate AI-driven insights, automation, and conversational capabilities into their applications, products, and services. With Azure OpenAI, you can unlock new dimensions of productivity, innovation, and customer engagement, giving your business a competitive edge in today's data-driven world. 
 
 In this quickstart we will build an architecture that demonstrates how to use Azure OpenAI with an AzureML Prompt Flow, AzureML Notebooks, Snowflake and the Snowflake + AzureML Connector to quickly generate results.
 
@@ -28,7 +28,7 @@ In this quickstart we will build an architecture that demonstrates how to use Az
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/)
-- [Azure Account](https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c) with AzureML. AzureML will need Publice Preview services enabled.
+- [Azure Account](https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c) with AzureML. AzureML will need Public Preview services enabled.
 
 ### What You’ll Build 
 You will build an end-to-end Generative AI workflow using Azure OpenAI, AzureML and Snowflake
@@ -52,11 +52,12 @@ Additionally, the data leverages demographic information (Median Age for the zip
 ## Set Up Snowflake Environment
 Duration: 5
 
-The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet. We are using the accountadmin role here for demo purposes, but in production you will likely use a different role.
+The first thing you will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet. We are using the accountadmin role here for demo purposes, but in production you will likely use a different role.
 ```sql
 -- Create a new database (if not already created)
 CREATE DATABASE IF NOT EXISTS retail_db;
 USE DATABASE retail_db;
+-- Create a new virtual warehouse (if not already created)
 CREATE WAREHOUSE IF NOT EXISTS small_wh WITH WAREHOUSE_SIZE='X-SMALL';
 
 -- Create purchase history table
@@ -92,7 +93,7 @@ The result of the final select statement should look like this:
 ## Set Up AzureML Workspace
 Duration: 5
 
-Head over to your Azure ML workspace, go to the Compute blade and make sure you have a Compute Instance running (any of the standard instances will work for this quickstart). 
+Head over to your AzureML workspace, go to the Compute blade and make sure you have a Compute Instance running (any of the standard instances will work for this quickstart). 
 
 ![](assets/ci.png)
 
@@ -100,7 +101,7 @@ Head over to your Azure ML workspace, go to the Compute blade and make sure you 
 ## Import and Register data from Snowflake in AzureML
 Duration: 10
 
-Next we're going to register and import data from Snowflake in AzureML. In your AzureML Workspace go to the Data blad and click Data Connections tab. Next you will name your connection, select the Snowflake Category and define your target. The target should follow the below syntax:
+Next we're going to register and import data from Snowflake in AzureML. In your AzureML Workspace go to the Data blade and click Data Connections tab. Next you will name your connection, select the Snowflake Category and define your target. The target should follow the below syntax:
 
 ```bash
 jdbc:snowflake://<server>.<region>.azure.snowflakecomputing.com/?db=RETAIL_DB&warehouse=SMALL_WH
@@ -112,7 +113,7 @@ You can reference the below image for an example of what the target should look 
 
 ![](assets/dataconnection.png)
 
-Now head to the Data Import tab and let's configure the actual import of the data. Select Snowflake, then name the new dataset something like "purchasehistory" and give it a description if you would like. Next choose the Snowflake connection you just created and enter the below query to retrieve the data from Snowflke (no semicolon in the query).
+Now head to the Data Import tab and let's configure the actual import of the data. Select Snowflake, then name the new dataset something like "purchasehistory" and give it a description if you would like. Next choose the Snowflake connection you just created and enter the below query to retrieve the data from Snowflake (no semicolon in the query).
 
 ```sql
 SELECT * FROM retail_db.public.purchase_history
@@ -120,13 +121,13 @@ SELECT * FROM retail_db.public.purchase_history
 
 ![](assets/dataimport.png)
 
-Next select Other Data Stores and select workspaceblobstore and select any path to place the data. The final review should look like this.
+Next select "Other Data Stores" and select "workspaceblobstore" and select any path to place the data. The final review should look like this.
 
 ![](assets/finalimport.png)
 
 Create the data import.
 
-The Connector is natively connecting to Snowflake and create an MLTable file based off your Connection and query. After several minutes you should head over to the Data Assets tab on the Data blade and see a new asset with the name you provided to the import job. Click on that asset then click explore to verify the data has been imported.
+The Connector is natively connecting to Snowflake and creating and registering an MLTable file based off your Connection and query. After several minutes you should head over to the Data Assets tab on the Data blade and see a new asset with the name you provided to the import job. Click on that asset then click explore to verify the data has been imported.
 
 ![](assets/dataasset.png)
 
@@ -134,30 +135,35 @@ The Connector is natively connecting to Snowflake and create an MLTable file bas
 ## Deploy Azure Open AI Model
 Duration: 5
 
-Head to your Azure Portal home screen and create an Azure Open AI service if you don't already have one. Place Open AI in a Resource Group (or create a new one), use the East US Region, provide a unique name, select the Standard S0 pricing tier. 
+Head to your Azure Portal home screen and create an Azure OpenAI service if you don't already have one. Place OpenAI in a Resource Group (or create a new one), use the East US Region, provide a unique name, select the Standard S0 pricing tier. 
 ![](assets/openaiportal.png)
 
 Click Next then leave it open to all networks for this lab. Continue to click next then create the service. Once the service is created, access the explorer from the service by clicking explore.
 ![](assets/openaiservice.png)
 
-You can familiarize yourself with the Azure AI Studio later, but for now click on the Models blade then select the gpt-35-turbo model and click deploy. Use the Auto-update to default Model version and name the deployment "gpt35turbo" and click create. The model should deploy in seconds.
+You can familiarize yourself with the Azure AI Studio later, but for now click on the Models blade then select the gpt-35-turbo model and click deploy. Use the Auto-update to default Model version and name the deployment "gpt35turbo" and click create. The model should deploy in seconds. We will be using this out-of-the-box OpenAI model for this quickstart.
 
 <!-- ------------------------ -->
 ## Build Prompt Flow
 Duration: 15
 
-Go back to your Azure ML workspace and access the Prompt Flow blade and click Create then click create on the Standard flow.
-
-![](assets/promptflow_setup.png)
-
-Prompt Flow allows you to streamline your LLM-based application development. You can create executable flows that link LLMs, prompts, and Python tools through a ui graph. You can iterate and debug right from the Prompt Flow ui then deploy the LLM application. Here we will creat a simple LLM application.
-
-Once you have your first flow open head to the to and edit the name and make it generate _products. Next delete the output, the echo and the joke prompts as they won't be needed. Next, add an LLM prompt from the top and select a runtime from the top, for this lab it can be the compute instance that you created earlier in the lab (or just use a compute instance that you already have). 
-Your flow should now look like this:
+Go back to your AzureML workspace and access the Prompt Flow blade and click Create then click create on the Standard flow.
 
 ![](assets/promptflow_start.png)
 
-IN the LLM window select the Connection as the OpenAI service, slect chat for the API and gpt35turbo for Deployment. Next copy and paste the below text into the prompt section:
+Prompt Flow allows you to streamline your LLM-based application development. You can create executable flows that link LLMs, prompts, and Python tools through a UI graph. You can iterate and debug right from the Prompt Flow UI then deploy the LLM application. Here we will create a simple LLM application.
+
+Once you have your first flow open head to the to and edit the name and make it generate_products. 
+
+Next delete the output, the echo and the joke prompts as they won't be needed. 
+
+Next, add an LLM prompt from the top and select a runtime from the top, for this lab it can be the compute instance that you created earlier in the lab (or just use a compute instance that you already have). 
+
+Your flow should now look like this:
+
+![](assets/promptflow_setup.png)
+
+In the LLM window select the Connection as the OpenAI service, select chat for the API and gpt35turbo for Deployment. Next copy and paste the below text into the prompt section:
 
 ```
 system:
@@ -168,11 +174,13 @@ also, consider the median age in the zip code where the customer lives in your r
 {{med_age}}
 ```
 
-This is the prompt that will be used to generate a response from the OpenAI model. You can see that were prompting the model to provide a recommendation of the next 3 items for the customer based on two variables: their recent purchase history and the median age in the zip code where they live.
+This is the prompt that will be used to generate a response from the OpenAI model. You can see that you are prompting the model to provide a recommendation of the next 3 items for the customer based on two variables: their recent purchase history and the median age in the zip code where they live which will be coming from the Snowflake data that you registered in AzureML.
 
 Scroll to the top in the input section and create two input variables named: purchase_history and med_age.
 
-Scroll back down and click the blue button that says "Validate and Parse Input". This will recognize the two variables in the prompt. On the right of those newly identified variables select the respective inputs you just created above. Scroll to the output section and add an output named 'output' the select the output from the model in the value section (it should be the only option). Save the Prompt Flow, it should look like this:
+Scroll back down and click the blue button that says "Validate and Parse Input". This will recognize the two variables in the prompt. On the right of those newly identified variables select the respective inputs you just created above. 
+
+Scroll to the output section and add an output named 'output' the select the output from the model in the value section (it should be the only option). Save the Prompt Flow, it should look like this:
 
 ![](assets/promptflow_final.png)
 
@@ -182,8 +190,9 @@ Save the flow and then click deploy. Accept all of the default options by clicki
 
 <!-- ------------------------ -->
 ## Develop Notebook to Orchestrate Inference
+Duration: 10
 
-Head back to your AzureML workspace and click on the notebook blade and select open terminal and start/select your compute instance near the top of the screen. In the terminal run the below code to copy the notebook that will use to orchestrate inference.
+Head back to your AzureML Workspace and click on the notebook blade and select open terminal and start/select your compute instance near the top of the screen. In the terminal run the below code to copy the notebook that will use to orchestrate inference.
 
 ```
 git clone https://github.com/marzillo-snow/azureopenai.git
@@ -196,27 +205,27 @@ You may have to refresh the folder listing to see the new folder and openai.ipyn
 
 In the AzureML workspace head to the Endpoint blade and verify that your Prompt Flow has deployed, note the name of the endpoint. Now go to the Azure Portal and find the AzureML Workspace we're working in and select 'Access Control (IAM)' the select Add and 'Add role assignment: ![](assets/addroleassignment.png)
 
-Select the 'AzureML Data Scientist' role then select next. Select 'Managed Identity' for 'assign access to' then select members. In the right menu select your Azure subscrition then 'Machine Learning online endpoint' then select your prompt flow endpoint. Click Select then 'Review and Assign' twice.
+Select the 'AzureML Data Scientist' role then select next. Select 'Managed Identity' for 'assign access to' then select members. In the right menu select your Azure subscription then 'Machine Learning online endpoint' then select your prompt flow endpoint. Click Select then 'Review and Assign' twice.
 ![](assets/miendpoint.png)
 
 You have just given the Prompt Flow endpoint the appropriate role to interact with the AzureML Workspace.
 
 ### Back to the Notebook
 
-Make sure that you're using the 'Python 3.8 - AzureML'kernel in the top right. Next uncomment rows 2-4 in the first block and run the block to install neccessarry packages.
+Make sure that you're using the 'Python 3.8 - AzureML'kernel in the top right. Next uncomment rows 2-4 in the first code block and run the block to install necessary packages.
 
-In the second block of code enter in the 3 pieces of information: 1. your Azure subscription 2. the resource group namethat contains your AzureML Workspace and 3. the name of your AzureML Workspace. Run this block of code to obtain a handle to the workspace.
+In the second block of code enter in the 3 pieces of information: 1. your Azure subscription 2. the resource group name that contains your AzureML Workspace and 3. the name of your AzureML Workspace. Run this block of code to obtain a handle to the workspace.
 
 Run the third block of code as-is to access the Azure dataset that was created with the AzureML + Snowflake Connector earlier in the lab.
 
-In the fourth block of code you will have to copy and paste the Endpoint url and the API key from AzureML into the appropriate parts of the code.
+In the fourth block of code you will have to copy and paste the Endpoint url and the API key from AzureML into the appropriate parts of the code. This is the endpoint to the Prompt Flow that you deployed.
 ![](assets/endpoint.png)
 
 Run the fourth block of code to see the magic happen! This code parses the Snowflake data and passes it to the Prompt Flow endpoint to generate a response. 
 
-In the fifth code block fill in your Sowflake Account Identifier, username and password the run the code to write the recemmendations back to a table in Snowflake.
+In the fifth code block fill in your Snowflake Account Identifier, username and password the run the code to write the recommendations back to a table in Snowflake.
 
-Then head back to your Snowflake account and run the below SQL to see your recommendations with customer id to be used by your organization.
+Head back to your Snowflake account and run the below SQL to see your recommendations with customer id to be used by your organization.
 
 ```
 sql
@@ -237,7 +246,7 @@ SELECT * FROM retail_db.public.nbi_promo;
 Duration: 5
 
 This quickstart is just that, a quick way to get you started with Azure OpenAI with Snowflake. You will want to consider the additional items below for enterprise-grade workloads:
-- Using [Environments in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-environments-v2?view=azureml-api-2&tabs=python#create-an-environment) to load addtional packages like Snowpark.
+- Using [Environments in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-environments-v2?view=azureml-api-2&tabs=python#create-an-environment) to load additional packages like Snowpark.
 - Using an [AzureML pipeline](https://learn.microsoft.com/en-us/azure/machine-learning/tutorial-pipeline-python-sdk?view=azureml-api-2) to automate and orchestrate the python script we built in the final step.
 - [Security and governance in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/concept-enterprise-security?view=azureml-api-2) with consideration for things like access control, authentication methods and networking.
 
