@@ -44,7 +44,7 @@ The end-to-end workflow will look like this:
 ## Use Case
 Duration: 5
 
-In this use case you will use purchase history data from a big box store, and leverage Azure Open AI to generate 3 suggested next items that can be marketed to the customer. Developing Next Best Offer (NBO) applications can often take months to devlop, but with Snowflake and Azure we are able to set up this workload in hours. 
+In this use case you will use purchase history data from a big box store, and leverage Azure Open AI to generate 3 suggested next items that can be marketed to the customer. Developing Next Best Offer (NBO) applications can often take months to develop, but with Snowflake and Azure we are able to set up this workload in hours. 
 
 Additionally, the data leverages demographic information (Median Age for the zip code the customer lives in). This data was pulled directly from [Knoema Data](https://knoema.com/) via the Snowflake Data Marketplace.
 
@@ -249,6 +249,7 @@ This quickstart is just that, a quick way to get you started with Azure OpenAI w
 - Using [Environments in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-environments-v2?view=azureml-api-2&tabs=python#create-an-environment) to load additional packages like Snowpark.
 - Using an [AzureML pipeline](https://learn.microsoft.com/en-us/azure/machine-learning/tutorial-pipeline-python-sdk?view=azureml-api-2) to automate and orchestrate the python script we built in the final step.
 - [Security and governance in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/concept-enterprise-security?view=azureml-api-2) with consideration for things like access control, authentication methods and networking.
+- Consideration of [Responsible AI practice with Azure OpenAI](https://learn.microsoft.com/en-us/legal/cognitive-services/openai/overview?context=%2Fazure%2Fai-services%2Fopenai%2Fcontext%2Fcontext)
 
 
 ### What We covered
