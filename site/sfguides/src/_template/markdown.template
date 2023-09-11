@@ -1,6 +1,7 @@
 author: AUTHOR_NAME
 id: SFGUIDE_NAME
 summary: This is a sample Snowflake Guide
+<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
 status: Published 

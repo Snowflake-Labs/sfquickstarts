@@ -25,7 +25,7 @@ So buckle up and get ready!
 
 > aside negative
 > 
-> **Note** - As of 2/1/2023, both the [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) and the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) are still in preview.
+> **Note** - As of 9/1/2023, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 
 ### Prerequisites
@@ -57,22 +57,11 @@ You will learn about the following Snowflake features during this Quickstart:
 ### What You’ll Need
 You will need the following things before beginning:
 
-* Snowflake
+* Snowflake account
     * **A Snowflake Account**
     * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
     * **Anaconda Terms & Conditions accepted**. See Getting Started section in [Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started).
-* Miniconda
-    * **Miniconda installed on your computer**. Download and install [Miniconda](https://conda.io/miniconda.html). Alternatively, you may use any other Python environment with Python 3.8.
-* SnowSQL
-    * **SnowSQL installed on your computer**. Go to the [SnowSQL Download page](https://developers.snowflake.com/snowsql/) and see the [Installing SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) page for more details.
-* Git
-    * **Git installed on your computer**. Check out the [Getting Started - Installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) page for more details.
-    * **Git configured with your username and email address**. If you haven't already done so please [set your Git username](https://docs.github.com/en/get-started/getting-started-with-git/setting-your-username-in-git#setting-your-git-username-for-every-repository-on-your-computer) and [set your Git email address](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-email-preferences/setting-your-commit-email-address#setting-your-email-address-for-every-repository-on-your-computer) on your local computer.
-* Visual Studio Code with required extensions
-    * **Visual Studio Code installed on your computer**. Check out the [Visual Studio Code](https://code.visualstudio.com/) homepage for a link to the download page.
-    * **Python extension installed**. Search for and install the "Python" extension (from Microsoft) in the *Extensions* pane in VS Code.
-    * **Snowflake extension installed**. Search for and install the "Snowflake" extension (from Snowflake) in the *Extensions* pane in VS Code.
-* GitHub account with lab repository forked and cloned locally
+* GitHub account
     * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 
 ### What You’ll Build
@@ -91,50 +80,52 @@ During this Quickstart you will accomplish the following things:
 ## Quickstart Setup
 Duration: 10
 
-### Fork and Clone Repository for Quickstart
+### Fork the Quickstart Repository and Enable GitHub Actions
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering Pipelines with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
 By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Python UDF and stored procedures, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
 
 <img src="assets/github-actions-activate.png" width="800" />
 
-Next you will need to clone your new forked repository to your local computer. For connection details about your new Git repository, open the Repository, click on the green "Code" icon near the top of the page and copy the "HTTPS" link.
+### Create GitHub Codespace
+For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be more than enough for this lab.
 
-<img src="assets/git_repo_url.png" width="300" />
+To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
 
-Use that link in VS Code to clone the repo to your computer. Please follow the instructions at [Clone and use a GitHub repository in Visual Studio Code](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository) for more details. You can also clone the repository from the command line, if that's more comfortable for you, by running the following commands:
+<img src="assets/codespace_setup.png" width="800" />
 
-```bash
-git clone <your-forked-repo-url>
-cd sfguide-data-engineering-with-snowpark-python/
-```
+This will open a new tab and begin setting up your codespace. This will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
 
-Once the forked repository has been cloned to your local computer open the folder with VS Code.
+* Creating a container for your environment
+* Installing Anaconda (miniconda)
+* SnowSQL setup
+    * Installing SnowSQL
+    * Creating a directory and default config file for SnowSQL
+* Anaconda setup
+    * Creating the Anaconda environment
+    * Installing the Snowpark Python library
+    * Installing the SnowCLI Python CLI
+* VS Code setup
+    * Installing VS Code
+    * Configuring VS Code for the Python Anaconda environment
+    * Installing the Snowflake VS Code extension
+* Starting a hosted, web-based VS Code editor
 
-### Configure Credentials
-We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. If that SnowSQL config file does not exist, please create an empty one.
+Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
 
-Create a SnowSQL configuration for this lab by adding the following section to your `~/.snowsql/config` file (replacing the accountname, username, and password with your values):
+### Configure Snowflake Credentials
+We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. A default config file was created for you during the codespace setup.
 
-```
-[connections.dev]
-accountname = myaccount
-username = myusername
-password = mypassword
-rolename = HOL_ROLE
-warehousename = HOL_WH
-dbname = HOL_DB
-```
+The easiest way to edit the default `~/.snowsql/config` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowsql/config` and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the `accountname`, `username`, and `password` with your values. Then save and close the file.
 
 **Note:** The SnowCLI tool (and by extension this Quickstart) currently does not work with Key Pair authentication. It simply grabs your username and password details from the shared SnowSQL config file.
 
-### Create Anaconda Environment
-Create and active a conda environment for this lab using the supplied `conda_env.yml` file. Run these commands from a terminal in the root of your local forked repository.
+### Verify Your Anaconda Environment is Activated
+During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
 
-```bash
-conda env create -f conda_env.yml
-conda activate pysnowpark
-```
+<img src="assets/vscode-terminal-conda.png" width="800" />
+
+If for some reason it wasn't activiated simply run `conda activate snowflake-demo` in your terminal.
 
 
 <!-- ------------------------ -->
@@ -161,7 +152,7 @@ During this step we will be loading the raw Tasty Bytes POS and Customer loyalty
 <img src="assets/data_pipeline_overview.png" width="800" />
 
 ### Run the Script
-To load the raw data, execute the `steps/02_load_raw.py` script. This can be done a number of ways in VS Code, from a terminal or directly by VS Code. For this demo you will need to execute the Python scripts from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To load the raw data, execute the `steps/02_load_raw.py` script. This can be done a number of ways in VS Code, from a terminal or directly by VS Code. For this demo you will need to execute the Python scripts from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps
@@ -291,7 +282,7 @@ During this step we will be creating a view to simplify the raw POS schema by jo
 <img src="assets/data_pipeline_overview.png" width="800" />
 
 ### Run the Script
-To create the view and stream, execute the `steps/04_create_pos_view.py` script. Like we did in step 2, let's execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To create the view and stream, execute the `steps/04_create_pos_view.py` script. Like we did in step 2, let's execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps
@@ -345,7 +336,7 @@ During this step we will be creating and deploying our first Snowpark Python obj
 <img src="assets/data_pipeline_overview.png" width="800" />
 
 ### Running the UDF Locally
-To test the UDF locally, you will execute the `steps/05_fahrenheit_to_celsius_udf/app.py` script. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To test the UDF locally, you will execute the `steps/05_fahrenheit_to_celsius_udf/app.py` script. Like we did in the previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/05_fahrenheit_to_celsius_udf
@@ -355,7 +346,7 @@ python app.py 35
 While you're developing the UDF you can simply run it locally in VS Code. And if your UDF doesn't need to query data from Snowflake, this process will be entirely local.
 
 ### Deploying the UDF to Snowflake
-To deploy your UDF to Snowflake we will use the SnowCLI tool. The SnowCLI tool will do all the heavy lifting of packaging up your application, copying it to a Snowflake stage, and creating the object in Snowflake. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To deploy your UDF to Snowflake we will use the SnowCLI tool. The SnowCLI tool will do all the heavy lifting of packaging up your application, copying it to a Snowflake stage, and creating the object in Snowflake. Like we did in the previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/05_fahrenheit_to_celsius_udf
@@ -404,7 +395,7 @@ This also allows you to develop and test your Python application without having 
 
 > aside negative
 > 
-> **Note** - As of 2/1/2023 the SnowCLI tool is still in preview.
+> **Note** -  As of 9/1/2023, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 ### More on Snowpark Python UDFs
 In this step we deployed a very simple Python UDF to Snowflake. In a future step will update it to use a third-party package. And because we deployed it to Snowflake with the SnowCLI command you didn't have to worry about the SQL DDL Syntax to create the object in Snowflake. But for reference please check out our [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html) developer guide.
@@ -431,7 +422,7 @@ During this step we will be creating and deploying our first Snowpark Python sto
 <img src="assets/data_pipeline_overview.png" width="800" />
 
 ### Running the Sproc Locally
-To test the procedure locally, you will execute the `steps/06_orders_update_sp/app.py` script. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To test the procedure locally, you will execute the `steps/06_orders_update_sp/app.py` script. Like we did in the previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/06_orders_update_sp
@@ -441,7 +432,7 @@ python app.py
 While you're developing the sproc you can simply run it locally in VS Code. The Python code will run locally on your laptop, but the Snowpark DataFrame code will issue SQL queries to your Snowflake account.
 
 ### Deploying the Sproc to Snowflake
-To deploy your sproc to Snowflake we will use the SnowCLI tool. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To deploy your sproc to Snowflake we will use the SnowCLI tool. Like we did in the previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/06_orders_update_sp
@@ -520,7 +511,7 @@ During this step we will be creating and deploying our second Snowpark Python sp
 <img src="assets/data_pipeline_overview.png" width="800" />
 
 ### Running the Sproc Locally
-To test the procedure locally, you will execute the `steps/07_daily_city_metrics_update_sp/app.py` script. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To test the procedure locally, you will execute the `steps/07_daily_city_metrics_update_sp/app.py` script. Like we did in the previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/07_daily_city_metrics_update_sp
@@ -530,7 +521,7 @@ python app.py
 While you're developing the sproc you can simply run it locally in VS Code. The Python code will run locally on your laptop, but the Snowpark DataFrame code will issue SQL queries to your Snowflake account.
 
 ### Deploying the Sproc to Snowflake
-To deploy your sproc to Snowflake we will use the SnowCLI tool. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To deploy your sproc to Snowflake we will use the SnowCLI tool. Like we did in the previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/07_daily_city_metrics_update_sp
@@ -767,7 +758,7 @@ Don't forget to save your changes.
 The second change we need to make is to add `scipy` to our `requirements.txt` file. Open the `steps/05_fahrenheit_to_celsius_udf/requirements.txt` file in VS Code, add a newline with `scipy` on it and save it.
 
 ### Test your Changes Locally
-To test the UDF locally, you will execute the `steps/05_fahrenheit_to_celsius_udf/app.py` script. Like we did in previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To test the UDF locally, you will execute the `steps/05_fahrenheit_to_celsius_udf/app.py` script. Like we did in previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/05_fahrenheit_to_celsius_udf
@@ -896,6 +887,7 @@ We've covered a ton in this Quickstart, and here are the highlights:
 ### Related Resources
 And finally, here's a quick recap of related resources:
 
+* [Full Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/data-engineering-pipelines/)
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python)
 * [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
     * [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html)

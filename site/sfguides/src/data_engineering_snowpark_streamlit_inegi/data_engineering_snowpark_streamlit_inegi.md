@@ -3,7 +3,7 @@ id: data_engineering_snowpark_streamlit_inegi
 summary: End-to-End from local to cloud using Snowapark Python Streamlit
 categories: getting-started
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: snowpark, Data engineering, python, streamlit, es
 
@@ -296,5 +296,7 @@ Con Snowpark y Streamlit es posible de forma directa hacer aplicaciones End-to-E
 - Extraer y Transformar 
 - Modelo y Carga de datos en Snowflake
 - Visualización de datos con Streamlit
+
+[Demo Completo en Snowflake Demo Hub](https://developers.snowflake.com/demos/visualizacion-de-datos-demograficos-es/)
 
 Repositorio [github repo](https://github.com/sfc-gh-csuarez/snowpark_inegi.git)

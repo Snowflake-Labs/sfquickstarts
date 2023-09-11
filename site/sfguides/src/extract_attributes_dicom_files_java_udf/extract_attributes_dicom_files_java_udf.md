@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Data Engineering, Unstructured Data
 
-# Extract Attributes from DICOM Files using a Java UDF
+# Extract Attributes from DICOM Files using Snowpark for Python and Java
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -100,15 +100,15 @@ First, create the external stage to import the pydicom package file and the help
 ```sql
 -- Create external stage to import pydicom package from S3
 create or replace stage python_imports
- url = "s3://Extract Dicom Attributes/Files/"
+ url = "s3://sfquickstarts/Extract Dicom Attributes/Files/"
  directory = (enable = true auto_refresh = false);
 
 -- Create a Python UDF to parse DICOM files
 create or replace function python_read_dicom(file string)
     returns variant
     language python
-    runtime_version=3.8
-    imports = ('@python_imports/wheel_loader.py','@python_imports/pydicom-2.4.1-py3-none-any.whl')
+    runtime_version=3.10
+    imports = ('@python_imports/pydicom.zip')
     packages = ('snowflake-snowpark-python')
     handler = 'get_dicom_attributes'
 AS
@@ -117,10 +117,8 @@ import json
 from snowflake.snowpark.files import SnowflakeFile
 import sys
 import os
-import wheel_loader
 
 def get_dicom_attributes(file_path):
-    wheel_loader.load('pydicom-2.4.1-py3-none-any.whl')
     
     from pydicom import dcmread,errors
 
