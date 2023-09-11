@@ -527,7 +527,7 @@ In this step, you'll add...
 
 if __name__ == "__main__":
     session = create_session_object()
-    load_data(session)
+    load_data(session) 
 ```
 
 
