@@ -63,7 +63,7 @@ Duration: 8
 5. Install Snowpark for Python, pandas, and scikit-learn by running `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn`
 6. Install Streamlit by running `pip install streamlit` or `conda install streamlit`
 7. Test Streamlit installation: `streamlit hello`
-8. Create folder, e.g. “PCE-Marketplace-Lab” and download these [Lab Files](https://github.com/Snowflake-Labs/sfquickstarts/tree/8c864e6760f411c8d71b8875f1d9e667d194cc03/site/sfguides/src/data_apps_summit_lab/assets/project_files) to that folder.
+8. Create folder, e.g. “PCE-Marketplace-Lab” and download these [Lab Files](https://github.com/Snowflake-Labs/sfquickstarts/tree/5c521382b44d3f584414497037c8b5d58d4432ed/site/sfguides/src/data_apps_summit_lab/assets/project_files) to that folder.
 
 ---
 
@@ -125,21 +125,15 @@ Before we begin to review working with Snowflake Marketplace data sets, verify y
 
 Now that we have a database with Cybersyn Financial & Economic Essentials, we need to create a database for our application that will store the User Defined Function.
 
-Select “Worksheets” from the Home menu of Snowflake. Create a new worksheet by selecting the 
+Select “Worksheets” from the Home menu of Snowflake. 
 
-
-![alt_text](assets/worksheet.png)
-button.
+Create a new worksheet by selecting the ![alt_text](assets/worksheet.png) button.
 
 In the worksheet copy the following script:
 
+``` sql
 
-``` sql 
--- Go to Marketplace to get the "Cybersyn Financial & Economic Essentials" data product
---   Accept Cybersyn's terms for use of the product
---   Click GET to create a database named CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS
-
--- Setup database, need to be logged in as accountadmin role */ 
+-- Setup database, need to be logged in as accountadmin role
 -- Set role and warehouse (compute)
 USE ROLE accountadmin;
 USE WAREHOUSE compute_wh;
@@ -148,8 +142,6 @@ USE WAREHOUSE compute_wh;
 CREATE DATABASE IF NOT EXISTS summit_hol;
 USE DATABASE summit_hol;
 CREATE STAGE IF NOT EXISTS udf_stage;
-
---Test the Cybersyn Essentials data
 
 -- What financial data is available as a time-series from FRED?
 SELECT DISTINCT variable_name
@@ -170,6 +162,7 @@ ORDER BY date;
 -- Once we created the UDF with the Python Notebook we can test the UDF
 SELECT predict_pce_udf(2022);
 ```
+
 
 <!-- ------------------------ -->
 
@@ -249,7 +242,7 @@ In the above code snippet, replace variables enclosed in "&lt;>" with your value
 In this step we will query the data using the traditional method of executing a SQL statement in the Session object, similar to querying data with the Snowflake for Python connector.
 
 
-```python 
+``` python 
 # SQL queries to explore the data
 
 # What financial data is available as a time-series from FRED?
