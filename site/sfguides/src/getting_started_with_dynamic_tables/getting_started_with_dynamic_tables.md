@@ -255,31 +255,81 @@ select * from customer_sales_data_history limit 10;
 select count(*) from customer_sales_data_history;
 ```
 
+Now, lets combine these results with product table and create a SCD TYPE 2 transformation using window function "LEAD", it gives us the subsequent rows in the same result set to build a TYPE 2 transformation.
 
-<!------------->
-## logical pause
+```
+CREATE OR REPLACE DYNAMIC TABLE salesreport
+    LAG = '1 MINUTE'
+    WAREHOUSE=lab_s_wh
+AS
+    Select
+        t1.customer_id,
+        t1.customer_name, 
+        t1.product_id,
+        p.pname as product_name,
+        t1.saleprice,
+        t1.quantity,
+        (t1.saleprice/t1.quantity) as unitsalesprice,
+        t1.salesdate as CreationTime,
+        customer_id || '-' || t1.product_id  || '-' || t1.salesdate AS CUSTOMER_SK,
+        LEAD(CreationTime) OVER (PARTITION BY t1.customer_id ORDER BY CreationTime ASC) AS END_TIME
+    from 
+        customer_sales_data_history t1 inner join prod_stock_inv p 
+        on t1.product_id = p.pid
+       
+;
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+-- Refresh Manually or wait for a minute
+-- alter dynamic table salesreport refresh;
 
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+Wait for a minute to check the results in the salesreport table or refresh the DT manually.
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+```
+select * from salesreport limit 10;
+select count(*) from salesreport;
+```
+
+So, we just created a DAG using Dynamic Tables. It runs whenever there is data in the upstream pipeline(raw base tables), this is made possible by setting the LAG to "DOWNSTREAM". Dynamic tables lag or target lag can defined in terms of time or dependency [referred from other dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag)
+
+## Create data validation/quality checks using Dynamic table
+
+The DAG that we created above will build our data pipeline but there are many use cases of DT, like creating data validation checks or data quality etc. In our data set, we want to know if a product is running low on inventory, lets say less than 10%
+
+```
+CREATE OR REPLACE DYNAMIC TABLE prod_inv_alert
+    LAG = '1 MINUTE'
+    WAREHOUSE=lab_s_wh
+AS
+    select 
+        s.product_id, 
+        s.product_name,creationtime as latest_sales_date,
+        stock as Begining_Stock,
+        sum(s.quantity) over (partition by s.product_id order by creationtime) totalunitsold, 
+        (stock - totalunitsold) as unitsleft,
+        round(((stock-totalunitsold)/stock) *100,2) percent_unitleft
+    from salesreport s join prod_stock_inv on product_id = pid
+    qualify row_number() over (partition by product_id order by creationtime desc) = 1
+;
+
+alter dynamic table prod_inv_alert refresh;
+
+```
+Now lets check if there are any products that has low inventory
+
+```
+-- check products with low inventory and alert
+select * from prod_inv_alert where percent_unitleft < 10;
+```
+
+
 
 <!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
+## Dashboard and DAG
+Duration: 4
+
+
 
 Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 
@@ -332,6 +382,10 @@ for (statement 1; statement 2; statement 3) {
 
 ### Hyperlinking
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+
+<!------------->
+## logical pause
+
 
 <!-- ------------------------ -->
 ## Images, Videos, and Surveys, and iFrames
