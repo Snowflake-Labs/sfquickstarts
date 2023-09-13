@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Dynamic Tables, Data Engineering, Data Pipeline 
 
-# Snowflake Guide Template
+# Getting Started with Snowflake Dynamic Tables
 <!-- ------------------------ -->
 ## Overview 
 Duration: 2
@@ -29,12 +29,11 @@ In this quickstart we will build a change data capture (CDC) pipeline and data v
 - Familiarity with JSON semi-structured data
 
 ### What You’ll Learn 
-- How to perform analytical queries on data in Snowflake, including joins between tables.
-- How to create a declarative data pipeline using Dynamic tables
+- How to create a declarative data pipeline DAG using Dynamic tables
 - How to pause and resume the data pipeline
-- How to monitor Dynamic table continous data pipeline
+- How to monitor Dynamic tables for continous data pipeline
 - How to automate the data validation process using Dynamic tables
-- How to setup alerts
+- How to setup data quality check alerts
 
 ### What You’ll Need 
 - A [Snowflake](https://trial.snowflake.com) Account 
@@ -293,7 +292,8 @@ select count(*) from salesreport;
 
 So, we just created a DAG using Dynamic Tables. It runs whenever there is data in the upstream pipeline(raw base tables), this is made possible by setting the LAG to "DOWNSTREAM". Dynamic tables lag or target lag can defined in terms of time or dependency [referred from other dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag)
 
-## Create data validation/quality checks using Dynamic table
+<!-- ------------------------ -->
+## Usecase: data validation using Dynamic table
 
 The DAG that we created above will build our data pipeline but there are many use cases of DT, like creating data validation checks or data quality etc. In our data set, we want to know if a product is running low on inventory, lets say less than 10%
 
@@ -322,8 +322,36 @@ Now lets check if there are any products that has low inventory
 -- check products with low inventory and alert
 select * from prod_inv_alert where percent_unitleft < 10;
 ```
+[Snowflake Alerts](https://docs.snowflake.com/en/user-guide/alerts) are now in Preview. This can help you send email alerts to your product procurement and inventory team to restock the required product.
 
+```
 
+CREATE NOTIFICATION INTEGRATION IF NOT EXISTS
+    notification_emailer
+    TYPE=EMAIL
+    ENABLED=TRUE
+    ALLOWED_RECIPIENTS=('first.last@company.com')
+    COMMENT = 'email integration to update on low product inventory levels'
+;
+
+CREATE OR REPLACE ALERT alert_new_rows
+  WAREHOUSE = my_warehouse
+  SCHEDULE = '1 MINUTE'
+  IF (EXISTS (
+      SELECT *
+      FROM prod_inv_alert
+      WHERE percent_unitleft < 10 and row_timestamp BETWEEN SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME()
+       AND SNOWFLAKE.ALERT.SCHEDULED_TIME()
+  ))
+  THEN CALL SYSTEM$SEND_EMAIL(
+                'notification_emailer', -- notification integration to use
+                'first.last@company.com', -- Email
+                'Email Alert: Low Inventory of products', -- Subject
+                'Inventory running low for certain products. Please check the inventory report in Snowflake table prod_inv_alert' -- Body of email
+);
+```
+
+![show alerts](assets/alert.jpg)
 
 <!-- ------------------------ -->
 ## Dashboard and DAG
@@ -331,57 +359,6 @@ Duration: 4
 
 
 
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
 
 <!------------->
 ## logical pause
