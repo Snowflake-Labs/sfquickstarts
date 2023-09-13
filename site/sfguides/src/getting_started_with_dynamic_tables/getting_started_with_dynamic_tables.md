@@ -298,19 +298,20 @@ So, we just created a DAG using Dynamic Tables. It runs whenever there is data i
 The DAG that we created above will build our data pipeline but there are many use cases of DT, like creating data validation checks or data quality etc. In our data set, we want to know if a product is running low on inventory, lets say less than 10%
 
 ```
-CREATE OR REPLACE DYNAMIC TABLE prod_inv_alert
+CREATE OR REPLACE DYNAMIC TABLE PROD_INV_ALERT
     LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=LAB_S_WH
 AS
-    select 
-        s.product_id, 
-        s.product_name,creationtime as latest_sales_date,
-        stock as Begining_Stock,
-        sum(s.quantity) over (partition by s.product_id order by creationtime) totalunitsold, 
-        (stock - totalunitsold) as unitsleft,
-        round(((stock-totalunitsold)/stock) *100,2) percent_unitleft
-    from salesreport s join prod_stock_inv on product_id = pid
-    qualify row_number() over (partition by product_id order by creationtime desc) = 1
+    SELECT 
+        S.PRODUCT_ID, 
+        S.PRODUCT_NAME,CREATIONTIME AS LATEST_SALES_DATE,
+        STOCK AS BEGINING_STOCK,
+        SUM(S.QUANTITY) OVER (PARTITION BY S.PRODUCT_ID ORDER BY CREATIONTIME) TOTALUNITSOLD, 
+        (STOCK - TOTALUNITSOLD) AS UNITSLEFT,
+        ROUND(((STOCK-TOTALUNITSOLD)/STOCK) *100,2) PERCENT_UNITLEFT,
+        CURRENT_TIMESTAMP() AS ROWCREATIONTIME
+    FROM SALESREPORT S JOIN PROD_STOCK_INV ON PRODUCT_ID = PID
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY PRODUCT_ID ORDER BY CREATIONTIME DESC) = 1
 ;
 
 alter dynamic table prod_inv_alert refresh;
@@ -337,11 +338,11 @@ CREATE NOTIFICATION INTEGRATION IF NOT EXISTS
 CREATE OR REPLACE ALERT alert_new_rows
   WAREHOUSE = my_warehouse
   SCHEDULE = '1 MINUTE'
+  SCHEDULE = '1 MINUTE'
   IF (EXISTS (
       SELECT *
       FROM prod_inv_alert
-      WHERE percent_unitleft < 10 and row_timestamp BETWEEN SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME()
-       AND SNOWFLAKE.ALERT.SCHEDULED_TIME()
+      WHERE percent_unitleft < 10 and ROWCREATIONTIME > SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME()
   ))
   THEN CALL SYSTEM$SEND_EMAIL(
                 'notification_emailer', -- notification integration to use
@@ -349,14 +350,50 @@ CREATE OR REPLACE ALERT alert_new_rows
                 'Email Alert: Low Inventory of products', -- Subject
                 'Inventory running low for certain products. Please check the inventory report in Snowflake table prod_inv_alert' -- Body of email
 );
+
+-- Alerts are pause by default, so lets resume it first
+ALTER ALERT alert_low_inv RESUME;
+
 ```
 
 ![show alerts](assets/alert.jpg)
 
+These alerts will only run if there is new data in the dynamic table which will only have products that are running on low inventory. So, you see how easy it is to manage and maintain this in Snowflake. 
+
+You can monitor, resume or pause alerts.
+
+```
+-- Monitor alerts in detail
+SHOW ALERTS;
+
+SELECT *
+FROM
+  TABLE(INFORMATION_SCHEMA.ALERT_HISTORY(
+    SCHEDULED_TIME_RANGE_START
+      =>dateadd('hour',-1,current_timestamp())))
+WHERE
+    NAME = 'ALERT_LOW_INV'
+ORDER BY SCHEDULED_TIME DESC;
+
+-- Suspend Alerts
+ALTER ALERT alert_low_inv SUSPEND;
+
+```
+
 <!-- ------------------------ -->
-## Dashboard and DAG
+## Monitor Dynamic Tables: Dashboard and DAG
 Duration: 4
 
+```
+SELECT * 
+FROM 
+    TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY())
+WHERE 
+    NAME IN ('SALESREPORT','CUSTOMER_SALES_DATA_HISTORY','PROD_INV_ALERT')
+    AND REFRESH_ACTION != 'NO_DATA'
+ORDER BY 
+    DATA_TIMESTAMP DESC, REFRESH_END_TIME DESC LIMIT 10;
+```
 
 
 
