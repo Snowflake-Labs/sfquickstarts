@@ -55,6 +55,8 @@ Duration: 8
 1. Install conda to manage a separate environment by running pip install conda. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 2. Open the terminal or command prompt
 
+
+> aside positive
 > IMPORTANT:
 > If you are using a machine wth Apple M1 chip, follow [these instructions](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
@@ -63,7 +65,9 @@ Duration: 8
 5. Install Snowpark for Python, pandas, and scikit-learn by running `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn`
 6. Install Streamlit by running `pip install streamlit` or `conda install streamlit`
 7. Test Streamlit installation: `streamlit hello`
-8. Create folder, e.g. “PCE-Marketplace-Lab” and download these [Lab Files](https://github.com/Snowflake-Labs/sfquickstarts/tree/5c521382b44d3f584414497037c8b5d58d4432ed/site/sfguides/src/data_apps_summit_lab/assets/project_files) to that folder.
+8. Create a directory on your local machine as a workspace, e.g. “PCE-Marketplace-Lab” and download the following files:
+   
+   <button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/5c521382b44d3f584414497037c8b5d58d4432ed/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
 
 ---
 
