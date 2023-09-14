@@ -1,31 +1,35 @@
 id: getting_started_with_generative_ai_snowflake_external_functions
-summary: Getting Started with Generative AI and External Functions in Snowflake
+summary: Getting Started with Generative AI in Snowflake and Streamlit
 categories: featured,getting-started,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Generative AI, Snowflake External Functions, OpenAI
+tags: Getting Started, Generative AI, Snowflake External Access, Snowflake External Functions, OpenAI
 authors: Dash Desai
 
-# Getting Started with Generative AI and External Functions in Snowflake and Streamlit
+# Getting Started with Generative AI in Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
 
 Duration: 5
 
-By completing this guide, you will be able to deploy two different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Functions in Snowflake.
+By completing this guide, you will be able to deploy different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Access and External Functions in Snowflake.
 
-![Demo](assets/openai_ext_function.gif)
+![Demo](assets/openai_ext_function_lambda_new_gpt4.gif)
 
-**Implementation 1: Use AWS API Gateway**
+**Implementation 1: Use External Access from Snowpark**
+
+In this implementation, we will use [External Access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) to securely connect to the OpenAI API from [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/index), the set of libraries and runtimes in Snowflake that run non-SQL code, including Python, Java and Scala. External Access provides flexibility to reach public internet endpoints from the Snowpark sandbox without any additional infrastructure setup.
+
+**Implementation 2: Use AWS API Gateway**
 
 In this implementation, we will use AWS API Gateway as a proxy for calling OpenAI API from Snowflake and then create an external function in Snowflake that uses the AWS API Gateway to directly call and interact with OpenAI API.
 
-**Implementation 2: Use AWS Lambda**
+**Implementation 3: Use AWS Lambda**
 
 In this implementation, we will wrap the OpenAI API in a AWS Lambda function which can then be accessed via external function in Snowflake.
 
-**Differences and Similarities**
+**Differences and Similarities between AWS API Gateway and AWS Lambda implementations**
 
 Here are some key differences and similarities between the two implementations.
 
@@ -34,17 +38,104 @@ Here are some key differences and similarities between the two implementations.
 * In both cases, you can call the external function for use cases like generating SQL based on natural language, performing sentiment analysis on Tweets, or any other LLM-powered use case, directly from Snowflake. **IMP NOTE**: Depending on how you construct the prompts, your data could be leaving Snowflake and beyond its security and governance perimeter so please be mindful of that.
 * The other thing to consider is [Amazon API Gateway pricing](https://aws.amazon.com/api-gateway/pricing/) and [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/).
 
-### What You’ll Learn
+### What You Will Learn
 
+* How to use External Access to securely connect to the OpenAI API from Snowpark
 * How to use AWS API Gateway as a proxy for calling OpenAI API from Snowflake
 * How to wrap OpenAI API in a AWS Lambda function which can be accessed via external function in Snowflake
 
 ### Prerequisites
 
-* A Snowflake account - [Sign-in or create a free trial account](https://signup.snowflake.com/).
+* A Snowflake account - [Sign-in or create a free trial account](https://signup.snowflake.com/)
 * A OpenAI account - [Sign-in or create an account](https://openai.com/)
   * [OpenAI API Key](https://platform.openai.com/account/api-keys)
 * AWS Account
+
+<!-- ------------------------ -->
+## Use External Access
+
+Duration: 10
+
+In this implementation, we will use External Access to securely connect to the OpenAI API from Snowpark Python.
+
+### Step 1
+
+Create a [Secret](https://docs.snowflake.com/en/sql-reference/sql/create-secret) object in Snowflake to securely store your OpenAI API key.
+
+```sql
+CREATE OR REPLACE SECRET dash_open_ai_api
+ TYPE = GENERIC_STRING
+ SECRET_STRING = 'YOUR_OPENAI_API_KEY';
+```
+
+### Step 2
+
+Create a [Network Rule](https://docs.snowflake.com/en/sql-reference/sql/create-network-rule) object in Snowflake.
+
+```sql
+CREATE OR REPLACE NETWORK RULE dash_apis_network_rule
+ MODE = EGRESS
+ TYPE = HOST_PORT
+ VALUE_LIST = ('api.openai.com');
+```
+
+### Step 3
+
+Create a [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) object in Snowflake.
+
+```sql
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dash_external_access_int
+ ALLOWED_NETWORK_RULES = (dash_apis_network_rule)
+ ALLOWED_AUTHENTICATION_SECRETS = (dash_open_ai_api)
+ ENABLED = true;
+```
+
+### Step 4
+
+Create Snowpark Python function in Snowflake
+
+```sql
+CREATE OR REPLACE FUNCTION CHATGPT_4(query varchar)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.9
+HANDLER = 'complete_me'
+EXTERNAL_ACCESS_INTEGRATIONS = (dash_external_access_int)
+SECRETS = ('openai_key' = dash_open_ai_api)
+PACKAGES = ('openai')
+AS
+$$
+import _snowflake
+import openai
+def complete_me(QUERY):
+    openai.api_key = _snowflake.get_generic_secret_string('openai_key')
+    messages = [{"role": "user", "content": QUERY}]
+    model="gpt-4"
+    response = openai.ChatCompletion.create(model=model,messages=messages,temperature=0,)    
+    return response.choices[0].message["content"]
+$$;
+```
+
+### **Call Function in Snowflake**
+
+Assuming you have completed all the prerequites, calling the function is as simple as follow:
+
+#### **Example 1**
+
+```sql
+SELECT CHATGPT_4('Describe Snowflake external access to a non-technical user') as chatgpt_4_response;
+```
+
+***Sample response:*** *"Snowflake external access is like a secure door that allows specific, approved outside sources to access and interact with your Snowflake data. This could be other software applications or services that need to use the data stored in Snowflake for various tasks. 
+This access is controlled by strict security measures to ensure only authorized users or systems can access the data. It's similar to how you might use a key or passcode to unlock your front door, allowing only trusted individuals to enter your home."*
+
+#### **Example 2**
+
+```sql
+SELECT CHATGPT_4('What do you think of the Data Cloud World Tour') as chatgpt_4_response;
+```
+
+***Sample response:*** *As an artificial intelligence, I don't have personal opinions. However, I can tell you that the Data Cloud World Tour is generally well-regarded for providing valuable insights into the latest trends and best practices in data management, analytics, and cloud technology. It offers opportunities for networking and learning from industry experts."*
 
 <!-- ------------------------ -->
 ## Use AWS API Gateway
@@ -67,8 +158,8 @@ In your AWS Management Console, [create a CloudFormation stack](https://docs.aws
 
 Once the CloudFormation stack has been successfully created:
 
-* [Create an API Integration](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration) object in Snowflake
-* Then set up a [trust relationship](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration-proxy-link) between Snowflake and IAM (Identity and Access Management) role **openAIAPIGatewayRole** created using the CFT.
+* Create [API Integration](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration) object in Snowflake
+* Set up a [trust relationship](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration-proxy-link) between Snowflake and IAM (Identity and Access Management) role **openAIAPIGatewayRole** created using the CFT.
 
 For reference purposes, here's what the API Integration SQL should look like:
 
@@ -282,24 +373,31 @@ TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0)
 ***Sample response:*** *"Sure, here's a simple query that will provide total spend per year, per month, and per channel: SELECT CHANNEL, EXTRACT (YEAR FROM DATE) as YEAR, EXTRACT (MONTH FROM DATE) as MONTH, SUM(TOTAL_COST) as TOTAL_SPEND FROM CAMPAIGN_SPEND GROUP BY CHANNEL, YEAR, MONTH ORDER BY YEAR, MONTH, CHANNEL; This query performs a simple aggregation operation on the CAMPAIGN_SPEND table, grouping the data by the channel and the year and month of the DATE attribute. The SUM function computes the total cost for each such group, and ORDER BY clause orders the output by Year, Month, and Channel. Make sure to replace CAMPAIGN_SPEND with the actual table name you are using."*
 
 <!-- ------------------------ -->
-## Streamlit-in-Snowflake Application
+## Streamlit Application
 
-If you have SiS enabled in your account, follow these steps to run the application in Snowsight.
+Duration: 5
 
-> aside negative
-> NOTE: SiS is in Private Preview as of July 2023.
+If you have Streamlit in Snowflake (currently in Preview) enabled, then follow these steps to create and run the Streamlit application in Snowsight.
 
-  1) Click on **Streamlit Apps** on the left navigation menu
-  2) Click on **+ Streamlit App** on the top right
-  3) Enter **App name**
-  4) Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
-  5) Click on **Create**
-  6) At this point, you will be provided code for an example Streamlit application
-  7) Open [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/streamlit_sis.py) and copy-paste the code into the example Streamlit application.
-  8) Click on **Run** on the top right
-  9) Select one of the options from the sidebar **Sentiment Analysis**, **Share Knowledge**, or **Text-to-SQL** and enter your prompt on the right to get a response.
+**Step 1.** Click on **Streamlit** on the left navigation menu
 
-If all goes well, you should see the following app in Snowsight as shown below with sample prompts and responses.
+**Step 2.** Click on **+ Streamlit App** on the top right
+
+**Step 3.** Enter **App name**
+
+**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+
+**Step 5.** Click on **Create**
+
+- At this point, you will be provided code for an example Streamlit application
+
+**Step 6.** Replace sample application code displayed in the code editor on the left with the code provided in [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/streamlit_sis.py)
+
+**Step 7.** Click on **Run** on the top right
+
+**Step 8.** Select one of the options from the sidebar **Sentiment Analysis**, **Share Knowledge**, or **Text-to-SQL** and enter your prompt on the right to get a response.
+
+If all goes well, you should see the app in Snowsight as shown below with sample prompts and responses.
 
 ![Img1](assets/app0.png)
 
@@ -314,18 +412,21 @@ If all goes well, you should see the following app in Snowsight as shown below w
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've successfully deployed two different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Functions in Snowflake.
+Congratulations! You've successfully deployed different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Access and External Functions in Snowflake.
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLScZHo42elucqHYG4SVobJ6qMbpxhbM8GWDK3QgOC-QNcb2XMA/viewform).
 
 ### What You Learned
 
+* How to use External Access to securely connect to the OpenAI API from Snowpark
 * How to use AWS API Gateway as a proxy for calling OpenAI API from Snowflake
 * How to wrap OpenAI API in a AWS Lambda function which can be accessed via external function in Snowflake
 
 ### Related Resources
 
-- [External Functions in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions)
-- [API Integration in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration)
-- [Using Request and Response Translators](https://docs.snowflake.com/en/sql-reference/external-functions-translators)
-- [OpenAI's Completions API](https://platform.openai.com/docs/api-reference/completions)
+* [Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/generative-ai-llm-snowflake/)
+* [External Access in Snowflake](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)
+* [External Functions in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions)
+* [API Integration in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration)
+* [Request and Response Translators in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions-translators)
+* [OpenAI's Completions API](https://platform.openai.com/docs/api-reference/completions)

@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview
 Duration: 2
 
-In this hands-on lab, you will build a data application that leverages Economical Data Atlas published by Knoema on Snowflake Marketplace.
+In this hands-on lab, you will build a data application that leverages Financial & Economic Essentials published by Cybersyn on Snowflake Marketplace.
 
 You will process data with Snowpark, develop a simple ML model and create a Python User Defined Function (UDF) in Snowflake, then visualize the data with Streamlit.
 
@@ -55,16 +55,19 @@ Duration: 8
 1. Install conda to manage a separate environment by running pip install conda. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 2. Open the terminal or command prompt
 
+
 > aside positive
 > IMPORTANT:
-> If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
+> If you are using a machine wth Apple M1 chip, follow [these instructions](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
-3. Create environment by running `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`
+3. Create environment by running `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.10`
 4. Activate conda environment by running `conda activate snowpark`
 5. Install Snowpark for Python, pandas, and scikit-learn by running `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn`
 6. Install Streamlit by running `pip install streamlit` or `conda install streamlit`
-7. Create folder, e.g. “Summit HOL PCE” and download/save the Lab files in that folder.
-    * Link to required files: https://drive.google.com/drive/folders/1CN6Ljj59XWv2B3Epqxk4DtfDmCH1co_Q?usp=sharing
+7. Test Streamlit installation: `streamlit hello`
+8. Create a directory on your local machine as a workspace, e.g. “PCE-Marketplace-Lab” and download the following files:
+   
+   <button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/5c521382b44d3f584414497037c8b5d58d4432ed/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
 
 ---
 
@@ -89,20 +92,19 @@ Before we begin to review working with Snowflake Marketplace data sets, verify y
 
 
 * At the top left corner, make sure you are logged in as ACCOUNTADMIN, switch role if not
-* Click on Marketplace
-* At the Search bar, type: Knoema Economy then click on the Tile Box labeled: Economy Data Atlas.
+* Click on `Marketplace`
+* At the Search bar, type: Cybersyn Essentials then click on the Tile Box labeled: `Financial & Economic Essentials`.
 
 
-![alt_text](assets/Picture1.png)
+![alt_text](assets/cybersyn-essentials.png)
 
-* At the top right corner, Select Get Data
-* Select the appropriate roles to access the Database being created and accept the Snowflake consumer terms and Knoema's terms of use.
-* Create Database
+* At the top right corner, click ![alt_text](assets/get-tile.png)
+* Click on `Options` to choose roles with access to the Database being created. Then accept Cybersyn's terms and Snowflake's Privacy Notice and click `Get`.
 
 
 ## 
 
-![alt_text](assets/Picture2.png)
+![alt_text](assets/query-data.png)
 
 
 
@@ -110,58 +112,61 @@ Before we begin to review working with Snowflake Marketplace data sets, verify y
 * At this point you can select Query Data, this will open a worksheet with example queries.
 
 
-![alt_text](assets/Picture3.png)
+![alt_text](assets/sample-query.png)
 
-* We are interested in the US Inflation data, so we will use this query to explore the data for the application:
-`What is the US inflation over time?`
+* We are interested in the US Inflation data, so we will use this query:
+`What is the US inflation over time (annually)?`
 
-    ```
-    SELECT * FROM "ECONOMY"."BEANIPA" WHERE "Table Name" = 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product' AND "Indicator Name" = 'Personal consumption expenditures (PCE)' AND "Frequency" = 'A' ORDER BY "Date"
-
+    ``` sql
+    SELECT variable_name, date, value, unit 
+    FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES 
+    WHERE variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100' 
+    AND MONTH(date) = 1 
+    ORDER BY date;
     ```
 
 ### Create a new database
 
-Now that we have created a database with the Economy Data Atlas, we need to create a database for our application that will store the User Defined Function.
+Now that we have a database with Cybersyn Financial & Economic Essentials, we need to create a database for our application that will store the User Defined Function.
 
-Select “Worksheets” from the Home menu of Snowflake. Create a new worksheet by selecting the 
+Select “Worksheets” from the Home menu of Snowflake. 
 
-
-![alt_text](assets/Picture8.png)
-button.
+Create a new worksheet by selecting the ![alt_text](assets/worksheet.png) button.
 
 In the worksheet copy the following script:
 
+``` sql
 
-``` python
--- First create database using the Knoema Economical Data Atlas
--- Go to Marketplace to get database
-
--- Setup database, need to be logged in as accountadmin role */
---Set role and warehouse (compute)
+-- Setup database, need to be logged in as accountadmin role
+-- Set role and warehouse (compute)
 USE ROLE accountadmin;
 USE WAREHOUSE compute_wh;
 
 --Create database and stage for the Snowpark Python UDF
 CREATE DATABASE IF NOT EXISTS summit_hol;
+USE DATABASE summit_hol;
 CREATE STAGE IF NOT EXISTS udf_stage;
 
---Test the data
--- What's the size?
-SELECT COUNT(*) FROM ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA;
+-- What financial data is available as a time-series from FRED?
+SELECT DISTINCT variable_name
+FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES;
 
--- What is the US inflation over time?
-SELECT * FROM ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA
-   WHERE "Table Name" = 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product'
-     AND "Indicator Name" = 'Personal consumption expenditures (PCE)'
-     AND "Frequency" = 'A'
-ORDER BY "Date"
-;
+-- What is the size of the all the time-series data?
+SELECT COUNT(*) FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES;
+
+-- What is the US inflation over time (annually)?
+SELECT variable_name, date, value, unit
+FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES
+WHERE 
+variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100'
+AND MONTH(date) = 1
+ORDER BY date;
 
 -- Now create UDF in VS Code / Notebook
 -- Once we created the UDF with the Python Notebook we can test the UDF
-SELECT predict_pce_udf(2021);
+SELECT predict_pce_udf(2022);
 ```
+
 
 <!-- ------------------------ -->
 
@@ -178,7 +183,7 @@ You can open the Python notebook (my_snowpark_pce.ipynb) and Streamlit applicati
 VS Code might ask for the Python environment: \
 
 
-![alt_text](assets/Picture4.png)
+![alt_text](assets/interpreter.png)
 
 
 Make sure you select the ‘snowpark’ Conda environment that was created earlier.
@@ -186,7 +191,7 @@ Make sure you select the ‘snowpark’ Conda environment that was created earli
 You can select the Interpreter by clicking in the lower right corner: \
 
 
-![alt_text](assets/Picture5.png)
+![alt_text](assets/conda.png)
 
 
 
@@ -198,7 +203,7 @@ Let's start by creating a Python script and adding the import statements to incl
 ``` python
 from snowflake.snowpark.session import Session
 from snowflake.snowpark.types import IntegerType, FloatType
-from snowflake.snowpark.functions import avg, sum, col, udf, call_udf, call_builtin, year
+from snowflake.snowpark.functions import avg, sum, col, udf, call_udf, call_builtin, year, month
 import streamlit as st
 import pandas as pd
 from datetime import date
@@ -211,7 +216,7 @@ from sklearn.linear_model import LinearRegression
 
 ### Connect to Snowflake
 
-In this step, you'll create a [Session object](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-a-session) to connect to your Snowflake. Here's a quick way of doing that, but note that hard coding credentials directly in code is not recommended in production environments. In production environments a better approach would be to load credentials from [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) or [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py), for example.
+In this step, you'll create a [Session object](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-session) to connect to your Snowflake. Here's a quick way of doing that, but note that hard coding credentials directly in code is not recommended in production environments. In production environments a better approach would be to load credentials from [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) or [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py), for example.
 
 We will be using the database that we created in the Snowflake setup section.
 
@@ -229,7 +234,7 @@ connection_parameters = {
 }
 session = Session.builder.configs(connection_parameters).create()
 # test if we have a connection
-session.sql("select current_warehouse() wh, current_database() db, current_schema() schema, current_version() v").show()
+session.sql("select current_account() acct, current_warehouse() wh, current_database() db, current_schema() schema, current_version() v").show()
 ```
 
 
@@ -241,9 +246,14 @@ In the above code snippet, replace variables enclosed in "&lt;>" with your value
 In this step we will query the data using the traditional method of executing a SQL statement in the Session object, similar to querying data with the Snowflake for Python connector.
 
 
-``` sql
-# SQL query to explore the data
-session.sql("SELECT * FROM ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA WHERE \"Table Name\" = 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product' AND \"Indicator Name\" = 'Personal consumption expenditures (PCE)' AND \"Frequency\" = 'A' ORDER BY \"Date\"").show()
+``` python 
+# SQL queries to explore the data
+
+# What financial data is available as a time-series from FRED?
+session.sql("SELECT DISTINCT variable_name FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES").show()
+
+# What is the size of all the time-series data?
+session.sql("SELECT COUNT(*) FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES").show()
 ```
 
 
@@ -252,14 +262,13 @@ Now we will query the data using a Snowpark DataFrame. As Snowpark uses lazy eva
 
 ``` python
 # Now use Snowpark dataframe
-snow_df_pce = (session.table("ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA")
-                           .filter(col('Table Name') == 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product')
-                           .filter(col('Indicator Name') == 'Personal consumption expenditures (PCE)')
-                           .filter(col('"Frequency"') == 'A')
-                           .filter(col('"Date"') >= '1972-01-01'))
+snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
+               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+               .filter(col('DATE') >= '1972-01-01')
+               .filter(month(col('DATE')) == 1)
+               .orderBy(col('DATE'))) 
 snow_df_pce.show()
 ```
-
 
 
 ### Creating features for ML training
@@ -269,12 +278,11 @@ As part of the application we would like to have some predictions of the Persona
 
 ``` python
 # Let Snowflake perform filtering using the Snowpark pushdown and display results in a Pandas dataframe
-snow_df_pce = (session.table("ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA")
-                       .filter(col('"Table Name"') == 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product')
-                       .filter(col('"Indicator Name"') == 'Personal consumption expenditures (PCE)')
-                       .filter(col('"Frequency"') == 'A')
-                       .filter(col('"Date"') >= '1972-01-01'))
-pd_df_pce_year = snow_df_pce.select(year(col('"Date"')).alias('"Year"'), col('"Value"').alias('PCE') ).to_pandas()
+snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
+               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+               .filter(col('DATE') >= '1972-01-01')
+               .filter(month(col('DATE')) == 1))
+pd_df_pce_year = snow_df_pce.select(year(col('DATE')).alias('"Year"'), col('VALUE').alias('PCE')).orderBy(col('DATE')).to_pandas()
 pd_df_pce_year
 ```
 
@@ -287,17 +295,18 @@ Now that we have created the features, we can train the model. In this step we w
 
 ``` python
 # train model with PCE index
+
 x = pd_df_pce_year["Year"].to_numpy().reshape(-1,1)
 y = pd_df_pce_year["PCE"].to_numpy()
 
 model = LinearRegression().fit(x, y)
 
-# test model for 2021
-predictYear = 2021
+# test model for 2022
+predictYear = 2022
 pce_pred = model.predict([[predictYear]])
 # print the last 5 years
 print (pd_df_pce_year.tail() )
-# run the prediction for 2021
+# run the prediction for 2022
 print ('Prediction for '+str(predictYear)+': '+ str(round(pce_pred[0],2)))
 ```
 
@@ -327,7 +336,7 @@ Now we can test the UDF using a SQL command in Python.
 
 
 ``` python
-session.sql("select predict_pce_udf(2021)").show()
+session.sql("select predict_pce_udf(2022)").show()
 ```
 
 <!-- ------------------------ -->
@@ -348,7 +357,7 @@ Similar to the notebook we create a Python script and add import statements to i
 # Snowpark
 from snowflake.snowpark.session import Session
 from snowflake.snowpark.types import IntegerType
-from snowflake.snowpark.functions import avg, sum, col, call_udf, lit, call_builtin, year
+from snowflake.snowpark.functions import avg, sum, col, call_udf, lit, call_builtin, year, month
 # Pandas
 import pandas as pd
 #Streamlit
@@ -365,7 +374,7 @@ We need to set the context for the application page.
 ``` python
 #Set page context
 st.set_page_config(
-    page_title="Economical Data Atlas",
+    page_title="Financial & Economic Essentials",
     page_icon="🧊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -380,7 +389,7 @@ st.set_page_config(
 
 ### Connect to Snowflake
 
-In this step, you'll create a [Session object](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-a-session) to connect to your Snowflake. Here's a quick way of doing that, but note that hard coding credentials directly in code is not recommended in production environments. In production environments a better approach would be to load credentials from [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) or [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py), for example.
+In this step, you'll create a [Session object](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-session) to connect to your Snowflake. Here's a quick way of doing that, but note that hard coding credentials directly in code is not recommended in production environments. In production environments a better approach would be to load credentials from [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) or [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py), for example.
 
 We will be using the database that we created in the Snowflake setup section.
 
@@ -398,7 +407,7 @@ def create_session_object():
    "schema": "PUBLIC"
   }
    session = Session.builder.configs(connection_parameters).create()
-   print(session.sql('select current_warehouse(), current_database(), current_schema()').collect())
+   print(session.sql('select current_account(), current_warehouse(), current_database(), current_schema()').collect())
    return session
 ```
 
@@ -408,7 +417,7 @@ In the above code snippet, replace variables enclosed in "&lt;>" with your value
 
 ### Load Data in Snowpark DataFrames
 
-In this step, we’ll create a dataframe with US Inflation (Personal consumption expenditures - PCE) data per year. We will be using the BEANIPA table (BEA NIPA: Bureau of Economic Analysis -  National Income and Product Accounts data). This table contains around 1.6 million rows, using the Snowpark lazy evaluation this data is processed in Snowflake.
+In this step, we’ll create a dataframe with US Inflation (Personal Consumption Expenditures - PCE) data per year. We will be using the FINANCIAL_FRED_TIMESERIES table from Cybersyn. Federal Reserve Economic Data (FRED) is aggregated information from various government sources published by the St. Louis Federal Reserve. This table contains over 2 million rows, using Snowpark lazy evaluation this data is processed in Snowflake.
 
 We’ll create a dataframe with actual and predicted PCE values based on the UDF with a trained ML model we created in the Notebook section.
 
@@ -418,61 +427,52 @@ Note that when working with Streamlit we need Pandas DataFrames and Snowpark API
 
 We also want to show some key metrics, so we will extract metrics from the dataframes.
 
-As a bonus we want to show the PCE data per quarter for a selected year and the breakdown per major type of product. We will create 2 data frames for this data.
+As a bonus we will show the PCE data per quarter for a selected year using a separate data frame.
 
 
 ``` python
-  #US Inflation, Personal consumption expenditures (PCE) per year
-   #Prepare data frame, set query parameters
-   snow_df_pce = (session.table("ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA")
-                           .filter(col('Table Name') == 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product')
-                           .filter(col('Indicator Name') == 'Personal consumption expenditures (PCE)')
-                           .filter(col('"Frequency"') == 'A')
-                           .filter(col('"Date"') >= '1972-01-01'))
-   #Select columns, substract 100 from value column to reference baseline
-   snow_df_pce_year = snow_df_pce.select(year(col('"Date"')).alias('"Year"'), (col('"Value"')-100).alias('PCE')).sort('"Year"', ascending=False)
-   #convert to pandas dataframe
-   pd_df_pce_year = snow_df_pce_year.to_pandas()
-   #round the PCE series
-   pd_df_pce_year["PCE"] = pd_df_pce_year["PCE"].round(2)
+# Create Snowpark DataFrames that load data from Cybersyn Financial & Economic Essentials
+def load_data(session): 
+    #US Inflation, Personal consumption expenditures (PCE) per year
+    #Prepare data frame, set query parameters
+    snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
+               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+               .filter(col('DATE') >= '1972-01-01')
+               .filter(month(col('DATE')) == 1))
+    #Select columns, subtract 100 from value column to reference baseline
+    snow_df_pce_year = snow_df_pce.select(year(col('DATE')).alias('"Year"'), (col('VALUE')-100).alias('PCE')).sort('"Year"', ascending=False)
+    #convert to pandas dataframe 
+    pd_df_pce_year = snow_df_pce_year.to_pandas()
+    #round the PCE series
+    pd_df_pce_year["PCE"] = pd_df_pce_year["PCE"].round(2)
+  
     #create metrics
-   latest_pce_year = pd_df_pce_year.loc[0]["Year"].astype('int')
-   latest_pce_value = pd_df_pce_year.loc[0]["PCE"]
-   delta_pce_value = latest_pce_value - pd_df_pce_year.loc[1]["PCE"]
+    latest_pce_year = pd_df_pce_year.loc[0]["Year"].astype('int')
+    latest_pce_value = pd_df_pce_year.loc[0]["PCE"]
+    delta_pce_value = latest_pce_value - pd_df_pce_year.loc[1]["PCE"]
 
-   #Use Snowflake UDF for Model Inference
-   snow_df_predict_years = session.create_dataframe([[int(latest_pce_year+1)], [int(latest_pce_year+2)],[int(latest_pce_year+3)]], schema=["Year"])
-   pd_df_pce_predictions = snow_df_predict_years.select(col("year"), call_udf("predict_pce_udf", col("year")).as_("pce")).sort(col("year")).to_pandas()
-   pd_df_pce_predictions.rename(columns={"YEAR": "Year"}, inplace=True)
-   #round the PCE prediction series
-   pd_df_pce_predictions["PCE"] = pd_df_pce_predictions["PCE"].round(2).astype(float)-100
-
-
-   #Combine actual and predictions dataframes
-   pd_df_pce_all = (
-       pd_df_pce_year.set_index('Year').sort_index().rename(columns={"PCE": "Actual"})
-       .append(pd_df_pce_predictions.set_index('Year').sort_index().rename(columns={"PCE": "Prediction"}))
-   )
-
-
-   #Data per quarter
-   snow_df_pce_q = (session.table("ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA")
-                           .filter(col('Table Name') == 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product')
-                           .filter(col('Indicator Name') == 'Personal consumption expenditures (PCE)')
-                           .filter(col('"Frequency"') == 'Q')
-                           .select(year(col('"Date"')).alias('Year'),
-                                   call_builtin("date_part", 'quarter', col('"Date"')).alias('"Quarter"') ,
-                                   (col('"Value"')-100).alias('PCE'))
-                           .sort('Year', ascending=False))
-
-
-   # by Major Type Of Product
-   snow_df_pce_all = (session.table("ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA")
-                       .filter(col('"Table Name"') == 'Price Indexes For Personal Consumption Expenditures By Major Type Of Product')
-                       .filter(col('"Indicator Name"') != 'Personal consumption expenditures (PCE)')
-                       .filter(col('"Frequency"') == 'A')
-                       .filter(col('"Date"') >= '1972-01-01')
-                       .select('"Indicator Name"', year(col('"Date"')).alias('Year'), (col('"Value"')-100).alias('PCE') ))
+    #Use Snowflake UDF for Model Inference
+    snow_df_predict_years = session.create_dataframe([[int(latest_pce_year+1)], [int(latest_pce_year+2)],[int(latest_pce_year+3)]], schema=["Year"])
+    pd_df_pce_predictions = snow_df_predict_years.select(col("year"), call_udf("predict_pce_udf", col("year")).as_("pce")).sort(col("year")).to_pandas()
+    pd_df_pce_predictions.rename(columns={"YEAR": "Year"}, inplace=True)
+    #round the PCE prediction series
+    pd_df_pce_predictions["PCE"] = pd_df_pce_predictions["PCE"].round(2).astype(float)-100
+    print(pd_df_pce_predictions)
+    
+    #Combine actual and predictions dataframes
+    pd_df_pce_all = (
+        pd_df_pce_year.set_index('Year').sort_index().rename(columns={"PCE": "Actual"})
+        ._append(pd_df_pce_predictions.set_index('Year').sort_index().rename(columns={"PCE": "Prediction"}))
+    )
+   
+    #Data per quarter
+    snow_df_pce_q = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
+                     .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+                     .filter(month(col('DATE')).in_(lit(1), lit(4), lit(7), lit(10)))
+                     .select(year(col('DATE')).alias('"Year"'), 
+                             call_builtin("date_part", 'quarter', col('DATE')).alias('"Quarter"'),
+                             (col('VALUE')-100).alias('PCE'))
+                            .sort('"Year"', ascending=False)) 
 ```
 
 
@@ -489,44 +489,42 @@ In this step, you'll add...
 
 
 ``` python
-   # Add header and a subheader
-   st.title("Knoema: Economical Data Atlas")
-   st.header("Powered by Snowpark for Python and Snowflake Marketplace | Made with Streamlit")
-   st.subheader("Personal consumption expenditures (PCE) over the last 25 years, baseline is 2012")
-   # Add an explanation on the PCE Price Index that can be expanded
-   with st.expander("What is the Personal Consumption Expenditures Price Index?"):
-       st.write("""
-        The prices you pay for goods and services change all the time – moving at different rates and even in different directions. Some prices may drop while others are going up. A price index is a way of looking beyond individual price tags to measure overall inflation (or deflation) for a group of goods and services over time.
+    # Add header and a subheader
+    st.title("Cybersyn: Financial & Economic Essentials")
+    st.header("Powered by Snowpark for Python and Snowflake Marketplace | Made with Streamlit")
+    st.subheader("Personal consumption expenditures (PCE) over the last 25 years, baseline is 2012")
+    with st.expander("What is the Personal Consumption Expenditures Price Index?"):
+        st.write("""
+         The prices you pay for goods and services change all the time – moving at different rates and even in different directions. Some prices may drop while others are going up. A price index is a way of looking beyond individual price tags to measure overall inflation (or deflation) for a group of goods and services over time.
+         
+         The Personal Consumption Expenditures Price Index is a measure of the prices that people living in the United States, or those buying on their behalf, pay for goods and services.The PCE price index is known for capturing inflation (or deflation) across a wide range of consumer expenses and reflecting changes in consumer behavior.
+        """)
 
+    # Use columns to display metrics for global value and predictions
+    col11, col12, col13 = st.columns(3)
+    with st.container():
+        with col11:
+            st.metric("PCE in " + str(latest_pce_year), round(latest_pce_value), round(delta_pce_value), delta_color=("inverse"))
+        with col12:
+            st.metric("Predicted PCE for " + str(int(pd_df_pce_predictions.loc[0]["Year"])), round(pd_df_pce_predictions.loc[0]["PCE"]), 
+                round((pd_df_pce_predictions.loc[0]["PCE"] - latest_pce_value)), delta_color=("inverse"))
+        with col13:
+            st.metric("Predicted PCE for " + str(int(pd_df_pce_predictions.loc[1]["Year"])), round(pd_df_pce_predictions.loc[1]["PCE"]), 
+                round((pd_df_pce_predictions.loc[1]["PCE"] - latest_pce_value)), delta_color=("inverse"))
 
-        The Personal Consumption Expenditures Price Index is a measure of the prices that people living in the United States, or those buying on their behalf, pay for goods and services.The PCE price index is known for capturing inflation (or deflation) across a wide range of consumer expenses and reflecting changes in consumer behavior.
-       """)
-   # Use columns to display metrics for global value and predictions
-   col11, col12, col13 = st.columns(3)
-   with st.container():
-       with col11:
-           st.metric("PCE in " + str(latest_pce_year), round(latest_pce_value), round(delta_pce_value), delta_color=("inverse"))
-       with col12:
-           st.metric("Predicted PCE for " + str(int(pd_df_pce_predictions.loc[0]["Year"])), round(pd_df_pce_predictions.loc[0]["PCE"]),
-               round((pd_df_pce_predictions.loc[0]["PCE"] - latest_pce_value)), delta_color=("inverse"))
-       with col13:
-           st.metric("Predicted PCE for " + str(int(pd_df_pce_predictions.loc[1]["Year"])), round(pd_df_pce_predictions.loc[1]["PCE"]),
-               round((pd_df_pce_predictions.loc[1]["PCE"] - latest_pce_value)), delta_color=("inverse"))
+    # Barchart with actual and predicted PCE
+    st.bar_chart(data=pd_df_pce_all.tail(25), width=0, height=0, use_container_width=True)
 
-   # Barchart with actual and predicted PCE
-   st.bar_chart(data=pd_df_pce_all.tail(25), width=0, height=0, use_container_width=True)
+    # Display interactive chart to visualize PCE per quarter 
+    with st.container():
+        year_selection = st.selectbox('Select year', pd_df_pce_year['Year'].head(25),index=3 )
+        pd_df_pce_q = snow_df_pce_q.filter(col('"Year"') == year_selection).sort(col('"Quarter"')).to_pandas().set_index('Quarter')
+        with st.expander("Price Indexes For Personal Consumption Expenditures per Quarter"):
+             st.bar_chart(data=pd_df_pce_q['PCE'], width=0, height=500, use_container_width=True)
 
-   # Display interactive chart to visualize PCE per quarter and per major type of product.
-   with st.container():
-
-
-       year_selection = st.selectbox('Select year', pd_df_pce_year['Year'].head(25),index=0 )
-       pd_df_pce_q = snow_df_pce_q.filter(col('Year') == year_selection).sort(col('"Quarter"')).to_pandas().set_index('Quarter')
-       with st.expander("Price Indexes For Personal Consumption Expenditures per Quarter"):
-            st.bar_chart(data=pd_df_pce_q['PCE'], width=0, height=500, use_container_width=True)
-       pd_df_pce_all = snow_df_pce_all.filter(col('Year') == year_selection).sort(col('"Indicator Name"')).to_pandas().set_index('Indicator Name')
-       st.write("Price Indexes For Personal Consumption Expenditures By Major Type Of Product")
-       st.bar_chart(data=pd_df_pce_all['PCE'], width=0, height=500, use_container_width=True)
+if __name__ == "__main__":
+    session = create_session_object()
+    load_data(session) 
 ```
 
 
@@ -566,5 +564,5 @@ In the application:
 3. The quarterly PCE values are collapsed by default, you can expand them by clicking the “+”
 
 
-![alt_text](assets/Picture6.png)
+![alt_text](assets/streamlit-output.png)
 

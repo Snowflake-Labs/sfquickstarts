@@ -637,3 +637,4 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [OpenAI's ChatCompetion feature](https://platform.openai.com/docs/api-reference/chat)
 * [Generative AI and Streamlit: A perfect match](https://blog.streamlit.io/generative-ai-and-streamlit-a-perfect-match/)
 * [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
+* [Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/data-exploration-llm-chatbot/)
