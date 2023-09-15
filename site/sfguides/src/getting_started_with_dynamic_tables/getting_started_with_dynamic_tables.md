@@ -406,6 +406,13 @@ From Snowsight you can monitor Dynamic Table DAG, refresh history, preview data,
 
 ![dahsboard alerts](assets/dashboard2.jpg)
 ![dahsboard alerts](assets/ref_history.jpg)
+
+You can also monitor any issues with the refresh using the two table functions in information schema -
+
+[DYNAMIC_TABLE_REFRESH_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/dynamic_table_refresh_history)
+
+[DYNAMIC_TABLE_GRAPH_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/dynamic_table_graph_history)
+
 ### Cost
 
 Dynamic tables incur cost in three ways: [details here](https://docs.snowflake.com/en/user-guide/dynamic-tables-cost)
@@ -415,42 +422,11 @@ Dynamic tables incur cost in three ways: [details here](https://docs.snowflake.c
 
 Dynamic tables require a virtual warehouse to perform updates. Snowflake recommends testing dynamic tables using dedicated warehouses in order to understand related costs.
 
-### Monitor
-
-
-
-
-
-
-
+Dynamic tables cost is driven by frequency of data refresh and on the frequency of data refreshes in bae tables. REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run Show Dynamic table command or check dynamic table dashboard to determine your DT refresh mode. Check [this page](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries) for more details.
 
 <!------------->
 ## logical pause
 
-
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Puppy](assets/SAMPLE.jpg)
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
 
 <!-- ------------------------ -->
 ## Conclusion
