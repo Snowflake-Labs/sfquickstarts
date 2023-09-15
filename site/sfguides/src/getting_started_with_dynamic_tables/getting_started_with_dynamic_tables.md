@@ -386,7 +386,7 @@ ALTER ALERT alert_low_inv SUSPEND;
 ## Monitor Dynamic Tables: Cost, DAG and Dashboard
 Duration: 4
 
-
+### Monitor DAG and dashboard
 Snowflake makes it easier to monitor your data pipeline.
 
 You can also monitor Dynamic Tables using the DYNAMIC_TABLE_REFRESH_HISTORY() function in INFORMATION_SCHEMA. This is sample SQL for dynamic tables in our data pipeline
