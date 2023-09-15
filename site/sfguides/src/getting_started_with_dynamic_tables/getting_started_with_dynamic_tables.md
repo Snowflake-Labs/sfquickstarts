@@ -31,7 +31,7 @@ In this quickstart we will build a change data capture (CDC) pipeline and data v
 ### What You’ll Learn 
 - How to create a declarative data pipeline DAG using Dynamic tables
 - How to pause and resume the data pipeline
-- How to monitor Dynamic tables for continous data pipeline
+- How to monitor Dynamic tables for continuous data pipeline
 - How to automate the data validation process using Dynamic tables
 - How to setup data quality check alerts
 
@@ -39,7 +39,7 @@ In this quickstart we will build a change data capture (CDC) pipeline and data v
 - A [Snowflake](https://trial.snowflake.com) Account 
 
 ### What You’ll Build 
-- A continous data pipeline using Dynamic tables
+- A continuous data pipeline using Dynamic tables
 - Data validation automation and alerts
 
 <!-- ------------------------ -->
@@ -48,7 +48,7 @@ Duration: 4
 
 - **Problem Statement**
 
-We are data engineers at an online retail company, where a wide array of products are sold. In this role, we collect customer purchase and product sales data, initially storing it in a raw data table. Our primary tasks involve creating a continous data pipeline for generating sales reports and validate the data for an alert system to notify the team of potential low inventory levels for specific products
+We are data engineers at an online retail company, where a wide array of products are sold. In this role, we collect customer purchase and product sales data, initially storing it in a raw data table. Our primary tasks involve creating a continuous data pipeline for generating sales reports and validate the data for an alert system to notify the team of potential low inventory levels for specific products. 
 
 - **Data Pipeline Architecture**
 
@@ -56,9 +56,9 @@ We are data engineers at an online retail company, where a wide array of product
 
 - **Sample data**: 
 
-We will use python "Faker" library to generate some test data required for this project. In order to run this python code we will buiild and use [Python UDTF](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
+We will use the Python "Faker" library to generate some test data required for this project. You don't need to learn python to use Dynamic Tables, it's only used to generate sample datasets. In order to run this python code we will build and use [Python UDTF](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
 
-We are going to build our lab in a database call "demo" and schema name "dt_demo", so go to your Snowflake account and open a worksheet and write or paste this code. Feel free to use any database if "demo" database is already in use or you don't have access to it.
+We are going to build our lab in a database called "demo" and schema name "dt_demo", so go to your Snowflake account and open a worksheet and write or paste this code. Feel free to use any database if "demo" database is already in use or you don't have access to it.
 
 Open a new worksheet and call it setup
 
@@ -67,7 +67,7 @@ CREATE DATABASE IF NOT EXISTS DEMO;
 CREATE SCHEMA DEMO.DT_DEMO;
 ```
 
-Once the database is created, we will create 3 UDTF to generate our source data. First table is **cust_info** and insert 1000 customers into it using this new Python UDTF.
+Once the database is created, we will create 3 UDTF to generate our source data. First table is **CUST_INFO** and insert 1000 customers into it using this new Python UDTF.
 
 ```
 create or replace function gen_cust_info(num_records number)
@@ -100,7 +100,7 @@ create or replace table cust_info as select * from table(gen_cust_info(1000)) or
 
 ```
 
-Next table is **prod_stock_inv** and insert 100 products inventory into it using this new Python UDTF.
+Next table is **PROD_STOCK_INV** and insert 100 products inventory into it using this new Python UDTF.
 
 ```
 create or replace function gen_prod_inv(num_records number)
@@ -140,7 +140,7 @@ $$;
 create or replace table prod_stock_inv as select * from table(gen_prod_inv(100)) order by 1;
 ```
 
-Next table is **salesdata** to store raw product sales by customer and purchase date 
+Next table is **SALESDATA** to store raw product sales by customer and purchase date 
 
 
 ```
@@ -244,7 +244,7 @@ from
 ;
 ```
 
-Looking good, we will see what **DOWNSTREAM** means here in just a minute. lets run some quick sanity checks and hydrate this table by manually refreshing the DT.
+Looking good, we will see what **DOWNSTREAM** means here in just a minute. let's run some quick sanity checks and hydrate this table by manually refreshing the DT.
 
 ```
 alter dynamic table customer_sales_data_history refresh;
@@ -254,7 +254,7 @@ select * from customer_sales_data_history limit 10;
 select count(*) from customer_sales_data_history;
 ```
 
-Now, lets combine these results with product table and create a SCD TYPE 2 transformation using window function "LEAD", it gives us the subsequent rows in the same result set to build a TYPE 2 transformation.
+Now, let's combine these results with the product table and create a SCD TYPE 2 transformation using window the function "LEAD", it gives us the subsequent rows in the same result set to build a TYPE 2 transformation.
 
 ```
 CREATE OR REPLACE DYNAMIC TABLE salesreport
@@ -283,19 +283,19 @@ AS
 
 ```
 
-Wait for a minute to check the results in the salesreport table or refresh the DT manually.
+Wait for a minute to check the results in the **salesreport** table or refresh the DT manually.
 
 ```
 select * from salesreport limit 10;
 select count(*) from salesreport;
 ```
 
-So, we just created a DAG using Dynamic Tables. It runs whenever there is data in the upstream pipeline(raw base tables), this is made possible by setting the LAG to "DOWNSTREAM". Dynamic tables lag or target lag can defined in terms of time or dependency [referred from other dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag)
+That’s it, we created a DAG using Dynamic Tables. It runs whenever there is data in the upstream pipeline(raw base tables), this is made possible by setting the LAG to "DOWNSTREAM". Dynamic tables lag or target lag can defined in terms of time or dependency [referred from other dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag)
 
 <!-- ------------------------ -->
 ## Usecase: data validation using Dynamic table
 
-The DAG that we created above will build our data pipeline but there are many use cases of DT, like creating data validation checks or data quality etc. In our data set, we want to know if a product is running low on inventory, lets say less than 10%
+The DAG that we created above will build our data pipeline but there are many use cases of DT, like creating data validation checks or data quality etc. In our data set, we want to know if a product is running low on inventory, let's say less than 10%
 
 ```
 CREATE OR REPLACE DYNAMIC TABLE PROD_INV_ALERT
@@ -317,12 +317,14 @@ AS
 alter dynamic table prod_inv_alert refresh;
 
 ```
-Now lets check if there are any products that has low inventory
+
+Now let's check if there are any products that has low inventory
 
 ```
 -- check products with low inventory and alert
 select * from prod_inv_alert where percent_unitleft < 10;
 ```
+
 [Snowflake Alerts](https://docs.snowflake.com/en/user-guide/alerts) are now in Preview. This can help you send email alerts to your product procurement and inventory team to restock the required product.
 
 ```
@@ -416,23 +418,36 @@ You can also monitor any issues with the refresh using the two table functions i
 ### Cost
 
 Dynamic tables incur cost in three ways: [details here](https://docs.snowflake.com/en/user-guide/dynamic-tables-cost)
-- Storage: DT materializes the results and saves it just like a noraml snoflake tables
+- Storage: DT materializes the results and saves it just like a normal Snowflake tables
 - Cloud service compute: You will only incur this if daily cloud service cost is over 10% of your bill (very very rare)
 - Warehouse compute cost: this is associated with the warehouse you use with Dynamic Table. This is only used if there is data to be processed upstream from base tables
 
 Dynamic tables require a virtual warehouse to perform updates. Snowflake recommends testing dynamic tables using dedicated warehouses in order to understand related costs.
 
-Dynamic tables cost is driven by frequency of data refresh and on the frequency of data refreshes in bae tables. REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run Show Dynamic table command or check dynamic table dashboard to determine your DT refresh mode. Check [this page](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries) for more details.
+Dynamic tables cost is driven by frequency of data refreshes in base tables and target LAG. REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run the Show Dynamic table command or check dynamic table dashboard to determine your DT refresh mode. Check [this page](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries) for more details.
 
-<!------------->
-## logical pause
+Dynamic tables support Time Travel, Replication, Governance, Masking, Tagging etc. just like a standard Snowflake table.
 
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
+Duration: 2
 
-Work in progress
+Dynamic Tables are a new kind of Snowflake table which is defined as a query and continually and automatically maintains the result of that query as a table. It's extremely flexible and we want you to start thinking of Dynamic tables as the easiest and default way of creating data pipelines. Some top use cases of DTs are -
+
+- Merging CDC data continuously into target tables with low latency
+- Slowly Changing Dimensions 
+- Continuous data aggregation & summarization from multiple sources
+- Filtering data by ID in raw tables into separate tables and sharing to clients 
+- Dimensional modeling, medallion architecture
+- Data quality validation and monitoring
+- Aggregation, Joins, grouping of data on reference data sets using the newly arrived data
+- Joins on multiple table and flattening of nested data
+
 
 ### What we've covered
---work in progress
+- Creating and managing Dynamic tables
+- Using UDTF in a dynamic table
+- Creating data validation rule using Dynamic tables
+- Alerting on those rule
+- Monitoring Dynamic table using dashboard and SQL
