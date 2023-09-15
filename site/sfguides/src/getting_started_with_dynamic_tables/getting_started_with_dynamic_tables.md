@@ -404,8 +404,8 @@ You can use Snowsight GUI to visualize and monitor the directed acyclic graph (D
 
 From Snowsight you can monitor Dynamic Table DAG, refresh history, preview data, refresh mode, columns and table ddl etc
 
-![dahsboard alerts](assets/dashboard.jpg)
-
+![dahsboard alerts](assets/dashboard2.jpg)
+![dahsboard alerts](assets/ref_history.jpg)
 ### Cost
 
 Dynamic tables incur cost in three ways: [details here](https://docs.snowflake.com/en/user-guide/dynamic-tables-cost)
