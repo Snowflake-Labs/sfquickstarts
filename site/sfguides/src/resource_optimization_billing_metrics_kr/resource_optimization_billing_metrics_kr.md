@@ -507,7 +507,7 @@ Account_Usage
 #### SQL
 
 ```sql
-TSELECT 
+SELECT 
 
 TO_DATE(START_TIME) as DATE
 ,DATABASE_NAME
