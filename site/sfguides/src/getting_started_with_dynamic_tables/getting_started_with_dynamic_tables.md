@@ -404,7 +404,7 @@ You can use Snowsight GUI to visualize and monitor the directed acyclic graph (D
 
 From Snowsight you can monitor Dynamic Table DAG, refresh history, preview data, refresh mode, columns and table ddl etc
 
-![dahsboard alerts](assets/dashboard2.jpg)
+![dahsboard alerts](assets/dashboard2.jpeg)
 ![dahsboard alerts](assets/ref_history.jpg)
 
 You can also monitor any issues with the refresh using the two table functions in information schema -
