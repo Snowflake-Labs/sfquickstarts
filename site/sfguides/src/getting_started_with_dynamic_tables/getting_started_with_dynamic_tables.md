@@ -358,7 +358,7 @@ ALTER ALERT alert_low_inv RESUME;
 
 ![show alerts](assets/alert.jpg)
 
-These alerts will only run if there is new data in the dynamic table which will only have products that are running on low inventory. So, you see how easy it is to manage and maintain this in Snowflake. 
+These alerts will only run if there is new data in the dynamic table (low inventory products). So, its super easy to manage and maintain alerts in Snowflake on live data. 
 
 You can monitor, resume or pause alerts.
 
@@ -381,19 +381,46 @@ ALTER ALERT alert_low_inv SUSPEND;
 ```
 
 <!-- ------------------------ -->
-## Monitor Dynamic Tables: Dashboard and DAG
+## Monitor Dynamic Tables: Cost, DAG and Dashboard
 Duration: 4
+
+
+Snowflake makes it easier to monitor your data pipeline.
+
+You can also monitor Dynamic Tables using the DYNAMIC_TABLE_REFRESH_HISTORY() function in INFORMATION_SCHEMA. This is sample SQL for dynamic tables in our data pipeline
 
 ```
 SELECT * 
 FROM 
     TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY())
 WHERE 
-    NAME IN ('SALESREPORT','CUSTOMER_SALES_DATA_HISTORY','PROD_INV_ALERT')
-    AND REFRESH_ACTION != 'NO_DATA'
+    NAME IN ('SALESREPORT','CUSTOMER_SALES_DATA_HISTORY','PROD_INV_ALERT','CUMULATIVE_PURCHASE')
+    -- AND REFRESH_ACTION != 'NO_DATA'
 ORDER BY 
     DATA_TIMESTAMP DESC, REFRESH_END_TIME DESC LIMIT 10;
 ```
+
+You can use Snowsight GUI to visualize and monitor the directed acyclic graph (DAG) of your pipeline. Go to **Data > Databases > DEMO > DT_DEMO > Dynamic Tables**
+
+From Snowsight you can monitor Dynamic Table DAG, refresh history, preview data, refresh mode, columns and table ddl etc
+
+![dahsboard alerts](assets/dag2.jpg)
+
+### Cost
+
+Dynamic tables incur cost in three ways: [details here](https://docs.snowflake.com/en/user-guide/dynamic-tables-cost)
+- Storage: DT materializes the results and saves it just like a noraml snoflake tables
+- Cloud service compute: You will only incur this if daily cloud service cost is over 10% of your bill (very very rare)
+- Warehouse compute cost: this is associated with the warehouse you use with Dynamic Table. This is only used if there is data to be processed upstream from base tables
+
+Dynamic tables require a virtual warehouse to perform updates. Snowflake recommends testing dynamic tables using dedicated warehouses in order to understand related costs.
+
+### Monitor
+
+
+
+
+
 
 
 
