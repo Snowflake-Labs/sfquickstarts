@@ -403,6 +403,71 @@ ALTER ALERT alert_low_inv SUSPEND;
 ```
 
 <!-- ------------------------ -->
+## Dynamic Table using Snowpark UDTF
+
+Using programming languages such as Python is a common practice in Data Engineering for constructing data pipelines. If you're considering migrating an existing data pipeline based on Python, Java, or Scala to Snowflake, Snowpark can be a valuable tool. Snowpark supports the creation of Python-based transformations through user-defined functions.
+
+In this example, we'll demonstrate how to build a cumulative total of customer account balances each month and leverage this information to identify any instances of customers exceeding their set limits in the CUST_INFO table.
+
+
+```
+CREATE OR REPLACE FUNCTION sum_table (INPUT_NUMBER number)
+  returns TABLE (running_total number)
+  language python
+  runtime_version = '3.8'
+  handler = 'gen_sum_table'
+as
+$$
+
+# Define handler class
+class gen_sum_table :
+
+  ## Define __init__ method ro initilize the variable
+  def __init__(self) :    
+    self._running_sum = 0
+  
+  ## Define process method
+  def process(self, input_number: float) :
+    # Increment running sum with data from the input row
+    new_total = self._running_sum + input_number
+    self._running_sum = new_total
+
+    yield(new_total,)
+  
+$$
+;
+```
+
+This function computes the cumulative total and can be seamlessly incorporated into any SQL code or applied to any table as a table function. It's flexibile and allows us to feed any data partition, making it highly adaptable to any "cumulative total" use case. Let's partition this total by Customer and Month using dynamic table.
+
+```
+CREATE OR REPLACE DYNAMIC TABLE cumulative_purchase
+    LAG = '1 MINUTE'
+    WAREHOUSE=lab_s_wh
+AS
+    select 
+        month(creationtime) monthNum,
+        year(creationtime) yearNum,
+        customer_id, 
+        saleprice,
+        running_total 
+    from 
+        salesreport,
+        table(sum_table(saleprice) over (partition by creationtime,customer_id order by creationtime, customer_id))
+       
+;
+```
+Results,
+
+```
+select * from  cumulative_purchase limit 10;
+```
+
+Similar results can be achieved using complex SQL queries, but it becomes more versatile and modular when implemented as a Python User-Defined Function (UDF).
+
+![cumulative sum](assets/cs.jpg)
+
+<!-- ------------------------ -->
 ## Monitor Dynamic Tables: Cost, DAG and Dashboard
 Duration: 4
 
