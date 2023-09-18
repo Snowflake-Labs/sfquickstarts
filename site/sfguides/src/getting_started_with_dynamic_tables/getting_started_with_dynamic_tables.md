@@ -437,7 +437,9 @@ You can also monitor any issues with the refresh using the two table functions i
 
 **Few tips for monitoring Dynamic Tables -**
 
-You should monitor Dynamic Tables for a few runs and verify if the refresh cycles are as desired (full or incremental). Keep in mind that any changes to the base tables DDL will most certainly impact the performance or refresh cycles of the Dynamic tables just like any other data pipeline. In few cases DT defaults to Full refresh like if you have masking policy on base tables, lateral flatten or some other non deterministic functions like UDTF.
+- You should monitor Dynamic Tables for a few runs and verify if the refresh cycles are as desired (full or incremental). 
+- Note that any changes to the base tables DDL will most certainly impact the performance or refresh cycles of the Dynamic tables just like any other data pipeline. 
+- In some cases DT defaults to full refresh like if you have masking policy on base tables, lateral flatten or some other non deterministic functions like UDTF.
 
 
 ### SUSPEND and RESUME Dynamic Tables
