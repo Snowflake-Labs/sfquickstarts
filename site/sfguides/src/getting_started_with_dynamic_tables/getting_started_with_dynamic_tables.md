@@ -190,9 +190,7 @@ class genCustPurchase:
 
 $$;
 
-
-
-select * from table(gen_cust_purchase(10,1));
+-- Create table and insert records 
 create or replace table salesdata as select * from table(gen_cust_purchase(10000,10));
 ```
 
@@ -289,6 +287,28 @@ Wait for a minute to check the results in the **salesreport** table or refresh t
 select * from salesreport limit 10;
 select count(*) from salesreport;
 ```
+
+### Test
+
+Let's test this DAG by adding some raw data in the base tables.
+
+```
+-- Add new records
+insert into salesdata select * from table(gen_cust_purchase(10000,2));
+
+-- Check raw base table
+select count(*) from salesdata;
+
+-- Check Dynamic Tables
+select count(*) from customer_sales_data_history;
+select count(*) from salesreport;
+select count(*) from prod_inv_alert;
+
+select * from prod_inv_alert where percent_unitleft < 10;
+
+```
+
+![DT After Test](assets/dt_after.jpg)
 
 That’s it, we created a DAG using Dynamic Tables. It runs whenever there is data in the upstream pipeline(raw base tables), this is made possible by setting the LAG to "DOWNSTREAM". Dynamic tables lag or target lag can defined in terms of time or dependency [referred from other dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag)
 
@@ -414,6 +434,26 @@ You can also monitor any issues with the refresh using the two table functions i
 [DYNAMIC_TABLE_REFRESH_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/dynamic_table_refresh_history)
 
 [DYNAMIC_TABLE_GRAPH_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/dynamic_table_graph_history)
+
+**Few tips for monitoring Dynamic Tables -**
+
+You should monitor Dynamic Tables for a few runs and verify if the refresh cycles are as desired (full or incremental). Keep in mind that any changes to the base tables DDL will most certainly impact the performance or refresh cycles of the Dynamic tables just like any other data pipeline. In few cases DT defaults to Full refresh like if you have masking policy on base tables, lateral flatten or some other non deterministic functions like UDTF.
+
+
+### SUSPEND and RESUME Dynamic Tables
+
+```
+-- Resume the data pipeline
+alter dynamic table customer_sales_data_history RESUME;
+alter dynamic table salesreport RESUME;
+alter dynamic table prod_inv_alert RESUME;
+
+-- Suspend the data pipeline
+alter dynamic table customer_sales_data_history SUSPEND;
+alter dynamic table salesreport SUSPEND;
+alter dynamic table prod_inv_alert SUSPEND;
+
+```
 
 ### Cost
 
