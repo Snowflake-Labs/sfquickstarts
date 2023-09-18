@@ -23,14 +23,15 @@ st.set_page_config(
 # Create Session object
 def create_session_object():
     connection_parameters = {
-   "account": "SFSENORTHAMERICA_DEMO222",
-   "user": "vinay",
-   "password": "Vigyan2020",
-   "warehouse": "compute_wh",
-   "role": "accountadmin",
-   "database": "SUMMIT_HOL",
-   "schema": "PUBLIC"
-   }
+        "account": "<account_identifier>",
+        "user": "<username>",
+        "password": "<password>",
+        "warehouse": "COMPUTE_WH",
+        "role": "ACCOUNTADMIN",
+        "database": "SUMMIT_HOL",
+        "schema": "PUBLIC"
+    }
+
     session = Session.builder.configs(connection_parameters).create()
     print(session.sql('select current_account(), current_warehouse(), current_database(), current_schema()').collect())
     return session
