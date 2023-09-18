@@ -1,8 +1,8 @@
 id: getting_started_with_snowpark_for_python_streamlit
 summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
-categories: getting-started
+categories: featured,getting-started,data-engineering,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai
@@ -13,11 +13,11 @@ authors: Dash Desai
 
 Duration: 5
 
-This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
+This guide provides the instructions for building a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
 
-### What You'll Build
+### What You Will Build
 
-A Streamlit application.
+A Streamlit application that loads and visualizes the data loaded from Snowflake Marketplace using Snowpark for Python.
 
 ![App](assets/sis.gif)
 
@@ -39,17 +39,18 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
-### What You’ll Learn
+### What You Will Learn
 
 - How to access current Session object in Streamlit
 - How to load data from Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
+- How to run Streamlit in Snowflake
 
 ### Prerequisites
 
 - A [Snowflake](https://www.snowflake.com/) account in **AWS US Oregon**
-- Access to **Environment Data Atlas** dataset provided (for free) by **Knoema**.
+- Access to **Environment Data Atlas** dataset provided by **Knoema**.
   - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on **Get Data** and follow the instructions to gain access to ENVIRONMENT_DATA_ATLAS. In particular, we will use data in schema **ENVIRONMENT** from tables **EDGARED2019**, **WBWDI2019Jan**, and **UNENVDB2018**.
 
 <!-- ------------------------ -->
@@ -57,15 +58,15 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 
 Duration: 5
 
-Follow these steps to start creating Streamlit application in Snowsight.
+Follow these steps to start building Streamlit application in Snowsight.
 
-**Step 1.** Click on **Streamlit Apps** on the left navigation menu
+**Step 1.** Click on **Streamlit** on the left navigation menu
 
 **Step 2.** Click on **+ Streamlit App** on the top right
 
 **Step 3.** Enter **App name**
 
-**Step 4.** Select **Warehouse** and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
 
 **Step 5.** Click on **Create**
 
@@ -307,9 +308,9 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 - How to load data from Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
+- How to run Streamlit in Snowflake
 
 ### Related Resources
 
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
-- [Streamlit Docs](https://docs.streamlit.io/)

@@ -3,7 +3,7 @@ id: data_engineering_snowpark_streamlit_inegi
 summary: End-to-End from local to cloud using Snowapark Python Streamlit
 categories: getting-started
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: snowpark, Data engineering, python, streamlit, es
 

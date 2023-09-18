@@ -10,7 +10,7 @@ tags: Getting Started, Data Science, Data Engineering, Apps
 # Build a Snowflake Native App to Analyze Chairlift Sensor Data
 <!-- ------------------------ -->
 ## Introduction
-Duration: 1
+Duration: 2
 
 In this Quickstart, you'll build a Snowflake Native Application that can analyze sensor data from chairlifts at different locations at a ski resort. Let's explore the scenario from the perspective of the application provider and an application consumer.
 
@@ -55,7 +55,7 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Clone GitHub repository
-Duration: 1
+Duration: 2
 
 Start by cloning the following GitHub repository, which contains the code we'll need to build the app:
 
@@ -108,7 +108,7 @@ Here's an overview of the directories:
 
 <!-- ------------------------ -->
 ## The **src/** directory
-Duration: 3
+Duration: 4
 
 Let's take a deeper look at the **/src** directory for this app.
 
@@ -152,7 +152,7 @@ Here's an overview of what this folder contains:
 
 <!-- ------------------------ -->
 ## Set up account roles
-Duration: 3
+Duration: 4
 
 Let's start building the app. You'll first need to configure certain roles and permissions within your Snowflake account. This will allow you to view the app as an app admin (for configuring the application after installation and/or dismissing sensor warnings), or as an app viewer (perhaps someone in charge of equipment maintenance at the resort keeps an eye on the condition of chairlifts).
 
@@ -197,7 +197,7 @@ grant usage on warehouse chairlift_wh to role chairlift_viewer;
 
 <!-- ------------------------ -->
 ## Prepare objects in account
-Duration: 4
+Duration: 5
 
 Next, you'll run some scripts to setup some databases, schemas, and tables needed by the app.
 
@@ -439,7 +439,7 @@ call populate_reading();
 
 <!-- ------------------------ -->
 ## Create application package
-Duration: 2
+Duration: 3
 
 With the environment created, we can now create the application package for the app. You'll run a script that creates this package and does a few key things:
 
@@ -508,8 +508,8 @@ grant select on view package_shared.sensor_service_schedules
 
 
 <!-- ------------------------ -->
-## Upload native app source code
-Duration: 3
+## Upload app source code
+Duration: 4
 
 Now that the application package has been created, you'll upload the app's source code into the application package. To do this, you'll create a schema within the **chairlift_pkg** application package called **code**, and then create a stage within that schema called **source** (i.e., `chairlift_pkg.code.source`).
 
@@ -541,7 +541,7 @@ It is important to make sure the directory structures match so that any referenc
 
 <!-- ------------------------ -->
 ## Create the first version of the app
-Duration: 1
+Duration: 2
 
 Let's review what we've covered so far:
 
@@ -572,7 +572,7 @@ This SQL command returns the new patch number, which will be used when installin
 
 <!-- ------------------------ -->
 ## Install the application
-Duration: 2
+Duration: 3
 
 Now that the source code has been uploaded into the application package, we can now install the application. To install the application in the same account, the provider role needs to grant installation and development permissions to the consumer role. 
 
@@ -600,11 +600,11 @@ grant application role chairlift_app.app_viewer
 ```
 <!-- ------------------------ -->
 ## Setup the application
-Duration: 3
+Duration: 4
 
 With the application installed, you can now run the app in your Snowflake account!
 
-1. Set your role to **CHAIRLIFT_ADMMIN**.
+1. Set your role to **CHAIRLIFT_ADMIN**.
 
 2. Navigate to **Apps** within Snowsight (left hand side).
 
@@ -618,13 +618,13 @@ When running the app for the first time, you'll be prompted to create bindings. 
 
 > aside negative
 > 
->  **NOTE** Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to **ORGADMIN**, then navigate to "**Admin** -> **Billing & Terms**". Click **Enable** and then acknowledge and continue in the ensuing modal.
+>  **NOTE** Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to **ORGADMIN**, then navigate to "**Admin** -> **Billing & Terms**". Click **Enable** and then acknowledge and continue in the ensuing modal. If, when navigating back to the app as **CHAIRLIFT_ADMIN**, you are again prompted to accept the terms, refresh your browser.
 
 ![Anaconda](assets/anaconda.png)
 
 <!-- ------------------------ -->
 ## Run the application
-Duration: 5
+Duration: 6
 
 You can run the app as an app admin or or app viewer. See the sections below for the differences between the two roles.
 
@@ -642,19 +642,24 @@ You can run the app as an app admin or or app viewer. See the sections below for
 
 To run the app as an app admin, switch your role to **CHAIRLIFT_ADMIN**, and navigate back to the app. You should have access to the two views above, as well as one additional view:
 
-– **Configuration** – This part of the app exposes a toggle (checkbox) for enabling a warning generation task. If enabled, this task will generate mock sensor warnings. You can view these generated sensor warnings in the **Dashboard** view. To avoid prolonged credit consumption, be sure to disable (i.e., uncheck) the warning generation task.
+– **Configuration** – The app admin is granted the following capabilities within this tab:
 
-In this Quickstart, the **Configuration** tab is intended to be a demonstration of differing access privileges to the app, based on role. In practice, the app admin (or other roles) may have access to other areas or functionality of the app.
+  - **Enable a warning generation task** – A maintenance warning is generated for any sensor reading that falls outside of the manufacturer's specified range for that sensor type. Toggling this checkbox (i.e., clicking it) will call the warning generation task. Every 60 seconds, the task will scan all sensor readings and conditionally generate a warning based on the sensor's reading.  You can view these generated warnings in the **Dashboard** view. Because this task runs every 60 seconds, this task can consume a lot of credits in your Snowflake account.  To avoid prolonged credit consumption, be sure to disable (i.e., uncheck) the checkbox, or consider the button below the checkbox. Its functionality is described below.
+
+  - **Generate new warnings (takes a while)** button – Clicking this button will also call the warning generation task, but it will only run on-demand (i.e., only when the button is clicked, not every 60 seconds). As a result, it consumes fewer credits when compared to the continuously run task, but it may take a little longer to generate warnings. You can view these generated warnings in the **Dashboard** view. In addition, clicking the button will temporarily disable the checkbox above it.
+
+
+In this Quickstart, the **Configuration** tab is included to demonstrate how different roles in an account may be granted different privileges within the app. In practice, the app admin (or other roles) may have access to other areas or functionality of the app.
 
 > aside negative
 > 
->  **AVOID PROLONGED CREDIT CONSUMPTION** Enabling the warning generation task will generate mock sensor warnings. A task intended to check for newly-generated warnings will also run, and will continue to run as long as the warning generation task is enabled. **To avoid prolonged credit consumption, be sure to disable (i.e., uncheck) the warning generation task.**
+>  **AVOID PROLONGED CREDIT CONSUMPTION** Enabling warning generation via the checkbox will call a warning generation task every 60 seconds. **To avoid prolonged credit consumption, be sure to disable the warning generation task by unchecking the checkbox.**
 
 
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 0
+Duration: 1
 
 Congratulations! In just a few minutes, you built a Snowflake Native App that allows a consumer to generate maintenance-related insights based on raw sensor data from chairlifts they own at a ski resort. The app also grants select access to parts of the app depending on the Snowflake role selected.
 
