@@ -141,7 +141,8 @@ Head to your Azure Portal home screen and create an Azure OpenAI service if you 
 Click Next then leave it open to all networks for this lab. Continue to click next then create the service. Once the service is created, access the explorer from the service by clicking explore.
 ![](assets/openaiservice.png)
 
-You can familiarize yourself with the Azure AI Studio later, but for now click on the Models blade then select the gpt-35-turbo model and click deploy. Use the Auto-update to default Model version and name the deployment "gpt35turbo" and click create. The model should deploy in seconds. We will be using this out-of-the-box OpenAI model for this quickstart.
+You can familiarize yourself with the Azure AI Studio later, but for now click on the Models blade then select the most recent gpt-35-turbo model and click deploy. Use the Auto-update to default Model version and name the deployment "gpt35turbo" and click create. The model should deploy in seconds. We will be using this out-of-the-box OpenAI model for this quickstart.
+![](assets/openai_deployment.png)
 
 <!-- ------------------------ -->
 ## Build Prompt Flow
