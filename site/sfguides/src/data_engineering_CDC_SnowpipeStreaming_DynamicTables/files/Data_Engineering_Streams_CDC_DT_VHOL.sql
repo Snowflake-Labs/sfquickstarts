@@ -80,7 +80,6 @@ select
   --5.c) But There is More Than One Table in My Source System
   select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from ENG.CDC_STREAMING_TABLE;
 
-
 ----    6 Create Dynamic Tables
 
 --6.a) The Current State
