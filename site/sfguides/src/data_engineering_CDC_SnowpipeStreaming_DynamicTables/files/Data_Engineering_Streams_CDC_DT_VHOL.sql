@@ -80,11 +80,6 @@ select
   --5.c) But There is More Than One Table in My Source System
   select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from ENG.CDC_STREAMING_TABLE;
 
-  --5.d) We can also get metadata about the Client's Channels
-  --Specifically the offset token identifying the source's indicator of the last successfully-committed row.
-  show channels in table ENG.CDC_STREAMING_TABLE;
-
-
 
 ----    6 Create Dynamic Tables
 
