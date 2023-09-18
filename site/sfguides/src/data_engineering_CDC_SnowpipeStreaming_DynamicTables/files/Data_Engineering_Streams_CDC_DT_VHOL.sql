@@ -29,7 +29,6 @@ grant role PII_ALLOWED to user identifier($myname);
 --4.b) Create Warehouse
 create or replace warehouse VHOL_CDC_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
 grant all privileges on warehouse VHOL_CDC_WH to role VHOL;
-grant usage on warehouse VHOL_CDC_WH to role VHOL_CDC_AGENT;
 
 grant usage on warehouse VHOL_CDC_WH to role PII_ADMIN;
 grant usage on warehouse VHOL_CDC_WH to role PII_ALLOWED;
@@ -42,10 +41,11 @@ revoke all privileges on database VHOL_ENG_CDC from role ACCOUNTADMIN;
 grant ownership on database VHOL_ENG_CDC to role VHOL;
 
 use role VHOL;
+use database VHOL_ENG_CDC;
+create schema ENG;
 use VHOL_ENG_CDC.ENG;
 use warehouse VHOL_CDC_WH;
 grant usage on database VHOL_ENG_CDC to role VHOL_CDC_AGENT;
-create schema ENG;
 grant usage on schema ENG to role VHOL_CDC_AGENT;
 grant usage on database VHOL_ENG_CDC to role PUBLIC;
 grant usage on schema PUBLIC to role PUBLIC;
@@ -80,7 +80,7 @@ select
   --5.c) But There is More Than One Table in My Source System
   select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from ENG.CDC_STREAMING_TABLE;
 
-  --5.d) We can also get metadata about the Client application's Channel.
+  --5.d) We can also get metadata about the Client's Channels
   --Specifically the offset token identifying the source's indicator of the last successfully-committed row.
   show channels in table ENG.CDC_STREAMING_TABLE;
 
@@ -111,8 +111,6 @@ SELECT * EXCLUDE (score,action) from (
         RECORD_CONTENT:transaction:schema::varchar='PROD' AND RECORD_CONTENT:transaction:table::varchar='LIMIT_ORDERS'
 )
 WHERE score = 1 and action != 'DELETE';
-
-SELECT count(*) FROM ENG.LIMIT_ORDERS_CURRENT_DT;
 
 -- Wait for the lag (1 minute)
 SELECT count(*) FROM LIMIT_ORDERS_CURRENT_DT;
@@ -147,7 +145,6 @@ SELECT * EXCLUDE score from ( SELECT *,
     ))
 ;
 
-select  count(*) from LIMIT_ORDERS_SCD_DT;
 --wait the lag period (~ 1 minute)
 select  * from LIMIT_ORDERS_SCD_DT  limit 1000;
 
@@ -177,7 +174,9 @@ from (
 WHERE action != 'DELETE' group by ticker,position order by position,TOTAL_VALUE_USD DESC
 ;
 
--- You know to wait for the Lag by now
+-- You know to wait for the Lag by now, but you can refresh right away too
+alter DYNAMIC TABLE LIMIT_ORDERS_SUMMARY_DT refresh;
+
 select * from LIMIT_ORDERS_SUMMARY_DT where position='LONG' order by TOTAL_VALUE_USD;
 --We are tracking the 30 Dow Jones Industrial Average Stocks (both Long and Short Limit Orders)
 select  count(*) from LIMIT_ORDERS_SUMMARY_DT;
@@ -292,9 +291,12 @@ select * from PII.LIMIT_ORDERS_VW order by ORDERID_PII limit 1000;
 select * from PII.LIMIT_ORDERS_VW where ticker='MMM' and position='LONG' order by ORDERID_PII;
 select * from PII.LIMIT_ORDERS_VW limit 1000;
 
-----    8 Check Security
+--7.g)  Check Security
+use role VHOL;
+use schema VHOL_ENG_CDC.PII;
+select * from VHOL_ENG_CDC.PII.LIMIT_ORDERS_VW limit 1000;
 
---8.b) See how many transactions you have processed
+--8.a) See how many transactions you have processed
 use role VHOL;
 select count(*) from ENG.CDC_STREAMING_TABLE;
 
