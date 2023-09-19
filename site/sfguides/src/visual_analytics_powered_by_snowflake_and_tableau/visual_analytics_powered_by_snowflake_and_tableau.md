@@ -1116,7 +1116,7 @@ By clicking the blue pill that says 'Year(Date)', we can see multiple options fo
 
  ![A](assets/date_agg_options.png)
  <br>
- ![A](assets/change_week_agg.png)
+ ![A](assets/change_week_agg_result.png)
 <br>
 
 Now, let's split out the line chart further and break it down by City. We can add a third field to the visualization by adding 'City' to Color on the marks card. This will break out the data by each city and assign it a different color. You'll see the legend on the right hand side pop up. Let's also rename this sheet by clicking on the 'Sheet 2' label on the bottom bar and renaming it 'City Sales by Week'.
