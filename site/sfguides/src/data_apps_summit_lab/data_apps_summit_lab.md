@@ -359,7 +359,7 @@ To do this, we will create a new Streamlit app:
 
 From here you will see a full-fledge browser based development environment for developing your Streamlit web app! 
 
-Copy and paste the code below to run our web app for this lab:
+Copy and paste the code from the file `streamlit_in_snowflake.py` to run our web app for this lab:
 
 
 <button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/5c521382b44d3f584414497037c8b5d58d4432ed/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
@@ -367,9 +367,7 @@ Copy and paste the code below to run our web app for this lab:
 
 > aside positive
 > 
-> Note: When creating a new Streamlit inside Snowflake, you can share your web app with other Snowflake users! To do this, click `Share` in the top right of you Streamlit app and select other roles that you want to share with. 
-
-sdfsdfsdffd
+> Fun Fact: When creating a new Streamlit inside Snowflake, you can share your web app with other Snowflake users! To do this, click `Share` in the top right of you Streamlit app and select other roles that you want to share with. 
 
 
 ![alt_text](assets/streamlit-output.png)
