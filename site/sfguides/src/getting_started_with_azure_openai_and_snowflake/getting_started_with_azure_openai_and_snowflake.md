@@ -201,6 +201,8 @@ git clone https://github.com/Snowflake-Labs/sf-samples.git
 You may have to refresh the folder listing to see the new folder and openai.ipynb file that you will open. Your workspace should now look like this:
 ![](assets/notebook_orch.png)
 
+Navigate to the openai.ipynb and open it using your active compute instance.
+
 ### Slight Detour - Back to the Azure Portal
 
 In the AzureML workspace head to the Endpoint blade and verify that your Prompt Flow has deployed, note the name of the endpoint. Now go to the Azure Portal and find the AzureML Workspace we're working in and select 'Access Control (IAM)' the select Add and 'Add role assignment: ![](assets/addroleassignment.png)
