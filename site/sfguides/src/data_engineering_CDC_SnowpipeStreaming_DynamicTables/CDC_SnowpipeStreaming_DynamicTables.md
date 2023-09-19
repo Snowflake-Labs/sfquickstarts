@@ -212,7 +212,7 @@ You should see this:
 
 ![](assets/image4-e.png)
 
-If you get any errors / exceptions, read the error message closely and ask for help.  As this application is running on your desktop, you may be missing a prerequisite, have an older version of Java, have too restrictive user profile, or many other reasons.  Also check your snowflake.properties file to ensure you have the correct Account Name and Identifier set.
+If you get any errors / exceptions, read the error message closely and ask for help.  As this application is running on your desktop, you may be missing a prerequisite, have an older version of Java, have too restrictive user profile, or many other reasons.  Also check your snowflake.properties file to ensure you have the correct Account Name and Identifier set if you get connector errors.  If authentication issues, check and review your public key configuration.
 
 ## Streaming Records!
 Duration: 15
@@ -266,16 +266,8 @@ As you can see, it is very easy to work with Semi-Structured data.  Our upcoming
 ### c)  But There is More Than One Table in My Source System
 The CDC Agent could easily be capturing changes from more than one source table, lets prepare for that and write each dynamic table to only use the events received for our simulated Stock Limit Order stream.  These are the key fields to use:
 ```
-show channels in table ENG.CDC_STREAMING_TABLE;
-```
-
-### d)  We can also get metadata about the Client Channels
-Specifically the offset token identifying the source's indicator of the last successfully-committed row.
-```
 select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from CDC_STREAMING_TABLE;
 ```
-
-
 
 ## Create Dynamic Tables
 Duration: 15
