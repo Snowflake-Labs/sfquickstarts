@@ -196,9 +196,8 @@ Duration: 10
 Head back to your AzureML Workspace and click on the notebook blade and select open terminal and start/select your compute instance near the top of the screen. In the terminal run the below code to copy the notebook that will use to orchestrate inference.
 
 ```
-git clone https://github.com/sfquickstarts/tree/master/site/sfguides/src/getting_started_with_azure_openai_and_snowflake/assets/openai-nb
+git clone https://github.com/Snowflake-Labs/sf-samples.git
 ```
-
 You may have to refresh the folder listing to see the new folder and openai.ipynb file that you will open. Your workspace should now look like this:
 ![](assets/notebook_orch.png)
 
