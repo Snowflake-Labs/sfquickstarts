@@ -67,7 +67,7 @@ Duration: 8
 7. Test Streamlit installation: `streamlit hello`
 8. Create a directory on your local machine as a workspace, e.g. “PCE-Marketplace-Lab” and download the following files:
    
-   <button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/5c521382b44d3f584414497037c8b5d58d4432ed/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
+   <button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
 
 ---
 
@@ -362,7 +362,7 @@ From here you will see a full-fledge browser based development environment for d
 Copy and paste the code from the file `streamlit_in_snowflake.py` to run our web app for this lab:
 
 
-<button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/5c521382b44d3f584414497037c8b5d58d4432ed/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
+<button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
 
 
 > aside positive
