@@ -1,7 +1,7 @@
 author: Chandra Nayak & Madeline Lee
 id: visual_analytics_powered_by_snowflake_and_tableau
-summary: TastyByte Analytics Powered by Snowflake and Tableau
-categories: getting-started
+summary: Visual Analytics Powered by Snowflake and Tableau
+categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
