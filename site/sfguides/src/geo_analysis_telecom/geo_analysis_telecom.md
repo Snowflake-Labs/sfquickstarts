@@ -88,6 +88,27 @@ In order to use the packages provided by Anaconda inside Snowflake, you must ack
 * In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
 * If you agree to the terms, select `Acknowledge & Continue`.
 
+### Acknowledge the Snowflake Third Party Terms
+
+Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar. 
+
+### Open a New Worksheet, Choose Your Warehouse and create a Database
+
+* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
+* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
+
+<img src ='assets/geo_sf_carto_telco_17.png' width=700>
+
+
+First, create a new database and schema where we will store datasets in the Geography data type.
+
+
+```
+create or replace DATABASE GEOLAB;
+CREATE OR REPLACE schema GEOLAB.GEOGRAPHY;
+
+```
+
 ### Connection Snowflake and Carto
 
 Let's connect your Snowflake to CARTO so you can run and visualize the queries in the following exercises of this workshop.
@@ -186,16 +207,7 @@ Now that you understand how to get data from Marketplace, let's try another way 
 
 In this step, we're going to load data into the table from the local file. In this Quickstart, we will use a dataset with the districts' boundaries of the United Kingdom and the Netherlands, you can download the file using [this URL](https://sfquickstarts.s3.us-west-1.amazonaws.com/vhol_spatial_analysis_geometry_geography/uk_nl_districts.csv).
 
-First, create a new database and schema where we will store datasets in the Geography data type.
-
-
-```
-create or replace DATABASE GEOLAB;
-CREATE OR REPLACE schema GEOLAB.GEOGRAPHY;
-
-```
-
-As a second step, you will create an empty table where we will store boundary data.
+In this step, you will create an empty table where we will store boundary data.
 
 ```
 create or replace TABLE GEOLAB.GEOGRAPHY.UK_NL_DISTRICTS (
@@ -220,17 +232,7 @@ Voila! Now you have a table with the boundaries of districts in the UK and the N
 
 Duration: 10
 
-Now we will run different queries to understand how the `GEOGRAPHY` data type works in Snowflake. Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar. 
-
-
-### Open a New Worksheet and Choose Your Warehouse
-
-* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
-* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
-
-<img src ='assets/geo_sf_carto_telco_17.png' width=700>
-
-Now you are ready to discover the data types.
+Now we will run different queries to understand how the `GEOGRAPHY` data type works in Snowflake. First, open the worksheet you created earlier.
 
 ### The GEOGRAPHY data type
 
@@ -462,7 +464,7 @@ Run the following two queries:
 
 ```
 USE DATABASE GEOLAB;
-CREATE OR REPLACE FUNCTION PY_UNION_AGG(g1 array)
+CREATE OR REPLACE FUNCTION GEOLAB.GEOGRAPHY.PY_UNION_AGG(g1 array)
 returns geography
 language python
 runtime_version = 3.8
@@ -473,6 +475,7 @@ from shapely.ops import unary_union
 from shapely.geometry import shape, mapping
 def udf(g1):
     shape_union = unary_union([shape(i) for i in g1])
+    shape_union = shape_union.simplify(0.000001)
     return mapping(shape_union)
 $$;
 ```
@@ -492,7 +495,7 @@ Run the following two queries:
 CREATE OR REPLACE TABLE geolab.geography.uk_districts_coverage AS
 SELECT name,
        to_geography(st_asgeojson(boundary)) AS county_geom,
-       st_intersection(any_value(boundary), py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS geometry,
+       st_intersection(any_value(boundary), geolab.geography.py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS geometry,
        round(st_area(geometry)/st_area(any_value(boundary)), 2) AS coverage_ratio
 FROM
   (SELECT c.coverage AS coverage,
