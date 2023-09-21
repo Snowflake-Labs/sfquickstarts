@@ -3,7 +3,7 @@ summary: Snowpark for Pythonを使用したデータエンジニアリングとM
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning, ja
 authors: Dash Desai
 

@@ -12,13 +12,13 @@ tags: Data Engineering, Getting Started, DataStage, Data Integration
 <!-- ------------------------ -->
 ## Overview
  
-IBM DataStage is a world-class data integration tool that helps users build trusted data pipelines, orchestrate data across distributed landscapes, and move and transform data between cloud sources and data warehouses. It provides a native Snowflake connector, among many others, to write, read, and load data into Snowflake and integrate it into the data pipeline. This Quickstart demonstrates how to load enterprise data into Snowflake quickly and efficiently through IBM DataStage. Let's get going!   <br><br>
+IBM DataStage is a world-class data integration tool that helps users build trusted data pipelines, orchestrate data across distributed landscapes, and move and transform data between cloud sources and data warehouses. It provides a native Snowflake connector, among many others, to read, write, and load data into Snowflake and integrate it into the data pipeline. This Quickstart demonstrates how to load enterprise data into Snowflake quickly and efficiently through IBM DataStage. Let's get going!   <br><br>
 
 ![datastage_snowflake_banner.png](assets/datastage_snowflake_banner.png)<br><br>
 
 
 ### Prerequisites
-- Access to an [IBM CP4DaaS account](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[…]eu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF) (or free trial)
+- Access to an [IBM CP4DaaS account](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source=Exinfluencer&utm_content=CPDWW&utm_term=30AE5&utm_id=PRODUCT1ENCTA1&context=cpdaas&apps=cos%2Cdatastage&regions=us-south%2Ceu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF) (or free trial)
 - Access to a [Snowflake account](https://signup.snowflake.com/) (or free trial)
 
 ### What You'll Learn
@@ -74,7 +74,7 @@ Duration: 2
 ![datastage_snowflake_trydatastage](assets/datastage_snowflake_trydatastage.png)<br>
 
 To provision DataStage and begin working with the enterprise data, you must first sign up for Cloud Pak for Data as a Service and provision DataStage. 
-1. Visit the [DataStage Trial Page](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source[…]eu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF). 
+1. Visit the [DataStage Trial Page](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source=Exinfluencer&utm_content=CPDWW&utm_term=30AE5&utm_id=PRODUCT1ENCTA1&context=cpdaas&apps=cos%2Cdatastage&regions=us-south%2Ceu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF). 
 2. Check the box to agree to the terms.
 4. If you have an existing Cloud Pak for Data as a Service or IBM Cloud account, then follow these steps:
     - Click **Log in with your IBMid**.
@@ -369,6 +369,8 @@ To check whether the data was loaded data into Snowflake correctly, you can go b
 <!-- ------------------------ -->
 ## Conclusion and Resources 
 Congratulations on completing this lab! You've successfully used [DataStage](https://www.ibm.com/products/datastage?utm_content=SRCWW&p1=Search&p4=43700050328190090&p5=e&gclid=EAIaIQobChMIgqOUjdrj_QIVEgZ9Ch3rvwWwEAAYASAAEgLNzPD_BwE&gclsrc=aw.ds) to load enterprise data into Snowflake and perform [data transformations](https://video.ibm.com/playlist/650317) (of which there are hundreds of [pre-built objects](https://dataplatform.cloud.ibm.com/docs/content/dstage/com.ibm.swg.im.iis.ds.parjob.dev.doc/topics/processingdata.html?audience=wdp) in DataStage). <br>
+
+We would love your feedback on this Quickstart! Please submit any and all feedback using this [Feedback Form](http://s.alchemer.com/s3/Quickstart-Feedback-A-Data-Integration-Guide-Load-Banking-Data-into-Snowflake-with-IBM-DataStage). <br>
 
 ### **What You Learned**
 1. How to provision DataStage as a Service 

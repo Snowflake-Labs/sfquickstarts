@@ -371,6 +371,7 @@ We would love your feedback on this Quickstart! Please submit your feedback usin
 
 ### Related Resources
 
+- [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/visualize-snowflake-data-in-a-django-web-app/)
 - [Official Django documentation](https://docs.djangoproject.com/en/4.1/)
 - [Native Programmatic Interfaces for Snowflake](https://docs.snowflake.com/en/user-guide/ecosystem-lang)
 - [Snowflake Community](https://community.snowflake.com/s/)
