@@ -470,7 +470,7 @@ SELECT 'frostbyte_tasty_bytes setup is now complete' AS note;
 
 ```sql
 /*----------------------------------------------------------------------------------
-Quickstart Section 3 - Investigating Zero Sales Days in our First Party Data
+ Investigating Zero Sales Days in our First Party Data
 
   Our Tasty Bytes Financial Analysts have brought it to our attention when running 
   year over year analysis that there are unexplainable days in various cities where
@@ -479,7 +479,7 @@ Quickstart Section 3 - Investigating Zero Sales Days in our First Party Data
   One example they have provided was for Hamburg, Germany in February of 2022.
 ----------------------------------------------------------------------------------*/
 
--- Section 3: Step 1 - Querying Point of Sales Data for Trends
+--  Step 1 - Querying Point of Sales Data for Trends
 USE ROLE tasty_data_engineer;
 USE WAREHOUSE tasty_de_wh;
 
@@ -497,7 +497,7 @@ ORDER BY o.date ASC;
 
 ```
 /*----------------------------------------------------------------------------------
-Quickstart Section 4 - Investigating Zero Sales Days in our First Party Data.
+ Investigating Zero Sales Days in our First Party Data.
  From what we saw above, it looks like we are missing sales for February 16th 
  through February 21st for Hamburg. Within our first party data there is not 
  much else we can use to investigate this but something larger must have been 
@@ -508,7 +508,7 @@ Quickstart Section 4 - Investigating Zero Sales Days in our First Party Data.
 ----------------------------------------------------------------------------------*/
 
 
--- Section 4: Step 1 - Acquiring the Weather Source LLC: frostbyte Snowflake Marketplace Listing
+--  Step 1 - Acquiring the Weather Source LLC: frostbyte Snowflake Marketplace Listing
 
 /*--- 
     1. Click -> Home Icon
@@ -532,7 +532,7 @@ Duration: 5
 ![Add Database](assets/Frostbyte_DB.png)
 
 ```sql 
--- Section 4: Step 2 - Harmonizing First and Third Party Data
+--  Step 2 - Harmonizing First and Third Party Data
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.daily_weather_v
     AS
 SELECT 
@@ -549,7 +549,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
     AND c.city = hd.city_name;
 
 
--- Section 4: Step 3 - Visualizing Daily Temperatures
+--  Step 3 - Visualizing Daily Temperatures
 SELECT 
     dw.country_desc,
     dw.city_name,
@@ -565,7 +565,7 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 
 
--- Section 4: Step 4 - Bringing in Wind and Rain Metrics
+--  Step 4 - Bringing in Wind and Rain Metrics
 SELECT 
     dw.country_desc,
     dw.city_name,
@@ -583,7 +583,7 @@ ORDER BY dw.date_valid_std DESC;
 ``` 
 ```sql
 /*----------------------------------------------------------------------------------
- Quickstart Section 5 - Democratizing Data Insights
+  Democratizing Data Insights
  
   We have now determined that Hurricane level winds were probably at play for the
   days with zero sales that our financial analysts brought to our attention.
@@ -592,7 +592,7 @@ ORDER BY dw.date_valid_std DESC;
   by deploying an Analytics view that all Tasty Bytes employees can access.
 ----------------------------------------------------------------------------------*/
 
--- Section 5: Step 1 - Creating SQL Functions
+--  Step 1 - Creating SQL Functions
     --> create the SQL function that translates Fahrenheit to Celsius
 CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(temp_f NUMBER(35,4))
 RETURNS NUMBER(35,4)
@@ -610,7 +610,7 @@ $$
 $$;
 
 
--- Section 5: Step 2 - Creating the SQL for our View
+--  Step 2 - Creating the SQL for our View
 SELECT 
     fd.date_valid_std AS date,
     fd.city_name,
@@ -634,7 +634,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 
 
--- Section 5: Step 3 - Deploying our Analytics View
+--  Step 3 - Deploying our Analytics View
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.daily_city_metrics_v
 COMMENT = 'Daily Weather Source Metrics and Orders Data for our Cities'
     AS
@@ -661,13 +661,13 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ```sql 
 
 /*----------------------------------------------------------------------------------
- Quickstart Section 6 - Deriving Insights from Sales and Marketplace Weather Data
+ Quickstart  - Deriving Insights from Sales and Marketplace Weather Data
  
  With Sales and Weather Data available for all Cities our Food Trucks operate in,
  let's now take a look at the value we have now provided to our Financial Analysts.
 ----------------------------------------------------------------------------------*/
 
--- Section 6: Step 1 - Simplifying our Analysis
+--  Step 1 - Simplifying our Analysis
 SELECT 
     dcm.date,
     dcm.city_name,
@@ -693,7 +693,7 @@ ORDER BY date DESC;
 ```sql
 
 /*----------------------------------------------------------------------------------
-Quickstart Section 3 - Acquiring Safegraph POI Data from the Snowflake Marketplace
+ - Acquiring Safegraph POI Data from the Snowflake Marketplace
 
  Tasty Bytes operates Food Trucks in numerous cities and countries across the
  globe with each truck having the ability to choose two different selling locations
@@ -709,7 +709,7 @@ Quickstart Section 3 - Acquiring Safegraph POI Data from the Snowflake Marketpla
  can assist us here.
 ----------------------------------------------------------------------------------*/
 
--- Section 3: Step 1 - Using First Party Data to Find Top Selling Locations
+--  Step 1 - Using First Party Data to Find Top Selling Locations
 USE ROLE tasty_data_engineer;
 USE WAREHOUSE tasty_de_wh;
 
@@ -724,9 +724,8 @@ GROUP BY o.location_id
 ORDER BY total_sales_usd DESC;
 ```
 
-
 ```
--- Section 3: Step 2 - Acquiring Safegraph POI Data from the Snowflake Marketplace 
+--  Step 2 - Acquiring Safegraph POI Data from the Snowflake Marketplace 
 /*--
     - Click -> Home Icon
     - Click -> Marketplace
@@ -735,14 +734,18 @@ ORDER BY total_sales_usd DESC;
     - Click -> Get
     - Rename Database -> FROSTBYTE_SAFEGRAPH (all capital letters)
     - Grant to Additional Roles -> PUBLIC
---*/
 
+--- */
 ```
+<br>
+
 ![Search Dataset](assets/Frostbyte_Spatial.png) 
+
+<br>
 
 ```sql
 
--- Section 3: Step 3 - Evaluating Safegraph POI Data
+--  Step 3 - Evaluating Safegraph POI Data
 SELECT 
     cpg.placekey,
     cpg.location_name,
@@ -761,14 +764,14 @@ WHERE 1=1
 
 
 /*----------------------------------------------------------------------------------
-Quickstart Section 4 - Harmonizing and Promoting First and Third Party Data
+ Harmonizing and Promoting First and Third Party Data
 
  To make our Geospatial analysis seamless, let's make sure to get Safegraph POI
  data included in the analytics.orders_v so all of our downstream users can
  also access it.
 ----------------------------------------------------------------------------------*/
 
--- Section 4: Step 1 - Enriching our Analytics View
+--  Step 1 - Enriching our Analytics View
 USE ROLE sysadmin;
 
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.orders_v_spatial
@@ -784,14 +787,14 @@ JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s cpg
 
 
 /*----------------------------------------------------------------------------------
-Quickstart Section 5 - Conducting Geospatial Analysis - Part 1
+ Conducting Geospatial Analysis - Part 1
 
  With Point of Interest metrics now readily available from the Snowflake Marketplace
  without any ETL required, our Tasty Bytes Data Engineer can now begin on our
  Geospatial analysis journey.
 ----------------------------------------------------------------------------------*/    
 
--- Section 5: Step 1 - Creating a Geography Point
+--  Step 1 - Creating a Geography Point
 USE ROLE tasty_data_engineer;
 
 SELECT TOP 10 
@@ -806,7 +809,7 @@ GROUP BY o.location_id, o.latitude, o.longitude
 ORDER BY total_sales_usd DESC;
 
 
--- Section 5: Step 2 - Calculating Distance Between Locations
+--  Step 2 - Calculating Distance Between Locations
 WITH _top_10_locations AS 
 (
     SELECT TOP 10
@@ -833,14 +836,14 @@ ORDER BY geography_distance_miles;
 
 
 /*----------------------------------------------------------------------------------
-Quickstart Section 6 - Conducting Geospatial Analysis - Part 1
+ Conducting Geospatial Analysis - Part 1
 
  Now that we understand how to create points, and calculate distance, we will now
  pile on a large set additional Snowflake Geospatial functionality to further our
  analysis.
 ----------------------------------------------------------------------------------*/   
 
--- Section 6: Step 1 - Collecting Points, Drawing a Minimum Bounding Polygon and Calculating Area
+--  Step 1 - Collecting Points, Drawing a Minimum Bounding Polygon and Calculating Area
 WITH _top_10_locations AS 
 (
     SELECT TOP 10
@@ -862,7 +865,7 @@ SELECT
 FROM _top_10_locations tl;
 
 
--- Section 6: Step 2 - Finding our Top Selling Locations Center Point
+--  Step 2 - Finding our Top Selling Locations Center Point
 WITH _top_10_locations AS 
 (
     SELECT TOP 10
@@ -882,7 +885,7 @@ SELECT
 FROM _top_10_locations tl;
 
 
--- Section 6: Step 3 - Setting a SQL Variable as our Center Point
+--  Step 3 - Setting a SQL Variable as our Center Point
 SET center_point = '{
   "coordinates": [
     2.364853294993676e+00,
@@ -892,7 +895,7 @@ SET center_point = '{
 } ';
 
 
--- Section 6: Step 4 - Finding Locations Furthest Away from our Top Selling Center Point
+--  Step 4 - Finding Locations Furthest Away from our Top Selling Center Point
 WITH _2022_paris_locations AS
 (
     SELECT DISTINCT 
@@ -913,18 +916,6 @@ ORDER BY kilometer_from_top_selling_center DESC;
 
 
 
-/**********************************************************************/
-/*------               Quickstart Reset Scripts                 ------*/
-/*------   These can be ran to reset your account to a state    ------*/
-/*----- that will allow you to run through this Quickstart again -----*/
-/**********************************************************************/
-
-UNSET center_point;
-
-USE ROLE sysdmin;
-
-
-DROP DATABASE IF EXISTS frostbyte_safegraph;
 ```
 
 ### 
@@ -1251,6 +1242,29 @@ Let's publish this dashboard to share this insight and feedback with others. Cli
 Congratulations! you have completed the lab.
 
 In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that data with geospatial data, and weather data from Snowflake Data marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
+
+```sql
+/**********************************************************************/
+/*------               Quickstart Reset Scripts                 ------*/
+/*------   These can be ran to reset your account to a state    ------*/
+/*----- that will allow you to run through this Quickstart again -----*/
+/**********************************************************************/
+
+
+USE ROLE accountadmin;
+DROP WAREHOUSE IF EXISTS demo_build_wh; 
+USE ROLE accountadmin;
+
+DROP VIEW IF EXISTS frostbyte_tasty_bytes.harmonized.daily_weather_v;
+DROP VIEW IF EXISTS frostbyte_tasty_bytes.analytics.daily_city_metrics_v;
+
+DROP DATABASE IF EXISTS frostbyte_weathersource;
+
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(NUMBER(35,4));
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.inch_to_millimeter(NUMBER(35,4));
+DROP DATABASE IF EXISTS frostbyte_safegraph;
+
+``` 
 
 [Semi-structured Data](https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
 <br>
