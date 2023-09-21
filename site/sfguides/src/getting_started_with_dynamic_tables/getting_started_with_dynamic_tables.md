@@ -276,8 +276,6 @@ AS
        
 ;
 
--- Refresh Manually or wait for a minute
--- alter dynamic table salesreport refresh;
 
 ```
 
@@ -310,7 +308,76 @@ select * from prod_inv_alert where percent_unitleft < 10;
 
 ![DT After Test](assets/dt_after.jpg)
 
-That’s it, we created a DAG using Dynamic Tables. It runs whenever there is data in the upstream pipeline(raw base tables), this is made possible by setting the LAG to "DOWNSTREAM". Dynamic tables lag or target lag can defined in terms of time or dependency [referred from other dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag)
+That’s it, we created a DAG using Dynamic Tables. It runs whenever there is data in the raw base tables and infers the lag based on the downstream dynamic tables lag using the LAG parameter as "DOWNSTREAM". In this example the CUSTOMER_SALES_DATA_HISTORY table will refresh based on the lag of its downstream table (“1 Minute”) and data in the raw table (SALESDATA). 
+
+Dynamic tables lag or target lag can defined in terms of time or dependency [referred from other dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag)
+
+
+<!-- ------------------------ -->
+## Dynamic Table using Snowpark UDTF
+
+Using programming languages such as Python is a common practice in Data Engineering for constructing data pipelines. If you're migrating an existing data pipeline based on Python, Java, or Scala to Snowflake, Snowpark can be a valuable tool. Snowpark supports the creation of Python-based transformations through user-defined functions.
+
+In this example, we'll demonstrate how to build a cumulative total of customer account balances each month and leverage this information to identify any instances of customers exceeding their set limits in the CUST_INFO table.
+
+
+```
+CREATE OR REPLACE FUNCTION sum_table (INPUT_NUMBER number)
+  returns TABLE (running_total number)
+  language python
+  runtime_version = '3.8'
+  handler = 'gen_sum_table'
+as
+$$
+
+# Define handler class
+class gen_sum_table :
+
+  ## Define __init__ method ro initilize the variable
+  def __init__(self) :    
+    self._running_sum = 0
+  
+  ## Define process method
+  def process(self, input_number: float) :
+    # Increment running sum with data from the input row
+    new_total = self._running_sum + input_number
+    self._running_sum = new_total
+
+    yield(new_total,)
+  
+$$
+;
+```
+
+This function computes the cumulative total and can be seamlessly incorporated into any SQL code or applied to any table as a table function. It's flexibile and allows us to feed any data partition, making it highly adaptable to any "cumulative total" use case. Let's partition this total by Customer and Month using dynamic table.
+
+```
+CREATE OR REPLACE DYNAMIC TABLE cumulative_purchase
+    LAG = '1 MINUTE'
+    WAREHOUSE=lab_s_wh
+AS
+    select 
+        month(creationtime) monthNum,
+        year(creationtime) yearNum,
+        customer_id, 
+        saleprice,
+        running_total 
+    from 
+        salesreport,
+        table(sum_table(saleprice) over (partition by creationtime,customer_id order by creationtime, customer_id))
+       
+;
+
+```
+Results,
+
+```
+select * from  cumulative_purchase limit 10;
+```
+
+Similar results can be achieved using complex SQL queries, but it becomes more versatile and modular when implemented as a Python User-Defined Function (UDF).
+
+![cumulative sum](assets/cs2.jpg)
 
 <!-- ------------------------ -->
 ## Usecase: data validation using Dynamic table
@@ -333,8 +400,6 @@ AS
     FROM SALESREPORT S JOIN PROD_STOCK_INV ON PRODUCT_ID = PID
     QUALIFY ROW_NUMBER() OVER (PARTITION BY PRODUCT_ID ORDER BY CREATIONTIME DESC) = 1
 ;
-
-alter dynamic table prod_inv_alert refresh;
 
 ```
 
@@ -403,71 +468,6 @@ ALTER ALERT alert_low_inv SUSPEND;
 ```
 
 <!-- ------------------------ -->
-## Dynamic Table using Snowpark UDTF
-
-Using programming languages such as Python is a common practice in Data Engineering for constructing data pipelines. If you're considering migrating an existing data pipeline based on Python, Java, or Scala to Snowflake, Snowpark can be a valuable tool. Snowpark supports the creation of Python-based transformations through user-defined functions.
-
-In this example, we'll demonstrate how to build a cumulative total of customer account balances each month and leverage this information to identify any instances of customers exceeding their set limits in the CUST_INFO table.
-
-
-```
-CREATE OR REPLACE FUNCTION sum_table (INPUT_NUMBER number)
-  returns TABLE (running_total number)
-  language python
-  runtime_version = '3.8'
-  handler = 'gen_sum_table'
-as
-$$
-
-# Define handler class
-class gen_sum_table :
-
-  ## Define __init__ method ro initilize the variable
-  def __init__(self) :    
-    self._running_sum = 0
-  
-  ## Define process method
-  def process(self, input_number: float) :
-    # Increment running sum with data from the input row
-    new_total = self._running_sum + input_number
-    self._running_sum = new_total
-
-    yield(new_total,)
-  
-$$
-;
-```
-
-This function computes the cumulative total and can be seamlessly incorporated into any SQL code or applied to any table as a table function. It's flexibile and allows us to feed any data partition, making it highly adaptable to any "cumulative total" use case. Let's partition this total by Customer and Month using dynamic table.
-
-```
-CREATE OR REPLACE DYNAMIC TABLE cumulative_purchase
-    LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
-AS
-    select 
-        month(creationtime) monthNum,
-        year(creationtime) yearNum,
-        customer_id, 
-        saleprice,
-        running_total 
-    from 
-        salesreport,
-        table(sum_table(saleprice) over (partition by creationtime,customer_id order by creationtime, customer_id))
-       
-;
-```
-Results,
-
-```
-select * from  cumulative_purchase limit 10;
-```
-
-Similar results can be achieved using complex SQL queries, but it becomes more versatile and modular when implemented as a Python User-Defined Function (UDF).
-
-![cumulative sum](assets/cs.jpg)
-
-<!-- ------------------------ -->
 ## Monitor Dynamic Tables: Cost, DAG and Dashboard
 Duration: 4
 
@@ -504,10 +504,12 @@ You can also monitor any issues with the refresh using the two table functions i
 
 - You should monitor Dynamic Tables for a few runs and verify if the refresh cycles are as desired (full or incremental). 
 - Consider that any changes to the base tables DDL will most certainly impact the performance or refresh cycles of the Dynamic tables just like any other data pipeline. 
-- In some cases DT defaults to full refresh like if you have masking policy on base tables, lateral flatten or some other non deterministic functions like UDTF.
+- In some cases DT defaults to full refresh like if you have masking policy on base tables, lateral flatten of nested structure or some other non deterministic functions like UDTF. These will be addressed in the future.
 
 
 ### SUSPEND and RESUME Dynamic Tables
+
+Dynamic tables can be suspended or resumed on demand. Snowflake automatically suspends it after 5 consecutive failures to prevent any credit consumption. If you suspend a Dynamic table upstream, it will automatically suspend its child or downstream Dynamic Tables in the DAG.
 
 ```
 -- Resume the data pipeline
@@ -529,9 +531,9 @@ Dynamic tables incur cost in three ways: [details here](https://docs.snowflake.c
 - Cloud service compute: You will only incur this if daily cloud service cost is over 10% of your bill (very very rare)
 - Warehouse compute cost: this is associated with the warehouse you use with Dynamic Table. This is only used if there is data to be processed upstream from base tables
 
-Dynamic tables require a virtual warehouse to perform updates. Snowflake recommends testing dynamic tables using dedicated warehouses in order to understand related costs.
+Dynamic tables require a virtual warehouse to perform updates. Snowflake recommends testing dynamic tables using dedicated warehouses in order to understand related costs.Dynamic tables cost is driven by frequency of data refreshes in base tables and target LAG. 
 
-Dynamic tables cost is driven by frequency of data refreshes in base tables and target LAG. REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run the Show Dynamic table command or check dynamic table dashboard to determine your DT refresh mode. Check [this page](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries) for more details.
+REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run the Show Dynamic table command or check dynamic table dashboard to determine your DT refresh mode. Check [this page](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries) for more details.
 
 Dynamic tables support Time Travel, Replication, Governance, Masking, Tagging etc. just like a standard Snowflake table.
 
@@ -546,7 +548,7 @@ Dynamic Tables are a new kind of Snowflake table which is defined as a query and
 - Slowly Changing Dimensions 
 - Continuous data aggregation & summarization from multiple sources
 - Filtering data by ID in raw tables into separate tables and sharing to clients 
-- Dimensional modeling, medallion architecture
+- Dimensional modeling, medallion architecture, multi layer data engineering and transformations
 - Data quality validation and monitoring
 - Aggregation, Joins, grouping of data on reference data sets using the newly arrived data
 - Joins on multiple table and flattening of nested data
@@ -554,7 +556,7 @@ Dynamic Tables are a new kind of Snowflake table which is defined as a query and
 
 ### What we've covered
 - Creating and managing Dynamic tables
-- Using UDTF in a dynamic table
+- Using Snowpark UDTF in a Dynamic table
 - Creating data validation rule using Dynamic tables
-- Alerting on those rule
+- Alerting on those rules
 - Monitoring Dynamic table using dashboard and SQL
