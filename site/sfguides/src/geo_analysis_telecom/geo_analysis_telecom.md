@@ -50,8 +50,6 @@ A sample use case that involves LTE cell towers in the United Kingdom. You will 
 
 Duration: 10
 
-[app.snowflake.com](https://app.snowflake.com/)
-
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
 Click `Sign-in` and you will be prompted for your user name and password.
