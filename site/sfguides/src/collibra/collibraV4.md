@@ -3,7 +3,7 @@ id: collibra
 summary: This is a sample Snowflake Guide to show how a user can work with Collibra in integration with Snowflake. 
 categories: Getting-Started
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
