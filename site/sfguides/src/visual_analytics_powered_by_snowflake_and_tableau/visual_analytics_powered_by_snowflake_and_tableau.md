@@ -60,9 +60,11 @@ Duration: 5
 
 ### Download Demo SQL Script
 
-[To skip individual command download tb_introduction_vhol.sql & create Worksheet to run SQL file](assets/tb_introduction_vhol.sql).
+[To skip individual commands download tb_introduction_vhol.sql & create Worksheet to run SQL file](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_introduction_vhol.sql).
 
- ![Snowflake Login](assets/Worksheet_1.png)
+![Download Button](assets/Git_Download.png)
+ 
+![Snowflake Login](assets/Worksheet_1.png)
 
 ### Create Snowflake Objects
 
@@ -88,7 +90,7 @@ CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.analytics;
 
 -- create warehouses
 CREATE OR REPLACE WAREHOUSE demo_build_wh
-    WAREHOUSE_SIZE = 'xxxlarge'
+    WAREHOUSE_SIZE = 'medium'
     WAREHOUSE_TYPE = 'standard'
     AUTO_SUSPEND = 30
     AUTO_RESUME = TRUE
@@ -202,7 +204,7 @@ GRANT APPLY TAG ON ACCOUNT TO ROLE tasty_data_engineer;
 GRANT APPLY MASKING POLICY ON ACCOUNT TO ROLE tasty_admin;
 ```
 
-### Load data to Tables
+### Load CSV data to Tables
 
 ```sql
 USE ROLE sysadmin;
@@ -464,9 +466,10 @@ SELECT 'frostbyte_tasty_bytes setup is now complete' AS note;
 
 
 
-### Data Collaboration - Weather Data 
+## Data Collaboration 
 
-[[To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file]](assets/tb_collaboration_vhol.sql)
+### Let's Bring Weather Data
+[[To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file]](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_collaboration_vhol.sql)
 
 ```sql
 /*----------------------------------------------------------------------------------
@@ -688,7 +691,7 @@ ORDER BY date DESC;
 <!-- ------------------------ -->
 
 ### Let's Bring Geospatial Data 
-[[To skip individual command download tb_geospatial_vhol.sql & create Worksheet to run SQL file]](assets/tb_geospatial_vhol.sql) 
+[[To skip individual command download tb_geospatial_vhol.sql & create Worksheet to run SQL file]](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_geospatial_vhol.sql) 
 
 ```sql
 
@@ -1243,6 +1246,8 @@ Congratulations! you have completed the lab.
 
 In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that data with geospatial data, and weather data from Snowflake Data marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
 
+[To skip individual commands download tb_reset_vhol.sql & create Worksheet to run SQL file](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_reset_vhol.sql).
+
 ```sql
 /**********************************************************************/
 /*------               Quickstart Reset Scripts                 ------*/
@@ -1250,19 +1255,33 @@ In this lab we captured semi-structured data coming from TastyBytes food truck d
 /*----- that will allow you to run through this Quickstart again -----*/
 /**********************************************************************/
 
+/**********************************************************************/
+/*------               Quickstart Reset Scripts                 ------*/
+/*------   These can be run to reset your account to a state    ------*/
+/*----- that will allow you to run through this Quickstart again -----*/
+/**********************************************************************/
 
-USE ROLE accountadmin;
-DROP WAREHOUSE IF EXISTS demo_build_wh; 
 USE ROLE accountadmin;
 
 DROP VIEW IF EXISTS frostbyte_tasty_bytes.harmonized.daily_weather_v;
 DROP VIEW IF EXISTS frostbyte_tasty_bytes.analytics.daily_city_metrics_v;
 
-DROP DATABASE IF EXISTS frostbyte_weathersource;
 
 DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(NUMBER(35,4));
 DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.inch_to_millimeter(NUMBER(35,4));
+
+
+UNSET center_point;
+
+--USE ROLE sysdmin;
+DROP DATABASE IF EXISTS frostbyte_tasty_bytes;   
+DROP DATABASE IF EXISTS frostbyte_weathersource;
 DROP DATABASE IF EXISTS frostbyte_safegraph;
+
+DROP WAREHOUSE IF EXISTS demo_build_wh; 
+DROP WAREHOUSE IF EXISTS tasty_de_wh;
+DROP WAREHOUSE IF EXISTS tasty_bi_wh;
+
 
 ``` 
 
