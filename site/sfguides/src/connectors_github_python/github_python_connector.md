@@ -127,11 +127,11 @@ newest row with the given key.
 ## External access
 Duration: 2
 
-Data from GitHub is ingested using external access capabilities of Snowflake.
+Data from GitHub is ingested using [external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) capabilities of Snowflake.
 
 ### Direct external access
 
-Direct external access is a public preview feature of Snowflake.
+[Direct external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) is a public preview feature of Snowflake.
 
 ## Ingestion logic
 Duration: 2
