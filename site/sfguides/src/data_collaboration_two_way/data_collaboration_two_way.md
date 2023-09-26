@@ -23,20 +23,19 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - Familiarity with Markdown syntax
 
 ### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+- How to become a Provider in Snowflake Marketplace (Private Listings)
+- How to Consume a shared private asset in the Snowflake Marketplace
+- How to enable Multi-tenanted tables as a Provider 
 
 ### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
+- Two [Snowflake](https://signup.snowflake.com/) Accounts in the same cloud and region 
 
 ### What You’ll Build 
-- A Snowflake Guide
+- Ingestion of Credit Card Approval Data
+- Sharing rew data seamlessly via a private listing
+- Consuming shared data via a private listing
+- Enriching shared data using a ML model
+- Sharing back enriched data to the original Provider account
 
 <!-- ------------------------ -->
 ## Metadata Configuration
