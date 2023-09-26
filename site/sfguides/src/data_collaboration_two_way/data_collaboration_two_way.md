@@ -1,6 +1,6 @@
 author: Tim Buchhorn
-id: getting-started-snowflake-collaboration
-summary: This is a sample Snowflake Guide
+id: data_collaboration_two_way
+summary: This is a Snowflake Guide on how to use Snowflake's Data Collaboration features to share an enrich data. 
 <!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Snowflake for Collaboration
+# Two Way Data Collaboration
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
