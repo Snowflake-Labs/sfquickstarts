@@ -671,7 +671,7 @@ run the source connector to ingest live data continuously as shown in Step 3 of 
 Duration: 10
 
 Previously we ingested raw jsons into the table `MSK_STREAMING_TBL` and did a DDL to create a nicely formulated view with 
-the column names mapped to the keys in the jsons. You can now skipp the DDL step with [schema detection](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-kafka-schema-detection) enabled to detect the schema of the streaming data and load data into tables that automatically match any user-defined schema. 
+the column names mapped to the keys in the jsons. You can now skip the DDL step with [schema detection](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-kafka-schema-detection) enabled to detect the schema of the streaming data and load data into tables that automatically match any user-defined schema. 
 
 #### 1. Modify the Snowpipe streaming properties file
 
