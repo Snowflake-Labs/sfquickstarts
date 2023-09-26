@@ -602,7 +602,7 @@ do
 done
 
 ```
-You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 30 seconds to verify that the row counts is indeed increasing.
+You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
 
 <!---------------------------->
 ## Use MSK Connect (MSKC) - Optional
@@ -665,8 +665,83 @@ Review the configurations and click `Create connector`. The connector will be cr
 
 At this point, the Kafka connector for Snowpipestreaming has been configured, it is running and managed by MSKC, all you need to do is to 
 run the source connector to ingest live data continuously as shown in Step 3 of Section 6. 
-<!---------------------------->
 
+<!---------------------------->
+## Schema detection - Optional
+Duration: 10
+
+Previously we ingested raw jsons into the table `MSK_STREAMING_TBL` and did a DDL to create a nicely formulated view with 
+the column names mapped to the keys in the jsons. You can now skipp the DDL step with [schema detection](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-kafka-schema-detection) enabled to detect the schema of the streaming data and load data into tables that automatically match any user-defined schema. 
+
+#### 1. Modify the Snowpipe streaming properties file
+
+Modify the two lines in `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` 
+
+from
+```commandline
+topics=streaming
+snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
+```
+to
+```commandline
+topics=streaming,streaming-schematization
+snowflake.topic2table.map=streaming:MSK_STREAMING_TBL,streaming-schematization:MSK_STREAMING_SCHEMATIZATION_TBL
+
+#Also enable schematiaztion by adding
+snowflake.enable.schematization=true
+```
+Save the properties file
+
+#### 2. Create a new topic in MSK
+
+We now need to create a new topic `streaming-schematization` in MSK cluster by running the following command:
+```
+$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-schematization --partitions 2 --replication-factor 2
+```
+
+#### 3. Restart the consumer 
+
+Restart the consumer by issuing the following shell command in a new Session Manager console.
+```commandline
+kill -9 `ps -ef | grep java | grep -v grep | awk '{print $2}'`
+$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+```
+
+#### 4. Ingest data 
+
+Now ingest some data into the newly created topic by running the following command in a new Session Manager console.
+```commandline
+curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | \
+jq -c '.[]' | \
+while read i ; \
+do \
+echo $i | \
+$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-schematization ; \
+echo $i ; \
+done
+
+```
+
+You should see the producer using [jq](https://jqlang.github.io/jq/) to break up the json array and stream in the records one by one.
+
+#### 5. Verify schema detection is working
+
+Now head over to the Snowflake UI, and issue the following SQL command:
+```commandline
+select * from msk_streaming_schematization_tbl;
+```
+
+You should see the table already contains the keys in json records as column names with values populated. There is no need to do DDL as before.
+
+![](assets/schema_detection.png)
+
+Note that using the shell script `connect-standalone.sh` that comes with the Kafka distribution is not the most efficient way of ingesting data into Snowflake as it
+opens and closes the topic every single time it calls the Snowpipe streaming SDK as you can see in the script in Step 4 above. We are doing this for the purpose of a quick
+demonstration.
+
+Other programing languages like Python or Java are highly recommended as they keep the topic open throughout the ingesting process.
+
+<!---------------------------->
 ## Cleanup
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://us-west-2.console.aws.amazon.com/cloudformation/home?stacks) console.
