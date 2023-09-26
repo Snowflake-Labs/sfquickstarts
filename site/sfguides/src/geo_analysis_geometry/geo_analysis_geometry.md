@@ -85,6 +85,23 @@ To use the packages provided by Anaconda inside Snowflake, you must acknowledge 
 * In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
 * If you agree to the terms, select `Acknowledge & Continue`.
 
+### Create a Database and Schema
+
+Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar and choose your warehouse.
+* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
+* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
+
+<img src ='assets/geo_analysis_geometry_13.png' width=700>
+
+Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
+
+```
+CREATE OR REPLACE DATABASE GEOLAB;
+CREATE OR REPLACE schema GEOLAB.GEOMETRY;
+// Set the working database schema
+USE SCHEMA GEOLAB.GEOMETRY;
+```
+
 ### Connect Snowflake and Carto
 
 Let's connect your Snowflake to CARTO so you can run and visualize the queries in the following exercises of this workshop.
@@ -177,23 +194,6 @@ Congratulations! Now you have data and the analytics toolbox!
 Duration: 5
 
 Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While you loading data you will learn formats supported by geospatial data types.
-
-
-
-Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar and choose your warehouse.
-* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
-* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
-
-<img src ='assets/geo_analysis_geometry_13.png' width=700>
-
-Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
-
-```
-CREATE OR REPLACE DATABASE GEOLAB;
-CREATE OR REPLACE schema GEOLAB.GEOMETRY;
-// Set the working database schema
-USE SCHEMA GEOLAB.GEOMETRY;
-```
 
 For this quickstart we have prepared a dataset with energy grid infrastructure (cable lines) in the Netherlands. It is stored in the CSV format in the public S3 bucket. To import this data, create an external stage using the following SQL command:
 
@@ -605,6 +605,7 @@ from shapely.ops import unary_union
 from shapely.geometry import shape, mapping
 def udf(g1):
     shape_union = unary_union([shape(i) for i in g1])
+    shape_union = shape_union.simplify(0.000001)
     return mapping(shape_union)
 $$;
 ```
