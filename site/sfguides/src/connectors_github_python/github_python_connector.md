@@ -133,6 +133,11 @@ Data from GitHub is ingested using [external access](https://docs.snowflake.com/
 
 [Direct external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) is a public preview feature of Snowflake.
 
+## Application logs
+Duration: 2
+
+Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to [enable loging](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging) documentation.
+
 ## Ingestion logic
 Duration: 2
 
