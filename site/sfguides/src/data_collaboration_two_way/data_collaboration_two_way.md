@@ -38,36 +38,24 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - Sharing back enriched data to the original Provider account
 
 <!-- ------------------------ -->
-## Metadata Configuration
+## Business Use Case
 Duration: 2
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+In this hands-on-lab, we are playing the role of a bank, which has a number of attributes of it's customers. It has employed the help of an outsourced risk agency to score each of these customers, and return a risk score on whether they should approve their credit card application.
 
+Both companies have chosen to use Snowflake. The advantages of doing this are:
+- Low latency between the Provider and Consumer accounts
+- The files stay within the security permieter of Snowflake, with RBAC 
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
+Below is a schematic of the data share
+![Diagram](assets/two_way_data_collaboration.png)
 
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
-
+<!-- ------------------------ -->
+## Set up
 
 <!-- ------------------------ -->
 ## Creating a Step
-Duration: 2
+Duration: 10
 
 A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
