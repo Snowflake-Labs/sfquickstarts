@@ -285,7 +285,7 @@ use role accountadmin;
 show replication accounts;
 ```
 
-#### Substitute `organization_name`, `source account_name` and `target account_name` in these commands to create connection and failover group objects:
+Substitute `organization_name` and `target account_name` below to create connection and failover group objects:
 
 ```sql
 use role accountadmin;
@@ -295,7 +295,10 @@ alter connection prodsnowgrid
     enable failover to accounts <organization_name.target_account_name>;
 
 show connections;
+```
+Note down the `connection_url`
 
+```sql
 create failover group sales_payroll_failover
     object_types = users, roles, warehouses, resource monitors, databases, shares
     allowed_databases = global_sales,common,payroll,inventory,loyalty,sales,crm,products,references,cross_database,externals
