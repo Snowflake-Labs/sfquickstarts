@@ -1,4 +1,4 @@
-author: Prateek Parashar
+author: Prateek Parashar, Vinay Srihari
 id: cross_cloud_business_continuity
 summary: This is a sample Snowflake Guide
 categories: data-engineering,app-development,devops
@@ -13,39 +13,70 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 
 “By failing to prepare, you are preparing to fail” - Benjamin Franklin
 
-A sound business continuity/disaster recovery plan is an important milestone for organizations looking to build resilient data platforms. We are in the information age and data-driven insights grow revenue, provide services, support customers and aid with critical decision making. Digital transformation is the need of the hour and in this important endeavor businesses face many forms of disruptions like fire, floods, cyberattacks, ransomware etc. These disruptions can spiral into various undesirable outcomes - from operational systems coming to a standstill leading to financial losses to something worse, like reputational damage.
+A sound business continuity/disaster recovery plan is an important milestone for organizations looking to build resilient data platforms. Data-driven insights grow revenue, provide services, support customers and aid with critical decision making. Businesses face many forms of disruptions like fire, floods, cyberattacks, ransomware etc. These disruptions can spiral into various undesirable outcomes - from operational systems coming to a standstill leading to financial losses to something worse, like reputational damage.
 
-Technology is the center-piece of all businesses and mission-critical data can never be unavailable. As businesses become cloud-based, new complexity arises. Namely, business continuity and continuous global operations rely even more on cloud dependability.
+Technology is the center-piece of all businesses and mission-critical data can never be unavailable. As businesses move critical applications to the public cloud, continuous global operations rely even more on cloud dependability.
 
-Snowflake’s new **Group-Based Replication and Failover** feature (in preview) enables account metadata, including everything from user identity and role-based access controls to governance policies, warehouses and resource monitors, to be automatically synchronized across clouds and regions for continuous availability. Multiple databases, shares and account metadata can be replicated as a unit, ensuring point-in-time consistency with the primary region.
+Snowflake’s **Replication and Failover/Failback** feature enables account metadata, including everything from user identity and role-based access controls to governance policies, warehouses and resource monitors, to be automatically synchronized across clouds and regions for continuous availability. Multiple databases, shares and account metadata can be replicated as a unit, ensuring point-in-time consistency with the primary region.
 
 Snowflake's **Client Redirect** feature facilitates seamless failover from primary to secondary so that apps and users can continue functioning without disruption. In the past, to recover, the connection string in every client application had to be manually changed to connect to the new primary site (the former secondary site) in a different region or cloud. With Client Redirect, administrators can use a single server-side command to redirect client applications to the new primary site, without disrupting business teams. 
  
 
 ### Prerequisites
-- Basic understanding of Snowflake concepts, familiarity with Snowflake UI.
-- Two snowflake trial accounts, preferably in different regions and different cloud platforms. Designate any one of them as the primary account and the other one will be secondary. The instructions in this guide will ask you to fire specific commands on source and target accounts. So remember (or make a note) of your primary and secondary account names to avoid confusion.
-- Account replication preview feature enabled on both trial accounts. If you've applied for this lab in advance and provided your account details, this should already be enabled for you by the Snowflake team. Verify that account replication has been enabled for both your accounts with the command below
+- Create 2 Snowflake trial accounts in the same Organization - in AWS, Azure cloud regions - and enable replication for each account.
+    > #### Create an AWS trial account [here](https://signup.snowflake.com/)
+    >
+    > - choose **Business Critical** edition, **AWS** as cloud provider, any **US** region
+    > - activate account with username `snowgrid` - this user has ACCOUNTADMIN
+    > - create a SQL Worksheet to setup an **Azure** account
+    >
+    > #### Create an Azure trial account from the AWS account (same Org)
+    > ```sql
+    > USE ROLE ORGADMIN;
+    >
+    > CREATE ACCOUNT snowflake_azure_target
+    >   admin_name = snowgrid
+    >   admin_password = 'FILL_IN_PASSWORD'
+    >   email = 'FILL_IN_EMAIL'
+    >   edition = business_critical
+    >   region = azure_eastus2;
+    > ```
+    > #### Enable replication for AWS and Azure accounts (doc [here](https://docs.snowflake.com/en/user-guide/account-replication-config#prerequisite-enable-replication-for-accounts-in-the-organization))
+    > ```sql
+    > -- note the organization_name, account_name for AWS and Azure accounts
+    > SHOW ORGANIZATION ACCOUNTS;
+    >
+    > SELECT SYSTEM$GLOBAL_ACCOUNT_SET_PARAMETER('FILL_ORG_NAME.FILL_AWS_ACCOUNT_NAME', 'ENABLE_ACCOUNT_DATABASE_REPLICATION', 'true'); 
+    >
+    > SELECT SYSTEM$GLOBAL_ACCOUNT_SET_PARAMETER('FILL_ORG_NAME.FILL_AZURE_ACCOUNT_NAME', 'ENABLE_ACCOUNT_DATABASE_REPLICATION', 'true'); 
+    > ```
+    > 
+    > #### Verify that accounts are enabled for replication
+    > ```sql
+    > USE ROLE ACCOUNTADMIN;
+    > SHOW REPLICATION ACCOUNTS;
+    >```
 
-```bash
-use role ACCOUNTADMIN;
-show replication accounts;
-```
+- [Install SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html#installing-snowsql) (CLI Client): used to load data into a Snowflake internal stage 
+- Check that SNOWFLAKE_SAMPLE_DATA shared database is visible, otherwise create it:
+    >```sql
+    > USE ROLE ACCOUNTADMIN;
+    > CREATE DATABASE IF NOT EXISTS SNOWFLAKE_SAMPLE_DATA FROM SHARE SFC_SAMPLES.SAMPLE_DATA;
+    > GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE PUBLIC;
+    >```
 
-- The organization administrator (ORGADMIN role) must enable replication for the source and target accounts before replicating a database as documented [here](https://docs.snowflake.com/en/user-guide/database-replication-config.html#prerequisite-enable-replication-for-accounts-in-the-organization). For the Summit Lab, your Snowflake team will ensure this is done for the two trial accounts.
-- Accountadmin access on both trial accounts.
-- Failover App: BI Sigma Dashboard
-  - A sigma trial account that is valid on the day of the lab. The trial account is valid for 14 days from the day of signing up. You can sign for the trial account directly from the [sigmacomputing free trial link](https://www.sigmacomputing.com/free-trial/) or from your Snowflake UI by clicking on “Partner Connect” -> Click on “Sigma” tile.
-- Failover App: Python Streamlit Dashboard - Install the following modules/connectors. Minimum python version needed is 3.7
-  - [snowflake python connector](https://docs.snowflake.com/en/user-guide/python-connector-install.html#installing-the-python-connector)
-  - [streamlit](https://docs.streamlit.io/library/get-started/installation) (pip/pip3 install streamlit)
-  - streamlit-echarts (pip/pip3  install streamlit-echarts)
-  - Pandas (pip/pip3 install pandas)
-  - Json  (pip/pip3 install json)
-- Failover App: SnowSQL
-  - [Install SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html#installing-snowsql)
+- (**Optional**) Python Streamlit Dashboard - install the following modules/connectors:
+  - Install Python (3.8 or higher): `python --version`
+  - [Install Snowflake Python connector](https://docs.snowflake.com/developer-guide/python-connector/python-connector-install#installing-the-python-connector)
+  - [Install Streamlit](https://docs.streamlit.io/library/get-started/installation#install-streamlit-on-macoslinux), then a few components
+    >```bash
+    > pip install streamlit-echarts
+    > pip install pandas
+    > streamlit hello
+    >```
 
-- Access to SNOWFLAKE_SAMPLE_DATA share.
+- (**Optional**) Sigma BI Dashboard
+  - [Sigma Free Trial](https://www.sigmacomputing.com/free-trial/) or launch the Sigma tile in Snowflake Partner Connect from your Snowsight UI
 
 ### What You’ll Learn 
 In this quickstart you will learn
@@ -60,13 +91,6 @@ In this quickstart you will learn
 
 - Python installed on local machine to stimulate a python app failover (Needed for streamlit app).
 - A Sigma trial account to stimulate a BI dashboard failover (Needed for Sigma BI app). 
-- Our source data is based on the TPC-DS benchmark dataset that is shared with all Snowflake accounts by default. If you don't see that share, you can create it with below commands.
-
-```bash
-use role ACCOUNTADMIN;
-create database SNOWFLAKE_SAMPLE_DATA from share SFC_SAMPLES.SAMPLE_DATA;
-grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
-```
 
 ### What You’ll Build 
 - Source account resources to mimic a production grade Snowflake account.
@@ -76,63 +100,66 @@ grant imported privileges on database SNOWFLAKE_SAMPLE_DATA to role PUBLIC;
 - Observe your apps now seamlessly powered by the secondary account.
 
 <!-- ------------------------ -->
-## Source Account Setup
+## Primary Account Setup (AWS)
 
-Download scripts to populate your source account from [this Github repository](https://github.com/Snowflake-Labs/sfguide_failover_scripts) as a ZIP
+Download ZIP or Clone [sfguide_failover_scripts](https://github.com/Snowflake-Labs/sfguide_failover_scripts) Github repo to your local machine
 
-OR clone to a directory in your local machine with the below command
+![Code Button](assets/code-download.png)
 
+To match provided scripts, copy `data` and `scripts` directories to `/tmp` 
 ```bash
-git clone https://github.com/Snowflake-Labs/vhol_failover_scripts.git
+cd sfguide_failover_scripts-main
+cp -r data /tmp
+cp -r scripts /tmp
 ```
 
-After downloading the code you should see numbered sql scripts in the scripts folder. The sequence also determines their order of execution.
+### Run SQL scripts 100-600 in sequential order on the AWS Primary account
 
-Execute the below scripts (100 - 600) on your _source account_. Script 300 needs to have the generic user name replaced in order for it to run without issues. Make sure you replace the user name before running the 300 script as instructed below.
+[Create Snowsight Worksheets from SQL File](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface) - use one worksheet per SQL script
 
-- **100_create_env_resources_source.sql**: Create roles, roles hierarchy, databases and warehouses. 
+![Create Worksheet](assets/create-worksheets.png)
 
-- **200_create_users_source.sql**: Create user base. 
 
-- **300_roles_privileges_assignment_source.sql**: Grant object privileges to roles and grant roles to create personas. *Be sure to replace user name "REPLACEME" with your own admin user.*
+1. `100_create_replication_objects.sql`: create roles, databases, warehouses, resource monitors
+2. `200_create_users_source.sql`: create users with basic password authentication
+3. `300_grant_privileges.sql`: grant object and account level privileges
+4. `400_load_data.sql`: create and load tables, views, functions, stored procedures, shares
+5. `500_add_governance_policies.sql`: assign tags, masking and row access policies
+6. `600_update_primary_task.sql`: setup task to update primary tables every few mins
 
-- **400_ingest_data_source.sql**: Create tables and data share and ingests data in tables. 
 
-- **500_governance_policies_source.sql**: Create and assign object tags, masking policies and row access policy.
+### Ingest Payroll Data
+Load data file `data/hr_data_sample.csv` into table `PAYROLL.NOAM_NORTHEAST.EMPLOYEE_DETAIL` with the Snowsight UI interface.
 
-- **600_update_primary_task.sql**: Create and start task to update primary tables every 3 minutes.
+![load_payroll_1](assets/load-data-payroll.png)
 
-You can run these scripts via UI by copy/pasting them or importing them as shown below. For some of our seasoned Snowflake users - if you have installed our awesome CLI SnowSQL and are comfortable pointing it to your source account for the lab, feel free to use that to execute the script. Make sure though that you pay attention to any errors encountered along the way.
+Browse to find the `data/hr_data_sample.csv` file and set the CSV format correctly
 
-![import_sql_ss](assets/Import_sql_ss.png)
+![load_payroll_2](assets/load-data-format.png)
 
-#### Ingest Payroll Data
-In the code base downloaded from Github earlier, there's a data/hr_data_sample.csv file that we'll now ingest in our "payroll.noam_northeast.employee_detail" table. We'll use the data loader functionality of the UI to achieve this (unfortunately, the data loader functionality is only available in the classic UI for now. Psst.. it will soon be available in snowsight as well!). Follow along the screenshots to load the data
+You should have successfully loaded `100 records`
 
-**Navigate to the table Databases -> Payroll -> Employee_detail**
+![load_payroll_3](assets/load-data-success.png)
 
-![payroll_ingest_1](assets/payroll_ingest_1.png)
+### Create ELT Pipeline using the [TPC-DI](https://www.tpc.org/tpcdi/) benchmark schema
+This modified TPC-DI benchmark flow simulates the process of extracting data from operational (OLTP) systems in a variety of data formats, loading into a set of staging tables, then transforming into a unified model for analytical reporting and insights.
 
-**Select ETL_WH to load your data**
+We will observe how Snowflake's pipeline replication features (in Public Preview) support seamless failover and idempotent restart of the pipeline on the new primary.
 
-![payroll_ingest_2](assets/payroll_ingest_2.png)
+7. `700_setup_tpcdi_pipeline.sql`: create external stage, internal stage w/directory table, create staging tables and batch load plan, use dynamic table DAG to build a declarative pipeline from staging to warehouse.
 
-**Choose source file location**
+    *Stop after creating the internal stage here, run Step 8, then continue*
 
-![payroll_ingest_3](assets/payroll_ingest_3.png)
+    ![switch-to-step8](assets/switch-to-step-8.png)
 
-**Create a new file format and call it "csv_format"**
+8. Use SnowSQL CLI to load batches from `data/tpcdi-scale5` and `data/tpcdi-scale10` to **internal stage**
 
-![payroll_ingest_4](assets/payroll_ingest_4.png)
+    Run in a Terminal window (after installing SnowSQL): this script assumes file locations are `/tmp/data` and `/tmp/scripts`, modify appropriately.
+```bash
+% snowsql -a ORGNAME-ACCOUNTNAME -u snowgrid -f /tmp/scripts/snowsql/tpcdi_load.sql -o output_format=csv -o output_file=output_file.csv
+```
 
-**Choose following options for the file format**
-
-![payroll_ingest_5](assets/payroll_ingest_5.png)
-
-**You should have successfully loaded 100 records**
-
-![payroll_ingest_6](assets/payroll_ingest_6.png)
-
+9. `800_execute_pipeline.sql`: call batch load procedure that simulates an ingest pipeline
 
 <!-- ------------------------ -->
 ## Review Source Account
@@ -243,38 +270,41 @@ __Object Tags:__
 
 
 <!-- ------------------------ -->
-## Configure DR On Source And Target Accounts
-Let the DR configuration Begin! (and finish, you'll breeze through these steps with the blink of the eye - it's that easy to setup DR configuration on Snowflake). This is where we make use of the account replication and client redirect features and setup two first class snowflake objects on the source account:
-- **Connection:** The connection object stores a secure connection URL that you can use with any Snowflake client to connect to Snowflake.
-- **Failover group:**  It is a collection of objects in a source account that are replicated as a unit to one or more target accounts and can failover as a unit. A secondary failover group in a target account provides read-only access for the replicated objects. When a secondary failover group is promoted to become the primary failover group, read-write access is available.
+## Configure Primary(AWS) and Secondary(Azure) for Business Continuity
+Now that our Primary AWS account has been populated with users, database objects, governance policies, account metadata and data tranformation pipelines - we are ready to configure our Azure account as a Secondary target.
 
-#### Note values for orgname, source_account_name and target_account_name
-Fire the command below and note down values for "organization_name" and "account_name" for source and target accounts. You will need these in order to setup DR resources on the source and target accounts
+Snowflake BCDR is simple to setup, maintain and test. The key capabilities are [**Replication with Failover**](https://docs.snowflake.com/en/user-guide/replication-intro#replication-and-failover-failback) and [**Client Redirect**](https://docs.snowflake.com/en/user-guide/client-redirect), available only with Business Critical edition (or higher).
 
+We will create these two first-class Snowflake objects that deliver business continuity:
+- **Connection:** a connection object provides a *secure connection URL* for any Snowflake client to connect to an account and to be redirected to another account.
+- **Failover Group:**  a defined collection of objects in a source account that are replicated as a unit to one or more target accounts and can failover. A secondary failover group in a target account provides read-only access for the replicated objects. When a secondary failover group is promoted to become the primary failover group, read-write access is available.
+
+#### Run in a SQL worksheet named *BCDR Configuration* on the `Primary(AWS)`
 ```sql
 use role accountadmin;
 show replication accounts;
 ```
 
-#### Run these queries on source account
-
-Substitue value of orgname and target_account_name (as noted above) in the commands below
+#### Substitute `organization_name`, `source account_name` and `target account_name` in these commands to create connection and failover group objects:
 
 ```sql
 use role accountadmin;
-create connection sfsummitfailover;
-alter connection sfsummitfailover enable failover to accounts <orgname.target_account_name>;
+
+create connection prodsnowgrid;
+alter connection prodsnowgrid 
+    enable failover to accounts <organization_name.target_account_name>;
+
+show connections;
 
 create failover group sales_payroll_failover
     object_types = users, roles, warehouses, resource monitors, databases, shares
     allowed_databases = global_sales,common,payroll,inventory,loyalty,sales,crm,products,references,cross_database,externals
     allowed_shares = global_sales_share,sales_history_share, cross_database_share, crm_share, inventory_share
-    replication_allowed_to_accounts = <org_name.target_account_name>
-    failover_allowed_to_accounts = <org_name.target_account_name>;
-
+    allowed_integration_types = storage integrations
+    allowed_accounts = <organization_name.target_account_name>;
 ```
 
-#### Run these queries on target account
+#### Run in a SQL worksheet named *BCDR Configuration* on the `Secondary(Azure)`
 Here you'll create a secondary connection and a secondary failover group.
 
 - A secondary connection is linked to the primary connection and must be created in an account in a different region from the source account. The secondary connection name must be the same as the primary connection name.
