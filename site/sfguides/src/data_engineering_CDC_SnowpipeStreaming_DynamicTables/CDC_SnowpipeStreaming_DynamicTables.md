@@ -4,7 +4,7 @@ categories: Data-Engineering
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Streaming, CDC, Snowpipe, Dynamic, Financial Services
+tags: Data Engineering, Streaming, CDC, Snowpipe, Dynamic Tables, Financial Services
 authors: steven.maser@snowflake.com 
 
 # Snowpipe Streaming and Dynamic Tables for Real-Time Ingestion (CDC Use Case)
@@ -12,40 +12,40 @@ authors: steven.maser@snowflake.com
 ## Overview 
 Duration: 4
 
-This guide will take you through a scenario of using Snowflake's Snowpipe Streaming to ingest a simulated stream, then utilize Dynamic tables to transform and prepare the raw ingested JSON payloads into ready-for-analytics datasets.  These are two of Snowflake's latest innovations.
+This guide will take you through a scenario of using Snowflake's Snowpipe Streaming to ingest a simulated stream, then utilize Dynamic tables to transform and prepare the raw ingested JSON payloads into ready-for-analytics datasets.  These are two of Snowflake's powerful Data Engineering innovations for ingestion and transformation.
 
-A simulated streaming datafeed will be generated for this exercise, using a java client running on your desktop, that implements the Snowpipe Streaming API.  The simulated datafeed will be Stock Limit Orders, with new, changed, and cancelled orders represented as RDMBS transactions logs captured from INSERT, UPDATE, and DELETE database events.  These events will be transmitted as JSON payloads and land into a Snowflake table with a variant data column.  The simulation will be high-volume, first starting at 1 million transactions in seconds and secondly providing a steady stream.  Data will contain sensitive fields, so our process will have extra protections for this.
+A simulated streaming datafeed will be generated for this exercise, using a java client running on your desktop, that implements the Snowpipe Streaming SDK.  The simulated datafeed will be Stock Limit Orders, with new, changed, and cancelled orders represented as RDBMS transactions logs captured from INSERT, UPDATE, and DELETE database events.  These events will be transmitted as JSON payloads and land into a Snowflake table with a variant data column.  The simulation will be high-volume, first starting at 1 million transactions in seconds and secondly as steady stream.  Finally, data will contain sensitive fields, so our process will have extra protections for this.
 
 ![](assets/image0.png)
 
-This is the same type of stream ingestion typically created by a processing Change-Data-Capture agents that parsing the transaction logs of a database or from event notification mechanisms in modern application.  However, this could be simulating any type of stream, in any industry.  This streaming ingestion use case was modeled similarly to one previously handled with Snowflake's Kafka Connector, but no Kafka is necessary for this use case as a Snowpipe Streaming client can enable replacing the Kafka middleware infrastucture and saving the cost & complexity.  Once landed, Dynamic Tables are purpose-built Snowflake objects for Data Engineering.
+This is the same type of stream ingestion typically created by Change-Data-Capture (CDC) agents that parse transaction logs of a database or event notification mechanisms of modern application.  However, this could be simulating any type of stream, in any industry.  This streaming ingestion use case was modeled similarly to one previously handled with Snowflake's Kafka Connector, but no Kafka is necessary for this use case as a Snowpipe Streaming client can enable replacing the Kafka middleware infrastucture, saving cost & complexity.  Once landed, Dynamic Tables are purpose-built Snowflake objects for Data Engineering to transform the raw data into data ready for insights.
 
 ### The Use Case
-Our Source 'database' has stock trades for the Dow Jones Industrials, [30 US stocks](https://www.nyse.com/quote/index/DJI) that on average trade 200M-400M executed trades per day.  Our agent will be capturing Limit Order transaction events for these 30 stocks:  new orders, updates to orders (changes in quantity or limit price), and cancelled orders.  There is an estimated 3 new orders for every 2 updates, and then one cancellation.  Our appication will be simulating this datastream which will be first reproduce a heavy workload of an initial market opening session and secondly a more modest continuous flow.  Snowflake data consumers want to see three perspectives on limit orders: what is the "current" list of orders that filters out stale and cancelled orders, a historical table showing every event on the source (traditional slowly changing dimension format), and current orders summarized by stock ticker symbol and by long or short position.  Latency needs to be minimized, 1-2 minutes would be ideal for the end-to-end process.
+Our Source 'database' has stock trades for the Dow Jones Industrials, [30 US stocks](https://www.nyse.com/quote/index/DJI).  On average 200M-400M stock trades are executed per day.  Our agent will be capturing Limit Order transaction events for these 30 stocks, which are new orders, updates to orders (changes in quantity or the limit price), and orders that are cancelled.  For this simulation, there are 3 new orders for every 2 updates, and then one cancellation.  This scenario's datastream will first reproduce a heavy workload of an initial market opening session and secondly a more modest continuous flow.  Snowflake data consumers want to see three perspectives on limit orders: what is the "current" list of orders that filters out stale and cancelled orders, a historical table showing every event on the source (in a traditional slowly changing dimension format), and current orders summarized by stock ticker symbol and by long or short position.  Latency needs to be minimized, 1-2 minutes would be ideal for the end-to-end process.
 
-While not covered in this exercise, more Snowflake capabilities can further enrich your incoming data using Snowflake Data Marketplace data, train and deploy machine learning models, perform fraud detection, and other use cases.  The Lab was to introduce you to how this making real-time ingestion and processing easier and more scalable than ever before.
+While not covered in this exercise, more Snowflake capabilities can further enrich your incoming data using Snowflake Data Marketplace data, train and deploy machine learning models, perform fraud detection, and other use cases.  This Lab was to introduce you to real-time streaming ingestion and then transformation, making processing easier and more scalable than ever before.
 
 
 ### Prerequisites
 - Familiarity with Snowflake, basic SQL knowledge, using your desktop command line and executing a java program
-- Have a Java JRE/JDK Runtime environment on your laptop/desktop (confirm by running "java -version" showing v11 or higher)
+- Have a Java JRE/JDK Runtime environment on your laptop/desktop (confirm by running "java -version" showing v11 or higher).  Suggest [OpenJDK](https://jdk.java.net/20/) 20 or higher if installing.
 
 ### What You’ll Learn
 - Create Private & Public keyfiles and using them for [keypair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth.html) into Snowflake
 - Introduction to Snowpipe Streaming Java API, with a sample client and JSON-format datastream generator
 - Ingest real-time semi-structured data into Snowflake and store as Variant datafield
 - Create Dynamic Tables to do in-Snowflake ELT processing easier than ever before 
-- How to perform field-level [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)-based data encryption at-the-source for security but governance controls for those authorized
+- How to perform field-level [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)-based data encryption at-the-source for security but governance controls for those authorized downstream
 
 ### What You’ll Need 
 To complete this Quickstart, attendees need the following:
 
-- A [Snowflake Enterprise Account on your preferred AWS region](https://signup.snowflake.com/) with **ACCOUNTADMIN** access or setup assistance
+- A [Snowflake Enterprise or Business Critical Account](https://signup.snowflake.com/) with **ACCOUNTADMIN** access or setup assistance
 - Be able to download a SQL and a Zip file
 - Be able to run "keytool" command on your desktop (a utility included with Java)
-- Be able to run a Java program from the command line on your desktop (OpenJDK is fine, built and tested on v11)
+- Be able to run a Java program from the command line on your desktop
 
-### What You’ll Build 
+### What You’ll Build
 - User and Roles to control authentication and security
 - A Snowflake database that contains all data and objects built in this lab
 - A Landing/Staging table to initially land your incoming data stream
@@ -58,7 +58,7 @@ To complete this Quickstart, attendees need the following:
 Duration: 5
 
 ### a) Download
-The first thing you will need to do is download the following two files.  The first is a ZIP file you need to extract to a directory (for example C:/SnowflakeQuickstarts) that is the streaming simulator client.  The second file contains a series of SQL commands to execute in Worksheets throughout this lab **Click the green buttons to access the page to download the files**
+The first thing you will need to do is download the following two files.  The first is a ZIP file you need to extract to a directory (for example C:/SnowflakeQuickstarts) that is the streaming simulator client.  The second file contains a series of SQL commands to execute in a Worksheet throughout this lab **Click the green buttons to access the page to download the files**
 
 
 <button>[CDCSimulatorApp.zip](https://sfquickstarts.s3.us-west-1.amazonaws.com/data_engineering_CDC_snowpipestreaming_dynamictables/CDCSimulatorApp.zip)</button> (Click Download)
@@ -66,7 +66,7 @@ The first thing you will need to do is download the following two files.  The fi
 <button>[Data_Engineering_Streams_CDC_DT_VHOL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/32fc9d8c26674f520cb894577e181dcfaeb7c7df/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/Data_Engineering_Streams_CDC_DT_VHOL.sql)</button> (Click Raw, then from your browser, use "Save Page As")
 
 ### b) Login
-At this point login into your Snowflake account. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
+At this point login into your Snowflake account. If you have just created a free trial account, feel free to minimize or close hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
 
 ### c) Create a Worksheet
 In the Snowflake UI click on **Worksheets** on the left side.   
@@ -88,7 +88,7 @@ Finally, switch to the ACCOUNTADMIN role.  If you just created an evaluation acc
 Duration: 10
 
 ### a) Unzip and Prepare Java Client
-Find where you downloaded your ZIP-compressed client application in step 2a), for example C:/SnowflakeQuickstarts.  Extract file **CDCSimulatorApp1.zip** file which will create a CDCSimulatorApp directory and many files within.  The second file, **DCSimulatorApp2.zip** file only contains two additional JAR files, which are needed to be extracted into the CDCSimulatorApp directory (these are larger files, so needed to split into 2 ZIP files). Confirm these two JAR files are in CDCSimulatorApp directory/lib before proceeding (On MacOS you may need to move the files manually).
+Find where you downloaded your ZIP-compressed client application in step 2a), for example C:/SnowflakeQuickstarts.  Extract file **CDCSimulatorApp.zip** file which will create a CDCSimulatorApp directory and many files within.
 
 
 ### b) Generate Public and Private Keys
@@ -97,21 +97,29 @@ From your desktop's Command Line / Terminal window, navigate to your working dir
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
 ```
-Open file rsa_key.pub with a simple text editor and be prepared to copy your key soon in step 3.e, which is everything in-between the "- - - -" lines
+Open file rsa_key.pub with a simple text editor and be prepared to copy your key soon in step 3.e, which is everything in-between the "- - - -" lines.  If 'openssl' command is not found, you need to review your Java installation before proceeding.
 
 ![](assets/image3b.png)
 
 (Yes, there will be carriage returns in the key, that is ok)
 
-### c) Edit Properties File
+
+### c) Create a Dedicated Role and Limited Login for your Streaming Application
+Return to your Snowflake worksheet and run these commands, using the Public Key generated and file opened in Step 3.b above:
+```
+create role if not exists VHOL_CDC_AGENT;
+create or replace user vhol_streaming1 COMMENT="Creating for VHOL";
+alter user vhol_streaming1 set rsa_public_key='<Paste Your Public Key Here>';
+```
+### d) Edit Properties File
 You will need to edit the snowflake.properties file to match your Snowflake account name (two places):
 ```
 user=vhol_streaming1
 role=VHOL_CDC_AGENT
-account=<My_Snowflake_Account>
+account=<MY_SNOWFLAKE_ACCOUNT>
 warehouse=VHOL_CDC_WH
 private_key_file=rsa_key.p8
-host=<My_Snowflake_Account>.snowflakecomputing.com
+host=<ACCOUNT_IDENTIFIER>.snowflakecomputing.com
 database=VHOL_ENG_CDC
 schema=ENG
 table=CDC_STREAMING_TABLE
@@ -122,14 +130,8 @@ DEBUG=FALSE
 SHOW_KEYS=TRUE
 NUM_ROWS=1000000
 ```
+For assistance on [Account identifiers](https://docs.snowflake.com/en/user-guide/admin-account-identifier)
 
-### d) Create a Dedicated Role and Limited Login for your Streaming Application
-Return to your Snowflake worksheet and run (using Public Key generated and file opened in Step 3.c above):
-```
-create role if not exists VHOL_CDC_AGENT;
-create or replace user vhol_streaming1 COMMENT="Creating for VHOL";
-alter user vhol_streaming1 set rsa_public_key='<Paste Your Public Key Here>';
-```
 
 <!-- ------------------------ -->
 ## Begin Construction
@@ -158,7 +160,6 @@ Size XS, dedicated for this Hands-on Lab
 ```
 create or replace warehouse VHOL_CDC_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
 grant all privileges on warehouse VHOL_CDC_WH to role VHOL;
-grant usage on warehouse VHOL_CDC_WH to role VHOL_CDC_AGENT; 
 ```
 For the PII Section (Step #7):
 ```
@@ -179,12 +180,15 @@ grant ownership on database VHOL_ENG_CDC to role VHOL;
 ```
 use role VHOL;
 use database VHOL_ENG_CDC;
+create schema ENG;
+use VHOL_ENG_CDC.ENG;
 use warehouse VHOL_CDC_WH;
 grant usage on database VHOL_ENG_CDC to role VHOL_CDC_AGENT;
-create schema ENG;
 grant usage on schema ENG to role VHOL_CDC_AGENT;
 grant usage on database VHOL_ENG_CDC to role PUBLIC;
 grant usage on schema PUBLIC to role PUBLIC;
+
+
 ```
 ### d)  Create a Staging/Landing Table
 Where all incoming data will land initially.  Each row will contain a transaction, but JSON will be stored as a VARIANT datatype within Snowflake.
@@ -208,7 +212,7 @@ You should see this:
 
 ![](assets/image4-e.png)
 
-If you get any errors / exceptions, read the error message closely and ask for help.  As this application is running on your desktop, you may be missing a prerequisite, have an older version of Java, have too restrictive user profile, or many other reasons.
+If you get any errors / exceptions, read the error message closely and ask for help.  As this application is running on your desktop, you may be missing a prerequisite, have an older version of Java, have too restrictive user profile, or many other reasons.  Also check your snowflake.properties file to ensure you have the correct Account Name and Identifier set if you get connector errors.  If authentication issues, check and review your public key configuration.
 
 ## Streaming Records!
 Duration: 15
@@ -227,7 +231,7 @@ Run_MAX.bat
 Which returns:  
 ![](assets/image5-a.png)
 
-This should take 20-30 seconds.
+This should take 10-20 seconds.
 
 ### b)  View New Records in Snowflake
 Just like that, in a few seconds, you have 1M records in Snowflake (single-row inserts!)
@@ -235,7 +239,7 @@ Just like that, in a few seconds, you have 1M records in Snowflake (single-row i
 select count(*) from ENG.CDC_STREAMING_TABLE;
 select * from CDC_STREAMING_TABLE limit 100;
 ```
-Each record is a JSON payload, received via Snowpipe Streaming Ingestion API and stored in Snowflake as a Variant datafield.
+Each record is a JSON payload, received via Snowpipe Streaming Ingestion API and stored in a Snowflake table as rows and Variant datafields.
 
 ![](assets/image5-b.png)
 
@@ -257,6 +261,7 @@ select
   where RECORD_CONTENT:transaction:action::varchar='INSERT' limit 1000;
   ```
 
+As you can see, it is very easy to work with Semi-Structured data.  Our upcoming task of creating Dynamic Tables will take advantage of this.
 
 ### c)  But There is More Than One Table in My Source System
 The CDC Agent could easily be capturing changes from more than one source table, lets prepare for that and write each dynamic table to only use the events received for our simulated Stock Limit Order stream.  These are the key fields to use:
@@ -296,7 +301,7 @@ WHERE score = 1 and action != 'DELETE';
 ```
 
 
-If you run this right away, it will show zero.  You have to wait a bit for the Dynamic Table to be built
+If you run this right away, it will show a warning that table is not yet ready.  You have to wait a bit for the refresh period and the Dynamic Table to be built
 ```
 SELECT count(*) FROM LIMIT_ORDERS_CURRENT_DT;
 ```
@@ -357,7 +362,7 @@ wait the lag period (~ 1 minute)
 ```
 select  * from LIMIT_ORDERS_SCD_DT  limit 1000;
 ```
-(Note, you should see more than the 1,000,000 initial records we loaded)
+(Note, you should now see more than the 1,000,000 initial records we loaded)
 ```
 select  count(*) from LIMIT_ORDERS_SCD_DT;
 ```
@@ -388,7 +393,12 @@ from (
 WHERE action != 'DELETE' group by ticker,position order by position,TOTAL_VALUE_USD DESC
 ;
 ```
-(We know to wait)
+You know to wait for the Lag by now, but you can refresh right away too:
+```
+alter DYNAMIC TABLE LIMIT_ORDERS_SUMMARY_DT refresh;
+```
+Now, table is ready for queries and note it shows you the statistics on this refresh performed.
+
 ```
 select * from LIMIT_ORDERS_SUMMARY_DT where position='LONG' order by TOTAL_VALUE_USD;;
 ```
@@ -404,9 +414,13 @@ First, lets look at the properties page for a Dynamic Table, from the left-side 
 
 ![](assets/image6-35.png)
 
-You will see four tabs (Table Details, Columns, Data Preview, Refresh History).  Click on Refresh History:
+You will see five tabs (Table Details, Columns, Data Preview, Graph, & Refresh History).  Click on Refresh History first:
 
  ![](assets/image6-36.png)
+
+The Graph view will show you dependencies on this Dynamic Table:
+
+ ![](assets/image6-38.png)
 
 Can also leverage Query History, a more account-wide administrative view, from the left side menu, click Activity>Query History:
 
@@ -445,7 +459,7 @@ Note:  No reason to show consumers the encrypted orderid value
 
 **Congrats, your consumers are able to view and analyze Limit Orders!**  
 ### Bonus:
-Feel free to create views for the other two dynamic tables.
+Feel free to create views for the other two dynamic tables.  Could also create a summary dynamic table (third one) sourcing from the first dynamic table instead of the landing table.
 
 
 ## Handling PII/Sensitive Data
@@ -582,6 +596,12 @@ You can now see the ORDERID in three forms:  Tokenized, Encrypted, and Decrypted
 Snowflake's Granular, Role-Based Access enables you to control who has access to what, at the database/schema, table, column, and row level as you need!
 Dynamic Masking and tagging will be more layers of security available soon, but not included or enabled in this preview.
 
+### g)  Check Security
+```
+use role VHOL;
+use schema VHOL_ENG_CDC.PII;
+select * from VHOL_ENG_CDC.PII.LIMIT_ORDERS_VW limit 1000;
+```
 
 
 ## Final Steps & Cleanup

@@ -2,7 +2,7 @@ summary: This guide can be used to help customers setup and run queries pertaini
 id: resource_optimization_billing_metrics
 categories: data-science-&-ml,resource-optimization
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Resource Optimization, Cost Optimization, Billing, Billing Metrics, Monitoring 
 authors: Matt Meredith
@@ -444,7 +444,7 @@ Look for irregularities in the credit consumption or consistently high consumpti
 Account_Usage
 #### SQL
 ```sql
-TSELECT 
+SELECT 
 
 TO_DATE(START_TIME) as DATE
 ,DATABASE_NAME
