@@ -3,7 +3,7 @@ id: connectors_example_push_based_java
 summary: Overview of building Snowflake push based connectors using Java and Native Apps.
 categories: connectors,solution-examples,partner-integrations
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps
 
@@ -39,7 +39,7 @@ Duration: 5
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure snowsql to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- Clone the [example-push-based-java-connector repository](https://github.com/Snowflake-Labs/connectors-examples)
+- Clone the [connectors-native-sdk repository](https://github.com/Snowflake-Labs/connectors-native-sdk) and go to `./examples/example-push-based-java-connector`
 
 ## Connector overview
 Duration: 4
