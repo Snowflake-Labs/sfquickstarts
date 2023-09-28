@@ -14,12 +14,12 @@ Duration: 1
 
 In this tutorial you will learn how to build native Snowflake connectors. This example uses GitHub issues API as the source
 of the data. In the next steps we will cover what constitutes a connector, how to build and deploy it and how to build
-application UI using Streamlit.
+an application UI using Streamlit.
 
 ## Prerequisites
 Duration: 1
 
-- Basic knowledge of Snowflake Native Apps
+- Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Python
 - Snowflake user with `accountadmin` role
 - GitHub account with [access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
@@ -27,19 +27,19 @@ Duration: 1
 ## You will learn
 Duration: 1
 
-- How to build native connector
+- How to build a native connector
 - How to achieve external connectivity
 - How to use secrets
 
 ## Prepare your local environment
 Duration: 5
 
-- Install Python 3.8
+- Install Python 3.9
 - Install `build` package using `pip install build`
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure snowsql to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- Clone [example-github-python-connector repository](https://github.com/Snowflake-Labs/connectors-examples)
+- Clone the [example-github-python-connector repository](https://github.com/Snowflake-Labs/connectors-examples)
 
 ## Connector overview
 Duration: 2
@@ -54,7 +54,7 @@ The connector consists of the following elements:
 - schemas
     - `PUBLIC` - versioned, used to store all public procedures
     - `STATE` - stateful, used for all stateful objects like tables
-    - `TASKS` - stateful, use for tasks
+    - `TASKS` - stateful, used for tasks
 - tables
     - `STATE.APP_CONFIGURATION` - application configuration (details will be covered in next steps)
     - `STATE.RESOURCE_CONFIGURATION` - resource configuration (details will be covered in next steps)
@@ -80,17 +80,21 @@ is separated into three modules:
 
 ### Streamlit dashboard
 
-Additionally, the connector has a UI build in streamlit. The streamlit dashboard is defined in `streamlit_app.py` file.
+Additionally, the connector has a UI build in Streamlit. The Streamlit dashboard is defined in `streamlit_app.py` file.
 Thanks to it the connector can be configured and monitored using Streamlit in Snowflake.
+Additionally, some of the privileges required by the application can be requested through a pop-up in Streamlit.
 
 ### setup.sql script
 
-Is the script defining the application (link to native apps). This script includes definition of all components that
-constitutes the connector including procedures, schemas and tables.
+[Setup script](https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script) defines objects which are created and needed inside the application.
+This includes procedures, schemas, tables etc.
 
 ### manifest.yml file
 
-Manifest file required by the native apps model.
+Manifest file is required by the native apps model. This file specifies properties of an application.
+Privileges and references required by the application can be
+specified inside the manifest file. For more information check [manifest docs](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest)
+and [requesting privileges docs](https://docs.snowflake.com/en/developer-guide/native-apps/requesting-about).
 
 ## Connector configuration
 Duration: 3
@@ -100,13 +104,13 @@ The connector configuration is split into two domains:
 - resource level configuration
 
 ### Configuring connector
-Connector level configuration lives in `STATE.APP_CONFIGURATION` table. This table is meant to keep information
-like API integration name used by the connector or secret name used for authentication to GitHub.
+Connector level configuration lives in the `STATE.APP_CONFIGURATION` table. This table is meant to keep information
+like API integration name used by the connector and secret name used for authentication in GitHub.
 
 The table is a key-value table.
 
 ### Ingestion resource configuration
-Next to global configuration the connector also stores configuration for every enabled resource. In case of this example
+Next to the global configuration the connector also stores a configuration for every enabled resource. In case of this example
 a single resource is represented as `org_name/repo_name`.
 
 The table is a key-value table.
@@ -114,27 +118,31 @@ The table is a key-value table.
 ## Connector state
 Duration: 2
 
-Apart from configuration table, the connector uses `STATE.APP_STATE` table for persisting state of ongoing ingestions.
+Apart from configuration table, the connector uses `STATE.APP_STATE` table to persist a state of any ongoing ingestion.
 
-The state table is key-value table with additional timestamp column. To improve the perfomance the table is an append only table.
+The state table is a key-value table with an additional timestamp column. To improve the performance, the table is an append only table.
 This means that creating or updating a value inserts a new row into the table. Reading a key is done by retrieving the
-newest row with given key.
+newest row with the given key.
 
 ## External access
 Duration: 2
 
-Data from Github is ingested using external access capabilities of Snowflake.
+Data from GitHub is ingested using [external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) capabilities of Snowflake.
 
 ### Direct external access
 
-If you are part of direct external access Private Preview you can continue to next step. If not then please
-follow additional necessary steps from the next paragraph.
+[Direct external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) is a public preview feature of Snowflake.
+
+## Application logs
+Duration: 2
+
+Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to [enable loging](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging) documentation.
 
 ## Ingestion logic
 Duration: 2
 
-When a repository is enabled following oject are created:
-- sink table for raw data ingested from GitHub API
+When a repository is enabled the following objects are created:
+- a sink table for raw data ingested from GitHub API
 - a view over sink table that flattens the raw JSON data
 - a task responsible for ingestion
 
@@ -144,32 +152,32 @@ The ingestion task calls `INGEST_DATA` procedure which does the following:
 1. reads the GitHub Token from secret
 2. sends a request to GitHub issues API with authorization headers
 3. merges fetched data into sink table
-4. checks for next page link in response headers
-5. if link is present it repeats steps from 2 onward
-6. if link is not present the procedure exits
+4. checks for a next page link in the response headers
+5. if the link is present it repeats the steps from 2 onward
+6. if the link is not present the procedure exits
 
-In this approach all data for given repository is fetched every time. New records are added and updated
-records get updated in the sink table.
+In this approach all the data for a given repository is fetched every time. The data is merged, meaning that 
+the new records are added, while the changed records are updated in the sink table.
 
 ## Build the connector
 Duration: 3
 
-As we've learnt in previous sections the project consists of three components:
+As we have learnt in the previous sections the project consists of the three components:
 - code module
 - manifest.yml
 - setup.sql
 
-All those components have to be uploaded to Snowflake prior creating the app.
+All of those components have to be uploaded to Snowflake prior to creating the app.
 
 ### Overview
 Build step for the app consist of:
-1. Creating a new `sf_build` directory on local machine
-2. Creating wheel artifact (for python we additionally rename `whl` file to `zip`) and putting it in `sf_build` folder
-3. Copying of `manifest.yml` to `sf_build` folder
-4. Copying of `install.sql` to `sf_build` folder
-5. Copying of `streamlit_app.py` to `sf_build` folder
+1. Creating a new `sf_build` directory on the local machine
+2. Creating a wheel artifact (for python we additionally rename `whl` file to `zip`) and putting it in the `sf_build` folder
+3. Copying of the `manifest.yml` to the`sf_build` folder
+4. Copying of the `install.sql` to the `sf_build` folder
+5. Copying of the `streamlit_app.py` to the `sf_build` folder
 
-The `sf_build` serves as the source of truth about the app definition and content.
+The `sf_build` directory serves as the source of truth about the app definition and its content.
 
 ### Building
 To build the connector execute a convenience script:
@@ -177,7 +185,7 @@ To build the connector execute a convenience script:
 make build
 ```
 
-Once `sf_build` folder is created you can follow to the next step where we will deploy the connector.
+Once the `sf_build` folder is created you can follow to the next step where we will deploy the connector.
 
 ## Deploy the connector
 Duration: 3
@@ -187,18 +195,18 @@ In this step we will deploy the connector to a Snowflake account.
 
 Deployment step consists of:
 1. Creating a database and stage for app artifacts
-2. Uploading the `sf_build` content to the newly created stage
+2. Uploading the `sf_build` contents to the newly created stage
 3. Creating an application package using the data from the stage
 
 ### Connection and app setup
 
-This quickstarts uses some convenience scripts for running necessary commands. Those scripts use snowsql. Before
-proceeding further you need to configure snowsql connection to your environment.
+This quickstart uses some convenience scripts for running necessary commands. Those scripts use [snowsql](https://docs.snowflake.com/en/user-guide/snowsql). 
+Before proceeding you need to configure snowsql connection to your Snowflake account.
 
-1. Configure snowsql connection according to [documentation](https://docs.snowflake.com/en/user-guide/snowsql-start#using-named-connections).
-2. Export the name of your connection in terminal `export CONNECTION=<your connection name>`
-3. Adjust values for APP_NAME, APP_VERSION, STAGE_DB, STAGE_NAME, WAREHOUSE in `Makefile` script. Those values
-   will be used by all scripts used in this quickstart.
+1. Configure snowsql connection according to the [documentation](https://docs.snowflake.com/en/user-guide/snowsql-start#using-named-connections).
+2. Export the name of your connection in the terminal `export CONNECTION=<your connection name>`
+3. Adjust values for APP_NAME, APP_VERSION, STAGE_DB, STAGE_NAME, WAREHOUSE in the `Makefile` script. Those values
+   will be used by all the scripts used in this quickstart.
 
 ### Deploy the app
 To deploy the connector execute a convenience script:
@@ -241,27 +249,26 @@ ENABLED = TRUE;
 
 ### Granting privileges to the application
 
-Also the script will grant the application required privileges. The application requires the following privileges:
-- usage on external access integration you created in previous step
-- usage on database and schema of the secrets
+The script will grant some of the required privileges to the application. 
+The rest of the privileges will be requested later through the Streamlit pop-up. 
+The application requires the following privileges:
+- usage on the external access integration you created in the previous step
+- usage on the database and the schema with the secrets
 - read on the secret itself
-- create database to create destination database
-- execute task to create and run ingestion tasks
-- usage on warehouse that will be used by the connector
 
-This translates to queries like this one:
+This translates to queries like those:
 ```snowflake
 GRANT USAGE ON INTEGRATION GITHUB_INTEGRATION TO APPLICATION GITHUB_CONNECTOR;
 
 GRANT USAGE ON DATABASE DB_NAME TO APPLICATION GITHUB_CONNECTOR;
 GRANT USAGE ON SCHEMA DB_NAME.PUBLIC TO APPLICATION GITHUB_CONNECTOR;
 GRANT READ ON SECRET DB_NAME.PUBLIC.GITHUB_TOKEN TO APPLICATION GITHUB_CONNECTOR;
-
-GRANT CREATE DATABASE ON ACCOUNT TO APPLICATION GITHUB_CONNECTOR;
-GRANT EXECUTE TASK ON ACCOUNT TO APPLICATION GITHUB_CONNECTOR;
-
-GRANT USAGE ON WAREHOUSE XS TO APPLICATION GITHUB_CONNECTOR;
 ```
+
+The following privileges will be granted using pop-ups inside Streamlit:
+- `create database` to create destination database
+- `execute task` to create and run ingestion tasks
+- `usage on warehouse` that will be used by the connector
 
 ### Running the installation script
 
@@ -272,31 +279,56 @@ make install
 ```
 
 ## Configuring the connector
-Duration: 3
+Duration: 5
 
-To start the data ingestion you need to configure the connector. To do this go to Apps tab and select your connector.
+To start the data ingestion you need to configure the connector. To do this go to the Apps tab inside Snowflake and select your connector.
 
 ![apps.png](assets/apps.png)
 
+### Grant privileges
+When your connector is loaded by Streamlit a pop-up will be displayed. It will always be displayed at the start of the application,
+as long as any of the privileges are missing.
+
+![privileges1.png](assets/privileges1.png)
+
 ### Configure the connector
 
-First you need to specify what database should be use for storing the ingested data and what secret, integration and warehouse
-should be use by the connector. Use names of the objects you created previously.
+First you need to specify what database should be used to store the ingested data. This database will be created, so it
+needs to have a name that is not used by any other database. Furthermore, a secret and integration that
+should be used by the connector need to be specified. Use names of the objects you created previously. Names of the objects will be visible
+in the execution log of the convenience scripts run in the previous steps.
+By default, created values are the following:
+- Secret name: `{APP_NAME}_SECRETS.PUBLIC.GITHUB_TOKEN`
+- Integration name: `GITHUB_INTEGRATION`
+
+Please note that the grey values visible in the form are just tooltips and are not used as the default values.
 
 ![configuration1.png](assets/configuration1.png)
 
+### Warehouse privilege
+After pressing the `Configure` button another pop-up will be displayed. It requires the user to choose a warehouse that will
+be used to schedule the ingestion task. Granting this privilege is necessary for the connector to work properly.
+
+After granting the privilege refresh the application page to ensure that the underlying 
+database connection session is refreshed with all the granted privileges.
+
+![privileges2.png](assets/privileges2.png)
+
 ### Enable data ingestion
 
-Next you can enable a repository for ingestion. You can try `Snowflake-Labs/sfquickstarts`. Put `Snowflake-Labs` as organization name
-and `sfquickstarts` as repository name in the form marked red on below picture.
+Next you can enable a repository for ingestion. You can try `Snowflake-Labs/sfquickstarts`. Put `Snowflake-Labs` as an organization name
+and `sfquickstarts` as a repository name in the form marked red in the below picture. Once `Start ingestion` button is pressed
+a task will be scheduled and the ingestion will start. Configured repository will be visible in the table below the form.
+More than one repository can be configured.
 
-![configuration1.png](assets/configuration2.png)
+![configuration2.png](assets/configuration2.png)
 
 ### Monitor the ingestion
 
-Once the ingestion is started you can monitor its state using state and data preview tabs.
+Once the ingestion is started you can monitor its state using state and data preview tabs. It might take some time before
+any data is visible. If multiple repositories were configured,
+the visible data can be changed using the selection box.
 
 ![state.png](assets/state.png)
 
 ![data.png](assets/data.png)
-
