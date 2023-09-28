@@ -13,11 +13,9 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview 
 Duration: 1
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+This guide will take you through Snowflake's Collaboration features, and highlight how easy it is to share data between two organisations.
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
-
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+It also highlights Snowflakes ability to host a ML Model, score data from shared data, and share the enriched (scored) data back to the original Provider. Hence, it is a 2-way sharing relationship, where both accounts are Providers and Consumers.
 
 ### Prerequisites
 - Familiarity with Markdown syntax
@@ -25,14 +23,15 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 ### What You’ll Learn 
 - How to become a Provider in Snowflake Marketplace (Private Listings)
 - How to Consume a shared private asset in the Snowflake Marketplace
-- How to enable Multi-tenanted tables as a Provider 
+- How to Deploy a ML Model in Snowflake
+- How to share seamlessly between two Snowflake Accounts 
 
 ### What You’ll Need 
 - Two [Snowflake](https://signup.snowflake.com/) Accounts in the same cloud and region 
 
 ### What You’ll Build 
-- Ingestion of Credit Card Approval Data
-- Sharing rew data seamlessly via a private listing
+- Ingestion of Credit Card Customer Profile Data
+- Sharing raw data seamlessly via a private listing
 - Consuming shared data via a private listing
 - Enriching shared data using a ML model
 - Sharing back enriched data to the original Provider account
@@ -41,21 +40,89 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 ## Business Use Case
 Duration: 2
 
-In this hands-on-lab, we are playing the role of a bank, which has a number of attributes of it's customers. It has employed the help of an outsourced risk agency to score each of these customers, and return a risk score on whether they should approve their credit card application.
+In this hands-on-lab, we are playing the role of a bank. The Credit Risk team has noticed a rise in credit card default rates which affect the bottom line of the business. It has employed the help of an external organisation to score the credit card default risk of their existing customers, based on a series of attributes in categories such as spending, balance, delinquency, payment and risk. The data needs to be shared between the two parties.
 
 Both companies have chosen to use Snowflake. The advantages of doing this are:
 - Low latency between the Provider and Consumer accounts
-- The files stay within the security permieter of Snowflake, with RBAC 
+- The files stay within the security perimeter of Snowflake, with Role Based Access Control (RBAC)
 
 Below is a schematic of the data share
 ![Diagram](assets/two_way_data_collaboration.png)
 
-<!-- ------------------------ -->
-## Set up
+### Dataset Details
+
+The dataset contains aggregated profile features for each customer at each statement date. Features are anonymized and normalized, and fall into the following general categories:
+
+D_* = Delinquency variables
+S_* = Spend variables
+P_* = Payment variables
+B_* = Balance variables
+R_* = Risk variables
+
+### Dataset Citation
+
+Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dane. (2022). American Express - Default Prediction. Kaggle. https://kaggle.com/competitions/amex-default-prediction
 
 <!-- ------------------------ -->
-## Creating a Step
+## Set up
+Duration: 1
+
+Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/). Follow the prompts to create a Snowflake Account.
+
+Repeat the process above. Be sure to select the same cloud and region as the first account your created. Although it is possible to share accross clouds and regions, this guide will not cover this scenario.
+
+Check your emails and follow the prompts to activate both the accounts. One will be the Provider and one will be the Consumer.
+
+<!-- ------------------------ -->
+## Provider Account - Set Up
 Duration: 10
+
+In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our credit card approval data into our AMEX_DATA table and run a few queries to get familiar with the data.
+
+### Initial Set Up
+
+For this part of the lab we will want to ensure we run all steps as the ACCOUNTADMIN role
+
+```SQL
+  -- Change role to accountadmin
+  use role accountadmin;
+```
+
+First we can create a [Virtual Warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview) that can be used for data exploration and general querying in this lab. We'll create this warehouse with a size of Medium which is right sized for that use case in this lab.
+
+```SQL
+  -- Create a virtual warehouse for data exploration
+  create or replace warehouse query_wh with 
+    warehouse_size = 'medium' 
+    warehouse_type = 'standard' 
+    auto_suspend = 300 
+    auto_resume = true 
+    min_cluster_count = 1 
+    max_cluster_count = 1 
+    scaling_policy = 'standard';
+```
+
+### Load Data 
+
+Next we will create a database and schema that will house the tables that store our data to be shared.
+
+```SQL
+  -- Create the application database and schema
+  create or replace database amex_data;
+  create or replace schema amex_data;
+```
+
+This DDL will create the structure for the table which is the main source of data for our lab.
+
+```SQL
+  create or replace table amex_transaction_data_sf (
+    customer_ID varchar,
+    B_3 float,
+    D_66 float,
+    S_12 float,
+    D_120 float
+  );
+```
 
 A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
