@@ -91,7 +91,7 @@ Contains files which are needed to create a native application in Snowflake
 ### Java Agent module
 Contains java files that constitute the Agent application and gradle files that are needed to build this application.
 
-### Application logs
+## Application logs
 Duration: 2
 
 Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to [enable loging](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging) documentation.
