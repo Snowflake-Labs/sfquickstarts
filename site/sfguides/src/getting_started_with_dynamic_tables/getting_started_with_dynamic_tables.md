@@ -1,7 +1,6 @@
 author: Parag Jain
 id: getting_started_with_dynamic_tables
 summary: Getting Started with Snowflake Dynamic Tables
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
 status: Published 
