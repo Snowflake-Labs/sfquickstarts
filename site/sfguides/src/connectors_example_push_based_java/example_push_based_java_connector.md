@@ -16,14 +16,14 @@ In this tutorial you will learn how to build a native Snowflake push based conne
 In the following steps we will cover what constitutes a connector, how to build and deploy it and how to build
 an application UI using Streamlit.
 
-## Prerequisites
+### Prerequisites
 Duration: 1
 
 - Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Java
 - Snowflake user with `accountadmin` role
 
-## You will learn
+### You will learn
 Duration: 1
 
 - Creating Native Applications in Snowflake
@@ -32,7 +32,7 @@ Duration: 1
 - How to optimize merge for the CDC scenario using [deferred merge approach](img/75ce96e228ff90d2.pdf)
 ![](assets/deferred_merge.pdf)
 
-## Prepare your local environment
+### Prepare your local environment
 Duration: 5
 
 - Install Java 11 or later
@@ -91,7 +91,7 @@ Contains files which are needed to create a native application in Snowflake
 ### Java Agent module
 Contains java files that constitute the Agent application and gradle files that are needed to build this application.
 
-## Application logs
+### Application logs
 Duration: 2
 
 Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to [enable loging](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging) documentation.

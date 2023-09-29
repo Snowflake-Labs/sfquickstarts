@@ -7,6 +7,8 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps, External connectivity
 
+# Native GitHub Connector (Java)
+
 ## Overview
 Duration: 1
 
@@ -14,7 +16,7 @@ In this tutorial you will learn how to build native Snowflake connectors. This e
 of the data. In the next steps we will cover what constitutes a connector, how to build and deploy it and how to build
 an application UI using Streamlit.
 
-## Prerequisites
+### Prerequisites
 Duration: 1
 
 - Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
@@ -22,14 +24,14 @@ Duration: 1
 - Snowflake user with `accountadmin` role
 - GitHub account with [access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
-## You will learn
+### You will learn
 Duration: 1
 
 - How to build a native connector
 - How to achieve external connectivity
 - How to use secrets
 
-## Prepare your local environment
+### Prepare your local environment
 Duration: 5
 
 - Install Java 11
