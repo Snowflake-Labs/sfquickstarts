@@ -117,7 +117,7 @@ Run the following to find the `YOUR_ACCOUNT_LOCATOR` and your Snowflake Region I
 SELECT current_account() as YOUR_ACCOUNT_LOCATOR, current_region() as YOUR_SNOWFLAKE_REGION_ID;
 ```
 
-You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#snowflake-region-ids). 
+You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier#snowflake-region-ids-and-region-groups). 
 
 **Example**: aws_us_west_2 would have a us-west-2 value for `YOUR_REGION_HERE`.
 
