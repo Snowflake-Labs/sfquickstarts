@@ -134,9 +134,46 @@ To run all the queries in this script, use the "Execute All Statements" button i
 
 
 <!-- ------------------------ -->
+## Load Weather
+Duration: 4
 
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace. To put this in context, we are on step **#3** in our data flow overview:
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+### Snowflake Data Marketplace
+Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Data Marketplace by following these steps:
+
+* Login to Snowsight
+* Click on the `Marketplace` link in the left navigation bar
+* Enter "Weather Source LLC: frostbyte" in the search box and click return
+* Click on the "Weather Source LLC: frostbyte" listing tile
+* Click the blue "Get" button
+    * Expand the "Options" dialog
+    * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
+    * Select the "HOL_ROLE" role to have access to the new database
+* Click on the blue "Get" button
+
+That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset!
+
+### Run the Script
+Open the `steps/03_load_weather.sql` script in VS Code from the file Explorer in the left navigation bar, and run the script. Notice how easy it is to query data shared through the Snowflake Marketplace! You access it just like any other table or view in Snowflake:
+
+```sql
+SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
+```
+
+<!-- ------------------------ -->
+## Load Excel Files
+Duration: 10
+
+During this step we will be loading the raw excel files containing location and order details from the local storage. Download the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data), and load them to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
+
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+### Run the Script
+To load the excel files data, execute the `steps/05_load_excel_files.sql` script. This can be done a number of ways in VS Code or Snowsight UI. 
+ 
 
 ```markdown
 ## Step 1 Title
