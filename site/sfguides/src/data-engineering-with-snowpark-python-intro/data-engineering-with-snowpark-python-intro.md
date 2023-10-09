@@ -60,7 +60,7 @@ During this Quickstart you will accomplish the following things:
 ## Quickstart Setup
 Duration: 10
 
-### Fork the Quickstart Repository and Enable GitHub Actions
+### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
 ### Create GitHub Codespace
@@ -98,24 +98,7 @@ During the codespace setup we created an Anaconda environment named `snowflake-d
 
 <img src="assets/vscode-terminal-conda.png" width="800" />
 
-If for some reason it wasn't activiated simply run `conda activate snowflake-demo` in your terminal.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+If for some reason it wasn't activiated simply run `conda activate snowflake-demo` in your terminal. It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
 
 
 <!-- ------------------------ -->
@@ -171,9 +154,168 @@ During this step we will be loading the raw excel files containing location and 
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
-### Run the Script
-To load the excel files data, execute the `steps/05_load_excel_files.sql` script. This can be done a number of ways in VS Code or Snowsight UI. 
+### Creating the Stored Procedure
+
+During this step we will be creating and deploying our first Snowpark Python stored procedure (or sproc) to Snowflake. This SPROC `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP` will load the excel data files into snowflake tables for further analysis.
+
+Here is the SQL query to create the SPROC:
+
+```sql
+CREATE OR REPLACE PROCEDURE LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(file_path string, worksheet_name string, target_table string)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python', 'pandas', 'openpyxl')
+HANDLER = 'main'
+AS
+$$
+from snowflake.snowpark.files import SnowflakeFile
+from openpyxl import load_workbook
+import pandas as pd
  
+def main(session, file_path, worksheet_name, target_table):
+ with SnowflakeFile.open(file_path, 'rb') as f:
+     workbook = load_workbook(f)
+     sheet = workbook.get_sheet_by_name(worksheet_name)
+     data = sheet.values
+ 
+     # Get the first line in file as a header line
+     columns = next(data)[0:]
+     # Create a DataFrame based on the second and subsequent lines of data
+     df = pd.DataFrame(data, columns=columns)
+ 
+     df2 = session.create_dataframe(df)
+     df2.write.mode("overwrite").save_as_table(target_table)
+ 
+ return True
+$$;
+```
+### Running the Sproc in Snowflake
+In order to run the sproc in Snowflake you have a few options. Any sproc in Snowflake can be invoked through SQL as follows:
+
+```sql
+CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP();
+```
+
+You can also simply run the entire script from Snowsight UI or VS Code. Execute the `steps/05_load_excel_files.sql` script by selecting Run all from VS Code.
+
+<!-- ------------------------ -->
+
+## Daily City Metrics Update Sproc
+Duration: 10
+
+During this step we will be creating and deploying our second Snowpark Python sproc to Snowflake. This sproc will join the `ORDER_DETAIL` table with the `LOCATION` table and `HISTORY_DAY` table to create a final, aggregated table for analysis named `DAILY_CITY_METRICS`.
+
+<img src="assets/data_pipeline_overview.png" width="800" />
+
+Here is the SQL query to create the SPROC:
+
+```sql
+CREATE OR REPLACE PROCEDURE LOAD_DAILY_CITY_METRICS_SP()
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+from snowflake.snowpark import Session
+import snowflake.snowpark.functions as F
+
+def table_exists(session, schema='', name=''):
+    exists = session.sql("SELECT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{}' AND TABLE_NAME = '{}') AS TABLE_EXISTS".format(schema, name)).collect()[0]['TABLE_EXISTS']
+    return exists
+
+def main(session: Session) -> str:
+    schema_name = "HOL_SCHEMA"
+    table_name = "DAILY_CITY_METRICS"
+
+    # Define the tables
+    order_detail = session.table("ORDER_DETAIL")
+    history_day = session.table("FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.HISTORY_DAY")
+    location = session.table("LOCATION")
+
+    # Join the tables
+    order_detail = order_detail.join(location, order_detail['LOCATION_ID'] == location['LOCATION_ID'])
+    order_detail = order_detail.join(history_day, (F.builtin("DATE")(order_detail['ORDER_TS']) == history_day['DATE_VALID_STD']) & (location['ISO_COUNTRY_CODE'] == history_day['COUNTRY']) & (location['CITY'] == history_day['CITY_NAME']))
+
+    # Aggregate the data
+    final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F.col('ISO_COUNTRY_CODE')) \
+                        .agg( \
+                            F.sum('PRICE').alias('DAILY_SALES_SUM'), \
+                            F.avg('AVG_TEMPERATURE_AIR_2M_F').alias("AVG_TEMPERATURE_F"), \
+                            F.avg("TOT_PRECIPITATION_IN").alias("AVG_PRECIPITATION_IN"), \
+                        ) \
+                        .select(F.col("DATE_VALID_STD").alias("DATE"), F.col("CITY_NAME"), F.col("ISO_COUNTRY_CODE").alias("COUNTRY_DESC"), \
+                            F.builtin("ZEROIFNULL")(F.col("DAILY_SALES_SUM")).alias("DAILY_SALES"), \
+                            F.round(F.col("AVG_TEMPERATURE_F"), 2).alias("AVG_TEMPERATURE_FAHRENHEIT"), \
+                            F.round(F.col("AVG_PRECIPITATION_IN"), 2).alias("AVG_PRECIPITATION_INCHES"), \
+                        )
+
+    # If the table doesn't exist then create it
+    if not table_exists(session, schema=schema_name, name=table_name):
+        final_agg.write.mode("overwrite").save_as_table(table_name)
+
+        return f"Successfully created {table_name}"
+    # Otherwise update it
+    else:
+        cols_to_update = {c: final_agg[c] for c in final_agg.schema.names}
+
+        dcm = session.table(f"{schema_name}.{table_name}")
+        dcm.merge(final_agg, (dcm['DATE'] == final_agg['DATE']) & (dcm['CITY_NAME'] == final_agg['CITY_NAME']) & (dcm['COUNTRY_DESC'] == final_agg['COUNTRY_DESC']), \
+                            [F.when_matched().update(cols_to_update), F.when_not_matched().insert(cols_to_update)])
+
+        return f"Successfully updated {table_name}"
+$$;
+```
+### Running the Sproc in Snowflake
+In order to run the sproc in Snowflake you have a few options. Any sproc in Snowflake can be invoked through SQL as follows:
+
+```sql
+CALL LOAD_DAILY_CITY_METRICS_SP();
+```
+
+You can also simply run the entire script from Snowsight UI or VS Code. Execute the `steps/06_load_daily_city_metrics.sql` script by selecting Run all from VS Code.
+
+### More on the Snowpark API
+In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like PySpark, this is accomplished with the `Session.builder.configs().create()` methods.
+
+ When building a Snowpark Python sproc the contract is that the first argument to the entry point (or handler) function is a Snowpark session.
+
+The first thing you'll notice in the `steps/06_load_daily_city_metrics.sql` script is that we have some functions which use SQL to create objects in Snowflake and to check object status. To issue a SQL statement to Snowflake with the Snowpark API you use the `session.sql()` function, like you'd expect. Here's one example:
+
+```python
+def table_exists(session, schema='', name=''):
+    exists = session.sql("SELECT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{}' AND TABLE_NAME = '{}') AS TABLE_EXISTS".format(schema, name)).collect()[0]['TABLE_EXISTS']
+    return exists
+```
+
+The second thing to point out is how we're using DataFrames to join the data from different data sources into an `ORDER_DETAIL` df using functions such as `join()`. 
+
+```python
+order_detail = order_detail.join(location, order_detail['LOCATION_ID'] == location['LOCATION_ID'])
+    order_detail = order_detail.join(history_day, (F.builtin("DATE")(order_detail['ORDER_TS']) == history_day['DATE_VALID_STD']) & (location['ISO_COUNTRY_CODE'] == history_day['COUNTRY']) & (location['CITY'] == history_day['CITY_NAME']))
+```
+
+The last thing to point out is how we are using the Python Dataframe APIs to aggregate dataframes into a final aggregate df using functions such as `agg(), group_by(), select()`. 
+
+```python
+final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F.col('ISO_COUNTRY_CODE')) \
+                        .agg( \
+                            F.sum('PRICE').alias('DAILY_SALES_SUM'), \
+                            F.avg('AVG_TEMPERATURE_AIR_2M_F').alias("AVG_TEMPERATURE_F"), \
+                            F.avg("TOT_PRECIPITATION_IN").alias("AVG_PRECIPITATION_IN"), \
+                        ) \
+                        .select(F.col("DATE_VALID_STD").alias("DATE"), F.col("CITY_NAME"), F.col("ISO_COUNTRY_CODE").alias("COUNTRY_DESC"), \
+                            F.builtin("ZEROIFNULL")(F.col("DAILY_SALES_SUM")).alias("DAILY_SALES"), \
+                            F.round(F.col("AVG_TEMPERATURE_F"), 2).alias("AVG_TEMPERATURE_FAHRENHEIT"), \
+                            F.round(F.col("AVG_PRECIPITATION_IN"), 2).alias("AVG_PRECIPITATION_INCHES"), \
+                        )
+```
+
+Again, for more details about the Snowpark Python DataFrame API, please check out our [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) page.
+
+<!-- ------------------------ -->
 
 ```markdown
 ## Step 1 Title
