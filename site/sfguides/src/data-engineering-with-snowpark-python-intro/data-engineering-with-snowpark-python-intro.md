@@ -32,8 +32,8 @@ You will learn about the following Snowflake features during this Quickstart:
 * Loading data from an external stage
 * Data Sharing/marketplace
 * Snowpark Python Dataframe APIs
-* Snowpark Python Task APIs
-* Python Stored Procedures
+* Python Task APIs
+* Stored Procedures
 * Visual Studio Code Snowflake Native Extension
 
 ### What You’ll Need 
@@ -462,8 +462,8 @@ We've covered a ton in this Quickstart, and here are the highlights:
 * Loading data from an external stage
 * Data Sharing/marketplace
 * Snowpark Python Dataframe APIs
-* Snowpark Python Task APIs
-* Python Stored Procedures
+* Python Task APIs
+* Stored Procedures
 * Visual Studio Code Snowflake Native Extension
 
 ### Related Resources
