@@ -63,7 +63,7 @@ Duration: 10
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
-To put this in context, we are on step **#1** in our data flow overview:
+To put this in context, we are on step **#2** in our data flow overview:
 
 ### Create GitHub Codespace
 For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be more than enough for this lab.
@@ -110,7 +110,7 @@ Duration: 10
 ### Snowflake Extensions for VS Code
 You can run SQL queries against Snowflake in many different ways (through the Snowsight UI, SnowSQL, etc.) but for this Quickstart we'll be using the Snowflake extension for VS Code. For a brief overview of Snowflake's native extension for VS Code, please check out our [VS Code Marketplace Snowflake extension page](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
 
-To put this in context, we are on step **#2** in our data flow overview:
+To put this in context, we are on step **#3** in our data flow overview:
 
 ### Run the Script
 To set up all the objects we'll need in Snowflake for this Quickstart you'll need to run the `steps/01_setup_snowflake.sql` script.
@@ -126,7 +126,7 @@ Duration: 4
 
 During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace. 
 
-To put this in context, we are on step **#3** in our data flow overview:
+To put this in context, we are on step **#4** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
@@ -158,7 +158,7 @@ Duration: 10
 
 During this step we will be loading the raw excel files containing location and order details from the local storage. Download the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data), and load them to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
 
-To put this in context, we are on step **#4** in our data flow overview:
+To put this in context, we are on step **#5** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
@@ -214,7 +214,7 @@ Duration: 10
 
 During this step we will be creating and deploying our second Snowpark Python sproc to Snowflake. This sproc will join the `ORDER_DETAIL` table with the `LOCATION` table and `HISTORY_DAY` table to create a final, aggregated table for analysis named `DAILY_CITY_METRICS`.
 
-To put this in context, we are on step **#5** in our data flow overview:
+To put this in context, we are on step **#6** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
@@ -342,7 +342,7 @@ Duration: 10
 
 During this step we will be orchestrating our new Snowpark pipelines with Snowflake's native orchestration feature named Tasks. We will create two tasks, one for each stored procedure, and chain them together. We will then run the tasks. 
 
-To put this in context, we are on step **#6** in our data flow overview:
+To put this in context, we are on step **#7** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
@@ -443,7 +443,7 @@ Duration: 2
 
 Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/11_teardown.sql` script. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/09_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
 
-To put this in context, we are on step **#7** in our data flow overview:
+To put this in context, we are on step **#8** in our data flow overview:
 
 <!-- ------------------------ -->
 
