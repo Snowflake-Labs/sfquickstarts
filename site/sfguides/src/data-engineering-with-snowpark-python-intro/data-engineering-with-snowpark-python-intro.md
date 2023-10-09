@@ -14,7 +14,7 @@ Duration: 15
 
 Are you interested in unleashing the power of Snowpark Python to build data engineering pipelines? Well then, this Quickstart is for you! The focus here will be on building data engineering pipelines with Python, and not on data science. For examples of doing data science with Snowpark Python please check out our [Machine Learning with Snowpark Python: - Credit Card Approval Prediction](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html?index=..%2F..index#0) Quickstart.
 
-This Quickstart will cover the basics of data engineering with Snowpark Python. The pipeline will load the data from different data sources (your local machine and Snowflake Marketplace). It uses Snowpark Python dataframe APIs and Stored procedures for ETL, and Tasks Python API for orchestration.  Here is the overview of what we will build:
+This Quickstart will cover the basics of data engineering with Snowpark Python. The pipeline will load the data from different data sources ( external stage and Snowflake Marketplace). It uses Snowpark Python dataframe APIs and Stored procedures for ETL, and Tasks Python API for orchestration.  Here is the overview of what we will build:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
@@ -29,7 +29,7 @@ Let's dive right in!
 ### What You’ll Learn 
 You will learn about the following Snowflake features during this Quickstart:
 
-* Loading data from local
+* Loading data from an external stage
 * Data Sharing/marketplace
 * Snowpark Python Dataframe APIs
 * Snowpark Python Task APIs
@@ -49,7 +49,7 @@ You will need the following things before beginning:
 ### What You’ll Build 
 During this Quickstart you will accomplish the following things:
 
-* Load Excel files from your local machine using Python Stored Procedures
+* Load Excel files from an external stage using Python Stored Procedures
 * Setup access to Snowflake Marketplace data
 * Create a data pipeline using Python stored procedures to calculate daily city metrics
 * Orchestrate the pipeline with Tasks API
@@ -62,8 +62,6 @@ Duration: 10
 
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
-
-To put this in context, we are on step **#2** in our data flow overview:
 
 ### Create GitHub Codespace
 For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be more than enough for this lab.
@@ -84,7 +82,6 @@ This will open a new tab and begin setting up your codespace. This will take a f
     * Installing the Snowpark Python library
 * VS Code setup
     * Installing VS Code
-    * Configuring VS Code for the Python Anaconda environment
     * Installing the Snowflake VS Code extension
 * Starting a hosted, web-based VS Code editor
 
@@ -94,14 +91,6 @@ Once the codepsace has been created and started you should see a hosted web-base
 We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. A default config file was created for you during the codespace setup.
 
 The easiest way to edit the default `~/.snowsql/config` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowsql/config` and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the `accountname`, `username`, and `password` with your values. Then save and close the file.
-
-### Verify Your Anaconda Environment is Activated
-During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
-
-<img src="assets/vscode-terminal-conda.png" width="800" />
-
-If for some reason it wasn't activiated simply run `conda activate snowflake-demo` in your terminal. It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
 
 <!-- ------------------------ -->
 ## Setup Snowflake
@@ -113,7 +102,7 @@ You can run SQL queries against Snowflake in many different ways (through the Sn
 To put this in context, we are on step **#3** in our data flow overview:
 
 ### Run the Script
-To set up all the objects we'll need in Snowflake for this Quickstart you'll need to run the `steps/01_setup_snowflake.sql` script.
+To set up all the objects we'll need in Snowflake for this Quickstart you'll need to run the `steps/03_setup_snowflake.sql` script.
 
 Start by clicking on the Snowflake extension in the left navigation bar in VS Code. Then login to your Snowflake account with a user that has ACCOUNTADMIN permissions. Once logged in to Snowflake, open the `steps/03_setup_snowflake.sql` script in VS Code by going back to the file Explorer in the left navigation bar.
 
@@ -156,7 +145,7 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 ## Load Excel Files
 Duration: 10
 
-During this step we will be loading the raw excel files containing location and order details from the local storage using Snowflake's dynamic file access feature. You can download the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data), and load them to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
+During this step we will be loading the raw excel files containing location and order details from an external stage using Snowflake's dynamic file access feature. You can look at the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data). We load the data to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
 
 To put this in context, we are on step **#5** in our data flow overview:
 
@@ -166,7 +155,7 @@ To put this in context, we are on step **#5** in our data flow overview:
 
 You can read a file from a stage using the `SnowflakeFile` class in the Snowpark `snowflake.snowpark.files` module. The `SnowflakeFile` class provides dynamic file access, which lets you stream files of any size.
 
-In this quickstart, we will use dynamic file access to load the raw excel files from your local storage.
+In this quickstart, we will use dynamic file access to load the excel files from an s3 bucket (an external stage).
 
 ```python
 from snowflake.snowpark.files import SnowflakeFile
@@ -458,16 +447,12 @@ Duration: 2
 
 Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/11_teardown.sql` script. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/09_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
 
-To put this in context, we are on step **#8** in our data flow overview:
-
 <!-- ------------------------ -->
 
 ## Conclusion
 Duration: 4
 
-In this Quickstart covered the basics of data engineering with Snowpark Python. We created the pipeline to load the data from different data sources (your local machine and Snowflake Marketplace). We then used Snowpark Python dataframe APIs and Stored procedures for the ETL process, and orchestrated the tasks by creating dags using Tasks Python API. 
-
-To put this in context, we are on step **#8** in our data flow overview:
+In this Quickstart covered the basics of data engineering with Snowpark Python. We created the pipeline to load the data from different data sources (external stage and Snowflake Marketplace). We then used Snowpark Python dataframe APIs and Stored procedures for the ETL process, and orchestrated the tasks by creating dags using Tasks Python API. 
 
 Here is the overview of what we built:
 
@@ -478,7 +463,7 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 ### What we've covered 
 We've covered a ton in this Quickstart, and here are the highlights:
 
-* Loading data from local
+* Loading data from an external stage
 * Data Sharing/marketplace
 * Snowpark Python Dataframe APIs
 * Snowpark Python Task APIs
