@@ -156,11 +156,26 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 ## Load Excel Files
 Duration: 10
 
-During this step we will be loading the raw excel files containing location and order details from the local storage. Download the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data), and load them to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
+During this step we will be loading the raw excel files containing location and order details from the local storage using Snowflake's dynamic file access feature. You can download the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data), and load them to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
 
 To put this in context, we are on step **#5** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
+
+### Dynamic File Access
+
+You can read a file from a stage using the `SnowflakeFile` class in the Snowpark `snowflake.snowpark.files` module. The `SnowflakeFile` class provides dynamic file access, which lets you stream files of any size.
+
+In this quickstart, we will use dynamic file access to load the raw excel files from your local storage.
+
+```python
+from snowflake.snowpark.files import SnowflakeFile
+from openpyxl import load_workbook 
+  with SnowflakeFile.open(file_path, 'rb') as f:
+     workbook = load_workbook(f)
+     sheet = workbook.get_sheet_by_name(worksheet_name)
+     data = sheet.values
+```
 
 ### Creating the Stored Procedure
 
