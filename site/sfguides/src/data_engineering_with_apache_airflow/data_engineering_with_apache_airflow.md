@@ -1,4 +1,4 @@
-author: Adrian Lee
+author: Adrian Lee, George Yates
 id: data_engineering_with_apache_airflow
 summary: This is a sample Snowflake Guide
 categories: data-engineering,architecture-patterns,partner-integrations
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, dbt, Airflow
 
-# Data Engineering with Apache Airflow, Snowflake & dbt
+# Data Engineering with Apache Airflow, Snowflake, dbt & Cosmos
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -19,6 +19,8 @@ Numerous business are looking at modern data strategy built on platforms that co
 Apache Airflow is an open-source workflow management platform that can be used to author and manage data pipelines. Airflow uses worklows made of directed acyclic graphs (DAGs) of tasks. 
 
 [dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by [dbt Labs](https://www.getdbt.com/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the command line interface for running dbt projects. The CLI is free to use and open source.
+
+[cosmos](https://astronomer.github.io/astronomer-cosmos/index.html) is an Open-Source project that enables you to run your dbt Core projects as Apache Airflow DAGs and Task Groups with a few lines of code.
 
 In this virtual hands-on lab, you will follow a step-by-step guide to using Airflow with dbt to create data transformation job schedulers. 
 
@@ -45,6 +47,7 @@ You will need the following things before beginning:
   1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
 1. Docker
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
+1. **The Astro CLI Installed.** We will be using the Astro CLI to create our Airflow environments. Please install the Astro CLI on your desired OS by following the [Astro CLI setup instructions](https://docs.astronomer.io/astro/cli/install-cli)
 
 ### What You’ll Build 
 - A simple working Airflow pipeline with dbt and Snowflake 
