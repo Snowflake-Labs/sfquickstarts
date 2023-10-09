@@ -7,6 +7,8 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps, External connectivity
 
+# Example Native GitHub Connector (Java)
+
 ## Overview
 Duration: 1
 

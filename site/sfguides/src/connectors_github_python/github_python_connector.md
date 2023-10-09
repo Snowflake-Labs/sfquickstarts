@@ -7,7 +7,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps, External connectivity
 
-# Native GitHub Connector (Python)
+# Example Native GitHub Connector (Python)
 
 ## Overview
 Duration: 1
