@@ -502,25 +502,44 @@ Again, for more details about the Snowpark Python DataFrame API, please check ou
 <!-- ------------------------ -->
 
 ## Orchestrate Jobs
+
 Duration: 10
 
-During this step we will be orchestrating our new Snowpark pipelines with Snowflake's native orchestration feature named Tasks. We will create two tasks, one for each stored procedure, and chain them together. We will then run the tasks. 
+During this step we will be orchestrating our new Snowpark pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as Python APIs. For the scope of this quickstart, we will use Python APIs to create and run Tasks. 
+
+In this step, we will create two tasks, one for each stored procedure, and chain them together. We will then deploy or run the tasks to operationalize the data pipeline.
+
+In this step, we will run through the commands in the Python file `steps/07_deploy_task_dag.py` from VS Code.
 
 To put this in context, we are on step **#7** in our data flow overview:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+---
 
-### Run the Task
-To orchestrate the stored procedures we created and run them periodically, we can use Snowflake Tasks. There are two ways to create tasks in Snowflake. SQL commands, and Python APIs. 
+![Quickstart Pipeline Overview](assets/data_pipeline_overview.png)
 
-In this quickstart, we will use Python APIs to create and run Tasks. 
+---
 
-### Creating DAGs
-In this step, let us create a dag and configure the schedule and transformations we want to run as part of the dag. 
+### Exploring the different terminologies associated with Snowflake Tasks
 
-Here is an example of how it looks like:
+- **Tasks**: Task is a basic, smallest unit of execution. A task can execute a single SQL statement, a call to a stored procedure, or any procedural logic using [Snowflake Scripting](https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index). One or more tasks make up a Dag.  A root task is a special type of task which is the first task in a dag with no parent tasks before it.
+- **Dags**: A Directed Acyclic Graph (DAG) is a series of tasks composed of a single root task and additional tasks, organized by their dependencies. DAGs flow in a single direction, meaning a task runs only after all of its predecessor tasks have run successfully to completion.
+- **Schedule Interval**: Schedule interval refers to the interval of time between successive scheduled executions of a standalone task or the root task in a DAG.
+- **Deploying a Dag**: When you create a dag, you define the schedule interval, transformation logic in the tasks and task dependancies. However, you need to deploy a dag to actually run those transformations on the schedule. If you don't deploy the dag, the dag will not run on the schedule.
+- **Running a dag**: When a dag is deployed, it is run on the defined schedule. Each instance of this scheduled run is called a Task Run.
+
+### Creating Tasks, and DAGs
+
+Let us create a dag and configure the schedule and transformations we want to run as part of the dag. 
+
+In this example, we have two tasks `dag_task1`, `dag_task2` and `dag_task3` as part of `HOL_DAG`. The dag is scheduled daily.
+
+- `dag_task1` loads the  `order_detail` data by calling the stored procedure `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP`.
+- `dag_task2` loads the `location` data by calling the stored procedure `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP`.
+- `dag_task3` updates the `DAILY_CITY_METRICS` table in snowflake by calling the stored procedure `LOAD_DAILY_CITY_METRICS_SP`.
+
+Here is the code snippet for dag and task creation:
+
 ```python
-
 dag_name = "HOL_DAG"
     dag = DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name)
     with dag:
@@ -529,29 +548,47 @@ dag_name = "HOL_DAG"
         dag_task3 = DAGTask("LOAD_DAILY_CITY_METRICS_TASK", definition="CALL LOAD_DAILY_CITY_METRICS_SP()", warehouse=warehouse_name)
 
 ```
-The above dag runs daily on the specified warehouse and it consists of 3 different tasks. 
 
-Here is how we define the order of execution of the tasks:
-```python
-        dag_task3 >> dag_task1
-        dag_task3 >> dag_task2
-```
-### Running DAGs
+Great, we have the tasks and the dag created. But how do we define the task dependancies? Which tasks should run first?
 
-So far, we have only created the dag and defined the order of execution of tasks within the dag. To start running the dags, we have to `deploy()` and `run()` them as shown here:
+If you are familiar with Apache Airflow, you might know how we can use `>>` operator to define task dependancy. If not, let's understand the flow.
+
+Here is how we define the order of execution of the tasks in our dag:
 
 ```python
-    dag_op.deploy(dag, mode="orreplace")
-    dag_op.run(dag)
+dag_task3 >> dag_task1
+dag_task3 >> dag_task2
 ```
-### More on Tasks
-Tasks are Snowflake's native scheduling/orchestration feature. 
-A few things to note in the dag creation step above. First we specify the schedule and warehouse on which the tasks will be run. Then we specify the order of tasks in the dag using the `>>` operator similar to other orchestration tools like Apache Airflow.  
+
+The above definition `dag_task3 >> dag_task1` means that `dag_task3` is dependant on `dag_task1`.
+
+Similarly, `dag_task3 >> dag_task2` means that `dag_task3` is dependant on `dag_task2`.
+
+### Deploying the DAG
+
+So far, we have only created the dag and defined the order of execution of tasks within the dag. To enable the dag to run on the defined schedule, we have to `deploy()` it first.
+
+```python
+dag_op.deploy(dag, mode="orreplace")
+```
+
+After we deploy the dag, the tasks in the dag will run periodically as per the schedule interval in the dag definition.
+
+### Running a DAG
+
+In addition to running the dags periodically, suppose if you need to run the dag on demand for debugging or troubleshooting, you can use the `run()` function.
+
+```python
+dag_op.run(dag)
+```
 
 And for more details on Tasks see [Introduction to Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro.html).
 
+
+
 ### Task Metadata
-Snowflake keeps metadata for almost everything you do, and makes that metadata available for you to query (and to create any type of process around). Tasks are no different, Snowflake maintains rich metadata to help you monitor your task runs. Here are a few sample SQL queries you can use to monitor your tasks runs:
+
+Snowflake keeps metadata for almost everything you do, and makes that metadata available for you to query (and to create any type of process around). Tasks are no different. Snowflake maintains rich metadata to help you monitor your task runs. Here are a few sample SQL queries you can use to monitor your tasks runs:
 
 ```sql
 -- Get a list of tasks
@@ -577,14 +614,17 @@ ORDER BY COMPLETED_TIME DESC;
 ```
 
 ### Monitoring Tasks
-So while you're free to create any operational or monitoring process you wish, Snowflake provides some rich task observability features in our Snowsight UI. Try it out for yourself by following these steps:
 
-* In the Snowsight navigation menu, click **Data** » **Databases**.
-* In the right pane, using the object explorer, navigate to a database and schema.
-* For the selected schema, select and expand **Tasks**.
-* Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
-* Select the **Graph** tab. The task graph appears, displaying a hierarchy of child tasks.
-* Select a task to view its details.
+Now, after your dag is deployed, all the tasks in your dag will be running as per the defined schedule. However, as a Snowflake user, how can you peek into the success and failure of each run, look at the task run time, and more?
+
+Snowflake provides some rich task observability features in the Snowsight UI. Try it out for yourself by following these steps:
+
+- In the Snowsight navigation menu, click **Data** » **Databases**.
+- In the right pane, using the object explorer, navigate to a database and schema.
+- For the selected schema, select and expand **Tasks**.
+- Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
+- Select the **Graph** tab. The task graph appears, displaying a hierarchy of child tasks.
+- Select a task to view its details.
 
 For more details, and to learn about viewing account level task history, please check out our [Viewing Task History](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html) documentation.
 
@@ -592,15 +632,15 @@ For more details, and to learn about viewing account level task history, please 
 
 One important thing to understand about tasks, is that the queries which get executed by the task won't show up with the default Query History UI settings. In order to see the queries that just ran you need to do the following:
 
-* Remove filters at the top of this table, including your username, as later scheduled tasks will run as "System":
+- Remove filters at the top of this table, including your username, as later scheduled tasks will run as "System":
 
-![](assets/query_history_remove_filter1.png)
+![remove filter](assets/query_history_remove_filter1.png)
 
-* Click "Filter", and add filter option 'Queries executed by user tasks' and click "Apply Filters":
+- Click "Filter", and add filter option 'Queries executed by user tasks' and click "Apply Filters":
 
-![](assets/query_history_remove_filter2.png)
+![remove filter](assets/query_history_remove_filter2.png)
 
-You should now see all the queries run by your tasks! Take a look at each of the MERGE commands in the Query History to see how many records were processed by each task. And don't forget to notice that we processed the whole pipeline just now, and did so incrementally!
+You should now see all the queries run by your tasks! 
 
 <!-- ------------------------ -->
 ## Teardown
