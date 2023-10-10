@@ -9,91 +9,105 @@ tags: Getting Started, Data Engineering, Snowpark, Python, Intro
 
 # Intro to Data Engineering with Snowpark Python
 <!-- ------------------------ -->
-## Overview 
+## Overview
+
 Duration: 15
 
-Are you interested in unleashing the power of Snowpark Python to build data engineering pipelines? Well then, this Quickstart is for you! The focus here will be on building data engineering pipelines with Python, and not on data science. For examples of doing data science with Snowpark Python please check out our [Machine Learning with Snowpark Python: - Credit Card Approval Prediction](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html?index=..%2F..index#0) Quickstart.
+This Quickstart will cover the basics of data engineering with Snowpark Python. By completing this guide, you will be able to build a data pipeline to process data from different sources, and periodically run the pipeline to update your data tables in Snowflake. 
 
-This Quickstart will cover the basics of data engineering with Snowpark Python. The pipeline will load the data from different data sources ( external stage and Snowflake Marketplace). It uses Snowpark Python dataframe APIs and Stored procedures for ETL, and Tasks Python API for orchestration.  Here is the overview of what we will build:
+Here is a summary of what you will be able to learn in each step by following this quickstart:
+
+- **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
+- **Snowflake Marketplace**: Download the data you need from Snowflake Marketplace and use it for your analysis
+- **Data Engineering**: Leverage Snowpark for Python Dataframes to perform data transformations such as group by, aggregate, and join to prep for the data for downstream applications
+- **Orchestrating Pipelines**: Use Snowflake Tasks API to turn your data pipeline code into operational pipelines with integrated monitoring
+
+In case you are new to some of the technologies mentioned above, here is a quick summary with the links to documentation.
+
+### What is Snowpark?
+
+The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
+
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
+
+**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+
+Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+
+![Snowpark](assets/snowpark.png)
+
+### Working with Snowflake Marketplace
+
+Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.
+
+### What you will learn
+
+- How to ingest data from an external stage such as an S3 bucket into a Snowflake table
+- How to access data from Snowflake marketplace and use it for your analysis
+- How to analyze data and perform data engineering tasks using Snowpark dataframe API, Python Stored procedures and more
+- How to use open-source Python libraries from curated Snowflake Anaconda channel
+- How to create Snowflake Tasks and use the Python Tasks API to schedule data pipelines
+- How to use VS Code extension for Snowflake to perform standard snowflake operations from VS Code and Snowsigt UI
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
-Let's dive right in!
-
 ### Prerequisites
-* Familiarity with Python
-* Familiarity with the DataFrame API
-* Familiarity with Snowflake
-* Familiarity with Git repositories and GitHub
 
-### What You’ll Learn 
-You will learn about the following Snowflake features during this Quickstart:
-
-* Loading data from an external stage
-* Data Sharing/marketplace
-* Snowpark Python Dataframe APIs
-* Python Task APIs
-* Stored Procedures
-* Visual Studio Code Snowflake Native Extension
+- Familiarity with Python
+- Familiarity with the DataFrame API
+- Familiarity with Snowflake
+- Familiarity with Git repositories and GitHub
 
 ### What You’ll Need 
+
 You will need the following things before beginning:
 
-* Snowflake account
-    * **A Snowflake Account**
-    * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
-    * **Anaconda Terms & Conditions accepted**. See Getting Started section in [Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started).
-* GitHub account
-    * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
+- [Python 3.10](https://www.python.org/downloads/) installed
+  - Note that you will be creating a Python environment with 3.10 in the **Get Started** step
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
-### What You’ll Build 
-During this Quickstart you will accomplish the following things:
-
-* Load Excel files from an external stage using Python Stored Procedures
-* Setup access to Snowflake Marketplace data
-* Create a data pipeline using Python stored procedures to calculate daily city metrics
-* Orchestrate the pipeline with Tasks API
-* Monitor the pipelines with Snowsight
-
+> aside positive
+> IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 
 <!-- ------------------------ -->
 ## Quickstart Setup
+
 Duration: 10
 
-### Fork the Quickstart Repository
-You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+### Fork the GitHub Repository
+
+The very first step is to fork the GitHub repository [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
 ### Create GitHub Codespace
-For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be more than enough for this lab.
+
+For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
 
 To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
 
 <img src="assets/codespace_setup.png" width="800" />
 
-This will open a new tab and begin setting up your codespace. This will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
+This will open a new tab and begin setting up your codespace. It will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
 
-* Creating a container for your environment
-* Installing Anaconda (miniconda)
-* SnowSQL setup
-    * Installing SnowSQL
-    * Creating a directory and default config file for SnowSQL
-* Anaconda setup
-    * Creating the Anaconda environment
-    * Installing the Snowpark Python library
-* VS Code setup
-    * Installing VS Code
-    * Installing the Snowflake VS Code extension
-* Starting a hosted, web-based VS Code editor
+- Creating a container for your environment
+- Installing Anaconda (miniconda)
+- SnowSQL setup
+  - Installing SnowSQL
+  - Creating a directory and default config file for SnowSQL
+- Anaconda setup
+  - Creating the Anaconda environment
+  - Installing the Snowpark Python library
+- VS Code setup
+  - Installing VS Code
+  - Installing the Snowflake VS Code extension
+- Starting a hosted, web-based VS Code editor
 
 Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
 
-### Configure Snowflake Credentials
-We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. A default config file was created for you during the codespace setup.
-
-The easiest way to edit the default `~/.snowsql/config` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowsql/config` and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the `accountname`, `username`, and `password` with your values. Then save and close the file.
-
 <!-- ------------------------ -->
 ## Setup Snowflake
+
 Duration: 10
 
 ### Snowflake Extensions for VS Code
