@@ -118,6 +118,14 @@ You can run SQL queries and Python APIs against Snowflake in many different ways
 
 Following the instructions mentioned in the [docs](https://docs.snowflake.com/en/user-guide/vscode-ext), you can install the Snowflake extension. Next, you need to connect to your Snowflake account from VS Code by logging in with your account details. Follow the instructions in the [docs](https://docs.snowflake.com/en/user-guide/vscode-ext#signing-in) to sign in.
 
+To put this in context, we are on step **#3** in our data flow overview:
+
+---
+
+![Quickstart Pipeline Overview](assets/data_pipeline_overview.png)
+
+---
+
 ### Create Roles, Databases, Tables, Schema and Stages
 
 You can log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) or VS Code to create all the snowflake objects needed to work through this guide.
@@ -126,7 +134,7 @@ For the purpose of this quickstart, we will use VS Code to run the SQL commands 
 
 ---
 
-![Execute in VS Code](assets/vscode-execute.png)
+![Execute in VS Code](assets/vscode_execute.png)
 
 ---
 
@@ -191,38 +199,65 @@ CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
 <!-- ------------------------ -->
 ## Load Weather
 
-Duration: 4
+Duration: 5
 
-During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace. 
+
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace.
 
 To put this in context, we are on step **#4** in our data flow overview:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+---
 
-### Snowflake Data Marketplace
+![Quickstart Pipeline Overview](assets/data_pipeline_overview.png)
+
+---
+
+### Snowflake Marketplace
+
+Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.
+
+But what about data that needs constant updating - like the WEATHER data? We would need to build a pipeline process to constantly update that data to keep it fresh. Perhaps a better way to get this external data would be to source it from a trusted data supplier. Let them manage the data, keeping it accurate and up to date.
+
+### Weather data from Snowflake Marketplace
+
 Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Data Marketplace by following these steps:
 
-* Login to Snowsight
-* Click on the `Marketplace` link in the left navigation bar
-* Enter "Weather Source LLC: frostbyte" in the search box and click return
-* Click on the "Weather Source LLC: frostbyte" listing tile
-* Click the blue "Get" button
-    * Expand the "Options" dialog
-    * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
-    * Select the "HOL_ROLE" role to have access to the new database
-* Click on the blue "Get" button
+- Login to Snowsight
+- Click on the `Marketplace` link in the left navigation bar
+- Enter "Weather Source LLC: frostbyte" in the search box and click return
+- Click on the "Weather Source LLC: frostbyte" listing tile
+- Click the blue "Get" button
+  - Expand the "Options" dialog
+  - Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
+  - Select the "HOL_ROLE" role to have access to the new database
+- Click on the blue "Get" button
+
+---
+
+![Snowflake Marketplace](assets/snowflake_marketplace.png)
+
+---
 
 That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset!
 
-### Run the Script
-Open the `steps/03_load_weather.sql` script in VS Code from the file Explorer in the left navigation bar, and run the script. Notice how easy it is to query data shared through the Snowflake Marketplace! You access it just like any other table or view in Snowflake:
+### Query the Weather data
+
+Open the `steps/04_load_weather.sql` script in VS Code from the file Explorer in the left navigation bar, and select `Execute All` from the top right corner. Notice how easy it is to query data shared through the Snowflake Marketplace! You access it just like any other table or view in Snowflake:
 
 ```sql
 SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 ```
 
+You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODE` by navigating to the Snowsight UI -> Data -> Databases.  
+
+> aside positive
+> IMPORTANT:
+>
+> - If you used different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.
+
 <!-- ------------------------ -->
 ## Load Excel Files
+
 Duration: 10
 
 During this step we will be loading the raw excel files containing location and order details from an external stage using Snowflake's dynamic file access feature. You can look at the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data). We load the data to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
