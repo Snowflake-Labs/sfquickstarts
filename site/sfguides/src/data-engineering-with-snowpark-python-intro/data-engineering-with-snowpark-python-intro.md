@@ -358,13 +358,30 @@ Fantastic. We now have all the raw data needed to build our data pipeline and fu
 
 Duration: 10
 
-During this step we will be creating and deploying our second Snowpark Python sproc to Snowflake. This sproc will join the `ORDER_DETAIL` table with the `LOCATION` table and `HISTORY_DAY` table to create a final, aggregated table for analysis named `DAILY_CITY_METRICS`.
+During this step we will be creating our second Snowpark Python sproc to Snowflake. This sproc will join the `ORDER_DETAIL` table with the `LOCATION` table and `HISTORY_DAY` table to create a final, aggregated table for analysis named `DAILY_CITY_METRICS`.
+
+In this step, we will run through the commands in the SQL file `steps/06_load_daily_city_metrics.sql` from VS Code.
 
 To put this in context, we are on step **#6** in our data flow overview:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+---
 
-Here is the SQL query to create the SPROC:
+![Quickstart Pipeline Overview](assets/data_pipeline_overview.png)
+
+---
+
+### Creating Sproc to Calculate Daily City Metrics
+
+Below is the SQL query to create the SPROC:
+
+- We use the python runtime 3.10 for the SPROC, and use the python package `snowflake-snowpark-python`
+- First part of the Sproc contains `table_exists()` function which we use to verify if the raw tables exist in the defined database and schema.
+- Second part of the Sproc contains the  `main()` function that reads the raw tables `ORDER_DETAIL`, `LOCATION`, and `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.HISTORY_DAY`. Remember the Frostbyte Weather Source data is from Snowflake Marketplace but we can use it like any other standard snowflake table.
+- After loading all 3 raw tables into their respective snowpark python dataframes, we prepare to join the dataframes.
+- We join all three dataframes into a final dataframe `order_detail`. 
+- Next step is data aggregation based on date, country and city. So we use group_by() on `DATE_VALID_STD`, `ISO_COUNTRY_CODE` and `CITY_NAME` columns.
+- After grouping by these 3 columns, we calculate the aggregate daily sales, daily average temperature in Farenheit, and daily average precipitation in inches.
+- The resulting dataframe called `final_agg` is saved. If the table `DAILY_CITY_METRICS` does not exist, we create a table and save the `final_agg` dataframe as a table. If the table already exists, we append it to the existing table using Snowpark `merge()` function. 
 
 ```sql
 CREATE OR REPLACE PROCEDURE LOAD_DAILY_CITY_METRICS_SP()
@@ -424,25 +441,30 @@ def main(session: Session) -> str:
         return f"Successfully updated {table_name}"
 $$;
 ```
-### Running the Sproc in Snowflake
-In order to run the sproc in Snowflake you have a few options. Any sproc in Snowflake can be invoked through SQL as follows:
+
+### Running the Sproc
+
+In the above step, we only created a Stored procedure. However, we need to invoke `CALL` on the SPROC to actually perform those aggregations and calculations.
+
+To calculate `final_agg` and update the `DAILY_CITY_METRICS` table, you can run the following SQL command in the SQL file `steps/06_load_daily_city_metrics.sql` from VS Code.
 
 ```sql
 CALL LOAD_DAILY_CITY_METRICS_SP();
 ```
 
-You can also simply run the entire script from Snowsight UI or VS Code. Execute the `steps/06_load_daily_city_metrics.sql` script by selecting Run all from VS Code.
-
+You can also simply run the entire script from Snowsight UI or VS Code. Execute the `steps/06_load_daily_city_metrics.sql` script by selecting Execute All from VS Code.
 
 ### Viewing What Happened in Snowflake
+
 The [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake is a very power feature, that logs every query run against your Snowflake account, no matter which tool or process initiated it. And this is especially helpful when working with client tools and APIs.
 
-The stored procedure we invoked in the previous step `LOAD_DAILY_CITY_METRICS_SP` would be logged in the Query History tab in the Snowsight UI. 
+The stored procedure we invoked in the previous step `LOAD_DAILY_CITY_METRICS_SP` would be logged in the Query History tab in the Snowsight UI.
 
 ### More on the Snowpark API
+
 In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like PySpark, this is accomplished with the `Session.builder.configs().create()` methods.
 
- When building a Snowpark Python sproc the contract is that the first argument to the entry point (or handler) function is a Snowpark session.
+When building a Snowpark Python sproc the contract is that the first argument to the entry point (or handler) function is a Snowpark session.
 
 The first thing you'll notice in the `steps/06_load_daily_city_metrics.sql` script is that we have some functions which use SQL to create objects in Snowflake and to check object status. To issue a SQL statement to Snowflake with the Snowpark API you use the `session.sql()` function, like you'd expect. Here's one example:
 
@@ -452,14 +474,14 @@ def table_exists(session, schema='', name=''):
     return exists
 ```
 
-The second thing to point out is how we're using DataFrames to join the data from different data sources into an `ORDER_DETAIL` df using functions such as `join()`. 
+The second thing to point out is how we're using DataFrames to join the data from different data sources into an `ORDER_DETAIL` df using the `join()` API.
 
 ```python
 order_detail = order_detail.join(location, order_detail['LOCATION_ID'] == location['LOCATION_ID'])
     order_detail = order_detail.join(history_day, (F.builtin("DATE")(order_detail['ORDER_TS']) == history_day['DATE_VALID_STD']) & (location['ISO_COUNTRY_CODE'] == history_day['COUNTRY']) & (location['CITY'] == history_day['CITY_NAME']))
 ```
 
-The last thing to point out is how we are using the Python Dataframe APIs to aggregate dataframes into a final aggregate df using functions such as `agg(), group_by(), select()`. 
+The last thing to point out is how we are using the Python Dataframe APIs to aggregate dataframes using APIs such as `agg()`, `group_by()`, and `select()`.
 
 ```python
 final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F.col('ISO_COUNTRY_CODE')) \
