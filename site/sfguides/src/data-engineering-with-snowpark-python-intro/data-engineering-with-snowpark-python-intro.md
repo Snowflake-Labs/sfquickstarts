@@ -256,36 +256,44 @@ You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL
 > - If you used different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
-## Load Excel Files
+## Load Location and Order Detail
 
 Duration: 10
 
-During this step we will be loading the raw excel files containing location and order details from an external stage using Snowflake's dynamic file access feature. You can look at the data files from the [Git repo]] (https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data). We load the data to `LOCATION` and `ORDER_DETAIL` tables in Snowflake using the Python Stored procedure. 
+During this step we will be "loading" the raw excel files containing location and order details data from an external stage (s3 bucket) to Snowflake using the Dynamic File Access feature. If you would like to peek at the raw excel files, you can check out the `data` folder in the [Git repo](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data). We use a Python stored procedure to load this data from an S3 bucket into a Snowflake table.
 
-To put this in context, we are on step **#5** in our data flow overview:
+In this step, we will run through the commands in the SQL file `steps/05_load_excel_files.sql` from VS Code. To put this in context, we are on step **#5** in our data flow overview:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+---
+
+![Quickstart Pipeline Overview](assets/data_pipeline_overview.png)
+
+---
 
 ### Dynamic File Access
 
-You can read a file from a stage using the `SnowflakeFile` class in the Snowpark `snowflake.snowpark.files` module. The `SnowflakeFile` class provides dynamic file access, which lets you stream files of any size.
+You can read a file from an internal or external stage using the `SnowflakeFile` class in the Snowpark `snowflake.snowpark.files` module. The `SnowflakeFile` class provides dynamic file access, which lets you stream files of any size.
 
-In this quickstart, we will use dynamic file access to load the excel files from an s3 bucket (an external stage).
+### Loading Excel files from an External Stage
 
-```python
-from snowflake.snowpark.files import SnowflakeFile
-from openpyxl import load_workbook 
-  with SnowflakeFile.open(file_path, 'rb') as f:
-     workbook = load_workbook(f)
-     sheet = workbook.get_sheet_by_name(worksheet_name)
-     data = sheet.values
+In this quickstart, we will use dynamic file access to load the excel files from an s3 bucket (an external stage we created before `FROSTBYTE_RAW_STAGE`).
+
+First let's check if the two excel files are present in the S3 bucket by calling `LIST` on the stage.
+
+```sql
+LIST @FROSTBYTE_RAW_STAGE/intro;
 ```
 
-### Creating the Stored Procedure
+### Creating the Stored Procedure to load Excel files
 
-During this step we will be creating and deploying our first Snowpark Python stored procedure (or sproc) to Snowflake. This SPROC `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP` will load the excel data files into snowflake tables for further analysis.
+During this step we will be creating our first Snowpark Python stored procedure (or SPROC) to Snowflake. This SPROC `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP` will load the excel data files into snowflake tables for further analysis.
 
-Here is the SQL query to create the SPROC:
+Below is the SQL query to create the SPROC:
+
+- We use the python runtime 3.10 for the SPROC
+- We use the python packages `snowflake-snowpark-python`, `pandas` and `openpyxl` to load excel files
+- Then import `snowflake.snowpark.files.SnowflakeFile` for the dynamic file access to load file from an external stage
+- We use `Snowflake.open()` to open the excel file, read the contents of the file into a pandas dataframe, and save the dataframe as a Snowflake table using `save_as_table()` API.
 
 ```sql
 CREATE OR REPLACE PROCEDURE LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(file_path string, worksheet_name string, target_table string)
@@ -317,18 +325,39 @@ def main(session, file_path, worksheet_name, target_table):
  return True
 $$;
 ```
+
 ### Running the Sproc in Snowflake
-In order to run the sproc in Snowflake you have a few options. Any sproc in Snowflake can be invoked through SQL as follows:
+
+In the above step, we only created the Stored procedure. However, we need to invoke `CALL` on the SPROC to actually load the excel files into a Snowflake target table.
+
+To load `ORDER_DETAIL.xlsx` file, you can run the following SQL command in the SQL file `steps/05_load_excel_files.sql` from VS Code.
 
 ```sql
-CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP();
+CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(BUILD_SCOPED_FILE_URL(@FROSTBYTE_RAW_STAGE, 'intro/order_detail.xlsx'), 'order_detail', 'ORDER_DETAIL');
 ```
 
-You can also simply run the entire script from Snowsight UI or VS Code. Execute the `steps/05_load_excel_files.sql` script by selecting Run all from VS Code.
+To laod the `LOCATION.xlsx` file, you can run the following SQL command in the SQL file `steps/05_load_excel_files.sql` from VS Code.
+
+```sql
+CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(BUILD_SCOPED_FILE_URL(@FROSTBYTE_RAW_STAGE, 'intro/location.xlsx'), 'location', 'LOCATION');
+```
+
+Next up, to verify if the excel files are loaded successfully into respective Snowflake tables, you can run the following `DESC` and `SELECT` statements from VS Code.
+
+```sql
+DESCRIBE TABLE ORDER_DETAIL;
+SELECT * FROM ORDER_DETAIL;
+
+DESCRIBE TABLE LOCATION;
+SELECT * FROM LOCATION;
+```
+
+Fantastic. We now have all the raw data needed to build our data pipeline and further analyze them. 
 
 <!-- ------------------------ -->
 
 ## Daily City Metrics Update Sproc
+
 Duration: 10
 
 During this step we will be creating and deploying our second Snowpark Python sproc to Snowflake. This sproc will join the `ORDER_DETAIL` table with the `LOCATION` table and `HISTORY_DAY` table to create a final, aggregated table for analysis named `DAILY_CITY_METRICS`.
