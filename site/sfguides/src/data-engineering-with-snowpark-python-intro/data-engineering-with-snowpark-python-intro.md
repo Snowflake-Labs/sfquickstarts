@@ -145,8 +145,6 @@ For the purpose of this quickstart, we will use VS Code to run the SQL commands 
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-To put this in context, we are on step **#3** in our data flow overview:
-
 Let's run through the commands individually and understand what each command does.
 
 ### Creating Account Level Objects
