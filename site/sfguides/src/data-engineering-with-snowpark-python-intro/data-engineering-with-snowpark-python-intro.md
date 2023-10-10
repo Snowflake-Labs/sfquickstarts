@@ -569,6 +569,7 @@ So while you're free to create any operational or monitoring process you wish, S
 For more details, and to learn about viewing account level task history, please check out our [Viewing Task History](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html) documentation.
 
 ### Query History for Tasks
+
 One important thing to understand about tasks, is that the queries which get executed by the task won't show up with the default Query History UI settings. In order to see the queries that just ran you need to do the following:
 
 * Remove filters at the top of this table, including your username, as later scheduled tasks will run as "System":
@@ -583,40 +584,44 @@ You should now see all the queries run by your tasks! Take a look at each of the
 
 <!-- ------------------------ -->
 ## Teardown
+
 Duration: 2
 
-Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/09_teardown.sql` script. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/09_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
+Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/09_teardown.sql`. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/09_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
 
 <!-- ------------------------ -->
 
-## Conclusion
-Duration: 4
+## Conclusion and Resources
 
-In this Quickstart covered the basics of data engineering with Snowpark Python. We created the pipeline to load the data from different data sources (external stage and Snowflake Marketplace). We then used Snowpark Python dataframe APIs and Stored procedures for the ETL process, and orchestrated the tasks by creating dags using Tasks Python API. 
+Duration: 2
+
+Congratulations! You have successfully built a data engineering pipeline using Snowpark Python, loaded data from an external stage using Snowflake Dynamic File Access, used data from Snowflake Marketplace and orchestrated the data pipeline using Snowflake Tasks as well.
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/M7C8EC3sYKide1ro9).
+
+### What You Learned
 
 Here is the overview of what we built:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+- How to ingest data from an external stage such as an S3 bucket into a Snowflake table
+- How to access data from Snowflake marketplace and use it for your analysis
+- How to analyze data and perform data engineering tasks using Snowpark dataframe API, Python Stored procedures and more
+- How to use open-source Python libraries from curated Snowflake Anaconda channel
+- How to create Snowflake Tasks and use the Python Tasks API to schedule data pipelines
+- How to use VS Code extension for Snowflake to perform standard snowflake operations from VS Code and Snowsigt UI
 
-Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipeline with Snowpark Python. So, what will you build now?
+---
 
-### What we've covered 
-We've covered a ton in this Quickstart, and here are the highlights:
+![Quickstart Pipeline Overview](assets/data_pipeline_overview.png)
 
-* Loading data from an external stage
-* Data Sharing/marketplace
-* Snowpark Python Dataframe APIs
-* Python Task APIs
-* Stored Procedures
-* Visual Studio Code Snowflake Native Extension
+---
 
 ### Related Resources
-And finally, here's a quick recap of related resources:
 
-* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro)
-* [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-    * [Writing Stored Procedures in Snowpark (Python)](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html)
-    * [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)
-* Related Tools
-    * [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)
-
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro)
+- [Advanced: Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python)
+- [Advanced: Getting Started with Data Engineering and ML using Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python)
+- [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+  - [Writing Stored Procedures in Snowpark (Python)](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html)
+  - [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)
+  - [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)
