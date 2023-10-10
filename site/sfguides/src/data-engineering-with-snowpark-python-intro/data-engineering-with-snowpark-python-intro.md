@@ -111,20 +111,86 @@ Once the codepsace has been created and started you should see a hosted web-base
 Duration: 10
 
 ### Snowflake Extensions for VS Code
-You can run SQL queries against Snowflake in many different ways (through the Snowsight UI, SnowSQL, etc.) but for this Quickstart we'll be using the Snowflake extension for VS Code. For a brief overview of Snowflake's native extension for VS Code, please check out our [VS Code Marketplace Snowflake extension page](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
+
+You can run SQL queries and Python APIs against Snowflake in many different ways through the Snowsight UI, SnowCLI, etc. But for this Quickstart we'll be using the Snowflake extension for VS Code. For a brief overview of Snowflake's native extension for VS Code, please check out our [VS Code Marketplace Snowflake extension page](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
+
+### Installing Snowflake Extension for VS Code
+
+Following the instructions mentioned in the [docs](https://docs.snowflake.com/en/user-guide/vscode-ext), you can install the Snowflake extension. Next, you need to connect to your Snowflake account from VS Code by logging in with your account details. Follow the instructions in the [docs](https://docs.snowflake.com/en/user-guide/vscode-ext#signing-in) to sign in.
+
+### Create Roles, Databases, Tables, Schema and Stages
+
+You can log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) or VS Code to create all the snowflake objects needed to work through this guide.
+
+For the purpose of this quickstart, we will use VS Code to run the SQL commands and create the Snowflake objects. You can open the sql file `steps/03_setup_snowflake.sql` in VS Code. You can click on the `Execute` option above every SQL command to run each command separately or click on `Execute All` to run all the commands sequentially.
+
+---
+
+![Execute in VS Code](assets/vscode-execute.png)
+
+---
+
+> aside positive
+> IMPORTANT:
+>
+> - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
+>
+> - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
 To put this in context, we are on step **#3** in our data flow overview:
 
-### Run the Script
-To set up all the objects we'll need in Snowflake for this Quickstart you'll need to run the `steps/03_setup_snowflake.sql` script.
+Let's run through the commands individually and understand what each command does.
 
-Start by clicking on the Snowflake extension in the left navigation bar in VS Code. Then login to your Snowflake account with a user that has ACCOUNTADMIN permissions. Once logged in to Snowflake, open the `steps/03_setup_snowflake.sql` script in VS Code by going back to the file Explorer in the left navigation bar.
+### Creating Account Level Objects
 
-To run all the queries in this script, use the "Execute All Statements" button in the upper right corner of the editor window. Or, if you want to run them in chunks, you can highlight the ones you want to run and press CMD/CTRL+Enter. 
+- In this step, we create the role `HOL_ROLE` and assign this role to `CURRENT_USER()` within Snowflake. This role will have access permissions to create all the Snowflake objects needed for the quickstart. First, grant the `HOL_ROLE` the same permissions as `SYSADMIN` role. Then, grant permissions to run tasks, monitor the execution of tasks and to import privileges on the database to `HOL_ROLE`. 
 
+```sql
+SET MY_USER = CURRENT_USER();
+CREATE OR REPLACE ROLE HOL_ROLE;
+GRANT ROLE HOL_ROLE TO ROLE SYSADMIN;
+GRANT ROLE HOL_ROLE TO USER IDENTIFIER($MY_USER);
+
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE HOL_ROLE;
+GRANT MONITOR EXECUTION ON ACCOUNT TO ROLE HOL_ROLE;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE HOL_ROLE;
+```
+
+- Create a new database `HOL_DB` and assign ownership of the database to `HOL_ROLE`.
+
+```sql
+CREATE OR REPLACE DATABASE HOL_DB;
+GRANT OWNERSHIP ON DATABASE HOL_DB TO ROLE HOL_ROLE;
+```
+
+- Create a new warehouse `HOL_WH` to serve the compute requirements for the quickstart. I have used a XSMALL warehouse, and configured it to auto suspend after 300 seconds (5 mins), and enabled auto resume on it. I have assigned ownership of the warehouse to the `HOL_ROLE` too.
+
+```sql
+CREATE OR REPLACE WAREHOUSE HOL_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, AUTO_RESUME= TRUE;
+GRANT OWNERSHIP ON WAREHOUSE HOL_WH TO ROLE HOL_ROLE;
+```
+
+### Creating Database Level Objects
+
+- In this step, we will set the Snowflake scope to `HOL_ROLE`, `HOL_DB` and `HOL_WH` and create the schema and stage.
+
+```sql
+CREATE OR REPLACE SCHEMA HOL_SCHEMA;
+
+USE SCHEMA HOL_SCHEMA;
+CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
+    URL = 's3://sfquickstarts/data-engineering-with-snowpark-python/'
+;
+```
+
+> aside positive
+> IMPORTANT:
+>
+> - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
 ## Load Weather
+
 Duration: 4
 
 During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace. 
