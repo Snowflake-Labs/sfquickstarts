@@ -18,7 +18,7 @@ While there are a variety of security metrics that Snowflake and Sigma supports,
 
 ### Prerequisites
 - For this lab you will need a Sigma free trial, which you can access here: sigmacomputing.com/free-trial-hol. The password is sigma. For detailed instructions on getting set up, see section 1, Connecting to Sigma. 
-- 
+  
 - It is recommended you have access to a Snowflake environment with ACCOUNTADMIN permissions, but is not required to complete this lab
 
 
@@ -341,7 +341,7 @@ role_path_privs_agg as (
     order by
         count(*) desc
 ) 
-select * from role_path_privs_agg order by num_of_privs desc
+select * from role_path_privs_agg order by num_of_privs desc;
 ```
 <img src="assets/customizingthetemplate9.png" />
 
