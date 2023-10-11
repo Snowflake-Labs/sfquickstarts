@@ -58,18 +58,16 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 - Familiarity with Snowflake
 - Familiarity with Git repositories and GitHub
 
-### What You’ll Need 
+### What You’ll Need
 
 You will need the following things before beginning:
 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-- [Python 3.10](https://www.python.org/downloads/) installed
-  - Note that you will be creating a Python environment with 3.10 in the **Get Started** step
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
-- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
-
-> aside positive
-> IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
+- Snowflake account
+  - **A Snowflake Account**
+  - **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
+  - **Anaconda Terms & Conditions accepted**. See Getting Started section in [Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started).
+- GitHub account
+  - **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 
 <!-- ------------------------ -->
 ## Quickstart Setup
@@ -104,6 +102,9 @@ This will open a new tab and begin setting up your codespace. It will take a few
 - Starting a hosted, web-based VS Code editor
 
 Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
+### Verify Your Anaconda Environment is Activated
+
+During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
 
 <!-- ------------------------ -->
 ## Setup Snowflake
@@ -113,10 +114,6 @@ Duration: 10
 ### Snowflake Extensions for VS Code
 
 You can run SQL queries and Python APIs against Snowflake in many different ways through the Snowsight UI, SnowCLI, etc. But for this Quickstart we'll be using the Snowflake extension for VS Code. For a brief overview of Snowflake's native extension for VS Code, please check out our [VS Code Marketplace Snowflake extension page](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
-
-### Installing Snowflake Extension for VS Code
-
-Following the instructions mentioned in the [docs](https://docs.snowflake.com/en/user-guide/vscode-ext), you can install the Snowflake extension. Next, you need to connect to your Snowflake account from VS Code by logging in with your account details. Follow the instructions in the [docs](https://docs.snowflake.com/en/user-guide/vscode-ext#signing-in) to sign in.
 
 To put this in context, we are on step **#3** in our data flow overview:
 
