@@ -3,7 +3,7 @@ id: data-engineering-with-snowpark-python-intro
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
 categories: Getting-Started, featured, data-engineering
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Snowpark, Python, Intro
 
