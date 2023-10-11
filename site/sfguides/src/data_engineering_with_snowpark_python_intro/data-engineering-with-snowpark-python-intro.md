@@ -19,7 +19,7 @@ Here is a summary of what you will be able to learn in each step by following th
 
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
 - **Snowflake Marketplace**: Download the data you need from Snowflake Marketplace and use it for your analysis
-- **Data Engineering**: Leverage Snowpark for Python Dataframes to perform data transformations such as group by, aggregate, and join to prep for the data for downstream applications
+- **Data Engineering**: Leverage Snowpark for Python Dataframe to perform data transformations such as group by, aggregate, and join to prep for the data for downstream applications
 - **Orchestrating Pipelines**: Use Snowflake Tasks API to turn your data pipeline code into operational pipelines with integrated monitoring
 
 In case you are new to some of the technologies mentioned above, here is a quick summary with the links to documentation.
@@ -43,8 +43,8 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 ### What you will learn
 
 - How to ingest data from an external stage such as an S3 bucket into a Snowflake table
-- How to access data from Snowflake marketplace and use it for your analysis
-- How to analyze data and perform data engineering tasks using Snowpark dataframe API, Python Stored procedures and more
+- How to access data from Snowflake Marketplace and use it for your analysis
+- How to analyze data and perform data engineering tasks using Snowpark DataFrame API, Python Stored Procedures and more
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks and use the Python Tasks API to schedule data pipelines
 - How to use VS Code extension for Snowflake to perform standard snowflake operations from VS Code and Snowsigt UI
@@ -197,7 +197,7 @@ CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
 Duration: 5
 
 
-During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Data Marketplace.
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace.
 
 To put this in context, we are on step **#4** in our data flow overview:
 
@@ -215,7 +215,7 @@ But what about data that needs constant updating - like the WEATHER data? We wou
 
 ### Weather data from Snowflake Marketplace
 
-Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Data Marketplace by following these steps:
+Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Marketplace by following these steps:
 
 - Login to Snowsight
 - Click on the `Marketplace` link in the left navigation bar
@@ -233,7 +233,7 @@ Weather Source is a leading provider of global weather and climate data and thei
 
 ---
 
-That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset!
+That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have to do here to get access to an always up-to-date, third-party dataset!
 
 ### Query the Weather data
 
@@ -248,7 +248,7 @@ You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL
 > aside positive
 > IMPORTANT:
 >
-> - If you used different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.
+> - If you used a different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
 ## Load Location and Order Detail
@@ -288,7 +288,7 @@ Below is the SQL query to create the SPROC:
 - We use the python runtime 3.10 for the SPROC
 - We use the python packages `snowflake-snowpark-python`, `pandas` and `openpyxl` to load excel files
 - Then import `snowflake.snowpark.files.SnowflakeFile` for the dynamic file access to load file from an external stage
-- We use `Snowflake.open()` to open the excel file, read the contents of the file into a pandas dataframe, and save the dataframe as a Snowflake table using `save_as_table()` API.
+- We use `Snowflake.open()` to open the excel file, read the contents of the file into a pandas DataFrame, and save the DataFrame as a Snowflake table using `save_as_table()` API.
 
 ```sql
 CREATE OR REPLACE PROCEDURE LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(file_path string, worksheet_name string, target_table string)
@@ -374,11 +374,11 @@ Below is the SQL query to create the SPROC:
 - We use the python runtime 3.10 for the SPROC, and use the python package `snowflake-snowpark-python`
 - First part of the Sproc contains `table_exists()` function which we use to verify if the raw tables exist in the defined database and schema.
 - Second part of the Sproc contains the  `main()` function that reads the raw tables `ORDER_DETAIL`, `LOCATION`, and `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.HISTORY_DAY`. Remember the Frostbyte Weather Source data is from Snowflake Marketplace but we can use it like any other standard snowflake table.
-- After loading all 3 raw tables into their respective snowpark python dataframes, we prepare to join the dataframes.
-- We join all three dataframes into a final dataframe `order_detail`. 
+- After loading all 3 raw tables into their respective Snowpark Python Dataframes, we prepare to join the Dataframes.
+- We join all three Dataframes into a final DataFrame `order_detail`. 
 - Next step is data aggregation based on date, country and city. So we use group_by() on `DATE_VALID_STD`, `ISO_COUNTRY_CODE` and `CITY_NAME` columns.
 - After grouping by these 3 columns, we calculate the aggregate daily sales, daily average temperature in Farenheit, and daily average precipitation in inches.
-- The resulting dataframe called `final_agg` is saved. If the table `DAILY_CITY_METRICS` does not exist, we create a table and save the `final_agg` dataframe as a table. If the table already exists, we append it to the existing table using Snowpark `merge()` function. 
+- The resulting DataFrame called `final_agg` is saved. If the table `DAILY_CITY_METRICS` does not exist, we create a table and save the `final_agg` DataFrame as a table. If the table already exists, we append it to the existing table using Snowpark `merge()` function. 
 
 ```sql
 CREATE OR REPLACE PROCEDURE LOAD_DAILY_CITY_METRICS_SP()
@@ -453,7 +453,7 @@ You can also simply run the entire script from Snowsight UI or VS Code. Execute 
 
 ### Viewing What Happened in Snowflake
 
-The [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake is a very power feature, that logs every query run against your Snowflake account, no matter which tool or process initiated it. And this is especially helpful when working with client tools and APIs.
+The [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake is a very powerful feature, that logs every query run against your Snowflake account, no matter which tool or process initiated it. And this is especially helpful when working with client tools and APIs.
 
 The stored procedure we invoked in the previous step `LOAD_DAILY_CITY_METRICS_SP` would be logged in the Query History tab in the Snowsight UI.
 
@@ -478,7 +478,7 @@ order_detail = order_detail.join(location, order_detail['LOCATION_ID'] == locati
     order_detail = order_detail.join(history_day, (F.builtin("DATE")(order_detail['ORDER_TS']) == history_day['DATE_VALID_STD']) & (location['ISO_COUNTRY_CODE'] == history_day['COUNTRY']) & (location['CITY'] == history_day['CITY_NAME']))
 ```
 
-The last thing to point out is how we are using the Python Dataframe APIs to aggregate dataframes using APIs such as `agg()`, `group_by()`, and `select()`.
+The last thing to point out is how we are using the Snowpark Python Dataframe APIs to aggregate DataFrames using APIs such as `agg()`, `group_by()`, and `select()`.
 
 ```python
 final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F.col('ISO_COUNTRY_CODE')) \
@@ -494,7 +494,7 @@ final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F
                         )
 ```
 
-Again, for more details about the Snowpark Python DataFrame API, please check out our [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) page.
+Again, for more details about the Snowpark Python DataFrame API, please check out our [Working with Dataframe in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) page.
 
 <!-- ------------------------ -->
 
@@ -521,7 +521,7 @@ To put this in context, we are on step **#7** in our data flow overview:
 - **Tasks**: Task is a basic, smallest unit of execution. A task can execute a single SQL statement, a call to a stored procedure, or any procedural logic using [Snowflake Scripting](https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index). One or more tasks make up a Dag.  A root task is a special type of task which is the first task in a dag with no parent tasks before it.
 - **Dags**: A Directed Acyclic Graph (DAG) is a series of tasks composed of a single root task and additional tasks, organized by their dependencies. DAGs flow in a single direction, meaning a task runs only after all of its predecessor tasks have run successfully to completion.
 - **Schedule Interval**: Schedule interval refers to the interval of time between successive scheduled executions of a standalone task or the root task in a DAG.
-- **Deploying a Dag**: When you create a dag, you define the schedule interval, transformation logic in the tasks and task dependancies. However, you need to deploy a dag to actually run those transformations on the schedule. If you don't deploy the dag, the dag will not run on the schedule.
+- **Deploying a Dag**: When you create a dag, you define the schedule interval, transformation logic in the tasks and task dependencies. However, you need to deploy a dag to actually run those transformations on the schedule. If you don't deploy the dag, the dag will not run on the schedule.
 - **Running a dag**: When a dag is deployed, it is run on the defined schedule. Each instance of this scheduled run is called a Task Run.
 
 ### Creating Tasks, and DAGs
@@ -546,9 +546,9 @@ dag_name = "HOL_DAG"
 
 ```
 
-Great, we have the tasks and the dag created. But how do we define the task dependancies? Which tasks should run first?
+Great, we have the tasks and the dag created. But how do we define the task dependencies? Which tasks should run first?
 
-If you are familiar with Apache Airflow, you might know how we can use `>>` operator to define task dependancy. If not, let's understand the flow.
+If you are familiar with Apache Airflow, you might know how we can use `>>` operator to define task dependency. If not, let's understand the flow.
 
 Here is how we define the order of execution of the tasks in our dag:
 
@@ -661,8 +661,8 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 Here is the overview of what we built:
 
 - How to ingest data from an external stage such as an S3 bucket into a Snowflake table
-- How to access data from Snowflake marketplace and use it for your analysis
-- How to analyze data and perform data engineering tasks using Snowpark dataframe API, Python Stored procedures and more
+- How to access data from Snowflake Marketplace and use it for your analysis
+- How to analyze data and perform data engineering tasks using Snowpark DataFrame API, Python Stored Procedures and more
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks and use the Python Tasks API to schedule data pipelines
 - How to use VS Code extension for Snowflake to perform standard snowflake operations from VS Code and Snowsigt UI
@@ -680,5 +680,5 @@ Here is the overview of what we built:
 - [Advanced: Getting Started with Data Engineering and ML using Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
   - [Writing Stored Procedures in Snowpark (Python)](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html)
-  - [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)
+  - [Working with DataFrame in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)
   - [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)
