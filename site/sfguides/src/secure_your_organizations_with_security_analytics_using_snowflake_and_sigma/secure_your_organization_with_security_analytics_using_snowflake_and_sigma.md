@@ -17,9 +17,9 @@ While there are a variety of security metrics that Snowflake and Sigma supports,
 
 
 ### Prerequisites
-- For this lab you will need a Sigma free trial, which you can access here: sigmacomputing.com/free-trial-hol. The password is sigma. For detailed instructions on getting set up, see section 1, Connecting to Sigma. 
+- For this lab you will need a Sigma free trial, which you can access here: [sigmacomputing.com/free-trial-hol](sigmacomputing.com/free-trial-hol). The password is sigma. For detailed instructions on getting set up, see section 1, Connecting to Sigma. 
   
-- It is recommended you have access to a Snowflake environment with ACCOUNTADMIN permissions, but is not required to complete this lab
+- It is recommended you have access to a Snowflake environment, but is not required to complete this lab
 
 
 
@@ -43,7 +43,7 @@ Duration: 10
 
 ### Connecting to Sigma 
 
-1.1 Navigate to sigmacomputing.com/free-trial-hol
+1.1 Navigate to [sigmacomputing.com/free-trial-hol](sigmacomputing.com/free-trial-hol)
 
 1.2 Enter "sigma" for the password
 
@@ -358,7 +358,7 @@ Double click the title of your new element and name it "Most Bloated Role".
 
 <img src="assets/customizingthetemplate12.png" />
 
-3.13 On the Identity Management page you will notice a tile titled "Users by Oldest Password". This tile shows us each user in our Snowflake instance and how long it has been since they changed their Snowflake password in days. Snowflake admins can set Snowflake password policies on their Snowflake account to require users to change their passwords at a set frequency, however Snowflake's default behavior does not require users to change their passwords. 
+3.13 On the Identity Management page you will notice a tile titled "Users by Oldest Password". This tile shows us each user in our Snowflake instance and how long it has been since they changed their Snowflake password in days. Snowflake admins can set [Snowflake password policies](https://docs.snowflake.com/en/sql-reference/sql/create-password-policy) on their Snowflake account to require users to change their passwords at a set frequency, however Snowflake's default behavior does not require users to change their passwords. 
 
 For the purpose of this lab, assume we want our users to change their Snowflake password every 180 days. We are going to create an alert that will send us a report of all users with passwords older than 180 days. 
 
