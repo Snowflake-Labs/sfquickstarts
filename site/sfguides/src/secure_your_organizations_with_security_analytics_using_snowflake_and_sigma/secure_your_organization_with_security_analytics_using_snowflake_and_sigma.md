@@ -17,7 +17,7 @@ While there are a variety of security metrics that Snowflake and Sigma supports,
 
 
 ### Prerequisites
-- For this lab you will need a Sigma free trial, which you can access here: [sigmacomputing.com/free-trial-hol](sigmacomputing.com/free-trial-hol). The password is sigma. For detailed instructions on getting set up, see section 1, Connecting to Sigma. 
+- For this lab you will need a Sigma free trial, which you can access here: [sigmacomputing.com/free-trial-hol](sigmacomputing.com/free-trial-hol). **The password is sigma**. For detailed instructions on getting set up, see section 1, Connecting to Sigma. 
   
 - It is recommended you have access to a Snowflake environment, but is not required to complete this lab
 
@@ -45,7 +45,7 @@ Duration: 10
 
 1.1 Navigate to [sigmacomputing.com/free-trial-hol](sigmacomputing.com/free-trial-hol)
 
-1.2 Enter "sigma" for the password
+1.2 Enter "sigma" for the password in all lowercase. 
 
 1.3 Fill out the form to access a free trial, including your name, email, company, title, and phone number. Then click "Start Trial" 
 
@@ -472,7 +472,7 @@ The data for our users departments doesn't live in our Snowflake environmennt, b
 <img src="assets/customizingthetemplate37.png" /> 
 <img src="assets/customizingthetemplate38.png" />
 
-3.41 Click here to open a spreadsheet that contains our department mapping data. You should see a spreadsheet with two columns, one for user name and one for department. 
+3.41 [Click here](https://docs.google.com/spreadsheets/d/e/2PACX-1vT_E_Up4H_unPCkf2nGuFfz9LrNaB6zX4g3a9fQArQdkKru8LR8EGbl-9F9IVpAh7QOU3et8L0y8yO_/pubhtml) to open a spreadsheet that contains our department mapping data. You should see a spreadsheet with two columns, one for user name and one for department. 
 
 <img src="assets/customizingthetemplate39.png" />
 
