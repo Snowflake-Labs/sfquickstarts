@@ -1,5 +1,5 @@
 author: Kelsey Hammock
-id: secure_your_organization_with_security_analytics_using_snowflake_and_Sigma
+id:secure_your_organization_with_security_analytics_using_snowflake_and_Sigma
 summary: Learn how to monitor your Snowflake security posture using Sigma
 categories: cybersecurity, data-warehousing
 environments: web
