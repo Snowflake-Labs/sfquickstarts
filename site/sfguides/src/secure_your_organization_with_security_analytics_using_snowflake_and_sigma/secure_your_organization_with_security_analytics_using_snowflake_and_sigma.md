@@ -5,7 +5,7 @@ categories: cybersecurity, data-warehousing
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cybersecurity, 
+tags: Getting Started, Cybersecurity 
 
 # Secure Your Organization with Security Analytics Using Snowflake and Sigma
 <!-- ------------------------ -->
