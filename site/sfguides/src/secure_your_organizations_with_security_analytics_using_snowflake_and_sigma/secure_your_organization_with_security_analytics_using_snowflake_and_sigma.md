@@ -3,7 +3,7 @@ id: secure_your_organization_with_security_analytics_using_snowflake_and_sigma
 summary: Learn how to monitor your Snowflake security posture using Sigma
 categories: cybersecurity, data-warehousing
 environments: web
-status: Published
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cybersecurity, 
 
