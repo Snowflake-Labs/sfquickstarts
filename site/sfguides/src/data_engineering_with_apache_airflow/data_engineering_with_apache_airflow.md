@@ -41,13 +41,12 @@ You will need the following things before beginning:
   1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
 1. GitHub
   1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
-  1. **A GitHub Repository.** If you don't already have a repository created, or would like to create a new one, then [Create a new respository](https://github.com/new). For the type, select `Public` (although you could use either). And you can skip adding the README, .gitignore and license for now.
 1. Integrated Development Environment (IDE)
   1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
-  1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
-1. Docker
+1. Docker Desktop
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
-1. **The Astro CLI Installed.** We will be using the Astro CLI to create our Airflow environments. Please install the Astro CLI on your desired OS by following the [Astro CLI setup instructions](https://docs.astronomer.io/astro/cli/install-cli)
+1. Astro CLI
+  1. **The Astro CLI Installed.** We will be using the Astro CLI to create our Airflow environments. Please install the Astro CLI on your desired OS by following the [Astro CLI setup instructions](https://docs.astronomer.io/astro/cli/install-cli)
 
 ### What You’ll Build 
 - A simple working Airflow pipeline with dbt and Snowflake 
@@ -80,16 +79,6 @@ Next, run the following command to install dbt and create all the necessary fold
 dbt init
 ```
 
----
-We would now need to create a `dbt` project as well as an `dags` folder. 
-
-For the dbt project, do a ```dbt init dbt``` - this is where we will configure our dbt later in step 4.
-
-For the dags folder, just create the folder by doing 
-
-```
-mkdir dags
-```
 
 Your tree repository should look like this
 
@@ -103,9 +92,9 @@ Now that we have gotten our repo up, it is time to configure and set up our dbt 
 
 Before we begin, let's take some time to understand what we are going to do for our dbt project.
 
-As can be seen in the diagram below, we have 3 csv files ```bookings_1```, ```bookings_2``` and ```customers ```. We are going to seed these csv files into Snowflake as tables. This will be covered in step 4 in detailed later.
+As can be seen in the diagram below, we have 3 csv files ```bookings_1```, ```bookings_2``` and ```customers ```. We are going to seed these csv files into Snowflake as tables. This will be detailed later.
 
-Following this, we are going to merge ```bookings_1``` and ```bookings_2``` tables into ```combined_bookings```. Next, we are going to join the ```combined_bookings``` and ```customer``` table on customer_id to form the ```prepped_data``` table. 
+Following this, we are going to use dbt to merge ```bookings_1``` and ```bookings_2``` tables into ```combined_bookings```. Then, we are going to join the ```combined_bookings``` and ```customer``` table on customer_id to form the ```prepped_data``` table. 
 
 Finally, we are going to perform our analysis and transformation on the ```prepped_data``` by creating 2 views.  
 
@@ -160,38 +149,77 @@ CREATE OR REPLACE DATABASE DEMO_dbt
 ```
 ![airflow](assets/data_engineering_with_apache_airflow_2_snowflake_console.png)
 
+Then, in the new ```Demo_dbt``` database, copy and paste the following sql statements to create our ```bookings_1```, ```bookings_2``` and ```customers ``` tables within Snowflake
 
-Now, let's go back to our project ```dbt_airflow``` > ```dbt```that we set up previously in step 1.
+```sql
 
-We will set up a few configurations for the respective files below. Please note for the ```dbt_project.yml``` you just need to replace the models section
+CREATE TABLE bookings_1 (
+    id INTEGER,
+    booking_reference INTEGER,
+    hotel STRING,
+    booking_date DATE,
+    cost INTEGER
+);
+CREATE TABLE bookings_2 (
+    id INTEGER,
+    booking_reference INTEGER,
+    hotel STRING,
+    booking_date DATE,
+    cost INTEGER
+);
+CREATE TABLE customers (
+    id INTEGER,
+    first_name STRING,
+    last_name STRING,
+    birthdate DATE,
+    membership_no INTEGER
+);
 
-profiles.yml
-```yml
-default:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      ######## Please replace with your Snowflake account name 
-      ######## for example sg_demo.ap-southeast-1
-      account: <ACCOUNT_URL>.<REGION> 
-
-      user: "{{ env_var('dbt_user') }}"
-      ######## These environment variables dbt_user and dbt_password 
-      ######## are read from the variabls in Airflow which we will set later
-      password: "{{ env_var('dbt_password') }}"
-
-      role: dbt_dev_role
-      database: demo_dbt
-      warehouse: dbt_dev_wh
-      schema: public
-      threads: 200
 ```
-packages.yml
+Then, run the following statements to insert data into these tables. 
+
+```sql
+INSERT INTO bookings_1
+  VALUES
+  (1, 232323231, 'Pan Pacific', TO_DATE('2021-03-19'), 100),
+  (1, 232323232, 'Fullerton', TO_DATE('2021-03-20'), 200),
+  (1, 232323233, 'Fullerton', TO_DATE('2021-04-20'), 300),
+  (1, 232323234, 'Jackson Square', TO_DATE('2021-03-21'), 400),
+  (1, 232323235, 'Mayflower', TO_DATE('2021-06-20'), 500),
+  (1, 232323236, 'Suncity', TO_DATE('2021-03-19'), 600),
+  (1, 232323237, 'Fullerton', TO_DATE('2021-08-20'), 700);
+
+```
+```sql
+INSERT INTO bookings_2
+  VALUES
+  (2, 332323231, 'Fullerton', TO_DATE('2021-03-19'), 100),
+  (2, 332323232, 'Jackson Square', TO_DATE('2021-03-20'), 300),
+  (2, 332323233, 'Suncity', TO_DATE('2021-03-20'), 300),
+  (2, 332323234, 'Jackson Square', TO_DATE('2021-03-21'), 300),
+  (2, 332323235, 'Fullerton', TO_DATE('2021-06-20'), 300),
+  (2, 332323236, 'Suncity', TO_DATE('2021-03-19'), 300),
+  (2, 332323237, 'Berkly', TO_DATE('2021-05-20'), 200);
+
+```
+```sql
+INSERT INTO customers
+  VALUES
+  (1, 'george', 'yates', TO_DATE('1989-03-19'), 12334),
+  (2, 'rishi','kar', TO_DATE('1990-03-10'), 12323);
+
+```
+
+
+Now, let's go back to our project ```cosmosproject``` > ```dbt```that we set up previously.
+
+We will set up a couple configurations for the respective files below. Please note for the ```dbt_project.yml``` you just need to replace the models section
+
+packages.yml (Create in ```cosmosproject``` folder if not already present) 
 ```yml
 packages:
-  - package: fishtown-analytics/dbt_utils
-    version: 0.6.4
+  - package: dbt-labs/dbt_utils
+    version: [">=1.0.0", "<2.0.0"]
 ```
 
 dbt_project.yml
@@ -207,7 +235,7 @@ models:
           materialized: view
 ```
 
-Next, we will install the ```fishtown-analytics/dbt_utils``` that we had placed inside ```packages.yml```. This can be done by running the command ```dbt deps``` from the ```dbt``` folder. 
+Next, we will install the ```dbt-labs/dbt_utils``` that we had placed inside ```packages.yml```. This can be done by running the command ```dbt deps``` from the ```cosmosproject``` folder. 
 
 We will now create a file called ```custom_demo_macros.sql``` under the ```macros``` folder and input the below sql 
 
@@ -236,62 +264,13 @@ We will now create a file called ```custom_demo_macros.sql``` under the ```macro
 
 If everything is done correctly, your folder should look like below. The annotated boxes are what we just went through above. 
 
-Our final step here is to install our dbt module for ```db_utils```. From the dbt directory run
-``` 
-dbt deps
-```
-and you would see the assoicated modules being installed in the ```dbt_modules``` folder
-
-By now, you should see the folder structure as below: 
-
-![airflow](assets/data_engineering_with_apache_airflow_3_dbt_structure.png)
-
 We are done configuring dbt. Let us proceed on crafting our csv files and our dags in the next section.
 
-<!-- ------------------------ -->
-## Creating our CSV data files in dbt
-Duration: 10
 
-In this section, we will be prepping our sample csv data files alongside the associated sql models. 
 
-To start, let us first create 3 excel files under the folder ```data``` inside the dbt folder.
+HOLD FOR SCREENSHOT OF FOLDER STRUCTURE 
 
-bookings_1.csv
 
-```csv
-id,booking_reference,hotel,booking_date,cost
-1,232323231,Pan Pacific,2021-03-19,100
-1,232323232,Fullerton,2021-03-20,200
-1,232323233,Fullerton,2021-04-20,300
-1,232323234,Jackson Square,2021-03-21,400
-1,232323235,Mayflower,2021-06-20,500
-1,232323236,Suncity,2021-03-19,600
-1,232323237,Fullerton,2021-08-20,700
-```
-
-bookings_2.csv
-
-```csv
-id,booking_reference,hotel,booking_date,cost
-2,332323231,Fullerton,2021-03-19,100
-2,332323232,Jackson Square,2021-03-20,300
-2,332323233,Suncity,2021-03-20,300
-2,332323234,Jackson Square,2021-03-21,300
-2,332323235,Fullerton,2021-06-20,300
-2,332323236,Suncity,2021-03-19,300
-2,332323237,Berkly,2021-05-20,200
-```
-
-customers.csv
-```csv
-id,first_name,last_name,birthdate,membership_no
-1,jim,jone,1989-03-19,12334
-2,adrian,lee,1990-03-10,12323
-```
-
-Our folder structure should be like as below
-
-![airflow](assets/data_engineering_with_apache_airflow_4_csv_files.png)
 
 <!-- ------------------------ -->
 ## Creating our dbt models in models folder
@@ -378,89 +357,68 @@ Your file structure should be as below. We have already finished our dbt models 
 ![airflow](assets/data_engineering_with_apache_airflow_5_dbt_models.png)
 
 <!-- ------------------------ -->
-## Preparing our Airflow DAGs
+## Preparing our Airflow Environment
 Duration: 5
 
-In our ```dags``` folder, create 2 files: ```init.py``` and ```transform_and_analysis.py```. The ```init.py``` will initialise and see the CSV data. The ```transform_and_analysis.py``` will perform the transformation and analysis. 
+Now going back to your Airflow directory, open up the requirements.txt file that the Astro CLI created. Copy and paste the following text block to install the [Cosmos](https://astronomer.github.io/astronomer-cosmos/index.html) and Snowflake libraries for Airflow. Cosmos will be used to turn each dbt model into a task/task group complete with retries, alerting, etc. 
+```
+astronomer-cosmos
+apache-airflow-providers-snowflake
+```
 
-With Airflow, we can then schedule the ```transform_and_analysis``` DAG on a daily basis. However, in this example, we will be triggering the DAG manually.
+Next, open up the Dockerfile in your Airflow folder and copy and paste the following code block to create a virtual environment for dbt along with the adapter to connect to Snowflake. It’s recommended to use a virtual environment because dbt and Airflow can have conflicting dependencies.
 
-init.py
+```
+RUN python -m venv dbt_venv && source dbt_venv/bin/activate && pip install --no-cache-dir dbt-snowflake && deactivate
+```
+
+<!-- ------------------------ -->
+## Building Our dbt DAG
+Duration: 5
+
+Now that our Airflow environment is set up, lets create our DAG! Instead of using the conventional DAG definition methods, we'll be using Cosmos' dbtDAG class to create a DAG based on our dbt models. This allows us to turn our dbt projects into Apache Airflow DAGs and Task Groups with a few lines of code. To do so, create a new file in the ```dags``` folder called ```my_cosmos_dag.py``` and copy and paste the following code block into the file. 
+
 ```python
 from datetime import datetime
 import os
-
-from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.operators.bash import BashOperator
-from airflow.operators.dummy_operator import DummyOperator
-
-default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'start_date': datetime(2020,8,1),
-    'retries': 0
-}
+from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
+from cosmos.profiles import PostgresUserPasswordProfileMapping
+from cosmos.profiles import SnowflakeUserPasswordProfileMapping
 
 
-with DAG('1_init_once_seed_data', default_args=default_args, schedule_interval='@once') as dag:
-    task_1 = BashOperator(
-        task_id='load_seed_data_once',
-        bash_command='cd /dbt && dbt seed --profiles-dir .',
-        env={
-            'dbt_user': '{{ var.value.dbt_user }}',
-            'dbt_password': '{{ var.value.dbt_password }}',
-            **os.environ
-        },
-        dag=dag
-    )
+profile_config = ProfileConfig(profile_name="default",
+                               target_name="dev",
+                               profile_mapping=SnowflakeUserPasswordProfileMapping(conn_id="snowflake_conn", 
+                                                    profile_args={
+                                                        "database": "demo_dbt",
+                                                        "schema": "public"
+                                                        },
+                                                    ))
 
-task_1  
+
+dbt_snowflake_dag = DbtDag(project_config=ProjectConfig("/usr/local/airflow/dags/dbt/cosmosproject",),
+                    operator_args={"install_deps": True},
+                    profile_config=profile_config,
+                    execution_config=ExecutionConfig(dbt_executable_path=f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt",),
+                    schedule_interval="@daily",
+                    start_date=datetime(2023, 9, 10),
+                    catchup=False,
+                    dag_id="dbt_snowflake_dag",)
+
 ```
+First, we import the various Cosmos libraries
 
-transform_and_analysis.py
-```python
-from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.operators.bash import BashOperator
-from airflow.operators.dummy_operator import DummyOperator
-from datetime import datetime
+• DbtDag: This is a class that allows you to create an Apache Airflow Directed Acyclic Graph (DAG) for a dbt (Data Build Tool) project. The DAG will execute the dbt project according to the specified configuration.
 
+• ProjectConfig: This class is used to specify the configuration for the dbt project that the DbtDag will execute. This typically includes the path to the dbt project.
 
-default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'start_date': datetime(2020,8,1),
-    'retries': 0
-}
+• ProfileConfig: This class is used to specify the configuration for the database profile that dbt will use when executing the project. This includes the profile name, target name, and any necessary mapping to Airflow connections.
 
-with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_interval='@once') as dag:
-    task_1 = BashOperator(
-        task_id='daily_transform',
-        bash_command='cd /dbt && dbt run --models transform --profiles-dir .',
-        env={
-            'dbt_user': '{{ var.value.dbt_user }}',
-            'dbt_password': '{{ var.value.dbt_password }}',
-            **os.environ
-        },
-        dag=dag
-    )
+• ExecutionConfig: This class is used to specify any additional configuration for executing the dbt project. This might include the path to the dbt executable files.
 
-    task_2 = BashOperator(
-        task_id='daily_analysis',
-        bash_command='cd /dbt && dbt run --models analysis --profiles-dir .',
-        env={
-            'dbt_user': '{{ var.value.dbt_user }}',
-            'dbt_password': '{{ var.value.dbt_password }}',
-            **os.environ
-        },
-        dag=dag
-    )
+• PostgresUserPasswordProfileMapping and SnowflakeUserPasswordProfileMapping: These classes are used to map Airflow connections to dbt profiles for PostgreSQL and Snowflake databases, respectively. This allows you to manage your database credentials in Airflow and use them in dbt.
 
-    task_1 >> task_2 # Define dependencies
-```
-
-
+In this code, ProfileConfig object is created, which is used to define the configuration for the Snowflake connection. The SnowflakeUserPasswordProfileMapping class is used to map the Snowflake connection in Airflow to a dbt profile.
 
 <!-- ------------------------ -->
 ## Running our docker-compose file for Airflow
