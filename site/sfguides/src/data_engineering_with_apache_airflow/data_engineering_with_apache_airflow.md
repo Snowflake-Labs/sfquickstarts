@@ -410,15 +410,22 @@ First, we import the various Cosmos libraries
 
 • DbtDag: This is a class that allows you to create an Apache Airflow Directed Acyclic Graph (DAG) for a dbt (Data Build Tool) project. The DAG will execute the dbt project according to the specified configuration.
 
-• ProjectConfig: This class is used to specify the configuration for the dbt project that the DbtDag will execute. This typically includes the path to the dbt project.
+• ProjectConfig: This class is used to specify the configuration for the dbt project that the DbtDag will execute by pointing it to the path tfor your dbt project.
 
 • ProfileConfig: This class is used to specify the configuration for the database profile that dbt will use when executing the project. This includes the profile name, target name, and any necessary mapping to Airflow connections.
 
-• ExecutionConfig: This class is used to specify any additional configuration for executing the dbt project. This might include the path to the dbt executable files.
+• ExecutionConfig: This class is used to specify any additional configuration for executing the dbt project. We'll be pointing it to the virtual environment we created at `{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt` in our `Dockerfile` to execute in. 
 
 • PostgresUserPasswordProfileMapping and SnowflakeUserPasswordProfileMapping: These classes are used to map Airflow connections to dbt profiles for PostgreSQL and Snowflake databases, respectively. This allows you to manage your database credentials in Airflow and use them in dbt.
 
-In this code, ProfileConfig object is created, which is used to define the configuration for the Snowflake connection. The SnowflakeUserPasswordProfileMapping class is used to map the Snowflake connection in Airflow to a dbt profile.
+After the imports, a ProfileConfig object is created, which is used to define the configuration for the Snowflake connection. The SnowflakeUserPasswordProfileMapping class is used to map the Snowflake connection in Airflow to a dbt profile. The DbtDag object is then created. This object represents an Airflow DAG that will execute a dbt project. It takes several parameters: 
+
+`project_config` specifies the path to the dbt project we created at `/usr/local/airflow/dags/dbt/cosmosproject`
+`operator_args` is used to pass arguments to the dbt operator. Here, it's specifying that dependencies should be installed.
+`profile_config` is the profile configuration defined earlier, which will be used to execute the dbt models in Snowflake.
+`execution_config` specifies the path to our virtual environment to executue our dbt code in. 
+`schedule_interval`, `start_date`, `catchup`, and `dag_id` are standard Airflow DAG parameters. You can use any of the standard Airflow DAG parameters in a dbtDAG as well. 
+
 
 <!-- ------------------------ -->
 ## Running our docker-compose file for Airflow
