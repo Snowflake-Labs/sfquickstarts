@@ -16,7 +16,7 @@ Duration: 5
 
 Numerous business are looking at modern data strategy built on platforms that could support agility, growth and operational efficiency. Snowflake is Data Cloud, a future proof solution that can simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance.
 
-Apache Airflow is an open-source workflow management platform that can be used to author and manage data pipelines. Airflow uses worklows made of directed acyclic graphs (DAGs) of tasks. 
+Apache Airflow is an open-source workflow management platform that can be used to author and manage data pipelines. Airflow uses workflows made of directed acyclic graphs (DAGs) of tasks. The [Astro CLI](https://docs.astronomer.io/astro/cli/overview) is a command line interface for Airflow developed by Astronomer. It's the easiest way to get started with running Apache Airflow locally
 
 [dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by [dbt Labs](https://www.getdbt.com/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the command line interface for running dbt projects. The CLI is free to use and open source.
 
@@ -59,32 +59,25 @@ Duration: 2
 First, let us create a folder by running the command below
 
 ```
-mkdir dbt_airflow && cd "$_"
+mkdir dbt_airflow && cd dbt_airflow
 ```
 
-Next, we will get our docker-compose file of our Airflow. To do so lets do a curl of the file onto our local laptop
+Next, we will use the Astro CLI to create a new Astro project by running the following command. An Astro project contains the set of files necessary to run Airflow, including dedicated folders for your DAG files, plugins, and dependencies.
 
 ```bash
-curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.yaml'
+astro dev init
 ```
 
-We will be now adjusting our docker-compose file - add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our dbt models and our CSV files. 
+Now, navigate into the DAG's folder that the Astro CLI created, and create a new folder called dbt by running the following command. 
 
 ```bash
-  volumes:
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./plugins:/opt/airflow/plugins
-    - ./dbt:/dbt # add this in
-    - ./dags:/dags # add this in
-
+mkdir dbt && cd dbt
 ```
 
-We would now need to create additional file with additional docker-compose parameters. This way dbt will be installed when the containers are started.
+Next, run the following command to install dbt and create all the necessary folders for your project. It will prompt you for a name for your project, enter 'cosmosproject'. 
 
-`.env`
 ```bash
-_PIP_ADDITIONAL_REQUIREMENTS=dbt==0.19.0
+dbt init
 ```
 
 ---
