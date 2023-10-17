@@ -104,7 +104,7 @@ Finally, we are going to perform our analysis and transformation on the ```prepp
 
 ![dbt_structure](assets/data_engineering_with_apache_airflow_0_dbt_flow.png)
 
-First, let's go to the Snowflake console and run the script below. What this does is create a dbt_user and a dbt_dev_role and after which we set up a database for dbt_user.
+First, let's go to the Snowflake console and run the script below after replacing the <Password> field with your password of choice. What this does is create a dbt_user and a dbt_dev_role and after which we set up a database for dbt_user. 
 
 ```sql
 USE ROLE SECURITYADMIN;
@@ -209,7 +209,9 @@ INSERT INTO customers
   (2, 'rishi','kar', TO_DATE('1990-03-10'), 12323);
 
 ```
+After you're done, you should have a folder structure that looks like the below: 
 
+![airflow](assets/data_engineering_with_apache_airflow_8_snowflake_successful_seed.png)
 
 Now, let's go back to our project ```cosmosproject``` > ```dbt```that we set up previously.
 
@@ -262,14 +264,9 @@ We will now create a file called ```custom_demo_macros.sql``` under the ```macro
 {% endmacro %}
 ```
 
-If everything is done correctly, your folder should look like below. The annotated boxes are what we just went through above. 
+Now we are done setting up our dbt environment. Your file structure should look like the below screenshot: 
 
-We are done configuring dbt. Let us proceed on crafting our csv files and our dags in the next section.
-
-
-
-HOLD FOR SCREENSHOT OF FOLDER STRUCTURE 
-
+![airflow](assets/data_engineering_with_apache_airflow_3_dbt_environment_structure.png)
 
 
 <!-- ------------------------ -->
@@ -352,7 +349,7 @@ SELECT
 FROM {{ ref('prepped_data') }}
 ```
 
-Your file structure should be as below. We have already finished our dbt models and can proceed onto working on Airflow. 
+Your file structure should look like the below screenshot. We have now finished our dbt models and can proceed to working on using Airflow to manage them. 
 
 ![airflow](assets/data_engineering_with_apache_airflow_5_dbt_models.png)
 
@@ -453,12 +450,11 @@ Now it's time to activate our DAG! First, click on the ```cosmos_dag``` to open 
 ### Running our cosmos_dag!
 We will now run our DAG ```cosmos_dag``` to see our dbt models in action! If you click the big blue play button on the top left of the screen, you'll see your tasks start to run your dbt transformations within your Snowflake database. If everything goes smoothly, your Snowflake environment should look like the following screenshot: 
 
-HOLD FOR SCREENSHOT OF SNOWFLAKE ENVIRONMENT
-
-
-Our ```Transform``` and ```Analysis``` views have been created successfully!
-
 ![airflow](assets/data_engineering_with_apache_airflow_10_snowflake_successful_transform_analysis.png)
+
+Our ```Transform``` and ```Analysis``` views have been created successfully! Open them to see the results of our analysis, and check out the other tables to see how data was transformed using dbt.
+
+
 
 <!-- ------------------------ -->
 ## Conclusion
