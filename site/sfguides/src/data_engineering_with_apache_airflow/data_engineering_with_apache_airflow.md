@@ -82,7 +82,7 @@ dbt init
 
 Your tree repository should look like this
 
-![Folderstructure](assets/data_engineering_with_apache_airflow_1_tree_structure.png)
+![Folderstructure](assets/data_engineering_with_apache_airflow_dbt_folder_structure.png)
 
 <!-- ------------------------ -->
 ## Setting up our dbt Project
