@@ -820,7 +820,7 @@ FROM geolab.geography.osm_nl_not_covered
 GROUP BY signal_category;
 ```
 
-You now know that you have 13,938 km with good coverage and 2,331 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
+You now know that you have 14,601 km with good coverage and 1,667 with poor/no coverage. Interestingly, that is about 13 % of the NL roads!
 
 Lastly, with this layer, you can add it to your CARTO map and visualize the road segment according to the `SIGNAL_CATEGORY` feature you created.
 
