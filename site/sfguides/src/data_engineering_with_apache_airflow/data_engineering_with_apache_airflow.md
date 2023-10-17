@@ -428,46 +428,33 @@ After the imports, a ProfileConfig object is created, which is used to define th
 
 
 <!-- ------------------------ -->
-## Running our docker-compose file for Airflow
+## Starting Airflow Environment & Adding Connections
 Duration: 5
 
-Let's run our ```docker-compose up``` and go to [http://localhost:8080/](http://localhost:8080/). The default username is ```airflow``` and password is ```airflow```
+Within your Airflow ```dbt_airflow``` directory, enter the below command to start your Airflow environment 
+```bash
+astro dev start
+```
+
+Once the Airflow environment is finished creating and the login credentials appear in the terminal window, open up your browser of choice and go to [http://localhost:8080/](http://localhost:8080/) to log into our. The default username  is ```admin``` and password is ```admin```
 
 ![airflow](assets/data_engineering_with_apache_airflow_2_airflow_url.png)
 
-We are now going to create 2 variables. Go to ```admin > Variables``` and click on the ```+``` icon. 
+Now we're going to create a connection to our Snowflake environment for our DAG to use. Open up the conneections page from the Admin drop down menu and click + to create a new connection. Choose Snowflake as the connection type, and `snowflake_conn` as the name for the connection. Then, enter your credentials following the example shown below. The only variables you'll need to change to your own are the password, account name, and region. The rest we set already via the dbt user creation script. 
 
-![airflow](assets/data_engineering_with_apache_airflow_5_airflow_variables.png)
-
-Let us first create key of ```dbt_user``` and value ```dbt_user```. 
-
-![airflow](assets/data_engineering_with_apache_airflow_5_airflow_username.png)
-
-Now let us create our second key of ```dbt_password``` and value ```<ADD IN YOUR PASSWORD>```
-
-![airflow](assets/data_engineering_with_apache_airflow_5_airflow_password.png)
+HOLD FOR EXAMPLE SNOWFLAKE CONNECTION PIC
 
 <!-- ------------------------ -->
 ## Activating and running our DAGs
 
-We will now activate our DAGs. Click on the blue buttons for ```1_init_once_seed_data``` and ```2_daily_transformation_analysis```
+Now it's time to activate our DAG! First, click on the ```cosmos_dag``` to open up its grid and graph view so we can see the DAG that Cosmos created from our dbt project. It should look exactly like the example below if you open up each task group. Notice that each of your dbt models is rendered as its own task group, with each step of the dbt model rendered as a task. It dynamically generates the dependencies between each model based on the data references between them, without us needing to explicitly create them. 
 
-![airflow](assets/data_engineering_with_apache_airflow_6_runnig_our_dags.png)
 
-### Running our 1_init_once_seed_data
-Now, lets run our ```1_init_once_seed_data```  to seed the data. To run click the play icon under the ```Actions``` on the right of the DAG.
+### Running our cosmos_dag!
+We will now run our DAG ```cosmos_dag``` to see our dbt models in action! If you click the big blue play button on the top left of the screen, you'll see your tasks start to run your dbt transformations within your Snowflake database. If everything goes smoothly, your Snowflake environment should look like the following screenshot: 
 
-![airflow](assets/data_engineering_with_apache_airflow_7_dag_init_successful.png)
+HOLD FOR SCREENSHOT OF SNOWFLAKE ENVIRONMENT
 
-### Viewing Seed data in tables created under public schema
-If all goes well when we go back to our Snowflake instance, we should see tree tables that have been successfully created in the ```PUBLIC``` schema. 
-
-![airflow](assets/data_engineering_with_apache_airflow_8_snowflake_successful_seed.png)
-
-### Running our 2_daily_transformation_analysis
-We will now run our second DAG ```2_daily_transformation_analysis``` which will run our ```transform``` and ```analysis``` models
-
-![airflow](assets/data_engineering_with_apache_airflow_9_dag_transform_analysis_successful.png)
 
 Our ```Transform``` and ```Analysis``` views have been created successfully!
 
@@ -477,12 +464,14 @@ Our ```Transform``` and ```Analysis``` views have been created successfully!
 ## Conclusion
 Duration: 1
 
-Congratulations! You have created your first Apache Airflow with dbt and Snowflake! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
+Congratulations! You have created your first Apache Airflow DAG with dbt, Snowflake, and Cosmos! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
 
 ### Additional Resources:
 - Join our [dbt community Slack](https://www.getdbt.com/community/) which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
 - Quick tutorial on how to write a simple [Airflow DAG](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html)
+- Documentation on how to use Cosmos to render dbt workflows in Airflow [Cosmos](https://astronomer.github.io/astronomer-cosmos/index.html)
 
 ### What we've covered:
 - How to set up Airflow, dbt & Snowflake
-- How to create a DAG and run dbt from our dag
+- How to create a dbt DAG using Cosmos to run dbt models using Airflow
+
