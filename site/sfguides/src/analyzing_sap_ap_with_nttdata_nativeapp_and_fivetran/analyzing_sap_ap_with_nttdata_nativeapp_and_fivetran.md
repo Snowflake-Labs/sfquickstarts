@@ -35,6 +35,8 @@ In this lab, you will use Fivetran to ingest mock SAP data into Snowflake, and u
  
 
 ## Launching Fivetran from Snowflake Partner Connect 
+Duration: 5
+
 Login to your Snowflake trial account.
 
 If this is your 1st time logging into Snowflake, you can get a detailed UI walkthrough [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight).
@@ -55,7 +57,7 @@ If this is your 1st time logging into Snowflake, you can get a detailed UI walkt
 
 <!-- ------------------------ -->
 ## Connect Fivetran to a Source and load to Snowflake
-Duration: 2
+Duration: 15
 
 Fivetran supports syncing data from file systems, applications, event systems, and databases. For SAP Sources, we support connecting to many different SAP sources. Our newest source is our [SAP HANA ERP Source](https://fivetran.com/docs/databases/sap-erp/sap-erp-hana). This fully managed SaaS connector is the simplest, fastest way to get started extracting SAP data.
 
@@ -227,7 +229,7 @@ Let’s leave the connector syncing the initial historical sync - we’ll check 
 
 <!-- ------------------------ -->
 ## Navigate the Fivetran UI for the PostgreSQL source connector
-Duration: 2
+Duration: 10
 
 In this section, we will further explore the information that is available in the Fivetran UI associated with the connector that you just created.
 
@@ -279,7 +281,7 @@ This concludes the Fivetran data ingestion portion of the Quickstart Lab. When y
 
 <!-- ------------------------ -->
 ## Install NTT Data’s Native App from Snowflake Marketplace
-Duration: 3
+Duration: 15
 
 1.  Back in your Snowflake account, as an ACCOUNTADMIN role, click on the <b>Marketplace</b> tab to view the list of native apps available on snowflake marketplace.
 
@@ -325,7 +327,7 @@ GRANT SELECT ON ALL VIEWS IN SCHEMA <AP_Database>.<AP_Schema> TO APPLICATION <AP
 
 <!-- ------------------------ -->
 ## Use the NTT DATA app to identify AP Duplicates
-Duration: 1
+Duration: 10
 
 1.  When you launch the APP for the very first time, you should see a message like below.
 
@@ -380,7 +382,7 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
-Duration: 2
+Duration: 4
 
 The app showcases only a couple of permutations and combinations of ways to identify duplicate payments. There are at least a dozen more and we can help include them in the app depending on the P2P cycle that your organization runs.
 
