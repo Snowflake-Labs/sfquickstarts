@@ -379,9 +379,10 @@ Now that our Airflow environment is set up, lets create our DAG! Instead of usin
 from datetime import datetime
 import os
 from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
-from cosmos.profiles import PostgresUserPasswordProfileMapping
 from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from pathlib import Path
 
+dbt_project_path = Path("/usr/local/airflow/dags/dbt/cosmosproject")
 
 profile_config = ProfileConfig(profile_name="default",
                                target_name="dev",
@@ -393,7 +394,7 @@ profile_config = ProfileConfig(profile_name="default",
                                                     ))
 
 
-dbt_snowflake_dag = DbtDag(project_config=ProjectConfig("/usr/local/airflow/dags/dbt/cosmosproject",),
+dbt_snowflake_dag = DbtDag(project_config=ProjectConfig(dbt_project_path,),
                     operator_args={"install_deps": True},
                     profile_config=profile_config,
                     execution_config=ExecutionConfig(dbt_executable_path=f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt",),
@@ -439,7 +440,7 @@ Once the Airflow environment is finished creating and the login credentials appe
 
 Now we're going to create a connection to our Snowflake environment for our DAG to use. Open up the conneections page from the Admin drop down menu and click + to create a new connection. Choose Snowflake as the connection type, and `snowflake_conn` as the name for the connection. Then, enter your credentials following the example shown below. The only variables you'll need to change to your own are the password, account name, and region. The rest we set already via the dbt user creation script. 
 
-HOLD FOR EXAMPLE SNOWFLAKE CONNECTION PIC
+![airflow](assets/data_engineering_with_apache_airflow_9_example_snowflake_conn.png)
 
 <!-- ------------------------ -->
 ## Activating and running our DAGs
