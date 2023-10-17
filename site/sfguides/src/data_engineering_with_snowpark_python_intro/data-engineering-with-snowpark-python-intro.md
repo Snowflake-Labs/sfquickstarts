@@ -13,14 +13,14 @@ tags: Getting Started, Data Engineering, Snowpark, Python, Intro
 
 Duration: 15
 
-This Quickstart will cover the basics of data engineering with Snowpark Python. By completing this guide, you will be able to build a data pipeline to process data from different sources, and periodically run the pipeline to update your data tables in Snowflake. 
+This Quickstart will cover the basics of data engineering with Snowpark for Python. By completing this guide, you will be able to build a data pipeline to process data from different sources, and periodically run the pipeline to update your data tables in Snowflake.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
 - **Snowflake Marketplace**: Download the data you need from Snowflake Marketplace and use it for your analysis
-- **Data Engineering**: Leverage Snowpark for Python Dataframe to perform data transformations such as group by, aggregate, and join to prep for the data for downstream applications
-- **Orchestrating Pipelines**: Use Snowflake Tasks API to turn your data pipeline code into operational pipelines with integrated monitoring
+- **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, and join to prep for the data for downstream applications
+- **Orchestrating Pipelines**: Use Snowflake Python Tasks API to turn your data pipeline code into operational pipelines with integrated monitoring
 
 In case you are new to some of the technologies mentioned above, here is a quick summary with the links to documentation.
 
@@ -28,7 +28,7 @@ In case you are new to some of the technologies mentioned above, here is a quick
 
 The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
 
-**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling and ML operations.
 
 **Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
@@ -257,7 +257,9 @@ Duration: 10
 
 During this step we will be "loading" the raw excel files containing location and order details data from an external stage (s3 bucket) to Snowflake using the Dynamic File Access feature. If you would like to peek at the raw excel files, you can check out the `data` folder in the [Git repo](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data). We use a Python stored procedure to load this data from an S3 bucket into a Snowflake table.
 
-In this step, we will run through the commands in the SQL file `steps/05_load_excel_files.sql` from VS Code. To put this in context, we are on step **#5** in our data flow overview:
+In this step, we will run through the commands in the SQL file `steps/05_load_excel_files.sql`. You can open the sql file `steps/05_load_excel_files.sql` in VS Code. You can click on the `Execute` option above every SQL command to run each command separately or click on `Execute All` to run all the commands sequentially.
+
+To put this in context, we are on step **#5** in our data flow overview:
 
 ---
 
@@ -347,7 +349,7 @@ DESCRIBE TABLE LOCATION;
 SELECT * FROM LOCATION;
 ```
 
-Fantastic. We now have all the raw data needed to build our data pipeline and further analyze them. 
+Fantastic. We now have all the raw data needed to build our data pipeline and further analyze them.
 
 <!-- ------------------------ -->
 
@@ -357,7 +359,7 @@ Duration: 10
 
 During this step we will be creating our second Snowpark Python sproc to Snowflake. This sproc will join the `ORDER_DETAIL` table with the `LOCATION` table and `HISTORY_DAY` table to create a final, aggregated table for analysis named `DAILY_CITY_METRICS`.
 
-In this step, we will run through the commands in the SQL file `steps/06_load_daily_city_metrics.sql` from VS Code.
+In this step, we will run through the commands in the SQL file `steps/06_load_daily_city_metrics.sql`. You can open the sql file `steps/06_load_daily_city_metrics.sql` in VS Code. You can click on the `Execute` option above every SQL command to run each command separately or click on `Execute All` to run all the commands sequentially.
 
 To put this in context, we are on step **#6** in our data flow overview:
 
@@ -502,11 +504,11 @@ Again, for more details about the Snowpark Python DataFrame API, please check ou
 
 Duration: 10
 
-During this step we will be orchestrating our new Snowpark pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as Python APIs. For the scope of this quickstart, we will use Python APIs to create and run Tasks. 
+During this step we will be orchestrating our new Snowpark pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as Python Task APIs. For the scope of this quickstart, we will use Snowflake Python Task APIs to create and run Tasks.
 
 In this step, we will create two tasks, one for each stored procedure, and chain them together. We will then deploy or run the tasks to operationalize the data pipeline.
 
-In this step, we will run through the commands in the Python file `steps/07_deploy_task_dag.py` from VS Code.
+In this step, we will run through the commands in the Python file `steps/07_deploy_task_dag.py` from VS Code. To execute the file, you can open the terminal in VS Code and run `python steps/07_deploy_task_dag.py`.
 
 To put this in context, we are on step **#7** in our data flow overview:
 
@@ -526,7 +528,7 @@ To put this in context, we are on step **#7** in our data flow overview:
 
 ### Creating Tasks, and DAGs
 
-Let us create a dag and configure the schedule and transformations we want to run as part of the dag. 
+Let us create a dag and configure the schedule and transformations we want to run as part of the dag.
 
 In this example, we have two tasks `dag_task1`, `dag_task2` and `dag_task3` as part of `HOL_DAG`. The dag is scheduled daily.
 
