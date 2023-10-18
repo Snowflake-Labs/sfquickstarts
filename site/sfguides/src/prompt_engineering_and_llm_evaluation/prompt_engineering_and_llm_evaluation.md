@@ -200,3 +200,97 @@ LIMIT 5;
 
 <!-- ------------------------ -->
 
+## Use External Access
+
+Duration: 10
+
+In this implementation, we will use External Access to securely connect to the OpenAI API from Snowpark Python.
+
+### Step 1
+
+Create a [Secret](https://docs.snowflake.com/en/sql-reference/sql/create-secret) object in Snowflake to securely store your OpenAI API key.
+
+```sql
+CREATE OR REPLACE SECRET vino_open_ai_api
+ TYPE = GENERIC_STRING
+ SECRET_STRING = 'YOUR-OPENAI-API-KEY';
+```
+
+### Step 2
+
+Create a [Network Rule](https://docs.snowflake.com/en/sql-reference/sql/create-network-rule) object in Snowflake.
+
+```sql
+CREATE OR REPLACE NETWORK RULE vino_apis_network_rule
+ MODE = EGRESS
+ TYPE = HOST_PORT
+ VALUE_LIST = ('api.openai.com');
+```
+
+### Step 3
+
+Create a [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) object in Snowflake.
+
+```sql
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION vino_external_access_int
+ ALLOWED_NETWORK_RULES = (vino_apis_network_rule)
+ ALLOWED_AUTHENTICATION_SECRETS = (vino_open_ai_api)
+ ENABLED = true;
+```
+
+### Step 4
+
+Create Snowpark Python function in Snowflake. Let us understand what this SQL query does:
+
+- It uses Python 3.9 runtime
+- It uses the package `openai`
+- It uses the external access integration we created in the above step
+- `complete_me()` function takes the query we pass, the prompt we have defined and invokes ChatCompletion API of OpenAI's `gpt-3.5-turbo` model
+- It returns the model response in the end
+
+```sql
+CREATE OR REPLACE FUNCTION PROD_DESC_CHATGPT35_V1(query varchar)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.9
+HANDLER = 'complete_me'
+EXTERNAL_ACCESS_INTEGRATIONS = (vino_external_access_int)
+SECRETS = ('openai_key' = vino_open_ai_api)
+PACKAGES = ('openai')
+AS
+$$
+import _snowflake
+import openai
+openai.api_key = _snowflake.get_generic_secret_string('openai_key')
+model="gpt-3.5-turbo"
+prompt="Explain in details what the ingredients and capabilities of this cosmetic product are. Limit the response to 150 words only. Here is the product:"
+def complete_me(QUERY):
+    messages=[
+    {'role': 'user', 'content':f"{prompt} {QUERY}"}
+    ]
+    response = openai.ChatCompletion.create(model=model,messages=messages,temperature=0)    
+    return response.choices[0].message["content"]
+$$;
+```
+
+### **Call Function in Snowflake**
+
+Assuming you have completed all the prerequites, calling the function is as simple as follow:
+
+```sql
+SELECT PROD_DESC_CHATGPT35_V1('Magnesium Lotion With Aloe Vera, Shea Butter, Coconut Oil & Magnesium Oil For Muscle Pain & Leg Cramps – Rich In Magnesium Chloride And Vitamin E Oil') as response;
+```
+
+***Sample response:*** *"response"*
+
+```sql
+SELECT PROD_DESC_CHATGPT35_V1('Tandoori Mixed Grill') as response;
+```
+
+***Sample response:*** *"response"*
+
+Very cool. Isn't it? Now we are able to call gpt-3.5-turbo model APIs from Snowflake. You can also use `GPT` model on your Snowflake data.
+
+Now that we are able to access OpenAI's gpt model from Snowflake, let's go ahead and try out the Snowpark `PROD_DESC_CHATGPT35_V1` function on our Snowflake data.
+
+<!-- ------------------------ -->
