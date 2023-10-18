@@ -82,3 +82,121 @@ Streamlit is an open-source Python library that enables developers to quickly cr
 
 <!-- ------------------------ -->
 
+## Set up Snowflake
+
+Duration: 5
+
+Sign up for [Snowflake Free Trial](https://signup.snowflake.com/) and create an account. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, streamlit app and more.
+
+> aside positive
+> IMPORTANT:
+>
+> - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
+>
+> - For each SQL script block below, select all the statements in the block and execute them top to bottom.
+
+### Create Databases, Tables and Warehouses
+
+Run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+
+```sql
+CREATE OR REPLACE DATABASE CUSTOMER_EXP_DB;
+CREATE OR REPLACE SCHEMA CUSTOMER_EXP_SCHEMA;
+CREATE OR REPLACE WAREHOUSE VINO_CUSTOMER_EXP_WH_M WAREHOUSE_SIZE='MEDIUM';
+```
+
+Run the following commands to change the scope to the database, schema and warehouse created above.
+
+```sql
+USE DATABASE CUSTOMER_EXP_DB;
+USE SCHEMA CUSTOMER_EXP_SCHEMA;
+USE WAREHOUSE VINO_CUSTOMER_EXP_WH_M;
+```
+
+<!-- ------------------------ -->
+
+## Snowflake Marketplace
+
+During this step, we will be loading customer experience data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace.
+
+### Customer Experience data from Snowflake Marketplace
+
+Let's connect to the data from Snowflake Marketplace by following these steps:
+
+- Log into Snowsight
+- Click on the `Marketplace` tab in the left navigation bar
+- Enter `Customer Experience Score by Product` in the search box and click return
+- Click on the `Sample - USA` listing title
+- Click the blue `Get` button
+  - Expand the `Options` dialog
+  - Change the database name to read `CUSTOMER_EXP` (all capital letters)
+  - Select the `ACCOUNTADMIN` role to have access to the new database
+  - Click the blue `Get` button
+
+---
+
+![Snowflake Marketplace](assets/marketplace.png)
+
+---
+
+That's it... we have the dataset to work with.
+
+### Query the Marketplace data
+
+Run the following queries to peek into the data we got from the Marketplace.
+
+```sql
+-- count the rows from the marketplace data
+SELECT COUNT(*) as row_count 
+FROM CUSTOMER_EXP.PUBLIC.TRIAL_PRODUCT_CUSTOMER_EXPERIENCE_VIEW;
+
+-- peek into the customer_exp data from marketplace
+SELECT * 
+FROM CUSTOMER_EXP.PUBLIC.TRIAL_PRODUCT_CUSTOMER_EXPERIENCE_VIEW
+LIMIT 5;
+```
+
+You can also view the shared database `CUSTOMER_EXP.PUBLIC.TRIAL_PRODUCT_CUSTOMER_EXPERIENCE_VIEW` by navigating to the Snowsight UI -> Data -> Databases.
+
+### Copy the Marketplace data into our Database
+
+The database and the view we got from the Marketplace are read-only. In order to be able to write data into the table, we need to copy `CUSTOMER_EXP.PUBLIC.TRIAL_PRODUCT_CUSTOMER_EXPERIENCE_VIEW` view into another table.
+
+Run the following SQL command to create a new table and copy data into the new table
+
+```sql
+CREATE OR REPLACE TABLE CUSTOMER_EXP_REVIEWS (
+    brand_name VARCHAR(100),
+    product_name VARCHAR(1000),
+    sub_category VARCHAR(100),
+    positive_customer_exp NUMBER(10,2),
+    sentence_count NUMBER(10),
+    month STRING(15),
+    year NUMBER(4),
+    start_date DATE,
+    end_date DATE
+);
+
+INSERT INTO CUSTOMER_EXP_REVIEWS
+SELECT * 
+FROM CUSTOMER_EXP.PUBLIC.TRIAL_PRODUCT_CUSTOMER_EXPERIENCE_VIEW;
+```
+
+Let us quickly review the data from the newly created table
+
+```sql
+SELECT COUNT(*) 
+FROM CUSTOMER_EXP_REVIEWS;
+
+SELECT *
+FROM CUSTOMER_EXP_REVIEWS
+LIMIT 5;
+```
+
+> aside positive
+> IMPORTANT:
+>
+> - If you used a different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.
+
+<!-- ------------------------ -->
+
