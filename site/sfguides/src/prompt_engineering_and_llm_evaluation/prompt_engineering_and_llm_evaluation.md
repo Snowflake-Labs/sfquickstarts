@@ -548,10 +548,33 @@ If all goes well, you should see the application in Snowsight as shown below.
 
 ---
 
-In the Streamlit application, you can see the product name along with two different model responses. You can click on the description to read the entire text and write your feedback in the `review` column.
+**Step 8.** In the Streamlit application, you can see the product name along with two different model responses. You can click on the description to read the entire text and write your feedback in the `review` column.
 
-Once you are done reviewing the responses, you could click on `Update Reviews` button to save the reviews in the `PRODUCT_DESC_GPT4` table.
+**Step 9.** Once you are done reviewing the responses, you could click on `Update Reviews` button to save the reviews in the `PRODUCT_DESC_GPT4` table.
 
 Voila. It's done!
 
 <!-- ------------------------ -->
+
+## Conclusion and Resources
+
+Duration: 3
+
+Congratulations! You have successfully learnt the basics of prompt engineering on your Large Language Models (LLMs) and to evaluate the responses of different LLMs through human feedback by building an interative Streamlit Application.
+
+### What you learned
+
+- How to access data from Snowflake Marketplace and use it for your analysis
+- How to use External Access to securely connect to the OpenAI API from Snowpark
+- How to use different prompts on a Large Language Model and capture model responses in a Snowflake table
+- How to build a Streamlit App to compare the model responses and capture the review in a Snowflake table
+
+### Related Resources
+
+Want to learn more about the tools and technologies used by your app? Check out the following resources:
+
+- [Source Code on GitHub](link)
+- [External Access in Snowflake](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)
+- [OpenAI's Completions API](https://platform.openai.com/docs/api-reference/completions)
+- [Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/generative-ai-llm-snowflake/)
+- [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
