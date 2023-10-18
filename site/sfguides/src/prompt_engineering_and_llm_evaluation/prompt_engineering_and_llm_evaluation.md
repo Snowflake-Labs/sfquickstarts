@@ -193,6 +193,24 @@ FROM CUSTOMER_EXP_REVIEWS
 LIMIT 5;
 ```
 
+The table has several columns but the `product_name` column will be of interest to us. What if we used the LLMs to create a detailed product description from the product_name column? Let's do it.
+
+Let us create a new table called `PRODUCT` to store the unique product names from the CUSTOMER_EXP_REVIEWS table.
+
+```sql
+CREATE OR REPLACE TABLE PRODUCT 
+AS
+SELECT DISTINCT product_name
+FROM CUSTOMER_EXP_REVIEWS
+LIMIT 10;
+
+SELECT COUNT(*)
+FROM PRODUCT;
+
+SELECT * 
+FROM PRODUCT;
+```
+
 > aside positive
 > IMPORTANT:
 >
@@ -294,3 +312,117 @@ Very cool. Isn't it? Now we are able to call gpt-3.5-turbo model APIs from Snowf
 Now that we are able to access OpenAI's gpt model from Snowflake, let's go ahead and try out the Snowpark `PROD_DESC_CHATGPT35_V1` function on our Snowflake data.
 
 <!-- ------------------------ -->
+## Prompt Engineering
+
+So far, we created a snowpark function to invoke the OpenAI's ChatCompletion APIs. We got access to the Customer Experience data from Marketplace. In this step, let us use the OpenAI APIs to generate detailed product descriptions for the products in our table.
+
+### Prompt Engineering with GPT-3.5 model
+
+Let us start with defining the `PROD_DESC_CHATGPT35_V1` function:
+
+```sql
+CREATE OR REPLACE FUNCTION PROD_DESC_CHATGPT35_V1(query varchar)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.9
+HANDLER = 'complete_me'
+EXTERNAL_ACCESS_INTEGRATIONS = (vino_external_access_int)
+SECRETS = ('openai_key' = vino_open_ai_api)
+PACKAGES = ('openai')
+AS
+$$
+import _snowflake
+import openai
+openai.api_key = _snowflake.get_generic_secret_string('openai_key')
+model="gpt-3.5-turbo"
+prompt="Explain in details what the ingredients and capabilities of this cosmetic product are. Limit the response to 150 words only. Here is the product:"
+def complete_me(QUERY):
+    messages=[
+    {'role': 'user', 'content':f"{prompt} {QUERY}"}
+    ]
+    response = openai.ChatCompletion.create(model=model,messages=messages,temperature=0)    
+    return response.choices[0].message["content"]
+$$;
+```
+
+Let's call this function with a sample query:
+
+```sql
+SELECT PROD_DESC_CHATGPT35_V1('Magnesium Lotion With Aloe Vera, Shea Butter, Coconut Oil & Magnesium Oil For Muscle Pain & Leg Cramps – Rich In Magnesium Chloride And Vitamin E Oil') as response;
+```
+
+***Sample response:*** *"response"*
+
+```sql
+SELECT PROD_DESC_CHATGPT35_V1('Tandoori Mixed Grill') as response;
+```
+
+***Sample response:*** *"response"*
+
+Our dataset contains only cosmetic products. So we want the LLM to generate descriptions for cosmetic products only. So let us tweak our prompt to achieve this.
+
+After tweaking the prompt, let's create a new function `PROD_DESC_CHATGPT35_V2`.
+
+```sql
+CREATE OR REPLACE FUNCTION PROD_DESC_CHATGPT35_V2(query varchar)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.9
+HANDLER = 'complete_me'
+EXTERNAL_ACCESS_INTEGRATIONS = (vino_external_access_int)
+SECRETS = ('openai_key' = vino_open_ai_api)
+PACKAGES = ('openai')
+AS
+$$
+import _snowflake
+import openai
+
+openai.api_key = _snowflake.get_generic_secret_string('openai_key')
+model="gpt-3.5-turbo"
+prompt="Explain in detail what the ingredients and capabilities of this cosmetic product are. Limit the response to 150 words only. Respond with OOPS!! it is not a beauty product if the product in question is not a cosmetic or a beauty product. Here is the product:"
+
+def complete_me(QUERY):
+    messages=[
+    {'role': 'user', 'content':f"{prompt} {QUERY}"}
+    ]
+    response = openai.ChatCompletion.create(model=model,messages=messages,temperature=0)    
+    return response.choices[0].message["content"]
+$$;
+```
+
+Let's call this function with the same sample queries again:
+
+```sql
+SELECT PROD_DESC_CHATGPT35_V1('Magnesium Lotion With Aloe Vera, Shea Butter, Coconut Oil & Magnesium Oil For Muscle Pain & Leg Cramps – Rich In Magnesium Chloride And Vitamin E Oil') as response;
+```
+
+***Sample response:*** *"response"*
+
+```sql
+SELECT PROD_DESC_CHATGPT35_V1('Tandoori Mixed Grill') as response;
+```
+
+***Sample response:*** *"response"*
+
+Interesting! For non-cosmetic products, it gives a clear response. Now let's generate product descriptions for all the products in our products table.
+
+
+
+I have played around with only 2 versions of the prompts. You can iterate on the prompts as many times as you want until the model produces desired output. 
+
+### Prompt Engineering with GPT-4 model
+
+Now, let us repeat the experiment but using GPT-4 model instead.
+
+Let us start with defining the `PROD_DESC_CHATGPT4_V1` function:
+
+
+
+
+
+
+
+Fun part is you can work with Snowflake data and OpenAI models together, thanks to External Access functionality.
+
+<!-- ------------------------ -->
+
