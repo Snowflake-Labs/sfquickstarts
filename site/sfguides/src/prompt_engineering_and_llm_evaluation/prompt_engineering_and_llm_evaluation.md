@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Generative AI, Snowflake External Access, OpenAI, LLMs, Streamlit, Snowflake Marketplace
 
-# Prompt Engineering and Evaluation of LLM responses through human feedback
+# Prompt Engineering and Evaluation of LLM responses
 <!-- ------------------------ -->
 ## Overview 
 
@@ -579,7 +579,7 @@ Congratulations! You have successfully learnt the basics of prompt engineering o
 
 Want to learn more about the tools and technologies used by your app? Check out the following resources:
 
-- [Source Code on GitHub](link)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-prompt-engineering-and-llm-evaluation)
 - [External Access in Snowflake](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)
 - [OpenAI's Completions API](https://platform.openai.com/docs/api-reference/completions)
 - [Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/generative-ai-llm-snowflake/)
