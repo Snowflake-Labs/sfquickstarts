@@ -63,7 +63,7 @@ The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/
 
 ### What is Streamlit?
 
-Streamlit is an open-source Python library that enables developers to quickly create, deploy, and share web apps from Python scripts. Learn more about [Streamlit](https://streamlit.io/).
+Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform. Learn more about [Streamlit](https://streamlit.io/).
 
 ### What You Will Learn
 
