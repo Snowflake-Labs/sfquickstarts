@@ -147,7 +147,7 @@ Let's login with the ```dbt_user``` and create the database ```DEMO_dbt``` by ru
 CREATE OR REPLACE DATABASE DEMO_dbt
 
 ```
-![airflow](assets/data_engineering_with_apache_airflow_2_snowflake_console.png)
+
 
 Then, in the new ```Demo_dbt``` database, copy and paste the following sql statements to create our ```bookings_1```, ```bookings_2``` and ```customers ``` tables within Snowflake
 
