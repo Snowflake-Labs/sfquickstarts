@@ -518,3 +518,40 @@ Fun part is you can work with Snowflake data and OpenAI models together using Sn
 
 <!-- ------------------------ -->
 
+## LLM Evaluation with Human Feedback
+
+Duration: 10
+
+Follow these steps to build a Streamlit application in Snowsight.
+
+**Step 1.** Click on **Streamlit** on the left navigation menu
+
+**Step 2.** Click on **+ Streamlit App** on the top right
+
+**Step 3.** Enter **App name**
+
+**Step 4.** Select **Warehouse** (VINO_CUSTOMER_EXP_WH_M) and **App location** (Database as CUSTOMER_EXP_DB and Schema as CUSTOMER_EXP_SCHEMA)
+
+**Step 5.** Click on **Create**
+
+- At this point, you will be provided code for an example Streamlit application
+
+*Step 6.** Replace sample application code displayed in the code editor on the left with the code provided in [llm_eval.py](link)
+
+**Step 7.** Click on **Run** on the top right
+
+If all goes well, you should see the application in Snowsight as shown below.
+
+---
+
+![Streamlit-in-Snowflake](assets/app_sis.png)
+
+---
+
+In the Streamlit application, you can see the product name along with two different model responses. You can click on the description to read the entire text and write your feedback in the `review` column.
+
+Once you are done reviewing the responses, you could click on `Update Reviews` button to save the reviews in the `PRODUCT_DESC_GPT4` table.
+
+Voila. It's done!
+
+<!-- ------------------------ -->
