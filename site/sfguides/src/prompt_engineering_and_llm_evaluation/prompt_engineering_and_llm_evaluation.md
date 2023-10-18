@@ -542,7 +542,7 @@ Follow these steps to build a Streamlit application in Snowsight.
 
 - At this point, you will be provided code for an example Streamlit application
 
-*Step 6.** Replace sample application code displayed in the code editor on the left with the code provided in [llm_eval.py](link)
+**Step 6.** Replace sample application code displayed in the code editor on the left with the code provided in [llm_evaluation_sis_app.py](https://github.com/Snowflake-Labs/sfguide-prompt-engineering-and-llm-evaluation/blob/main/llm_evaluation_sis_app.py))
 
 **Step 7.** Click on **Run** on the top right
 
