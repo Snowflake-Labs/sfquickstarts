@@ -95,6 +95,22 @@ Sign up for [Snowflake Free Trial](https://signup.snowflake.com/) and create an 
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
+### Clone GitHub Repository
+
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-prompt-engineering-and-llm-evaluation). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+
+Using HTTPS:
+
+```shell
+git clone https://github.com/Snowflake-Labs/sfguide-prompt-engineering-and-llm-evaluation.git
+```
+
+OR, using SSH:
+
+```shell
+git clone git@github.com:Snowflake-Labs/sfguide-prompt-engineering-and-llm-evaluation.git
+```
+
 ### Create Databases, Tables and Warehouses
 
 Run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
