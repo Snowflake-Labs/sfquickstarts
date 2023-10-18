@@ -436,7 +436,7 @@ astro dev start
 
 Once the Airflow environment is finished creating and the login credentials appear in the terminal window, open up your browser of choice and go to [http://localhost:8080/](http://localhost:8080/) to log into our. The default username  is ```admin``` and password is ```admin```
 
-![airflow](assets/data_engineering_with_apache_airflow_2_airflow_url.png)
+![airflow](assets/data_engineering_with_apache_airflow_12_dbt_cosmos_airflow_rendered.png)
 
 Now we're going to create a connection to our Snowflake environment for our DAG to use. Open up the conneections page from the Admin drop down menu and click + to create a new connection. Choose Snowflake as the connection type, and `snowflake_conn` as the name for the connection. Then, enter your credentials following the example shown below. The only variables you'll need to change to your own are the password, account name, and region. The rest we set already via the dbt user creation script. 
 
