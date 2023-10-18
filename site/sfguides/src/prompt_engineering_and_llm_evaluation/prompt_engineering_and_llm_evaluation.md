@@ -3,7 +3,7 @@ id: prompt_engineering_and_llm_evaluation
 summary: This guide provides instructions to perform prompt engineering on your LLM models and to build a streamlit app for evaluating LLM responses using human feedback
 categories: data-science-&-ml, app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Generative AI, Snowflake External Access, OpenAI, LLMs, Streamlit, Snowflake Marketplace
 
@@ -146,11 +146,9 @@ That's it... we have the dataset to work with.
 Run the following queries to peek into the data we got from the Marketplace.
 
 ```sql
--- count the rows from the marketplace data
 SELECT COUNT(*) as row_count 
 FROM CUSTOMER_EXP.PUBLIC.TRIAL_PRODUCT_CUSTOMER_EXPERIENCE_VIEW;
 
--- peek into the customer_exp data from marketplace
 SELECT * 
 FROM CUSTOMER_EXP.PUBLIC.TRIAL_PRODUCT_CUSTOMER_EXPERIENCE_VIEW
 LIMIT 5;
@@ -299,25 +297,13 @@ Assuming you have completed all the prerequites, calling the function is as simp
 SELECT PROD_DESC_CHATGPT35_V1('Magnesium Lotion With Aloe Vera, Shea Butter, Coconut Oil & Magnesium Oil For Muscle Pain & Leg Cramps – Rich In Magnesium Chloride And Vitamin E Oil') as response;
 ```
 
-***Sample response:*** *"This cosmetic product, the Magnesium Lotion with Aloe Vera, Shea Butter, Coconut Oil, and Magnesium Oil, is specifically designed to alleviate muscle pain and leg cramps. It contains a combination of key ingredients that work synergistically to provide relief and nourishment to the skin.
-
-The lotion is rich in Magnesium Chloride, a mineral known for its muscle relaxing properties. Magnesium Chloride helps to reduce muscle tension, ease cramps, and promote relaxation. Additionally, it aids in the absorption of magnesium into the body, which is essential for maintaining healthy muscle function.
-
-Aloe Vera is included in the formula for its soothing and moisturizing properties. It helps to calm irritated skin, reduce inflammation, and provide hydration.
-
-Shea Butter and Coconut Oil are both deeply moisturizing ingredients that help to nourish and soften the skin. They create a protective barrier that locks in moisture, leaving the skin feeling smooth and supple.
-
-Vitamin E Oil is added for its antioxidant properties, which help to protect the skin from free radicals and environmental damage.
-
-Overall, this Magnesium Lotion combines the benefits of Magnesium Chloride, Aloe Vera, Shea Butter, Coconut Oil, and Vitamin E Oil to provide relief from muscle pain and leg cramps while simultaneously nourishing and hydrating the skin."*
+***Sample response:*** *"This cosmetic product, the Magnesium Lotion with Aloe Vera, Shea Butter, Coconut Oil, and Magnesium Oil, is specifically designed to alleviate muscle pain and leg cramps. It contains a combination of key ingredients that work synergistically to provide relief and nourishment to the skin.The lotion is rich in Magnesium Chloride, a mineral known for its muscle relaxing properties. Magnesium Chloride helps to reduce muscle tension, ease cramps, and promote relaxation. Additionally, it aids in the absorption of magnesium into the body, which is essential for maintaining healthy muscle function.Aloe Vera is included in the formula for its soothing and moisturizing properties. It helps to calm irritated skin, reduce inflammation, and provide hydration.Shea Butter and Coconut Oil are both deeply moisturizing ingredients that help to nourish and soften the skin. They create a protective barrier that locks in moisture, leaving the skin feeling smooth and supple.Vitamin E Oil is added for its antioxidant properties, which help to protect the skin from free radicals and environmental damage.Overall, this Magnesium Lotion combines the benefits of Magnesium Chloride, Aloe Vera, Shea Butter, Coconut Oil, and Vitamin E Oil to provide relief from muscle pain and leg cramps while simultaneously nourishing and hydrating the skin."*
 
 ```sql
 SELECT PROD_DESC_CHATGPT35_V1('Tandoori Mixed Grill') as response;
 ```
 
-***Sample response:*** *"Tandoori Mixed Grill is not a cosmetic product, but rather a popular Indian dish consisting of a variety of marinated meats and vegetables cooked in a traditional clay oven called a tandoor. It typically includes ingredients such as chicken, lamb, fish, or shrimp, along with a blend of spices and yogurt-based marinade. The marinade is made using a combination of ingredients like ginger, garlic, turmeric, cumin, coriander, paprika, garam masala, and yogurt, which help to tenderize the meat and infuse it with rich flavors.
-
-The capabilities of Tandoori Mixed Grill lie in its ability to provide a delicious and aromatic culinary experience. The combination of spices and yogurt-based marinade not only enhances the taste of the meats and vegetables but also helps to tenderize and moisten them during the cooking process. The high heat of the tandoor oven imparts a smoky and charred flavor to the dish, giving it a unique and authentic taste. Tandoori Mixed Grill is often served with naan bread, rice, or a side salad, making it a satisfying and flavorful meal option."*
+***Sample response:*** *"Tandoori Mixed Grill is not a cosmetic product, but rather a popular Indian dish consisting of a variety of marinated meats and vegetables cooked in a traditional clay oven called a tandoor. It typically includes ingredients such as chicken, lamb, fish, or shrimp, along with a blend of spices and yogurt-based marinade. The marinade is made using a combination of ingredients like ginger, garlic, turmeric, cumin, coriander, paprika, garam masala, and yogurt, which help to tenderize the meat and infuse it with rich flavors. The capabilities of Tandoori Mixed Grill lie in its ability to provide a delicious and aromatic culinary experience. The combination of spices and yogurt-based marinade not only enhances the taste of the meats and vegetables but also helps to tenderize and moisten them during the cooking process. The high heat of the tandoor oven imparts a smoky and charred flavor to the dish, giving it a unique and authentic taste. Tandoori Mixed Grill is often served with naan bread, rice, or a side salad, making it a satisfying and flavorful meal option."*
 
 Very cool. Isn't it? Now we are able to call gpt-3.5-turbo model APIs from Snowflake. You can also use `GPT` model on your Snowflake data.
 
@@ -363,25 +349,13 @@ Let's call this function with a sample query:
 SELECT PROD_DESC_CHATGPT35_V1('Magnesium Lotion With Aloe Vera, Shea Butter, Coconut Oil & Magnesium Oil For Muscle Pain & Leg Cramps – Rich In Magnesium Chloride And Vitamin E Oil') as response;
 ```
 
-***Sample response:*** *"This cosmetic product, the Magnesium Lotion with Aloe Vera, Shea Butter, Coconut Oil, and Magnesium Oil, is specifically designed to alleviate muscle pain and leg cramps. It contains a combination of key ingredients that work synergistically to provide relief and nourishment to the skin.
-
-The lotion is rich in Magnesium Chloride, a mineral known for its muscle relaxing properties. Magnesium Chloride helps to reduce muscle tension, ease cramps, and promote relaxation. Additionally, it aids in the absorption of magnesium into the body, which is essential for maintaining healthy muscle function.
-
-Aloe Vera is included in the formula for its soothing and moisturizing properties. It helps to calm irritated skin, reduce inflammation, and provide hydration.
-
-Shea Butter and Coconut Oil are both deeply moisturizing ingredients that help to nourish and soften the skin. They create a protective barrier that locks in moisture, leaving the skin feeling smooth and supple.
-
-Vitamin E Oil is added for its antioxidant properties, which help to protect the skin from free radicals and environmental damage.
-
-Overall, this Magnesium Lotion combines the benefits of Magnesium Chloride, Aloe Vera, Shea Butter, Coconut Oil, and Vitamin E Oil to provide relief from muscle pain and leg cramps while simultaneously nourishing and hydrating the skin."*
+***Sample response:*** *"This cosmetic product, the Magnesium Lotion with Aloe Vera, Shea Butter, Coconut Oil, and Magnesium Oil, is specifically designed to alleviate muscle pain and leg cramps. It contains a combination of key ingredients that work synergistically to provide relief and nourishment to the skin. The lotion is rich in Magnesium Chloride, a mineral known for its muscle relaxing properties. Magnesium Chloride helps to reduce muscle tension, ease cramps, and promote relaxation. Additionally, it aids in the absorption of magnesium into the body, which is essential for maintaining healthy muscle function. Aloe Vera is included in the formula for its soothing and moisturizing properties. It helps to calm irritated skin, reduce inflammation, and provide hydration. Shea Butter and Coconut Oil are both deeply moisturizing ingredients that help to nourish and soften the skin. They create a protective barrier that locks in moisture, leaving the skin feeling smooth and supple. Vitamin E Oil is added for its antioxidant properties, which help to protect the skin from free radicals and environmental damage. Overall, this Magnesium Lotion combines the benefits of Magnesium Chloride, Aloe Vera, Shea Butter, Coconut Oil, and Vitamin E Oil to provide relief from muscle pain and leg cramps while simultaneously nourishing and hydrating the skin."*
 
 ```sql
 SELECT PROD_DESC_CHATGPT35_V1('Tandoori Mixed Grill') as response;
 ```
 
-***Sample response:*** *"Tandoori Mixed Grill is not a cosmetic product, but rather a popular Indian dish consisting of a variety of marinated meats and vegetables cooked in a traditional clay oven called a tandoor. It typically includes ingredients such as chicken, lamb, fish, or shrimp, along with a blend of spices and yogurt-based marinade. The marinade is made using a combination of ingredients like ginger, garlic, turmeric, cumin, coriander, paprika, garam masala, and yogurt, which help to tenderize the meat and infuse it with rich flavors.
-
-The capabilities of Tandoori Mixed Grill lie in its ability to provide a delicious and aromatic culinary experience. The combination of spices and yogurt-based marinade not only enhances the taste of the meats and vegetables but also helps to tenderize and moisten them during the cooking process. The high heat of the tandoor oven imparts a smoky and charred flavor to the dish, giving it a unique and authentic taste. Tandoori Mixed Grill is often served with naan bread, rice, or a side salad, making it a satisfying and flavorful meal option."*
+***Sample response:*** *"Tandoori Mixed Grill is not a cosmetic product, but rather a popular Indian dish consisting of a variety of marinated meats and vegetables cooked in a traditional clay oven called a tandoor. It typically includes ingredients such as chicken, lamb, fish, or shrimp, along with a blend of spices and yogurt-based marinade. The marinade is made using a combination of ingredients like ginger, garlic, turmeric, cumin, coriander, paprika, garam masala, and yogurt, which help to tenderize the meat and infuse it with rich flavors. The capabilities of Tandoori Mixed Grill lie in its ability to provide a delicious and aromatic culinary experience. The combination of spices and yogurt-based marinade not only enhances the taste of the meats and vegetables but also helps to tenderize and moisten them during the cooking process. The high heat of the tandoor oven imparts a smoky and charred flavor to the dish, giving it a unique and authentic taste. Tandoori Mixed Grill is often served with naan bread, rice, or a side salad, making it a satisfying and flavorful meal option."*
 
 Our dataset contains only cosmetic products. So we want the LLM to generate descriptions for cosmetic products only. So let us tweak our prompt to achieve this.
 
@@ -422,27 +396,13 @@ SELECT PROD_DESC_CHATGPT35_V2('Magnesium Lotion With Aloe Vera, Shea Butter, Coc
 
 ***Sample response:*** *"The Magnesium Lotion with Aloe Vera, Shea Butter, Coconut Oil, and Magnesium Oil is a beauty product designed to alleviate muscle pain and leg cramps. It contains a combination of ingredients that work synergistically to provide relief and nourishment to the skin.
 
-Magnesium chloride is a key ingredient in this lotion, known for its ability to relax muscles and reduce muscle pain. It is easily absorbed through the skin, making it an effective topical treatment. Aloe Vera is included for its soothing and moisturizing properties, helping to calm irritated skin and promote healing.
-
-Shea butter and coconut oil are both rich in essential fatty acids and vitamins, providing deep hydration and nourishment to the skin. These ingredients help to improve skin elasticity and promote a healthy, youthful appearance.
-
-Vitamin E oil is added for its antioxidant properties, protecting the skin from free radicals and environmental damage. It also aids in reducing inflammation and promoting skin healing.
-
-Overall, this Magnesium Lotion combines the benefits of magnesium chloride, aloe vera, shea butter, coconut oil, and vitamin E oil to provide relief from muscle pain and leg cramps while nourishing and rejuvenating the skin."*
+Magnesium chloride is a key ingredient in this lotion, known for its ability to relax muscles and reduce muscle pain. It is easily absorbed through the skin, making it an effective topical treatment. Aloe Vera is included for its soothing and moisturizing properties, helping to calm irritated skin and promote healing. Shea butter and coconut oil are both rich in essential fatty acids and vitamins, providing deep hydration and nourishment to the skin. These ingredients help to improve skin elasticity and promote a healthy, youthful appearance. Vitamin E oil is added for its antioxidant properties, protecting the skin from free radicals and environmental damage. It also aids in reducing inflammation and promoting skin healing. Overall, this Magnesium Lotion combines the benefits of magnesium chloride, aloe vera, shea butter, coconut oil, and vitamin E oil to provide relief from muscle pain and leg cramps while nourishing and rejuvenating the skin."*
 
 ```sql
 SELECT PROD_DESC_CHATGPT35_V2('Tandoori Mixed Grill') as response;
 ```
 
-***Sample response:*** *"OOPS!! it is not a beauty product.
-
-The Tandoori Mixed Grill is not a cosmetic or beauty product. It is a popular Indian dish that consists of a variety of marinated and grilled meats and vegetables. The ingredients typically include chicken, lamb, and/or shrimp, along with a mixture of spices and yogurt-based marinade.
-
-The capabilities of the Tandoori Mixed Grill are centered around its delicious taste and flavor. The meats and vegetables are marinated in a blend of spices, such as cumin, coriander, turmeric, paprika, and garam masala, which gives them a rich and aromatic profile. The yogurt-based marinade helps to tenderize the meats and adds a creamy texture to the dish.
-
-When cooked in a tandoor oven or on a grill, the Tandoori Mixed Grill develops a smoky and charred flavor, while still retaining its juicy and tender texture. It is often served with naan bread, rice, and a side of mint chutney or raita.
-
-Overall, the Tandoori Mixed Grill is a flavorful and satisfying dish that showcases the vibrant and aromatic flavors of Indian cuisine."*
+***Sample response:*** *"OOPS!! it is not a beauty product. The Tandoori Mixed Grill is not a cosmetic or beauty product. It is a popular Indian dish that consists of a variety of marinated and grilled meats and vegetables. The ingredients typically include chicken, lamb, and/or shrimp, along with a mixture of spices and yogurt-based marinade.The capabilities of the Tandoori Mixed Grill are centered around its delicious taste and flavor. The meats and vegetables are marinated in a blend of spices, such as cumin, coriander, turmeric, paprika, and garam masala, which gives them a rich and aromatic profile. The yogurt-based marinade helps to tenderize the meats and adds a creamy texture to the dish. When cooked in a tandoor oven or on a grill, the Tandoori Mixed Grill develops a smoky and charred flavor, while still retaining its juicy and tender texture. It is often served with naan bread, rice, and a side of mint chutney or raita. Overall, the Tandoori Mixed Grill is a flavorful and satisfying dish that showcases the vibrant and aromatic flavors of Indian cuisine."*
 
 Interesting! For non-cosmetic products, the response is not right. Now let's generate product descriptions for all the products in our products table.
 
