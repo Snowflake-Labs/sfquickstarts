@@ -1,6 +1,6 @@
 author: Tomasz Urbaszek
 id: connectors_github_python
-summary: Overview of building Snowflake native connectors using Python snowpark and Native Apps. Example connector connects to GitHub issues API. 
+summary: Overview of building Snowflake native connectors using Python, Snowpark and Native Apps. Example connector connects to GitHub issues API. 
 categories: connectors,solution-examples,partner-integrations
 environments: web
 status: Hidden
@@ -93,7 +93,7 @@ Let's take a look at the structure of this connector.
 
 ### Python module
 
-The `src/snowflake_github_connector` is a python package containing all the execution logic of the connector. This package
+The `src/snowflake_github_connector` is a Python package containing all the execution logic of the connector. This package
 is separated into three modules:
 - `procedures` module that contains definitions of all connector procedures
 - `ingestion` module that contains the ingestion logic (external connectivity with GitHub)
@@ -202,7 +202,7 @@ All of those components have to be uploaded to Snowflake prior to creating the a
 ### Overview
 Build step for the app consist of:
 1. Creating a new `sf_build` directory on the local machine
-2. Creating a wheel artifact (for python we additionally rename `whl` file to `zip`) and putting it in the `sf_build` folder
+2. Creating a wheel artifact (for Python we additionally rename `whl` file to `zip`) and putting it in the `sf_build` folder
 3. Copying of the `manifest.yml` to the`sf_build` folder
 4. Copying of the `install.sql` to the `sf_build` folder
 5. Copying of the `streamlit_app.py` to the `sf_build` folder

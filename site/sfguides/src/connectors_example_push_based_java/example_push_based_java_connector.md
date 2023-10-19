@@ -116,7 +116,7 @@ Contains files which are needed to create a Snowflake Native App:
 - `scripts/install.sql` - Script which creates a native application from the files uploaded by `deploy.sql` script.
 
 ### Java Agent module
-Contains java files that constitute the Agent application and gradle files that are needed to build this application.
+Contains Java files that constitute the Agent application and gradle files that are needed to build this application.
 
 ### sf_build.sh script
 
