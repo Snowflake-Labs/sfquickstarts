@@ -34,7 +34,7 @@ Duration: 1
 ## Prepare your local environment
 Duration: 5
 
-- Install Python 3.9
+- Install Python 3.9. If you are looking a way to switch between Python versions, we recommend checking [penv](https://github.com/pyenv/pyenv).
 - Install `build` package using `pip install build`
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
@@ -64,11 +64,32 @@ The connector consists of the following elements:
     - `PUBLIC.ENABLE_RESOURCE` - enables a repository for ingestion
     - `PUBLIC.INGEST_DATA` - used by tasks running the ingestion
 
+Only selected objects will be visible to customer who installed the app. See: [docs](https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script#visibility-of-objects-created-in-the-setup-script-to-consumers).
 
 ## Project structure
 Duration: 3
 
 Let's take a look at the structure of this connector.
+
+```text
+├── Makefile
+├── README.md
+├── environment.yml
+├── hatch_build.py
+├── manifest.yml
+├── pyproject.toml
+├── setup.sql
+├── sql
+│    ├── deploy.sql
+│    └── install.sql
+├── src
+│    └── snowflake_github_connector
+│        ├── common.py
+│        ├── ingestion.py
+│        └── procedures.py
+├── streamlit_app.py
+└── tests-integrations/
+```
 
 ### Python module
 
@@ -95,6 +116,15 @@ Manifest file is required by the native apps model. This file specifies properti
 Privileges and references required by the application can be
 specified inside the manifest file. For more information check [manifest docs](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest)
 and [requesting privileges docs](https://docs.snowflake.com/en/developer-guide/native-apps/requesting-about).
+
+### hatch_build.py file
+
+Build script responsible for packaging Python code into a zip file and copying all resources into sf_build directory.
+
+### Makefile and scripts in sql/ directory
+
+Commands for building and deployign applications are exposed in Makefile, and are also using sql scripts defined in sql/ directory.
+
 
 ## Connector configuration
 Duration: 3

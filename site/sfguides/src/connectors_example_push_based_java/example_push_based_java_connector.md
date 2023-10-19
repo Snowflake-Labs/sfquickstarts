@@ -22,6 +22,7 @@ Duration: 1
 - Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Java
 - Snowflake user with `accountadmin` role
+- macOS or Linux machine to build a project and run deployment scripts
 
 ## You will learn
 Duration: 1
@@ -66,6 +67,8 @@ initializes resources by creating all objects in the database needed for the def
       - task which periodically merges the data from the delta to the base table
   - destination database - a database for all the resource data, it is created outside the Native Application by the `INIT_DESTINATION_DATABASE` procedure
 
+Only selected objects will be visible to customer who installed the app. See: [docs](https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script#visibility-of-objects-created-in-the-setup-script-to-consumers).
+
 ### Java Agent
 - a simple Java application
 - connects to the Native Application
@@ -79,16 +82,49 @@ initializes resources by creating all objects in the database needed for the def
 ## Project structure
 Duration: 3
 
+Let's take a look at the structure of this connector.
+```text
+├── Makefile
+├── example-push-based-java-connector-agent
+│    ├── build.gradle
+│    └── src
+├── example-push-based-java-connector-native-app
+│    ├── environment.yml
+│    ├── manifest.yml
+│    └── scripts
+│    │   ├── deploy.sql
+│    │   └── install.sql
+│    ├── setup.sql
+│    └── streamlit_app.py
+├── gradle
+├── gradlew
+├── gradlew.bat
+├── imgs
+├── integration-test
+├── README.md
+├── settings.gradle
+└── sf_build.sh
+```
+
 ### Native Application module
-Contains files which are needed to create a native application in Snowflake
+
+Contains files which are needed to create a Snowflake Native App:
 - `manifest.yml` - Manifest file required by the native apps model.
 - `setup.sql` - This script includes definition of all components that constitute the connector including procedures, schemas and tables.
 - `streamlit_app.py` - File which contains the UI of the connector.
-- `deploy.sql` - Script which uploads `manifest.yml`, `setup.sql` and `streamlit_app.py` to Snowflake.
-- `install.sql` - Script which creates a native application from the files uploaded by `deploy.sql` script.
+- `srcipts/deploy.sql` - Script which uploads `manifest.yml`, `setup.sql` and `streamlit_app.py` to Snowflake.
+- `scripts/install.sql` - Script which creates a native application from the files uploaded by `deploy.sql` script.
 
 ### Java Agent module
 Contains java files that constitute the Agent application and gradle files that are needed to build this application.
+
+### sf_build.sh script
+
+Simple script to collect all files needed to deploy Snowflake Native App into sf_build folder. This directory will be used in deployment script.
+
+### imgs directory
+
+Images used in README file.
 
 ## Application logs
 Duration: 2
