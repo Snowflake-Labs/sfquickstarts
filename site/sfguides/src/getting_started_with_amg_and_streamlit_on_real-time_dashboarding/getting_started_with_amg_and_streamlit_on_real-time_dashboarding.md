@@ -23,7 +23,7 @@ Here are some of the use cases that can benefit from tracking your live data str
 
 In this workshop, we will visualize real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) with [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io/).
 The architecture diagram below illustrates the deployment, with the non-greyed out area being the focus of our workshop. The grey out area is covered in the
-[Snowpipe Streaming quicstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0).
+[Snowpipe Streaming quickstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/).
 
 The data in Snowflake table is visualized in real-time with [AMG (Amazon Managed Service for Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
 Note that Streamlit is containerized and managed by [Amazon Elastic Container Service (ALB)](https://aws.amazon.com/ecs/). An [Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) is used to front-end the container.
