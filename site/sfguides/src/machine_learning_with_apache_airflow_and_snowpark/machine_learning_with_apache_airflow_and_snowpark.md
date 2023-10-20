@@ -15,16 +15,16 @@ Duration: 5
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_0_header_image.png)
 
-Snowpark ML (in public preview) is a python framework for Machine Learning workloads with Snowpark. Currently Snowpark ML provides a model registry (storing ML tracking data and models in Snowflake tables and stages), feature engineering primitives similar to scikit-learn (ie. LabelEncoder, OneHotEncoder, etc.) and support for training and deploying certain model types as well as deployments as user-defined functions (UDFs).
+Snowpark ML (in public preview) is a Python framework for Machine Learning workloads with Snowpark. Currently Snowpark ML provides a model registry (storing ML tracking data and models in Snowflake tables and stages), feature engineering primitives similar to scikit-learn (ie. LabelEncoder, OneHotEncoder, etc.) and support for training and deploying certain model types as well as deployments as user-defined functions (UDFs).
 
-This virtual hands-on lab demonstrates how to use Apache Airflow to orchestrate a machine learning pipeline leveraging Snowpark ML for feature engineering and model tracking. While Snowpark ML has its own support for models similar to scikit-learn this code demonstrates a "bring-your-own" model approach showing the use of open-source scikit-learn along with Snowpark ML model registry and model serving in an Airflow task rather than Snowpark UDF. It also shows the use of the Snowflake XCOM backend which supports security and governance by serializing all task in/output to Snowflake tables and stages while storing in the Airflow XCOM table a URI pointer to the data. 
+This virtual hands-on lab demonstrates how to use [Apache Airflow](https://airflow.apache.org/) to orchestrate a machine learning pipeline leveraging Snowpark ML for feature engineering and model tracking. While Snowpark ML has its own support for models similar to scikit-learn this code demonstrates a "bring-your-own" model approach showing the use of open-source scikit-learn along with Snowpark ML model registry and model serving in an Airflow task rather than Snowpark UDF. It also shows the use of the Snowflake XCom backend which supports security and governance by serializing all task in/output to Snowflake tables and stages while storing in the Airflow XCom table a URI pointer to the data. 
 
 
 This workflow includes:
 
-- Sourcing structured, unstructured and semistructured data from different systems
-- Extracting, transforming and loading with the Snowpark Python provider for Airflow
-- Ingesting with Astronomer's python SDK for Airflow
+- Sourcing structured, unstructured, and semistructured data from different systems
+- Extracting, transforming, and loading with the Snowpark Python provider for Airflow
+- Ingesting with Astronomer's Python SDK for Airflow
 - Audio file transcription with OpenAI Whisper
 - Natural language embeddings with OpenAI Embeddings and the Weaviate provider for Airflow
 - Vector search with Weaviate
@@ -37,7 +37,7 @@ Let’s get started.
 This guide assumes you have a basic working knowledge of Python, Airflow, and Snowflake
 
 ### What You’ll Learn 
-- How to use Airflow to manage your Machine Learning Operations
+- How to use Airflow to manage your Machine Learning Operations (MLOps)
 - How to leverage Snowpark's compute for your Machine Learning workflows
 - How to use Snowpark & Airflow together to create horizontally and vertically scalable ML pipelines
 
@@ -52,7 +52,7 @@ You will need the following things before beginning:
   1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
   1. **Download the Project's GitHub Repository.** To do this workshop, you'll need to download the following Repo onto your local machine: https://github.com/astronomer/airflow-snowparkml-demo/tree/main
 1. Integrated Development Environment (IDE)
-  1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
+  1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git, open-source [Visual Studio Code](https://code.visualstudio.com/) is a good option.
 1. Docker
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
 1. Astro CLI
@@ -61,11 +61,13 @@ You will need the following things before beginning:
 ### What You’ll Build 
 - A Machine Learning Pipeline called "Customer Analytics" that predicts customer lifetime value based on customer sentiment
 
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_2_dag_graph.png)
+
 <!-- ------------------------ -->
-## Set up of environment and Repo Overview
+## Environment Setup and Repo Overview
 Duration: 2
 
-First, Clone [this repository](https://github.com/astronomer/airflow-snowparkml-demo/tree/main) and navigate into its directory in terminal, before opening the folder up in the code editor of your choice! 
+First, Clone [this repository](https://github.com/astronomer/airflow-snowparkml-demo/tree/main) and navigate into its directory in terminal, before opening the folder up in the code editor of your choice. 
 
 ```
 git clone https://github.com/astronautyates/SnowParkMLWorkshop
@@ -76,7 +78,7 @@ After you've downloaded the repo, open the `airflow-snowparkml-demo` folder in t
 
 ![filestructure](assets/machine_learning_with_apache_airflow_and_snowpark_1_file_structure.png)
 
-Since we're using so many different tools installed via the requirements/packages files, it's worth going through them so you understand the systems being used in the 'Customer Analytics' DAG
+Since we're using so many different tools installed via the requirements/packages files, it's worth going through them so you understand the systems being used in the 'Customer Analytics' DAG.
 
 Repository Contents Overview:
 
@@ -100,7 +102,7 @@ We will also show how to use a Python virtual environment to simplify Snowpark r
 
 `/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl`: This beta provider simplifies the process of making secure connections to Snowflake, the process of building Airflow tasks with Snowpark code and the passing of Snowpark dataframes between tasks. 
 
-`virtualenv`: A tool in Python used to create isolated Python virtual environments, which we’ll need to create a 3.8 Python virtual environment to connect to Snowpark
+`virtualenv`: A tool in Python used to create isolated Python virtual environments, which we’ll need to create a 3.8 Python virtual environment to connect to Snowpark.
 
 
 `Packages.txt`
@@ -116,7 +118,7 @@ This file is allowing us to build a local weaviate vector database using Docker 
 
 Step 2: 
 
-Navigate to the `.env` file and update the `AIRFLOW_CONN_SNOWFLAKE_DEFAULT` with your own credentials. These will be used to connect to Snowflake. The Snowflake account field of the connection should use the new `ORG_NAME-ACCOUNT_NAME` format as per Snowflake Account Identifier policies. The `ORG` and `ACCOUNT` names can be found in the confirmation email or in the Snowflake login link (ie. https://xxxxxxx-yyy11111.snowflakecomputing.com/console/login) Do not specify a region when using this format for accounts. If you need help finding your `ORG_NAME-ACCOUNT_NAME`, use [this guide](https://docs.snowflake.com/en/user-guide/admin-account-identifier) to find them. 
+Navigate to the `.env` file and update the `AIRFLOW_CONN_SNOWFLAKE_DEFAULT` with your own credentials. These will be used to connect to Snowflake. The Snowflake account field of the connection should use the new `ORG_NAME-ACCOUNT_NAME` format as per Snowflake Account Identifier policies. The `ORG` and `ACCOUNT` names can be found in the confirmation email or in the Snowflake login link (ie. https://xxxxxxx-yyy11111.snowflakecomputing.com/console/login) Do not specify a region when using this format for accounts. If you need help finding your `ORG_NAME-ACCOUNT_NAME`, use [this guide](https://docs.snowflake.com/en/user-guide/admin-account-identifier)
 
 
 
@@ -137,11 +139,11 @@ astro dev start
 
 This will build our local Airflow environment using the Docker engine and the Astro CLI. After your Airflow environment has finished starting up, open up the UI by navigating to `localhost:8080` in the browser and use admin/admin as the username/password to login. 
 
-After you've opened the UI, unpause the `customer_analytics` DAG and press the play icon to start it! 
+After you've opened the UI, unpause the `customer_analytics` DAG and press the play icon to start it.
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_3_airflow_ui.png)
 
-This DAG demonstrates an end-to-end application workflow to generate predictions on Customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCOM backend andthe Snowpark ML model registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.
+This DAG demonstrates an end-to-end application workflow to generate predictions on customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCom backend and the Snowpark ML model registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.
 
 <!-- ------------------------ -->
 ## DAG Explanation
@@ -151,17 +153,17 @@ This DAG demonstrates an end-to-end application workflow to generate predictions
 
 Task `create_snowflake_objects`:
 Our first task creates Snowflake objects (databases, schemas, stages, etc.) prior to 
-running any tasks, since we are assuming you are starting with a fresh trial account. This is implemented using the new setup/teardown task feature, and has a corresponding clean up task at the end of the DAG. This means that no matter what, temp tables used for this project will be deleted after usage to prevent unnecessary consumption, mimicking how you might use them in a production setting! It also adds a handy dotted line to link the two tasks in the Airflow UI, which you can see in the above screenshot. 
+running any tasks, since we are assuming you are starting with a fresh trial account. This is implemented using the new setup/teardown task feature, and has a corresponding clean up task at the end of the DAG. This means that no matter what, temp tables used for this project will be deleted after usage to prevent unnecessary consumption, mimicking how you might use them in a production setting. It also adds a handy dotted line to link the two tasks in the Airflow UI, which you can see in the above screenshot. 
  
 The DAG then runs the `enter` task group, which includes 3 tasks to set up a Weaviate database, and create a Snowpark model registry if none exists already:
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_4_enter_task_group.png)
 
 Task `download_weaviate_backup`: 
-In order to speed up the demo process the data has already been ingested into Weaviate and vectorized.  The data was then backed up and stored in the cloud for easy restore. This task will download the backup.zip and make it available in a docker mounted filesystem for the restore_weaviate task.
+In order to speed up the demo process, the data has already been ingested into Weaviate and vectorized. The data was then backed up and stored in the cloud for easy restore. This task will download the backup .zip and make it available in a docker mounted filesystem for the restore_weaviate task.
 
 Task `restore_weaviate`: 
-This task exists only to speedup the demo in subsequent runs. By restoring prefetched embeddings to Weaviate the later tasks will skip embeddings and only make calls to OpenAI for data it hasn't yet embedded.
+This task exists to speedup the demo in subsequent runs. By restoring prefetched embeddings to Weaviate the later tasks will skip embeddings and only make calls to OpenAI for data it hasn't yet embedded.
 
 Task `check_model_registry`:
 This task checks if a Snowpark model registry exists in the specified database and schema. If not, it creates one and returns a dictionary containing the database and schema information.
@@ -212,7 +214,7 @@ For our final task, we’ll clear all the temporary tables we used during data p
 <!-- ------------------------ -->
 ## Monitoring Results
 
-After your pipeline has finished running, go into the graph view and check the various tasks to make sure everything has run properly. Then, go into your Snowflake environment and check the newly created `PRED_CUSTOMER_CALLS` and `PRED_TWITTER_COMMENTS` to see the finished result of your model training. They should look like the examples below:
+After your pipeline has finished running, go into the grid view and check that all tasks ran successfully. Then, go into your Snowflake environment and check the newly created `PRED_CUSTOMER_CALLS` and `PRED_TWITTER_COMMENTS` to see the finished result of your model training. They should look like the examples below:
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_7_pred_table1.png)
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_8_pred_table2.png)
