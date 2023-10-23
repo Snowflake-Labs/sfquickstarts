@@ -57,7 +57,9 @@ You will need the following things before beginning:
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
 1. Astro CLI
   1. **Astro CLI Installed**  We will be using the Astro CLI to easily create and run a local Airflow environment. Please install it on your local machine by following these [instructions](https://docs.astronomer.io/astro/cli/install-cli)
-
+1. OpenAI API key
+  1. **Optional Step to Enable Chatbot Functionality** We have pre-embedded all the documents so an openai key is not needed for the ingestion process. However, if you want to run the Streamlit app at the end of the workshop, you will need the key to tokenize the search and questions.
+  2. 
 ### What You’ll Build 
 - A Machine Learning Pipeline called "Customer Analytics" that predicts customer lifetime value based on customer sentiment
 
@@ -219,3 +221,18 @@ After your pipeline has finished running, go into the grid view and check that a
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_7_pred_table1.png)
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_8_pred_table2.png)
 
+
+### View Streamlit Dashboard
+We can now view our analyzed data on a [Streamlit](https://streamlit.io/) dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.  
+
+```bash
+astro dev bash -w
+```
+
+Then, run the following command to start a streamlit application. 
+```bash
+cd include/streamlit/src
+python -m streamlit run ./streamlit_app.py
+```
+
+After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you'd like to enable the ability to ask questions about your data, you'll need to add an OpenAI API key in the .env file and restart your Airflow environment. 
