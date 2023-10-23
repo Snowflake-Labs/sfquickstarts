@@ -1,7 +1,6 @@
-author: 
+author: Ripu Jain
 id: analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran
 summary: This is the Fivetran NTT SAP AP Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
 status: Published 
