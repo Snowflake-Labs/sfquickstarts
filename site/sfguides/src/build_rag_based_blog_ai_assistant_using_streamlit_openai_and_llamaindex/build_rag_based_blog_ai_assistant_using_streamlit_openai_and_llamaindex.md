@@ -129,7 +129,7 @@ Duration: 10
 
 In this step, we will build a vector index for the markdown files. It involves chunking the blogs in the `.content` directory, storing them as a [TreeIndex](https://gpt-index.readthedocs.io/en/latest/api_reference/indices/tree.html) using LlamaIndex.
 
-Before diving into building the index, let us understand the Retrieval Augmented Generation(RAG) architecture. It has three main steps.
+Before diving into building the index, let us understand the **Retrieval Augmented Generation(RAG)** architecture. It has three main steps.
 
 - Choose a foundation model of your choice to generate text
 However, if I were to question the foundation model about the specifics of Snowpark and other features that were released recently, GPT-4 may not be able to answer.
@@ -177,7 +177,7 @@ Open the terminal and run the following command to build the vector index:
 
 ```shell
 python build_index.py
-```
+``` 
 
 This will store the chunks of documents as a tree index in `.kb` directory.
 
