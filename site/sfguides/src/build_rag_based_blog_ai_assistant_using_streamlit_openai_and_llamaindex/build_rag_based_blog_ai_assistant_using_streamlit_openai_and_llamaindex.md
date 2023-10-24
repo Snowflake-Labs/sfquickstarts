@@ -64,3 +64,30 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
   - [OpenAI API Key](https://platform.openai.com/account/api-keys)
 
 <!-- ------------------------ -->
+
+## Setup Environment
+
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-blog-ai-assistant). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+
+Using HTTPS:
+
+```shell
+git clone https://github.com/Snowflake-Labs/sfguide-blog-ai-assistant.git
+```
+
+OR, using SSH:
+
+```shell
+git clone git@github.com:Snowflake-Labs/sfguide-blog-ai-assistant.git
+```
+
+Run the following command to install the dependancies.
+
+```shell
+cd sfguide-blog-ai-assistant 
+pip install -r requirements.txt
+```
+
+Great, we installed all the dependancies needed to work through this demo.
+
+<!-- ------------------------ -->
