@@ -91,3 +91,32 @@ pip install -r requirements.txt
 Great, we installed all the dependancies needed to work through this demo.
 
 <!-- ------------------------ -->
+
+## Data Pipeline to Download Blogs
+
+During this step, we will identify the blog or list of blogs that we want to query using the AI chatbot. In this example, the bot will answer questions about Snowpark Data Engineering quickstarts. The list of blogs the bot is capable of answering is defined in `data_pipeline.py` file in `PAGES` list.
+
+```python
+PAGES = [
+    "https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python",
+    "https://quickstarts.snowflake.com/guide/cloud_native_data_engineering_with_matillion_and_snowflake",
+    "https://quickstarts.snowflake.com/guide/data_engineering_with_apache_airflow",
+    "https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python",
+    "https://quickstarts.snowflake.com/guide/data_engineering_with_snowpark_python_and_dbt"
+]
+```
+
+> aside positive
+> IMPORTANT:
+>
+> - You can append or replace this list with your own list of blogs as well. Open the code in an IDE of your choice and update the list.
+
+After you update the blogs list, switch to the terminal run the following command:
+
+```shell
+python data_pipeline.py
+```
+
+This will download the blogs in your list into  `./.content` directory and store them as markdown files.
+
+<!-- ------------------------ -->
