@@ -45,21 +45,21 @@ This guide assumes you have a basic working knowledge of Python, Airflow, and Sn
 You will need the following things before beginning:
 
 1. Snowflake
-  1. **A Snowflake Account.**
-  1. **A Snowflake User created with appropriate permissions.** This user will need sys/accountadmin level permissions to create and manipulate the necessary databases.
-  2. Follow [these instructions](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda) to enable Anaconda Packages in your trial account
-1. GitHub
-  1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
-  1. **Download the Project's GitHub Repository.** To do this workshop, you'll need to download the following Repo onto your local machine: https://github.com/astronomer/airflow-snowparkml-demo/tree/main
-1. Integrated Development Environment (IDE)
-  1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git, open-source [Visual Studio Code](https://code.visualstudio.com/) is a good option.
-1. Docker
-  1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
-1. Astro CLI
-  1. **Astro CLI Installed**  We will be using the Astro CLI to easily create and run a local Airflow environment. Please install it on your local machine by following these [instructions](https://docs.astronomer.io/astro/cli/install-cli)
-1. OpenAI API key
-  1. **Optional Step to Enable Chatbot Functionality** We have pre-embedded all the documents so an openai key is not needed for the ingestion process. However, if you want to run the Streamlit app at the end of the workshop, you will need the key to tokenize the search and questions.
-  2. 
+  1a. **A Snowflake Account.**
+  1b. **A Snowflake User created with appropriate permissions.** This user will need sys/accountadmin level permissions to create and manipulate the necessary databases.
+  1c. Follow [these instructions](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda) to enable Anaconda Packages in your trial account
+2. GitHub
+   2a. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
+   2b. **Download the Project's GitHub Repository.** To do this workshop, you'll need to download the following Repo onto your local machine: https://github.com/astronomer/airflow-snowparkml-demo/tree/main
+3. Integrated Development Environment (IDE)
+  3a. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git, open-source [Visual Studio Code](https://code.visualstudio.com/) is a good option.
+4. Docker
+  4a. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
+5. Astro CLI
+  5a. **Astro CLI Installed**  We will be using the Astro CLI to easily create and run a local Airflow environment. Please install it on your local machine by following these [instructions](https://docs.astronomer.io/astro/cli/install-cli)
+6. OpenAI API key
+  6a. **Optional Step to Enable Chatbot Functionality** We have pre-embedded all the documents so an openai key is not needed for the ingestion process. However, if you want to run the Streamlit app at the end of the workshop, you will need the key to tokenize the search and questions.
+    
 ### What You’ll Build 
 - A Machine Learning Pipeline called "Customer Analytics" that predicts customer lifetime value based on customer sentiment
 
@@ -235,4 +235,8 @@ cd include/streamlit/src
 python -m streamlit run ./streamlit_app.py
 ```
 
-After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you'd like to enable the ability to ask questions about your data, you'll need to add an OpenAI API key in the .env file and restart your Airflow environment. 
+After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! The Question Answering interface in the Customer Analytics dashboard uses the Weaviate Q&A module which has integrations with LLM providers like OpenAI.  The Q&A module (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/qna-openai) accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents' (tweets, transcripts, etc.) vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents are provided as search results.  Because this is not a text search you can ask a question like "Who does Thomas like best?" and it will provide related tweets that talk about Thomas and Bertie as best friends.
+
+One could also easily add generative search to the dashboard.  The generative search (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/generative-openai) module accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents' vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents related to the question are then used as context for a generated answer.  The question along with contextual documents are fed to ChatGPT with instructions to answer the question with the provided context.
+
+For an example of generative search see https://github.com/astronomer/ask-astro/blob/0ad255e8084dcba5d55a4019f24efc31541e9959/airflow/include/streamlit/streamlit_app.py#L132
