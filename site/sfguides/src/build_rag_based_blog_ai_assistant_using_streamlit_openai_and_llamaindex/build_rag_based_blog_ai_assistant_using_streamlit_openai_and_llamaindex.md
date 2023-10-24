@@ -131,14 +131,14 @@ In this step, we will build a vector index for the markdown files. It involves c
 
 Before diving into building the index, let us understand the **Retrieval Augmented Generation(RAG)** architecture. It has three main steps.
 
-- Choose a foundation model of your choice to generate text
+1. Choose a foundation model of your choice to generate text
 However, if I were to question the foundation model about the specifics of Snowpark and other features that were released recently, GPT-4 may not be able to answer.
-- Augment the input prompt (i.e., your question) with relevant documents
+2. Augment the input prompt (i.e., your question) with relevant documents
 If we provide the model with Snowpark documentation or quickstart, it will be capable of answering questions. However, the context length of these models are small. GPT-4 has context length of 4000 tokens only. 4000 tokens is about 500 words, which is roughly 3-4 paragraphs. But Snowpark documentation is more than 4 paragraphs. What could be done?
-  - We take the Snowflake documentation and chunk it with ~500 words per chunk. We then convert each of these chunks into vector embeddings, store them in a vector store, and build an index for easy retrieval.
-- Query the foundation model for answers
-  - During the inference phase, the input prompt is converted into a vector embedding, the vector store is searched to find the text chunk that has higher similarity to the input prompt and is returned to the foundation model.
-  - The model then uses the chunk of document that is relevant to the query to answer the query.
+  i. We take the Snowflake documentation and chunk it with ~500 words per chunk. We then convert each of these chunks into vector embeddings, store them in a vector store, and build an index for easy retrieval.
+3. Query the foundation model for answers
+  i. During the inference phase, the input prompt is converted into a vector embedding, the vector store is searched to find the text chunk that has higher similarity to the input prompt and is returned to the foundation model.
+  ii. The model then uses the chunk of document that is relevant to the query to answer the query.
 
 Challenges in this approach:
 
