@@ -112,7 +112,7 @@ Contains files which are needed to create a Snowflake Native App:
 - `manifest.yml` - Manifest file required by the native apps model.
 - `setup.sql` - This script includes definition of all components that constitute the connector including procedures, schemas and tables.
 - `streamlit_app.py` - File which contains the UI of the connector.
-- `srcipts/deploy.sql` - Script which uploads `manifest.yml`, `setup.sql` and `streamlit_app.py` to Snowflake.
+- `scripts/deploy.sql` - Script which uploads `manifest.yml`, `setup.sql` and `streamlit_app.py` to Snowflake.
 - `scripts/install.sql` - Script which creates a native application from the files uploaded by `deploy.sql` script.
 
 ### Java Agent module
