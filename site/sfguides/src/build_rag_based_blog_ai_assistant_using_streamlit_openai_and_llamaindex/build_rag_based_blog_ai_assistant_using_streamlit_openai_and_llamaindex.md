@@ -94,6 +94,8 @@ Great, we installed all the dependancies needed to work through this demo.
 
 ## Data Pipeline to Download Blogs
 
+Duration: 5
+
 During this step, we will identify the blog or list of blogs that we want to query using the AI chatbot. In this example, the bot will answer questions about Snowpark Data Engineering quickstarts. The list of blogs the bot is capable of answering is defined in `data_pipeline.py` file in `PAGES` list.
 
 ```python
@@ -120,3 +122,84 @@ python data_pipeline.py
 This will download the blogs in your list into  `./.content` directory and store them as markdown files.
 
 <!-- ------------------------ -->
+
+## Chunk the Blog Contents and Build Index
+
+Duration: 10
+
+In this step, we will build a vector index for the markdown files. It involves chunking the blogs in the `.content` directory, storing them as a [TreeIndex](https://gpt-index.readthedocs.io/en/latest/api_reference/indices/tree.html) using LlamaIndex.
+
+Open the `build_index.py` file from an IDE of your choice and update the `YOUR_OPENAI_API_KEY` with your OpenAI API key.
+
+Open the terminal and run the following command to build the vector index:
+
+```shell
+python build_index.py
+```
+
+This will store the chunks of documents as a tree index in `.kb` directory.
+
+<!-- ------------------------ -->
+
+## Build a Streamlit Chatbot Application
+
+We're ready to start building our app. We will build a Streamlit App for the chat interface. As a first step, open the `streamlit_app.py` from an IDE of your choice and update the `YOUR_OPENAI_API_KEY` with your OpenAI API key.
+
+Open the terminal and run the following command to create the Streamlit App:
+
+```python
+streamlit run streamlit_app.py
+```
+
+The chat UI will open in a chrome window at `https://localhost:8051`. You can type your questions about Snowpark data engineering and the chatbot will respond.
+
+We'll break down the Python file snippet-by-snippet so that you understand the functionality of each section.
+
+Initialize the chatbot's message history by adding the system prompt that sets the tone and functionality of the chatbot. 
+
+```python
+if "messages" not in st.session_state:
+    system_prompt = (
+        "Your purpose is to answer questions about specific documents only. "
+        "Please answer the user's questions based on what you know about the document. "
+        "If the question is outside scope of the document, please politely decline. "
+        "If you don't know the answer, say `I don't know`. "
+    )
+    st.session_state.messages = [{"role": "system", "content": system_prompt}]
+```
+
+Prompt the user to enter the chat input by using Streamlit's `st.chat_input()` feature. After the user enters a message, add that message to the chat history by storing it in [session state](https://docs.streamlit.io/library/api-reference/session-state).
+
+```python
+if prompt := st.chat_input():
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+```
+
+In the next step, the `load_index()` function returns the relevant chuck of document from the `.kb` directory. By invoking OpenAI's ChatCompletion API with the user prompt and the relevant document context, the chatbot generates a response.
+
+That's it. So when you finally run the app using the command `streamlit run streamlit_app.py`, you can interact with the chatbot and learn all about using Snowpark for data engineering use-cases.
+
+Here is how the app looks:
+
+![Preview of Final App](assets/app_demo.png)
+
+## Conclusion and next steps
+
+Duration: 1
+
+Congratulations – you've just built an LLM-powered chatbot capable of answering questions based on the blog(s) you built it on.
+
+### Where to go from here
+
+This tutorial is just a starting point for exploring the possibilities of LLM-powered chat interfaces for data exploration and question-answering using Snowflake and Streamlit. 
+
+Want to learn more about the tools and technologies used by your app? Check out the following resources:
+
+- [Streamlit's new chat UI](https://docs.streamlit.io/library/api-reference/chat)
+- [Session state](https://docs.streamlit.io/library/api-reference/session-state)
+- [OpenAI's ChatCompetion feature](https://platform.openai.com/docs/api-reference/chat)
+- [Generative AI and Streamlit: A perfect match](https://blog.streamlit.io/generative-ai-and-streamlit-a-perfect-match/)
+- [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
+
