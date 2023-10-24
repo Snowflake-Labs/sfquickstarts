@@ -21,6 +21,7 @@ Duration: 1
 - Basic knowledge of Java
 - Snowflake user with `accountadmin` role
 - GitHub account with [access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+- macOS or Linux machine to build a project and run deployment scripts
 
 ## You will learn
 Duration: 1
@@ -62,6 +63,7 @@ The connector consists of the following elements:
     - `PUBLIC.ENABLE_RESOURCE` - enables a repository for the ingestion
     - `PUBLIC.INGEST_DATA` - used by the tasks running the ingestion
 
+Only selected objects will be visible to customer who installed the app. See: [docs](https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script#visibility-of-objects-created-in-the-setup-script-to-consumers).
 
 ## Project structure
 Duration: 3
@@ -102,7 +104,7 @@ Basic example of application workflow containing building, deploying and install
 Additionally, the connector has a UI build in Streamlit. The Streamlit dashboard is defined
 in `streamlit_app.py` file.
 Thanks to it the connector can be configured and monitored using Streamlit in Snowflake.
-Additionally, some of the privileges required by the application can be requested through a pop-up in Streamlit.
+Additionally, some privileges required by the application can be requested through a pop-up in Streamlit.
 
 ### setup.sql script
 
@@ -316,6 +318,11 @@ as long as any of the privileges are missing.
 
 ![privileges1.png](assets/privileges1.png)
 
+Currently, there is a bug related to granting privileges. After granting privileges we need to refresh the web page in the browser to make them visible.
+If we skip that, we will see an error during enabling ingestion, saying that we don't have permission to run tasks.
+
+After granting privileges - refresh the page.
+
 ### Configure the connector
 
 First you need to specify what database should be used for storing the ingested data. This database will be created,
@@ -334,10 +341,9 @@ Please note that the grey values visible in the form are just tooltips and are n
 After pressing the `Configure` button another pop-up will be displayed. It requires the user to choose a warehouse that will
 be used to schedule the ingestion task. Granting this privilege is necessary for the connector to work properly.
 
-After granting the privilege refresh the application page to ensure that the underlying
-database connection session is refreshed with all the granted privileges.
-
 ![privileges2.png](assets/privileges2.png)
+
+After granting privileges - refresh the page.
 
 ### Enable data ingestion
 
