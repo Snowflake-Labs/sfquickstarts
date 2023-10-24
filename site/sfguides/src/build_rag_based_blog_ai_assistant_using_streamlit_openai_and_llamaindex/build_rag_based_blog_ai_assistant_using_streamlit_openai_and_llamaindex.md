@@ -119,7 +119,7 @@ After you update the blogs list, switch to the terminal run the following comman
 python data_pipeline.py
 ```
 
-This will download the blogs in your list into  `./.content` directory and store them as markdown files.
+This will iteratively download all the blogs in `PAGES` list into  `.content` directory and convert them into markdown files. We use the `html2text` library to convert the html files into markdown files. 
 
 <!-- ------------------------ -->
 
@@ -128,6 +128,48 @@ This will download the blogs in your list into  `./.content` directory and store
 Duration: 10
 
 In this step, we will build a vector index for the markdown files. It involves chunking the blogs in the `.content` directory, storing them as a [TreeIndex](https://gpt-index.readthedocs.io/en/latest/api_reference/indices/tree.html) using LlamaIndex.
+
+Before diving into building the index, let us understand the Retrieval Augmented Generation(RAG) architecture. It has three main steps.
+
+- Choose a foundation model of your choice to generate text
+However, if I were to question the foundation model about the specifics of Snowpark and other features that were released recently, GPT-4 may not be able to answer.
+- Augment the input prompt (i.e., your question) with relevant documents
+If we provide the model with Snowpark documentation or quickstart, it will be capable of answering questions. However, the context length of these models are small. GPT-4 has context length of 4000 tokens only. 4000 tokens is about 500 words, which is roughly 3-4 paragraphs. But Snowpark documentation is more than 4 paragraphs. What could be done?
+  - We take the Snowflake documentation and chunk it with ~500 words per chunk. We then convert each of these chunks into vector embeddings, store them in a vector store, and build an index for easy retrieval.
+- Query the foundation model for answers
+  - During the inference phase, the input prompt is converted into a vector embedding, the vector store is searched to find the text chunk that has higher similarity to the input prompt and is returned to the foundation model.
+  - The model then uses the chunk of document that is relevant to the query to answer the query.
+
+Challenges in this approach:
+
+- How can you split the document into meaningful chunks so the context is not lost?
+- What are the different indexes you can build? 
+- How can you decide on the type of index to build for faster retrieval?
+
+Here is where LlamaIndex comes in. It abstracts away the complexity in smart chucking and indexing of the document. All you need to do is to select which type of index you need based on your use case, and let LlamaIndex do the work.
+
+Now that we understand RAG architecture, let's review the code in `build_index.py` and understand what each snippet of code does.
+
+```python
+def build_index(data_dir: str, knowledge_base_dir: str) -> None:
+    """Build the vector index from the markdown files in the directory."""
+    print("Building vector index...")
+    documents = SimpleDirectoryReader(data_dir).load_data()
+
+    index = TreeIndex.from_documents(documents, service_context=service_context)
+    index.storage_context.persist(persist_dir=knowledge_base_dir)
+    print("Done.")
+```
+
+The `build_index()` creates a TreeIndex from the markdown files in `.content` directory and persists the index in the local `.kb` directory. In LlamaIndex terminology, a node refers to a chunk of text from a document.
+
+The  `TreeIndex` builds a hierarchical tree from a set of nodes which become leaf nodes in the tree. 
+
+![TreeIndex](assets/tree_index.png)
+
+During the inference time, it queries the index by traversing from root nodes down to leaf nodes. Once the leaf node/nodes with relevant keywords as the user prompt is returned, a response is returned by the index. This response is then augmented with user prompt to chat with the model.
+
+![Retrieving from Key Index](assets/retrieval.png)
 
 Open the `build_index.py` file from an IDE of your choice and update the `YOUR_OPENAI_API_KEY` with your OpenAI API key.
 
@@ -202,4 +244,3 @@ Want to learn more about the tools and technologies used by your app? Check out 
 - [OpenAI's ChatCompetion feature](https://platform.openai.com/docs/api-reference/chat)
 - [Generative AI and Streamlit: A perfect match](https://blog.streamlit.io/generative-ai-and-streamlit-a-perfect-match/)
 - [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
-
