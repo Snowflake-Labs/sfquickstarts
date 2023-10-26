@@ -72,7 +72,7 @@ Duration: 2
 First, Clone [this repository](https://github.com/astronomer/airflow-snowparkml-demo/tree/main) and navigate into its directory in terminal, before opening the folder up in the code editor of your choice. 
 
 ```
-git clone https://github.com/astronautyates/SnowParkMLWorkshop
+git clone https://github.com/astronomer/airflow-snowparkml-demo/
 cd airflow-snowparkml-demo
 ```
 
