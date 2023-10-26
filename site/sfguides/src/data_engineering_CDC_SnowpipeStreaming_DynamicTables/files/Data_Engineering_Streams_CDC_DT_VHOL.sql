@@ -80,6 +80,9 @@ select
   --5.c) But There is More Than One Table in My Source System
   select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from ENG.CDC_STREAMING_TABLE;
 
+
+
+
 ----    6 Create Dynamic Tables
 
 --6.a) The Current State
@@ -175,7 +178,14 @@ select * from LIMIT_ORDERS_SUMMARY_DT where position='LONG' order by TOTAL_VALUE
 --We are tracking the 30 Dow Jones Industrial Average Stocks (both Long and Short Limit Orders)
 select  count(*) from LIMIT_ORDERS_SUMMARY_DT;
 
---6.e) Create a view for consumers
+--6.d) Monitoring Dynamic Tables (in Snowsight)
+
+--6.e) Monitor Landing Table Channels
+--Specifically the offset token identifying the source's indicator of the last successfully-committed row identifier.  If there ever was an error on the source agent, this is the restart point.
+show channels in table ENG.CDC_STREAMING_TABLE;
+
+
+--6.f) Create a view for consumers
 create or replace view PUBLIC.CURRENT_LIMIT_ORDERS_VW
   as select orderid_tokenized, lastUpdated,client,ticker,position,quantity,price
   FROM ENG.LIMIT_ORDERS_CURRENT_DT order by orderid_tokenized;
