@@ -69,19 +69,17 @@ The first thing you will need to do is download the following two files.  The fi
 At this point login into your Snowflake account. If you have just created a free trial account, feel free to minimize or close hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
 
 ### c) Create a Worksheet
-In the Snowflake UI click on **Worksheets** on the left side.   
+In the Snowflake UI click on **Worksheets** on the left side.
 ![](assets/image2-1.png)
 
-Create a new Worksheet by clicking on the ** ... ** button on the top right side and click **Create Worksheet from SQL File**.    
+Create a new Worksheet by clicking on the ** + ** button on the top right side and click **SQL Worksheet** which will create a new worksheet in a tab.
 ![](assets/image2-2.png)
 
-You can now select the .sql file you downloaded and named earlier called **Data_Engineering_Streams_CDC_DT_VHOL.sql**.
+Next, from the **Tab Menu** you can rename the tab to something more meaningful and from the same menu click **Import SQL from File** and select the .sql file you downloaded and named earlier called **Data_Engineering_Streams_CDC_DT_VHOL.sql**.
+![](assets/image2-3.png)
 
 Each step throughout the Snowflake portion of the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code one command at-a-time as you walk through the lab.
 
-### d) Set your Role
-Finally, switch to the ACCOUNTADMIN role.  If you just created an evaluation account to go through this Lab, this should be easy.  However, if you are using an established account and find this role missing from your list, you may need assistance to complete the next few steps.  Creating a Role, Database, Stages, Tasks, and monitoring tasks executed by 'System' requires higher-level permissions.    
-![](assets/image2-4.png)
 
 <!-- ------------------------ -->
 ## Setting up Your Desktop
@@ -393,12 +391,7 @@ from (
 WHERE action != 'DELETE' group by ticker,position order by position,TOTAL_VALUE_USD DESC
 ;
 ```
-You know to wait for the Lag by now, but you can refresh right away too:
-```
-alter DYNAMIC TABLE LIMIT_ORDERS_SUMMARY_DT refresh;
-```
-Now, table is ready for queries and note it shows you the statistics on this refresh performed.
-
+Table is created and populated.
 ```
 select * from LIMIT_ORDERS_SUMMARY_DT where position='LONG' order by TOTAL_VALUE_USD;;
 ```
@@ -650,6 +643,3 @@ Duration: 2
 - Created Multiple Dynamic Tables for Data Engineering Tasks
 - Secured Sensitive Fields, beginning from the Source, but also decrypted for those authorized
 
-
-### Related Resources
-**(Will be available once these capabilities move to Public Preview)**

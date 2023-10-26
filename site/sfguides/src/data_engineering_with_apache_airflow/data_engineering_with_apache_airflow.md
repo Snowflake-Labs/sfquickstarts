@@ -45,6 +45,8 @@ You will need the following things before beginning:
   1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
 1. Docker
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
+1. OpenAI API key
+  1. **Optional Step to Enable Chatbot Functionality**
 
 ### What You’ll Build 
 - A simple working Airflow pipeline with dbt and Snowflake 
@@ -464,9 +466,8 @@ with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_
     task_1 >> task_2 # Define dependencies
 ```
 
-
-
 <!-- ------------------------ -->
+
 ## Running our docker-compose file for Airflow
 Duration: 5
 
@@ -511,6 +512,21 @@ We will now run our second DAG ```2_daily_transformation_analysis``` which will 
 Our ```Transform``` and ```Analysis``` views have been created successfully!
 
 ![airflow](assets/data_engineering_with_apache_airflow_10_snowflake_successful_transform_analysis.png)
+
+### View Streamlit Dashboard
+We can now view our analyzed data on a [Streamlit](https://streamlit.io/) dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.  
+
+```bash
+astro dev bash -w
+```
+
+Then, run the following command to start a streamlit application. 
+```bash
+cd include/streamlit/src
+python -m streamlit run ./streamlit_app.py
+```
+
+After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you'd like to enable the ability to ask questions about your data, you'll need to add an OpenAI API key in the .env file and restart your Airflow environment. 
 
 <!-- ------------------------ -->
 ## Conclusion
