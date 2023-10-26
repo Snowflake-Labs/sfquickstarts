@@ -48,7 +48,7 @@ The scenario presents some challenges to me as the provider
 * You have no idea what the name of the IP address attribute will be
 * You have no idea where the consumer will want me to write out the data
 
-Requesting read and write access to a table in the consumer account is easy because my application can simply tell the consumer I require Read/Write access to a table and the consumer can grant access. The next two points are slightly more tricky. We have the ability within the Native App Framework to gain access to a table which the application consumer will specify. Every consumer of the application will most likely have differently named attributes as well. In testing an application's functionality locally you know the names of the columns and life is good. Let’s see two ways in which you could solve this problem with Snowflake Native Apps.  There are others but here we want to just call out two for now.
+Requesting read and write access to a table in the consumer account is easy because my application can simply tell the consumer I require Read/Write access to a table and the consumer can grant access. The next two points are slightly more tricky. We have the ability within the Snowflake Native App Framework to gain access to a table which the application consumer will specify. Every consumer of the application will most likely have differently named attributes as well. In testing an application's functionality locally you know the names of the columns and life is good. Let’s see two ways in which you could solve this problem with Snowflake Native Apps.  There are others but here we want to just call out two for now.
 
 #### Solution 1:  Make the consumer do the work
 
@@ -66,13 +66,13 @@ Duration: 10
 
 The application itself is a simple one and has been broken down into three parts.
 
-* The building of the application package on the producer and the sharing of the lookup database with the application. 
+* The building of the application package on the provider and the sharing of the lookup database with the application. 
 * The building of the application install script which contains the functionality to accept an IP address, look it up in the database we just shared with the application and write back enhanced data from the application. 
 * Arguably (certainly for this Quickstart) the most important part which is the user interface written using Streamlit. This is where we will do the mappings.
 
-To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart.  If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the Producer account.
+To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart.  If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
 
-Head over to Snowsight on the producer account and open a new worksheet.
+Head over to Snowsight on the provider account and open a new worksheet.
 
 The first thing you need to do is create a new database which will serve as the lookup database for the application
 
@@ -107,12 +107,12 @@ Your database should now look like the following
 <img src="assets/producer_org.png" width="425" />
 
 
-You now need to upload the file you just downloaded from IP2Location to the stage you just created in Snowflake.  There are a couple of ways to do this
+You now need to upload the file you just downloaded from IP2Location to the stage you just created in Snowflake.  There are a couple of ways to do this:
 
-* Using the new UI in Snowsight
+* Using Snowsight
 * Using SnowSQL
 
-Using Snowsight come out of worksheets and go to **data/databases** and then navigate to the stage we just created.  You should see a screen similar to the below
+Using Snowsight, come out of Worksheets and go to **data/databases** and then navigate to the stage we just created.  You should see a screen similar to the below
 
 <img src="assets/location_data_upload.png" width="800" />
 
@@ -129,7 +129,7 @@ With the data loaded you can run some test queries to get a feel for the data
 SELECT COUNT(*) FROM LITEDB11;
 SELECT * FROM LITEDB11 LIMIT 10;
 ```
-We now have the reference database setup in the producer account so are now ready to start building the application itself.
+We now have the reference database setup in the provider account so are now ready to start building the application itself.
 
 <!-- ------------------------ -->
 ## Provider Setup
@@ -171,7 +171,7 @@ Fantastic.  we now have an application package with permissions onto the lookup 
 ## The Manifest File
 Duration: 3
 
-Every Snowflake Native App is required to have a manifest file.  The manifest file defines any properties of the application as well as the location of the application's setup script.  The manaifest file for this application will not use all the possible fetures of the manifest file so you can read more about it [here](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).  The manifest file has three requirements
+Every Snowflake Native App is required to have a manifest file.  The manifest file defines any properties of the application as well as the location of the application's setup script.  The manifest file for this application will not use all the possible fetures of the manifest file so you can read more about it [here](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).  The manifest file has three requirements:
 
 * The name of the manifest file must be manifest.yml.
 * The manifest file must be uploaded to a named stage so that it is accessible when creating an application package or Snowflake Native App.
@@ -199,7 +199,7 @@ references:
       register_callback: config_code.register_single_callback
 ```
 
-The **artifacts** section details what files will be included in the application and their location relative to the manifest file.  The **references** section is where we define the permissions we require within the consumer account.  This is what we will ask the consumer to grant.  The way it does that is by calling the **register_callback** procedure which we will shortly define in our setup script
+The **artifacts** section details what files will be included in the application and their location relative to the manifest file.  The **references** section is where we define the permissions we require within the consumer account.  This is what we will ask the consumer to grant.  The way it does that is by calling the **register_callback** procedure which we will shortly define in our setup script.
 
 <!-- ------------------------ -->
 ## The Setup Script
@@ -208,7 +208,7 @@ Duration: 10
 In a Snowflake Native App, the setup script is used to define what objects will be created when the application is installed on the consumer account.  The location of the file as we have seen is defined in the manifest file.  The setup script is run on initial installation of the application and any subsequent upgrades/patches.
 
 Most setup scripts are called either **setup.sql** or **setup_script.sql** but that is not a hard and fast requirement.  In the setup script you will see that for some objects, the application role is given permissions and some not.  
-If the application role is permissioned onto an object then the object will be visible in Snowsight after the application is installed (permissions allowing)
+If the application role is permissioned onto an object then the object will be visible in Snowsight after the application is installed (permissions allowing).
 If the application role is not granted permissions onto an object then you will not see the object in Snowsight.  The application itself can still use the objects regardless.
 
 ```sql
@@ -296,7 +296,7 @@ grant usage on schema ui to application role app_public;
 --this is our streamlit.  The application will be looking for 
 --file = enricher_dash.py in a folder called ui
 
---this is the reference to the streamlit (not the streamllit itself)
+--this is the reference to the streamlit (not the streamlit itself)
 --this was referenced in the manifest file
 create or replace streamlit ui."Dashboard" from 'ui' main_file='enricher_dash.py';
 
@@ -329,12 +329,12 @@ Duration: 5
 
 We now come to arguably the most important part of the application for us which is the user interface.  We have defined all the objects we need to create and also the permissions we will require from the consumer of the application.
 
-A little recap on what this UI needs to achieve
+A little recap on what this UI needs to achieve:
 
 * Map a field in a table to an ip column
 * Map a field in a the same table to receive the enhaced output
 
-Once we have the streamlit UI built we can then finish off the build of the application package
+Once we have the streamlit UI built we can then finish off the build of the application package.
 
 ### Building the User Interface
 
@@ -370,7 +370,7 @@ with st.form("mapping_form"):
     # submit the mappings
     submit = row[1].form_submit_button('Update Mappings')
 
-# not necessary but useful to see what the amppings look like
+# not necessary but useful to see what the mappings look like
 st.json(to_be_mapped)
 
 #function call the stored procedure in the application that does the reading and writing
@@ -387,7 +387,7 @@ st.button('UPDATE!', on_click=update_table)
 
 ### Finishing the Application
 
-All the pieces are in place for our application so we now need to go back to the producer account and upload the files we have just created (manifest.yml, setup_script.sql and enricher_dash.py) to the stage **APPLICATION_STAGE**.  
+All the pieces are in place for our application so we now need to go back to the provider account and upload the files we have just created (manifest.yml, setup_script.sql and enricher_dash.py) to the stage **APPLICATION_STAGE**.  
 
 
 > aside positive
@@ -398,7 +398,7 @@ once uploaded the stage should look like the following
 
 <img src="assets/code_complete.png" width="395" />
 
-Once the files are uploaded, go into your worksheets and finish off the building of the application package
+Once the files are uploaded, go into your worksheets and finish off the building of the application package:
 
 ```sql
 ALTER APPLICATION PACKAGE IP2LOCATION_APP
@@ -408,13 +408,13 @@ ALTER APPLICATION PACKAGE IP2LOCATION_APP
 ALTER APPLICATION PACKAGE IP2LOCATION_APP SET DEFAULT RELEASE DIRECTIVE VERSION = MyFirstVersion PATCH = 0;
 ```
 
-Our application package is built, now let's create an application
+Our application package is built, now let's create an application.
 
 <!-- ------------------------ -->
 ## Creating and Deploying the Application
 Duration: 2
 
-There are a few ways we could deploy our application
+There are a few ways we could deploy our application:
 
 * Same account / Different account
 * Same Org / Different Org
@@ -444,15 +444,15 @@ INSERT INTO TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');
 
 ### Viewing the Application
 
-Come out of worksheets and head over to the Apps menu in Snowsight
+Come out of worksheets and head over to the Apps menu in Snowsight:
 
 <img src="assets/find_apps.png" width="233" />
 
-click on that and you should see the following
+click on that and you should see the following:
 
 <img src="assets/deployed_app.png" width="1555" />
 
-The application if you remember needs permissions onto a table in the consumer account (the one we just created.).  We have now switched roles to being the consumer.  We are finished with being the application producer.  Over on the right hand side hit the ellipses and select **View Details**
+The application if you remember needs permissions onto a table in the consumer account (the one we just created.).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the ellipses and select **View Details**:
 
 <img src="assets/perms.png" width="288" />
 
@@ -460,7 +460,7 @@ This will take you through to a page which will allow you to specify the table t
 
 <img src="assets/assign_perms.png" width="901" />
 
-Click **Add** and navigate to the table we just created and select it
+Click **Add** and navigate to the table we just created and select it:
 
 > aside positive
 > 
@@ -468,11 +468,11 @@ Click **Add** and navigate to the table we just created and select it
 
 <img src="assets/table_chosen.png" width="719" />
 
-Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to apps and click on the app itself.  It should open to a screen like the following
+Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to apps and click on the app itself.  It should open to a screen like the following:
 
 <img src="assets/app_entry.png" width="975" />
 
-You should recognise the layout from building the streamlit earlier.  If you drop down either of the two boxes you will see that they are populated with the columns from the table the application has been assigned permissions to.  If we populate the mappings correctly, hit **Update Mappings** then you will see the piece of JSON underneath change to tell us the currently set mappings.  The ones we want for this application are
+You should recognise the layout from building the streamlit earlier.  If you drop down either of the two boxes you will see that they are populated with the columns from the table the application has been assigned permissions to.  If we populate the mappings correctly, hit **Update Mappings** then you will see the piece of JSON underneath change to tell us the currently set mappings.  The ones we want for this application are:
 
 <img src="assets/correct_mappings.png" width="703" />
 
@@ -521,6 +521,6 @@ We have covered a lot of ground in this Quickstart.  We have covered the buildin
 ### Further Reading
 
 * [Tutorial: Developing an Application with the Native Apps Framework](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial)
-
-* [Getting Started with Snowflake Natrive Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/#0)
+* [Getting Started with Snowflake Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/#0)
+* [Build a Snowflake Native App to Analyze Chairlift Sensor Data](https://quickstarts.snowflake.com/guide/native-app-chairlift/#0)
 * [About the Snowflake Native App Framework](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
