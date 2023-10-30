@@ -3,11 +3,11 @@ id: connectors_github_java
 summary: Overview of building Snowflake native connectors using Java snowpark and Native Apps. Example connector connects to GitHub issues API. 
 categories: connectors,solution-examples,partner-integrations
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps, External connectivity
 
-# Example Native GitHub Connector (Java)
+# Native Connector - Java (Pull Based)
 
 ## Overview
 Duration: 1
