@@ -1,6 +1,6 @@
 author: marzillo-snow
 id: getting_started_with_azure_openai_and_snowflake
-summary: This is a quickstart for using Snowpark for ML on SageMaker
+summary: This is a quickstart for using Snowflake with Azure OpenAI and AzureML
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published 
@@ -205,7 +205,8 @@ Navigate to the openai.ipynb and open it using your active compute instance.
 
 ### Slight Detour - Back to the Azure Portal
 
-In the AzureML workspace head to the Endpoint blade and verify that your Prompt Flow has deployed, note the name of the endpoint. Now go to the Azure Portal and find the AzureML Workspace we're working in and select 'Access Control (IAM)' the select Add and 'Add role assignment: ![](assets/addroleassignment.png)
+In the AzureML workspace head to the Endpoint blade and verify that your Prompt Flow has deployed, note the name of the endpoint. Now go to the Azure Portal and find the AzureML Workspace we're working in and select 'Access Control (IAM)' the select Add and 'Add role assignment': 
+![](assets/addroleassignment.png)
 
 Select the 'AzureML Data Scientist' role then select next. Select 'Managed Identity' for 'assign access to' then select members. In the right menu select your Azure subscription then 'Machine Learning online endpoint' then select your prompt flow endpoint. Click Select then 'Review and Assign' twice.
 ![](assets/miendpoint.png)
@@ -229,8 +230,7 @@ In the fifth code block fill in your Snowflake Account Identifier, username and 
 
 Head back to your Snowflake account and run the below SQL to see your recommendations with customer id to be used by your organization.
 
-```
-sql
+```sql
 SELECT * FROM retail_db.public.nbi_promo;
 ```
 ![](assets/results.png)
@@ -260,7 +260,7 @@ This quickstart is just that, a quick way to get you started with Azure OpenAI w
 - Utilize an AzureML Notebook with Snowpark to coordinate the movement of data from Snowflake to the Prompt Flow and bring results back to Snowflake
 
 ### Additional Considerations
-- There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
+- There are some great blogs on Medium regarding Snowpark, AzureML and using Snowflake with Azure.
 
 - [Snowpark with AzureML](https://www.youtube.com/watch?v=p8QUMiND7Ig)
 
