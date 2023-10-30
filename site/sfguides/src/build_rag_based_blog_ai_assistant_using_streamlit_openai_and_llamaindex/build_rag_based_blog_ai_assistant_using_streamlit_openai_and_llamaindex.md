@@ -1,26 +1,26 @@
 author: Vino Duraisamy
 id: build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex
-summary: This guide will provide step-by-step details for building an LLM chatbot called SnowStart that answers questions based on Snowflake Quickstart Blogs
+summary: This guide will provide step-by-step details for building an LLM chatbot that answers questions based on Snowflake Quickstart Blogs
 categories: data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, LLMs, Generative AI, Streamlit, ChatBot, OpenAI
 
-# SnowStart: Build a Retrieval Augmented Generation(RAG) based LLM assistant using  Streamlit, OpenAI and LlamaIndex
+# Build a Retrieval Augmented Generation(RAG) based LLM assistant using  Streamlit, OpenAI and LlamaIndex
 <!-- ------------------------ -->
 ## Overview
 
 Duration: 5
 
-This quickstart will cover the basics of Retrieval Augmented Generation (RAG) and how to build an LLM assistant (SnowStart) using Streamlit, OpenAI and LlamaIndex. The AI assistant will be trained on Snowpark data engineering quickstarts and can answer questions related to those blogs.
+This quickstart will cover the basics of Retrieval Augmented Generation (RAG) and how to build an LLM assistant using Streamlit, OpenAI and LlamaIndex. The AI assistant will be trained on Snowpark data engineering quickstarts and can answer questions related to those blogs.
 
 Here is a summary of what you will be able to learn in each step following this quickstart:
 
 - **Setup Environment**: Setup your development environment, access OpenAI API keys and install the dependancies needed to run this quickstart
 - **Data Pipeline**: Build a data pipeline to download the blogs on which the AI assisstant is trained on
 - **Build Index**: Chunk the blogs into smaller contexts which can then be appended with the input prompt to an LLM
-- **Streamlit Application**: Build a Streamlit App to serve as the UI for SnowStart
+- **Streamlit Application**: Build a Streamlit App to serve as the UI for the LLM assistant
 
 Let's dive into the key features and technologies used in the demo, for better understanding.
 
@@ -55,7 +55,7 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 - How to build a data pipeline to download the blogs for retrieval
 - How to chuck the blogs into smaller contexts which can then be augmented with the input prompt to an LLM
-- How to build a Streamlit App to serve as the UI for SnowStart bot
+- How to build a Streamlit App to serve as the UI for the chatbot
 
 ### Prerequisites
 
