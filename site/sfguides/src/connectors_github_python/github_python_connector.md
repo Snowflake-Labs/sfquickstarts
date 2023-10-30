@@ -3,11 +3,11 @@ id: connectors_github_python
 summary: Overview of building Snowflake native connectors using Python, Snowpark and Native Apps. Example connector connects to GitHub issues API. 
 categories: connectors,solution-examples,partner-integrations
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps, External connectivity
 
-# Native GitHub Connector (Python)
+# Native Connector - Python (Pull Based)
 
 ## Overview
 Duration: 1
@@ -39,7 +39,7 @@ Duration: 5
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure snowsql to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- Clone the [connectors-native-sdk repository](https://github.com/Snowflake-Labs/connectors-native-sdk) and go to `./examples/example-github-python-connector`
+- Clone the [connectors-native-sdk repository](https://github.com/snowflakedb/connectors-native-sdk) and go to `./examples/example-github-python-connector`
 
 ## Connector overview
 Duration: 2
