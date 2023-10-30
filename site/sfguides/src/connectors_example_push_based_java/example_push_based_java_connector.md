@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps
 
-# Native Connector - Java (Pull Based)
+# Native Connector - Java (Push Based)
 
 ## Overview
 Duration: 1
