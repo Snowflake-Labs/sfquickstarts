@@ -356,7 +356,8 @@ More than one repository can be configured.
 ### Monitor the ingestion
 
 Once the ingestion is started you can monitor its state using state and data preview tabs. It might take some time before
-any data is visible. If multiple repositories were configured,
+any data is visible. You may want to refresh the whole page if data does not appear in a minute or two.
+If multiple repositories were configured,
 the visible data can be changed using the selection box.
 
 ![state.png](assets/state.png)
