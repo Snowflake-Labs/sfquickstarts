@@ -3,9 +3,7 @@ id: prompt_engineering_and_llm_evaluation
 summary: This guide provides instructions to perform prompt engineering on your LLM models and to build a streamlit app for evaluating LLM responses using human feedback
 categories: data-science-&-ml, app-development
 environments: web
-
 status: Published
-
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Generative AI, Snowflake External Access, OpenAI, LLMs, Streamlit, Snowflake Marketplace
 
