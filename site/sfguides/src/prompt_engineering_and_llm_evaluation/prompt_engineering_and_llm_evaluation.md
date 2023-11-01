@@ -3,7 +3,7 @@ id: prompt_engineering_and_llm_evaluation
 summary: This guide provides instructions to perform prompt engineering on your LLM models and to build a streamlit app for evaluating LLM responses using human feedback
 categories: data-science-&-ml, app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Generative AI, Snowflake External Access, OpenAI, LLMs, Streamlit, Snowflake Marketplace
 
@@ -133,7 +133,7 @@ USE WAREHOUSE VINO_CUSTOMER_EXP_WH_M;
 
 ## Snowflake Marketplace
 
-During this step, we will be loading customer experience data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace.
+During this step, we will be loading customer experience data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the customer review data shared by `Clootrack` in the Snowflake Marketplace.
 
 ### Customer Experience data from Snowflake Marketplace
 
