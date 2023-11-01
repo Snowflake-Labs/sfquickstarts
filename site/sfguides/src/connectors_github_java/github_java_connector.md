@@ -325,6 +325,14 @@ If we skip that, we will see an error during enabling ingestion, saying that we 
 
 After granting privileges - refresh the page.
 
+### Warehouse privilege
+After granting privileges another pop-up will be displayed. It requires the user to choose a warehouse that will
+be used to schedule the ingestion task. Granting this privilege is necessary for the connector to work properly.
+
+![privileges2.png](assets/privileges2.png)
+
+After granting warehouse privilege - refresh the page.
+
 ### Configure the connector
 
 First you need to specify what database should be used for storing the ingested data. This database will be created,
@@ -333,19 +341,11 @@ used by the connector need to be specified. Use names of the objects you created
 Names of the objects will be visible in the execution log of the convenience scripts run in the previous steps.
 By default, created values are the following:
 - Secret name: `{APP_NAME}_SECRETS.PUBLIC.GITHUB_TOKEN>`
-- Integration name: `GITHUB_INTEGRATION`
+- Integration name: `{APP_NAME}_INTEGRATION`
 
 Please note that the grey values visible in the form are just tooltips and are not used as the default values.
 
 ![configuration1.png](assets/configuration1.png)
-
-### Warehouse privilege
-After pressing the `Configure` button another pop-up will be displayed. It requires the user to choose a warehouse that will
-be used to schedule the ingestion task. Granting this privilege is necessary for the connector to work properly.
-
-![privileges2.png](assets/privileges2.png)
-
-After granting privileges - refresh the page.
 
 ### Enable data ingestion
 
@@ -359,8 +359,8 @@ More than one repository can be configured.
 ### Monitor the ingestion
 
 Once the ingestion is started you can monitor its state using state and data preview tabs. It might take some time before
-any data is visible. If multiple repositories were configured,
-the visible data can be changed using the selection box.
+any data is visible.  You may want to refresh the whole page if data does not appear in a minute or two. 
+If multiple repositories were configured, the visible data can be changed using the selection box.
 
 ![state.png](assets/state.png)
 

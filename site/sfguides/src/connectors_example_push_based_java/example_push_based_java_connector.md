@@ -302,9 +302,6 @@ The requested privileges must be granted for the connector to work properly.
 Agent that provides the data to the Native App requires a database to work. This database is created by the Native App.
 To create it just enter the database name in the input box and press `Configure` button.
 
-Keep in mind that the same database name needs to be entered here and in `native_application.database_name` property
-inside `connector.properties` file in the agent part of the example.
-
 ![configure1.png](assets/configure1.png)
 
 ## Using Java Agent to enable a resources
