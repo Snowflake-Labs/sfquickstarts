@@ -221,7 +221,7 @@ After your pipeline has finished running, go into the grid view and check that a
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_7_pred_table1.png)
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_8_pred_table2.png)
 
-
+<!-- ------------------------ -->
 ### View Streamlit Dashboard
 We can now view our analyzed data on a [Streamlit](https://streamlit.io/) dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.  
 
@@ -234,9 +234,8 @@ Then, run the following command to start a streamlit application.
 cd include/streamlit/src
 python -m streamlit run ./streamlit_app.py
 ```
-
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_9_streamlitss.png)
 After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! The Question Answering interface in the Customer Analytics dashboard uses the Weaviate Q&A module which has integrations with LLM providers like OpenAI.  The Q&A module (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/qna-openai) accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents' (tweets, transcripts, etc.) vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents are provided as search results.  Because this is not a text search you can ask a question like "Who does Thomas like best?" and it will provide related tweets that talk about Thomas and Bertie as best friends.
-
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_10_streamlitss.png)
 One could also easily add generative search to the dashboard.  The generative search (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/generative-openai) module accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents' vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents related to the question are then used as context for a generated answer.  The question along with contextual documents are fed to ChatGPT with instructions to answer the question with the provided context.
 
-For an example of generative search see https://github.com/astronomer/ask-astro/blob/0ad255e8084dcba5d55a4019f24efc31541e9959/airflow/include/streamlit/streamlit_app.py#L132
