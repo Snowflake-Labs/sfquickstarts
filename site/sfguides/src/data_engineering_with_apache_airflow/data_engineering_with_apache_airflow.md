@@ -391,7 +391,7 @@ dbt_project_path = Path("/usr/local/airflow/dags/dbt/cosmosproject")
 
 profile_config = ProfileConfig(profile_name="default",
                                target_name="dev",
-                               profile_mapping=SnowflakeUserPasswordProfileMapping(conn_id="snowflake_conn", 
+                               profile_mapping=SnowflakeUserPasswordProfileMapping(conn_id="snowflake_default", 
                                                     profile_args={
                                                         "database": "demo_dbt",
                                                         "schema": "public"
@@ -443,9 +443,9 @@ Once the Airflow environment is finished creating and the login credentials appe
 
 ![airflow](assets/data_engineering_with_apache_airflow_12_dbt_cosmos_airflow_rendered.png)
 
-Now we're going to create a connection to our Snowflake environment for our DAG to use. Open up the conneections page from the Admin drop down menu and click + to create a new connection. Choose Snowflake as the connection type, and `snowflake_conn` as the name for the connection. Then, enter your credentials following the example shown below. The only variables you'll need to change to your own are the password, account name, and region. The rest we set already via the dbt user creation script. 
+Now we're going to create a connection to our Snowflake environment for our DAG to use. Open up the conneections page from the Admin drop down menu and click + to create a new connection. Choose Snowflake as the connection type, and `snowflake_default` as the name for the connection. Then, enter your credentials following the example shown below. The only variables you'll need to change to your own are the password, account name, and region. The rest we set already via the dbt user creation script. 
 
-![airflow](assets/data_engineering_with_apache_airflow_9_example_snowflake_conn.png)
+![airflow](assets/data_engineering_with_apache_airflow_9_example_snowflake_default.png)
 
 <!-- ------------------------ -->
 ## Activating and running our DAGs
@@ -461,7 +461,7 @@ We will now run our DAG ```cosmos_dag``` to see our dbt models in action! If you
 Our ```Transform``` and ```Analysis``` views have been created successfully! Open them to see the results of our analysis, and check out the other tables to see how data was transformed using dbt.
 
 <!-- ------------------------ -->
-## Extending our DAG for Data Analysis with Snowpark
+## Incorporating Snowpark
 
 Now that we've gotten our dbt DAG set up, lets extend it by adding Snowpark for some data analysis with Python. To do this, we'll need to change some existing files and add new requirements to our local airflow environment. While we do this, lets stop our Airflow environment by running the following command so we can restart it later with our changes incorporated.
 
@@ -469,9 +469,139 @@ Now that we've gotten our dbt DAG set up, lets extend it by adding Snowpark for 
 astro dev stop
 ```
 
+First, go to your `packages.txt` file in your root directory and add `build-essential` to it, then save. The build-essential package in Linux systems is a reference for all the packages needed to compile a Debian package. We'll be using it to create a Python 3.8 Virtual Environment to run our Snowpark code in, since Snowpark uses Python 3.8, and Airflow only supports Python versions 3.9 and above. 
+
+Next, we'll need to import the Snowpark provider to create our Snowpark task. While in development the provider package is not yet in pypi. For this demo, download the `astro_provider_snowflake-0.0.0-py3-none-any.whl` file from the this [link](https://github.com/astronomer/airflow-snowpark-demo/tree/main/include). Then, copy the downloaded file into your include directory in your `DBT_Airflow` folder. In the future, this will be a part of the base Snowflake provider, but in the meantime you can use this .whl file in any other projects that require it. 
+
+After that, we'll need to add the .whl file to our `requirements.txt`. Copy and paste the following line into your `requirements.txt` file to do so. 
+
+```
+/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl
+```
+
+Finally, we'll need to create a `requirements-snowpark.txt` to install some necessary packages into the Python VirtualEnv we'll be creating. To do so, create a file called `requirements-snowpark.txt` in your root Airflow directory and copy and paste the following code block into it:
+
+```
+psycopg2-binary
+snowflake_snowpark_python[pandas]==1.5.1
+virtualenv
+/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl
+```
+These packages will allow us to interact with Snowpark through the virtual environment we're creating. 
+
+Now that we've got our Snowpark provider present, we'll need to edit our Dockerfile to install it, and spin up the Snowpark Python VirtualEnv. Copy and paste the following code block into your Dockerfile to add the necessary commands.
+```
+# syntax=quay.io/astronomer/airflow-extensions:latest
+
+FROM quay.io/astronomer/astro-runtime:9.1.0-python-3.9-base
+
+COPY include/astro_provider_snowflake-0.0.0-py3-none-any.whl /tmp
+
+# Create the virtual environment
+PYENV 3.8 snowpark requirements-snowpark.txt
+
+# Install packages into the virtual environment
+COPY requirements-snowpark.txt /tmp
+RUN python3.8 -m pip install -r /tmp/requirements-snowpark.txt
 
 
+RUN python -m venv dbt_venv && source dbt_venv/bin/activate && pip install --no-cache-dir dbt-snowflake && pip install --no-cache-dir dbt-postgres && deactivate
+```
 
+The first line tells Docker to use the Astronomer provided BuildKit that enables us to create virtual environments with the PYENV command. Then we COPY in the `.whl` file and use it to create a Python 3.8 VirtualEnv called snowpark. 
+
+<!-- ------------------------ -->
+## Creating a DAG with Cosmos and Snowpark
+
+In order to use Cosmos and Snowpark together, we'll need to use Cosmos's `dbtTaskGroup` with a normal Airflow DAG instead of a `dbtDAG`. The definition for this is almost identical to the `dbtDAG` approach, and allows us to add additional tasks up or downstream of our dbt workflows. Instead of editing our existing DAG, create a new file called `cosmosandsnowflake.py` in your DAG's folder, and copy the following code into it: 
+
+```
+from airflow.operators.dummy_operator import DummyOperator
+from astro import sql as aql
+from astro.files import File
+from astro.sql.table import Table
+from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
+from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from astronomer.providers.snowflake.utils.snowpark_helpers import SnowparkTable
+from pathlib import Path
+
+dbt_project_path = Path("/usr/local/airflow/dags/dbt/cosmosproject")
+snowflake_objects = {'demo_database': 'DEMO',
+                     'demo_schema': 'DEMO',
+                     'demo_warehouse': 'COMPUTE_WH',
+                     'demo_xcom_stage': 'XCOM_STAGE',
+                     'demo_xcom_table': 'XCOM_TABLE',
+                     'demo_snowpark_wh': 'SNOWPARK_WH'
+}
+_SNOWFLAKE_CONN_ID = "snowflake_default"
+
+profile_config = ProfileConfig(
+    profile_name="default",
+    target_name="dev",
+    profile_mapping=SnowflakeUserPasswordProfileMapping(
+        conn_id="snowflake_default",
+        profile_args={
+          "database": "demo_dbt",
+            "schema": "public"
+        },
+    )
+)
+
+@dag(default_args={
+         "snowflake_conn_id": _SNOWFLAKE_CONN_ID,
+         "temp_data_output": "table",
+         "temp_data_db": snowflake_objects['demo_database'],
+         "temp_data_schema": snowflake_objects['demo_schema'],
+         "temp_data_overwrite": True,
+         "database": snowflake_objects['demo_database'],
+         "schema": snowflake_objects['demo_schema']
+         },
+    schedule_interval="@daily",
+    start_date=datetime(2023, 9, 10),
+    catchup=False,
+    dag_id="dbt_snowpark",
+)
+def dbt_snowpark_dag():
+    transform_data = DbtTaskGroup(
+        group_id="transform_data",
+        project_config=ProjectConfig(dbt_project_path),
+        profile_config=profile_config,
+        execution_config=ExecutionConfig(dbt_executable_path=f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt"),
+        operator_args={"install_deps": True},
+    )
+
+    intermediate = DummyOperator(task_id='intermediate')
+
+    @task.snowpark_virtualenv(python_version='3.8', requirements=['snowflake-ml-python==1.0.9'])
+    def findbesthotel(snowflake_objects:dict): 
+        
+        df = snowpark_session.sql("""
+            SELECT *
+            FROM DEMO_DBT.PUBLIC.THIRTY_DAY_AVG_COST
+        """).to_pandas()
+        highest_cost_hotel = df[df['COST'] == df['COST'].max()]['HOTEL']
+
+        highest_cost_hotel_str = str(highest_cost_hotel)
+        print(highest_cost_hotel)
+
+        return highest_cost_hotel_str
+    
+
+    besthotel = findbesthotel(snowflake_objects)
+    transform_data >> intermediate >> besthotel
+
+dbt_snowpark_dag = dbt_snowpark_dag()
+```
+
+This DAG adds a new Snowpark task called `findbesthotel`, which means it is executed in a virtual environment with Snowpark and other specified dependencies installed. In this case, we installed the `snowflake-ml-python==1.0.9` package to install pandas and other popular data science packages for data analysis. The `findbesthotel` task connects to a Snowflake database and fetches data from the `THIRTY_DAY_AVG_COST` table in the `PUBLIC` schema of the `DEMO_DBT` database. It then converts this data into a pandas DataFrame and finds the hotel with the highest cost. The name of this hotel is converted to a string, printed, and then returned by the task. All of our dbt transformation set up stays almost identical, aside from changing from using dbtDAG to dbtTaskGroup. 
+
+<!-- ------------------------ -->
+## Running our new DAG
+Now that we've add Snowpark to our environment and written our DAG, it's time to restart our Airflow environment and run it! Restart your Airflow environment with the following terminal command
+
+```bash
+astro dev start
+```
 
 <!-- ------------------------ -->
 ## Conclusion
