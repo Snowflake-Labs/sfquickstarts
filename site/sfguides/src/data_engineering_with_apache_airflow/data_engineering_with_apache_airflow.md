@@ -181,39 +181,7 @@ CREATE TABLE customers (
 );
 
 ```
-Then, run the following statements to insert data into these tables. 
 
-```sql
-INSERT INTO bookings_1
-  VALUES
-  (1, 232323231, 'Pan Pacific', TO_DATE('2021-03-19'), 100),
-  (1, 232323232, 'Fullerton', TO_DATE('2021-03-20'), 200),
-  (1, 232323233, 'Fullerton', TO_DATE('2021-04-20'), 300),
-  (1, 232323234, 'Jackson Square', TO_DATE('2021-03-21'), 400),
-  (1, 232323235, 'Mayflower', TO_DATE('2021-06-20'), 500),
-  (1, 232323236, 'Suncity', TO_DATE('2021-03-19'), 600),
-  (1, 232323237, 'Fullerton', TO_DATE('2021-08-20'), 700);
-
-```
-```sql
-INSERT INTO bookings_2
-  VALUES
-  (2, 332323231, 'Fullerton', TO_DATE('2021-03-19'), 100),
-  (2, 332323232, 'Jackson Square', TO_DATE('2021-03-20'), 300),
-  (2, 332323233, 'Suncity', TO_DATE('2021-03-20'), 300),
-  (2, 332323234, 'Jackson Square', TO_DATE('2021-03-21'), 300),
-  (2, 332323235, 'Fullerton', TO_DATE('2021-06-20'), 300),
-  (2, 332323236, 'Suncity', TO_DATE('2021-03-19'), 300),
-  (2, 332323237, 'Berkly', TO_DATE('2021-05-20'), 200);
-
-```
-```sql
-INSERT INTO customers
-  VALUES
-  (1, 'george', 'yates', TO_DATE('1989-03-19'), 12334),
-  (2, 'rishi','kar', TO_DATE('1990-03-10'), 12323);
-
-```
 After you're done, you should have a folder structure that looks like the below: 
 
 ![airflow](assets/data_engineering_with_apache_airflow_8_snowflake_successful_seed.png)
@@ -272,6 +240,51 @@ We will now create a file called ```custom_demo_macros.sql``` under the ```macro
 Now we are done setting up our dbt environment. Your file structure should look like the below screenshot: 
 
 ![airflow](assets/data_engineering_with_apache_airflow_3_dbt_environment_structure.png)
+
+<!-- ------------------------ -->
+## Creating our CSV data files in dbt
+Duration: 10
+
+In this section, we will be prepping our sample csv data files alongside the associated sql models. 
+
+To start, let us first create 3 excel files under the folder ```data``` inside the dbt folder.
+
+bookings_1.csv
+
+```csv
+id,booking_reference,hotel,booking_date,cost
+1,232323231,Pan Pacific,2021-03-19,100
+1,232323232,Fullerton,2021-03-20,200
+1,232323233,Fullerton,2021-04-20,300
+1,232323234,Jackson Square,2021-03-21,400
+1,232323235,Mayflower,2021-06-20,500
+1,232323236,Suncity,2021-03-19,600
+1,232323237,Fullerton,2021-08-20,700
+```
+
+bookings_2.csv
+
+```csv
+id,booking_reference,hotel,booking_date,cost
+2,332323231,Fullerton,2021-03-19,100
+2,332323232,Jackson Square,2021-03-20,300
+2,332323233,Suncity,2021-03-20,300
+2,332323234,Jackson Square,2021-03-21,300
+2,332323235,Fullerton,2021-06-20,300
+2,332323236,Suncity,2021-03-19,300
+2,332323237,Berkly,2021-05-20,200
+```
+
+customers.csv
+```csv
+id,first_name,last_name,birthdate,membership_no
+1,jim,jone,1989-03-19,12334
+2,adrian,lee,1990-03-10,12323
+```
+
+Our folder structure should be like as below
+
+![airflow](assets/data_engineering_with_apache_airflow_4_csv_files.png)
 
 
 <!-- ------------------------ -->
@@ -368,9 +381,13 @@ astronomer-cosmos
 apache-airflow-providers-snowflake
 ```
 
-Next, open up the Dockerfile in your Airflow folder and copy and paste the following code block to create a virtual environment for dbt along with the adapter to connect to Snowflake. It’s recommended to use a virtual environment because dbt and Airflow can have conflicting dependencies.
+Next, open up the Dockerfile in your Airflow folder and copy and paste the following code block to overwrite your existing Dockerfile. These changes will create a virtual environment for dbt along with the adapter to connect to Snowflake. It’s recommended to use a virtual environment because dbt and Airflow can have conflicting dependencies. 
 
 ```
+# syntax=quay.io/astronomer/airflow-extensions:latest
+
+FROM quay.io/astronomer/astro-runtime:9.1.0-python-3.9-base
+
 RUN python -m venv dbt_venv && source dbt_venv/bin/activate && pip install --no-cache-dir dbt-snowflake && deactivate
 ```
 
@@ -515,7 +532,7 @@ The first line tells Docker to use the Astronomer provided BuildKit that enables
 
 In order to use Cosmos and Snowpark together, we'll need to use Cosmos's `dbtTaskGroup` with a normal Airflow DAG instead of a `dbtDAG`. The definition for this is almost identical to the `dbtDAG` approach, and allows us to add additional tasks up or downstream of our dbt workflows. Instead of editing our existing DAG, create a new file called `cosmosandsnowflake.py` in your DAG's folder, and copy the following code into it: 
 
-```
+```python
 from airflow.operators.dummy_operator import DummyOperator
 from astro import sql as aql
 from astro.files import File
@@ -603,11 +620,18 @@ Now that we've add Snowpark to our environment and written our DAG, it's time to
 astro dev start
 ```
 
+Login to the Airflow UI the same way as before, and you should see a new dag called `dbt_snowpark`. Since we already set up our Snowflake connection before, we can just run this new DAG immediately by clicking its blue play button. Then, click on the DAG and open up its graph view to watch it run. It should look like the example below:
+
+
+
+After the DAG has finished running, select the `findbesthotel` and open its log file. If all has gone well, you'll see the most expensive hotel to stay at printed out for your convenience! 
+
+
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-Congratulations! You have created your first Apache Airflow DAG with dbt, Snowflake, and Cosmos! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
+Congratulations! You have created your first Apache Airflow DAG with dbt, Cosmos, Snowflake, and Snowpark! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
 
 ### Additional Resources:
 - Join our [dbt community Slack](https://www.getdbt.com/community/) which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
