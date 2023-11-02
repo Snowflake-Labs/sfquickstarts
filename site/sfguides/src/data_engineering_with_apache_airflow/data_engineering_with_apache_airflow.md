@@ -5,9 +5,9 @@ categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Airflow
+tags: Getting Started, Data Engineering, dbt, Airflow, Snowpark
 
-# Data Engineering with Apache Airflow, Snowflake, dbt & Cosmos
+# Data Engineering with Apache Airflow, Snowflake, Snowpark, dbt & Cosmos
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -22,16 +22,19 @@ Apache Airflow is an open-source workflow management platform that can be used t
 
 [cosmos](https://astronomer.github.io/astronomer-cosmos/index.html) is an Open-Source project that enables you to run your dbt Core projects as Apache Airflow DAGs and Task Groups with a few lines of code.
 
-In this virtual hands-on lab, you will follow a step-by-step guide to using Airflow with dbt to create data transformation job schedulers. 
+Snowflake's [Snowpark](https://www.snowflake.com/en/data-cloud/snowpark/) is a developer experience feature introduced by Snowflake to allow data engineers, data scientists, and developers to write code in familiar programming languages, such as Python, and execute it directly within the Snowflake Data Cloud. Snowpark provides a set of native libraries that make it easier to build complex data transformations, UDFs (User-Defined Functions), and data pipelines without having to rely heavily on SQL. This not only makes it more approachable for those who aren't SQL experts but also enables leveraging the full power and scalability of Snowflake's platform.
+
+In this virtual hands-on lab, you will follow a step-by-step guide to using Airflow with dbt to create scheduled data transformation jobs. Then, you'll learn how you can make use of this data within Snowpark for further analysis via Python and Pandas transformations. 
 
 Let’s get started. 
 ### Prerequisites
-This guide assumes you have a basic working knowledge of Python and dbt
+This guide assumes you have a basic working knowledge of Python, SQL and dbt
 
 ### What You’ll Learn 
 - how to use an opensource tool like Airflow to create a data scheduler
 - how do we write a DAG and upload it onto Airflow
 - how to build scalable pipelines using dbt, Airflow and Snowflake
+- How to use Snowpark to interact with your Snowflake data using Python
 
 ### What You’ll Need 
 You will need the following things before beginning:
@@ -39,6 +42,7 @@ You will need the following things before beginning:
 1. Snowflake
   1. **A Snowflake Account.**
   1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
+  2. **Snowpark Enabled**
 1. GitHub
   1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
 1. Integrated Development Environment (IDE)
@@ -49,7 +53,8 @@ You will need the following things before beginning:
   1. **The Astro CLI Installed.** We will be using the Astro CLI to create our Airflow environments. Please install the Astro CLI on your desired OS by following the [Astro CLI setup instructions](https://docs.astronomer.io/astro/cli/install-cli)
 
 ### What You’ll Build 
-- A simple working Airflow pipeline with dbt and Snowflake 
+- A simple working Airflow pipeline with dbt and Snowflake
+- A slightly more complex Airflow pipeline that incorporates Snowpark to analyze your data with Python 
 
 <!-- ------------------------ -->
 ## Set up of environment
@@ -454,6 +459,17 @@ We will now run our DAG ```cosmos_dag``` to see our dbt models in action! If you
 ![airflow](assets/data_engineering_with_apache_airflow_10_snowflake_successful_transform_analysis.png)
 
 Our ```Transform``` and ```Analysis``` views have been created successfully! Open them to see the results of our analysis, and check out the other tables to see how data was transformed using dbt.
+
+<!-- ------------------------ -->
+## Extending our DAG for Data Analysis with Snowpark
+
+Now that we've gotten our dbt DAG set up, lets extend it by adding Snowpark for some data analysis with Python. To do this, we'll need to change some existing files and add new requirements to our local airflow environment. While we do this, lets stop our Airflow environment by running the following command so we can restart it later with our changes incorporated.
+
+```bash
+astro dev stop
+```
+
+
 
 
 
