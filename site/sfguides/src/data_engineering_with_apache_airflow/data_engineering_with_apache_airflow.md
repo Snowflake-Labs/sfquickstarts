@@ -1,6 +1,6 @@
 author: Adrian Lee, George Yates
 id: data_engineering_with_apache_airflow
-summary: This is a sample Snowflake Guide
+summary: This guide shows you how to build a Data Pipeline with Apache Airflow that manages DBT model transformations and conducts data analysis with Snowpark, all in a single DAG
 categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
@@ -463,7 +463,7 @@ Once the Airflow environment is finished creating and the login credentials appe
 
 Now we're going to create a connection to our Snowflake environment for our DAG to use. Open up the conneections page from the Admin drop down menu and click + to create a new connection. Choose Snowflake as the connection type, and `snowflake_default` as the name for the connection. Then, enter your credentials following the example shown below. The only variables you'll need to change to your own are the password, account name, and region. The rest we set already via the dbt user creation script. 
 
-![airflow](assets/data_engineering_with_apache_airflow_9_example_snowflake_default.png)
+![airflow](assets/data_engineering_with_apache_airflow_9_example_snowflake_conn.png)
 
 <!-- ------------------------ -->
 ## Activating and running our DAGs
