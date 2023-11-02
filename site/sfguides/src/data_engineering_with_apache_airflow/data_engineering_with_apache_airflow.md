@@ -49,6 +49,7 @@ You will need the following things before beginning:
   1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
 1. Docker Desktop
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
+
 1. Astro CLI
   1. **The Astro CLI Installed.** We will be using the Astro CLI to create our Airflow environments. Please install the Astro CLI on your desired OS by following the [Astro CLI setup instructions](https://docs.astronomer.io/astro/cli/install-cli)
 
@@ -456,6 +457,7 @@ Within your Airflow ```dbt_airflow``` directory, enter the below command to star
 astro dev start
 ```
 
+
 Once the Airflow environment is finished creating and the login credentials appear in the terminal window, open up your browser of choice and go to [http://localhost:8080/](http://localhost:8080/) to log into our. The default username  is ```admin``` and password is ```admin```
 
 
@@ -467,6 +469,12 @@ Now we're going to create a connection to our Snowflake environment for our DAG 
 ## Activating and running our DAGs
 
 Now it's time to activate our DAG! First, click on the ```cosmos_dag``` to open up its grid and graph view so we can see the DAG that Cosmos created from our dbt project. It should look exactly like the example below if you open up each task group. Notice that each of your dbt models is rendered as its own task group, with each step of the dbt model rendered as a task. It dynamically generates the dependencies between each model based on the data references between them, without us needing to explicitly create them. 
+
+<!-- ------------------------ -->
+
+## Running our docker-compose file for Airflow
+Duration: 5
+
 
 
 ### Running our cosmos_dag!
@@ -627,6 +635,21 @@ Login to the Airflow UI the same way as before, and you should see a new dag cal
 After the DAG has finished running, select the `findbesthotel` and open its log file. If all has gone well, you'll see the most expensive hotel to stay at printed out for your convenience! 
 
 ![airflow](assets/data_engineering_with_apache_airflow_14_log_view.png)
+
+### View Streamlit Dashboard
+We can now view our analyzed data on a [Streamlit](https://streamlit.io/) dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.  
+
+```bash
+astro dev bash -w
+```
+
+Then, run the following command to start a streamlit application. 
+```bash
+cd include/streamlit/src
+python -m streamlit run ./streamlit_app.py
+```
+
+After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you'd like to enable the ability to ask questions about your data, you'll need to add an OpenAI API key in the .env file and restart your Airflow environment. 
 
 <!-- ------------------------ -->
 ## Conclusion
