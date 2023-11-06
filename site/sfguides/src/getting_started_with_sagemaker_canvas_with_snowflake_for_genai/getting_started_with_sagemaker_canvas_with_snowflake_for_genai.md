@@ -24,6 +24,7 @@ This quickstart is designed to serve as an introduction for using Snowflake with
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
 - Familiarity with SageMaker and an AWS account
 - Familiarity with Canvas and a Canvas Service available in Sagemaker
+- Active Bedrock service
 
 ### You'll Learn
 - How to get started with Sagemaker Canvas
@@ -116,7 +117,7 @@ Your Snowflake environment should look like this:
 ## Set Up Sagemaker Canvas
 Duration: 10
 
-Open up your Sagemaker Canvas application and click on the datasets blade on the left side then click create in the upper left and select a tabular dataset then name the dataset "loan-data" and click create.
+Open up your Sagemaker Canvas application and click on the datasets blade (this is changing to the Data Preparation blade soon) on the left side then click create in the upper left and select a tabular dataset then name the dataset "loan-data" and click create.
 ![](assets/canvas-create-dataset.png)
 
 Navigate to the Data Source menu at the top left and select Snowflake as the data source you will then populate your Snowflake AccountID and utilize username and password to connect to Snowflake. The connection should look similar to this.
@@ -130,24 +131,50 @@ Canvas has this great interface with the Snowflake connection where you can perf
 Go ahead and selection the "HOL_WH" warehouse from the Warehouse dropdown then find the LOAN_ONE and LOAN_TWO tables in CANVAS_DB.PUBLIC and drag and drop them into the workspace. Canvas will recognize that the tables will be joined on the ID field. For transformations this all that we will be doing in this lab, but you can check out [this link](https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-prepare-data.html) to learn about all of the data prep functionality inside of Canvas. Additionally, you scroll down to the preview and look at the exploratory capabilities in Canvas
 
 Your workspace should look something like this:
+
 ![](assets/canvas-dataset.png)
 
 
 Click on "Create Dataset" and now you've created a Canvas dataset!
+
 <!-- ------------------------ -->'
 ## Talking to your data
-Duration: 5
+Duration: 10
+
+Before chatting with data you will want to make sure that you have access to Anthropic models through the Bedrock service. Head to the Bedrock service and select "Model Access", then check to make sure that you have access to the Anthropic models. You can request access if you don't have access. The chat with data functionality uses Anthropic models via Bedrock so expect standard Bedrock charges to apply when using chat with data.
+![](assets/bedrockaccess.png)
+
+"Chat with data" is part of the Canvas data flow experience which allows users to analyze and prepare their data with a no code experience and create an easy to understand flow that tracks the lineage of the analysis and preparation steps. To start a data flow you have to first access your data.
+
+
+In the Dataset (or Data Preparation) blade you will now click on the dataset that you just created and click crate a data flow at the top of the screen and name it "chat-flow" then click create.
+![](assets/chatflow.png)
+
+Now, lets walk through some prompts. Select "chat with data" at the top and in the prompt type "what is the average employment length" and hit enter. It should take several seconds, but you should get 5.09 years. Notice that you didn't have to use the exact field name that's in the data.
+
+Let's try do some aggregations by some other parameter. Type "what is the average loan amount by purpose", it looks like small business loans are the largest on average.
+
+Now let's try producing some plots, type "plot interest rate against loan amount" and now you can see a plot that you can download along with the code that was used to produce it!
+![](assets/correlationplot.png)
+
+Let's product a time series plot by typing "plot the monthly loan amount". You should produce a plot that looks like this:
+![](assets/monthlyloan.png)
+
+You can see how valuable chat with data is for doing some exploratory analysis very quickly or you can produce formal analyses using plain text and download many of the artifacts.
+
+Lastly, let's type "can you detect anomalies in the data" and after several seconds you will get a prompt to add this analysis. Click "add to analysis" and after ~1 minute it will be added to the analysis. Now click on the data flow in the breadcrumbs at the top and click into the Data Quality and Insights Report that has been added to the data flow. You can see the new insights report complete with anomaly detection that has been added to your data flow!
+![](assets/anomaly.png)
 
 
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
 Duration: 5
 
-This quickstart is just that, a quick way to get you started with using SageMaker with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
-
+This quickstart is just that, a quick way to get you started with using Canvas with Chat with Data with Snowflake. We encourage users to continue to explore using their Snowflake with Canvas and the many ways that Canvas allows users to leverage Generative AI services easily with their data.
 
 ### What We covered
 - Connecting to Snowflake data from Sagemaker Canvas
+- Build a Canvas dataset and data flow
 - Utilizing GenAI functionality in Canvas with Snowflake data to generate insights
 
 ### Additional Considerations
