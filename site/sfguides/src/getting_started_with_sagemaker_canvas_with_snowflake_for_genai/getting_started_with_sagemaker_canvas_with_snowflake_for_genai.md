@@ -144,11 +144,15 @@ Duration: 10
 Before chatting with data you will want to make sure that you have access to Anthropic models through the Bedrock service. Head to the Bedrock service and select "Model Access", then check to make sure that you have access to the Anthropic models. You can request access if you don't have access. The chat with data functionality uses Anthropic models via Bedrock so expect standard Bedrock charges to apply when using chat with data.
 ![](assets/bedrockaccess.png)
 
+
+
 "Chat with data" is part of the Canvas data flow experience which allows users to analyze and prepare their data with a no code experience and create an easy to understand flow that tracks the lineage of the analysis and preparation steps. To start a data flow you have to first access your data.
 
 
 In the Dataset (or Data Preparation) blade you will now click on the dataset that you just created and click crate a data flow at the top of the screen and name it "chat-flow" then click create.
 ![](assets/chatflow.png)
+
+
 
 Now, lets walk through some prompts. Select "chat with data" at the top and in the prompt type "what is the average employment length" and hit enter. It should take several seconds, but you should get 5.09 years. Notice that you didn't have to use the exact field name that's in the data.
 
@@ -157,8 +161,12 @@ Let's try do some aggregations by some other parameter. Type "what is the averag
 Now let's try producing some plots, type "plot interest rate against loan amount" and now you can see a plot that you can download along with the code that was used to produce it!
 ![](assets/correlationplot.png)
 
-Let's product a time series plot by typing "plot the monthly loan amount". You should produce a plot that looks like this:
+
+
+Let's produce a time series plot by typing "plot the monthly loan amount". You should produce a plot that looks like this:
 ![](assets/monthlyloan.png)
+
+
 
 You can see how valuable chat with data is for doing some exploratory analysis very quickly or you can produce formal analyses using plain text and download many of the artifacts.
 
@@ -180,10 +188,10 @@ This quickstart is just that, a quick way to get you started with using Canvas w
 ### Additional Considerations
 - There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
 
-- [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
-
-- [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
+- [Sagemaker Canvas](https://aws.amazon.com/sagemaker/canvas/)
 
 - [AWS and Snowflake](https://aws.amazon.com/financial-services/partner-solutions/snowflake/)
+
+- [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
 
 If you have any questions, reach out to your Snowflake account team!
