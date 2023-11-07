@@ -87,7 +87,7 @@ USE SCHEMA mlpf;
 
 -- Create warehouse to work with: 
 CREATE OR REPLACE WAREHOUSE quickstart_wh;
-USE quickstart_wh;
+USE WAREHOUSE quickstart_wh;
 
 -- Set search path for MLPFs:
 ALTER ACCOUNT
@@ -204,7 +204,7 @@ CREATE OR REPLACE TABLE macncheese_predictions AS (
         TABLE(RESULT_SCAN(-1))
 );
 
--- Visualize the reuslts, overlaid on top of one another: 
+-- Visualize the results, overlaid on top of one another: 
 SELECT
     timestamp,
     total_sold,
@@ -287,10 +287,11 @@ CREATE OR REPLACE VIEW allitems_vancouver as (
         vs.timestamp,
         vs.menu_item_name,
         vs.total_sold,
-        ch.holiday_name
+        coalesce(ch.holiday_name, '') as holiday_name
     FROM 
         vancouver_sales vs
         left join canadian_holidays ch on vs.timestamp = ch.date
+    WHERE MENU_ITEM_NAME in ('Mothers Favorite', 'Bottled Soda', 'Ice Tea')
 );
 
 -- Train Model: 
@@ -401,6 +402,7 @@ CREATE OR REPLACE VIEW vancouver_anomaly_training_set AS (
 SELECT *
 FROM vancouver_sales
 WHERE timestamp < (SELECT max(timestamp) FROM vancouver_sales) - interval '1 Month'
+AND MENU_ITEM_NAME IN ('Smoky and Spicy BBQ Sauce', 'Fried Pickles')
 );
 
 -- Create a view containing the data we want to make inferences on: 
