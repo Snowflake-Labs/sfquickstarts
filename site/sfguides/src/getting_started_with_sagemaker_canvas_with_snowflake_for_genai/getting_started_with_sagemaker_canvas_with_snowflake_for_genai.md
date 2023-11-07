@@ -5,7 +5,7 @@ categories: getting-started,data-science-&-ml,data-engineering,app-development, 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Generative AI, LLM, AWS
+tags: Getting Started, Data Science, Data Engineering, Generative AI, LLM, AWS, Sagemaker, Canvas, ML
 
 # Getting Started with Canvas and Snowflake for Generative AI Use Cases
 <!-- ------------------------ -->
