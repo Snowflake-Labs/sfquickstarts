@@ -10,7 +10,8 @@ tags: Getting Started, Data Engineering
 # Getting Started with Keboola 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
+
+Duration: 1
 
 
 Modern Data Stack requires setup and maintenance and Snowflake goes a long way to lowering the bar.
@@ -22,96 +23,125 @@ This Quickstart will guide you to build a complete data pipeline from ingestion,
 ### Prerequisites
 - Familiarity with Snowflake
  
-### What You’ll Learn 
+### What You’ll discover 
 * How to start working with Keboola
 * How to create a flow based on Keboola template
 * How to configure Keboola template 
 * How to work with SQL transformation in Snowflake
+* Introduction to Snowpark Python UDF
 * How to run Keboola flow
 * How to visualize data with Streamlit
  
 ### ![Template](assets/important-point-icon.png) What You’ll Need 
-- A [Snowflake](https://trial.snowflake.com/) account or free trial
-* A [Keboola](https://snowshop.keboola.com/) account or free trial
+- A [Snowflake](https://trial.snowflake.com/) account or free trial with an ACCOUNTADMIN user.
 
 ### What You’ll Build 
-- A complete data pipeline from Shopify and FaceBook Ads. The Keboola template will automatically join, clean and transform data into Snowflake. Within few clicks, Keboola will generates RFM segmentation to optimize the monetization of your online traffic. A predefined Streamlit "Connected application" closes the loop to visualise data, create marketing discount simulations and write back results into Snowflake. 
+- A complete data pipeline from Shopify. The Keboola template will automatically join, clean and transform data into Snowflake. Within few clicks, Keboola will generate all necessary steps plus a Streamlit Application to interact with data. The template will also generate a Snowpark UDF to create RFM segmentation. This will help you to optimize the monetization of your online traffic.
 
 ![Template](assets/template.png) 
 
-
-## Setup Snowflake Account
+## Create Keboola Account with Partner Connect
 Duration: 5
 
-Here we'll prepare everything for Keboola to write into Snowflake account:
+### Step 1 
+1. Login to **Snowflake Snowsight**.
+2. Switch role to **ACCOUNTADMIN**.
+3. Click **Admin > Partner Connect**.
+4. Search for **Keboola**.
+![kebPC](assets/pctile.png) 
+5. Click **Keboola** tile.
 
-- Get hostname information
-- Create DB
-- Create Schema
-- Create Warehouse
-- Set default Warehouse for User
+### Step 2
+1. See objects that will be created in Snowflake.
+2. Click **Connect**.<BR>
+![PartnerConnect](assets/pcinfo.png)
+
+### Step 3
+1. Click **Activate**.<BR>
+![PartnerConnect](assets/pcactivate.png)
+
+### Troubleshooting
+
+You must have a verified email in your profile. Otherwise you'll get the following message:
+
+![PartnerConnect](assets/pcemailverif.png)
+
+You also MUST have a first name and last name in your profile:
+
+Open your profile:
+
+![PartnerConnect](assets/pcprofile1.png)
+
+Add email, first and last name:
+
+![PartnerConnect](assets/pcprofile2.png)
+
+## Activate Keboola Account
+Duration: 2
+
+### Define your Keboola password
+After you have clicked "Activate" from the previous section, you'll land on Keboola's Welcome page to define your password:
+
+![PartnerConnect](assets/pckebaccountactivation.png)
+
+### Enable full features
+
+Congratulation, you have now a Keboola account!
+
+We need to enable all features for this lab. It's a simple process. 
+
+Click on "Enable All Features" link:
+
+![PartnerConnect](assets/pcenablelink.png)
+
+Copy the SQL code from the Keboola UI:
+
+![PartnerConnect](assets/pcenableall.png)
+
+In Snowflake Snowsight, open a new worksheet, paste the code and select "Run All", be sure all rows are executed!
+
+![PartnerConnect](assets/pcenableallsnow.png)
+
+Go back to Keboola, you should see the following:
+
+![PartnerConnect](assets/pcenableallsuccess.png)
+
+
+## Get Snowflake Account URL
+Duration: 1
+
+Here we'll prepare everything for Keboola to write into Snowflake account, remember Partner Connect flow already created a DB (PC_KEBOOLA_DB) and a warehouse (PC_KEBOOLA_WH):
+
+- Get hostname information, note for later usage
 
 Login to Snowflake trial account
 
 - Get host name:
 
+![PartnerConnect](assets/hostname.png)
+
 At the left bottom of the screen, hover the account and click on "Copy account URL".
 
 Paste the content in safe place to reuse later.
 
-![Template Creation](assets/hostname.png)
-
-- Create a new Database:
-
-Click the blue button to create the new database
-
-![Template Creation](assets/newdb.png)
-
- 
-![Template](assets/important-point-icon.png) PLEASE USE THE NAME "SHOP_DB" FOR LATER INSTRUCTIONS
-![Template Creation](assets/newdb2.png)
-
-- Create a new Schema:
-
-Select the "SHOP_DB" and create a new schema:
-
-![Template Creation](assets/schema1.png)
-
-
-![Template](assets/important-point-icon.png) PLEASE USE THE NAME "SHOP_SC" FOR LATER INSTRUCTIONS
-
-![Template Creation](assets/schema2.gif)
-
-- Create Warehouse:
-
-Navigate to the "Warehouses" section in Admin, click "+ Warehouse"
-
-Select X-Small size
-
-Enter the name (SHOP_WH) and click "Create Warehouse"
-
-  ![Template Creation](assets/newwh.png)
-
-- Set default Warehouse:
-
-Navigate to the "Users & Roles" section in Admin, select the ... on your user and click "Edit"
-
-  ![Template Creation](assets/defaultwh.png)
-
-Select the warehouse previously created (SHOP_WH)
-
-  ![Template Creation](assets/defaultwh2.png)
-
-Click "Save User"
-
 ## Instantiate the Template
-Duration: 2
+Duration: 3
 
-Let's move to Keboola platform, after you have created your Keboola trial account, login to the platform and navigate to the "Use Cases" tabs. 
+We need first to activate the Data Apps feature in Keboola:
 
-In the searchbar, type "virtual"
+In the top right corner, select your user and navigate to "Settings"
 
-![Template](assets/important-point-icon.png) Be sure you select the correct template "Snowflake Virtual Hands on Lab".
+![Template Creation](assets/menufeat.png)
+
+Activate the Data Apps Feature:
+
+![Template Creation](assets/dataappfeat.png)
+
+Let's move to Keboola platform, after you have created your Keboola trial account, login to the platform and navigate to the "Templates" tabs. 
+
+In the searchbar, type "RFM"
+
+![Template](assets/important-point-icon.png) Be sure you select the correct template "Shopify RFM Analysis with Streamlit".
 
 ![Template Creation](assets/template_creation.png)
 
@@ -137,13 +167,13 @@ For our lab, we'll need to setup only Snowflake.
 ![Template Creation](assets/tpoverview.png)
 
 
-We need to enter Snowflake information in the last step of the flow:
+We need to enter Snowflake information in the "Snowflake Destination" step of the flow:
 
 Click on "Edit Configuration"
 
 ![Template Creation](assets/snowinfo1.png)
 
-Add the information we created during step 1
+Add the information we created during step 4 (Get Snowflake Account URL) 
 
 ![Template Creation](assets/snowinfo.png)
 
@@ -155,48 +185,17 @@ Add the information we created during step 1
 
 ![Template](assets/important-point-icon.png) Password is your Snowflake password
 
-![Template](assets/important-point-icon.png) Database Name is "SHOP_DB"
+![Template](assets/important-point-icon.png) Database Name is "PC_KEBOOLA_DB"
 
-![Template](assets/important-point-icon.png) Scheam Name is "SHOP_SC"
+![Template](assets/important-point-icon.png) Schema Name is "PUBLIC"
 
-![Template](assets/important-point-icon.png) Warehouse is "SHOP_WH"
+![Template](assets/important-point-icon.png) Warehouse is "PC_KEBOOLA_WH"
 
 Save the template: 
 
 ![Template](assets/savetp.png) 
 
-
-## Run the Flow
-Duration: 10
-
-The template generated a Keboola Flow. A flow is a sequence of actions.
-
-Navigate to the generated flow:
-
-![Template](assets/flow.gif)
-
-We are now ready to run it!
-
-![Template](assets/run.gif)
-
-The run will last about 10mn for the first time, about 5mn for subsequent, you can track the progress:
-
-![Template](assets/track.gif)
-
-Success!
-
-![Template](assets/results.png)
-
-## See results in Snowflake
-Duration: 2
-
-Open your Snowflake web tab and check the SHOP_DB content.
-
-You should see the tables created:
-
-![Template](assets/ressnow.png)
-
-## Get information for Streamlit connection
+## Configure the Data App Secrets
 Duration: 5
 
 ### Get Keboola token:
@@ -209,31 +208,72 @@ Navigate to token page in Keboola:
 
 ![Template Creation](assets/tokenk.gif)
 
-Generate the token, do not forget to set "Full Access" and to copy the value !
+![Template](assets/important-point-icon.png)  Generate the token, do not forget to set "Full Access" and to copy the value, paste into a text file!
 
 ![Template Creation](assets/tokenk2.gif)
 
 ### Get Snowflake account name:
 
-At the left bottom of the screen, hover the account and click on "Copy account URL".
+![Template](assets/important-point-icon.png) At the left bottom of the screen, hover the account and click on "Copy account URL" paste into a text file!
 
 ![Template Creation](assets/hostname.png)
 
-The URL is: 
+Navigate to the Flow page:
+![Template](assets/navflow.png) 
 
-https://_XXXXXX.eu-central-1_.snowflakecomputing.com
+Select the Flow:
+![Template](assets/navflow2.png) 
 
-The pattern is [protocol][locator][region].snowflakecomputing.com
+Scroll down in the Flow and select the "RFM Analysis Data App", click on "Edit Configuration":
 
-![Template](assets/important-point-icon.png) We need only [locator][region]
+![Template](assets/navconfapp.png) 
 
-**Our account ID to connect Streamlit application will be:**
+Change the values according to your Snowflake account and Keboola API token:
 
-***XXXXXX.eu-central-1***
+![Template](assets/important-point-icon.png) user and password are your SNOWFLAKE user and password
 
-![Template](assets/important-point-icon.png) Change the region accordingly !
+![Template](assets/important-point-icon.png) account is the snowflake URL you have pasted in your text file
 
-## Connect with Streamlit
+![Template](assets/important-point-icon.png) keboola_key is the keboola API token you have pasted in your text file
+
+![Template Creation](assets/appsecrets.png)
+
+## Run the Flow
+Duration: 10
+
+The template generated a Keboola Flow. A flow is a sequence of actions.
+
+Navigate to the Flow page:
+![Template](assets/navflow.png) 
+
+Select the Flow:
+![Template](assets/navflow2.png) 
+
+Run the Flow:
+
+![Template](assets/flowrun.png) 
+
+Monitor the run:
+
+![Template](assets/flowrunnav.png)
+
+The inital run can take about 10mn, subsequent will take only few mn.
+
+Success!
+
+![Template](assets/success.png)
+
+## See results in Snowflake
+Duration: 2
+
+Open your Snowflake web tab and check the PC_KEBOOLA_DB content.
+
+You should see the tables created:
+
+![Template](assets/ressnow.png)
+
+
+## Open Streamlit
 Duration: 5
 
 We have seen Keboola Shopify template in action. We have now a complete set of tables in Snowflake with Shopify sales data including an RFM segmentation, ready to use!
@@ -242,7 +282,7 @@ We have seen Keboola Shopify template in action. We have now a complete set of t
 _RFM stands for Recency, Frequency, and Monetary value, each corresponding to some key customer charasteritics. These RFM metrics are important indicators of a customer’s behavior because frequency and monetary value affects a customer’s lifetime value, and recency affects retention, a measure of engagement_
 
 
-In this section, we'll leverage this segmentation in a Streamlit application.
+In this section, we'll leverage this segmentation in the Streamlit application, automatically created from the template.
 
 This application will :
 
@@ -253,24 +293,16 @@ This application will :
 - Get targeted customer list and expected discount to trigger a marketing campaign
 - Write back this information in Keboola for a next flow to create the campaign
 
-From the previous step, you have now your Snowflake credentials, account information and Keboola token.
+Navigate to the Data Apps section
 
-### Connect the Streamlit Application:
+![Template Creation](assets/navapp.png)
 
-Navigate to application: [Link](https://aalteirac-streamlit-keboola-vhol-main-4lsmmy.streamlitapp.com/)
+Open the Data App
 
-![Template Creation](assets/stream.png)
-
-Click "Connect" to validate.
-
-Select the Keboola region (you can check with your browser in the keboola tab) end enter the Keboola token
-
-![Template Creation](assets/tokinput.png)
-
-You are now connected !
+![Template Creation](assets/openapp.png)
 
 ## Play with Data
-Duration: 8
+Duration: 5
 
 If your Snowflake information are correct, after clicking "Connect" you should see:
 
@@ -371,6 +403,20 @@ Check the DB, Schema, Warehouse:
 
 ![Template Creation](assets/checkCred.png)
 
+### Your Data Application secrets are wrong
+
+Navigate to the Data Apps section:
+
+![Template](assets/navapp.png) 
+
+Open the configuration:
+
+![Template](assets/navsecapp.png) 
+
+Correct the secrets:
+
+![Template Creation](assets/appsecrets.png)
+
 ## Conclusion
 Duration: 1
 
@@ -386,6 +432,6 @@ Congratulations! You've successfully built a complete data pipeline from ingesti
 ### Related Resources
 
   - [Keboola documentation](https://help.keboola.com/)
-  - [Github Streamlit source code](https://github.com/Snowflake-Labs/sfguide-getting-started-keboola-streamlit)
+  - [Github Streamlit source code](https://github.com/sfc-gh-aalteirac/streamlit_keboola_vhol_pc)
   - [Keboola Streamlit Component](https://pypi.org/project/streamlit-keboola-api/)
 

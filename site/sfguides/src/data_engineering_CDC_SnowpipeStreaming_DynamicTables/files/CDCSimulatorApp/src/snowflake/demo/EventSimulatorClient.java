@@ -84,16 +84,17 @@ public class EventSimulatorClient {
         if(!SPEED.equalsIgnoreCase("MAX")) {
           if(id==0) {
             System.out.println();
-            System.out.println(" *** SLOW=1,000/second   SLOOW=100/second    SLOOOW=10/second ***");
+            System.out.println(" *** SLOW=1,000/second   SLOOW=100/second    SLOOOW=10/second    SLOOOOW=1/second  ***");
             TimeUnit.SECONDS.sleep(5);
           }
           if(SPEED.equalsIgnoreCase("SLOW")) TimeUnit.MILLISECONDS.sleep(1);  // 1000/second
           else if(SPEED.equalsIgnoreCase("SLOOW")) TimeUnit.MILLISECONDS.sleep(10);  // 100/second
           else if(SPEED.equalsIgnoreCase("SLOOOW")) TimeUnit.MILLISECONDS.sleep(100);  // 10/second
+          else if(SPEED.equalsIgnoreCase("SLOOOOW")) TimeUnit.MILLISECONDS.sleep(1000);  // 1/second
           else System.out.println("Speed Input Parameter unknown, ignored:  "+SPEED);
           System.out.print(id+" ");
         }
-	    row.put("RECORD_CONTENT", ES.getEvent(id));  // one column
+	      row.put("RECORD_CONTENT", ES.getEvent(id));  // one column
 
         InsertValidationResponse response = channel1.insertRow(row, String.valueOf(id));
         if (response.hasErrors()) {

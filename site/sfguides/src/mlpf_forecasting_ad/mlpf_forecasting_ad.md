@@ -54,12 +54,12 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight),
 The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about) provides mutiple listings for data you may use for analytical purposes. We will be leveraging the open data aggregated by Cybersyn for this quickstart, which contains a database of holidays to enrich our sales data. 
 
 - Log into your Snowflake account as the ACCOUNTADMIN or similar role
-- Follow the steps below to access the Cybersyn US & International Government Essentials listing in your account. 
+- Follow the steps below to access the Cybersyn Government Essentials listing in your account. 
   - Click on 'Marketplace' on the left hand banner:
   
     <img src = "assets/marketplace.png">
   
-  - In the search bar, search for 'Cybersyn US & International Government Essentials'
+  - In the search bar, search for 'Cybersyn Government Essentials'
     
   - Click on the first listing, with the same title: 
 
@@ -87,7 +87,7 @@ USE SCHEMA mlpf;
 
 -- Create warehouse to work with: 
 CREATE OR REPLACE WAREHOUSE quickstart_wh;
-USE quickstart_wh;
+USE WAREHOUSE quickstart_wh;
 
 -- Set search path for MLPFs:
 ALTER ACCOUNT
@@ -111,7 +111,7 @@ CREATE OR REPLACE TABLE quickstart.mlpf.tasty_byte_sales(
 	PRIMARY_CITY VARCHAR(16777216),
 	MENU_ITEM_NAME VARCHAR(16777216),
 	TOTAL_SOLD NUMBER(17,0)
-)
+);
 
 -- Ingest data from s3 into our table
 COPY INTO quickstart.mlpf.tasty_byte_sales 
@@ -204,7 +204,7 @@ CREATE OR REPLACE TABLE macncheese_predictions AS (
         TABLE(RESULT_SCAN(-1))
 );
 
--- Visualize the reuslts, overlaid on top of one another: 
+-- Visualize the results, overlaid on top of one another: 
 SELECT
     timestamp,
     total_sold,
@@ -227,6 +227,8 @@ ORDER BY
 <img src = "assets/lobster_cheese.png">
 
 There we have it! We just created our first set of predictions for the next 10 days worth of demand, which can be used to inform how much inventory of raw ingredients we may need. As shown from the above visualization, there seems to also be a weekly trend for the items sold, which the model was also able to pick up on. 
+
+**Note:** You may notice that your chart has included the null being represented as 0's. Make sure to select the 'none' aggregation for each of columns as shown on the right hand side of the image above to reproduce the image. 
 
 ### Step 4: Understanding Forecasting Output & Configuration Options
 
@@ -285,10 +287,11 @@ CREATE OR REPLACE VIEW allitems_vancouver as (
         vs.timestamp,
         vs.menu_item_name,
         vs.total_sold,
-        ch.holiday_name
+        coalesce(ch.holiday_name, '') as holiday_name
     FROM 
         vancouver_sales vs
         left join canadian_holidays ch on vs.timestamp = ch.date
+    WHERE MENU_ITEM_NAME in ('Mothers Favorite', 'Bottled Soda', 'Ice Tea')
 );
 
 -- Train Model: 
@@ -399,6 +402,7 @@ CREATE OR REPLACE VIEW vancouver_anomaly_training_set AS (
 SELECT *
 FROM vancouver_sales
 WHERE timestamp < (SELECT max(timestamp) FROM vancouver_sales) - interval '1 Month'
+AND MENU_ITEM_NAME IN ('Smoky and Spicy BBQ Sauce', 'Fried Pickles')
 );
 
 -- Create a view containing the data we want to make inferences on: 
@@ -541,13 +545,16 @@ warehouse = test
 after AD_VANCOUVER_TRAINING_TASK
 as call send_anomaly_report();
 
--- Execute the tasks to run and send email: 
+-- Steps to immediately execute the task:  
+ALTER TASK SEND_ANOMALY_REPORT_TASK RESUME;
+ALTER TASK AD_VANCOUVER_TRAINING_TASK RESUME;
 EXECUTE TASK AD_VANCOUVER_TRAINING_TASK;
 ```
 Some considerations to keep in mind from the above code: 
 1. **Use the freshest data available**: In the code above, we used `vancouver_anomaly_analysis_set` to retrain the model, which, because the data is static, would contain the same data as the original model. In a production setting, you may accordingly adjust the input table/view to have the most updated dataset to retrain the model.
 2. **Sending emails**: This requires you to set up an integration, and specify who the recipients of the email should be. When completed appropriately, you'll recieve an email from `no-reply@snowflake.net`, as seen below. 
 3. **Formatting results**: We've made use of a snowpark stored procedure, to take advantage of the functions that pandas has to neatly present the resultset into an email. For futher details and options, refer to this [medium post](https://medium.com/snowflake/hey-snowflake-send-me-an-email-243741a0fe3) by Felipe Hoffa.
+4. **Executing the Tasks**: We have set this task to run the first of every month - if you would like to run it immediately, you'll have to change the state of the task to `RESUME` as shown in the last three lines of code above, before executing the parent task `AD_VANCOUVER_TRAINING_TASK`. Note that we have orchestrated the task to send the email to the user *after* the model has been retrained. After executing, you may expect to see an email similar to the one below within a few minutes.
 
 <img src = "assets/email_report.png">
 

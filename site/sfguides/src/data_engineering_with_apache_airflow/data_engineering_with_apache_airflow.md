@@ -1,13 +1,13 @@
-author: Adrian Lee
+author: Adrian Lee, George Yates
 id: data_engineering_with_apache_airflow
-summary: This is a sample Snowflake Guide
+summary: This guide shows you how to build a Data Pipeline with Apache Airflow that manages DBT model transformations and conducts data analysis with Snowpark, all in a single DAG
 categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Airflow
+tags: Getting Started, Data Engineering, dbt, Airflow, Snowpark
 
-# Data Engineering with Apache Airflow, Snowflake & dbt
+# Data Engineering with Apache Airflow, Snowflake, Snowpark, dbt & Cosmos
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -16,20 +16,25 @@ Duration: 5
 
 Numerous business are looking at modern data strategy built on platforms that could support agility, growth and operational efficiency. Snowflake is Data Cloud, a future proof solution that can simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance.
 
-Apache Airflow is an open-source workflow management platform that can be used to author and manage data pipelines. Airflow uses worklows made of directed acyclic graphs (DAGs) of tasks. 
+Apache Airflow is an open-source workflow management platform that can be used to author and manage data pipelines. Airflow uses workflows made of directed acyclic graphs (DAGs) of tasks. The [Astro CLI](https://docs.astronomer.io/astro/cli/overview) is a command line interface for Airflow developed by Astronomer. It's the easiest way to get started with running Apache Airflow locally
 
 [dbt](https://www.getdbt.com/) is a modern data engineering framework maintained by [dbt Labs](https://www.getdbt.com/) that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) is the command line interface for running dbt projects. The CLI is free to use and open source.
 
-In this virtual hands-on lab, you will follow a step-by-step guide to using Airflow with dbt to create data transformation job schedulers. 
+[cosmos](https://astronomer.github.io/astronomer-cosmos/index.html) is an Open-Source project that enables you to run your dbt Core projects as Apache Airflow DAGs and Task Groups with a few lines of code.
+
+Snowflake's [Snowpark](https://www.snowflake.com/en/data-cloud/snowpark/) is a developer experience feature introduced by Snowflake to allow data engineers, data scientists, and developers to write code in familiar programming languages, such as Python, and execute it directly within the Snowflake Data Cloud. Snowpark provides a set of native libraries that make it easier to build complex data transformations, UDFs (User-Defined Functions), and data pipelines without having to rely heavily on SQL. This not only makes it more approachable for those who aren't SQL experts but also enables leveraging the full power and scalability of Snowflake's platform.
+
+In this virtual hands-on lab, you will follow a step-by-step guide to using Airflow with dbt to create scheduled data transformation jobs. Then, you'll learn how you can make use of this data within Snowpark for further analysis via Python and Pandas transformations. 
 
 Let’s get started. 
 ### Prerequisites
-This guide assumes you have a basic working knowledge of Python and dbt
+This guide assumes you have a basic working knowledge of Python, SQL and dbt
 
 ### What You’ll Learn 
 - how to use an opensource tool like Airflow to create a data scheduler
 - how do we write a DAG and upload it onto Airflow
 - how to build scalable pipelines using dbt, Airflow and Snowflake
+- How to use Snowpark to interact with your Snowflake data using Python
 
 ### What You’ll Need 
 You will need the following things before beginning:
@@ -37,17 +42,20 @@ You will need the following things before beginning:
 1. Snowflake
   1. **A Snowflake Account.**
   1. **A Snowflake User created with appropriate permissions.** This user will need permission to create objects in the DEMO_DB database.
+  2. **Snowpark Enabled**
 1. GitHub
   1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
-  1. **A GitHub Repository.** If you don't already have a repository created, or would like to create a new one, then [Create a new respository](https://github.com/new). For the type, select `Public` (although you could use either). And you can skip adding the README, .gitignore and license for now.
 1. Integrated Development Environment (IDE)
   1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
-  1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
-1. Docker
+1. Docker Desktop
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
 
+1. Astro CLI
+  1. **The Astro CLI Installed.** We will be using the Astro CLI to create our Airflow environments. Please install the Astro CLI on your desired OS by following the [Astro CLI setup instructions](https://docs.astronomer.io/astro/cli/install-cli)
+
 ### What You’ll Build 
-- A simple working Airflow pipeline with dbt and Snowflake 
+- A simple working Airflow pipeline with dbt and Snowflake
+- A slightly more complex Airflow pipeline that incorporates Snowpark to analyze your data with Python 
 
 <!-- ------------------------ -->
 ## Set up of environment
@@ -56,48 +64,31 @@ Duration: 2
 First, let us create a folder by running the command below
 
 ```
-mkdir dbt_airflow && cd "$_"
+mkdir dbt_airflow && cd dbt_airflow
 ```
 
-Next, we will get our docker-compose file of our Airflow. To do so lets do a curl of the file onto our local laptop
+Next, we will use the Astro CLI to create a new Astro project by running the following command. An Astro project contains the set of files necessary to run Airflow, including dedicated folders for your DAG files, plugins, and dependencies.
 
 ```bash
-curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.yaml'
+astro dev init
 ```
 
-We will be now adjusting our docker-compose file - add in our 2 folders as volumes. The `dags` is the folder where the Airflow DAGs are placed for Airflow to pick up and analyse. The `dbt` is the folder in which we configured our dbt models and our CSV files. 
+Now, navigate into the DAG's folder that the Astro CLI created, and create a new folder called dbt by running the following command. 
 
 ```bash
-  volumes:
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./plugins:/opt/airflow/plugins
-    - ./dbt:/dbt # add this in
-    - ./dags:/dags # add this in
-
+mkdir dbt && cd dbt
 ```
 
-We would now need to create additional file with additional docker-compose parameters. This way dbt will be installed when the containers are started.
+Next, run the following command to install dbt and create all the necessary folders for your project. It will prompt you for a name for your project, enter 'cosmosproject'. 
 
-`.env`
 ```bash
-_PIP_ADDITIONAL_REQUIREMENTS=dbt==0.19.0
+dbt init
 ```
 
----
-We would now need to create a `dbt` project as well as an `dags` folder. 
-
-For the dbt project, do a ```dbt init dbt``` - this is where we will configure our dbt later in step 4.
-
-For the dags folder, just create the folder by doing 
-
-```
-mkdir dags
-```
 
 Your tree repository should look like this
 
-![Folderstructure](assets/data_engineering_with_apache_airflow_1_tree_structure.png)
+![Folderstructure](assets/data_engineering_with_apache_airflow_dbt_folder_structure.png)
 
 <!-- ------------------------ -->
 ## Setting up our dbt Project
@@ -107,9 +98,9 @@ Now that we have gotten our repo up, it is time to configure and set up our dbt 
 
 Before we begin, let's take some time to understand what we are going to do for our dbt project.
 
-As can be seen in the diagram below, we have 3 csv files ```bookings_1```, ```bookings_2``` and ```customers ```. We are going to seed these csv files into Snowflake as tables. This will be covered in step 4 in detailed later.
+As can be seen in the diagram below, we have 3 csv files ```bookings_1```, ```bookings_2``` and ```customers ```. We are going to seed these csv files into Snowflake as tables. This will be detailed later.
 
-Following this, we are going to merge ```bookings_1``` and ```bookings_2``` tables into ```combined_bookings```. Next, we are going to join the ```combined_bookings``` and ```customer``` table on customer_id to form the ```prepped_data``` table. 
+Following this, we are going to use dbt to merge ```bookings_1``` and ```bookings_2``` tables into ```combined_bookings```. Then, we are going to join the ```combined_bookings``` and ```customer``` table on customer_id to form the ```prepped_data``` table. 
 
 Finally, we are going to perform our analysis and transformation on the ```prepped_data``` by creating 2 views.  
 
@@ -119,7 +110,7 @@ Finally, we are going to perform our analysis and transformation on the ```prepp
 
 ![dbt_structure](assets/data_engineering_with_apache_airflow_0_dbt_flow.png)
 
-First, let's go to the Snowflake console and run the script below. What this does is create a dbt_user and a dbt_dev_role and after which we set up a database for dbt_user.
+First, let's go to the Snowflake console and run the script below after replacing the <Password> field with your password of choice. What this does is create a dbt_user and a dbt_dev_role and after which we set up a database for dbt_user. 
 
 ```sql
 USE ROLE SECURITYADMIN;
@@ -162,40 +153,49 @@ Let's login with the ```dbt_user``` and create the database ```DEMO_dbt``` by ru
 CREATE OR REPLACE DATABASE DEMO_dbt
 
 ```
-![airflow](assets/data_engineering_with_apache_airflow_2_snowflake_console.png)
 
 
-Now, let's go back to our project ```dbt_airflow``` > ```dbt```that we set up previously in step 1.
+Then, in the new ```Demo_dbt``` database, copy and paste the following sql statements to create our ```bookings_1```, ```bookings_2``` and ```customers ``` tables within Snowflake
 
-We will set up a few configurations for the respective files below. Please note for the ```dbt_project.yml``` you just need to replace the models section
+```sql
 
-profiles.yml
-```yml
-default:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      ######## Please replace with your Snowflake account name 
-      ######## for example sg_demo.ap-southeast-1
-      account: <ACCOUNT_URL>.<REGION> 
+CREATE TABLE bookings_1 (
+    id INTEGER,
+    booking_reference INTEGER,
+    hotel STRING,
+    booking_date DATE,
+    cost INTEGER
+);
+CREATE TABLE bookings_2 (
+    id INTEGER,
+    booking_reference INTEGER,
+    hotel STRING,
+    booking_date DATE,
+    cost INTEGER
+);
+CREATE TABLE customers (
+    id INTEGER,
+    first_name STRING,
+    last_name STRING,
+    birthdate DATE,
+    membership_no INTEGER
+);
 
-      user: "{{ env_var('dbt_user') }}"
-      ######## These environment variables dbt_user and dbt_password 
-      ######## are read from the variabls in Airflow which we will set later
-      password: "{{ env_var('dbt_password') }}"
-
-      role: dbt_dev_role
-      database: demo_dbt
-      warehouse: dbt_dev_wh
-      schema: public
-      threads: 200
 ```
-packages.yml
+
+After you're done, you should have a folder structure that looks like the below: 
+
+![airflow](assets/data_engineering_with_apache_airflow_8_snowflake_successful_seed.png)
+
+Now, let's go back to our project ```cosmosproject``` > ```dbt```that we set up previously.
+
+We will set up a couple configurations for the respective files below. Please note for the ```dbt_project.yml``` you just need to replace the models section
+
+packages.yml (Create in ```cosmosproject``` folder if not already present) 
 ```yml
 packages:
-  - package: fishtown-analytics/dbt_utils
-    version: 0.6.4
+  - package: dbt-labs/dbt_utils
+    version: [">=1.0.0", "<2.0.0"]
 ```
 
 dbt_project.yml
@@ -211,7 +211,7 @@ models:
           materialized: view
 ```
 
-Next, we will install the ```fishtown-analytics/dbt_utils``` that we had placed inside ```packages.yml```. This can be done by running the command ```dbt deps``` from the ```dbt``` folder. 
+Next, we will install the ```dbt-labs/dbt_utils``` that we had placed inside ```packages.yml```. This can be done by running the command ```dbt deps``` from the ```cosmosproject``` folder. 
 
 We will now create a file called ```custom_demo_macros.sql``` under the ```macros``` folder and input the below sql 
 
@@ -238,19 +238,9 @@ We will now create a file called ```custom_demo_macros.sql``` under the ```macro
 {% endmacro %}
 ```
 
-If everything is done correctly, your folder should look like below. The annotated boxes are what we just went through above. 
+Now we are done setting up our dbt environment. Your file structure should look like the below screenshot: 
 
-Our final step here is to install our dbt module for ```db_utils```. From the dbt directory run
-``` 
-dbt deps
-```
-and you would see the assoicated modules being installed in the ```dbt_modules``` folder
-
-By now, you should see the folder structure as below: 
-
-![airflow](assets/data_engineering_with_apache_airflow_3_dbt_structure.png)
-
-We are done configuring dbt. Let us proceed on crafting our csv files and our dags in the next section.
+![airflow](assets/data_engineering_with_apache_airflow_3_dbt_environment_structure.png)
 
 <!-- ------------------------ -->
 ## Creating our CSV data files in dbt
@@ -296,6 +286,7 @@ id,first_name,last_name,birthdate,membership_no
 Our folder structure should be like as below
 
 ![airflow](assets/data_engineering_with_apache_airflow_4_csv_files.png)
+
 
 <!-- ------------------------ -->
 ## Creating our dbt models in models folder
@@ -377,151 +368,301 @@ SELECT
 FROM {{ ref('prepped_data') }}
 ```
 
-Your file structure should be as below. We have already finished our dbt models and can proceed onto working on Airflow. 
+Your file structure should look like the below screenshot. We have now finished our dbt models and can proceed to working on using Airflow to manage them. 
 
 ![airflow](assets/data_engineering_with_apache_airflow_5_dbt_models.png)
 
 <!-- ------------------------ -->
-## Preparing our Airflow DAGs
+## Preparing our Airflow Environment
 Duration: 5
 
-In our ```dags``` folder, create 2 files: ```init.py``` and ```transform_and_analysis.py```. The ```init.py``` will initialise and see the CSV data. The ```transform_and_analysis.py``` will perform the transformation and analysis. 
+Now going back to your Airflow directory, open up the requirements.txt file that the Astro CLI created. Copy and paste the following text block to install the [Cosmos](https://astronomer.github.io/astronomer-cosmos/index.html) and Snowflake libraries for Airflow. Cosmos will be used to turn each dbt model into a task/task group complete with retries, alerting, etc. 
+```
+astronomer-cosmos
+apache-airflow-providers-snowflake
+```
 
-With Airflow, we can then schedule the ```transform_and_analysis``` DAG on a daily basis. However, in this example, we will be triggering the DAG manually.
+Next, open up the Dockerfile in your Airflow folder and copy and paste the following code block to overwrite your existing Dockerfile. These changes will create a virtual environment for dbt along with the adapter to connect to Snowflake. It’s recommended to use a virtual environment because dbt and Airflow can have conflicting dependencies. 
 
-init.py
+```
+# syntax=quay.io/astronomer/airflow-extensions:latest
+
+FROM quay.io/astronomer/astro-runtime:9.1.0-python-3.9-base
+
+RUN python -m venv dbt_venv && source dbt_venv/bin/activate && pip install --no-cache-dir dbt-snowflake && deactivate
+```
+
+<!-- ------------------------ -->
+## Building Our dbt DAG
+Duration: 5
+
+Now that our Airflow environment is set up, lets create our DAG! Instead of using the conventional DAG definition methods, we'll be using Cosmos' dbtDAG class to create a DAG based on our dbt models. This allows us to turn our dbt projects into Apache Airflow DAGs and Task Groups with a few lines of code. To do so, create a new file in the ```dags``` folder called ```my_cosmos_dag.py``` and copy and paste the following code block into the file. 
+
 ```python
 from datetime import datetime
 import os
+from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
+from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from pathlib import Path
 
-from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.operators.bash import BashOperator
-from airflow.operators.dummy_operator import DummyOperator
+dbt_project_path = Path("/usr/local/airflow/dags/dbt/cosmosproject")
 
-default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'start_date': datetime(2020,8,1),
-    'retries': 0
-}
+profile_config = ProfileConfig(profile_name="default",
+                               target_name="dev",
+                               profile_mapping=SnowflakeUserPasswordProfileMapping(conn_id="snowflake_default", 
+                                                    profile_args={
+                                                        "database": "demo_dbt",
+                                                        "schema": "public"
+                                                        },
+                                                    ))
 
 
-with DAG('1_init_once_seed_data', default_args=default_args, schedule_interval='@once') as dag:
-    task_1 = BashOperator(
-        task_id='load_seed_data_once',
-        bash_command='cd /dbt && dbt seed --profiles-dir .',
-        env={
-            'dbt_user': '{{ var.value.dbt_user }}',
-            'dbt_password': '{{ var.value.dbt_password }}',
-            **os.environ
-        },
-        dag=dag
-    )
+dbt_snowflake_dag = DbtDag(project_config=ProjectConfig(dbt_project_path,),
+                    operator_args={"install_deps": True},
+                    profile_config=profile_config,
+                    execution_config=ExecutionConfig(dbt_executable_path=f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt",),
+                    schedule_interval="@daily",
+                    start_date=datetime(2023, 9, 10),
+                    catchup=False,
+                    dag_id="dbt_snowflake_dag",)
 
-task_1  
 ```
+First, we import the various Cosmos libraries
 
-transform_and_analysis.py
-```python
-from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.operators.bash import BashOperator
-from airflow.operators.dummy_operator import DummyOperator
-from datetime import datetime
+• DbtDag: This is a class that allows you to create an Apache Airflow Directed Acyclic Graph (DAG) for a dbt (Data Build Tool) project. The DAG will execute the dbt project according to the specified configuration.
 
+• ProjectConfig: This class is used to specify the configuration for the dbt project that the DbtDag will execute by pointing it to the path tfor your dbt project.
 
-default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'start_date': datetime(2020,8,1),
-    'retries': 0
-}
+• ProfileConfig: This class is used to specify the configuration for the database profile that dbt will use when executing the project. This includes the profile name, target name, and any necessary mapping to Airflow connections.
 
-with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_interval='@once') as dag:
-    task_1 = BashOperator(
-        task_id='daily_transform',
-        bash_command='cd /dbt && dbt run --models transform --profiles-dir .',
-        env={
-            'dbt_user': '{{ var.value.dbt_user }}',
-            'dbt_password': '{{ var.value.dbt_password }}',
-            **os.environ
-        },
-        dag=dag
-    )
+• ExecutionConfig: This class is used to specify any additional configuration for executing the dbt project. We'll be pointing it to the virtual environment we created at `{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt` in our `Dockerfile` to execute in. 
 
-    task_2 = BashOperator(
-        task_id='daily_analysis',
-        bash_command='cd /dbt && dbt run --models analysis --profiles-dir .',
-        env={
-            'dbt_user': '{{ var.value.dbt_user }}',
-            'dbt_password': '{{ var.value.dbt_password }}',
-            **os.environ
-        },
-        dag=dag
-    )
+• PostgresUserPasswordProfileMapping and SnowflakeUserPasswordProfileMapping: These classes are used to map Airflow connections to dbt profiles for PostgreSQL and Snowflake databases, respectively. This allows you to manage your database credentials in Airflow and use them in dbt.
 
-    task_1 >> task_2 # Define dependencies
-```
+After the imports, a ProfileConfig object is created, which is used to define the configuration for the Snowflake connection. The SnowflakeUserPasswordProfileMapping class is used to map the Snowflake connection in Airflow to a dbt profile. The DbtDag object is then created. This object represents an Airflow DAG that will execute a dbt project. It takes several parameters: 
 
+`project_config` specifies the path to the dbt project we created at `/usr/local/airflow/dags/dbt/cosmosproject`
+`operator_args` is used to pass arguments to the dbt operator. Here, it's specifying that dependencies should be installed.
+`profile_config` is the profile configuration defined earlier, which will be used to execute the dbt models in Snowflake.
+`execution_config` specifies the path to our virtual environment to executue our dbt code in. 
+`schedule_interval`, `start_date`, `catchup`, and `dag_id` are standard Airflow DAG parameters. You can use any of the standard Airflow DAG parameters in a dbtDAG as well. 
 
 
 <!-- ------------------------ -->
-## Running our docker-compose file for Airflow
+## Starting Airflow Environment & Adding Connections
 Duration: 5
 
-Let's run our ```docker-compose up``` and go to [http://localhost:8080/](http://localhost:8080/). The default username is ```airflow``` and password is ```airflow```
+Within your Airflow ```dbt_airflow``` directory, enter the below command to start your Airflow environment 
+```bash
+astro dev start
+```
 
-![airflow](assets/data_engineering_with_apache_airflow_2_airflow_url.png)
 
-We are now going to create 2 variables. Go to ```admin > Variables``` and click on the ```+``` icon. 
+Once the Airflow environment is finished creating and the login credentials appear in the terminal window, open up your browser of choice and go to [http://localhost:8080/](http://localhost:8080/) to log into our. The default username  is ```admin``` and password is ```admin```
 
-![airflow](assets/data_engineering_with_apache_airflow_5_airflow_variables.png)
 
-Let us first create key of ```dbt_user``` and value ```dbt_user```. 
+Now we're going to create a connection to our Snowflake environment for our DAG to use. Open up the conneections page from the Admin drop down menu and click + to create a new connection. Choose Snowflake as the connection type, and `snowflake_default` as the name for the connection. Then, enter your credentials following the example shown below. The only variables you'll need to change to your own are the password, account name, and region. The rest we set already via the dbt user creation script. 
 
-![airflow](assets/data_engineering_with_apache_airflow_5_airflow_username.png)
-
-Now let us create our second key of ```dbt_password``` and value ```<ADD IN YOUR PASSWORD>```
-
-![airflow](assets/data_engineering_with_apache_airflow_5_airflow_password.png)
+![airflow](assets/data_engineering_with_apache_airflow_9_example_snowflake_conn.png)
 
 <!-- ------------------------ -->
 ## Activating and running our DAGs
 
-We will now activate our DAGs. Click on the blue buttons for ```1_init_once_seed_data``` and ```2_daily_transformation_analysis```
+Now it's time to activate our DAG! First, click on the ```cosmos_dag``` to open up its grid and graph view so we can see the DAG that Cosmos created from our dbt project. It should look exactly like the example below if you open up each task group. Notice that each of your dbt models is rendered as its own task group, with each step of the dbt model rendered as a task. It dynamically generates the dependencies between each model based on the data references between them, without us needing to explicitly create them. 
 
-![airflow](assets/data_engineering_with_apache_airflow_6_runnig_our_dags.png)
+<!-- ------------------------ -->
 
-### Running our 1_init_once_seed_data
-Now, lets run our ```1_init_once_seed_data```  to seed the data. To run click the play icon under the ```Actions``` on the right of the DAG.
+## Running our docker-compose file for Airflow
+Duration: 5
 
-![airflow](assets/data_engineering_with_apache_airflow_7_dag_init_successful.png)
 
-### Viewing Seed data in tables created under public schema
-If all goes well when we go back to our Snowflake instance, we should see tree tables that have been successfully created in the ```PUBLIC``` schema. 
 
-![airflow](assets/data_engineering_with_apache_airflow_8_snowflake_successful_seed.png)
+### Running our cosmos_dag!
+We will now run our DAG ```cosmos_dag``` to see our dbt models in action! If you click the big blue play button on the top left of the screen, you'll see your tasks start to run your dbt transformations within your Snowflake database. If everything goes smoothly, your Snowflake environment should look like the following screenshot: 
 
-### Running our 2_daily_transformation_analysis
-We will now run our second DAG ```2_daily_transformation_analysis``` which will run our ```transform``` and ```analysis``` models
+![airflow](assets/data_engineering_with_apache_airflow_15_updated_dbt_dag.png)
 
-![airflow](assets/data_engineering_with_apache_airflow_9_dag_transform_analysis_successful.png)
+Our ```Transform``` and ```Analysis``` views have been created successfully! Open them to see the results of our analysis, and check out the other tables to see how data was transformed using dbt.
 
-Our ```Transform``` and ```Analysis``` views have been created successfully!
+<!-- ------------------------ -->
+## Incorporating Snowpark
 
-![airflow](assets/data_engineering_with_apache_airflow_10_snowflake_successful_transform_analysis.png)
+Now that we've gotten our dbt DAG set up, lets extend it by adding Snowpark for some data analysis with Python. To do this, we'll need to change some existing files and add new requirements to our local airflow environment. While we do this, lets stop our Airflow environment by running the following command so we can restart it later with our changes incorporated.
+
+```bash
+astro dev stop
+```
+
+First, go to your `packages.txt` file in your root directory and add `build-essential` to it, then save. The build-essential package in Linux systems is a reference for all the packages needed to compile a Debian package. We'll be using it to create a Python 3.8 Virtual Environment to run our Snowpark code in, since Snowpark uses Python 3.8, and Airflow only supports Python versions 3.9 and above. 
+
+Next, we'll need to import the Snowpark provider to create our Snowpark task. While in development the provider package is not yet in pypi. For this demo, download the `astro_provider_snowflake-0.0.0-py3-none-any.whl` file from the this [link](https://github.com/astronomer/airflow-snowpark-demo/tree/main/include). Then, copy the downloaded file into your include directory in your `DBT_Airflow` folder. In the future, this will be a part of the base Snowflake provider, but in the meantime you can use this .whl file in any other projects that require it. 
+
+After that, we'll need to add the .whl file to our `requirements.txt`. Copy and paste the following line into your `requirements.txt` file to do so. 
+
+```
+/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl
+```
+
+Finally, we'll need to create a `requirements-snowpark.txt` to install some necessary packages into the Python VirtualEnv we'll be creating. To do so, create a file called `requirements-snowpark.txt` in your root Airflow directory and copy and paste the following code block into it:
+
+```
+psycopg2-binary
+snowflake_snowpark_python[pandas]==1.5.1
+virtualenv
+/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl
+```
+These packages will allow us to interact with Snowpark through the virtual environment we're creating. 
+
+Now that we've got our Snowpark provider present, we'll need to edit our Dockerfile to install it, and spin up the Snowpark Python VirtualEnv. Copy and paste the following code block into your Dockerfile to add the necessary commands.
+```
+# syntax=quay.io/astronomer/airflow-extensions:latest
+
+FROM quay.io/astronomer/astro-runtime:9.1.0-python-3.9-base
+
+COPY include/astro_provider_snowflake-0.0.0-py3-none-any.whl /tmp
+
+# Create the virtual environment
+PYENV 3.8 snowpark requirements-snowpark.txt
+
+# Install packages into the virtual environment
+COPY requirements-snowpark.txt /tmp
+RUN python3.8 -m pip install -r /tmp/requirements-snowpark.txt
+
+
+RUN python -m venv dbt_venv && source dbt_venv/bin/activate && pip install --no-cache-dir dbt-snowflake && pip install --no-cache-dir dbt-postgres && deactivate
+```
+
+The first line tells Docker to use the Astronomer provided BuildKit that enables us to create virtual environments with the PYENV command. Then we COPY in the `.whl` file and use it to create a Python 3.8 VirtualEnv called snowpark. 
+
+<!-- ------------------------ -->
+## Creating a DAG with Cosmos and Snowpark
+
+In order to use Cosmos and Snowpark together, we'll need to use Cosmos's `dbtTaskGroup` with a normal Airflow DAG instead of a `dbtDAG`. The definition for this is almost identical to the `dbtDAG` approach, and allows us to add additional tasks up or downstream of our dbt workflows. Instead of editing our existing DAG, create a new file called `cosmosandsnowflake.py` in your DAG's folder, and copy the following code into it: 
+
+```python
+from airflow.operators.dummy_operator import DummyOperator
+from astro import sql as aql
+from astro.files import File
+from astro.sql.table import Table
+from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
+from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from astronomer.providers.snowflake.utils.snowpark_helpers import SnowparkTable
+from pathlib import Path
+
+dbt_project_path = Path("/usr/local/airflow/dags/dbt/cosmosproject")
+snowflake_objects = {'demo_database': 'DEMO',
+                     'demo_schema': 'DEMO',
+                     'demo_warehouse': 'COMPUTE_WH',
+                     'demo_xcom_stage': 'XCOM_STAGE',
+                     'demo_xcom_table': 'XCOM_TABLE',
+                     'demo_snowpark_wh': 'SNOWPARK_WH'
+}
+_SNOWFLAKE_CONN_ID = "snowflake_default"
+
+profile_config = ProfileConfig(
+    profile_name="default",
+    target_name="dev",
+    profile_mapping=SnowflakeUserPasswordProfileMapping(
+        conn_id="snowflake_default",
+        profile_args={
+          "database": "demo_dbt",
+            "schema": "public"
+        },
+    )
+)
+
+@dag(default_args={
+         "snowflake_conn_id": _SNOWFLAKE_CONN_ID,
+         "temp_data_output": "table",
+         "temp_data_db": snowflake_objects['demo_database'],
+         "temp_data_schema": snowflake_objects['demo_schema'],
+         "temp_data_overwrite": True,
+         "database": snowflake_objects['demo_database'],
+         "schema": snowflake_objects['demo_schema']
+         },
+    schedule_interval="@daily",
+    start_date=datetime(2023, 9, 10),
+    catchup=False,
+    dag_id="dbt_snowpark",
+)
+def dbt_snowpark_dag():
+    transform_data = DbtTaskGroup(
+        group_id="transform_data",
+        project_config=ProjectConfig(dbt_project_path),
+        profile_config=profile_config,
+        execution_config=ExecutionConfig(dbt_executable_path=f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt"),
+        operator_args={"install_deps": True},
+    )
+
+    intermediate = DummyOperator(task_id='intermediate')
+
+    @task.snowpark_virtualenv(python_version='3.8', requirements=['snowflake-ml-python==1.0.9'])
+    def findbesthotel(snowflake_objects:dict): 
+        
+        df = snowpark_session.sql("""
+            SELECT *
+            FROM DEMO_DBT.PUBLIC.THIRTY_DAY_AVG_COST
+        """).to_pandas()
+        highest_cost_hotel = df[df['COST'] == df['COST'].max()]['HOTEL']
+
+        highest_cost_hotel_str = str(highest_cost_hotel)
+        print(highest_cost_hotel)
+
+        return highest_cost_hotel_str
+    
+
+    besthotel = findbesthotel(snowflake_objects)
+    transform_data >> intermediate >> besthotel
+
+dbt_snowpark_dag = dbt_snowpark_dag()
+```
+
+This DAG adds a new Snowpark task called `findbesthotel`, which means it is executed in a virtual environment with Snowpark and other specified dependencies installed. In this case, we installed the `snowflake-ml-python==1.0.9` package to install pandas and other popular data science packages for data analysis. The `findbesthotel` task connects to a Snowflake database and fetches data from the `THIRTY_DAY_AVG_COST` table in the `PUBLIC` schema of the `DEMO_DBT` database. It then converts this data into a pandas DataFrame and finds the hotel with the highest cost. The name of this hotel is converted to a string, printed, and then returned by the task. All of our dbt transformation set up stays almost identical, aside from changing from using dbtDAG to dbtTaskGroup. 
+
+<!-- ------------------------ -->
+## Running our new DAG
+Now that we've add Snowpark to our environment and written our DAG, it's time to restart our Airflow environment and run it! Restart your Airflow environment with the following terminal command
+
+```bash
+astro dev start
+```
+
+Login to the Airflow UI the same way as before, and you should see a new dag called `dbt_snowpark`. Since we already set up our Snowflake connection before, we can just run this new DAG immediately by clicking its blue play button. Then, click on the DAG and open up its graph view to watch it run. It should look like the example below:
+
+![snowparkdag](assets/data_engineering_with_apache_airflow_13_snowpark_dag_view.png)
+
+
+After the DAG has finished running, select the `findbesthotel` and open its log file. If all has gone well, you'll see the most expensive hotel to stay at printed out for your convenience! 
+
+![airflow](assets/data_engineering_with_apache_airflow_14_log_view.png)
+
+### View Streamlit Dashboard
+We can now view our analyzed data on a [Streamlit](https://streamlit.io/) dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.  
+
+```bash
+astro dev bash -w
+```
+
+Then, run the following command to start a streamlit application. 
+```bash
+cd include/streamlit/src
+python -m streamlit run ./streamlit_app.py
+```
+
+After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you'd like to enable the ability to ask questions about your data, you'll need to add an OpenAI API key in the .env file and restart your Airflow environment. 
 
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-Congratulations! You have created your first Apache Airflow with dbt and Snowflake! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
+Congratulations! You have created your first Apache Airflow DAG with dbt, Cosmos, Snowflake, and Snowpark! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
 
 ### Additional Resources:
 - Join our [dbt community Slack](https://www.getdbt.com/community/) which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
 - Quick tutorial on how to write a simple [Airflow DAG](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html)
+- Documentation on how to use Cosmos to render dbt workflows in Airflow [Cosmos](https://astronomer.github.io/astronomer-cosmos/index.html)
 
 ### What we've covered:
 - How to set up Airflow, dbt & Snowflake
-- How to create a DAG and run dbt from our dag
+- How to create a dbt DAG using Cosmos to run dbt models using Airflow
+
