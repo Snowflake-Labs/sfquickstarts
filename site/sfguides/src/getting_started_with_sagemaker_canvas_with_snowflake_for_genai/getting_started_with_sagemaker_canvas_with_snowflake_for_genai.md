@@ -40,7 +40,8 @@ This quickstart is designed to serve as an introduction for using Snowflake with
 ### What You’ll Build 
 You will build a Canvas flow that leverages Snowflake data and AWS generative ai capabilities
 - Connect to Snowflake data from Canvas
-- Utilize generative AI capabilities in Sagemaker Canvas
+- Build a Canvas data flow
+- Utilize generative AI capabilities in Sagemaker Canvas using chat with your data
 
 The end-to-end workflow will look like this:
 ![](assets/snowflake_canvas_arch.png)
@@ -137,7 +138,7 @@ Your workspace should look something like this:
 
 Click on "Create Dataset" and now you've created a Canvas dataset!
 
-<!-- ------------------------ -->'
+<!-- ------------------------ -->
 ## Talking to your data
 Duration: 10
 
@@ -180,6 +181,8 @@ Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Canvas with Chat with Data with Snowflake. We encourage users to continue to explore using their Snowflake with Canvas and the many ways that Canvas allows users to leverage Generative AI services easily with their data.
 
+Also, worth mentioning that at the time this quickstart was written Canvas is just rolling out all of its generative AI capabilities, there will be more to come in addition to "chat with your data" so be on the lookout for additional functionality. 
+
 ### What We covered
 - Connecting to Snowflake data from Sagemaker Canvas
 - Build a Canvas dataset and data flow
@@ -193,5 +196,7 @@ This quickstart is just that, a quick way to get you started with using Canvas w
 - [AWS and Snowflake](https://aws.amazon.com/financial-services/partner-solutions/snowflake/)
 
 - [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
+
+- [Snowflake and Direct Data Integration](https://aws.amazon.com/about-aws/whats-new/2023/06/amazon-sagemaker-data-wrangler-direct-connection-snowflake-data/)
 
 If you have any questions, reach out to your Snowflake account team!
