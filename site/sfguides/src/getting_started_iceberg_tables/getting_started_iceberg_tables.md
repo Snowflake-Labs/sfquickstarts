@@ -93,7 +93,7 @@ GRANT ROLE accountadmin TO USER iceberg_lab;
 
 ### Generate Public and Private Keys
 
-Your local Spark client will connect to Snowflake via the [JDBC driver](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc). From your desktop's command line / terminal window, navigate to your working directory, then run these two commands.
+Your local Spark client will connect to Snowflake via the [JDBC driver](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc). For mac, open a terminal window, navigate to your working directory, then run these two commands. For PC, you can use [this tool](https://www.cryptool.org/en/cto/openssl) to run the same commands below, and download the `/rsa_key.p8` and `/rsa_key.pub` files from the Files tab.
 
 ```bash
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
