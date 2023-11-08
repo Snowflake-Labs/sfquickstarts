@@ -50,7 +50,7 @@ In this quickstart, you can use Conda to easily create a development environment
 - [Windows](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html)
 - [Linux](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html)
 
-Either download [this file](/assets/environment.yml), or create a file named environment.yml with the following contents.
+Either download [this file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/environment.yml), or create a file named environment.yml with the following contents.
 
 ```yaml
 name: iceberg-lab
@@ -495,7 +495,7 @@ conda activate iceberg-lab
 jupyter notebook
 ```
 
-Download the notebook [iceberg_lab.ipynb provided here](assets/iceberg_lab.ipynb), then open from Jupyter. Update and run the cells that are applicable to the cloud in which your Snowflake account is located.
+Download the notebook [iceberg_lab.ipynb provided here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/iceberg_lab.ipynb), then open from Jupyter. Update and run the cells that are applicable to the cloud in which your Snowflake account is located.
 
 ![PySpark](assets/7_jupyter-notebook.png)
 
