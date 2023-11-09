@@ -174,7 +174,7 @@ Duration: 15
 
 Open the following jupyter notebook and run each of the cells: [3_snowpark_ml_model_training_deployment.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/3_snowpark_ml_model_training_deployment.ipynb)
 
-In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Model API. We also show how to do inference and deploy the model to a Snowflake Warehouse through the Snowpark Model Registry.
+In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling API. We also show how to do inference and deploy the model to a Snowflake Warehouse through the Snowpark Model Registry.
 
 <!-- ------------------------ -->
 ## Conclusion
