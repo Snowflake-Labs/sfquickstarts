@@ -75,7 +75,7 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
     - to train an XGBoost ML model using Snowpark ML estimators
     - to deploy the trained model in Snowflake using the Snowpark Model Registry
 
-![e2e_ml_workflow](assets/e2e_ml_workflow.png)
+![e2e_ml_workflow](assets/snowpark-ml-e2e.png)
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
