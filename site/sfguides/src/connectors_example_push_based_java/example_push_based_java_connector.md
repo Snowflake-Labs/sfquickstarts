@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps
 
-# Snowflake example push based Java connector
+# Native Connector - Java (Push Based)
 
 ## Overview
 Duration: 1
@@ -40,7 +40,7 @@ Duration: 5
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure snowsql to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- Clone the [connectors-native-sdk repository](https://github.com/Snowflake-Labs/connectors-native-sdk) and go to `./examples/example-push-based-java-connector`
+- Clone the [connectors-native-sdk repository](https://github.com/snowflakedb/connectors-native-sdk) and go to `./examples/example-push-based-java-connector`
 
 ## Connector overview
 Duration: 4
@@ -301,9 +301,6 @@ The requested privileges must be granted for the connector to work properly.
 ### Create a sink database
 Agent that provides the data to the Native App requires a database to work. This database is created by the Native App.
 To create it just enter the database name in the input box and press `Configure` button.
-
-Keep in mind that the same database name needs to be entered here and in `native_application.database_name` property
-inside `connector.properties` file in the agent part of the example.
 
 ![configure1.png](assets/configure1.png)
 
