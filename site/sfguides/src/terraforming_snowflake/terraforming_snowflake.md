@@ -125,13 +125,13 @@ You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID`
 
 Run these commands in your shell. Be sure to replace the `YOUR_ACCOUNT_LOCATOR` and `YOUR_REGION_HERE` placeholders with the correct values.
 
-**NOTE**: Setting `SNOWFLAKE_REGION` is only required if you are using a [Legacy Account Locator](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-2-legacy-account-locator-in-a-region).
+**NOTE**: Setting `SNOWFLAKE_REGION` is required if you are using a [Legacy Account Locator](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-2-legacy-account-locator-in-a-region).
 
 ```Shell
 $ export SNOWFLAKE_USER="tf-snow"
-$ export SNOWFLAKE_PRIVATE_KEY_PATH="~/.ssh/snowflake_tf_snow_key.p8"
+$ export SNOWFLAKE_AUTHENTICATOR=JWT
+$ export SNOWFLAKE_PRIVATE_KEY=`cat ~/.ssh/snowflake_tf_snow_key.p8`
 $ export SNOWFLAKE_ACCOUNT="YOUR_ACCOUNT_LOCATOR"
-$ export SNOWFLAKE_REGION="YOUR_REGION_HERE"
 ```
 
 If you plan on working on this or other projects in multiple shells, it may be convenient to put this in a `snow.env` file that you can source or put it in your `.bashrc` or `.zshrc` file. For this lab, we expect you to run future Terraform commands in a shell with those set.
@@ -148,7 +148,7 @@ terraform {
   required_providers {
     snowflake = {
       source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.68"
+      version = "~> 0.76"
     }
   }
 }
