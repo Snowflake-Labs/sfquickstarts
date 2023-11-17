@@ -521,7 +521,7 @@ Change directory to the `zero-to-app/` directory that is created when you clone 
 
 We will start by adding the Node dependencies to the project. In a terminal window run the following:
 ```bash
-npm i express@4.18.2 snowflake-sdk@1.6.22 dotenv@16.1.3 bcrypt@5.1.0 cors@2.8.5 jsonwebtoken@9.0.0
+npm i express@4.18.2 snowflake-sdk@1.9.1 dotenv@16.1.3 bcrypt@5.1.0 cors@2.8.5 jsonwebtoken@9.0.0
 npm i nodemon@2.0.22 --save-dev
 ```
 
