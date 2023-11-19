@@ -98,7 +98,7 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 * At the top left corner select Worksheets and select Enable Worksheets and Dashboards*
 ![img1](assets/mp7.png)
 * You will see a display “ Setting Up” and then select Import Worksheets if you have any. Otherwise, you will be taken directly into the worksheet counsel  click +Worksheets and paste the following code into the display.
-* At the top right corner, Select Account Admin Role and a Warehouse and select the Database: Knoema_Economy_Data Atlas  and run the query by pressing the circle with arrow button at the top right-hand corner for the counsel. Explore the data and familiar yourself with the following data sets: 
+* At the top right corner, Select Account Admin Role and a Warehouse and select the Database: Economy_Data Atlas  and run the query by pressing the circle with arrow button at the top right-hand corner for the counsel. Explore the data and familiar yourself with the following data sets: 
 
 
 
@@ -108,22 +108,22 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 
 --## Step 1  Review the available data tables
 --Review the datasets available
-select * from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."DATASETS";
-select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS";
+select * from "POVERTY_DATA_ATLAS"."POVERTY"."DATASETS";
+select * from "ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS";
 
 --## Step 2 Identify the columns by which data sets can be joined by running simple select statements for a variety of different data views.  This will allow you to see patterns in data which join views to produce a combined view of many datasets.
 
-select * from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."sdg_01_20" agi;
+select * from "POVERTY_DATA_ATLAS"."POVERTY"."sdg_01_20" agi;
 --Poverty Thresholds -ilc_li01  geo, geoName, geoRegionid month start date
-select * from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01";
+select * from "POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01";
 --Household Investment rate tec00098  geo, geoName, geoRegionid annual start date
-select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098";
+select * from "ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098";
 --Household Saving rate teina500-20160217 geo, geoName, geoRegionid quarter start date
-select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217";
+select * from "ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217";
 --Key indicators annual nasa_10_ki-20180427 geo, geoName, geoRegionid annual start date
-select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."nasa_10_ki-20180427";
+select * from "ECONOMY_DATA_ATLAS"."ECONOMY"."nasa_10_ki-20180427";
 --Proverty and Equity WBPED2020  Country, Country Name, Country Region annual start date
-select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."WBPED2020"
+select * from "ECONOMY_DATA_ATLAS"."ECONOMY"."WBPED2020"
 ```
   Review the datasets available and identify which data sets can be joined by running simple select statements for a variety of different data views.  This will allow you to see patterns in data which join views to produce a combined view of many datasets. 
 
@@ -182,10 +182,10 @@ agi."geo RegionId" as GeoRegionIdAgi
 ,REGR_SLOPE(pth."Value", sr."Value") OVER (  PARTITION BY pth."geo RegionId",pth.
 "hhtyp Name" ) as sr_lin
 
-from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."sdg_01_20" agi  --pov atlas
-inner join "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01" pth on agi."geo RegionId"=pth."geo RegionId" and agi."Date"=pth."Date"  -- join thresholds
-inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098" ir on agi."geo RegionId"=ir."geo RegionId" and agi."Date"=ir."Date" -- join investment rate
-inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."geo RegionId"=sr."geo RegionId" and agi."Date"=sr."Date"  -- join saving rate
+from "POVERTY_DATA_ATLAS"."POVERTY"."sdg_01_20" agi  --pov atlas
+inner join "POVERTY_DATA_ATLAS"."POVERTY"."ilc_li01" pth on agi."geo RegionId"=pth."geo RegionId" and agi."Date"=pth."Date"  -- join thresholds
+inner join "ECONOMY_DATA_ATLAS"."ECONOMY"."tec00098" ir on agi."geo RegionId"=ir."geo RegionId" and agi."Date"=ir."Date" -- join investment rate
+inner join "ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."geo RegionId"=sr."geo RegionId" and agi."Date"=sr."Date"  -- join saving rate
 
 
 --## Step 3 Create a view to pair down the variables for the APP --
