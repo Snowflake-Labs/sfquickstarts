@@ -633,6 +633,15 @@ Snowflake provides some rich task observability features in the Snowsight UI. Tr
 - Select the **Graph** tab. The task graph appears, displaying a hierarchy of child tasks.
 - Select a task to view its details.
 
+![Tasks](assets/tasks_and_dags.png)
+
+To monitor all the tasks at an account level, you can use the Task History tab as well.
+
+- In the Snowsight navigation menu, click **Activity** » **Task History**.
+- In the right pane, select the **Task Runs** tab. You can scroll through all the task runs in the account.
+
+![Task Runs](assets/tasks_history_runs.png)
+
 For more details, and to learn about viewing account level task history, please check out our [Viewing Task History](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html) documentation.
 
 ### Query History for Tasks
