@@ -209,7 +209,7 @@ This query was completed in 2.5 seconds, which is more than three times faster t
 
 Duration: 10
 
-Another advantage of using materialized geospatial types is that you can use fast and efficient geospatial joins. Whenever you join two datasets using geo predicate, such as ST_CONTAINS, ST_WITHIN, etc., Snowflake under the hood builds a spatial grid for both datasets and then compares the content of cells. If both objects are within some cell, then the actual geo predicate executes. Snowflake decides on the size of the cells in the grid based on the size of the objects that take part in a join. 
+Another advantage of using materialized geospatial types is that you can use fast and efficient geospatial joins. Whenever you join two datasets using geo predicate, such as [ST_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/st_contains), [ST_WITHIN](https://docs.snowflake.com/en/sql-reference/functions/st_within), etc., Snowflake under the hood builds a spatial grid for both datasets and then compares the content of cells. If both objects are within some cell, then the actual geo predicate executes. Snowflake decides on the size of the cells in the grid based on the size of the objects that take part in a join. 
 
 Imagine that you are working for a telecommunication company and are interested in the density of cell towers per statistical population unit. To model this example, we will use the previously created OpenCellID table and calculate the number of cell towers per [Dissemination Areas](https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/da-ad/def-eng.htm) in Canada. A dissemination area is a small geographic unit used in Canada for disseminating census data, typically containing 400 to 700 persons. The analogy to Canada's dissemination area in the US would be a Census Block Group, or Statistical Area in Europe.  Run the following query:
 
@@ -221,7 +221,7 @@ GROUP BY 1;
 
 ```
 
-It is completed in about 40 seconds o a LARGE warehouse. Let's look inside of the dataset with shapes of dissemination areas and bucket its records based on the size of the area. If you visualize the `canada_dissemination_areas` table, you'll see that there is several extremely large polygons that correspond to areas with low population density.
+It is completed in about 40 seconds on a LARGE warehouse. Let's look inside of the dataset with shapes of dissemination areas and bucket its records based on the size of the area. If you visualize the `canada_dissemination_areas` table, you'll see that there is several extremely large polygons that correspond to areas with low population density.
 
 <img src ='assets/geo_performance_7.png' width=700>
 
@@ -262,9 +262,9 @@ The query is completed in about 12 sec. By cleaning 0.17% of the boundaries data
 
 Duration: 20
 
-In this lab, you'll step into the role of an analyst working with a dataset containing New York taxi trips. Your task is to identify all trips that occurred within a specific location. And will see how you can improve the execution time of lookup queries even on extra small warehouse when you enable Search Optimization (SO) for the geography column.
+In this lab, you'll step into the role of an analyst working with a dataset containing New York taxi trips. Your task is to identify all trips that occurred within a specific location. You will see how you can improve the execution time of lookup queries even on extra small warehouse when you enable Search Optimization (SO) for the geography column.
 
-For this, we will use a publicly available dataset: [New York Taxi Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). To give you a sense of data, below is a visualization that shows the density of taxi pickups in the New York Area.
+For this, we will use a publicly available dataset: [New York Taxi Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). To give you a sense of data, below is a visualization that shows the density of taxi pickups.
 
 <img src ='assets/geo_performance_9.png' width=700>
 
@@ -277,7 +277,7 @@ LIMIT 10;
 
 ```
 
-It contains pickup times, pickup/drop-off locations, and information about the fare. Let's check the number of rows
+It contains pickup and drop-off locations. Let's count the number of rows:
 
 ```
 SELECT count(*)
@@ -285,7 +285,7 @@ FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES;
 
 ```
 
-The dataset contains around 143.5M rows. And it doesn't have Search Optimization activated. To compare query execution time with and without Search Optimization, you will create a new table with a copy of this dataset and activate Search Optimization (SO) for it. To unleash all the power of Search Optimization, in the copied table, you will create one additional column containing the H3 Index of the pickup_location column.
+The dataset contains around 143.5M rows. And it doesn't have Search Optimization activated. To compare query execution time with and without Search Optimization, you will create a new table with a copy of this dataset and activate Search Optimization (SO) for it. To unleash all the power of Search Optimization, in the copied table, you will create one additional column containing the H3 Index of the `pickup_location` column.
 
 ```
 CREATE OR REPLACE TABLE GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO
@@ -294,7 +294,7 @@ FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES;
 
 ```
 
-To activate SO, first, you need to enable clustering on the pickup_location_h3 column. Because the Search Optimization service is designed for highly selective predicates, clustering geospatial objects in the table by proximity can result in better performance. And as a second step, you will enable the SO feature.
+To activate SO, first, you need to enable clustering on the `pickup_location_h3` column. Because the Search Optimization service is designed for highly selective predicates, clustering geospatial objects in the table by proximity can result in better performance. And as a second step, you will enable the SO feature.
 
 ```
 ALTER TABLE GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO CLUSTER BY (pickup_location_h3);
@@ -341,9 +341,10 @@ WHERE st_contains(to_geography('POLYGON((-74.14497384801507 40.596100847757526, 
 
 This query finished in about 40 seconds.
 
-Note: if you want, you can use [this tool](https://clydedacruz.github.io/openstreetmap-wkt-playground/) to visualize the search area. You can put the search polygon from the query above and click Plot Shape.
+> aside positive
+>  Note: if you want, you can use [this tool](https://clydedacruz.github.io/openstreetmap-wkt-playground/) to visualize the search area. You can put the search polygon from the query above and click Plot Shape.
 
-Now you search using the query with SO:
+Now you'll do the same search using the query with SO enabled:
 ```
 SELECT pickup_location AS GEOG
 FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO
@@ -361,7 +362,7 @@ This query was finished in just 2 seconds, which is about 20 times faster compar
 
 Duration: 10
 
-In some situations, customers need to figure out how far apart certain objects are in space. For example, consider a logistics company that keeps track of where their trucks are. They do this by recording the GPS location of each truck every two minutes. To check if this location data is accurate, they might measure the distance between the most recent location they recorded and the one before that. If this distance is too large – say, more than three miles – it could indicate that the latest GPS reading was wrong. 
+In certain situations, users need to determine the distance between objects. For example, consider a logistics company that keeps track of where their trucks are. They do this by recording the GPS location of each truck every two minutes. To check if this location data is accurate, they might measure the distance between the most recent location they recorded and the one before that. If this distance is too large – say, more than three miles – it could indicate that the latest GPS reading was wrong. Below is a visualization displaying correct GPS records (in green) and two incorrect records (in red).
 
 <img src ='assets/geo_performance_10.png' width=500>
 
@@ -370,7 +371,7 @@ In this situation, they don't need to know the exact distance, but just want to 
 <img src ='assets/geo_performance_11.png' width=500>
 
 
-Let's continue being analysts who work with the New York taxi dataset. Our job often involves preparing data for training models or for analysis. An important part of this is making sure the data is of good quality. This means you need to get rid of any records where the GPS coordinates don't seem right. In this project, you're particularly focused on removing records where the taxi trips are longer than about 100 kilometers. These long trips are usually either mistakes in the data or very unusual cases that could skew our analysis or predictions.
+Let's continue being analysts who work with the New York taxi dataset. Our job often involves preparing data for training models or analysis. An important part of this is making sure the data is of good quality. This means you need to get rid of any records where the GPS coordinates don't seem right. In this project, you're particularly focused on removing records where the taxi trips are longer than about 100 kilometers. These long trips are usually either mistakes in the data or very unusual cases that could skew our analysis or predictions.
 
 In the query below you will use the previously created table `GEOLAB.PERFORMANCE.NY_TAXI_RIDES` and extend it with two additional columns that contain indexes of H3 cells of pickup and dropoff locations:
 
@@ -410,7 +411,7 @@ GROUP BY 1;
 
 ```
 
-This query returned 605 trips with the h3 distance above 41 cells, and it was completed in about 4 seconds. By improving the performance of the query by more than 7x, you got an acceptable number of false positives (compared to the size of the dataset).
+This query returned 605 trips with the H3 distance above 41 cells, and it was completed in about 4 seconds. By improving the performance of the query by more than 7x, you got an acceptable number of false positives (compared to the size of the dataset).
 
 Similarly, you can speed up lookup queries. Below, you will find all the trips that started within 10 km of Perth Amboy Public Library in New York. First, let's use lookup with [ST_DWITHIN](https://docs.snowflake.com/en/sql-reference/functions/st_dwithin) function: 
 
@@ -421,7 +422,7 @@ WHERE ST_DWITHIN(ST_POINT(-74.2704837, 40.5103654), pickup_location, 10000);
 
 ```
 
-It's completed in about 30 seconds and found 1091 trips. Now you will run the similar search, but with the help of the H3 function ][H3_GRID_DISK](https://docs.snowflake.com/en/sql-reference/functions/h3_grid_disk) which you use to get a K-Ring with the "radius" of four hexahons:
+It's completed in about 30 seconds and found 1091 trips. Now you will run the similar search, but with the help of the H3 function [H3_GRID_DISK](https://docs.snowflake.com/en/sql-reference/functions/h3_grid_disk) which you'll use to get a K-Ring with the "radius" of four hexahons:
 
 ```
 WITH kring AS
@@ -449,7 +450,7 @@ ALTER WAREHOUSE my_wh SET warehouse_size=LARGE;
 
 When you need to join two large tables, it can be computationally expensive and time-consuming. Tessellation is a technique that can be really useful when you need to calculate statistics like averages. It allows to reduce the number of rows in a table by grouping them in chunks based on spatial criteria such as geographic location or proximity. 
 
-In this lab, you will wear the hat of an analyst in a logistics company and you'll calculate the average speed of company's vehicles for each dissemination area in Canada. You will use a synthetic dataset `geolab.performance.canada_trips`, which contains 100K rows, where every row is a separate trip. Each trip is a large array of dictionaries stored in the GPS_POINTS column. These dictionaries store location of vehicles and other relevant data, like the vehicle's speed at that location. To help you understand what this data looks like, here's an example of what you might find in a typical `GPS_POINT` column entry:
+In this lab, you will wear the hat of an analyst in a logistics company and you'll calculate the average speed of company's vehicles for each dissemination area in Canada. You will use a synthetic dataset `geolab.performance.canada_trips`, which contains 100K rows, where every row is a separate trip. Each trip is a large array of dictionaries stored in the `GPS_POINTS` column. These dictionaries store location of vehicles and other relevant data, like the vehicle's speed at that location. To help you understand what this data looks like, here's an example of what you might find in a typical `GPS_POINT` column entry:
 
 ```
 [
@@ -478,9 +479,9 @@ You need to join this data with a dataset of Dissemination Area boundaries in Ca
 
 One approach is to join all the GPS points from every trip with the borders of dissemination areas. The images below helps illustrate this concept. In the first image, each linestring represents a trip, and each point is a GPS location where the truck's speed was captured (in reality each trip could include up to several thousand points). The black shapes in the second image are the dissemination areas.
 
-<img src ='assets/geo_performance_12.png'>
+<img src ='assets/geo_performance_12.png'  width=600>
 
-As a first step you will "unpack" arrays with trips information into a table that contains all GPS points. Then you'll join GPS points and boundaries by matching each GPS point to the specific dissemination area it falls within. And finally you'll group these points based on the unique ID of each dissemination area and can calculate the average speed for each area. Run the following query:
+As a first step you will "unpack" arrays with trips information into a table that contains all GPS points. Then you'll join GPS points and boundaries by matching each GPS point to the specific dissemination area it falls within. And finally you'll group these points based on the unique ID of each dissemination area and calculate the average speed for each area. Run the following query:
 
 ```
 SELECT dauid, AVG(value['speed']) AS avg_speed_per_da
@@ -497,9 +498,9 @@ GROUP BY 1;
 
 It's completed in around 6 minutes and returned 9970 rows. As one of the intermediate steps in the query above, you flattened the column with trip information, which resulted in exploding the trips dataset.
 
-Now, instead of joining the full dataset with trips, which could contain billions of points after flattening, you will aggregate trip data into H3 buckets based on the GPS location. Then, you can calculate the average speed per H3 cell, reducing the size of the trips table before joining it with the dissemination areas. In this scenario you join much smaller table with centroids of H3 cells with dissemination area boundaries. This makes the join operation much faster. The images below illustrate this approach.
+Now, instead of joining the full dataset with trips, which could contain billions of points after flattening, you will aggregate trip data into H3 buckets based on the GPS location. Then, you'll calculate the average speed per H3 cell, reducing the size of the trips table before joining it with the dissemination areas. In this scenario you join much smaller table with centroids of H3 cells with dissemination area boundaries. This makes the join operation much faster. The images below illustrate this approach.
 
-<img src ='assets/geo_performance_13.png'>
+<img src ='assets/geo_performance_13.png' width=598>
 
 Run the following query:
 
