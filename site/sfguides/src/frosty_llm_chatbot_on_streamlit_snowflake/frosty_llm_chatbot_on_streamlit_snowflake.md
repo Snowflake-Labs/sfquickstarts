@@ -61,7 +61,7 @@ Complete the following steps in your local machine (or an equivalent dev environ
     ```
     conda create --name snowpark-llm-chatbot --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
     ```
-    Activate the environment created in those instructions by running `conda activate py310_env` and proceed to step 6 below.
+    Activate the environment created by running `conda activate snowpark-llm-chatbot` and proceed to step 6 below.
 
     If you're not using a machine with an Apple M1 chip, continue to step 4.
 
@@ -76,7 +76,7 @@ Complete the following steps in your local machine (or an equivalent dev environ
 6. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
     conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai
-    pip install streamlit
+    conda install -c conda-forge "streamlit>=1.28.2"
     ```
 
 ### Troubleshooting `pyarrow` related issues
