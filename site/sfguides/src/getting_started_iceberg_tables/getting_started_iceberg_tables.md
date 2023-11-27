@@ -1,4 +1,4 @@
-author: Scott Teal
+author: Scott Teal, Brad Culberson, Vino Duraisamy
 id: getting_started_iceberg_tables
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
@@ -45,7 +45,7 @@ Duration: 1
 
 ### Install Conda, Spark, Jupyter
 
-In this quickstart, you can use Conda to easily create a development environment and download necessary packages. Here are instructions for installing Conda:
+In this quickstart, you can use Conda to easily create a development environment and download necessary packages. This is only needed if you choose to follow the last section for using Spark to read Snowflake-managed Iceberg Tables. This is not required to create or use Iceberg Tables on Snowflake. Here are instructions for installing Conda:
 - [Mac](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html)
 - [Windows](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html)
 - [Linux](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html)
@@ -76,16 +76,21 @@ Create a database, schema, warehouse, role, and user called `ICEBERG_LAB` in you
 ```sql
 CREATE WAREHOUSE iceberg_lab;
 CREATE ROLE iceberg_lab;
---GRANT USAGE ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab;
---GRANT OPERATE ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab;
-GRANT ALL ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab;
 CREATE DATABASE iceberg_lab;
 CREATE SCHEMA iceberg_lab;
-GRANT ALL ON DATABASE iceberg_lab TO ROLE iceberg_lab; --WITH GRANT OPTION
-GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE iceberg_lab;
-GRANT ALL ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab;
+GRANT ALL ON DATABASE iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;
+GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;;
+GRANT ALL ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;;
 
-CREATE USER iceberg_lab PASSWORD='<your desired password>' LOGIN_NAME='ICEBERG_LAB' MUST_CHANGE_PASSWORD=FALSE, DISABLED=FALSE, DEFAULT_WAREHOUSE='ICEBERG_LAB', DEFAULT_NAMESPACE='ICEBERG_LAB.ICEBERG_LAB', DEFAULT_ROLE='ICEBERG_LAB';
+CREATE USER iceberg_lab
+    PASSWORD='<your desired password>',
+    LOGIN_NAME='ICEBERG_LAB',
+    MUST_CHANGE_PASSWORD=FALSE,
+    DISABLED=FALSE,
+    DEFAULT_WAREHOUSE='ICEBERG_LAB',
+    DEFAULT_NAMESPACE='ICEBERG_LAB.ICEBERG_LAB',
+    DEFAULT_ROLE='ICEBERG_LAB';
+
 GRANT ROLE iceberg_lab TO USER iceberg_lab;
 GRANT ROLE iceberg_lab TO USER <your username>;
 GRANT ROLE accountadmin TO USER iceberg_lab;
@@ -133,12 +138,12 @@ Name the external volume you create `iceberg_lab_vol`.
 After the external volume is created, use the `ACCOUNTADMIN` role to grant usage to the `ICEBERG_LAB` role.
 
 ```sql
-GRANT USAGE ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE iceberg_lab; --WITH GRANT OPTION
+GRANT ALL ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE iceberg_lab WITH GRANT OPTION;
 ```
 
 ### Create a Snowflake-managed Iceberg Table
 
-Iceberg Tables can either use Snowflake, AWS Glue, or object storage as the catalog. In this quickstart, we use Snowflake as the catalog to allow read and write operations to tables. More information about integrating catalogs can be found [here](https://docs.snowflake.com/LIMITEDACCESS/iceberg-2023/create-catalog-integration).
+Iceberg Tables can either use Snowflake, AWS Glue, or object storage as the catalog. In this quickstart, we use Snowflake as the catalog to allow read and write operations to tables. More information about integrating catalogs can be found [here](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration).
 
 Create an Iceberg Table referencing the external volume you just created. You can specify `BASE_LOCATION` to instruct Snowflake where to write table data and metadata, or leave empty to write data and metadata to the location specified in the external volume definition.
 
@@ -172,7 +177,9 @@ INSERT INTO customer_iceberg
   SELECT * FROM snowflake_sample_data.tpch_sf1.customer;
 ```
 
-If you check your cloud storage bucket, you should now see files that Snowflake has written as part of table creation.
+If you check your cloud storage bucket, you should now see files that Snowflake has written as part of table creation. While Snowflake writes these files automatically, you can also use a [function](https://docs.snowflake.com/en/sql-reference/functions/system_get_iceberg_table_information) to generate table metadata files that capture any data manipulation language (DML) changes that have been made since the last time Iceberg metadata was generated.
+
+![/assets/3-3_storage.png]
 
 ### Query and Time Travel
 
@@ -250,7 +257,6 @@ GRANT ALL ON ICEBERG TABLE iceberg_lab.iceberg_lab.customer_iceberg TO ROLE tpch
 GRANT ALL ON DATABASE iceberg_lab TO ROLE tpch_us;
 GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE tpch_us;
 GRANT ALL ON ICEBERG TABLE iceberg_lab.iceberg_lab.customer_iceberg TO ROLE tpch_us;
-USE ROLE accountadmin; --maybe delete after grant options above
 GRANT USAGE ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE tpch_intl;
 GRANT USAGE ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE tpch_us;
 GRANT USAGE ON WAREHOUSE iceberg_lab TO ROLE tpch_us;
@@ -302,7 +308,6 @@ SET body ->
 GRANT ALL ON DATABASE iceberg_lab TO ROLE tpch_analyst;
 GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE tpch_analyst;
 GRANT ALL ON TABLE iceberg_lab.iceberg_lab.customer_iceberg TO ROLE tpch_analyst;
-USE ROLE accountadmin; --maybe delete after grant options above
 GRANT USAGE ON WAREHOUSE iceberg_lab TO ROLE tpch_analyst;
 GRANT USAGE ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE tpch_analyst;
 USE ROLE iceberg_lab;
@@ -355,7 +360,7 @@ You can interact with Iceberg Tables using [DataFrames](https://docs.snowflake.c
 USE ROLE iceberg_lab;
 USE DATABASE iceberg_lab;
 USE SCHEMA iceberg_lab;
-CREATE OR REPLACE ICEBERG TABLE X (
+CREATE OR REPLACE ICEBERG TABLE nation_orders_iceberg (
     regionkey NUMBER(38,0),
     nationkey NUMBER(38,0),
     nation VARCHAR(25),
@@ -411,7 +416,11 @@ For a deeper dive on Snowpark for data engineering pipelines, try [this quicksta
 ## Sharing Iceberg Tables
 Duration: 1
 
-Iceberg Tables can be securely shared with consumers either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account. 
+Iceberg Tables can be securely shared with consumers either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
+
+> aside negative
+> 
+>  Cross-cloud and cross-region sharing of Iceberg Tables is not currently supported. The provider’s external volume, Snowflake account, and consumer’s Snowflake account must all be in the same cloud region.
 
 With data sharing, including Iceberg Tables:
 - There is only one copy of the data that’s stored in the data provider's cloud storage account.
@@ -428,13 +437,27 @@ For the purposes of this lab, we’ll share data with a provisioned reader accou
 ```sql
 USE ROLE accountadmin;
 GRANT CREATE ACCOUNT ON ACCOUNT TO ROLE iceberg_lab;
-GRANT CREATE SHARE ON ACCOUNT TO ROLE iceberg_lab;
 USE ROLE ICEBERG_LAB;
 ```
 
 Exit your SQL worksheet and navigate to **Private Sharing**, then click the tab **Reader Accounts** near the top of your window, then click **+ New**. Use ICEBERG_LAB_READER as the Account Name, READER_ADMIN as the User Name, and provide a password. Then click **Create Account**. You’ll see the reader account now listed.
 
 ![Create Reader Account](assets/6-1_create-reader.png)
+
+### Create a Secure View
+
+Now create a secure view which is what will eventually be shared with the ICEBERG_LAB_READER account.
+
+```sql
+USE ROLE iceberg_lab;
+CREATE OR REPLACE SECURE VIEW nation_orders_v AS
+SELECT
+    nation,
+    SUM(order_count) as order_count,
+    SUM(total_price) as total_price
+FROM nation_orders_iceberg
+GROUP BY nation;
+```
 
 ### Create an Outbound Share
 
@@ -506,11 +529,16 @@ Duration: 1
 To delete all of the objects created in this guide, you can drop the user, role, database, and warehouse.
 
 ```sql
+USE ROLE iceberg_lab;
+DROP SHARE iceberg_lab_nation_orders_shared_data;
 USE ROLE accountadmin;
 DROP DATABASE iceberg_lab;
 DROP EXTERNAL VOLUME iceberg_lab_vol;
 DROP USER iceberg_lab;
 DROP ROLE iceberg_lab;
+DROP ROLE tpch_us;
+DROP ROLE tpch_intl;
+DROP ROLE tpch_analyst;
 DROP WAREHOUSE iceberg_lab;
 ```
 
@@ -535,7 +563,7 @@ Congratulations! You've successfully created an open data lakehouse on Snowflake
 - How to access a Snowflake-managed Iceberg Table from Apache Spark
 
 ### Related Resources
-- [Snowflake Documentation for Iceberg Tables]()
+- [Snowflake Documentation for Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog)
 - [Apache Iceberg Documentation](https://iceberg.apache.org/)
 
 
