@@ -698,7 +698,7 @@ Now that you know the H3 cell for each LTE tower you can find its neighboring H3
 
 The signal will range from 0 (poor) to 100 (strongest). The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. 
 
-Clustering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
+Ordering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
 
 Run the following query:
 
@@ -716,7 +716,7 @@ WITH nl_lte_h3 AS (
 h3_neighbors AS (
   SELECT id,
          p.value::int AS h3,
-         H3_GRID_DISTANCE(n.h3, p.value::int)::int AS H3_GRID_DISTANCE,
+         H3_GRID_DISTANCE(n.h3, p.value::int) AS H3_GRID_DISTANCE,
          // decay model for signal strength:
          100 * pow(1 - H3_GRID_DISTANCE / (h3_cell_range + 1), 2) AS signal_strength
   FROM nl_lte_h3 n,
