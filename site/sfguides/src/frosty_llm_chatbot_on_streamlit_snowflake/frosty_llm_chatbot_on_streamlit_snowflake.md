@@ -75,7 +75,7 @@ Complete the following steps in your local machine (or an equivalent dev environ
     ```
 6. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
-    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai
+    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python "openai<1.0.0"
     pip install streamlit
     ```
 

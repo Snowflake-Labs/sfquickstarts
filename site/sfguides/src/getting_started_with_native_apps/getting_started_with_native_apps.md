@@ -12,29 +12,49 @@ tags: Getting Started, Data Science, Data Engineering, Native Apps
 ## Overview 
 Duration: 3
 
+> aside negative
+> 
+> **Important**
+> Snowflake Native Apps are currently only available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.
+
 ![Native Apps Framework](assets/app_framework.png)
 
-In this tutorial you will get up and running with developing your first Snowflake Native Application. 
+In this Quickstart, you'll build your first Snowflake Native Application. 
 
 Snowflake Native Applications provide developers a way to package applications for consumption by other Snowflake users. The Snowflake Marketplace is a central place for Snowflake users to discover and install Snowflake Native Applications. 
 
-We will be building a Snowflake Native Application used for inventory and supply chain management. In this scenario, we have various suppliers of raw material and our native app will use `order data`, `shipping data`, and `site recovery data` to intelligently determine the following:
+ The application you'll build will visualize data from suppliers of raw material, used for inventory and supply chain management. Let's explore the application from the perspective of the application provider and an application consumer.
 
-- **Lead Time Status:** bar chart to demonstrate real-time overview of the lead time status of the raw material procurement process.
-- **Raw Material Inventory:** bar/table view of  inventory levels of the raw materials 
-- **Purchase Order Status:** pie chart display the status of all the purchase orders (shipped, in transit; completed)
-- **Supplier Performance:** bar chart group by supplier measuring the lead time, quality, and cost of raw materials delivered by each supplier
+– **Provider** – In this Quickstart, the provider of the app is a supply chain management company. They have proprietary data on all sorts of shipments. They've built the app, bundled it with access to their shipping data, and listed it on the Snowflake Marketplace so that manufacturers can use it in combination with manufacturing supply chain data to get a view of the supply chain.
 
+– **Consumer** – The consumer of the app manufactures a consumer product – in this case it's ski goggles. They work with several suppliers of the raw material used to manufacture the ski goggles. When the consumer runs the application in their account, the application will render multiple charts to help them visualize information related to:
+
+- **Lead Time Status** The lead time status of the raw material procurement process.
+- **Raw Material Inventory** Inventory levels of the raw materials. 
+- **Purchase Order Status** The status of all the purchase orders (shipped, in transit; completed)
+- **Supplier Performance** The performance of each raw material supplier, measured in terms lead time, quality, and cost of raw materials delivered by the supplier.
+
+The data powering the charts is a combination of the consumer's own supply chain data (orders and site recovery data) in their Snowflake account, while the provider is sharing shipping data to provide an enriched view of the overall supply chain.
+
+Note that this Quickstart is limited to a single-account installation. You'll use a single Snowflake account to experience the app from the provider's perspective and from the consumer's perspective. Listing to the Snowflake Marketplace and versions / release directives are outside of the scope of this guide.
+
+Let's get started!
+
+![streamlit](assets/streamlit.png)
 
 ### Prerequisites
-- Snowflake Trial Account
+- Snowflake trial account on AWS
 - Beginner Python knowledge
 
+> aside negative
+> 
+> **Important**
+> Snowflake Native Apps are currently only available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.
 
 ### What You’ll Learn 
-- Native apps concepts
-- Native Apps deployment
-- Native Apps sharing and Marketplace Listing
+- Snowflake Native App Framework
+- Snowflake Native App deployment
+- Snowflake Native App sharing and Marketplace Listing
 
 
 ### What You’ll Need 
@@ -47,13 +67,13 @@ We will be building a Snowflake Native Application used for inventory and supply
 ## Architecture & Concepts
 Duration: 2
 
-Snowflake Native Apps are a new way to build data intensive applications. Snowflake Native Apps benefit from running *inside* Snowflake and can be installed from the Snowflake Marketplace similar to installing an app on a smart phone. Snowflake Native Apps can read and write data to a user's database (when given permission to do so). Snowflake Native Apps can even bring in new data to their users, providing new insights. 
+Snowflake Native Apps are a new way to build data intensive applications. Snowflake Native Apps benefit from running *inside* Snowflake and can be installed from the Snowflake Marketplace, similar to installing an app on a smart phone. Snowflake Native Apps can read and write data to a user's database (when given permission to do so). Snowflake Native Apps can even bring in new data to their users, providing new insights. 
 
-When discussing Snowflake Native Apps, we have two groups `Providers` and `Consumers`. When developing and publishing a Snowflake Native App, you are a Provider. 
+When discussing Snowflake Native Apps, there are two personas to keep in mind: **Providers** and **Consumers**.
 
-- **Snowflake Native App Providers:** these are the developers of the Native App. The developer or company publishing a Native App to the Snowflake Marketplace is a App Provider.
+- **Providers:** Developers of the app. The developer or company publishing an app to the Snowflake Marketplace is an app provider.
 
-- **Snowflake Native App Consumer:** these are the users of a Native App. When a user installs a Native App from the Snowflake Marketplace they are a consumer of the Native App.
+- **Consumer:** Users of an app. When a user installs an app from the Snowflake Marketplace, they are a consumer of the app.
 
 The diagram below demonstrates this model:
  
@@ -63,7 +83,7 @@ The diagram below demonstrates this model:
 ## Clone Sample Repo & Directory Structure
 Duration: 3
 
-To create our Snowflake Native Application, we will first clone the starter project by running this command:
+To create our Snowflake Native Application, we will first clone the [starter project](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps) by running this command:
 
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps.git
@@ -180,7 +200,7 @@ references:
 ## Update UDF.py
 Duration: 3
 
-To add some new functionality to our application we will modify `UDF.py`. This is the python file we use to create all our User Defined Functions (UDFs).
+To add some new functionality to our application we will modify **UDF.py**. This is the Python file we use to create all our User Defined Functions (UDFs).
 
 ```python
 def cal_distance(lat1,lon1,lat2,lon2):
@@ -206,7 +226,7 @@ def cal_lead_time(i,j,k):
 
 Let's add a new function that simply outputs "Hello World!"
 
-To do this, copy and paste the code below into `UDF.py`
+To do this, copy and paste the code below into **UDF.py**:
 
 ```python
 def hello_world():
@@ -220,9 +240,9 @@ In the next step, we will expose this function to Consumers by adding it to our 
 ## Edit Installation Script
 Duration: 3
 
-The installation script `setup.sql` defines all Snowflake Objects used within the application. This script runs every time a user installs the application into their environment. 
+The installation script **setup.sql** defines all Snowflake objects used within the application. This script runs every time a user installs the application into their environment. 
 
-We will use this file to expose our new `hello_world` python UDF.
+We will use this file to expose our new `hello_world` Python UDF.
 
 ```
 -- ==========================================
@@ -349,25 +369,29 @@ CREATE OR REPLACE STAGE NATIVE_APP_QUICKSTART_STAGE
 	COMMENT = '';
 ```
 
-Now that both the `package` and `stage` have been created, you can upload files to Snowflake using the web interface. To do this:
+Now that a `stage` has been created, you'll need to upload the application source code into the stage. We'll do this using the Snowflake UI:
 
 1. Login to your Snowflake account and navigate to `Data -> Databases`
 2. Select `NATIVE_APP_QUICKSTART_PACKAGE` -> `NATIVE_APP_QUICKSTART_SCHEMA` -> `Stages` -> `NATIVE_APP_QUICKSTART_STAGE`
 3. Click the `+ Files` button in the top right.
 
-> aside negative
->
-> **Note**
-> It is important that you match the local directory structure with the directory structure of your stage. This is because `manifest.yml` and `setup.sql` use relative path references. Prepend `v1/` to all directories created for this tutorial. For example, when uploading `udf.py`, the path should read `v1/libraries/udf.py`.
+You'll need to upload **manifest.yml**, **setup.sql**, and all of the files inside of the **libraries/** folder.
 
+4. In the modal that opens, upload the **manifest.yml** file. The file will be added to the stage.
+
+5. Next, you'll upload the **setup.sql** file. Use the modal once again to select this file. Before uploading, use the form near the bottom of the modal to enter a folder name. Enter **scripts**, then upload the file. A folder called **scripts/** will be added to the stage, and the folder will contain the **setup.sql** file.
+
+6. Repeat Step 5 to upload the four files within the **libraries/** folder. Be sure to enter **libraries** in the form at the bottom of the modal so that the folder is also created within the stage.
+
+The file and folder structure within your `NATIVE_APP_QUICKSTART_STAGE` stage should match the structure within the [**src/** folder of the companion repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps/tree/main/app/src). It is important that the structure withiin the stage match structure in the repo so that references to files and artifacts within any of these files do not break. This will ensure that the application can run as intended when it is installed and run in a consumer's account.
 
 <!-- ------------------------ -->
-## Upload Provider Data to Snowflake
+## Upload Provider Shipping Data
 Duration: 2
 
-Now, let's create a database that we will use to store our data. The manufacturer will be supplying the shipping data with the Native Application via data sharing.
+Now, let's create a database that we will use to store provider's shipping data. This is the data that we will share with the application so that the consumer can enrich their own supply chain data with it when they install the app in their account.
 
-In the SQL below, we will be using `NATIVE_APP_QUICKSTART_DB` for our Producer data.
+Start by running the SQL below in a Snowflake SQL worksheet. It creates the database, warehouse, schema, and defines the table that will hold the shipping data.
 
 ```
 CREATE OR REPLACE WAREHOUSE NATIVE_APP_QUICKSTART_WH WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=TRUE;
@@ -387,18 +411,15 @@ CREATE OR REPLACE TABLE MFG_SHIPPING (
   lon FLOAT,
   duration NUMBER(38,0)
 );
-
--- Load app/data/shipping_data.csv using Snowsight
-
 ```
 
-### Using the Snowflake Web UI  
+### Upload data into the table
 
- To upload our data we can use the Snowflake UI:
+ Next, you'll load data into this table using the Snowflake UI.
 
 1. Login to your Snowflake account and navigate to `Data -> Databases`
 2. Select `NATIVE_APP_QUICKSTART_DB` -> `NATIVE_APP_QUICKSTART_SCHEMA` -> `Tables` 
-3. From there, select table `MFG_SHIPPING` and upload the corresponding `.csv` file from the downloaded repository:
+3. From there, select table `MFG_SHIPPING` and upload the **app/data/shipping_data.csv** file from the downloaded repository:
    1. Select `Load Data` in the top right
    2. Select `NATIVE_APP_QUICKSTART_WH` for the warehouse
    3. Click `Browse` and select the corresponding `.csv` file, Click `Next`
@@ -406,11 +427,21 @@ CREATE OR REPLACE TABLE MFG_SHIPPING (
    5. For `Field optionally enclosed by` select `Double quotes`
    6. Click `Next`, repeat for each table. 
 
-### Add Data to the Application Package
+### Share the Provider Shipping Data via the Application Package
 
-In order for the shipping data to be available to the application consumer, it will be added to the application package.
+In order for this data to be available to the application consumer, we'll need to share it in the application package via reference usage.
 
-In the SQL below, the data is added to a share in the application package as a view and select is granted on the data.
+Run the SQL below in a SQL worksheet. Here's what the SQL does:
+
+- Creates a schema in the application package that will be used for sharing the shipping data
+
+- Create a view within that schema
+
+- Grants usage on the schema to the application package
+
+- Grants reference usage on the database holding the provider shipping data to the application package
+
+- Grants SELECT privileges on the view to the application package, meaning the app will be able to SELECT on the view once it is installed
 
 ```sql
 -- ################################################################
@@ -427,13 +458,15 @@ grant reference_usage on database NATIVE_APP_QUICKSTART_DB to share in applicati
 grant select on view MFG_SHIPPING to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
 ```
 
+This flow ensures that the data is able to be shared securely with the consumer through the application. The objects containing the provider's proprietary shipping data are **never** shared directly with the consumer via a Snowflake Native Application. This means the provider's proprietary data remains safe, secure, and in the provider's Snowflake account. Instead, the application package has reference usage on objects (databases) corresponding to the provider's data, and when a consumer install the app (i.e., instantiates the application package), they are able to use the shared data through the application.
+
 <!-- ------------------------ -->
 ## Create App Package Version
 Duration: 4
 
-We've now created our Application `package`, uploaded our project files to our `stage`, and created a mocked Consumer database with sample data. 
+We've now uploaded the application source code to our stage, created our application package, and uploaded the provider data to be shared in the application package.
 
-From here, we will create our first Application Package Version. You can have multiple versions available 
+From here, we will create the first version of our application package. You can have multiple versions available. 
 
 To view our App Package in the Snowflake UI:
 
@@ -447,24 +480,16 @@ Now let's add our first version using our previously uploaded code.
 2. Type `V1` for the version name.
 3. Select `NATIVE_APP_QUICKSTART_PACKAGE` for the database.
 4. Select `NATIVE_APP_QUICKSTART_STAGE` for the stage.
-5. Select `v1` for the directory.
-
-Alternatively, you can add this new version via SQL like this:
-
-```
-ALTER APPLICATION PACKAGE "NATIVE_APP_QUICKSTART_PACKAGE" ADD VERSION "V1" USING '@NATIVE_APP_QUICKSTART_PACKAGE.NATIVE_APP_QUICKSTART_SCHEMA.NATIVE_APP_QUICKSTART_STAGE/v1' LABEL = ''
-
-ALTER APPLICATION PACKAGE "NATIVE_APP_QUICKSTART_PACKAGE" SET DEFAULT RELEASE DIRECTIVE VERSION = "V1" PATCH = 0
-```
-
+5. Select `/` for the directory.
+6. Create the first version.
 
 <!-- ------------------------ -->
-## Upload Test Data to Snowflake
+## Upload Consumer Supply Chain Data
 Duration: 2
 
-The model used in this scenario is that each Native App Consumer will bring their own supply chain data (orders and site recovery). The Native App will use the consumer's data to perform it's calculations. 
+In this scenario, consumers will provider their own supply chain data (orders and site recovery data) from their own Snowflake account. The app will use the consumer's data to render graphs representing different aspects of the supply chain.
 
-In the SQL below, we will be using `NATIVE_APP_QUICKSTART_DB` for our Consumer testing data.
+Run the SQL below in a worksheet. We'll use the `NATIVE_APP_QUICKSTART_DB` to store the consumer supply chain data.
 
 ```
 USE WAREHOUSE NATIVE_APP_QUICKSTART_WH;
@@ -495,9 +520,9 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
 -- Load app/data/site_recovery_data.csv using Snowsight
 ```
 
-### Using the Snowflake Web UI  
+### Upload data into these tables  
 
- To upload our test data we can use the Snowflake UI:
+Next, you'll load data into these newly defined tables using the Snowflake UI.
 
 1. Login to your Snowflake account and navigate to `Data -> Databases`
 2. Select `NATIVE_APP_QUICKSTART_DB` -> `NATIVE_APP_QUICKSTART_SCHEMA` -> `Tables` 
@@ -510,32 +535,36 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
    6. Click `Next`, repeat for each table. 
 
 <!-- ------------------------ -->
-## Test Application
+## Install the Application
 Duration: 3
 
-To test this application, let's run the following:
+To use the application, we'll first need to install it in the account. Normally you'd simply click an install button in the Snowflake Marketplace, but since we're building the application and using a single account to demonstrate the provider and consumer experiences, you'll need to run the following SQL to install the application in the account. 
+
+Open a SQL worksheet and run the following SQL:
 
 ```
 -- ################################################################
--- TEST APP LOCALLY
+-- INSTALL THE APP IN THE ACCOUNT
 -- ################################################################
 
 USE DATABASE NATIVE_APP_QUICKSTART_DB;
 USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
+USE WAREHOUSE NATIVE_APP_QUICKSTART_WH;
 
--- This executes "setup.sql" linked in the manifest.yml; This is also what gets executed when installing the app
+-- This executes "setup.sql"; This is also what gets executed when installing the app
 CREATE APPLICATION NATIVE_APP_QUICKSTART_APP FROM application package NATIVE_APP_QUICKSTART_PACKAGE using version V1 patch 0;
--- For example, CREATE APPLICATION LEAD_TIME_OPTIMIZER_APP FROM application package LEAD_TIME_OPTIMIZER_PKG using version V1 patch 0;
 
--- At this point you should see and run the app NATIVE_APP_QUICKSTART_APP listed under Apps
-SHOW APPLICATION PACKAGES;
+-- At this point you should see the app NATIVE_APP_QUICKSTART_APP listed under Apps
+SHOW APPLICATIONS;
 ```
 
 <!-- ------------------------ -->
 ## Run the Streamlit App
 Duration: 1
 
-Now you can run the Streamlit Application! To run this yourself, navigate to the `Apps` tab in Snowflake. From there, you will see your new application.
+With the application installed, you can now the app! To run the app, navigate to the `Apps` tab in Snowflake. From there, you will see your new application. Click on the app to launch it and give it a few seconds to warm up. 
+
+When running the app for the first time, you'll be prompted to do some first-time setup by granting the app access to certain tables (i.e., create object-level bindings). The bindings link references defined in the manifest file to corresponding objects in the Snowflake account. These bindings ensure that the application can run as intended.
 
 Upon running the application, you will see this:
 
@@ -547,7 +576,9 @@ Upon running the application, you will see this:
 ## Conclusion & Next Steps
 Duration: 1
 
-Congratulations, you have now developed your first Snowflake Native Application! As next steps and to learn more, checkout additional documentation at [docs.snowflake.com](https://docs.snowflake.com) and demos of other Snowflake Native Apps at [developers.snowflake.com/demos](https://developers.snowflake.com/demos).
+Congratulations, you have now developed your first Snowflake Native Application! As next steps and to learn more, checkout additional documentation at [docs.snowflake.com](https://docs.snowflake.com) and demos of other Snowflake Native Apps at [developers.snowflake.com/demos](https://developers.snowflake.com/demos/analytics-snowflake-native-app/).
+
+For a slightly more advanced Snowflake Native Application, see the following Quickstart: [Build a Snowflake Native App to Analyze Chairlift Sensor Data](https://quickstarts.snowflake.com/guide/native-app-chairlift/).
 
 ### What we've covered
 - Prepare data to be included in your application.

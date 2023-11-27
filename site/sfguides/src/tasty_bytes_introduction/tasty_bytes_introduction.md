@@ -101,8 +101,9 @@ With the Tasty Bytes Setup successful, we can now explore the Database, Roles an
 >
 
 ### Step 1 - Exploring the Tasty Bytes Database
-This query will return the Database we created via [SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html).
+This query will return the Database we created via [SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html) using our SYSADMIN role.
 ```
+USE ROLE sysadmin;
 SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
 ```
 <img src = "assets/show_tb_db.png"> 
