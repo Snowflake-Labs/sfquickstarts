@@ -41,7 +41,7 @@ This guide is designed to help you understand the capabilities included in Snowf
 
 <!-- ------------------------ -->
 ## Setup your Environment
-Duration: 1
+Duration: 10
 
 ### Install Conda, Spark, Jupyter
 
@@ -116,7 +116,7 @@ ALTER USER iceberg_lab SET rsa_public_key='<paste your public key here>';
 
 <!-- ------------------------ -->
 ## Create an Iceberg Table
-Duration: 1
+Duration: 10
 
 ### Create an External Volume
 
@@ -179,7 +179,7 @@ INSERT INTO customer_iceberg
 
 If you check your cloud storage bucket, you should now see files that Snowflake has written as part of table creation. While Snowflake writes these files automatically, you can also use a [function](https://docs.snowflake.com/en/sql-reference/functions/system_get_iceberg_table_information) to generate table metadata files that capture any data manipulation language (DML) changes that have been made since the last time Iceberg metadata was generated.
 
-![/assets/3-3_storage.png]
+![Storage](assets/3-3_storage.png)
 
 ### Query and Time Travel
 
@@ -221,7 +221,7 @@ GROUP BY 2;
 
 <!-- ------------------------ -->
 ## Governance on Iceberg Tables
-Duration: 1
+Duration: 7
 
 Governance and access controls work on Iceberg Tables just like internal tables. As described in the overview section, all of these features require Enterprise or Business Critical Edition of Snowflake.
 
@@ -348,7 +348,7 @@ And if you notice certain tables are missing tags or policies, you can modify, c
 
 <!-- ------------------------ -->
 ## Processing Iceberg Tables with Snowpark
-Duration: 1
+Duration: 3
 
 Snowpark is a set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala. Snowpark can be used for data science and data engineering pipelines, with key benefits including:
 - Support for pushdown for all operations, leaving heavy lifting up to Snowflake and allowing you to efficiently work with data of any size.
@@ -414,7 +414,7 @@ For a deeper dive on Snowpark for data engineering pipelines, try [this quicksta
 
 <!-- ------------------------ -->
 ## Sharing Iceberg Tables
-Duration: 1
+Duration: 10
 
 Iceberg Tables can be securely shared with consumers either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
 
@@ -507,7 +507,7 @@ As changes are made to the Iceberg Table from the producer’s account, those ch
 
 <!-- ------------------------ -->
 ## Access Iceberg Tables from Apache Spark
-Duration: 1
+Duration: 10
 
 Suppose another team that uses Spark wants to read the Snowflake-managed Iceberg Table using their Spark clusters. They can use the Snowflake Iceberg Catalog SDK to access snapshot information, and directly access data and metadata in object storage, all without using any Snowflake warehouses.
 
