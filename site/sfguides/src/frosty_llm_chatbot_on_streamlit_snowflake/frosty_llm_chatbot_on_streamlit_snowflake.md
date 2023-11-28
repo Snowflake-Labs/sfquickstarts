@@ -61,7 +61,7 @@ Complete the following steps in your local machine (or an equivalent dev environ
     ```
     conda create --name snowpark-llm-chatbot --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
     ```
-    Activate the environment created in those instructions by running `conda activate py310_env` and proceed to step 6 below.
+    Activate the environment created by running `conda activate snowpark-llm-chatbot` and proceed to step 6 below.
 
     If you're not using a machine with an Apple M1 chip, continue to step 4.
 
@@ -75,8 +75,8 @@ Complete the following steps in your local machine (or an equivalent dev environ
     ```
 6. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
-    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python "openai<1.0.0"
-    pip install streamlit
+    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai
+    conda install -c conda-forge "streamlit>=1.28.2"
     ```
 
 ### Troubleshooting `pyarrow` related issues
@@ -208,9 +208,9 @@ First, we'll validate our OpenAI credentials by asking GPT-3.5 a simple question
 import streamlit as st
 import openai
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-completion = openai.ChatCompletion.create(
+completion = client.chat.completions.create(
   model="gpt-3.5-turbo",
   messages=[
     {"role": "user", "content": "What is Streamlit?"}
@@ -234,7 +234,7 @@ Next, let's validate that our Snowflake credentials are working as expected.
 ```python
 import streamlit as st
 
-conn = st.experimental_connection("snowpark")
+conn = st.connection("snowflake")
 df = conn.query("select current_warehouse()")
 st.write(df)
 ```
@@ -252,7 +252,7 @@ We'll break down the Python file snippet-by-snippet so that you understand the f
 
 1. Create a file called `simple_chatbot.py`. Add import statements and give your app a title.
 ```python
-import openai
+from openai import OpenAI
 import streamlit as st
 
 st.title("☃️ Frosty")
@@ -263,9 +263,7 @@ st.title("☃️ Frosty")
 ```python
 # Initialize the chat messages history
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [
-        {"role": "assistant", "content": "How can I help?"}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "How can I help?"}]
 ```
 
 3. Prompt the user to enter chat input by using Streamlit's `st.chat_input()` feature. If the user has entered a message, add that message to the chat history by storing it in session state.
@@ -279,7 +277,7 @@ if prompt := st.chat_input():
 4. Display the chatbot's message history by iterating through the values stored in session state associated with the key "messages" and printing each value.
 
 ```python
-# display the prior chat messages
+# display the existing chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
@@ -293,9 +291,9 @@ if st.session_state.messages[-1]["role"] != "assistant":
     # Call LLM
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            r = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+            r = OpenAI().chat.completions.create(
                 messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                model="gpt-3.5-turbo",
             )
             response = r.choices[0].message.content
             st.write(response)
@@ -310,16 +308,14 @@ if st.session_state.messages[-1]["role"] != "assistant":
 The full contents of the Python file for this simple chatbot app are below, or you can download the file from [GitHub](https://github.com/Snowflake-Labs/sfguide-frosty-llm-chatbot-on-streamlit-snowflake/blob/main/src/simple_chatbot.py).
 
 ```python
-import openai
+from openai import OpenAI
 import streamlit as st
 
 st.title("☃️ Frosty")
 
 # Initialize the chat messages history
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [
-        {"role": "assistant", "content": "How can I help?"}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "How can I help?"}]
 
 # Prompt for user input and save
 if prompt := st.chat_input():
@@ -335,9 +331,9 @@ if st.session_state.messages[-1]["role"] != "assistant":
     # Call LLM
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            r = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+            r = OpenAI().chat.completions.create(
                 messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                model="gpt-3.5-turbo",
             )
             response = r.choices[0].message.content
             st.write(response)
@@ -371,33 +367,38 @@ This file should be placed in the root of your `llm-chatbot` folder. You can dow
 ````python
 import streamlit as st
 
-QUALIFIED_TABLE_NAME = "FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ANNUAL_TIME_SERIES"
-METADATA_QUERY = "SELECT VARIABLE_NAME, DEFINITION FROM FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED;"
+SCHEMA_PATH = st.secrets.get("SCHEMA_PATH", "FROSTY_SAMPLE.CYBERSYN_FINANCIAL")
+QUALIFIED_TABLE_NAME = f"{SCHEMA_PATH}.FINANCIAL_ENTITY_ANNUAL_TIME_SERIES"
 TABLE_DESCRIPTION = """
 This table has various metrics for financial entities (also referred to as banks) since 1983.
 The user may describe the entities interchangeably as banks, financial institutions, or financial entities.
 """
+# This query is optional if running Frosty on your own table, especially a wide table.
+# Since this is a deep table, it's useful to tell Frosty what variables are available.
+# Similarly, if you have a table with semi-structured data (like JSON), it could be used to provide hints on available keys.
+# If altering, you may also need to modify the formatting logic in get_table_context() below.
+METADATA_QUERY = f"SELECT VARIABLE_NAME, DEFINITION FROM {SCHEMA_PATH}.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED;"
 
 GEN_SQL = """
-You will be acting as an AI Snowflake SQL expert named Frosty.
-Your goal is to give correct, executable SQL queries to users.
+You will be acting as an AI Snowflake SQL Expert named Frosty.
+Your goal is to give correct, executable sql query to users.
 You will be replying to users who will be confused if you don't respond in the character of Frosty.
 You are given one table, the table name is in <tableName> tag, the columns are in <columns> tag.
-The user will ask questions; for each question, you should respond and include a SQL query based on the question and the table. 
+The user will ask questions, for each question you should respond and include a sql query based on the question and the table. 
 
 {context}
 
 Here are 6 critical rules for the interaction you must abide:
 <rules>
-1. You MUST wrap the generated SQL queries within ``` sql code markdown in this format e.g
+1. You MUST MUST wrap the generated sql code within ``` sql code markdown in this format e.g
 ```sql
 (select 1) union (select 2)
 ```
 2. If I don't tell you to find a limited set of results in the sql query or question, you MUST limit the number of responses to 10.
 3. Text / string where clauses must be fuzzy match e.g ilike %keyword%
-4. Make sure to generate a single Snowflake SQL code snippet, not multiple. 
-5. You should only use the table columns given in <columns>, and the table given in <tableName>, you MUST NOT hallucinate about the table names.
-6. DO NOT put numerical at the very front of SQL variable.
+4. Make sure to generate a single snowflake sql code, not multiple. 
+5. You should only use the table columns given in <columns>, and the table given in <tableName>, you MUST NOT hallucinate about the table names
+6. DO NOT put numerical at the very front of sql variable.
 </rules>
 
 Don't forget to use "ilike %keyword%" for fuzzy match queries (especially for variable_name column)
@@ -412,14 +413,14 @@ Now to get started, please briefly introduce yourself, describe the table at a h
 Then provide 3 example questions using bullet points.
 """
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner="Loading Frosty's context...")
 def get_table_context(table_name: str, table_description: str, metadata_query: str = None):
     table = table_name.split(".")
-    conn = st.experimental_connection("snowpark")
+    conn = st.connection("snowflake")
     columns = conn.query(f"""
         SELECT COLUMN_NAME, DATA_TYPE FROM {table[0].upper()}.INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_SCHEMA = '{table[1].upper()}' AND TABLE_NAME = '{table[2].upper()}'
-        """,
+        """, show_spinner=False,
     )
     columns = "\n".join(
         [
@@ -437,7 +438,7 @@ Here are the columns of the {'.'.join(table)}
 <columns>\n\n{columns}\n\n</columns>
     """
     if metadata_query:
-        metadata = conn.query(metadata_query)
+        metadata = conn.query(metadata_query, show_spinner=False)
         metadata = "\n".join(
             [
                 f"- **{metadata['VARIABLE_NAME'][i]}**: {metadata['DEFINITION'][i]}"
@@ -476,7 +477,7 @@ We'll break down the Python file snippet-by-snippet so that you understand the f
    * Iterates through the message history and displays each message in the app
 
 ```python
-import openai
+from openai import OpenAI
 import re
 import streamlit as st
 from prompts import get_system_prompt
@@ -484,8 +485,7 @@ from prompts import get_system_prompt
 st.title("☃️ Frosty")
 
 # Initialize the chat messages history
-openai.api_key = st.secrets.OPENAI_API_KEY
-
+client = OpenAI(api_key=st.secrets.OPENAI_API_KEY)
 if "messages" not in st.session_state:
     # system prompt includes table information, rules, and prompts the LLM to produce
     # a welcome message to the user.
@@ -513,12 +513,12 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         response = ""
         resp_container = st.empty()
-        for delta in openai.ChatCompletion.create(
+        for delta in client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
             stream=True,
         ):
-            response += delta.choices[0].delta.get("content", "")
+            response += (delta.choices[0].delta.content or "")
             resp_container.markdown(response)
 ```
 
@@ -530,7 +530,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
         sql_match = re.search(r"```sql\n(.*)\n```", response, re.DOTALL)
         if sql_match:
             sql = sql_match.group(1)
-            conn = st.experimental_connection("snowpark")
+            conn = st.connection("snowflake")
             message["results"] = conn.query(sql)
             st.dataframe(message["results"])
         st.session_state.messages.append(message)
@@ -543,7 +543,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
 The full contents of the Python file for this app are below, or you can download the file from [GitHub](https://github.com/Snowflake-Labs/sfguide-frosty-llm-chatbot-on-streamlit-snowflake/blob/main/src/frosty_app.py).
 
 ```python
-import openai
+from openai import OpenAI
 import re
 import streamlit as st
 from prompts import get_system_prompt
@@ -551,7 +551,7 @@ from prompts import get_system_prompt
 st.title("☃️ Frosty")
 
 # Initialize the chat messages history
-openai.api_key = st.secrets.OPENAI_API_KEY
+client = OpenAI(api_key=st.secrets.OPENAI_API_KEY)
 if "messages" not in st.session_state:
     # system prompt includes table information, rules, and prompts the LLM to produce
     # a welcome message to the user.
@@ -575,12 +575,12 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         response = ""
         resp_container = st.empty()
-        for delta in openai.ChatCompletion.create(
+        for delta in client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
             stream=True,
         ):
-            response += delta.choices[0].delta.get("content", "")
+            response += (delta.choices[0].delta.content or "")
             resp_container.markdown(response)
 
         message = {"role": "assistant", "content": response}
@@ -588,7 +588,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
         sql_match = re.search(r"```sql\n(.*)\n```", response, re.DOTALL)
         if sql_match:
             sql = sql_match.group(1)
-            conn = st.experimental_connection("snowpark")
+            conn = st.connection("snowflake")
             message["results"] = conn.query(sql)
             st.dataframe(message["results"])
         st.session_state.messages.append(message)
