@@ -160,7 +160,11 @@ MATCH_BY_COLUMN_NAME = case_insensitive;
 
 Duration: 5
 
-Geospatial types are designed for fast and efficient spatial operations. Whenever you store objects that are based on Lat and Lon or X and Y coordinates, and you plan to run spatial calculations, we recommend storing those objects as GEOGRAPHY or GEOMETRY type accordingly. 
+Geospatial types are designed for quick and efficient spatial operations and GEOGRAPHY is the ideal choice when your coordinates are in latitude and longitude.
+
+Each time you store a new spatial object, we check it for compliance with the OGC standards. This validation process is one reason why using a GEOGRAPHY column can be faster than generating GEOGRAPHY objects on the fly, as Snowflake does not need to re-validate it every time it's used. If you use the `allowInvalid=True` parameter while creating spatial column, Snowflake will save objects even if they don't meet OGC standards. However, this approach still speeds up spatial calculations because Snowflake can quickly determine whether each object is valid. Keep in mind that the results of spatial operations on invalid objects may differ from those on valid ones.
+
+GEOGRAPHY data is stored in a binary format and optimised for fast read operations. We store an additional shape index for each object to speed up spatial operations. Moreover, if you activate Search Optimisation (see Lab 3), Snowflake creates additional partition-based indices, enhancing performance even more.
 
 Let's explore the OpenCellID dataset, which contains the locations of over 40 million cell towers. The image below illustrates the locations of these towers.
 
