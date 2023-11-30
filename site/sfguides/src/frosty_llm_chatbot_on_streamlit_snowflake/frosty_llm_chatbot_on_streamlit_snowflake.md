@@ -223,14 +223,12 @@ st.write(completion.choices[0].message.content)
 
 Next, let's validate that our Snowflake credentials are working as expected.
 
-1. Replace the contents of `validate_credentials.py` with the below code. This snippet does the following:
+1. Append the following to `validate_credentials.py`. This snippet does the following:
    * Imports the Streamlit package
    * Creates a Snowpark connection
    * Executes a query to pull the current warehouse and writes the result to the UI
 
 ```python
-import streamlit as st
-
 conn = st.connection("snowflake")
 df = conn.query("select current_warehouse()")
 st.write(df)
