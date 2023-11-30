@@ -63,7 +63,7 @@ Complete the following steps in your local machine (or an equivalent dev environ
     ```
 4. Run the following command to create a Python 3.11 conda virtual environment:
     ```
-    conda create --name snowpark-llm-chatbot python=3.11 --yes
+    conda create --name snowpark-llm-chatbot python=3.11
     ```
 5. Activate the conda environment by running the following command:
     ```
