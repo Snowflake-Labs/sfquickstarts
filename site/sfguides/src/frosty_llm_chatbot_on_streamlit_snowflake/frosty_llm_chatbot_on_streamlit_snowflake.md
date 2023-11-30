@@ -55,28 +55,24 @@ Duration: 8
 
 Complete the following steps in your local machine (or an equivalent dev environment):
 
-1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to manage a separate environment by selecting the appropriate installer link for your operating system and Python version from [Anaconda's website](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links).
+1. Install [Anaconda Distribution](https://docs.conda.io/en/latest/miniconda.html) to manage a separate environment by selecting the appropriate installer link for your operating system and Python version from [Anaconda's website](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links).
 2. Open the terminal or command prompt and create a folder for your project. Let's call it `llm-chatbot`.
-3. If you're using a machine with an Apple M1 chip, run the following command to use conda to create a Python 3.10 virtual environment, add the Snowflake conda channel, and install the numpy and pandas packages: 
+3. Make sure you are running the latest version of conda by running the following command:
     ```
-    conda create --name snowpark-llm-chatbot --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
+    conda update -n base conda
     ```
-    Activate the environment created by running `conda activate snowpark-llm-chatbot` and proceed to step 6 below.
-
-    If you're not using a machine with an Apple M1 chip, continue to step 4.
-
-4. Create a conda environment by running the following command:
+4. Run the following command to create a Python 3.11 conda virtual environment:
     ```
-    conda create --name snowpark-llm-chatbot -c https://repo.anaconda.com/pkgs/snowflake python=3.10
+    conda create --name snowpark-llm-chatbot python=3.11 --yes
     ```
 5. Activate the conda environment by running the following command:
     ```
     conda activate snowpark-llm-chatbot
     ```
-6. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
+8. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
-    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai
-    conda install -c conda-forge "streamlit>=1.28.2"
+    conda install snowflake-snowpark-python openai
+    conda install conda-forge::"streamlit>=1.28.2"
     ```
 
 ### Troubleshooting `pyarrow` related issues
@@ -153,6 +149,7 @@ Since our application will connect to Snowflake and OpenAI, we need a way to sec
 
 #### Add Snowflake credentials to `secrets.toml`
 We need to add the Snowflake `user`, `password`, `warehouse`, `role`, and `account` to our secrets file. Copy the following format, replacing the placeholder credentials with your actual credentials.
+`account` should be your Snowflake account identifier, which you can locate by following the instructions outlined [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 If you prefer to use browser-based SSO to authenticate, replace `password = "<my_trial_pass>"` with `authenticator=EXTERNALBROWSER`.
 
