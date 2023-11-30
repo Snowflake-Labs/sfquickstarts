@@ -179,7 +179,7 @@ OPENAI_API_KEY = "sk-2v...X"
 
 OPENAI_API_KEY = "sk-2v...X"
 
-[connections.snowpark]
+[connections.snowflake]
 user = "<username>"
 password = "<password>"
 warehouse = "COMPUTE_WH"
