@@ -71,7 +71,7 @@ Complete the following steps in your local machine (or an equivalent dev environ
     ```
 8. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
-    conda install snowflake-snowpark-python openai
+    conda install snowflake-snowpark-python "openai>=1.0.0"
     conda install conda-forge::"streamlit>=1.28.2"
     ```
 
@@ -147,8 +147,17 @@ Since our application will connect to Snowflake and OpenAI, we need a way to sec
 1. Add a folder within your `llm-chatbot` folder called `.streamlit`. Using the command line, you can do this by entering `mkdir .streamlit`.
 2. Within the `.streamlit` folder, add a file called `secrets.toml`. Using the command line, you can do this by first navigating to the `.streamlit` folder via `cd .streamlit` and then entering `touch secrets.toml.`
 
+#### Add OpenAI credentials to `secrets.toml`
+We need to add our OpenAI API key to our secrets file. Add your OpenAI key to the secrets file with the following format (replace the placeholder API key with your actual API key).
+
+```toml
+# .streamlit/secrets.toml
+
+OPENAI_API_KEY = "sk-2v...X"
+```
+
 #### Add Snowflake credentials to `secrets.toml`
-We need to add the Snowflake `user`, `password`, `warehouse`, `role`, and `account` to our secrets file. Copy the following format, replacing the placeholder credentials with your actual credentials.
+We also need to add the Snowflake `user`, `password`, `warehouse`, `role`, and `account` to our secrets file. Copy the following format, replacing the placeholder credentials with your actual credentials.
 `account` should be your Snowflake account identifier, which you can locate by following the instructions outlined [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 If you prefer to use browser-based SSO to authenticate, replace `password = "<my_trial_pass>"` with `authenticator=EXTERNALBROWSER`.
@@ -156,21 +165,12 @@ If you prefer to use browser-based SSO to authenticate, replace `password = "<my
 ```toml
 # .streamlit/secrets.toml
 
-[connections.snowpark]
+[connections.snowflake]
 user = "<jdoe>"
 password = "<my_trial_pass>"
 warehouse = "COMPUTE_WH"
 role = "ACCOUNTADMIN"
 account = "<account-id>"
-```
-
-#### Add OpenAI credentials to `secrets.toml`
-We also need to add our OpenAI API key to our secrets file. Copy the following format, replacing the placeholder API key with your actual API key.
-
-```toml
-# .streamlit/secrets.toml
-
-OPENAI_API_KEY = "sk-2v...X"
 ```
 
 #### Full contents of secrets.toml
@@ -203,7 +203,7 @@ First, we'll validate our OpenAI credentials by asking GPT-3.5 a simple question
 
 ```python
 import streamlit as st
-import openai
+from openai import OpenAI
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
@@ -224,7 +224,6 @@ st.write(completion.choices[0].message.content)
 Next, let's validate that our Snowflake credentials are working as expected.
 
 1. Append the following to `validate_credentials.py`. This snippet does the following:
-   * Imports the Streamlit package
    * Creates a Snowpark connection
    * Executes a query to pull the current warehouse and writes the result to the UI
 
