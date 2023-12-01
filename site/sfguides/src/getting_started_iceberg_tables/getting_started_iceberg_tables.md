@@ -563,5 +563,5 @@ Congratulations! You've successfully created an open data lakehouse on Snowflake
 - How to access a Snowflake-managed Iceberg Table from Apache Spark
 
 ### Related Resources
-- [Snowflake Documentation for Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog)
+- [Snowflake Documentation for Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 - [Apache Iceberg Documentation](https://iceberg.apache.org/)
