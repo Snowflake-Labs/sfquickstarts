@@ -516,7 +516,7 @@ During this step we will be orchestrating our new Snowpark pipelines with Snowfl
 
 In this step, we will create two tasks, one for each stored procedure, and chain them together. We will then deploy or run the tasks to operationalize the data pipeline.
 
-In this step, we will run through the commands in the Python file `steps/07_deploy_task_dag.py` from VS Code. To execute the file, you can open the terminal in VS Code and run `python steps/07_deploy_task_dag.py`.
+In this step, we will run through the commands in the Python file `steps/07_deploy_task_dag.py` from VS Code. To execute the file, you can open the terminal in VS Code and run `cd steps && python 07_deploy_task_dag.py`.
 
 To put this in context, we are on step **#7** in our data flow overview:
 
