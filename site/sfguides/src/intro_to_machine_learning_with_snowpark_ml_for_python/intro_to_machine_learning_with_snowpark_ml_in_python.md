@@ -17,17 +17,17 @@ Through this quickstart guide, you will explore what's new in Snowpark for Machi
 
 Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
 
-**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes a set of Snowpark ML APIs for more efficient ML modeling (GA soon) and ML operations (public preview soon).
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes a set of Snowpark ML APIs for more efficient ML modeling and ML operations (public preview soon).
 
 **Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
-![snowpark_diagram](assets/snowpark.png)
+![snowpark_diagram](assets/snowpark_chart.png)
 
 ### What is Snowpark ML?
 
-[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (GA soon) for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview soon) for model deployment and management. 
+[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview soon) for model deployment and management. 
 
 This quickstart will focus on
 * Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution for faster and more intuitive model development.
