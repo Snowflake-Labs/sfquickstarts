@@ -1,9 +1,9 @@
 author: marzillo-snow
-id: with_snowflake_for_genai
+id: getting_started_with_sagemaker_canvas_with_snowflake_for_genai
 summary: This is a quickstart for using Sagemaker with Canvas for Generative AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development, gen-ai, llms, aws, sagemaker, canvas
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Generative AI, LLM, AWS, Sagemaker, Canvas, ML
 
