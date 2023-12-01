@@ -1,9 +1,9 @@
 author: marzillo-snow
 id: getting_started_with_sagemaker_canvas_with_snowflake_for_genai
-summary: This is a qucikstart for using Sagemaker with Canvas for Generative AI
+summary: This is a quickstart for using Sagemaker with Canvas for Generative AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development, gen-ai, llms, aws, sagemaker, canvas
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Generative AI, LLM, AWS, Sagemaker, Canvas, ML
 
@@ -16,9 +16,9 @@ Amazon SageMaker is a fully managed machine learning service. With SageMaker, da
 
 SageMaker Canvas is a visual interface that simplifies the process of building, training, and deploying machine learning models. It allows users to construct and manage machine learning workflows through a drag-and-drop interface, making it easier to create and iterate on machine learning models without writing extensive code. 
 
-Additionally, Canvas now has native integrations with AWS generative ai services like Sagemaker Jumpstart and Bedrock. 
+Additionally, Canvas now has native integrations with AWS Generative AI services like Sagemaker Jumpstart and Bedrock. 
 
-This quickstart is designed to serve as an introduction for using Snowflake with Canvas and generative ai services.
+This quickstart is designed to serve as an introduction for using Snowflake with Canvas and Generative AI services.
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
@@ -29,7 +29,7 @@ This quickstart is designed to serve as an introduction for using Snowflake with
 ### You'll Learn
 - How to get started with Sagemaker Canvas
 - Using Snowflake with Sagemaker Canvas
-- Using generative ai with Snowflake data in Canvas
+- Using Generative AI with Snowflake data in Canvas
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/)
@@ -38,10 +38,10 @@ This quickstart is designed to serve as an introduction for using Snowflake with
 - In the VPC [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic
 
 ### What You’ll Build 
-You will build a Canvas flow that leverages Snowflake data and AWS generative ai capabilities
+You will build a Canvas flow that leverages Snowflake data and AWS Generative AI capabilities
 - Connect to Snowflake data from Canvas
 - Build a Canvas data flow
-- Utilize generative AI capabilities in Sagemaker Canvas using chat with your data
+- Utilize Generative AI capabilities in Sagemaker Canvas using chat with your data
 
 The end-to-end workflow will look like this:
 ![](assets/snowflake_canvas_arch.png)
@@ -109,7 +109,7 @@ COPY INTO LOAN_TWO FROM @LOAN/loans-part-2.csv
 select top 10 * from LOAN_TWO;
 ```
 
-What you have done here is copied over two files from an open S3 bucket and created two new tables inside of a new database in Snowflake. We will access these tables from Canvas to explore them with generative ai capabilities.
+What you have done here is copied over two files from an open S3 bucket and created two new tables inside of a new database in Snowflake. We will access these tables from Canvas to explore them with Generative AI capabilities.
 
 Your Snowflake environment should look like this:
 ![](assets/snowflake_env.png)
@@ -181,12 +181,12 @@ Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Canvas with Chat with Data with Snowflake. We encourage users to continue to explore using their Snowflake with Canvas and the many ways that Canvas allows users to leverage Generative AI services easily with their data.
 
-Also, worth mentioning that at the time this quickstart was written Canvas is just rolling out all of its generative AI capabilities, there will be more to come in addition to "chat with your data" so be on the lookout for additional functionality. 
+Also, worth mentioning that at the time this quickstart was written Canvas is just rolling out all of its Generative AI capabilities, there will be more to come in addition to "chat with your data" so be on the lookout for additional functionality. 
 
 ### What We covered
 - Connecting to Snowflake data from Sagemaker Canvas
 - Build a Canvas dataset and data flow
-- Utilizing GenAI functionality in Canvas with Snowflake data to generate insights
+- Utilizing Generative AI functionality in Canvas with Snowflake data to generate insights
 
 ### Additional Considerations
 - There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
