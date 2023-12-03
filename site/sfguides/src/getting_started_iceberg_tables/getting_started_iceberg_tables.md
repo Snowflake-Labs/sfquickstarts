@@ -152,14 +152,14 @@ USE ROLE iceberg_lab;
 USE DATABASE iceberg_lab;
 USE SCHEMA iceberg_lab;
 CREATE OR REPLACE ICEBERG TABLE customer_iceberg (
-    c_custkey number,
-    c_name varchar(25),
-    c_address varchar(40),
-    c_nationkey number,
-    c_phone varchar(15),
-    c_acctbal number,
-    c_mktsegment varchar(10),
-    c_comment varchar (117)
+    c_custkey INTEGER,
+    c_name STRING,
+    c_address STRING,
+    c_nationkey INTEGER,
+    c_phone STRING,
+    c_acctbal INTEGER,
+    c_mktsegment STRING,
+    c_comment STRING
 )  
     CATALOG='SNOWFLAKE'
     EXTERNAL_VOLUME='iceberg_lab_vol'
@@ -293,10 +293,11 @@ We want the team of analysts to be able to query the customer table but not see 
 We can do that with a [masking policy](https://docs.snowflake.com/en/user-guide/security-column-ddm-use).
 
 ```sql
-USE ROLE iceberg_lab;
+USE ROLE accountadmin;
 CREATE ROLE tpch_analyst;
 GRANT ROLE tpch_analyst TO USER <your username>;
 
+USE ROLE iceberg_lab;
 ALTER ROW ACCESS POLICY rap_nation
 SET body ->
   ('TPCH_US' = current_role() and nation_key = 24) or
@@ -361,15 +362,15 @@ USE ROLE iceberg_lab;
 USE DATABASE iceberg_lab;
 USE SCHEMA iceberg_lab;
 CREATE OR REPLACE ICEBERG TABLE nation_orders_iceberg (
-    regionkey NUMBER(38,0),
-    nationkey NUMBER(38,0),
-    nation VARCHAR(25),
-    custkey NUMBER(38,0),
-    order_count NUMBER(38,0),
-    total_price NUMBER(12,2)
+    regionkey INTEGER,
+    nationkey INTEGER,
+    nation STRING,
+    custkey INTEGER,
+    order_count INTEGER,
+    total_price INTEGER
 )
     CATALOG = 'SNOWFLAKE'
-    EXTERNAL_VOLUME = ''
+    EXTERNAL_VOLUME = 'iceberg_lab_vol'
     BASE_LOCATION = '';
 ```
 
@@ -531,8 +532,8 @@ To delete all of the objects created in this guide, you can drop the user, role,
 ```sql
 USE ROLE iceberg_lab;
 DROP SHARE iceberg_lab_nation_orders_shared_data;
-USE ROLE accountadmin;
 DROP DATABASE iceberg_lab;
+USE ROLE accountadmin;
 DROP EXTERNAL VOLUME iceberg_lab_vol;
 DROP USER iceberg_lab;
 DROP ROLE iceberg_lab;
