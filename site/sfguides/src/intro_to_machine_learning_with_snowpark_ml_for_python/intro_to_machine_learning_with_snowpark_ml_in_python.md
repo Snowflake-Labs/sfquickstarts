@@ -37,7 +37,7 @@ Using these features, you can build and operationalize a complete ML workflow, t
 
 **Preprocessing:** Improve performance and scalability with distributed, multi-node execution for common feature engineering functions
 
-**Model Training:** Execute training for popular scikit-learn and xgboost models without manual creation of Stored Procedures or UDFs
+**Model Training:** Execute training for popular scikit-learn, xgboost, and lightgbm models without manual creation of Stored Procedures or UDFs and accelerate model training with distributed hyperparameter tuning
 
 ![snowpark_ml_diagram](assets/what_is_snowpark_ml.png)
 
@@ -61,7 +61,7 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**
+    >**Download the git repo here: [https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**]
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.9](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.9 in the **Setup the Python Environment** step
@@ -80,6 +80,8 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
 Duration: 2
+
+> MAKE SURE YOU'VE DOWNLOADED THE GIT REPO HERE: [https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**]
 
 Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -109,6 +111,8 @@ These can also be found in the **setup.sql** file.
 <!-- ------------------------ -->
 ## Set up the Python environment
 Duration: 7
+
+> MAKE SURE YOU'VE DOWNLOADED THE GIT REPO HERE: [https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**]
 
 ### Snowpark for Python and Snowpark ML
 
