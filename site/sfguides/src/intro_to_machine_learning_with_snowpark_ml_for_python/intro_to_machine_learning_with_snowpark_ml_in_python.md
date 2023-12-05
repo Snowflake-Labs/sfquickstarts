@@ -17,17 +17,17 @@ Through this quickstart guide, you will explore what's new in Snowpark for Machi
 
 Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
 
-**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes a set of Snowpark ML APIs for more efficient ML modeling (GA soon) and ML operations (public preview soon).
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes a set of Snowpark ML APIs for more efficient ML modeling and ML operations (public preview soon).
 
 **Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
-![snowpark_diagram](assets/snowpark.png)
+![snowpark_diagram](assets/snowpark_chart.png)
 
 ### What is Snowpark ML?
 
-[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (GA soon) for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview soon) for model deployment and management. 
+[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview soon) for model deployment and management. 
 
 This quickstart will focus on
 * Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution for faster and more intuitive model development.
@@ -37,7 +37,7 @@ Using these features, you can build and operationalize a complete ML workflow, t
 
 **Preprocessing:** Improve performance and scalability with distributed, multi-node execution for common feature engineering functions
 
-**Model Training:** Execute training for popular scikit-learn and xgboost models without manual creation of Stored Procedures or UDFs
+**Model Training:** Execute training for popular scikit-learn, xgboost, and lightgbm models without manual creation of Stored Procedures or UDFs and accelerate model training with distributed hyperparameter tuning
 
 ![snowpark_ml_diagram](assets/what_is_snowpark_ml.png)
 
@@ -61,7 +61,7 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**
+    >**Download the git repo here: [https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**]
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.9](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.9 in the **Setup the Python Environment** step
@@ -80,6 +80,8 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
 Duration: 2
+
+> MAKE SURE YOU'VE DOWNLOADED THE GIT REPO HERE: [https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**]
 
 Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -109,6 +111,8 @@ These can also be found in the **setup.sql** file.
 <!-- ------------------------ -->
 ## Set up the Python environment
 Duration: 7
+
+> MAKE SURE YOU'VE DOWNLOADED THE GIT REPO HERE: [https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**]
 
 ### Snowpark for Python and Snowpark ML
 
