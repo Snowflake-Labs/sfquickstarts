@@ -22,6 +22,8 @@ Within this Quickstart we will learn about Snowflake Roles, Role Based Access Co
 
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+- Please note that features leveraged within this Quickstart will require an Enterprise or Business Critical Snowflake account. Please see our documentation an [**Overview of Snowflake Editions**](https://docs.snowflake.com/en/user-guide/intro-editions#overview-of-editions).
+
 
 ### What You Will Learn
 - What System Defined Roles Exist in Snowflake Accounts

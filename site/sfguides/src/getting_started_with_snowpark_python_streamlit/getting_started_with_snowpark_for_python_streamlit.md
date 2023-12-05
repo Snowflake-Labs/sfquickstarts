@@ -2,7 +2,7 @@ id: getting_started_with_snowpark_for_python_streamlit
 summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai
@@ -45,6 +45,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 - How to load data from Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
+- How to run Streamlit in Snowflake
 
 ### Prerequisites
 
@@ -307,6 +308,7 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 - How to load data from Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
+- How to run Streamlit in Snowflake
 
 ### Related Resources
 

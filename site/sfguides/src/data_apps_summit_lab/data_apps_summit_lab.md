@@ -55,6 +55,8 @@ Duration: 8
 1. Install conda to manage a separate environment by running pip install conda. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 2. Open the terminal or command prompt
 
+
+> aside positive
 > IMPORTANT:
 > If you are using a machine wth Apple M1 chip, follow [these instructions](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
@@ -63,7 +65,9 @@ Duration: 8
 5. Install Snowpark for Python, pandas, and scikit-learn by running `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn`
 6. Install Streamlit by running `pip install streamlit` or `conda install streamlit`
 7. Test Streamlit installation: `streamlit hello`
-8. Create folder, e.g. “PCE-Marketplace-Lab” and download these [Lab Files](https://github.com/Snowflake-Labs/sfquickstarts/tree/8c864e6760f411c8d71b8875f1d9e667d194cc03/site/sfguides/src/data_apps_summit_lab/assets/project_files) to that folder.
+8. Create a directory on your local machine as a workspace, e.g. “PCE-Marketplace-Lab” and download the following files:
+   
+   <button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
 
 ---
 
@@ -125,21 +129,15 @@ Before we begin to review working with Snowflake Marketplace data sets, verify y
 
 Now that we have a database with Cybersyn Financial & Economic Essentials, we need to create a database for our application that will store the User Defined Function.
 
-Select “Worksheets” from the Home menu of Snowflake. Create a new worksheet by selecting the 
+Select “Worksheets” from the Home menu of Snowflake. 
 
-
-![alt_text](assets/worksheet.png)
-button.
+Create a new worksheet by selecting the ![alt_text](assets/worksheet.png) button.
 
 In the worksheet copy the following script:
 
+``` sql
 
-``` sql 
--- Go to Marketplace to get the "Cybersyn Financial & Economic Essentials" data product
---   Accept Cybersyn's terms for use of the product
---   Click GET to create a database named CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS
-
--- Setup database, need to be logged in as accountadmin role */ 
+-- Setup database, need to be logged in as accountadmin role
 -- Set role and warehouse (compute)
 USE ROLE accountadmin;
 USE WAREHOUSE compute_wh;
@@ -148,8 +146,6 @@ USE WAREHOUSE compute_wh;
 CREATE DATABASE IF NOT EXISTS summit_hol;
 USE DATABASE summit_hol;
 CREATE STAGE IF NOT EXISTS udf_stage;
-
---Test the Cybersyn Essentials data
 
 -- What financial data is available as a time-series from FRED?
 SELECT DISTINCT variable_name
@@ -170,6 +166,7 @@ ORDER BY date;
 -- Once we created the UDF with the Python Notebook we can test the UDF
 SELECT predict_pce_udf(2022);
 ```
+
 
 <!-- ------------------------ -->
 
@@ -249,7 +246,7 @@ In the above code snippet, replace variables enclosed in "&lt;>" with your value
 In this step we will query the data using the traditional method of executing a SQL statement in the Session object, similar to querying data with the Snowflake for Python connector.
 
 
-```python 
+``` python 
 # SQL queries to explore the data
 
 # What financial data is available as a time-series from FRED?
@@ -342,8 +339,43 @@ Now we can test the UDF using a SQL command in Python.
 session.sql("select predict_pce_udf(2022)").show()
 ```
 
+
 <!-- ------------------------ -->
 ## Creating the Streamlit application
+
+Duration: 5
+
+Now that we have a trained ML model and created a UDF to do predictions we can create the Streamlit application. We can do this directly inside Snowflake using Streamlit!
+
+To do this, we will create a new Streamlit app:
+
+1. Navigate to your Snowflake Console in your browser and click `Streamlit` on the left navbar. 
+2. Click `+ Streamlit App` on the top right.
+3. Name your app `Snowflake Lab`
+4. Select an available warehouse. In this case `compute_wh`
+5. Select `summit_hol` for the database. This is the database we created earlier that contains our UDF that will be used to predict PCE.
+6. Select `PUBLIC` for the schema. 
+7. Click `Create`
+
+From here you will see a full-fledge browser based development environment for developing your Streamlit web app! 
+
+Copy and paste the code from the file `streamlit_in_snowflake.py` to run our web app for this lab:
+
+
+<button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
+
+
+> aside positive
+> 
+> Fun Fact: When creating a new Streamlit inside Snowflake, you can share your web app with other Snowflake users! To do this, click `Share` in the top right of you Streamlit app and select other roles that you want to share with. 
+
+
+![alt_text](assets/streamlit-output.png)
+
+
+
+<!-- ------------------------ -->
+## Creating the Streamlit application (Locally)
 
 Duration: 7
 
@@ -485,7 +517,6 @@ def load_data(session):
 In this step, you'll add...
 
 
-
 1. A header and sub-header and also use containers and columns to organize the application content using Streamlit's _columns()_ and _container()_
 2. Display of metrics with delta using Streamlit's metric function.
 3. Interactive bar chart using Streamlit's selectbox_()_ and _bar_chart()_
@@ -537,29 +568,24 @@ More details can be shown by using a year selection (Streamlit_ selectbox() _ fu
 
 
 <!-- ------------------------ -->
-## Run Web Application
+### Run Web Application
 
-Duration: 4
 
 The fun part! Assuming your Python script is free of syntax and connection errors, you’re ready to run the application.
 
-You can run this by executing: \
- <code>streamlit run my_snowpark_streamlit_app_pce.py</code></strong> at the command line, or in the terminal section of VS code. (Replace <em>my_snowpark_streamlit_app_pce.py</em> with the name of your Python script.)
+You can run this by executing: `streamlit run my_snowpark_streamlit_app_pce.py` at the command line, or in the terminal section of VS code. (Replace <em>my_snowpark_streamlit_app_pce.py</em> with the name of your Python script.)
 
-Make sure you have activated the ‘snowpark’ Conda environment by using this terminal command: <code>conda activate snowpark</code></strong>
+Make sure you have activated the ‘snowpark’ Conda environment by using this terminal command: `conda activate snowpark`
 
 You will see a terminal prompt indicating that you have selected the right Conda environment:
 
 
-``` sql
-(base) user SummitHOL % conda activate snowpark
-(snowpark) user SummitHOL %
-           
+``` bash
+(base)      user SummitHOL % conda activate snowpark
+(snowpark)  user SummitHOL % streamlit run my_snowpark_streamlit_app_pce.py
 ```
 
-
 In the application:
-
 
 
 1. You can click on expansion sections indicated with a “+”

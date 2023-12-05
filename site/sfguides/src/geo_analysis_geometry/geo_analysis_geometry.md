@@ -85,6 +85,23 @@ To use the packages provided by Anaconda inside Snowflake, you must acknowledge 
 * In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
 * If you agree to the terms, select `Acknowledge & Continue`.
 
+### Create a Database and Schema
+
+Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar and choose your warehouse.
+* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
+* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
+
+<img src ='assets/geo_analysis_geometry_13.png' width=700>
+
+Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
+
+```
+CREATE OR REPLACE DATABASE GEOLAB;
+CREATE OR REPLACE schema GEOLAB.GEOMETRY;
+// Set the working database schema
+USE SCHEMA GEOLAB.GEOMETRY;
+```
+
 ### Connect Snowflake and Carto
 
 Let's connect your Snowflake to CARTO so you can run and visualize the queries in the following exercises of this workshop.
@@ -177,23 +194,6 @@ Congratulations! Now you have data and the analytics toolbox!
 Duration: 5
 
 Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While you loading data you will learn formats supported by geospatial data types.
-
-
-
-Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar and choose your warehouse.
-* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
-* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
-
-<img src ='assets/geo_analysis_geometry_13.png' width=700>
-
-Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
-
-```
-CREATE OR REPLACE DATABASE GEOLAB;
-CREATE OR REPLACE schema GEOLAB.GEOMETRY;
-// Set the working database schema
-USE SCHEMA GEOLAB.GEOMETRY;
-```
 
 For this quickstart we have prepared a dataset with energy grid infrastructure (cable lines) in the Netherlands. It is stored in the CSV format in the public S3 bucket. To import this data, create an external stage using the following SQL command:
 
@@ -552,7 +552,7 @@ You can modify the colors of cell towers in the output and expand their radius i
 
 Duration: 20
 
-In the previous section you've found cell towers that don't have electricity cables nearby. But what about answering more sophisticated questions, like what areas in the Netherlands have very good and bad coverage by LTE (4G) network? You can use geospatial functions combined with spatial join and H3 functions from the Carto toolbox to find out.
+In the previous section you've found cell towers that don't have electricity cables nearby. But what about answering more sophisticated questions, like what areas in the Netherlands have very good and bad coverage by LTE (4G) network? You can use geospatial functions combined with spatial join and H3 functions.
 
 ### What municipalities in the Netherlands have good/poor LTE coverage?
 
@@ -605,6 +605,7 @@ from shapely.ops import unary_union
 from shapely.geometry import shape, mapping
 def udf(g1):
     shape_union = unary_union([shape(i) for i in g1])
+    shape_union = shape_union.simplify(0.000001)
     return mapping(shape_union)
 $$;
 ```
@@ -689,15 +690,15 @@ It seems your LTE network covers almost 100% of the highways. A good number to c
 
 In the previous section you found that almost all highways in the Netherlands are within a range of LTE towers. But the LTE signal may have a different quality depending on how close the tower is or how many towers are in reach. The next question you may ask as an analysis is what motorways in the NL have poor signal quality. 
 
-For this you need to build a signal decay model. You will use H3 to represent signal distribution around the cell towers. H3 functions from `CARTO’s Analytics Toolbox` will help us with that.
+For this you need to build a signal decay model. You will use H3 to represent signal distribution around the cell towers.
 
-In the query below, the first CTE uses the `H3_FROMGEOGPOINT` function to compute the H3 cell id for each cell tower. It also estimates the distance in H3 cells around the tower based on the cell's range. The distance is calculated by dividing the `cell_range` by 400 meters, which represents the spacing between H3 cells at resolution 9.
+In the query below, the first CTE uses the `H3_POINT_TO_CELL` function to compute the H3 cell id for each cell tower. It also estimates the distance in H3 cells around the tower based on the cell's range. The distance is calculated by dividing the `cell_range` by 400 meters, which represents the spacing between H3 cells at resolution 9.
 
-Now that you know the H3 cell for each LTE tower you can find its neighboring H3 cells and estimate signal strength in them. First, you will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. Since `H3_KRING` yields an array, you must use the lateral join to flatten these arrays. Then you will create a decay function based on the H3 distance, so you need to determine the maximum H3 distance for each antenna. You can then group the data by H3 cell and choose the highest signal strength within that cell. Multiple towers can cover the same H3 cell multiple times; thus, you will select the one with the strongest signal.
+Now that you know the H3 cell for each LTE tower you can find its neighboring H3 cells and estimate signal strength in them. First, you will apply the `H3_GRID_DISK` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. Since `H3_GRID_DISK` yields an array, you must use the lateral join to flatten these arrays. Then you will create a decay function based on the H3 distance, so you need to determine the maximum H3 distance for each antenna. You can then group the data by H3 cell and choose the highest signal strength within that cell. Multiple towers can cover the same H3 cell multiple times; thus, you will select the one with the strongest signal.
 
 The signal will range from 0 (poor) to 100 (strongest). The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. 
 
-Clustering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
+Ordering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
 
 Run the following query:
 
@@ -707,19 +708,19 @@ CREATE OR REPLACE TABLE geolab.geography.nl_lte_coverage_h3 AS
 WITH nl_lte_h3 AS (
     SELECT row_number() OVER(ORDER BY NULL) AS id,
            cell_range,
-           carto.carto.h3_fromgeogpoint(geom, 9) AS h3,
+           H3_POINT_TO_CELL(geom, 9)::int AS h3,
            round(least(cell_range, 2000) / 400)::int AS h3_cell_range
     FROM geolab.geography.nl_lte
 ),
 // Find all neighboring cells and calculate signal strength in them
 h3_neighbors AS (
   SELECT id,
-         p.value::string AS h3,
-         carto.carto.h3_distance(h3, p.value)::int AS h3_distance,
+         p.value::int AS h3,
+         H3_GRID_DISTANCE(n.h3, p.value::int) AS H3_GRID_DISTANCE,
          // decay model for signal strength:
-         100 * pow(1 - h3_distance / (h3_cell_range + 1), 2) AS signal_strength
-  FROM nl_lte_h3,
-       table(flatten(INPUT => CARTO.CARTO.H3_KRING(h3, h3_cell_range))) p)
+         100 * pow(1 - H3_GRID_DISTANCE / (h3_cell_range + 1), 2) AS signal_strength
+  FROM nl_lte_h3 n,
+       table(flatten(INPUT => H3_GRID_DISK(n.h3, h3_cell_range))) p)
 SELECT h3, 
        // maximum signal strength with noise:
        max(signal_strength) * uniform(0.8, 1::float, random()) AS signal_strength
@@ -774,7 +775,7 @@ segments AS (
           value::integer AS segment_id,
           st_makeline(st_pointn(geom, segment_id), st_pointn(geom, segment_id + 1)) AS SEGMENT,
           geom,
-          carto.carto.h3_fromgeogpoint(st_centroid(SEGMENT), 9) AS h3_center
+          H3_POINT_TO_CELL(st_centroid(SEGMENT), 9)::int AS h3_center
   FROM roads,
        LATERAL flatten(array_generate_range(1, st_npoints(geom)))) 
 // Next table build the H3 cells covering the roads
@@ -819,7 +820,7 @@ FROM geolab.geography.osm_nl_not_covered
 GROUP BY signal_category;
 ```
 
-You now know that you have 13,938 km with good coverage and 2,331 with poor/no coverage. Interestingly, that is about 15 % of the NL roads!
+You now know that you have 14,601 km with good coverage and 1,667 with poor/no coverage. Interestingly, that is about 13 % of the NL roads!
 
 Lastly, with this layer, you can add it to your CARTO map and visualize the road segment according to the `SIGNAL_CATEGORY` feature you created.
 
@@ -849,7 +850,7 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to perform measurement calculations like ST_LENGTH.
 * How to use set operations like ST_INTERSECTION.
 * How to use Python UDFs for reading Shapefiles and creating custom functions.
-* How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
+* How to use Spatial grid and H3 functions like H3_POINT_TO_CELL, H3_GRID_DISK, H3_POLYFILL.
 * How to use Search Optimization to speed up geospatial queries.
 
 ### Related Resources

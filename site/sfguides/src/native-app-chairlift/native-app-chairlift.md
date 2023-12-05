@@ -654,7 +654,27 @@ In this Quickstart, the **Configuration** tab is included to demonstrate how dif
 > aside negative
 > 
 >  **AVOID PROLONGED CREDIT CONSUMPTION** Enabling warning generation via the checkbox will call a warning generation task every 60 seconds. **To avoid prolonged credit consumption, be sure to disable the warning generation task by unchecking the checkbox.**
+<!-- ------------------------ -->
+## Clean up
+Duration: 1
 
+Let's clean up your Snowflake account. Run the following SQL commands in a worksheet:
+
+```sql
+----- CLEAN UP -----
+USE ROLE chairlift_admin;
+DROP APPLICATION chairlift_app;
+DROP DATABASE chairlift_consumer_data;
+
+USE ROLE chairlift_provider;
+DROP APPLICATION PACKAGE chairlift_pkg;
+
+USE ROLE ACCOUNTADMIN;
+DROP WAREHOUSE chairlift_wh;
+DROP ROLE chairlift_provider;
+DROP ROLE chairlift_viewer;
+DROP ROLE chairlift_admin;
+```
 
 
 <!-- ------------------------ -->

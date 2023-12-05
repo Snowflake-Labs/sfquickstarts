@@ -50,8 +50,6 @@ A sample use case that involves LTE cell towers in the United Kingdom. You will 
 
 Duration: 10
 
-[app.snowflake.com](https://app.snowflake.com/)
-
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
 Click `Sign-in` and you will be prompted for your user name and password.
@@ -87,6 +85,27 @@ In order to use the packages provided by Anaconda inside Snowflake, you must ack
 * In the Anaconda section, select Enable.
 * In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.
 * If you agree to the terms, select `Acknowledge & Continue`.
+
+### Acknowledge the Snowflake Third Party Terms
+
+Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar. 
+
+### Open a New Worksheet, Choose Your Warehouse and create a Database
+
+* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
+* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
+
+<img src ='assets/geo_sf_carto_telco_17.png' width=700>
+
+
+First, create a new database and schema where we will store datasets in the Geography data type.
+
+
+```
+create or replace DATABASE GEOLAB;
+CREATE OR REPLACE schema GEOLAB.GEOGRAPHY;
+
+```
 
 ### Connection Snowflake and Carto
 
@@ -186,16 +205,7 @@ Now that you understand how to get data from Marketplace, let's try another way 
 
 In this step, we're going to load data into the table from the local file. In this Quickstart, we will use a dataset with the districts' boundaries of the United Kingdom and the Netherlands, you can download the file using [this URL](https://sfquickstarts.s3.us-west-1.amazonaws.com/vhol_spatial_analysis_geometry_geography/uk_nl_districts.csv).
 
-First, create a new database and schema where we will store datasets in the Geography data type.
-
-
-```
-create or replace DATABASE GEOLAB;
-CREATE OR REPLACE schema GEOLAB.GEOGRAPHY;
-
-```
-
-As a second step, you will create an empty table where we will store boundary data.
+In this step, you will create an empty table where we will store boundary data.
 
 ```
 create or replace TABLE GEOLAB.GEOGRAPHY.UK_NL_DISTRICTS (
@@ -220,17 +230,7 @@ Voila! Now you have a table with the boundaries of districts in the UK and the N
 
 Duration: 10
 
-Now we will run different queries to understand how the `GEOGRAPHY` data type works in Snowflake. Navigate to the query editor by clicking on  `Worksheets`  on the top left navigation bar. 
-
-
-### Open a New Worksheet and Choose Your Warehouse
-
-* Click the + Worksheet button in the upper right of your browser window. This will open a new window.
-* In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
-
-<img src ='assets/geo_sf_carto_telco_17.png' width=700>
-
-Now you are ready to discover the data types.
+Now we will run different queries to understand how the `GEOGRAPHY` data type works in Snowflake. First, open the worksheet you created earlier.
 
 ### The GEOGRAPHY data type
 
@@ -462,7 +462,7 @@ Run the following two queries:
 
 ```
 USE DATABASE GEOLAB;
-CREATE OR REPLACE FUNCTION PY_UNION_AGG(g1 array)
+CREATE OR REPLACE FUNCTION GEOLAB.GEOGRAPHY.PY_UNION_AGG(g1 array)
 returns geography
 language python
 runtime_version = 3.8
@@ -473,6 +473,7 @@ from shapely.ops import unary_union
 from shapely.geometry import shape, mapping
 def udf(g1):
     shape_union = unary_union([shape(i) for i in g1])
+    shape_union = shape_union.simplify(0.000001)
     return mapping(shape_union)
 $$;
 ```
@@ -492,7 +493,7 @@ Run the following two queries:
 CREATE OR REPLACE TABLE geolab.geography.uk_districts_coverage AS
 SELECT name,
        to_geography(st_asgeojson(boundary)) AS county_geom,
-       st_intersection(any_value(boundary), py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS geometry,
+       st_intersection(any_value(boundary), geolab.geography.py_union_agg(ARRAY_AGG(st_asgeojson(coverage)))) AS geometry,
        round(st_area(geometry)/st_area(any_value(boundary)), 2) AS coverage_ratio
 FROM
   (SELECT c.coverage AS coverage,
@@ -543,13 +544,13 @@ It seems our LTE network covers more than 90% of the motorways. A good number to
 
 Duration: 20
 
-In this section we will cover more advanced use case where we will leverage H3 functions from Carto toolbox.
+In this section we will cover more advanced use case where we will leverage H3 functions.
 
 ### How many kilometers of UK roads have poor or no LTE coverage?
 
-As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
+As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions.
 
-Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function.
+Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_LATLNG_TO_CELL` function.
 
 Run the foillowing query in your Snowflake worksheet:
 
@@ -558,7 +559,7 @@ CREATE OR REPLACE TABLE geolab.geography.uk_lte AS
 SELECT
     row_number() over(order by null) as id
     , cell_range
-    , carto.carto.H3_FROMLONGLAT(lon, lat, 9) as h3
+    , H3_LATLNG_TO_CELL(lat, lon, 9) as h3
 FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS 
 where mcc in ('234', '235')
 and radio = 'LTE'
@@ -566,13 +567,13 @@ ORDER BY h3;
 ```
 
 Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the `CELL_RANGE` accordingly.
-First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
+First, we will apply the `H3_GRID_DISK` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_GRID_DISK` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
 
 Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. As we have computed H3 neighbors for each antenna, antennas in close proximity will have generated the same H3 cell multiple times; thus, we will select the one with the strongest signal.
 
 The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. The signal will range from 0 (poor) to 100 (strongest).
 
-Clustering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
+Ordering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
 
 Run the following query.
 
@@ -582,23 +583,24 @@ with h3_neighbors as (
     select 
         id
         , p.value::string as h3
-        , carto.carto.h3_distance(h3, p.value) as h3_distance
+        , h3_grid_distance(h3, p.value::int) as h3_grid_distance
     from geolab.geography.uk_lte,
-    table(flatten(input => carto.carto.h3_kring(h3, ceil(least(cell_range, 6000) / 586)::int
+    table(flatten(input => h3_grid_disk(h3, ceil(least(cell_range, 6000) / 586)::int
         ))) p
 ), 
 max_distance_per_antena as (
-    select id, max(h3_distance) as h3_max_distance
+    select id, max(h3_grid_distance) as h3_max_distance
     from h3_neighbors 
     group by id
 )
 select 
     h3, 
-    max((100 * pow(1 - h3_distance / (h3_max_distance + 1), 2)) -- decay
+    max((100 * pow(1 - h3_grid_distance / (h3_max_distance + 1), 2)) -- decay
     ) * uniform(0.8, 1::float, random() -- noise
     ) as signal_strength
 from h3_neighbors join max_distance_per_antena using(id)
-group by h3;
+group by h3
+order by h3;
 ```
 
 Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
@@ -628,7 +630,7 @@ To intersect the road layer with the H3 signal strength layer, we will split the
 
 Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the `ST_COLLECT` function.
 
-Finally, we use the same `H3_FROMGEOGPOINT` for the selected resolution and we use the Linestring centroid for the point geography.
+Finally, we use the same `H3_POINT_TO_CELL` for the selected resolution and we use the Linestring centroid for the point geography.
 
 Run the following two queries.
 
@@ -671,7 +673,7 @@ select
     , st_collect(segment) as geom -- This is creating the original road segments by collecting them.
 from segments 
 left join GEOLAB.GEOGRAPHY.UK_LTE_COVERAGE_H3
-on carto.carto.h3_fromgeogpoint(st_centroid(segment), 9) = h3
+on H3_POINT_TO_CELL(st_centroid(segment), 9) = h3
 where segment is not null
 group by 1, 2, 3
 order by st_geohash(geom);
@@ -687,7 +689,7 @@ from GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED
 group by signal;
 ```
 
-We now know that we have 58,910 km with good coverage and 10,963 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+We now know that we have 58,907 km with good coverage and 10,966 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 
@@ -722,5 +724,5 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to use a transformation like ST_COLLECT.
 * How to perform measurement calculations like ST_DISTANCE and ST_LENGTH.
 * How to perform relational calculations like ST_DWITHIN and ST_WITHIN.
-* How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
+* How to use Spatial grid and H3 functions like H3_POINT_TO_CELL, H3_GRID_DISK, H3_GRID_DISTANCE
 * How to use Search Optimization to speed up geospatial queries.
