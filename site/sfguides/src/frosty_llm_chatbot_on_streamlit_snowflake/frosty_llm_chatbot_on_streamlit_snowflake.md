@@ -55,7 +55,7 @@ Duration: 8
 
 Complete the following steps in your local machine (or an equivalent dev environment):
 
-1. Install [Anaconda Distribution](https://docs.conda.io/en/latest/miniconda.html) to manage a separate environment by selecting the appropriate installer link for your operating system and Python version from [Anaconda's website](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links).
+1. Install [Anaconda Distribution](https://docs.conda.io/en/latest/miniconda.html](https://www.anaconda.com/download) to manage a separate environment by selecting the appropriate installer link for your operating system and Python version.
 2. Open the terminal or command prompt and create a folder for your project. Let's call it `llm-chatbot`.
 3. Make sure you are running the latest version of conda by running the following command:
     ```
