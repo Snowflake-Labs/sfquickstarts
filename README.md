@@ -80,7 +80,7 @@ You can always read the [sample Quickstart](site/sfguides/src/sample/sample.md) 
 
 - Review the [sample.md](site/sfguides/src/sample/sample.md) file to learn more about how to structure your Quickstart for the claat tool. 
 - You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a GitHub issue!
-- Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
+- Check out [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
 
 ## How do I get my Snowflake Quickstart on [quickstarts.snowflake.com](https://quickstarts.snowflake.com)?
