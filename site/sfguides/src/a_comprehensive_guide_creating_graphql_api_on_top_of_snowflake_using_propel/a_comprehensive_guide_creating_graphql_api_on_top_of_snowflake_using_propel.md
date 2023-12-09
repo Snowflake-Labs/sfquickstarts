@@ -114,7 +114,7 @@ SELECT * FROM taco_orders;
 
 This query will display the data you've inserted like this:
 
-![Propel Example Table](assets/propel_example_table.png)
+![Propel Example Result](assets/propel_example_result.png)
 
 ### **Using Your Own Data**
 
@@ -123,6 +123,49 @@ If you already have data in Snowflake, you can proceed with that data for the re
 ### **Next Steps**
 
 With your data ready, either the example data or your own, you can move on to configuring Propel for creating your GraphQL API.
+
+<!-- ------------------------ -->
+## **Using Propel: Overview and Setup**
+
+### **Introduction to Propel**
+
+In this part of the guide, we'll explore using [Propel](https://www.propeldata.com/), an analytics platform with a semantic layer, to create a high-performance GraphQL API over your Snowflake data.
+
+### **Advantages of Using Propel**
+
+Propel offers significant benefits for handling Snowflake data in a GraphQL API:
+
+1. **Low Latency:** With a separate caching and storage system, Propel significantly speeds up analytics data querying, typically achieving millisecond response times.
+2. **High Concurrency:** The serverless architecture of Propel enables scaling to handle a virtually unlimited number of concurrent users or requests.
+3. **Better Timezone Handling:** Propel simplifies the process of querying and serving data in different timezones, a crucial feature for global applications.
+4. **Organized Code:** Propel reduces the complexity of managing multiple SQL queries, making multi-tenant use cases more manageable.
+
+### **Ideal Use Cases**
+
+Propel is particularly useful in scenarios demanding low latency and high concurrency, such as customer-facing analytics dashboards.
+
+### **Setting Up Propel with Example Data**
+
+To utilize Propel with the example taco order data:
+
+1. **Confirm Data Setup:**
+Ensure you have the example data by running: 
+```sql
+SELECT * FROM taco_orders;    
+```
+in the correct database and schema. This verifies that the example data has been properly created.
+
+![Propel Example Result 2](assets/propel_example_result_2.png)
+    
+2. **Enable Change Tracking:**
+Before setting up Propel, enable CHANGE_TRACKING on your **`taco_orders`** table (or your own table) with this query:
+```sql
+ALTER TABLE TACO_ORDERS SET CHANGE_TRACKING = TRUE;
+```
+
+### **Next Steps**
+
+With your data setup confirmed and change tracking enabled, you're now ready to dive into configuring Propel to work with your Snowflake data.
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
