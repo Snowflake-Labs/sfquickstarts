@@ -168,6 +168,11 @@ ALTER TABLE TACO_ORDERS SET CHANGE_TRACKING = TRUE;
 With your data setup confirmed and change tracking enabled, you're now ready to dive into configuring Propel to work with your Snowflake data.
 
 <!-- ------------------------ -->
+## Configuring Snowflake for Propel Integration
+
+This section will guide you through the process of configuring your Snowflake environment to integrate seamlessly with Propel. This involves setting up a dedicated Snowflake user, role, and warehouse for Propel, and optionally configuring Snowflake Network Policies to include Propel's IP addresses.
+
+<!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
 Duration: 2
 
