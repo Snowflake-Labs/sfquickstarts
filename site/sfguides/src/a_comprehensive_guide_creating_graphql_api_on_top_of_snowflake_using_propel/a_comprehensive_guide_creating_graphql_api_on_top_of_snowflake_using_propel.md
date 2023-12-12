@@ -172,6 +172,127 @@ With your data setup confirmed and change tracking enabled, you're now ready to 
 
 This section will guide you through the process of configuring your Snowflake environment to integrate seamlessly with Propel. This involves setting up a dedicated Snowflake user, role, and warehouse for Propel, and optionally configuring Snowflake Network Policies to include Propel's IP addresses.
 
+### **Step 1: Sign Up for Propel**
+
+Before starting the configuration, make sure you have signed up for a Propel account. Visit [Propel's website](https://www.propeldata.com/) and complete the sign-up process.
+
+![Sign up on Propel](assets/propel_signup_page.png)
+
+### **Step 2: Create Snowflake User, Role, and Warehouse for Propel**
+
+It's recommended to create a dedicated user, role, and warehouse in Snowflake for Propel. This enhances security by adhering to the principle of least privilege and facilitates cost monitoring and control. Here's a script to set up these components:
+
+```sql
+begin;
+
+    use role accountadmin;
+    /* Create variables for user, password, role, warehouse, database, and schema (needs to be uppercase for objects) */
+    set role_name = 'PROPELLER';
+    set user_name = 'PROPEL_USER';
+    set warehouse_name = 'PROPELLING';
+
+    /* Must be at least 8 characters long, contain at least 1 digit, 1 uppercase letter and 1 lowercase letter */
+    set user_password = '';               /* Replace with a strong password */
+    set database_name = 'ANALYTICS';      /* Replace with your Snowflake database name */
+    set schema_name = 'ANALYTICS.PUBLIC'; /* Replace with your Snowflake schema name */
+
+    /* Grant sysadmin role access to the database */
+    grant usage,modify
+    on database identifier($database_name)
+    to role sysadmin;
+
+    /* Grant sysadmin role access to the schema */
+    grant usage,modify
+    on schema identifier($schema_name)
+    to role sysadmin;
+
+    /* Change role to securityadmin for user / role steps */
+    use role securityadmin;
+
+    /* Create a role for Propel */
+    create role if not exists identifier($role_name);
+    grant role identifier($role_name) to role SYSADMIN;
+
+     /* Change role to sysadmin for warehouse and database steps */
+    use role sysadmin;
+
+    /* Create a warehouse for Propel */
+    create warehouse if not exists identifier($warehouse_name)
+    warehouse_size = xsmall
+    warehouse_type = standard
+    auto_suspend = 60
+    auto_resume = true
+    initially_suspended = true;
+
+    /* Change role to securityadmin for user / role steps */
+    use role securityadmin;
+
+    /* Create a user for Propel */
+    create user if not exists identifier($user_name)
+    password = $user_password
+    default_role = $role_name
+    default_warehouse = $warehouse_name;
+
+    grant role identifier($role_name) to user identifier($user_name);
+
+    /* Change role to accountadmin for warehouse and database steps */
+    use role accountadmin;
+
+    /* Grant Propel role access to the warehouse */
+    grant usage, monitor
+    on warehouse identifier($warehouse_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role access to the database */
+    grant usage, monitor
+    on database identifier($database_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role access to the schema */
+    grant create procedure, create stage, create task, create stream, usage
+    on schema identifier($schema_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role select on all tables in the schema */
+    grant select on all tables
+    in schema identifier($schema_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role select on all future tables in the schema */
+    grant select on future tables
+    in schema identifier($schema_name)
+    to role identifier($role_name);
+
+    grant execute task on account
+    to role identifier($role_name);
+
+commit;
+```
+
+This script will:
+
+- **Create a Propel-specific Role:** This role (**`PROPELLER`**) is tailored for Propel's access and operations within Snowflake.
+- **Establish a Dedicated Warehouse:** The script sets up a warehouse (**`PROPELLING`**) specifically for Propel, with pre-configured settings.
+- **Generate a Propel User:** A user (**`PROPEL_USER`**) is created and assigned the Propel role and warehouse as defaults.
+- **Grant Necessary Permissions:** The script ensures the Propel role has the required permissions on the warehouse, database, and schema. This includes select permissions on all current and future tables in the specified schema.
+
+**Note:** Replace placeholder values in the script (such as **`user_password`**, **`database_name`**, and **`schema_name`**) with your specific details before execution.
+
+### **Step 3: (Optional) Configure Snowflake Network Policy**
+
+If your Snowflake environment uses Network Policies, you might need to update them to allow Propel's IP addresses:
+
+- 3.17.239.162
+- 3.15.73.135
+- 18.219.73.236
+
+This ensures that Propel can communicate with your Snowflake instance without any network restrictions.
+
+### **Conclusion and Next Steps**
+
+With the Snowflake user, role, and warehouse now set up for Propel, and the network policies updated (if applicable), your Snowflake environment is ready for integration with Propel. This foundation allows you to proceed with building and optimizing your GraphQL API using Propel.
+
+
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
 Duration: 2
