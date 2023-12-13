@@ -395,15 +395,23 @@ Creating Metrics is a pivotal step in setting up your GraphQL API. These Metrics
 With the Metrics created, you can move forward to the final stages of testing and deploying your GraphQL API, harnessing the power of Propel and Snowflake for efficient data querying and analytics.
 
 <!-- ------------------------ -->
-## Conclusion
-Duration: 1
+## **Testing the GraphQL API with Your Snowflake Data**
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+### **Overview**
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+The final step in leveraging Propel with Snowflake is to test the GraphQL API created based on your Metrics. This step is crucial for ensuring that your API is functioning correctly and is ready for practical use.
 
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+### **Accessing the Playground for Testing**
+
+1. After setting up your Metric, locate and click on the “Playground” option within the Propel Console.
+2. The Playground is an interactive environment where you can test GraphQL queries against your Metrics.
+
+![Propel Playground](assets/propel_playground.png)
+
+### **Testing the GraphQL API**
+
+You can learn more about how to use this GraphQL API, as well as check examples in a few different languages on the [Query your data](https://www.propeldata.com/docs/query-your-data) page on our documentation.
+
+### **Next Steps**
+
+With successful testing, you can confidently proceed to implement your GraphQL API in real-world scenarios, making the most of your Snowflake data through Propel’s powerful querying capabilities.
