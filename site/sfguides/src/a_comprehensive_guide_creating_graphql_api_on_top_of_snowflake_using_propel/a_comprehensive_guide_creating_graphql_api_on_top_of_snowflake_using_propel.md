@@ -340,7 +340,9 @@ Having configured your Snowflake environment for Propel integration, the next st
 ### **Finalizing the Data Pool**
 
 1. Click “Next” and review your setup to ensure accuracy.
+![Propel Data Pool Review](assets/propel_data_pool_review.png)
 2. You have the option to preview your data to confirm that it’s loading correctly.
+![Propel Data Pool Preview](assets/propel_data_pool_preview.png)
 
 ### **Conclusion**
 
@@ -351,28 +353,46 @@ After these steps, your Data Pool in Propel will be set up, integrating your Sno
 With your Data Pool in place, you can proceed to the next phase of developing your GraphQL API using Propel on Snowflake.
 
 <!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
+## **Creating Metrics for GraphQL API Queries**
 
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
+After establishing a Data Pool in Propel, the next crucial step is to create Metrics. Metrics in Propel enable the creation of effective GraphQL queries for your data.
 
-### Images
-![Puppy](assets/SAMPLE.jpg)
+### **Initiating Metric Creation**
 
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
+1. Click on “Metrics” in the left-hand side menu of the Propel Console.
+2. Select “Create New Metric” to begin the process.
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
+![Propel New Metric](assets/propel_new_metric.png)
 
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+### **Configuring Metric Details**
+
+1. Provide essential information for your new Metric:
+- **Name:** Give it a unique identifier, such as “Taco Soft Revenue”.
+- **Description:** Offer a brief explanation, like “Metric to keep track of taco revenue”.
+- **Data Pool:** Choose the Data Pool you created earlier (e.g., “Taco Test”).
+- **Metric Type:** Select the type of calculation, such as “SUM”.
+- **Measure:** Pick the specific data field to measure, like “TACO_TOTAL_PRICE”.
+
+This Metric configuration is aimed at tracking the revenue generated from taco sales.
+
+![Propel Metric Details](assets/propel_metric_details.png)
+
+### **Selecting Dimensions**
+
+1. Choose the columns that will serve as dimensions.
+2. These dimensions are filters you can apply to your Metric data.
+
+![Propel Metric Dimensions](assets/propel_metric_dimensions.png)
+
+3. After filling out all the required fields, click “Create”.
+
+### **Conclusion**
+
+Creating Metrics is a pivotal step in setting up your GraphQL API. These Metrics will enable you to query specific data points within your Snowflake data through Propel. With the Metrics set up, you’re now one step closer to testing and utilizing your GraphQL API.
+
+### **Next Steps**
+
+With the Metrics created, you can move forward to the final stages of testing and deploying your GraphQL API, harnessing the power of Propel and Snowflake for efficient data querying and analytics.
 
 <!-- ------------------------ -->
 ## Conclusion
