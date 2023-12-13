@@ -355,14 +355,14 @@ After establishing a Data Pool in Propel, the next crucial step is to create Met
 
 ### **Initiating Metric Creation**
 
-1. Click on “Metrics” in the left-hand side menu of the Propel Console.
-2. Select “Create New Metric” to begin the process.
+1. Click on “New” in the left-hand side menu of the Propel Console.
+2. Select “Metric” to begin the process.
 
 ![Propel New Metric](assets/propel_new_metric.png)
 
 ### **Configuring Metric Details**
 
-1. Provide essential information for your new Metric:
+Provide essential information for your new Metric:
 - **Name:** Give it a unique identifier, such as “Taco Soft Revenue”.
 - **Description:** Offer a brief explanation, like “Metric to keep track of taco revenue”.
 - **Data Pool:** Choose the Data Pool you created earlier (e.g., “Taco Test”).
