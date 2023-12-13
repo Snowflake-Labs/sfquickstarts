@@ -294,60 +294,61 @@ With the Snowflake user, role, and warehouse now set up for Propel, and the netw
 
 
 <!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
+## **Creating a Data Pool in Propel for Your Snowflake Data**
 
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+Having configured your Snowflake environment for Propel integration, the next step is to create a Data Pool in Propel. Data Pools are Propel’s proprietary storage system designed for fast, efficient analytical queries.
 
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
+### **Initiate Data Pool Creation**
 
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
+1. In the Propel Console, locate the menu on the left-hand side and click on “Data Pools”.
+2. Click on the plus sign (+) to initiate the creation of a new Data Pool.
 
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
+![Propel New Data Pool](assets/propel_new_data_pool.png)
 
+3. In the new screen, select Snowflake as your data source.
 
-> aside negative
-> 
->  This will appear in a negative info box.
+![Propel Data Source Selection](assets/propel_data_source_selection.png)
 
-### Buttons
-<button>
+### **Adding Credentials**
 
-  [This is a download button](link.com)
-</button>
+1. Click on “Add new credentials”.
 
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
+![Propel Add New Credentials](assets/propel_add_new_credentials.png)
 
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+2. Provide a unique name for your credentials.
+3. Enter the required Snowflake details: account, database, schema, warehouse, role, user, and password.
+    
+    **Note:** Your Snowflake account format should be "accountId.region.cloud" (e.g., "fn25463.us-east-2.aws"). Exclude the “[snowflakecomputing.com](http://snowflakecomputing.com/)” domain.
+
+![Propel Credential Details](assets/propel_credential_details.png)
+    
+4. After entering all details, click “Create and test Credentials”.
+    - Upon successful connection, you should see a “Connected” status message.
+
+![Propel Credentials Connected](assets/propel_credentials_connected.png)
+
+### **Setting Up Data Pool Configuration**
+
+1. Continue with the setup flow.
+2. Select the table and columns for use in your Data Pool.
+    - You can opt for the default selection, which includes all columns.
+![Propel Data Pool Configuration](assets/propel_data_pool_configuration.png)
+3. For the “Primary timestamp”, choose “TIMESTAMP”.
+4. For “Unique ID”, select “ORDER_ID”.
+![Propel Data Pool Configuration 2](assets/propel_data_pool_configuration_2.png)
+
+### **Finalizing the Data Pool**
+
+1. Click “Next” and review your setup to ensure accuracy.
+2. You have the option to preview your data to confirm that it’s loading correctly.
+
+### **Conclusion**
+
+After these steps, your Data Pool in Propel will be set up, integrating your Snowflake data for efficient querying. This setup is crucial for building and optimizing your GraphQL API using Propel and Snowflake data.
+
+### **Next Steps**
+
+With your Data Pool in place, you can proceed to the next phase of developing your GraphQL API using Propel on Snowflake.
 
 <!-- ------------------------ -->
 ## Images, Videos, and Surveys, and iFrames
