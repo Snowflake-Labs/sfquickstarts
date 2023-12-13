@@ -116,13 +116,9 @@ This query will display the data you've inserted like this:
 
 ![Propel Example Result](assets/propel_example_result.png)
 
-### **Using Your Own Data**
-
-If you already have data in Snowflake, you can proceed with that data for the rest of this tutorial.
-
 ### **Next Steps**
 
-With your data ready, either the example data or your own, you can move on to configuring Propel for creating your GraphQL API.
+With your data ready, either the example data or your own, you can move on to the next steps.
 
 <!-- ------------------------ -->
 ## **Using Propel: Overview and Setup**
