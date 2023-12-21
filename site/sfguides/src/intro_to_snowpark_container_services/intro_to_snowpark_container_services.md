@@ -489,7 +489,7 @@ spec:
       port: 9090
       public: true
 ```
-**Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
+**Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
 ```bash
 cd .../snowpark-container-services-101-quickstart/src/convert-api
 snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
@@ -509,7 +509,7 @@ create service CONTAINER_HOL_DB.PUBLIC.convert_api
     from @specs
     spec='convert-api.yaml';
 ```
-Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.CONVERT-API');` to verify that the service is successfully running. These commands are also listed in [`03_rest_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.sql)
+Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.CONVERT_API');` to verify that the service is successfully running. These commands are also listed in [`03_rest_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.sql)
 
 ### Create and Test the Service Function
 Once the service is up and running, we will create a Service Function that allows us to call our REST API's function via SQL. First, let's create a table with some sample weather data in it:
@@ -563,6 +563,8 @@ SELECT * FROM WEATHER;
 ### (Optional) Call the Convert Temperature Service Function from our Jupyter Notebook Service
 Open up our previously created Jupyter Notebook service and open up our `sample_notebook.ipynb`. Copy and paste the following code into a new cell at the bottom of the notebook:
 ```python
+from snowflake.snowpark import functions as F
+
 df = session.table('weather')
 df = df.with_column("TEMP_F_SNOWPARK", F.call_udf('convert_udf', df['TEMP_C']))
 df.show()
