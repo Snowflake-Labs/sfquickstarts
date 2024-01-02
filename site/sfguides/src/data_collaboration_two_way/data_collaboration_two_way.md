@@ -196,3 +196,15 @@ A screenshot on how to find your account identifier from the Snowsight UI is sho
 ![Diagram](assets/account_indentifier_navigation.png)
 
 <!-- ------------------------ -->
+## Provider Account - Create Private Listing
+Duration: 2
+
+In your provider account, open up Snowsight and navigate to Data > Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
+
+In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it cc_default_training_data. They will securely access this data from their own Snowflake account, and share back the scored results. We have selected "Only Specified Consumers" in our discovery settings, so that our data can only be seen with the partners we explicitly want to share with. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
+
+In the next modal, click the "+ Select" option. In this next modal, select the DEFAULT_PREDICTION_TABLE in the DATA_SHARING_DEMO database and schema. Add it to the listing. Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consimer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
+
+Click publish, and now your listing is live and readty for the consumer. No movement of data, no SFTP. The data is live and ready to query.
+
+<!-- ------------------------ -->
