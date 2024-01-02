@@ -9,7 +9,7 @@
   "password"           : "",
   "authenticator"      : "externalbrowser",
   "role"               : "ACCOUNTADMIN",
-  "warehouse"          : "TWS_HOL_WH",
-  "database"           : "TWS_HOL_DB",
-  "schema"             : "TWS_HOL_SCHEMA"
+  "warehouse"          : "QUERY_WH",
+  "database"           : "CC_DEFAULT_TRAINING_DATA",
+  "schema"             : "DATA_SHARING_DEMO"
 }

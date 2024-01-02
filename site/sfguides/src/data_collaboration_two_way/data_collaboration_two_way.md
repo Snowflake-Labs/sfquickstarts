@@ -244,3 +244,52 @@ Next we will create some warehouses to query the sharted data and to train our m
     warehouse_type = 'snowpark-optimized' 
     max_concurrency_level = 1;
 ```
+<!-- ------------------------ -->
+## Consumer Account - Create Model
+Duration: 2
+
+For this section, make sure you download the corresponding git repo (INSERT LINK) so you have the files referenced in this section.
+
+### Set Up Snowpark for Python and Snowpark ML
+
+The first step is to set up the python environment to develop our model. To do this:
+
+- Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
+
+- Open a new terminal window and execute the following commands in the same terminal window:
+
+  1. Create the conda environment.
+  ```
+  conda env create -f conda_env.yml
+  ```
+
+  2. Activate the conda environment.
+  ```
+  conda activate snowpark-ml-hol
+  ```
+
+  2. `Optionally` start notebook server:
+  ```
+  $ jupyter notebook &> /tmp/notebook.log &
+  ```  
+
+- Update connection.json with your Snowflake account details and credentials.
+  Here's a sample based on the object names we created in the last step:
+
+```
+{
+  "account"   : "<your_account_identifier_goes_here>",
+  "user"      : "<your_username_goes_here>",
+  "password"  : "<your_password_goes_here>",
+  "role"      : "ACCOUNTADMIN",
+  "warehouse" : "QUERY_WH",
+  "database"  : "CC_DEFAULT_TRAINING_DATA",
+  "schema"    : "DATA_SHARING_DEMO"
+}
+```
+
+> aside negative
+> 
+> **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
+
+<!-- ------------------------ -->
