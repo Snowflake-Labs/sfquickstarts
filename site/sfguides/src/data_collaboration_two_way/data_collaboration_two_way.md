@@ -142,7 +142,7 @@ Next we set up our [External Stage](https://docs.snowflake.com/en/user-guide/dat
 This DDL will create the structure for the table which is the main source of data for our lab.
 
 ```SQL
-  CREATE TABLE cc_default_training_table
+  CREATE TABLE cc_default_training_data
     USING TEMPLATE (
       SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
         FROM TABLE(
@@ -152,7 +152,7 @@ This DDL will create the structure for the table which is the main source of dat
           )
         ));
 
-  CREATE TABLE cc_default_unscored_table
+  CREATE TABLE cc_default_unscored_data
     USING TEMPLATE (
       SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
         FROM TABLE(
@@ -166,12 +166,12 @@ This DDL will create the structure for the table which is the main source of dat
 Load the data in the tables
 
 ```SQL
-  COPY INTO cc_default_training_table 
+  COPY INTO cc_default_training_data 
     FROM @quickstart_cc_default_training_data 
     FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
     MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 
-  COPY INTO cc_default_training_table 
+  COPY INTO cc_default_training_data 
     FROM @quickstart_cc_default_training_data 
     FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
     MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
@@ -180,8 +180,8 @@ Load the data in the tables
 You should have loaded over 5 million rows in less than a minute. To check, query the data in the worksheet
 
 ```SQL
-  select count(*) default_prediction_table 
-    FROM default_prediction_table;
+  select count(*) 
+    FROM cc_default_training_data;
 ```
 
 <!-- ------------------------ -->
@@ -203,7 +203,7 @@ In your provider account, open up Snowsight and navigate to Data > Provider Stud
 
 In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it cc_default_training_data. They will securely access this data from their own Snowflake account, and share back the scored results. We have selected "Only Specified Consumers" in our discovery settings, so that our data can only be seen with the partners we explicitly want to share with. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
 
-In the next modal, click the "+ Select" option. In this next modal, select the DEFAULT_PREDICTION_TABLE in the DATA_SHARING_DEMO database and schema. Add it to the listing. Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consimer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
+In the next modal, click the "+ Select" option. In this next modal, select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing. Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consimer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
 
 Click publish, and now your listing is live and readty for the consumer. No movement of data, no SFTP. The data is live and ready to query.
 
@@ -219,7 +219,7 @@ The first step is to accept the share. Log in to the Consumer Account and ensure
 Click Get, and in the next modal, click Get.
 ![Diagram](assets/accept_share_navigation_2.png)
 
-You should now see CC_DEFAULT_TRAINING_DATA as one of the Databases in your catalog, with the DATA_SHARING_DEMO schema and the DEFAULT_PREDICTION_TABLE. We did not need to load any data, it is shared live from the Provider. Screenshot below
+You should now see CC_DEFAULT_TRAINING_DATA as one of the Databases in your catalog, with the DATA_SHARING_DEMO schema and the CC_DEFAULT_TRAINING_DATA. We did not need to load any data, it is shared live from the Provider. Screenshot below
 ![Diagram](assets/accept_share_result.png)
 
 Next we will create some warehouses to query the sharted data and to train our model in subsequent steps. We will create a [Snowpark Optimised Warehouse](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-snowpark-training-ml) for our training jobs. Open up a worksheet and run the following commands. 
@@ -268,9 +268,9 @@ The first step is to set up the python environment to develop our model. To do t
   conda activate snowpark-ml-hol
   ```
 
-  2. `Optionally` start notebook server:
+  3. Start notebook server:
   ```
-  $ jupyter notebook &> /tmp/notebook.log &
+  $ jupyter notebook
   ```  
 
 - Update connection.json with your Snowflake account details and credentials.
@@ -292,4 +292,6 @@ The first step is to set up the python environment to develop our model. To do t
 > 
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
 
+### Train Model
+Open up the notebook 
 <!-- ------------------------ -->
