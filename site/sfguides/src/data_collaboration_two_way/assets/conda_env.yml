@@ -1,15 +1,15 @@
 name: snowpark-ml-hol
 channels:
-  - https://repo.anaconda.com/pkgs/snowflake
+  - defaults
 dependencies:
-  - python=3.9
+  - notebook
   - snowflake-snowpark-python
   - pandas
-  - xgboost
-  - notebook
-  - scikit-learn
-  - cachetools
-  - seaborn
   - matplotlib
-  - pip:
-    - snowflake-ml-python # temporary till it's in the Snowflake conda channel
+  - scikit-learn
+  - seaborn
+  - pip
+  - cachetools
+  - python==3.9.18
+  - xgboost
+  - lightgbm
