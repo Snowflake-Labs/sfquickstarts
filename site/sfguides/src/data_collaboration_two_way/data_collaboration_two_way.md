@@ -185,3 +185,14 @@ You should have loaded over 5 million rows in less than a minute. To check, quer
 ```
 
 <!-- ------------------------ -->
+## Consumer Account - Set Up
+Duration: 2
+
+In this step, we set up the consumer account to accept the share. We need to get the account details to share with the bank, so they can set up a private listing with us, as we do not want anyone outside of out partnership to have access to the data.
+
+Log in to the second trial account that was set up, and note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
+
+A screenshot on how to find your account identifier from the Snowsight UI is shown below 
+![Diagram](assets/account_indentifier_navigation.png)
+
+<!-- ------------------------ -->
