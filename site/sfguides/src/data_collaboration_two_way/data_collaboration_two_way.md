@@ -41,3 +41,32 @@ It also highlights Snowflakes ability to host a ML Model, score data from shared
 - Consuming shared data via a private listing
 - Enriching shared data using a ML model
 - Sharing back enriched data to the original Provider account
+
+<!-- ------------------------ -->
+## Business Use Case
+Duration: 2
+
+In this hands-on-lab, we are playing the role of a bank. The Credit Risk team has noticed a rise in credit card default rates which affects the bottom line of the business. It has employed the help of an external organisation to score the credit card default risk of their existing customers, based on a series of attributes in categories such as spending, balance, delinquency, payment and risk. The data needs to be shared between the two parties.
+
+Both companies have chosen to use Snowflake. The advantages of doing this are:
+- Low latency between the Provider and Consumer accounts
+- The files stay within the security perimeter of Snowflake, with Role Based Access Control (RBAC)
+
+Below is a schematic of the data share
+![Diagram](assets/two_way_data_collaboration.png)
+
+### Dataset Details
+
+The dataset contains aggregated profile features for each customer at each statement date. Features are anonymized and normalized, and fall into the following general categories:
+
+D_* = Delinquency variables
+S_* = Spend variables
+P_* = Payment variables
+B_* = Balance variables
+R_* = Risk variables
+
+### Dataset Citation
+
+Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dane. (2022). American Express - Default Prediction. Kaggle. https://kaggle.com/competitions/amex-default-prediction
+
+<!-- ------------------------ -->
