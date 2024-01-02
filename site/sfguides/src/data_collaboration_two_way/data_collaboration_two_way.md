@@ -70,3 +70,13 @@ R_* = Risk variables
 Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dane. (2022). American Express - Default Prediction. Kaggle. https://kaggle.com/competitions/amex-default-prediction
 
 <!-- ------------------------ -->
+## Set up
+Duration: 1
+
+Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/). Follow the prompts to create a Snowflake Account.
+
+Repeat the process above. Be sure to select the same cloud and region as the first account your created. Although it is possible to share accross clouds and regions, this guide will not cover this scenario.
+
+Check your emails and follow the prompts to activate both the accounts. One will be the Provider and one will be the Consumer.
+
+<!-- ------------------------ -->
