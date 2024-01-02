@@ -80,3 +80,108 @@ Repeat the process above. Be sure to select the same cloud and region as the fir
 Check your emails and follow the prompts to activate both the accounts. One will be the Provider and one will be the Consumer.
 
 <!-- ------------------------ -->
+## Provider Account - Set Up
+Duration: 10
+
+In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our credit card default prediction data into our default_prediction_table_train and default_prediction_table_unscored and run a few queries to get familiar with the data.
+
+In our scenrio, this step would be the bank loading the data, and creating a final dataset that will be shared with an external partner which has been taskes with creating a machine learning model to predict defaults on new data (Step X). The default_prediction_table_train dataset would be sent for the partner to train and test the model, and the default_prediction_table_unscored would be new data sent to the partner to be scored and returned.
+
+### Initial Set Up
+
+For this part of the lab we will want to ensure we run all steps as the ACCOUNTADMIN role
+
+```SQL
+  -- Change role to accountadmin
+  use role accountadmin;
+```
+
+First we can create a [Virtual Warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview) that can be used to load the initial dataset. We'll create this warehouse with a size of XS which is right sized for that use case in this lab.
+
+```SQL
+  -- Create a virtual warehouse for data exploration
+  create or replace warehouse query_wh with 
+    warehouse_size = 'x-small' 
+    warehouse_type = 'standard' 
+    auto_suspend = 300 
+    auto_resume = true 
+    min_cluster_count = 1 
+    max_cluster_count = 1 
+    scaling_policy = 'standard';
+```
+
+### Load Data 
+
+Next we will create a database and schema that will house the tables that store our data to be shared.
+
+```SQL
+  -- Create the application database and schema
+  create or replace database data_sharing_demo;
+  create or replace schema data_sharing_demo;
+```
+
+Our data is in Parquet format, so we will create a file format object
+
+```SQL
+  create or replace file format parquet_format
+  type = parquet;
+```
+
+Next we set up our [External Stage](https://docs.snowflake.com/en/user-guide/data-load-s3-create-stage#external-stages) to our data. In our business scenario, we would have a secure [Storage Integration](https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration) to the external stage rather than a public s3 bucket.
+
+```SQL
+  create or replace stage quickstart_cc_default_training_data
+      url = 'insert public url here'
+      file_format = parquet_format;
+
+  create or replace stage quickstart_cc_default_unscored_data
+      url = 'insert public url here'
+      file_format = parquet_format;
+```
+
+This DDL will create the structure for the table which is the main source of data for our lab.
+
+```SQL
+  CREATE TABLE cc_default_training_table
+    USING TEMPLATE (
+      SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+        FROM TABLE(
+          INFER_SCHEMA(
+            LOCATION=>'@quickstart_cc_default_training_data',
+            FILE_FORMAT=>'parquet_format'
+          )
+        ));
+
+  CREATE TABLE cc_default_unscored_table
+    USING TEMPLATE (
+      SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+        FROM TABLE(
+          INFER_SCHEMA(
+            LOCATION=>'@quickstart_cc_default_unscored_data',
+            FILE_FORMAT=>'parquet_format'
+          )
+        ));
+```
+
+Load the data in the tables
+
+```SQL
+  COPY INTO cc_default_training_table 
+    FROM @quickstart_cc_default_training_data 
+    FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+    MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+
+  COPY INTO cc_default_training_table 
+    FROM @quickstart_cc_default_training_data 
+    FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+    MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+```
+
+You should have loaded over 5 million rows in less than a minute. To check, query the data in the worksheet
+
+```SQL
+  select count(*) default_prediction_table 
+    FROM default_prediction_table;
+```
+
+<!-- ------------------------ -->
