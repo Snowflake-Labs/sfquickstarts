@@ -208,3 +208,39 @@ In the next modal, click the "+ Select" option. In this next modal, select the D
 Click publish, and now your listing is live and readty for the consumer. No movement of data, no SFTP. The data is live and ready to query.
 
 <!-- ------------------------ -->
+## Consumer Account - Accept Share and Create Warehouses
+Duration: 2
+
+In this section, we assume the role of the consumer of the data. Our data science team will take the data shared with us securely, score it for credit card default risk, and share the results back with the bank (the original data provider).
+
+The first step is to accept the share. Log in to the Consumer Account and ensure you have assumed the ACCOUNTADMIN Role. Navigate to Data > Private Sharing and you should see the cc_default_training_darta waiting for the account admin to accept. Screenshot below
+![Diagram](assets/accept_share_navigation.png)
+
+Click Get, and in the next modal, click Get.
+![Diagram](assets/accept_share_navigation_2.png)
+
+You should now see CC_DEFAULT_TRAINING_DATA as one of the Databases in your catalog, with the DATA_SHARING_DEMO schema and the DEFAULT_PREDICTION_TABLE. We did not need to load any data, it is shared live from the Provider. Screenshot below
+![Diagram](assets/accept_share_result.png)
+
+Next we will create some warehouses to query the sharted data and to train our model in subsequent steps. We will create a [Snowpark Optimised Warehouse](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-snowpark-training-ml) for our training jobs. Open up a worksheet and run the following commands. 
+
+```SQL
+  -- Change role to accountadmin
+  use role accountadmin;
+
+  -- Create a virtual warehouse for data exploration
+  create or replace warehouse query_wh with 
+    warehouse_size = 'x-small' 
+    warehouse_type = 'standard' 
+    auto_suspend = 300 
+    auto_resume = true 
+    min_cluster_count = 1 
+    max_cluster_count = 1 
+    scaling_policy = 'standard';
+
+  -- Create a virtual warehouse for training
+  create or replace warehouse training_wh with 
+    warehouse_size = 'medium' 
+    warehouse_type = 'snowpark-optimized' 
+    max_concurrency_level = 1;
+```
