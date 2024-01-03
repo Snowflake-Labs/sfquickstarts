@@ -31,7 +31,7 @@ This virtual hands-on lab demonstrates how to use Apache Airflow to orchestrate 
 This workflow includes:
 
 - Sourcing structured, unstructured, and semistructured data from different systems
-- Extracting, transforming, and loading with the Snowpark Python provider for Airflow
+- Extracting, transforming, and loading with the Snowpark for Python provider for Airflow
 - Ingesting with Astronomer's Python SDK for Airflow
 - Audio file transcription with OpenAI Whisper
 - Natural language embeddings with OpenAI Embeddings and the Weaviate provider for Airflow
