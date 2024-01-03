@@ -25,6 +25,7 @@ It also highlights Snowflakes ability to host a ML Model, score data from shared
     - Note that you will be creating a Python environment with 3.9 in the **Setup the Python Environment** step
 - Snowflake accounts with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for free trials or use a different role.
+- The [Snowpark ML](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) package installed
 
 ### What You’ll Learn
 - How to become a Provider in Snowflake Marketplace (Private Listings)
@@ -291,6 +292,8 @@ The first step is to set up the python environment to develop our model. To do t
 > aside negative
 > 
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
+
+If you are having some trouble with the steps above, this could be due tohaving different architectures, such as an M1 chip. In that case, follow the instructions [here](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) and be sure to conda install jupyter notebooks and pyarrow.
 
 ### Train Model
 Open up the notebook 
