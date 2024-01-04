@@ -1,14 +1,13 @@
 author: Meny Kobel
 id: getting_started_with_hybrid_tables
-summary: This is a sample Snowflake Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
+summary: Follow this tutorial to learn the basics of hybrid tables
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Engineering, Hybrid Tables 
 
-# Getting Strated With Hybrid Tables  
+# Getting Strated with Hybrid Tables  
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -35,15 +34,13 @@ Hybrid tables may be suitable for some transactional applications, depending on 
 Hybrid tables provide the lower latency and higher throughput for single-row DMLs necessary for these use cases.
 
 In this quickstart we will use Tasty Bytes snowflake fictional food truck business data to simulate a data serving use case. We will use two tables:
-- ORDER_HEADER table -  This table stores order metadata such as TRUCK_ID, CUSTOMER_ID, ORDER_AMOUNT, etc.
-- TRUCK table -  This table stores truck metadata such as TRUCK_ID,FRANCHISE_ID,MENU_TYPE_ID, etc.
+- ORDER_HEADER -  This table stores order metadata such as TRUCK_ID, CUSTOMER_ID, ORDER_AMOUNT, etc.
+- TRUCK -  This table stores truck metadata such as TRUCK_ID,FRANCHISE_ID,MENU_TYPE_ID, etc.
 
 ### Prerequisites
 - Familiarity with the Snowflake Snowsight interface
 - Basic experience using git
 - Tasty Bytes V2 Installed on your account. If you don't have it install it by running [V2 Tasty Bytes Foundational Data Model - Setup](https://github.com/snowflakecorp/frostbytes/tree/main/Tasty%20Bytes/20%20-%20setup/V2)
-
-
 
 
 ### What You’ll Learn 
@@ -303,6 +300,7 @@ DESC TABLE TRUCK;
 
 Due to the unique constraint, if we attempt to insert two records with the same email address, the statement will fail.
 To test it run the following statement:
+
 
 ```sql
 -- select one of the existing email addresses
