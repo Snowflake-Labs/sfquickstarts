@@ -10,7 +10,7 @@ tags: Getting Started, Data Engineering, Hybrid Tables
 # Getting Started with Hybrid Tables  
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
+Duration: 50
 
 ### The Use Case
 
@@ -59,7 +59,7 @@ To complete this quickstart, attendees need the following:
 
 ## Set Up
 
-Duration: 5 Minutes
+Duration: 10 Minutes
 
 In this part of the step, we will set up our Snowflake account, create new worksheets, role, database structures and create a Virtual Warehouse that we will use in this step.
 
