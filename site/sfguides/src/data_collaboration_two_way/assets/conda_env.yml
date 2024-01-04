@@ -1,15 +1,12 @@
-name: snowpark-ml-hol
+name: pysnowpark1
 channels:
   - defaults
 dependencies:
-  - notebook
-  - snowflake-snowpark-python
-  - pandas
-  - matplotlib
-  - scikit-learn
-  - seaborn
   - pip
-  - cachetools
-  - python==3.9.18
-  - xgboost
+  - python==3.10.13
+  - pyarrow
+  - snowflake-ml-python
   - lightgbm
+  - chardet
+  - jupyter
+prefix: /Users/tbuchhorn/opt/anaconda3/envs/pysnowpark1
