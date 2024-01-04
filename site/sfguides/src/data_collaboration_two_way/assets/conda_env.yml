@@ -9,4 +9,5 @@ dependencies:
   - lightgbm
   - chardet
   - jupyter
+  - matplotlib
 prefix: /Users/tbuchhorn/opt/anaconda3/envs/pysnowpark1
