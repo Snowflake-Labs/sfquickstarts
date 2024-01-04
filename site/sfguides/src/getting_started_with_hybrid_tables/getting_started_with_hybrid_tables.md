@@ -10,7 +10,7 @@ tags: Getting Started, Data Engineering, Hybrid Tables
 # Getting Started with Hybrid Tables  
 <!-- ------------------------ -->
 ## Overview 
-Duration: 50
+Duration: 5
 
 ### The Use Case
 
