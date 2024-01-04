@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Hybrid Tables 
 
-# Getting Strated with Hybrid Tables  
+# Getting Started with Hybrid Tables  
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
