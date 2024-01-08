@@ -373,7 +373,7 @@ In this step, we will test that a record referenced by a foreign key constraint 
 To test it run the following statement:
 
 ```sql
-DELETE TRUCK WHERE TRUCK_ID = $NEW_TRUCK_ID;
+DELETE FROM TRUCK WHERE TRUCK_ID = $NEW_TRUCK_ID;
 ```
 
 The statement should fail and we should receive the following error message:
