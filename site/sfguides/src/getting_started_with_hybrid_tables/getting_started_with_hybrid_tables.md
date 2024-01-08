@@ -53,15 +53,15 @@ In this quickstart we will use Tasty Bytes snowflake fictional food truck busine
 ### What You’ll Need 
 To complete this quickstart, attendees need the following:
 - Snowflake account with Hybrid Tables Enabled
-- Account Admin and password which you should use to execute the quickstart
+- Account admin credentials which you should use to execute the quickstart
 
 <!-- ------------------------ -->
 
-## Set Up
+## Setup
 
-Duration: 10 Minutes
+Duration: 5
 
-In this part of the step, we will set up our Snowflake account, create new worksheets, role, database structures and create a Virtual Warehouse that we will use in this step.
+In this part of the step, we will setup our Snowflake account, create new worksheets, role, database structures and create a Virtual Warehouse that we will use in this step.
 
 ### Step 2.1 Creating a Worksheet
 
@@ -71,7 +71,7 @@ Within Worksheets, click the "+" button in the top-right corner of Snowsight and
 
 Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Hybrid Table - QuickStart"
 
-### Step 2.2 Set Up
+### Step 2.2 Setup
 
 #### Create Objects
 
@@ -226,9 +226,9 @@ insert into ORDER_HEADER (
 ```
 
 ## Explore Data
-Duration: 5 Minutes
+Duration: 5
 
-In the previous Set Up step we created HYBRID_QUICKSTART_ROLE role, HYBRID_QUICKSTART_WH warehouse, HYBRID_QUICKSTART_DB database and schema DATA. Let's use them.
+In the previous Setup step we created HYBRID_QUICKSTART_ROLE role, HYBRID_QUICKSTART_WH warehouse, HYBRID_QUICKSTART_DB database and schema DATA. Let's use them.
 ```sql
 -- Step 3
 -- Set step context
@@ -275,13 +275,13 @@ select * from ORDER_HEADER limit 10;
 ```
 
 ## Unique and Foreign Keys Constraints
-Duration: 10 Minutes
+Duration: 10
 
 In this part of the step, we will test Unique and Foreign Keys Constraints.
 
 ### Step 4.1 Unique Constraints
 In this step, we will test Unique Constraint which ensures that all values in a column are different.
-In table TRUCK that we created in the Set Up step we defined column TRUCK_EMAIL as NOT NULL and UNIQUE.
+In table TRUCK that we created in the Setup step we defined column TRUCK_EMAIL as NOT NULL and UNIQUE.
 
 
 Display information about the columns in the table. Note the unique key value for the TRUCK_EMAIL column.
@@ -323,7 +323,7 @@ insert into TRUCK values ($NEW_TRUCK_ID,2,'Stockholm','Stockholm län','Stockhol
 ```
 Statement should run successfully.
 
-### Step 2.2 Insert Foreign Keys Constraints
+### Step 4.2 Insert Foreign Keys Constraints
 
 In this step we will test foreign key constraint.
 First, we will try to insert a new record to table ORDER_HEADER with non existing truck id.
@@ -379,8 +379,7 @@ DELETE TRUCK WHERE TRUCK_ID = $NEW_TRUCK_ID;
 The statement should fail and we should receive the following error message:
 "Foreign keys that reference key values still exist."
 
-In order to be able to delete a record referenced by a foreign key constraint you need first to delete the reference record in table ORDER_HEADER and only then delete the referenced by record in table TRUCK.
-To test it run the following statement:
+To successfully delete a record referenced by a foreign key constraint, you must first delete the corresponding reference record in the ORDER_HEADER table. Only after completing this step you can proceed to delete the referenced record in the TRUCK table. To test this, execute the following statement:
 
 ```sql
 DELETE FROM ORDER_HEADER WHERE ORDER_ID = $NEW_ORDER_ID;
@@ -392,12 +391,11 @@ Both statements should run successfully.
 
 ## Row Level Locking
 
-Duration: 10 Minutes
+Duration: 5
 
-locking hybrid tables unlike standard tables uses row level locking for update operations. Row Level locking allows for concurrent updates on independent records.
-In this step, we will test concurrent updates to different records.
+Locking hybrid tables, unlike standard tables, utilizes row-level locking for update operations. Row-level locking enables concurrent updates on independent records. In this step, we will test concurrent updates to different records.
 
-In order to test it we will run concurrent updates on two different records in the hybrid table ORDER_HEADER. We will use the main worksheet "Hybrid Table - QuickStart" we created in set up step and will create a new worksheet "Hybrid Table - QuickStart session 2" to simulate a new session. From the "Hybrid Table - QuickStart" worksheet we will start a new transaction using the [BEGIN](https://docs.snowflake.com/en/sql-reference/sql/begin) statement, and run an update DML statement. Before running the [COMMIT](https://docs.snowflake.com/en/sql-reference/sql/commit) transaction statement we will open the "Hybrid Table - QuickStart session 2" worksheet and run another update DML statement. finally we will commit the open transaction.
+In order to test it we will run concurrent updates on two different records in the hybrid table ORDER_HEADER. We will use the main worksheet "Hybrid Table - QuickStart" we created in Setup step and will create a new worksheet "Hybrid Table - QuickStart session 2" to simulate a new session. From the "Hybrid Table - QuickStart" worksheet we will start a new transaction using the [BEGIN](https://docs.snowflake.com/en/sql-reference/sql/begin) statement, and run an update DML statement. Before running the [COMMIT](https://docs.snowflake.com/en/sql-reference/sql/commit) transaction statement we will open the "Hybrid Table - QuickStart session 2" worksheet and run another update DML statement. finally we will commit the open transaction.
 
 ### Step 5.1 Creating a New Worksheet
 
@@ -409,7 +407,7 @@ Rename the Worksheet by clicking on the auto-generated Timestamp name and inputt
 
 ### Step 5.2 Running concurrent updates
 
-First Open "Hybrid Table - QuickStart" worksheet and then select and set MAX_ORDER_ID variable.
+Open "Hybrid Table - QuickStart" worksheet and then select and set MAX_ORDER_ID variable.
 
 ```sql
 -- Step 4
@@ -464,7 +462,7 @@ UPDATE ORDER_HEADER
 SET order_status = 'COMPLETED'
 WHERE order_id = $MIN_ORDER_ID;
 ```
-Update statement should run successfully.
+the update statement should run successfully.
 
 Open "Hybrid Table - QuickStart" worksheet and run a commit statement to commit the open transaction.
 
@@ -479,9 +477,9 @@ SELECT * from ORDER_HEADER where order_status = 'COMPLETED';
 ```
 
 ## Consistency 
-Duration: 10 Minutes
+Duration: 5
 
-In this step, we will demonstrate a unique feature that shows how we can run natively, easily and effectively multi-statement operation in one consistent atomic transaction across both hybrid and standard table types. 
+In this step, we will demonstrate a unique feature that shows how we can run natively, easily and effectively multi-statement operations in one consistent atomic transaction across both hybrid and standard table types. 
 
 
 First, we will create a new TRUCK_STANDARD table. Afterward, we'll initiate a new transaction using the [BEGIN](https://docs.snowflake.com/en/sql-reference/sql/begin) statement, execute a multi-statement DML to insert a new truck record into both the TRUCK_HYBRID table and the TRUCK_STANDARD standard table, and finally, [COMMIT](https://docs.snowflake.com/en/sql-reference/sql/commit) the transaction.
@@ -568,13 +566,13 @@ select * from TRUCK where TRUCK_ID = $NEW_TRUCK_ID;
 ```
 
 ## Hybrid Querying
-Duration: 5 Minutes
+Duration: 5
 
 In this step, we will test the join between hybrid and standard tables. We will use the TRUCK_STANDARD table created in the previous step and join it with the hybrid table ORDER_HEADER.
 
 ### Step 7.1 Explore Data 
 
-In the Set Up step, we already created and loaded data into the ORDER_HEADER tables. Now we can run a few queries and review some information to get familiar with it.
+In the Setup step, we already created and loaded data into the ORDER_HEADER tables. Now we can run a few queries and review some information to get familiar with it.
 ```sql
 -- Step 7
 -- Set step context
@@ -588,7 +586,7 @@ select * from TRUCK_STANDARD limit 10;
 -- Simple query to look at 10 rows of data from hybrid table ORDER_HEADER
 select * from ORDER_HEADER limit 10;
 ```
-### Step 5.2 Join Hybrid Table and Standard Table
+### Step 7.2 Join Hybrid Table and Standard Table
 
 In order to test the join of the hybrid table ORDER_HEADER with the standard table FROSTBYTE_TASTY_BYTES.RAW_POS.TRUCK, let's run the join statement.
 
@@ -605,13 +603,13 @@ After executing the join statement, examine and analyze the data in the result s
 
 ## Security & Governance
 
-Duration: 10 Minutes
+Duration: 10
 
-In this step, we will demonstrate that the security and governance functionalities that have been applied to the standard table are also exist for the hybrid table. 
+In this step, we will demonstrate that the security and governance functionalities that have been applied to the standard table also exist for the hybrid table. 
 
 ### Step 8.1 Hybrid Table Access Control and User Management
 
-Role-based access control (RBAC) in Snowflake for hybrid tables is the same as standard tables.
+[Role-based access control (RBAC)](https://docs.snowflake.com/en/user-guide/security-access-control-overview) in Snowflake for hybrid tables is the same as standard tables.
 The purpose of this exercise is to give you a chance to see how you can manage access to hybrid table data in Snowflake by granting privileges to some roles.
 
 First we will create a new HYBRID_QUICKSTART_BI_USER_ROLE role
@@ -744,7 +742,7 @@ Having completed this quickstart you have successfully
 - Explore the Data 
 - Learned about Unique and Foreign Keys Constraints
 - Learned about hybrid table unique row level locking
-- Learned about consistency and how you can run multi-statement operation in one consistent atomic transaction across both hybrid and standard table types
+- Learned about consistency and how you can run multi-statement operations in one consistent atomic transaction across both hybrid and standard table types
 - Learned about hybrid querying and how to join standard table and hybrid table
 - Learned that security and governance principles apply similarly to both hybrid and standard tables
 
