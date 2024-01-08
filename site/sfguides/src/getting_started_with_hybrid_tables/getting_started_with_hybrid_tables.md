@@ -433,7 +433,7 @@ WHERE order_id = $MAX_ORDER_ID;
 ```
 Note that we didn't commit the transaction so now there is an open lock on the record WHERE order_id = $MAX_ORDER_ID.
 
-Run SHOW TRANSACTIONS statement. It is expected that the SHOW TRANSACTIONS statement would return 1 single open transaction.
+Run [SHOW TRANSACTIONS](https://docs.snowflake.com/en/sql-reference/sql/show-transactions) statement. It is expected that the SHOW TRANSACTIONS statement would return 1 single open transaction.
 ```sql
 -- List all running transactions
 SHOW TRANSACTIONS;
