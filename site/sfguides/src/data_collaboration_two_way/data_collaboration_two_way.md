@@ -360,3 +360,23 @@ $$;
 
 CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA');
 ```
+
+<!-- ------------------------ -->
+## Provider Account - Share New Data
+Duration: 2
+
+<!-- ------------------------ -->
+## Consumer Account - Score New Data
+Duration: 2
+
+<!-- ------------------------ -->
+## Consumer Account - Share Data Back to Provider
+Duration: 2
+
+<!-- ------------------------ -->
+## Provider Account - Use Scored Data
+Duration: 2
+
+<!-- ------------------------ -->
+## Wrap Up and Clean Up
+Duration: 2
