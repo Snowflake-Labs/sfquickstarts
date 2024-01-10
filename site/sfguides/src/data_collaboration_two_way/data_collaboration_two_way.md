@@ -172,8 +172,8 @@ Load the data in the tables
     FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
     MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 
-  COPY INTO cc_default_training_data 
-    FROM @quickstart_cc_default_training_data 
+  COPY INTO cc_default_unscored_data 
+    FROM @quickstart_cc_default_uncscored_data 
     FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
     MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 ```
@@ -365,9 +365,28 @@ CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA');
 ## Provider Account - Share New Data
 Duration: 2
 
+In this section, we will go back to assuming the role of the bank. We will switch back to our original provider account and create another listing of unscored data to share to our partner to score for default risk. This time however, we will create a [stream on the shared table](https://docs.snowflake.com/en/user-guide/data-sharing-provider#label-data-sharing-streams) so the new data can be shared live (without etl).
+
+The first thing we need to do is to enable change tracking on the table to be shared. This will add a pair of hidden columns automatically to the table and begin storing change tracking metadata.
+
+```SQL
+ALTER TABLE DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE SET CHANGE_TRACKING = TRUE;
+```
+
+Next, lets add this data to the listing. Navigate to Data > Private Sharing in Snowsight. Then select "Shared By Your Account" in the top menu, and select "DATA_SHARING_DEMO".
+
+Scroll to the Data section and select "Edit". Screenshot below
+![Diagram](assets/update_listing.png)
+
+From this screen, select the "CC_DEFAULT_UNSCORED_TABLE" and click "Done", then in the following screen, click "Save".
+
+Your listing has now been updated, and the Consumer Account will be able to see the new table.
+
 <!-- ------------------------ -->
 ## Consumer Account - Score New Data
 Duration: 2
+
+
 
 <!-- ------------------------ -->
 ## Consumer Account - Share Data Back to Provider
