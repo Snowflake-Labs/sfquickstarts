@@ -302,8 +302,8 @@ Open up the notebook
 Duration: 2
 
 ```SQL
-CREATE OR REPLACE PROCEDURE cc_profile_processing(tableName VARCHAR)
-RETURNS TABLE()
+CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR)
+RETURNS STRING
 LANGUAGE PYTHON
 RUNTIME_VERSION = '3.8'
 PACKAGES = ('snowflake-snowpark-python')
@@ -314,7 +314,7 @@ import snowflake.snowpark as snp
 import snowflake.snowpark.window as W
 import snowflake.snowpark.functions as F
 
-def feature_transform(session, raw_table):
+def feature_transform(session, raw_table, target_table):
     training_df = session.table(raw_table)
     # Feature engineer raw input
     #Average
@@ -354,11 +354,13 @@ def feature_transform(session, raw_table):
     feature_df = df_min.natural_join(df_avg)
     feature_df = feature_df.natural_join(df_max)
     feature_df = feature_df.natural_join(df_last)
+
+    feature_df.write.save_as_table(target_table, mode="append")
     
-    return feature_df
+    return "Success"
 $$;
 
-CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA');
+CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA', 'SCORED_DATA');
 ```
 
 <!-- ------------------------ -->
@@ -383,14 +385,25 @@ From this screen, select the "CC_DEFAULT_UNSCORED_TABLE" and click "Done", then 
 Your listing has now been updated, and the Consumer Account will be able to see the new table.
 
 <!-- ------------------------ -->
-## Consumer Account - Score New Data
+## Consumer Account - Automate Scoering Pipeline
 Duration: 2
 
+Switch over to the Consumer Account, and you should see the newly shared table in the databases tab. If not, click the ellipsis and click "Refresh". Screenshot below.
+![Diagram](assets/updated_listing_in_consumer_navigation.png)
+
+Next we will create a pipeline from streams and tasks to automate the feature engineering of the newly shared data, score it, and make it available to the Bank.
+
+First we will create a Stream on the newly shared table with the following code, and check it was created successfully
+
+```SQL
+CREATE OR REPLACE STREAM CC_DEFAULT_DATA_STREAM ON TABLE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE;
+
+SHOW STREAMS;
+```
+Next, lets set up a task to transform this data, using the stored procedures and UDFs we created in step 8.
 
 
-<!-- ------------------------ -->
-## Consumer Account - Share Data Back to Provider
-Duration: 2
+
 
 <!-- ------------------------ -->
 ## Provider Account - Use Scored Data
