@@ -363,6 +363,34 @@ $$;
 CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA', 'SCORED_DATA');
 ```
 
+Lets also wrap the UDF in a task so we can automate the scoring as well
+
+```SQL
+CREATE OR REPLACE PROCEDURE cc_batch_processing(rawTable VARCHAR, targetTable VARCHAR)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'cc_batch_processing'
+AS
+$$
+from snowflake.snowpark.functions import call_udf
+import snowflake.snowpark.functions as F
+
+def cc_batch_processing(session, raw_table, target_table):
+
+    batch_df = session.table(raw_table)
+    feature_cols = batch_df.columns
+    feature_cols.remove('"customer_ID"')
+    
+    scored_data = batch_df.select('"customer_ID"', call_udf("batch_predict_cc_default", [F.col(c) for c in feature_cols]).alias('Prediction'))
+    
+    scored_data.write.save_as_table(target_table, mode="append")
+
+    return "Success"
+$$;
+```
+
 <!-- ------------------------ -->
 ## Provider Account - Share New Data
 Duration: 2
