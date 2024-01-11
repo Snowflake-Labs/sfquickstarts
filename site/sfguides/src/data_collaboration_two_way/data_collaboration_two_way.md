@@ -402,7 +402,16 @@ SHOW STREAMS;
 ```
 Next, lets set up a task to transform this data, using the stored procedures and UDFs we created in step 8.
 
+```SQL
+CREATE TASK FEATURE_ENG
+    WAREHOUSE = 'QUERY_WH'
+AS
+    CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE', 'TRANSFORMED_TABLE3');
+```
 
+Then we make a task depndant on the above
+
+How to pass the table to UDF?
 
 
 <!-- ------------------------ -->
