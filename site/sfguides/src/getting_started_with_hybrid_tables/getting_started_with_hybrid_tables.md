@@ -40,7 +40,7 @@ In this quickstart we will use Tasty Bytes snowflake fictional food truck busine
 ### Prerequisites
 - Familiarity with the Snowflake Snowsight interface
 - Basic experience using git
-- Tasty Bytes V2 Installed on your account. If you don't have it install it by running [V2 Tasty Bytes Foundational Data Model - Setup](https://github.com/snowflakecorp/frostbytes/tree/main/Tasty%20Bytes/20%20-%20setup/V2)
+- Please make sure you have completed the [Introduction to Tasty Bytes Quickstart](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 
 ### What You’ll Learn 
@@ -410,7 +410,7 @@ Rename the Worksheet by clicking on the auto-generated Timestamp name and inputt
 Open "Hybrid Table - QuickStart" worksheet and then select and set MAX_ORDER_ID variable.
 
 ```sql
--- Step 4
+-- Step 5
 -- Set step context
 USE ROLE HYBRID_QUICKSTART_ROLE;
 USE WAREHOUSE HYBRID_QUICKSTART_WH;
@@ -479,7 +479,7 @@ SELECT * from ORDER_HEADER where order_status = 'COMPLETED';
 ## Consistency 
 Duration: 5
 
-In this step, we will demonstrate a unique feature that shows how we can run natively, easily and effectively multi-statement operations in one consistent atomic transaction across both hybrid and standard table types. 
+In this step, we will demonstrate a unique hybrid tables feature that shows how we can run multi-statement operations natively, easily and effectively in one consistent atomic transaction across both hybrid and standard table types. 
 
 
 First, we will create a new TRUCK_STANDARD table. Afterward, we'll initiate a new transaction using the [BEGIN](https://docs.snowflake.com/en/sql-reference/sql/begin) statement, execute a multi-statement DML to insert a new truck record into both the TRUCK_HYBRID table and the TRUCK_STANDARD standard table, and finally, [COMMIT](https://docs.snowflake.com/en/sql-reference/sql/commit) the transaction.
@@ -605,7 +605,8 @@ After executing the join statement, examine and analyze the data in the result s
 
 Duration: 10
 
-In this step, we will demonstrate that the security and governance functionalities that have been applied to the standard table also exist for the hybrid table. 
+In this step, we will demonstrate that the security and governance functionalities that have been applied to the standard table also exist for the hybrid table.
+
 
 ### Step 8.1 Hybrid Table Access Control and User Management
 
