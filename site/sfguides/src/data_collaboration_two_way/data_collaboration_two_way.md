@@ -431,8 +431,12 @@ SHOW STREAMS;
 Next, lets set up a task to transform this data, using the stored procedures and UDFs we created in step 8.
 
 ```SQL
-CREATE TASK FEATURE_ENG
+CREATE OR REPLACE TASK FEATURE_ENG
     WAREHOUSE = 'QUERY_WH'
+    -- We would add a schedule in production, but this is commented out to avoid accidental credit consumption
+    -- SCHEDULE = '5 minute'
+WHEN
+  SYSTEM$STREAM_HAS_DATA('CC_DEFAULT_DATA_STREAM')
 AS
     CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE', 'TRANSFORMED_TABLE');
 ```
@@ -485,6 +489,24 @@ Duration: 2
 <!-- ------------------------ -->
 ## Provider Account - Add New Data
 Duration: 2
+
+In production, this step would most likely be an automated ingestion pipeline form a source system. However, for illustrative purposes, we will use the Snowsight UI to append a csv to simulate incoming data and append it to a table.
+
+Navigate to Data > Databases > DATA_SHARING_DEMO > CC_DEFAULT_UNCENSORED_TABLE and click "Load Data in the top right of the screen.
+
+Upload the new_data.csv. Thi will be appended to the table.
+
+Test the new data is there by running the following query in a worksheet.
+
+```SQL
+SELECT
+  *
+FROM
+  CC_DEFAULT_UNSCORED_TABLE
+WHERE "customer_ID" = 'new_data';
+```
+
+This updated data has noe updated the stream, which would be picked up by the consumer. This will then execute the first task to undertake feature engineering, and then a second dependant task which would invoke our model and score the data. This new scored data would be appended to the shared table, and automatically shared back to the original provider.
 
 <!-- ------------------------ -->
 ## Wrap Up and Clean Up
