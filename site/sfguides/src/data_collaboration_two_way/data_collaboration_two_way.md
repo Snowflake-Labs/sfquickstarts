@@ -206,7 +206,7 @@ In the modal, enter the name of the Private Listing that we wish to share with o
 
 In the next modal, click the "+ Select" option. In this next modal, select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing. Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consimer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
 
-Click publish, and now your listing is live and readty for the consumer. No movement of data, no SFTP. The data is live and ready to query.
+Click publish, and now your listing is live and ready for the consumer. No movement of data, no SFTP. The data is live and ready to query.
 
 <!-- ------------------------ -->
 ## Consumer Account - Accept Share and Create Warehouses
@@ -413,7 +413,7 @@ From this screen, select the "CC_DEFAULT_UNSCORED_TABLE" and click "Done", then 
 Your listing has now been updated, and the Consumer Account will be able to see the new table.
 
 <!-- ------------------------ -->
-## Consumer Account - Automate Scoering Pipeline
+## Consumer Account - Automate Scoring Pipeline
 Duration: 2
 
 Switch over to the Consumer Account, and you should see the newly shared table in the databases tab. If not, click the ellipsis and click "Refresh". Screenshot below.
@@ -434,16 +434,56 @@ Next, lets set up a task to transform this data, using the stored procedures and
 CREATE TASK FEATURE_ENG
     WAREHOUSE = 'QUERY_WH'
 AS
-    CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE', 'TRANSFORMED_TABLE3');
+    CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE', 'TRANSFORMED_TABLE');
 ```
 
 Then we make a task depndant on the above
 
-How to pass the table to UDF?
+```SQL
+CREATE TASK score_data 
+    WAREHOUSE = 'QUERY_WH'
+AFTER FEATURE_ENG
+AS 
+CALL cc_batch_processing('TRANSFORMED_TABLE', 'SCORED_TABLE');
+```
+Check the tasks are created
+
+```SQL
+SHOW TASKS;
+```
+
+And resume them
+
+```SQL
+ALTER TASK FEATURE_ENG RESUME;
+ALTER TASK SCORE_DATA RESUME;
+```
+
+```SQL
+EXECUTE TASK FEATURE_ENG;
+```
+
+If you want to see the status of your tasks, you can run the following query
+
+```SQL
+select *
+  from table(information_schema.task_history())
+  order by scheduled_time;
+```
+
+Now lets share our scored table back to the Bank. This process is the same as step X in reverse. Navigate to Data > Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
+
+In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it SCORED_DATA. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
+
+In the next modal, click the "+ Select" option. In this next modal, select the SCORED_DATA in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_DATA and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
 
 
 <!-- ------------------------ -->
 ## Provider Account - Use Scored Data
+Duration: 2
+
+<!-- ------------------------ -->
+## Provider Account - Add New Data
 Duration: 2
 
 <!-- ------------------------ -->
