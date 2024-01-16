@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Intro to Machine Learning with Snowpark ML for Python
+# Intro to Snowpark ML
 <!-- ------------------------ -->
 ## Overview 
 
