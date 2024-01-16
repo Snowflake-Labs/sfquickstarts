@@ -92,7 +92,7 @@ Duration: 10
 
 In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our credit card default prediction data into our tables.
 
-In our scenario, this step represents SnowBank loading data from their source systems in to Snowflake, and creating datasets that will be shared with an external partner (Zamboni) which has been tasked with creating a machine learning model to predict defaults on new data. The default_prediction_table_train dataset would be sent for the partner to train and test the model, and the default_prediction_table_unscored would be new data sent to the partner to be scored and returned.
+In our scenario, this step represents SnowBank loading data from their source systems in to Snowflake, and creating datasets that will be shared with an external partner (Zamboni) which has been tasked with creating a machine learning model to predict defaults on new data. The default_prediction_table_train dataset would be sent for the partner to train and test the model, and the default_prediction_table_unscored would be new data sent to the partner to be scored and returned. We will create a third stage for illustrative purposes that will simulate newly arriving data, and how the processis automated. We will come back to this in a later step.
 
 ### Initial Set Up
 
@@ -139,40 +139,60 @@ type = parquet;
 Next we set up our [External Stage](https://docs.snowflake.com/en/user-guide/data-load-s3-create-stage#external-stages) to our data. In our business scenario, we would have a secure [Storage Integration](https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration) to the external stage rather than a public s3 bucket.
 
 ```SQL
-  create or replace stage quickstart_cc_default_training_data
-      url = 'insert public url here'
-      file_format = parquet_format;
+create or replace stage quickstart_cc_default_training_data
+    url = 'insert public url here/train'
+    file_format = parquet_format;
 
-  create or replace stage quickstart_cc_default_unscored_data
-      url = 'insert public url here'
-      file_format = parquet_format;
+create or replace stage quickstart_cc_default_unscored_data
+    url = 'insert public url here/test'
+    file_format = parquet_format;
+
+CREATE OR REPLACE STAGE quickstart_cc_default_new_data
+  URL = 's3://.../new_data/'
+  FILE_FORMAT = parquet_format;
 ```
 
 This DDL will create the structure for the table which is the main source of data for our lab.
 
 ```SQL
-  CREATE TABLE cc_default_training_data
-    USING TEMPLATE (
-      SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
-        FROM TABLE(
-          INFER_SCHEMA(
-            LOCATION=>'@quickstart_cc_default_training_data',
-            FILE_FORMAT=>'parquet_format'
-          )
-        ));
+CREATE TABLE cc_default_training_data
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION=>'@quickstart_cc_default_training_data',
+          FILE_FORMAT=>'parquet_format'
+        )
+      ));
 
-  CREATE TABLE cc_default_unscored_data
-    USING TEMPLATE (
-      SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
-        FROM TABLE(
-          INFER_SCHEMA(
-            LOCATION=>'@quickstart_cc_default_unscored_data',
-            FILE_FORMAT=>'parquet_format'
-          )
-        ));
+CREATE TABLE cc_default_unscored_data
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION=>'@quickstart_cc_default_unscored_data',
+          FILE_FORMAT=>'parquet_format'
+        )
+      ));
+
+CREATE TABLE cc_default_new_data
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION=>'@quickstart_cc_default_new_data',
+          FILE_FORMAT=>'parquet_format'
+        )
+      ));
 ```
 
-Load the data in the tables
+Now we will load the data in the tables. We can scale up the warehouse temporarily so we do not have to wait as long
+
+```SQL
+ALTER WAREHOUSE query_wh SET warehouse_size=MEDIUM;
+```
+
+The code below loads the data in to the tables.
 
 ```SQL
   COPY INTO cc_default_training_data 
@@ -181,16 +201,29 @@ Load the data in the tables
     MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 
   COPY INTO cc_default_unscored_data 
-    FROM @quickstart_cc_default_uncscored_data 
+    FROM @quickstart_cc_default_unscored_data 
+    FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+    MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+
+  COPY INTO cc_default_new_data 
+    FROM @quickstart_cc_default_new_data 
     FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
     MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 ```
+We can now scale down the warehouse since we have finished loading data for the lab
 
-You should have loaded over 5 million rows in less than a minute. To check, query the data in the worksheet
+```SQL
+ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
+```
+
+You should have loaded over 5 million and 11 million rows in a few minutes. To check, query the data in the worksheet
 
 ```SQL
   select count(*) 
     FROM cc_default_training_data;
+
+  select count(*) 
+    FROM CC_DEFAULT_UNSCORED_DATA;
 ```
 
 <!-- ------------------------ -->
