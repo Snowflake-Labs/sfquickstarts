@@ -216,7 +216,7 @@ We can now scale down the warehouse since we have finished loading data for the 
 ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
 ```
 
-You should have loaded over 5 million and 11 million rows in a few minutes. To check, query the data in the worksheet
+You should have loaded over 5 million and 7 million rows in a few minutes. To check, query the data in the worksheet
 
 ```SQL
   select count(*) 
@@ -226,19 +226,21 @@ You should have loaded over 5 million and 11 million rows in a few minutes. To c
     FROM CC_DEFAULT_UNSCORED_DATA;
 ```
 
+We have loaded all the data in SnowBank. We can now switch over to our second account (Zamboni)
+
 <!-- ------------------------ -->
-## Consumer Account - Set Up
-Duration: 2
+## Consumer Account (Zamboni) - Set Up
+Duration: 5
 
-In this step, we set up the consumer account to accept the share. We need to get the account details to share with the bank, so they can set up a private listing with us, as we do not want anyone outside of out partnership to have access to the data.
+In this step, we set up the consumer account to accept the share. Log in to the second trial account that was set up, and accept the Anaconda and Snowflake Marketplace Terms as we did in the last step. ![Diagram](assets/accept_terms_navigation.png)
 
-Log in to the second trial account that was set up, and note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
+We need to get the account details to share with the bank, so they can set up a private listing with us, as we do not want anyone outside of out partnership to have access to the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
 
 A screenshot on how to find your account identifier from the Snowsight UI is shown below 
 ![Diagram](assets/account_indentifier_navigation.png)
 
 <!-- ------------------------ -->
-## Provider Account - Create Private Listing
+## Provider Account (SnowBank) - Create Private Listing
 Duration: 2
 
 In your provider account, open up Snowsight and navigate to Data > Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
