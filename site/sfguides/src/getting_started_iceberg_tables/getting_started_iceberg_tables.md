@@ -466,7 +466,7 @@ By default, ACCOUNTADMIN is the only role that can create shares. From your SQL 
 
 ```sql
 USE ROLE accountadmin;
-GRANT ON ACCOUNT CREATE SHARE TO ROLE iceberg_lab;
+GRANT CREATE SHARE ON ACCOUNT TO ROLE iceberg_lab;
 USE ROLE iceberg_lab;
 ```
 
