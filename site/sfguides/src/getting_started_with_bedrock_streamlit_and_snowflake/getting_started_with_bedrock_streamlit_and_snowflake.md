@@ -512,8 +512,10 @@ After setting up our AWS and Snowflake and envrionments we built two primary thi
 
 
 ### Additional resources 
-[RBAC with External Services](https://www.youtube.com/watch?v=fALb8SosA_U)
-[Prompting](https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md)
-[Streamlit](https://streamlit.io/)
+- [RBAC with External Services](https://www.youtube.com/watch?v=fALb8SosA_U)
+
+- [Prompting](https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md)
+
+- [Streamlit](https://streamlit.io/)
 
 If you have any questions, reach out to your Snowflake account team!
