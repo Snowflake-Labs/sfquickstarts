@@ -524,24 +524,30 @@ Next, lets set up a task to transform this data, using the Stored Procedures and
 The first task is Change Data Capture (CDC) which checks the stream for new arriving data, and moves it in to a new temporary table for feature engineering.
 
 ```SQL
-CREATE OR REPLACE TASK CDC
+CREATE OR REPLACE TASK CDC_1
     WAREHOUSE = 'QUERY_WH'
     -- We would add a schedule in production, but this is commented out to avoid accidental credit consumption
-    -- SCHEDULE = '5 minute'
+    SCHEDULE = '5 minute'
 WHEN
   SYSTEM$STREAM_HAS_DATA('CC_DEFAULT_DATA_STREAM')
 AS
-  CREATE OR REPLACE TEMPORARY TABLE NEW_CC_DEFAULT_DATA AS (
-    SELECT * FROM 'CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA'
-    WHERE METADATA$ACTION = 'INSERT'
-  );
+  CREATE OR REPLACE TEMPORARY TABLE SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA LIKE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA;
+
+CREATE OR REPLACE TASK CDC_2
+    WAREHOUSE = 'QUERY_WH'
+    -- We would add a schedule in production, but this is commented out to avoid accidental credit consumption
+AFTER CDC_1
+AS
+INSERT INTO SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA
+SELECT * FROM CC_DEFAULT_DATA_STREAM
+WHERE METADATA$ACTION = 'INSERT';
 ```
 Then we create a second task dependant on the first that performs the feature engineering.
 
 ```SQL
 CREATE OR REPLACE TASK FEATURE_ENG
     WAREHOUSE = 'QUERY_WH'
-AFTER CDC
+AFTER CDC_2
 AS
     CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE');
 ```
