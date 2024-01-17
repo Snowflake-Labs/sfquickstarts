@@ -175,15 +175,8 @@ CREATE TABLE cc_default_unscored_data
         )
       ));
 
-CREATE TABLE cc_default_new_data
-  USING TEMPLATE (
-    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
-      FROM TABLE(
-        INFER_SCHEMA(
-          LOCATION=>'@quickstart_cc_default_new_data',
-          FILE_FORMAT=>'parquet_format'
-        )
-      ));
+-- Create below to be the template of the above
+CREATE OR REPLACE TABLE cc_default_new_data LIKE cc_default_unscored_data;
 ```
 
 Now we will load the data in the tables. We can scale up the warehouse temporarily so we do not have to wait as long
@@ -589,7 +582,7 @@ Navigate to Data > Private Sharing and you should see the scored_data waiting fo
 Click Get, and in the next modal, click Get.
 ![Diagram](assets/accept_share_navigation_4.png)
 
-You should now see SCORED_DATA as one of the Databases in your catalog, with the SCORED_MODEL schema and the SCORED_TABLE. We did not need to load any data, it is shared live from the Provider.
+You should now see SCORED_DATA as one of the Databases in your catalog, with the SCORED_MODEL schema and the SCORED_TABLE. We did not need to load any data, it is shared live from the Zamboni.
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) -  Add New Data
@@ -597,9 +590,21 @@ Duration: 15
 
 In this section, we will add some new data to demonstate how the automated pipeline would operate between the two accounts.
 
+Specifically, we will add the credit card default information of 2 customers (new_customer_1 and new_customer_2) to the CC_DEFAULT_UNSCORED_DATA in the SnowBank account. This will then trigger the Stream in the Zamboni account via the live share. Thereafter, the feature engineering task will run, and the scoring model will run sequentially via tasks, and the new data will be appended to the SCORED_TABLE in the Zamboni Account. Since that table is shared live with SnowBank, we will see the new scored results. This entire pipeline is automated using Snowflake Features.
+
+The first step is to add new data to the CC_DEFAULT_UNSCORED_DATA table in the SnowBank account. Run the following SQL to add the new data to the table
+
+```SQL
+INSERT INTO DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA
+SELECT * FROM DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_NEW_DATA;
+```
+
+In a fully automated scenario where the CDC task runs on a schedule, this is all we would need to do. The second account would recognise the newly incoming data and run the pipeline. We could imply run the following command and get our results.
+
+NEED TO FIX BUG WITH TASK RUNNING ON NEWLY SHARED DATA
 
 <!-- ------------------------ -->
-## Consumer Account (Zamoboni) -  Kickstart Automated Pipeline
+## Consumer Account (Zamoboni) -  Manually Inspect Automated Pipeline
 Duration: 15
 
 In production, this step would most likely be an automated ingestion pipeline form a source system. However, for illustrative purposes, we will run the following query to update the table.
