@@ -27,19 +27,41 @@ In this quickstart we will go through the two ways you can build predictive feat
 
 It's important to note that Predictions runs on top of RudderStack [Profiles](https://www.rudderstack.com/docs/profiles/overview/), a product that automates identity resolution and user feature development in Snowflake. 
 
-Predictions leverages the Profiles identity graph to train and run ML models. Because Predictions is part of Profiles, project outputs include an identity graph, standard user featuers (i.e., `last_seen`) and predictive user features (i.e., `percentile_churn_score_30_days`). Both types of features are built using RudderStack data sources and standardized feature definitions.
+Predictions leverages the Profiles identity graph to train and run ML models. Because Predictions is part of Profiles, project outputs include an identity graph, standard user features (i.e., `last_seen`) and predictive user features (i.e., `percentile_churn_score_30_days`). Both types of features are built using RudderStack data sources and standardized feature definitions.
 
 For automated features, you perform the setup and run the jobs within the RudderStack UI. This process makes it easy for less technical users to implement basic predictive features. In this guide, we will show you how to set up an automated churn prediction feature.
 
-Predictions also supports a code-based approach that gives technical users full control to define custom predictive features that match their unique business logic, which we will cover in the second part of the guide. 
+Predictions also supports a code-based approach that gives technical users full control to define custom predictive features that match their unique business logic, which we will cover in the second part of the guide.
+
+### What You Will Learn
+
+By completing this guide you will create predictive models and features using RudderStack Predictions, Snowflake, and Snowpark. In the process you will learn:
+
+- To build a basic event stream pipeline in RudderStack
+- To build a basic Profiles project in RudderStack
+- To create custom features within RudderStack Profiles
+- To create custom predictive features using RudderStack Predictions
+- To create a Predictions project in the RudderStack UI
+- To update the project in using the RudderStack Profiles CLI tool (`PB`)
+
+### What You Will Build
+
+- An automated 30-day churn score in the RudderStack UI
+- A custom feature in the RudderStack UI
+- A code-based feature
+- A code-based predictive feature
+
+### Prerequisites
+
+- [Python 3.10](https://www.python.org/downloads/) installed
+- A RudderStack account, if you do not have an account you can crate a [free account](https://app.rudderstack.com/signup?type=freetrial)
+- Predictions access. Once you set up your RudderStack account, [reach out to our support team](mailto:support@rudderstack.com?subject=I%20would%20like%20access%20to%20your%20Predictions%20feature) to request access to our Predictions feature.
+- A Snowflake account, if you do not have an account you can register for a [free trial account](https://signup.snowflake.com/)
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 <!-- ------------------------ -->
-## Prerequisites
-Duration: 10
-
-For this quickstart you will need access to both RudderStack and Snowflake. If you do not have access, follow these links to create a free [RudderStack account](https://app.rudderstack.com/signup?type=freetrial) and [Snowflake account](https://signup.snowflake.com/).
-
-Once you set up your RudderStack account, [reach out to our support team](mailto:support@rudderstack.com?subject=I%20would%20like%20access%20to%20your%20Predictions%20feature) to request access to our Predictions feature.
+## Setup Environment
+Duration: 15
 
 ### Setting up Snowflake for Event Stream Data
 Because Predictions is designed to run in a production environment, you need to perform some basic set up in Snowflake (and later, your RudderStack workspace) to simulate the pipelines you would run when collecting user event data. 
@@ -865,3 +887,18 @@ Duration: 1
 In this quickstart we created a project that leveraged RudderStack data and the power of Snowpark to generate predictive features directly in the Snowflake environment.
 
 All of this was accomplished without any additional MLOps infrastructure. Being able to create predictive features in a warehouse environment opens up ML modeling to Data Engineers, Analytical Engineers, and Data Analysts. It also allows businesses to significantly cut the time to data activation and positive ROI.
+
+### What You Learned
+
+- How to create a basic event stream pipeline in RudderStack
+- How to create an identity graph and feature table using RudderStack Profiles
+- How to automatically create predictive models and features using RudderStack Predictions
+- How to download a Profiles project and update it using the CLI tool `PB`
+
+### Related Resources
+
+- [AI/ML Success Starts with Data Quality](https://www.rudderstack.com/blog/your-aiml-success-starts-with-data-quality/)
+- [How Analytics Engineers can Unlock Practical ML to Drive Business Value](https://www.rudderstack.com/blog/how-analytics-engineers-can-unlock-practical-ml-to-drive-business-value/)
+- [Shopify Churn Score on GitHub](https://github.com/rudderlabs/rudderstack-profiles-shopify-churn)
+- [Getting Started with Profiles](https://www.rudderstack.com/docs/profiles/get-started/)
+- [Predictions Guide](https://www.rudderstack.com/docs/profiles/predictions/)
