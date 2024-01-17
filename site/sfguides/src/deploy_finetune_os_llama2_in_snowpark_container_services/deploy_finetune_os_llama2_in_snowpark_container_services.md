@@ -247,7 +247,9 @@ Copy the endpoint URL, and paste it in your browser. At this point, you will be 
 ## Deploy Llama 2 in SPCS
 Duration: 40
 
-Recall that in our `Dockerfile` we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab. 
+Recall that in our `Dockerfile` we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab as shown below.
+
+![JupyterLab](./assets/jupyterlab.png)
 
 Here's a quick overview of the three notebooks.
 
@@ -369,7 +371,7 @@ In this cell we're loading the tokenizer and pre-trained Llama 2 Model From Hugg
 
 ### Load and Split Dataset
 
-Next we will load data (transcripts with instructions and expected output) from `transcripts_inst.json` file into a Pandas dataframe. Then we will split the dataset into train, eval, and test dataframes with 100 records each. 
+Next we will load data (***transcripts with instructions and expected output***) from `transcripts_inst.json` file into a Pandas dataframe. Then we will split the dataset into train, eval, and test dataframes with 100 records each. 
 
 Here's what the data looks like:
 
@@ -378,10 +380,6 @@ Here's what the data looks like:
 ### Apply Prompt to Datasets
 
 In order for the model to give us very specific output, we need to provide concrete instruction as well as example of expected output as `prompt` so the model is fine-tuned based on that information.
-
-Here's what the data looks like after applying the prompt to `input` column:
-
-![Eval Transcripts](./assets/sample_eval_dataset.png)
 
 ### Tokenize Datasets
 
