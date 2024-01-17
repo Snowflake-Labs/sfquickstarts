@@ -88,7 +88,7 @@ Check your emails and follow the prompts to activate both the accounts. One will
 
 <!-- ------------------------ -->
 ## Provider Account (Snowbank) - Set Up
-Duration: 10
+Duration: 20
 
 In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our credit card default prediction data into our tables.
 
@@ -232,24 +232,24 @@ We have loaded all the data in SnowBank. We can now switch over to our second ac
 ## Consumer Account (Zamboni) - Set Up
 Duration: 5
 
-In this step, we set up the consumer account to accept the share. Log in to the second trial account that was set up, and accept the Anaconda and Snowflake Marketplace Terms as we did in the last step. ![Diagram](assets/accept_terms_navigation.png)
+In this step, we set up the consumer account. Log in to the second trial account that was set up, and accept the Anaconda and Snowflake Marketplace Terms as we did in the last step. ![Diagram](assets/accept_terms_navigation.png)
 
-We need to get the account details to share with the bank, so they can set up a private listing with us, as we do not want anyone outside of out partnership to have access to the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
+We need to get the account details to share with SnowBank, so they can set up a private listing with us, as we do not want anyone outside of our partnership to have access to the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
 
 A screenshot on how to find your account identifier from the Snowsight UI is shown below 
 ![Diagram](assets/account_indentifier_navigation.png)
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) - Create Private Listing
-Duration: 2
+Duration: 10
 
-In your provider account, open up Snowsight and navigate to Data > Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
+In your provider account, open up Snowsight and navigate to Data > Provider Studio on the left hand menu. then click the blue "Listing" button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
 
-In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it cc_default_training_data. They will securely access this data from their own Snowflake account, and share back the scored results. We have selected "Only Specified Consumers" in our discovery settings, so that our data can only be seen with the partners we explicitly want to share with. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
+In the modal, enter the name of the Private Listing that we wish to share with our external partner (Zamboni). We have named it cc_default_training_data. They will securely access this data from their own Snowflake account, and share back the scored results. We have selected "Only Specified Consumers" in our discovery settings, so that our data can only be seen with the partners we explicitly want to share with. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
 
-In the next modal, click the "+ Select" option. In this next modal, select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing. Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consimer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
+In the next modal, click the "+ Select" option. In this next modal, select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing by clicking "Done". Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consumer account. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
 
-Click publish, and now your listing is live and ready for the consumer. No movement of data, no SFTP. The data is live and ready to query.
+Click Publish, and now your listing is live and ready for the consumer. No movement of data, no SFTP. The data is live and ready to query. Next we switch over to the Zamboni account to accept the share.
 
 <!-- ------------------------ -->
 ## Consumer Account - Accept Share and Create Warehouses
