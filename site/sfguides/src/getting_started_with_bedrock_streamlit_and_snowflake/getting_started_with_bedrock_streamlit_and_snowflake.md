@@ -38,8 +38,9 @@ We will build an efficient architecture all within Snowflake that will access pu
 
 ![](assets/architecture.png)
 
-Authors of this quickstart: Matt Marzillo and Dan Hunt
-Key contributor: Frank Dallezotte AWS ISV SA
+**Authors of this quickstart:** Matt Marzillo and Dan Hunt
+
+**Key contributor:** Frank Dallezotte AWS ISV SA
 
 <!-- ------------------------ -->
 ## Use Case
