@@ -10,7 +10,7 @@ tags: Getting Started, Containers, Snowpark
 # Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
+Duration: 8
 
 By completing this QuickStart guide, you will get to explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview), now in `Public Preview` on AWS, to deploy and fine-tune open source Llama 2 Large Language Model (LLM) from Hugging Face.
 
@@ -18,11 +18,9 @@ By completing this QuickStart guide, you will get to explore [Snowpark Container
 
 ![Snowpark Container Service](./assets/containers.png)
 
-[Snowpark Container Services (SPCS)](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) is a fully managed container offering that allows you to easily deploy, manage, and scale containerized services, jobs, and functions, all within the security and governance boundaries of Snowflake, with zero data movement. As a fully managed service, SPCS comes with Snowflake’s native security, RBAC support, and built-in configuration and operational best-practices.
+[Snowpark Container Services (SPCS)](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) is a fully managed container offering that allows you to easily deploy, manage, and scale containerized services, jobs, and functions, all within the security and governance boundaries of Snowflake, with no data movement. As a fully managed service, SPCS comes with Snowflake’s native security, RBAC support, and built-in configuration and operational best-practices.
 
 Snowpark Container Services are fully integrated with both Snowflake features and third-party tools, such as Snowflake Virtual Warehouses and Docker, allowing teams to focus on building data applications, and not building or managing infrastructure. This managed service allows you to run and scale your container workloads across regions and clouds without the additional complexity of managing a control plane, worker nodes, and also while having quick and easy access to your Snowflake data.
-
-The introduction of Snowpark Container Services on Snowflake includes the incorporation of new object types and constructs to the Snowflake platform such as: images, image registry, image repositories, compute pools, specification files, services, and jobs.
 
 ![Development to Deployment](./assets/spcs_dev_to_deploy.png)
 
@@ -35,35 +33,36 @@ For more information on these objects, check out [this blog](https://medium.com/
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services.git**. If you don't have Git installed, you can also download the repo as a .zip file.
-- A non-trial Snowflake account in a supported [AWS region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions) with access to a role that has the `ACCOUNTADMIN` role. If not, you will need to work with your `ACCOUNTADMIN` to perform the initial environment setup.
-- A Hugging Face account (https://huggingface.co/)
-- Completed Llama 2 request form (https://ai.meta.com/resources/models-and-libraries/llama-downloads/). **NOTE**: Your Hugging Face account email address MUST match the email you provide on the Meta website or your request will not be approved.
-- After approval, submit the form (https://huggingface.co/meta-llama/Llama-2-7b-chat-hf) to access Llama 2 on Hugging Face to unlock access to the model. **NOTE**: This could take several hours so plan accordingly.
-- Hugging Face Token: Login into your account and access your Hugging Face token by browsing to *Settings -> Access Tokens -> New token* -- https://huggingface.co/settings/tokens
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed.
+- A non-trial Snowflake account in a supported [AWS region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions) with access to a role that has the `ACCOUNTADMIN` role. If not, you will need to work with your admin to perform the initial environment setup.
+- A [Hugging Face account](https://huggingface.co/).
+  - Completed Llama 2 request form [https://ai.meta.com/resources/models-and-libraries/llama-downloads](https://ai.meta.com/resources/models-and-libraries/llama-downloads/). ***NOTE: Your Hugging Face account email address MUST match the email you provide on the Meta website or your request will not be approved.***
+  - After approval, submit the form (https://huggingface.co/meta-llama/Llama-2-7b-chat-hf) to access Llama 2 on Hugging Face to unlock access to the model. ***NOTE: This could take several hours so plan accordingly.***
+  - Login into your Hugging Face account and access your [Hugging Face token](https://huggingface.co/settings/tokens) by browsing to *Settings -> Access Tokens -> New token*. Make note of this token -- you will need to copy-paste it later on.
 
 ### What You’ll Build 
-- A hosted JupyterLab service running inside of Snowpark Container Services
+- A hosted JupyterLab service running in Snowpark Container Services
 - Open Source Llama 2 LLM base model deployed and fine-tuned in Snowpark Container Services
 
 <!-- ------------------------ -->
-## Environment Setup
-Duration: 10
+## Setup Environment
+Duration: 15
 
-In a SQL worksheet in Snowsight, run the SQL commands in [`setup.sql`](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services/blob/main/setup.sql) to create various objects such as database, schema, warehouse, stages, compute pool, dedicated SPCA role, etc. 
+**Step 1**. Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services.git**.). If you don't have Git installed, you can also download the repo as a .zip file.
 
-#### Useful resources
-- The [OAuth security integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration) will allow us to login to our UI-based services using our web browser and Snowflake credentials
-- The [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool) is the set of compute resources on which our services will run
-- The [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository) is the location in Snowflake where we will push our Docker images so that our services can use them
+**Step 2**. In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file) using [`setup.sql`](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services/blob/main/setup.sql) and run the commands to create various objects such as database, schema, warehouse, stages, compute pool, image repository, etc. 
+
+#### Useful resources for some of the newly introduced objects created during setup
+- The [OAuth security integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration) will allow us to login to our UI-based services using our web browser and Snowflake credentials.
+- The [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool) is the set of compute resources on which our services will run.
+- The [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository) is the location in Snowflake where we will push our Docker images so that our services can use them.
 
 <!-- ------------------------ -->
 ## Build, Tag and Push Docker Image
 Duration: 45
 
-In the repo, there is a [`Dockerfile`](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services/blob/main/Dockerfile) with the following contents:
+In the cloned repo, you should see a [`Dockerfile`](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services/blob/main/Dockerfile) that looks like this:
 
 ```python
 # Use rapidsai image for GPU compute
@@ -96,9 +95,13 @@ EXPOSE 8888
 CMD ["/opt/conda/envs/rapids/bin/jupyter", "llm-spcs", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--NotebookApp.password=''"]
 ```
 
-***NOTE: We've selected `rapidsai` for the base image which will enable us to run GPU workloads for deploying and fine-tuning Llama 2 LLM in SPCS.***
+Notes:
 
-In this Dockerfile, we install packages including Snowpark Python, Pandas and JupyterLab from Snowflake Anaconda channel and other open source libraries for fine-tuning the model, change our working directory, copy over Notebooks and data files, expose a port, and then start JupyterLab service when the container launches.
+- We're selecting `rapidsai` for the base image which will enable us to run GPU workloads for deploying and fine-tuning Llama 2 in SPCS.
+- We're setting working directory, and copying over Notebooks and data files.
+- We're installing packages including Snowpark Python, Pandas and JupyterLab from Snowflake Anaconda channel and other open source libraries for fine-tuning the model.
+- We're exposing port 8888.
+- We're starting JupyterLab when the container launches.
 
 ### Build Image
 
@@ -120,7 +123,7 @@ docker tag llm-spcs:latest your-org-name-your-account-name.registry.snowflakecom
 
 ### Push Image
 
-Now, we need to push the image to Snowflake. From the same terminal window, run the following commands:
+Next we need to push the image to Snowflake. From the same terminal window, run the following commands:
 
 Replace ***your-org-name*** and ***your-account-name*** with your organization and account name. If your account name contains an underscore (_), you will need to replace it with a dash (-) for the below commands. Otherwise, you may encounter an error similar to `Get "https:/v2/": http: no Host in request URL`.
 
@@ -132,22 +135,20 @@ docker login your-org-name-your-account-name.registry.snowflakecomputing.com
 docker push your-org-name-your-account-name.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/llm-spcs:latest
 ```
 
-This may take some time so you may move on to the next step **Upload Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following SQL in a SQL worksheet:
+NOTE: This may take some time so you may move on to the next step **Upload Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following commands in a SQL worksheet:
 
 ```sql
 use role DASH_SPCS;
 CALL SYSTEM$REGISTRY_LIST_IMAGES('/dash_db/dash_schema/dash_repo');
 ```
 
-You should see your image `llm-spcs` listed.
+You should see image `llm-spcs` listed.
 
 ### Upload Spec YAML
 
-Services in SPCA are defined using YAML files. These YAML files configure all of the various parameters, etc. needed to run the containers within your Snowflake account. 
+Services in SPCS are defined using YAML files. These YAML files configure all of the various parameters needed to run the containers within your Snowflake account. Learn more about [configurable parameters](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference) in spec YAML files.
 
-Learn more about [configurable parameters](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference) in spec YAML files.
-
-Navigate to your local clone and you should see `llm-spcs.yaml` that looks like this:
+Navigate to your local clone of the repo and you should see `llm-spcs.yaml` that looks like this:
 
 ```yaml
 spec:
@@ -175,7 +176,7 @@ spec:
     gid: 0
 ```
 
-If needed, make edits to the default names of the database, schema, and/or image repository and save the file. Once the spec file is updated, use Snowsight to upload it to your Snowflake Stage `dash_stage` so that it can be referenced in the service we will create in the next section.
+If needed, make edits to the default names of the database, schema, and/or image repository and save the file. Once the spec file is updated, use [Snowsight to upload it to Snowflake Stage `dash_stage`](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#uploading-files-onto-a-stage) so that it can be referenced in the service we will create in the next section.
 
 <!-- ------------------------ -->
 ## Create LLM Service
@@ -184,8 +185,23 @@ Duration: 5
 Once we have successfully pushed the Docker image and uploaded the spec YAML, we have all of the components we need in order to create our service. There are three components required to create the service: 
 
 1) A service name
-2) A compute pool the service will run on, and 
-3) The spec file that defines the service
+2) A compute pool the service will run on
+3) A spec file that defines the service
+
+Before creating the service, run the following command to check the status of the compute pool DASH_GPU3 and make sure it is in IDLE or ACTIVE state. 
+
+```sql
+show compute pools;
+```
+
+If the compute pool DASH_GPU3 is **not** in IDLE or ACTIVE state, run the following command and wait a few mins.
+
+```sql
+alter compute pool DASH_GPU3 resume;
+```
+
+> aside positive
+> NOTE: Before proceeding, make sure the compute pool DASH_GPU3 is in IDLE or ACTIVE state.
 
 To create the service, run the following commands in a SQL worksheet:
 
@@ -209,6 +225,9 @@ from (select parse_json(system$get_service_status('llm_service'))) t,
 lateral flatten(input => t.$1) v;
 ```
 
+> aside positive
+> NOTE: Before proceeding, make sure the service is in READY state.
+
 ### Access LLM Service
 
 Since we specified that the `llm-spcs` endpoint running on port `8888` would be `public: true` in our spec YAML, Snowflake will generate a URL that can be used to access the service via a web browser. 
@@ -221,23 +240,29 @@ show endpoints in service llm_service;
 
 Copy the endpoint URL, and paste it in your browser. At this point, you will be asked to login. Use your Snowflake username and password, after which you should see JupyterLab running, all inside of Snowflake in SPCS!
 
-***NOTE: To access the service, the user logging in must have `DASH_SPCS` role AND their default role cannot be `ACCOUNTADMIN`, `SECURITYADMIN`, or `ORGADMIN`.***
+> aside positive
+> NOTE: To access the service, the user logging in must have `DASH_SPCS` role AND their default role cannot be `ACCOUNTADMIN`, `SECURITYADMIN`, or `ORGADMIN`.
 
 <!-- ------------------------ -->
 ## Deploy Llama 2 in SPCS
 Duration: 40
 
-Recall that in our `Dockerfile` we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab. Here's a quick overview of the notebooks.
+Recall that in our `Dockerfile` we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab. 
 
-1) ***llm-notebook-with-fine-tune.ipynb***: This is the main notebook you will run through to complete this QuickStart guide.
+Here's a quick overview of the three notebooks.
 
-2) ***llm-notebook-with-fine-tune-pre-run.ipynb***: If for any reason you are not able to run through *llm-notebook-with-fine-tune.ipynb* notebook, you can use this notebook as reference. It has been pre-run so all the cells show the actual/expected output of running each cell.
+1) **llm-notebook-with-fine-tune.ipynb**: This is the main notebook you will run through to complete this QuickStart guide.
 
-3) ***llm-notebook-with-fine-tune-pre-run-all-rows.ipynb***: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that--while all the code is exactly the same as in *llm-notebook-with-fine-tune.ipynb* the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in *llm-notebook-with-fine-tune.ipynb* the same model is fine-tuned using only 100 rows. And the improved model accuracy is evident in the inference results -- refer to the `output` vs `predicted` dataframe columns of the evaluation dataset in both notebooks. *NOTE: Fine-tuning the model on a larger dataset compared to 100 rows in our case will take much longer so just be mindful of that.* 
+2) **llm-notebook-with-fine-tune-pre-run.ipynb**: If for any reason you are not able to run through *llm-notebook-with-fine-tune.ipynb* notebook, you can use this notebook as reference. It has been pre-run so all the cells show the actual/expected output of running each cell.
+
+3) **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb**: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that--while all the code is exactly the same as in *llm-notebook-with-fine-tune.ipynb* the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in *llm-notebook-with-fine-tune.ipynb* the same model is fine-tuned using only 100 rows. And the improved model accuracy is evident in the inference results -- refer to the `output` vs `predicted` dataframe columns of the evaluation dataset in both notebooks. 
+
+> aside positive
+> NOTE: Fine-tuning the model on a larger dataset compared to 100 rows in our case will take much longer so just be mindful of that.
 
 Let's get started!
 
-In JupyterLab, double-click on ***llm-notebook-with-fine-tune.ipynb*** and follow along the instructions to run each cell starting at the very top by first importing the libraries.
+In JupyterLab, double-click on **llm-notebook-with-fine-tune.ipynb** and follow along the instructions to run each cell starting at the very top by first importing the libraries.
 
 ### Set Variables
 
@@ -275,15 +300,24 @@ Run this cell to reference the Llama 2 base model directly from Hugging Face. No
 
 ### Register, Log and Deploy Llama 2 into Snowpark Container Services 
 
-Run cells under this section to register, log and deploy the Llama 2 base model into SPCS.
+Run cells under this section to register, log and deploy the Llama 2 base model into SPCS. If all goes well, you should see cell output similar to the following showing the ModelReference object:
 
-If all goes well, you should see cell output similar to the following showing the ModelReference object:
-
-`<snowflake.ml.registry.model_registry.ModelReference at 0x7f0c02d33970>`
+```bash
+<snowflake.ml.registry.model_registry.ModelReference at 0x7f0c02d33970>
+```
 
 Notes:
+
 - Deploying model for the first time can take ~25-30mins
-- If for any reason you need to delete the existing `BaseV1.1` model and start over, run cells `registry.list_models().to_pandas()` and `registry.delete_model(model_name=MODEL_NAME,model_version='BaseV1.1',delete_artifact=True)`.
+- If for any reason you need to delete the existing `BaseV1.1` model and start over, run the following cells:
+
+```python
+registry.list_models().to_pandas() 
+```
+
+```python
+registry.delete_model(model_name=MODEL_NAME model_version='BaseV1.1',delete_artifact=True)
+```
 
 ### Load Data from JSON into Snowflake
 
@@ -311,7 +345,7 @@ Here's what the transcript summaries look like:
 
 ### Cleanup Resources
 
-Before we move on to the next section, let's delete the base model service (identified as `SERVICE_XXXXXXXXXXXXX`) because we won't be using it anymore. This is to free up resources on our compute pool because we have it configured to max two nodes which we will need during fine-tuning of the Llama 2 model in the next section.
+Before we move on to the next section, run this cell to delete the base model service (identified as `SERVICE_XXXXXXXXXXXXX`) because we won't be using it anymore. This is to free up resources on our compute pool because we have it configured to max two nodes which we will need during fine-tuning of the Llama 2 model in the next section.
 
 Once the base model service is deleted, the only service running on your compute pool should be `LLM_SERVICE`.
 
@@ -319,7 +353,7 @@ Once the base model service is deleted, the only service running on your compute
 ## Fine-tune Llama 2 in SPCS
 Duration: 40
 
-In this section, we will continue working through the same ***llm-notebook-with-fine-tune.ipynb*** notebook where we left off in the previous **Deploy Llama 2 in SPCS** section.
+In this section, we will continue working through the same **llm-notebook-with-fine-tune.ipynb** notebook where we left off in the previous **Deploy Llama 2 in SPCS** section.
 
 Fine-tuning is one form of model training. We start training from a pre-trained model and adjust a set of model parameters to better solve for a concrete task based on task specific data. In this guide, we are going to fine-tune **7B Llama 2** model using **LoRA (Low-Rank Adaptation)**--which is a parameter efficient way of fine-tuning LLM.
 
@@ -359,7 +393,9 @@ Instead of adjusting all the parameters, LoRA allows us to adjust only a percent
 
 After running the first cell under this section, you will see the following output which makes it clear that only ~4million out of ~6.7billion params were adjusted.
 
-`trainable params: 4,194,304 || all params: 6,742,609,920 || trainable%: 0.06220594176090199`
+```bash
+trainable params: 4,194,304 || all params: 6,742,609,920 || trainable%: 0.06220594176090199
+```
 
 In the following cells in this section, note that we're passing `train_dataset` and `eval_dataset` that are used to generate loss calculation during fine-tuning process. And we've set `output_dir` to `output_weights_dir` where the fine-tuned weights will be stored after fine-tuning job completes.
 
@@ -367,9 +403,7 @@ To achieve good performance for the task, you will need at least 1 `num_epochs`.
 
 ### Log and Deploy Fine-tuned Llama 2
 
-In the next few cells, we will log and deploy fine-tuned Llama 2. 
-
-Note that you might need to delete existing deployments and/or models if you're rerunning or starting over. If that's not the case, skip running the following cells:
+In the next few cells, we will log and deploy fine-tuned Llama 2. Note that you might need to delete existing deployments and/or models if you're rerunning or starting over. If that's the case, run the following cells:
 
 ```python
 registry.delete_deployment(model_name=MODEL_NAME,model_version=MODEL_VERSION,deployment_name=DEPLOYMENT_NAME)
@@ -385,7 +419,8 @@ Here we are referencing our fine-tuned weights and using the Hugging Face token 
 
 #### Log and Deploy fine-tuned Llama 2 model using Model Registry
 
-Note that logging and deploying fine-tuned model with our setup may take ~15mins.
+> aside positive
+> NOTE: Logging and deploying fine-tuned model with our setup may take ~15mins.
 
 If all goes well, you should see cell output similar to the following:
 
@@ -429,7 +464,10 @@ Here's what the inference output looks like:
 
 ### Model Accuracy
 
-As noted earlier, in most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. In our case, the improved model accuracy is evident in the inference results seen in ***llm-notebook-with-fine-tune-pre-run-all-rows.ipynb*** notebook where the model was fine-tuned on the entire dataset compared to only 100 rows. *NOTE: Fine-tuning the model on a larger dataset compared to 100 rows will take much longer so just be mindful of that.*
+As noted earlier, in most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. In our case, the improved model accuracy is evident in the inference results seen in **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb** notebook where the model was fine-tuned on the entire dataset compared to only 100 rows. 
+
+> aside positive
+> NOTE: Fine-tuning the model on a larger dataset compared to 100 rows will take much longer so just be mindful of that.
 
 Here's what the inference output looks like when the model is fine-tuned on the entire dataset.
 
@@ -439,7 +477,10 @@ Here's what the inference output looks like when the model is fine-tuned on the 
 ## Cleanup
 Duration: 5
 
-To cleanup resources and remove all of the objects you created during this QuickStart, run the following commands in a SQL worksheet. This will ensure that you don't incur any unnecessary costs specifically associated with this QuickStart guide. NOTE: Snowpark Container Services bills credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing.
+To cleanup resources and remove all of the objects you created during this QuickStart, run the following commands in a SQL worksheet. This will ensure that you don't incur any unnecessary costs specifically associated with this QuickStart guide. 
+
+> aside positive
+> NOTE: Snowpark Container Services bills credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing.
 
 ```sql
 USE ROLE ROLE DASH_SPCS;
@@ -461,12 +502,20 @@ Duration: 2
 
 Congratulations, you have successfully completed this QuickStart! By completing this guide, you were able to create and manage long-running service using Snowflake's managed Snowpark Container Services to deploy and fine-tune open source Llama 2 LLM from Hugging Face.
 
+### What You Learned
+
+- The working mechanics of Snowpark Container Services 
+- How to build and push a containerized Docker image to SPCS along with code and data files
+- How to deploy and fine-tune open source Llama 2 LLM from Hugging Face in SPCS
+
 ### Related Resources
+
 - [QuickStart GitHub Repo](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services)
-- [Intro to Snowpark Container Services](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services)
-- [Snowpark Container Services Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-- [Snowpark Container Services SQL Commands](https://docs.snowflake.com/en/sql-reference/commands-snowpark-container-services)
-- [Snowpark Container Services - A Tech Primer](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741)
-- [Building Advanced ML with Snowpark Container Services - Summit 2023](https://www.youtube.com/watch?v=DelaJBm0UgI)
-- [Snowpark Container Services with NVIDIA](https://www.youtube.com/watch?v=u98YTgCelYg)
-- [Snowflake Announces Snowpark Container Services](https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
+- [QuickStart Guide: Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#0)
+- [Blog: Snowflake Announces Snowpark Container Services](https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
+- [Blog: Snowpark Container Services - A Tech Primer](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741)
+- [Docs: Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+- [Docs: Snowpark Container Services SQL Commands](https://docs.snowflake.com/en/sql-reference/commands-snowpark-container-services)
+- [Video: Building Advanced ML with Snowpark Container Services - Summit 2023](https://www.youtube.com/watch?v=DelaJBm0UgI)
+- [Video: Snowpark Container Services with NVIDIA](https://www.youtube.com/watch?v=u98YTgCelYg)
+
