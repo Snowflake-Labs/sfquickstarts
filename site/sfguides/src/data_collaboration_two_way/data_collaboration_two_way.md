@@ -234,6 +234,14 @@ Duration: 5
 
 In this step, we set up the consumer account. Log in to the second trial account that was set up, and accept the Anaconda and Snowflake Marketplace Terms as we did in the last step. ![Diagram](assets/accept_terms_navigation.png)
 
+Next we will create a database and schema that will house the tables that store our scored data to be shared back with SnowBank.
+
+```SQL
+-- Create the application database and schema
+create or replace database scored_model;
+create or replace schema scored_model;
+```
+
 We need to get the account details to share with SnowBank, so they can set up a private listing with us, as we do not want anyone outside of our partnership to have access to the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
 
 A screenshot on how to find your account identifier from the Snowsight UI is shown below 
@@ -331,8 +339,8 @@ The first step is to set up the python environment to develop our model. To do t
   "password"  : "<your_password_goes_here>",
   "role"      : "ACCOUNTADMIN",
   "warehouse" : "QUERY_WH",
-  "database"  : "CC_DEFAULT_TRAINING_DATA",
-  "schema"    : "DATA_SHARING_DEMO"
+  "database"  : "SCORED_MODEL",
+  "schema"    : "SCORED_MODEL"
 }
 ```
 
