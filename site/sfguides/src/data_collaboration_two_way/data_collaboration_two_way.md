@@ -252,12 +252,12 @@ In the next modal, click the "+ Select" option. In this next modal, select the C
 Click Publish, and now your listing is live and ready for the consumer. No movement of data, no SFTP. The data is live and ready to query. Next we switch over to the Zamboni account to accept the share.
 
 <!-- ------------------------ -->
-## Consumer Account - Accept Share and Create Warehouses
-Duration: 2
+## Consumer Account (Zamboni) - Accept Share and Create Warehouses
+Duration: 10
 
-In this section, we assume the role of the consumer of the data. Our data science team will take the data shared with us securely, score it for credit card default risk, and share the results back with the bank (the original data provider).
+In this section, we assume the role of the consumer of the data (Zamboni). Our data science team will take the data shared with us securely, score it for credit card default risk, and share the results back with SnowBank (the original data provider).
 
-The first step is to accept the share. Log in to the Consumer Account and ensure you have assumed the ACCOUNTADMIN Role. Navigate to Data > Private Sharing and you should see the cc_default_training_darta waiting for the account admin to accept. Screenshot below
+The first step is to accept the share. Log in to the Consumer Account and ensure you have assumed the ACCOUNTADMIN Role. Navigate to Data > Private Sharing and you should see the cc_default_training_data waiting for the ACCOUNTADMIN to accept. Screenshot below
 ![Diagram](assets/accept_share_navigation.png)
 
 Click Get, and in the next modal, click Get.
@@ -266,7 +266,7 @@ Click Get, and in the next modal, click Get.
 You should now see CC_DEFAULT_TRAINING_DATA as one of the Databases in your catalog, with the DATA_SHARING_DEMO schema and the CC_DEFAULT_TRAINING_DATA. We did not need to load any data, it is shared live from the Provider. Screenshot below
 ![Diagram](assets/accept_share_result.png)
 
-Next we will create some warehouses to query the sharted data and to train our model in subsequent steps. We will create a [Snowpark Optimised Warehouse](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-snowpark-training-ml) for our training jobs. Open up a worksheet and run the following commands. 
+Next we will create some warehouses to query the shared data and to train our model in subsequent steps. We will create a [Snowpark Optimised Warehouse](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-snowpark-training-ml) for our training jobs. Open up a worksheet and run the following commands. 
 
 ```SQL
   -- Change role to accountadmin
@@ -290,7 +290,7 @@ Next we will create some warehouses to query the sharted data and to train our m
 ```
 <!-- ------------------------ -->
 ## Consumer Account - Create Model
-Duration: 2
+Duration: 45
 
 For this section, make sure you download the corresponding git repo (INSERT LINK) so you have the files referenced in this section.
 
