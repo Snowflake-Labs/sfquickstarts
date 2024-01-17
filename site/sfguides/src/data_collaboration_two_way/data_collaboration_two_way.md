@@ -288,8 +288,11 @@ Next we will create some warehouses to query the shared data and to train our mo
     warehouse_type = 'snowpark-optimized' 
     max_concurrency_level = 1;
 ```
+
+We will train our model in the next step. We stay in this account.
+
 <!-- ------------------------ -->
-## Consumer Account - Create Model
+## Consumer Account (Zamboni) - Create Model
 Duration: 45
 
 For this section, make sure you download the corresponding git repo (INSERT LINK) so you have the files referenced in this section.
@@ -300,7 +303,7 @@ The first step is to set up the python environment to develop our model. To do t
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
-- Open a new terminal window and execute the following commands in the same terminal window:
+- Open a new terminal window in the downloaded directory with the conda_env.yml file and execute the following commands in the same terminal window:
 
   1. Create the conda environment.
   ```
@@ -309,13 +312,14 @@ The first step is to set up the python environment to develop our model. To do t
 
   2. Activate the conda environment.
   ```
-  conda activate snowpark-ml-hol
+  conda activate two-way-share-hol
   ```
 
   3. Start notebook server:
   ```
   $ jupyter notebook
-  ```  
+  ```
+  Open the jupyter notebook Credit Card Default Notebook
 
 - Update connection.json with your Snowflake account details and credentials.
   Here's a sample based on the object names we created in the last step:
@@ -336,10 +340,11 @@ The first step is to set up the python environment to develop our model. To do t
 > 
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
 
-If you are having some trouble with the steps above, this could be due tohaving different architectures, such as an M1 chip. In that case, follow the instructions [here](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) and be sure to conda install jupyter notebooks and pyarrow.
+If you are having some trouble with the steps above, this could be due to having different architectures, such as an M1 chip. In that case, follow the instructions [here](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) and be sure to conda install jupyter notebooks and pyarrow.
 
 ### Train Model
-Open up the notebook 
+Open up the notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk.
+
 <!-- ------------------------ -->
 ## Optional - Create Stored Procedure in Worksheet
 Duration: 2

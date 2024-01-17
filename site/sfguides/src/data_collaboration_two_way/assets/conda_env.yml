@@ -1,4 +1,4 @@
-name: pysnowpark1
+name: two-way-share-hol
 channels:
   - defaults
 dependencies:
@@ -10,4 +10,3 @@ dependencies:
   - chardet
   - jupyter
   - matplotlib
-prefix: /Users/tbuchhorn/opt/anaconda3/envs/pysnowpark1
