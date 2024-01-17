@@ -22,8 +22,8 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     **Download the git repo here: insert repo**
 - [Anaconda](https://www.anaconda.com/) installed
-- [Python 3.9](https://www.python.org/downloads/) installed
-    - Note that you will be creating a Python environment with 3.9 in the **Consumer Account - Create Model** step
+- [Python 3.10](https://www.python.org/downloads/) installed
+    - Note that you will be creating a Python environment with 3.10 in the **Consumer Account - Create Model** step
 - Snowflake accounts with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - Snowflake accounts with the Snowflake Marketplace T&C's accepted. This will allow you to create listings.
 - A Snowflake account login with a role that has the ability to create listings, databases, schemas, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for free trials or use a different role.
@@ -309,7 +309,7 @@ For this section, make sure you download the corresponding git repo (INSERT LINK
 
 The first step is to set up the python environment to develop our model. To do this:
 
-- Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
+- Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.10, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
 - Open a new terminal window in the downloaded directory with the conda_env.yml file and execute the following commands in the same terminal window:
 
@@ -354,8 +354,23 @@ If you are having some trouble with the steps above, this could be due to having
 Open up the notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk.
 
 <!-- ------------------------ -->
-## Optional - Create Stored Procedure in Worksheet
-Duration: 2
+## Consumer Account (Zamboni) - Productionise the ML Pipeline
+Duration: 15
+
+Now we have trained the data science model, we will create some Stored Procedures which hold the feature engineering and scoring logic. In a subsequent step, we will encompass these in Streams and Tasks to automate this pipeline.
+
+Open up a SQL Worksheet in Snowsight. First we can check tha the UDF was deployed from the Jupyter Notebook by running the following:
+
+```SQL
+SHOW USER FUNCTIONS;
+```
+
+You should see BATCH_PREDICT_CC_DEFAULT Vectorized UDF we deployed in the previous steps.
+
+Next we will create some stored procedures which hould our feature engineering logic. We will do this so we can later execute these Stored Procedures from a Task for automation.
+
+Run the following coide in a worksheet to create the Stored Procedure.
+
 
 ```SQL
 CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR)
@@ -415,11 +430,9 @@ def feature_transform(session, raw_table, target_table):
     
     return "Success"
 $$;
-
-CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA', 'SCORED_DATA');
 ```
 
-Lets also wrap the UDF in a task so we can automate the scoring as well
+Next we will create a Stored Procedure that encompasses the UDF we created.
 
 ```SQL
 CREATE OR REPLACE PROCEDURE cc_batch_processing(rawTable VARCHAR, targetTable VARCHAR)
@@ -447,16 +460,26 @@ def cc_batch_processing(session, raw_table, target_table):
 $$;
 ```
 
+Check we have created the Stored Procedures by running the following
+
+```SQL
+SHOW PROCEDURES;
+```
+
+You should see two Stored Procedurs; CC_BATCH_PROCESSING and CC_PROFILE_PROCESSING.
+
+Let's now switch over to the SnowBank account and share a new dataset to be scored.
+
 <!-- ------------------------ -->
-## Provider Account - Share New Data
-Duration: 2
+## Provider Account (SnowBank) - Share New Data
+Duration: 10
 
 In this section, we will go back to assuming the role of the bank. We will switch back to our original provider account and create another listing of unscored data to share to our partner to score for default risk. This time however, we will create a [stream on the shared table](https://docs.snowflake.com/en/user-guide/data-sharing-provider#label-data-sharing-streams) so the new data can be shared live (without etl).
 
 The first thing we need to do is to enable change tracking on the table to be shared. This will add a pair of hidden columns automatically to the table and begin storing change tracking metadata.
 
 ```SQL
-ALTER TABLE DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE SET CHANGE_TRACKING = TRUE;
+ALTER TABLE DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA SET CHANGE_TRACKING = TRUE;
 ```
 
 Next, lets add this data to the listing. Navigate to Data > Private Sharing in Snowsight. Then select "Shared By Your Account" in the top menu, and select "DATA_SHARING_DEMO".
@@ -464,27 +487,48 @@ Next, lets add this data to the listing. Navigate to Data > Private Sharing in S
 Scroll to the Data section and select "Edit". Screenshot below
 ![Diagram](assets/update_listing.png)
 
-From this screen, select the "CC_DEFAULT_UNSCORED_TABLE" and click "Done", then in the following screen, click "Save".
+From this screen, select the "CC_DEFAULT_UNSCORED_DATA" and click "Done", then in the following screen, click "Save".
 
 Your listing has now been updated, and the Consumer Account will be able to see the new table.
 
+Switch over to the Zamboni account for the next step.
+
 <!-- ------------------------ -->
-## Consumer Account - Automate Scoring Pipeline
-Duration: 2
+## Consumer Account (Zamboni) - Automate Scoring Pipeline
+Duration: 10
 
 Switch over to the Consumer Account, and you should see the newly shared table in the databases tab. If not, click the ellipsis and click "Refresh". Screenshot below.
 ![Diagram](assets/updated_listing_in_consumer_navigation.png)
 
-Next we will create a pipeline from streams and tasks to automate the feature engineering of the newly shared data, score it, and make it available to the Bank.
+Let manually execute our pipeline for demonstrative purposes, and then later in this step we will use Streams and Tasks to score and share any newly arriving data.
 
-First we will create a Stream on the newly shared table with the following code, and check it was created successfully
+In a worksheet, run the following code:
 
 ```SQL
-CREATE OR REPLACE STREAM CC_DEFAULT_DATA_STREAM ON TABLE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE;
+CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA', 'TRANSFORMED_TABLE');
+```
+```SQL
+CALL cc_batch_processing('TRANSFORMED_TABLE', 'SCORED_TABLE');
+```
+
+By running those two Stored Procedures sequentially, we chould now have feature engineered and scored the newly shared data! We can run the following and see the results
+
+```SQL
+SELECT * FROM SCORED_MODEL.SCORED_MODEL.UDF_TEST_SCORED LIMIT 100;
+```
+
+Next we will create a pipeline from streams and tasks to automate the feature engineering of the newly shared data, score it, and make it available to the Bank.
+
+First we will create a Stream on the newly shared table with the following code, and check it was created successfully. Open a worksheet and run the following:
+
+```SQL
+CREATE OR REPLACE STREAM CC_DEFAULT_DATA_STREAM ON TABLE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA;
 
 SHOW STREAMS;
 ```
-Next, lets set up a task to transform this data, using the stored procedures and UDFs we created in step 8.
+Next, lets set up a task to transform this data, using the Stored Procedures and UDFs we created in step 9.
+
+The first task is Change Data Capture (CDC) which checks the stream for new arriving data, and moves it in to a new temporary table for feature engineering.
 
 ```SQL
 CREATE OR REPLACE TASK CDC
@@ -495,10 +539,11 @@ WHEN
   SYSTEM$STREAM_HAS_DATA('CC_DEFAULT_DATA_STREAM')
 AS
   CREATE OR REPLACE TEMPORARY TABLE NEW_CC_DEFAULT_DATA AS (
-    SELECT * FROM 'CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_TABLE'
+    SELECT * FROM 'CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA'
     WHERE METADATA$ACTION = 'INSERT'
   );
 ```
+Then we create a second task dependant on the first that performs the feature engineering.
 
 ```SQL
 CREATE OR REPLACE TASK FEATURE_ENG
@@ -508,53 +553,54 @@ AS
     CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE');
 ```
 
-Then we make a task depndant on the above
+Then we make a task depndant on the above which scores the model.
 
 ```SQL
-CREATE TASK score_data 
+CREATE OR REPLACE TASK score_data 
     WAREHOUSE = 'QUERY_WH'
 AFTER FEATURE_ENG
 AS 
 CALL cc_batch_processing('TRANSFORMED_TABLE', 'SCORED_TABLE');
 ```
-Check the tasks are created
+Check the tasks are created by running the following
 
 ```SQL
 SHOW TASKS;
 ```
+We should see the three tasks we just created.
 
-And resume the root
+Now lets share our scored table back to the Bank. This process is the same as step 6 in reverse. Navigate to Data > Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
 
-```SQL
-ALTER TASK CDC RESUME;
-```
+In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it SCORED_DATA. Screenshot is below: ![Diagram](assets/private_listing_navigation_2.png)
 
-```SQL
-EXECUTE TASK FEATURE_ENG;
-```
+In the next modal, click the "+ Select" option. In this next modal, select the SCORED_DATA in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_TABLE and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. YOu will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: ![Diagram](assets/create_listing_navigation.png)
 
-If you want to see the status of your tasks, you can run the following query
+Switch over to the SnowBank account for the next step.
 
-```SQL
-select *
-  from table(information_schema.task_history())
-  order by scheduled_time;
-```
+<!-- ------------------------ -->
+## Provider Account (SnowBank) - Accept Share and Use Scored Data
+Duration: 5
 
-Now lets share our scored table back to the Bank. This process is the same as step X in reverse. Navigate to Data > Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
+Open up the SnowBank account, and accept the share from Zamboni of the newly scored data. This is the same process in reverse of Step 7.
 
-In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it SCORED_DATA. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
+Navigate to Data > Private Sharing and you should see the scored_data waiting for the ACCOUNTADMIN to accept. Screenshot below
+![Diagram](assets/accept_share_navigation_3.png)
 
-In the next modal, click the "+ Select" option. In this next modal, select the SCORED_DATA in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_DATA and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
+Click Get, and in the next modal, click Get.
+![Diagram](assets/accept_share_navigation_4.png)
+
+You should now see SCORED_DATA as one of the Databases in your catalog, with the SCORED_MODEL schema and the SCORED_TABLE. We did not need to load any data, it is shared live from the Provider.
+
+<!-- ------------------------ -->
+## Provider Account (SnowBank) -  Add New Data
+Duration: 15
+
+In this section, we will add some new data to demonstate how the automated pipeline would operate between the two accounts.
 
 
 <!-- ------------------------ -->
-## Provider Account - Use Scored Data
-Duration: 2
-
-<!-- ------------------------ -->
-## Provider Account - Add New Data
-Duration: 2
+## Consumer Account (Zamoboni) -  Kickstart Automated Pipeline
+Duration: 15
 
 In production, this step would most likely be an automated ingestion pipeline form a source system. However, for illustrative purposes, we will run the following query to update the table.
 
@@ -575,3 +621,11 @@ This updated data has now updated the stream, which would be picked up by the co
 <!-- ------------------------ -->
 ## Wrap Up and Clean Up
 Duration: 2
+
+If you want to see the status of your tasks, you can run the following query
+
+```SQL
+select *
+  from table(information_schema.task_history())
+  order by scheduled_time;
+```
