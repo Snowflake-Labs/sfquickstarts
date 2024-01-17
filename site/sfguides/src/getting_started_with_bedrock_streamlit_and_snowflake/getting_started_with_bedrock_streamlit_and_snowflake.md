@@ -2,7 +2,7 @@ id: getting_started_with_bedrock_streamlit_and_snowflake
 summary: Getting Started with Bedrock, Streamlit and Snowflake using Snowpark External Access
 categories: featured,getting-started,app-development, bedrock, aws, streamlit, genai, ai, ml
 environments: web
-status: Published
+status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Generative AI, Snowflake External Access, Bedrock, Snowpark, Streamlit
 authors: Matt Marzillo, Dan Hunt
@@ -15,25 +15,31 @@ Duration: 5
 
 Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.
 
-Amazon Bedrock is a fully managed service that offers a choice of high-performing foundation models via a single API, along with a broad set of capabilities to build generative AI applications.Amazon Bedrock is a managed service from Amazon Web Services designed to simplify the deployment, management, and scaling of Kubernetes clusters. It integrates with AWS's ecosystem to provide robust security, networking, and operational features, enabling users to focus more on their applications rather than on managing infrastructure. Bedrock aims to offer a seamless and efficient way to run containerized applications at scale, leveraging AWS's cloud capabilities for improved performance and reliability.	
+Amazon Bedrock is a fully managed service that offers a choice of high-performing foundation models via a single API, along with a broad set of capabilities to build generative AI applications. Amazon Bedrock is a managed service from Amazon Web Services designed to simplify the deployment, management, and scaling of Kubernetes clusters. It integrates with AWS's ecosystem to provide robust security, networking, and operational features, enabling users to focus more on their applications rather than on managing infrastructure. Bedrock aims to offer a seamless and efficient way to run containerized applications at scale, leveraging AWS's cloud capabilities for improved performance and reliability.	
 
 Snowflake is a cloud-based data warehousing solution that allows businesses to store and analyze large volumes of data efficiently. It separates storage and compute functionalities, enabling users to scale resources independently and pay only for what they use. Snowflake supports a wide range of data workloads, including data warehousing, data lakes, and data engineering, and offers robust data sharing capabilities across different cloud platforms.
+
+Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.
 
 In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Amazon Bedrock that will generate a personalized marketing message to customers to cross-sell products.
 
 ### Pre-requisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
--Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
-- [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
-- The AWS account should be a sandbox account with open network policies or you you should [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the same region as the Snowflake account
+with Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
+- [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/).
+- The AWS account should be a sandbox account with open network policies or you you should [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the same region as the Snowflake account.Additionally, users should have access to Bedrock models in their AWS account.
 - In the VPC [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic
 Note: please make sure to use a supported Amazon Bedrock region.
 Familiarity with the Python programming language.
+- (Optional) access to Sagemaker Canvas to fine tune a Bedrock model.
 
 ### What you’ll build
 We will build an efficient architecture all within Snowflake that will access purchase history in Snowflake and pass that data to a Bedrock model with context to generate a message that can be used in a marketing campaign. The architecture will look like this
 
 ![](assets/architecture.png)
+
+Authors of this quickstart: Matt Marzillo and Dan Hunt
+Key contributor: Frank Dallezotte AWS ISV SA
 
 <!-- ------------------------ -->
 ## Use Case
@@ -293,7 +299,7 @@ select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting',
 
 This block of code builds a User Defined Fucntion (UDF) called ask_bedrock() that accepts three parameters: instructions to the model, context for the model and model type.
 
-Now, let's use that UDF in a Streamlit app.
+Now, let's use that UDF in a Streamlit app!
 
 <!-- ------------------------ -->
 ## Build Streamlit App
@@ -345,13 +351,45 @@ if(st.button('Ask Bedrock')):
     st.header('Answer')
     st.write(result[0][0].replace('"','')) 
 ```
+<!-- ------------------------ -->
+## Test Prompt Engineering (OPTIONAL)
+
+Duration: 
+
+Prompt engineering for a language model involves crafting your questions or prompts in a way that maximizes the effectiveness and accuracy of the responses you receive. Here are some simple guidelines to help you with prompt engineering:
+
+**Be Clear and Specific:** The more specific your prompt, the better. Clearly define what you're asking for. If you need information on a specific topic, mention it explicitly.
+
+**Provide Context:** If your question builds on particular knowledge or a specific scenario, provide that context. This helps the model understand the frame of reference and respond more accurately.
+
+**Use Direct Questions:** Phrase your prompts as direct questions if you're looking for specific answers. This approach tends to yield more focused responses.
+
+**Break Down Complex Queries:** If you have a complex question, break it down into smaller, more manageable parts. This can help in getting more detailed and precise answers.
+
+**Specify the Desired Format:** If you need the information in a particular format (like a list, a summary, a detailed explanation), mention this in your prompt.
+
+**Avoid Ambiguity:** Try to avoid ambiguous language. The clearer you are, the less room there is for misinterpretation.
+
+**Sequential Prompts for Follow-ups:** If you're not satisfied with an answer or need more information, use follow-up prompts that build on the previous ones. This helps in maintaining the context and getting more refined answers.
+
+**Experiment and Iterate:** Don’t hesitate to rephrase or adjust your prompts based on the responses you get. Sometimes a slight change in wording can make a big difference.
+
+**Consider the Model's Limitations:** Remember that the model may not have the latest information, and it cannot browse the internet or access personal data unless explicitly provided in the prompt.
+
+**Ethical Use:** Always use the model ethically. Avoid prompts that are harmful, biased, or violate privacy or legal guidelines.
+
+Let’s look at how we can experiment and iterate on the prompt that we provided to the LLM function in Streamlit. Go back to the previous step and test out different prompt strategies to see if you can improve the accuracy of the response.
+
+Consider the above concepts and also consider this pointed guide to prompting: https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md
+
+(it is required that you try the prompt in principal #6 🙂)
 
 <!-- ------------------------ -->
 ## Build Streamlit App - With data in Snowflake (OPTIONAL)
 
 Duration:
 
-Let's build a new app similar to the above application, but with some of the data that we loaded to Snowflake. The app will additionally include a filter for a specific customer to provide context. There are several lines of code indicated below where the user has to write Snowpark and Python code to complete the app
+Let's build a new app similar to the one above, but with some of the data that we loaded to Snowflake. The app will additionally include a filter for a specific customer to provide context. There are several lines of code indicated below where the user has to write Snowpark and Python code to complete the app
 
 ```python
 # Import python packages
@@ -370,17 +408,17 @@ categories_df = session.table("product_category")
 
 # join all tables together
 # join the purchases_df, products_df and the categories_df into one dataframe
-purchases_products_categories_df = 
+purchases_products_categories_df = # ADD YOUR CODE HERE
 
 # aggregate products by customer
 # with the purchases_products_categories_df dataframe aggregate the products by customer to create a new dataframe
 # hint you will likely use the array_agg() function from snowpark
-purchases_products_df = 
+purchases_products_df = # ADD YOUR CODE HERE
 
 # aggregate product categories by customer
 # with the purchases_products_categories_df dataframe aggregate the product categories by customer to create a new dataframe
 # hint you will likely use the array_agg() function from snowpark
-purchases_categories_df = 
+purchases_categories_df = # ADD YOUR CODE HERE
 
 # Add some cosmetic headers
 st.title("Bedrock Shopper")
@@ -406,7 +444,7 @@ option = st.selectbox(
 # products
 filtered_products_df = purchases_products_df.loc[purchases_products_df['CUSTOMER_ID'] == option]['PRODUCT_ARRAY'].iloc[0]
 # categories
-filtered_categories_df = 
+filtered_categories_df = # ADD YOUR CODE HERE
 
 # display products and categories
 st.subheader("Products Purchased")
@@ -424,39 +462,6 @@ if(st.button('Ask Bedrock')):
     st.header('Answer')
     st.write(result[0][0].replace('"','')) 
 ```
-
-<!-- ------------------------ -->
-## Test Prompt Engineering (OPTIONAL)
-
-Duration: 
-
-Prompt engineering for a language model involves crafting your questions or prompts in a way that maximizes the effectiveness and accuracy of the responses you receive. Here are some simple guidelines to help you with prompt engineering:
-
-Be Clear and Specific: The more specific your prompt, the better. Clearly define what you're asking for. If you need information on a specific topic, mention it explicitly.
-
-Provide Context: If your question builds on particular knowledge or a specific scenario, provide that context. This helps the model understand the frame of reference and respond more accurately.
-
-Use Direct Questions: Phrase your prompts as direct questions if you're looking for specific answers. This approach tends to yield more focused responses.
-
-Break Down Complex Queries: If you have a complex question, break it down into smaller, more manageable parts. This can help in getting more detailed and precise answers.
-
-Specify the Desired Format: If you need the information in a particular format (like a list, a summary, a detailed explanation), mention this in your prompt.
-
-Avoid Ambiguity: Try to avoid ambiguous language. The clearer you are, the less room there is for misinterpretation.
-
-Sequential Prompts for Follow-ups: If you're not satisfied with an answer or need more information, use follow-up prompts that build on the previous ones. This helps in maintaining the context and getting more refined answers.
-
-Experiment and Iterate: Don’t hesitate to rephrase or adjust your prompts based on the responses you get. Sometimes a slight change in wording can make a big difference.
-
-Consider the Model's Limitations: Remember that the model may not have the latest information, and it cannot browse the internet or access personal data unless explicitly provided in the prompt.
-
-Ethical Use: Always use the model ethically. Avoid prompts that are harmful, biased, or violate privacy or legal guidelines.
-
-Let’s look at how we can experiment and iterate on the prompt that we provided to the LLM function in Streamlit. Go back to the previous step and test out different prompt strategies to see if you can improve the accuracy of the response.
-
-Consider the above concepts and also consider this pointed guide to prompting: https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md
-
-(it is required that you try the prompt in principal #6 🙂)
 
 <!-- ------------------------ -->
 ## Fine Tune Model using Canvas (OPTIONAL)
@@ -517,5 +522,9 @@ After setting up our AWS and Snowflake and envrionments we built two primary thi
 - [Prompting](https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md)
 
 - [Streamlit](https://streamlit.io/)
+
+- [Bedrock Performance](https://docs.aws.amazon.com/bedrock/latest/userguide/general-guidelines-for-bedrock-users.html)
+
+- [Provisioned Throughput](https://docs.aws.amazon.com/bedrock/latest/userguide/prov-throughput.html)
 
 If you have any questions, reach out to your Snowflake account team!
