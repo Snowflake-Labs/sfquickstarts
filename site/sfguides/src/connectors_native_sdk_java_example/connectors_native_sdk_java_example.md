@@ -92,6 +92,11 @@ To achieve this go to `connectors-native-sdk-java/` directory and execute the fo
 ./gradlew publishToMavenLocal
 ```
 
+Alternatively main directory of the project contains convenience script to help:
+```shell
+./publish-sdk-locally.sh
+```
+
 ## Build, deploy and installation
 Duration: 10
 
@@ -307,22 +312,24 @@ Next step of the Wizard is connection configuration.
 This step allows user to provide names of the external access integration and secret that were created during the Prerequisites step of the Wizard.
 Once the names of the objects are provided in the designated fields, 
 pressing a confirmation button will trigger TEST_CONNECTION procedure inside the connector.
-This procedure will try to access a public repository in GitHub to check if the external connectivity was configured correctly.
+This procedure will try to access [octocat endpoint](https://api.github.com/octocat) in GitHub to check if the external connectivity was configured correctly,
+additionally if API token is invalid for some reason this verification should fail.
+
 When it succeeds application will proceed into finalization step.
 
-[//]: # (todo add screenshot)
+![connection_configuration.png](assets/connection_configuration.png)
 
 ### Configuration Finalization
 Finalization is the last step of the Wizard. In this step you will be asked to provide organisation and repository name. 
 This repository should be some repository that was configured to be accessible using the provided GitHub API token.
 For now, it will be used only for connection validation purposes. 
-This is a bit different from the previous step, because test connection procedure only check if the external access is configured properly. 
+This is a bit different from the previous step, because test connection procedure only checks if the GitHub API is accessible and the provided token is valid. 
 This step ensures that repository provided by user is accessible with the provided GitHub API token. 
 It will fail if the token does not have required permissions to access the repository, for example if the repository is private.
 
 Additionally, during this step the database and schema specified in connector configuration phase will be created.
 
-[//]: # (todo add screenshot)
+![finalize_configuration.png](assets/finalize_configuration.png)
 
 ## Daily Use
 Duration: 15
