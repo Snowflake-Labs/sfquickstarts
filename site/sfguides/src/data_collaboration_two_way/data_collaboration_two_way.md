@@ -634,7 +634,7 @@ This updated data has now updated the stream, which would be picked up by the co
 ## Wrap Up and Clean Up
 Duration: 2
 
-Open up the Zamoboni Account and [Unpublish the Listing](https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing). You can do this by navigating to Data > Provider Studio > Listings, and select the listing. A screenshot is below ![Diagram](assets/delist_navigation.png)
+Open up the Zamoboni Account and [unpublish the Listing](https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing). You can do this by navigating to Data > Provider Studio > Listings, and select the listing. A screenshot is below ![Diagram](assets/delist_navigation.png)
 
 Next select the "Live" button in the top right and select "Unpublish". After that, select the bin icon and delete the listing. A screenshot is below ![Diagram](assets/delete_listing_navigation.png)
 
@@ -644,10 +644,25 @@ DROP SHARE SCORED_MODEL;
 
 ```SQL
 DROP DATABASE SCORED_MODEL CASCADE;
+DROP DATABASE CC_DEFAULT_TRAINING_DATA;
 ```
 
-Next we repeat the steps for SnowBank
+Next we repeat the steps for SnowBank.
 
+Open up the account and navigate to Data > Provider Studio > Listings, and select the listing "cc_default_training_data". A screenshot is below ![Diagram](assets/delist_navigation_2.png)
+
+Next select the "Live" button in the top right and select "Unpublish". The following modal should appera. Click "Unpublish" ![Diagram](assets/unpublish_navigation_2.png)
+
+Next, click the trash can icon and delete the listing. Screenshot is below ![Diagram](assets/delete_listing_navigation_2.png)
+
+```SQL
+DROP SHARE DATA_SHARING_DEMO;
+```
+
+```SQL
+DROP DATABASE DATA_SHARING_DEMO CASCADE;
+DROP DATABASE SCORED_DATA;
+```
 
 If you want to see the status of your tasks, you can run the following query
 
