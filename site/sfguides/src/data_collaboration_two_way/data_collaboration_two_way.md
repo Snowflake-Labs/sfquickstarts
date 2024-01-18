@@ -217,10 +217,10 @@ ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
 You should have loaded over 5 million and 7 million rows in a few minutes. To check, query the data in the worksheet
 
 ```SQL
-  select count(*) 
+  SELECT COUNT(*) 
     FROM cc_default_training_data;
 
-  select count(*) 
+  SELECT COUNT(*) 
     FROM CC_DEFAULT_UNSCORED_DATA;
 ```
 
@@ -235,9 +235,11 @@ In this step, we set up the consumer account. Log in to the second trial account
 Next we will create a database and schema that will house the tables that store our scored data to be shared back with SnowBank.
 
 ```SQL
+USE ROLE ACCOUNTADMIN;
+
 -- Create the application database and schema
-create or replace database scored_model;
-create or replace schema scored_model;
+CREATE OR REPLACE DATABASE scored_model;
+CREATE OR REPLACE SCHEMA scored_model;
 ```
 
 We need to get the account details to share with SnowBank, so they can set up a private listing with us, as we do not want anyone outside of our partnership to have access to the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
@@ -245,15 +247,17 @@ We need to get the account details to share with SnowBank, so they can set up a 
 A screenshot on how to find your account identifier from the Snowsight UI is shown below 
 ![Diagram](assets/account_indentifier_navigation.png)
 
+After you have noted / copied these details, switch back to the SnowBank account.
+
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) - Create Private Listing
 Duration: 10
 
-In your provider account, open up Snowsight and navigate to Data > Provider Studio on the left hand menu. then click the blue "Listing" button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
+In the SnowBank account, open up Snowsight and navigate to Data > Provider Studio on the left hand menu. then click the blue "Listing" button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
 
 In the modal, enter the name of the Private Listing that we wish to share with our external partner (Zamboni). We have named it cc_default_training_data. They will securely access this data from their own Snowflake account, and share back the scored results. We have selected "Only Specified Consumers" in our discovery settings, so that our data can only be seen with the partners we explicitly want to share with. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
 
-In the next modal, click the "+ Select" option. In this next modal, select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing by clicking "Done". Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consumer account. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
+In the next modal, click the "+ Select" option. Select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing by clicking "Done". Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consumer account. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
 
 Click Publish, and now your listing is live and ready for the consumer. No movement of data, no SFTP. The data is live and ready to query. Next we switch over to the Zamboni account to accept the share.
 
@@ -263,7 +267,7 @@ Duration: 10
 
 In this section, we assume the role of the consumer of the data (Zamboni). Our data science team will take the data shared with us securely, score it for credit card default risk, and share the results back with SnowBank (the original data provider).
 
-The first step is to accept the share. Log in to the Consumer Account and ensure you have assumed the ACCOUNTADMIN Role. Navigate to Data > Private Sharing and you should see the cc_default_training_data waiting for the ACCOUNTADMIN to accept. Screenshot below
+The first step is to accept the share. Log in to the Zamboni and ensure you have assumed the ACCOUNTADMIN Role. Navigate to Data > Private Sharing and you should see the cc_default_training_data waiting for the ACCOUNTADMIN to accept. Screenshot below
 ![Diagram](assets/accept_share_navigation.png)
 
 Click Get, and in the next modal, click Get.
@@ -276,23 +280,24 @@ Next we will create some warehouses to query the shared data and to train our mo
 
 ```SQL
   -- Change role to accountadmin
-  use role accountadmin;
+USE ROLE accountadmin;
 
   -- Create a virtual warehouse for data exploration
-  create or replace warehouse query_wh with 
-    warehouse_size = 'x-small' 
-    warehouse_type = 'standard' 
-    auto_suspend = 300 
-    auto_resume = true 
-    min_cluster_count = 1 
-    max_cluster_count = 1 
-    scaling_policy = 'standard';
+CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
+  WAREHOUSE_SIZE = 'X-SMALL' 
+  WAREHOUSE_TYPE = 'STANDARD' 
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE 
+  MIN_CLUSTER_COUNT = 1 
+  MAX_CLUSTER_COUNT = 1;
 
   -- Create a virtual warehouse for training
-  create or replace warehouse training_wh with 
-    warehouse_size = 'medium' 
-    warehouse_type = 'snowpark-optimized' 
-    max_concurrency_level = 1;
+CREATE OR REPLACE WAREHOUSE training_wh with 
+  WAREHOUSE_SIZE = 'MEDIUM' 
+  WAREHOUSE_TYPE = 'snowpark-optimized' 
+  MAX_CONCURRENCY_LEVEL = 1
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE;
 ```
 
 We will train our model in the next step. We stay in this account.
@@ -650,6 +655,8 @@ DROP SHARE SCORED_MODEL;
 ```SQL
 DROP DATABASE SCORED_MODEL CASCADE;
 DROP DATABASE CC_DEFAULT_TRAINING_DATA;
+DROP WAREHOUSE TRAINING_WH;
+DROP WAREHOUSE QUERY_WH;
 ```
 
 Next we repeat the steps for SnowBank.
