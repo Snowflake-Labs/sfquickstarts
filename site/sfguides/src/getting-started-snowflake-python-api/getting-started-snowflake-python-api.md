@@ -72,7 +72,7 @@ source '.venv/bin/activate'
 The Snowflake Python API is available via PyPi. Install it by running the following command:
 
 ```bash
-pip install snowflake
+pip install snowflake -U
 ```
 
 
@@ -100,7 +100,7 @@ Let's quickly take a look at how the Snowflake Python API is organized:
 
 `snowflake.core` represents the entry point to the core Snowflake Python APIs that manage Snowflake objects. To use the Snowflake Python API, you'll follow a common pattern:
 
-1. Establish a session using Snowpark, representing your connection to Snowflake.
+1. Establish a session using Snowpark or a Python connector connection, representing your connection to Snowflake.
 
 2. Import and instantiate the `Root` class from `snowflake.core`, and pass in the Snowpark session object as an argument. You'll use the resulting `Root` object to use the rest of the methods and types in the Snowflake Python API.
 
@@ -121,6 +121,11 @@ root = Root(session)
 
 The `connection_params` dictionary shown above is included for the purposes of demonstration only, specifying only the required connection parameters. In practice, consider using a configuration file with named connections that can be passed into `Session.builder.configs()`. For more information, see [Connecting to Snowflake with the Snowflake Python API](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/snowflake-python-connecting-snowflake).
 
+> aside negative
+> 
+> **NOTE**
+> The Snowflake Python API can establish a connection to Snowflake via a Snowpark session or a Python connector connection. In the example above, we opt for a Snowpark session.
+
 Let's get started!
 
 <!-- ------------------------ -->
@@ -132,9 +137,10 @@ In this Quickstart, we'll walk through a Jupyter notebook to incrementally showc
 1. First, download the [
 Quickstart: Getting Started with the Snowflake Python API](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/sfguide-getting-started-snowflake-python-api/getting_started_snowflake_python_api.ipynb) notebook from the accompanying repo for this Quickstart.
 
-2. Next, open the notebook in a code editor that supports Jupyter notebooks. Alternatively, open the notebook in your browser by starting the notebook server with `jupyter notebook` and navigating to the notebook.
+2. Next, open the notebook in a code editor that supports Jupyter notebooks (i.e., Visual Studio Code). 
+Alternatively, open the notebook in your browser by starting a notebook server with `jupyter notebook` and navigating to the notebook in your browser. To do this, you'll need to ensure your environment can run a notebook (be sure to run `conda install notebook` in your terminal, then start the notebook server).
 
-Now, run the first cell within the notebook, the one containing the import statements.
+Now run the first cell within the notebook, the one containing the import statements.
 
 ```py
 from snowflake.snowpark import Session
@@ -315,7 +321,7 @@ Note how the dictionary now contains column information in `columns`, as well as
 Object metadata is useful when building business logic in your application. For example, you could imagine building logic that executes depending on certain information about an object. `fetch()` would be helpful in retrieving object metadata in such scenarios.
 
 <!-- ------------------------ -->
-## Programmatically add a column to a table
+## Programmatically update a table
 Duration: 5
 
 Let's take a look at how you might programmatically add a column to a table. Let's add a new column to the **PYTHON_API_TABLE** table. Currently, it has two columns, `TEMPERATURE` and `LOCATION`.
@@ -535,6 +541,156 @@ Navigate once again to your Snowflake account and confirm the deletion of the wa
 
 ![delete wh close session](./assets/delete_wh_close_session.png)
 
+
+<!-- ------------------------ -->
+## Managing Tasks
+Duration: 10
+
+You can also manage tasks using the Snowflake Python API. Let's use the API to manage a couple of basic stored procedures using tasks.
+
+First, create a stage within the **PYTHON_API_SCHEMA** called **TASKS_STAGE**. This stage will hold the stored procedures and any dependencies those procedures will need.
+
+Next, in the notebook, run the following cell:
+
+```python
+def trunc(session: Session, from_table: str, to_table: str, count: int) -> str:
+  session.table(from_table).limit(count).write.save_as_table(to_table)
+  return "Truncated table successfully created!"
+
+def filter_by_shipmode(session: Session, mode: str) -> str:
+  session.table("snowflake_sample_data.tpch_sf100.lineitem").filter(col("L_SHIPMODE") == mode).limit(10).write.save_as_table("filter_table")
+  return "Filter table successfully created!"
+
+task1 = Task(
+    "task_python_api_trunc",
+    definition=StoredProcedureCall(trunc, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]),
+    warehouse="COMPUTE_WH",
+    schedule=timedelta(minutes=1)
+)
+
+task2 = Task(
+    "task_python_api_filter",
+    definition=StoredProcedureCall(filter_by_shipmode, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]),
+    warehouse="COMPUTE_WH"
+)
+
+task2.predecessors = [task1.name]
+```
+
+This cell does a few things:
+
+* Creates a couple of basic functions that will be run as stored procedures. `trunc()` creates a truncated version of an input table and `filter_by_shipmode()` creates a 10 row table created by filtering the **SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.LINEITEM** by ship mode. The functions are intentionally basic in nature and are intended to be used for demonstration purposes.
+
+* Defines two tasks, `task1` and `task2`, whose definitions are stored procedures that each refer to the functions created. We specify the stage that will hold the contents of the stored procedure, and also specify packages that are dependencies. Task 1 is the root task, so we specify a warehouse and a schedule (run every minute).
+
+* Sets task 1 as a predecessor to task 2, which links the tasks, creating a DAG (albeit, a small one).
+
+Note that this cell does not create the tasks – it only defines them. To create the tasks, run the next cell:
+
+```python
+tasks = root.databases["python_api_db"].schemas["python_api_schema"].tasks
+
+trunc_task = tasks.create(task1, mode=CreateMode.or_replace)
+filter_task = tasks.create(task2, mode=CreateMode.or_replace)
+```
+
+This cell creates the two tasks by first retrieving a TaskCollection object (`tasks`) and adding the two tasks to that object. Navigate back to your Snowflake account and confirm that the two tasks now exist.
+
+![tasks](./assets/tasks.png)
+
+![minidag](./assets/minidag.png)
+
+When created, tasks are suspended by default. To start them, call `.resume()` on the task. Run the following cell in the notebook:
+
+```python
+trunc_task.resume()
+```
+
+Navigate to your Snowflake account and observe that the `trunc_task` task was started. You can check the status of the task by running the next cell:
+
+```python
+taskiter = tasks.iter()
+for t in taskiter:
+    print("Name: ", t.name, "| State: ", t.state)
+```
+
+You should see an output similar to the following:
+
+```bash
+Name:  TASK_PYTHON_API_FILTER | State:  suspended
+Name:  TASK_PYTHON_API_TRUNC | State:  started
+```
+
+Let's wrap things up by suspending the task, and then deleting both tasks. Run the following cell:
+
+```python
+trunc_task.suspend()
+```
+
+Optionally, navigate to your Snowflake account to confirm that the task is indeed suspended.
+
+Finally, delete both tasks by running the following cell:
+
+```python
+trunc_task.delete()
+filter_task.delete()
+```
+<!-- ------------------------ -->
+## Managing DAGs
+Duration: 10
+
+When the number of tasks that must be managed becomes very large, individually managing each task can become a growing challenge. The Snowflake Python API provides functionality to orchestrate tasks with a higher level DAG API. Let's take a look at how it can be used.
+
+Run the following cell in the notebook:
+
+```python
+dag_name = "python_api_dag" 
+dag = DAG(dag_name, schedule=timedelta(days=1))
+with dag:
+    dag_task1 = DAGTask("task_python_api_trunc", StoredProcedureCall(trunc, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]), warehouse="COMPUTE_WH")
+    dag_task2 = DAGTask("task_python_api_filter", StoredProcedureCall(filter_by_shipmode, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]), warehouse="COMPUTE_WH")
+    dag_task1 >> dag_task2
+dag_op = DAGOperation(schema)
+dag_op.deploy(dag, mode="orreplace") 
+```
+
+This cell does the following:
+
+* Creates a dag object by instantiating the `DAG` class, and specifying a DAG name and schedule.
+
+* Defines DAG-specific tasks using the `DAGTask` constructor. Note that the constructor accepts the same arguments that were specified in an earlier cell when using the `StoredProcedureCall` class.
+
+* Specifies `dag_task1` as the root task and predecessor to `dag_task2`, with more convenient syntax.
+
+* Deploys the DAG to the **PYTHON_API_SCHEMA** schema.
+
+Navigate to your Snowflake account and confirm the creation of the DAG.
+
+![dag](./assets/dag.png)
+
+![daggraph](./assets/daggraph.png)
+
+Start the DAG by starting the root task by running the following cell:
+
+```python
+dag_op.run(dag)
+```
+
+Optionally, navigate to your Snowflake account and confirm that **PYTHON_API_DAG$TASK_PYTHON_API_TRUNC** task was started. The call to the function will not succeed as we are not calling it with any of its required arguments. The purpose of this cell is to demonstrate how to run the root task in the DAG.
+
+Finally, delete the DAG by running the following cell:
+
+```python
+dag_op.delete(dag)
+```
+<!-- ------------------------ -->
+## Managing Snowpark Container Services
+Duration: 5
+
+> aside negative
+> 
+> **Important**
+> At the time of writing, Snowpark Container Services are in Public Preview in select AWS regions.
 
 <!-- ------------------------ -->
 ## Conclusion
