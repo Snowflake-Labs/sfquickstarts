@@ -25,8 +25,8 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 - [Python 3.10](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.10 in the **Consumer Account - Create Model** step
 - Snowflake accounts with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
-- Snowflake accounts with the Snowflake Marketplace T&C's accepted. This will allow you to create listings.
-- A Snowflake account login with a role that has the ability to create listings, databases, schemas, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for free trials or use a different role.
+- Snowflake accounts with the Snowflake Marketplace T&C's accepted. This will allow you to create Listings.
+- A Snowflake account login with a role that has the ability to create Listings, Databases, Schemas, Tables, Stages, User-Defined Functions, and Stored Procedures. If not, you will need to register for free trials or use a different role.
 - The [Snowpark ML](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) package installed
 
 ### What You’ll Learn
@@ -42,8 +42,8 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 
 ### What You’ll Build 
 - Ingestion of Credit Card Customer Profile Data
-- Sharing raw data seamlessly via a private listing
-- Consuming shared data via a private listing
+- Sharing raw data seamlessly via a Private Listing
+- Consuming shared data via a Private Listing
 - Enriching shared data using a ML model
 - Sharing back enriched data to the original Provider account
 - Automating the above for new data
@@ -87,12 +87,12 @@ Repeat the process above. Be sure to select the same cloud and region as the fir
 Check your emails and follow the prompts to activate both the accounts. One will be the Provider (SnowBank) and one will be the Consumer (Zamboni).
 
 <!-- ------------------------ -->
-## Provider Account (Snowbank) - Set Up
+## Provider Account (SnowBank) - Set Up
 Duration: 20
 
 In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our credit card default prediction data into our tables.
 
-In our scenario, this step represents SnowBank loading data from their source systems in to Snowflake, and creating datasets that will be shared with an external partner (Zamboni) which has been tasked with creating a machine learning model to predict defaults on new data. The default_prediction_table_train dataset would be sent for the partner to train and test the model, and the default_prediction_table_unscored would be new data sent to the partner to be scored and returned. We will create a third stage for illustrative purposes that will simulate newly arriving data, and how the processis automated. We will come back to this in a later step.
+In our scenario, this step represents SnowBank loading data from their source systems in to Snowflake, and creating datasets that will be shared with an external partner (Zamboni) which has been tasked with creating a machine learning model to predict defaults on new data. The cc_default_training_data dataset would be sent for the partner to train and test the model, and the cc_default_unscored_data would be new data sent to the partner to be scored and returned. We will create a third stage for illustrative purposes that will simulate newly arriving data, and how the process is automated. We will come back to this in a later step.
 
 ### Initial Set Up
 
@@ -102,50 +102,49 @@ Next, open up a worksheet and run all following steps as the ACCOUNTADMIN role
 
 ```SQL
   -- Change role to accountadmin
-  use role accountadmin;
+  USE ROLE ACCOUNTADMIN;
 ```
 
 First we can create a [Virtual Warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview) that can be used to load the initial dataset. We'll create this warehouse with a size of XS which is right sized for that use case in this lab.
 
 ```SQL
 -- Create a virtual warehouse for data exploration
-create or replace warehouse query_wh with 
-  warehouse_size = 'x-small' 
-  warehouse_type = 'standard' 
-  auto_suspend = 300 
-  auto_resume = true 
-  min_cluster_count = 1 
-  max_cluster_count = 1 
-  scaling_policy = 'standard';
+CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
+  WAREHOUSE_SIZE = 'X-SMALL' 
+  WAREHOUSE_TYPE = 'STANDARD' 
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE 
+  MIN_CLUSTER_COUNT = 1 
+  MAX_CLUSTER_COUNT = 1;
 ```
 
 ### Load Data 
 
-Next we will create a database and schema that will house the tables that store our data to be shared.
+Next we will create a database and schema that will house the tables that store our data to be shared with Zamoboni.
 
 ```SQL
 -- Create the application database and schema
-create or replace database data_sharing_demo;
-create or replace schema data_sharing_demo;
+CREATE OR REPLACE DATABASE DATA_SHARING_DEMO;
+CREATE OR REPLACE SCHEMA DATA_SHARING_DEMO;
 ```
 
 Our data is in Parquet format, so we will create a file format object
 
 ```SQL
-create or replace file format parquet_format
-type = parquet;
+CREATE OR REPLACE FILE FORMAT parquet_format
+TYPE = PARQUET;
 ```
 
 Next we set up our [External Stage](https://docs.snowflake.com/en/user-guide/data-load-s3-create-stage#external-stages) to our data. In our business scenario, we would have a secure [Storage Integration](https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration) to the external stage rather than a public s3 bucket.
 
 ```SQL
-create or replace stage quickstart_cc_default_training_data
-    url = 'insert public url here/train'
-    file_format = parquet_format;
+CREATE OR REPLACE STAGE quickstart_cc_default_training_data
+    URL = 'insert public url here/train'
+    FILE_FORMAT = parquet_format;
 
-create or replace stage quickstart_cc_default_unscored_data
-    url = 'insert public url here/test'
-    file_format = parquet_format;
+CREATE OR REPLACE STAGE quickstart_cc_default_unscored_data
+    URL = 'insert public url here/test'
+    FILE_FORMAT = parquet_format;
 
 CREATE OR REPLACE STAGE quickstart_cc_default_new_data
   URL = 's3://.../new_data/'
@@ -155,7 +154,7 @@ CREATE OR REPLACE STAGE quickstart_cc_default_new_data
 This DDL will create the structure for the table which is the main source of data for our lab.
 
 ```SQL
-CREATE TABLE cc_default_training_data
+CREATE OR REPLACE TABLE cc_default_training_data
   USING TEMPLATE (
     SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
       FROM TABLE(
@@ -165,7 +164,7 @@ CREATE TABLE cc_default_training_data
         )
       ));
 
-CREATE TABLE cc_default_unscored_data
+CREATE OR REPLACE TABLE cc_default_unscored_data
   USING TEMPLATE (
     SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
       FROM TABLE(
@@ -177,6 +176,12 @@ CREATE TABLE cc_default_unscored_data
 
 -- Create below to be the template of the above
 CREATE OR REPLACE TABLE cc_default_new_data LIKE cc_default_unscored_data;
+```
+
+Before we load data, we need to enable change tracking in one of the tables. We will come back to this in a later step, but we need to enable it noe before we load any data.
+
+```SQL
+ALTER TABLE DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA SET CHANGE_TRACKING = TRUE;
 ```
 
 Now we will load the data in the tables. We can scale up the warehouse temporarily so we do not have to wait as long
@@ -662,6 +667,7 @@ DROP SHARE DATA_SHARING_DEMO;
 ```SQL
 DROP DATABASE DATA_SHARING_DEMO CASCADE;
 DROP DATABASE SCORED_DATA;
+DROP WAREHOUSE QUERY_WH;
 ```
 
 If you want to see the status of your tasks, you can run the following query
