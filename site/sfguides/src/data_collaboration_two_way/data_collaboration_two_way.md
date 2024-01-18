@@ -524,22 +524,17 @@ Next, lets set up a task to transform this data, using the Stored Procedures and
 The first task is Change Data Capture (CDC) which checks the stream for new arriving data, and moves it in to a new temporary table for feature engineering.
 
 ```SQL
-CREATE OR REPLACE TASK CDC_1
-    WAREHOUSE = 'QUERY_WH'
-    -- We would add a schedule in production, but this is commented out to avoid accidental credit consumption
-    SCHEDULE = '5 minute'
-WHEN
-  SYSTEM$STREAM_HAS_DATA('CC_DEFAULT_DATA_STREAM')
-AS
-  CREATE OR REPLACE TEMPORARY TABLE SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA LIKE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA;
+CREATE OR REPLACE TABLE SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA LIKE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA;
+```
 
-CREATE OR REPLACE TASK CDC_2
+```SQL
+CREATE OR REPLACE TASK CDC
     WAREHOUSE = 'QUERY_WH'
+    SCHEDULE = '5 minute'
     -- We would add a schedule in production, but this is commented out to avoid accidental credit consumption
-AFTER CDC_1
 AS
 INSERT INTO SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA
-SELECT * FROM CC_DEFAULT_DATA_STREAM
+SELECT * exclude (metadata$row_id, metadata$action, metadata$isupdate) FROM CC_DEFAULT_DATA_STREAM
 WHERE METADATA$ACTION = 'INSERT';
 ```
 Then we create a second task dependant on the first that performs the feature engineering.
@@ -615,16 +610,22 @@ Duration: 15
 
 In production, this step would most likely be an automated ingestion pipeline form a source system. However, for illustrative purposes, we will run the following query to update the table.
 
-
-
 Test the new data is there by running the following query in a worksheet.
 
 ```SQL
 SELECT
   *
 FROM
-  CC_DEFAULT_UNSCORED_TABLE
-WHERE "customer_ID" = 'new_data';
+  SCORED_DATA.SCORED_MODEL.SCORED_TABLE
+WHERE "customer_ID" = 'new_customer_1';
+```
+
+```SQL
+SELECT
+  *
+FROM
+  SCORED_DATA.SCORED_MODEL.SCORED_TABLE
+WHERE "customer_ID" = 'new_customer_2';
 ```
 
 This updated data has now updated the stream, which would be picked up by the consumer. This will then execute the first task to undertake feature engineering, and then a second dependant task which would invoke our model and score the data. This new scored data would be appended to the shared table, and automatically shared back to the original provider.
@@ -632,6 +633,21 @@ This updated data has now updated the stream, which would be picked up by the co
 <!-- ------------------------ -->
 ## Wrap Up and Clean Up
 Duration: 2
+
+Open up the Zamoboni Account and [Unpublish the Listing](https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing). You can do this by navigating to Data > Provider Studio > Listings, and select the listing. A screenshot is below ![Diagram](assets/delist_navigation.png)
+
+Next select the "Live" button in the top right and select "Unpublish". After that, select the bin icon and delete the listing. A screenshot is below ![Diagram](assets/delete_listing_navigation.png)
+
+```SQL
+DROP SHARE SCORED_MODEL;
+```
+
+```SQL
+DROP DATABASE SCORED_MODEL CASCADE;
+```
+
+Next we repeat the steps for SnowBank
+
 
 If you want to see the status of your tasks, you can run the following query
 
