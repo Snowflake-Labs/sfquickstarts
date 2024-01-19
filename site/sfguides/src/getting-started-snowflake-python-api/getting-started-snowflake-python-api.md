@@ -616,7 +616,7 @@ for t in taskiter:
 
 You should see an output similar to the following:
 
-```bash
+```console
 Name:  TASK_PYTHON_API_FILTER | State:  suspended
 Name:  TASK_PYTHON_API_TRUNC | State:  started
 ```
@@ -629,7 +629,7 @@ trunc_task.suspend()
 
 Optionally, navigate to your Snowflake account to confirm that the task is indeed suspended.
 
-Finally, delete both tasks by running the following cell:
+(Optional) Finally, delete both tasks by running the following cell:
 
 ```python
 trunc_task.delete()
@@ -637,7 +637,7 @@ filter_task.delete()
 ```
 <!-- ------------------------ -->
 ## Managing DAGs
-Duration: 10
+Duration: 8
 
 When the number of tasks that must be managed becomes very large, individually managing each task can become a growing challenge. The Snowflake Python API provides functionality to orchestrate tasks with a higher level DAG API. Let's take a look at how it can be used.
 
@@ -656,7 +656,7 @@ dag_op.deploy(dag, mode="orreplace")
 
 This cell does the following:
 
-* Creates a dag object by instantiating the `DAG` class, and specifying a DAG name and schedule.
+* Creates a DAG object by calling the `DAG` constructor, and specifying a DAG name and schedule.
 
 * Defines DAG-specific tasks using the `DAGTask` constructor. Note that the constructor accepts the same arguments that were specified in an earlier cell when using the `StoredProcedureCall` class.
 
@@ -676,7 +676,7 @@ Start the DAG by starting the root task by running the following cell:
 dag_op.run(dag)
 ```
 
-Optionally, navigate to your Snowflake account and confirm that **PYTHON_API_DAG$TASK_PYTHON_API_TRUNC** task was started. The call to the function will not succeed as we are not calling it with any of its required arguments. The purpose of this cell is to demonstrate how to run the root task in the DAG.
+Optionally, navigate to your Snowflake account and confirm that **PYTHON_API_DAG$TASK_PYTHON_API_TRUNC** task was started. The call to the function will not succeed as we are not calling it with any of its required arguments. The purpose of this cell is simply to demonstrate how to programatically start the DAG.
 
 Finally, delete the DAG by running the following cell:
 
@@ -685,13 +685,168 @@ dag_op.delete(dag)
 ```
 <!-- ------------------------ -->
 ## Managing Snowpark Container Services
-Duration: 5
+Duration: 10
 
 > aside negative
 > 
 > **Important**
-> At the time of writing, Snowpark Container Services are in Public Preview in select AWS regions.
+> At the time of writing, Snowpark Container Services is in Public Preview in select AWS regions. To use Snowpark Container Services, your Snowflake account must be in one of the select AWS regions. For more information, refer to [Snowpark Container Services – Available Regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 
+Snowpark Container Services is a fully managed container offering designed to facilitate the deployment, management, and scaling of containerized applications within the Snowflake ecosystem. The service enables users to run containerized workloads directly within Snowflake. Let's take a look at how you can manage Snowpark Container Services with the Snowflake Python API.
+
+For this section, we'll switch to a new notebook. The notebook contains **sample code** that runs an NGINX web server using Snowpark Container Services, all running in Snowflake. The notebook is provided for convenience and demonstrative purposes.
+
+ Open the following notebook in your preferred code editor, or using `jupyter notebook <path_to_notebook>`: 
+ 
+ In the first cell, we import the required libraries, create our connection to Snowflake, and instantiate our `Root` object. We also create objects to represent references to existing Snowflake objects in a Snowflake account. Our Snowpark Container Services will reside in the **PUBLIC** schema.
+
+ ```python
+ from pprint import pprint
+from snowflake.core import Root
+from snowflake.core.service import ServiceSpecInlineText
+from snowflake.snowpark import Session
+
+session = Session.builder.config("connection_name", "python_api").create()
+api_root = Root(session)
+database = api_root.databases["spcs_python_api_db"]
+schema = database.schemas["public"]
+ ```
+
+When orchestrating Snowpark Container Services, there are a couple of patterns you'll typically follow:
+
+* **Define a compute pool** – A compute pool represents a set of compute resources (virtual machine, or VM, nodes). You can think of these compute resources as analogous (but not equivalent) to Snowflake virtual warehouses. The service (in this case, our NGINX service) will run in the compute pool. Compute-intensive services will require high-powered compute pools (i.e., many cores, many GPUs), while less intensive services may need smaller compute pools (fewer cores). For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
+
+* **Define the service** – A service is how you run an application container. The services require, at minimum, a specification and a compute pool. A specification contains the information needed to run the application container, like the path to a container image, endpoints that the services will expose, and more. The specification is written in YML. The compute pool is what the service will run in. For more information, see [Snowpark Container Services: Working with services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services).
+
+Let's cover these patterns in the notebook. Take a look at the following cell:
+
+```python
+new_compute_pool_def = ComputePool(
+    name="MyComputePool"
+    instance_family="CPU_X64_XS",
+    min_nodes=1,
+    max_nodes=2,
+)
+
+new_compute_pool = api_root.compute_pools.create(new_compute_pool_def)
+```
+
+In this cell, we define a compute pool using the `ComputePool` constructor, and provide a name, instance family, and the min and max number of nodes. We then create the compute pool and pass in the compute pool definition. 
+
+Here are some details behind the arguments passed into the constructor:
+
+* `instance_family` – An instance family refers to the type of machine you want to provision for the nodes in the compute pool. Different machines have different amounts of compute resources in their compute pools. In this cell, we use `CPU_X64_XS`, which is the smallest available machine type. See [CREATE COMPUTE POOL: Required parameters](https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool#required-parameters) for more detail.
+
+* `min_nodes`, `max_nodes` – The lower and upper bounds for nodes in the compute pool. After creating a compute pool, Snowflake launches the minimum number of nodes. New nodes are created – up to the maximum specified – when the running nodes cannot take any additional workload. This is called **autoscaling**. For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
+
+It's time to build our service. Take a look at the next cell:
+
+```python
+image_repository = schema.image_repositories["MyImageRepository"]
+```
+
+In this cell, we retrieve the repository containing our container image. This repository is in the Snowflake account, listed as a stage in the **PUBLIC** schema. We'll need this reference to fetch container image information, which you can see referenced in the next cell:
+
+```python
+from textwrap import dedent
+from io import BytesIO
+from snowflake.core.service import Service
+session.use_role("my_role")  # Perhaps this role has permission to create and run a service
+specification = dedent(f"""\
+            spec:
+              containers:
+              - name: web-server
+                image: {image_repository.fetch().repository_url}/nginx:latest
+              endpoints:
+              - name: ui
+                port: 80
+                public: true
+             """)
+
+service_def = Service(
+    name="MyService",
+    compute_pool="MyComputePool",
+    spec=ServiceSpecInlineText(specification),
+    min_instances=1,
+    max_instances=1,
+)
+
+nginx_service = schema.services.create(service_def)
+```
+
+This cell defines the service specification, the service, and creates the service for our NGINX web server. You should note a few things:
+
+* `specification` – We define specification using a Python f-string. The string is formatted as YML. It contains the name of the container, a path to the container image, and endpoints that the service will expose to be able to access the service publicly. Although the specification is defined inline, it could also been a reference to a **.yml** file in a stage.
+
+* `service_def` – We define a service with the `Service` constructor, passing in a name for the service, the compute pool it should run in, a path to the specification, and the total number of instances for the service. Note that `ServiceSpecInlineText` is used when setting `spec`. This is because the specification was defined inline as an f-string. Multiple instances of the service could be run, but in this example we want only one instance of the service to run.
+
+With the service created, the next cell will output the status of the service.
+
+```python
+pprint(nginx_service.get_service_status(timeout=5))
+```
+
+Sample output of the cell:
+
+```console
+{'auto_resume': True,
+ 'auto_suspend_secs': 3600,
+ 'instance_family': 'CPU_X64_XS',
+ 'max_nodes': 1,
+ 'min_nodes': 1,
+ 'name': 'MyService'}
+```
+
+It'll take a few minutes for the endpoints that are needed to access the service to be provisioned. The next cell isn't specific to Snowpark Container Services or the Snowflake Python API – it simply provides a handy way to inspect whether the endpoints are ready. Note that we fetch the endpoints by calling `.fetch().public_endpoints` on our service object.
+
+```python
+import json, time
+while True:
+    public_endpoints = nginx_service.fetch().public_endpoints
+    try:
+        endpoints = json.loads(public_endpoints)
+    except json.JSONDecodeError:
+        print(public_endpoints)
+        time.sleep(15)
+    else:
+        break
+```
+
+Sample output of the cell:
+
+```console
+Endpoints provisioning in progress... check back in a few minutes
+Endpoints provisioning in progress... check back in a few minutes
+Endpoints provisioning in progress... check back in a few minutes
+```
+
+Once the endpoints are provisioned, the next cell will open the public endpoints in your browser. 
+
+```python
+print(f"Visiting {endpoints['ui']} in your browser. You may need to log in there.")
+import webbrowser
+webbrowser.open(f"https://{endpoints['ui']}")
+```
+
+Sample output of the cell:
+
+```console
+Visiting fekqoap7-orgname-sslpr.snowflakecomputing.app in your browser. You may need to log in there.
+```
+
+If successful, you'll see the NGINX success page in your browser when visiting the endpoint:
+
+![minidag](./assets/nginx-success.png)
+
+The next cells will suspend and delete the service:
+
+```python
+nginx_service.suspend()
+```
+
+```python
+nginx_service.delete()
+```
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
@@ -705,6 +860,8 @@ Congratulations! In this Quickstart, you learned the fundamentals for managing S
 * Retrieving object information
 * Programmatically updating an object
 * Creating, suspending, and deleting warehouses
+* How to manage tasks and DAGs
+* How to manage Snowpark Container Services
 
 ### Additional resources
 
