@@ -75,6 +75,7 @@ The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/co
 - Paste and run the following SQL commands in the worksheet to create the required Snowflake objects, ingest sales data from S3, and update your Search Path to make it easier to work with the ML Functions. 
 
 ```sql
+-- Using accountadmin is often suggested for quickstarts, but any role with sufficient privledges can work
 USE ROLE ACCOUNTADMIN;
 
 -- Create development database, schema for our work: 
@@ -90,22 +91,23 @@ CREATE OR REPLACE WAREHOUSE quickstart_wh;
 USE WAREHOUSE quickstart_wh;
 
 -- Set search path for ML Functions:
+-- ref: https://docs.snowflake.com/en/user-guide/ml-powered-forecasting#preparing-for-forecasting
 ALTER ACCOUNT
 SET SEARCH_PATH = '$current, $public, SNOWFLAKE.ML';
 
--- Create a csv file format: 
+-- Create a csv file format to be used to ingest from the stage: 
 CREATE OR REPLACE FILE FORMAT quickstart.ml_functions.csv_ff
-type = 'csv'
-SKIP_HEADER = 1,
-COMPRESSION = AUTO;
+    type = 'csv'
+    SKIP_HEADER = 1,
+    COMPRESSION = AUTO;
 
--- Create an external stage pointing to s3, to load sales data: 
+-- Create an external stage pointing to AWS S3 for loading sales data: 
 CREATE OR REPLACE STAGE s3load 
-COMMENT = 'Quickstart S3 Stage Connection'
-url = 's3://sfquickstarts/frostbyte_tastybytes/mlpf_quickstart/'
-file_format = quickstart.ml_functions.csv_ff;
+    COMMENT = 'Quickstart S3 Stage Connection'
+    url = 's3://sfquickstarts/frostbyte_tastybytes/mlpf_quickstart/'
+    file_format = quickstart.ml_functions.csv_ff;
 
--- Define Tasty Byte Sales Table
+-- Define Tasty Byte Sales table
 CREATE OR REPLACE TABLE quickstart.ml_functions.tasty_byte_sales(
   	DATE DATE,
 	PRIMARY_CITY VARCHAR(16777216),
@@ -113,12 +115,12 @@ CREATE OR REPLACE TABLE quickstart.ml_functions.tasty_byte_sales(
 	TOTAL_SOLD NUMBER(17,0)
 );
 
--- Ingest data from s3 into our table
+-- Ingest data from S3 into our table
 COPY INTO quickstart.ml_functions.tasty_byte_sales 
-FROM @s3load/ml_functions_quickstart.csv;
+    FROM @s3load/ml_functions_quickstart.csv;
 
 -- View a sample of the ingested data: 
-SELECT * FROM quickstart.ml_functions.tasty_byte_sales limit 100;
+SELECT * FROM quickstart.ml_functions.tasty_byte_sales LIMIT 100;
 ```
 
 At this point, we have all the data we need to start building models. We will get started with building our first forecasting model.  
@@ -135,8 +137,8 @@ Before building our model, let's first visualize our data to get a feel for what
 
 ```sql
 SELECT *
-FROM tasty_byte_sales
-where menu_item_name like 'Lobster Mac & Cheese';
+    FROM tasty_byte_sales
+    WHERE menu_item_name LIKE 'Lobster Mac & Cheese';
 ```
 After toggling to the chart, we should see a daily sales for the item Lobster Mac & Cheese going back all the way to 2014: 
 
@@ -145,10 +147,10 @@ After toggling to the chart, we should see a daily sales for the item Lobster Ma
 Observing the chart, one thing we can notice is that there appears to be a seasonal trend present for sales, on a yearly basis. This is an important consideration for building robust forecasting models, and we want to make sure that we feed in enough training data that represents one full cycle of the time series data we are modeling for. The forecasting ML function is smart enough to be able to automatically identify and handle multiple seasonality patterns, so we will go ahead and use the latest year's worth of data as input to our model. In the query below, we will also convert the date column using the `to_timestamp_ntz` function, so that it be used in the forecasting function. 
 
 ```sql
--- Create Table containing the latest years worth of sales data: 
+-- Create table containing the latest years worth of sales data: 
 CREATE OR REPLACE TABLE vancouver_sales AS (
     SELECT
-        to_timestamp_ntz(date) as timestamp,
+        to_timestamp_ntz(date) AS timestamp,
         primary_city,
         menu_item_name,
         total_sold
@@ -282,7 +284,7 @@ CREATE OR REPLACE VIEW canadian_holidays AS (
 );
 
 -- Create a view for our training data, including the holidays for all items sold: 
-CREATE OR REPLACE VIEW allitems_vancouver as (
+CREATE OR REPLACE VIEW allitems_vancouver AS (
     SELECT
         vs.timestamp,
         vs.menu_item_name,
@@ -290,8 +292,8 @@ CREATE OR REPLACE VIEW allitems_vancouver as (
         ch.holiday_name
     FROM 
         vancouver_sales vs
-        left join canadian_holidays ch on vs.timestamp = ch.date
-    WHERE MENU_ITEM_NAME in ('Mothers Favorite', 'Bottled Soda', 'Ice Tea')
+        LEFT JOIN canadian_holidays ch ON vs.timestamp = ch.date
+    WHERE MENU_ITEM_NAME IN ('Mothers Favorite', 'Bottled Soda', 'Ice Tea')
 );
 
 -- Train Model: 
@@ -321,7 +323,7 @@ SELECT MAX(timestamp) FROM vancouver_sales;
 CREATE OR REPLACE VIEW vancouver_forecast_data AS (
     WITH future_dates AS (
         SELECT
-            '2023-05-28' ::DATE + row_number() over (
+            '2023-05-28' ::DATE + row_number() OVER (
                 ORDER BY
                     0
             ) AS timestamp
@@ -365,10 +367,8 @@ CALL vancouver_forecast!forecast(
 
 -- Store results into a table: 
 CREATE OR REPLACE TABLE vancouver_predictions AS (
-    SELECT
-        *
-    FROM
-        TABLE(RESULT_SCAN(-1))
+    SELECT *
+    FROM TABLE(RESULT_SCAN(-1))
 );
 
 ```
@@ -399,16 +399,17 @@ In this section, we will make use of the [anomaly detection ML Function](https:/
 ```sql
 -- Create a view containing our training data: 
 CREATE OR REPLACE VIEW vancouver_anomaly_training_set AS (
-SELECT *
-FROM vancouver_sales
-WHERE timestamp < (SELECT max(timestamp) FROM vancouver_sales) - interval '1 Month'
+    SELECT *
+    FROM vancouver_sales
+    WHERE timestamp < (SELECT MAX(timestamp) FROM vancouver_sales) - interval '1 Month'
 );
 
 -- Create a view containing the data we want to make inferences on: 
 CREATE OR REPLACE VIEW vancouver_anomaly_analysis_set AS (
-SELECT *
-FROM vancouver_sales
-WHERE timestamp > (SELECT max(timestamp) FROM vancouver_anomaly_training_set));
+    SELECT *
+    FROM vancouver_sales
+    WHERE timestamp > (SELECT MAX(timestamp) FROM vancouver_anomaly_training_set)
+);
 
 -- Create the model: UNSUPERVISED method, however can pass labels as well - 
 CREATE OR REPLACE snowflake.ml.anomaly_detection vancouver_anomaly_model(
@@ -429,10 +430,8 @@ CALL vancouver_anomaly_model!DETECT_ANOMALIES(
 );
 
 CREATE OR REPLACE TABLE vancouver_anomalies AS (
-    SELECT
-        *
-    FROM 
-        TABLE(RESULT_SCAN(-1))
+    SELECT *
+    FROM TABLE(RESULT_SCAN(-1))
 );
 
 SELECT * FROM vancouver_anomalies;
@@ -473,6 +472,7 @@ In this last section, we will walk through how we can use the models created pre
 3. A [Snowpark Python Stored Procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-python) to extract the anomalies and send formatted emails containing the most trending items. 
 
 ```sql
+-- Note: It's important to update the recipient email twice in the code below
 -- Create a task to run every month to retrain the anomaly detection model: 
 CREATE OR REPLACE TASK ad_vancouver_training_task
     WAREHOUSE = quickstart_wh
@@ -514,16 +514,16 @@ END;
 CREATE NOTIFICATION INTEGRATION my_email_int
 TYPE = EMAIL
 ENABLED = TRUE
-ALLOWED_RECIPIENTS = ('<EMAIL GOES HERE>');
+ALLOWED_RECIPIENTS = ('<EMAIL-RECIPIENT>');  -- update the recipient's email
 
 -- Create Snowpark Python Stored Procedure to format email and send it
-create or replace procedure send_anomaly_report()
-returns string
-language python
+CREATE OR REPLACE PROCEDURE send_anomaly_report()
+RETURNS string
+LANGUAGE python
 runtime_version = 3.9
 packages = ('snowflake-snowpark-python')
 handler = 'send_email'
-as
+AS
 $$
 def send_email(session):
     session.call('extract_anomalies').collect()
@@ -532,19 +532,19 @@ def send_email(session):
       ).to_pandas().to_html()
     session.call('system$send_email',
         'my_email_int',
-        '<EMAIL RECIPIENTS GO HERE>',
+        '<EMAIL-RECIPIENT>', -- update the recipient's email
         'Email Alert: Anomaly Report Has Been created',
         printed,
         'text/html')
 $$;
 
 -- Orchestrating the Tasks: 
-create or replace task send_anomaly_report_task
-warehouse = quickstart_wh
-after AD_VANCOUVER_TRAINING_TASK
-as call send_anomaly_report();
+CREATE OR REPLACE TASK send_anomaly_report_task
+    warehouse = quickstart_wh
+    AFTER AD_VANCOUVER_TRAINING_TASK
+    AS CALL send_anomaly_report();
 
--- Steps to immediately execute the task:  
+-- Steps to resume and then immediately execute the task DAG:  
 ALTER TASK SEND_ANOMALY_REPORT_TASK RESUME;
 ALTER TASK AD_VANCOUVER_TRAINING_TASK RESUME;
 EXECUTE TASK AD_VANCOUVER_TRAINING_TASK;
