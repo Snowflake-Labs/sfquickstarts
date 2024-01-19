@@ -356,13 +356,15 @@ If you are having some trouble with the steps above, this could be due to having
 ### Train Model
 Open up the notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk.
 
+Stay in the Zamboni account for the next step.
+
 <!-- ------------------------ -->
 ## Consumer Account (Zamboni) - Productionise the ML Pipeline
 Duration: 15
 
-Now we have trained the data science model, we will create some Stored Procedures which hold the feature engineering and scoring logic. In a subsequent step, we will encompass these in Streams and Tasks to automate this pipeline.
+Now we have trained the ML model, we will create some Stored Procedures which holds the feature engineering and scoring logic. In a subsequent step, we will encompass these in Streams and Tasks to automate this pipeline.
 
-Open up a SQL Worksheet in Snowsight. First we can check tha the UDF was deployed from the Jupyter Notebook by running the following:
+Open up a SQL Worksheet in Snowsight. First we can check that the UDF was deployed from the Jupyter Notebook by running the following:
 
 ```SQL
 SHOW USER FUNCTIONS;
@@ -370,7 +372,7 @@ SHOW USER FUNCTIONS;
 
 You should see BATCH_PREDICT_CC_DEFAULT Vectorized UDF we deployed in the previous steps.
 
-Next we will create some stored procedures which hould our feature engineering logic. We will do this so we can later execute these Stored Procedures from a Task for automation.
+Next we will create some stored procedures which hold our feature engineering logic. We will do this so we can later execute these Stored Procedures from a Task for automation.
 
 Run the following coide in a worksheet to create the Stored Procedure.
 
@@ -469,7 +471,7 @@ Check we have created the Stored Procedures by running the following
 SHOW PROCEDURES;
 ```
 
-You should see two Stored Procedurs; CC_BATCH_PROCESSING and CC_PROFILE_PROCESSING.
+You should see two Stored Procedures; CC_BATCH_PROCESSING and CC_PROFILE_PROCESSING.
 
 Let's now switch over to the SnowBank account and share a new dataset to be scored.
 
