@@ -479,13 +479,7 @@ Let's now switch over to the SnowBank account and share a new dataset to be scor
 ## Provider Account (SnowBank) - Share New Data
 Duration: 10
 
-In this section, we will go back to assuming the role of the bank. We will switch back to our original provider account and create another listing of unscored data to share to our partner to score for default risk. This time however, we will create a [stream on the shared table](https://docs.snowflake.com/en/user-guide/data-sharing-provider#label-data-sharing-streams) so the new data can be shared live (without etl).
-
-The first thing we need to do is to enable change tracking on the table to be shared. This will add a pair of hidden columns automatically to the table and begin storing change tracking metadata.
-
-```SQL
-ALTER TABLE DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA SET CHANGE_TRACKING = TRUE;
-```
+In this section, we will go back to assuming the role of the bank. We will switch back to our original provider account and create another listing of unscored data to share to our partner to score for default risk. This time however, we will create a [stream on the shared table](https://docs.snowflake.com/en/user-guide/data-sharing-provider#label-data-sharing-streams) so the new data can be shared live (without etl). In order to set up a stream, the provider of data (SnowBank in this example) needs to have enables Change Tracking on the table. We have already done this in our set-up step.
 
 Next, lets add this data to the listing. Navigate to Data > Private Sharing in Snowsight. Then select "Shared By Your Account" in the top menu, and select "DATA_SHARING_DEMO".
 
@@ -533,16 +527,17 @@ SHOW STREAMS;
 ```
 Next, lets set up a task to transform this data, using the Stored Procedures and UDFs we created in step 9.
 
-The first task is Change Data Capture (CDC) which checks the stream for new arriving data, and moves it in to a new temporary table for feature engineering.
+The first task is Change Data Capture (CDC) which checks the stream for new arriving data, and moves it in to an intermediate table for feature engineering.
 
 ```SQL
+-- Create intermediate table
 CREATE OR REPLACE TABLE SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA LIKE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA;
 ```
 
 ```SQL
 CREATE OR REPLACE TASK CDC
     WAREHOUSE = 'QUERY_WH'
-    SCHEDULE = '5 minute'
+    -- SCHEDULE = '5 minute'
     -- We would add a schedule in production, but this is commented out to avoid accidental credit consumption
 AS
 INSERT INTO SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA
@@ -554,7 +549,7 @@ Then we create a second task dependant on the first that performs the feature en
 ```SQL
 CREATE OR REPLACE TASK FEATURE_ENG
     WAREHOUSE = 'QUERY_WH'
-AFTER CDC_2
+AFTER CDC
 AS
     CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE');
 ```
@@ -568,18 +563,38 @@ AFTER FEATURE_ENG
 AS 
 CALL cc_batch_processing('TRANSFORMED_TABLE', 'SCORED_TABLE');
 ```
+
+Finally, we add a task that runs when the data is successfully processed and clears the intermediate table
+
+```SQL
+CREATE OR REPLACE TASK clean_int_table 
+    WAREHOUSE = 'QUERY_WH'
+AFTER SCORE_DATA
+AS 
+TRUNCATE TABLE IF EXISTS SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA;
+```
+
 Check the tasks are created by running the following
 
 ```SQL
 SHOW TASKS;
 ```
-We should see the three tasks we just created.
+We should see the four tasks we just created.
+
+We now need to switch these tasks on from a suspended state. Since they are dependant on each other, we need to do these in reverse order. Run the following commands
+
+```SQL
+ALTER TASK CLEAN_INT_TABLE RESUME;
+ALTER TASK SCORE_DATA RESUME;
+ALTER TASK FEATURE_ENG RESUME;
+ALTER TASK CDC RESUME;
+```
 
 Now lets share our scored table back to the Bank. This process is the same as step 6 in reverse. Navigate to Data > Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
 
 In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it SCORED_DATA. Screenshot is below: ![Diagram](assets/private_listing_navigation_2.png)
 
-In the next modal, click the "+ Select" option. In this next modal, select the SCORED_DATA in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_TABLE and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. YOu will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: ![Diagram](assets/create_listing_navigation.png)
+In the next modal, click the "+ Select" option. In this next modal, select the SCORED_DATA in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_TABLE and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. You will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: ![Diagram](assets/create_listing_navigation.png)
 
 Switch over to the SnowBank account for the next step.
 
@@ -614,13 +629,15 @@ SELECT * FROM DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_NEW_DATA;
 
 In a fully automated scenario where the CDC task runs on a schedule, this is all we would need to do. The second account would recognise the newly incoming data and run the pipeline. We could imply run the following command and get our results.
 
-NEED TO FIX BUG WITH TASK RUNNING ON NEWLY SHARED DATA
+We have not run ours on a schedule so we can step through what is happening. However the principle is the same. Let's switch over to the Zamboni account and see it in action.
 
 <!-- ------------------------ -->
 ## Consumer Account (Zamoboni) -  Manually Inspect Automated Pipeline
 Duration: 15
 
 In production, this step would most likely be an automated ingestion pipeline form a source system. However, for illustrative purposes, we will run the following query to update the table.
+
+
 
 Test the new data is there by running the following query in a worksheet.
 
