@@ -838,13 +838,15 @@ If successful, you'll see the NGINX success page in your browser when visiting t
 
 ![minidag](./assets/nginx-success.png)
 
-The next cells will suspend and delete the service:
+The next cells will suspend and delete the compute pool and the service:
 
 ```python
+new_compute_pool_def.suspend()
 nginx_service.suspend()
 ```
 
 ```python
+new_compute_pool_def.delete()
 nginx_service.delete()
 ```
 <!-- ------------------------ -->
