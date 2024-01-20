@@ -543,7 +543,7 @@ Navigate once again to your Snowflake account and confirm the deletion of the wa
 
 
 <!-- ------------------------ -->
-## Managing Tasks
+## Managing tasks
 Duration: 10
 
 You can also manage tasks using the Snowflake Python API. Let's use the API to manage a couple of basic stored procedures using tasks.
@@ -627,7 +627,7 @@ Let's wrap things up by suspending the task, and then deleting both tasks. Run t
 trunc_task.suspend()
 ```
 
-Optionally, navigate to your Snowflake account to confirm that the task is indeed suspended.
+Navigate to your Snowflake account to confirm that the task is indeed suspended.
 
 (Optional) Finally, delete both tasks by running the following cell:
 
@@ -639,7 +639,7 @@ filter_task.delete()
 ## Managing DAGs
 Duration: 8
 
-When the number of tasks that must be managed becomes very large, individually managing each task can become a growing challenge. The Snowflake Python API provides functionality to orchestrate tasks with a higher level DAG API. Let's take a look at how it can be used.
+When the number of tasks that must be managed becomes very large, individually managing each task can be a challenge. The Snowflake Python API provides functionality to orchestrate tasks with a higher level DAG API. Let's take a look at how it can be used.
 
 Run the following cell in the notebook:
 
@@ -658,7 +658,7 @@ This cell does the following:
 
 * Creates a DAG object by calling the `DAG` constructor, and specifying a DAG name and schedule.
 
-* Defines DAG-specific tasks using the `DAGTask` constructor. Note that the constructor accepts the same arguments that were specified in an earlier cell when using the `StoredProcedureCall` class.
+* Defines DAG-specific tasks using the `DAGTask` constructor. Note that the constructor accepts the same arguments that were specified in an earlier cell (in the previous step) when using the `StoredProcedureCall` class.
 
 * Specifies `dag_task1` as the root task and predecessor to `dag_task2`, with more convenient syntax.
 
@@ -696,7 +696,7 @@ Snowpark Container Services is a fully managed container offering designed to fa
 
 For this section, we'll switch to a new notebook. The notebook contains **sample code** that runs an NGINX web server using Snowpark Container Services, all running in Snowflake. The notebook is provided for convenience and demonstrative purposes.
 
- Open the following notebook in your preferred code editor, or using `jupyter notebook <path_to_notebook>`: 
+ Download and open the following notebook in your preferred code editor, or with `jupyter notebook`: [Snowpark Container Services – Python API](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/sfguide-getting-started-snowflake-python-api/snowpark_container_services_python_api.ipynb).
  
  In the first cell, we import the required libraries, create our connection to Snowflake, and instantiate our `Root` object. We also create objects to represent references to existing Snowflake objects in a Snowflake account. Our Snowpark Container Services will reside in the **PUBLIC** schema.
 
@@ -714,7 +714,7 @@ schema = database.schemas["public"]
 
 When orchestrating Snowpark Container Services, there are a couple of patterns you'll typically follow:
 
-* **Define a compute pool** – A compute pool represents a set of compute resources (virtual machine, or VM, nodes). You can think of these compute resources as analogous (but not equivalent) to Snowflake virtual warehouses. The service (in this case, our NGINX service) will run in the compute pool. Compute-intensive services will require high-powered compute pools (i.e., many cores, many GPUs), while less intensive services may need smaller compute pools (fewer cores). For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
+* **Define a compute pool** – A compute pool represents a set of compute resources (virtual machine nodes). You can think of these compute resources as analogous (but not equivalent) to Snowflake virtual warehouses. The service (in this case, our NGINX service) will run in the compute pool. Compute-intensive services will require high-powered compute pools (i.e., many cores, many GPUs), while less intensive services can run in smaller compute pools (fewer cores). For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
 
 * **Define the service** – A service is how you run an application container. The services require, at minimum, a specification and a compute pool. A specification contains the information needed to run the application container, like the path to a container image, endpoints that the services will expose, and more. The specification is written in YML. The compute pool is what the service will run in. For more information, see [Snowpark Container Services: Working with services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services).
 
@@ -776,9 +776,9 @@ nginx_service = schema.services.create(service_def)
 
 This cell defines the service specification, the service, and creates the service for our NGINX web server. You should note a few things:
 
-* `specification` – We define specification using a Python f-string. The string is formatted as YML. It contains the name of the container, a path to the container image, and endpoints that the service will expose to be able to access the service publicly. Although the specification is defined inline, it could also been a reference to a **.yml** file in a stage.
+* `specification` – We define the specification using a Python f-string. The string is formatted as YML. It contains the name of the container, a path to the container image, and endpoints that the service will expose to be able to access the service publicly. Although the specification is defined inline, it could also been a reference to a **.yml** file in a stage.
 
-* `service_def` – We define a service with the `Service` constructor, passing in a name for the service, the compute pool it should run in, a path to the specification, and the total number of instances for the service. Note that `ServiceSpecInlineText` is used when setting `spec`. This is because the specification was defined inline as an f-string. Multiple instances of the service could be run, but in this example we want only one instance of the service to run.
+* `service_def` – We define a service with the `Service` constructor, passing in a name for the service, the compute pool it should run in, a path to the specification, and the total number of instances for the service. Note that `ServiceSpecInlineText` is used when setting `spec` in this cell. This is because the specification was defined inline as an f-string. Multiple instances of the service could be run, but in this example we want only one instance of the service to run, which is set via `min_instances` and `max_instances`.
 
 With the service created, the next cell will output the status of the service.
 
@@ -838,6 +838,8 @@ If successful, you'll see the NGINX success page in your browser when visiting t
 
 ![minidag](./assets/nginx-success.png)
 
+With just a few lines of Python, we were able to run an NGINX web server in Snowflake using Snowpark Container Services.
+
 The next cells will suspend and delete the compute pool and the service:
 
 ```python
@@ -853,7 +855,7 @@ nginx_service.delete()
 ## Conclusion
 Duration: 1
 
-Congratulations! In this Quickstart, you learned the fundamentals for managing Snowflake objects using the Snowflake Python API. Bookmark this Quickstart and be sure to come back soon, when the Quickstart will be expanded to include Task, DAG, and Snowpark Container Services management using the Snowflake Python API.
+Congratulations! In this Quickstart, you learned the fundamentals for managing Snowflake objects, tasks, DAGs, and Snowpark Container Services using the Snowflake Python API.
 
 ### What we've covered
 
