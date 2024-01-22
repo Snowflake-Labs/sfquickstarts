@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Intro to Maching Learning with Snowpark ML for Python
+# Intro to Machine Learning with Snowpark ML
 <!-- ------------------------ -->
 ## Overview 
 
@@ -174,7 +174,7 @@ Duration: 10
 
 Open the following jupyter notebook and run each of the cells: [2_snowpark_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
 
-In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Preprocessing API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
+In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
 <!-- ------------------------ -->
 ## ML Model Training and Inference
