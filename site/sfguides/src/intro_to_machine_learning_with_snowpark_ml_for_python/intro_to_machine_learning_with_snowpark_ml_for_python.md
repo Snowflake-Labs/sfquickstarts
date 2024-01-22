@@ -1,5 +1,5 @@
 author: sikha-das
-id: intro_to_snowpark_ml
+id: intro_to_machine_learning_with_snowpark_ml_for_python
 summary: Through this quickstart guide, you will explore what's new in Snowpark for Machine Learning.
 categories: Getting-Started
 environments: web
@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Intro to Snowpark ML
+# Intro to Maching Learning with Snowpark ML for Python
 <!-- ------------------------ -->
 ## Overview 
 
