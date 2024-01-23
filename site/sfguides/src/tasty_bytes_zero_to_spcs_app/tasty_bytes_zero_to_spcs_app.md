@@ -15,9 +15,9 @@ Duration: 1
 
 Snowflake is a terrific platform on which to build data applications. The unique characteristics and cloud-based design allow for building applications that scale with data and workload. This tutorial will go through how to build and deploy both the Processing Layer and the User Interface Layer paired with Snowflake as the Persistence Layer.
 
-Our example will be using a fictional food truck franchise website, Tasty Bytes. We will be building a graphical user interface with charts and graphs for franshisees to be able to examine sales data related to their franchise of food trucks. After logging in via a login page, each franchisee will have one page that will show metrics at the franchise level, and another that will show metrics around the food truck brands for that franchise.
+Our example will be using a fictional food truck franchise website, Tasty Bytes. We will be building a graphical user interface with charts and graphs for franchisees to be able to examine sales data related to their franchise of food trucks. After logging in via a login page, each franchisee will have one page that will show metrics at the franchise level, and another that will show metrics around the food truck brands for that franchise.
 
-The Processing and User Interface Layers will be built using Node.js. The dataset is a orders history for Tasty Bytes. 
+The Processing and User Interface Layers will be built using Node.js. The dataset is an orders history for Tasty Bytes. 
 
 The application itself will be built using containers and deployed to Snowflake.  Snowpark Container Services(SPCS) allows the running of containerized workloads directly within Snowflake, ensuring that data doesn’t need to be moved out of the Snowflake environment for processing. 
 
@@ -68,9 +68,9 @@ Before we start building the solution, let's go through the different parts in t
 
 The solution consists of two services hosted on Snowpark Container Services:
 - The backend service - which hosts the API built on Node Express
-- The frontend service - which hosts the React based frontend, and a router service in NGINX that allows calls from the browser-based React frontend to be routed to the backend serivices also.
+- The frontend service - which hosts the React based frontend, and a router service in NGINX that allows calls from the browser-based React frontend to be routed to the backend services also.
 
-Without the router part of the frontend service, CORS would actually prevent the browser to talk to the backend service, even if we opened up a public endpoint for it. This is due to the fact that we cannot add our own headers to requests comming to the service endpoints - for security reasons Snowpark Container Services networking strips out any headers (but adds a few usefull ones that we will use for authentication later).
+Without the router part of the frontend service, CORS would actually prevent the browser from talking to the backend service, even if we opened up a public endpoint for it. This is due to the fact that we cannot add our own headers to requests coming to the service endpoints - for security reasons Snowpark Container Services networking strips out any headers (but adds a few useful ones that we will use for authentication later).
 
 ### Step 3 - Setting up the data
 
@@ -79,14 +79,14 @@ This first part of the quickstart will help you set up the data for the applicat
 > aside negative
 > The sample data for the quickstart that we load will only cover the dates between 2022-01-01 to 2022-10-31. Don't be alarmed if a query on a data later or earlier than that returns an empty response
 
-### Step 4 - Setup Snowflake and prepare Snowpark Container Services environement
+### Step 4 - Setup Snowflake and prepare Snowpark Container Services environment
 
-In this step we set up the required primitives in Snwoflake to host and run serivces. Much of these steps are required for any SPCS solution and can be reused throughout other solutions.
+In this step we set up the required primitives in Snowflake to host and run services. Much of these steps are required for any SPCS solution and can be reused throughout other solutions.
 
 Here we create the objects for
 - Docker image repositories
-- Compute pools that the serivces will be running on
-- Users, roles and permissions needed to create and also to run and access the serivces
+- Compute pools that the services will be running on
+- Users, roles and permissions needed to create and also to run and access the services
 
 ### Step 5 - Adapting the backend and frontend code
 
@@ -102,11 +102,11 @@ Once the code is updated we can build the container images and then push them to
 
 ### Step 7 - Create the services and deploy the solution
 
-We are now ready to create the serivces and spin them up. We here look at how to specify the service definitions and to to connect the services.
+We are now ready to create the services and spin them up. We here look at how to specify the service definitions and to connect the services.
 
 ### Step 8 - Clean up
 
-We tear down any resourse created throughout the labs.
+We tear down any resource created throughout the labs.
 
 <!-- ------------------------ -->
 
@@ -198,7 +198,7 @@ create or replace warehouse load_wh with
 	max_cluster_count = 1 
 	scaling_policy = 'standard';
 ```
-Next we have to create a [STAGE](https://docs.snowflake.com/en/user-guide/data-load-overview) which is a Snowflake object that points to a cloud storage location Snowflake can access to both ingest and query data.  In this lab the data is stored in a publically accessible AWS S3 bucket which we are referencing when creating the Stage object. 
+Next we have to create a [STAGE](https://docs.snowflake.com/en/user-guide/data-load-overview) which is a Snowflake object that points to a cloud storage location Snowflake can access to both ingest and query data.  In this lab the data is stored in a publicly accessible AWS S3 bucket which we are referencing when creating the Stage object. 
 ```sql
 --create stage for loading orders data
 create or replace stage tasty_bytes_app_stage
@@ -260,7 +260,7 @@ use warehouse query_wh;
 ```
 
 ### Franchise Queries
-To answer the business questions about how our overall Franchise business is doing we'll need create the three following queries.  All of the columns required for these exist in the ORDERS table and no joining of tables are required. 
+To answer the business questions about how our overall Franchise business is doing we'll need to create the three following queries.  All of the columns required for these exist in the ORDERS table and no joining of tables are required. 
 
 1. Top 10 Countries Based on Revenue in a Time Window
 2. Top 10 Truck Brands Based on Revenue in a Time Window
@@ -322,7 +322,7 @@ You can spend some time creating the queries for each of these and then check yo
 ```
 
 ### Truck Brand Queries
-To answer the business questions about how our overall Franchise business is doing we'll need create the three following queries.  All of the columns required for these exist in the ORDERS table and no joining of tables are required. 
+To answer the business questions about how our overall Franchise business is doing we'll need to create the three following queries.  All of the columns required for these exist in the ORDERS table and no joining of tables are required. 
 
 1. Total Sales by Day-of-Week
 2. Top Selling Items
@@ -390,17 +390,17 @@ You can spend some time creating the queries for each of these and then check yo
 Duration: 10
 
 ### Overview
-Now that we've created our database, loaded data and developed the queries needed to answer our business questions the last step before getting into application code is setting up the necessary objects so that the application can connect to Snowflake securely and query data on its own Virtual Warehouse. We will also set up the objects required to create and run services. The objects we will look at are:
+Now that we've created our database, loaded data and developed the queries needed to answer our business questions, the last step before getting into application code is setting up the necessary objects so that the application can connect to Snowflake securely and query data on its own Virtual Warehouse. We will also set up the objects required to create and run services. The objects we will look at are:
 
 - [Compute Pools](https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-compute-pool) that are responsible for providing compute to the services once they run.
 - [Image Repositories](https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-registry-repository) that can hold docker images used by the services we create
-- [Serivices Ingress Security Integration](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services?utm_source=legacy&utm_medium=serp&utm_term=snowservices_ingress#ingress-using-a-service-from-outside-snowflake)
+- [Services Ingress Security Integration](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services?utm_source=legacy&utm_medium=serp&utm_term=snowservices_ingress#ingress-using-a-service-from-outside-snowflake)
 
 ### Step 4.1 Creating roles, permissions and virtual warehouse for running the application
 
 Much like we created separate Virtual Warehouses for exploring and loading data, we will create one specifically for our service to use when executing queries on Snowflake.
 
-We start by creating a role that can be responsible for administering the setup of the services and everyting else. There are a number of permissions that can be granted, and in a production build environment, these permissions may instead be granted to different roles with different responsiblities.
+We start by creating a role that can be responsible for administering the setup of the services and everything else. There are a number of permissions that can be granted, and in a production build environment, these permissions may instead be granted to different roles with different responsibilities.
 
 ```sql
 USE DATABASE frostbyte_tasty_bytes;
@@ -427,7 +427,7 @@ GRANT ALL ON WAREHOUSE tasty_app_warehouse TO ROLE tasty_app_admin_role;
 
 ### Step 4.2 Creating Compute Pools for service to run on
 
-The Compute Pools are used to run the serivices. We can create different pools for different purposes. In this example we create two different pools to run the serivces, one for the backend and one for the frontend. We could technicaly allow both services to use the same Compute Pool, in fact for this demo it would work very well, but in many scenarios the scaling requirements for the frontend and a backend may be different. Here we can see that the backend is given a pool of compute nodes that is slightly more scaled up than the nodes for the compute pool used for the frontend. There are multiple options for choosing the right instance family for a Compute Pool [Create Compute Pool](https://docs.snowflake.com/sql-reference/sql/create-compute-pool). This would be even more relevant if the backend needed to do some more compute heavy work, even to the point where it needed to have GPU enabled nodes.
+The Compute Pools are used to run the services. We can create different pools for different purposes. In this example we create two different pools to run the services, one for the backend and one for the frontend. We could technically allow both services to use the same Compute Pool, in fact for this demo it would work very well, but in many scenarios the scaling requirements for the frontend and a backend may be different. Here we can see that the backend is given a pool of compute nodes that is slightly more scaled up than the nodes for the compute pool used for the frontend. There are multiple options for choosing the right instance family for a Compute Pool [Create Compute Pool](https://docs.snowflake.com/sql-reference/sql/create-compute-pool). This would be even more relevant if the backend needed to do some more compute heavy work, even to the point where it needed to have GPU enabled nodes.
 ```sql
 CREATE COMPUTE POOL tasty_app_backend_compute_pool
 MIN_NODES = 1
@@ -627,7 +627,7 @@ This should return the following JSON response:
 
 Currently there is no authentication of the user calling this endpoint. We will change that to take advantage of the mechanism built into Snowflake Container Services.
 
-In the earlier guide [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provider user name and password, and the service looked that up in the database (the `USERS` table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client's browser, even if the code is served from the frontend service, so calls to the API are comming from the end users' browsers, not from the internal service hosting the frontend.
+In the earlier guide [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provider user name and password, and the service looked that up in the database (the `USERS` table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client's browser, even if the code is served from the frontend service, so calls to the API are coming from the end users' browsers, not from the internal service hosting the frontend.
 
 > aside positive
 >
@@ -637,7 +637,7 @@ What Snowpark Container Services offers is a different authentication model. Any
 
 ![User authentication](./assets/authenticating_with_snowservices_ingress.png)
 
-In this example, one of the users we created in the earlier steps (`user1`, `user2`, `user3`,...) is users. Once the user is authenticated, Snowpark Container Services adds that user name as a special header `Sf-Context-Current-User` to any request to the public endpoints. Since the environment strips away any other headers, there is no risk that the client can tamper with the value of this either, so from the perspective of the backend service, we can trust that the value in that header represents the user that authenticated with Snowflake.
+In this example, one of the users we created in the earlier steps (`user1`, `user2`, `user3`,...) can now log in here. Once the user is authenticated, Snowpark Container Services adds that user name as a special header `Sf-Context-Current-User` to any request to the public endpoints. Since the environment strips away any other headers, there is no risk that the client can tamper with the value of this either, so from the perspective of the backend service, we can trust that the value in that header represents the user that authenticated with Snowflake.
 
 The request headers reaching the service endpoint will look something like this for a normal call:
 
@@ -654,7 +654,7 @@ accept: '*/*'
 
 With this we can then look up that user and ensure that they have access to the application.
 
-Go to the code for `auth.js`, it contains code to validate this header and look up the user in the database, in order to check it's assciation with a franchise. The following code does that:
+Go to the code for `auth.js`, it contains code to validate this header and look up the user in the database, in order to check its association with a franchise. The following code does that:
 
 ```js
 function lookupUser(user_name) {
@@ -816,9 +816,9 @@ Open the file `connect.js` and look at how the code is sending the options for t
     };
 ```
 
-When the service is running on SPCS, the file located at `/snowflake/session/token` will contain an OAuth token that is pre-validated for accessing Snowflake. This means we don't need to supply user and password for the connection. This token is authenticated for a temporary user that is given the same role as the `OWNER` for the Service being called. This is an important detail, as the service will be connecting as the very role that created it (here it will be `tasty_app_admin_role`), so think of it as a service account type of user that is connecting. This is analoguous to how the original solutuion worked, but in there we created a dedicated user that the service connected as.
+When the service is running on SPCS, the file located at `/snowflake/session/token` will contain an OAuth token that is pre-validated for accessing Snowflake. This means we don't need to supply a user and password for the connection. This token is authenticated for a temporary user that is given the same role as the `OWNER` for the Service being called. This is an important detail, as the service will be connecting as the very role that created it (here it will be `tasty_app_admin_role`), so think of it as a service account type of user that is connecting. This is analogous to how the original solution worked, but in there we created a dedicated user that the service connected as.
 
-Once connected, the rest of the backend code is working the same, regardless if it is running in the SPCS environment or somewhere else, like a local testing enviroinment.
+Once connected, the rest of the backend code is working the same, regardless if it is running in the SPCS environment or somewhere else, like a local testing environment.
 
 
 <!-- ------------------------ -->
@@ -834,7 +834,7 @@ There are two areas that needs to be updated here to run in the new environment:
 - Authentication - by placing the service behind a public endpoint that forces users to login, it no longer makes sense to keep the login form in the client, the required authentication is already captured by the Snowflake OAuth login form
 - Routing from client to the backend API, we can no longer directly control the CORS directives for the services, and calls from the client are actually made directly from the users' browsers.
 
-The routing is something that changes somewhat significantly from the original solution. Instead of adding a CORS directive to the backend (e.g. allowing calls from another origin), we introduce a router service that takes calls from the public enpoint and _routes_ them to either the frontend service, or the backend service, allowing us to maintain a single public endpoint.
+The routing is something that changes somewhat significantly from the original solution. Instead of adding a CORS directive to the backend (e.g. allowing calls from another origin), we introduce a router service that takes calls from the public endpoint and _routes_ them to either the frontend service, or the backend service, allowing us to maintain a single public endpoint.
 
 > aside negative
 >
@@ -877,9 +877,9 @@ http {
 
 There are three routes in here, `/`, `/api` `/test`. The last one simply outputs debug information and can help to understand that the setup is correct (it should be removed when not testing out the services).
 
-The `/api` route means that anything prefixed with that get rewritten to remove the "`/api`" part and then passed forwrad to the backend service URL. For all other calls they should be forwarded directly to the frontend service URL (which should be running on the same service as the router, in a different container).
+The `/api` route means that anything prefixed with that gets rewritten to remove the "`/api`" part and then passed forward to the backend service URL. For all other calls they should be forwarded directly to the frontend service URL (which should be running on the same service as the router, in a different container).
 
-The `$FRONTEND_SERVICE` and `$BACKEND_SERVICE` variables allows us to dynamically replace these values when the Docker image is being used. If we look at the Dockerfile:
+The `$FRONTEND_SERVICE` and `$BACKEND_SERVICE` variables allow us to dynamically replace these values when the Docker image is being used. If we look at the Dockerfile:
 
 ```bash
 FROM nginx:alpine
@@ -906,7 +906,7 @@ The frontend code itself needs fewer changes to adapt to the new environment. Pr
 
 > aside negative
 >
-> The original React code is actually built on older in package dependencies. In order to keep this guide as similar to the original guide no changes to the React framework have been introduced, only minor changes are done as part of this guide. There are many ways to update the general React code to later standards, but this guide will focus on the core parts of connecting the services,
+> The original React code is actually built on older package dependencies. In order to keep this guide as similar to the original guide no changes to the React framework have been introduced, only minor changes are done as part of this guide. There are many ways to update the general React code to later standards, but this guide will focus on the core parts of connecting the services,
 
 In a commonly shared file `Utils.js` we can provide some methods that will help check how to communicate with the backend and to verify if the login button should be visible. 
 
@@ -1020,7 +1020,7 @@ const clientValidation = process.env.REACT_APP_CLIENT_VALIDATION;
     };
 ```
 
-When the `/login` page shows, this call is run and if the result it that a user context is returned then it navigates to the default route `/`. This all ensures that the same code runs both in the SPCS environment and in another hosting environment. By setting the `ENVIRONMENT` variable `REACT_APP_CLIENT_VALIDATION` to `Snowflake` when deploying this we ensure the method is called and evaluated.
+When the `/login` page shows, this call is run and if the result is that a user context is returned then it navigates to the default route `/`. This all ensures that the same code runs both in the SPCS environment and in another hosting environment. By setting the `ENVIRONMENT` variable `REACT_APP_CLIENT_VALIDATION` to `Snowflake` when deploying this we ensure the method is called and evaluated.
 
 Remember, the `/authorize` endpoint of the backend service should return a JWT access token containing the user name and franchise when called from an authenticated context in SPCS, like the following result:
 ```json
@@ -1064,7 +1064,7 @@ With those changes, the code should be ready to be Dockerized and then deployed 
 ## Containerize the Application
 Duration: 5
 
-No we can prepare the services for deployment, and we will do that by building Docker container images for each service to deploy.
+Now we can prepare the services for deployment, and we will do that by building Docker container images for each service to deploy.
 
 Ensure that you have Docker installed on you environment:
 
@@ -1075,7 +1075,7 @@ docker --version
 
 ### 7.1 Defining Dockerfiles for services
 
-Each service that we will spin up consists of one or more containers, and each container is build on a Docker image. 
+Each service that we will spin up consists of one or more containers, and each container is built on a Docker image. 
 
 Let's start with the Dockerfile for the backend service. In the `/backend/Dockerfile` we are exposing the port this service is exposed on. By putting it in as a variable `${PORT}` we can set it through the service definition.
 ```bash
@@ -1178,7 +1178,7 @@ The user then you will use to login to this Docker image repository should be a 
 ```bash
 # Snowflake user name
 export admin_user= <your user name>
-# login to the repo.  You'll need thisfor the push later.
+# login to the repo.  You'll need this for the push later.
 docker login ${repo_url} --username ${admin_user}
 ```
 Type in the password for that user when prompted.
@@ -1260,11 +1260,11 @@ $$
 ;
 GRANT USAGE ON SERVICE backend_service TO ROLE tasty_app_ext_role;
 ```
-This creates the backend service using the image `backend_service_image:tutorial` that we should now have pushed to the repository. Note how we can suppy overriding environment variables to the services.
+This creates the backend service using the image `backend_service_image:tutorial` that we should now have pushed to the repository. Note how we can supply overriding environment variables to the services.
 
 We also set this service to use the `tasty_app_backend_compute_pool` as the [COMPUTE POOL](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool) to run the service on. At the end we can set the scaling behavior of this service in the pool. In order to test this service we don't need any additional scaling setup here, but in a real scenario we may want to increase the number of instances available in case the load on the service goes up.
 
-Lastly we call `GRANT USAGE ON SERVICE` to allow the `tasty_app_ext_role` role and users with that role granted to access the service.
+Lastly we call `GRANT USAGE ON SERVICE` to allow the `tasty_app_ext_role` role and users with that role granted access to the service.
 
 We can then call `SHOW SERVICES` to look at the services created. In order to check the status of the newly created service we can call:
 ```sql
@@ -1336,7 +1336,7 @@ $$
 GRANT USAGE ON SERVICE frontend_service TO ROLE tasty_app_ext_role;
 ```
 
-In the same way we can here check the status of the service and read the logs. Note that there are two logs to read, one for each container in the service.
+In the same way we can check the status of the service and read the logs. Note that there are two logs to read, one for each container in the service.
 ```sql
 SELECT SYSTEM$GET_SERVICE_STATUS('frontend_service'); 
 CALL SYSTEM$GET_SERVICE_LOGS('frontend_service', '0', 'frontend', 50);
@@ -1362,16 +1362,16 @@ We are now finally ready to test the application in a browser. In order to do th
 SHOW ENDPOINTS IN SERVICE frontend_service;
 ```
 
-The `ingress_url` in the response is the public endpoint URL, it should look simlar to this, the first part is randomly generated for each enpoint and service:
+The `ingress_url` in the response is the public endpoint URL, it should look similar to this, the first part is randomly generated for each endpoint and service:
 
 ```bash
 <RANDOM>-<ACCOUNT NAME>.snowflakecomputing.app
 ```
 
-Now open up that URL in a browser. You will be prompted for a login, and here we can choose any on the users created earlier. You can use `user1` with password `password1`. Note that you will be forced to change this on first login.
+Now open up that URL in a browser. You will be prompted for a login, and here we can choose any of the users created earlier. You can use `user1` with password `password1`. Note that you will be forced to change this on first login.
 ![Tasty App UI](./assets/authenticating_with_snowservices_ingress.png)
 
-Once logged in, the application loads the authorization status, and then redirects the user to the loged in `Home` page. After a few moments the data is loaded also and the charts for the current franchsise (Franchise 1, if you logged in with user1) is shown. 
+Once logged in, the application loads the authorization status, and then redirects the user to the logged in `Home` page. After a few moments the data is loaded also and the charts for the current franchise (Franchise 1, if you logged in with user1) is shown. 
 
 ![Tasty App UI](./assets/tasty-app-ui.png)
 <!-- ------------------------ -->
@@ -1386,7 +1386,7 @@ Once we have tested the application we can tear down any resources that we have 
 - Warehouses
 - Image Repositories
 - Database and Schema
-- Secuity Integration (NOTE: this may be used by other services, you can only have one active per ACCOUNT)
+- Security Integration (NOTE: this may be used by other services, you can only have one active per ACCOUNT)
 - Roles
 - Users
 - Local Docker images
@@ -1452,5 +1452,5 @@ docker image prune --all
 >
 > Warning, the above removes _all_ unused Docker images. If you have other Docker images that you don't want to remove, then manually remove the images created in this guide using `docker image rm <IMAGE NAME>`.
 
-Good work! You have now successfully built, depoloyed and run a data application on Snowpark Container Services.
+Good work! You have now successfully built, deployed and run a data application on Snowpark Container Services.
 <!-- ------------------------ -->
