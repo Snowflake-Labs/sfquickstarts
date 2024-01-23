@@ -7,64 +7,66 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Intro to Machine Learning with Snowpark ML for Python
+# Intro to Machine Learning with Snowpark ML
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will explore what's new in Snowpark for Machine Learning. You will set up your Snowflake and Python environments and build an end to end ML workflow from feature engineering to model training and deployment using Snowpark ML.
+Through this quickstart guide, you will explore what's new in Snowpark for Machine Learning. You will set up your Snowflake and Python environments and build an end to end ML workflow from feature engineering to model training and batch inference using Snowpark ML.
 
 ### What is Snowpark?
 
 Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
 
-**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes a set of Snowpark ML APIs for more efficient ML modeling (GA soon) and ML operations (public preview soon).
+**Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
 
-**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
-![snowpark_diagram](assets/snowpark.png)
-
 ### What is Snowpark ML?
 
-[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (GA soon) for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview soon) for model deployment and management. 
+[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. With Snowpark ML, data scientists and ML engineers can use familiar Python frameworks for preprocessing, feature engineering, and training models that can be managed entirely in Snowflake without any data movement, silos or governance trade-offs. Snowpark ML has 2 components: Snowpark ML Modeling for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview) for model management and batch inference.
+
+![snowpark_ml_overview](assets/snowpark_ml_overview.png)
 
 This quickstart will focus on
-* Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution for faster and more intuitive model development.
-* Snowpark Model Registry, which provides scalable and secure deployment, management, and inference of ML models in Snowflake compute, including warehouses and Snowpark Container Services. 
+* Snowpark ML Modeling API, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
+* Snowpark Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin. 
 
-Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake’s scale and security features.
+Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
 
-**Preprocessing:** Improve performance and scalability with distributed, multi-node execution for common feature engineering functions
+**Feature Engineering and Preprocessing:** Improve performance and scalability with distributed execution for common scikit-learn preprocessing functions. 
 
-**Model Training:** Execute training for popular scikit-learn and xgboost models without manual creation of Stored Procedures or UDFs
+**Model Training:** Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization (public preview).
 
-![snowpark_ml_diagram](assets/what_is_snowpark_ml.png)
+![snowpark_ml_modeling_overview](assets/snowpark_ml_modeling_overview.png)
 
-**Model management and deployment:** Manage and deploy models and their metadata easily into Snowflake warehouses as UDFs, or Snowpark Container Services as Service endpoints for batch inference
+**Model Management and Batch Inference:** Manage several types of ML models created both within and outside Snowflake and execute batch inference.
 
-![model_registry_diagram](assets/model_registry.png)
+![snowpark_model_registry](assets/snowpark_model_registry.png)
 
 By letting you perform these tasks within Snowflake, snowpark-ml provides the following advantages:
 * Transform your data and train your models using popular Python ML frameworks such as scikit-learn, xgboost, and lightgbm without moving data out of Snowflake
-* Streamline model management and deployment with built-in versioning support and role-based access control catering to both Python and SQL users
+* Streamline model management and batch inference with built-in versioning support and role-based access control catering to both Python and SQL users
 * Keep your ML pipeline running within Snowflake's security and governance perimeters
 * Take advantage of the performance and scalability of Snowflake's scalable computing platform.
 
 The first batch of algorithms provided in Snowpark Python is based on [scikit-learn](https://scikit-learn.org/stable/) preprocessing transformations from [sklearn.preprocessing](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.preprocessing), as well as estimators that are compatible with those in the scikit-learn, xgboost, and lightgbm libraries.
 
-Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling) and [Snowpark Model Registry](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-model-registry)
+Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling) and [Snowpark Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops).
 
 ### What you will learn 
 - How to perform feature engineering and train a model in Snowflake with [Snowpark ML Modeling API](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling)
-- How to deploy a Snowpark ML model in Snowflake via [Snowpark Model Registry](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-model-registry) for model inference
+- How to manage models and execute batch inference in Snowflake via [Snowpark Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops) for model inference
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**
+    > aside positive
+    >
+    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python)
 - [Anaconda](https://www.anaconda.com/) installed
-- [Python 3.9](https://www.python.org/downloads/) installed
-    - Note that you will be creating a Python environment with 3.9 in the **Setup the Python Environment** step
+- [Python 3.11](https://www.python.org/downloads/) installed
+    - Note that you will be creating a Python environment with 3.11 in the **Setup the Python Environment** step
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.
 
@@ -73,13 +75,15 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
     - to load and clean data
     - to perform features transformations on the data using Snowpark ML transformers
     - to train an XGBoost ML model using Snowpark ML estimators
-    - to deploy the trained model in Snowflake using the Snowpark Model Registry
-
-![e2e_ml_workflow](assets/snowpark-ml-e2e.png)
+    - to log models and execute batch inference in Snowflake using the Snowpark Model Registry
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
 Duration: 2
+
+> aside positive
+>
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
 
 Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -109,6 +113,10 @@ These can also be found in the **setup.sql** file.
 <!-- ------------------------ -->
 ## Set up the Python environment
 Duration: 7
+
+> aside positive
+>
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
 
 ### Snowpark for Python and Snowpark ML
 
@@ -166,19 +174,19 @@ Duration: 10
 
 Open the following jupyter notebook and run each of the cells: [2_snowpark_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
 
-In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Preprocessing API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
+In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
 <!-- ------------------------ -->
-## ML Model Training and Deployment
+## ML Model Training and Inference
 Duration: 15
 
-Open the following jupyter notebook and run each of the cells: [3_snowpark_ml_model_training_deployment.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/3_snowpark_ml_model_training_deployment.ipynb)
+Open the following jupyter notebook and run each of the cells: [3_snowpark_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/3_snowpark_ml_model_training_inference.ipynb)
 
-In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling API. We also show how to do inference and deploy the model to a Snowflake Warehouse through the Snowpark Model Registry.
+In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling API. We also show how to execute batch inference through the Snowpark Model Registry.
 
 <!-- ------------------------ -->
 ## Conclusion
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowpark for Machine Learning through the introduction of Snowpark ML, the Python library and underlying infrastructure for data science and machine learning tasks. Now, you can run data preprocessing, feature engineering, model training, and integrated deployment in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowpark for Machine Learning through the introduction of Snowpark ML, the Python library and underlying infrastructure for data science and machine learning tasks. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
 
 For more information, check out the resources below:
 
