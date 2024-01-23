@@ -27,21 +27,36 @@ In case you are new to some of the technologies mentioned above, here’s a quic
 
 ### What is Snowpark?
 
-The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
+Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
 
-**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
+**Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
 
-**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
-![Snowpark](assets/snowpark.png)
-
 ### What is Snowpark ML?
 
-Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (in Public Preview) for model development and Snowpark ML Operations (in Private Preview) for model deployment.
+[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index?_fsi=g3LX4YOG) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. With Snowpark ML, data scientists and ML engineers can use familiar Python frameworks for preprocessing, feature engineering, and training models that can be managed entirely in Snowflake without any data movement, silos or governance trade-offs. Snowpark ML has 2 components: Snowpark ML Modeling for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview) for model management and batch inference.
 
-This quickstart will focus on the Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution in Snowflake.
+![Snowpark](assets/snowpark_ml.png)
+
+This quickstart will focus on
+
+- Snowpark ML Modeling API, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
+
+- Snowpark Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
+Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
+
+**Feature Engineering and Preprocessing** - Improve performance and scalability with distributed execution for common scikit-learn preprocessing functions.
+
+**Model Training** - Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization (public preview).
+
+![Snowpark](assets/snowpark_ml_modeling.png)
+
+**Model Management and Batch Inference** - Manage several types of ML models created both within and outside Snowflake and execute batch inference.
+
+![Snowpark](assets/snowpark_ml_arch.png)
 
 ### What is Streamlit?
 
