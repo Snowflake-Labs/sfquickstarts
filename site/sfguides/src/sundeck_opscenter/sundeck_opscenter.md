@@ -93,6 +93,10 @@ Once installation is complete, you will see a confirmation dialog, which will of
 
 Click "Configure" to complete the local setup of OpsCenter.
 
+> aside positive
+>
+> For more tips and information about the installation procedure see [OpsCenter FAQs](https://docs.sundeck.io/opscenter/faq/)
+
 ## Complete Setup
 Duration: 2
 
