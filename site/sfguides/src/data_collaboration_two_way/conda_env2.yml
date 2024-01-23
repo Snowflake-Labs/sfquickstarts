@@ -1,0 +1,16 @@
+name: snowpark-ml-lightgbm
+channels:
+  - https://repo.anaconda.com/pkgs/snowflake
+dependencies:
+  - python=3.11
+  - snowflake-snowpark-python
+  - pandas
+  - xgboost
+  - notebook
+  - scikit-learn
+  - lightgbm
+  - cachetools
+  - seaborn
+  - matplotlib
+  - pip:
+    - snowflake-ml-python

@@ -46,7 +46,7 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 - Consuming shared data via a Private Listing
 - Enriching shared data using a ML model
 - Sharing back enriched data to the original Provider account
-- Automating the above for new data
+- Automating the above data pipeline using Streams and Tasks
 
 <!-- ------------------------ -->
 ## Business Use Case and Context
@@ -90,9 +90,9 @@ Check your emails and follow the prompts to activate both the accounts. One will
 ## Provider Account (SnowBank) - Set Up
 Duration: 20
 
-In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our credit card default prediction data into our tables.
+In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading, and finally load our credit card default prediction data into our tables.
 
-In our scenario, this step represents SnowBank loading data from their source systems in to Snowflake, and creating datasets that will be shared with an external partner (Zamboni) which has been tasked with creating a machine learning model to predict defaults on new data. The cc_default_training_data dataset would be sent for the partner to train and test the model, and the cc_default_unscored_data would be new data sent to the partner to be scored and returned. We will create a third stage for illustrative purposes that will simulate newly arriving data, and how the process is automated. We will come back to this in a later step.
+In our business scenario, this step represents SnowBank loading data from their source systems in to Snowflake, and creating datasets that will be shared with an external partner (Zamboni) which has been tasked with creating a machine learning model to predict defaults on new data. The cc_default_training_data dataset would be sent for the partner to train and test the model, and the cc_default_unscored_data would be new data sent to the partner to be scored and returned. We will create a third stage for illustrative purposes that will simulate newly arriving data, and how the process is automated. We will come back to this in a later step.
 
 ### Initial Set Up
 
@@ -164,15 +164,9 @@ CREATE OR REPLACE TABLE cc_default_training_data
         )
       ));
 
-CREATE OR REPLACE TABLE cc_default_unscored_data
-  USING TEMPLATE (
-    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
-      FROM TABLE(
-        INFER_SCHEMA(
-          LOCATION=>'@quickstart_cc_default_unscored_data',
-          FILE_FORMAT=>'parquet_format'
-        )
-      ));
+-- Create below to be the template of the above (without the target column)
+CREATE OR REPLACE TABLE cc_default_unscored_data LIKE cc_default_training_data;
+ALTER TABLE cc_default_unscored_data DROP COLUMN "target";
 
 -- Create below to be the template of the above
 CREATE OR REPLACE TABLE cc_default_new_data LIKE cc_default_unscored_data;
@@ -242,7 +236,7 @@ CREATE OR REPLACE DATABASE scored_model;
 CREATE OR REPLACE SCHEMA scored_model;
 ```
 
-We need to get the account details to share with SnowBank, so they can set up a private listing with us, as we do not want anyone outside of our partnership to have access to the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
+We need to get the account details to share with SnowBank, so they can set up a Private Listing with us, as we do not want anyone outside of our partnership to have access to / discover the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
 
 A screenshot on how to find your account identifier from the Snowsight UI is shown below 
 ![Diagram](assets/account_indentifier_navigation.png)
@@ -280,7 +274,7 @@ Next we will create some warehouses to query the shared data and to train our mo
 
 ```SQL
   -- Change role to accountadmin
-USE ROLE accountadmin;
+USE ROLE ACCOUNTADMIN;
 
   -- Create a virtual warehouse for data exploration
 CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
@@ -431,7 +425,7 @@ def feature_transform(session, raw_table, target_table):
     feature_df = feature_df.natural_join(df_max)
     feature_df = feature_df.natural_join(df_last)
 
-    feature_df.write.save_as_table(target_table, mode="append")
+    feature_df.write.save_as_table(target_table, mode="overwrite")
     
     return "Success"
 $$;
@@ -537,8 +531,9 @@ CREATE OR REPLACE TABLE SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA LIKE CC_DE
 ```SQL
 CREATE OR REPLACE TASK CDC
     WAREHOUSE = 'QUERY_WH'
-    -- SCHEDULE = '5 minute'
-    -- We would add a schedule in production, but this is commented out to avoid accidental credit consumption
+    SCHEDULE = 'USING CRON 0 0 1 1 * UTC'
+    -- We would add a more realistic schedule in production, but this is set ton once a year to avoid accidental credit consumption
+    WHEN system$stream_has_data('CC_DEFAULT_DATA_STREAM')
 AS
 INSERT INTO SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA
 SELECT * exclude (metadata$row_id, metadata$action, metadata$isupdate) FROM CC_DEFAULT_DATA_STREAM
@@ -627,7 +622,7 @@ INSERT INTO DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA
 SELECT * FROM DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_NEW_DATA;
 ```
 
-In a fully automated scenario where the CDC task runs on a schedule, this is all we would need to do. The second account would recognise the newly incoming data and run the pipeline. We could imply run the following command and get our results.
+In a fully automated scenario where the CDC task runs on a schedule, this is all we would need to do. The second account would recognise the newly incoming data and run the pipeline. 
 
 We have not run ours on a schedule so we can step through what is happening. However the principle is the same. Let's switch over to the Zamboni account and see it in action.
 
@@ -635,9 +630,39 @@ We have not run ours on a schedule so we can step through what is happening. How
 ## Consumer Account (Zamoboni) -  Manually Inspect Automated Pipeline
 Duration: 15
 
-In production, this step would most likely be an automated ingestion pipeline form a source system. However, for illustrative purposes, we will run the following query to update the table.
+In production, this step would most likely be an automated ingestion pipeline form a source system. However for this example we have set the schedule to once a year to avoind unnecessary credit consumption
 
+First, lets check if our stream has picked up the changes in our shared table
 
+```SQL
+SELECT system$stream_has_data('CC_DEFAULT_DATA_STREAM');
+```
+
+We should see TRUE. Lets run the following command to see exactly what has changed
+
+```SQL
+SELECT * exclude (metadata$row_id, metadata$action, metadata$isupdate) FROM CC_DEFAULT_DATA_STREAM;
+```
+
+Since the task CDC has system$stream_has_data('CC_DEFAULT_DATA_STREAM') as its predicate, this would kick off when checked. Since we do not want to wait a year for this, lets execute it immediately by running the following command.
+
+```SQL
+EXECUTE TASK CDC;
+```
+
+We can see the progress of the task by running the following
+
+```SQL
+select *
+  from table(information_schema.task_history())
+  order by scheduled_time;
+```
+
+To recap, the updated data has now updated the stream. This will then execute the first task to update the temporary table as an input for the feature engineering. A second dependant task executes after this to perform the feature engineering. This table is overwritten each time to avoid duplicates. Thereafter, the next task is triggered which would invoke our model and score the data. This new scored data would be appended to the shared table, and automatically shared back to the original provider.
+
+<!-- ------------------------ -->
+## Inspect Newly Scored Data
+Duration: 5
 
 Test the new data is there by running the following query in a worksheet.
 
@@ -656,8 +681,6 @@ FROM
   SCORED_DATA.SCORED_MODEL.SCORED_TABLE
 WHERE "customer_ID" = 'new_customer_2';
 ```
-
-This updated data has now updated the stream, which would be picked up by the consumer. This will then execute the first task to undertake feature engineering, and then a second dependant task which would invoke our model and score the data. This new scored data would be appended to the shared table, and automatically shared back to the original provider.
 
 <!-- ------------------------ -->
 ## Wrap Up and Clean Up
@@ -694,12 +717,4 @@ DROP SHARE DATA_SHARING_DEMO;
 DROP DATABASE DATA_SHARING_DEMO CASCADE;
 DROP DATABASE SCORED_DATA;
 DROP WAREHOUSE QUERY_WH;
-```
-
-If you want to see the status of your tasks, you can run the following query
-
-```SQL
-select *
-  from table(information_schema.task_history())
-  order by scheduled_time;
 ```
