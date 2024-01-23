@@ -13,15 +13,24 @@ authors: Matt Marzillo, Dan Hunt
 
 Duration: 5
 
+In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Amazon Bedrock that will generate a personalized marketing message to customers to cross-sell products.
+
+In summary this is what you will do:
+- Set up environments in both Snowflake and AWS.
+- Create a function that leverages Snowpark External Access to make a call to Amazon Bedrock.
+- Create a Streamlit app that leverages the above function to generate responses using data from Snowflake and prompts.
+
+### What is Generative AI?
 Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.
 
+### What is Amazon Bedrock?
 Amazon Bedrock is a fully managed service that offers a choice of high-performing foundation models via a single API, along with a broad set of capabilities to build generative AI applications. Amazon Bedrock is a managed service from Amazon Web Services designed to simplify the deployment, management, and scaling of Kubernetes clusters. It integrates with AWS's ecosystem to provide robust security, networking, and operational features, enabling users to focus more on their applications rather than on managing infrastructure. Bedrock aims to offer a seamless and efficient way to run containerized applications at scale, leveraging AWS's cloud capabilities for improved performance and reliability.	
 
+### What is Snowflake?
 Snowflake is a cloud-based data warehousing solution that allows businesses to store and analyze large volumes of data efficiently. It separates storage and compute functionalities, enabling users to scale resources independently and pay only for what they use. Snowflake supports a wide range of data workloads, including data warehousing, data lakes, and data engineering, and offers robust data sharing capabilities across different cloud platforms.
 
+### What is Streamlit?
 Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.
-
-In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Amazon Bedrock that will generate a personalized marketing message to customers to cross-sell products.
 
 ### Pre-requisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
@@ -37,10 +46,6 @@ Familiarity with the Python programming language.
 We will build an efficient architecture all within Snowflake that will access purchase history in Snowflake and pass that data to a Bedrock model with context to generate a message that can be used in a marketing campaign. The architecture will look like this
 
 ![](assets/architecture.png)
-
-**Authors of this quickstart:** Matt Marzillo and Dan Hunt
-
-**Key contributor:** Frank Dallezotte AWS ISV SA
 
 <!-- ------------------------ -->
 ## Use Case
@@ -516,8 +521,14 @@ Duration: 5
 ### What we covered
 After setting up our AWS and Snowflake and envrionments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to different Bedrock models and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and Bedrock!
 
+### What You Learned
 
-### Additional resources 
+- How to set up a Snowflake and AWS environment to integrate the two platforms.
+- How to build a Snowpark External Access integration to call Amazon Bedrock.
+- How to build a Streamlit app that calls Amazon Bedrock
+
+
+### Related resources 
 - [RBAC with External Services](https://www.youtube.com/watch?v=fALb8SosA_U)
 
 - [Prompting](https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md)
