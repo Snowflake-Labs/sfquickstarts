@@ -78,8 +78,7 @@ to SSH if your instance is in a private subnet
 Duration: 30
 
 #### 1. Create an MSK cluster and an EC2 instance
-The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure
-the communications between the MSK cluster and clients are secure. 
+The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure the communications between the MSK cluster and clients are secure. 
 
 First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/msk-CFT-for-SE-Sandbox.json)
 to launch a provisioned MSK cluster. Note the default AWS region is `us-west-2 (Oregon)`, feel free to select a region you prefer to deploy the environment.
@@ -88,7 +87,9 @@ Click `Next` at the `Create stack` page.
 Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `Subnet1` and `Subnet2`, in the drop-down menu, pick two different subnets respectively, they can be either public or private subnets depending on the network layout of your VPC. Please note that if
 you plan to use [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) later, you should choose private subnets here. 
 For `MSKSecurityGroupId`, we recommend
-using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC, if you do not have the default security group, [create one](https://docs.aws.amazon.com/vpc/latest/userguide/default-security-group.html) on your own before moving forward. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
+using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC. If you are using your security groups, please ensure that Outbound is fully open to the internet as the jumpbox will require access to external URLs, and inbound is open to all ports inside the subnet or VPC, for example, use the VPC range plus all ports. 
+
+Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
 `Next`. 
 
 See below sample screen capture for reference.
@@ -182,7 +183,7 @@ sudo yum clean all
 sudo yum -y install openssl vim-common java-1.8.0-openjdk-devel.x86_64 gzip tar jq python3-pip
 wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
 tar xvfz kafka_2.12-2.8.1.tgz -C $pwd
-wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.1-all.jar
+wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.7/aws-msk-iam-auth-1.1.7-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.7-all.jar
 rm -rf $pwd/kafka_2.12-2.8.1.tgz
 cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
@@ -193,8 +194,8 @@ wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.0.
 #Snowpipe streaming SDK
 wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/2.0.2/snowflake-ingest-sdk-2.0.2.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-2.0.2.jar
 wget https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/3.13.15/snowflake-jdbc-3.13.15.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-jdbc-3.13.15.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.2.3/bc-fips-1.0.2.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.2.3.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.7/bcpkix-fips-1.0.7.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.7.jar
 
 ```
 
@@ -330,6 +331,7 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
 GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
 GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
 GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO ROLE SYSADMIN;
 
 -- SET DEFAULTS
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
@@ -378,9 +380,9 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 To install SnowSQL. Execute the following commands on the Linux Session Manager console:
 ```commandline
-curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
+curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.27-linux_x86_64.bash -o /tmp/snowsql-1.2.27-linux_x86_64.bash
 echo -e "~/bin \n y" > /tmp/ans
-bash /tmp/snowsql-1.2.24-linux_x86_64.bash < /tmp/ans
+bash /tmp/snowsql-1.2.27-linux_x86_64.bash < /tmp/ans
 
 ```
 See below example screenshot:
@@ -471,14 +473,14 @@ dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorMSK.properties
 name=snowpipeStreaming
 connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
-tasks.max=4
+tasks.max=8
 topics=streaming
 snowflake.private.key.passphrase=$key_pass
 snowflake.database.name=MSK_STREAMING_DB
 snowflake.schema.name=MSK_STREAMING_SCHEMA
 snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
 buffer.count.records=10000
-buffer.flush.time=5
+buffer.flush.time=10
 buffer.size.bytes=20000000
 snowflake.url.name=$clstr_url
 snowflake.user.name=$user
