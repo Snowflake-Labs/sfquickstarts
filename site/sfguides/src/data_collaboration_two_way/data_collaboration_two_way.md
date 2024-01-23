@@ -660,11 +660,13 @@ select *
 
 To recap, the updated data has now updated the stream. This will then execute the first task to update the temporary table as an input for the feature engineering. A second dependant task executes after this to perform the feature engineering. This table is overwritten each time to avoid duplicates. Thereafter, the next task is triggered which would invoke our model and score the data. This new scored data would be appended to the shared table, and automatically shared back to the original provider.
 
+Lets switch back to SnowBank and see if we can see the newly scored data.
+
 <!-- ------------------------ -->
 ## Inspect Newly Scored Data
 Duration: 5
 
-Test the new data is there by running the following query in a worksheet.
+Open up a SQL worksheet in SnowBank and test the new data is there by running the following query in a worksheet.
 
 ```SQL
 SELECT
@@ -682,9 +684,23 @@ FROM
 WHERE "customer_ID" = 'new_customer_2';
 ```
 
+We should see from the results that the newly scored data is in our Snowflake Account.
+
 <!-- ------------------------ -->
-## Wrap Up and Clean Up
-Duration: 2
+## Wrap Up and Summary
+Duration: 5
+
+From this quickstart, we can see how we can create an end-to-end automated pipeline between two Snowflake accounts seamlessly. We were able to:
+- Share live data between 2 accounts
+- Etc.
+
+From a business point of view, ...
+
+The next Quickstart in this series extends on this idea by leveraging our Native Apps framework.
+
+<!-- ------------------------ -->
+## Clean Up
+Duration: 10
 
 Open up the Zamoboni Account and [unpublish the Listing](https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing). You can do this by navigating to Data > Provider Studio > Listings, and select the listing. A screenshot is below ![Diagram](assets/delist_navigation.png)
 
