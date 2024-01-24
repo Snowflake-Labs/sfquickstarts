@@ -236,7 +236,7 @@ USE SCHEMA DEMO.DT_DEMO;
 
 CREATE OR REPLACE DYNAMIC TABLE customer_sales_data_history
     LAG='DOWNSTREAM'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=COMPUTE_WH
 AS
 select 
     s.custid as customer_id,
@@ -265,7 +265,7 @@ Now, let's combine these results with the product table and create a SCD TYPE 2 
 ```
 CREATE OR REPLACE DYNAMIC TABLE salesreport
     LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=COMPUTE_WH
 AS
     Select
         t1.customer_id,
@@ -366,7 +366,7 @@ This function computes the cumulative total and can be seamlessly incorporated i
 
 CREATE OR REPLACE DYNAMIC TABLE cumulative_purchase
     LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=COMPUTE_WH
 AS
     select 
         month(creationtime) monthNum,
@@ -402,7 +402,7 @@ USE SCHEMA DEMO.DT_DEMO;
 
 CREATE OR REPLACE DYNAMIC TABLE PROD_INV_ALERT
     LAG = '1 MINUTE'
-    WAREHOUSE=LAB_S_WH
+    WAREHOUSE=COMPUTE_WH
 AS
     SELECT 
         S.PRODUCT_ID, 
@@ -440,7 +440,7 @@ CREATE NOTIFICATION INTEGRATION IF NOT EXISTS
 ;
 
 CREATE OR REPLACE ALERT alert_low_inv
-  WAREHOUSE = my_warehouse
+  WAREHOUSE = COMPUTE_WH
   SCHEDULE = '30 MINUTE'
   IF (EXISTS (
       SELECT *
