@@ -367,8 +367,15 @@ Additionally, execution of each `Work Item` includes logging data like start dat
 to internal connector tables, which are then used for statistics purposes.
 
 ### Viewing statistics
-The daily use screen contains a chart with the information about recent ingestion. The data is based on the internal connector view called `AGGREGATED_CONNECTOR_STUTS`. 
-The view itself aggregates the data by hour, but it can be always aggregated by wider timeframes.
+The `Home` screen contains statistics from the past ingestion runs. The data is based on the view called `PUBLIC.AGGREGATED_CONNECTOR_STATS`.
+The view aggregates the number of ingested rows based on the hour of the day when it was ingested. 
+The data from this view can be retrieved using worksheet and that way it can be aggregated by a time window bigger than an hour.
+
+There is another view that is available through the worksheet. It is called `PUBLIC.CONNECTOR_STATS`. 
+Using this data you can see status, start and end date, average rows ingested per seconds and some other information regarding ingestion.
+
+The `Home` screen also contains a `Sync status` indicator. That way user can quickly see when was the last successful ingestion.
+This indicator will be in one of the following states: `PAUSED`, `LAST SYNCED x TIME AGO`, `SYNCING DATA`, `NOT SYNCING`.
 
 ### Viewing ingested data
 The ingested data is not visible in the streamlit ui. 
