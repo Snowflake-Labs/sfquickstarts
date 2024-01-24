@@ -70,16 +70,18 @@ deploy and installation convenience scripts, which will be described in the next
 
 ### Connectors Native SDK Java test
 This directory contains source code of a helper library used in unit tests, for example objects to mock particular components and custom assertions.
-It allows to write unit test more easily. Those files are not used for the deployment and are here just for the development and testing purposes.
+Files inside this directory are not used when deploying an application.
 
 ### Connectors Native SDK Java integration tests
 This directory contains the integration tests of the application using Connectors Native SDK Java. 
-Those tests are performing whole process of building and deploying a simple application to Snowflake and then automatically going through the whole setup process.
-Because of the nature of those tests they require Snowflake credentials and need some time to finish.
+Those tests are performing whole process of building and deploying a simple application 
+to Snowflake and then automatically going through the main functionalities of the application.
+Because those tests need to be executed using actual Snowflake, they require credentials to be configured. 
+Furthermore, those tests are heavy and time-consuming.
 
 ### Example Native SDK app
-This application is only used by the integration tests. It does not have streamlit sources and contains no custom code. 
-It is just an application built from Connectors Native SDK Java sources exclusively.
+This directory contains a simple application used by the integration tests. It is similar to the `Example Java GitHub connector`,
+but it does not contain any Streamlit or GitHub specific code. It is basically an application consisting of pure Connectors Native SDK Java.
 
 ## Build and publish locally the sdk code
 Duration: 2
