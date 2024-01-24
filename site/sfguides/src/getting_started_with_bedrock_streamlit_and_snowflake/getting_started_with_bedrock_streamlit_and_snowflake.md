@@ -386,7 +386,7 @@ Prompt engineering for a language model involves crafting your questions or prom
 
 Let’s look at how we can experiment and iterate on the prompt that we provided to the LLM function in Streamlit. Go back to the previous step and test out different prompt strategies to see if you can improve the accuracy of the response.
 
-Consider the above concepts and also consider this pointed guide to prompting: https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md
+Consider the above concepts and also consider this pointed [guide to prompting](https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md)
 
 (it is required that you try the prompt in principal #6 🙂)
 
