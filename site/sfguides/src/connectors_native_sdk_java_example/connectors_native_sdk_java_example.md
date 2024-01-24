@@ -42,7 +42,7 @@ Duration: 3
 - Configure `snowsql` to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
 - 
 [//]: # (TODO add link to repo, add path where to go)
-- Clone the ... repository, and go to ... directory
+- Clone the ... repository
 
 ## Project structure
 Duration: 6
@@ -69,7 +69,7 @@ Other files in the `example-java-github-connector/` directory are gradle related
 deploy and installation convenience scripts, which will be described in the next step of this tutorial.
 
 ### Connectors Native SDK Java test
-This directory contains source code of a helper library used in unit tests to mock some of the components.
+This directory contains source code of a helper library used in unit tests, for example objects to mock particular components and custom assertions.
 It allows to write unit test more easily. Those files are not used for the deployment and are here just for the development and testing purposes.
 
 ### Connectors Native SDK Java integration tests
@@ -343,22 +343,26 @@ This part will explain:
 - how to pause and resume connector
 
 ### Configuring resources
-To configure resources got to the `Data Sync` tab. 
-Usually there should be the list of the already configured resources, but right now it should be empty.
-To configure resource press the `Add resource` button, this should display a popup (or not).
-Input the organisation name and repository name of the GitHub repository you wish to get the data from in the designated fields.
+To configure resources got to the `Data Sync` tab. This tab displays a list of the repositories already configured for ingestion.
+When opened for the first time the list should be empty.
+To configure a resource type the organisation and repository names in the designated fields, then press `Queue ingestion` button.
+
 For example:
 
-By default, newly added resource is disabled (or not). It has to be enabled manually. 
-Each resource can be enabled and disabled individually, but all of them will follow a global schedule for processing.
+The definition for a new resource will be saved, and it will be picked up by the scheduler according to the global schedule.
 
 [//]: # (todo update when the ui is done)
 
 ### Ingestion process
-Ingestion is managed by a scheduler task which adds the resources to the dispatcher queue according to the global schedule.
-Items from that queue are then spread among the workers that perform actual ingestion. 
-This connector fetches all the data on every run, saves completely new records and updates old records.
-The ingested data contains issues, pull requests and commits from the specified repository.
+Ingestion process is handled using a `Scheduler Task` and `Task Reactor` components. 
+The scheduler picks up the defined resources according to the global schedule and submits them as `Work Items` to the dispatcher queue.
+Then task reactor component called `Dispatcher` picks them up and splits between the defined number of workers. 
+Each worker performs the actual ingestion for every item from the queue that it picks up.
+Singular ingestion of a resource consists of fetching the data from the endpoints in the GitHub API 
+and then saving them in the designated tables in the sink database.
+For this example purposes all the data is fetched in every run, which results in new records being added to the table and old records being updated.
+Additionally, execution of each `Work Item` includes logging data like start date, end date, number of ingested rows, status etc.
+to internal connector tables, which are then used for statistics purposes.
 
 ### Viewing statistics
 The daily use screen contains a chart with the information about recent ingestion. The data is based on the internal connector view called `AGGREGATED_CONNECTOR_STUTS`. 
@@ -372,13 +376,12 @@ The structure of tables is as follows:
 [//]: # (todo after ingestion is implemented)
 
 ### Pausing and resuming
-The connector can be paused and resumed, whenever desired. To do so just click the `pause` button in the daily use screen. 
-When pausing is triggered the underlying scheduling and work execution mechanism is disabled. 
-It won't happen instantaneously, because currently processing tasks must finish. 
-However, nothing new will be triggered during this transition period.
+The connector can be paused and resumed, whenever desired. To do so just click the `Pause` button in the daily use screen. 
+When pausing is triggered the underlying scheduling and work execution mechanism is disabled. However, the currently processing tasks
+will finish before the connector actually goes into `PAUSED` state. Because of that, it can take some time before it happens.
 
-To resume the connector you just have to press `resume` button that will be displayed in place of the `pause` button. 
-This will resume the scheduling process which will start triggering new workloads.
+To resume the connector you just have to press `Resume` button that will be displayed in place of the `Pause` button. 
+This will resume the scheduling task which will start queueing new `Work Items`.
 
 ## Customization
 Duration: 2
