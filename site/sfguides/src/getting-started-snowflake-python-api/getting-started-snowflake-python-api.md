@@ -24,8 +24,8 @@ The Snowflake Python API allows you to manage Snowflake using Python. Using the 
 - How to install the Snowflake Python API library
 - How to create a Root object to use the API
 - How to create tables, schemas, and warehouses using the API
-- (Coming Soon) How to create and manage tasks using the API
-- (Coming Soon) How to use Snowpark Container Services with the Snowflake Python API
+- How to create and manage tasks using the API
+- How to use Snowpark Container Services with the Snowflake Python API
 
 ### What You’ll Need 
 - A Snowflake account ([trial](https://signup.snowflake.com/), or otherwise)

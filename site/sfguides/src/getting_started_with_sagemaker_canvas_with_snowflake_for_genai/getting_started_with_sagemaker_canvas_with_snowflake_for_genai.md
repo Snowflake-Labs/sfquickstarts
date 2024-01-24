@@ -174,7 +174,6 @@ You can see how valuable chat with data is for doing some exploratory analysis v
 Lastly, let's type "can you detect anomalies in the data" and after several seconds you will get a prompt to add this analysis. Click "add to analysis" and after ~1 minute it will be added to the analysis. Now click on the data flow in the breadcrumbs at the top and click into the Data Quality and Insights Report that has been added to the data flow. You can see the new insights report complete with anomaly detection that has been added to your data flow!
 ![](assets/anomaly.png)
 
-
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
 Duration: 5
