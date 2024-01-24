@@ -19,7 +19,7 @@ Our example will be using a fictional food truck franchise website, Tasty Bytes.
 
 The Processing and User Interface Layers will be built using Node.js. The dataset is an orders history for Tasty Bytes. 
 
-The application itself will be built using containers and deployed to Snowflake.  Snowpark Container Services(SPCS) allows the running of containerized workloads directly within Snowflake, ensuring that data doesn’t need to be moved out of the Snowflake environment for processing. 
+The application itself will be built using containers and deployed to Snowflake. Snowpark Container Services (SPCS) allows the running of containerized workloads directly within Snowflake, ensuring that data doesn’t need to be moved out of the Snowflake environment for processing. 
 
 This lab builds directly on the same code and solution as the [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) quickstart, for in depth walk-through of the use case and the data, and how the application is built using Node Express and React you can review each step in that guide as well. 
 
@@ -31,6 +31,11 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 - Intermediate knowledge of Node.js and React JS
 - Intermediate knowledge of containerised applications
 
+> aside positive
+> **Snowpark Container Services availability**
+> 
+>  Snowpark Container Services is currently in a *Public Preview* and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions, or [create a Trial account](https://medium.com/r/?url=https%3A%2F%2Fsignup.snowflake.com%2F) in one of them.
+
 ### What You’ll Learn 
 - How to configure and build a custom API Powered by Snowflake, written in Node.js
 - How to configure and build a custom frontend website to communicate with the API, written in React and Node.js
@@ -41,74 +46,23 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 - [VSCode](https://code.visualstudio.com/download) Installed
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) Installed
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) Installed
+- [NodeJS](https://nodejs.org/en/download/) (Optional) Installed for local testing
+- [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Optional) Installed for local testing
 
 ### What You’ll Build 
-- API Powered by Snowflake built in Node.js
-- React JS Web Application that connects to that API
-
-> aside positive
-> **Installing Using NVM**
-> 
->  Node Version Manager provides the ability to have multiple versions of Node installed on your local environment.  This can be helpful so that you can complete this lab without impacting any existing Node setup that you have on your machine. 
-> NVM can be found here: [https://github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm)
-> 
-> To run this lab you will want to utilize Node 18.16.0 which can be installed using the following command after NVM has been installed: `nvm install 18.16.0`
-
-<!-- ------------------------ -->
-
-## What we will build
-Duration: 2
-
-### Overview
-Before we start building the solution, let's go through the different parts in the solution that we will build.
+In this quickstart we will build and deploy a Data Application running on Snowpark Container Services.
 
 ![Service Overview](./assets/build-a-data-app-spcs-overview.png)
 
 The solution consists of two services hosted on Snowpark Container Services:
-- The backend service - which hosts the API built on Node Express
-- The frontend service - which hosts the React based frontend, and a router service in NGINX that allows calls from the browser-based React frontend to be routed to the backend services also.
+- **The backend service** - which hosts the API built on Node Express - API Powered by Snowflake built in Node.js
+- **The frontend service** - which hosts the React JS Web Application that connects to that API, and a router service in NGINX that allows calls from the browser-based React frontend to be routed to the backend services also.
 
 Without the router part of the frontend service, CORS would actually prevent the browser from talking to the backend service, even if we opened up a public endpoint for it. This is due to the fact that we cannot add our own headers to requests coming to the service endpoints - for security reasons Snowpark Container Services networking strips out any headers (but adds a few useful ones that we will use for authentication later).
 
-### Step 3 - Setting up the data
-
-This first part of the quickstart will help you set up the data for the application. This is exactly the same as the data used for the quickstart [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake), so if you have run through it you will be familiar with it.
-
-> aside negative
-> The sample data for the quickstart that we load will only cover the dates between 2022-01-01 to 2022-10-31. Don't be alarmed if a query on a data later or earlier than that returns an empty response
-
-### Step 4 - Setup Snowflake and prepare Snowpark Container Services environment
-
-In this step we set up the required primitives in Snowflake to host and run services. Much of these steps are required for any SPCS solution and can be reused throughout other solutions.
-
-Here we create the objects for
-- Docker image repositories
-- Compute pools that the services will be running on
-- Users, roles and permissions needed to create and also to run and access the services
-
-### Step 5 - Adapting the backend and frontend code
-
-In this step we look at how the code for both the backend service and the frontend service needs to be adapted to take advantage of running in Snowpark Container Services.
-
-Mainly it is the authentication model that benefits from changing. SPCS introduces a new ingress authentication to any public endpoint exposed, and we can use that to authenticate the users login in to the application.
-
-The way that the backend connects to and authenticates itself to the rest of Snowflake when running inside a containerized service also changes. A pre-configured authentication token is supplied to services running on SPCS, and that can be used to connect to the data
-
-### Step 6 - Building and containerizing the application
-
-Once the code is updated we can build the container images and then push them to the Docker image repository we created earlier. Once the images are build and pushed they can be used to spin up the services
-
-### Step 7 - Create the services and deploy the solution
-
-We are now ready to create the services and spin them up. We here look at how to specify the service definitions and to connect the services.
-
-### Step 8 - Clean up
-
-We tear down any resource created throughout the labs.
 
 <!-- ------------------------ -->
+
 
 ## Set up the Data
 Duration: 5
@@ -116,8 +70,12 @@ Duration: 5
 ### Overview
 In this part of the lab we'll set up our Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our Tasty Bytes Food Truck orders data into our ORDERS table and run a few queries to get familiar with the data.
 
+> aside negative
+>
+> The sample data for the quickstart that we load will only cover the dates between 2022-01-01 to 2022-10-31. Don't be alarmed if a query on a data later or earlier than that returns an empty response
 
-### Step 3.1 Initial Snowflake Setup
+
+### Step 2.1 Initial Snowflake Setup
 
 For this part of the lab we will want to ensure we run all steps as the ACCOUNTADMIN role 
 ```sql
@@ -138,7 +96,7 @@ create or replace warehouse query_wh with
 	scaling_policy = 'standard';
 ```
 
-### Step 3.2 Load Data
+### Step 2.2 Load Data
 
 Next we will create a database and schema that will house the tables that store our application data.
 ```sql
@@ -211,7 +169,7 @@ Once we've created both the Virtual Warehouse we want to use for loading data an
 ```
 
 
-### Step 3.3 Explore Data
+### Step 2.3 Explore Data
 Now that we've loaded our data into the ORDERS table we can run a few queries to get familiar with it - but first we will want to change the Virtual Warehouse we're using from the `LOAD_WH` back to the `QUERY_WH` created earlier in the lab. 
 ```sql
 --change our Virtual Warehouse context to use our query_wh
@@ -238,7 +196,7 @@ from orders
 group by month(order_ts), monthname(order_ts)
 order by month(order_ts);
 ```
-### Step 2.3 Further explore the Data
+### Step 2.4 Further explore the Data
 
 To understand and explore the data even more, you can look through the [Quickstart for Building a Data Application - Lab 2: Queries](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake/#2) that offers a number of steps to explore it.
 
@@ -396,7 +354,7 @@ Now that we've created our database, loaded data and developed the queries neede
 - [Image Repositories](https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-registry-repository) that can hold docker images used by the services we create
 - [Services Ingress Security Integration](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services?utm_source=legacy&utm_medium=serp&utm_term=snowservices_ingress#ingress-using-a-service-from-outside-snowflake)
 
-### Step 4.1 Creating roles, permissions and virtual warehouse for running the application
+### Step 3.1 Creating roles, permissions and virtual warehouse for running the application
 
 Much like we created separate Virtual Warehouses for exploring and loading data, we will create one specifically for our service to use when executing queries on Snowflake.
 
@@ -425,7 +383,7 @@ INITIALLY_SUSPENDED=false;
 GRANT ALL ON WAREHOUSE tasty_app_warehouse TO ROLE tasty_app_admin_role;
 ```
 
-### Step 4.2 Creating Compute Pools for service to run on
+### Step 3.2 Creating Compute Pools for service to run on
 
 The Compute Pools are used to run the services. We can create different pools for different purposes. In this example we create two different pools to run the services, one for the backend and one for the frontend. We could technically allow both services to use the same Compute Pool, in fact for this demo it would work very well, but in many scenarios the scaling requirements for the frontend and a backend may be different. Here we can see that the backend is given a pool of compute nodes that is slightly more scaled up than the nodes for the compute pool used for the frontend. There are multiple options for choosing the right instance family for a Compute Pool [Create Compute Pool](https://docs.snowflake.com/sql-reference/sql/create-compute-pool). This would be even more relevant if the backend needed to do some more compute heavy work, even to the point where it needed to have GPU enabled nodes.
 ```sql
@@ -446,7 +404,7 @@ GRANT USAGE ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_ad
 GRANT MONITOR ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_admin_role;
 ```
 
-### Step 4.3 Create security integration for public web access
+### Step 3.3 Create security integration for public web access
 
 To allow external connections to public endpoints we will create for each service later, we add a `SECURITY INTEGRATION` that is dedicated to authentication of users coming from the public web. [Ingress: Using a service from outside Snowflake](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services?utm_source=legacy&utm_medium=serp&utm_term=snowservices_ingress#ingress-using-a-service-from-outside-snowflake)
 ```sql
@@ -465,7 +423,7 @@ The `tasty_app_admin_role` role must also be given the permission to bind servic
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE tasty_app_admin_role;
 ```
 
-### Step 4.4 Set up docker image repositories and stage for service specifications
+### Step 3.4 Set up docker image repositories and stage for service specifications
 
 We can now ensure that the current user can use the admin role.
 ```sql 
@@ -491,7 +449,7 @@ CREATE STAGE tasty_app_stage DIRECTORY = ( ENABLE = true );
 ```
 
 
-### Step 4.5 Create external users role and users for the external access
+### Step 3.5 Create external users role and users for the external access
 
 In order to allow the application users to access the application we can create dedicated `USERS` for each user. In the guide [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) users were actually stored in a `USERS` table that was created, where hashed passwords were stored and could be used to check the login from the frontend. Create that table by running the following SQL:
 
@@ -561,7 +519,7 @@ git clone --branch spcs https://github.com/Snowflake-Labs/sfguide-tasty-bytes-ze
 
 Change directory to the `zero-to-app-spcs/` directory that is created in the clone above. You should now have a directory with a `/src` subdirectory that contains `/backend` and `/frontend` directories. 
 
-### The backend service
+### Step 4.1 The backend service
 Let's start with looking at the backend code. Open a terminal and go to the `/src/backend` directory.
 
 First ensure that you have Docker installed on you environment:
@@ -623,7 +581,7 @@ This should return the following JSON response:
 }
 ```
 
-### Authenticating and authorizing service users
+### Step 4.2 Authenticating and authorizing service users
 
 Currently there is no authentication of the user calling this endpoint. We will change that to take advantage of the mechanism built into Snowflake Container Services.
 
@@ -790,7 +748,7 @@ docker rm backend-backend_service-1
 docker image rm backend-backend_service
 ```
 
-### Connecting to Snowflake data
+### Step 4.3 Connecting to Snowflake data
 
 With this update, we can now look at how the backend service can access the data in the Snowflake tables and views. In the self hosted version of of the code (as in the [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake)) we use a key pair authentication schema to connect the service to Snowflake. For a service running on Snowpark Container Services, we can benefit from the service already running on Snowflake and we can use a provided and pre-loaded authentication model based on OAuth. This is available for every service running on SPCS.
 
@@ -843,7 +801,7 @@ The routing is something that changes somewhat significantly from the original s
 The router ensures that calls made to routes starting with `/api` are forwarded to the `backend-service`, whereas any other calls `/*` are routed to the frontend container running in the same service as the router:
 ![Routing](./assets/frontend-routing.png)
 
-### Step 6.1 Building the router
+### Step 5.1 Building the router
 
 The router is a simple service based on [*NGINX*](https://www.nginx.com/). The code is very simple and serves a NGINX server that is given a configuration that defines the different routes, open `/src/frontend/router/nginx.conf.template`:
 
@@ -898,7 +856,7 @@ CMD ["/bin/sh" , "-c" , "envsubst '$FRONTEND_SERVICE $BACKEND_SERVICE' < /nginx.
 
 The last line substitutes these variables for values taken from the `environment` it is running in, before copying the contents into the `nginx.conf` file and starting up the server.
 
-### Step 6.2 Updating the frontend code
+### Step 5.2 Updating the frontend code
 
 The frontend code itself needs fewer changes to adapt to the new environment. Primarily here we are looking at removing the actual login form and user management in favor of using the built in login capability.
 
@@ -1073,7 +1031,7 @@ docker --version
 -- Docker version 24.0.6, build ed223bc
 ```
 
-### 7.1 Defining Dockerfiles for services
+### Step 6.1 Defining Dockerfiles for services
 
 Each service that we will spin up consists of one or more containers, and each container is built on a Docker image. 
 
@@ -1153,7 +1111,7 @@ CMD ["/bin/sh" , "-c" , "envsubst '$FRONTEND_SERVICE $BACKEND_SERVICE' < /nginx.
 ```
 The last line is where the `$FRONTEND_SERVICE` and `$BACKEND_SERVICE` variables are replaced into the configuration for the NGINX server.
 
-### 7.2 Login to the repo
+### Step 6.2 Login to the repo
 
 We need to connect our local Docker to the remote [Image repository](https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-registry-repository) that we created in Step 4. Start by grabbing the url for the repository by running the following SQL:
 
@@ -1189,7 +1147,7 @@ Login Succeeded
 
 With this, you can now push Docker images to this repository.
 
-### 6.2 Build and push up the image
+### Step 6.3 Build and push up the image
 
 When building and pushing an image to the repo, we do a number of steps to ensure we build the image locally, tag it and then push it to the remote repository. Here is how the backend service is build in the `./build-all.sh` file:
 
@@ -1230,6 +1188,8 @@ The output should be similar to this:
 
 ## Create the Services
 Duration: 5
+
+### Step 7.1 Creating the Service in Snowflake
 
 The services can now be created in Snowflake. Go back to Snowflake and open a worksheet. Enter the following to create the backend service. The `CREATE SERVICE` command creates a new service.
 
@@ -1356,6 +1316,8 @@ You can now view tasty_app in the browser.
   On Your Network:  http://10.244.2.15:4000
 ```
 
+### Step 7.2 Testing the service
+
 We are now finally ready to test the application in a browser. In order to do that we need the public endpoint exposed by the frontend_service. Call `SHOW ENDPOINTS` to retrieve that:
 
 ```sql
@@ -1374,6 +1336,7 @@ Now open up that URL in a browser. You will be prompted for a login, and here we
 Once logged in, the application loads the authorization status, and then redirects the user to the logged in `Home` page. After a few moments the data is loaded also and the charts for the current franchise (Franchise 1, if you logged in with user1) is shown. 
 
 ![Tasty App UI](./assets/tasty-app-ui.png)
+
 <!-- ------------------------ -->
 
 ## Clean up resources
@@ -1452,5 +1415,28 @@ docker image prune --all
 >
 > Warning, the above removes _all_ unused Docker images. If you have other Docker images that you don't want to remove, then manually remove the images created in this guide using `docker image rm <IMAGE NAME>`.
 
+<!-- ------------------------ -->
+
+## Conclusion and Resources
+
 Good work! You have now successfully built, deployed and run a data application on Snowpark Container Services.
+
+You now have gone through the basic concepts of building a a Data Application that can run directly on Snowflake, we have looked through how to adapt existing code to cover:
+- Authentication and Authorization and user management
+- Public endpoints for service
+- Service to service communication
+- Services connecting to Snowflake accounts
+
+Using this you should be able to build your own Data Application and run it direclty on Snowpark Container Services, directly connected to your data.
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this Feedback Form.
+
+### What You Learned
+
+### Related Resources
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app/tree/spcs)
+- [Snowpark Container Services documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+- [Snowpark Container Services tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials)
+- [Quickstart: Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake)
+
 <!-- ------------------------ -->
