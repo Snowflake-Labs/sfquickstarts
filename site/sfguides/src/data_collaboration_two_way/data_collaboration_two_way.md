@@ -609,7 +609,7 @@ You should now see SCORED_DATA as one of the Databases in your catalog, with the
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) -  Add New Data
-Duration: 15
+Duration: 10
 
 In this section, we will add some new data to demonstate how the automated pipeline would operate between the two accounts.
 
@@ -663,7 +663,7 @@ To recap, the updated data has now updated the stream. This will then execute th
 Lets switch back to SnowBank and see if we can see the newly scored data.
 
 <!-- ------------------------ -->
-## Inspect Newly Scored Data
+## Consumer Account (SnowBank) - Inspect Newly Scored Data
 Duration: 5
 
 Open up a SQL worksheet in SnowBank and test the new data is there by running the following query in a worksheet.
@@ -692,9 +692,12 @@ Duration: 5
 
 From this quickstart, we can see how we can create an end-to-end automated pipeline between two Snowflake accounts seamlessly. We were able to:
 - Share live data between 2 accounts
-- Etc.
+- Train and Deploy an ML Model
+- Use Streams and Tasks to automate the pipeline
 
-From a business point of view, ...
+From a business point of view, this architecture exists to satisfy several use cases. Examples include:
+- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a srcure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data
+- Another example is benchmarking. 
 
 The next Quickstart in this series extends on this idea by leveraging our Native Apps framework.
 
