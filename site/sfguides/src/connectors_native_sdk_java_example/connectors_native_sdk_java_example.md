@@ -350,10 +350,11 @@ When opened for the first time the list should be empty.
 To configure a resource type the organisation and repository names in the designated fields, then press `Queue ingestion` button.
 
 For example:
+![define_resource.png](assets/define_resource.png)
 
-The definition for a new resource will be saved, and it will be picked up by the scheduler according to the global schedule.
+The definition for a new resource will be saved, and it will be picked up by the scheduler according to the global schedule. It will be visible in the table below:
 
-[//]: # (todo update when the ui is done)
+![list_defined_resources.png](assets/list_defined_resources.png)
 
 ### Ingestion process
 Ingestion process is handled using a `Scheduler Task` and `Task Reactor` components. 
