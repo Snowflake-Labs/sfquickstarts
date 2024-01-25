@@ -1,5 +1,5 @@
 author: sikha-das
-id: intro_to_snowpark_ml
+id: intro_to_machine_learning_with_snowpark_ml_for_python
 summary: Through this quickstart guide, you will explore what's new in Snowpark for Machine Learning.
 categories: Getting-Started
 environments: web
@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Intro to Snowpark ML
+# Intro to Machine Learning with Snowpark ML
 <!-- ------------------------ -->
 ## Overview 
 
@@ -63,7 +63,7 @@ Learn more about [Snowpark ML Modeling API](https://docs.snowflake.com/en/develo
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
-    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**)
+    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python)
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.11](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.11 in the **Setup the Python Environment** step
@@ -83,7 +83,7 @@ Duration: 2
 
 > aside positive
 >
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**).
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
 
 Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -116,7 +116,7 @@ Duration: 7
 
 > aside positive
 >
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python**).
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
 
 ### Snowpark for Python and Snowpark ML
 
@@ -174,7 +174,7 @@ Duration: 10
 
 Open the following jupyter notebook and run each of the cells: [2_snowpark_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
 
-In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Preprocessing API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
+In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
 <!-- ------------------------ -->
 ## ML Model Training and Inference
