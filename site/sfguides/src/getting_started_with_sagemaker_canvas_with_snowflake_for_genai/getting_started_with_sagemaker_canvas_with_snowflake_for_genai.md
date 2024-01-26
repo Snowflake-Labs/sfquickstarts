@@ -3,7 +3,7 @@ id: getting_started_with_sagemaker_canvas_with_snowflake_for_genai
 summary: This is a quickstart for using Sagemaker with Canvas for Generative AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development, gen-ai, llms, aws, sagemaker, canvas
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Generative AI, LLM, AWS, Sagemaker, Canvas, ML
 
@@ -173,7 +173,6 @@ You can see how valuable chat with data is for doing some exploratory analysis v
 
 Lastly, let's type "can you detect anomalies in the data" and after several seconds you will get a prompt to add this analysis. Click "add to analysis" and after ~1 minute it will be added to the analysis. Now click on the data flow in the breadcrumbs at the top and click into the Data Quality and Insights Report that has been added to the data flow. You can see the new insights report complete with anomaly detection that has been added to your data flow!
 ![](assets/anomaly.png)
-
 
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
