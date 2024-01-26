@@ -16,9 +16,9 @@ Snowflake's Snowpipe streaming capabilities are designed for rowsets with variab
 It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake
 without requiring files with a more attractive cost/latency profile.
 
-Here are some of the use cases that can benefit from Snowpipe streaming:
+Here are some of the use cases that can benefit from this integration:
 - IoT time-series data ingestion
-- CDC streams from OLTP systems
+- CDC streams from OLTP systems 
 - Log ingestion from SIEM systems
 - Ingestion into ML feature stores
 
