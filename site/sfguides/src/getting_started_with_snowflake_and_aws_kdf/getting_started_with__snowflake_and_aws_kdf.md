@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Kafka, Streaming, Amazon MSK, Snowpipe Streaming, SnowSQL
 authors: James Sun
 
-# Getting Started with Snowpipe Streaming and Amazon MSK
+# Getting Started with Snowflake and Amazon Kinesis Data Firehose
 <!---------------------------->
 ## Overview
 Duration: 5
@@ -20,7 +20,7 @@ Here are some of the use cases that can benefit from this integration:
 - IoT time-series data ingestion
 - CDC streams from OLTP systems 
 - Log ingestion from SIEM systems
-- Ingestion into ML feature stores
+- Ingestion into ML feature stores 
 
 In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution using 
 Snowflake's Snowpipe streaming and [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/).
