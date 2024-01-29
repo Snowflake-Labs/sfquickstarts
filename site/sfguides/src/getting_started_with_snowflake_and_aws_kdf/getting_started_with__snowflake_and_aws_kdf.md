@@ -375,51 +375,58 @@ create or replace TABLE KDF_STREAMING_TBL (
 );
 ```
 #### 2. Ingest real-time data 
+
+Go to the EC2 console, and run the following command.
+```commandline
+python3 /tmp/kdf-producer.py <Kinesis delivery stream name>
+```
+The Python script gets the raw flight data from a [real-time source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky) and streams into the delivery stream.
+You should see the flight data being ingested to the KDF delivery stream in json format.
+
 #### 3. Query the raw data in Snowflake
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
-
 
 Now run the following query on the table.
 ```
 select * from kdf_streaming_tbl;
 ```
-You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
+
+Here is the screen capture of the sample output.
 
 ![](assets/raw_data.png)
-The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
+
 
 #### 2. Flatten the raw JSON data
-Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
+Now execute the following SQL command.
 
 ```sh
 create or replace view flights_vw
   as select
-    f.value:utc::timestamp_ntz ts_utc,
+    utc::timestamp_ntz ts_utc,
     CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
-    f.value:alt::integer alt,
-    f.value:dest::string dest,
-    f.value:orig::string orig,
-    f.value:id::string id,
-    f.value:icao::string icao,
-    f.value:lat::float lat,
-    f.value:lon::float lon,
+    alt::integer alt,
+    dest::string dest,
+    orig::string orig,
+    id::string id,
+    icao::string icao,
+    lat::float lat,
+    lon::float lon,
     st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
     year(ts_pt) yr,
     month(ts_pt) mo,
     day(ts_pt) dd,
     hour(ts_pt) hr
-FROM   msk_streaming_tbl,
-       Table(Flatten(msk_streaming_tbl.record_content)) f;
+FROM kdf_streaming_tbl;
 ```
 
-The SQL commands create a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools like Grafana
+The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools such as Grafana.
 
 Let's query the view `flights_vw` now.
 ```sh
 select * from flights_vw;
 ```
 
-As a result, you will see a nicely structured output with columns derived from the JSONs
+As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
 ![](assets/materialized_view.png)
 
 #### 3. Stream real-time flight data continuously to Snowflake
