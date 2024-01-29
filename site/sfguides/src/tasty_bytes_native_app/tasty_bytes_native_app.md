@@ -1,11 +1,11 @@
 author: Gilberto Hernandez, Charlie Hammond
 id: tasty_bytes_native_app
-summary: This is a sample Snowflake Guide
-categories: Getting-Started
+summary: This is a Quickstart on how to build a Snowflake Native Application with Tasty Bytes.
+categories: Native-Applications
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering, Applications
 
 # Tasty Bytes - Snowflake Native Application
 <!-- ------------------------ -->
@@ -66,8 +66,6 @@ If these prerequisites are not completed, you will not able to complete this Qui
 ## Prerequisites
 Duration: 1
 
-### Prerequisites
-
 To successfully complete this Quickstart, your Snowflake account must have the Tasty Bytes data set and Tasty Bytes machine learning models. Make sure you complete the following before attempting this Quickstart:
 
 1. Step 2 of [An Introduction to Tasty Byes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#1)
@@ -105,11 +103,16 @@ GRANT ROLE franchise_viewer TO ROLE franchise_admin;
 CREATE WAREHOUSE IF NOT EXISTS franchise_wh;
 GRANT USAGE ON WAREHOUSE franchise_wh TO ROLE franchise_admin;
 GRANT USAGE ON WAREHOUSE franchise_wh TO ROLE franchise_viewer;
+
+-- Grant usage on source data to consumer roles
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_dev TO ROLE franchise_admin;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes_dev TO ROLE franchise_admin;
+GRANT SELECT ON TABLE frostbyte_tasty_bytes_dev.analytics.shift_sales_v TO ROLE franchise_admin;
 ```
 
 The SQL above does the following:
 
-* Creates two application roles, `franchise_admin` and `franchise_viewer`. These are roles specific to the application. An account admin in the consumer account would be able to assign users in the Snowflake account to either one of these roles. One role (say, `franchise_admin`) could have more privileges within the application than another role (say, `franchise_viewer`).
+* Creates two application roles, `franchise_admin` and `franchise_viewer`. These are roles that exist in the consumer account. An account admin in the consumer account would be able to assign users in the Snowflake account to either one of these roles. One role (say, `franchise_admin`) could have more privileges within the application than another role (say, `franchise_viewer`).
 
 * Grants certain privileges to the `franchise_admin` role. It also allows the `franchise_admin` role to assume the `franchise_viewer` role if necessary.
 
@@ -118,9 +121,7 @@ The SQL above does the following:
 With the base roles and privileges now defined, let's now create the consumer data in the account. Open a SQL worksheet and run the following:
 
 ```sql 
---------------------------------------------------
 -- Create consumer data
---------------------------------------------------
 
 USE ROLE franchise_admin;
 USE WAREHOUSE franchise_wh;
@@ -173,9 +174,15 @@ GRANT ROLE sales_forecast_provider TO ROLE accountadmin;
 GRANT CREATE application package ON ACCOUNT TO ROLE sales_forecast_provider;
 GRANT CREATE DATABASE ON ACCOUNT TO ROLE sales_forecast_provider;
 
--- create warehouse and ensure a warehouse is usable by provider
+-- Create warehouse and ensure a warehouse is usable by provider
 CREATE WAREHOUSE IF NOT EXISTS franchise_wh;
 GRANT USAGE ON WAREHOUSE franchise_wh TO ROLE sales_forecast_provider;
+
+-- Grant usage on source data to provider role
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE sales_forecast_provider;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes TO ROLE sales_forecast_provider;
+GRANT SELECT ON TABLE frostbyte_tasty_bytes.raw_pos.location TO ROLE sales_forecast_provider;
+GRANT SELECT ON TABLE frostbyte_tasty_bytes.raw_pos.country TO ROLE sales_forecast_provider;
 ```
 
 The SQL above does the following:
@@ -191,9 +198,7 @@ With the provider roles, grants, and objects now defined, let's now create some 
 Open a SQL worksheet and run the following:
 
 ```sql
---------------------------------------------------
 -- Create provider data
---------------------------------------------------
 
 USE ROLE sales_forecast_provider;
 USE WAREHOUSE franchise_wh;
@@ -285,29 +290,6 @@ The SQL above creates a table containing location data that will be used alongsi
 ![location data](./assets/location_data.png)
 
 <!-- ------------------------ -->
-## Account Set Up: Source data privileges
-Duration: 1
-
-Finally, grant usage on all source data (the data created as part of the prerequisites) to all roles.
-
-Open a SQL worksheet and run the following:
-
-
-```sql
--- Grant usage on source data to all roles
-USE ROLE accountadmin;
-
-GRANT USAGE ON DATABASE frostbyte_tasty_bytes_dev TO ROLE franchise_admin;
-GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes_dev TO ROLE franchise_admin;
-GRANT SELECT ON TABLE frostbyte_tasty_bytes_dev.analytics.shift_sales_v TO ROLE franchise_admin;
-
-GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE sales_forecast_provider;
-GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes TO ROLE sales_forecast_provider;
-GRANT SELECT ON TABLE frostbyte_tasty_bytes.raw_pos.location TO ROLE sales_forecast_provider;
-GRANT SELECT ON TABLE frostbyte_tasty_bytes.raw_pos.country TO ROLE sales_forecast_provider;
-```
-
-<!-- ------------------------ -->
 ## Application: Structure
 Duration: 1
 
@@ -328,9 +310,9 @@ tasty-bytes-native-app/
 ├─ README.md
 ```
 
-* Application user interface (UI) – The code powering the UI of the application resides in **streamlit/**. This directory contains two files, **environment.yml** and **forecast_ui.py**. The former contains the definition for an environment used to build the UI, and contains references to dependencies (packages) used in the UI. The latter contains the Streamlit code that defines the layout and data rendering in the app.
+* **Application user interface (UI)** – The code powering the UI of the application resides in **streamlit/**. This directory contains two files, **environment.yml** and **forecast_ui.py**. The former contains the definition for an environment used to build the UI, and contains references to dependencies (packages) used in the UI. The latter contains the Streamlit code that defines the layout and data rendering in the app.
 
-* Application logic – You can find the logic powering the sales forecasting model in the **python/** directory. The **inference_pipeline.py** file contains the logic that enriches, transforms, and preps the data that will be used for sales predictions. **evaluate_model.py** contains a user-defined function (UDF) that accepts a DataFrame and calls the prediction model (**linreg_location_sales_model.sav**) on that DataFrame to returns a sales forecast.
+* **Application logic** – You can find the logic powering the sales forecasting model in the **python/** directory. The **inference_pipeline.py** file contains the logic that enriches, transforms, and preps the data that will be used for sales predictions. **evaluate_model.py** contains a user-defined function (UDF) that accepts a DataFrame and calls the prediction model (**linreg_location_sales_model.sav**) on that DataFrame to returns a sales forecast.
 
 * **scripts/** contains the application set up script **setup.sql**, which is required by the Snowflake Native Application framework and will execute when a consumer installs the application in their account.
 
@@ -343,7 +325,7 @@ That's a high level overview of the structure and components of the application.
 > aside negative
 > 
 > **Important**
-> The directory structure above omits a file in the repository called **account_setup.sql**. This is a SQL file authored for the purposes of convenience. It is not required by the application or the Snowflake Native Application framework. It contains SQL that you've already run (or will run) in the Quickstart.
+> The directory structure above omits a file in the repository called **account_setup.sql**, which is a SQL file that was authored for the purposes of convenience. It is not required by the application or the Snowflake Native Application framework. It contains SQL that you've already run (or will run) in the Quickstart. Do not run the file.
 
 <!-- ------------------------ -->
 ## Application: User Interface (UI)
@@ -529,7 +511,7 @@ This file is required by the Snowflake Native Application framework – all app
 
 In `artifacts`, we provide paths to the set up script **setup.sql** (which we'll cover in the next step), the README file, and the default Streamlit (also covered in the next step).
 
-In `references`, we describe the objects that the application will need access to. There's one entry, `shift_sales`, representing a table that the application will require `SELECT` privileges on. The `register_callback` is set to a procedure that is intended to handle application references – we'll cover this in the next step.
+In `references`, we describe the objects that the application will need access to. There's one entry, `shift_sales`, representing a table in the consumer's account that the application will require `SELECT` privileges on. The `register_callback` is set to a procedure that is intended to handle application references – we'll cover this in the next step.
 
 
 <!-- ------------------------ -->
@@ -624,9 +606,7 @@ Now that we've covered all of the components of the application's source code, l
 
 Open a SQL worksheet and run the following:
 ```sql
-----------------------------------------------------
 -- Create application package
-----------------------------------------------------
 USE ROLE sales_forecast_provider;
 USE WAREHOUSE franchise_wh;
 
@@ -651,30 +631,22 @@ GRANT USAGE ON SCHEMA package_shared
   TO SHARE IN APPLICATION PACKAGE sales_forecast_package;
 GRANT SELECT ON VIEW package_shared.location_detail_v
   TO SHARE IN APPLICATION PACKAGE sales_forecast_package;
-```
-
-The SQL above creates the application package `sales_forecast_package`. This application package will contain the application source code.
-
-We also share provider data with the consumer in a safe and secure way. In the SQL above, we grant **reference usage** on the provider's data to the application package. We then create a schema that holds a view constructed from the provider's data. We grant the application package privileges on the schema and view, allowing the application consumer to "access" the data through the application when they run the application in their account.
-
-<!-- ------------------------ -->
-## Upload application source code
-Duration: 1
-
-Let's now upload the application source code into the application package. To do this, we'll create a schema within the application package, and then create a stage within that schema. We'll upload the source code to the stage.
-
-Open a SQL worksheet and run the following:
-
-```sql
--- Create stage to hold package files
-USE ROLE sales_forecast_provider;
-USE WAREHOUSE franchise_wh;
 
 CREATE SCHEMA sales_forecast_package.stage_content;
 CREATE OR REPLACE STAGE sales_forecast_package.stage_content.sales_forecast_package_snowflake_stage;
 ```
 
-Next, navigate to the newly created stage and upload the source code. In the top right, click on the **+ FILES** button. Next, click **Browse** in the modal that appears.
+The SQL above creates the application package `sales_forecast_package`. This application package will contain the application source code.
+
+We also share provider data with the consumer in a safe and secure way. In the SQL above, we grant **reference usage** on the provider's data to the application package. We then create a schema that holds a view constructed from the provider's data. We grant the application package privileges on the schema and view, allowing the consumer to "access" the provider data through the application when they run it in their account.
+
+<!-- ------------------------ -->
+## Upload application source code
+Duration: 1
+
+Let's now upload the application source code into the application package. We'll upload the source code into a stage in the package.
+
+Set your role to **SALES_FORECAST_PROVIDER**. Navigate to the `sales_forecast_package.stage_content.sales_forecast_package_snowflake_stage` stage. Click on the **+ FILES** button at the top right. Next, click **Browse** in the modal that appears.
 
 To avoid breaking any references to objects needed by the app, the folder structure within the stage must reflect the folder structure in the **tasty-bytes-native-app** directory. Be sure to upload the source code exactly as follows:
 
@@ -722,14 +694,12 @@ The final few lines of SQL create the first version of the application (`v1_0`) 
 ## Install application
 Duration: 1
 
-Let's now install the application in the account. In practice, the consumer would be installing the application in their own account, so we'll assume the role of a user in the consumer account (in this case, `franchise_admin`) and install the application.
+Let's now install the application in the account. In practice, the consumer would be installing the application in their own account, so we'll assume the role of a user in the consumer account (in this case, `franchise_admin`) and install the application. In addition, running this SQL would not be necessary in practice. Instead, consumers would install the application into their account directly from the Snowflake Marketplace listing.
 
 Open a SQL worksheet and run the following:
 
 ```sql
-------------------------------------------------
 -- Install application in account
-------------------------------------------------
 
 USE ROLE franchise_admin;
 USE WAREHOUSE franchise_wh;
@@ -748,11 +718,15 @@ The SQL above creates the application from the application package and grants th
 ## Run the application
 Duration: 1
 
-If all went as expected, the application is now installed in the account! Navigate to the **Apps** section in your account. You should see an application titled **SALES_FORECAST_APP** installed. Click on the name of the app to run the app.Play around in the app to get a feel for how it works.
+If all went as expected, the application is now installed in the account! Set your role to **FRANCHISE_ADMIN**, then navigate to the **Apps** section in your account. You should see an application titled **SALES_FORECAST_APP** installed. Click on the name of the app to run the app.
 
 ![installed](./assets/installed_app.png)
 
 When running the app for the first time, you'll be prompted to create bindings. The bindings link references defined in the manifest file (`shift_sales`) to corresponding objects (`shift_sales` table) in the Snowflake account. These bindings ensure that the application can access necessary objects in the account.
+
+![binding](./assets/binding.png)
+
+Once the bindings are properly configured, the application will start up. Play around in the app to get a feel for how it works!
 
 ![app](./assets/app.png)
 
@@ -769,9 +743,7 @@ Duration: 1
 To clean up, open a SQL worksheet and run the following:
 
 ```sql
-------------------------------------------------
 -- Tear down
-------------------------------------------------
 
 USE ROLE accountadmin;
 
@@ -792,12 +764,11 @@ DROP WAREHOUSE IF EXISTS franchise_wh;
 ## Conclusion
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+Congratulations! In just a few steps, you were able to build a Snowflake Native Application that uses a pre-trained machine learning model to make sales forecasts on consumer data. You played the role of the application provider, building an application that provides the consumer with data enrichment and application logic that performs model inference on their raw sales data to visualize sales forecasts.
 
 ### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- The structure of the application
+- How to create a application package
+- How to add source code to an application package
+- How to create the first version of an application
+- How to install and run the app in the account
