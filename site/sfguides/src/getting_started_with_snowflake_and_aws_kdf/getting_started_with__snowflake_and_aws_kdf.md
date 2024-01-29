@@ -348,26 +348,40 @@ Leave everything else as default and click `Create delivery stream`.
 Your delivery stream will be generated in about 5 minutes.
 
 <!---------------------------->
-## Query ingested data in Snowflake
+## Ingest and Query data in Snowflake
 Duration: 10
 
 Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
 The data should have been streamed into a table, ready for further processing.
 
-#### 1. Query the raw data
+#### 1. Create a destination table in Snowflake
+
+Run the following SQL command to create the table `KDF_STREAMING_TBL` we specified when provisioning
+the delivery stream. Note that here we use varchar type for most of the columns, we will
+generate a view later to transform them into the correct types.
+
+```commandline
+use KDF_STREAMING_DB;
+use schema KDF_STREAMING_SCHEMA;
+create or replace TABLE KDF_STREAMING_TBL (
+	ORIG VARCHAR(20),
+	UTC NUMBER(38,0),
+	ALT VARCHAR(20),
+	ICAO VARCHAR(20),
+	LON VARCHAR(20),
+	ID VARCHAR(20),
+	DEST VARCHAR(20),
+	LAT VARCHAR(20)
+);
+```
+#### 2. Ingest real-time data 
+#### 3. Query the raw data in Snowflake
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
 
-```sh
-use msk_streaming_db;
-use schema msk_streaming_schema;
-show channels in table msk_streaming_tbl;
-```
-You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
-![](assets/channels.png)
 
 Now run the following query on the table.
 ```
-select * from msk_streaming_tbl;
+select * from kdf_streaming_tbl;
 ```
 You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
 
