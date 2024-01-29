@@ -382,6 +382,8 @@ python3 /tmp/kdf-producer.py <Kinesis delivery stream name>
 The Python script gets the raw flight data from a [real-time source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky) and streams into the delivery stream.
 You should see the flight data being ingested continuously to the KDF delivery stream in json format.
 
+![](assets/kdf-producer-ingest.png)
+
 #### 3. Query the raw data in Snowflake
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
 
@@ -421,12 +423,12 @@ FROM kdf_streaming_tbl;
 The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools such as Grafana.
 
 Let's query the view `flights_vw` now.
-```sh
+```command
 select * from flights_vw;
 ```
 
 As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
-![](assets/materialized_view.png)
+![](assets/flight_view.png)
 
 <!---------------------------->
 ## Conclusions
