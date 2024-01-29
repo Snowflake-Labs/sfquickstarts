@@ -293,7 +293,6 @@ USE ROLE HYBRID_QUICKSTART_ROLE;
 USE WAREHOUSE HYBRID_QUICKSTART_WH;
 USE DATABASE HYBRID_QUICKSTART_DB;
 USE SCHEMA DATA;
-
 --Describe the columns in the table TRUCK
 DESC TABLE TRUCK;
 ```
@@ -393,7 +392,7 @@ Both statements should run successfully.
 
 Duration: 5
 
-Locking hybrid tables, unlike standard tables, utilizes row-level locking for update operations. Row-level locking enables concurrent updates on independent records. In this step, we will test concurrent updates to different records.
+Unlike standard tables, which utilize partition or table-level locking, hybrid tables employ row-level locking for update operations. Row Level locking allows for concurrent updates on independent records. In this lab, we will test concurrent updates to different records.
 
 In order to test it we will run concurrent updates on two different records in the hybrid table ORDER_HEADER. We will use the main worksheet "Hybrid Table - QuickStart" we created in Setup step and will create a new worksheet "Hybrid Table - QuickStart session 2" to simulate a new session. From the "Hybrid Table - QuickStart" worksheet we will start a new transaction using the [BEGIN](https://docs.snowflake.com/en/sql-reference/sql/begin) statement, and run an update DML statement. Before running the [COMMIT](https://docs.snowflake.com/en/sql-reference/sql/commit) transaction statement we will open the "Hybrid Table - QuickStart session 2" worksheet and run another update DML statement. finally we will commit the open transaction.
 
@@ -462,7 +461,7 @@ UPDATE ORDER_HEADER
 SET order_status = 'COMPLETED'
 WHERE order_id = $MIN_ORDER_ID;
 ```
-the update statement should run successfully.
+Since hybrid tables employ row-level locking and the open transaction locks the row WHERE order_id = $MAX_ORDER_ID the update statement should run successfully.
 
 Open "Hybrid Table - QuickStart" worksheet and run a commit statement to commit the open transaction.
 
