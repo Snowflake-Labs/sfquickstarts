@@ -457,6 +457,8 @@ USE DATABASE NATIVE_APP_QUICKSTART_DB;
 CREATE OR REPLACE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
 USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
 
+-- Load app/data/shipping_data.csv into the table below using Snowsight
+
 CREATE OR REPLACE TABLE MFG_SHIPPING (
   order_id NUMBER(38,0), 
   ship_order_id NUMBER(38,0),
@@ -508,7 +510,7 @@ The SQL described in the two sections below is identical except for one differen
 
 - Grant SELECT privileges on the view to the application package, meaning the app will be able to SELECT on the view once it is installed
 
-This flow ensures that the data is able to be shared securely with the consumer through the application. The objects containing the provider's proprietary shipping data are **never** shared directly with the consumer via a Snowflake Native Application. This means the provider's proprietary data remains safe, secure, and in the provider's Snowflake account. Instead, the application package has reference usage on objects (databases) corresponding to the provider's data, and when a consumer install the app (i.e., instantiates the application package), they are able to use the shared data through the application.
+This flow ensures that the data is able to be shared securely with the consumer through the application. The objects containing the provider's proprietary shipping data are **never** shared directly with the consumer via a Snowflake Native Application. This means the provider's proprietary data remains safe, secure, and in the provider's Snowflake account. Instead, the application package has reference usage on objects (databases) corresponding to the provider's data, and when a consumer installs the app (i.e., instantiates the application package), they are able to use the shared data through the application.
 
 **Option 1: Using the Snowflake CLI (Recommended)**
 
@@ -519,7 +521,7 @@ Add the SQL below in a new file at `sf_native_app_quickstart/app/scripts/shared_
 -- Create SHARED_CONTENT_SCHEMA to share in the application package
 -- ################################################################
 use database {{package_name}};
-create schema shared_content_schema;
+create or replace schema shared_content_schema;
 
 use schema shared_content_schema;
 create or replace view MFG_SHIPPING as select * from NATIVE_APP_QUICKSTART_DB.NATIVE_APP_QUICKSTART_SCHEMA.MFG_SHIPPING;
@@ -569,7 +571,7 @@ Run the SQL below in a SQL worksheet.
 -- Create SHARED_CONTENT_SCHEMA to share in the application package
 -- ################################################################
 use database NATIVE_APP_QUICKSTART_PACKAGE;
-create schema shared_content_schema;
+create or replace schema shared_content_schema;
 
 use schema shared_content_schema;
 create or replace view MFG_SHIPPING as select * from NATIVE_APP_QUICKSTART_DB.NATIVE_APP_QUICKSTART_SCHEMA.MFG_SHIPPING;
@@ -637,6 +639,8 @@ USE DATABASE NATIVE_APP_QUICKSTART_DB;
 
 USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
 
+-- Load app/data/order_data.csv into the table below using Snowsight
+
 CREATE OR REPLACE TABLE MFG_ORDERS (
   order_id NUMBER(38,0), 
   material_name VARCHAR(60),
@@ -646,7 +650,7 @@ CREATE OR REPLACE TABLE MFG_ORDERS (
   process_supply_day NUMBER(38,0)
 );
 
--- Load app/data/orders_data.csv using Snowsight
+-- Load app/data/site_recovery_data.csv using Snowsight
 
 CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
   event_id NUMBER(38,0), 
@@ -654,8 +658,6 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
   lat FLOAT,
   lon FLOAT
 );
-
--- Load app/data/site_recovery_data.csv using Snowsight
 ```
 
 Now run the Snowflake CLI command to run all commands in this file.
@@ -664,7 +666,7 @@ Now run the Snowflake CLI command to run all commands in this file.
 snow sql -f consumer_setup.sql -c connection_name
 ```
 
-where `connection_name` is the name of the connection you specified in your config.toml file during Snowflake CLI installation.
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
 
 **Option 2: Manually executing SQL**
 
@@ -688,7 +690,7 @@ Next, you'll load data into these newly defined tables using the Snowflake UI.
 ## Install the Application
 Duration: 3
 
-To use the application, we'll first need to install it in the account. Normally you'd simply click an install button in the Snowflake Marketplace, but since we're building the application and using a single account to demonstrate the provider and consumer experiences, you'll need to either run a Snowflake CLI command or some SQL to install the application in the account. 
+To use the application, we'll first need to install it in the account. Normally you'd simply click an install button in the Snowflake Marketplace, but since we're building the application using a single account to demonstrate the provider and consumer experiences, you'll need to either run a Snowflake CLI command or some SQL to install the application in the account. 
 
 **Option 1: Using the Snowflake CLI (Recommended)**
 
@@ -724,7 +726,7 @@ Now run the command below.
 ```bash
 snow app run --version V1 -c connection_name
 ```
-where `connection_name` is the name of the connection you specified in your config.toml file during Snowflake CLI installation.
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
 
 This command will create an application `NATIVE_APP_QUICKSTART_APP` in your account, installed from version `V1` of application package `NATIVE_APP_QUICKSTART_PACKAGE`. At the end of the command execution, it will display the URL at which the application is available in your account.
 
@@ -761,6 +763,46 @@ Upon running the application, you will see this:
 ![streamlit](assets/streamlit.png)
 
 
+<!-- ------------------------ -->
+## Drop the Application and App Package
+Duration: 1
+
+Since this is a Quickstart, we want to clean up objects that have been created in your Snowflake account.
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Run the command below to first drop the existing version `V1` in your application package `NATIVE_APP_QUICKSTART_PACKAGE`. 
+
+```bash
+snow app version drop V1 -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation. A prompt asks if you want to proceed, and you can respond with a `y`.
+
+Then run the command below to drop both the application `NATIVE_APP_QUICKSTART_APP` and the package `NATIVE_APP_QUICKSTART_PACKAGE`.
+
+```bash
+snow app teardown -c connection_name
+```
+
+However, the tables you created in your Snowflake account will not be deleted using the commands above. In the case of this quickstart, only one database `NATIVE_APP_QUICKSTART_DB` contains both the provider and consumer tables, so dropping just this database will do the trick.
+ 
+```bash 
+snow object drop database NATIVE_APP_QUICKSTART_DB -c connection_name
+snow object drop warehouse NATIVE_APP_QUICKSTART_WH -c connection_name
+```
+
+**Option 2: Manually executing SQL**
+
+Open a SQL worksheet and run the following SQL:
+
+```
+DROP APPLICATION NATIVE_APP_QUICKSTART_APP;
+DROP APPLICATION PACKAGE NATIVE_APP_QUICKSTART_PACKAGE;
+DROP DATABASE NATIVE_APP_QUICKSTART_DB;
+DROP WAREHOUSE NATIVE_APP_QUICKSTART_WH;
+```
+
+This will drop all the objects you created for the purpose of this Quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
