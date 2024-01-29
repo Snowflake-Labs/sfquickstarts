@@ -149,10 +149,13 @@ see below example screenshot:
 
 ![](assets/key-pair-sessionmgr-2.png)
 
-Next we will print out the public key string in a correct format that we can use for Snowflake.
+Next we will print out the public and private key string in a correct format that we can use for configuration later.
 ```
 grep -v KEY rsa_key.pub | tr -d '\n' | awk '{print $1}' > pub.Key
 cat pub.Key
+
+grep -v KEY rsa_key.p8 | tr -d '\n' | awk '{print $1}' > priv.Key
+cat priv.Key
 ```
 see below example screenshot:
 
