@@ -401,7 +401,7 @@ Here is the screen capture of the sample output.
 #### 2. Convert the raw data table into a view with correct data types
 Now execute the following SQL command.
 
-```sh
+```commandline
 create or replace view flights_vw
   as select
     utc::timestamp_ntz ts_utc,
@@ -424,7 +424,7 @@ FROM kdf_streaming_tbl;
 The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools such as Grafana.
 
 Let's query the view `flights_vw` now.
-```command
+```commandline
 select * from flights_vw;
 ```
 
