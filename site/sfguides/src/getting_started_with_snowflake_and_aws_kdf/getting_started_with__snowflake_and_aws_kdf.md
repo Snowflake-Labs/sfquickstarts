@@ -1,10 +1,10 @@
-id: getting_started_with_snowpipe_streaming_aws_msk
-summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK).
+id: getting_started_with_snowflake_and_aws_kdf
+summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Kinesis Data Firehose (KDF).
 categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Kafka, Streaming, Amazon MSK, Snowpipe Streaming, SnowSQL
+tags: Getting Started, Kinesis, Firehose, Streaming, Snowpipe Streaming, SnowSQL
 authors: James Sun
 
 # Getting Started with Snowflake and Amazon Kinesis Data Firehose
@@ -22,8 +22,8 @@ Here are some of the use cases that can benefit from this integration:
 - Log ingestion from SIEM systems
 - Ingestion into ML feature stores 
 
-In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution using 
-Snowflake's Snowpipe streaming and [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/).
+In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution leveraging
+the native integration between Snowflake and [KDF (Amazon Kinesis Data Firehose)](https://aws.amazon.com/about-aws/whats-new/2024/01/stream-data-snowflake-kinesis-data-firehose-snowpipe-streaming-preview/).
 
 The architecture diagram below shows the deployment. An MSK cluster and a Linux 
 EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
