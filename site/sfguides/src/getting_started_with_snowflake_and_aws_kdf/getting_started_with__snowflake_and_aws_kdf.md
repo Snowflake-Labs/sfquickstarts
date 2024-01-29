@@ -55,12 +55,12 @@ to this [AWS document](https://docs.aws.amazon.com/whitepapers/latest/amazon-msk
   - In the AWS account, [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html), preferrably in the same region as the Snowflake account
   - In the VPC, [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-subnets.html) and attach an [internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) to allow egress traffic to the internet by using a routing table and security group for outbound traffic.
   Note that the subnets can be public or private, for private subnets, you will need to attach a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to allow egress traffic to the internet. Public subnets are sufficient for this lab.
-  - Now if you have decided to create your own VPC/subnets, for your convenience, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake-VPC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/MyFullVPC-2pub-2priv.json) to deploy a VPC with a pair of public and private subnets, internet gateway and NAT gateway for you. 
+  - If you have decided to create your own VPC/subnets, for your convenience, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake-VPC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/MyFullVPC-2pub-2priv.json) to deploy a VPC with a pair of public and private subnets, internet gateway and NAT gateway for you. 
 Note that you must have network administrator permissions to deploy these resources. 
 
 ### What You'll Learn
 
-- Using [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/)
+- Using [KDF (Amazon Kinesis Data Firehose)](https://aws.amazon.com/kinesis/data-firehose/)
 - Connecting to EC2 instances with [Amazon System Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), this is an alternative
 to SSH if your instance is in a private subnet
 - Using [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html), the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
@@ -68,10 +68,11 @@ to SSH if your instance is in a private subnet
 
 ### What You'll Build
 
-- [Create a provisioned Kafka cluster](https://docs.aws.amazon.com/msk/latest/developerguide/msk-create-cluster.html)
-- Create Kafka producers and connectors
-- Create topics in a Kafka cluster
-- A Snowflake database for hosting real-time flight data
+- [Create a KDF delivery stream](https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html)
+- Setup `Direct Put` as the source for the KDF delivery stream
+- Setup `Snowflake` as the destination for the KDF delivery stream
+- Secure the connection between Snowflake and KDF with [Privatlink](https://aws.amazon.com/privatelink)
+- A Snowflake database and table for hosting real-time flight data
 
 <!---------------------------->
 ## Create a provisioned Kafka cluster and a Linux jumphost in AWS
