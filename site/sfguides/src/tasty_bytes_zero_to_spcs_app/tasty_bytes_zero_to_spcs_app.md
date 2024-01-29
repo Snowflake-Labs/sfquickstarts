@@ -514,7 +514,7 @@ We now look at the code for the backend and frontend to adapt it to run in Snowp
 
 The code for this lab is hosted on GitHub. Start by cloning the repository into a separate folder. Note that we are cloning a specific branch `spcs` here that contains the code adapted for this guide.
 ```bash
-git clone --branch spcs https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app zero-to-app-spcs
+git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git zero-to-app-spcs
 ```
 
 Change directory to the `zero-to-app-spcs/` directory that is created in the clone above. You should now have a directory with a `/src` subdirectory that contains `/backend` and `/frontend` directories. 
@@ -1434,7 +1434,7 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 ### What You Learned
 
 ### Related Resources
-- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app/tree/spcs)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs)
 - [Snowpark Container Services documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - [Snowpark Container Services tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials)
 - [Quickstart: Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake)
