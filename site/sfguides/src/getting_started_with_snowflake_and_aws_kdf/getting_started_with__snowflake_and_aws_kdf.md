@@ -83,15 +83,16 @@ First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us
 to launch an EC2 instance(jumphost). Note the default AWS region is `us-west-2 (Oregon)`, at the time of writing this quickstart, three regions are available
 for this integration preview: `us-east-1`, `us-west-2`, and `eu-west-1`.
 
+Click Next at the Create stack page. Set the Stack name or modify the default value to customize it to your identity.
+
 See below sample screen capture for reference.
 
-![](assets/msk-cft-stack-1.png)
+![](assets/ec2-cft-stack-1.png)
 
 Leave everything as default in the `Configure stack options` page and click `Next`.
 In the `Review` page, click `Submit`.
 
-In about 10-30 minutes depending on your AWS region, the Cloudformation template provisions an MSK cluster with two brokers. It will also
-provision a Linux EC2 instance in the subnet you selected. We will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
+In about 5 minutes, the Cloudformation template provisions a Linux EC2 instance in the subnet you selected. We will then use it to run the Kinesis producer for data ingestion.
 
 #### 2. Configure the Linux session for timeout and default shell
 
