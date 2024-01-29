@@ -78,7 +78,7 @@ to SSH if your instance is in a private subnet
 Duration: 30
 
 #### 1. Create an EC2 instance
-First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=KDF-Snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/kdf-bastion.json)
+First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=KDF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
 to launch an EC2 instance(jumphost). Note the default AWS region is `us-west-2 (Oregon)`, at the time of writing this quickstart, three regions are available
 for this integration preview: `us-east-1`, `us-west-2`, and `eu-west-1`.
 
