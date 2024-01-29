@@ -41,7 +41,7 @@ Please note that in the demo, we are not demonstrating the visualization aspect.
 ### Prerequisites
 
 - Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects
-- Familiarity with AWS Services (e.g. EC2, MSK, etc), Networking and the Management Console
+- Familiarity with AWS Services (e.g. EC2, Kinesis, etc), Networking and the Management Console
 - Basic knowledge of Python and Linux shell scripting
 
 ### What You'll Need Before the Lab
@@ -50,9 +50,8 @@ To participate in the virtual hands-on lab, attendees need the following resourc
 
 - A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
 - An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
-- Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. Please refer
-to this [AWS document](https://docs.aws.amazon.com/whitepapers/latest/amazon-msk-migration-guide/amazon-managed-streaming-for-apache-kafka-amazon-msk.html) for the MSK networking topology)
-  - In the AWS account, [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html), preferrably in the same region as the Snowflake account
+- Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage.
+  - In the AWS account, [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html), preferably in the same region as the Snowflake account
   - In the VPC, [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-subnets.html) and attach an [internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) to allow egress traffic to the internet by using a routing table and security group for outbound traffic.
   Note that the subnets can be public or private, for private subnets, you will need to attach a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to allow egress traffic to the internet. Public subnets are sufficient for this lab.
   - If you have decided to create your own VPC/subnets, for your convenience, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake-VPC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/MyFullVPC-2pub-2priv.json) to deploy a VPC with a pair of public and private subnets, internet gateway and NAT gateway for you. 
@@ -99,9 +98,9 @@ In about 5 minutes, the Cloudformation template provisions a Linux EC2 instance 
 
 #### 2. Configure the Linux session for timeout and default shell
 
-In this step we need to connect to the EC2 instance in order to interact with the MSK cluster.
+In this step we need to connect to the EC2 instance in order to ingest the real-time data.
 
-Go to the AWS [Systems Manager](https://us-west-2.console.aws.amazon.com/systems-manager/home) console in the same region where you setup the MSK cluster,
+Go to the AWS [Systems Manager](https://us-west-2.console.aws.amazon.com/systems-manager/home) console in the same region where you setup the EC2 instance,
 Click `Session Manager` on the left pane.
 
 ![](assets/session-mgr-1.png)
@@ -231,7 +230,7 @@ See below example screenshot:
 ![](assets/key-pair-snowflake.png)
 
 Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
-Run the following SQL commands in a worksheet to create a schema (e.g. `MSK_STREAMING_SCHEMA`) in the default database (e.g. `MSK_STREAMING_DB`):
+Run the following SQL commands in a worksheet to create a schema (e.g. `KDF_STREAMING_SCHEMA`) in the default database (e.g. `KDF_STREAMING_DB`):
 
 ```commandline
 SET DB = 'KDF_STREAMING_DB';
@@ -267,7 +266,7 @@ echo "export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE" >> 
 
 Now you can execute this command to interact with Snowflake:
 ```commandline
-$HOME/bin/snowsql -a <The Account Identifier that you recorded earlier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
+$HOME/bin/snowsql -a <The Account Identifier that you recorded earlier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d kdf_streaming_db -s kdf_streaming_schema
 ```
 See below example screenshot:
 
