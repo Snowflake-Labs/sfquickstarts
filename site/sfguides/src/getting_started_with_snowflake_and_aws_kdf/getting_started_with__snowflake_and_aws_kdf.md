@@ -161,135 +161,6 @@ see below example screenshot:
 
 ![](assets/key-pair-sessionmgr-3.png)
 
-
-#### 5. Install the Kafka connector for Snowpipe streaming
-
-Run the following command to install the Kafka connector and Snowpipe streaming SDK
-
-```commandline
-passwd=changeit  # Use the default password for the Java keystore, you should chang it after finishing the lab
-directory=/home/ssm-user/snowpipe-streaming # Installation directory
-
-cd $HOME
-mkdir -p $directory
-cd $directory
-pwd=`pwd`
-sudo yum clean all
-sudo yum -y install openssl vim-common java-1.8.0-openjdk-devel.x86_64 gzip tar jq python3-pip
-wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
-tar xvfz kafka_2.12-2.8.1.tgz -C $pwd
-wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.1-all.jar
-rm -rf $pwd/kafka_2.12-2.8.1.tgz
-cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
-cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
-
-#Snowflake kafka connector
-wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.0.0/snowflake-kafka-connector-2.0.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-2.0.0.jar
-
-#Snowpipe streaming SDK
-wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/2.0.2/snowflake-ingest-sdk-2.0.2.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-2.0.2.jar
-wget https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/3.13.15/snowflake-jdbc-3.13.15.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-jdbc-3.13.15.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
-
-```
-
-#### 6. Retrieve the broker string from the MSK cluster.
-Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click the newly created MSK cluster, it should have a substring `MSKCluster` in its name.
-
-![](assets/bs-1.png)
-
-Click `View client information`
-![](assets/bs-2.png)
-
-We are going to use TLS authentication between the client and brokers. Copy down the broker string under `Private endpoint` for TLS authentication type.
-![](assets/bs-3.png)
-
-Now switch back to the Session Manager window and execute the following command by replacing `<broker string>` with 
-the copied values.
-
-```commandline
-export BS=<broker string>
-```
-
-Now run the following command to add `BS` as an environment variable so it is recognized across the Linux sessions.
-```
-echo "export BS=$BS" >> ~/.bashrc
-```
-See the following example screen capture.
-
-![](assets/bs-4.png)
-#### 7. Create a configuration file `connect-standalone.properties` for the Kafka connector
-
-Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/ssm-user/snowpipe-streaming/scripts` for the client to authenticate
-with the Kafka cluster.
-
-```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
-mkdir -p $dir && cd $dir
-cat << EOF > $dir/connect-standalone.properties
-#************CREATING SNOWFLAKE Connector****************
-bootstrap.servers=$BS
-
-#************SNOWFLAKE VALUE CONVERSION****************
-key.converter=org.apache.kafka.connect.storage.StringConverter
-value.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
-key.converter.schemas.enable=true
-value.converter.schemas.enable=true
-#************SNOWFLAKE ****************
-
-offset.storage.file.filename=/tmp/connect.offsets
-# Flush much faster than normal, which is useful for testing/debugging
-offset.flush.interval.ms=10000
-
-#*********** FOR SSL  ****************
-security.protocol=SSL
-ssl.truststore.location=/tmp/kafka.client.truststore.jks
-ssl.truststore.password=changeit
-ssl.enabled.protocols=TLSv1.1,TLSv1.2
-
-consumer.security.protocol=SSL
-consumer.ssl.truststore.location=/tmp/kafka.client.truststore.jks
-consumer.ssl.truststore.password=changeit
-consumer.ssl.enabled.protocols=TLSv1.1,TLSv1.2
-EOF
-
-```
-A configuration file `connect-standalone.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
-
-#### 8. Create a security client.properties configuration file for the producer
-
-Run the following commands to create a security configuration file `client.properties` for the MSK cluster
-```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
-cat << EOF > $dir/client.properties
-security.protocol=SSL
-ssl.truststore.location=/tmp/kafka.client.truststore.jks
-ssl.truststore.password=changeit
-ssl.enabled.protocols=TLSv1.1,TLSv1.2
-EOF
-
-```
-
-A configuration file `client.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
-
-#### 9. Create a streaming topic called “streaming” in the MSK cluster
-
-Now we can run the following commands to create a Kafka topic on the MSK cluster to stream our data.
- 
-```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming --partitions 2 --replication-factor 2
-```
-You should see the response `Created topic streaming` if it is successful.
-
-To describe the topic, run the following commands:
-```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --describe --topic streaming
-```
-You should see there are two partitions with a replication factor of 2 in the `streaming` topic.
-See below example screenshot:
-![](assets/list-kafka-topic.png)
-
 <!---------------------------->
 ## Prepare the Snowflake cluster for streaming
 Duration: 10
@@ -304,9 +175,9 @@ Then run the following SQL commands in a worksheet to create a user, database an
 -- You should change them after the workshop
 SET PWD = 'Test1234567';
 SET USER = 'STREAMING_USER';
-SET DB = 'MSK_STREAMING_DB';
-SET WH = 'MSK_STREAMING_WH';
-SET ROLE = 'MSK_STREAMING_RL';
+SET DB = 'KDF_STREAMING_DB';
+SET WH = 'KDF_STREAMING_WH';
+SET ROLE = 'KDF_STREAMING_RL';
 
 USE ROLE ACCOUNTADMIN;
 
@@ -331,7 +202,6 @@ GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
-
 -- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
 -- IT WILL BE SOMETHING LIKE <organization_name>-<account_name>
 -- e.g. ykmxgak-wyb52636
@@ -341,8 +211,8 @@ WITH HOSTLIST AS
 SELECT REPLACE(VALUE:host,'.snowflakecomputing.com','') AS ACCOUNT_IDENTIFIER
 FROM HOSTLIST
 WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
-
 ```
+
 Please write down the Account Identifier, we will need it later.
 ![](assets/account-identifier.png)
 
@@ -361,8 +231,8 @@ Now logout of Snowflake, sign back in as the default user `streaming_user` we ju
 Run the following SQL commands in a worksheet to create a schema (e.g. `MSK_STREAMING_SCHEMA`) in the default database (e.g. `MSK_STREAMING_DB`):
 
 ```commandline
-SET DB = 'MSK_STREAMING_DB';
-SET SCHEMA = 'MSK_STREAMING_SCHEMA';
+SET DB = 'KDF_STREAMING_DB';
+SET SCHEMA = 'KDF_STREAMING_SCHEMA';
 
 USE IDENTIFIER($DB);
 CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
@@ -394,7 +264,7 @@ echo "export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE" >> 
 
 Now you can execute this command to interact with Snowflake:
 ```commandline
-$HOME/bin/snowsql -a <Snowflake Account Identifier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
+$HOME/bin/snowsql -a <The Account Identifier that you recorded earlier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
 ```
 See below example screenshot:
 
@@ -407,93 +277,10 @@ You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/
 At this point, the Snowflake setup is complete.
 
 <!---------------------------->
-## Configure Kafka connector for Snowpipe Streaming
-
+## Create the KDF delivery stream
 Duration: 10
 
-#### 1. Run the following commands to collect various connection parameters for the Kafka connector
-```commandline
-cd $HOME
-outf=/tmp/params
-cat << EOF > /tmp/get_params
-a=''
-until [ ! -z \$a ]
-do
- read -p "Input Snowflake account identifier: e.g. ylmxgak-wyb53646 ==> " a
-done
-
-echo export clstr_url=\$a.snowflakecomputing.com > $outf
-export clstr_url=\$a.snowflakecomputing.com
-
-read -p "Snowflake cluster user name: default: streaming_user ==> " user
-if [[ \$user == "" ]]
-then
-   user="streaming_user"
-fi
-
-echo export user=\$user >> $outf
-export user=\$user
-
-pass=''
-until [ ! -z \$pass ]
-do
-  read -p "Private key passphrase ==> " pass
-done
-
-echo export key_pass=\$pass >> $outf
-export key_pass=\$pass
-
-read -p "Full path to your Snowflake private key file, default: /home/ssm-user/rsa_key.p8 ==> " p8
-if [[ \$p8 == "" ]]
-then
-   p8="/home/ssm-user/rsa_key.p8"
-fi
-
-priv_key=\`cat \$p8 | grep -v PRIVATE | tr -d '\n'\`
-echo export priv_key=\$priv_key  >> $outf
-export priv_key=\$priv_key
-cat $outf >> $HOME/.bashrc
-EOF
-. /tmp/get_params
-
-```
-See below example screen capture.
-
-![](assets/get_params.png)
-
-#### 2. Run the following commands to create a Snowflake Kafka connect property configuration file:
-```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
-cat << EOF > $dir/snowflakeconnectorMSK.properties
-name=snowpipeStreaming
-connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
-tasks.max=4
-topics=streaming
-snowflake.private.key.passphrase=$key_pass
-snowflake.database.name=MSK_STREAMING_DB
-snowflake.schema.name=MSK_STREAMING_SCHEMA
-snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
-buffer.count.records=10000
-buffer.flush.time=5
-buffer.size.bytes=20000000
-snowflake.url.name=$clstr_url
-snowflake.user.name=$user
-snowflake.private.key=$priv_key
-snowflake.role.name=MSK_STREAMING_RL
-snowflake.ingestion.method=snowpipe_streaming
-value.converter.schemas.enable=false
-jmx=true
-key.converter=org.apache.kafka.connect.storage.StringConverter
-value.converter=org.apache.kafka.connect.json.JsonConverter
-errors.tolerance=all
-EOF
-```
-
-<!---------------------------->
-## Putting it all together
-Duration: 10
-
-Finally, we are ready to start ingesting data into the Snowflake table.
+In this step, we are going to create a KDF delivery stream for data streaming.
 
 #### 1. Start the Kafka Connector for Snowpipe streaming
 
