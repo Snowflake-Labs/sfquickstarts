@@ -381,7 +381,7 @@ Go to the EC2 console, and run the following command.
 python3 /tmp/kdf-producer.py <Kinesis delivery stream name>
 ```
 The Python script gets the raw flight data from a [real-time source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky) and streams into the delivery stream.
-You should see the flight data being ingested to the KDF delivery stream in json format.
+You should see the flight data being ingested continuously to the KDF delivery stream in json format.
 
 #### 3. Query the raw data in Snowflake
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
@@ -429,20 +429,7 @@ select * from flights_vw;
 As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
 ![](assets/materialized_view.png)
 
-#### 3. Stream real-time flight data continuously to Snowflake
 
-We can now write a loop to stream the flight data continuously into Snowflake.
-
-Go back to the Linux session and run the following script.
-
-```sh
-while true
-do
-  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
-  sleep 10
-done
-
-```
 You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
 
 <!---------------------------->
