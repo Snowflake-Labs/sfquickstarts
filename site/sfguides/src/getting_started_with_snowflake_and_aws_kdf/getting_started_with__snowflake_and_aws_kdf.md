@@ -83,6 +83,7 @@ to launch an EC2 instance(jumphost). Note the default AWS region is `us-west-2 (
 for this integration preview: `us-east-1`, `us-west-2`, and `eu-west-1`.
 
 For `Subnet1`, in the drop-down menu, pick an existing subnet, it can be either public or private subnets depending on the network layout of your VPC. 
+
 For `InstanceSecurityGroupId`, we recommend using the default security group in your VPC, if you do not have the default security group, create one on your own before moving forward.
 
 Click Next at the Create stack page. Set the Stack name or modify the default value to customize it to your identity.
