@@ -75,7 +75,7 @@ to SSH if your instance is in a private subnet
 
 <!---------------------------->
 ## Provision a Linux jumphost in AWS
-Duration: 30
+Duration: 10
 
 #### 1. Create an EC2 instance
 First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=KDF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
@@ -165,7 +165,7 @@ see below example screenshot:
 
 <!---------------------------->
 ## Prepare the Snowflake cluster for streaming
-Duration: 10
+Duration: 15
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -280,7 +280,7 @@ At this point, the Snowflake setup is complete.
 
 <!---------------------------->
 ## Create a KDF delivery stream
-Duration: 10
+Duration: 15
 
 In this step, we are going to create a KDF delivery stream for data streaming.
 
