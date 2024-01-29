@@ -432,22 +432,21 @@ As a result, you will see a nicely structured output with columns derived from t
 ## Conclusions
 Duration: 5
 
-In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
-connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
-scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
-[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
+In this lab, we built a demo to show how to ingest real-time data using Amazon Kinesis Data Firehose with low latency. We demonstrated this using a self-managed Kafka 
+connector on an EC2 instance. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
+[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kinesis producers as well.
 
 For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
 [quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/) to continue.
 
 Related Resources
 
+- [Amazon Kinesis Data Firehose (KDF)](https://aws.amazon.com/kinesis/data-firehose/)
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/)
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
-- [Amazon Managed Streaming for Apache Kafka (MSK)](https://aws.amazon.com/msk/)
 
 
