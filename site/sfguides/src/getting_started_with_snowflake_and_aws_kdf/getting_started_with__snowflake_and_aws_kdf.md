@@ -75,14 +75,14 @@ to SSH if your instance is in a private subnet
 - A Snowflake database and table for hosting real-time flight data
 
 <!---------------------------->
-## Create a provisioned Kafka cluster and a Linux jumphost in AWS
+## Provision a Linux jumphost in AWS
 Duration: 30
 
 #### 1. Create an MSK cluster and an EC2 instance
 The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure
 the communications between the MSK cluster and clients are secure. 
 
-First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/msk-CFT-for-SE-Sandbox.json)
+First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=KDF-Snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/kdf-bastion.json)
 to launch a provisioned MSK cluster. Note the default AWS region is `us-west-2 (Oregon)`, feel free to select a region you prefer to deploy the environment.
 
 Click `Next` at the `Create stack` page. 
