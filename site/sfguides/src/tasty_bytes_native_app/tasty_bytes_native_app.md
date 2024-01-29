@@ -322,11 +322,6 @@ tasty-bytes-native-app/
 
 That's a high level overview of the structure and components of the application. Let's dive into more details in subsequent sections.
 
-> aside negative
-> 
-> **Important**
-> The directory structure above omits a file in the repository called **account_setup.sql**, which is a SQL file that was authored for the purposes of convenience. It is not required by the application or the Snowflake Native Application framework. It contains SQL that you've already run (or will run) in the Quickstart. Do not run the file.
-
 <!-- ------------------------ -->
 ## Application: User Interface (UI)
 Duration: 1
