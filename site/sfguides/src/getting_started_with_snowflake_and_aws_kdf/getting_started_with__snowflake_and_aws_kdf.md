@@ -83,6 +83,9 @@ First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us
 to launch an EC2 instance(jumphost). Note the default AWS region is `us-west-2 (Oregon)`, at the time of writing this quickstart, three regions are available
 for this integration preview: `us-east-1`, `us-west-2`, and `eu-west-1`.
 
+For `Subnet1`, in the drop-down menu, pick an existing subnet, it can be either public or private subnets depending on the network layout of your VPC. 
+For `InstanceSecurityGroupId`, we recommend using the default security group in your VPC, if you do not have the default security group, create one on your own before moving forward.
+
 Click Next at the Create stack page. Set the Stack name or modify the default value to customize it to your identity.
 
 See below sample screen capture for reference.
@@ -277,38 +280,72 @@ You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/
 At this point, the Snowflake setup is complete.
 
 <!---------------------------->
-## Create the KDF delivery stream
+## Create a KDF delivery stream
 Duration: 10
 
 In this step, we are going to create a KDF delivery stream for data streaming.
 
-#### 1. Start the Kafka Connector for Snowpipe streaming
+Navigate to the [KDF console](https://console.aws.amazon.com/firehose/home?streams) and click `Create delivery stream`.
 
-Go back to the Linux console and execute the following commands to start the Kafka connector.
+In the `Source` section, select `Direct PUT` from the drop-down menu.
+
+In the `Destination` section, select `Snowflake` from the drop-down menu.
+
+Type in a name for the delivery stream.
+
+![](assets/kdf-stream-1.png)
+
+For `Snowflake account URL`, run this SQL command in your Snowflake account to obtain the value:
+```
+with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-account-url')
+SELECT concat('https://'|| REPLACE(VALUE,'"','')) AS PRIVATE_LINK_VPCE_ID
+from PL;
+```
+Note that we are going to use Amazon PrivateLink to secure the communication between Snowflake and KDF, so the
+URL is a private endpoint with `privatelink` as a substring.
+
+e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
+
+For `User`, type in `STREAMING_USER`.
+
+For `Private key`, go back to your EC2 console in Systems Manager and run
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+cat ~/priv.key
+```
+Copy the output string and paste into the `Private key` field.
+
+For `Passphrase`, type in the phrase you used when generating the public key with openssl earlier.
+
+![](assets/kdf-stream-2.png)
+
+For `Role`, select `Use custom Snowflake role` and type in `KDF_STREAMING_RL`.
+
+For `VPCE ID`, run the following SQL command in your Snowflake account to obtain the value.
+```commandline
+with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
+SELECT REPLACE(VALUE,'"','') AS PRIVATE_LINK_VPCE_ID
+from PL;
 ```
 
-If everything goes well, you should something similar to screen capture below:
-![](assets/snowpipe-streaming-kc.png)
+For `Snowflake database`, type in `KDF_STREAMING_DB`.
 
-#### 2. Start the producer that will ingest real-time data to the MSK cluster
+For `Snowflake Schema`, type in `KDF_STREAMING_SCHEMA`.
 
-Start a new Linux session in `step 3` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane.
-```commandline
-curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
-```
-You should see response similar to screen capture below if everything works well.
+For `Snowflake table`, type in `KDF_STREAMING_TBL`.
 
-![](assets/producer.png)
+For `Data loading options for your Snowflake table`, select `Use JSON keys as table column names`.
 
-Note that in the script above, the producer queries a [Rest API](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky ) that provides real-time flight data over the San Francisco 
-Bay Area in JSON format. The data includes information such as timestamps, [icao](https://icao.usmission.gov/mission/icao/#:~:text=Home%20%7C%20About%20the%20Mission%20%7C%20U.S.,civil%20aviation%20around%20the%20world.) numbers, flight IDs, destination airport, longitude, 
-latitude, and altitude of the aircraft, etc. The data is ingested into the `streaming` topic on the MSK cluster and 
-then picked up by the Snowpipe streaming Kafka connector, which delivers it directly into a Snowflake 
-table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
+![](assets/kdf-stream-3.png)
 
-![](assets/flight-json.png)
+For `S3 backup bucket`, pick an existing S3 bucket where you want to save the logs or error messages. [Create a S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html) if you don't have one.
+
+![](assets/kdf-stream-4.png)
+
+Leave everything else as default and click `Create delivery stream`.
+
+Your delivery stream will be generated in about 5 minutes.
 
 <!---------------------------->
 ## Query ingested data in Snowflake
