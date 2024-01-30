@@ -39,9 +39,6 @@ In this quickstart we will use Tasty Bytes snowflake fictional food truck busine
 
 ### Prerequisites
 - Familiarity with the Snowflake Snowsight interface
-- Basic experience using git
-- Please make sure you have completed the [Introduction to Tasty Bytes Quickstart](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
-
 
 ### What You’ll Learn 
 - The basics of hybrid tables
@@ -111,11 +108,28 @@ USE SCHEMA DATA;
 #### Create Hybrid Table and Bulk Load Data
 
 You may bulk load data into hybrid tables by copying from a data stage or other tables (that is, using CTAS, COPY, or INSERT INTO … SELECT).
-It is strongly recommended to bulk load data into a hybrid table using a CREATE TABLE … AS SELECT statement, as there are several optimizations which can only be applied to a data load as part of table creation. You need to define all keys, indexes, and constraints at the creation of a hybrid table. 
+It is strongly recommended to bulk load data into a hybrid table using a CREATE TABLE … AS SELECT statement, as there are several optimizations which can only be applied to a data load as part of table creation. You need to define all keys, indexes, and constraints at the creation of a hybrid table. Bulk loading via INSERT or COPY is supported, but data loading is slower compared to CTAS, which could be 10 times faster, for large amounts of data and queries against freshly loaded data will be slower as well.
 
+First we have to create a [FILE FORMAT](https://docs.snowflake.com/en/sql-reference/sql/create-file-format) that describes a set of staged data to access or load into Snowflake tables and a [STAGE](https://docs.snowflake.com/en/user-guide/data-load-overview) which is a Snowflake object that points to a cloud storage location Snowflake can access to both ingest and query data. In this lab the data is stored in a publically accessible AWS S3 bucket which we are referencing when creating the Stage object.
+
+```sql
+-- Create a CSV file format named CSV_FORMAT
+CREATE OR REPLACE FILE FORMAT CSV_FORMAT TYPE = csv field_delimiter = ',' skip_header = 1 null_if = ('NULL', 'null') empty_field_as_null = true;
+-- Create stage for loading orders data
+create or replace stage FROSTBYTE_TASTY_BYTES_STAGE url = 'TBD' FILE_FORMAT = CSV_FORMAT;
+```
+
+Once we've created the stage lets view using [LIST](https://docs.snowflake.com/en/sql-reference/sql/list?utm_source=snowscope&utm_medium=serp&utm_term=LIST+%40) statement all the files in FROSTBYTE_TASTY_BYTES_STAGE named stage:
+
+```sql
+-- List all the files in FROSTBYTE_TASTY_BYTES_STAGE named stage:
+list @FROSTBYTE_TASTY_BYTES_STAGE;
+```
+The statement should return two records: one for the 'TRUCK.csv' file and the second for the 'ORDER_HEADER.csv' file.
+
+Once we've created the Stage which points to where the data resides in cloud storage we can simply load the data using CTAS statement into our TRUCK table.
 This DDL will create a hybrid table TRUCK using CREATE TABLE … AS SELECT statement.
 Note the primary key constraint on the TRUCK_ID column.
-
 
 ```sql
 CREATE OR REPLACE HYBRID TABLE TRUCK (
@@ -133,28 +147,27 @@ CREATE OR REPLACE HYBRID TABLE TRUCK (
 	EV_FLAG NUMBER(38,0),
 	FRANCHISE_ID NUMBER(38,0),
 	TRUCK_OPENING_DATE DATE,
-        TRUCK_EMAIL VARCHAR NOT NULL UNIQUE,
+	TRUCK_EMAIL VARCHAR NOT NULL UNIQUE,
 	primary key (TRUCK_ID) 
-)
-AS
-SELECT 
-TRUCK_ID,
-MENU_TYPE_ID,
-PRIMARY_CITY,
-REGION,
-ISO_REGION,
-COUNTRY,
-ISO_COUNTRY_CODE,
-FRANCHISE_FLAG,
-YEAR,
-MAKE,
-MODEL,
-EV_FLAG,
-FRANCHISE_ID,
-TRUCK_OPENING_DATE,
-CONCAT(TRUCK_ID, '_truck@email.com')
-FROM 
-FROSTBYTE_TASTY_BYTES.RAW_POS.TRUCK;
+	)
+	AS
+	SELECT 
+	t.$1 AS TRUCK_ID, 
+	t.$2 AS MENU_TYPE_ID,
+	t.$3 AS PRIMARY_CITY,
+	t.$4 AS REGION,
+	t.$5 AS ISO_REGION,
+	t.$6 AS COUNTRY,
+	t.$7 AS ISO_COUNTRY_CODE,
+	t.$8 AS FRANCHISE_FLAG,
+	t.$9 AS YEAR,
+	t.$10 AS MAKE,
+	t.$11 AS MODEL,
+	t.$12 AS EV_FLAG,
+	t.$13 AS FRANCHISE_ID,
+	t.$14 AS TRUCK_OPENING_DATE,
+	CONCAT(TRUCK_ID, '_truck@email.com') TRUCK_EMAIL
+	FROM @FROSTBYTE_TASTY_BYTES_STAGE (file_format => 'CSV_FORMAT', pattern=>'TRUCK.csv') t;
 ```
 
 This DDL will create the structure for the ORDER_HEADER hybrid table.
@@ -169,7 +182,8 @@ CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
 	TRUCK_ID NUMBER(38,0),
 	LOCATION_ID NUMBER(19,0),
 	CUSTOMER_ID NUMBER(38,0),
-	SHIFT NUMBER(38,0),
+	DISCOUNT_ID FLOAT,
+	SHIFT_ID NUMBER(38,0),
 	SHIFT_START_TIME TIME(9),
 	SHIFT_END_TIME TIME(9),
 	ORDER_CHANNEL VARCHAR(16777216),
@@ -184,46 +198,51 @@ CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
 	primary key (ORDER_ID),
 	foreign key (TRUCK_ID) references TRUCK(TRUCK_ID) ,
 	index IDX01_ORDER_TS(ORDER_TS)
-    );
+);
 ```
 
 This DML will insert data into table ORDER_HEADER using INSERT INTO … SELECT statement
 
 ```sql
 insert into ORDER_HEADER (
-     ORDER_ID,
-     TRUCK_ID,
-     LOCATION_ID,
-     CUSTOMER_ID,
-     SHIFT_START_TIME,
-     SHIFT_END_TIME,
-     ORDER_CHANNEL,
-     ORDER_TS,
-     SERVED_TS,
-     ORDER_CURRENCY,
-     ORDER_AMOUNT,
-     ORDER_TAX_AMOUNT,
-     ORDER_DISCOUNT_AMOUNT,
-     ORDER_TOTAL,
-     ORDER_STATUS)
-     SELECT
-     ORDER_ID,
-     TRUCK_ID,
-     LOCATION_ID,
-     CUSTOMER_ID,
-     SHIFT_START_TIME,
-     SHIFT_END_TIME,
-     ORDER_CHANNEL,
-     ORDER_TS,
-     SERVED_TS,
-     ORDER_CURRENCY,
-     ORDER_AMOUNT,
-     ORDER_TAX_AMOUNT,
-     ORDER_DISCOUNT_AMOUNT,
-     ORDER_TOTAL,
-     ''
-     from FROSTBYTE_TASTY_BYTES.RAW_POS.ORDER_HEADER limit 1000;
+	ORDER_ID,
+	TRUCK_ID,
+	LOCATION_ID,
+	CUSTOMER_ID,
+	DISCOUNT_ID,
+	SHIFT_ID,
+	SHIFT_START_TIME,
+	SHIFT_END_TIME,
+	ORDER_CHANNEL,
+	ORDER_TS,
+	SERVED_TS,
+	ORDER_CURRENCY,
+	ORDER_AMOUNT,
+	ORDER_TAX_AMOUNT,
+	ORDER_DISCOUNT_AMOUNT,
+	ORDER_TOTAL,
+	ORDER_STATUS)
+	SELECT
+	t.$1 AS ORDER_ID,
+	t.$2 AS TRUCK_ID,
+	t.$3 AS LOCATION_ID,
+	t.$4 AS CUSTOMER_ID,
+	t.$5 AS DISCOUNT_ID,
+	t.$6 AS SHIFT_ID,
+	t.$7 AS SHIFT_START_TIME,
+	t.$8 AS SHIFT_END_TIME,
+	t.$9 AS ORDER_CHANNEL,
+	t.$10 AS ORDER_TS,
+	t.$11 AS SERVED_TS,
+	t.$12 AS ORDER_CURRENCY,
+	t.$13 AS ORDER_AMOUNT,
+	t.$14 AS ORDER_TAX_AMOUNT,
+	t.$15 AS ORDER_DISCOUNT_AMOUNT,
+	t.$16 AS ORDER_TOTAL,
+	'' as ORDER_STATUS 
+	FROM @FROSTBYTE_TASTY_BYTES_STAGE (file_format => 'CSV_FORMAT', pattern=>'ORDER_HEADER.csv') t;
 ```
+
 
 ## Explore Data
 Duration: 5
@@ -275,7 +294,7 @@ select * from ORDER_HEADER limit 10;
 ```
 
 ## Unique and Foreign Keys Constraints
-Duration: 10
+Duration: 5
 
 In this part of the step, we will test Unique and Foreign Keys Constraints.
 
@@ -602,7 +621,7 @@ After executing the join statement, examine and analyze the data in the result s
 
 ## Security & Governance
 
-Duration: 10
+Duration: 5
 
 In this step, we will demonstrate that the security and governance functionalities that have been applied to the standard table also exist for the hybrid table.
 
