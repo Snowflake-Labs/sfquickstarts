@@ -26,6 +26,9 @@ Snowpark Container Services are fully integrated with both Snowflake features an
 
 For more information on these objects, check out [this blog](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741) along with the Snowpark Container Services [documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview).
 
+> aside negative
+> NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.
+
 ### What you will learn 
 - The working mechanics of Snowpark Container Services 
 - How to build and push a containerized Docker image to SPCS along with code and data files
@@ -208,10 +211,11 @@ To create the service, run the following commands in a SQL worksheet:
 ```sql
 use role DASH_SPCS;
 create service DASH_DB.DASH_SCHEMA.llm_service
+    in compute pool DASH_GPU3
+    from @dash_stage
+    specification_file = 'llm-spcs.yaml'
     min_instances = 1
-    max_instances = 1
-    compute_pool = DASH_GPU3
-    spec = '@dash_stage/llm-spcs.yaml';
+    max_instances = 1;
 ```
 
 To check the status of the service, run the following in a SQL worksheet:
@@ -246,6 +250,9 @@ Copy the endpoint URL, and paste it in your browser. At this point, you will be 
 <!-- ------------------------ -->
 ## Deploy Llama 2 in SPCS
 Duration: 40
+
+> aside negative
+> NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.
 
 Recall that in our `Dockerfile` we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab as shown below.
 
