@@ -507,7 +507,7 @@ CALL cc_batch_processing('TRANSFORMED_TABLE', 'SCORED_TABLE');
 By running those two Stored Procedures sequentially, we chould now have feature engineered and scored the newly shared data! We can run the following and see the results
 
 ```SQL
-SELECT * FROM SCORED_MODEL.SCORED_MODEL.UDF_TEST_SCORED LIMIT 100;
+SELECT * FROM SCORED_MODEL.SCORED_MODEL.SCORED_TABLE LIMIT 100;
 ```
 
 Next we will create a pipeline from streams and tasks to automate the feature engineering of the newly shared data, score it, and make it available to the Bank.
@@ -549,7 +549,7 @@ AS
     CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE');
 ```
 
-Then we make a task depndant on the above which scores the model.
+Then we make a task dependant on the above which scores the model.
 
 ```SQL
 CREATE OR REPLACE TASK score_data 
@@ -589,7 +589,7 @@ Now lets share our scored table back to the Bank. This process is the same as st
 
 In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it SCORED_DATA. Screenshot is below: ![Diagram](assets/private_listing_navigation_2.png)
 
-In the next modal, click the "+ Select" option. In this next modal, select the SCORED_DATA in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_TABLE and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. You will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: ![Diagram](assets/create_listing_navigation.png)
+In the next modal, click the "+ Select" option. In this next modal, select the SCORED_TABLE in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_TABLE and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. You will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: ![Diagram](assets/account_identifier_navigation.png)
 
 Switch over to the SnowBank account for the next step.
 
@@ -739,12 +739,13 @@ DROP WAREHOUSE QUERY_WH;
 ```
 
 ```SQL
-CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR)
+CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR, imputeTable VARCHAR)
 RETURNS STRING
 LANGUAGE PYTHON
 RUNTIME_VERSION = '3.8'
 PACKAGES = ('snowflake-snowpark-python', 'snowflake-ml-python')
 HANDLER = 'feature_transform'
+EXECUTE AS CALLER
 AS
 $$
 import snowflake.snowpark as snp
@@ -753,8 +754,9 @@ import snowflake.snowpark.functions as F
 import snowflake.snowpark.types as T
 import snowflake.ml.modeling.impute as I
 
-def feature_transform(session, raw_table, target_table):
+def feature_transform(session, raw_table, target_table, impute_table):
     input_df = session.table(raw_table)
+    impute_df = session.table(impute_table)
     feature_cols = input_df.columns
     feature_cols.remove('"customer_ID"')
 
@@ -764,7 +766,7 @@ def feature_transform(session, raw_table, target_table):
     my_imputer = I.SimpleImputer(input_cols= feature_cols,
                            output_cols= feature_cols,
                            strategy='most_frequent')
-    my_imputer.fit(input_df)
+    my_imputer.fit(impute_df)
     input_df = my_imputer.transform(input_df)
     
     # Feature engineer raw input
@@ -835,3 +837,5 @@ def cc_batch_processing(session, raw_table, target_table):
     return "Success"
 $$;
 ```
+
+Tasks cannot run Imputer... nan is most common value
