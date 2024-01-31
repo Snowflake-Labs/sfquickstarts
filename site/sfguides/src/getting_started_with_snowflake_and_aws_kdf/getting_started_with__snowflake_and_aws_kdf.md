@@ -302,8 +302,9 @@ with PL as
 SELECT concat('https://'|| REPLACE(VALUE,'"','')) AS PRIVATE_LINK_VPCE_ID
 from PL;
 ```
-Note that we are going to use Amazon PrivateLink to secure the communication between Snowflake and KDF, so the
-URL is a private endpoint with `privatelink` as a substring.
+Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and KDF, so the
+URL is a private endpoint with `privatelink` as a substring. Alternatively, you can use the public endpoint without 
+the `privatelink` substring, if this is the case, leave the `VPCE ID` field blank below.
 
 e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
 
