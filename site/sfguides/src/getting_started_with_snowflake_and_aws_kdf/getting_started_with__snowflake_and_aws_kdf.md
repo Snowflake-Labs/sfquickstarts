@@ -302,10 +302,12 @@ with PL as
 SELECT concat('https://'|| REPLACE(VALUE,'"','')) AS PRIVATE_LINK_VPCE_ID
 from PL;
 ```
-Note that we are going to use Amazon PrivateLink to secure the communication between Snowflake and KDF, so the
-URL is a private endpoint with `privatelink` as a substring.
 
 e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
+
+Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and KDF, so the
+URL is a private endpoint with `privatelink` as a substring. Alternatively, you can use the public endpoint without 
+the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, leave the `VPCE ID` field blank below.
 
 For `User`, type in `STREAMING_USER`.
 
@@ -444,6 +446,7 @@ For those of you who are interested in learning more about how to build sleek da
 
 Related Resources
 
+- [Unleashing the Full Potential of Real-Time Streaming with Amazon Kinesis Data Firehose and Snowpipe Streaming](https://medium.com/snowflake/unleashing-the-full-potential-of-real-time-streaming-with-amazon-kinesis-data-firehose-and-snowpipe-0283fb599364#Snowflake)
 - [Amazon Kinesis Data Firehose (KDF)](https://aws.amazon.com/kinesis/data-firehose/)
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/)
