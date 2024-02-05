@@ -49,8 +49,11 @@ Duration: 6
 
 The project contains multiple subdirectories which will be shortly described in the following section.
 
-### Connectors Native SDK Java
-This directory contains all the Native SDK Java code along with unit tests for the components. 
+### Connectors Native SDK
+This directory contains all the Connectors Native SDK code. It is further split into subdirectories as described below.
+
+#### Connectors Native SDK Java
+This directory contains all the Native SDK Java code along with unit tests and integration tests for the components. 
 Because of the nature of the Native Apps inside Snowflake this means not only Java code, but also sql code, which is necessary to create a working application.
 The definitions of the database objects can be found inside `src/main/resources` directory. 
 Those files are used while creating an application to customize what objects will be available inside the application. 
@@ -58,30 +61,23 @@ For this example purposes we will be using `all.sql` file, which creates objects
 General idea how those files are used will be explained in this tutorial, but for the more information it's better to check usage documentation.
 For now this code is not available as jar archive that can be used as a dependency in java project and has to be included as source files.
 
+#### Connectors Native SDK Java test
+This directory contains source code of a helper library used in unit tests, for example objects to mock particular components and custom assertions.
+Files inside this directory are not used when deploying an application.
+
 ### Example Java GitHub connector
-This directory `app/` contains all the files needed to run the Native App. The `streamlit/` directory 
-inside contains source files necessary to run the streamlit ui. The `setup.sql` 
+The actual example connector is located inside `examples/connectors-native-sdk-example-java-github-connector` directory.
+Inside this directory `app/` contains all the files needed to run the Native App. The `app/streamlit/` directory 
+contains source files necessary to run the streamlit ui. The `setup.sql` 
 file is run during the application installation and is responsible for creating the necessary database objects.
 The `manifest.yml` is the manifest of the Native App and is necessary to create application package and then the application itself. 
 This file specifies application properties as well as permissions needed by the application.
 
-Other files in the `example-java-github-connector/` directory are gradle related files, the `Makefile` contains build,
+Additionally, `examples/connectors-native-sdk-example-java-github-connector` directory contains `src/` subdirectory which contains 
+custom connector logic, such as implementation of the required classes and customization to the default SDK components.
+
+Other files in the directory are gradle related files, the `Makefile` contains build,
 deploy and installation convenience scripts, which will be described in the next step of this tutorial.
-
-### Connectors Native SDK Java test
-This directory contains source code of a helper library used in unit tests, for example objects to mock particular components and custom assertions.
-Files inside this directory are not used when deploying an application.
-
-### Connectors Native SDK Java integration tests
-This directory contains the integration tests of the application using Connectors Native SDK Java. 
-Those tests are performing whole process of building and deploying a simple application 
-to Snowflake and then automatically going through the main functionalities of the application.
-Because those tests need to be executed using actual Snowflake, they require credentials to be configured. 
-Furthermore, those tests are heavy and time-consuming.
-
-### Example Native SDK app
-This directory contains a simple application used by the integration tests. It is similar to the `Example Java GitHub connector`,
-but it does not contain any Streamlit or GitHub specific code. It is basically an application consisting of pure Connectors Native SDK Java.
 
 ## Build and publish locally the sdk code
 Duration: 2
