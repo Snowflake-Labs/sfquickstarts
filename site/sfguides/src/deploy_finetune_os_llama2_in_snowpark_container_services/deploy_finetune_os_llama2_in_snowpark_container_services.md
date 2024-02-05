@@ -26,6 +26,9 @@ Snowpark Container Services are fully integrated with both Snowflake features an
 
 For more information on these objects, check out [this blog](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741) along with the Snowpark Container Services [documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview).
 
+> aside negative
+> NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.
+
 ### What you will learn 
 - The working mechanics of Snowpark Container Services 
 - How to build and push a containerized Docker image to SPCS along with code and data files
@@ -38,7 +41,7 @@ For more information on these objects, check out [this blog](https://medium.com/
 - A non-trial Snowflake account in a supported [AWS region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions) with access to a role that has the `ACCOUNTADMIN` role. If not, you will need to work with your admin to perform the initial environment setup.
 - A [Hugging Face account](https://huggingface.co/).
   - Completed Llama 2 request form [https://ai.meta.com/resources/models-and-libraries/llama-downloads](https://ai.meta.com/resources/models-and-libraries/llama-downloads/). ***NOTE: Your Hugging Face account email address MUST match the email you provide on the Meta website or your request will not be approved.***
-  - After approval, submit the form (https://huggingface.co/meta-llama/Llama-2-7b-chat-hf) to access Llama 2 on Hugging Face to unlock access to the model. ***NOTE: This could take several hours so plan accordingly.***
+  - After approval, submit the form [https://huggingface.co/meta-llama/Llama-2-7b-chat-hf](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf) to access Llama 2 on Hugging Face to unlock access to the model. ***NOTE: This could take several hours so plan accordingly.***
   - Login into your Hugging Face account and access your [Hugging Face token](https://huggingface.co/settings/tokens) by browsing to *Settings -> Access Tokens -> New token*. Make note of this token -- you will need to copy-paste it later on.
 
 ### What You’ll Build 
@@ -191,6 +194,8 @@ Once we have successfully pushed the Docker image and uploaded the spec YAML, we
 Before creating the service, run the following command to check the status of the compute pool DASH_GPU3 and make sure it is in IDLE or ACTIVE state. 
 
 ```sql
+use role DASH_SPCS;
+
 show compute pools;
 ```
 
@@ -206,12 +211,13 @@ alter compute pool DASH_GPU3 resume;
 To create the service, run the following commands in a SQL worksheet:
 
 ```sql
-use role DASH_SPCS;
-create service DASH_DB.DASH_SCHEMA.llm_service
-    min_instances = 1
-    max_instances = 1
-    compute_pool = DASH_GPU3
-    spec = '@dash_stage/llm-spcs.yaml';
+create service llm_service
+IN COMPUTE POOL DASH_GPU3
+FROM @dash_stage
+SPECIFICATION_FILE = 'llm-spcs.yaml'
+MIN_INSTANCES = 1
+MAX_INSTANCES = 1
+EXTERNAL_ACCESS_INTEGRATIONS = (HUGGINGFACE_ACCESS_INTEGRATION);
 ```
 
 To check the status of the service, run the following in a SQL worksheet:
@@ -247,6 +253,9 @@ Copy the endpoint URL, and paste it in your browser. At this point, you will be 
 ## Deploy Llama 2 in SPCS
 Duration: 40
 
+> aside negative
+> NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.
+
 Recall that in our `Dockerfile` we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab as shown below.
 
 ![JupyterLab](./assets/jupyterlab.png)
@@ -257,7 +266,7 @@ Here's a quick overview of the three notebooks.
 
 2) **llm-notebook-with-fine-tune-pre-run.ipynb**: If for any reason you are not able to run through *llm-notebook-with-fine-tune.ipynb* notebook, you can use this notebook as reference. It has been pre-run so all the cells show the actual/expected output of running each cell.
 
-3) **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb**: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that--while all the code is exactly the same as in *llm-notebook-with-fine-tune.ipynb* the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in *llm-notebook-with-fine-tune.ipynb* the same model is fine-tuned using only 100 rows. And the improved model accuracy is evident in the inference results -- refer to the `output` vs `predicted` dataframe columns of the evaluation dataset in both notebooks. 
+3) **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb**: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that--while all the code is exactly the same as in *llm-notebook-with-fine-tune.ipynb* the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in *llm-notebook-with-fine-tune.ipynb* the same model is fine-tuned using only 100 rows. And the improved model is evident in the inference results -- refer to the `output` vs `predicted` dataframe columns of the evaluation dataset in both notebooks. 
 
 > aside positive
 > NOTE: Fine-tuning the model on a larger dataset compared to 100 rows in our case will take much longer so just be mindful of that.
@@ -331,7 +340,7 @@ Here's what the transcripts looks like:
 
 ### Simple Prompt Engineering
 
-Before we can use the deployed Llama 2 base model for inference, run this cell to create a new column named `input` (in `df_inputs` dataframe) with instruction to summarize the transcripts in less that 200 words.
+Before we can use the deployed Llama 2 base model for inference, run this cell to create a new column named `input` (in `df_inputs` dataframe) with instruction to summarize the transcripts in less that 200 words. Like so `Summarize this transcript in less than 200 words:`.
 
 Here's what the transcripts with instructions look like:
 
@@ -344,6 +353,18 @@ Here we're calling `predict()` method on the deployed Llama 2 base model which w
 Here's what the transcript summaries look like:
 
 ![Transcript Summaries](./assets/sample_transcript_summaries.png)
+
+ Notice that in this case Llama 2 base model performs really well and generates <= 200 words summary for each of the call transcripts as per our instructions.
+
+### Complex Prompt Engineering
+
+Now let's try a bit more complex prompt that includes a concrete instruction to and see how the base model performs. Like so `Extract location and list of toys in JSON format:`.
+
+### <TODO... insert screenshot>
+
+Notice that in this case the model does not perform as well and the output is not consistent across all transcripts. It also includes additional information in plain-text format which makes displaying and processing it as a JSON object tricky.
+
+This is where fine-tuning the model can help. Let's see how we can accomplish that in the following sections.
 
 ### Cleanup Resources
 
@@ -460,9 +481,9 @@ Here's what the inference output looks like:
 
 ![Eval Inference](./assets/sample_eval_inference.png)
 
-### Model Accuracy
+### Model Performance
 
-As noted earlier, in most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. In our case, the improved model accuracy is evident in the inference results seen in **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb** notebook where the model was fine-tuned on the entire dataset compared to only 100 rows. 
+As noted earlier, in most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. In our case, the improved model is evident in the inference results seen in **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb** notebook where the model was fine-tuned on the entire dataset compared to only 100 rows. 
 
 > aside positive
 > NOTE: Fine-tuning the model on a larger dataset compared to 100 rows will take much longer so just be mindful of that.
