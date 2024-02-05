@@ -352,6 +352,16 @@ The definition for a new resource will be saved, and it will be picked up by the
 
 ![list_defined_resources.png](assets/list_defined_resources.png)
 
+
+### Ingestion schedule and status
+At the top of the `Data Sync` tab there is a section containing general information about ingestion. 
+This section allows user to see the global schedule with which the configured resources will be ingested.
+Furthermore, it will be visited again in the Pause/resume section below. Last indicator here shows the current ingestion status.
+At first, it will be in `NOT SYNCING` state until first resource is defined. Then it will transition to `SYNCING`, and finally
+when at lest one resource finishes successfully it will show the date of last successful ingestion.
+
+![pause.png](assets/pause.png)
+
 ### Ingestion process
 Ingestion process is handled using a `Scheduler Task` and `Task Reactor` components. 
 The scheduler picks up the defined resources according to the global schedule and submits them as `Work Items` to the dispatcher queue.
@@ -382,12 +392,14 @@ The structure of tables is as follows:
 [//]: # (todo after ingestion is implemented)
 
 ### Pausing and resuming
-The connector can be paused and resumed, whenever desired. To do so just click the `Pause` button in the daily use screen. 
+The connector can be paused and resumed, whenever desired. To do so just click the `Pause` button in the `Data Sync` tab. 
 When pausing is triggered the underlying scheduling and work execution mechanism is disabled. However, the currently processing tasks
 will finish before the connector actually goes into `PAUSED` state. Because of that, it can take some time before it happens.
 
 To resume the connector you just have to press `Resume` button that will be displayed in place of the `Pause` button. 
 This will resume the scheduling task which will start queueing new `Work Items`.
+
+![pause.png](assets/pause.png)
 
 ## Customization
 Duration: 2
