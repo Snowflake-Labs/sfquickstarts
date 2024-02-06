@@ -11,8 +11,8 @@ tags: Data Engineering
 # MongoDB to Snowflake CDC Data Replication with Rivery
 <!-- ------------------------ -->
 
-## 1. Overview
-Duration: 1
+## Overview
+Duration: 5
 
 The ability to move MongoDB data into a Snowflake Data Warehouse is key to enabling meaningful analytics using a proper SQL interface.
 
@@ -33,10 +33,15 @@ Given this need, we'll use Rivery's platform to rapidly build a data pipeline to
 	-   Use your own MongoDB database
 
 ### What You'll Learn:
-In this guide, you will learn how to set up a data pipeline that migrates MongoDB data to Snowflake using CDC Data Replication in Rivery’s SaaS ELT Platform. The setup also demonstrates how to respect Snowflake’s Masking Policy for PII or other sensitive data. 
+In this guide, you will learn how to set up a data pipeline that migrates MongoDB data to Snowflake using CDC Data Replication in Rivery’s SaaS ELT Platform. In this process, you will learn:
+- How to use Snowflake partner connect to launch a Rivery account
+- How to create a source to target data pipeline to load any data source into Snowflake
+- How to configure standard SQL extraction or CDC database data replication into Snowflake
+- How to enforce your Snowflake masking policy on ingested data 
+- How to automate data source to snowflake data pipeline execution and track the pipeline current status and overall performance 
 
 <!-- ------------------------ -->
-## 2. Setup a Rivery Account
+## Setup a Rivery Account
 Duration: 2
 
 **If you already have a Rivery account you can skip this step.  
@@ -49,8 +54,8 @@ If you’d like to set up a Rivery account separately, you can do so by navigati
 <!-- END -->
 
 <!-- ------------------------ -->
-## 3. Configure Snowflake Target Connection
-Duration: 2
+## Configure Snowflake Target Connection
+Duration: 5
 
 **If you’ve utilized Snowflake’s Partner Connect to create your Rivery account you can skip to Step 4.  
   
@@ -60,8 +65,8 @@ You can configure your Snowflake connection in Rivery. This will be needed later
 <!-- END -->
 
 <!-- ------------------------ -->
-## 4. Configure MongoDB Source Connection
-Duration: 3
+## Configure MongoDB Source Connection
+Duration: 5
 
 To configure Source Connection within Rivery, you’ll want to navigate to your [Rivery account](https://console.rivery.io/). From here, you can go to Connections > New Connection > MongoDB, fill in the connection details, and test the connection. More information can be found [here](https://docs.rivery.io/docs/create-a-connection).
  
@@ -71,8 +76,8 @@ Note Rivery offers a few different methods to ensure a secured connection to Mon
 <!-- END -->
 
 <!-- ------------------------ -->
-## 5. Configure MongoDB for Change Streams
-Duration: 2
+## Configure MongoDB for Change Streams
+Duration: 3
 
 If you are using MongoDB versions 4.0 or 4.1 you will need to make sure your MongoDB instance “Read Preference” is set to Primary as detailed [here](https://www.mongodb.com/docs/manual/core/read-preference/). If you are using version 4.2 or above this step isn’t required.
     
@@ -80,15 +85,15 @@ If you are using MongoDB versions 4.0 or 4.1 you will need to make sure your Mon
 Note only versions 4.0 and higher of MongoDB are supported by Rivery for [CDC via Change Streams](https://docs.rivery.io/docs/mongo-db-change-streams-overview). If you have an older version of MongoDB or you don’t want to use Change Streams you can still replicate your data using Standard Extraction (SQL-based). In that case, choose Standard Extraction instead of Change Streams under step 7.<!-- END -->
 
 <!-- ------------------------ -->
-## 6. Create a Replication Data Pipeline
-Duration: 1
+## Create a Replication Data Pipeline
+Duration: 2
 
-Once your connections are set up, you’ll want to create your replication data pipeline (River). On the lnavigation menu, click on Create River > Source to Target River.
+Once your connections are set up, you’ll want to create your replication data pipeline (River). On the navigation menu, click on Create River > Source to Target River.
 <!--END--> 
 
 <!-- ------------------------ -->
-## 7. Set the Pipeline Source
-Duration: 1
+## Set the Pipeline Source
+Duration: 5
 
 
 From here, you’ll want to select MongoDB as your Source.
@@ -104,8 +109,8 @@ As mentioned above, you can also use ‘Standard Extraction’ if you’ve decid
 <!--END--> 
 
 <!-- ------------------------ -->
-## 8. Set the Pipeline Target
-Duration: 1
+## Set the Pipeline Target
+Duration: 3
 
 Click on the ‘Target’ tab to configure your Target.  
       
@@ -120,8 +125,8 @@ Rivery supports loading your data via 3 different modes including [Upsert-Merge]
 <!-- END -->
 
 <!--------------->
-## 9. Set the Pipeline Target Schema
-Duration: 1
+## Set the Pipeline Target Schema
+Duration: 5
 
 
 Clicking on the Schema tab you’ll be able to select the specific collections that you want to extract/load.  
@@ -145,8 +150,8 @@ Specifically, under the Table Settings tab, you will find Advanced Options to fi
 ![](assets/step9-3.png)<!-- END -->
 
 <!--------------------> 
-## 10. Schedule and Run the Pipeline
-Duration: 1
+## Schedule and Run the Pipeline
+Duration: 3
 
 Once your setup is complete you can click on the Enable Stream toggle.
 
@@ -166,7 +171,8 @@ Regardless of your replication method, under the Settings tab, you can add any a
 
 
 <!--------------------> 
-## 11. Monitoring Your Pipeline
+## Monitoring Your Pipeline
+Duration: 2
 
 You can then monitor the River run from the Activities page via the navigation menu or by clicking on the River Activities icon on the right-hand side.  
     ![](assets/step11.png)  
@@ -176,8 +182,23 @@ You can then monitor the River run from the Activities page via the navigation m
 
 
 <!--------------------> 
-## 12. Conclusion
-You’ve now configured a MongoDB to Snowflake data migration pipeline. Depending on your configuration, this may be a one-time extract or schedule to run at a regular interval using CDC or standard SQL extraction.  
+## Conclusion
 
-Get up to speed on other [Rivery and Snowflake integrations](https://rivery.io/partners-snowflake/) to simplify your data delivery.
+Congratulations! You’ve now configured a MongoDB to Snowflake data migration pipeline. Depending on your configuration, this may be a one-time extract or schedule to run at a regular interval using CDC or standard SQL extraction. This pipeline should make sure you always get fresh MongoDB data in Snowflake with little effort to set up and code a data pipeline. 
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this Feedback [Form](https://docs.google.com/forms/d/e/1FAIpQLSdiYVIB6X-pge0FL2q1xNIXd1lo3qI947K6D42F3NBAQEcHtA/viewform?usp=sf_link).
+
+What You Learned
+- How to use Snowflake partner connect to launch a Rivery account
+- How to create a source to target data pipeline to load MongoDB data into Snowflake
+- How to configure standard SQL extraction vs. CDC for MongoDB data replication into Snowflake
+- How to enforce your Snowflake masking policy on ingested data 
+- How to automate MongoDB to snowflake data pipeline execution and track the pipeline current status and overall performance
+
+Related Resources
+- [MongoDB Change Stream Overview](https://docs.rivery.io/docs/mongo-db-change-streams-overview)
+- [How to transform data within Snowflake using Rivery](https://docs.rivery.io/docs/logic-overview)
+- [How to Reverse ETL Snowflake data using Rivery](https://rivery.io/product/reverse-etl/)
+
+Get up to speed on other [Rivery and Snowflake integrations](https://rivery.io/partners-snowflake/) to simplify your data delivery.  
 <!-- END -->	
