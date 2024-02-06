@@ -62,6 +62,11 @@ Both companies have chosen to use Snowflake. The advantages of doing this are:
 Below is a schematic of the data share
 ![Diagram](assets/two_way_data_collaboration.png)
 
+From a business point of view, this architecture exists to satisfy several use cases. Examples include:
+- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
+- Superannuation and Life Insurance Companies. A more specific example above is claims processing for life insurance. Often times, the Superannuation companies have the necessary attributes required by the insurance companies for claims processing.
+- Whitelabel Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
+
 ### Dataset Details
 
 The dataset contains aggregated profile features for each customer at each statement date. Features are anonymized and normalized, and fall into the following general categories:
@@ -372,26 +377,42 @@ Run the following coide in a worksheet to create the Stored Procedure.
 
 
 ```SQL
-CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR)
+CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR, imputeTable VARCHAR)
 RETURNS STRING
 LANGUAGE PYTHON
 RUNTIME_VERSION = '3.8'
-PACKAGES = ('snowflake-snowpark-python')
+PACKAGES = ('snowflake-snowpark-python', 'snowflake-ml-python')
 HANDLER = 'feature_transform'
+EXECUTE AS CALLER
 AS
 $$
 import snowflake.snowpark as snp
 import snowflake.snowpark.window as W
 import snowflake.snowpark.functions as F
+import snowflake.snowpark.types as T
+import snowflake.ml.modeling.impute as I
 
-def feature_transform(session, raw_table, target_table):
-    training_df = session.table(raw_table)
+def feature_transform(session, raw_table, target_table, impute_table):
+    input_df = session.table(raw_table)
+    impute_df = session.table(impute_table)
+    feature_cols = input_df.columns
+    feature_cols.remove('"customer_ID"')
+
+    for col_name in feature_cols:
+        input_df = input_df.withColumn(col_name, F.col(col_name).cast(T.FloatType()))
+
+    my_imputer = I.SimpleImputer(input_cols= feature_cols,
+                           output_cols= feature_cols,
+                           strategy='most_frequent')
+    my_imputer.fit(impute_df)
+    input_df = my_imputer.transform(input_df)
+    
     # Feature engineer raw input
     #Average
     features_avg = ['B_1', 'B_2', 'B_3', 'B_4', 'B_5', 'B_6', 'B_8', 'B_9', 'B_10', 'B_11', 'B_12', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_18', 'B_19', 'B_20', 'B_21', 'B_22', 'B_23', 'B_24', 'B_25', 'B_28', 'B_29', 'B_30', 'B_32', 'B_33', 'B_37', 'B_38', 'B_39', 'B_40', 'B_41', 'B_42', 'D_39', 'D_41', 'D_42', 'D_43', 'D_44', 'D_45', 'D_46', 'D_47', 'D_48', 'D_50', 'D_51', 'D_53', 'D_54', 'D_55', 'D_58', 'D_59', 'D_60', 'D_61', 'D_62', 'D_65', 'D_66', 'D_69', 'D_70', 'D_71', 'D_72', 'D_73', 'D_74', 'D_75', 'D_76', 'D_77', 'D_78', 'D_80', 'D_82', 'D_84', 'D_86', 'D_91', 'D_92', 'D_94', 'D_96', 'D_103', 'D_104', 'D_108', 'D_112', 'D_113', 'D_114', 'D_115', 'D_117', 'D_118', 'D_119', 'D_120', 'D_121', 'D_122', 'D_123', 'D_124', 'D_125', 'D_126', 'D_128', 'D_129', 'D_131', 'D_132', 'D_133', 'D_134', 'D_135', 'D_136', 'D_140', 'D_141', 'D_142', 'D_144', 'D_145', 'P_2', 'P_3', 'P_4', 'R_1', 'R_2', 'R_3', 'R_7', 'R_8', 'R_9', 'R_10', 'R_11', 'R_14', 'R_15', 'R_16', 'R_17', 'R_20', 'R_21', 'R_22', 'R_24', 'R_26', 'R_27', 'S_3', 'S_5', 'S_6', 'S_7', 'S_9', 'S_11', 'S_12', 'S_13', 'S_15', 'S_16', 'S_18', 'S_22', 'S_23', 'S_25', 'S_26']
     feat = [F.col(c) for c in features_avg]
     exprs = {x: "avg" for x in features_avg}
-    df_avg = (training_df
+    df_avg = (input_df
           .groupBy('"customer_ID"')
           .agg(exprs)
           .rename({F.col(f"AVG({f})"): f"{f}_avg" for f in features_avg})
@@ -400,7 +421,7 @@ def feature_transform(session, raw_table, target_table):
     # Minimum
     features_min = ['B_2', 'B_4', 'B_5', 'B_9', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_19', 'B_20', 'B_28', 'B_29', 'B_33', 'B_36', 'B_42', 'D_39', 'D_41', 'D_42', 'D_45', 'D_46', 'D_48', 'D_50', 'D_51', 'D_53', 'D_55', 'D_56', 'D_58', 'D_59', 'D_60', 'D_62', 'D_70', 'D_71', 'D_74', 'D_75', 'D_78', 'D_83', 'D_102', 'D_112', 'D_113', 'D_115', 'D_118', 'D_119', 'D_121', 'D_122', 'D_128', 'D_132', 'D_140', 'D_141', 'D_144', 'D_145', 'P_2', 'P_3', 'R_1', 'R_27', 'S_3', 'S_5', 'S_7', 'S_9', 'S_11', 'S_12', 'S_23', 'S_25']
     exprs_min = {x: "min" for x in features_min}
-    df_min = (training_df
+    df_min = (input_df
           .groupBy('"customer_ID"')
           .agg(exprs_min)
           .rename({F.col(f"MIN({f})"): f"{f}_min" for f in features_min})
@@ -409,7 +430,7 @@ def feature_transform(session, raw_table, target_table):
     # Maximum
     features_max = ['B_1', 'B_2', 'B_3', 'B_4', 'B_5', 'B_6', 'B_7', 'B_8', 'B_9', 'B_10', 'B_12', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_18', 'B_19', 'B_21', 'B_23', 'B_24', 'B_25', 'B_29', 'B_30', 'B_33', 'B_37', 'B_38', 'B_39', 'B_40', 'B_42', 'D_39', 'D_41', 'D_42', 'D_43', 'D_44', 'D_45', 'D_46', 'D_47', 'D_48', 'D_49', 'D_50', 'D_52', 'D_55', 'D_56', 'D_58', 'D_59', 'D_60', 'D_61', 'D_63', 'D_64', 'D_65', 'D_70', 'D_71', 'D_72', 'D_73', 'D_74', 'D_76', 'D_77', 'D_78', 'D_80', 'D_82', 'D_84', 'D_91', 'D_102', 'D_105', 'D_107', 'D_110', 'D_111', 'D_112', 'D_115', 'D_116', 'D_117', 'D_118', 'D_119', 'D_121', 'D_122', 'D_123', 'D_124', 'D_125', 'D_126', 'D_128', 'D_131', 'D_132', 'D_133', 'D_134', 'D_135', 'D_136', 'D_138', 'D_140', 'D_141', 'D_142', 'D_144', 'D_145', 'P_2', 'P_3', 'P_4', 'R_1', 'R_3', 'R_5', 'R_6', 'R_7', 'R_8', 'R_10', 'R_11', 'R_14', 'R_17', 'R_20', 'R_26', 'R_27', 'S_3', 'S_5', 'S_7', 'S_8', 'S_11', 'S_12', 'S_13', 'S_15', 'S_16', 'S_22', 'S_23', 'S_24', 'S_25', 'S_26', 'S_27']
     exprs_max = {x: "max" for x in features_max}
-    df_max = (training_df
+    df_max = (input_df
           .groupBy('"customer_ID"')
           .agg(exprs_max)
           .rename({F.col(f"MAX({f})"): f"{f}_max" for f in features_max})
@@ -418,7 +439,7 @@ def feature_transform(session, raw_table, target_table):
     # Last
     features_last = ['B_1', 'B_2', 'B_3', 'B_4', 'B_5', 'B_6', 'B_7', 'B_8', 'B_9', 'B_10', 'B_11', 'B_12', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_18', 'B_19', 'B_20', 'B_21', 'B_22', 'B_23', 'B_24', 'B_25', 'B_26', 'B_28', 'B_29', 'B_30', 'B_32', 'B_33', 'B_36', 'B_37', 'B_38', 'B_39', 'B_40', 'B_41', 'B_42', 'D_39', 'D_41', 'D_42', 'D_43', 'D_44', 'D_45', 'D_46', 'D_47', 'D_48', 'D_49', 'D_50', 'D_51', 'D_52', 'D_53', 'D_54', 'D_55', 'D_56', 'D_58', 'D_59', 'D_60', 'D_61', 'D_62', 'D_63', 'D_64', 'D_65', 'D_69', 'D_70', 'D_71', 'D_72', 'D_73', 'D_75', 'D_76', 'D_77', 'D_78', 'D_79', 'D_80', 'D_81', 'D_82', 'D_83', 'D_86', 'D_91', 'D_96', 'D_105', 'D_106', 'D_112', 'D_114', 'D_119', 'D_120', 'D_121', 'D_122', 'D_124', 'D_125', 'D_126', 'D_127', 'D_130', 'D_131', 'D_132', 'D_133', 'D_134', 'D_138', 'D_140', 'D_141', 'D_142', 'D_145', 'P_2', 'P_3', 'P_4', 'R_1', 'R_2', 'R_3', 'R_4', 'R_5', 'R_6', 'R_7', 'R_8', 'R_9', 'R_10', 'R_11', 'R_12', 'R_13', 'R_14', 'R_15', 'R_19', 'R_20', 'R_26', 'R_27', 'S_3', 'S_5', 'S_6', 'S_7', 'S_8', 'S_9', 'S_11', 'S_12', 'S_13', 'S_16', 'S_19', 'S_20', 'S_22', 'S_23', 'S_24', 'S_25', 'S_26', 'S_27', '"customer_ID"']
     w = snp.Window.partition_by('"customer_ID"').order_by(F.col('S_2').desc())
-    df_last = training_df.withColumn("rn", F.row_number().over(w)).filter("rn = 1").select(features_last)
+    df_last = input_df.withColumn("rn", F.row_number().over(w)).filter("rn = 1").select(features_last)
     
     # Join
     feature_df = df_min.natural_join(df_avg)
@@ -498,7 +519,7 @@ Let manually execute our pipeline for demonstrative purposes, and then later in 
 In a worksheet, run the following code:
 
 ```SQL
-CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA', 'TRANSFORMED_TABLE');
+CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA', 'TRANSFORMED_TABLE', 'CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA');
 ```
 ```SQL
 CALL cc_batch_processing('TRANSFORMED_TABLE', 'SCORED_TABLE');
@@ -532,7 +553,7 @@ CREATE OR REPLACE TABLE SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA LIKE CC_DE
 CREATE OR REPLACE TASK CDC
     WAREHOUSE = 'QUERY_WH'
     SCHEDULE = 'USING CRON 0 0 1 1 * UTC'
-    -- We would add a more realistic schedule in production, but this is set ton once a year to avoid accidental credit consumption
+    -- We will not need the schedule once triggered tasks is GA
     WHEN system$stream_has_data('CC_DEFAULT_DATA_STREAM')
 AS
 INSERT INTO SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA
@@ -546,7 +567,7 @@ CREATE OR REPLACE TASK FEATURE_ENG
     WAREHOUSE = 'QUERY_WH'
 AFTER CDC
 AS
-    CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE');
+    CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE', 'CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA');
 ```
 
 Then we make a task dependant on the above which scores the model.
@@ -589,7 +610,7 @@ Now lets share our scored table back to the Bank. This process is the same as st
 
 In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it SCORED_DATA. Screenshot is below: ![Diagram](assets/private_listing_navigation_2.png)
 
-In the next modal, click the "+ Select" option. In this next modal, select the SCORED_TABLE in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_TABLE and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. You will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: ![Diagram](assets/account_identifier_navigation.png)
+In the next modal, click the "+ Select" option. In this next modal, select the SCORED_TABLE in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_MODEL and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. You will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: ![Diagram](assets/account_indentifier_navigation.png)
 
 Switch over to the SnowBank account for the next step.
 
@@ -695,9 +716,11 @@ From this quickstart, we can see how we can create an end-to-end automated pipel
 - Train and Deploy an ML Model
 - Use Streams and Tasks to automate the pipeline
 
-From a business point of view, this architecture exists to satisfy several use cases. Examples include:
-- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a srcure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data
-- Another example is benchmarking. 
+To recap, from a business point of view, this architecture exists to satisfy several use cases. Examples include:
+- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
+- Superannuation and Life Insurance Companies. A more specific example above is claims processing for life insurance. Often times, the Superannuation companies have the necessary attributes required by the insurance companies for claims processing.
+- Whitelabel Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
+
 
 The next Quickstart in this series extends on this idea by leveraging our Native Apps framework.
 
@@ -724,7 +747,7 @@ Next we repeat the steps for SnowBank.
 
 Open up the account and navigate to Data > Provider Studio > Listings, and select the listing "cc_default_training_data". A screenshot is below ![Diagram](assets/delist_navigation_2.png)
 
-Next select the "Live" button in the top right and select "Unpublish". The following modal should appera. Click "Unpublish" ![Diagram](assets/unpublish_navigation_2.png)
+Next select the "Live" button in the top right and select "Unpublish". The following modal should appear. Click "Unpublish" ![Diagram](assets/unpublish_navigation_2.png)
 
 Next, click the trash can icon and delete the listing. Screenshot is below ![Diagram](assets/delete_listing_navigation_2.png)
 
@@ -737,105 +760,3 @@ DROP DATABASE DATA_SHARING_DEMO CASCADE;
 DROP DATABASE SCORED_DATA;
 DROP WAREHOUSE QUERY_WH;
 ```
-
-```SQL
-CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR, imputeTable VARCHAR)
-RETURNS STRING
-LANGUAGE PYTHON
-RUNTIME_VERSION = '3.8'
-PACKAGES = ('snowflake-snowpark-python', 'snowflake-ml-python')
-HANDLER = 'feature_transform'
-EXECUTE AS CALLER
-AS
-$$
-import snowflake.snowpark as snp
-import snowflake.snowpark.window as W
-import snowflake.snowpark.functions as F
-import snowflake.snowpark.types as T
-import snowflake.ml.modeling.impute as I
-
-def feature_transform(session, raw_table, target_table, impute_table):
-    input_df = session.table(raw_table)
-    impute_df = session.table(impute_table)
-    feature_cols = input_df.columns
-    feature_cols.remove('"customer_ID"')
-
-    for col_name in feature_cols:
-        input_df = input_df.withColumn(col_name, F.col(col_name).cast(T.FloatType()))
-
-    my_imputer = I.SimpleImputer(input_cols= feature_cols,
-                           output_cols= feature_cols,
-                           strategy='most_frequent')
-    my_imputer.fit(impute_df)
-    input_df = my_imputer.transform(input_df)
-    
-    # Feature engineer raw input
-    #Average
-    features_avg = ['B_1', 'B_2', 'B_3', 'B_4', 'B_5', 'B_6', 'B_8', 'B_9', 'B_10', 'B_11', 'B_12', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_18', 'B_19', 'B_20', 'B_21', 'B_22', 'B_23', 'B_24', 'B_25', 'B_28', 'B_29', 'B_30', 'B_32', 'B_33', 'B_37', 'B_38', 'B_39', 'B_40', 'B_41', 'B_42', 'D_39', 'D_41', 'D_42', 'D_43', 'D_44', 'D_45', 'D_46', 'D_47', 'D_48', 'D_50', 'D_51', 'D_53', 'D_54', 'D_55', 'D_58', 'D_59', 'D_60', 'D_61', 'D_62', 'D_65', 'D_66', 'D_69', 'D_70', 'D_71', 'D_72', 'D_73', 'D_74', 'D_75', 'D_76', 'D_77', 'D_78', 'D_80', 'D_82', 'D_84', 'D_86', 'D_91', 'D_92', 'D_94', 'D_96', 'D_103', 'D_104', 'D_108', 'D_112', 'D_113', 'D_114', 'D_115', 'D_117', 'D_118', 'D_119', 'D_120', 'D_121', 'D_122', 'D_123', 'D_124', 'D_125', 'D_126', 'D_128', 'D_129', 'D_131', 'D_132', 'D_133', 'D_134', 'D_135', 'D_136', 'D_140', 'D_141', 'D_142', 'D_144', 'D_145', 'P_2', 'P_3', 'P_4', 'R_1', 'R_2', 'R_3', 'R_7', 'R_8', 'R_9', 'R_10', 'R_11', 'R_14', 'R_15', 'R_16', 'R_17', 'R_20', 'R_21', 'R_22', 'R_24', 'R_26', 'R_27', 'S_3', 'S_5', 'S_6', 'S_7', 'S_9', 'S_11', 'S_12', 'S_13', 'S_15', 'S_16', 'S_18', 'S_22', 'S_23', 'S_25', 'S_26']
-    feat = [F.col(c) for c in features_avg]
-    exprs = {x: "avg" for x in features_avg}
-    df_avg = (input_df
-          .groupBy('"customer_ID"')
-          .agg(exprs)
-          .rename({F.col(f"AVG({f})"): f"{f}_avg" for f in features_avg})
-         )
-    
-    # Minimum
-    features_min = ['B_2', 'B_4', 'B_5', 'B_9', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_19', 'B_20', 'B_28', 'B_29', 'B_33', 'B_36', 'B_42', 'D_39', 'D_41', 'D_42', 'D_45', 'D_46', 'D_48', 'D_50', 'D_51', 'D_53', 'D_55', 'D_56', 'D_58', 'D_59', 'D_60', 'D_62', 'D_70', 'D_71', 'D_74', 'D_75', 'D_78', 'D_83', 'D_102', 'D_112', 'D_113', 'D_115', 'D_118', 'D_119', 'D_121', 'D_122', 'D_128', 'D_132', 'D_140', 'D_141', 'D_144', 'D_145', 'P_2', 'P_3', 'R_1', 'R_27', 'S_3', 'S_5', 'S_7', 'S_9', 'S_11', 'S_12', 'S_23', 'S_25']
-    exprs_min = {x: "min" for x in features_min}
-    df_min = (input_df
-          .groupBy('"customer_ID"')
-          .agg(exprs_min)
-          .rename({F.col(f"MIN({f})"): f"{f}_min" for f in features_min})
-         )
-    
-    # Maximum
-    features_max = ['B_1', 'B_2', 'B_3', 'B_4', 'B_5', 'B_6', 'B_7', 'B_8', 'B_9', 'B_10', 'B_12', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_18', 'B_19', 'B_21', 'B_23', 'B_24', 'B_25', 'B_29', 'B_30', 'B_33', 'B_37', 'B_38', 'B_39', 'B_40', 'B_42', 'D_39', 'D_41', 'D_42', 'D_43', 'D_44', 'D_45', 'D_46', 'D_47', 'D_48', 'D_49', 'D_50', 'D_52', 'D_55', 'D_56', 'D_58', 'D_59', 'D_60', 'D_61', 'D_63', 'D_64', 'D_65', 'D_70', 'D_71', 'D_72', 'D_73', 'D_74', 'D_76', 'D_77', 'D_78', 'D_80', 'D_82', 'D_84', 'D_91', 'D_102', 'D_105', 'D_107', 'D_110', 'D_111', 'D_112', 'D_115', 'D_116', 'D_117', 'D_118', 'D_119', 'D_121', 'D_122', 'D_123', 'D_124', 'D_125', 'D_126', 'D_128', 'D_131', 'D_132', 'D_133', 'D_134', 'D_135', 'D_136', 'D_138', 'D_140', 'D_141', 'D_142', 'D_144', 'D_145', 'P_2', 'P_3', 'P_4', 'R_1', 'R_3', 'R_5', 'R_6', 'R_7', 'R_8', 'R_10', 'R_11', 'R_14', 'R_17', 'R_20', 'R_26', 'R_27', 'S_3', 'S_5', 'S_7', 'S_8', 'S_11', 'S_12', 'S_13', 'S_15', 'S_16', 'S_22', 'S_23', 'S_24', 'S_25', 'S_26', 'S_27']
-    exprs_max = {x: "max" for x in features_max}
-    df_max = (input_df
-          .groupBy('"customer_ID"')
-          .agg(exprs_max)
-          .rename({F.col(f"MAX({f})"): f"{f}_max" for f in features_max})
-         )
-    
-    # Last
-    features_last = ['B_1', 'B_2', 'B_3', 'B_4', 'B_5', 'B_6', 'B_7', 'B_8', 'B_9', 'B_10', 'B_11', 'B_12', 'B_13', 'B_14', 'B_15', 'B_16', 'B_17', 'B_18', 'B_19', 'B_20', 'B_21', 'B_22', 'B_23', 'B_24', 'B_25', 'B_26', 'B_28', 'B_29', 'B_30', 'B_32', 'B_33', 'B_36', 'B_37', 'B_38', 'B_39', 'B_40', 'B_41', 'B_42', 'D_39', 'D_41', 'D_42', 'D_43', 'D_44', 'D_45', 'D_46', 'D_47', 'D_48', 'D_49', 'D_50', 'D_51', 'D_52', 'D_53', 'D_54', 'D_55', 'D_56', 'D_58', 'D_59', 'D_60', 'D_61', 'D_62', 'D_63', 'D_64', 'D_65', 'D_69', 'D_70', 'D_71', 'D_72', 'D_73', 'D_75', 'D_76', 'D_77', 'D_78', 'D_79', 'D_80', 'D_81', 'D_82', 'D_83', 'D_86', 'D_91', 'D_96', 'D_105', 'D_106', 'D_112', 'D_114', 'D_119', 'D_120', 'D_121', 'D_122', 'D_124', 'D_125', 'D_126', 'D_127', 'D_130', 'D_131', 'D_132', 'D_133', 'D_134', 'D_138', 'D_140', 'D_141', 'D_142', 'D_145', 'P_2', 'P_3', 'P_4', 'R_1', 'R_2', 'R_3', 'R_4', 'R_5', 'R_6', 'R_7', 'R_8', 'R_9', 'R_10', 'R_11', 'R_12', 'R_13', 'R_14', 'R_15', 'R_19', 'R_20', 'R_26', 'R_27', 'S_3', 'S_5', 'S_6', 'S_7', 'S_8', 'S_9', 'S_11', 'S_12', 'S_13', 'S_16', 'S_19', 'S_20', 'S_22', 'S_23', 'S_24', 'S_25', 'S_26', 'S_27', '"customer_ID"']
-    w = snp.Window.partition_by('"customer_ID"').order_by(F.col('S_2').desc())
-    df_last = input_df.withColumn("rn", F.row_number().over(w)).filter("rn = 1").select(features_last)
-    
-    # Join
-    feature_df = df_min.natural_join(df_avg)
-    feature_df = feature_df.natural_join(df_max)
-    feature_df = feature_df.natural_join(df_last)
-
-    feature_df.write.save_as_table(target_table, mode="overwrite")
-    
-    return "Success"
-$$;
-
-CREATE OR REPLACE PROCEDURE cc_batch_processing(rawTable VARCHAR, targetTable VARCHAR)
-RETURNS STRING
-LANGUAGE PYTHON
-RUNTIME_VERSION = '3.8'
-PACKAGES = ('snowflake-snowpark-python')
-HANDLER = 'cc_batch_processing'
-AS
-$$
-from snowflake.snowpark.functions import call_udf
-import snowflake.snowpark.functions as F
-
-def cc_batch_processing(session, raw_table, target_table):
-
-    batch_df = session.table(raw_table)
-    feature_cols = batch_df.columns
-    feature_cols.remove('"customer_ID"')
-    
-    scored_data = batch_df.select('"customer_ID"', call_udf("batch_predict_cc_default", [F.col(c) for c in feature_cols]).alias('Prediction'))
-    
-    scored_data.write.save_as_table(target_table, mode="append")
-
-    return "Success"
-$$;
-```
-
-Tasks cannot run Imputer... nan is most common value
