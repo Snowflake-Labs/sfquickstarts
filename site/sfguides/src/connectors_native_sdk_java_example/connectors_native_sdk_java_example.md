@@ -401,6 +401,14 @@ This will resume the scheduling task which will start queueing new `Work Items`.
 
 ![pause.png](assets/pause.png)
 
+### Settings tab
+After configuration one more tab called `Settings` becomes available. This tab allows the user to see current connector and connection configurations.
+The data from this tab is extracted from the underlying configuration table and is read only.
+
+![connector_config_settings.png](assets/connector_config_settings.png)
+
+![connection_config_settings.png](assets/connection_config_settings.png)
+
 ## Customization
 Duration: 2
 
