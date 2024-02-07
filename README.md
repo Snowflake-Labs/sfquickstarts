@@ -74,7 +74,7 @@ export PATH=$PATH:$HOME/go/bin
   4. Run the website again `npm run serve`
   5. As you edit and save changes, your changes will automatically load in the browser.
 
-### Template To Follow
+#### Template To Follow
 
 - For general guidance, read this [sample Quickstart](site/sfguides/src/sample/sample.md)
 - For structure, layout, sections, etc. use this [QuickStart](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#0) as a template to follow
