@@ -65,6 +65,8 @@ Run the following code in new SQL worksheet:
 ```sql
 use role accountadmin;
 
+create database util_db;
+
 create or replace external function util_db.public.grader(        
  step varchar     
  , passed boolean     
