@@ -79,7 +79,7 @@ export PATH=$PATH:$HOME/go/bin
 - For general guidance, read this [sample Quickstart](site/sfguides/src/sample/sample.md)
 - For structure, layout, sections, etc. use this [QuickStart](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#0) as a template to follow
 
-### Tips
+#### Other Tips
 
 - Review the [sample.md](site/sfguides/src/sample/sample.md) file to learn more about how to structure your QuickStart for the claat tool. 
 - You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a GitHub issue!
