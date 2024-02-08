@@ -81,7 +81,7 @@ deploy and installation convenience scripts, which will be described in the next
 ## Build and publish locally the sdk code
 Duration: 2
 
-As mentioned before the project currently contains Connectors Native SDK Java as source files, because it's not available in Maven repository. 
+As mentioned before the project currently contains Connectors Native SDK Java as source files, because it's not available in Maven repository yet. 
 For that reason it needs to be built and published to local repository. This step might seem unnecessary, 
 because it could be just directly linked as a module, but will show the future experience we are aiming for when the artifacts are available in public maven repositories.
 To achieve this go to `connectors-native-sdk-java/` directory and execute the following command:
@@ -445,7 +445,7 @@ Currently, it is possible to customize the behavior of the application in 2 ways
 - overwriting internal sql procedures
 - using builders to overwrite whole `Handlers` with custom implementations of the underlying interfaces
 
-For more information on those approaches please check the documentation.
+More information on those topics will be covered in the documentation.
 
 ## Cleanup
 Duration: 2
@@ -455,19 +455,17 @@ or completely remove it using the convenience script
 ```shell
 make drop_application
 ```
-If this part is skipped then even the example connector will generate cost.
+If this part is skipped then even the example connector will generate credit consumption.
 
 ## Integration tests
 Duration: 2
 
 Connectors Native SDK Java module comes with integration tests bundled. 
-Those tests build the SDK module and deploy it using mocked empty application from the `example-native-sdk-app/` directory.
-The test cases are taking significant time to complete and can be quite costly,
-because of that they mostly cover only happy paths.
-To run those test go into `connectors-native-sdk-integration-tests/` directory. 
-In the `Makefile` specify a path to a file with Snowflake credentials, this path should be in the `SNOWSQL_CONFIG_FILE` environmental variable at the top.
-This file should follow snowsql format and the connection will be used to perform the tests.
-When the connection files is provided run:
+Those tests build the SDK module and deploy it using mocked empty application.
+The test cases are taking significant time to complete because they require the whole Connector to be built and deployed to Snowflake.
+To run those tests you need to specify the Snowflake connection credentials in the file that is located in the `.env` directory.
+When the connection file is provided run:
+
 ```shell
 make test
 ```
