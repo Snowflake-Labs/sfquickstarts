@@ -179,6 +179,10 @@ it is simply faster to skip creating version and then create application instanc
 make create_new_version
 ```
 
+After this step the APPLICATION PACKAGE will be visible in the `App packages` tab in the `Data products` category.
+
+![app_packages.png](assets/app_packages.png)
+
 ### Installation
 Installation of the application is the last step of the process. 
 It creates an application from the application package created previously.
@@ -195,7 +199,7 @@ make create_app_instance_from_app_version
 #### After the installation
 After application is installed successfully it should be visible in the Apps tab inside Snowflake.
 
-![installed_app.png](assets/installed_app.png)
+![installed_apps.png](assets/installed_apps.png)
 
 ## Connector flow
 Duration: 5
@@ -381,10 +385,19 @@ The data from this view can be retrieved using worksheet and that way it can be 
 There is another view that is available through the worksheet. It is called `PUBLIC.CONNECTOR_STATS`. 
 Using this data you can see status, start and end date, average rows ingested per seconds and some other information regarding ingestion.
 
+The chart should look like this:
+
+![stats.png](assets/stats.png)
+
 ### Viewing ingested data
 The ingested data is not visible in the streamlit ui, but it can be viewed through the worksheet by users with `ADMIN` and `DATA_READER` roles.
 To view the data you have to go to the worksheets inside Snowflake and just query the database that was configured as the sink during the connector configuration step.
 The sink database uses name and schema that were defined during the connector configuration step. The name of the table is ISSUES and the view is called ISSUES_VIEW.
+
+The table contains the following columns:
+* ORGANIZATION
+* REPOSITORY
+* RAW_DATA
 
 The columns in the view are as follows:
 * ID
@@ -395,6 +408,16 @@ The columns in the view are as follows:
 * CREATED_AT
 * UPDATED_AT
 * ASSIGNEE
+
+Those fields are extracted from the raw_data inside the original table.
+
+To see the data use the below query:
+
+```snowflake
+SELECT * FROM SINK_DATABASE.SINK_SCHEMA.ISSUES;
+
+SELECT * FROM SINK_DATABASE.SINK_SCHEMA.ISSUES_VIEW;
+```
 
 ### Pausing and resuming
 The connector can be paused and resumed, whenever desired. To do so just click the `Pause` button in the `Data Sync` tab. 
