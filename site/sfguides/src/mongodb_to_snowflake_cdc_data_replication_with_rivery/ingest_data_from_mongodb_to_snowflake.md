@@ -46,9 +46,11 @@ Duration: 2
 
 **If you already have a Rivery account you can skip this step.  
   
-The easiest way to start a Rivery account with an established connection to your Snowflake account is to utilize Snowflake’s Partner Connect. Within Snowsite this can be found under Admin > Partner Connect > Search for Rivery.**
+The easiest way to start a Rivery account with an established connection to your Snowflake account is to utilize Snowflake’s Partner Connect. Within Snowsite this can be found under Admin > Partner Connect > Search for Rivery.
+
 **![](assets/step2.png)**
-**This will set up both your Rivery account and Snowflake Target connection within Rivery.  
+
+This will set up both your Rivery account and Snowflake Target connection within Rivery.  
   
 If you’d like to set up a Rivery account separately, you can do so by navigating to [Rivery’s website](https://rivery.io/) and clicking [‘Start for Free’](https://rivery.io/free-trial/). You can also use [this link](https://docs.rivery.io/docs/setting-up-a-rivery-account) to find more information.**
 <!-- END -->
@@ -66,35 +68,26 @@ You can configure your Snowflake connection in Rivery. This will be needed later
 
 <!-- ------------------------ -->
 ## Configure MongoDB Source Connection
-Duration: 5
+Duration: 8
 
 To configure Source Connection within Rivery, you’ll want to navigate to your [Rivery account](https://console.rivery.io/). From here, you can go to Connections > New Connection > MongoDB, fill in the connection details, and test the connection. More information can be found [here](https://docs.rivery.io/docs/create-a-connection).
  
 Note Rivery offers a few different methods to ensure a secured connection to MongoDB including SSH, Reverse SSH, VPN, AWS PrivateLink, and Azure Private Link. If you are using a trial instance of MongoDB, it may be sufficient to only [whitelist Rivery’s IPs](https://docs.rivery.io/docs/rivery-whitelist-ips?_gl=1*1txi7y0*_ga*MTQ1MTMzMDY5My4xNjc1OTQ2NDIz*_ga_6EMVQJWTN6*MTcwMzgyOTg0Mi40NjcuMS4xNzAzODMyMzkxLjI1LjAuMA..). If you are connecting to your own MongoDB instance, you may want to use [one of the methods](https://docs.rivery.io/docs/security) mentioned above per your organization's preferences.  
 
 ![](assets/step4.png)
-<!-- END -->
 
-<!-- ------------------------ -->
-## Configure MongoDB for Change Streams
-Duration: 3
+### Configure MongoDB for Change Streams
 
 If you are using MongoDB versions 4.0 or 4.1 you will need to make sure your MongoDB instance “Read Preference” is set to Primary as detailed [here](https://www.mongodb.com/docs/manual/core/read-preference/). If you are using version 4.2 or above this step isn’t required.
     
+Note only versions 4.0 and higher of MongoDB are supported by Rivery for [CDC via Change Streams](https://docs.rivery.io/docs/mongo-db-change-streams-overview). If you have an older version of MongoDB or you don’t want to use Change Streams you can still replicate your data using Standard Extraction (SQL-based). In that case, choose Standard Extraction instead of Change Streams under step 5.
 
-Note only versions 4.0 and higher of MongoDB are supported by Rivery for [CDC via Change Streams](https://docs.rivery.io/docs/mongo-db-change-streams-overview). If you have an older version of MongoDB or you don’t want to use Change Streams you can still replicate your data using Standard Extraction (SQL-based). In that case, choose Standard Extraction instead of Change Streams under step 7.<!-- END -->
-
-<!-- ------------------------ -->
-## Create a Replication Data Pipeline
-Duration: 2
-
-Once your connections are set up, you’ll want to create your replication data pipeline (River). On the navigation menu, click on Create River > Source to Target River.
-<!--END--> 
-
+<!-- END -->
 <!-- ------------------------ -->
 ## Set the Pipeline Source
-Duration: 5
+Duration: 7
 
+Once your connections are set up, you’ll want to create your replication data pipeline (River). On the navigation menu, click on Create River > Source to Target River.
 
 From here, you’ll want to select MongoDB as your Source.
 
@@ -163,7 +156,7 @@ Once your setup is complete you can click on the Enable Stream toggle.
 
 This will make sure that you have everything set up and will give you the option to Schedule your River run.
 
-If you choose Standard Extraction under step 7, you can schedule your pipeline under the Settings tab.
+If you choose Standard Extraction under step 5, you can schedule your pipeline under the Settings tab.
 
 Regardless of your replication method, under the Settings tab, you can add any additional alerts. Lastly, all you have to do is save your River and click Run to execute it for the first time!
 
