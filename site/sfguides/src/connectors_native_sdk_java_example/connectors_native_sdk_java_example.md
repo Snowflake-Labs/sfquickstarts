@@ -16,7 +16,7 @@ Duration: 4
 
 ### Summary
 In this tutorial you will learn how to build and deploy a connector using Native Apps framework in Snowflake and Native Connectors SDK Java. 
-Provided example application connects to the GitHub API to pull information about issues, pull requests etc. from the desired repositories.
+Provided example application connects to the GitHub API to pull information about issues from the desired repositories.
 The following steps will guide you through the whole process starting with the source files 
 and finishing with working and configured application inside Snowflake.
 
@@ -40,9 +40,7 @@ Duration: 3
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure `snowsql` to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure `snowsql` to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- 
-[//]: # (TODO add link to repo, add path where to go)
-- Clone the ... repository
+- Clone the [connectors-examples](https://github.com/Snowflake-Labs/connectors-examples) repository
 
 ## Project structure
 Duration: 6
@@ -50,28 +48,29 @@ Duration: 6
 The project contains multiple subdirectories which will be shortly described in the following section.
 
 ### Connectors Native SDK
-This directory contains all the Connectors Native SDK code. It is further split into subdirectories as described below.
+The `connectors-native-sdk` directory contains all the Connectors Native SDK code. It is further split into subdirectories as described below.
 
 #### Connectors Native SDK Java
-This directory contains all the Native SDK Java code along with unit tests and integration tests for the components. 
-Because of the nature of the Native Apps inside Snowflake this means not only Java code, but also sql code, which is necessary to create a working application.
+The `connectors-native-sdk-java` directory contains all the Native SDK Java code with unit tests and integration tests for the SDK components. 
+Because of the nature of the Native Apps inside Snowflake not only Java code, but also sql code, which is necessary to create a working application.
 The definitions of the database objects can be found inside `src/main/resources` directory. 
 Those files are used while creating an application to customize what objects will be available inside the application. 
 For this example purposes we will be using `all.sql` file, which creates objects for all the available features.
-General idea how those files are used will be explained in this tutorial, but for the more information it's better to check usage documentation.
+This file will be executed during the installation process of the application.
 For now this code is not available as jar archive that can be used as a dependency in java project and has to be included as source files.
 
 #### Connectors Native SDK Java test
-This directory contains source code of a helper library used in unit tests, for example objects to mock particular components and custom assertions.
+The `connectors-native-sdk-java-test` directory contains source code of a helper library used in unit tests, for example objects to mock particular components and custom assertions.
 Files inside this directory are not used when deploying an application.
 
 ### Example Java GitHub connector
 The actual example connector is located inside `examples/connectors-native-sdk-example-java-github-connector` directory.
 Inside this directory `app/` contains all the files needed to run the Native App. The `app/streamlit/` directory 
 contains source files necessary to run the streamlit ui. The `setup.sql` 
-file is run during the application installation and is responsible for creating the necessary database objects.
+file is run during the application installation and is responsible for creating the necessary database objects. This file will execute
+the `all.sql` file mentioned before, as well as some custom sql code.
 The `manifest.yml` is the manifest of the Native App and is necessary to create application package and then the application itself. 
-This file specifies application properties as well as permissions needed by the application.
+This file specifies application properties, as well as permissions needed by the application.
 
 Additionally, `examples/connectors-native-sdk-example-java-github-connector` directory contains `src/` subdirectory which contains 
 custom connector logic, such as implementation of the required classes and customization to the default SDK components.
@@ -82,9 +81,9 @@ deploy and installation convenience scripts, which will be described in the next
 ## Build and publish locally the sdk code
 Duration: 2
 
-As mentioned before the project currently contains Connectors Native SDK Java as source files and is not available in maven repositories. 
-For that reason it needs to be built and published to local repository locally. This step might seem unnecessary,
-but will show the future experience we are aiming for when the artifacts are available in public maven repositories.
+As mentioned before the project currently contains Connectors Native SDK Java as source files, because it's not available in Maven repository. 
+For that reason it needs to be built and published to local repository. This step might seem unnecessary, 
+because it could be just directly linked as a module, but will show the future experience we are aiming for when the artifacts are available in public maven repositories.
 To achieve this go to `connectors-native-sdk-java/` directory and execute the following command:
 ```shell
 ./gradlew publishToMavenLocal
@@ -123,19 +122,19 @@ Building the application contains the following steps:
 - copying custom internal components to the target directory
 
 #### Copying sdk components
-This step consists of 2 things. First of all it copies the Connectors Native SDK Java artifact to the target directory, by default - `sf_build`. 
+This step consists of 2 things. First of all, it copies the Connectors Native SDK Java artifact to the target directory, by default - `sf_build`. 
 Secondly, it extracts the bundled sql files from the jar archive to the target directory. 
 Using those sql files allows user to customize which provided objects will be created during the application installation.
 For the first time users customization is not recommended, because omitting objects may cause some features to fail if done incorrectly.
-The provided example application uses `all.sql` file, which creates all the provided objects. 
-For more information about the features and which sql files are needed please check the documentation.
+The provided example application uses `all.sql` file, which creates all the provided objects.
+
 To execute this step independently of the whole process execute the following command:
 ```shell
 make copy_sdk_components
 ```
 
 This step can be executed to get familiarized with the provided sql files, 
-however because Connectors Native SDK Java is currently provided as source code, 
+however, because Connectors Native SDK Java is currently provided as source code, 
 this can be done by going through the source files in the `connectors-native-sdk-java/main/resources/` directory.
 
 #### Copying internal components
@@ -150,7 +149,7 @@ To deploy a Native App an application package needs to be created inside Snowfla
 Then all the files from the target build directory (`sf_build`) need to be copied there. 
 Then based on those files a version of the Native App can be created.
 
-Note: Creating version is optional, because development mode allows for creating an application from the stage files directly.
+Note: Creating version is optional, for development purposes the application can be created from the stage files directly.
 
 #### Preparing application package
 The first part of the deployment is creation of the application package if it does not exist yet. 
@@ -164,7 +163,7 @@ make prepare_app_package
 #### Deploying files
 This step copies all the files and subdirectories recursively from the `sf_build` directory to the stage created in the previous step.
 The tree structure of the directory is kept and prefixed with the version of the application that is specified in the `Makefile`.
-This process might take a moment especially for bigger apps with a lot of custom code and big artifacts, that need to be uploaded.
+This process might take a moment especially for bigger apps with a lot of custom code and big artifacts.
 
 ```shell
 make deploy_connector
@@ -202,7 +201,8 @@ After application is installed successfully it should be visible in the Apps tab
 Duration: 5
 
 Before we dig into configuring the connector and ingesting the data let's have a quick look at how the connector actually works.
-Below you can see all the steps that will be completed in the following parts of this quickstart.
+Below you can see all the steps that will be completed in the following parts of this quickstart. 
+The starting point will be completing the prerequisites and going through the Wizard.
 
 ![connector_overview](assets/connector_overview.svg)
 
@@ -275,7 +275,7 @@ GRANT READ ON SECRET GITHUB_SECRETS.PUBLIC.GITHUB_TOKEN TO APPLICATION < applica
 ### Connector Configuration
 Next step of the Wizard is connector configuration. 
 This step allows user to grant to application privileges that can be requested through the permissions sdk, 
-choose warehouse which will be referenced in the queries that require it,
+choose warehouse which will be referenced when scheduling tasks,
 and choose destination database and schema for the data that will be ingested.
 
 #### Permissions
@@ -341,7 +341,7 @@ This part will explain:
 - how to pause and resume connector
 
 ### Configuring resources
-To configure resources got to the `Data Sync` tab. This tab displays a list of the repositories already configured for ingestion.
+To configure resources go to the `Data Sync` tab. This tab displays a list of the repositories already configured for ingestion.
 When opened for the first time the list should be empty.
 To configure a resource type the organisation and repository names in the designated fields, then press `Queue ingestion` button.
 
@@ -381,15 +381,20 @@ The data from this view can be retrieved using worksheet and that way it can be 
 There is another view that is available through the worksheet. It is called `PUBLIC.CONNECTOR_STATS`. 
 Using this data you can see status, start and end date, average rows ingested per seconds and some other information regarding ingestion.
 
-The `Home` screen also contains a `Sync status` indicator. That way user can quickly see when was the last successful ingestion.
-This indicator will be in one of the following states: `PAUSED`, `LAST SYNCED x TIME AGO`, `SYNCING DATA`, `NOT SYNCING`.
-
 ### Viewing ingested data
-The ingested data is not visible in the streamlit ui. 
+The ingested data is not visible in the streamlit ui, but it can be viewed through the worksheet by users with `ADMIN` and `DATA_READER` roles.
 To view the data you have to go to the worksheets inside Snowflake and just query the database that was configured as the sink during the connector configuration step.
-The structure of tables is as follows:
+The sink database uses name and schema that were defined during the connector configuration step. The name of the table is ISSUES and the view is called ISSUES_VIEW.
 
-[//]: # (todo after ingestion is implemented)
+The columns in the view are as follows:
+* ID
+* ORGANIZATION
+* REPOSITORY
+* STATE
+* TITLE
+* CREATED_AT
+* UPDATED_AT
+* ASSIGNEE
 
 ### Pausing and resuming
 The connector can be paused and resumed, whenever desired. To do so just click the `Pause` button in the `Data Sync` tab. 
