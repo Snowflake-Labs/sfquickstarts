@@ -75,7 +75,7 @@ To successfully complete this Quickstart, your Snowflake account must have the T
 
 If these prerequisites are not completed, you will not able to complete this Quickstart.
 
-
+In addition, clone or download the source code for the application you'll build in this Quickstart here: [Tasty Bytes - Native App](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/sfguide-tasty-bytes-native-app).
 <!-- ------------------------ -->
 ## Account Set Up: Consumer
 Duration: 3
