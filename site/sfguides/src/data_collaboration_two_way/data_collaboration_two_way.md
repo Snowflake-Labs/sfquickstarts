@@ -14,7 +14,7 @@ Duration: 5
 
 This guide will take you through Snowflake's Collaboration features, and highlight how easy it is to share data between two organisations.
 
-It also highlights Snowflakes ability to host a ML Model, score data from shared data, and share the enriched (scored) data back to the original Provider. Hence, it is a 2-way sharing relationship, where both accounts are Providers and Consumers.
+It also highlights Snowflakes ability to perform feature engineering, host a ML Model, score data from shared data, and share the enriched (scored) data back to the original Provider. Hence, it is a 2-way sharing relationship, where both accounts are Providers and Consumers.
 
 We will also build on these concepts, and introduce how we can utilise Streams and Tasks to automate this entire process.
 
@@ -44,8 +44,9 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 - Ingestion of Credit Card Customer Profile Data
 - Sharing raw data seamlessly via a Private Listing
 - Consuming shared data via a Private Listing
-- Enriching shared data using a ML model
-- Sharing back enriched data to the original Provider account
+- Perform feature engineering
+- Scoring shared data using a ML model
+- Sharing back scored data to the original Provider account
 - Automating the above data pipeline using Streams and Tasks
 
 <!-- ------------------------ -->
@@ -55,12 +56,16 @@ Duration: 5
 In this hands-on-lab, we are playing the role of SnowBank. The Credit Risk team has noticed a rise in credit card default rates which affects the bottom line of the business. It has enlisted the help of an external organisation (Zamboni) to score the credit card default risk of their existing customers, based on a series of attributes in categories such as spending, balance, delinquency, payment and risk. The data needs to be shared between the two parties.
 
 Both companies have chosen to use Snowflake. The advantages of doing this are:
-- Low latency (live sharing) between the Provider and Consumer accounts
-- The data stays within the security perimeter of Snowflake, with Role Based Access Control (RBAC), Auditability and robust Data Governance features
-- Closed Group Sharing
+- Direct access and no delay data sharing between the Provider and Consumer accounts
+- Govern access to your data offering and monitor usage
+- Enable targeted discovery with one or many organizations
+- Rely on a multitude of built-in data security features
+- Reduce extract, transform, load (ETL), and data pipeline maintenance costs
 
 Below is a schematic of the data share
 ![Diagram](assets/two_way_data_collaboration.png)
+
+### Example Use Cases
 
 From a business point of view, this architecture exists to satisfy several use cases. Examples include:
 - This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
@@ -711,14 +716,14 @@ We should see from the results that the newly scored data is in our Snowflake Ac
 ## Wrap Up and Summary
 Duration: 5
 
-From this quickstart, we can see how we can create an end-to-end automated pipeline between two Snowflake accounts seamlessly. We were able to:
+From this quickstart, we can see how we can create an end-to-end automated ML pipeline between two Snowflake accounts seamlessly. We were able to:
 - Share live data between 2 accounts
 - Train and Deploy an ML Model
 - Use Streams and Tasks to automate the pipeline
 
 To recap, from a business point of view, this architecture exists to satisfy several use cases. Examples include:
-- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
-- Superannuation and Life Insurance Companies. A more specific example above is claims processing for life insurance. Often times, the Superannuation companies have the necessary attributes required by the insurance companies for claims processing.
+- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a [Lenders Mortgage Insurance](https://insurancecouncil.com.au/articles/lenders-mortgage-insurance/) company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has, without the data leaving the security and governance controls of Snowflake.
+- Superannuation and Life Insurance Companies. Another example of sharing sdata securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a [streamlined customer claims process](https://www.snowflake.com/trending/insurance-analytics/). With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.
 - Whitelabel Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
 
 
