@@ -52,10 +52,10 @@ The `connectors-native-sdk` directory contains all the Connectors Native SDK cod
 
 #### Connectors Native SDK Java
 The `connectors-native-sdk-java` directory contains all the Native SDK Java code with unit tests and integration tests for the SDK components. 
-Because of the nature of the Native Apps inside Snowflake not only Java code, but also sql code, which is necessary to create a working application.
+Because of the nature of the Native Apps inside Snowflake this means not only Java code, but also sql code, which is necessary to create a working application.
 The definitions of the database objects can be found inside `src/main/resources` directory. 
 Those files are used while creating an application to customize what objects will be available inside the application. 
-For this example purposes we will be using `all.sql` file, which creates objects for all the available features.
+In this example we use `all.sql` file, which creates objects for all the available features.
 This file will be executed during the installation process of the application.
 For now this code is not available as jar archive that can be used as a dependency in java project and has to be included as source files.
 
