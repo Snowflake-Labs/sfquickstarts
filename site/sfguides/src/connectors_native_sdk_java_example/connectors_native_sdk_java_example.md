@@ -40,6 +40,7 @@ Duration: 3
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure `snowsql` to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure `snowsql` to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
+- Configure `snowsql` [connection](https://docs.snowflake.com/en/user-guide/snowsql-start#defining-named-connections-in-the-configuration-file) named: `native_sdk_connection` or change the CONNECTION environmental variable in the example `examples/connectors-native-sdk-example-java-github-connector/Makefile`
 - Clone the [connectors-examples](https://github.com/Snowflake-Labs/connectors-examples) repository
 
 ## Project structure
@@ -97,7 +98,7 @@ Alternatively main directory of the project contains convenience script to help:
 ## Build, deploy and installation
 Duration: 10
 
-The `Makefile` in the `example-java-github-connector/` directory contains convenience scripts to build, deploy and install the connector. 
+The `Makefile` in the `examples/connectors-native-sdk-example-java-github-connector/` directory contains convenience scripts to build, deploy and install the connector. 
 Those scripts execute specific gradle tasks, execute some shell scripts and run sql commands in Snowflake. 
 They require a `snowsql` connection to be defined on the local machine. 
 The name of the connection should be provided in the `CONNECTION` environmental variable at the top of the `Makefile`.
