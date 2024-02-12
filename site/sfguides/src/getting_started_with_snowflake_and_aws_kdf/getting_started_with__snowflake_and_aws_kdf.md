@@ -305,7 +305,11 @@ from PL;
 
 e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
 
+<<<<<<< HEAD
 Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the
+=======
+Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the
+>>>>>>> origin/master
 URL is a private endpoint with `privatelink` as a substring. Alternatively, you can use the public endpoint without 
 the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, leave the `VPCE ID` field blank below.
 
@@ -447,7 +451,11 @@ For those of you who are interested in learning more about how to build sleek da
 Related Resources
 
 - [Unleashing the Full Potential of Real-Time Streaming with Amazon Kinesis Data Firehose and Snowpipe Streaming](https://medium.com/snowflake/unleashing-the-full-potential-of-real-time-streaming-with-amazon-kinesis-data-firehose-and-snowpipe-0283fb599364#Snowflake)
+<<<<<<< HEAD
 - [Amazon Data Firehose (ADF)](https://aws.amazon.com/firehose/)
+=======
+- [Amazon Kinesis Data Firehose (ADF)](https://aws.amazon.com/firehose/)
+>>>>>>> origin/master
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/)
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
