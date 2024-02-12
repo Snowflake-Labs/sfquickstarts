@@ -4,7 +4,7 @@ categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Amazon Data Firehose, Streaming, Snowpipe Streaming, SnowSQL
+tags: Getting Started, Amazon Data Firehose, Streaming, Snowpipe Streaming, SnowSQL, Kinesis
 authors: James Sun
 
 # Getting Started with Snowflake and [Amazon Data Firehose](https://aws.amazon.com/firehose/) (ADF)
