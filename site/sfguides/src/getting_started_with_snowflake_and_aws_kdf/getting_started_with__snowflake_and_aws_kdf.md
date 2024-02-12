@@ -1,13 +1,13 @@
 id: getting_started_with_snowflake_and_aws_kdf
-summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Kinesis Data Firehose (KDF).
+summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Data Firehose (ADF).
 categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Kinesis, Firehose, Streaming, Snowpipe Streaming, SnowSQL
+tags: Getting Started, Amazon Data Firehose, Streaming, Snowpipe Streaming, SnowSQL
 authors: James Sun
 
-# Getting Started with Snowflake and Amazon Kinesis Data Firehose
+# Getting Started with Snowflake and [Amazon Data Firehose](https://aws.amazon.com/firehose/) (ADF)
 <!---------------------------->
 ## Overview
 Duration: 5
@@ -23,13 +23,13 @@ Here are some of the use cases that can benefit from this integration:
 - Ingestion into ML feature stores 
 
 In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution leveraging
-the [native integration](https://aws.amazon.com/about-aws/whats-new/2024/01/stream-data-snowflake-kinesis-data-firehose-snowpipe-streaming-preview/) between Snowflake and [KDF (Amazon Kinesis Data Firehose)](https://aws.amazon.com/kinesis/data-firehose/).
+the [native integration](https://aws.amazon.com/about-aws/whats-new/2024/01/stream-data-snowflake-kinesis-data-firehose-snowpipe-streaming-preview/) between Snowflake and [ADF (Amazon Data Firehose)](https://aws.amazon.com/firehose/).
 
 The architecture diagram below shows the deployment. A Linux 
 EC2 instance (jumphost) will be provisioned in the subnet of an AWS VPC. 
-The Linux jumphost will host the Kinesis producer that ingests real-time flight data into the Kinesis delivery stream.
+The Linux jumphost will host the data producer that ingests real-time flight data into the Firehose delivery stream.
 
-The Kinesis producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kinesis delivery stream and delivered to a Snowflake table.
+The data producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Firehose delivery stream and delivered to a Snowflake table.
 The data in Snowflake table can be visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
 The historical data can also be analyzed by BI tools like [Amazon Quicksight](https://aws.amazon.com/quicksight/?trk=56601b48-df3f-4cb4-9ef7-9f52efa1d0b8&sc_channel=ps&ef_id=Cj0KCQiA_bieBhDSARIsADU4zLebWWM6ZmxRODjR9Xlc7ztNm5JGwqEMSi0EjCLZ9CXYa1YvXL3LMYYaAnV_EALw_wcB:G:s&s_kwcid=AL!4422!3!629393324770!!!g!!).
 Please note that in the demo, we are not demonstrating the visualization aspect. We will have a future Quickstart demo that focuses on visualization.
@@ -41,7 +41,7 @@ Please note that in the demo, we are not demonstrating the visualization aspect.
 ### Prerequisites
 
 - Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects
-- Familiarity with AWS Services (e.g. EC2, Kinesis, etc), Networking and the Management Console
+- Familiarity with AWS Services (e.g. EC2, ADF, etc), Networking and the Management Console
 - Basic knowledge of Python and Linux shell scripting
 
 ### What You'll Need Before the Lab
@@ -59,7 +59,7 @@ Note that you must have network administrator permissions to deploy these resour
 
 ### What You'll Learn
 
-- Using [KDF (Amazon Kinesis Data Firehose)](https://aws.amazon.com/kinesis/data-firehose/)
+- Using [ADF (Amazon Data Firehose)](https://aws.amazon.com/firehose/)
 - Connecting to EC2 instances with [Amazon System Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), this is an alternative
 to SSH if your instance is in a private subnet
 - Using [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html), the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
@@ -95,7 +95,7 @@ See below sample screen capture for reference.
 Leave everything as default in the `Configure stack options` page and click `Next`.
 In the `Review` page, click `Submit`.
 
-In about 5 minutes, the Cloudformation template provisions a Linux EC2 instance in the subnet you selected. We will then use it to run the Kinesis producer for data ingestion.
+In about 5 minutes, the Cloudformation template provisions a Linux EC2 instance in the subnet you selected. We will then use it to run the ADF producer for data ingestion.
 
 #### 2. Configure the Linux session for timeout and default shell
 
@@ -380,7 +380,7 @@ create or replace TABLE KDF_STREAMING_TBL (
 
 Go to the EC2 console, and run the following command.
 ```commandline
-python3 /tmp/kdf-producer.py <Kinesis delivery stream name>
+python3 /tmp/kdf-producer.py <ADF delivery stream name>
 ```
 The Python script gets the raw flight data from a [real-time source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky) and streams into the delivery stream.
 You should see the flight data being ingested continuously to the KDF delivery stream in json format.
@@ -437,9 +437,9 @@ As a result, you will see a nicely structured output with columns derived from t
 ## Conclusions
 Duration: 5
 
-In this lab, we built a demo to show how to ingest real-time data using Amazon Kinesis Data Firehose with low latency. We demonstrated this using a self-managed Kafka 
+In this lab, we built a demo to show how to ingest real-time data using Amazon Data Firehose with low latency. We demonstrated this using a self-managed Kafka 
 connector on an EC2 instance. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
-[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kinesis producers as well.
+[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized ADF producers as well.
 
 For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
 [quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/) to continue.
@@ -447,7 +447,7 @@ For those of you who are interested in learning more about how to build sleek da
 Related Resources
 
 - [Unleashing the Full Potential of Real-Time Streaming with Amazon Kinesis Data Firehose and Snowpipe Streaming](https://medium.com/snowflake/unleashing-the-full-potential-of-real-time-streaming-with-amazon-kinesis-data-firehose-and-snowpipe-0283fb599364#Snowflake)
-- [Amazon Kinesis Data Firehose (KDF)](https://aws.amazon.com/kinesis/data-firehose/)
+- [Amazon Data Firehose (ADF)](https://aws.amazon.com/firehose/)
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/)
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
