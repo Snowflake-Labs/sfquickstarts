@@ -32,7 +32,7 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
   4. [Install Go](https://golang.org/doc/install)
      - If you have Homebrew installed, run: `brew install golang`
      - Install claat `go install github.com/googlecodelabs/tools/claat@latest`
-     - Ensure go and claat is in your `PATH` [claat path setup](#claat-related-errors)
+     - Ensure go and claat is in your `PATH` [claat path setup](#1-claat-related-errors)
   5. **Optional**: install the live-reload plugin for Chrome: [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
 
 ### Run locally
