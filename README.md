@@ -17,7 +17,7 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 * Support for multiple target environments or events (conferences, kiosk, web, offline, etc.)
 * Support for anonymous use - ideal for public computers at developer events
 * Looks great, with a responsive web implementation
-* Remembers where the student left off when returning to a quickstarts
+* Remembers where the student left off when returning to a quickstart
 * Mobile friendly user experience
 
 ## Getting Started
