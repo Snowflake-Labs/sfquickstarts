@@ -52,7 +52,7 @@ For more information on these objects, check out [this blog](https://medium.com/
 ## Setup Environment
 Duration: 15
 
-**Step 1**. Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services). If you don't have Git installed, you can also download the repo as a .zip file.
+**Step 1**. Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services). If you don't have Git installed, you can also download the repo as a .zip file.
 
 **Step 2**. In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file) using [`setup.sql`](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services/blob/main/setup.sql) and run the commands to create various objects such as database, schema, warehouse, stages, compute pool, image repository, etc. 
 
@@ -529,7 +529,7 @@ Congratulations, you have successfully completed this QuickStart! By completing 
 
 ### Related Resources
 
-- [QuickStart GitHub Repo](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services)
+- [QuickStart GitHub Repo](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services)
 - [QuickStart Guide: Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#0)
 - [Blog: Snowflake Announces Snowpark Container Services](https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
 - [Blog: Snowpark Container Services - A Tech Primer](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741)
