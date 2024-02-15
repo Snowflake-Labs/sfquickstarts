@@ -142,7 +142,7 @@ To set up automated features, you will need RudderStack event data in your Snowf
 - `PAGES`
 - `ORDER_COMPLETED`
 
-**NOTE:** You must have all 3 identity types in your `INDENTIFIES` table. If you are using your own data and don't normally track email you can send the following identify call to add the column.
+**NOTE:** You must have all 3 identity types in your `IDENTIFIES` table. If you are using your own data and don't normally track email you can send the following identify call to add the column.
 
 ```text
 rudderanalytics.identify('userId', {
