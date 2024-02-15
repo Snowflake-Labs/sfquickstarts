@@ -132,12 +132,24 @@ GRANT SELECT ON FUTURE VIEWS IN SCHEMA "<YOUR_DATABASE>"."_RUDDERSTACK" TO ROLE 
 
 ### Importing RudderStack Event Data from the Snowflake Marketplace
 
-To set up automated features, you will need RudderStack event data in your Snowflake warehouse. If you already use RudderStack and have the following tables (see below), you can skip to the [Profiles Schema and Permissions](#profiles-schema-and-permissions) section. For the purposes of following this guide, though, it is recommended that you use the provided sample data. 
+To set up automated features, you will need RudderStack event data in your Snowflake warehouse. If you already use RudderStack and have the following tables and fields (see below), you can skip to the [Profiles Schema and Permissions](#profiles-schema-and-permissions) section. For the purposes of following this guide, though, it is recommended that you use the provided sample data.
 
 - `TRACKS`
 - `IDENTIFIES`
+  - `user_id`
+  - `anonymous_id`
+  - `email`
 - `PAGES`
 - `ORDER_COMPLETED`
+
+**NOTE:** You must have all 3 identity types in your `INDENTIFIES` table. If you are using your own data and don't normally track email you can send the following identify call to add the column.
+
+```text
+rudderanalytics.identify('userId', {
+  email: 'email@address.com',
+  name: 'name'
+})
+```
 
 #### Get Sample Data
 
