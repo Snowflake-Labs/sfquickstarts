@@ -132,6 +132,7 @@ GRANT SELECT ON FUTURE VIEWS IN SCHEMA "<YOUR_DATABASE>"."_RUDDERSTACK" TO ROLE 
 
 ### Importing RudderStack Event Data from the Snowflake Marketplace
 
+
 To set up automated features, you will need RudderStack event data in your Snowflake warehouse. If you already use RudderStack and have the following tables and fields (see below), you can skip to the [Profiles Schema and Permissions](#profiles-schema-and-permissions) section. For the purposes of following this guide, though, it is recommended that you use the provided sample data.
 
 - `TRACKS`
