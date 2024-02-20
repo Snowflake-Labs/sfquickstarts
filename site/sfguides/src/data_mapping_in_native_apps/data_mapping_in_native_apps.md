@@ -34,6 +34,7 @@ The Snowflake Native App Framework is a fantastic way for Snowflake application 
 
 * A Snowflake account in AWS
 * A Snowflake user created with ACCOUNTADMIN permissions - this is more than is strictly necessary and you can read more about the permissions required [here](https://docs.snowflake.com/en/sql-reference/sql/create-application-package#access-control-requirements)
+* [SnowflakeCLI](https://github.com/Snowflake-Labs/snowcli/tree/main) installed. This is a new tool currently in Public Preview.
 
 
 
@@ -60,6 +61,10 @@ The application provides a user interface which allows the consumer of the appli
 
 The first solution is not really what we want to be doing because the consumer will potentially have to create objects on their Snowflake instance just to satisfy the application's requirements, so this Quickstart will deliver the second solution.
 
+**Note**
+
+- This Quickstart is limited to a single-account installation. You'll use a single Snowflake account to experience the app from the provider's perspective and from the consumer's perspective. Listing to the Snowflake Marketplace and versions / release directives are outside of the scope of this guide.
+
 <!-- ------------------------ -->
 ## Building the Application
 Duration: 10
@@ -71,6 +76,55 @@ The application itself is a simple one and has been broken down into three parts
 * Arguably (certainly for this Quickstart) the most important part which is the user interface written using Streamlit. This is where we will do the mappings.
 
 To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart.  If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
+
+### Create provider table to hold the data
+There are a few different ways to set up the database in your provider account.
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+First, we need to set up a dedicated directory in your filesystem for the application we want to build. 
+
+```bash
+snow app init streamlit_data_mapping
+```
+
+This command requires the use of git. It will create a directory structure in your filesystem for our Snowflake Native Application from a preset [template](https://github.com/snowflakedb/native-apps-templates/tree/main/basic).
+
+At the root of `streamlit_data_mapping`, create a file called `lookup_database_setup.sql` and copy in the code snippet below.
+```sql
+CREATE DATABASE IP2LOCATION;
+CREATE SCHEMA IP2LOCATION;
+
+CREATE TABLE LITEDB11 (
+ip_from INT,
+ip_to INT,
+country_code char(2),
+country_name varchar(64),
+region_name varchar(128),
+city_name varchar(128),
+latitude DOUBLE,
+longitude DOUBLE,
+zip_code varchar(30),
+time_zone varchar(8)
+);
+--Create a file format for the file
+CREATE OR REPLACE FILE FORMAT LOCATION_CSV
+SKIP_HEADER = 1
+FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+COMPRESSION = AUTO;
+--create a stage so we can upload the file
+CREATE STAGE LOCATION_DATA_STAGE
+file_format = LOCATION_CSV;
+```
+
+Now execute the Snowflake CLI command to run all the SQL statements in this file.
+```bash
+cd streamlit_data_mapping
+snow sql -f lookup_database_setup.sql -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+**Option 2: Using Snowsight**
 
 Head over to Snowsight on the provider account and open a new worksheet.
 
@@ -102,15 +156,38 @@ CREATE STAGE LOCATION_DATA_STAGE
 file_format = LOCATION_CSV;
 ```
 
-Your database should now look like the following
+After completing either Option 1 or Option 2, your database should look like the following:
 
 <img src="assets/producer_org.png" width="425" />
 
 
+### Upload data into the table
 You now need to upload the file you just downloaded from IP2Location to the stage you just created in Snowflake.  There are a couple of ways to do this:
 
-* Using Snowsight
-* Using SnowSQL
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+Run the following command, replacing `path_to_csv_file` with the path to the CSV file on your filesystem.
+```bash
+snow object stage copy path_to_csv_file @IP2LOCATION/IP2LOCATION/LOCATION_DATA_STAGE -c connection_name
+```
+This will upload the CSV file to the stage `@IP2LOCATION/IP2LOCATION/LOCATION_DATA_STAGE`.
+
+After the step above, the file needs to be used to populate the table `IP2LOCATION.IP2LOCATION.LITEDB11` that was just created. 
+```bash
+snow sql -q 'copy into IP2LOCATION.IP2LOCATION.LITEDB11 from @IP2LOCATION/IP2LOCATION/LOCATION_DATA_STAGE' -c connection_name
+```
+
+With the data loaded, you can run some test queries to get a feel for the data, such as 
+```bash
+snow sql -q 'SELECT COUNT(*) FROM IP2LOCATION.IP2LOCATION.LITEDB11' -c connection_name
+-- OR --
+snow sql -q 'SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11 LIMIT 10' -c connection_name
+```
+We now have the reference database setup in the provider account so are now ready to start building the application itself.
+
+You can skip to the next page if you chose Option 1.
+
+**Option 2: Using Snowsight**
 
 Using Snowsight, come out of Worksheets and go to **data/databases** and then navigate to the stage we just created.  You should see a screen similar to the below
 
@@ -135,37 +212,73 @@ We now have the reference database setup in the provider account so are now read
 ## Provider Setup
 Duration: 5
 
-Staying in the same worksheet we will carry on creating the application.  As part of the application build we will need to upload some files to a stage again.  You can either clear out the stage you just used, or you can create another stage.  Here we create another stage
+As part of the setup in the provider account, we want to set up our application package with permissions onto the lookup database. We also explore different ways of creating an application package.
 
-```sql
-USE DATABASE IP2LOCATION;
-USE SCHEMA IP2LOCATION;
---create the new stage
-CREATE STAGE APPLICATION_STAGE;
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+There is a file called `snowflake.yml` in the root of `streamlit_data_mapping`. Edit the contents of this file so that they match the snippet below:  
+```yaml
+definition_version: 1
+native_app:
+  name: STREAMLIT_DATA_MAPPING
+  source_stage: IP2LOCATION_APP_PKG_SCHEMA.APPLICATION_STAGE
+  package:
+    name: IP2LOCATION_APP_PKG
+    scripts:
+      - app/scripts/shared_content.sql
+  artifacts:
+    - src: app/src/*
+      dest: ./
 ```
 
-We are now ready to go ahead and build out our application package.  In the worksheet execute the following
-
+Add the SQL below in a new file at `streamlit_data_mapping/app/scripts/shared_content.sql`.
 ```sql
---create the application package
-CREATE APPLICATION PACKAGE IP2LOCATION_APP;
---set context to the application package
-USE IP2LOCATION_APP;
+USE DATABASE {{package_name}};
 --create a schema
 CREATE SCHEMA IP2LOCATION;
 --Grant the application permissions on the schema we just created
-GRANT USAGE ON SCHEMA IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP; 
+GRANT USAGE ON SCHEMA IP2LOCATION TO SHARE IN APPLICATION PACKAGE {{package_name}}; 
 --grant permissions on the database where our data resides
-GRANT REFERENCE_USAGE ON DATABASE IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
+GRANT REFERENCE_USAGE ON DATABASE IP2LOCATION TO SHARE IN APPLICATION PACKAGE {{package_name}};
 --we need to create a proxy artefact here referencing the data we want to use
 CREATE VIEW IP2LOCATION.LITEDB11
 AS
 SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11;
 --grant permissions to the application
-GRANT SELECT ON VIEW IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
+GRANT SELECT ON VIEW IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE {{package_name}};
+```
+Here, `package_name` is a pre-defined variable that will be replaced by the name of your `package` from the `snowflake.yml` file when you execute a Snowflake CLI command.
+
+As a note, the `package` or any other objects do not exist at the end of these edits. There is a separate command later that will create these objects for you. If you followed this section, you can skip to the next page.
+
+**Option 2: Using Snowsight**
+
+We are now ready to go ahead and build out our application package.  In the worksheet execute the following
+
+```sql
+--create the application package
+CREATE APPLICATION PACKAGE IP2LOCATION_APP_PKG;
+--set context to the application package
+USE IP2LOCATION_APP_PKG;
+--create a schema
+CREATE SCHEMA IP2LOCATION_APP_PKG_SCHEMA;
+--create a stage
+CREATE STAGE APPLICATION_STAGE;
+--create a schema
+CREATE SCHEMA IP2LOCATION;
+--Grant the application permissions on the schema we just created
+GRANT USAGE ON SCHEMA IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP_PKG; 
+--grant permissions on the database where our data resides
+GRANT REFERENCE_USAGE ON DATABASE IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP_PKG;
+--we need to create a proxy artefact here referencing the data we want to use
+CREATE VIEW IP2LOCATION.LITEDB11
+AS
+SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11;
+--grant permissions to the application
+GRANT SELECT ON VIEW IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP_PKG;
 ```
 
-Fantastic.  we now have an application package with permissions onto the lookup database.  That's the first part of the application completed but we will be revisiting this worksheet towards the end of the exercise as we need to add a version and patch to the application
+That's the first part of the application completed but we will be revisiting this worksheet towards the end of the exercise as we need to add a version and patch to the application.
 
 <!-- ------------------------ -->
 ## The Manifest File
@@ -392,20 +505,61 @@ All the pieces are in place for our application so we now need to go back to the
 
 > aside positive
 > 
-> **Note** Remember our application manifest is expectng the file enricher_dash.py to be in a folder called **ui**
+> **Note** Remember our application manifest is expecting the file enricher_dash.py to be in a folder called **ui**
 
-once uploaded the stage should look like the following
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+In order to upload the files, let's make sure that they exist as the following structure under `app/`:
+```plaintext
+|-- streamlit_data_mapping
+    |-- ...
+    |-- app
+        |-- src
+        |   |-- manifest.yml
+        |   |-- setup_script.sql
+        |   |-- ui
+        |   |   |-- enricher_dash.py
+        |-- scripts
+        |   |-- shared_content.sql
+```
+
+Your `snowflake.yml` has a snippet 
+```yaml
+  artifacts:
+    - src: app/src/*
+      dest: ./
+```
+This means that all code files under `streamlit_data_mapping/app/src` will be uploaded to `IP2LOCATION_APP_PKG.IP2LOCATION_APP_PKG_SCHEMA.APPLICATION_STAGE` when you execute the relevant command, more of that in a later section:
+
+1. `streamlit_data_mapping/app/src/manifest.yml` will be uploaded at `@IP2LOCATION_APP_PKG.IP2LOCATION_APP_PKG_SCHEMA.APPLICATION_STAGE/manifest.yml`.
+2. `streamlit_data_mapping/app/src/setup_script.sql` will be uploaded at `@IP2LOCATION_APP_PKG.IP2LOCATION_APP_PKG_SCHEMA.APPLICATION_STAGE/setup_script.sql`.
+3. `streamlit_data_mapping/app/src/ui/*` will be uploaded at `@IP2LOCATION_APP_PKG.IP2LOCATION_APP_PKG_SCHEMA.APPLICATION_STAGE/ui/*`.
+
+Now we can create our application package, upload the application source code to the stage, share the provider `IP2LOCATION` data via the application package, and create a version of the application package.
+
+There is a single Snowflake CLI command that carries out all the above functionality.
+
+```bash
+snow app version create MyFirstVersion -c connection_name
+```
+where `V1` is the name of the version we want to create and `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation. 
+
+You can now skip to the next page.
+
+**Option 2: Using Snowsight**
+
+You can manually upload each of the files mentioned at the top of the page to the `APPLICATION_STAGE`.
+
+Once uploaded, the stage should look like the following
 
 <img src="assets/code_complete.png" width="395" />
 
 Once the files are uploaded, go into your worksheets and finish off the building of the application package:
 
 ```sql
-ALTER APPLICATION PACKAGE IP2LOCATION_APP
+ALTER APPLICATION PACKAGE IP2LOCATION_APP_PKG
   ADD VERSION MyFirstVersion
-  USING '@IP2LOCATION.IP2LOCATION.APPLICATION_STAGE';
-
-ALTER APPLICATION PACKAGE IP2LOCATION_APP SET DEFAULT RELEASE DIRECTIVE VERSION = MyFirstVersion PATCH = 0;
+  USING '@IP2LOCATION_APP_PKG.IP2LOCATION_APP_PKG_SCHEMA.APPLICATION_STAGE';
 ```
 
 Our application package is built, now let's create an application.
@@ -422,14 +576,71 @@ There are a few ways we could deploy our application:
 
 In this instance we are going to deploy the application locally so we can see what it looks like wthout having to have another account.  This will be in non-debug mode.
 
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Edit the contents of the `snowflake.yml` file so that they match the snippet below:  
+```yaml
+definition_version: 1
+native_app:
+  name: STREAMLIT_DATA_MAPPING
+  source_stage: IP2LOCATION_APP_PKG_SCHEMA.APPLICATION_STAGE
+  package:
+    name: IP2LOCATION_APP_PKG
+    scripts:
+      - app/scripts/shared_content.sql
+  artifacts:
+    - src: app/src/*
+      dest: ./
+  application:
+    name: IP2LOCATION_APP
+    debug: False
+```
+
+Now run the command below.
+
+```bash
+snow app run --version MyFirstVersion -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+This command will create an application `IP2LOCATION_APP` in your account, installed from version `MyFirstVersion` of application package `IP2LOCATION_APP_PKG`. At the end of the command execution, it will display the URL at which the application is available in your account.
+
+**Option 2: Using Snowsight**
+
 ```sql
-CREATE APPLICATION APPL_MAPPING
-FROM APPLICATION PACKAGE IP2LOCATION_APP
+CREATE APPLICATION IP2LOCATION_APP
+FROM APPLICATION PACKAGE IP2LOCATION_APP_PKG
 USING VERSION MyFirstVersion;
 ```
 
-The application is now built.  Before we look at the application itself.  Because we have installed the application locally we need to create a table to test with.  Let's do that now.  In your worksheet execute the following
+The application is now built.  
 
+### Testing
+
+Because we have installed the application locally we need to create a table to test with, before we can look at the application itself.  Let's do that now.  In your worksheet execute the following
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+At the root of `streamlit_data_mapping`, create a file called `consumer_test.sql` and copy in the code snippet below.
+```sql
+CREATE DATABASE TEST_IPLOCATION;
+CREATE SCHEMA TEST_IPLOCATION;
+
+CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
+	IP VARCHAR(16),
+	IP_DATA VARIANT
+);
+
+INSERT INTO TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');
+```
+
+Now execute the Snowflake CLI command to run all the SQL statements in this file.
+```bash
+snow sql -f consumer_test.sql -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+**Option 2: Using Snowsight**
 ```sql
 CREATE DATABASE TEST_IPLOCATION;
 CREATE SCHEMA TEST_IPLOCATION;
@@ -493,11 +704,35 @@ SELECT * FROM TEST_DATA;
 ## Teardown
 Duration: 1
 
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Run the command below to first drop the existing version `MyFirstVersion` in your application package `IP2LOCATION_APP_PKG` while still in `streamlit_data_mapping` directory. 
+
+```bash
+snow app version drop MyFirstVersion -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation. A prompt asks if you want to proceed, and you can respond with a `y`.
+
+Then run the command below to drop both the application `IP2LOCATION_APP` and the package `IP2LOCATION_APP_PKG`.
+
+```bash
+snow app teardown -c connection_name
+```
+
+However, other objects you created in your Snowflake account will not be deleted using the commands above. You need to explicitly drop them.
+
+```bash 
+snow object drop database IP2LOCATION -c connection_name
+snow object drop database TEST_IPLOCATION -c connection_name
+```
+
+**Option 2: Using Snowsight**
+
 Once you have finished with the application and want to clean up your environment you can execute the following script
 
 ```sql
-DROP APPLICATION APPL_MAPPING;
-DROP APPLICATION PACKAGE IP2LOCATION_APP;
+DROP APPLICATION IP2LOCATION_APP;
+DROP APPLICATION PACKAGE IP2LOCATION_APP_PKG;
 DROP DATABASE IP2LOCATION;
 DROP DATABASE TEST_IPLOCATION;
 ```
