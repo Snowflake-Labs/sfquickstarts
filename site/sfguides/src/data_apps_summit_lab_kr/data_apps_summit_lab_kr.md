@@ -55,7 +55,7 @@ duration: 8
 1. pip install conda를 실행하여 별도의 환경을 관리하기 위해 Conda를 설치합니다. 참고: 대신 [Miniconda](https://docs.conda.io/en/latest/miniconda.html)를 사용할 수도 있습니다.
 2. 터미널이나 명령 프롬프트를 엽니다.
 
-> aside positive 중요: Apple M1 칩이 탑재된 컴퓨터를 사용하고 있다면 아래에 설명된 내용을 따르는 대신 [이 지침](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup)에 따라 가상 환경을 생성하고 Snowpark Python을 설치합니다.
+> aside positive 중요: Apple M1 칩이 탑재된 컴퓨터를 사용하고 있다면 아래에 설명된 내용을 따르는 대신 [이 지침](https://docs.snowflake.com/ko/developer-guide/snowpark/python/setup)에 따라 가상 환경을 생성하고 Snowpark Python을 설치합니다.
 
 3. `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`을 실행하여 환경을 생성합니다.
 4. `conda activate snowpark`를 실행하여 Conda 환경을 활성화합니다.
@@ -187,7 +187,7 @@ from sklearn.linear_model import LinearRegression
 
 ### Snowflake와 연결
 
-이 단계에서는 Snowflake와 연결하기 위한 [Session 객체](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-a-session "alt_text")를 생성하게 됩니다. 이를 빠르게 진행하는 방법은 다음과 같지만, 프로덕션 환경에서는 코드에 바로 하드 코딩 자격 증명을 사용하는 것이 권장되지 않습니다. 프로덕션 환경에 더 적합한 접근 방식은 예를 들어 [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) 또는 [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py)에서 자격 증명을 로드하는 것입니다.
+이 단계에서는 Snowflake와 연결하기 위한 [Session 객체](https://docs.snowflake.com/ko/LIMITEDACCESS/snowpark-python.html#creating-a-session "alt_text")를 생성하게 됩니다. 이를 빠르게 진행하는 방법은 다음과 같지만, 프로덕션 환경에서는 코드에 바로 하드 코딩 자격 증명을 사용하는 것이 권장되지 않습니다. 프로덕션 환경에 더 적합한 접근 방식은 예를 들어 [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) 또는 [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py)에서 자격 증명을 로드하는 것입니다.
 
 Snowflake 설정 섹션에서 생성한 데이터베이스를 사용하겠습니다.
 
@@ -332,7 +332,7 @@ st.set_page_config(
 
 ### Snowflake와 연결
 
-이 단계에서는 Snowflake와 연결하기 위한 [Session 객체](https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-a-session)를 생성하게 됩니다. 이를 빠르게 진행하는 방법은 다음과 같지만, 프로덕션 환경에서는 코드에 바로 하드 코딩 자격 증명을 사용하는 것이 권장되지 않습니다. 프로덕션 환경에 더 적합한 접근 방식은 예를 들어 [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) 또는 [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py)에서 자격 증명을 로드하는 것입니다.
+이 단계에서는 Snowflake와 연결하기 위한 [Session 객체](https://docs.snowflake.com/ko/LIMITEDACCESS/snowpark-python.html#creating-a-session)를 생성하게 됩니다. 이를 빠르게 진행하는 방법은 다음과 같지만, 프로덕션 환경에서는 코드에 바로 하드 코딩 자격 증명을 사용하는 것이 권장되지 않습니다. 프로덕션 환경에 더 적합한 접근 방식은 예를 들어 [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) 또는 [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py)에서 자격 증명을 로드하는 것입니다.
 
 Snowflake 설정 섹션에서 생성한 데이터베이스를 사용하겠습니다.
 
