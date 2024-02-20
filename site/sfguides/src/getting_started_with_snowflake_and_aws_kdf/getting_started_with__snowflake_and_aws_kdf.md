@@ -436,7 +436,7 @@ As a result, you will see a nicely structured output with columns derived from t
 ![](assets/flight_view.png)
 
 <!---------------------------->
-## Conclusions
+## Conclusion
 Duration: 5
 
 In this lab, we built a demo to show how to ingest real-time data using Amazon Data Firehose with low latency. We demonstrated this using an ADF
