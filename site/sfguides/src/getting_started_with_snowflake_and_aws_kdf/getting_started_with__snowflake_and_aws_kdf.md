@@ -415,7 +415,8 @@ create or replace view flights_vw
     icao::string icao,
     lat::float lat,
     lon::float lon,
-    st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
+    st_geohash(to_geography(st_makepoint(lon, lat)),12) geohash,
+    st_distance(st_makepoint(-122.366340, 37.616245), st_makepoint(lon, lat))/1609::float dist_to_sfo,
     year(ts_pt) yr,
     month(ts_pt) mo,
     day(ts_pt) dd,
@@ -423,7 +424,8 @@ create or replace view flights_vw
 FROM adf_streaming_tbl;
 ```
 
-The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools such as Grafana.
+The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools such as Grafana.
+You can also easily calculate the distance in miles between two geo locations. In above example, the `st_distance` function is used to calculate the distance between an airplane and San Francisco Airport.
 
 Let's query the view `flights_vw` now.
 ```commandline
