@@ -105,7 +105,7 @@ Run the following SQL commands to create the [warehouse](https://docs.snowflake.
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE DASH_L;
+CREATE OR REPLACE WAREHOUSE DASH_L WAREHOUSE_SIZE=LARGE;
 CREATE OR REPLACE DATABASE DASH_DB;
 CREATE OR REPLACE SCHEMA DASH_SCHEMA;
 
@@ -517,9 +517,9 @@ Follow these steps to build Streamlit application in Snowsight.
 
 **Step 2.** Click on **+ Streamlit App** on the top right
 
-**Step 3.** Enter **App name**
+**Step 3.** Enter **App title**
 
-**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+**Step 4.** Select **App location** (DASH_DB and DASH_SCHEMA) and **App warehouse** (DASH_L) 
 
 **Step 5.** Click on **Create**
 
