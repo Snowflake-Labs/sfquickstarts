@@ -1,13 +1,13 @@
 id: getting_started_with_snowflake_and_aws_kdf
-summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Kinesis Data Firehose (KDF).
+summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Data Firehose (ADF).
 categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Kinesis, Firehose, Streaming, Snowpipe Streaming, SnowSQL
+tags: Getting Started, Amazon Data Firehose, Streaming, Snowpipe Streaming, SnowSQL, Kinesis
 authors: James Sun
 
-# Getting Started with Snowflake and Amazon Kinesis Data Firehose
+# Getting Started with Snowflake and [Amazon Data Firehose](https://aws.amazon.com/firehose/) (ADF)
 <!---------------------------->
 ## Overview
 Duration: 5
@@ -23,13 +23,13 @@ Here are some of the use cases that can benefit from this integration:
 - Ingestion into ML feature stores 
 
 In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution leveraging
-the [native integration](https://aws.amazon.com/about-aws/whats-new/2024/01/stream-data-snowflake-kinesis-data-firehose-snowpipe-streaming-preview/) between Snowflake and [KDF (Amazon Kinesis Data Firehose)](https://aws.amazon.com/kinesis/data-firehose/).
+the [native integration](https://aws.amazon.com/about-aws/whats-new/2024/01/stream-data-snowflake-kinesis-data-firehose-snowpipe-streaming-preview/) between Snowflake and [ADF (Amazon Data Firehose)](https://aws.amazon.com/firehose/).
 
 The architecture diagram below shows the deployment. A Linux 
 EC2 instance (jumphost) will be provisioned in the subnet of an AWS VPC. 
-The Linux jumphost will host the Kinesis producer that ingests real-time flight data into the Kinesis delivery stream.
+The Linux jumphost will host the data producer that ingests real-time flight data into the Firehose delivery stream.
 
-The Kinesis producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kinesis delivery stream and delivered to a Snowflake table.
+The data producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Firehose delivery stream and delivered to a Snowflake table.
 The data in Snowflake table can be visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
 The historical data can also be analyzed by BI tools like [Amazon Quicksight](https://aws.amazon.com/quicksight/?trk=56601b48-df3f-4cb4-9ef7-9f52efa1d0b8&sc_channel=ps&ef_id=Cj0KCQiA_bieBhDSARIsADU4zLebWWM6ZmxRODjR9Xlc7ztNm5JGwqEMSi0EjCLZ9CXYa1YvXL3LMYYaAnV_EALw_wcB:G:s&s_kwcid=AL!4422!3!629393324770!!!g!!).
 Please note that in the demo, we are not demonstrating the visualization aspect. We will have a future Quickstart demo that focuses on visualization.
@@ -41,7 +41,7 @@ Please note that in the demo, we are not demonstrating the visualization aspect.
 ### Prerequisites
 
 - Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects
-- Familiarity with AWS Services (e.g. EC2, Kinesis, etc), Networking and the Management Console
+- Familiarity with AWS Services (e.g. EC2, ADF, etc), Networking and the Management Console
 - Basic knowledge of Python and Linux shell scripting
 
 ### What You'll Need Before the Lab
@@ -59,7 +59,7 @@ Note that you must have network administrator permissions to deploy these resour
 
 ### What You'll Learn
 
-- Using [KDF (Amazon Kinesis Data Firehose)](https://aws.amazon.com/kinesis/data-firehose/)
+- Using [ADF (Amazon Data Firehose)](https://aws.amazon.com/firehose/)
 - Connecting to EC2 instances with [Amazon System Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), this is an alternative
 to SSH if your instance is in a private subnet
 - Using [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html), the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
@@ -67,10 +67,10 @@ to SSH if your instance is in a private subnet
 
 ### What You'll Build
 
-- Create a [KDF delivery stream](https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html)
-- Setup `Direct Put` as the source for the KDF delivery stream
-- Setup `Snowflake` as the destination for the KDF delivery stream
-- Secure the connection between Snowflake and KDF with [Privatelink](https://aws.amazon.com/privatelink)
+- Create an [ADF delivery stream](https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html)
+- Setup `Direct Put` as the source for the ADF delivery stream
+- Setup `Snowflake` as the destination for the ADF delivery stream
+- Secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
 - A Snowflake database and table for hosting real-time flight data
 
 <!---------------------------->
@@ -78,8 +78,8 @@ to SSH if your instance is in a private subnet
 Duration: 10
 
 #### 1. Create an EC2 instance
-First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=KDF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
-to launch an EC2 instance(jumphost). Note the default AWS region is `us-west-2 (Oregon)`, at the time of writing this quickstart, three regions are available
+First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=ADF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
+to launch an EC2 instance(jumphost) with Cloudformation. Note the default AWS region is `us-west-2 (Oregon)`, at the time of writing this quickstart, three regions are available
 for this integration preview: `us-east-1`, `us-west-2`, and `eu-west-1`.
 
 For `Subnet1`, in the drop-down menu, pick an existing subnet, it can be either public or private subnets depending on the network layout of your VPC. 
@@ -95,7 +95,7 @@ See below sample screen capture for reference.
 Leave everything as default in the `Configure stack options` page and click `Next`.
 In the `Review` page, click `Submit`.
 
-In about 5 minutes, the Cloudformation template provisions a Linux EC2 instance in the subnet you selected. We will then use it to run the Kinesis producer for data ingestion.
+In about 5 minutes, the Cloudformation template provisions a Linux EC2 instance in the subnet you selected. We will then use it to run the ADF producer for data ingestion.
 
 #### 2. Configure the Linux session for timeout and default shell
 
@@ -178,9 +178,9 @@ Then run the following SQL commands in a worksheet to create a user, database an
 -- You should change them after the workshop
 SET PWD = 'Test1234567';
 SET USER = 'STREAMING_USER';
-SET DB = 'KDF_STREAMING_DB';
-SET WH = 'KDF_STREAMING_WH';
-SET ROLE = 'KDF_STREAMING_RL';
+SET DB = 'ADF_STREAMING_DB';
+SET WH = 'ADF_STREAMING_WH';
+SET ROLE = 'ADF_STREAMING_RL';
 
 USE ROLE ACCOUNTADMIN;
 
@@ -231,11 +231,11 @@ See below example screenshot:
 ![](assets/key-pair-snowflake.png)
 
 Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
-Run the following SQL commands in a worksheet to create a schema (e.g. `KDF_STREAMING_SCHEMA`) in the default database (e.g. `KDF_STREAMING_DB`):
+Run the following SQL commands in a worksheet to create a schema (e.g. `ADF_STREAMING_SCHEMA`) in the default database (e.g. `ADF_STREAMING_DB`):
 
 ```commandline
-SET DB = 'KDF_STREAMING_DB';
-SET SCHEMA = 'KDF_STREAMING_SCHEMA';
+SET DB = 'ADF_STREAMING_DB';
+SET SCHEMA = 'ADF_STREAMING_SCHEMA';
 
 USE IDENTIFIER($DB);
 CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
@@ -267,7 +267,7 @@ echo "export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE" >> 
 
 Now you can execute this command to interact with Snowflake:
 ```commandline
-$HOME/bin/snowsql -a <The Account Identifier that you recorded earlier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d kdf_streaming_db -s kdf_streaming_schema
+$HOME/bin/snowsql -a <The Account Identifier that you recorded earlier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d adf_streaming_db -s adf_streaming_schema
 ```
 See below example screenshot:
 
@@ -280,12 +280,12 @@ You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/
 At this point, the Snowflake setup is complete.
 
 <!---------------------------->
-## Create a KDF delivery stream
+## Create an ADF delivery stream
 Duration: 15
 
-In this step, we are going to create a KDF delivery stream for data streaming.
+In this step, we are going to create an ADF delivery stream for data streaming.
 
-Navigate to the [KDF console](https://console.aws.amazon.com/firehose/home?streams) and click `Create delivery stream`.
+Navigate to the [ADF console](https://console.aws.amazon.com/firehose/home?streams) and click `Create delivery stream`.
 
 In the `Source` section, select `Direct PUT` from the drop-down menu.
 
@@ -305,7 +305,7 @@ from PL;
 
 e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
 
-Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and KDF, so the
+Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the
 URL is a private endpoint with `privatelink` as a substring. Alternatively, you can use the public endpoint without 
 the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, leave the `VPCE ID` field blank below.
 
@@ -321,7 +321,7 @@ For `Passphrase`, type in the phrase you used when generating the public key wit
 
 ![](assets/kdf-stream-2.png)
 
-For `Role`, select `Use custom Snowflake role` and type in `KDF_STREAMING_RL`.
+For `Role`, select `Use custom Snowflake role` and type in `ADF_STREAMING_RL`.
 
 For `VPCE ID`, run the following SQL command in your Snowflake account to obtain the value.
 ```commandline
@@ -331,11 +331,11 @@ SELECT REPLACE(VALUE,'"','') AS PRIVATE_LINK_VPCE_ID
 from PL;
 ```
 
-For `Snowflake database`, type in `KDF_STREAMING_DB`.
+For `Snowflake database`, type in `ADF_STREAMING_DB`.
 
-For `Snowflake Schema`, type in `KDF_STREAMING_SCHEMA`.
+For `Snowflake Schema`, type in `ADF_STREAMING_SCHEMA`.
 
-For `Snowflake table`, type in `KDF_STREAMING_TBL`.
+For `Snowflake table`, type in `ADF_STREAMING_TBL`.
 
 For `Data loading options for your Snowflake table`, select `Use JSON keys as table column names`.
 
@@ -358,14 +358,14 @@ The data should have been streamed into a table, ready for further processing.
 
 #### 1. Create a destination table in Snowflake
 
-Run the following SQL command to create the table `KDF_STREAMING_TBL` we specified when provisioning
+Run the following SQL command to create the table `ADF_STREAMING_TBL` we specified when provisioning
 the delivery stream. Note that here we use varchar type for most of the columns, we will
 generate a view later to transform them into the correct types.
 
 ```commandline
-use KDF_STREAMING_DB;
-use schema KDF_STREAMING_SCHEMA;
-create or replace TABLE KDF_STREAMING_TBL (
+use ADF_STREAMING_DB;
+use schema ADF_STREAMING_SCHEMA;
+create or replace TABLE ADF_STREAMING_TBL (
 	ORIG VARCHAR(20),
 	UTC NUMBER(38,0),
 	ALT VARCHAR(20),
@@ -380,10 +380,10 @@ create or replace TABLE KDF_STREAMING_TBL (
 
 Go to the EC2 console, and run the following command.
 ```commandline
-python3 /tmp/kdf-producer.py <Kinesis delivery stream name>
+python3 /tmp/adf-producer.py <ADF delivery stream name>
 ```
 The Python script gets the raw flight data from a [real-time source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky) and streams into the delivery stream.
-You should see the flight data being ingested continuously to the KDF delivery stream in json format.
+You should see the flight data being ingested continuously to the ADF delivery stream in json format.
 
 ![](assets/kdf-producer-ingest.png)
 
@@ -392,7 +392,7 @@ To verify that data has been streamed into Snowflake, execute the following SQL 
 
 Now run the following query on the table.
 ```
-select * from kdf_streaming_tbl;
+select * from adf_streaming_tbl;
 ```
 
 Here is the screen capture of the sample output.
@@ -415,15 +415,17 @@ create or replace view flights_vw
     icao::string icao,
     lat::float lat,
     lon::float lon,
-    st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
+    st_geohash(to_geography(st_makepoint(lon, lat)),12) geohash,
+    st_distance(st_makepoint(-122.366340, 37.616245), st_makepoint(lon, lat))/1609::float dist_to_sfo,
     year(ts_pt) yr,
     month(ts_pt) mo,
     day(ts_pt) dd,
     hour(ts_pt) hr
-FROM kdf_streaming_tbl;
+FROM adf_streaming_tbl;
 ```
 
-The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools such as Grafana.
+The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools such as Grafana.
+You can also easily calculate the distance in miles between two geo locations. In above example, the `st_distance` function is used to calculate the distance between an airplane and San Francisco Airport.
 
 Let's query the view `flights_vw` now.
 ```commandline
@@ -437,9 +439,9 @@ As a result, you will see a nicely structured output with columns derived from t
 ## Conclusions
 Duration: 5
 
-In this lab, we built a demo to show how to ingest real-time data using Amazon Kinesis Data Firehose with low latency. We demonstrated this using a self-managed Kafka 
+In this lab, we built a demo to show how to ingest real-time data using Amazon Data Firehose with low latency. We demonstrated this using an ADF
 connector on an EC2 instance. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
-[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kinesis producers as well.
+[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized ADF producers as well.
 
 For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
 [quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/) to continue.
@@ -447,7 +449,7 @@ For those of you who are interested in learning more about how to build sleek da
 Related Resources
 
 - [Unleashing the Full Potential of Real-Time Streaming with Amazon Kinesis Data Firehose and Snowpipe Streaming](https://medium.com/snowflake/unleashing-the-full-potential-of-real-time-streaming-with-amazon-kinesis-data-firehose-and-snowpipe-0283fb599364#Snowflake)
-- [Amazon Kinesis Data Firehose (KDF)](https://aws.amazon.com/kinesis/data-firehose/)
+- [Amazon Data Firehose (ADF)](https://aws.amazon.com/firehose/)
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/)
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
