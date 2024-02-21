@@ -14,32 +14,34 @@ Duration: 5
 
 ### Hybrid Tables
 
-Hybrid tables are a new Snowflake table type that is optimized for hybrid transactional and operational workloads requiring low latency and high throughput on small random point reads and writes. They support some additional features, such as unique and referential integrity constraints enforcement, that are critical for transactional workloads. You can use hybrid tables along with other Snowflake tables and features to power [Unistore workloads](https://www.snowflake.com/en/data-cloud/workloads/unistore/) that bring transactional and analytical data together in a single platform.
+A [hybrid table](https://docs.snowflake.com/en/user-guide/tables-hybrid) is a Snowflake table type that is optimized for hybrid transactional and operational workloads that require low latency and high throughput on small random point reads and writes. A hybrid table supports unique and referential integrity constraint enforcement that is critical for transactional workloads. You can use a hybrid table along with other Snowflake tables and features to power [Unistore workloads](https://www.snowflake.com/en/data-cloud/workloads/unistore/) that bring transactional and analytical data together in a single platform.
 
-### Use Cases for Hybrid Tables
+Use cases that may benefit from hybrid tables include:
 
-This section lists some of the use cases that may benefit from hybrid table features.
+- Build a cohort for a targeted marketing campaign through an interactive user interface.
+- Maintain a central workflow state to coordinate large parallel data transformation pipelines.
+- Serve a precomputed promotion treatment for users who are visiting your website or mobile app.
 
-#### Application State
+### Architecture
 
-Applications often require persisting state data. For example, you may need to store the state of a customer session (authentication, activity, etc.) in a user-facing application, or you may want to store the state of an ETL workflow to monitor status and avoid running the entire workflow again if the workflow fails in the middle. Hybrid tables provide the lower latency and higher throughput for single-row DMLs necessary for these use cases.
+Hybrid tables are integrated seamlessly into the existing Snowflake architecture. Customers connect to the same Snowflake database service. Queries are compiled and optimized in the cloud services layer and executed in the same query engine in virtual warehouses. This provides several key benefits:
 
-#### Data Serving
+- Snowflake platform features, such as data governance, work with hybrid tables out of the box.
+- You can run hybrid workloads mixing operational and analytical queries.
+- You can join hybrid tables with other Snowflake tables and the query executes natively and efficiently in the same query engine. No federation is required.
+- You can execute an atomic transaction across hybrid tables and other Snowflake tables. There is no need to orchestrate your own two-phase commit.
 
-There are many use cases where customers want to serve data to their applications and to partners. Examples include ML model feature stores or pre-computed game statistics served to users through an API. Hybrid tables support higher concurrency, higher throughput (queries per second), and lower latency on single-row lookups required for these use cases.
+![Architecture](assets/Architecture-Hybrid-Tables.png)
 
-#### Transactional Applications
-
-Hybrid tables may be suitable for some transactional applications, depending on their concurrency, latency, and feature requirements.
-
-In this quickstart, we will use Tasty Bytes Snowflake fictional food truck business data to simulate a data serving use case.
-
+Hybrid tables leverage a row store as the primary data store to provide excellent operational query performance. When you write to a hybrid table, the data is written directly into the rowstore. Data is asynchronously copied into object storage in order to provide better performance and workload isolation for large scans without impacting your ongoing operational workloads. Some data may also be cached in columnar format on your warehouse in order to provide better performance on analytical queries. You simply execute SQL statements against the logical hybrid table and Snowflake’s query optimizer decides where to read data from in order to provide the best performance. You get one consistent view of your data without needing to worry about the underlying infrastructure.
 
 
 ### Prerequisites
 - Familiarity with the Snowflake Snowsight interface
+- Familiarity with SQL
 
 ### What You’ll Learn 
+
 - The basics of hybrid tables
 - How to create and use hybrid tables
 - The advantages of hybrid tables over standard tables
@@ -100,7 +102,8 @@ USE SCHEMA DATA;
 
 #### Create Tables and Bulk Load Data
 
-In this quickstart, we will use Tasty Bytes Snowflake fictional food truck business data to simulate a data serving use case.
+In this quickstart, we will use Tasty Bytes Snowflake fictional food truck business data to simulate a data serving use case where we would like to serve data to our applications.
+
 We will create three tables:
 - ORDER_HEADER Hybrid table -  This  table stores order metadata such as TRUCK_ID, CUSTOMER_ID, ORDER_AMOUNT, etc.
 - TRUCK Hybrid table -  This table stores truck metadata such as TRUCK_ID,FRANCHISE_ID,MENU_TYPE_ID, etc.
@@ -296,7 +299,7 @@ insert into ORDER_HEADER (
 ## Explore Data
 Duration: 3
 
-In the previous Setup step we created HYBRID_QUICKSTART_ROLE role, HYBRID_QUICKSTART_WH warehouse, HYBRID_QUICKSTART_DB database and schema DATA. Let's use them.
+In the previous Setup step we created HYBRID_QUICKSTART_ROLE role, HYBRID_QUICKSTART_WH warehouse, HYBRID_QUICKSTART_DB database and DATA schema. Let's use them.
 ```sql
 -- Step 3
 -- Set step context
@@ -321,7 +324,7 @@ DESC TABLE TRUCK;
 DESC TABLE ORDER_HEADER;
 ```
 
-View details for all hybrid tables.
+Lists the hybird tables for which you have access privileges.
 
 ```sql
 --Show all HYBRID tables
@@ -354,7 +357,7 @@ In this step, we will test Unique Constraint which ensures that all values in a 
 In table TRUCK that we created in the Setup step we defined column TRUCK_EMAIL as NOT NULL and UNIQUE.
 
 
-Display information about the columns in the table. Note the unique key value for the TRUCK_EMAIL column.
+Display information about the columns in the table. 
 
 ```sql
 -- Step 4
@@ -363,9 +366,11 @@ USE ROLE HYBRID_QUICKSTART_ROLE;
 USE WAREHOUSE HYBRID_QUICKSTART_WH;
 USE DATABASE HYBRID_QUICKSTART_DB;
 USE SCHEMA DATA;
---Describe the columns in the table TRUCK
+-- Describe the columns in the table TRUCK
+-- Note the unique key value for the TRUCK_EMAIL column
 DESC TABLE TRUCK;
 ```
+Note the unique key value for the TRUCK_EMAIL column.
 
 Due to the unique constraint, if we attempt to insert two records with the same email address, the statement will fail.
 To test it run the following statement:
@@ -394,7 +399,15 @@ Statement should run successfully.
 ### Step 4.2 Insert Foreign Keys Constraints
 
 In this step we will test foreign key constraint.
-First, we will try to insert a new record to table ORDER_HEADER with non existing truck id.
+
+First, let's recall the foreign key constraints we defined in the ORDER_HEADER table by executing the [GET_DDL](https://docs.snowflake.com/en/sql-reference/functions/get_ddl). Note the foreign key constraints related to the TRUCK_ID column in the output.
+
+```sql
+-- Return the DDL used to create table named ORDER_HEADER:
+select get_ddl('table', 'ORDER_HEADER');
+```
+
+Second, we will try to insert a new record to table ORDER_HEADER with non existing truck id.
 It is expected that the insert statement would fail since we will violate the TRUCK table foreign key constraint.
 
 ```sql
@@ -424,9 +437,10 @@ Statement should run successfully.
 ### Step 4.3 Truncated Active Foreign Key Constraint
 
 In this step, we will test that the table referenced by a foreign key constraint cannot be truncated as long as the foreign key relationship exists.
-To test it run the following statement:
+To test it run the following [TRUNCATE](https://docs.snowflake.com/en/sql-reference/sql/truncate-table) statement:
 
 ```sql
+-- truncate the table
 TRUNCATE TABLE TRUCK;
 ```
 
@@ -438,7 +452,7 @@ The statement should fail and we should receive the following error message:
 
 In this step, we will test that a record referenced by a foreign key constraint cannot be deleted as long as the foreign key reference relationship exists.
 
-To test it run the following statement:
+To test it run the following [DELETE](https://docs.snowflake.com/en/sql-reference/sql/delete) statement:
 
 ```sql
 DELETE FROM TRUCK WHERE TRUCK_ID = $NEW_TRUCK_ID;
@@ -447,7 +461,7 @@ DELETE FROM TRUCK WHERE TRUCK_ID = $NEW_TRUCK_ID;
 The statement should fail and we should receive the following error message:
 "Foreign keys that reference key values still exist."
 
-To successfully delete a record referenced by a foreign key constraint, you must first delete the corresponding reference record in the ORDER_HEADER table. Only after completing this step you can proceed to delete the referenced record in the TRUCK table. To test this, execute the following statement:
+To successfully delete a record referenced by a foreign key constraint, you must first delete the corresponding reference record in the ORDER_HEADER table. Only after completing this step you can proceed to delete the referenced record in the TRUCK table. To test this, execute the following DELETE statements:
 
 ```sql
 DELETE FROM ORDER_HEADER WHERE ORDER_ID = $NEW_ORDER_ID;
@@ -457,7 +471,7 @@ Both statements should run successfully.
 
 ## Row Level Locking
 
-Duration: 
+Duration: 5 
 
 Unlike standard tables, which utilize partition or table-level locking, hybrid tables employ row-level locking for update operations.
 Row Level locking allows for concurrent updates on independent records.
@@ -471,7 +485,8 @@ Within Worksheets, click the "+" button in the top-right corner of Snowsight and
 
 ![Create New SQL Worksheet](assets/new-worksheet.png)
 
-Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Hybrid Table - QuickStart session 2"
+Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Hybrid Table - QuickStart session 2".
+The "Hybrid Table - QuickStart Session 2" worksheet that we have just created will only be used in the current step.
 
 ### Step 5.2 Running concurrent updates
 
@@ -782,6 +797,6 @@ Having completed this quickstart you have successfully
 
 
 ### Additional References:
-- [Snowflake unistore landing page](https://www.snowflake.com/en/data-cloud/workloads/unistore/)
-- [Build, Run, and Distribute Custom Apps on Snowflake Snowday 2023](https://snowflake.wistia.com/medias/mvtdzo06c5)
-- [Snowflake BUILD: Simplify Application Development With Hybrid Tables](https://www.youtube.com/watch?v=kBdz2BFxp6U)
+- [Snowflake Unistore Landing Page](https://www.snowflake.com/en/data-cloud/workloads/unistore/)
+- [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
+- [Simplify Application Development Hybrid Tables Blog](https://www.snowflake.com/blog/simplify-application-development-hybrid-tables)
