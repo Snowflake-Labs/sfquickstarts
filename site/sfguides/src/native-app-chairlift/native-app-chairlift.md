@@ -48,16 +48,31 @@ Let's get started!
 > Native Apps are currently only  available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.
 
 - A Snowflake account ([trial](https://signup.snowflake.com/developers), or otherwise). See note above on AWS as cloud provider for the deployment.
+- [SnowflakeCLI](https://github.com/Snowflake-Labs/snowcli/tree/main) installed. This is a new tool currently in Public Preview.
 
 ### What You’ll Build 
 
 - A Snowflake Native App
 
+**Note**
+
+- This Quickstart is limited to a single-account installation. You'll use a single Snowflake account to experience the app from the provider's perspective and from the consumer's perspective. Listing to the Snowflake Marketplace and versions / release directives are outside of the scope of this guide.
+
 <!-- ------------------------ -->
 ## Clone GitHub repository
 Duration: 2
 
-Start by cloning the following GitHub repository, which contains the code we'll need to build the app:
+Start by cloning the following GitHub repository, which contains the code we'll need to build the app. This can be done in two different ways.
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+```bash
+snow app init sfguide-native-apps-chairlift --template-repo ttps://github.com/Snowflake-Labs/sfguide-native-apps-chairlift.git
+```
+
+This command requires the use of git. It will create a directory structure in your filesystem for our Snowflake Native Application from the [Github repository](ttps://github.com/Snowflake-Labs/sfguide-native-apps-chairlift.git).
+
+**Option 2: Using Git**
 
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-native-apps-chairlift.git
@@ -70,6 +85,7 @@ sfguide-native-apps-chairlift/
 ├─ LEGAL.md
 ├─ LICENSE
 ├─ README.md
+├─ snowflake.yml
 ├─ app/
 │  ├─ README.md
 │  ├─ manifest.yml
@@ -110,6 +126,10 @@ Here's an overview of the directories:
 **provider/** 
 
 - This directory is specific to this Quickstart. It contains a SQL script to create the application package and grant privileges on provider data.
+
+**snowflake.yml**
+
+There is an additional file called `snowflake.yml`, which is used by the Snowflake CLI.
 
 <!-- ------------------------ -->
 ## The **app/** directory
@@ -182,7 +202,18 @@ Let's start building the app. You'll first need to configure certain roles and p
 
 To create these roles and permissions, run the scripts below. You'll only need to execute these scripts once.
 
-**Execute prepare/provider-role.sql**
+### Execute prepare/provider-role.sql
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Run the script directly using the Snowflake CLI, like so:
+```bash
+cd sfguide-native-apps-chairlift
+snow sql -f prepare/provider-role.sql -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+**Option 2: Manually executing SQL**
 
 Open a SQL worksheet in Snowsight and execute the following script:
 
@@ -198,7 +229,16 @@ create warehouse if not exists chairlift_wh;
 grant usage on warehouse chairlift_wh to role chairlift_provider;
 ```
 
-**Execute prepare/consumer-roles.sql**
+### Execute prepare/consumer-roles.sql
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+While still in the `sfguide-native-apps-chairlift` directory, run the script directly using the Snowflake CLI, like so:
+```bash
+snow sql -f prepare/consumer-roles.sql -c connection_name
+```
+
+**Option 2: Manually executing SQL**
 
 Open a SQL worksheet in Snowsight and execute the following script:
 
@@ -233,7 +273,17 @@ The scripts will do a couple of things:
 
 To set up the environment, run the scripts below. You'll only need to execute these scripts once.
 
-**Execute prepare/provider-data.sql**
+### Execute prepare/provider-data.sql
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+While still in the `sfguide-native-apps-chairlift` directory, run the script directly using the Snowflake CLI, like so:
+```bash
+snow sql -f prepare/provider-data.sql -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+**Option 2: Manually executing SQL**
 
 Open a SQL worksheet in Snowsight and execute the following script:
 
@@ -271,7 +321,16 @@ insert into chairlift_provider_data.core.sensor_types values
     (9, 'Chairlift Vibration', 30, 100, 3, 'month', 3, 'year');
 ```
 
-**Execute prepare/consumer-data.sql**
+### Execute prepare/consumer-data.sql 
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+While still in the `sfguide-native-apps-chairlift` directory, run the script directly using the Snowflake CLI, like so:
+```bash
+snow sql -f prepare/consumer-data.sql -c connection_name
+```
+
+**Option 2: Manually executing SQL**
 
 Open a SQL worksheet in Snowsight and execute the following script:
 
@@ -465,6 +524,38 @@ call populate_reading();
 ## Create application package
 Duration: 3
 
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Edit your snowflake.yml file so that it mirrors the snipper below. 
+```yaml
+definition_version: 1
+native_app:
+  name: chairlift
+  source_stage: code.source
+  artifacts:
+    - src: app/*
+      dest: ./
+  package:
+    name: chairlift_pkg
+    warehouse: chairlift_wh
+    role: chairlift_provider
+    scripts:
+      - scripts/setup-shared-content.sql
+  application:
+    name: chairlift_app
+    warehouse: chairlift_wh
+    role: chairlift_admin
+    debug: False
+```
+
+Here, `chairlift_pkg` is the name of the `package` to create, `code` is a schema within the `package`, and `source` is the name of the stage within the `schema`.
+
+Further, all code files under `sfguide-native-apps-chairlift/app/` will be uploaded to `chairlift_pkg.code.source` with the same folder structure as `sfguide-native-apps-chairlift/app/`.
+
+As a note, the `package` or any other objects do not exist at the end of these edits. There is a separate command later that will create these objects for you. If you followed this section, you can now skip to the next page.
+
+**Option 2: Manually executing SQL**
+
 With the environment created, we can now create the application package for the app. You'll run a script that creates this package and does a few key things:
 
 * Creates the application package for the native app
@@ -475,7 +566,7 @@ With the environment created, we can now create the application package for the 
 
 For more details, see the comments in the **provider/create-package.sql** script.
 
-**Execute provider/create-package.sql**
+***Execute provider/create-package.sql***
 
 Open a SQL worksheet in Snowsight and execute the following script:
 
@@ -535,6 +626,12 @@ grant select on view package_shared.sensor_service_schedules
 ## Upload app source code
 Duration: 4
 
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+If you have been following the use of Snowflake CLI so far, you do not need to perform any additional steps in this section. You can skip to the next page.
+
+**Option 2: Manually executing SQL**
+
 Now that the application package has been created, you'll upload the app's source code into the application package. To do this, you'll create a schema within the **chairlift_pkg** application package called **code**, and then create a stage within that schema called **source** (i.e., `chairlift_pkg.code.source`).
 
 Execute the following commands in a worksheet to create the schema and the stage:
@@ -571,6 +668,22 @@ It is important to make sure the directory structures match so that any referenc
 ## Create the first version of the app
 Duration: 2
 
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+With `snowflake.yml` setup, you can now run
+```bash
+snow app version create develop -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+This will perform a number of steps for you:
+1. Create an application package called `chairlift_pkg` using role `chairlift_provider`.
+2. Create a stage within the package `chairlift_pkg.code.source` and upload all files under `sfguide-native-apps-chairlift/app/` to this stage.
+3. Run `sfguide-native-apps-chairlift/scripts/setup-shared-content.sql`to grant various privileges to the application package `chairlift_pkg`.
+4. Create a version called `develop` for this application package using the stage where all code files have been uploaded, i.e. `chairlift_pkg.code.source`.
+
+**Option 2: Manually executing SQL**
+
 Let's review what we've covered so far:
 
 * Created necessary account roles and objects, and granted proper privileges
@@ -602,7 +715,27 @@ This SQL command returns the new patch number, which will be used when installin
 ## Install the application
 Duration: 3
 
-Now that the source code has been uploaded into the application package, we can now install the application. To install the application in the same account, the provider role needs to grant installation and development permissions to the consumer role. 
+Now that the source code has been uploaded into the application package, we can install the application. 
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Execute the following command to create an application `chairlift_app` from the `develop` version of the application package `chairlift_pkg`.
+```bash
+snow app run --version develop -c connection_name
+```
+`connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+The newly created application is created using the role `chairlift_admin`, which is specified in the `snowflake.yml` file. Upon completion of the command, a URL to the application on Snowsight will also be provided.
+
+We also want to grant some additional privileges to our secondary viewer role `chairlift_viewer`. Use the command below to do so.
+```bash
+snow sql -q 'grant application role chairlift_app.app_viewer
+    to role chairlift_viewer' --role chairlift_admin -c connection_name
+```
+
+**Option 2: Manually executing SQL**
+
+To install the application in the same account, the provider role needs to grant installation and development permissions to the consumer role. 
 
 To do this, execute the following SQL statement using role **chairlift_provider**:
 
@@ -686,7 +819,31 @@ In this Quickstart, the **Configuration** tab is included to demonstrate how dif
 ## Clean up
 Duration: 1
 
-Let's clean up your Snowflake account. Run the following SQL commands in a worksheet:
+Let's clean up your Snowflake account. 
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Run the following Snowflake CLI commands:
+```bash
+snow app teardown -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation. A prompt asks if you want to proceed, and you can respond with a `y`.
+
+This will drop both the application `chairlift_app` and the package `chairlift_pkg`.
+
+However, other objects that you created in your Snowflake account will not be deleted using the commands above. You will need to execute a separate set of commands for this.
+
+```bash
+snow object drop database chairlift_consumer_data --role chairlift_admin -c connection_name
+snow object drop warehouse chairlift_wh --role accountadmin -c connection_name
+snow object drop role chairlift_provider --role accountadmin -c connection_name
+snow object drop role chairlift_viewer --role accountadmin -c connection_name
+snow object drop role chairlift_admin --role accountadmin -c connection_name
+```
+
+**Option 2: Manually executing SQL**
+
+Run the following SQL commands in a worksheet:
 
 ```sql
 ----- CLEAN UP -----
