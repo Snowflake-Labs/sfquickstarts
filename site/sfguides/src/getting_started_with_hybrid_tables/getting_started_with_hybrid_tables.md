@@ -36,24 +36,20 @@ Hybrid tables are integrated seamlessly into the existing Snowflake architecture
 Hybrid tables leverage a row store as the primary data store to provide excellent operational query performance. When you write to a hybrid table, the data is written directly into the rowstore. Data is asynchronously copied into object storage in order to provide better performance and workload isolation for large scans without impacting your ongoing operational workloads. Some data may also be cached in columnar format on your warehouse in order to provide better performance on analytical queries. You simply execute SQL statements against the logical hybrid table and Snowflake’s query optimizer decides where to read data from in order to provide the best performance. You get one consistent view of your data without needing to worry about the underlying infrastructure.
 
 
-### Prerequisites
-- Familiarity with the Snowflake Snowsight interface
-- Familiarity with SQL
-
-### What You’ll Learn 
+### What You Will Learn 
 
 - The basics of hybrid tables
 - How to create and use hybrid tables
 - The advantages of hybrid tables over standard tables
 - Hybrid table unique characteristics like Indexes, primary keys, unique and foreign keys
 
+### Prerequisites
 
-### What You’ll Need 
-To complete this quickstart, attendees need the following:
-- Snowflake account with Hybrid Tables enabled
+- Familiarity with the Snowflake Snowsight interface
+- Familiarity with SQL
+- Snowflake non-trail account with Hybrid Tables enabled
 - Account admin credentials which you should use to execute the quickstart
 
-<!-- ------------------------ -->
 
 ## Setup
 
@@ -784,7 +780,9 @@ DROP ROLE HYBRID_QUICKSTART_BI_USER_ROLE;
 
 The last step is to manually delete "Hybrid Table - QuickStart" and "Hybrid Table - QuickStart session 2" worksheets.
 
-## Conclusion & Next Steps
+## Conclusion and Resources
+
+### What You Learned
 
 Having completed this quickstart you have successfully
 - Created Hybrid Table and Bulk Load Data
@@ -796,7 +794,7 @@ Having completed this quickstart you have successfully
 - Learned that security and governance principles apply similarly to both hybrid and standard tables
 
 
-### Additional References:
+### Related Resources:
 - [Snowflake Unistore Landing Page](https://www.snowflake.com/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
 - [Simplify Application Development Hybrid Tables Blog](https://www.snowflake.com/blog/simplify-application-development-hybrid-tables)
