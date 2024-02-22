@@ -52,7 +52,7 @@ If these prerequisites are not completed, you will not able to complete this Qui
 - How to install and run the application in your account
 
 ### What You'll Need 
-- A Snowflake account with ACCOUNTADMIN access ([trial](https://signup.snowflake.com/developers), or otherwise)
+- A Snowflake account with ACCOUNTADMIN access ([trial](https://signup.snowflake.com/developers/?utm_cta=developer-toolkit-quickstart), or otherwise)
 
 > aside negative
 > 
