@@ -542,14 +542,14 @@ handler = 'send_email'
 -- update the recipient's email below
 AS
 $$
- def send_email(session):
+def send_email(session):
     session.call('extract_anomalies').collect()
     printed = session.sql(
         "select * from table(result_scan(last_query_id(-1)))"
       ).to_pandas().to_html()
     session.call('system$send_email',
         'my_email_int',
-        '<EMAIL-RECIPIENT>', 
+        '<EMAIL RECIPIENT HERE!>',
         'Email Alert: Anomaly Report Has Been created',
         printed,
         'text/html')
