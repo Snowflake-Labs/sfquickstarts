@@ -98,9 +98,6 @@ This will open a new tab and begin setting up your codespace. This will take a f
 
 * Creating a container for your environment
 * Installing Anaconda (miniconda)
-* SnowSQL setup
-    * Installing SnowSQL
-    * Creating a directory and default config file for SnowSQL
 * Anaconda setup
     * Creating the Anaconda environment
     * Installing the Snowpark Python library
@@ -114,9 +111,9 @@ This will open a new tab and begin setting up your codespace. This will take a f
 Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
 
 ### Configure Snowflake Credentials
-We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. A default config file was created for you during the codespace setup.
+We will be using [the Snowflake command line client](https://docs.snowflake.com/LIMITEDACCESS/snowcli/snowcli-guide) for this Quickstart. We will be storing our Snowflake connection details in the config file located at `~/.snowflake/config.toml`. If that config file does not exist, please create an empty one.
 
-The easiest way to edit the default `~/.snowsql/config` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowsql/config` and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the `accountname`, `username`, and `password` with your values. Then save and close the file.
+The easiest way to edit the default `~/.snowflake/config.toml` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowflake/config.toml` and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the `account`, `user`, and `password` with your values. Then save and close the file.
 
 **Note:** The SnowCLI tool (and by extension this Quickstart) currently does not work with Key Pair authentication. It simply grabs your username and password details from the shared SnowSQL config file.
 
@@ -346,11 +343,11 @@ python app.py 35
 While you're developing the UDF you can simply run it locally in VS Code. And if your UDF doesn't need to query data from Snowflake, this process will be entirely local.
 
 ### Deploying the UDF to Snowflake
-To deploy your UDF to Snowflake we will use the SnowCLI tool. The SnowCLI tool will do all the heavy lifting of packaging up your application, copying it to a Snowflake stage, and creating the object in Snowflake. Like we did in the previous steps, we'll execute it from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To deploy your UDF to Snowflake we will use the SnowCLI tool. The SnowCLI tool will do all the heavy lifting of packaging up your application, copying it to a Snowflake stage, and creating the object in Snowflake. Like we did in the previous steps, we'll execute it from the terminal. So open up a terminal in VS Code (Terminal -> New Terminal) in the top menu bar, make sure that your `pysnowpark` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
 cd steps/05_fahrenheit_to_celsius_udf
-snow function create
+snow snowpark function create -n "FAHRENHEIT_TO_CELSIUS_UDF" -i "(temp_f float)" -r "float" -h "app.main"
 ```
 
 While that is running, please open the script in VS Code and continue on this page to understand what is happening.
@@ -365,13 +362,13 @@ SELECT ANALYTICS.FAHRENHEIT_TO_CELSIUS_UDF(35);
 And with the SnowCLI utility you can also invoke the UDF from the terminal in VS Code as follows:
 
 ```bash
-snow function execute -f "fahrenheit_to_celsius_udf(35)"
+snow snowpark function execute -f "fahrenheit_to_celsius_udf(35)"
 ```
 
 That will result in the SnowCLI tool generating the SQL query above and running it against your Snowflake account.
 
 ### Overview of the SnowCLI Tool
-The [SnowCLI](https://github.com/Snowflake-Labs/snowcli) tool is a command line tool for developers, and is executed as `snow` from the command line. 
+The [SnowCLI](https://docs.snowflake.com/LIMITEDACCESS/snowcli/snowcli-guide) tool is a command line tool for developers, and is executed as `snow` from the command line. 
 
 > aside negative
 > **Note** - Do not confuse this with the [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) command line tool which is a client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, and is executed as `snowsql` from the command line.
@@ -395,7 +392,7 @@ This also allows you to develop and test your Python application without having 
 
 > aside negative
 > 
-> **Note** -  As of 9/1/2023, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
+> **Note** -  As of 9/1/2023, the [SnowCLI Tool](https://docs.snowflake.com/LIMITEDACCESS/snowcli/snowcli-guide) is still in preview.
 
 ### More on Snowpark Python UDFs
 In this step we deployed a very simple Python UDF to Snowflake. In a future step will update it to use a third-party package. And because we deployed it to Snowflake with the SnowCLI command you didn't have to worry about the SQL DDL Syntax to create the object in Snowflake. But for reference please check out our [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html) developer guide.
@@ -436,7 +433,7 @@ To deploy your sproc to Snowflake we will use the SnowCLI tool. Like we did in t
 
 ```bash
 cd steps/06_orders_update_sp
-snow procedure create
+snow snowpark procedure create -n "orders_update_sp" -i "()" -r "string" -h "app.main" --execute-as-caller
 ```
 
 While that is running, please open the script in VS Code and continue on this page to understand what is happening.
@@ -451,7 +448,7 @@ CALL ORDERS_UPDATE_SP();
 And with the SnowCLI utility you can also invoke the UDF from the terminal in VS Code as follows:
 
 ```bash
-snow procedure execute -p "orders_update_sp()"
+snow snowpark procedure execute --procedure "orders_update_sp()"
 ```
 
 That will result in the SnowCLI tool generating the SQL query above and running it against your Snowflake account.
@@ -525,7 +522,7 @@ To deploy your sproc to Snowflake we will use the SnowCLI tool. Like we did in t
 
 ```bash
 cd steps/07_daily_city_metrics_update_sp
-snow procedure create
+snow snowpark procedure create -n "daily_city_metrics_update_sp" -i "()" -r "string" -h "app.main" --execute-as-caller
 ```
 
 While that is running, please open the script in VS Code and continue on this page to understand what is happening.
@@ -540,7 +537,7 @@ CALL DAILY_CITY_METRICS_UPDATE_SP();
 And with the SnowCLI utility you can also invoke the UDF from the terminal in VS Code as follows:
 
 ```bash
-snow procedure execute -p "daily_city_metrics_update_sp()"
+snow snowpark procedure execute --procedure "daily_city_metrics_update_sp()"
 ```
 
 That will result in the SnowCLI tool generating the SQL query above and running it against your Snowflake account.
