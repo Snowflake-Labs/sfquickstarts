@@ -361,7 +361,9 @@ To configure a resource type the organisation and repository names in the design
 For example:
 ![define_resource.png](assets/define_resource.png)
 
-The definition for a new resource will be saved, and it will be picked up by the scheduler according to the global schedule. It will be visible in the table below:
+The definition for a new resource will be saved, and it will be picked up by the scheduler according to the global schedule. 
+**It will take some time before the data is ingested and visible in the sink table.**
+It will be visible in the table below:
 
 ![list_defined_resources.png](assets/list_defined_resources.png)
 
