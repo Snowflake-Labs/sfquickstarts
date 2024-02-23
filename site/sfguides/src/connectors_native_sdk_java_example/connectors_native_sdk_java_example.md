@@ -24,6 +24,7 @@ and finishing with working and configured application inside Snowflake.
 Before starting this tutorial please be sure that below prerequisites are satisfied:
 - Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Java
+- Basic knowledge of [Streamlit UI](https://docs.streamlit.io/)
 - Snowflake user with `accountadmin` role
 - GitHub account with [access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 - MacOS or Linux machine to build a project and run deployment scripts
@@ -37,11 +38,11 @@ Before starting this tutorial please be sure that below prerequisites are satisf
 Duration: 3
 
 - Install Java 11
+- Clone the [connectors-examples](https://github.com/Snowflake-Labs/connectors-examples) repository
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure `snowsql` to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure `snowsql` to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
 - Configure `snowsql` [connection](https://docs.snowflake.com/en/user-guide/snowsql-start#defining-named-connections-in-the-configuration-file) named: `native_sdk_connection` or change the CONNECTION environmental variable in the example `examples/connectors-native-sdk-example-java-github-connector/Makefile`
-- Clone the [connectors-examples](https://github.com/Snowflake-Labs/connectors-examples) repository
 
 ## Project structure
 Duration: 6
@@ -61,20 +62,20 @@ This file will be executed during the installation process of the application.
 For now this code is not available as jar archive that can be used as a dependency in java project and has to be included as source files.
 
 #### Connectors Native SDK Java test
-The `connectors-native-sdk-java-test` directory contains source code of a helper library used in unit tests, for example objects to mock particular components and custom assertions.
-Files inside this directory are not used when deploying an application.
+The `connectors-native-sdk-java-test` directory contains source code of a helper library used in unit tests, for example objects used to mock particular components, custom assertions etc.
+Those files are neither a part of the library nor the application.
 
 ### Example Java GitHub connector
 The actual example connector is located inside `examples/connectors-native-sdk-example-java-github-connector` directory.
 Inside this directory `app/` contains all the files needed to run the Native App. The `app/streamlit/` directory 
-contains source files necessary to run the streamlit ui. The `setup.sql` 
+contains source files necessary to run the [Streamlit UI](https://docs.streamlit.io/). The `setup.sql` 
 file is run during the application installation and is responsible for creating the necessary database objects. This file will execute
 the `all.sql` file mentioned before, as well as some custom sql code.
-The `manifest.yml` is the manifest of the Native App and is necessary to create application package and then the application itself. 
+The `manifest.yml` is the manifest of the Native App and is required to create application package and then the application itself. 
 This file specifies application properties, as well as permissions needed by the application.
 
 Additionally, `examples/connectors-native-sdk-example-java-github-connector` directory contains `src/` subdirectory which contains 
-custom connector logic, such as implementation of the required classes and customization to the default SDK components.
+custom connector logic, such as implementation of the required classes and customizations of the default SDK components.
 
 Other files in the directory are gradle related files, the `Makefile` contains build,
 deploy and installation convenience scripts, which will be described in the next step of this tutorial.
@@ -85,20 +86,15 @@ Duration: 2
 As mentioned before the project currently contains Connectors Native SDK Java as source files, because it's not available in Maven repository yet. 
 For that reason it needs to be built and published to local repository. This step might seem unnecessary, 
 because it could be just directly linked as a module, but will show the future experience we are aiming for when the artifacts are available in public maven repositories.
-To achieve this go to `connectors-native-sdk-java/` directory and execute the following command:
 ```shell
-./gradlew publishToMavenLocal
-```
-
-Alternatively main directory of the project contains convenience script to help:
-```shell
+cd connectors-examples/connectors-native-sdk
 ./publish-sdk-locally.sh
 ```
 
 ## Build, deploy and installation
 Duration: 10
 
-The `Makefile` in the `examples/connectors-native-sdk-example-java-github-connector/` directory contains convenience scripts to build, deploy and install the connector. 
+The `Makefile` in the `connectors-examples/examples/connectors-native-sdk-example-java-github-connector/` directory contains convenience scripts to build, deploy and install the connector. 
 Those scripts execute specific gradle tasks, execute some shell scripts and run sql commands in Snowflake. 
 They require a `snowsql` connection to be defined on the local machine. 
 The name of the connection should be provided in the `CONNECTION` environmental variable at the top of the `Makefile`.
@@ -108,19 +104,28 @@ To perform all the needed scripts, one of the 2 commands below will be enough,
 however the following sections will go deeper to explain the whole process and what is happening under the hood.
 
 ```shell
+cd connectors-example/examples/connectors-native-sdk-example-java-github-connector
 make complex_create_app_instance_from_app_version
 ```
 
 ```shell
+cd connectors-example/examples/connectors-native-sdk-example-java-github-connector
 make complex_create_app_instance_from_version_dir
 ```
 
 ### Build
+**To simply run an application the above commands are enough, however if you are interested in the details continue reading.**
 Building a Native App is a little bit different from building a usual Java application. 
 There are some things that must be done except just building the jar archives from the sources.
 Building the application contains the following steps:
 - copying sdk components to the target directory
 - copying custom internal components to the target directory
+
+**If you run one of the previous commands and want to run step by step commands then run the following command first**
+
+```shell
+make drop_application
+```
 
 #### Copying sdk components
 This step consists of 2 things. First of all, it copies the Connectors Native SDK Java artifact to the target directory, by default - `sf_build`. 
@@ -209,12 +214,15 @@ Before we dig into configuring the connector and ingesting the data let's have a
 Below you can see all the steps that will be completed in the following parts of this quickstart. 
 The starting point will be completing the prerequisites and going through the Wizard.
 
+The Wizard stage of the Connector guides the user through all the required configurations needed by the connector.
+The Daily Use stage allows user to view statistics, configure repositories for ingestion and pausing/resuming the connector.
+
 ![connector_overview](assets/connector_overview.svg)
 
 ## Wizard
 Duration: 15
  
-After entering the application the Wizard streamlit page will be opened. 
+After entering the application the Wizard Streamlit page will be opened. 
 The connector needs some information provided by the user before it can start ingesting data. 
 The Wizard will guide you through all the required steps in the application itself, 
 but also on the whole Snowflake account and sometimes even the external system that will be the source of the ingested data, in this case GitHub.
@@ -231,8 +239,6 @@ In the case of the example GitHub connector there are 3 things that need to be t
 
 For the GitHub related prerequisites please check the [documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
-![prerequisites.png](assets/prerequisites.png)
-
 #### External Access
 Setting up external connectivity objects inside Snowflake requires the GitHub prerequisites to be completed. 
 External connectivity objects have to be created on the account level by the `accountadmin`.
@@ -242,7 +248,7 @@ In order to access external resources the connector requires 3 objects to be con
 - [secrets](https://docs.snowflake.com/en/sql-reference/sql/create-secret)
 - [external access integration](https://docs.snowflake.com/en/developer-guide/external-network-access/creating-using-external-network-access)
 
-The following commands create necessary objects. Names can be customized and will be needed during connector wizard phase later.
+The following commands create necessary objects. Names can be customized and will be needed during connector Wizard phase later.
 
 ```snowflake
 CREATE DATABASE GITHUB_SECRETS;
@@ -252,11 +258,11 @@ MODE = EGRESS
 TYPE = HOST_PORT
 VALUE_LIST=('api.github.com:443');
 
-CREATE OR REPLACE SECRET GITHUB_TOKEN TYPE=GENERIC_STRING SECRET_STRING='< PASTE API TOKEN >';
+CREATE OR REPLACE SECRET < GITHUB_TOKEN > TYPE=GENERIC_STRING SECRET_STRING='< PASTE API TOKEN >';
 
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION GITHUB_INTEGRATION
 ALLOWED_NETWORK_RULES = (GH_RULE)
-ALLOWED_AUTHENTICATION_SECRETS = ('GITHUB_SECRETS.PUBLIC.GITHUB_TOKEN')
+ALLOWED_AUTHENTICATION_SECRETS = ('GITHUB_SECRETS.PUBLIC.< GITHUB_TOKEN >')
 ENABLED = TRUE;
 ```
 
@@ -276,6 +282,8 @@ GRANT USAGE ON DATABASE GITHUB_SECRETS TO APPLICATION < application name >;
 GRANT USAGE ON SCHEMA GITHUB_SECRETS.PUBLIC TO APPLICATION < application name >;
 GRANT READ ON SECRET GITHUB_SECRETS.PUBLIC.GITHUB_TOKEN TO APPLICATION < application name >;
 ```
+
+![prerequisites.png](assets/prerequisites.png)
 
 ### Connector Configuration
 Next step of the Wizard is connector configuration. 
