@@ -448,6 +448,12 @@ The data from this tab is extracted from the underlying configuration table and 
 
 ![connection_config_settings.png](assets/connection_config_settings.png)
 
+### Troubleshooting
+If Connector encounters any problems they will be visible in the `event table` logs if it is enabled in the account.
+More on the enabling and using `event table` and logging in Native Apps can be found in the documentation:
+* [Set up logging and event sharing for an application](https://docs.snowflake.com/en/developer-guide/native-apps/setting-up-logging-and-events)
+* [Enable logging and event sharing for an application](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging)
+
 ## Customization
 Duration: 2
 
