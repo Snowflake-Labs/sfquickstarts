@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai, Victoria Warner (Cybersyn)
 
-# Getting Started With Snowpark for Python and Streamlit
+# Getting Started With Snowpark for Python and Streamlit with Cybersyn data
 <!-- ------------------------ -->
 ## Overview
 
@@ -17,7 +17,7 @@ This guide provides the instructions for building a Streamlit application using 
 
 ### What You Will Build
 
-A Streamlit application that loads and visualizes the data loaded from Snowflake Marketplace using Snowpark for Python.
+A Streamlit application that loads and visualizes daily **stock price** and **foreign exchange (FX) rate** data loaded from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace using Snowpark for Python.
 
 ![App](assets/sis.gif)
 
@@ -40,6 +40,10 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
+### What is Cybersyn?
+
+Cybersyn is a data-as-a-service company creating a real-time view of the world's economy with analytics-ready economic data on Snowflake Marketplace. Cybersyn builds derived data products from datasets that are difficult to procure, clean, or join. With Cybersyn, you can access external data directly in your Snowflake instance — no ETL required. [Explore all 60+ sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers and find the data on [Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc).
+
 ### What You Will Learn
 
 - How to access current Session object in Streamlit
@@ -52,7 +56,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 
 - A [Snowflake](https://www.snowflake.com/) account in **AWS US Oregon**
 - Access to **Financial & Economic Essentials** dataset provided by **Cybersyn**.
-  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/), click on **Get Data** and follow the instructions to gain access. In particular, we will use data in schema **CYBERSYN** from tables **FX_RATES_TIMESERIES** and **STOCK_PRICE_TIMESERIES**.
+  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/), click on **Get Data** and follow the instructions to gain access. In particular, we will use data in schema **CYBERSYN** from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 <!-- insert a small Cybersyn logo here?^ - victoria -->
 
 <!-- ------------------------ -->
@@ -108,13 +112,13 @@ Now add the following Python function that loads and caches data from *CYBERSYN.
 ```python
 @st.cache_data()
 def load_data():
-    # Load stock price data.
-    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(col('BASE_CURRENCY_ID') == 'EUR').sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
-
     # Load and transform daily stock price data.
     snow_df_stocks = session.table("CYBERSYN.STOCK_PRICE_TIMESERIES").
     # Change this aggregation here. - victoria
     return snow_df_fx.to_pandas(), snow_df_stocks.to_pandas()
+
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(col('BASE_CURRENCY_ID') == 'EUR').sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
 
 # Load and cache data
 snow_df_fx, snow_df_stocks = load_data() ## check this - victoria
@@ -123,11 +127,35 @@ snow_df_fx, snow_df_stocks = load_data() ## check this - victoria
 In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, *filter(), group_by(), agg(), sum(), alias() and sort()*.
 
 <!-- ------------------------ -->
-## EUR Exchange (FX) Rates by Quote Currency
+## Daily Stock Prices by Company
 
 Duration: 5
 
 Now add the following Python function that displays a country selection dropdown and a chart to visualize CO2 emissions over time for the selected countries.
+
+```python
+def stock_prices():
+    st.subheader('Daily Stock Prices by Company')
+
+    threshold = st.slider(label='Minimum Stock Price', min_value=0, max_value=2500, value=5, step=1, label_visibility='hidden')
+    st.markdown("___")
+
+    # Display an interactive chart to visualize forest occupied land area by countries
+    with st.container():
+        filter = df_forest_land['Total Share of Forest Land'] > threshold
+        pd_df_land_top_n = df_forest_land.where(filter)
+        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True)
+```
+
+In the above code snippet, a bar chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_stock_prices* dataframe filtered by the threshold set via Streamlit's *slider()* user input component.
+
+<!-- ------------------------ -->
+
+## EUR Exchange (FX) Rates by Quote Currency
+
+Duration: 5
+
+Next, add the following Python function that displays a slider input element and a chart to visualize stock prices by company based on the set threshold.
 
 ```python
 def fx_rates():
@@ -158,29 +186,7 @@ def fx_rates():
 In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_fx* dataframe filtered by the currencies selected via Streamlit's *multiselect()* user input component.
 
 <!-- ------------------------ -->
-## Daily Stock Prices by Company
 
-Duration: 5
-
-Next, add the following Python function that displays a slider input element and a chart to visualize stock prices by company based on the set threshold.
-
-```python
-def stock_prices():
-    st.subheader('Daily Stock Prices by Company')
-
-    threshold = st.slider(label='Minimum Stock Price', min_value=0, max_value=2500, value=5, step=1, label_visibility='hidden')
-    st.markdown("___")
-
-    # Display an interactive chart to visualize forest occupied land area by countries
-    with st.container():
-        filter = df_forest_land['Total Share of Forest Land'] > threshold
-        pd_df_land_top_n = df_forest_land.where(filter)
-        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True)
-```
-
-In the above code snippet, a bar chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_stock_prices* dataframe filtered by the threshold set via Streamlit's *slider()* user input component.
-
-<!-- ------------------------ -->
 ## Application Components
 
 Duration: 5
@@ -193,8 +199,8 @@ st.header("Cybersyn: Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "Exchange (FX) Rates": fx_rates,
-    "Daily Stock Price Data": stock_prices
+    "Daily Stock Price Data": stock_prices,
+    "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
 page_names_to_funcs[selected_page]()
@@ -237,6 +243,18 @@ def load_data():
 # Load and cache data
 snow_df_fx, snow_df_stocks = load_data() ## check this - victoria
 
+def stock_prices():
+    st.subheader('Daily Stock Prices by Company')
+
+    threshold = st.slider(label='Minimum Stock Price', min_value=0, max_value=2500, value=5, step=1, label_visibility='hidden')
+    st.markdown("___")
+
+    # Display an interactive chart to visualize forest occupied land area by countries
+    with st.container():
+        filter = df_forest_land['Total Share of Forest Land'] > threshold
+        pd_df_land_top_n = df_forest_land.where(filter)
+        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True)
+
 def fx_rates():
     st.subheader('EUR Exchange (FX) Rates by Currency Over Time')
 
@@ -261,25 +279,13 @@ def fx_rates():
         )
         st.altair_chart(line_chart, use_container_width=True)
 
-def stock_prices():
-    st.subheader('Daily Stock Prices by Company')
-
-    threshold = st.slider(label='Minimum Stock Price', min_value=0, max_value=2500, value=5, step=1, label_visibility='hidden')
-    st.markdown("___")
-
-    # Display an interactive chart to visualize forest occupied land area by countries
-    with st.container():
-        filter = df_forest_land['Total Share of Forest Land'] > threshold
-        pd_df_land_top_n = df_forest_land.where(filter)
-        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True)
-
 # Display header
 st.header("Cybersyn: Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "Exchange (FX) Rates": fx_rates,
-    "Daily Stock Price Data": stock_prices
+    "Daily Stock Price Data": stock_prices,
+    "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
 page_names_to_funcs[selected_page]()
@@ -294,21 +300,21 @@ To run the application, click on **Run** button located at the top right corner.
 
 In the application:
 
-1. Select **Exchange (FX) Rates** or **Daily Stock Price Data** option from the sidebar
-2. Select or unselect currencies to visualize euro exchange rates over time for select currencies
-3. Increase/decrease the stock price threshold value using the slider to visualize the exchange rates by currencies based on the set threshold
+1. Select **Daily Stock Price Data** or **Exchange (FX) Rates** option from the sidebar.
+2. Select or unselect currencies to visualize euro exchange rates over time for select currencies.
+3. Increase/decrease the stock price threshold value using the slider to visualize the stock prices of companies with varying volumes of NASDAQ trading activity.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit quickstart guide.
+Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit with Cybersyn data quickstart guide.
 
 ### What You Learned
 
 - How to access current Session object in Streamlit
-- How to load data from Snowflake Marketplace
+- How to load data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
 - How to run Streamlit in Snowflake
@@ -318,3 +324,4 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Cybersyn free data on the Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc)
+- [Cybersyn Data Catalog](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart)
