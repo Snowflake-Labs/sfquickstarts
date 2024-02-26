@@ -147,7 +147,7 @@ df_stocks, df_fx = load_data()
 In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, *filter(), group_by(), agg(), sum(), alias() and sort()*.
 
 <!-- ------------------------ -->
-## Daily Stock Prices by Company
+## Daily Stock Performance on the Nasdaq by Company
 
 Duration: 5
 
@@ -239,7 +239,7 @@ In the above code snippet, a line chart is constructed which takes a dataframe a
 
 Duration: 5
 
-Add the following code snippet to display application header, create a sidebar, and map *fx_rates()* and *stock_prices()* functions to **Exchange (FX) Rates** and **Daily Stock Price Data** options respectively in the sidebar.
+Add the following code snippet to display application header, create a sidebar, and map *fx_rates()* and *stock_prices()* functions to **Daily Stock Performance Data** and **Exchange (FX) Rates** options respectively in the sidebar.
 
 ```python
 # Display header
@@ -247,7 +247,7 @@ st.header("Cybersyn: Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "Daily Stock Price Data": stock_prices,
+    "Daily Stock Performance Data": stock_prices,
     "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
@@ -381,7 +381,7 @@ st.header("Cybersyn: Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "Daily Stock Price Data": stock_prices,
+    "Daily Stock Performance Data": stock_prices,
     "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
@@ -396,7 +396,7 @@ To run the application, click on **Run** button located at the top right corner.
 
 In the application:
 
-1. Select **Daily Stock Price Data** or **Exchange (FX) Rates** option from the sidebar.
+1. Select **Daily Stock Performance Data** or **Exchange (FX) Rates** option from the sidebar.
 2. Select or unselect currencies to visualize euro exchange rates over time for select currencies.
 3. Increase/decrease the stock price threshold value using the slider to visualize the stock prices of companies with varying volumes of NASDAQ trading activity.
 
