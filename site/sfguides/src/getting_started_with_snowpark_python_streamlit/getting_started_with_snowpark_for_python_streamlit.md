@@ -26,7 +26,6 @@ A Streamlit application that loads and visualizes daily **stock price** and **fo
 The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
 
 **Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
-<!-- Does any of this need updated - victoria ^ -->
 
 **Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
@@ -57,7 +56,6 @@ Cybersyn is a data-as-a-service company creating a real-time view of the world's
 - A [Snowflake](https://www.snowflake.com/) account in **AWS US Oregon**
 - Access to **Financial & Economic Essentials** dataset provided by **Cybersyn**.
   - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/), click on **Get Data** and follow the instructions to gain access. In particular, we will use data in schema **CYBERSYN** from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
-<!-- insert a small Cybersyn logo here?^ - victoria -->
 
 <!-- ------------------------ -->
 ## Get Started
@@ -88,10 +86,14 @@ Duration: 2
 Delete existing sample application code in the code editor on the left and add the following code snippet at the very top.
 
 ```python
+# Import libraries
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import sum, col
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
 import altair as alt
 import streamlit as st
+import pandas as pd
 
 # Set page config
 st.set_page_config(layout="wide")
@@ -113,15 +115,33 @@ Now add the following Python function that loads and caches data from *CYBERSYN.
 @st.cache_data()
 def load_data():
     # Load and transform daily stock price data.
-    snow_df_stocks = session.table("CYBERSYN.STOCK_PRICE_TIMESERIES").
-    # Change this aggregation here. - victoria
-    return snow_df_fx.to_pandas(), snow_df_stocks.to_pandas()
+    snow_df_stocks = (
+        session.table("CYBERSYN.STOCK_PRICE_TIMESERIES")
+        .filter(
+            (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
+            (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
+        .groupBy("TICKER", "DATE")
+        .agg(
+            max(when(col("VARIABLE_NAME") == "Nasdaq Volume", col("VALUE"))).alias("NASDAQ_VOLUME"),
+            max(when(col("VARIABLE_NAME") == "Post-Market Close", col("VALUE"))).alias("POSTMARKET_CLOSE")
+        )
+    )
+    
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy("TICKER").orderBy("DATE")
+    snow_df_stocks_transformed = snow_df_stocks.withColumn("DAY_OVER_DAY_CHANGE", 
+        (col("POSTMARKET_CLOSE") - lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)) /
+        lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)
+    )
 
     # Load foreign exchange (FX) rates data.
-    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(col('BASE_CURRENCY_ID') == 'EUR').sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+    
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
 
 # Load and cache data
-snow_df_fx, snow_df_stocks = load_data() ## check this - victoria
+df_stocks, df_fx = load_data()
 ```
 
 In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, *filter(), group_by(), agg(), sum(), alias() and sort()*.
@@ -135,16 +155,45 @@ Now add the following Python function that displays a country selection dropdown
 
 ```python
 def stock_prices():
-    st.subheader('Daily Stock Prices by Company')
+    st.subheader('Stock Performance on the Nasdaq for the Magnificent 7')
+    
+    df_stocks['DATE'] = pd.to_datetime(df_stocks['DATE'])
+    max_date = df_stocks['DATE'].max()  # Most recent date
+    min_date = df_stocks['DATE'].min()  # Earliest date
+    
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
 
-    threshold = st.slider(label='Minimum Stock Price', min_value=0, max_value=2500, value=5, step=1, label_visibility='hidden')
-    st.markdown("___")
+    # Use the adjusted default start date in the 'date_input' widget
+    start_date, end_date = st.date_input(
+        "Date range:", [default_start_date, max_date],
+        min_value=min_date, max_value=max_date, key='date_range')
 
-    # Display an interactive chart to visualize forest occupied land area by countries
-    with st.container():
-        filter = df_forest_land['Total Share of Forest Land'] > threshold
-        pd_df_land_top_n = df_forest_land.where(filter)
-        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True)
+    # Convert start_date and end_date to pandas Timestamp if necessary
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks['DATE'] >= start_date_ts) & (df_stocks['DATE'] <= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered['TICKER'].unique().tolist()
+    default_tickers = [ticker for ticker in ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA'] if ticker in unique_tickers]
+    selected_tickers = st.multiselect('Ticker(s):', unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered['TICKER'].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox('Metric:',('DAY_OVER_DAY_CHANGE','POSTMARKET_CLOSE','NASDAQ_VOLUME'), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x='DATE',
+        y=alt.Y(metric, title=metric),
+        color='TICKER',
+        tooltip=['TICKER','DATE',metric]
+    ).interactive()
+
+    st.altair_chart(line_chart, use_container_width=True)
 ```
 
 In the above code snippet, a bar chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_stock_prices* dataframe filtered by the threshold set via Streamlit's *slider()* user input component.
@@ -161,9 +210,9 @@ Next, add the following Python function that displays a slider input element and
 def fx_rates():
     st.subheader('EUR Exchange (FX) Rates by Currency Over Time')
 
-    # British Pound Sterling, Canadian Dollar, United States Dollar, Japanese Yen, Polish Zloty, Turkish Lira, Swiss Franc
-    currencies = ['GBP','CAD','USD','JPY','PLN','TRY','CHF']
-    selected_currencies = st.multiselect('', currencies, default = ['GBP','CAD','USD','JPY','PLN'])
+    # GBP, CAD, USD, JPY, PLN, TRY, CHF
+    currencies = ['British Pound Sterling','Canadian Dollar','United States Dollar','Japanese Yen','Polish Zloty','Turkish Lira','Swiss Franc']
+    selected_currencies = st.multiselect('', currencies, default = ['British Pound Sterling','Canadian Dollar','United States Dollar','Swiss Franc','Polish Zloty'])
     st.markdown("___")
 
     # Display an interactive chart to visualize exchange rates over time by the selected currencies
@@ -173,12 +222,11 @@ def fx_rates():
         line_chart = alt.Chart(df_fx_filtered).mark_line(
             color="lightblue",
             line=True,
-            point=alt.OverlayMarkDef(color="red")
         ).encode(
-            x='Date',
-            y='Value',
-            color='Currency',
-            tooltip=['Currency','Date','Value']
+            x='DATE',
+            y='VALUE',
+            color='QUOTE_CURRENCY_NAME',
+            tooltip=['QUOTE_CURRENCY_NAME','DATE','VALUE']
         )
         st.altair_chart(line_chart, use_container_width=True)
 ```
@@ -220,9 +268,12 @@ Here's what the entire application code should look like.
 ```python
 # Import libraries
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import sum, col
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
 import altair as alt
 import streamlit as st
+import pandas as pd
 
 # Set page config
 st.set_page_config(layout="wide")
@@ -232,35 +283,82 @@ session = get_active_session()
 
 @st.cache_data()
 def load_data():
-    # Load stock price data.
-    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(col('BASE_CURRENCY_ID') == 'EUR').sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
-
     # Load and transform daily stock price data.
-    snow_df_stocks = session.table("CYBERSYN.STOCK_PRICE_TIMESERIES").
-    # Change this aggregation here. - victoria
-    return snow_df_fx.to_pandas(), snow_df_stocks.to_pandas()
+    snow_df_stocks = (
+        session.table("CYBERSYN.STOCK_PRICE_TIMESERIES")
+        .filter(
+            (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
+            (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
+        .groupBy("TICKER", "DATE")
+        .agg(
+            max(when(col("VARIABLE_NAME") == "Nasdaq Volume", col("VALUE"))).alias("NASDAQ_VOLUME"),
+            max(when(col("VARIABLE_NAME") == "Post-Market Close", col("VALUE"))).alias("POSTMARKET_CLOSE")
+        )
+    )
+    
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy("TICKER").orderBy("DATE")
+    snow_df_stocks_transformed = snow_df_stocks.withColumn("DAY_OVER_DAY_CHANGE", 
+        (col("POSTMARKET_CLOSE") - lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)) /
+        lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)
+    )
+
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+    
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
 
 # Load and cache data
-snow_df_fx, snow_df_stocks = load_data() ## check this - victoria
+df_stocks, df_fx = load_data()
 
 def stock_prices():
-    st.subheader('Daily Stock Prices by Company')
+    st.subheader('Stock Performance on the Nasdaq for the Magnificent 7')
+    
+    df_stocks['DATE'] = pd.to_datetime(df_stocks['DATE'])
+    max_date = df_stocks['DATE'].max()  # Most recent date
+    min_date = df_stocks['DATE'].min()  # Earliest date
+    
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
 
-    threshold = st.slider(label='Minimum Stock Price', min_value=0, max_value=2500, value=5, step=1, label_visibility='hidden')
-    st.markdown("___")
+    # Use the adjusted default start date in the 'date_input' widget
+    start_date, end_date = st.date_input(
+        "Date range:", [default_start_date, max_date],
+        min_value=min_date, max_value=max_date, key='date_range')
 
-    # Display an interactive chart to visualize forest occupied land area by countries
-    with st.container():
-        filter = df_forest_land['Total Share of Forest Land'] > threshold
-        pd_df_land_top_n = df_forest_land.where(filter)
-        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True)
+    # Convert start_date and end_date to pandas Timestamp if necessary
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks['DATE'] >= start_date_ts) & (df_stocks['DATE'] <= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered['TICKER'].unique().tolist()
+    default_tickers = [ticker for ticker in ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA'] if ticker in unique_tickers]
+    selected_tickers = st.multiselect('Ticker(s):', unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered['TICKER'].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox('Metric:',('DAY_OVER_DAY_CHANGE','POSTMARKET_CLOSE','NASDAQ_VOLUME'), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x='DATE',
+        y=alt.Y(metric, title=metric),
+        color='TICKER',
+        tooltip=['TICKER','DATE',metric]
+    ).interactive()
+
+    st.altair_chart(line_chart, use_container_width=True)
 
 def fx_rates():
     st.subheader('EUR Exchange (FX) Rates by Currency Over Time')
 
     # GBP, CAD, USD, JPY, PLN, TRY, CHF
-    currencies = ['British Pound Sterling', 'Canadian Dollar', 'United States Dollar', 'Japanese Yen', 'Polish Zloty', 'Turkish Lira', 'Swiss Franc']
-    selected_currencies = st.multiselect('', currencies, default = ['British Pound Sterling', 'Canadian Dollar', 'United States Dollar', 'Japanese Yen', 'Polish Zloty'])
+    currencies = ['British Pound Sterling','Canadian Dollar','United States Dollar','Japanese Yen','Polish Zloty','Turkish Lira','Swiss Franc']
+    selected_currencies = st.multiselect('', currencies, default = ['British Pound Sterling','Canadian Dollar','United States Dollar','Swiss Franc','Polish Zloty'])
     st.markdown("___")
 
     # Display an interactive chart to visualize exchange rates over time by the selected currencies
@@ -270,12 +368,11 @@ def fx_rates():
         line_chart = alt.Chart(df_fx_filtered).mark_line(
             color="lightblue",
             line=True,
-            point=alt.OverlayMarkDef(color="red")
         ).encode(
-            x='Date',
-            y='Value',
-            color='Currency',
-            tooltip=['Currency','Date','Value']
+            x='DATE',
+            y='VALUE',
+            color='QUOTE_CURRENCY_NAME',
+            tooltip=['QUOTE_CURRENCY_NAME','DATE','VALUE']
         )
         st.altair_chart(line_chart, use_container_width=True)
 
@@ -295,8 +392,7 @@ page_names_to_funcs[selected_page]()
 
 To run the application, click on **Run** button located at the top right corner. If all goes well, you should see the application running as shown below.
 
-![App](assets/sis.gif) 
-<!-- ^^^update - victoria -->
+![App](assets/sis.gif)
 
 In the application:
 
