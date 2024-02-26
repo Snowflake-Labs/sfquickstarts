@@ -136,7 +136,7 @@ def load_data():
 
     # Load foreign exchange (FX) rates data.
     snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(
-        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
     
     return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
 
@@ -305,7 +305,7 @@ def load_data():
 
     # Load foreign exchange (FX) rates data.
     snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(
-        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).sort('VARIABLE_NAME','DATE').with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
     
     return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
 
