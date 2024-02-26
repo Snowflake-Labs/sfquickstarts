@@ -13,11 +13,11 @@ authors: Dash Desai, Victoria Warner (Cybersyn)
 
 Duration: 5
 
-This guide provides the instructions for building a Streamlit application using Snowpark for Python and data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace.
+This guide provides the instructions for building a Streamlit application using Snowpark for Python and [Cybersyn data](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) from the Snowflake Marketplace.
 
 ### What You Will Build
 
-A Streamlit application that loads and visualizes daily **stock price** and **foreign exchange (FX) rate** data loaded from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace using Snowpark for Python.
+A Streamlit application that loads and visualizes daily **stock performance** and **foreign exchange (FX) rate** data loaded from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace using Snowpark for Python.
 
 ![App](assets/sis.gif)
 
