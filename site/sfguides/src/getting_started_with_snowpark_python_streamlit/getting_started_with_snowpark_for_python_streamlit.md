@@ -1,5 +1,5 @@
 id: getting_started_with_snowpark_for_python_streamlit
-summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
+summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and Cybersyn data from Snowflake Marketplace.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
@@ -46,7 +46,7 @@ Cybersyn is a data-as-a-service company creating a real-time view of the world's
 ### What You Will Learn
 
 - How to access current Session object in Streamlit
-- How to load data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace
+- How to load data from Cybersyn on the Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
 - How to run Streamlit in Snowflake
@@ -54,7 +54,7 @@ Cybersyn is a data-as-a-service company creating a real-time view of the world's
 ### Prerequisites
 
 - A [Snowflake](https://www.snowflake.com/) account in **AWS US Oregon**
-- Access to **Financial & Economic Essentials** dataset provided by **Cybersyn**.
+- Access to the **Financial & Economic Essentials** dataset provided by **Cybersyn**.
   - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/), click on **Get Data** and follow the instructions to gain access. In particular, we will use data in schema **CYBERSYN** from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 
 <!-- ------------------------ -->
@@ -109,7 +109,7 @@ In the above code snippet, we're importing the required libraries, setting the a
 
 Duration: 5
 
-Now add the following Python function that loads and caches data from *CYBERSYN.FX_RATES_TIMESERIES* and *CYBERSYN.STOCK_PRICE_TIMESERIES* tables.
+Now add the following Python function that loads and caches data from `CYBERSYN.STOCK_PRICE_TIMESERIES` and `CYBERSYN.FX_RATES_TIMESERIES` tables.
 
 ```python
 @st.cache_data()
@@ -144,14 +144,14 @@ def load_data():
 df_stocks, df_fx = load_data()
 ```
 
-In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, *filter(), group_by(), agg(), sum(), alias() and sort()*.
+In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, `filter()`, `group_by()`, `agg()`, `sum()`, `alias()` and `sort()`.
 
 <!-- ------------------------ -->
 ## Daily Stock Performance on the Nasdaq by Company
 
 Duration: 5
 
-Now add the following Python function that displays a country selection dropdown and a chart to visualize CO2 emissions over time for the selected countries.
+Now add the following Python function that displays daily stock performance. Create selection dropdowns for date, stock ticker, and metric to be visualized.
 
 ```python
 def stock_prices():
@@ -165,11 +165,7 @@ def stock_prices():
     default_start_date = max_date - timedelta(days=30)
 
     # Use the adjusted default start date in the 'date_input' widget
-    start_date, end_date = st.date_input(
-        "Date range:", [default_start_date, max_date],
-        min_value=min_date, max_value=max_date, key='date_range')
-
-    # Convert start_date and end_date to pandas Timestamp if necessary
+    start_date, end_date = st.date_input("Date range:", [default_start_date, max_date], min_value=min_date, max_value=max_date, key='date_range')
     start_date_ts = pd.to_datetime(start_date)
     end_date_ts = pd.to_datetime(end_date)
 
@@ -192,7 +188,6 @@ def stock_prices():
         color='TICKER',
         tooltip=['TICKER','DATE',metric]
     ).interactive()
-
     st.altair_chart(line_chart, use_container_width=True)
 ```
 
@@ -323,11 +318,7 @@ def stock_prices():
     default_start_date = max_date - timedelta(days=30)
 
     # Use the adjusted default start date in the 'date_input' widget
-    start_date, end_date = st.date_input(
-        "Date range:", [default_start_date, max_date],
-        min_value=min_date, max_value=max_date, key='date_range')
-
-    # Convert start_date and end_date to pandas Timestamp if necessary
+    start_date, end_date = st.date_input("Date range:", [default_start_date, max_date], min_value=min_date, max_value=max_date, key='date_range')
     start_date_ts = pd.to_datetime(start_date)
     end_date_ts = pd.to_datetime(end_date)
 
@@ -350,7 +341,6 @@ def stock_prices():
         color='TICKER',
         tooltip=['TICKER','DATE',metric]
     ).interactive()
-
     st.altair_chart(line_chart, use_container_width=True)
 
 def fx_rates():
