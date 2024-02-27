@@ -388,7 +388,7 @@ In the application:
 
 1. Select **Daily Stock Performance Data** or **Exchange (FX) Rates** option from the sidebar.
 2. Select or unselect currencies to visualize euro exchange rates over time for select currencies.
-3. Increase/decrease the stock price threshold value using the slider to visualize the stock prices of companies with varying volumes of NASDAQ trading activity.
+3. Select a different stock price metric and date range to visualize additional metrics for stock performance evaluation.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
