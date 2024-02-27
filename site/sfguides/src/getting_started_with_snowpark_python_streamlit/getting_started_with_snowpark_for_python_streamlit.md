@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai, Victoria Warner (Cybersyn)
 
-# Getting Started With Snowpark for Python and Streamlit with Cybersyn data
+# Getting Started With Snowpark for Python and Streamlit
 <!-- ------------------------ -->
 ## Overview
 
@@ -109,14 +109,14 @@ In the above code snippet, we're importing the required libraries, setting the a
 
 Duration: 5
 
-Now add the following Python function that loads and caches data from `CYBERSYN.STOCK_PRICE_TIMESERIES` and `CYBERSYN.FX_RATES_TIMESERIES` tables.
+Now add the following Python function that loads and caches data from the `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES` and `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES` tables.
 
 ```python
 @st.cache_data()
 def load_data():
     # Load and transform daily stock price data.
     snow_df_stocks = (
-        session.table("CYBERSYN.STOCK_PRICE_TIMESERIES")
+        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
         .filter(
             (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
             (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
@@ -135,7 +135,7 @@ def load_data():
     )
 
     # Load foreign exchange (FX) rates data.
-    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(
+    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
         (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
     
     return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
@@ -144,7 +144,7 @@ def load_data():
 df_stocks, df_fx = load_data()
 ```
 
-In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, `filter()`, `group_by()`, `agg()`, `sum()`, `alias()` and `sort()`.
+In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, `filter()`, `group_by()`, `agg()`, `sum()`, `alias()` and `isin()`.
 
 <!-- ------------------------ -->
 ## Daily Stock Performance on the Nasdaq by Company
@@ -191,7 +191,7 @@ def stock_prices():
     st.altair_chart(line_chart, use_container_width=True)
 ```
 
-In the above code snippet, a bar chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_stock_prices* dataframe filtered by the threshold set via Streamlit's *slider()* user input component.
+In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_stock_prices` dataframe filtered by ticker, date, and metric using Streamlit's built in components. This enhances the customizability of the visualization.
 
 <!-- ------------------------ -->
 
@@ -199,7 +199,7 @@ In the above code snippet, a bar chart is constructed which takes a dataframe as
 
 Duration: 5
 
-Next, add the following Python function that displays a slider input element and a chart to visualize stock prices by company based on the set threshold.
+Next, add the following Python function that displays a currency selection dropdown and a chart to visualize euro exchange rates over time for the selected quote currencies.
 
 ```python
 def fx_rates():
@@ -226,7 +226,7 @@ def fx_rates():
         st.altair_chart(line_chart, use_container_width=True)
 ```
 
-In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_fx* dataframe filtered by the currencies selected via Streamlit's *multiselect()* user input component.
+In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_fx` dataframe filtered by the currencies selected via Streamlit's `multiselect()` user input component.
 
 <!-- ------------------------ -->
 
@@ -234,7 +234,7 @@ In the above code snippet, a line chart is constructed which takes a dataframe a
 
 Duration: 5
 
-Add the following code snippet to display application header, create a sidebar, and map *fx_rates()* and *stock_prices()* functions to **Daily Stock Performance Data** and **Exchange (FX) Rates** options respectively in the sidebar.
+Add the following code snippet to display application header, create a sidebar, and map `stock_prices()` and `fx_rates()` functions to **Daily Stock Performance Data** and **Exchange (FX) Rates** options respectively in the sidebar.
 
 ```python
 # Display header
@@ -280,7 +280,7 @@ session = get_active_session()
 def load_data():
     # Load and transform daily stock price data.
     snow_df_stocks = (
-        session.table("CYBERSYN.STOCK_PRICE_TIMESERIES")
+        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
         .filter(
             (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
             (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
@@ -299,7 +299,7 @@ def load_data():
     )
 
     # Load foreign exchange (FX) rates data.
-    snow_df_fx = session.table("CYBERSYN.FX_RATES_TIMESERIES").filter(
+    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
         (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
     
     return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
