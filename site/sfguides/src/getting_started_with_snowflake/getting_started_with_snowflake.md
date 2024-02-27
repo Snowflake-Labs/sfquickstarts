@@ -1084,7 +1084,7 @@ For the next section, stay in the ACCOUNTADMIN role for the UI session.
 <!-- ------------------------ -->
 
 ## Sharing Data Securely & the Data Marketplace
-Duration: 12
+Duration:12
 
 Snowflake enables data access between accounts through the secure data sharing features. Shares are created by data providers and imported by data consumers, either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
 
@@ -1147,31 +1147,26 @@ Snowflake provides several ways to securely share data without compromising conf
 Make sure you're using the ACCOUNTADMIN role and, navigate to the **Marketplace**:
 
 ![data marketplace tab](assets/10Share_7.png)
-<!-- ^ Update this -->
 
 #### Find a listing
 
 The search box at the top allows you to search for a listings. The drop-down lists to the right of the search box let you filter data listings by Provider, Business Needs, and Category.
 
-Type `Stock Prices` in the search box, scroll through the results, and select **Financial & Economic Essentials** (provided by Cybersyn).
+Type `COVID` in the search box, scroll through the results, and select **COVID-19 Epidemiological Data** (provided by Starschema).
 
 ![health tab](assets/10Share_8.png)  
-<!-- ^ Update this -->
 
-In the **Financial & Economic Essentials** page, you can learn more about the dataset and see some usage example queries. When you're ready, click the **Get** button to make this information available within your Snowflake account:
+In the **COVID-19 Epidemiological Data** page, you can learn more about the dataset and see some usage example queries. When you're ready, click the **Get** button to make this information available within your Snowflake account:
 
 ![get data fields](assets/10Share_starschema_get_data.png)
-<!-- ^ Update this -->
 
 Review the information in the dialog and lick **Get** again:
 
 ![get data fields](assets/10Share_starschema_get_data2.png)
-<!-- ^ Update this -->
 
-You can now click **Done** or choose to run the sample queries provided by Cybersyn:
+You can now click **Done** or choose to run the sample queries provided by Starschema:
 
 ![get data fields](assets/10Share_starschema_query_data.png)
-<!-- ^ Update this -->
 
 If you chose **Open**, a new worksheet opens in a new browser tab/window:
 
@@ -1182,18 +1177,16 @@ If you chose **Open**, a new worksheet opens in a new browser tab/window:
 5. When you are done running the sample queries, click the **Home** icon in the upper left corner.
 
 ![get data fields](assets/10Share_starschema_query_data2.png)
-<!-- ^ Update this -->
 
 Next:
 
 1. Click **Data** > **Databases**
-2. Click the `STOCK_PRICES` database.
+2. Click the `COVID19_BY_STARSCHEMA_DM` database.
 3. You can see details about the schemas, tables, and views that are available to query.
 
 ![covid19 databases](assets/10Share_starschema_db_info.png)
-<!-- ^ Update this -->
 
-That's it! You have now successfully subscribed to the Financial & Economic datasets from Cybersyn, which is updated daily with stock price & volume data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
+That's it! You have now successfully subscribed to the COVID-19 dataset from Starschema, which is updated daily with global COVID data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
 
 Positive
 To learn more about how to use the new worksheet interface, go to the [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight)
@@ -1246,7 +1239,6 @@ We encourage you to continue with your free trial by loading your own sample or 
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
 - Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
 - Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
-- Check out additional free data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc)!
 
 ### What we've covered:
 
