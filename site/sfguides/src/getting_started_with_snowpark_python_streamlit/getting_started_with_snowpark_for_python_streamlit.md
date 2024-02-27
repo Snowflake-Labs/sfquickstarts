@@ -191,7 +191,7 @@ def stock_prices():
     st.altair_chart(line_chart, use_container_width=True)
 ```
 
-In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_stock_prices` dataframe filtered by ticker, date, and metric using Streamlit's built in components. This enhances the customizability of the visualization.
+In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_stocks` dataframe filtered by ticker, date, and metric using Streamlit's built in components. This enhances the customizability of the visualization.
 
 <!-- ------------------------ -->
 
