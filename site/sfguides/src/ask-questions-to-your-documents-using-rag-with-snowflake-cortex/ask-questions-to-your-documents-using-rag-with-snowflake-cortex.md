@@ -27,27 +27,9 @@ The final product includes an application that lets users test how the LLM respo
 
 ![App](assets/qs_cortex_intro.gif)
 
-### This is RAG flow
+### RAG Overview
 
 ![App](assets/fig1_1.png)
-
-### How to do this in Snowflake
-
-#### Organize Documents
-
-- Define your Snowflake [database](https://docs.snowflake.com/en/sql-reference/ddl-database) and staging area to help you organize the documents
-
-#### Build the Vector Store
-
-- Upload documents into staging area via Snowsight - Snowflake's web interface
-- Create a function that uses [PyPDF2](https://pypdf2.readthedocs.io/en/3.0.0/) will extract the text from the pdf documents 
-- Create another function that uses [Langchain](https://python.langchain.com/docs/get_started/introduction) to chunk (i.e. split in pieces) the text
-- Build a table that holds the PDF text chunks alongside its embedding representation
-
-#### Build Chat UI with Retrieval and Generation Logic
-
-- Build a front-end using Streamlit
-- Embed logic that performs the vector search and calls the LLM to generate the contextualized response
 
 
 ### What You’ll Learn 
@@ -488,7 +470,7 @@ You can also try different instructions in your prompt and see how the responses
 ## Optional: Automatic Processing of New Documents
 Duration: 5
 
-We can use Snowflake festures Streams and Task to automatically process new PDF files as they are added into Snowflake. 
+We can use Snowflake features Streams and Task to automatically process new PDF files as they are added into Snowflake. 
 
 - First we are creating a Snowflake Task. That Task will have some conditions to be executed and one action to take:
   - Where: This is going to be executed using warehouse **XS_WH**. Please name to your own Warehouse.
