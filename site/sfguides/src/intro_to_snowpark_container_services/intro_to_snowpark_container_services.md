@@ -39,12 +39,14 @@ Note that while in this quickstart, we will predominantly use the direct SQL com
 - How to deploy a Service Function to perform basic calculations
 
 ### Prerequisites
+##### **Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services.git**. 
+You can simply download the repo as a .zip if you don't have Git installed locally.
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
 - [Python 3.10](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.10 in the **Setup the Local Environment** step
 - (Optional) [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services.git**. You can simply doownload the repo as a .zip if you don't have Git installed locally.
+    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services.git**. You can simply download the repo as a .zip if you don't have Git installed locally.
 - (Optional) [VSCode](https://code.visualstudio.com/) (recommended) with the [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker), [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python), and [Snowflake](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) extensions installed.
 - A non-trial Snowflake account in a supported [AWS region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 - A Snowflake account login with a role that has the `ACCOUNTADMIN` role. If not, you will need to work with your `ACCOUNTADMIN` to perform the initial account setup (e.g. creating the `CONTAINER_USER_ROLE` and granting required privileges, as well as creating the OAuth Security Integration).
@@ -104,7 +106,7 @@ CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
 CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
   TYPE = 'HOST_PORT'
   MODE = 'EGRESS'
-  VALUES_LIST= ('0.0.0.0:443', '0.0.0.0:80');
+  VALUE_LIST= ('0.0.0.0:443', '0.0.0.0:80');
 
 CREATE EXTERNAL ACCESS INTEGRATION ALLOW_ALL_EAI
   ALLOWED_NETWORK_RULES = (ALLOW_ALL_RULE)
