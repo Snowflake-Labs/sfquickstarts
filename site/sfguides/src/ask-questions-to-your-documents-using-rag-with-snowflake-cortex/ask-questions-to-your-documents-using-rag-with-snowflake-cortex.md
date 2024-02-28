@@ -31,22 +31,23 @@ The final product includes an application that lets users test how the LLM respo
 
 ![App](assets/fig1_1.png)
 
+### RAG Overview in Snowflake
 
-### What You’ll Learn 
+![App](assets/fig1_2.png)
+
+### What You Will Learn 
 - How to create functions that use Python libraries using [Snowpark](https://snowflake.com/snowpark)
 - How to generate embeddings, run semantic search and use LLMs using serverless functions in [Snowflake Cortex](https://snowflake.com/cortex)
 - How to build a front-end with Python using [Streamlit in Snowflake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/)
 - Optional: How to automate data processing pipelines using directory tables, [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) and [Task](https://docs.snowflake.com/en/user-guide/tasks-intro)
 
-### RAG Overview in Snowflake
-
-![App](assets/fig1_2.png)
-
 ### Prerequisites
 - Snowflake account in a cloud region where Snowflake Cortex LLM functions are supported
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
-- Snowflake Cortex vector functions for semantic distance calculations along with VECTOR as a data type enabled. To get access to this feature (currently in private preview) reach out to your Snowflake account team.
+- Snowflake Cortex vector functions for semantic distance calculations along with VECTOR as a data type enabled.
 
+> aside negative
+> NOTE: To get access to Snowflake Cortex vector functions and vector datatype (both currently in private preview) reach out to your Snowflake account team.
 
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Functions
@@ -67,7 +68,7 @@ Let's download at least two user guides for smart devices. You can always add mo
 
 Relevant documentation: [Creating Snowflake Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface). 
 
-**Step 2**. Create a database and a schema
+**Step 3**. Create a database and a schema
 
 Run the following code inside your newly created worksheet
 
@@ -175,6 +176,9 @@ Duration: 15
 
 In this step we are going to leverage our document processing functions to prepare documents before turning the text into embeddings using Snowflake Cortex. These embeddings will be stored in a Snowflake Table using the new native VECTOR data type. 
 
+> aside negative
+> NOTE: To get access to these features (currently in private preview) reach out to your Snowflake account team.
+
 ![App](assets/fig4.png)
 
 **Step 1**. Create the table where we are going to store the chunks and vectors for each PDF. Note here the usage of the new VECTOR data type:
@@ -267,7 +271,6 @@ Relevant documentation: [Introduction to Streamlit in Snowflake](https://docs.sn
 The Streamlit app comes with a default template you can delete and replace with this code which includes the front-end elements:
 
 - Table with list of available documents
-- Table with list of pending documents
 - Toggle to choose to use documents as context
 - Question input box
 
@@ -520,10 +523,11 @@ Congratulations! You've successfully performed RAG using Snowflake Cortex and se
 
 ### Related Resources
 
-- [Customizing RAG framework components using Snowpark Container Services](https://medium.com/@jason.summer/developing-a-product-chatbot-with-airmiles-in-snowflake-6b197d3fc424)
-- [Blog: Asking Questions to Your Own Documents with Snowflake Cortex](https://medium.com/snowflake/asking-questions-to-your-own-documents-with-snowflake-cortex-56c67922bed8)
-- [Snowflake Directory Tables Documentation](https://docs.snowflake.com/en/user-guide/data-load-dirtables)
-- [Creating User-Defined Table Functions Documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
+- [Docs: Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
+- [Blog: RAG explainer and how it works in Snowflake](https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex)
+- [Blog: Customizing RAG framework components using Snowpark Container Services](https://medium.com/@jason.summer/developing-a-product-chatbot-with-airmiles-in-snowflake-6b197d3fc424)
+- [Docs: Snowflake Directory Tables](https://docs.snowflake.com/en/user-guide/data-load-dirtables)
+- [Docs: Creating User-Defined Table Functions](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
 
 ---
 
