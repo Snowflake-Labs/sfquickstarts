@@ -18,10 +18,10 @@ By completing this guide, you will be able to go from raw data to an interactive
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
-- **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications.
-- **Data Pipelines**: Use Snowflake Tasks to turn your data pipeline code into operational pipelines with integrated monitoring.  
-- **Machine Learning**: Prepare data and run ML Training in Snowflake using Snowpark ML and deploy the model as a Snowpark User-Defined-Function (UDF).
-- **Streamlit**: Build an interactive Streamlit application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets.
+- **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications
+- **Data Pipelines**: Use Snowflake Tasks to turn your data pipeline code into operational pipelines with integrated monitoring
+- **Machine Learning**: Process data and run ML Training in Snowflake using Snowpark ML, and register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- **Streamlit**: Build an interactive Streamlit application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets
 
 In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
@@ -68,16 +68,16 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
-- How to train ML model using Snowpark ML in Snowflake
-- How to create Scalar and Vectorized Snowpark Python User-Defined Functions (UDFs) for online and offline inference respectively
 - How to create Snowflake Tasks to automate data pipelines
-- How to create Streamlit application that uses the Scalar UDF for inference based on user input
+- How to train ML model using Snowpark ML in Snowflake
+- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- How to create Streamlit application that uses the ML Model for inference based on user input
 
 ### Prerequisites
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-- [Python 3.9](https://www.python.org/downloads/) installed
-  - Note that you will be creating a Python environment with 3.9 in the **Get Started** step
+- [Python 3.11](https://www.python.org/downloads/) installed
+  - Note that you will be creating a Python environment with 3.11 in the **Get Started** step
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
@@ -217,14 +217,14 @@ To complete the **Data Engineering** and **Machine Learning** steps, you have th
 
 #### Option 1 -- Local Installation
 
-**Step 1:** Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
+**Step 1:** Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.11, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
 
 **Step 2:** Open a new terminal window and execute the following commands in the same terminal window.
 
-**Step 3:** Create Python 3.9 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
+**Step 3:** Create Python 3.11 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
 
 ```python
-conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.9
+conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.11
 ```
 
 **Step 4:** Activate conda environment **snowpark-de-ml** by running the following command in the same terminal window
@@ -236,7 +236,8 @@ conda activate snowpark-de-ml
 **Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python pandas notebook cachetools
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python pandas notebook
+pip install snowflake
 ```
 
 **Step 6:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
@@ -273,7 +274,7 @@ The Notebook linked below covers the following data engineering tasks.
 2) Load data from Snowflake tables into Snowpark DataFrames
 3) Perform Exploratory Data Analysis on Snowpark DataFrames
 4) Pivot and Join data from multiple tables using Snowpark DataFrames
-5) Automate data pipeline tasks using Snowflake Tasks
+5) Automate data pipelines using Snowflake Tasks
 
 ### Data Engineering Notebook in Jupyter or Visual Studio Code
 
@@ -324,7 +325,7 @@ In particular, in the [Data Engineering Notebook](https://github.com/Snowflake-L
 
 For reference purposes, here are the code snippets.
 
-### **Root/parent Task**
+### **Campaign Spend**
 
 This task automates loading campain spend data and performing various transformations.
 
@@ -354,26 +355,20 @@ def campaign_spend_data_pipeline(session: Session) -> str:
   # Save transformed data
   snow_df_spend_per_month_t.write.mode('overwrite').save_as_table('SPEND_PER_MONTH')
 
-# Register data pipelining function as a Stored Procedure so it can be run as a task
-session.sproc.register(
-  func=campaign_spend_data_pipeline,
-  name="campaign_spend_data_pipeline",
-  packages=['snowflake-snowpark-python'],
-  is_permanent=True,
-  stage_location="@dash_sprocs",
-  replace=True)
+# Register data pipeline function as a task
+root = Root(session)
+my_task = Task(name='campaign_spend_data_pipeline_task'
+               , definition=StoredProcedureCall(
+                   campaign_spend_data_pipeline, stage_location='@dash_sprocs'
+               )
+               , warehouse='DASH_L'
+               , schedule=timedelta(minutes=3))
 
-campaign_spend_data_pipeline_task = """
-CREATE OR REPLACE TASK campaign_spend_data_pipeline_task
-    WAREHOUSE = 'DASH_L'
-    SCHEDULE  = '3 MINUTE'
-AS
-    CALL campaign_spend_data_pipeline()
-"""
-session.sql(campaign_spend_data_pipeline_task).collect()
+tasks = root.databases[session.get_current_database()].schemas[session.get_current_schema()].tasks
+task_res = tasks.create(my_task,mode=CreateMode.or_replace)
 ```
 
-### **Child/dependant Task**
+### **Monthly Revenue**
 
 This task automates loading monthly revenue data, performing various transformations, and joining it with transformed campaign spend data.
 
@@ -389,45 +384,67 @@ def monthly_revenue_data_pipeline(session: Session) -> str:
 
   # SAVE in a new table for the next task
   snow_df_spend_and_revenue_per_month_t.write.mode('overwrite').save_as_table('SPEND_AND_REVENUE_PER_MONTH')
-
-# Register data pipelining function as a Stored Procedure so it can be run as a task
-session.sproc.register(
-  func=monthly_revenue_data_pipeline,
-  name="monthly_revenue_data_pipeline",
-  packages=['snowflake-snowpark-python'],
-  is_permanent=True,
-  stage_location="@dash_sprocs",
-  replace=True)
-
-monthly_revenue_data_pipeline_task = """
-  CREATE OR REPLACE TASK monthly_revenue_data_pipeline_task
-      WAREHOUSE = 'DASH_L'
-      AFTER campaign_spend_data_pipeline_task
-  AS
-      CALL monthly_revenue_data_pipeline()
-  """
-session.sql(monthly_revenue_data_pipeline_task).collect()
 ```
 
-> aside negative
-> Note: In the ***monthly_revenue_data_pipeline_task*** above, notice the **AFTER campaign_spend_data_pipeline_task** clause which makes it a dependant task.
+### **Tasks DAG**
 
-#### Start Tasks
+```python
+# Delete the previous task
+task_res.delete()
 
-Snowflake Tasks are not started by default so you need to execute the following statements to start/resume them.
+with DAG("de_pipeline_dag", schedule=timedelta(minutes=3)) as dag:
+    # Create a task that runs our first pipleine
+    dag_spend_task = DAGTask(name='campaign_spend_data_pipeline_task'
+                        , definition=StoredProcedureCall(
+                                    campaign_spend_data_pipeline, stage_location='@dash_sprocs'
+                                )
+                        ,warehouse='DASH_L'
+                        )
+    # Create a task that runs our second pipleine
+    dag_revenue_task = DAGTask(name='monthly_revenue_data_pipeline'
+                          , definition=StoredProcedureCall(
+                                monthly_revenue_data_pipeline, stage_location='@dash_sprocs'
+                            )
+                        ,warehouse='DASH_L'
+                        )
 
-```sql
-session.sql("alter task monthly_revenue_data_pipeline_task resume").collect()
-session.sql("alter task campaign_spend_data_pipeline_task resume").collect()
+# Shift right and left operators can specify task relationships
+dag_spend_task >> dag_revenue_task  # dag_spend_task is a predecessor of dag_revenue_task
+
+schema = root.databases[session.get_current_database()].schemas[session.get_current_schema()]
+dag_op = DAGOperation(schema)
+
+dag_op.deploy(dag)
+
+# A DAG is not suspended by default so we will suspend the root task that will suspend the full DAG
+root_task = tasks["DE_PIPELINE_DAG"]
+root_task.suspend()
 ```
 
-#### Suspend Tasks
+#### Run DAG
 
-If you resume the above tasks, suspend them to avoid unecessary resource utilization by executing the following commands.
+We can manually run DAGs even if they're suspended.
 
-```sql
-session.sql("alter task campaign_spend_data_pipeline_task suspend").collect()
-session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
+```python
+# dag_op.run(dag)
+```
+
+#### Resume Task
+
+Here's how you can resume Tasks.
+
+```python
+# root_task = tasks["DE_PIPELINE_DAG"]
+# root_task.resume()
+```
+
+#### Suspend Task
+
+If you resumed the above tasks, suspend them to avoid unecessary resource utilization by uncommenting and executing the following commands.
+
+```python
+# root_task = tasks["DE_PIPELINE_DAG"]
+# root_task.suspend()
 ```
 
 ### Tasks Observability
@@ -457,14 +474,8 @@ The Notebook linked below covers the following machine learning tasks.
 1) Establish secure connection from Snowpark Python to Snowflake
 2) Load features and target from Snowflake table into Snowpark DataFrame
 3) Prepare features for model training
-4) Train ML model using Snowpark ML on Snowflake
-5) Create Scalar and Vectorized (aka Batch) [Python User-Defined Functions (UDFs)](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs) for inference on new data points for online and offline inference respectively.
-
----
-
-![End-To-End-ML](assets/snowpark_e2e_ml.png)
-
----
+4) Train ML model using Snowpark ML in Snowflake
+5) Register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
 
 ### Machine Learning Notebook in Jupyter or Visual Studio Code
 
@@ -544,20 +555,13 @@ In the application, adjust the advertising budget sliders to see the predicted R
 <!-- ------------------------ -->
 ## Cleanup
 
-If you started/resumed the two tasks `monthly_revenue_data_pipeline_task` and `campaign_spend_data_pipeline_task` as part of the **Data Engineering** or **Data Pipelines** sections, then it is important that you run the following commands to suspend those tasks in order to avoid unecessary resource utilization.
+If you started/resumed the tasks as part of the **Data Engineering** or **Data Pipelines** sections, then it is important that you run the following commands to suspend those tasks in order to avoid unecessary resource utilization. 
 
-In Notebook using Snowpark Python API
+*Note: Suspending the root task will suspend the full DAG.*
 
-```sql
-session.sql("alter task campaign_spend_data_pipeline_task suspend").collect()
-session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
-```
-
-In Snowsight
-
-```sql
-alter task campaign_spend_data_pipeline_task suspend;
-alter task monthly_revenue_data_pipeline_task suspend;
+```python
+root_task = tasks["DE_PIPELINE_DAG"]
+root_task.suspend()
 ```
 
 <!-- ------------------------ -->
@@ -573,10 +577,10 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
+- How to create Snowflake Tasks to automate data pipelines
 - How to train ML model using Snowpark ML in Snowflake
-- How to create Scalar and Vectorized Snowpark Python User-Defined Functions (UDFs) for online and offline inference respectively
-- How to create Snowflake Tasks to automate data pipelining and (re)training of the model
-- How to create Streamlit application that uses the Scalar UDF for inference
+- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- How to create Streamlit application that uses the ML Model for inference based on user input
 
 ### Related Resources
 
