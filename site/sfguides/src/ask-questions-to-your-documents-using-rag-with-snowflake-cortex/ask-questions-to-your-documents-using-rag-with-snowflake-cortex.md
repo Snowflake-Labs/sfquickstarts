@@ -1,10 +1,10 @@
 author: Carlos Carrero
 id: asking_questions_to_your_own_documents_with_snowflake_cortex
 summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex and Streamlit. 
-categories: data-science, gen-ai 
+categories: featured,getting-started,data-science, gen-ai 
 environments: web 
-tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings
-status: `Draft`
+tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
@@ -38,7 +38,7 @@ The final product includes an application that lets users test how the LLM respo
 - How to build a front-end with Python using [Streamlit in Snowflake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/)
 - Optional: How to automate data processing pipelines using directory tables, [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) and [Task](https://docs.snowflake.com/en/user-guide/tasks-intro)
 
-Here is how Streamlit in Snowflake, Snowpark and Snowflake Cortex will come together to build this app:
+### RAG Overview in Snowflake
 
 ![App](assets/fig1_2.png)
 
@@ -416,8 +416,6 @@ def complete(myquestion, model, rag = 1):
     return df_response, url_link, relative_path
 ```
 
-Related documentation: [Foundational LLMs supported in complete()](https://docs.snowflake.com/LIMITEDACCESS/cortex-functions)
-
 ![App](assets/fig9.png)
 
 ### Deploy and share your AI-powered app
@@ -509,9 +507,9 @@ You can add a new PDF document and check that in around a minute, it will be ava
 ## Conclusion & Resources
 Duration: 5
 
-Thank you for completing this quickstart guide.
+Congratulations! You've successfully performed RAG using Snowflake Cortex and securely built a full-stack RAG application in Snowflake without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
 
-### What we've covered
+### What You Learned
 - Creating functions to automatically extract text and chunk PDF files
 - Creating embeddings with Snowflake Cortex
 - Use Snowflake VECTOR data type for similarity search
@@ -524,11 +522,8 @@ Thank you for completing this quickstart guide.
 
 - [Customizing RAG framework components using Snowpark Container Services](https://medium.com/@jason.summer/developing-a-product-chatbot-with-airmiles-in-snowflake-6b197d3fc424)
 - [Blog: Asking Questions to Your Own Documents with Snowflake Cortex](https://medium.com/snowflake/asking-questions-to-your-own-documents-with-snowflake-cortex-56c67922bed8)
-- [Github Repository](https://github.com/ccarrero-sf/asking-questions-pdfs-snowflake-cortex)
-- [Snowflake Cortex LLM Functions Documentation](https://docs.snowflake.com/LIMITEDACCESS/cortex-functions)
 - [Snowflake Directory Tables Documentation](https://docs.snowflake.com/en/user-guide/data-load-dirtables)
 - [Creating User-Defined Table Functions Documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
-
 
 ---
 
