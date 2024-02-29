@@ -190,7 +190,7 @@ In a real-world environment, you would use different roles for the tasks in this
 ## Data Lab: Preparing Data
 
 Duration: 14
-<!-- dash to advise on changed durations from rework? -->
+<!-- dash to advise on changed durations from rework? (throughout entire document) -->
 
 ### The Lab Story
 You are a university researcher that wants to study stock performance of major consumer goods (CPG) companies in the US. This lab combines Nasdaq's daily stock price data with SEC company filings to understand how stocks react to certain reports.
@@ -218,6 +218,155 @@ Below is a snippet from consumer goods CSV data files:
 
 It is in comma-delimited format with a single header line and double quotes enclosing all string values, including the field headings in the header line. This will come into play later in this section as we configure the Snowflake table to store this data.
 
+#### Create a Database and Table
+
+Ensure you are using the sysadmin role by selecting your name at the top left, **Switch Role** > **SYSADMIN**.
+
+Navigate to the **Databases** tab. Click **Create**, name the database `COMPANY_DATA`, then click **CREATE**.
+
+<!-- ------------------------ -->
+
+## Loading Data
+
+Duration: 10
+
+In this section, we will use a virtual warehouse and the COPY command to initiate bulk loading of structured data into the Snowflake table we created in the last section.
+
+### Resize and Use a Warehouse for Data Loading
+
+Compute resources are needed for loading data. Snowflake's compute nodes are called virtual warehouses and they can be dynamically sized up or out according to workload, whether you are loading data, running a query, or performing a DML operation. Each workload can have its own warehouse so there is no resource contention.
+
+Navigate to the **Warehouses** tab (under **Admin**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
+
+Note the **+ Warehouse** option in the upper right corner of the top. This is where you can quickly add a new warehouse. However, we want to use the existing warehouse COMPUTE_WH included in the 30-day trial environment.
+
+Click the row of the `COMPUTE_WH` warehouse. Then click the **...** (dot dot dot) in the upper right corner text above it to see the actions you can perform on the warehouse. We will use this warehouse to load the data from AWS S3.
+
+![compute warehouse configure](assets/5Load_1.png)
+
+Click **Edit** to walk through the options of this warehouse and learn some of Snowflake's unique functionality.
+
+> aside positive
+> 
+>  If this account isn't using Snowflake Enterprise Edition (or higher), you will not see the **Mode** or **Clusters** options shown in the screenshot below. The multi-cluster warehouses feature is not used in this lab, but we will discuss it as a key capability of Snowflake.
+
+![warehouse configure settings](assets/5Load_2.png)
+
+- The **Size** drop-down is where the capacity of the warehouse is selected. For larger data loading operations or more compute-intensive queries, a larger warehouse is recommended. The sizes translate to the underlying compute resources provisioned from the cloud provider (AWS, Azure, or GCP) where your Snowflake account is hosted. It also determines the number of credits consumed by the warehouse for each full hour it runs. The larger the size, the more compute resources from the cloud provider are allocated to the warehouse and the more credits it consumes. For example, the `4X-Large` setting consumes 128 credits for each full hour. This sizing can be changed up or down at any time with a simple click.
+
+- If you are using Snowflake Enterprise Edition (or higher) the **Query Acceleration** option is available. When it is enabled for a warehouse, it can improve overall warehouse performance by reducing the impact of outlier queries, which are queries that use more resources than the typical query. Leave this disabled 
+
+- If you are using Snowflake Enterprise Edition (or higher) and the **Multi-cluster Warehouse** option is enabled, you will see additional options. This is where you can set up a warehouse to use multiple clusters of compute resources, up to 10 clusters. For example, if a `4X-Large` multi-cluster warehouse is assigned a maximum cluster size of 10, it can scale out to 10 times the compute resources powering that warehouse...and it can do this in seconds! However, note that this will increase the number of credits consumed by the warehouse to 1280 if all 10 clusters run for a full hour (128 credits/hour x 10 clusters). Multi-cluster is ideal for concurrency scenarios, such as many business analysts simultaneously running different queries using the same warehouse. In this use case, the various queries are allocated across multiple clusters to ensure they run quickly.
+
+- Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources. Additionally, there is an option to change the Warehouse type from Standard to Snowpark-optimized. Snowpark-optmized warehouses provide 16x memory per node and are recommended for workloads that have large memory requirements such as ML training use cases using a stored procedure on a single virtual warehouse node. Leave this type as Standard
+
+> aside negative
+> 
+>  **Snowflake Compute vs Other Data Warehouses**
+Many of the virtual warehouse and compute capabilities we just covered, such as the ability to create, scale up, scale out, and auto-suspend/resume virtual warehouses are easy to use in Snowflake and can be done in seconds. For on-premise data warehouses, these capabilities are much more difficult, if not impossible, as they require significant physical hardware, over-provisioning of hardware for workload spikes, and significant configuration work, as well as additional challenges. Even other cloud-based data warehouses cannot scale up and out like Snowflake without significantly more configuration work and time.
+
+**Warning - Watch Your Spend!**
+During or after this lab, you should be careful about performing the following actions without good reason or you may burn through your $400 of free credits more quickly than desired:
+
+- Do not disable auto-suspend. If auto-suspend is disabled, your warehouses continues to run and consume credits even when not in use.
+- Do not use a warehouse size that is excessive given the workload. The larger the warehouse, the more credits are consumed.
+
+We are going to use this virtual warehouse to load the structured data in the CSV files (stored in the AWS S3 bucket) into Snowflake. However, we are first going to change the size of the warehouse to increase the compute resources it uses. After the load, note the time taken and then, in a later step in this section, we will re-do the same load operation with an even larger warehouse, observing its faster load time.
+
+Change the **Size** of this data warehouse from `X-Small` to `Small`. then click the **Save Warehouse** button:
+
+![configure settings small](assets/5Load_3.png)
+
+### Load the Data
+Now we can run a COPY command to load the data into the `COMPANY` table we created earlier.
+
+Navigate back to the `ZERO_TO_SNOWFLAKE` worksheet in the **Worksheets** tab. Make sure the worksheet context is correctly set:
+
+Role: `SYSADMIN`
+Warehouse: `COMPUTE_WH`
+Database: `COMPANY_DATA`
+Schema = `CYBERSYN`
+
+![worksheet context](assets/5Load_4.png)
+
+Execute the following statements in the worksheet to load the staged data into the table. This may take up to 30 seconds.
+
+```SQL
+copy into company_metadata from @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ;
+```
+
+In the result pane, you should see the status of each file that was loaded. Once the load is done, in the **Query Details** pane on the bottom right, you can scroll through the various statuses, error statistics, and visualizations for the last statement executed:
+
+![results load status](assets/5Load_5.png)
+
+Next, navigate to the **Query History** tab by clicking the **Home** icon and then **Activity** > **Query History**. Select the query at the top of the list, which should be the COPY INTO statement that was last executed. Select the **Query Profile** tab and note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
+
+![history and duration](assets/5Load_6.png)
+
+Now let's reload the `COMPANY_DATA` table with a larger warehouse to see the impact the additional compute resources have on the loading time.
+
+Go back to the worksheet and use the TRUNCATE TABLE command to clear the table of all data and metadata:
+
+```SQL
+truncate table company_metadata;
+```
+
+Verify that the table is empty by running the following command:
+
+```SQL
+--verify table is clear
+select * from company_metadata limit 10;
+```
+
+The result should show "Query produced no results".
+
+Change the warehouse size to `large` using the following ALTER WAREHOUSE:
+ 
+```SQL
+--change warehouse size from small to large (4x)
+alter warehouse compute_wh set warehouse_size='large';
+```
+
+Verify the change using the following SHOW WAREHOUSES:
+
+```SQL
+--load data with large warehouse
+show warehouses;
+```
+
+![resize context to large in UI step 1](assets/5Load_7.png)
+
+
+The size can also be changed using the UI by clicking on the worksheet context box, then the **Configure** (3-line) icon on the right side of the context box, and changing `Small` to `Large` in the **Size** drop-down:
+
+![resize context to large in UI step 1](assets/5Load_8.png)
+![resize context to large in UI step 2](assets/5Load_8b.png)
+
+Execute the same COPY INTO statement as before to load the same data again:
+
+```SQL
+copy into company_metadata from @cybersyn_company_metadata
+file_format=CSV;
+```
+
+![compare load durations](assets/5Load_9.png)
+
+Once the load is done, navigate back to the **Queries** page (**Home** icon > **Activity** > **Query History**). Compare the times of the two COPY INTO commands. The load using the `Large` warehouse was significantly faster.
+
+### Create a New Warehouse for Data Analytics
+
+Going back to the lab story, let's assume the research team wants to eliminate resource contention between their data loading/ETL workloads and the analytical end users using BI tools to query Snowflake. As mentioned earlier, Snowflake can easily do this by assigning different, appropriately-sized warehouses to various workloads. Since our internal team already has a warehouse for data loading, let's create a new warehouse for the end users of our research to run analytics. We will use this warehouse to perform analytics in the next section.
+
+Navigate to the **Admin** > **Warehouses** tab, click **+ Warehouse**, and name the new warehouse `` and set the size to `Large`.
+
+If you are using Snowflake Enterprise Edition (or higher) and **Multi-cluster Warehouses** is enabled, you will see additional settings:
+
+- Make sure **Max Clusters** is set to `1`.
+- Leave all the other settings at their defaults.
+
+![warehouse settings](assets/5Load_10.png)
+
+Click the **Create Warehouse** button to create the warehouse.
 
 
 
@@ -228,6 +377,535 @@ It is in comma-delimited format with a single header line and double quotes encl
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ------------------------ -->
+
+## Accessing Cybersyn Data from Snowflake Marketplace
+
+Duration: 5
+
+### Snowflake Data Marketplace
+
+Make sure you're using the ACCOUNTADMIN role and, navigate to the **Marketplace**:
+
+![data marketplace tab](assets/10Share_7.png)
+<!-- dash to update -->
+
+#### Find a listing
+
+The search box at the top allows you to search for a listing based on the type of data that you are looking for. The drop-down lists to the right of the search box let you filter data listings by Provider, Business Needs, and Category.
+
+Type `stock prices` in the search box, scroll through the results, and select **Financial & Economic Essentials** provided by Cybersyn.
+
+![health tab](assets/10Share_8.png)
+<!-- dash to update -->
+
+In the **Financial & Economic Essentials** page, you can learn more about the dataset and see some sample queries. Click the **Get** button to make this information available within your Snowflake account:
+
+![get data fields](assets/10Share_starschema_get_data.png)
+<!-- dash to update -->
+
+Review the information in the dialog and click **Get** again:
+
+![get data fields](assets/10Share_starschema_get_data2.png)
+<!-- dash to update -->
+
+You can now click **Done** or choose to run the sample queries provided by Cybersyn:
+
+![get data fields](assets/10Share_starschema_query_data.png)
+<!-- dash to update -->
+
+If you chose **Open**, a new worksheet opens in a new browser tab/window:
+
+1. Set your context 
+2. Select the query you want to run (or place your cursor in the query text).
+3. Click the **Run/Play** button (or use the keyboard shortcut).
+4. You can view the data results in the bottom pane.
+5. When you are done running the sample queries, click the **Home** icon in the upper left corner.
+
+![get data fields](assets/10Share_starschema_query_data2.png)
+<!-- dash to update -->
+
+Next:
+1. Click **Data** > **Databases**
+2. Click the `FINANCIAL__ECONOMIC_ESSENTIALS` database.
+3. You can see details about the `CYBERSYN` schema, tables, and views that are available to query.
+
+![covid19 databases](assets/10Share_starschema_db_info.png)
+<!-- dash to update -->
+
+That's it! You have now successfully subscribed to the Financial & Economics Essentials data from Cybersyn, which offers many different datasets. **Stock price** and **foreign exchange rate** data is updated daily. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from Cybersyn in the Snowflake Data Marketplace.
+
+_To learn more about how to use the new worksheet interface, go to the [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight)._
+
+<!-- ------------------------ -->
+
+## Queries, the Results Cache, & Cloning
+
+Duration: 8
+
+In the previous exercises, we loaded data into two tables using Snowflake's COPY bulk loader command and the `COMPUTE_WH` virtual warehouse. We also grabbed additional data from Cybersyn on the Snowflake Marketplace. Now, we are going to take on the role of the university researchers to query data in those tables using the worksheet and second warehouse `ANALYTICS_WH`.
+
+> aside negative
+> 
+>  **Real World Roles and Querying**
+Within a real company or research team, analytics users would likely have a different role than SYSADMIN. To keep the lab simple, we are going to stay with the SYSADMIN role for this section.
+Additionally, querying would typically be done with a business intelligence product like Tableau, Looker, PowerBI, etc. For more advanced analytics, data science tools like Datarobot, Dataiku, AWS Sagemaker or many others can query Snowflake. Any technology that leverages JDBC/ODBC, Spark, Python, or any of the other supported programmatic interfaces can run analytics on the data in Snowflake. To keep this lab simple, all queries are being executed via the Snowflake worksheet.
+
+### Execute Some Queries
+
+Go to the **ZERO_TO_SNOWFLAKE** worksheet and change the warehouse to use the new warehouse you created in the last section. Your worksheet context should be the following:
+
+Role: `SYSADMIN`
+Warehouse: `ANALYTICS_WH (L)`
+Database: `COMPANY_DATA`
+Schema = `CYBERSYN`
+
+Run the following query to see a sample of the `company_metadata`:
+
+```SQL
+select * from company_metadata limit 20;
+```
+
+![sample data query results](assets/6Query_1.png)
+<!-- dash to update -->
+
+Now, let's look at some basic daily statistics on stock price data. Run the query below in the worksheet. For each day, it shows the day-over-day stock price change, volume of Nasdaq trading, and post-close price.
+
+```SQL
+
+```
+
+![sample data query results](assets/6Query_2.png)
+<!-- dash to update -->
+
+### Use the Result Cache
+
+Snowflake has a result cache that holds the results of every query executed in the past 24 hours. These are available across warehouses, so query results returned to one user are available to any other user on the system who executes the same query, provided the underlying data has not changed. Not only do these repeated queries return extremely fast, but they also use no compute credits.
+
+Let's see the result cache in action by running the exact same query again.
+
+```SQL
+
+```
+
+In the **Query Details** pane on the right, note that the second query runs significantly faster because the results have been cached.
+
+![cached query duration](assets/6Query_4.png)
+<!-- dash to update -->
+
+### Execute Another Query
+
+Next, let's run the following query to see which stocks are the most volatile:
+
+```SQL
+
+```
+
+![months query results](assets/6Query_5.png)
+<!-- dash to update -->
+
+### Clone a Table
+
+Snowflake allows you to create clones, also known as "zero-copy clones" of tables, schemas, and databases in seconds. When a clone is created, Snowflake takes a snapshot of data present in the source object and makes it available to the cloned object. The cloned object is writable and independent of the clone source. Therefore, changes made to either the source object or the clone object are not included in the other.
+
+A popular use case for zero-copy cloning is to clone a production environment for use by Development & Testing teams to test and experiment without adversely impacting the production environment and eliminating the need to set up and manage two separate environments.
+
+> aside negative
+> 
+>  **Zero-Copy Cloning**
+A massive benefit of zero-copy cloning is that the underlying data is not copied. Only the metadata and pointers to the underlying data change. Hence, clones are “zero-copy" and storage requirements are not doubled when the data is cloned. Most data warehouses cannot do this, but for Snowflake it is easy!
+
+Run the following command in the worksheet to create a development (dev) table clone of the `company_metadata` table:
+
+```SQL
+create table company_metadata_dev clone company_metadata;
+```
+
+Click the three dots (**...**) in the left pane and select **Refresh**. Expand the object tree under the `COMPANY_DATA` database and verify that you see a new table named `company_metadata_dev`. Your Development team now can do whatever they want with this table, including updating or deleting it, without impacting the `company_metadata` table or any other object.
+
+![trips_dev table](assets/6Query_6.png)
+<!-- dash to update -->
+
+<!-- ------------------------ -->
+
+## Semi-Structured Data, Views, & Joins
+
+Duration: 16
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ------------------------ -->
+
+## Using Time Travel
+
+Duration: 6
+
+Snowflake's powerful Time Travel feature enables accessing historical data, as well as the objects storing the data, at any point within a period of time. The default window is 24 hours and, if you are using Snowflake Enterprise Edition, can be increased up to 90 days. Most data warehouses cannot offer this functionality, but - you guessed it - Snowflake makes it easy!
+
+Some useful applications include:
+- Restoring data-related objects such as tables, schemas, and databases that may have been deleted.
+- Duplicating and backing up data from key points in the past.
+- Analyzing data usage and manipulation over specified periods of time.
+
+### Drop and Undrop a Table
+
+First let's see how we can restore data objects that have been accidentally or intentionally deleted.
+
+In the `ZERO_TO_SNOWFLAKE` worksheet, run the following DROP command to remove the `COMPANY_METADATA` table:
+```SQL
+drop table company_metadata;
+```
+
+Run a query on the table:
+```SQL
+select * from company_metadata limit 10;
+```
+
+In the results pane at the bottom, you should see an error because the underlying table has been dropped:
+![table dropped error](assets/8Time_1.png)
+<!-- dash to update -->
+
+Now, restore the table:
+```SQL
+undrop table company_metadata;
+```
+
+The `company_metadata` table should be restored. Verify by running the following query:
+```SQL 
+select * from company_metadata limit 10;
+```
+![restored table result](assets/8Time_2.png)
+<!-- dash to update -->
+
+### Roll Back a Table
+
+Let's roll back the `COMPANY_METADATA` table in the `COMPANY_DATA` database to a previous state to fix an unintentional DML error that replaces all the station names in the table with the word "oops".
+
+First, run the following SQL statements to switch your worksheet to the proper context:
+
+```SQL
+use role sysadmin;
+
+use warehouse compute_wh;
+
+use database company_data;
+
+use schema cybersyn;
+```
+
+Run the following command to replace all of the station names in the table with the word "oops":
+
+```SQL
+update company_metadata set ticker = 'OOPS';
+```
+
+Now, run a query that returns the unique tickers in the dataset. Notice that each row now has the same ticker `'OOPS'`:
+
+```SQL
+select *
+from company_metadata
+order by ticker;
+```
+
+![one row result](assets/8Time_3.png)
+<!-- dash to update -->
+
+Normally we would need to scramble and hope we have a backup lying around.
+
+In Snowflake, we can simply run a command to find the query ID of the last UPDATE command and store it in a variable named `$QUERY_ID`.
+
+```SQL
+set query_id =
+(select query_id from table(information_schema.query_history_by_session (result_limit=>5))
+where query_text like 'update%' order by start_time desc limit 1);
+```
+
+Use **Time Travel** to recreate the table with the correct station names:
+
+```SQL
+create or replace table company_metadata as
+(select * from company_metadata before (statement => $query_id));
+```
+
+Run the previous query again to verify that the tickers have been restored:
+
+```SQL
+select *
+from company_metadata
+order by ticker;
+```
+
+![restored names result](assets/8Time_4.png)
+<!-- dash to update -->
+
+<!-- ------------------------ -->
+
+## Working with Roles, Account Admin, & Account Usage
+
+Duration: 8
+
+In this section, we will explore aspects of Snowflake's access control security model, such as creating a role and granting it specific permissions. We will also explore other usage of the `ACCOUNTADMIN` (Account Administrator) role, which was briefly introduced earlier in the lab.
+
+Continuing with the lab story, let's assume a junior DBA has joined our research team, and we want to create a new role for them with less privileges than the system-defined, default role of `SYSADMIN`.
+
+> aside negative
+> 
+>  **Role-Based Access Control**
+Snowflake offers very powerful and granular access control that dictates the objects and functionality a user can access, as well as the level of access they have. For more details, check out the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
+
+### Create a New Role and Add a User
+
+In the `ZERO_TO_SNOWFLAKE` worksheet, switch to the `ACCOUNTADMIN` role to create a new role. `ACCOUNTADMIN` encapsulates the `SYSADMIN` and `SECURITYADMIN` system-defined roles. It is the top-level role in the account and should be granted only to a limited number of users.
+
+In the `ZERO_TO_SNOWFLAKE` worksheet, run the following command:
+
+```SQL
+use role accountadmin;
+```
+
+Notice that, in the top right of the worksheet, the context has changed to `ACCOUNTADMIN`:
+
+![ACCOUNTADMIN context](assets/9Role_1.png)
+
+Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowflake user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
+
+Use the following commands to create the role and assign it to you. Before you run the `GRANT ROLE` command, replace `YOUR_USERNAME_GOES_HERE` with your username:
+
+```SQL
+create role junior_dba;
+
+grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
+```
+
+> aside positive
+> 
+>  If you try to perform this operation while in a role such as `SYSADMIN`, it would fail due to insufficient privileges. By default (and design), the `SYSADMIN` role cannot create new roles or users.
+
+Change your worksheet context to the new `JUNIOR_DBA` role:
+
+```SQL
+use role junior_dba;
+```
+
+In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role. 
+
+![JUNIOR_DBA context](assets/9Role_2.png)
+
+Also, the warehouse is not selected because the newly created role does not have usage privileges on any warehouse. Let's fix it by switching back to `ACCOUNTADMIN` role and grant usage privileges to `COMPUTE_WH` warehouse.
+
+```SQL
+use role accountadmin;
+
+grant usage on warehouse compute_wh to role junior_dba;
+```
+
+Switch back to the `JUNIOR_DBA` role. You should be able to use `COMPUTE_WH` now.
+
+```SQL
+use role junior_dba;
+
+use warehouse compute_wh;
+```
+
+Finally, you can notice that in the database object browser panel on the left, the `COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+
+Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases:
+
+```SQL
+use role accountadmin;
+
+grant usage on database COMPANY_DATA to role junior_dba;
+
+grant usage on database FINANCIAL__ECONOMIC_ESSENTIALS to role junior_dba;
+```
+
+Switch to the `JUNIOR_DBA` role:
+
+```SQL
+use role junior_dba;
+```
+
+Notice that the `COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
+
+![object browser panel with databases](assets/9Role_3.png)
+
+### View the Account Administrator UI
+
+Let's change our access control role back to `ACCOUNTADMIN` to see other areas of the UI accessible only to this role. However, to perform this task, use the UI instead of the worksheet.
+
+First, click the **Home** icon in the top left corner of the worksheet. Then, in the top left corner of the UI, click your name to display the user preferences menu. In the menu, go to **Switch Role** and select `ACCOUNTADMIN`.
+
+![switch UI role](assets/9Role_4.png)
+
+> aside negative
+> 
+>  **Roles in User Preference vs Worksheet**
+Why did we use the user preference menu to change the role instead of the worksheet? The UI session and each worksheet have their own separate roles. The UI session role controls the elements you can see and access in the UI, whereas the worksheet role controls only the objects and actions you can access within the role.
+
+Notice that once you switch the UI session to the `ACCOUNTADMIN` role, new tabs are available under **Admin**.
+
+
+#### Usage
+
+![account usage](assets/9Role_5.png)
+
+The **Usage** tab shows the following, each with their own page:
+
+- **Organization**: Credit usage across all the accounts in your organization.
+- **Consumption**: Credits consumed by the virtual warehouses in the current account.
+- **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
+- **Transfers**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
+
+The filters in the top right corner of each page can be used to break down the usage/consumption/etc. visualizations by different measures.
+
+#### Security
+
+![account usage](assets/9Role_6.png)
+
+The **Security** tab contains network policies created for the Snowflake account. New network policies can be created by selecting “+ Network Policy” at the top right hand side of the page.
+
+#### Billing
+
+![account usage](assets/9Role_7.png)
+
+The **Billing** tab contains the payment method for the account:
+
+- If you are a Snowflake contract customer, the tab shows the name associated with your contract information.
+- If you are an on-demand Snowflake customer, the tab shows the credit card used to pay month-to-month, if one has been entered. If no credit card is on file, you can add one to continue using Snowflake when your trial ends.
+
+<!-- ------------------------ -->
+
+## Sharing Data Securely on the Snowflake Marketplace
+
+Duration: 6
+
+Snowflake enables data access between accounts through the secure data sharing features. Shares are created by data providers and imported by data consumers, either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
+
+> aside positive
+> 
+>  **Cybersyn**
+<!-- Meghan content ^^ -->
+
+With secure data sharing:
+
+- There is only one copy of the data that lives in the data provider's account.
+- Shared data is always live, real-time, and immediately available to consumers.
+- Providers can establish revocable, fine-grained access to shares.
+- Data sharing is simple and safe, especially compared to older data sharing methods, which were often manual and insecure, such as transferring large `.csv` files across the internet.
+
+> aside positive
+> 
+>  **Cross-region & cross-cloud data sharing** To share data across regions or cloud platforms, you must set up replication. This is outside the scope of this lab, but more information is available in [this Snowflake article](https://www.snowflake.com/trending/what-is-data-replication).
+
+Snowflake uses secure data sharing to provide account usage data and sample data sets to all Snowflake accounts. In this capacity, Snowflake acts as the data provider of the data and all other accounts.
+
+Secure data sharing also powers the Snowflake Data Marketplace, which is available to all Snowflake customers and allows you to discover and access third-party datasets from numerous data providers and SaaS vendors. Again, in this data sharing model, the data doesn't leave the provider's account and you can use the datasets without any transformation.
+
+
+### View Existing Shares
+
+In the home page, navigate to **Data** > **Databases**. In the list of databases, look at the **SOURCE** column. You should see two databases with `Local` in the column. These are the two databases we created previously in the lab. The other database, `SNOWFLAKE`, shows `Share` in the column, indicating it's shared from a provider.
+
+![arrow over database icon](assets/10Share_1.png)
+<!-- dash to update -->
+
+### Create an Outbound Share
+
+Let's go back to the stock price data story and assume we are the Account Administrator for Snowflake at a university. We have a trusted partner who wants to analyze the data in our `COMPANY_DATA` database on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. So let's use secure data sharing to allow them to access this information.
+
+Navigate to **Data** > **Private Sharing**, then at the top of the tab click **Shared by My Account**. Click the **Share** button in the top right corner and select **Create a Direct Share**:
+
+![shares outbound button](assets/10Share_2.png)
+<!-- dash to update -->
+
+Click **+ Select Data** and navigate to the `COMPANY_DATA` database and `CYBERSYN` schema. Select the 2 tables we created in the schema and click the **Done** button:
+
+![share fields](assets/10Share_3.png)
+<!-- dash to update -->
+
+The default name of the share is a generic name with a random numeric value appended. Edit the default name to a more descriptive value that will help identify the share in the future (e.g. `ZERO_TO_SNOWFLAKE_SHARED_DATA`. You can also add a comment.
+
+In a real-world scenario, the Account Administrator would next add one or more consumer accounts to the share, but we'll stop here for the purposes of this lab.
+
+Click the **Create Share** button at the bottom of the dialog:
+
+![success message](assets/10Share_4.png)
+<!-- dash to update -->
+
+The dialog closes and the page shows the secure share you created:
+
+![TRIPS_SHARE share](assets/10Share_5.png)
+<!-- dash to update -->
+
+You can add consumers, add/change the description, and edit the objects in the share at any time. In the page, click the **<** button next to the share name to return to the **Share with Other Accounts** page:
+
+![TRIPS_SHARE share](assets/10Share_6.png)
+<!-- dash to update -->
+
+We've demonstrated how it only takes seconds to give other accounts access to data in your Snowflake account in a secure manner with no copying or transferring of data required!
+
+Snowflake provides several ways to securely share data without compromising confidentiality. In addition to tables, you can share secure views, secure UDFs (user-defined functions), and other secure objects. For more details about using these methods to share data while preventing access to sensitive information, see the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/data-sharing-secure-views.html).
+
+<!-- ------------------------ -->
+
+## Resetting Your Snowflake Environment
+
+Duration: 2
+
+If you would like to reset your environment by deleting all the objects created as part of this lab, run the SQL statements in a worksheet.
+
+First, ensure you are using the ACCOUNTADMIN role in the worksheet:
+
+```SQL
+use role accountadmin;
+```
+
+Then, run the following SQL commands to drop all the objects we created in the lab:
+
+```SQL
+drop share if exists zero_to_snowflake_shared_data;
+-- If necessary, replace "zero_to_snowflake-shared_data" with the name you used for the share
+
+drop database if exists company_data;
+
+drop warehouse if exists analytics_wh;
+
+drop role if exists junior_dba;
+```
 
 <!-- ------------------------ -->
 
