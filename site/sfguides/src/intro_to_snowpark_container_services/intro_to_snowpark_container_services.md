@@ -39,12 +39,14 @@ Note that while in this quickstart, we will predominantly use the direct SQL com
 - How to deploy a Service Function to perform basic calculations
 
 ### Prerequisites
+##### **Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services.git**. 
+You can simply download the repo as a .zip if you don't have Git installed locally.
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
 - [Python 3.10](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.10 in the **Setup the Local Environment** step
 - (Optional) [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services.git**. You can simply doownload the repo as a .zip if you don't have Git installed locally.
+    >**Download the git repo here: https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services.git**. You can simply download the repo as a .zip if you don't have Git installed locally.
 - (Optional) [VSCode](https://code.visualstudio.com/) (recommended) with the [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker), [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python), and [Snowflake](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) extensions installed.
 - A non-trial Snowflake account in a supported [AWS region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 - A Snowflake account login with a role that has the `ACCOUNTADMIN` role. If not, you will need to work with your `ACCOUNTADMIN` to perform the initial account setup (e.g. creating the `CONTAINER_USER_ROLE` and granting required privileges, as well as creating the OAuth Security Integration).
@@ -93,13 +95,24 @@ ENCRYPTION = (TYPE='SNOWFLAKE_SSE')
 DIRECTORY = (ENABLE = TRUE);
 ```
 
-Run the following SQL commands in [`01_snowpark_container_services_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), our first [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool), and our [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository)
+Run the following SQL commands in [`01_snowpark_container_services_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) our first [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool), and our [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository)
 ```SQL
 USE ROLE ACCOUNTADMIN;
 CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
   TYPE=oauth
   OAUTH_CLIENT=snowservices_ingress
   ENABLED=true;
+
+CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
+  TYPE = 'HOST_PORT'
+  MODE = 'EGRESS'
+  VALUE_LIST= ('0.0.0.0:443', '0.0.0.0:80');
+
+CREATE EXTERNAL ACCESS INTEGRATION ALLOW_ALL_EAI
+  ALLOWED_NETWORK_RULES = (ALLOW_ALL_RULE)
+  ENABLED = true;
+
+GRANT USAGE ON INTEGRATION ALLOW_ALL_EAI TO ROLE CONTAINER_USER_ROLE;
 
 USE ROLE CONTAINER_USER_ROLE;
 CREATE COMPUTE POOL IF NOT EXISTS CONTAINER_HOL_POOL
@@ -112,6 +125,7 @@ CREATE IMAGE REPOSITORY CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO;
 SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
 ```
 - The [OAuth security integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration) will allow us to login to our UI-based services using our web browser and Snowflake credentials
+- The [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) will allow our services to reach outside of Snowflake to the public internet
 - The [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool) is the set of compute resources on which our services will run
 - The [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository) is the location in Snowflake where we will push our Docker images so that our services can use them
 
@@ -135,23 +149,10 @@ Duration: 10
   conda activate snowpark-container-services-hol
   ```
 
-  3. Install hatch so we can build the SnowCLI:
+  3. Install SnowCLI:
   ```
-  pip install hatch
-  ```
-
-  4. Install SnowCLI:
-  ```bash
-  # naviage to where you want to download the snowcli GitHub repo, e.g. ~/Downloads
-  cd /your/preferred/path
-  # clone the git repo
-  git clone https://github.com/Snowflake-Labs/snowcli
-  # cd into the snowcli repo
-  cd snowcli
-  # install
-  hatch build && pip install .
-  # during install you may observe some dependency errors, which should be okay for the time being 
-  ```
+  pip install snowflake-cli-labs==2.0.0rc1
+  ``` 
 
   5. Configure your Snowflake CLI connection. The Snowflake CLI is designed to make managing UDFs, stored procedures, and other developer centric configuration files easier and more intuitive to manage. Let's create a new connection using:
   ```bash
@@ -183,14 +184,14 @@ Duration: 10
   // Get the image repository URL
   use role CONTAINER_user_role;
   show image repositories in schema CONTAINER_HOL_DB.PUBLIC;
-  // COPY the repository_url field, e.g. org-account.registry.snowflakecomputing.com/CONTAINER_hol_db/public/image_repo
+  // COPY the repository_url field, e.g. org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo
   ```
   ```bash
-  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/CONTAINER_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
+  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
   docker login <snowflake_registry_hostname> -u <user_name>
   > prompt for password
   ```
-  **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/CONTAINER_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
+  **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
 
 <!-- ------------------------ -->
 ## Build, Push, and Run the Jupyter Service
@@ -242,12 +243,12 @@ Open up a browser and navigate to [localhost:8888/lab](http://localhost:8888/lab
 ### Tag and Push the Image
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
-  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/CONTAINER_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
+  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
   docker login <snowflake_registry_hostname> -u <user_name>
   > prompt for password
   docker tag <local_repository>/python-jupyter-snowpark:latest <repository_url>/python-jupyter-snowpark:dev
 ```
-  **Note the difference** between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/CONTAINER_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)
+  **Note the difference** between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)
 
 Verify that the new tagged image exists by running:
 ```bash
@@ -270,7 +271,7 @@ Services in Snowpark Container Services are defined using YAML files. These YAML
 spec:
   containers:
     - name: jupyter-snowpark
-      image: <repository_hostname>/CONTAINER_hol_db/public/image_repo/python-jupyter-snowpark:dev
+      image: <repository_hostname>/container_hol_db/public/image_repo/python-jupyter-snowpark:dev
       volumeMounts:
         - name: jupyter-home
           mountPath: /home/jupyter
@@ -283,8 +284,6 @@ spec:
       source: "@volumes/jupyter-snowpark"
       uid: 1000
       gid: 1000
-  networkPolicyConfig:
-      allowInternetEgress: true
 
 ```
 **Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
@@ -305,7 +304,8 @@ use role CONTAINER_user_role;
 create service CONTAINER_HOL_DB.PUBLIC.jupyter_snowpark_service
     in compute pool CONTAINER_HOL_POOL
     from @specs
-    spec='jupyter-snowpark.yaml';
+    specification_file='jupyter-snowpark.yaml'
+    external_access_integrations = (ALLOW_ALL_EAI);
 ```
 Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE');` to verify that the service is successfully running. These commands are also spelled out in [`02_jupyter_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/02_jupyter_service.sql).
 
@@ -455,12 +455,12 @@ Once you've verified that the service is working, you can stop the container: `d
 ### Tag and Push the Image
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
-  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/CONTAINER_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
+  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
   docker login <snowflake_registry_hostname> -u <user_name>
   > prompt for password
   docker tag <local_repository>/convert-api:latest <repository_url>/convert-api:dev
 ```
-**Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/CONTAINER_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
+**Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
 
 Verify that the new tagged image exists by running:
 ```bash
@@ -483,7 +483,7 @@ Services in Snowpark Container Services are defined using YAML files. These YAML
 spec:
   containers:
     - name: convert-api
-      image: <repository_hostname>/CONTAINER_hol_db/public/image_repo/convert-api:dev
+      image: <repository_hostname>/container_hol_db/public/image_repo/convert-api:dev
   endpoints:
     - name: convert-api
       port: 9090
@@ -507,7 +507,8 @@ use role CONTAINER_user_role;
 create service CONTAINER_HOL_DB.PUBLIC.convert_api
     in compute pool CONTAINER_HOL_POOL
     from @specs
-    spec='convert-api.yaml';
+    specification_file='convert-api.yaml'
+    external_access_integrations = (ALLOW_ALL_EAI);
 ```
 Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.CONVERT-API');` to verify that the service is successfully running. These commands are also listed in [`03_rest_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.sql)
 
