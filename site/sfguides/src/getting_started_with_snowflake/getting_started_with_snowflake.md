@@ -8,11 +8,12 @@ tags: Getting Started, Data Science, Data Engineering
 authors: Victoria Warner (Cybersyn)
 
 # Getting Started with Snowflake - Zero to Snowflake
+
 <!-- ------------------------ -->
 
 ## Overview
 
-Duration: 2
+Duration: 3
 
 Welcome to Snowflake! This entry-level guide designed for database and data warehouse administrators and architects will help you navigate the Snowflake interface and introduce you to some of our core capabilities. [Sign up for a free 30-day trial of Snowflake](https://trial.snowflake.com) and follow along with this lab exercise. Once we cover the basics, you'll be ready to start processing your own data and diving into Snowflake's more advanced features like a pro.
 
@@ -38,8 +39,12 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 - How to securely and easily share data with other accounts.
 
 ### Data You'll Use:
+**Cybersyn** is a Data-as-a-Service (DaaS) company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on where consumers spend money and time, Cybersyn acquires high-value datasets and builds derived data products from proprietary and public sources. With Cybersyn, you can access external data directly in your Snowflake instance — no ETL required. 
 
-Cybersyn is a Data-as-a-Service (DaaS) company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on where consumers spend money and time, Cybersyn acquires high-value datasets and builds derived data products from proprietary and public sources. With Cybersyn, you can access external data directly in your Snowflake instance — no ETL required. 
+For the lab story, we will use the following datasets from Cybersyn:
+- Daily stock price data
+- Company metadata
+- SEC Filings text
 
 Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marketplace/listing/GZTSZ290BUX62/) and [explore all 60+ public sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc).
 
@@ -47,7 +52,7 @@ Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marke
 
 ## Prepare Your Lab Environment
 
-Duration: 2
+Duration: 1
 
 If you haven't already, register for a [Snowflake free 30-day trial](https://signup.snowflake.com/developers). The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
 
@@ -57,9 +62,7 @@ After registering, you will receive an email with an activation link and URL for
 
 ### Logging into the Snowflake User Interface (UI)
 
-Open a browser window and enter the URL of your Snowflake 30-day trial environment that was sent with your registration email.
-
-You should see the following login dialog​. Enter the username and password that you specified during the registration:
+Open a browser window and enter the URL of your Snowflake 30-day trial environment that was sent with your registration email. Enter the username and password that you specified during the registration:
 
 ![login screen](assets/3UIStory_1.png)
 
@@ -197,7 +200,7 @@ Duration: 14
 <!-- dash to advise on changed durations from rework? (throughout entire document) -->
 
 ### The Lab Story
-You are a university researcher that wants to study stock performance of major consumer goods (CPG) companies in the US. This lab combines Nasdaq's daily stock price data with SEC company filings to understand how stocks react to certain reports.
+You are a university researcher studying stock performance of major consumer goods (CPG) companies in the US. This lab combines Nasdaq's daily stock price data with SEC company filings to understand how stocks react to certain reports.
 
 We will start by collecting data from three different sources:
 1. Load company metadata `.csv` file.
@@ -207,20 +210,19 @@ We will start by collecting data from three different sources:
 ### Loading Data into Snowflake
 Let's start by preparing to load structured `.csv` data into Snowflake.
 
-The data we are using is company metadata from SEC filings that details consumer goods companies we are evaluating. The data has been exported and pre-staged for you in an Amazon AWS S3 bucket in the US-EAST region. The data details the consumer goods companies we are evaluating 
-<!-- trip times, locations, user type, gender, age, etc. On AWS S3, the data represents 61.5M rows, 377 objects, and 1.9GB compressed. victoria --> 
-. _(The full dataset available [for free](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Cybersyn -- no ETL required. For the purposes of this demo, we will focus on working with the `.csv` file to learn how to load structured data into Snowflake.)_
+The data we are using is company metadata from SEC filings that details consumer goods companies we are evaluating. The data has been exported and pre-staged for you in an Amazon AWS S3 bucket in the US-EAST region. It is in comma-delimited format with a single header line and double quotes enclosing all string values, including the field headings in the header line. This will come into play later in this section as we configure the Snowflake table to store this data.
+
+The data details the consumer goods companies we are evaluating:
+
+<!-- victoria image -->
+
+_(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Cybersyn -- no ETL required. For the purposes of this demo, we will focus on working with the csv file to learn how to load structured data into Snowflake.)_
 
 > aside negative
 > 
 >  **Getting Data into Snowflake**
 There are many ways to get data into Snowflake from many locations including the COPY command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT solutions. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide-data-load.html).
 For the purposes of this lab, we use the COPY command and AWS S3 storage to load data manually. In a real-world scenario, you would more likely use an automated process or ETL solution.
-
-Below is a snippet from consumer goods CSV data files:
-<!-- victoria -->
-
-It is in comma-delimited format with a single header line and double quotes enclosing all string values, including the field headings in the header line. This will come into play later in this section as we configure the Snowflake table to store this data.
 
 #### Create a Database and Table
 
@@ -296,7 +298,7 @@ Schema = `CYBERSYN`
 Execute the following statements in the worksheet to load the staged data into the table. This may take up to 30 seconds.
 
 ```SQL
-copy into company_metadata from @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ;
+copy into cybersyn_company_metadata from @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ;
 ```
 
 In the result pane, you should see the status of each file that was loaded. Once the load is done, in the **Query Details** pane on the bottom right, you can scroll through the various statuses, error statistics, and visualizations for the last statement executed:
@@ -312,14 +314,14 @@ Now let's reload the `COMPANY_DATA` table with a larger warehouse to see the imp
 Go back to the worksheet and use the TRUNCATE TABLE command to clear the table of all data and metadata:
 
 ```SQL
-truncate table company_metadata;
+truncate table cybersyn_company_metadata;
 ```
 
 Verify that the table is empty by running the following command:
 
 ```SQL
 --verify table is clear
-select * from company_metadata limit 10;
+select * from cybersyn_company_metadata limit 10;
 ```
 
 The result should show "Query produced no results".
@@ -349,7 +351,7 @@ The size can also be changed using the UI by clicking on the worksheet context b
 Execute the same COPY INTO statement as before to load the same data again:
 
 ```SQL
-copy into company_metadata from @cybersyn_company_metadata
+copy into cybersyn_company_metadata from @cybersyn_company_metadata
 file_format=CSV;
 ```
 
@@ -410,11 +412,11 @@ All the DDL operations we have done so far do not require compute resources, so 
 
 To make working in the worksheet easier, let's rename it. In the top left corner, double-click the worksheet name, which is the timestamp when the worksheet was created, and change it to `ZERO_TO_SNOWFLAKE`.
 
-Next we create a table called `COMPANY_METADATA` to use for loading the comma-delimited data. Instead of using the UI, we use the worksheet to run the DDL that creates the table. Copy the following SQL text into your worksheet:
+Next we create a table called `CYBERSYN_COMPANY_METADATA` to use for loading the comma-delimited data. Instead of using the UI, we use the worksheet to run the DDL that creates the table. Copy the following SQL text into your worksheet:
 
 ```SQL
-create or replace table company_metadata
-(company_id varchar,
+create or replace table cybersyn_company_metadata
+(cybersyn_company_id varchar,
 company_name varchar,
 permid_security_id varchar,
 primary_ticker varchar,
@@ -436,17 +438,20 @@ As mentioned earlier, to save time, we are performing most of the operations in 
 
 Run the query by placing your cursor anywhere in the SQL text and clicking the blue **Play/Run** button in the top right of the worksheet. Or use the keyboard shortcut [Ctrl]/[Cmd]+[Enter].
 
-Verify that your TRIPS table has been created. At the bottom of the worksheet you should see a Results section displaying a "Table TRIPS successfully created" message.
+Verify that your `CYBERSYN_COMPANY_METADATA` table has been created. At the bottom of the worksheet you should see a Results section displaying a "Table CYBERSYN_COMPANY_METADATA successfully created" message.
 
 ![TRIPS confirmation message](assets/4PreLoad_5.png)
+<!-- dash to recreate -->
 
-Navigate to the **Databases** tab by clicking the **HOME** icon in the upper left corner of the worksheet. Then click **Data** > **Databases**. In the list of databases, click `CITIBIKE` > `PUBLIC` > **TABLES** to see your newly created `TRIPS` table. If you don't see any databases on the left, expand your browser because they may be hidden.
+Navigate to the **Databases** tab by clicking the **HOME** icon in the upper left corner of the worksheet. Then click **Data** > **Databases**. In the list of databases, click `COMPANY_DATA` > `CYBERSYN` > **TABLES** to see your newly created `CYBERSYN_COMPANY_METADATA` table. If you don't see any databases on the left, expand your browser because they may be hidden.
 
 ![TRIPS table](assets/4PreLoad_6.png)
+<!-- dash to recreate -->
 
-Click `TRIPS` and the **Columns** tab to see the table structure you just created.
+Click `CYBERSYN_COMPANY_METADATA` and the **Columns** tab to see the table structure you just created.
 
 ![TRIPS table structure](assets/4PreLoad_7.png)
+<!-- dash to recreate -->
 
 ### Create an External Stage
 
@@ -456,15 +461,16 @@ We are working with structured, comma-delimited data that has already been stage
 > 
 >  For this lab we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CITIBIKE` database and `PUBLIC` schema. Click the **Create** button, then **Stage** > **Amazon S3**.
+From the **Databases** tab, click the `COMPANY_DATA` database and `CYBERSYN` schema. Click the **Create** button, then **Stage** > **Amazon S3**.
 
 ![stages create](assets/4PreLoad_8.png)
+<!-- dash to recreate -->
 
 In the "Create Securable Object" dialog that opens, replace the following values in the SQL statement:
 
-`<stage_name>`: `citibike_trips`
+`<stage_name>`: `cybersyn_consumer_company_metadata`
 
-`<url>`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
+`<url>`: `s3://snowflake-workshop-lab/cybersyn-consumer-company-metadata-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
 Also ensure you have removed 'credentials = (...)' statement which is not required. You can also comment it out like the picture below by using '--'. The create stage command should resemble the below picture or not include the 3rd line.
@@ -475,15 +481,16 @@ Also ensure you have removed 'credentials = (...)' statement which is not requir
 
 ![create stage settings](assets/4PreLoad_9.png)
 
-Now let's take a look at the contents of the `citibike_trips` stage. Navigate back to the **Worksheets** tab and open the 'CITIBIKE_ZERO_TO_SNOWFLAKE' worksheet we made, add the following SQL statement below the previous code as shown in the below picture and then execute:
+Now let's take a look at the contents of the `cybersyn_consumer_company_metadata` stage. Navigate back to the **Worksheets** tab and open the `ZERO_TO_SNOWFLAKE` worksheet we made, add the following SQL statement below the previous code as shown in the below picture and then execute:
 
 ```SQL
-list @citibike_trips;
+list @cybersyn_consumer_company_metadata;
 ```
 
 In the results in the bottom pane, you should see the list of files in the stage:
 
 ![worksheet result](assets/4PreLoad_10.png)
+<!-- dash to recreate -->
 
 ### Create a File Format
 
@@ -499,6 +506,7 @@ create or replace file format csv type='csv'
 ```
 
 ![create file format](assets/4PreLoad_11.png)
+<!-- dash to recreate -->
 
 Verify that the file format has been created with the correct settings by executing the following command:
 
@@ -509,6 +517,7 @@ show file formats in database company_data;
 
 The file format created should be listed in the result:
 ![create file format settings](assets/4PreLoad_12.png)
+<!-- dash to recreate -->
 
 <!-- ------------------------ -->
 
@@ -595,7 +604,7 @@ Warehouse: `ANALYTICS_WH (L)`
 Database: `COMPANY_DATA`
 Schema = `CYBERSYN`
 
-Run the following query to see a sample of the `company_metadata`:
+Run the following query to see a sample of the `CYBERSYN_COMPANY_METADATA`:
 
 ```SQL
 select * from company_metadata limit 20;
@@ -671,50 +680,49 @@ Duration: 16
 > 
 >  This section requires loading additional data and, therefore, provides a review of data loading while also introducing loading semi-structured data.
 
-Going back to the lab's example, the Citi Bike analytics team wants to determine how weather impacts ride counts. To do this, in this section, we will:
-
-- Load weather data in semi-structured JSON format held in a public S3 bucket.
+Back to the lab, our research analytics team wants to determine how SEC reports impact stock performance. To do this, in this section, we will:
+- Load SEC filing data in semi-structued JSON format held in a public S3 bucket.
 - Create a view and query the JSON data using SQL dot notation.
-- Run a query that joins the JSON data to the previously loaded `TRIPS` data.
-- Analyze the weather and ride count data to determine their relationship.
+- Run a query that joins the JSON data to the previously loaded `COMPANY_DATA` data.
+- Analyze the SEC filing and stock price data to determine their relationship.
 
-The JSON data consists of weather information provided by *MeteoStat* detailing the historical conditions of New York City from 2016-07-05 to 2019-06-25. It is also staged on AWS S3 where the data consists of 75k rows, 36 objects, and 1.1MB compressed. If viewed in a text editor, the raw JSON in the GZ files looks like:
+The JSON data consists of SEC report content provided by **Cybersyn**, detailing the historical SEC filings of consumer product companies between 2019 and 2023. It is also staged on AWS S3. If viewed in a text editor, the raw JSON in the GZ files looks like:
 
 ![raw JSON sample](assets/7SemiStruct_1_1.png)
 
 > aside negative
 > 
->  **SEMI-STRUCTURED DATA**
+>  **Semi-Structured Data**
 Snowflake can easily load and query semi-structured data such as JSON, Parquet, or Avro without transformation. This is a key Snowflake feature because an increasing amount of business-relevant data being generated today is semi-structured, and many traditional data warehouses cannot easily load and query such data. Snowflake makes it easy!
 
 ### Create a New Database and Table for the Data
 
-First, in the worksheet, let's create a database named `WEATHER` to use for storing the semi-structured JSON data.
+First, in the worksheet, let's create a database named `SEC_FILINGS` to use for storing the semi-structured JSON data.
 
 ```SQL
-create database weather;
+create database sec_filings;
 ```
 
-Execute the following USE commands to set the worksheet context appropriately:
+Execute the following `USE` commands to set the worksheet context appropriately:
 
 ```SQL
 use role sysadmin;
 
 use warehouse compute_wh;
 
-use database weather;
+use database sec_filings;
 
-use schema public;
+use schema cybersyn;
 ```
 
 > aside positive
 > 
 >  **Executing Multiple Commands** Remember that you need to execute each command individually. However, you can execute them in sequence together by selecting all of the commands and then clicking the **Play/Run** button (or using the keyboard shortcut).
 
-Next, let's create a table named `JSON_WEATHER_DATA` to use for loading the JSON data. In the worksheet, execute the following CREATE TABLE command:
+Next, let's create a table named `JSON_SEC_DATA` to use for loading the JSON data. In the worksheet, execute the following CREATE TABLE command:
 
 ```SQL
-create table json_weather_data (v variant);
+create table json_sec_data (v variant);
 ```
 
 Note that Snowflake has a special column data type called `VARIANT` that allows storing the entire JSON object as a single row and eventually query the object directly.
@@ -724,57 +732,60 @@ Note that Snowflake has a special column data type called `VARIANT` that allows 
 >  **Semi-Structured Data Magic**
 The VARIANT data type allows Snowflake to ingest semi-structured data without having to predefine the schema.
 
-In the results pane at the bottom of the worksheet, verify that your table, `JSON_WEATHER_DATA`, was created:
+In the results pane at the bottom of the worksheet, verify that your table, `JSON_SEC_DATA`, was created:
 
 ![success message](assets/7SemiStruct_2_1.png)
+<!-- dash to update -->
 
 ### Create Another External Stage
 
-In the `CITIBIKE_ZERO_TO_SNOWFLAKE` worksheet, use the following command to create a stage that points to the bucket where the semi-structured JSON data is stored on AWS S3:
+In the `ZERO_TO_SNOWFLAKE` worksheet, use the following command to create a stage that points to the bucket where the semi-structured JSON data is stored on AWS S3:
 
 ```SQL
-create stage nyc_weather
-url = 's3://snowflake-workshop-lab/zero-weather-nyc';
+create stage cybersyn_sec_filing_reports
+url = 's3://snowflake-workshop-lab/cybersyn-sec-filing-reports';
 ```
 
-Now let's take a look at the contents of the `nyc_weather` stage. Execute the following LIST command to display the list of files:
+Now let's take a look at the contents of the `cybersyn_sec_filing_reports` stage. Execute the following `LIST` command to display the list of files:
 
 ```SQL
-list @nyc_weather;
+list @cybersyn_sec_filing_reports;
 ```
 
 In the results pane, you should see a list of `.gz` files from S3:
 
 ![results output](assets/7SemiStruct_3_1.png)
+<!-- dash to update -->
 
 ### Load and Verify the Semi-structured Data
 
-In this section, we will use a warehouse to load the data from the S3 bucket into the `JSON_WEATHER_DATA` table we created earlier.
+In this section, we will use a warehouse to load the data from the S3 bucket into the `JSON_SEC_DATA` table we created earlier.
 
-In the `CITIBIKE_ZERO_TO_SNOWFLAKE` worksheet, execute the COPY command below to load the data.
+In the `ZERO_TO_SNOWFLAKE` worksheet, execute the COPY command below to load the data.
 
 Note that you can specify a `FILE FORMAT` object inline in the command. In the previous section where we loaded structured data in CSV format, we had to define a file format to support the CSV structure. Because the JSON data here is well-formed, we are able to simply specify the JSON type and use all the default settings:
 
 ```SQL
-copy into json_weather_data
-from @nyc_weather 
+copy into json_sec_data
+from @cybersyn_sec_filing_reports
     file_format = (type = json strip_outer_array = true);
 ```
 
 Verify that each file has a status of `LOADED`:
 
 ![query result](assets/7SemiStruct_4_1.png)
-
+<!-- dash to update -->
 
 Now, let's take a look at the data that was loaded:
 
 ```SQL
-select * from json_weather_data limit 10;
+select * from json_sec_data limit 10;
 ```
 
 Click any of the rows to display the formatted JSON in the right panel:
 
 ![JSON data snippet](assets/7SemiStruct_5_1.png)
+<!-- dash to update -->
 
 To close the display in the panel and display the query details again, click the **X** (Close) button that appears when you hover your mouse in the right corner of the panel.
 
@@ -794,7 +805,7 @@ Run the following command to create a columnar view of the semi-structured JSON 
 
 ```SQL
 // create a view that will put structure onto the semi-structured data
-create or replace view json_weather_data_view as
+create or replace view json_sec_data_view as
 select
     v:obsTime::timestamp as observation_time,
     v:station::string as station_id,
@@ -813,21 +824,22 @@ select
     v:rhum::float as relative_humidity,
     v:pres::float as pressure
 from
-    json_weather_data
+    json_sec_data
 where
-    station_id = '72502';
+    ticker = '72502';
 ```
 
 SQL dot notation `v:temp` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
-The new view should appear as `JSON_WEATHER_DATA` under `WEATHER` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
+The new view should appear as `JSON_SEC_DATA` under `WEATHER` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
 
 ![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6_1.png)
+<!-- dash to update -->
 
 Verify the view with the following query: 
 
 ```SQL
-select * from json_weather_data_view
+select * from json_sec_data_view
 where date_trunc('month',observation_time) = '2018-01-01'
 limit 20;
 ```
@@ -838,7 +850,9 @@ Notice the results look just like a regular structured data source. Your result 
 
 ### Use a Join Operation to Correlate Against Data Sets
 
-We will now join the JSON weather data to our `CITIBIKE.PUBLIC.TRIPS` data to answer our original question of how weather impacts the number of rides.
+We will now join the JSON SEC filings data to our `CYBERSYN_COMPANY_DATA.CYBERSYN.COMPANY_METDATA` and `CYBERSYN.STOCK_PRICE_TIMESERIES` to answer our original question of .
+
+weather data to our `CITIBIKE.PUBLIC.TRIPS` data to answer our original question of how weather impacts the number of rides.
 
 Run the query below to join `WEATHER` to `TRIPS` and count the number of trips associated with certain weather conditions:
 
@@ -848,13 +862,7 @@ Run the query below to join `WEATHER` to `TRIPS` and count the number of trips a
 
 
 ```SQL
-select weather_conditions as conditions
-,count(*) as num_trips
-from citibike.public.trips
-left outer join json_weather_data_view
-on date_trunc('hour', observation_time) = date_trunc('hour', starttime)
-where conditions is not null
-group by 1 order by 2 desc;
+
 ```
 
 ![weather results](assets/7SemiStruct_8_1.png)
@@ -878,14 +886,14 @@ Some useful applications include:
 
 First let's see how we can restore data objects that have been accidentally or intentionally deleted.
 
-In the `ZERO_TO_SNOWFLAKE` worksheet, run the following DROP command to remove the `COMPANY_METADATA` table:
+In the `ZERO_TO_SNOWFLAKE` worksheet, run the following DROP command to remove the `CYBERSYN_COMPANY_METADATA` table:
 ```SQL
-drop table company_metadata;
+drop table cybersyn_company_metadata;
 ```
 
 Run a query on the table:
 ```SQL
-select * from company_metadata limit 10;
+select * from cybersyn_company_metadata limit 10;
 ```
 
 In the results pane at the bottom, you should see an error because the underlying table has been dropped:
@@ -894,19 +902,19 @@ In the results pane at the bottom, you should see an error because the underlyin
 
 Now, restore the table:
 ```SQL
-undrop table company_metadata;
+undrop table cybersyn_company_metadata;
 ```
 
-The `company_metadata` table should be restored. Verify by running the following query:
+The `cybersyn_company_metadata` table should be restored. Verify by running the following query:
 ```SQL 
-select * from company_metadata limit 10;
+select * from cybersyn_company_metadata limit 10;
 ```
 ![restored table result](assets/8Time_2.png)
 <!-- dash to update -->
 
 ### Roll Back a Table
 
-Let's roll back the `COMPANY_METADATA` table in the `COMPANY_DATA` database to a previous state to fix an unintentional DML error that replaces all the station names in the table with the word "oops".
+Let's roll back the `CYBERSYN_COMPANY_METADATA` table in the `COMPANY_DATA` database to a previous state to fix an unintentional DML error that replaces all the station names in the table with the word "oops".
 
 First, run the following SQL statements to switch your worksheet to the proper context:
 
@@ -923,14 +931,14 @@ use schema cybersyn;
 Run the following command to replace all of the station names in the table with the word "oops":
 
 ```SQL
-update company_metadata set ticker = 'OOPS';
+update cybersyn_company_metadata set ticker = 'OOPS';
 ```
 
 Now, run a query that returns the unique tickers in the dataset. Notice that each row now has the same ticker `'OOPS'`:
 
 ```SQL
 select *
-from company_metadata
+from cybersyn_company_metadata
 order by ticker;
 ```
 
@@ -950,15 +958,15 @@ where query_text like 'update%' order by start_time desc limit 1);
 Use **Time Travel** to recreate the table with the correct station names:
 
 ```SQL
-create or replace table company_metadata as
-(select * from company_metadata before (statement => $query_id));
+create or replace table cybersyn_company_metadata as
+(select * from cybersyn_company_metadata before (statement => $query_id));
 ```
 
 Run the previous query again to verify that the tickers have been restored:
 
 ```SQL
 select *
-from company_metadata
+from cybersyn_company_metadata
 order by ticker;
 ```
 
@@ -1034,9 +1042,9 @@ use role junior_dba;
 use warehouse compute_wh;
 ```
 
-Finally, you can notice that in the database object browser panel on the left, the `COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Finally, you can notice that in the database object browser panel on the left, the `CYBERSYN_COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
-Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases:
+Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN_COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases:
 
 ```SQL
 use role accountadmin;
@@ -1052,7 +1060,7 @@ Switch to the `JUNIOR_DBA` role:
 use role junior_dba;
 ```
 
-Notice that the `COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
+Notice that the `CYBERSYN_COMPANY_DATA` and `FINANCIAL__ECONOMIC_ESSENTIALS` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
 
 ![object browser panel with databases](assets/9Role_3.png)
 
@@ -1138,14 +1146,14 @@ In the home page, navigate to **Data** > **Databases**. In the list of databases
 
 ### Create an Outbound Share
 
-Let's go back to the stock price data story and assume we are the Account Administrator for Snowflake at a university. We have a trusted partner who wants to analyze the data in our `COMPANY_DATA` database on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. So let's use secure data sharing to allow them to access this information.
+Let's go back to the stock price data story and assume we are the Account Administrator for Snowflake at a university. We have a trusted partner who wants to analyze the data in our `CYBERSYN_COMPANY_DATA` database on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. So let's use secure data sharing to allow them to access this information.
 
 Navigate to **Data** > **Private Sharing**, then at the top of the tab click **Shared by My Account**. Click the **Share** button in the top right corner and select **Create a Direct Share**:
 
 ![shares outbound button](assets/10Share_2.png)
 <!-- dash to update -->
 
-Click **+ Select Data** and navigate to the `COMPANY_DATA` database and `CYBERSYN` schema. Select the 2 tables we created in the schema and click the **Done** button:
+Click **+ Select Data** and navigate to the `CYBERSYN_COMPANY_DATA` database and `CYBERSYN` schema. Select the 2 tables we created in the schema and click the **Done** button:
 
 ![share fields](assets/10Share_3.png)
 <!-- dash to update -->
@@ -1179,9 +1187,7 @@ Snowflake provides several ways to securely share data without compromising conf
 
 Duration: 2
 
-If you would like to reset your environment by deleting all the objects created as part of this lab, run the SQL statements in a worksheet.
-
-First, ensure you are using the ACCOUNTADMIN role in the worksheet:
+If you would like to reset your environment by deleting all the objects created as part of this lab, ensure you are using the `ACCOUNTADMIN` role in the worksheet:
 
 ```SQL
 use role accountadmin;
@@ -1191,7 +1197,7 @@ Then, run the following SQL commands to drop all the objects we created in the l
 
 ```SQL
 drop share if exists zero_to_snowflake_shared_data;
--- If necessary, replace "zero_to_snowflake-shared_data" with the name you used for the share
+## If necessary, replace zero_to_snowflake-shared_data with share name you used
 
 drop database if exists company_data;
 
