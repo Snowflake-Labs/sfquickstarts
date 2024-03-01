@@ -388,3 +388,7 @@ The app showcases only a couple of permutations and combinations of ways to iden
 Reach out to snowflakemarketplace@nttdata.com if you would like all the permutation and combinations implemented for your organization.
 
 If you have any questions about any Fivetran connectors, please check out the Fivetran website - [website](https://www.fivetran.com/partners/technology/snowflake).
+
+### Additional resources
+
+- [Snowflake Native App Developer Toolkit](https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)

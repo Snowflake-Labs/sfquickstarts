@@ -580,6 +580,10 @@ Congratulations, you have now developed your first Snowflake Native Application!
 
 For a slightly more advanced Snowflake Native Application, see the following Quickstart: [Build a Snowflake Native App to Analyze Chairlift Sensor Data](https://quickstarts.snowflake.com/guide/native-app-chairlift/).
 
+### Additional resources
+
+- [Snowflake Native App Developer Toolkit](https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)
+
 ### What we've covered
 - Prepare data to be included in your application.
 - Create an application package that contains the data and business logic of your application.
