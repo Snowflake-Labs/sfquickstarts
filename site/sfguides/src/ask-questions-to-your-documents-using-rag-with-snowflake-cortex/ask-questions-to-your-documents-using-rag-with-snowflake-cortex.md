@@ -217,7 +217,7 @@ The insert statement is reading the records from the docs_stream stream and it i
 The **chunk** text is passed to Snowflake Cortex to generate the embeddings with this code:
 
 ```code
-            snowflake.ml.embed_text('e5-base-v2',chunk) as chunk_vec
+            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
 ````
 
 That code is calling the embed_text function using the e5-base-v2 trnasformer and returning an embedding vector.
@@ -520,7 +520,7 @@ create or replace task task_extract_chunk_vec_from_pdf
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.ml.embed_text('e5-base-v2',chunk) as chunk_vec
+            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
     from 
         docs_stream,
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path)))            as func;
