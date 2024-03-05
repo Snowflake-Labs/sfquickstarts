@@ -63,8 +63,12 @@ You will use [Snowsight](https://app.snowflake.com/), the Snowflake web interfac
 - Ingest data from S3
 
 ### Creating Objects, Loading Data, and Accessing Data
-Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+- Navigate to Worksheets
+
 <img src="assets/Worksheets.png"/>
+
+- click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+
 <img src="assets/NewWorksheet.png"/>
 
 Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema),
