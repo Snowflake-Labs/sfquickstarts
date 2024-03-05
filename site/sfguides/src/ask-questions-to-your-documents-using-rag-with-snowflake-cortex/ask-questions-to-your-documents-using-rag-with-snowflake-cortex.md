@@ -4,7 +4,7 @@ summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex an
 categories: featured,getting-started,data-science, gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
@@ -43,6 +43,7 @@ The final product includes an application that lets users test how the LLM respo
 
 ### Prerequisites
 - Snowflake account in a cloud region where Snowflake Cortex LLM functions are supported
+- Check [LLM availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_ga=2.5151286.405859672.1709568467-277021311.1701887324&_gac=1.124754680.1707955750.Cj0KCQiA5rGuBhCnARIsAN11vgRLWfK6RIoIEqcZ7cFas8qwN4yCoL0q9nttp5UEmSocnPmhdBG57fgaAjqNEALw_wcB&_fsi=j2b82Wl3#availability) to help you decide where you want to create your snowflake account
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 - Snowflake Cortex vector functions for semantic distance calculations along with VECTOR as a data type enabled.
 
@@ -140,7 +141,7 @@ class pdf_text_chunker:
         df = pd.DataFrame(chunks, columns=['chunks'])
         
         yield from df.itertuples(index=False, name=None)
-$$
+$$;
 ```
 
 **Step 5**. Create a Stage with Directory Table where you will be uploading your documents
@@ -203,11 +204,10 @@ insert into docs_chunks_table (relative_path, size, file_url,
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.ml.embed_text('e5-base-v2',chunk) as chunk_vec
+            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
     from 
-        docs_stream,
+        directory(@docs),
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
-
 ```
 
 ### Explanation of the previous code:
@@ -217,7 +217,7 @@ The insert statement is reading the records from the docs_stream stream and it i
 The **chunk** text is passed to Snowflake Cortex to generate the embeddings with this code:
 
 ```code
-            snowflake.ml.embed_text('e5-base-v2',chunk) as chunk_vec
+            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
 ````
 
 That code is calling the embed_text function using the e5-base-v2 trnasformer and returning an embedding vector.
@@ -287,19 +287,31 @@ session = get_active_session() # Get the current credentials
 def create_prompt (myquestion, rag):
 
     if rag == 1:    
+        createsql = f"""
+            create or replace table query_vec (qvec vector(float, 768))
+        """
+        session.sql(createsql).collect()
+
+        insertsql = f"""
+            insert into query_vec 
+              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
+        """
+
+        session.sql(insertsql).collect()
+
         cmd = f"""
         with results as
         (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(chunk_vec, 
-                    snowflake.ml.embed_text('e5-base-v2','{myquestion}')) as distance,
+           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
            chunk
-        from docs_chunks_table
+        from docs_chunks_table, query_vec
         order by distance desc
         limit 1)
-        select chunk, relative_path from results
-        
+        select chunk, relative_path from results 
         """
+
         df_context = session.sql(cmd).to_pandas()
+
         prompt_context = df_context._get_value(0,'CHUNK')
         prompt_context = prompt_context.replace("'", "")
         relative_path =  df_context._get_value(0,'RELATIVE_PATH')
@@ -332,7 +344,7 @@ def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.ml.complete(
+        select snowflake.cortex.complete(
             '{model_name}',
             {prompt})
             as response
@@ -359,7 +371,11 @@ for doc in docs_available:
 st.dataframe(list_docs)
 
 
-model = st.selectbox('Select your model:',('llama2-7b-chat','llama2-70b-chat'))
+model = st.selectbox('Select your model:',('mistral-7b',
+                                           'llama2-70b-chat',
+                                           'mixtral-8x7b',
+                                           'gemma-7b'))
+
 
 question = st.text_input("Enter question", placeholder="What is the warranty for the frame of the bike?", label_visibility="collapsed")
 
@@ -374,6 +390,7 @@ else:
 
 if question:
     display_response (question, model, use_rag)
+
 ```
 ### Explanation
 
@@ -381,20 +398,27 @@ Let´s go step by step what that code is doing:
 
 create_prompt() receives a question as an argument and whether it has to use the context documents or not. This can be used to compare how the LLM responds when using the RAG framework vs. using existing knowledge gained during pre-training. 
 
-When the box is checked, this code is going to look for the PDF chunk with the closest similarity to the question being asked. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
+When the box is checked, this code is going embed the question and look for the PDF chunk with the closest similarity to the question being asked. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
 
 ```python
-      with results as
+        insertsql = f"""
+            insert into query_vec 
+              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
+        """
+
+        session.sql(insertsql).collect()
+
+        cmd = f"""
+        with results as
         (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(chunk_vec, 
-                    snowflake.cortex.embed_text('e5-base-v2','{myquestion}')) as distance,
+           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
            chunk
-        from docs_chunks_table
+        from docs_chunks_table, query_vec
         order by distance desc
         limit 1)
-        select chunk, relative_path from results
-        
+        select chunk, relative_path from results 
         """
+
         df_context = session.sql(cmd).to_pandas()
 ``` 
 
@@ -496,7 +520,7 @@ create or replace task task_extract_chunk_vec_from_pdf
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.ml.embed_text('e5-base-v2',chunk) as chunk_vec
+            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
     from 
         docs_stream,
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path)))            as func;
@@ -505,6 +529,12 @@ alter task task_extract_chunk_vec_from_pdf resume;
 ```
 
 You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application.
+
+Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
+
+```SQL
+alter task task_extract_chunk_vec_from_pdf suspend;
+```
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
