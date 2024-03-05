@@ -4,7 +4,7 @@ summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex an
 categories: featured,getting-started,data-science, gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
@@ -193,6 +193,10 @@ create or replace TABLE DOCS_CHUNKS_TABLE (
     CHUNK_VEC VECTOR(FLOAT, 768) );  -- Embedding using the VECTOR data type
 ```
 
+```sql
+create or replace TABLE QUERY (VEC VECTOR(FLOAT, 768));
+```
+
 **Step 2**. Use the function previously created to process the PDF files, extract the chunks and created the embeddings. Insert that info in the table we have just created:
 
 ```SQL
@@ -205,9 +209,8 @@ insert into docs_chunks_table (relative_path, size, file_url,
             func.chunk as chunk,
             snowflake.ml.embed_text('e5-base-v2',chunk) as chunk_vec
     from 
-        docs_stream,
+        directory(@docs),
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
-
 ```
 
 ### Explanation of the previous code:
@@ -287,13 +290,17 @@ session = get_active_session() # Get the current credentials
 def create_prompt (myquestion, rag):
 
     if rag == 1:    
+
+        create_tr = f"""UPDATE query SET vec =
+            snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')"""            
+        session.sql(create_tr).collect()
+
         cmd = f"""
         with results as
         (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(chunk_vec, 
-                    snowflake.ml.embed_text('e5-base-v2','{myquestion}')) as distance,
+           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query.vec) as distance,
            chunk
-        from docs_chunks_table
+        from docs_chunks_table, query
         order by distance desc
         limit 1)
         select chunk, relative_path from results
@@ -332,7 +339,7 @@ def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.ml.complete(
+        select snowflake.cortex.complete(
             '{model_name}',
             {prompt})
             as response
@@ -359,7 +366,11 @@ for doc in docs_available:
 st.dataframe(list_docs)
 
 
-model = st.selectbox('Select your model:',('llama2-7b-chat','llama2-70b-chat'))
+model = st.selectbox('Select your model:',('mixtral-8x7b',
+                                           'mistral-7b',
+                                           'llama2-70b-chat',
+                                           'gemma-7b'))
+
 
 question = st.text_input("Enter question", placeholder="What is the warranty for the frame of the bike?", label_visibility="collapsed")
 
