@@ -40,7 +40,6 @@ To tackle scaling challenges, the implementation of Hybrid Tables within this li
 - [VSCode](https://code.visualstudio.com/download) Installed or any IDE of your preference 
 - [NodeJS](https://nodejs.org/en/download/) Installed
 - [Python](https://www.python.org/downloads/) Installed
-- [Serverless](https://www.serverless.com/) Installed
 
 ### What You’ll Build 
 - A React Native Data Applcation Leveraging Hybrid Tables
