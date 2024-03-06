@@ -1,24 +1,24 @@
 author: Gilberto Hernandez
-id: dora
-summary: In this guide, you'll set up DORA – Snowflake's Auto-Grader.
+id: snowflake-auto-grader
+summary: In this guide, you'll set up Snowflake's Auto-Grader.
 categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# How to Setup the Snowflake DORA Auto-Grader
+# How to Setup the Snowflake Auto-Grader
 <!-- ------------------------ -->
 ## Overview 
 Duration: 0
 
-In this guide, you'll learn how to setup DORA, Snowflake's auto-grader.
+In this guide, you'll learn how to setup Snowflake's auto-grader.
 
-DORA runs in your Snowflake account and can be used to check successful completion of tasks within a Snowflake account.
+The auto-grader runs in your Snowflake account and can be used to check successful completion of tasks within a Snowflake account.
 
 
 ### What You’ll Learn 
-- How to setup DORA
+- How to setup the auto-grader
 
 
 ### What You’ll Need 
@@ -50,7 +50,7 @@ If the integration was successfully created, you should see output similar to th
 
 | **name**             | **type**     | **category** | **enabled** | **comment** | **created_on**                |
 |----------------------|--------------|--------------|-------------|-------------|-------------------------------|
-| DORA_API_INTEGRATION | EXTERNAL_API | API          | true        |             | 2023-02-03 12:36:22.470 -0700 |
+| _API_INTEGRATION | EXTERNAL_API | API          | true        |             | 2023-02-03 12:36:22.470 -0700 |
 
 
 
@@ -74,7 +74,7 @@ create or replace external function util_db.public.grader(
  , expected integer    
  , description varchar) 
  returns variant 
- api_integration = dora_api_integration 
+ api_integration = _api_integration 
  context_headers = (current_timestamp,current_account, current_statement) 
  as 'https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/grader'  
 ;  
@@ -85,10 +85,10 @@ The `grader` function will be located in the `UTIL_DB.PUBLIC` schema in your acc
 ![refresh picker](./assets/picker-refresh.png)
 
 <!-- ------------------------ -->
-## Confirm that DORA is provisioned correctly
+## Confirm that the auto-grader is provisioned correctly
 Duration: 1
 
-To confirm that DORA is functioning as intended, open a new SQL worksheet and run the following code:
+To confirm that the auto-grader is functioning as intended, open a new SQL worksheet and run the following code:
 
 ```sql
 use role accountadmin;
@@ -103,13 +103,13 @@ select grader(step, (actual = expected), actual, expected, description) as grade
 );
 ```
 
-If DORA is correctly provisioned, you should see a **GRADED_RESULTS** column with several pieces of information, including a checkbox and a message `"description": "Dora is working!"`.
+If the auto-grader is correctly provisioned, you should see a **GRADED_RESULTS** column with several pieces of information, including a checkbox and a message `"description": "Dora is working!"`.
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-That's it! You should now have DORA correctly provisioned in your account. When grading Quickstarts, you'll need to invoke DORA via steps specific to that Quickstart. Be sure to follow any specific steps corresponding to the Quickstart.
+That's it! You should now have the auto-grader correctly provisioned in your account. When grading Quickstarts, you'll need to invoke the auto-grader via steps specific to that Quickstart. Be sure to follow any specific steps corresponding to the Quickstart.
 
 Resources:
 
-- [DORA Auto-Grader](https://learn.snowflake.com/news)
+- [Snowflake Auto-Grader](https://learn.snowflake.com/news)
