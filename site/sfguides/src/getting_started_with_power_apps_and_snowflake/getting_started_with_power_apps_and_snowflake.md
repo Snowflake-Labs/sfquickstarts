@@ -90,32 +90,43 @@ VALUES (1, 'Jimi Hendrix', 27),
 *for this quickstart we will use the ACCOUNTADMIN role to create the Snowflake environment, but in practice you will likely want to use another role when creating databases, tables and warehouses.
 
 <!-- ------------------------ -->
-## Create Security Integration in Snowflake
-Duration: 10
+## Set up Azure AD (Entra ID) authentication for Snowflake 
+Duration: 15
 
-Copy and paste the below security integration in a Snowflake worksheet. Everything will be left as is other than populating the tenant id for the external_oauth_issuer paramater. This will come from your Power Apps environment
-
+1.	In [Step 1: Configure the OAuth Resource in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#configure-the-oauth-resource-in-azure-ad), follow steps 1-10 and define the scope as SESSION:ROLE-ANY by following these [instructions](https://docs.snowflake.com/en/user-guide/oauth-azure#using-any-role-with-external-oauth).
+2.	In [Step 2: Create an OAuth Client in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#create-an-oauth-client-in-azure-ad), follow steps 1-13.
+3.	Navigate to Authentication -> Platform configurations -> Add a platform -> Add "https://global.consent.azure-apim.net/redirect" -> Click Save. Ensure that the redirect URL is set in the Snowflake OAuth Client and not the Snowflake OAuth Resource.
+4.	Go to the resource created in Step 1 and go to Expose an API -> Add a client application -> Add your APPLICATION_CLIENT_ID from earlier in step 3 above -> Click Save
+5.	Follow [Step 3: Collect Azure AD Information for Snowflake](https://docs.snowflake.com/en/user-guide/oauth-azure#collect-azure-ad-information-for-snowflake) entirely.
+6.	If you have already established a connection using the Snowflake certified connector, Update existing security integration in Snowflake.  
 ```sql
-create or replace security integration powerapps
-       type = external_oauth
-       enabled = true
-       external_oauth_type = azure 
-       external_oauth_issuer = 'https://sts.windows.net/<tenant id>/'     
-       external_oauth_jws_keys_url = 'https://login.windows.net/common/discovery/keys'
-       external_oauth_audience_list = ('https://analysis.windows.net/powerbi/connector/Snowflake','https://analysis.windows.net/powerbi/connector/snowflake')
-       external_oauth_token_user_mapping_claim = 'upn'
-       external_oauth_snowflake_user_mapping_attribute = 'login_name'
-       external_oauth_any_role_mode = 'ENABLE';
+ALTER SECURITY INTEGRATION <existing integration name>
+set external_oauth_audience_list = ('<existing power bi audience list url>', '< Application ID URI from Step 1>')
 ```
 
-To find your Power Apps tenant id you will go to your Power Apps environment, click the settings gear button in the top right, click "Session Details" then copy the "Tenant ID" value and paste it into the code from above where <tenant id> is tagged.
+If you are establishing a new connection Create new security integration in Snowflake by following the below steps. Make sure you've set your role as ACCOUNTADMIN before executing the query.
+a)	In Microsoft Azure, go to your Snowflake OAuth Resource app and click on Endpoints. 
 
-![](assets/tenant_id.png)
+b)	To get the AZURE_AD_ISSUER in line 5, copy the link in the Federation metadata document field and open the link in a new tab. Copy the entityID link which should something look like this: https://sts.windows.net/90288a9b-97df-4c6d-b025-95713f21cef9/. Paste it into the query and make sure you have a / before the last quotation mark and that you keep the quotation marks. 
 
-For this integration we are using 'login_name' as the mapping attribute. You will want go to your users and roles in the admin section of your Snowflake environment and make sure that there is exactly one user where the login name matches the username (likely an email address) in your Power Apps environment. It must match exactly and is case sensitive. The user must also have a default warehouse and a default role.
-![](assets/sf_user.png)
+c)	To get the Keys URL in line 6, copy the link in the OpenID Connect metadata document field and open the link in a new tab. Copy the jwks_uri which should look something like this: https://login.microsoftonline.com/90288a9b-97df-4c6d-b025-95713f21cef9/discovery/v2.0/keys. Paste it into the query and make sure you keep the quotation marks.
 
-This security integration is the same as setting up a Power BI integration [PowerBI](https://docs.snowflake.com/en/user-guide/oauth-powerbi#getting-started)
+d)	Replace the Audience List URL in line 7 with Application ID URI from Step 1. Keep the quotation marks.
+
+e)	If your Snowflake account uses the same email address as your Microsoft Azure account, then replace login_name in line 9 with email_address. If not, keep it as is and do not type in your login name. Keep the quotation marks.
+
+```sql
+CREATE SECURITY INTEGRATION <integration name>
+        type = external_oauth
+        enabled = true
+        external_oauth_type = azure
+        external_oauth_issuer = '<AZURE_AD_ISSUER>'     
+        external_oauth_jws_keys_url = '< https://login.windows.net/common/discovery/keys >'
+        external_oauth_audience_list = ('<Application ID URI from registered resource app in Azure>')
+        external_oauth_token_user_mapping_claim = 'upn'
+        external_oauth_snowflake_user_mapping_attribute = 'login_name'
+        external_oauth_any_role_mode = 'ENABLE';
+```
 
 <!-- ------------------------ -->
 ## Build Power Automate Flow
@@ -129,7 +140,18 @@ On the Power Automate screen click on the 'My Flow' menu item on the left then "
 
 ![](assets/new_flow.png)
 
-Now, it's time to build the connector! First click on "New Step" and the search bar search for "Snowflake" and select the "Submit SQL Statement for Executiuon" for each of the parameters in the Snowflake connector please populate as such:
+Now, it's time to build the connector! First click on "New Step" and the search bar search for "Snowflake" and select the "Submit SQL Statement for Execution" BUT first you will have to authenticate through the security integration establishing a connection to Snowflake:
+
+While creating the connection in power platform, use the credentials as shown in below snapshot.
+a)	Client Id: Snowflake OAuth Client ID from registered Client app in Azure
+b)	Client Secret: Snowflake OAuth Client secret from registered Client app in Azure
+c)	Resource URL: Application ID URI from registered Resource app in Azure
+
+![](assets/sf_auth.png)
+
+Once connected, you will populate the below information to query from Snowflake.
+
+for each of the parameters in the Snowflake connector please populate as such:
 ```bash
 Instance: <Snowflake host> (it should resemble: sn00111.central-us.azure.snowflakecomputing.com, do not include the "https://")
 statement: select name, age from rockers_table;
@@ -163,6 +185,8 @@ Click "save" in the top right corner then once saved click "test". Move through 
 - Similarly you may explore changing the external_oauth_snowflake_user_mapping_attribute value to "email_name" as that value in your user profile will match the email address in your Power Apps account. 
 - Make sure the you're getting the tenant id from your Power Apps account and not your Azure account as they don't always match.
 - If you're not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you're using an environment where the Snowflake connector is available.
+- When returning larger datasets from Snowflake (varies based on the length and width of the data, but typically more than several hundred rows of data) partitioning occurs and users will have to set up an "apply to each" flow in order to stitch the results together. This flow can be set up in a matter of minutes and will resemble the flow below.
+![](assets/applytoeach.jpg)
 
 
 <!-- ------------------------ -->
