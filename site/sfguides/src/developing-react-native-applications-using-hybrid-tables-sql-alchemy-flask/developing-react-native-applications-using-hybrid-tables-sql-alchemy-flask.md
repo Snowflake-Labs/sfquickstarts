@@ -317,7 +317,7 @@ For Tasty Bytes food truck drivers, quick access to past and current orders, alo
 6. Install the depenancies needed, ``` pip install -r requirements.txt ```
 7. Update the private key in the ``` API/config.py ``` file. Replace ``` PRIVATE_KEY ``` with the private key. Copy and paste the whole private key from ``` ~/.ssh/snowflake_app_key ``` including header(``` -----BEGIN RSA PRIVATE KEY----- ```) and footer(``` -----END RSA PRIVATE KEY----- ```).
 8. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account. If you are located outside the us-west region, Update ``` SNOWFLAKE_ACCOUNT ``` as ```SNOWFLAKE_ACCOUNT.REGION```. To get the snowflake_account value from Snowflake, run ``` SELECT CURRENT_ACCOUNT() ``` in Snowsight. To get the region value from Snowflake, run ``` SELECT CURRENT_REGION() ``` in Snowsight. 
-9. Start the local serverless server, ``` sls wsgi serve ```
+9. Start the local serverless server, ``` node ./node_modules/serverless/bin/serverless wsgi serve ```
 10. In a new Terminal Tab, Navigate to the UserInterface folder to set up the frontend React Native Application, ``` cd reactNativeAppWithHybridTables/UserInterface ```
 11. Run ``` npm install ``` to install dependancies
 12. run ```export NODE_OPTIONS=--openssl-legacy-provider```. This is required for the nide version we are using in the Application
