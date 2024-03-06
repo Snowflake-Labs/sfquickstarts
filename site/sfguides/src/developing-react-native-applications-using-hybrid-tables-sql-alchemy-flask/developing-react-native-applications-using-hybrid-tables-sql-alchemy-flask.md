@@ -320,7 +320,7 @@ For Tasty Bytes food truck drivers, quick access to past and current orders, alo
 9. Start the local serverless server, ``` node ./node_modules/serverless/bin/serverless wsgi serve ```
 10. In a new Terminal Tab, Navigate to the UserInterface folder to set up the frontend React Native Application, ``` cd reactNativeAppWithHybridTables/UserInterface ```
 11. Run ``` npm install ``` to install dependancies
-12. run ```export NODE_OPTIONS=--openssl-legacy-provider```. This is required for the nide version we are using in the Application
+12. Run ```export NODE_OPTIONS=--openssl-legacy-provider```. This is required for the nide version we are using in the Application
 13. Run ``` npx expo start --clear ``` and hit ``` w ``` key to run the app in a web browser
 14. This launches the app in Web Browser
 15. Upon Launch, You can see the InQueue Orders Screen.
