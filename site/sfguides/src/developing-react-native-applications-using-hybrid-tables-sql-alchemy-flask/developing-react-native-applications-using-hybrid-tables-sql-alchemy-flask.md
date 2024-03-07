@@ -319,15 +319,10 @@ For Tasty Bytes food truck drivers, quick access to past and current orders, alo
 8. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account. If you are located outside the us-west region, Update ``` SNOWFLAKE_ACCOUNT ``` as ```SNOWFLAKE_ACCOUNT.REGION```. To get the snowflake_account value from Snowflake, run ``` SELECT CURRENT_ACCOUNT() ``` in Snowsight. To get the region value from Snowflake, run ``` SELECT CURRENT_REGION() ``` in Snowsight. 
 9. Start the local serverless server, ``` node ./node_modules/serverless/bin/serverless wsgi serve ```
 10. In a new Terminal Tab, Navigate to the UserInterface folder to set up the frontend React Native Application, ``` cd reactNativeAppWithHybridTables/UserInterface ```
-11. [Install Node Version Manager (nvm)](https://github.com/nvm-sh/nvm#installing-and-updating)
-     - Not sure if you have it installed? Run `nvm` or `nvm -v` at the command line and hit enter. If you encounter a "command not found" error, you likely do not have it installed.
-12. Install Node v14 (required to run the site locally) using nvm: `nvm install 14`
-     - If you have Homebrew installed, run: `brew install node@14`
-13. Set the project to use Node v14 by running `nvm use 14`
-14. Run ``` npm install ``` to install dependancies
-15. Run ``` npx expo start --clear ``` and hit ``` w ``` key to run the app in a web browser
-16. This launches the app in Web Browser
-17. Upon Launch, You can see the InQueue Orders Screen.
+11. Run ``` npm install ``` to install dependancies
+12. Run ``` npx expo start --clear ``` and hit ``` w ``` key to run the app in a web browser. If you are encountering "Error: error:0308010C:digital envelope routines::unsupported", Run `export NODE_OPTIONS=--openssl-legacy-provider` 
+13. This launches the app in Web Browser
+14. Upon Launch, You can see the InQueue Orders Screen.
 
 ### Step 2: Review the Source Code
 We are using Key Pair Authentication to authenticate with Snowflake using SQL API. ```API/endpoints.py``` file has the API's we are using in the application. We are using SQLAlchemy to connect to the Snowflake. 
