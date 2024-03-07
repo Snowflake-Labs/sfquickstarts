@@ -18,7 +18,7 @@ In this quickstart you will build an architecture that demonstrates how to use A
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
+- Familiarity with [Snowflake](https://signup.snowflake.com/) and a Snowflake account
 - Familiarity with Azure and an Azure account, an ADF workspace, and an Azure SQL with Adventure works sample data
 
 ### You'll Learn
@@ -398,19 +398,20 @@ Once the trigger has activated and the pipeline is running, you can monitor the 
 ![](assets/Monitor.png)
 
 <!-- ------------------------ -->
-## Conclusion and Additional Considerations
+## Conclusion and Resources
 Duration: 5
 
-This Quickstart is just that, a quick way to get you started with ADF and Snowflake. You will want to consider the additional items below for enterprise-grade workloads:
-- [Official documentation](https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake?tabs=data-factory) for any updates on capabilities
-- [Documentation](https://learn.microsoft.com/en-us/azure/data-factory/connector-troubleshoot-snowflake) for troubleshooting common errors
-- [Blog](https://community.snowflake.com/s/article/How-to-set-up-a-managed-private-endpoint-from-Azure-Data-Factory-or-Synapse-to-Snowflake) about private managed endpoints with ADF
-- Options for [Key-Pair authentication](https://medium.com/snowflake/azure-data-factory-connecting-to-snowflake-using-keypair-authentication-906000506345)
+Congratulations! You've successfully set up a data pipeline ingesting data from Azure SQL to Snowflake, using CopyData, DataFlows, and Script activities. You now have bulk data ingestion occuring at a scheduled interval, and your AdventureWorks retail data is prepared for analytics, machine learning, and data applications.
 
-
-### What We Covered
+### What You Learned
 - How to deploy an Azure SQL with Adventure Works sample data
 - Set up an Azure Data Factory pipeline with linked services and datasets
 - Utilize Copy Data, Data Flow, and Script activities using both SQL and SnowPark Python within ADF
 
-If you have any questions, reach out to your Snowflake account team!
+### Related Resources
+
+This Quickstart is just that, a quick way to get you started with ADF and Snowflake. You will want to consider the additional items below for enterprise-grade workloads:
+- [Official Documentation](https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake?tabs=data-factory)
+- [Common Troubleshooting](https://learn.microsoft.com/en-us/azure/data-factory/connector-troubleshoot-snowflake)
+- [Using Private Endpoints](https://community.snowflake.com/s/article/How-to-set-up-a-managed-private-endpoint-from-Azure-Data-Factory-or-Synapse-to-Snowflake)
+- [Key-Pair authentication](https://medium.com/snowflake/azure-data-factory-connecting-to-snowflake-using-keypair-authentication-906000506345)
