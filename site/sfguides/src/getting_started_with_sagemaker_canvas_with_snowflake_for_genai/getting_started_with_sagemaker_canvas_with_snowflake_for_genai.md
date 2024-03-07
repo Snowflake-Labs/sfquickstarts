@@ -7,14 +7,14 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Generative AI, LLM, AWS, Sagemaker, Canvas, ML
 
-# Getting Started with Canvas and Snowflake for Generative AI Use Cases
+# Getting Started with Amazon Sagemaker Canvas and Snowflake for Generative AI Use Cases
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
 
 Amazon SageMaker is a fully managed machine learning service. With SageMaker, data scientists and developers can quickly and easily build and train machine learning models, and then directly deploy them into a production-ready hosted environment. It provides an integrated Jupyter authoring notebook instance for easy access to your data sources for exploration and analysis, so you don't have to manage servers. 
 
-SageMaker Canvas is a visual interface that simplifies the process of building, training, and deploying machine learning models. It allows users to construct and manage machine learning workflows through a drag-and-drop interface, making it easier to create and iterate on machine learning models without writing extensive code. 
+Amazon SageMaker Canvas is a visual interface that simplifies the process of building, training, and deploying machine learning models. It allows users to construct and manage machine learning workflows through a drag-and-drop interface, making it easier to create and iterate on machine learning models without writing extensive code. 
 
 Additionally, Canvas now has native integrations with AWS Generative AI services like Sagemaker Jumpstart and Bedrock. 
 

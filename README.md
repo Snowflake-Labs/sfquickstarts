@@ -1,6 +1,7 @@
 # Snowflake Quickstarts
 
-[![Demo](https://drive.google.com/uc?export=view&id=1wPgQExjdIONOtYruMKyeknvMvTDlVJEY)](https://drive.google.com/uc?export=view&id=1Dg3s5-KK-TzFZti63XButyDaTzcuZFxE)
+https://github.com/Snowflake-Labs/sfquickstarts/assets/2223194/a9f57881-ccf0-4549-89d6-d2fe2569012a
+
 
 ## What are Snowflake Quickstarts?
 Snowflake Quickstarts are interactive tutorials and self-serve demos written in markdown syntax. Quickstarts provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [quickstarts.snowflake.com](https://guides.snowflake.com/)
@@ -74,11 +75,14 @@ export PATH=$PATH:$HOME/go/bin
   4. Run the website again `npm run serve`
   5. As you edit and save changes, your changes will automatically load in the browser.
 
-You can always read the [sample Quickstart](site/sfguides/src/sample/sample.md) online.
+#### Template To Follow
 
-### Tips
+- For general guidance, read this [sample Quickstart](site/sfguides/src/sample/sample.md)
+- For structure, layout, sections, etc. use this [QuickStart](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#0) as a template to follow
 
-- Review the [sample.md](site/sfguides/src/sample/sample.md) file to learn more about how to structure your Quickstart for the claat tool. 
+#### Other Tips
+
+- Review the [sample.md](site/sfguides/src/sample/sample.md) file to learn more about how to structure your QuickStart for the claat tool. 
 - You can see the supported Quickstart categories [here](site/app/styles/_overrides.scss). If you want to suggest a new category please create a GitHub issue!
 - Checkout [how to use VS Code to write markdown files](https://code.visualstudio.com/docs/languages/markdown)
 - If you want to learn more about Quickstarts, check out this [excellent tutorial](https://medium.com/@zarinlo/publish-technical-tutorials-in-google-codelab-format-b07ef76972cd)
