@@ -93,6 +93,8 @@ VALUES (1, 'Jimi Hendrix', 27),
 ## Set up Azure AD (Entra ID) authentication for Snowflake 
 Duration: 15
 
+Now we need to set up an app registration for Active Directory (Entra ID) OAuth, which will establish trust between your power app and Azure AD. This allows you to define and manage permissions and ensures only authorized users to access your application.
+
 1.	In [Step 1: Configure the OAuth Resource in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#configure-the-oauth-resource-in-azure-ad), follow steps 1-10 and define the scope as SESSION:ROLE-ANY by following these [instructions](https://docs.snowflake.com/en/user-guide/oauth-azure#using-any-role-with-external-oauth).
 2.	In [Step 2: Create an OAuth Client in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#create-an-oauth-client-in-azure-ad), follow steps 1-13.
 3.	Navigate to Authentication -> Platform configurations -> Add a platform -> Add "https://global.consent.azure-apim.net/redirect" -> Click Save. Ensure that the redirect URL is set in the Snowflake OAuth Client and not the Snowflake OAuth Resource.
@@ -128,7 +130,14 @@ CREATE SECURITY INTEGRATION <integration name>
         external_oauth_any_role_mode = 'ENABLE';
 ```
 
+``sql
+### Update existing security integration in Snowflake
+ALTER SECURITY INTEGRATION <existing integration name>
+set external_oauth_audience_list = ('< Application ID URI from Step 1>');
+```
+
 <!-- ------------------------ -->
+
 ## Build Power Automate Flow
 Duration: 15
 
@@ -181,7 +190,7 @@ Click "save" in the top right corner then once saved click "test". Move through 
 ![](assets/run_flow.png)
 
 ### Things to look out for
-- If you're getting a username and password error make sure that you the forward slash at the end the external_oauth_issuer parameter value
+- If you're getting a username and password error make sure that you use the forward slash at the end the external_oauth_issuer parameter value
 - Similarly you may explore changing the external_oauth_snowflake_user_mapping_attribute value to "email_name" as that value in your user profile will match the email address in your Power Apps account. 
 - Make sure the you're getting the tenant id from your Power Apps account and not your Azure account as they don't always match.
 - If you're not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you're using an environment where the Snowflake connector is available.
