@@ -1,6 +1,7 @@
 # Snowflake Quickstarts
 
-[![Demo](https://drive.google.com/uc?export=view&id=1wPgQExjdIONOtYruMKyeknvMvTDlVJEY)](https://drive.google.com/uc?export=view&id=1Dg3s5-KK-TzFZti63XButyDaTzcuZFxE)
+https://github.com/Snowflake-Labs/sfquickstarts/assets/2223194/a9f57881-ccf0-4549-89d6-d2fe2569012a
+
 
 ## What are Snowflake Quickstarts?
 Snowflake Quickstarts are interactive tutorials and self-serve demos written in markdown syntax. Quickstarts provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [quickstarts.snowflake.com](https://guides.snowflake.com/)
