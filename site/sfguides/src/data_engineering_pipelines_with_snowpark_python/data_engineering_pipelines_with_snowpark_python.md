@@ -25,7 +25,7 @@ So buckle up and get ready!
 
 > aside negative
 > 
-> **Note** - As of 2/10/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
+> **Note** - As of 3/7/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 
 ### Prerequisites
@@ -166,15 +166,12 @@ In this step you will be running the Snowpark Python code locally from your lapt
 # For local debugging
 if __name__ == "__main__":
     # Create a local Snowpark session
-    session = Session.builder.getOrCreate()
-
-    load_all_raw_tables(session)
-#    validate_raw_tables(session)
-
-    session.close()
+    with Session.builder.getOrCreate() as session:
+        load_all_raw_tables(session)
+#        validate_raw_tables(session)
 ```
 
-A few things to point out here. First, the Snowpark session is being created with the `session = Session.builder.getOrCreate()` statement. And the connection details used by the Snowpark library are pulled from the standard `~/.snowflake/connections.toml` configuration file (which you configured in step 2).
+A few things to point out here. First, the Snowpark session is being created with the `Session.builder.getOrCreate()` statement. And the connection details used by the Snowpark library are pulled from the standard `~/.snowflake/connections.toml` configuration file (which you configured in step 2).
 
 Then after getting the Snowpark session it calls the `load_all_raw_tables(session)` method which does the heavy lifting. The next few sections will point out the key parts.
 
@@ -388,7 +385,7 @@ This also allows you to develop and test your Python application without having 
 
 > aside negative
 > 
-> **Note** -  As of 2/10/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
+> **Note** -  As of 3/7/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 ### More on Snowpark Python UDFs
 In this step we deployed a very simple Python UDF to Snowflake. In a future step will update it to use a third-party package. And because we deployed it to Snowflake with the SnowCLI command you didn't have to worry about the SQL DDL Syntax to create the object in Snowflake. But for reference please check out our [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html) developer guide.
@@ -396,11 +393,11 @@ In this step we deployed a very simple Python UDF to Snowflake. In a future step
 Here is the SQL query that the SnowCLI tool generated to deploy the function:
 
 ```sql
-create or replace function fahrenheit_to_celsius_udf(temp_f float)
+create or replace function HOL_DB.ANALYTICS.FAHRENHEIT_TO_CELSIUS_UDF(temp_f float)
 returns float
 language python
 runtime_version=3.10
-imports=('@external.dev_deployment/hol/fahrenheit_to_celsius_udf.zip')
+imports=('@HOL_DB.ANALYTICS.DEPLOYMENT/hol/fahrenheit_to_celsius_udf.zip')
 handler='function.main'
 packages=('snowflake-snowpark-python')
 ```
@@ -445,7 +442,7 @@ CALL ORDERS_UPDATE_SP();
 And with the SnowCLI utility you can also invoke the UDF from the terminal in VS Code as follows:
 
 ```bash
-snow snowpark execute procedure "orders_update_sp()"
+snow snowpark execute procedure "harmonized.orders_update_sp()"
 ```
 
 That will result in the SnowCLI tool generating the SQL query above and running it against your Snowflake account.
@@ -456,11 +453,11 @@ In this step we deployed a Python sproc to Snowflake. And because we deployed it
 Here is the SQL query that the SnowCLI tool generated to deploy the procedure:
 
 ```sql
-create or replace procedure orders_update_sp()
+create or replace procedure HOL_DB.HARMONIZED.ORDERS_UPDATE_SP()
 returns string
 language python
 runtime_version=3.10
-imports=('@external.dev_deployment/hol/orders_update_sp.zip')
+imports=('@HOL_DB.HARMONIZED.DEPLOYMENT/hol/orders_update_sp.zip')
 handler='procedure.main'
 packages=('snowflake-snowpark-python')
 ```
