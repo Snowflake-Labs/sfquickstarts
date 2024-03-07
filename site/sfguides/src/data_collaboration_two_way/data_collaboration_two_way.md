@@ -149,15 +149,15 @@ Next we set up our [External Stage](https://docs.snowflake.com/en/user-guide/dat
 
 ```SQL
 CREATE OR REPLACE STAGE quickstart_cc_default_training_data
-    URL = 'insert public url here/train'
+    URL = 's3://sfquickstarts/two_way_data_share/train/'
     FILE_FORMAT = parquet_format;
 
 CREATE OR REPLACE STAGE quickstart_cc_default_unscored_data
-    URL = 'insert public url here/test'
+    URL = 's3://sfquickstarts/two_way_data_share/unscored/'
     FILE_FORMAT = parquet_format;
 
 CREATE OR REPLACE STAGE quickstart_cc_default_new_data
-  URL = 's3://.../new_data/'
+  URL = 's3://sfquickstarts/two_way_data_share/new_data/'
   FILE_FORMAT = parquet_format;
 ```
 
@@ -310,7 +310,7 @@ We will train our model in the next step. We stay in this account.
 ## Consumer Account (Zamboni) - Create Model
 Duration: 45
 
-For this section, make sure you download the corresponding git repo (INSERT LINK) so you have the files referenced in this section.
+For this section, make sure you download the corresponding git repo (https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration) so you have the files referenced in this section.
 
 ### Set Up Snowpark for Python and Snowpark ML
 
