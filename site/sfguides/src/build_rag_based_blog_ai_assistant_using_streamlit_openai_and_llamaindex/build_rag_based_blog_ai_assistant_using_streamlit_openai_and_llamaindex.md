@@ -1,9 +1,9 @@
 author: Vino Duraisamy
 id: build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex
 summary: This guide will provide step-by-step details for building an LLM chatbot that answers questions based on Snowflake Quickstart Blogs
-categories: data-science-&-ml,app-development
+categories: data-science-&-ml,app-development, marketing
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, LLMs, Generative AI, Streamlit, ChatBot, OpenAI
 
