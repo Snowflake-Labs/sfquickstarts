@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering 
 
 # Two Way Data Collaboration
 <!-- ------------------------ -->
@@ -20,7 +20,7 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    **Download the git repo here: insert repo**
+    **Download the git repo here: https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration**
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.10](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.10 in the **Consumer Account - Create Model** step
