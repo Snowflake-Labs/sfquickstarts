@@ -2,7 +2,7 @@ summary: This guide provides the instructions for writing an LLM chatbot in Stre
 id: frosty_llm_chatbot_on_streamlit_snowflake
 categories: data-science-&-ml,app-development
 environments: web
-status: Publish
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowpark Python, Streamlit, OpenAI, LLMs
 authors: Joshua Carroll, Richard Meng, Caroline Frasca
