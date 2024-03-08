@@ -295,6 +295,8 @@ Type in a name for the `Firehose stream name`.
 
 ![](assets/kdf-stream-1.png)
 
+Skip `Transform records` setup.
+
 For `Snowflake account URL`, run this SQL command in your Snowflake account to obtain the value:
 ```
 with PL as
