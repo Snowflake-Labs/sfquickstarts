@@ -72,10 +72,6 @@
       "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
       "type": 301
     }  
-    ],
-    "rewrites": [ {
-      "source": "**",
-      "destination": "https://data-cloud-summit-countdown.streamlit.app/"
-    } ]
+    ]
   }
 }
