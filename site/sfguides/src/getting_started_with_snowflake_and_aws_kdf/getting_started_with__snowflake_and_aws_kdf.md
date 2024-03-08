@@ -291,7 +291,7 @@ In the `Source` section, select `Direct PUT` from the drop-down menu.
 
 In the `Destination` section, select `Snowflake` from the drop-down menu.
 
-Type in a name for the delivery stream.
+Type in a name for the `Firehose stream name`.
 
 ![](assets/kdf-stream-1.png)
 
