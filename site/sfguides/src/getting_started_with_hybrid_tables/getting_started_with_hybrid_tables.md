@@ -47,7 +47,7 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 - Familiarity with the Snowflake Snowsight interface
 - Familiarity with SQL
-- Snowflake non-trail account with Hybrid Tables enabled
+- Snowflake non-trial account with Hybrid Tables enabled
 - Account admin credentials which you should use to execute the quickstart
 
 

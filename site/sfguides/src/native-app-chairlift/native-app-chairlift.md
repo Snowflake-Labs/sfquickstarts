@@ -720,6 +720,7 @@ Congratulations! In just a few minutes, you built a Snowflake Native App that al
 
 ### Related Resources
 
+- [Snowflake Native App Developer Toolkit](https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)
 - [Official Native App documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Tutorial: Developing an Application with the Native Apps Framework](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial)
 - [Snowflake Demos](https://developers.snowflake.com/demos)
