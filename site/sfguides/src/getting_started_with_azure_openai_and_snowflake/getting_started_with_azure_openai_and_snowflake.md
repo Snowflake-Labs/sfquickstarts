@@ -3,7 +3,7 @@ id: getting_started_with_azure_openai_and_snowflake
 summary: This is a quickstart for using Snowflake with Azure OpenAI and AzureML
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, LLM, GenAI, Azure, OpenAI, Marketplace, Snowpark
 

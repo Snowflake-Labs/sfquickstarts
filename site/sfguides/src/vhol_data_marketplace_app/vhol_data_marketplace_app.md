@@ -3,7 +3,7 @@ id: vhol_data_marketplace_app
 summary: This is a sample Snowflake Guide
 categories: app-development, marketing
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
