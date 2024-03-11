@@ -462,7 +462,7 @@ Currently, it is possible to customize the behavior of the application in 2 ways
 - overwriting internal sql procedures
 - using builders to overwrite whole `Handlers` with custom implementations of the underlying interfaces
 
-More information on those topics will be covered in the documentation.
+More information on those topics will be covered in the [Snowflake Native SDK for Connectors documentation](https://docs.snowflake.com/en/LIMITEDACCESS/connector-sdk/index).
 
 ## Cleanup
 Duration: 2
