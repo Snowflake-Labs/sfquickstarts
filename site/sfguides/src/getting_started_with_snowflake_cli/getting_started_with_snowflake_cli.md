@@ -1,5 +1,6 @@
+author: Tomasz Urbaszek, Gilberto Hernandez
 summary: Getting Started with Snowflake CLI
-id:getting_started_with_snowflake_cli
+id:getting-started-with-snowflake-cli
 categories: getting-started
 environments: web
 status: Draft 
@@ -11,25 +12,25 @@ tags: Getting Started, SQL, Data Engineering, SnowSQL
 ## Overview 
 Duration: 2
 
-Snowflake CLI is a command line tool designed for developers building apps on Snowflake. Using Snowflake CLI, you can 
-manage Native Applications, Snowpark functions and procedures as well as Snowpark containers. This guide will show you
+Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage Snowflake Native Applications, Snowpark functions, stored procedures, and Snowpark Container Services. This guide will show you
 how to configure and efficiently use Snowflake CLI.
  
 
 ### Prerequisites
-- Quick Video [Introduction to Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc.)
-- Snowflake [Data Loading Basics](https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc.) Video
+- [Video: Introduction to Snowflake](https://www.youtube.com/watch?v=gGPKYGN0VQM)
+- [Video: Snowflake Data Loading Basics](https://youtu.be/htLsbrJDUqk?si=vfTjL6JaCdEFdiSG)
 - Python 3.8 or later installed on your machine
-- Basic knowledge of Snowflake concepts and management
+- Basic knowledge of Snowflake concepts
+- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/).
 
 ### What You’ll Learn
-- How to install Snowflake CLI locally
-- How to configure Snowflake CLI locally
+- How to install Snowflake CLI
+- How to configure Snowflake CLI
 - How to switch between different connections
 - How to download and upload files using Snowflake CLI
 - How to execute SQL using Snowflake CLI
 
-Be sure to check the needed computing requirements before beginning.
+Ensure your development environment meets the following requirements before proceeding:
 
 [//]: # (### What You’ll Need )
 
@@ -42,54 +43,87 @@ Be sure to check the needed computing requirements before beginning.
 [//]: # (- A connection to cloud host and manage data with SnowSQL.)
 
 <!-- ------------------------ -->
-## Set up Snowflake CLI
+## Install Snowflake CLI
 Duration: 6
-First, you’ll install the Snowflake CLI and later on you will configure it to connect to your Snowflake account.
+First, you’ll install the Snowflake CLI, and later you'll configure it to connect to your Snowflake account.
 
 ### Create a Snowflake Account
 
-Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/).
+You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/).
 
-### Access Snowflake’s Web Console
+### Access Snowflake’s Web Interface
 
-``https://<account-name>.snowflakecomputing.com/console/login``
-    
-Log in to the web interface on your browser. The URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region.
+Navigate to [https://app.snowflake.com/](https://app.snowflake.com/) and log into your Snowflake account.
 
 
 ### Install the Snowflake CLI 
 
-Snowflake CLI can be downloaded and installed on Linux, Windows, or Mac. In this example, we’ll install it using [pip](LINK).
+Snowflake CLI can be installed on Linux, Windows, or Mac. To install it, run the following command in a terminal:
 
 ```console
 pip install snowflake-cli-labs
 ```
 
-Once the pip installer finished with success run
+Once it's been successfully installed, run the following command to verify that it was successfully installed:
 
-```console
+```bash
 snow --help
 ```
 
-If this work it means that the Snowflake CLI was installed successfully.
+If Snowflake CLI was installed successfully, you should see output similar to the following:
+
+```basb
+Usage: snow [OPTIONS] COMMAND [ARGS]...                                                        
+                                                                                                
+ Snowflake CLI tool for developers.                                                             
+                                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────╮
+│ --version                    Shows version of the Snowflake CLI                              │
+│ --info                       Shows information about the Snowflake CLI                       │
+│ --config-file          FILE  Specifies Snowflake CLI configuration file that should be used  │
+│                              [default: None]                                                 │
+│ --help         -h            Show this message and exit.                                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────╮
+│ app         Manages a Snowflake Native App                                                   │
+│ connection  Manages connections to Snowflake.                                                │
+│ object      Manages Snowflake objects like warehouses and stages                             │
+│ snowpark    Manages procedures and functions.                                                │
+│ spcs        Manages Snowpark Container Services compute pools, services, image registries,   │
+│             and image repositories.                                                          │
+│ sql         Executes Snowflake query.                                                        │
+│ streamlit   Manages Streamlit in Snowflake.                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+You may encounter an error like the following:
+
+```bash
+╭─ Error ──────────────────────────────────────────────────────────────────────────────────────╮
+│ Configuration file /Users/yourusername/.snowflake/config.toml has too wide permissions, run    │
+│ `chmod 0600 "/Users/yourusername/.snowflake/config.toml"`                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+In this case, run `chmod 0600 "/Users/yourusername/.snowflake/config.toml"` in the terminal to update the permissions on the file. After running this command, run `snow --help` again. You should see the output shown earlier in this section.
 
 ### Configure connection to Snowflake
 
-Snowflake CLI uses `config.toml` file for storing connections (LINK TO DOCS). This file is created automatically when
+Snowflake CLI uses a [configuration file named **config.toml** for storing your Snowflake connections](placeholder) . This file is created automatically when
 you run Snowflake CLI for the first time.
 
-You can add the connection either manually or by using Snowflake CLI. For purpose of this tutorial you will add 
-the connection using dedicated command.
+You can add your connection details within **config.toml** either manually or by using Snowflake CLI. Let's add a connection using Snowflake CLI.
 
-To add a new connection run
+To add a new connection, run the following:
 
 ```bash
 snow connection add
 ```
 
-The command will guide you through connection creation process. You can omit all fields where [optional] is present.
+The command will guide you through defining a connection. You can omit all fields denoted by `[optional]` by pressing "Enter" or "return" on your keyboard.
 
-For example:
+Here's an example:
+
 ```console
 Name for this connection: my_connection
 Snowflake account name: my_account
@@ -109,39 +143,40 @@ For more detailed information about configuring connections see DOCS LINK.
 
 ### Test connection to Snowflake
 
-To tests connection to Snowflake run
+To test a connection to Snowflake, run the following command
+
 ```bash
 snow connection tests --connection my_connection
 ```
 
-If your connection has different name than `my_connection` you will have to change it in the above command.
+In the example above, we use `my_connection` as the connection name, as it corresponds to the prior example connection. To test your connection, replace `my_connection` with the name of the connection you defined during the connection definition process.
 
 <!-- ------------------------ -->
 ## Working with connections
 
-Connections are crucial to Snowflake CLI. In the next steps you will learn how to efficiently work with them. 
+Connections are crucial to using Snowflake CLI. In the next step, you'll learn how to efficiently work with connections.
 
 ### Default connection
 
-Snowflake CLI has a concept of default connection. As the name suggest this is a connection that will be use when
-you do not specify connection using `-c/--connection` flag.
+You can define a default Snowflake connection by adding the following at the top of **config.toml**:
 
-To configure a default connection you can add `default_connection_name = "my_connection"` to the top of your
-`config.toml`.
-
-However, it's more convenient to use a dedicated command to do so:
-```bash
-snow connection set-default <connection name>
+```toml
+default_connection_name = "my_connection"
 ```
 
-Running `set-default` command will update your `config.toml` file. You can use this command when you work on multiple
-connections (for example using different roles or warehouses).
+This is the connection that will be used by default if you do not specify a connection name when using the `-c` or `--connection` flag with Snowflake CLI.
+
+You can also set a default connection directly from the terminal:
+
+```bash
+snow connection set-default <connection-name>
+```
+
+Running `set-default` will update your `config.toml` file to use the specified connection as the default connection. This command is incredibly convenient if you work across multiple Snowflake accounts.
 
 ### Using multiple connections
 
-By default, the Snowflake CLI commands operate within context of specified connection. Mandatory configuration of connection
-includes only `user` and `account` information. However, many cli operations may require active `database`, `schema` or 
-`warehouse`. In many cases adding those fields to your connections may be the best option:
+By default, Snowflake CLI commands operate within context of a specified connection. The only required fields in a named connection in **config.toml** are `user` and `account`, however, many Snowflake CLI commands require `database`, `schema`, or `warehouse` to be set in order for a command to be successful. For this reason, it's convenient to set these fields in your named connections:
 
 ```toml
 [connections.my_connection]
@@ -151,9 +186,9 @@ database = "jdoe_db"
 warehouse = "xs"
 ```
 
-This is especially recommend if you usually work with particular context (single database, dedicated warehouse or role).
-If you need to often switch the context (for example using different roles) it is good to consider having multiple connections
-reflecting those contexts. For example:
+This is especially recommended if you usually work with a particular context (i.e., a single database, dedicated warehouse, or role).
+
+If you switch your Snowflake context often(for example, when using different roles), it's good practice to define several connections that each correspond to a specific context, like so:
 
 ```toml
 [connections.admin_connection]
@@ -161,26 +196,25 @@ user = "jdoe"
 account = "my_account"
 role = "accountadmin"
 
-
 [connections.eng_connection]
 user = "jdoe"
 account = "my_account"
 role = "eng_ops_rl"
 ```
 
-In such case switching between multiple connection can be easily done by using `snow connection set-default` command
-that you used in previous steps.
+In such cases, switching between multiple connections can be easily done by using the `snow connection set-default` command shown previously.
 
 ### Overriding connection details
 
-There is a plenty of use-cases where you may want to override a connection details without editing `config.toml`. This
-can be achieved in two ways:
-1. Using connection flags in cli commands
+There are plenty of use cases where you may want to override connection details without editing **config.toml**. You can do this in one of the following ways:
+
+1. Using connection flags in CLI commands
 2. Using environment variables
 
-#### Using cli flags
+#### Using CLI flags
 
-All commands that require to establish a connection to Snowflake support the following flags:
+All commands that require an established connection to Snowflake support the following flags:
+
 ```console
 ╭─ Connection configuration ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ --connection,--environment  -c      TEXT  Name of the connection, as defined in your `config.toml`. Default: `default`.                                                                                 │
@@ -198,27 +232,28 @@ All commands that require to establish a connection to Snowflake support the fol
 ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-In the future you can access this list by running any command with `--help`.
+You can access this list by running any Snowflake CLI command with `--help`.
 
-Specifying a connection detail using cli flag always take precedence over any other source. 
+Specifying a connection detail using cli flag always take precedence over any other source. (?)
 
 #### Using environment variables
 
-Other option to override connection details is to use environment variables. Snowflake recommends using this option
-for password or any other sensitive information, especially if you use Snowflake CLI on external systems like CI/CD pipelines.
+Another option for overriding connection details is to use environment variables. This option is recommended for passwords or any other sensitive information, especially if you use Snowflake CLI with external systems (e.g., CI/CD pipelines, etc.)
 
-For every connection detail there are two flags:
-1. Generic flag in form of `SNOWFLAKE_[KEY]`
-2. Connection specific flag in form of `SNOWFLAKE_CONNECTIONS_[CONNECTION_NAME]_[KEY]`
+For every connection field, there are two flags:
 
-Connection specific flags take precedence over generic flags.
+1. A generic flag in form of `SNOWFLAKE_[KEY]`
 
-To test it out you can test connection with role that don't exist, for example:
+2. A connection-specific flag in form of `SNOWFLAKE_CONNECTIONS_[CONNECTION_NAME]_[KEY]`
+
+Connection specific flags take precedence over generic flags. Let's take a look at an example, where we test a connection with a role that doesn't exist in that Snowflake environment:
+
 ```bash
 SNOWFLAKE_ROLE=funny_role snow connection test
 ```
 
-If the role don't exist you should see error similar to this one
+If the role does not exist, you should see error similar the one below:
+
 ```console
 ╭─ Error ───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Invalid connection configuration. 250001 (08001): None: Failed to connect to DB: myacc.snowflakecomputing.com:443.    │
@@ -229,15 +264,16 @@ If the role don't exist you should see error similar to this one
 
 ### Using temporary connection
 
-There can be situations where you may want to use Snowflake CLI without adding new connection to configuration file.
-This is possible by using `-x/--temporary-connection` flag that requires you to specify connection details on the fly.
+In situations where you are unable to add a new connection to **config.toml**, you may specify a temporary connection directly from the command line using the `-x` or `--temporary-connection` flags. These flags allow you to specify connection details inline, like so:
 
-You can test it by replacing the values between < > braces and running the following command:
+
 ```bash
-snow sql -q "select 1" -x --account=<account_name> --user=<user_name> --password=<your_password>
+snow sql -q "SELECT r_value FROM my_table LIMIT 10" -x --account=<account_name> --user=<user_name> --password=<your_password>
 ```
 
-**Note:** If your account does not allow password authentication use proper authenticator using `--authenticator`.
+In the example above, we establish a temporary connection to Snowflake and execute the `SELECT r_value FROM my_table LIMIT 10` SQL statement.
+
+**Note:** If your account does not allow password authentication, use proper authentication using `--authenticator`.
 
 ## Using Snowflake CLI to execute SQL commands
 
