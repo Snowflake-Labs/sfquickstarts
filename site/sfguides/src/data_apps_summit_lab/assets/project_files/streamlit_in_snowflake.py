@@ -32,7 +32,7 @@ print(session.sql('select current_account(), current_warehouse(), current_databa
 #US Inflation, Personal consumption expenditures (PCE) per year
 #Prepare data frame, set query parameters
 snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
-           .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+           .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100')
            .filter(col('DATE') >= '1972-01-01')
            .filter(month(col('DATE')) == 1))
 #Select columns, subtract 100 from value column to reference baseline
@@ -63,7 +63,7 @@ pd_df_pce_all = (
 
 #Data per quarter
 snow_df_pce_q = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
-                 .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+                 .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100')
                  .filter(month(col('DATE')).in_(lit(1), lit(4), lit(7), lit(10)))
                  .select(year(col('DATE')).alias('"Year"'), 
                          call_builtin("date_part", 'quarter', col('DATE')).alias('"Quarter"'),
@@ -73,7 +73,7 @@ snow_df_pce_q = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN
 # Add header and a subheader
 st.title("Cybersyn: Financial & Economic Essentials")
 st.header("Powered by Snowpark for Python and Snowflake Marketplace | Made with Streamlit")
-st.subheader("Personal consumption expenditures (PCE) over the last 25 years, baseline is 2012")
+st.subheader("Personal consumption expenditures (PCE) over the last 25 years, baseline is 2017")
 with st.expander("What is the Personal Consumption Expenditures Price Index?"):
     st.write("""
      The prices you pay for goods and services change all the time – moving at different rates and even in different directions. Some prices may drop while others are going up. A price index is a way of looking beyond individual price tags to measure overall inflation (or deflation) for a group of goods and services over time.
