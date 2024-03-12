@@ -1,7 +1,7 @@
 author: Parag Jain
 id: getting_started_with_dynamic_tables
 summary: Getting Started with Snowflake Dynamic Tables
-categories: Getting-Started
+categories: Getting-Started, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ summary: This lab will walk you through how to apply a data-centric approach to 
 id: vhol_snowflake_data_wrangler
 categories: data-science-&-ml,partner-integrations
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SageMaker, Data Wrangler, Feature Engineering, Data Marketplace, Machine Learning, Financial Services, Storage Integration
 authors: andries.engelbrecht@snowflake.com
