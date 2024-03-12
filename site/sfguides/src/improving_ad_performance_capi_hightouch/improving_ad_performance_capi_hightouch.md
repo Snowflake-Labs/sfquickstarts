@@ -131,11 +131,9 @@ your data using either a SQL editor, table selector, or your existing dbt models
 4. Input a query that joins your events table onto your customer table.
 
 ```sql
-SELECT 
-  * 
-FROM 
-  public.customers c 
-  JOIN public.events e ON c.customer_id = e.customer_id
+SELECT *
+FROM public.events e
+LEFT JOIN public.customer c ON e.customer_id = c.customer_id
 ```
 
 *Note: each row should be a unique event with a unique event ID and timestamp (within the last 7 days). You can additionally include any of the server event parameters or custom data parameters below. The more customer information you're able to provide, the higher the likelihood that Facebook will match events to the correct user profiles.*

@@ -291,9 +291,11 @@ In the `Source` section, select `Direct PUT` from the drop-down menu.
 
 In the `Destination` section, select `Snowflake` from the drop-down menu.
 
-Type in a name for the delivery stream.
+Type in a name for the `Firehose stream name`.
 
 ![](assets/kdf-stream-1.png)
+
+Skip `Transform records` setup.
 
 For `Snowflake account URL`, run this SQL command in your Snowflake account to obtain the value:
 ```
@@ -424,7 +426,7 @@ create or replace view flights_vw
 FROM adf_streaming_tbl;
 ```
 
-The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools such as Grafana.
+The SQL command creates a view, converts timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools such as Grafana.
 You can also easily calculate the distance in miles between two geo locations. In above example, the `st_distance` function is used to calculate the distance between an airplane and San Francisco Airport.
 
 Let's query the view `flights_vw` now.
@@ -436,7 +438,7 @@ As a result, you will see a nicely structured output with columns derived from t
 ![](assets/flight_view.png)
 
 <!---------------------------->
-## Conclusions
+## Conclusion
 Duration: 5
 
 In this lab, we built a demo to show how to ingest real-time data using Amazon Data Firehose with low latency. We demonstrated this using an ADF
