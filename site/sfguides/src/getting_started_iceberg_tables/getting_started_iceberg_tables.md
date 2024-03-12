@@ -61,6 +61,8 @@ dependencies:
   - jupyter=1.0.0
   - pyspark=3.5.0
   - openjdk=11.0.13
+  - python=3.11.6
+  - python-dotenv
 ```
 
 To create the environment needed, run the following in your shell.
