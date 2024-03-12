@@ -74,7 +74,7 @@ create or replace external function util_db.public.grader(
  , expected integer    
  , description varchar) 
  returns variant 
- api_integration = _api_integration 
+ api_integration = dora_api_integration 
  context_headers = (current_timestamp,current_account, current_statement) 
  as 'https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/grader'  
 ;  
