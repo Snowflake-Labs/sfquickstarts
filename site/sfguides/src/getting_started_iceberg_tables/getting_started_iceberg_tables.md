@@ -62,7 +62,6 @@ dependencies:
   - pyspark=3.5.0
   - openjdk=11.0.13
   - python=3.11.6
-  - python-dotenv
 ```
 
 To create the environment needed, run the following in your shell.
