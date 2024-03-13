@@ -14,7 +14,7 @@ Duration: 2
 
 Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage Snowflake Native Applications, Snowpark functions, stored procedures, and Snowpark Container Services. This guide will show you
 how to configure and efficiently use Snowflake CLI.
- 
+
 
 ### Prerequisites
 - [Video: Introduction to Snowflake](https://www.youtube.com/watch?v=gGPKYGN0VQM)
@@ -72,7 +72,7 @@ snow --help
 
 If Snowflake CLI was installed successfully, you should see output similar to the following:
 
-```basb
+```bash
 Usage: snow [OPTIONS] COMMAND [ARGS]...                                                        
                                                                                                 
  Snowflake CLI tool for developers.                                                             
@@ -98,7 +98,7 @@ Usage: snow [OPTIONS] COMMAND [ARGS]...
 
 You may encounter an error like the following:
 
-```bash
+```console
 ╭─ Error ──────────────────────────────────────────────────────────────────────────────────────╮
 │ Configuration file /Users/yourusername/.snowflake/config.toml has too wide permissions, run    │
 │ `chmod 0600 "/Users/yourusername/.snowflake/config.toml"`                                      │
@@ -440,11 +440,26 @@ To check for list of supported objects run `snow object list --help`.
 
 ### Describing objects
 
-TODO
+Snowflake CLI allows you to describe existing objects of given type. In this example we will use database as the type.
+
+By running the following command you will get details of the database we created in previous steps:
+```bash
+snow object describe database snowflake_cli_test
+```
+
+To check for list of supported objects run `snow object describe --help`.
+
 
 ### Dropping objects
 
-TODO
+Snowflake CLI allows you to drop existing objects of given type. In this example we will use database as the type.
+
+By running the following command you will drop the database we created in previous steps:
+```bash
+snow object drop database snowflake_cli_test
+```
+
+To check for list of supported objects run `snow object drop --help`.
 
 ## Using Snowflake CLI to work with stages
 
@@ -554,15 +569,173 @@ In result, you should see message like this one:
 +--------------------------------+
 ```
 
+## Building applications using Snowflake CLI
 
+In next steps you will learn how to use Snowflake CLI to bootstrap and develop Snowpark and Streamlit apps. 
 
+## Working with Snowpark applications
 
+First you will learn how Snowflake CLI can support development of Snowpark applications with multiple functions 
+and procedures.
+
+### Initializing Snowpark project
+
+First you can use Snowflake CLI to initialize example Snowpark project. To do so run the following command
+```bash
+snow snowpark init my_project
+```
+
+Running this command will create a new `my_project` directory. Now move to this new directory by running
+```bash
+cd my_project
+```
+
+This new directory include:
+- `snowflake.yml` - a project definition file that includes definitions of procedures and functions
+- `requirements.txt` - a requirements file for this Python project
+- `app/` - directory with python code of you app
+
+In current state the project defines:
+- a function `hello_function(name string)`.
+- and two procedures: `hello_procedure(name string)` and `test_procedure()`
+
+### Building Snowpark project
+
+Working with Snowpark project requires two steps: building and deploying. In this step you will build the project.
+
+Building a Snowpark project results in creation of zip file. The zip name is same as the value of  `snowpark.src` key from `snowflake.yml`.
+The archive contains code of your application as well as downloaded dependencies that were defined in `requirements.txt` 
+and are not present in Snowflake Anaconda channel.
+
+You can build project by running
+```bash
+snow snowpark build
+```
+
+### Deploying the Snowpark project
+
+Next step of working with Snowpark project is to deploy the result of build step. This step uploads your 
+code and required dependencies to a stage in Snowflake. Also at this point functions and procedures will be created.
+
+Before deploying the project you will need to create database where the functions and procedures will be created. Also
+this is where the stage will be created.
+
+To create a database you will use `snow sql` command:
+```bash
+snow sql -q "create database snowpark_example"
+```
+
+Now, you can deploy the project to the newly created database:
+```bash
+snow snowpark deploy --database=snowpark_example
+```
+
+This will result in creation of the functions and procedures, after the process is completed you should 
+see message similar to this one
+```console
++----------------------------------------------------------------------------+
+| object                                               | type      | status  |
+|------------------------------------------------------+-----------+---------|
+| SNOWPARK_EXAMPLE.PUBLIC.HELLO_PROCEDURE(name string) | procedure | created |
+| SNOWPARK_EXAMPLE.PUBLIC.TEST_PROCEDURE()             | procedure | created |
+| SNOWPARK_EXAMPLE.PUBLIC.HELLO_FUNCTION(name string)  | function  | created |
++----------------------------------------------------------------------------+
+```
+
+### Executing functions and procedures
+
+You have successfully deployed Snowpark functions and procedures. Now you can execute them to see if they work.
+
+To execute the `HELLO_FUNCTION` function run the following
+```bash
+snow snowpark execute function "SNOWPARK_EXAMPLE.PUBLIC.HELLO_FUNCTION('jdoe')"
+```
+
+Running this command should return an output similar to this one:
+```console
++--------------------------------------------------------------+
+| key                                            | value       |
+|------------------------------------------------+-------------|
+| SNOWPARK_EXAMPLE.PUBLIC.HELLO_FUNCTION('JDOE') | Hello jdoe! |
++--------------------------------------------------------------+
+```
+
+To execute `HELLO_PROCEDURE` procedure run the following command:
+```bash
+snow snowpark execute procedure "SNOWPARK_EXAMPLE.PUBLIC.HELLO_PROCEDURE('jdoe')"
+```
+
+Running this command should return an output similar to this one:
+```console
++-------------------------------+
+| key             | value       |
+|-----------------+-------------|
+| HELLO_PROCEDURE | Hello jdoe! |
+
+```
+
+## Working with Streamlit applications
+
+Snowflake CLI provides commands to work with Streamlit applications. In this step you will learn how to deploy
+Streamlit application using Snowflake CLI.
+
+### Initializing Streamlit project
+
+First you will initialize a Streamlit project. To do so run:
+```bash
+snow streamlit init streamlit_app
+```
+
+By running this command a new `streamlit_app` directory will be created. Similarly to Snowpark project
+this directory includes also `snowflake.yml` which defines the Streamlit app.
+
+Now you should move to this new project directory by running:
+```bash
+cd streamlit_app/
+```
+
+### Deploying Streamlit project
+
+The next step is to deploy the Streamlit application. However, before deploying you will need to create database where
+the Streamlit and related sources will live. To do so run
+```bash
+snow sql -q "create database streamlit_example"
+```
+
+Also, to deploy the Streamlit you will have to have a warehouse. If you already have a warehouse that you want to use
+then you should update Streamlit definition in `snowflake.yml` file to use the specified warehouse:
+```yml
+definition_version: 1
+streamlit:
+  # ...
+  query_warehouse: <warehouse_name>
+```
+
+Once you specified existing warehouse you can deploy the Streamlit application by running:
+```bash
+snow streamlit deploy --database=streamlit_example
+```
+
+Successfully deploying the Streamlit should result in message similar to this one:
+```console
+Streamlit successfully deployed and available under https://app.snowflake.com/.../streamlit-apps/STREAMLIT_EXAMPLE.PUBLIC.STREAMLIT_APP
+```
+
+### Opening Streamlit app from CLI level
+
+Snowflake CLI allows you also to retrieve url or open any Streamlit app. To open the application created in previous step
+run:
+```bash
+snow streamlit get-url streamlit_app --database=streamlit_example --open
+```
 
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
 ### Use Snowflake CLI for Your Application
+
+Hopefully this quickstart showed you how to use Snowflake CLI to level up you interactions with Snowflake. 
 
 ### What we've covered
 - Snowflake CLI setup
