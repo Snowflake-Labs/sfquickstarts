@@ -441,9 +441,15 @@ As a result, you will see a nicely structured output with columns derived from t
 ## Cleanup
 Duration: 5
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
-Select the Cloudformation template you used to deploy the MSK cluster at the start of the demo, then click the `Delete` tab. All the resources that were deployed previously, such as EC2 instances, MSK clusters, roles, etc., will be cleaned up.
+Select the Cloudformation template you used to deploy the jumphost at the start of the demo, then click the `Delete` tab.
 
 See example screen capture below.
+
+![](assets/cleanup.png)
+
+You will also need to delete the Firehose delivery stream. Navigate to the [ADF Console](https://console.aws.amazon.com/firehose/home?streams), select the delivery stream you created, and select `Delete` button at the top.
+
+![](assets/delete-adf.png)
 
 <!---------------------------->
 ## Conclusion
