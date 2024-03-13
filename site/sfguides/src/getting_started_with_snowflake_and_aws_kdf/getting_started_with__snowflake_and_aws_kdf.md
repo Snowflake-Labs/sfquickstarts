@@ -325,7 +325,7 @@ For `Passphrase`, type in the phrase you used when generating the public key wit
 
 For `Role`, select `Use custom Snowflake role` and type in `ADF_STREAMING_RL`.
 
-For `VPCE ID`, run the following SQL command in your Snowflake account with an user with `accountadmin` privileges to obtain the value.
+For `VPCE ID`, run the following SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value.
 ```commandline
 with PL as
 (SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
