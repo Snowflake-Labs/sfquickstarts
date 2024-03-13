@@ -30,7 +30,7 @@ how to configure and efficiently use Snowflake CLI.
 - How to download and upload files using Snowflake CLI
 - How to execute SQL using Snowflake CLI
 
-Ensure your development environment meets the following requirements before proceeding:
+Ensure your development environment meets the following requirements before proceeding:)
 
 [//]: # (### What You’ll Need )
 
@@ -154,7 +154,7 @@ In the example above, we use `my_connection` as the connection name, as it corre
 <!-- ------------------------ -->
 ## Working with connections
 
-Connections are crucial to using Snowflake CLI. In the next step, you'll learn how to efficiently work with connections.
+An understanding of connections is critical for efficiently working with Snowflake CLI. In the next step, you'll learn how to work with connections.
 
 ### Default connection
 
@@ -176,7 +176,7 @@ Running `set-default` will update your `config.toml` file to use the specified c
 
 ### Using multiple connections
 
-By default, Snowflake CLI commands operate within context of a specified connection. The only required fields in a named connection in **config.toml** are `user` and `account`, however, many Snowflake CLI commands require `database`, `schema`, or `warehouse` to be set in order for a command to be successful. For this reason, it's convenient to set these fields in your named connections:
+By default, Snowflake CLI commands operate within context of a specified connection. The only required fields in a named connection in **config.toml** are `user` and `account`, however, many Snowflake CLI commands require `database`, `schema`, or `warehouse` to be set in order for a command to be successful. For this reason, it's convenient to proactively set these fields in your named connections:
 
 ```toml
 [connections.my_connection]
@@ -186,9 +186,9 @@ database = "jdoe_db"
 warehouse = "xs"
 ```
 
-This is especially recommended if you usually work with a particular context (i.e., a single database, dedicated warehouse, or role).
+This is especially recommended if you usually work with a particular context (i.e., a single database, dedicated warehouse, or role, etc.).
 
-If you switch your Snowflake context often(for example, when using different roles), it's good practice to define several connections that each correspond to a specific context, like so:
+If you switch your Snowflake context often (for example, when using different roles), it's good practice to define several connections that each correspond to a specific context, like so:
 
 ```toml
 [connections.admin_connection]
@@ -206,7 +206,7 @@ In such cases, switching between multiple connections can be easily done by usin
 
 ### Overriding connection details
 
-There are plenty of use cases where you may want to override connection details without editing **config.toml**. You can do this in one of the following ways:
+There may be instances where you might want to override connection details without directly editing **config.toml**. You can do this in one of the following ways:
 
 1. Using connection flags in CLI commands
 2. Using environment variables
@@ -234,7 +234,7 @@ All commands that require an established connection to Snowflake support the fol
 
 You can access this list by running any Snowflake CLI command with `--help`.
 
-Specifying a connection detail using cli flag always take precedence over any other source. (?)
+You can override any of the connection settings above directly from the CLI. Overriding a connection detail using a CLI flag will always take precedence over other overwriting methods (as in the next section).
 
 #### Using environment variables
 
@@ -246,7 +246,9 @@ For every connection field, there are two flags:
 
 2. A connection-specific flag in form of `SNOWFLAKE_CONNECTIONS_[CONNECTION_NAME]_[KEY]`
 
-Connection specific flags take precedence over generic flags. Let's take a look at an example, where we test a connection with a role that doesn't exist in that Snowflake environment:
+Connection specific flags take precedence over generic flags. 
+
+Let's take a look at an example, where we test a connection with a role that doesn't exist in that Snowflake environment:
 
 ```bash
 SNOWFLAKE_ROLE=funny_role snow connection test
@@ -273,23 +275,21 @@ snow sql -q "SELECT r_value FROM my_table LIMIT 10" -x --account=<account_name> 
 
 In the example above, we establish a temporary connection to Snowflake and execute the `SELECT r_value FROM my_table LIMIT 10` SQL statement.
 
-**Note:** If your account does not allow password authentication, use proper authentication using `--authenticator`.
+> aside negative
+> 
+> **Note:** If your account does not allow password authentication, use proper authentication using `--authenticator`.
+
 
 ## Using Snowflake CLI to execute SQL commands
 
-Snowflake CLI enables basic execution of SQL. In this step you will learn how to execute ad-hoc queries or
-whole SQL files.
-
-**Note:** For advanced SQL use cases it's recommend to use [SnowSQL](LINK).
+Snowflake CLI enables basic execution of SQL. In this step you will learn how to execute ad-hoc queries or entire SQL files.
 
 ### The `sql` command
 
-To execute SQL queries using Snowflake CLI you use `snow sql` command. 
+To execute SQL queries using Snowflake CLI, you can use the `snow sql` command. 
 
-**Tip:** Whenever working with a new Snowflake CLI command consider running it first with `--help` to learn 
-more about possible usages.
+The `snow sql` command can be run as follows:
 
-The `snow sql` command allows the following usages:
 ```console
 snow sql --help                
                                                                                                                          
@@ -307,13 +307,17 @@ snow sql --help
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
+Whenever you're working with a new Snowflake CLI command, consider running it initially with the `--help` flag  to learn more about how to use it.usages.
+
 ### Executing ad-hoc query
 
 To execute an ad-hoc query run the following command:
 ```bash
 snow sql --query "select 1 as a, 2 as b, 3 as c"
 ```
-it will return the following output
+
+This command will output the following:
+
 ```
 +-----------+
 | A | B | C |
@@ -323,7 +327,7 @@ it will return the following output
 
 ```
 
-You can execute multiple queries using `--query` parameter. For example run:
+You can execute multiple queries using `--query` parameter. For example:
 ```bash
 snow sql --query "select 42 as a; select 2 as b"
 ```
@@ -345,10 +349,11 @@ select 2 as b
 +---+
 ```
 
-#### Changing output format
+#### Process the output programmatically
 
-There can be situations where you may want to process the query output programmatically. Currently Snowflake CLI 
-support only `JSON` output. To get data in the `JSON` format you need to add `--format=JSON` to your commands.
+You may encounter situations where you might want to process the output of a SQL query programmatically. To do this, you'll need to change the output format of the command output. 
+
+Currently Snowflake CLI supports only JSON output. To format the output of your SQL queries to JSON, you'll need to add `--format=JSON` to your query commands.
 
 Let's re-run the above examples using JSON format. To do so run the following command:
 ```bash
@@ -366,6 +371,7 @@ This will return data as single array (because there's only single query) with r
 ```
 
 Next run the other example with JSON format:
+
 ```bash
 snow sql --query "select 42 as a; select 2 as b" --format=JSON
 ```
@@ -388,14 +394,16 @@ In this case data will be returned as array of arrays due to executing multiple 
 
 ### Executing query from file
 
-Snowflake CLI allows you also to execute an SQL file. To learn how to do it first let's prepare simple SQL file
-by running the following script:
+Snowflake CLI also allows you to execute SQL files. Let's start by preparing a SQL file with a very simple script.
+
+First, write `select 1` to a file called **test.sql**. This will create the file in your working directory.
 
 ```bash
-echo "select 1;" >> test.sql
+echo "select 1 as a;" >> test.sql
 ```
 
-This will create `test.sql` file in you current working directory. To execute this file against Snowflake run:
+Next, execute the contents of the file by running the following:
+
 ```bash
 snow sql --filename test.sql
 ```
@@ -403,48 +411,50 @@ snow sql --filename test.sql
 As a result you should see the following output:
 ```console
 +---+
-| 1 |
+| a |
 |---|
 | 1 |
 +---+
 ```
 
-## The `snow object` commands
+## Managing Snowflake objects
 
-Snowflake CLI offers commands for generic operations like `SHOW`, `DROP` and `DESCRIBE`. Those commands are available
-under `snow object` sub-group.
+Snowflake CLI offers commands for generic object operations like `SHOW`, `DROP` and `DESCRIBE`. Those commands are available under `snow object` command.
 
 ### Prerequisites
-For purpose of this tutorial we will create a new database. To do so, you can use `snow sql` command.
 
-To create a new database run the following command:
+Le'ts create a new database using `snow sql`:
+
 ```bash
-snow sql -q "create database snowflake_cli_test"
+snow sql -q "create database snowflake_cli_db"
 ```
 
 ### Listing objects
-Snowflake CLI allows you to list existing objects of given type. In this example we will use database as the type.
 
-To list database available to you run:
+Snowflake CLI allows you to list existing objects of given type. In this example we will use `database`` as the type.
+
+To list available databases to you run:
+
 ```bash
 snow object list database
 ```
 
-You can limit the result by specifying `--like` flag, for example running the following command should return only one database:
+You can filter results by specifying `--like` flag. For example running the following command should return only one database:
+
 ```bash
-snow object list database --like=snowflake_cli_test
+snow object list database --like=snowflake_cli_db
 ```
 
-To check for list of supported objects run `snow object list --help`.
-
+To learn more about supported objects, run `snow object list --help`.
 
 ### Describing objects
 
-Snowflake CLI allows you to describe existing objects of given type. In this example we will use database as the type.
+Snowflake CLI allows you to describe objects of a given type. In this example, we will use `database`` as the type.
 
 By running the following command you will get details of the database we created in previous steps:
+
 ```bash
-snow object describe database snowflake_cli_test
+snow object describe database snowflake_cli_db
 ```
 
 To check for list of supported objects run `snow object describe --help`.
@@ -452,44 +462,47 @@ To check for list of supported objects run `snow object describe --help`.
 
 ### Dropping objects
 
-Snowflake CLI allows you to drop existing objects of given type. In this example we will use database as the type.
+Snowflake CLI allows you to drop existing objects of a given type. In this example we will use `database`` as the type.
 
 By running the following command you will drop the database we created in previous steps:
+
 ```bash
-snow object drop database snowflake_cli_test
+snow object drop database snowflake_cli_db
 ```
 
 To check for list of supported objects run `snow object drop --help`.
 
 ## Using Snowflake CLI to work with stages
 
-Snowflake CLI can help you when working with stages. In this step you will learn how to use `snow object stage` commands.
+You can use Snowflake CLI to work with stages. In this step you will learn how to use the `snow object stage` commands.
 
 ### Prerequisites
 
-Commands in this section requires a `database` and `schema` to be specified in your connection details. If you skipped
-creating `snowflake_cli_test` database in previous steps you should create it now by running the following command:
+Commands in this section require a `database` and `schema` to be specified in your connection details. If you skipped creating `snowflake_cli_db` database in previous steps, you should create it now by running the following command:
+
 ```bash
-snow sql -q "create database snowflake_cli_test"
+snow sql -q "create database snowflake_cli_db"
 ```
 
-After running the command you should see output similar ot this one:
+After running the command you should see output similar to this one:
 ```console
 +---------------------------------------------------+
 | status                                            |
 |---------------------------------------------------|
-| Database SNOWFLAKE_CLI_TEST successfully created. |
+| Database SNOWFLAKE_CLI_DB successfully created.   |
 +---------------------------------------------------+
 ```
 
 ### Creating a stage
 
-You can create a new stage using Snowflake CLI. To do so you run the following command:
+You can create a new stage using by running the following command:
+
 ```bash
-snow object stage create snowflake_cli_test.public.my_stage
+snow object stage create snowflake_cli_db.public.my_stage
 ```
 
-If the command succeeds you should see the following output:
+If the command succeeds, you should see the following output:
+
 ```console
 +----------------------------------------------------+
 | key    | value                                     |
@@ -498,19 +511,24 @@ If the command succeeds you should see the following output:
 +----------------------------------------------------+
 ```
 
-### Uploading file to stage
+### Uploading files to a stage
 
-Now the stage is created you can upload some files from local file system to the stage. First you will have to create
-such a file. For purpose of this tutorial run the following command to create an empty file:
+Now that the stage is created, you can upload files from your local file system to the stage. First, you'll need to create these files before uploading them.
+
+Let's create an empty CSV file:
+
 ```bash
 touch data.csv
 ```
 
-Next, to upload this file to stage run the following commands:
+Next, upload this file to the stage by running the following command:
+
 ```bash
-snow object stage copy data.csv @snowflake_cli_test.public.my_stage
+snow object stage copy data.csv @snowflake_cli_db.public.my_stage
 ```
-Running it should return the following output:
+
+Running this command should return the following output:
+
 ```console
 +----------------------------------------------------------------------------------------------------------------+
 | source   | target   | source_size | target_size | source_compression | target_compression | status   | message |
@@ -521,11 +539,14 @@ Running it should return the following output:
 
 ### Listing stage contents
 
-At this point you should have a stage with a single file on it. To check it you can list the contents of a stage. To do so run:
+At this point you should have a stage with a single file in it. To list the contents of the stage, you can run:
+
 ```bash
-snow object stage list @snowflake_cli_test.public.my_stage 
+snow object stage list @snowflake_cli_db.public.my_stage 
 ```
-After running this command you should see the output like this:
+
+After running this command you should see output similar to the folowing:
+
 ```console
 +--------------------------------------------------------------------------------------------+
 | name              | size | md5                              | last_modified                |
@@ -536,14 +557,18 @@ After running this command you should see the output like this:
 
 ### Downloading a file from stage
 
-Now that you are sure you have at least one file on stage you can download. Downloading of files is done by using 
-the same `snow object stage copy` command. Only this time you will replace the order of arguments.
+You can also download files from a stage. Let's download the CSV file we just uploaded.
 
-To download the file from stage to current working directory run the following command:
+You can download files from a stage using the same `snow object stage copy`` command, only this time you will replace the order of the arguments.
+
+To download the file from the stage to your current working directory run the following command:
+
 ```bash
-snow object stage copy @snowflake_cli_test.public.my_stage/data.csv .
+snow object stage copy @snowflake_cli_db.public.my_stage/data.csv .
 ```
-This command should complete with output similar to this one:
+
+This command should return output similar to the following:
+
 ```console
 +----------------------------------------+
 | file     | size | status     | message |
@@ -554,13 +579,15 @@ This command should complete with output similar to this one:
 
 ### Removing stage
 
-Lastly, you can use Snowflake CLI to remove a stage. This is possible by using `snow object drop` command.
+Lastly, you can use Snowflake CLI to remove a stage. You can do this with the `snow object drop` command.
 
-To remove the stage you created for this tutorial run:
+To remove the stage you created for this tutorial, run:
 ```bash
-snow object drop stage snowflake_cli_test.public.my_stage
+snow object drop stage snowflake_cli_db.public.my_stage
 ```
-In result, you should see message like this one:
+
+In the output, you should see a message like this one:
+
 ```console
 +--------------------------------+
 | status                         |
@@ -571,67 +598,72 @@ In result, you should see message like this one:
 
 ## Building applications using Snowflake CLI
 
-In next steps you will learn how to use Snowflake CLI to bootstrap and develop Snowpark and Streamlit apps. 
+In the next steps, you'll learn how to use Snowflake CLI to bootstrap and develop Snowpark and Streamlit apps. 
 
 ## Working with Snowpark applications
 
-First you will learn how Snowflake CLI can support development of Snowpark applications with multiple functions 
-and procedures.
+Let's take a look at how Snowflake CLI can support development of Snowpark applications with multiple functions and procedures.
 
 ### Initializing Snowpark project
 
-First you can use Snowflake CLI to initialize example Snowpark project. To do so run the following command
+You can use Snowflake CLI to initialize a Snowpark project. To do so, run the following command
+
 ```bash
 snow snowpark init my_project
 ```
 
-Running this command will create a new `my_project` directory. Now move to this new directory by running
+Running this command will create a new `my_project` directory. Now move to this new directory by running:
+
 ```bash
 cd my_project
 ```
 
 This new directory include:
-- `snowflake.yml` - a project definition file that includes definitions of procedures and functions
-- `requirements.txt` - a requirements file for this Python project
-- `app/` - directory with python code of you app
+- **snowflake.yml** – a project definition file that includes definitions of procedures and functions
 
-In current state the project defines:
-- a function `hello_function(name string)`.
-- and two procedures: `hello_procedure(name string)` and `test_procedure()`
+- **requirements.txt** – a requirements file for this Python project.
+
+- **app/** - directory with Python code for your app
+
+In its initial state, the project defines:
+
+- A function called `hello_function(name string)`
+
+- Two procedures: `hello_procedure(name string)` and `test_procedure()`
 
 ### Building Snowpark project
 
-Working with Snowpark project requires two steps: building and deploying. In this step you will build the project.
+Working with a Snowpark project requires two main steps: building and deploying. In this step you will build the project.
 
-Building a Snowpark project results in creation of zip file. The zip name is same as the value of  `snowpark.src` key from `snowflake.yml`.
-The archive contains code of your application as well as downloaded dependencies that were defined in `requirements.txt` 
-and are not present in Snowflake Anaconda channel.
+Building a Snowpark project results in the creation of a ZIP file. The name of the ZIP file is the same as the value of the `snowpark.src` key from `snowflake.yml`. The archive contains code for your application, as well as downloaded dependencies that were defined in **requirements.txt** (not present in Snowflake's Anaconda channel).
 
-You can build project by running
+You can build the project by running:
+
 ```bash
 snow snowpark build
 ```
 
 ### Deploying the Snowpark project
 
-Next step of working with Snowpark project is to deploy the result of build step. This step uploads your 
-code and required dependencies to a stage in Snowflake. Also at this point functions and procedures will be created.
+The next step is to deploy the Snowpark project. This step uploads your 
+code and required dependencies to a stage in Snowflake. At this point, functions and procedures will be created in your Snowflake account.
 
-Before deploying the project you will need to create database where the functions and procedures will be created. Also
-this is where the stage will be created.
+Before deploying the project, you will need to create a database to store the the functions and procedures. This is also where the stage will be created.
 
-To create a database you will use `snow sql` command:
+To create a database, use the `snow sql` command:
+
 ```bash
 snow sql -q "create database snowpark_example"
 ```
 
 Now, you can deploy the project to the newly created database:
+
 ```bash
 snow snowpark deploy --database=snowpark_example
 ```
 
-This will result in creation of the functions and procedures, after the process is completed you should 
-see message similar to this one
+This will result in the creation of the functions and procedures. After the process is completed you should see message similar to this one:
+
 ```console
 +----------------------------------------------------------------------------+
 | object                                               | type      | status  |
@@ -644,14 +676,15 @@ see message similar to this one
 
 ### Executing functions and procedures
 
-You have successfully deployed Snowpark functions and procedures. Now you can execute them to see if they work.
+You have successfully deployed Snowpark functions and procedures. Now you can execute them to confirm that they function as intended.
 
 To execute the `HELLO_FUNCTION` function run the following
 ```bash
 snow snowpark execute function "SNOWPARK_EXAMPLE.PUBLIC.HELLO_FUNCTION('jdoe')"
 ```
 
-Running this command should return an output similar to this one:
+Running this command should return output similar to this:
+
 ```console
 +--------------------------------------------------------------+
 | key                                            | value       |
@@ -660,7 +693,8 @@ Running this command should return an output similar to this one:
 +--------------------------------------------------------------+
 ```
 
-To execute `HELLO_PROCEDURE` procedure run the following command:
+To execute the `HELLO_PROCEDURE` procedure run the following command:
+
 ```bash
 snow snowpark execute procedure "SNOWPARK_EXAMPLE.PUBLIC.HELLO_PROCEDURE('jdoe')"
 ```
@@ -676,34 +710,33 @@ Running this command should return an output similar to this one:
 
 ## Working with Streamlit applications
 
-Snowflake CLI provides commands to work with Streamlit applications. In this step you will learn how to deploy
-Streamlit application using Snowflake CLI.
+Snowflake CLI also provides commands to work with Streamlit applications. In this step you will learn how to deploy a Streamlit application using Snowflake CLI.
 
 ### Initializing Streamlit project
 
-First you will initialize a Streamlit project. To do so run:
+Start by initializing a Streamlit project. To do so, run:
+
 ```bash
 snow streamlit init streamlit_app
 ```
 
-By running this command a new `streamlit_app` directory will be created. Similarly to Snowpark project
-this directory includes also `snowflake.yml` which defines the Streamlit app.
+By running this command a new `streamlit_app` directory will be created. Similar to a Snowpark project, this directory also includes also a **snowflake.yml** file which defines the Streamlit app.
 
-Now you should move to this new project directory by running:
+Navigate to this new project directory by running:
+
 ```bash
 cd streamlit_app/
 ```
 
-### Deploying Streamlit project
+### Deploying a Streamlit project
 
-The next step is to deploy the Streamlit application. However, before deploying you will need to create database where
-the Streamlit and related sources will live. To do so run
+The next step is to deploy the Streamlit application. Before deploying you will need to create database where the Streamlit and related sources will live. To do so run:
+
 ```bash
 snow sql -q "create database streamlit_example"
 ```
 
-Also, to deploy the Streamlit you will have to have a warehouse. If you already have a warehouse that you want to use
-then you should update Streamlit definition in `snowflake.yml` file to use the specified warehouse:
+You'll also need a warehouse to deploy the Streamlit application. If you already have a warehouse that you can use, then you should update the Streamlit definition in the **snowflake.yml** file to use the specified warehouse:
 ```yml
 definition_version: 1
 streamlit:
@@ -711,7 +744,8 @@ streamlit:
   query_warehouse: <warehouse_name>
 ```
 
-Once you specified existing warehouse you can deploy the Streamlit application by running:
+Once you specify an existing warehouse, you can deploy the Streamlit application by running:
+
 ```bash
 snow streamlit deploy --database=streamlit_example
 ```
@@ -721,9 +755,9 @@ Successfully deploying the Streamlit should result in message similar to this on
 Streamlit successfully deployed and available under https://app.snowflake.com/.../streamlit-apps/STREAMLIT_EXAMPLE.PUBLIC.STREAMLIT_APP
 ```
 
-### Opening Streamlit app from CLI level
+### Opening Streamlit app from the command line
 
-Snowflake CLI allows you also to retrieve url or open any Streamlit app. To open the application created in previous step
+Snowflake CLI also allows you to retrieve the URL for a Streamlit app, as well as open the app directly from the command line. To open the application created in previous step
 run:
 ```bash
 snow streamlit get-url streamlit_app --database=streamlit_example --open
@@ -733,9 +767,7 @@ snow streamlit get-url streamlit_app --database=streamlit_example --open
 ## Conclusion
 Duration: 1
 
-### Use Snowflake CLI for Your Application
-
-Hopefully this quickstart showed you how to use Snowflake CLI to level up you interactions with Snowflake. 
+Congratulations! In just a few short steps, you were able to get up and running with Snowflake CLI for connection and object management, working with stages, and building and deploying Snowpark projects and Streamlit applications.
 
 ### What we've covered
 - Snowflake CLI setup
