@@ -70,7 +70,7 @@ to SSH if your instance is in a private subnet
 - Create an [ADF delivery stream](https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html)
 - Setup `Direct Put` as the source for the ADF delivery stream
 - Setup `Snowflake` as the destination for the ADF delivery stream
-- Secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
+- Optionally, secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
 - A Snowflake database and table for hosting real-time flight data
 
 <!---------------------------->
