@@ -440,6 +440,7 @@ As a result, you will see a nicely structured output with columns derived from t
 <!---------------------------->
 ## Cleanup
 Duration: 5
+
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
 Select the Cloudformation template you used to deploy the jumphost at the start of the demo, then click the `Delete` tab.
 
