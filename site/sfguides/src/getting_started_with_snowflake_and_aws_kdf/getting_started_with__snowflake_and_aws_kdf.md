@@ -297,7 +297,7 @@ Type in a name for the `Firehose stream name`.
 
 Skip `Transform records` setup.
 
-For `Snowflake account URL`, run this SQL command in your Snowflake account to obtain the value:
+For `Snowflake account URL`, run this SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value:
 ```
 with PL as
 (SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-account-url')
