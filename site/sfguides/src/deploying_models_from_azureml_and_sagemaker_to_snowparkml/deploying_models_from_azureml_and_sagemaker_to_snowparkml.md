@@ -11,7 +11,7 @@ authors: Matt Marzillo,
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
+Duration: 10
 
 In this quickstart we will walk you through how to access models deployed with Snowflake's major CSP partners and deploy them to Snowflake.
 
@@ -24,7 +24,7 @@ Snowpark ML is the Python library and underlying infrastructure for end-to-end M
 
 A part of Snowpark ML Operations (MLOps), the Snowpark Model Registry allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The Snowpark Model Registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using Snowpark ML. Models can have multiple versions, and you can designate a version as the default.
 
-More details on Snowpark ML can be found in Snowflake's ![documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+More details on Snowpark ML can be found in Snowflake's [documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
 
 ### What is Amazon Sagemaker?
 Amazon SageMaker is a fully managed machine learning (ML) service. With SageMaker, data scientists and developers can quickly and confidently build, train, and deploy ML models into a production-ready hosted environment. It provides a UI experience for running ML workflows that makes SageMaker ML tools available across multiple integrated development environments (IDEs).
