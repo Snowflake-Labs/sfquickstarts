@@ -203,6 +203,7 @@ With Sagemaker there is no way easy programmatic way to access the dependencies 
 ## Benefits of Deploying to Snowpark ML Registries
 
 Duration: 5
+
 Customers prefer deploying models to Snowpark for several reasons. These reasons include:
 Bringing the model to the inference data. If all (or most) of your inference data is in Snowflake then having the model with the data makes for a more efficient and secure experience. Data doesn’t have to leave the Snowflake plane and results are returned more quickly
 Security and Flexibility. With the model deployed in the SnowparkML Registry admins can leverage Snowflake’s RBAC to easily control access and organizations have the flexibility to allow privileged users the ability to generate predictions with their Snowpark model.
