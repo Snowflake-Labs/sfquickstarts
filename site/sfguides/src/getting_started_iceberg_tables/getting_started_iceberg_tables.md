@@ -61,6 +61,7 @@ dependencies:
   - jupyter=1.0.0
   - pyspark=3.5.0
   - openjdk=11.0.13
+  - python=3.11.6
 ```
 
 To create the environment needed, run the following in your shell.
@@ -94,24 +95,6 @@ CREATE USER iceberg_lab
 GRANT ROLE iceberg_lab TO USER iceberg_lab;
 GRANT ROLE iceberg_lab TO USER <your username>;
 GRANT ROLE accountadmin TO USER iceberg_lab;
-```
-
-### Generate Public and Private Keys
-
-Your local Spark client will connect to Snowflake via the [JDBC driver](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc). For mac, open a terminal window, navigate to your working directory, then run these two commands. For PC, you can use [this tool](https://www.cryptool.org/en/cto/openssl) to run the same commands below, and download the `/rsa_key.p8` and `/rsa_key.pub` files from the Files tab.
-
-```bash
-openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
-openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-```
-
-Open file rsa_key.pub with a simple text editor copy your key, which is everything in-between the "- - - -" lines. If ‘openssl' command is not found, you need to review your Java installation before proceeding.
-
-Now in a Snowflake SQL worksheet, run the command below after pasting your username and key.
-
-```sql
-USE ROLE accountadmin;
-ALTER USER iceberg_lab SET rsa_public_key='<paste your public key here>';
 ```
 
 <!-- ------------------------ -->
