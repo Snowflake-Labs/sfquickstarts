@@ -14,7 +14,7 @@ Duration: 5
 
 This guide will take you through Snowflake's Collaboration features, and highlight how easy it is to share data between two organisations.
 
-It also highlights Snowflakes ability to perform feature engineering, host a ML Model, score data from shared data, and share the enriched (scored) data back to the original Provider. Hence, it is a 2-way sharing relationship, where both accounts are Providers and Consumers.
+It also highlights Snowflakes ability to perform feature engineering, host an ML model, score data from shared data, and share the enriched (scored) data back to the original provider. Hence, it is a 2-way sharing relationship, where both accounts are providers and consumers.
 
 We will also build on these concepts, and introduce how we can utilise Streams and Tasks to automate this entire process.
 
@@ -31,8 +31,8 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 
 ### What You’ll Learn
 - How to become a Provider in Snowflake Marketplace (Private Listings)
-- How to Consume a shared private asset in the Snowflake Marketplace
-- How to Deploy a ML Model in Snowflake
+- How to consume a shared private asset in the Snowflake Marketplace
+- How to deploy a ML model in Snowflake
 - How to share seamlessly between two Snowflake Accounts
 - How to automate the process using Streams and Tasks  
 
@@ -68,9 +68,9 @@ Below is a schematic of the data share
 ### Example Use Cases
 
 From a business point of view, this architecture exists to satisfy several use cases. Examples include:
-- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
-- Superannuation and Life Insurance Companies. A more specific example above is claims processing for life insurance. Often times, the Superannuation companies have the necessary attributes required by the insurance companies for claims processing.
-- Whitelabel Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
+- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBank's data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a service contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
+- Superannuation and Life Insurance Companies. A more specific example above is claims processing for life insurance. Often times, Superannuation companies have the necessary attributes required by the insurance companies for claims processing.
+- Whitelabel Insurance. Some insurance companies have offerings to whitelabel insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
 
 ### Dataset Details
 
@@ -136,6 +136,7 @@ Next we will create a database and schema that will house the tables that store 
 -- Create the application database and schema
 CREATE OR REPLACE DATABASE DATA_SHARING_DEMO;
 CREATE OR REPLACE SCHEMA DATA_SHARING_DEMO;
+USE SCHEMA DATA_SHARING_DEMO.DATA_SHARING_DEMO;
 ```
 
 Our data is in Parquet format, so we will create a file format object
@@ -197,20 +198,20 @@ ALTER WAREHOUSE query_wh SET warehouse_size=MEDIUM;
 The code below loads the data in to the tables.
 
 ```SQL
-  COPY INTO cc_default_training_data 
-    FROM @quickstart_cc_default_training_data 
-    FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
-    MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+COPY INTO cc_default_training_data 
+  FROM @quickstart_cc_default_training_data 
+  FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 
-  COPY INTO cc_default_unscored_data 
-    FROM @quickstart_cc_default_unscored_data 
-    FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
-    MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+COPY INTO cc_default_unscored_data 
+  FROM @quickstart_cc_default_unscored_data 
+  FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 
-  COPY INTO cc_default_new_data 
-    FROM @quickstart_cc_default_new_data 
-    FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
-    MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+COPY INTO cc_default_new_data 
+  FROM @quickstart_cc_default_new_data 
+  FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 ```
 We can now scale down the warehouse since we have finished loading data for the lab
 
@@ -221,11 +222,11 @@ ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
 You should have loaded over 5 million and 7 million rows in a few minutes. To check, query the data in the worksheet
 
 ```SQL
-  SELECT COUNT(*) 
-    FROM cc_default_training_data;
+SELECT COUNT(*) 
+  FROM CC_DEFAULT_TRAINING_DATA;
 
-  SELECT COUNT(*) 
-    FROM CC_DEFAULT_UNSCORED_DATA;
+SELECT COUNT(*) 
+  FROM CC_DEFAULT_UNSCORED_DATA;
 ```
 
 We have loaded all the data in SnowBank. We can now switch over to our second account (Zamboni)
@@ -236,14 +237,15 @@ Duration: 5
 
 In this step, we set up the consumer account. Log in to the second trial account that was set up, and accept the Anaconda and Snowflake Marketplace Terms as we did in the last step. ![Diagram](assets/accept_terms_navigation.png)
 
-Next we will create a database and schema that will house the tables that store our scored data to be shared back with SnowBank.
+Next we will create a database and schema that will house the tables that store our scored data to be shared back with SnowBank. Open up a worksheet and run the following.
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
 
 -- Create the application database and schema
-CREATE OR REPLACE DATABASE scored_model;
-CREATE OR REPLACE SCHEMA scored_model;
+CREATE OR REPLACE DATABASE SCORED_MODEL;
+CREATE OR REPLACE SCHEMA SCORED_MODEL;
+USE SCHEMA SCORED_MODEL.SCORED_MODEL;
 ```
 
 We need to get the account details to share with SnowBank, so they can set up a Private Listing with us, as we do not want anyone outside of our partnership to have access to / discover the data. For this, we need to note the account identifier. Instructions on how to do this can be found [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Once you have noted this, return to the Provider account.
@@ -536,7 +538,7 @@ By running those two Stored Procedures sequentially, we chould now have feature 
 SELECT * FROM SCORED_MODEL.SCORED_MODEL.SCORED_TABLE LIMIT 100;
 ```
 
-Next we will create a pipeline from streams and tasks to automate the feature engineering of the newly shared data, score it, and make it available to the Bank.
+Next we will create a pipeline from Streams and Tasks to automate the feature engineering of the newly shared data, score it, and make it available to the Bank.
 
 First we will create a Stream on the newly shared table with the following code, and check it was created successfully. Open a worksheet and run the following:
 
@@ -723,7 +725,7 @@ From this quickstart, we can see how we can create an end-to-end automated ML pi
 
 To recap, from a business point of view, this architecture exists to satisfy several use cases. Examples include:
 - This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a [Lenders Mortgage Insurance](https://insurancecouncil.com.au/articles/lenders-mortgage-insurance/) company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has, without the data leaving the security and governance controls of Snowflake.
-- Superannuation and Life Insurance Companies. Another example of sharing sdata securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a [streamlined customer claims process](https://www.snowflake.com/trending/insurance-analytics/). With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.
+- Superannuation and Life Insurance Companies. Another example of sharing data securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a [streamlined customer claims process](https://www.snowflake.com/trending/insurance-analytics/). With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.
 - Whitelabel Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
 
 
@@ -742,7 +744,7 @@ DROP SHARE SCORED_MODEL;
 ```
 
 ```SQL
-DROP DATABASE SCORED_MODEL CASCADE;
+DROP DATABASE SCORED_MODEL;
 DROP DATABASE CC_DEFAULT_TRAINING_DATA;
 DROP WAREHOUSE TRAINING_WH;
 DROP WAREHOUSE QUERY_WH;
@@ -761,7 +763,7 @@ DROP SHARE DATA_SHARING_DEMO;
 ```
 
 ```SQL
-DROP DATABASE DATA_SHARING_DEMO CASCADE;
+DROP DATABASE DATA_SHARING_DEMO;
 DROP DATABASE SCORED_DATA;
 DROP WAREHOUSE QUERY_WH;
 ```
