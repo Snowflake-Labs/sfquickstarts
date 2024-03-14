@@ -221,10 +221,10 @@ Please write down the Account Identifier, we will need it later.
 
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` in `section #2 Provision a Linux jumphost in AWS` located in the left pane) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
-alter user streaming_user set rsa_public_key='<pubKey>';
+alter user streaming_user set rsa_public_key='< pubKey >';
 ```
 See below example screenshot:
 
@@ -325,7 +325,7 @@ For `Passphrase`, type in the phrase you used when generating the public key wit
 
 For `Role`, select `Use custom Snowflake role` and type in `ADF_STREAMING_RL`.
 
-For `VPCE ID`, run the following SQL command in your Snowflake account to obtain the value.
+For `VPCE ID`, run the following SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value.
 ```commandline
 with PL as
 (SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
@@ -436,6 +436,20 @@ select * from flights_vw;
 
 As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
 ![](assets/flight_view.png)
+
+<!---------------------------->
+## Cleanup
+Duration: 5
+When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
+Select the Cloudformation template you used to deploy the jumphost at the start of the demo, then click the `Delete` tab.
+
+See example screen capture below.
+
+![](assets/cleanup.png)
+
+You will also need to delete the Firehose delivery stream. Navigate to the [ADF Console](https://console.aws.amazon.com/firehose/home?streams), select the delivery stream you created, and select `Delete` button at the top.
+
+![](assets/delete-adf.png)
 
 <!---------------------------->
 ## Conclusion
