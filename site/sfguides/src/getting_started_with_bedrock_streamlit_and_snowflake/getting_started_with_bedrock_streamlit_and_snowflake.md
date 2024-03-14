@@ -232,9 +232,9 @@ def prepare_request_body(model_id, instructions, user_context):
     default_temperature = 0.7
     default_top_p = 1.0
 
-    if model_id == 'amazon.titan-tg1-large':
+    if model_id == 'amazon.titan-text-express-v1':
         body = {
-            "inputText": instructions,
+            "inputText": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<USER_CONTEXT>Use this user context in your response:{user_context}<END_USER_CONTEXT>",
             "textGenerationConfig": {
                 "maxTokenCount": default_max_tokens,
                 "stopSequences": [],
@@ -244,19 +244,17 @@ def prepare_request_body(model_id, instructions, user_context):
         }
     elif model_id == 'ai21.j2-ultra-v1':
         body = {
-            "prompt": instructions,
+            "prompt": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<USER_CONTEXT>Use this user context in your response:{user_context}<END_USER_CONTEXT>",
             "temperature": default_temperature,
             "topP": default_top_p,
             "maxTokens": default_max_tokens
         }
-    elif model_id == 'anthropic.claude-v2:1':
+    elif model_id == 'anthropic.claude-3-sonnet-20240229-v1:0':
         body = {
-            "prompt": f"\n\nHuman:{instructions}\n\nAssistant:",
-            "max_tokens_to_sample": default_max_tokens,
-            "temperature": default_temperature,
-            "top_p": default_top_p,
-            "stop_sequences": ["\n\nHuman:"]
-        }
+            "max_tokens": default_max_tokens,
+            "messages": [{"role": "user", "content": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<USER_CONTEXT>Use this user context in your response:{user_context}<END_USER_CONTEXT>"}],
+            "anthropic_version": "bedrock-2023-05-31"
+                }
     else:
         raise ValueError("Unsupported model ID")
 
@@ -264,12 +262,12 @@ def prepare_request_body(model_id, instructions, user_context):
 
 # parse API response format from different model families in Bedrock
 def get_completion_from_response(response_body, model_id):
-    if model_id == 'amazon.titan-tg1-large':
+    if model_id == 'amazon.titan-text-express-v1':
         output_text = response_body.get('results')[0].get('outputText')
     elif model_id == 'ai21.j2-ultra-v1':
         output_text = response_body.get('completions')[0].get('data').get('text')
-    elif model_id == 'anthropic.claude-v2:1':
-        output_text = response_body.get('completion')
+    elif model_id == 'anthropic.claude-3-sonnet-20240229-v1:0':
+        output_text = response_body.get('content')[0].get('text')
     else:
         raise ValueError("Unsupported model ID")
     return output_text
@@ -296,11 +294,10 @@ $$;
 
 
 SET DEFAULT_LLM_INSTRUCTIONS = 'Review the customer\'s most frequent retail purchases from last year. Write a personalized email explaining their shopper profile based on these habits. Add a tailored message suggesting products and brands for them to consider, from their purchase history.';
-SET DEFAULT_MODEL = 'amazon.titan-tg1-large';
+SET DEFAULT_MODEL = 'anthropic.claude-3-sonnet-20240229-v1:0';
 
 select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting', $DEFAULT_MODEL);
 --select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, PRODUCTS_PURCHASED, $DEFAULT_MODEL) from CUSTOMER_WRAPPED.public.customer_wrapped;
-
 ```
 
 This block of code builds a User Defined Fucntion (UDF) called ask_bedrock() that accepts three parameters: instructions to the model, context for the model and model type.
@@ -344,7 +341,7 @@ with st.expander("Adjust system prompt"):
 st.markdown('------') 
 bedrock_model = st.selectbox(
      'Select Bedrock model',
-     ('amazon.titan-tg1-large', 'ai21.j2-ultra-v1', 'anthropic.claude-v2:1'))
+     ('amazon.titan-text-express-v1', 'ai21.j2-ultra-v1', 'anthropic.claude-3-sonnet-20240229-v1:0'))
 
 # A field to enter an example prompt
 user_context = st.text_area('Product categories and other user context'
@@ -439,7 +436,7 @@ with st.expander("Adjust system prompt"):
 st.markdown('------') 
 bedrock_model = st.selectbox(
      'Select Bedrock model',
-     ('amazon.titan-tg1-large', 'ai21.j2-ultra-v1', 'anthropic.claude-v2:1'))
+     ('amazon.titan-text-express-v1', 'ai21.j2-ultra-v1', 'anthropic.claude-3-sonnet-20240229-v1:0'))
 
 # widget for customer filter
 option = st.selectbox(
