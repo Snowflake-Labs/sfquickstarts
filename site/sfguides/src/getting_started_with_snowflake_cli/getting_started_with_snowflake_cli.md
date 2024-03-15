@@ -705,7 +705,7 @@ Running this command should return an output similar to this one:
 | key             | value       |
 |-----------------+-------------|
 | HELLO_PROCEDURE | Hello jdoe! |
-
++-------------------------------+
 ```
 
 ## Working with Streamlit applications
