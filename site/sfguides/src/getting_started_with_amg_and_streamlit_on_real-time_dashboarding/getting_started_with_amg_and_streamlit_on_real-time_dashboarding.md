@@ -158,7 +158,12 @@ SELECT * FROM FLIGHTS_TBL LIMIT 10;
 
 Now you should see raw data in variant type is copied into the `FLIGHTS_TBL` table.
 
-Next, we will create a view and run DDL to convert the raw data into a multi-column table.
+<!---------------------------->
+## Preparation For Visualization
+
+#### 1. Create a view from the raw table
+
+Create a view and run DDL to convert the raw data into a multi-column table.
 
 ```commandline
 CREATE OR REPLACE VIEW FLIGHTS_O_VW
@@ -188,7 +193,7 @@ You should see the view `FLIGHTS_O_VW` with multiple columns for timestamps, alt
 
 ![](assets/flight-data.png)
 
-#### 3. Adjust the timestamps to current
+#### 2. Adjust the timestamps to current
 
 Because the sample data is from a time in the past, we now need to adjust the old timestamps to current to simulate the real-time pattern.
 Run the following commands to adjust the timestamps.
@@ -205,7 +210,7 @@ SELECT TS_UTC_O, TS_UTC FROM FLIGHTS_VW ORDER BY TS_PT DESC;
 
 Now you should see the timestamps(`TS_UTC_O`) are adjusted to the current time(`TS_UTC`).
 
-#### 4. Create a task to adjust the timestamps continuously
+#### 3. Create a task to adjust the timestamps continuously
 
 We need to run a task in the background every minute to simulate the incoming stream of new data by running the following commands:
 
