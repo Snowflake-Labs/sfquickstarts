@@ -1,4 +1,4 @@
-author: Tomasz Urbaszek, Gilberto Hernandez
+author: Tomasz Urbaszek, Gilberto Hernandez, David Wang
 summary: Getting Started with Snowflake CLI
 id:getting-started-with-snowflake-cli
 categories: getting-started
@@ -761,6 +761,176 @@ Snowflake CLI also allows you to retrieve the URL for a Streamlit app, as well a
 run:
 ```bash
 snow streamlit get-url streamlit_app --database=streamlit_example --open
+```
+<!-- ------------------------ -->
+## Working with Snowpark Container Services 
+Duration: 5
+
+> aside negative
+> 
+> **Note:** Trial accounts do not support this feature.
+
+You can also manage Snowpark Container Services with Snowflake CLI. In this step, you'll learn how to create and use Snowpark Container Services with Snowflake CLI. To proceed, you'll need the following prerequisites:
+
+* A Snowflake account with Snowpark Container Services enabled
+* A user in your Snowflake account with ACCOUNTADMIN privileges
+* [Docker Desktop](https://docs.docker.com/get-docker/) installed on your computer
+
+### Download the source code
+
+Download the source code for this section: [snowflake_cli_snowpark_container_services](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/snowflake_cli_snowpark_container_services)
+
+
+### Set up your connection
+
+1. Navigate to the downloaded folder (i.e., `cd snowflake_cli_snowpark_container_services`, or wherever you saved the source code).
+
+2. Setup the connection for your admin user by running `snow connection ad`d and filling in the admin user login along with the following settings:
+
+```console
+Name for this connection: admin
+Snowflake account name: <account_name>
+Snowflake username: <admin_user>
+Snowflake password [optional]: <password> (note that your password input will be hidden)
+Role for the connection [optional]: accountadmin
+```
+
+### Create a test role
+
+3. Edit the **setup/admin_setup.sql** file and fill in `<user_name>` with the name of the test user.
+
+4. Run `snow sql -f setup/admin_setup.sql -c admin``. This does the following:
+
+* Creates a role (`test_role`) and other Snowflake objects. To create the role and objects, you must use the ACCOUNTADMIN role. (This restriction helps to control costs and manage business information risks.) The script also grants the `test_role` role the privileges needed to manage the newly created objects.
+
+* Grants the role to the specified test user, who then uses the role to explore the tutorial.
+
+### Set up a connection for your test role
+
+5. Setup the connection for your test user by running `snow connection add` and filling in the user login as well as the following settings: 
+
+```console
+Name for this connection: default
+Snowflake account name: <account_name>
+Snowflake username: <test_user>
+Snowflake password [optional]: <password> (note that your password input will be hidden)
+Role for the connection [optional]: tutorial_role
+Warehouse for the connection [optional]: tutorial_warehouse
+Database for the connection [optional]: tutorial_db
+Schema for the connection [optional]: data_schema
+```
+
+### Create an image repository for your service code
+
+6. Run `snow sql -f setup/user_setup.sql`. This does the following:
+
+* Creates a schema for your image repository and service.
+
+* Creates an image repository to store your service code (container images).
+
+### Verify proper set up
+
+7. Verify that you have the correct objects from the setup with the following commands
+
+```console
+# should describe your newly created compute pool
+snow object describe compute-pool tutorial_compute_pool
+
+# should describe your newly created warehouse
+snow object describe warehouse tutorial_warehouse
+
+# confirms that tutorial repository exists and also returns the url
+snow spcs image-repository url tutorial_repository
+```
+
+### Build an image and upload it to an image repository
+
+1. Get the repository URL by running:
+ 
+```console
+snow spcs image-repository url tutorial_repository
+```
+
+You could also run the following handy command to retrieve the repository URL and store it:
+
+```console
+repo_url=$(snow spcs image-repository url tutorial_repository)
+image_name="my_echo_service_image:latest"
+
+```
+
+2. Open another terminal window, and change to the `snowflake_cli_snowpark_container_services/tutorial` directory.
+
+3. To build a Docker image, execute the following docker build command using the Docker CLI. Note the command specifies the current working directory (`.`) as the PATH for files to use for building the image.
+
+```console
+docker build --rm --platform linux/amd64 -t <repository_url>/<image_name> .
+```
+
+For `image_name`, use `my_echo_service_image:latest`. 
+
+4. To login to docker, use `snow spcs image-registry login`.
+
+5. Push your image to docker with the following command:
+
+```console
+docker push <repository_url>/<image_name>
+```
+
+### Create the service
+
+1. Create the service with the following command
+
+```console
+snow spcs service create echo_service --compute-pool tutorial_compute_pool --min-instances 1 --spec-path spec.yaml
+```
+
+2. Inspect your service with the following commands:
+
+```
+# check that your service is listed
+snow object list service
+
+# get the current status of the service
+snow spcs service status echo_service
+
+# get the logs of the service
+snow spcs service logs echo_service --container-name echo --instance-id 0
+
+# get detailed info on your service
+snow object describe service echo_service
+```
+
+### Use the service
+
+1. Test endpoint using the UI. Start by retrieving the public endpoint of your service with:
+
+```
+snow spcs service list-endpoints echo_service
+```
+
+2. In your web browser, navigate to `<endpoint_url>/ui`.
+
+3. Type in some input and press `return` or `Enter` on your keyboard
+
+
+4. You should see output like the following, which is what was specified in **echo_service.py**:
+
+![]()
+
+
+### Clean up
+
+Finally, clean up billable resources by suspending or dropping `tutorial_compute_pool` and `tutorial_warehouse`. Run the following commands:
+
+```
+# suspend (currently no native SnowCLI support for suspending warehouses)
+snow spcs compute-pool suspend tutorial_compute_pool
+snow sql -q "alter warehouse tutorial_warehouse suspend" 
+
+# drop
+snow object drop compute-pool tutorial_compute_pool
+snow object drop warehouse tutorial_warehouse
 ```
 
 <!-- ------------------------ -->
