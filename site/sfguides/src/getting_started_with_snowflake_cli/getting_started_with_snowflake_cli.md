@@ -785,7 +785,7 @@ Download the source code for this section: [snowflake_cli_snowpark_container_ser
 
 1. Navigate to the downloaded folder (i.e., `cd snowflake_cli_snowpark_container_services`, or wherever you saved the source code).
 
-2. Setup the connection for your admin user by running `snow connection ad`d and filling in the admin user login along with the following settings:
+2. Setup the connection for your admin user by running `snow connection add` and filling in the admin user login along with the following settings:
 
 ```console
 Name for this connection: admin
@@ -799,7 +799,7 @@ Role for the connection [optional]: accountadmin
 
 3. Edit the **setup/admin_setup.sql** file and fill in `<user_name>` with the name of the test user.
 
-4. Run `snow sql -f setup/admin_setup.sql -c admin``. This does the following:
+4. Run `snow sql -f setup/admin_setup.sql -c admin`. This does the following:
 
 * Creates a role (`test_role`) and other Snowflake objects. To create the role and objects, you must use the ACCOUNTADMIN role. (This restriction helps to control costs and manage business information risks.) The script also grants the `test_role` role the privileges needed to manage the newly created objects.
 
@@ -861,7 +861,7 @@ image_name="my_echo_service_image:latest"
 
 2. Open another terminal window, and change to the `snowflake_cli_snowpark_container_services/tutorial` directory.
 
-3. To build a Docker image, execute the following docker build command using the Docker CLI. Note the command specifies the current working directory (`.`) as the PATH for files to use for building the image.
+3. To build a Docker image, execute the following docker build command using the Docker CLI. Note the command specifies the current working directory (`.`) as the PATH for files to use for building the image. You may need to update it according to your preferred directory structure.
 
 ```console
 docker build --rm --platform linux/amd64 -t <repository_url>/<image_name> .
@@ -869,9 +869,9 @@ docker build --rm --platform linux/amd64 -t <repository_url>/<image_name> .
 
 For `image_name`, use `my_echo_service_image:latest`. 
 
-4. To login to docker, use `snow spcs image-registry login`.
+4. To login to Docker, use `snow spcs image-registry login`.
 
-5. Push your image to docker with the following command:
+5. Push your image to Docker with the following command:
 
 ```console
 docker push <repository_url>/<image_name>
@@ -903,7 +903,7 @@ snow object describe service echo_service
 
 ### Use the service
 
-1. Test endpoint using the UI. Start by retrieving the public endpoint of your service with:
+1. Test the service endpoints using the UI. Start by retrieving the public endpoint of your service with:
 
 ```
 snow spcs service list-endpoints echo_service
