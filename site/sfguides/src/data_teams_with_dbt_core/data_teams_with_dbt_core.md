@@ -2,7 +2,7 @@ id: data_teams_with_dbt_core
 summary: Build your data pipeline with dbt Core & Snowflake
 categories: marketing,data-engineering,partner-integrations
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, dbt, Data Sharing
 authors: Dmytro Yaroshenko

@@ -221,10 +221,10 @@ Please write down the Account Identifier, we will need it later.
 
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` in `section #2 Provision a Linux jumphost in AWS` located in the left pane) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
-alter user streaming_user set rsa_public_key='<pubKey>';
+alter user streaming_user set rsa_public_key='< pubKey >';
 ```
 See below example screenshot:
 
@@ -291,9 +291,11 @@ In the `Source` section, select `Direct PUT` from the drop-down menu.
 
 In the `Destination` section, select `Snowflake` from the drop-down menu.
 
-Type in a name for the delivery stream.
+Type in a name for the `Firehose stream name`.
 
 ![](assets/kdf-stream-1.png)
+
+Skip `Transform records` setup.
 
 For `Snowflake account URL`, run this SQL command in your Snowflake account to obtain the value:
 ```
@@ -323,7 +325,7 @@ For `Passphrase`, type in the phrase you used when generating the public key wit
 
 For `Role`, select `Use custom Snowflake role` and type in `ADF_STREAMING_RL`.
 
-For `VPCE ID`, run the following SQL command in your Snowflake account to obtain the value.
+For `VPCE ID`, run the following SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value.
 ```commandline
 with PL as
 (SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
@@ -424,7 +426,7 @@ create or replace view flights_vw
 FROM adf_streaming_tbl;
 ```
 
-The SQL command creates a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools such as Grafana.
+The SQL command creates a view, converts timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools such as Grafana.
 You can also easily calculate the distance in miles between two geo locations. In above example, the `st_distance` function is used to calculate the distance between an airplane and San Francisco Airport.
 
 Let's query the view `flights_vw` now.
@@ -436,7 +438,21 @@ As a result, you will see a nicely structured output with columns derived from t
 ![](assets/flight_view.png)
 
 <!---------------------------->
-## Conclusions
+## Cleanup
+Duration: 5
+When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
+Select the Cloudformation template you used to deploy the jumphost at the start of the demo, then click the `Delete` tab.
+
+See example screen capture below.
+
+![](assets/cleanup.png)
+
+You will also need to delete the Firehose delivery stream. Navigate to the [ADF Console](https://console.aws.amazon.com/firehose/home?streams), select the delivery stream you created, and select `Delete` button at the top.
+
+![](assets/delete-adf.png)
+
+<!---------------------------->
+## Conclusion
 Duration: 5
 
 In this lab, we built a demo to show how to ingest real-time data using Amazon Data Firehose with low latency. We demonstrated this using an ADF

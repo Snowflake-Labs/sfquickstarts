@@ -100,7 +100,7 @@ First, create the external stage to import the pydicom package file and the help
 ```sql
 -- Create external stage to import pydicom package from S3
 create or replace stage python_imports
- url = "s3://sfquickstarts/Extract Dicom Attributes/Files/"
+ url = "s3://sfquickstarts/Extract DICOM Attributes/Files/"
  directory = (enable = true auto_refresh = false);
 
 -- Create a Python UDF to parse DICOM files
