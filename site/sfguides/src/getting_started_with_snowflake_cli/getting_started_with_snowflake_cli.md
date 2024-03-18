@@ -30,18 +30,6 @@ how to configure and efficiently use Snowflake CLI.
 - How to download and upload files using Snowflake CLI
 - How to execute SQL using Snowflake CLI
 
-Ensure your development environment meets the following requirements before proceeding:)
-
-[//]: # (### What You’ll Need )
-
-[//]: # (- Local [Browser and OS Requirements]&#40;https://docs.snowflake.com/en/user-guide/setup.html&#41;)
-
-[//]: # (- Download the [Sample Data Files]&#40;https://docs.snowflake.com/en/user-guide/getting-started-tutorial-prerequisites.html#sample-data-files-for-loading&#41;)
-
-[//]: # (### What You’ll Build )
-
-[//]: # (- A connection to cloud host and manage data with SnowSQL.)
-
 <!-- ------------------------ -->
 ## Install Snowflake CLI
 Duration: 6
@@ -153,6 +141,7 @@ In the example above, we use `my_connection` as the connection name, as it corre
 
 <!-- ------------------------ -->
 ## Working with connections
+Duration: 5
 
 An understanding of connections is critical for efficiently working with Snowflake CLI. In the next step, you'll learn how to work with connections.
 
@@ -281,6 +270,7 @@ In the example above, we establish a temporary connection to Snowflake and execu
 
 
 ## Using Snowflake CLI to execute SQL commands
+Duration: 6
 
 Snowflake CLI enables basic execution of SQL. In this step you will learn how to execute ad-hoc queries or entire SQL files.
 
@@ -418,6 +408,7 @@ As a result you should see the following output:
 ```
 
 ## Managing Snowflake objects
+Duration: 5
 
 Snowflake CLI offers commands for generic object operations like `SHOW`, `DROP` and `DESCRIBE`. Those commands are available under `snow object` command.
 
@@ -473,6 +464,7 @@ snow object drop database snowflake_cli_db
 To check for list of supported objects run `snow object drop --help`.
 
 ## Using Snowflake CLI to work with stages
+Duration: 10
 
 You can use Snowflake CLI to work with stages. In this step you will learn how to use the `snow object stage` commands.
 
@@ -597,10 +589,12 @@ In the output, you should see a message like this one:
 ```
 
 ## Building applications using Snowflake CLI
+Duration: 1
 
 In the next steps, you'll learn how to use Snowflake CLI to bootstrap and develop Snowpark and Streamlit apps. 
 
 ## Working with Snowpark applications
+Duration: 10
 
 Let's take a look at how Snowflake CLI can support development of Snowpark applications with multiple functions and procedures.
 
@@ -709,6 +703,7 @@ Running this command should return an output similar to this one:
 ```
 
 ## Working with Streamlit applications
+Duration: 10
 
 Snowflake CLI also provides commands to work with Streamlit applications. In this step you will learn how to deploy a Streamlit application using Snowflake CLI.
 
@@ -764,7 +759,7 @@ snow streamlit get-url streamlit_app --database=streamlit_example --open
 ```
 <!-- ------------------------ -->
 ## Working with Snowpark Container Services 
-Duration: 5
+Duration: 15
 
 > aside negative
 > 
@@ -916,7 +911,7 @@ snow spcs service list-endpoints echo_service
 
 4. You should see output like the following, which is what was specified in **echo_service.py**:
 
-![]()
+![ui for the service](./assets/echo_service_ui.png)
 
 
 ### Clean up
