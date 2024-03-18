@@ -46,7 +46,7 @@ Duration: 5
 
 In this use case you will use purchase history data from a big box store, and leverage Azure Open AI to generate 3 suggested next items that can be marketed to the customer. Developing Next Best Offer (NBO) applications can often take months to develop, but with Snowflake and Azure we are able to set up this workload in hours. 
 
-Additionally, the data leverages demographic information (Median Age for the zip code the customer lives in). This data was pulled directly from [Knoema Data](https://knoema.com/) via the Snowflake Data Marketplace.
+Additionally, the data leverages demographic information (Median Age for the zip code the customer lives in). This data was pulled directly from [AGS - Sociodemographics](https://appliedgeographic.com/) via the Snowflake Data Marketplace.
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
