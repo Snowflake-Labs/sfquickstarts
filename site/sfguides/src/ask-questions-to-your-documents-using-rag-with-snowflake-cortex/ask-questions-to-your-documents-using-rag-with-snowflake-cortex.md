@@ -550,7 +550,7 @@ alter task task_extract_chunk_vec_from_pdf resume;
 
 You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application. You may want to upload your own documents or try with this new bike guide:
 
-- [The Ultimate Downhill Bike](assets/The_Ultimate_Downhill_Bike.pdf)
+- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
 
 
 Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
