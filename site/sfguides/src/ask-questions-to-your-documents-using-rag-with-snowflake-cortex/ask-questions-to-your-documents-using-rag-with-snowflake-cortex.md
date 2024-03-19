@@ -60,12 +60,10 @@ In Snowflake, databases and schemas are used to organize and govern access to da
 
 Let's download a few documents we have created about bikes. In those documents we have added some very specific information about those ficticious models. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
 
-- [Mondracer Infant Bike](assets/Mondracer_Infant_Bike.pdf)
-- [Premium Bycycle User Guide](assets/Premium_Bicycle_User_Guide.pdf)
-- [The Xtreme Road Bike 105 SL](assets/The_Xtreme_Road_Bike_105_SL.pdf)
-- [Ski Boots TDGucci Special](assets/Ski_Boots_TDGucci_Special.pdf)
-
-
+- [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Mondracer_Infant_Bike.pdf)
+- [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Premium_Bicycle_User_Guide.pdf)
+- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
+- [Ski Boots TDGucci Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDGucci_Special.pdf)
 
 **Step 2**. Open a new Worksheet
 
