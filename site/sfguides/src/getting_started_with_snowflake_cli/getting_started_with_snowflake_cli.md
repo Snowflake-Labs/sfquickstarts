@@ -874,7 +874,7 @@ Duration: 15
 
 > aside negative
 > 
-> **Note:** Trial accounts do not support Snowpark Container Services. Snowpark Container Services is available to all Snowflake accounts in AWS commercial [regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=g3LX4YOG&_fsi=g3LX4YOG#available-regions) except for trial accounts.
+> **Note:** Snowpark Container Services is currently in Public Preview in select AWS [regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=g3LX4YOG&_fsi=g3LX4YOG#available-regions). In addition, trial accounts do not support Snowpark Container Services. Reach out to your Snowflake account team to enable your account for Snowpark Container Services.
 
 You can also manage Snowpark Container Services with Snowflake CLI. In this step, you'll learn how to create and use Snowpark Container Services with Snowflake CLI. To proceed, you'll need the following prerequisites:
 
