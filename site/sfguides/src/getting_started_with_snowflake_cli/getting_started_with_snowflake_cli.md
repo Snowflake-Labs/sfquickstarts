@@ -1,4 +1,4 @@
-author: Tomasz Urbaszek, Gilberto Hernandez, David Wang
+author: Tomasz Urbaszek, Gilberto Hernandez, Bhumika Goel, David Wang
 summary: Getting Started with Snowflake CLI
 id:getting-started-with-snowflake-cli
 categories: getting-started
@@ -12,8 +12,9 @@ tags: Getting Started, SQL, Data Engineering, SnowSQL
 ## Overview 
 Duration: 2
 
-Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage Snowflake Native Applications, Snowpark functions, stored procedures, and Snowpark Container Services. This guide will show you
-how to configure and efficiently use Snowflake CLI.
+
+Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage a Snowflake Native App, Snowpark functions, stored procedures, Snowpark Container Services, and much more. This guide will show you how to configure and efficiently use Snowflake CLI.
+
 
 
 ### Prerequisites
@@ -26,9 +27,13 @@ how to configure and efficiently use Snowflake CLI.
 ### What You’ll Learn
 - How to install Snowflake CLI
 - How to configure Snowflake CLI
-- How to switch between different connections
+- How to switch between different Snowflake connections
 - How to download and upload files using Snowflake CLI
 - How to execute SQL using Snowflake CLI
+- How to manage Snowflake objects
+- How to build and deploy Snowpark and Streamlit applications
+- How to build and deploy a Snowflake Native App
+- How to create and deploy Snowpark Container Services projects
 
 <!-- ------------------------ -->
 ## Install Snowflake CLI
@@ -84,7 +89,9 @@ Usage: snow [OPTIONS] COMMAND [ARGS]...
 ╰──────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-You may encounter an error like the following:
+### Troubleshooting
+
+You may encounter an error like the following when attempting to use Snowflake CLI for the first time:
 
 ```console
 ╭─ Error ──────────────────────────────────────────────────────────────────────────────────────╮
@@ -98,7 +105,25 @@ In this case, run `chmod 0600 "/Users/yourusername/.snowflake/config.toml"` in t
 ### Configure connection to Snowflake
 
 Snowflake CLI uses a [configuration file named **config.toml** for storing your Snowflake connections](placeholder) . This file is created automatically when
-you run Snowflake CLI for the first time.
+you run Snowflake CLI for the first time. The file is typically created at **~/.snowflake/config.toml**, but to confirm the default config file path, run the following command:
+
+```console
+snow --info
+```
+
+The output will be an array of dictionaries. One of the dictionaries will contain the default config file path, similar to the following:
+
+
+```console
+...
+
+{
+  "key": "default_config_file_path",
+  "value": "/Users/yourusername/.snowflake/config.toml
+},
+
+...
+```
 
 You can add your connection details within **config.toml** either manually or by using Snowflake CLI. Let's add a connection using Snowflake CLI.
 
@@ -591,7 +616,7 @@ In the output, you should see a message like this one:
 ## Building applications using Snowflake CLI
 Duration: 1
 
-In the next steps, you'll learn how to use Snowflake CLI to bootstrap and develop Snowpark and Streamlit apps. 
+In the next steps, you'll learn how to use Snowflake CLI to bootstrap and develop Snowpark, Snowflake Native App and Streamlit apps. 
 
 ## Working with Snowpark applications
 Duration: 10
@@ -702,6 +727,92 @@ Running this command should return an output similar to this one:
 +-------------------------------+
 ```
 
+## Working with a Snowflake Native App
+Duration: 10
+
+Let's take a look at how Snowflake CLI can support development of a Snowflake Native App.
+
+### Initializing a Snowflake Native App project
+
+You can use Snowflake CLI to initialize a Snowflake Native App project. To do so, run the following command
+
+```bash
+snow app init na_streamlit_project --template streamlit-python
+```
+
+Running this command will create a new `na_streamlit_project` directory from a predetermined template provided by Snowflake called `streamlit-python`. For a full list of templates, check out the official [Snowflake Native App templates repo](https://github.com/snowflakedb/native-apps-templates/tree/main). 
+
+Once the directory is created, navigate to it by running:
+
+```bash
+cd na_streamlit_project
+```
+
+This new directory includes:
+- **snowflake.yml** – a project definition file that includes information about the Snowflake Native App that you will create.
+
+- **src/** – a directory that contains all the source code for stored procedures, UDFs and streamlit application.
+
+- **app/** - a directory that contains the files required by Snowflake Native App such as manifest.yml and a setup script.
+
+- **scripts/** - a directory that contains scripts that will be run as part of the Snowflake Native App creation.
+
+This template will be used to build a simple calculator as a Snowflake Native App.
+
+### Building a Snowflake Native App
+
+Working with this Snowflake Native App project involves two main steps: deploying an application package and creating an application object from this application package.
+
+The following step will create an application package for you, upload the files specified in **snowflake.yml** to a stage, run any scripts in **scripts/** if they are specified in **snowflake.yml**, and create an application object from this application package using named files on the stage. 
+
+You can achieve all of the above from your project by running a single commnad:
+
+```bash
+snow app run
+```
+
+As a note, this template assumes that the role and warehouse you specified in your **config.toml** file has the required privileges to create an application package and an application object. If you did not specify either in **config.toml** file, then the default role and/or warehouse assigned to your user will be used. 
+
+After the process is completed you should see message similar to this one:
+
+```console
+Your application object na_streamlit_project_$USER is now available:
+https://app.snowflake.com/.../apps/application/na_streamlit_project_$USER
+```
+
+where `$USER` is populated from the environment variable from your machine. This will navigate you directly to the application object created in your account.
+
+### Executing functions and procedures in your application object
+
+You have successfully created an application object in your account. Now you can use either the Streamlit UI or SQL to interact with it. 
+
+To execute the `core.add` function in the application object using SQL, run the following
+```bash
+snow sql -q "select na_streamlit_project_$USER.core.add(1, 2)"
+```
+replacing `na_streamlit_project_$USER` with the actual name of your application object. This will output the result of the function call also on the console.
+
+### Opening a Snowflake Native App from the command line
+
+Snowflake CLI also allows you to retrieve the URL for a Snowflake Native App, as well as open the app directly from the command line. To open the application created in previous step while still in the project directory,
+run:
+
+```bash
+snow app open
+```
+
+This will open the Snowflake Native App in your browser.
+
+### Dropping a Snowflake Native App from the command line
+
+Snowflake CLI allows you to drop both the application object and the application package you created as part of the previous `snow app run` in one go. To do that, run:
+
+```bash
+snow app teardown
+```
+
+This will drop both the objects for you. As a note, it will not drop any other roles, databases, warehouses etc associated with the Snowflake Native App project.
+
 ## Working with Streamlit applications
 Duration: 10
 
@@ -763,7 +874,7 @@ Duration: 15
 
 > aside negative
 > 
-> **Note:** Trial accounts do not support this feature.
+> **Note:** Snowpark Container Services is currently in Public Preview in select AWS [regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=g3LX4YOG&_fsi=g3LX4YOG#available-regions). In addition, trial accounts do not support Snowpark Container Services. Reach out to your Snowflake account team to enable your account for Snowpark Container Services.
 
 You can also manage Snowpark Container Services with Snowflake CLI. In this step, you'll learn how to create and use Snowpark Container Services with Snowflake CLI. To proceed, you'll need the following prerequisites:
 
@@ -932,7 +1043,7 @@ snow object drop warehouse tutorial_warehouse
 ## Conclusion
 Duration: 1
 
-Congratulations! In just a few short steps, you were able to get up and running with Snowflake CLI for connection and object management, working with stages, and building and deploying Snowpark projects and Streamlit applications.
+Congratulations! In just a few short steps, you were able to get up and running with Snowflake CLI for connection and object management, working with stages, and building and deploying Snowpark projects, Snowflake Native App and Streamlit applications.
 
 ### What we've covered
 - Snowflake CLI setup
@@ -940,3 +1051,7 @@ Congratulations! In just a few short steps, you were able to get up and running 
 - Uploading data using Snowflake CLI
 - Executing SQL using Snowflake CLI
 - Managing Snowflake objects using the CLI
+
+### Additional resources
+
+- [Snowflake CLI Guide](https://docs.snowflake.com/LIMITEDACCESS/snowcli-v2/snowcli-guide)
