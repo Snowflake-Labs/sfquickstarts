@@ -58,11 +58,13 @@ In Snowflake, databases and schemas are used to organize and govern access to da
 
 **Step 1**. Download example documents
 
-Let's download at least two user guides for smart devices. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
+Let's download a few documents we have created about bikes. In those documents we have added some very specific information about those ficticious models. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
 
-- [Roku TV User Guide](https://image.roku.com/c3VwcG9ydC1B/Roku-TV-User-Guide-10-0-en-US-.pdf)
+- [Mondracer Infant Bike](assets/Mondracer_Infant_Bike.pdf)
+- [Premium Bycycle User Guide](assets/Premium_Bicycle_User_Guide.pdf)
+- [The Xtreme Road Bike 105 SL](assets/The_Xtreme_Road_Bike_105_SL.pdf)
+- [Ski Boots TDGucci Special](assets/Ski_Boots_TDGucci_Special.pdf)
 
-- [Peloton Bike User Guide](https://onepeloton.my.salesforce.com/sfc/p/#15000000kWYQ/a/6O000001nHhI/sGjFDlh80Zv78WgXF_5BCbHrZkrBA3bmIYmWNjxW42c)
 
 
 **Step 2**. Open a new Worksheet
@@ -284,6 +286,11 @@ import streamlit as st # Import python packages
 from snowflake.snowpark.context import get_active_session
 session = get_active_session() # Get the current credentials
 
+import pandas as pd
+
+pd.set_option("max_colwidth",None)
+num_chunks = 3 # Num-chunks provided as context. Play with this to check how it affects your accuracy
+
 def create_prompt (myquestion, rag):
 
     if rag == 1:    
@@ -306,13 +313,20 @@ def create_prompt (myquestion, rag):
            chunk
         from docs_chunks_table, query_vec
         order by distance desc
-        limit 1)
+        limit {num_chunks})
         select chunk, relative_path from results 
         """
 
-        df_context = session.sql(cmd).to_pandas()
+        df_context = session.sql(cmd).to_pandas()       
 
-        prompt_context = df_context._get_value(0,'CHUNK')
+        context_lenght = len(df_context) -1
+
+        prompt_context = ""
+        for i in range (0, context_lenght):
+            prompt_context += df_context._get_value(i, 'CHUNK')
+        #st.text(prompt_context)
+
+                                #prompt_context = df_context._get_value(0,'CHUNK')
         prompt_context = prompt_context.replace("'", "")
         relative_path =  df_context._get_value(0,'RELATIVE_PATH')
     
@@ -376,8 +390,7 @@ model = st.selectbox('Select your model:',('mistral-7b',
                                            'mixtral-8x7b',
                                            'gemma-7b'))
 
-
-question = st.text_input("Enter question", placeholder="What is the warranty for the frame of the bike?", label_visibility="collapsed")
+question = st.text_input("Enter question", placeholder="Is there any special lubricant to be used with the premium bike?", label_visibility="collapsed")
 
 rag = st.checkbox('Use your own documents as context?')
 
@@ -390,7 +403,6 @@ else:
 
 if question:
     display_response (question, model, use_rag)
-
 ```
 ### Explanation
 
@@ -398,7 +410,7 @@ Let´s go step by step what that code is doing:
 
 create_prompt() receives a question as an argument and whether it has to use the context documents or not. This can be used to compare how the LLM responds when using the RAG framework vs. using existing knowledge gained during pre-training. 
 
-When the box is checked, this code is going embed the question and look for the PDF chunk with the closest similarity to the question being asked. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
+When the box is checked, this code is going embed the question and look for the PDF chunk with the closest similarity to the question being asked. We can limit the number of chunks we want to provide as a context. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
 
 ```python
         insertsql = f"""
@@ -415,7 +427,7 @@ When the box is checked, this code is going embed the question and look for the 
            chunk
         from docs_chunks_table, query_vec
         order by distance desc
-        limit 1)
+        limit {num_chunks})
         select chunk, relative_path from results 
         """
 
@@ -456,13 +468,18 @@ In the app, we can see the two documents we had uploaded previously and can be u
 - LLM dropdown: Evaluate the response to the same question from different LLMs available in Snowflake Cortex.
 - Context toggle: Check the box to receive answer with RAG. Uncheck to see how LLM answers without access to the context.
 
-To test out the RAG framework, here a few questions you can ask and then use the interactive widgets to compare the results when using a different LLM or when choosing to get a response without the context. 
+To test out the RAG framework, here a few questions you can ask and then use the interactive widgets to compare the results when using a different LLM or when choosing to get a response without the context. This is related to very specific information that we have added into the documents and that is very unique to our products.
 
-- Describe all the steps to rearrange tiles in my tv
-- Can I enable parental controls on my tv? Let me know how to do it
-- How can I set a sleep timer on my tv?
-- What is the warranty for my bike pedals?
-- What is the warranty for the frame of the bike?
+- Is there any special lubricant to be used with the premium bike?
+- What is the warranty for the premium bike?
+- What is the max recommended speed for the infant bike?
+- Does the mondracer infant bike need any special tool?
+- Is there any temperature to be considered with the premium bicycle?
+- What is the temperature to store the ski boots?
+- What are the tires used for the road bike?
+- Is there any discount when buying the road bike?
+- Where have the ski boots been tested and who tested them?
+
 
 ### Other things to test
 
@@ -490,6 +507,11 @@ You can also try different instructions in your prompt and see how the responses
            """
 ```
 
+You can also try to change the number of chunks that are provided as context by simply modifying this value:
+
+```python
+num_chunks = 3
+```
 
 <!-- ------------------------ -->
 ## Optional: Automatic Processing of New Documents
@@ -528,7 +550,10 @@ create or replace task task_extract_chunk_vec_from_pdf
 alter task task_extract_chunk_vec_from_pdf resume;
 ```
 
-You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application.
+You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application. You may want to upload your own documents or try with this new bike guide:
+
+- [The Ultimate Downhill Bike](assets/The_Ultimate_Downhill_Bike.pdf)
+
 
 Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
 
