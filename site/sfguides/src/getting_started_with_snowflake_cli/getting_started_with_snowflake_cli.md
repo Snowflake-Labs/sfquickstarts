@@ -12,8 +12,7 @@ tags: Getting Started, SQL, Data Engineering, SnowSQL
 ## Overview 
 Duration: 2
 
-Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage Snowflake Native Applications, Snowpark functions, stored procedures, and Snowpark Container Services. This guide will show you
-how to configure and efficiently use Snowflake CLI.
+Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage Snowflake Native Applications, Snowpark functions, stored procedures, Snowpark Container Services, and much more. This guide will show you how to configure and efficiently use Snowflake CLI.
 
 
 ### Prerequisites
@@ -26,9 +25,12 @@ how to configure and efficiently use Snowflake CLI.
 ### What You’ll Learn
 - How to install Snowflake CLI
 - How to configure Snowflake CLI
-- How to switch between different connections
+- How to switch between different Snowflake connections
 - How to download and upload files using Snowflake CLI
 - How to execute SQL using Snowflake CLI
+- How to manage Snowflake objects
+- How to build and deploy Snowpark and Streamlit applications
+- How to create and deploy Snowpark Container Services projects
 
 <!-- ------------------------ -->
 ## Install Snowflake CLI
@@ -84,7 +86,9 @@ Usage: snow [OPTIONS] COMMAND [ARGS]...
 ╰──────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-You may encounter an error like the following:
+### Troubleshooting
+
+You may encounter an error like the following when attempting to use Snowflake CLI for the first time:
 
 ```console
 ╭─ Error ──────────────────────────────────────────────────────────────────────────────────────╮
@@ -98,7 +102,25 @@ In this case, run `chmod 0600 "/Users/yourusername/.snowflake/config.toml"` in t
 ### Configure connection to Snowflake
 
 Snowflake CLI uses a [configuration file named **config.toml** for storing your Snowflake connections](placeholder) . This file is created automatically when
-you run Snowflake CLI for the first time.
+you run Snowflake CLI for the first time. The file is typically created at **~/.snowflake/config.toml**, but to confirm the default config file path, run the following command:
+
+```console
+snow --info
+```
+
+The output will be an array of dictionaries. One of the dictionaries will contain the default config file path, similar to the following:
+
+
+```console
+...
+
+{
+  "key": "default_config_file_path",
+  "value": "/Users/yourusername/.snowflake/config.toml
+},
+
+...
+```
 
 You can add your connection details within **config.toml** either manually or by using Snowflake CLI. Let's add a connection using Snowflake CLI.
 
@@ -763,7 +785,7 @@ Duration: 15
 
 > aside negative
 > 
-> **Note:** Trial accounts do not support this feature.
+> **Note:** Trial accounts do not support Snowpark Container Services. Snowpark Container Services is available to all Snowflake accounts in AWS commercial [regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=g3LX4YOG&_fsi=g3LX4YOG#available-regions) except for trial accounts.
 
 You can also manage Snowpark Container Services with Snowflake CLI. In this step, you'll learn how to create and use Snowpark Container Services with Snowflake CLI. To proceed, you'll need the following prerequisites:
 
