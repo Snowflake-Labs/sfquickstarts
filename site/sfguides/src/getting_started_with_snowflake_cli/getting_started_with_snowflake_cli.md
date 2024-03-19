@@ -12,7 +12,9 @@ tags: Getting Started, SQL, Data Engineering, SnowSQL
 ## Overview 
 Duration: 2
 
-Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage Snowflake Native Applications, Snowpark functions, stored procedures, Snowpark Container Services, and much more. This guide will show you how to configure and efficiently use Snowflake CLI.
+Snowflake CLI is an open-source command-line interface designed for developer-centric workloads in addition to SQL operations. It is a flexible and extensible tool that can accommodate modern development practices and technologies.
+
+With Snowflake CLI, developers can create, manage, update, and view apps running on Snowflake across workloads such as Streamlit, the Snowflake Native App Framework, Snowflake Container Services, and Snowpark. It supports a range of Snowflake features, including user-defined functions, stored procedures, Streamlit, and SQL execution.
 
 
 ### Prerequisites
@@ -962,3 +964,7 @@ Congratulations! In just a few short steps, you were able to get up and running 
 - Uploading data using Snowflake CLI
 - Executing SQL using Snowflake CLI
 - Managing Snowflake objects using the CLI
+
+### Additional resources
+
+- [Snowflake CLI Guide](https://docs.snowflake.com/LIMITEDACCESS/snowcli-v2/snowcli-guide)
