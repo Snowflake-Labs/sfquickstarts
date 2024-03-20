@@ -36,7 +36,11 @@ Snowflake Native Applications provide developers a way to package applications f
 
 The data powering the charts is a combination of the consumer's own supply chain data (orders and site recovery data) in their Snowflake account, while the provider is sharing shipping data to provide an enriched view of the overall supply chain.
 
-Note that this Quickstart is limited to a single-account installation. You'll use a single Snowflake account to experience the app from the provider's perspective and from the consumer's perspective. Listing to the Snowflake Marketplace and versions / release directives are outside of the scope of this guide.
+**Note**
+
+- This Quickstart is limited to a single-account installation. You'll use a single Snowflake account to experience the app from the provider's perspective and from the consumer's perspective. Listing to the Snowflake Marketplace and versions / release directives are outside of the scope of this guide.
+
+- This Quickstart introduces a new tool called Snowflake CLI. Please refer to the installation instructions below to get set up.
 
 Let's get started!
 
@@ -59,6 +63,7 @@ Let's get started!
 
 ### What You’ll Need 
 - [VSCode](https://code.visualstudio.com/download) Installed
+- [SnowflakeCLI](https://github.com/Snowflake-Labs/snowcli/tree/main) Installed
 
 ### What You’ll Build 
 - A Snowflake Native Application
@@ -83,14 +88,20 @@ The diagram below demonstrates this model:
 ## Clone Sample Repo & Directory Structure
 Duration: 3
 
-To create our Snowflake Native Application, we will first clone the [starter project](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps) by running this command:
+There are a few different ways to create a directory structure for our Snowflake Native Application from the [starter project](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps).
 
+**Option 1: Using the Snowflake CLI (Recommended)**
+```bash
+snow app init sf_native_app_quickstart --template-repo https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps.git
+```
+This command requires the use of git. If you do not have git installed, you can also download the code directly from [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps/archive/refs/heads/main.zip) and extract it to a local folder.
+
+**Option 2: Using Git directly**
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps.git
 ```
 
-If you do not have git installed, you can also download the code directly from [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps/archive/refs/heads/main.zip) and extract it to a local folder.
-
+**Directory Structure**
 This repository contains all of our starter code for our native app. Throughout the rest of this tutorial we will be modifying various parts of the code to add functionality and drive a better understanding of what is happening at each step in the process.
 
 
@@ -100,6 +111,7 @@ Let's explore the directory structure:
 |-- repos
     |-- .gitignore
     |-- LICENSE
+    |-- snowflake.yml
     |-- app
         |-- data
         |   |-- order_data.csv
@@ -127,6 +139,8 @@ There are two main directories that we will be using:
 `test`
 
 - the `test` directory contains both our sample data used for seeding our application tests, and our test script `Test_App_Locally.sql`
+
+There is an additional file called `snowflake.yml`, which is used by the Snowflake CLI.
 
 <!-- ------------------------ -->
 ## Manifest.yml
@@ -334,7 +348,42 @@ Duration: 2
 
 A Snowflake Application Package is conceptually similar to that of an application installer for a desktop computer (like `.msi` for Windows or `.pkg` for Mac). An app package for Snowflake contains all the material used to install the application later, including the setup scripts. In fact, we will be using this app package in future steps to test our app!
 
-Now that we've modified our project files locally, lets create the Snowflake Application Package so we can upload our project:
+Let's look at the different ways to create an application package.
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+In addition to modifying the code files locally, we need to make a few changes to `snowflake.yml` file as well. Add the following snippets under `native_app` section of the file, but do not remove any existing fields:
+```yaml
+  source_stage: NATIVE_APP_QUICKSTART_SCHEMA.NATIVE_APP_QUICKSTART_STAGE
+  package:
+    name: NATIVE_APP_QUICKSTART_PACKAGE
+  artifacts:
+    - src: app/src/*
+      dest: ./
+```
+After adding the above, the `snowflake.yml` file should look like:
+```yaml
+definition_version: 1
+native_app:
+  name: sf_native_app_quickstart
+  source_stage: NATIVE_APP_QUICKSTART_SCHEMA.NATIVE_APP_QUICKSTART_STAGE
+  package:
+    name: NATIVE_APP_QUICKSTART_PACKAGE
+  artifacts:
+    - src: app/src/*
+      dest: ./
+```
+Here, `NATIVE_APP_QUICKSTART_PACKAGE` is the name of the `package` to create, `NATIVE_APP_QUICKSTART_SCHEMA` is a schema within the `package`, and `NATIVE_APP_QUICKSTART_STAGE` is the name of the stage within the `schema`.
+
+Further, all code files under `sf_native_app_quickstart/app/src` will be uploaded to `NATIVE_APP_QUICKSTART_STAGE` as follows:
+
+1. `sf_native_app_quickstart/app/src/manifest.yml` will be uploaded at `@NATIVE_APP_QUICKSTART_STAGE/manifest.yml`.
+2. `sf_native_app_quickstart/app/src/scripts/setup.sql` will be uploaded at `@NATIVE_APP_QUICKSTART_STAGE/scripts/setup.sql`.
+3. `sf_native_app_quickstart/app/src/libraries/*` will be uploaded at `@NATIVE_APP_QUICKSTART_STAGE/libraries/*`.
+
+As a note, the `package` or any other objects do not exist at the end of these edits. There is a separate command later that will create these objects for you. If you followed this section, you can skip to the next page.
+
+**Option 2: Manually executing SQL** 
 
 To create an application package:
 
@@ -389,11 +438,16 @@ The file and folder structure within your `NATIVE_APP_QUICKSTART_STAGE` stage sh
 ## Upload Provider Shipping Data
 Duration: 2
 
+### Create provider table to hold the data
+
 Now, let's create a database that we will use to store provider's shipping data. This is the data that we will share with the application so that the consumer can enrich their own supply chain data with it when they install the app in their account.
 
-Start by running the SQL below in a Snowflake SQL worksheet. It creates the database, warehouse, schema, and defines the table that will hold the shipping data.
+The goal is to create the database, warehouse, schema, and defines the table that will hold the shipping data.
 
-```
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Create a file `provider_setup.sql` in your project directory and copy in the code snippet below.
+```sql
 CREATE OR REPLACE WAREHOUSE NATIVE_APP_QUICKSTART_WH WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=TRUE;
 
 -- this database is used to store our data
@@ -402,6 +456,8 @@ USE DATABASE NATIVE_APP_QUICKSTART_DB;
 
 CREATE OR REPLACE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
 USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
+
+-- Load app/data/shipping_data.csv into the table below using Snowsight
 
 CREATE OR REPLACE TABLE MFG_SHIPPING (
   order_id NUMBER(38,0), 
@@ -412,6 +468,17 @@ CREATE OR REPLACE TABLE MFG_SHIPPING (
   duration NUMBER(38,0)
 );
 ```
+
+Now run the Snowflake CLI command to run all commands in this file.
+```bash
+snow sql -f provider_setup.sql -c connection_name
+```
+
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.  
+
+**Option 2: Manually executing SQL** 
+
+You can also run the SQL from the above section in a Snowflake SQL worksheet.
 
 ### Upload data into the table
 
@@ -429,26 +496,82 @@ CREATE OR REPLACE TABLE MFG_SHIPPING (
 
 ### Share the Provider Shipping Data via the Application Package
 
-In order for this data to be available to the application consumer, we'll need to share it in the application package via reference usage.
+In order for this data to be available to the application consumer, we'll need to share it in the application package via reference usage. 
 
-Run the SQL below in a SQL worksheet. Here's what the SQL does:
+The SQL described in the two sections below is identical except for one difference. The SQL aims to:
 
-- Creates a schema in the application package that will be used for sharing the shipping data
+- Create a schema in the application package that will be used for sharing the shipping data
 
 - Create a view within that schema
 
-- Grants usage on the schema to the application package
+- Grant usage on the schema to the application package
 
-- Grants reference usage on the database holding the provider shipping data to the application package
+- Grant reference usage on the database holding the provider shipping data to the application package
 
-- Grants SELECT privileges on the view to the application package, meaning the app will be able to SELECT on the view once it is installed
+- Grant SELECT privileges on the view to the application package, meaning the app will be able to SELECT on the view once it is installed
+
+This flow ensures that the data is able to be shared securely with the consumer through the application. The objects containing the provider's proprietary shipping data are **never** shared directly with the consumer via a Snowflake Native Application. This means the provider's proprietary data remains safe, secure, and in the provider's Snowflake account. Instead, the application package has reference usage on objects (databases) corresponding to the provider's data, and when a consumer installs the app (i.e., instantiates the application package), they are able to use the shared data through the application.
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Add the SQL below in a new file at `sf_native_app_quickstart/app/scripts/shared_content.sql`.
+
+```sql
+-- ################################################################
+-- Create SHARED_CONTENT_SCHEMA to share in the application package
+-- ################################################################
+use database {{package_name}};
+create or replace schema shared_content_schema;
+
+use schema shared_content_schema;
+create or replace view MFG_SHIPPING as select * from NATIVE_APP_QUICKSTART_DB.NATIVE_APP_QUICKSTART_SCHEMA.MFG_SHIPPING;
+
+grant usage on schema shared_content_schema to share in application package {{package_name}};
+grant reference_usage on database NATIVE_APP_QUICKSTART_DB to share in application package {{package_name}};
+grant select on view MFG_SHIPPING to share in application package {{package_name}};
+```
+
+Here, `package_name` is a pre-defined variable that will be replaced by the name of your `package` from the `snowflake.yml` file when you execute a Snowflake CLI command. 
+
+Next, add the following snippets under `native_app` section of the file, but do not remove any existing fields: 
+
+```yaml
+  package:
+    warehouse: NATIVE_APP_QUICKSTART_WH
+  scripts:
+    - app/scripts/shared_content.sql
+```
+
+After adding the above, the `snowflake.yml` file should look like:
+```yaml
+definition_version: 1
+native_app:
+  name: NATIVE_APP_QUICKSTART
+  source_stage: NATIVE_APP_QUICKSTART_SCHEMA.NATIVE_APP_QUICKSTART_STAGE
+  package:
+    name: NATIVE_APP_QUICKSTART_PACKAGE
+    warehouse: NATIVE_APP_QUICKSTART_WH
+    scripts:
+      - app/scripts/shared_content.sql
+  artifacts:
+    - src: app/src/*
+      dest: ./
+```
+
+This ensures that `sf_native_app_quickstart/app/scripts/shared_content.sql` will run after the `package` is created.
+
+As a note, `package_name` will only be replaced in scripts that are listed under `native_app.package.scripts` when you execute a Snowflake CLI command.
+
+**Option 2: Manually executing SQL** 
+
+Run the SQL below in a SQL worksheet.
 
 ```sql
 -- ################################################################
 -- Create SHARED_CONTENT_SCHEMA to share in the application package
 -- ################################################################
 use database NATIVE_APP_QUICKSTART_PACKAGE;
-create schema shared_content_schema;
+create or replace schema shared_content_schema;
 
 use schema shared_content_schema;
 create or replace view MFG_SHIPPING as select * from NATIVE_APP_QUICKSTART_DB.NATIVE_APP_QUICKSTART_SCHEMA.MFG_SHIPPING;
@@ -458,11 +581,24 @@ grant reference_usage on database NATIVE_APP_QUICKSTART_DB to share in applicati
 grant select on view MFG_SHIPPING to share in application package NATIVE_APP_QUICKSTART_PACKAGE;
 ```
 
-This flow ensures that the data is able to be shared securely with the consumer through the application. The objects containing the provider's proprietary shipping data are **never** shared directly with the consumer via a Snowflake Native Application. This means the provider's proprietary data remains safe, secure, and in the provider's Snowflake account. Instead, the application package has reference usage on objects (databases) corresponding to the provider's data, and when a consumer install the app (i.e., instantiates the application package), they are able to use the shared data through the application.
-
 <!-- ------------------------ -->
 ## Create App Package Version
 Duration: 4
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Now we can create our application package, upload the application source code to the stage, share the provider shipping data via the application package, and create a version of the application package.
+
+There is a single Snowflake CLI command that carries out all the above functionality.
+
+```bash
+snow app version create V1 -c connection_name
+```
+where `V1` is the name of the version we want to create and `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation. 
+
+You can now skip to the next page.
+
+**Option 2: Using Snowflake UI** 
 
 We've now uploaded the application source code to our stage, created our application package, and uploaded the provider data to be shared in the application package.
 
@@ -487,17 +623,23 @@ Now let's add our first version using our previously uploaded code.
 ## Upload Consumer Supply Chain Data
 Duration: 2
 
+### Create consumer tables to hold the data
+
 In this scenario, consumers will provider their own supply chain data (orders and site recovery data) from their own Snowflake account. The app will use the consumer's data to render graphs representing different aspects of the supply chain.
 
-Run the SQL below in a worksheet. We'll use the `NATIVE_APP_QUICKSTART_DB` to store the consumer supply chain data.
+**Option 1: Using the Snowflake CLI (Recommended)**
 
-```
+Create a file `consumer_setup.sql` in your project directory and copy in the code snippet below.
+
+```sql
 USE WAREHOUSE NATIVE_APP_QUICKSTART_WH;
 
 -- this database is used to store our data
 USE DATABASE NATIVE_APP_QUICKSTART_DB;
 
 USE SCHEMA NATIVE_APP_QUICKSTART_SCHEMA;
+
+-- Load app/data/order_data.csv into the table below using Snowsight
 
 CREATE OR REPLACE TABLE MFG_ORDERS (
   order_id NUMBER(38,0), 
@@ -508,7 +650,7 @@ CREATE OR REPLACE TABLE MFG_ORDERS (
   process_supply_day NUMBER(38,0)
 );
 
--- Load app/data/orders_data.csv using Snowsight
+-- Load app/data/site_recovery_data.csv using Snowsight
 
 CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
   event_id NUMBER(38,0), 
@@ -516,9 +658,19 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
   lat FLOAT,
   lon FLOAT
 );
-
--- Load app/data/site_recovery_data.csv using Snowsight
 ```
+
+Now run the Snowflake CLI command to run all commands in this file.
+
+```bash
+snow sql -f consumer_setup.sql -c connection_name
+```
+
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+**Option 2: Manually executing SQL**
+
+You can also run the SQL from the above section in a Snowflake SQL worksheet.
 
 ### Upload data into these tables  
 
@@ -538,7 +690,47 @@ Next, you'll load data into these newly defined tables using the Snowflake UI.
 ## Install the Application
 Duration: 3
 
-To use the application, we'll first need to install it in the account. Normally you'd simply click an install button in the Snowflake Marketplace, but since we're building the application and using a single account to demonstrate the provider and consumer experiences, you'll need to run the following SQL to install the application in the account. 
+To use the application, we'll first need to install it in the account. Normally you'd simply click an install button in the Snowflake Marketplace, but since we're building the application using a single account to demonstrate the provider and consumer experiences, you'll need to either run a Snowflake CLI command or some SQL to install the application in the account. 
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Add the following snippets under `native_app` section of the file, but do not remove any existing fields: 
+
+```yaml
+  application:
+    name: NATIVE_APP_QUICKSTART_APP
+    warehouse: NATIVE_APP_QUICKSTART_WH
+```
+
+After adding the above, the `snowflake.yml` file should look like:
+```yaml
+definition_version: 1
+native_app:
+  name: NATIVE_APP_QUICKSTART
+  source_stage: NATIVE_APP_QUICKSTART_SCHEMA.NATIVE_APP_QUICKSTART_STAGE
+  package:
+    name: NATIVE_APP_QUICKSTART_PACKAGE
+    warehouse: NATIVE_APP_QUICKSTART_WH
+    scripts:
+      - app/scripts/shared_content.sql
+  application:
+    name: NATIVE_APP_QUICKSTART_APP
+    warehouse: NATIVE_APP_QUICKSTART_WH
+  artifacts:
+    - src: app/src/*
+      dest: ./
+```
+
+Now run the command below.
+
+```bash
+snow app run --version V1 -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation.
+
+This command will create an application `NATIVE_APP_QUICKSTART_APP` in your account, installed from version `V1` of application package `NATIVE_APP_QUICKSTART_PACKAGE`. At the end of the command execution, it will display the URL at which the application is available in your account.
+
+**Option 2: Manually executing SQL**
 
 Open a SQL worksheet and run the following SQL:
 
@@ -562,7 +754,7 @@ SHOW APPLICATIONS;
 ## Run the Streamlit App
 Duration: 1
 
-With the application installed, you can now the app! To run the app, navigate to the `Apps` tab in Snowflake. From there, you will see your new application. Click on the app to launch it and give it a few seconds to warm up. 
+With the application installed, you can now the app! If you are not using the Snowflake CLI and want to run the app, navigate to the `Apps` tab in Snowflake. From there, you will see your new application. Click on the app to launch it and give it a few seconds to warm up. 
 
 When running the app for the first time, you'll be prompted to do some first-time setup by granting the app access to certain tables (i.e., create object-level bindings). The bindings link references defined in the manifest file to corresponding objects in the Snowflake account. These bindings ensure that the application can run as intended.
 
@@ -571,6 +763,46 @@ Upon running the application, you will see this:
 ![streamlit](assets/streamlit.png)
 
 
+<!-- ------------------------ -->
+## Drop the Application and App Package
+Duration: 1
+
+Since this is a Quickstart, we want to clean up objects that have been created in your Snowflake account.
+
+**Option 1: Using the Snowflake CLI (Recommended)**
+
+Run the command below to first drop the existing version `V1` in your application package `NATIVE_APP_QUICKSTART_PACKAGE`. 
+
+```bash
+snow app version drop V1 -c connection_name
+```
+where `connection_name` is the name of the connection you specified in your `config.toml` file during Snowflake CLI installation. A prompt asks if you want to proceed, and you can respond with a `y`.
+
+Then run the command below to drop both the application `NATIVE_APP_QUICKSTART_APP` and the package `NATIVE_APP_QUICKSTART_PACKAGE`.
+
+```bash
+snow app teardown -c connection_name
+```
+
+However, the tables you created in your Snowflake account will not be deleted using the commands above. In the case of this quickstart, only one database `NATIVE_APP_QUICKSTART_DB` contains both the provider and consumer tables, so dropping just this database will do the trick.
+ 
+```bash 
+snow object drop database NATIVE_APP_QUICKSTART_DB -c connection_name
+snow object drop warehouse NATIVE_APP_QUICKSTART_WH -c connection_name
+```
+
+**Option 2: Manually executing SQL**
+
+Open a SQL worksheet and run the following SQL:
+
+```
+DROP APPLICATION NATIVE_APP_QUICKSTART_APP;
+DROP APPLICATION PACKAGE NATIVE_APP_QUICKSTART_PACKAGE;
+DROP DATABASE NATIVE_APP_QUICKSTART_DB;
+DROP WAREHOUSE NATIVE_APP_QUICKSTART_WH;
+```
+
+This will drop all the objects you created for the purpose of this Quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
@@ -591,4 +823,5 @@ For a slightly more advanced Snowflake Native Application, see the following Qui
 - Add business logic to an application package.
 - Test the application locally.
 - View and test the application in Snowsight.
+- Use Snowflake CLI to manage Native Applications
 
