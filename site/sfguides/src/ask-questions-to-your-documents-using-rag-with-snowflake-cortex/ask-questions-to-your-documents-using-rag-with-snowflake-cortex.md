@@ -63,7 +63,7 @@ Let's download a few documents we have created about bikes. In those documents w
 - [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Mondracer_Infant_Bike.pdf)
 - [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Premium_Bicycle_User_Guide.pdf)
 - [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
-- [Ski Boots TDGucci Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDGucci_Special.pdf)
+- [Ski Boots TDBootz Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDBootz_Special.pdf)
 
 **Step 2**. Open a new Worksheet
 
@@ -552,6 +552,13 @@ You can add a new PDF document and check that in around a minute, it will be ava
 
 - [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
 
+Try asking questions that are unique in that new bike guide like:
+
+- What is the name of the ultimate downhill bike?
+- What is the suspension used for the downhill bike?
+(note: try different models to see different results)
+- What is the carbon used for the downhill bike?
+- Who are the testers for the downhill bike?
 
 Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
 
