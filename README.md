@@ -27,8 +27,8 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
 
   1. [Install Node Version Manager (nvm)](https://github.com/nvm-sh/nvm#installing-and-updating)
      - Not sure if you have it installed? Run `nvm` or `nvm -v` at the command line and hit enter. If you encounter a "command not found" error, you likely do not have it installed.
-  2. Install Node v14 (required to run the site locally) using nvm: `nvm install 14`
-     - If you have Homebrew installed, run: `brew install node@14`
+  2. Install Node v14 (required to run the site locally) using nvm: `nvm install latest`
+     - If you have Homebrew installed and don't want to use nvm, run: `brew install node`
   3. Install gulp-cli `npm i -g gulp-cli`
   4. [Install Go](https://golang.org/doc/install)
      - If you have Homebrew installed, run: `brew install golang`
