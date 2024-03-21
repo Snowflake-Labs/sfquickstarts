@@ -8,3 +8,4 @@ node_modules
 site/.firebaserc
 site/.firebase/**
 package-lock.json
+site/sfguides/src/data_collaboration_two_way/assets/connection.json
