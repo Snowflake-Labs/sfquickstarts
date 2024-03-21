@@ -159,7 +159,7 @@ For more detailed information about configuring connections see DOCS LINK.
 To test a connection to Snowflake, run the following command
 
 ```bash
-snow connection tests --connection my_connection
+snow connection test --connection my_connection
 ```
 
 In the example above, we use `my_connection` as the connection name, as it corresponds to the prior example connection. To test your connection, replace `my_connection` with the name of the connection you defined during the connection definition process.
