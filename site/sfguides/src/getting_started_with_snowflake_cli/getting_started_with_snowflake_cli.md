@@ -104,7 +104,7 @@ In this case, run `chmod 0600 "/Users/yourusername/.snowflake/config.toml"` in t
 
 ### Configure connection to Snowflake
 
-Snowflake CLI uses a [configuration file named **config.toml** for storing your Snowflake connections](placeholder) . This file is created automatically when
+Snowflake CLI uses a [configuration file named **config.toml** for storing your Snowflake connections](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/connecting/specify-credentials#how-to-add-snowflake-credentials-using-a-configuration-file) . This file is created automatically when
 you run Snowflake CLI for the first time. The file is typically created at **~/.snowflake/config.toml**, but to confirm the default config file path, run the following command:
 
 ```console
