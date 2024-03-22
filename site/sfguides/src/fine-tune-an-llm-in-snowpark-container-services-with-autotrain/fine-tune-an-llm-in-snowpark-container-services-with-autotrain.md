@@ -48,7 +48,7 @@ Out of the box, LLMs can comprehend natural language but tend to fall short in u
 
 ![add HG LOGO](./assets/hf.png)
 
-Fine-tuning can be a rather complex process. To alleviate much of this complexity, we will be running HuggingFace's AutoTrain-Advanced Python package in the containerized service to securely fine-tune an LLM using Snowflake compute. Refer to the [documentation](https://huggingface.co/docs/autotrain/index) for more info.
+Fine-tuning can be a rather complex process. To alleviate much of this complexity, we will be running HuggingFace's AutoTrain-Advanced Python package in the containerized service to securely fine-tune an LLM using Snowflake compute. AutoTrain-Advanced will use pairs of inputs and outputs to fine-tune an open-source LLM to make its outputs better align to our use case's expectations. Refer to the [documentation](https://huggingface.co/docs/autotrain/index) for more info.
 
 ### What you will learn 
 - The basic mechanics of how Snowpark Container Services works
@@ -61,17 +61,18 @@ Fine-tuning can be a rather complex process. To alleviate much of this complexit
 - Download the git repo here: [add git repo]. You can simply download the repo as a .zip if you don't have Git installed locally.
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
 - [HuggingFace Token](https://huggingface.co/docs/hub/en/security-tokens)
-- (Optional) [VSCode](https://code.visualstudio.com/) (recommended) with the [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) and [Snowflake](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) extensions installed.
-- (Optional) [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config) or [SnowCLI](https://github.com/snowflakedb/snowflake-cli) installed and configured for Snowflake account.
 - A non-trial Snowflake account in a supported [AWS region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 - A Snowflake account login with a role that has the `ACCOUNTADMIN` role. If not, you will need to work with your `ACCOUNTADMIN` to perform the initial account setup (e.g. creating the `CONTAINER_USER_ROLE` and granting required privileges, as well as creating the OAuth Security Integration).
+- (Optional) [VSCode](https://code.visualstudio.com/) (recommended) with the [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) and [Snowflake](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) extensions installed.
+- (Optional) [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config) or [SnowCLI](https://github.com/snowflakedb/snowflake-cli) installed and configured for Snowflake account.
+
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 5
+Duration: 10
 
 > aside positive
-> IMPORTANT: The Snowflake environment setup that follows is the same as the setup in [Quickstart: Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#1). However, here we create a GPU-powered compute pool. You will only need to complete the Setup Environment section once but ensure you have a `GPU_NV_M` instance compute pool.
+> IMPORTANT: The Snowflake environment setup that follows is similar to the setup in [Quickstart: Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#1). However, here we have added 2 additional statements at the end to create a GPU-powered compute pool and stage for data. You only need to complete the Setup Environment section.
 
 Run the following SQL commands in [`00_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/00_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the role, database, warehouse, and stage that we need to get started:
 ```SQL
@@ -92,11 +93,6 @@ grant role CONTAINER_USER_ROLE to role ACCOUNTADMIN;
 // Create Database, Warehouse, and Image spec stage
 USE ROLE CONTAINER_USER_ROLE;
 CREATE OR REPLACE DATABASE CONTAINER_HOL_DB;
-
-CREATE OR REPLACE WAREHOUSE CONTAINER_HOL_WH
-  WAREHOUSE_SIZE = XSMALL
-  AUTO_SUSPEND = 120
-  AUTO_RESUME = TRUE;
   
 CREATE STAGE IF NOT EXISTS specs
 ENCRYPTION = (TYPE='SNOWFLAKE_SSE');
@@ -126,15 +122,18 @@ CREATE EXTERNAL ACCESS INTEGRATION ALLOW_ALL_EAI
 GRANT USAGE ON INTEGRATION ALLOW_ALL_EAI TO ROLE CONTAINER_USER_ROLE;
 
 USE ROLE CONTAINER_USER_ROLE;
+USE DATABASE CONTAINER_HOL_DB;
+
+CREATE IMAGE REPOSITORY CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO;
+
 CREATE COMPUTE POOL IF NOT EXISTS CONTAINER_HOL_POOL
 MIN_NODES = 1
 MAX_NODES = 1
 INSTANCE_FAMILY = GPU_NV_M
 AUTO_RESUME = true;
 
-CREATE IMAGE REPOSITORY CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO;
-
-SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
+CREATE STAGE IF NOT EXISTS DATA_STAGE
+ENCRYPTION = (TYPE='SNOWFLAKE_SSE');
 ```
 - The [OAuth security integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration) will allow us to login to our UI-based services using our web browser and Snowflake credentials
 - The [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) will allow our services to reach outside of Snowflake to the public internet
@@ -145,10 +144,73 @@ SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
+## Training Data
+Duration: 5
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+LLM fine-tuning (specifically, [Supervised Fine-Tuning / Generic Trainer](https://huggingface.co/docs/autotrain/llm_finetuning)) with AutoTrain-Advanced requires a csv file named `train.csv` containing a single column named `text`. 
+
+Follow these steps to create the training data:
+  1. Download `product_offerings.csv` from the assets folder (if you have not already done so).
+  2. Upload `product_offerings.csv` as a table in `CONTAINER_HOL_DB.PUBLIC.DATA_STAGE` in Snowsight:
+  ![File Upload](./assets/upload.png)
+      - Select Database CONTAINER_HOL_DB and PUBLIC schema
+      - Click Create Table From File
+      - Select or drag `product_offerings.csv` to upload and name table `PRODUCT_OFFERS`. Click Next.
+      - Expand `View options` and set Header to `First line contains header`. Click Load.
+  3. Run the following SQL commands in [`02_training_data.sql`](add link)
+  ```SQL
+  USE ROLE CONTAINER_USER_ROLE;
+  
+  // Create training data as table
+  CREATE OR REPLACE TABLE CONTAINER_HOL_DB.PUBLIC.TRAINING_TABLE AS
+  SELECT 
+      CONCAT(INSTRUCTION,' ### Metadata: ', METADATA,' ### Response: ', DESCRIPTION) AS "text"
+  FROM (
+  SELECT
+    'You are a customer service assistant with knowledge of product rewards available to customers. Describe this reward offering given reward metadata.' as INSTRUCTION
+    ,TO_VARCHAR(OBJECT_CONSTRUCT(*)) AS METADATA
+    ,CONCAT
+    (
+      'Company '
+      ,ORGANIZATION_NAME
+      ,' is offering a '
+      ,REWARD
+      ,' '
+      ,REWARD_TYPE
+      ,' for a '
+      ,PRODUCT_CATEGORY
+      ,' category product. To receive the reward, '
+      ,QUALIFICATION
+      ,'. The product description is '
+      ,PRODUCT_DESCRIPTION
+      ,' More info at '
+      ,HYPERLINK
+      ,'.'
+  ) as DESCRIPTION
+  FROM CONTAINER_HOL_DB.PUBLIC.PRODUCT_OFFERS);
+
+  // Create training file in stage
+  COPY INTO @CONTAINER_HOL_DB.PUBLIC.DATA_STAGE/train.csv
+  FROM CONTAINER_HOL_DB.PUBLIC.TRAINING_TABLE
+  FILE_FORMAT = (
+          TYPE = CSV
+          FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+          ESCAPE_UNENCLOSED_FIELD = NONE
+          COMPRESSION = None
+      )
+    OVERWRITE = TRUE
+    SINGLE=TRUE
+    HEADER=TRUE;
+  ```
+
+
+
+
+
+
+
+
+sdfsdf
 
 
 - **summary**: This is a sample Snowflake Guide 
