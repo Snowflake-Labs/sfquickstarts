@@ -375,7 +375,7 @@ Duration: 5
 
 We are now ready to build out the application and connect to the data. Start by cloning the repo with the code for the Python Flask application.
 ```bash
-git clone https://github.com/Snowflake-Labs/hybrid-table-data-app hybrid-table-data-app
+git clone https://github.com/Snowflake-Labs/sfguide-build-data-application-with-hybrid-tables hybrid-table-data-app
 ```
 
 ### Set up the environment
