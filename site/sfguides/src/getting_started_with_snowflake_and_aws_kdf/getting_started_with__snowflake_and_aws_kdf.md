@@ -448,6 +448,8 @@ See example screen capture below.
 
 ![](assets/cleanup.png)
 
+Navigate to the [EC2 console](https://console.aws.amazon.com/ec2/home#Instances:instanceState=running) and delete the jumphost.
+
 You will also need to delete the Firehose delivery stream. Navigate to the [ADF Console](https://console.aws.amazon.com/firehose/home?streams), select the delivery stream you created, and select `Delete` button at the top.
 
 ![](assets/delete-adf.png)
