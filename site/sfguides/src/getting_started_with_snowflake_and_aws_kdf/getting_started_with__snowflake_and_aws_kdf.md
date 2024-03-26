@@ -70,7 +70,7 @@ to SSH if your instance is in a private subnet
 - Create an [ADF delivery stream](https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html)
 - Setup `Direct Put` as the source for the ADF delivery stream
 - Setup `Snowflake` as the destination for the ADF delivery stream
-- Secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
+- Optionally, secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
 - A Snowflake database and table for hosting real-time flight data
 
 <!---------------------------->
@@ -297,7 +297,7 @@ Type in a name for the `Firehose stream name`.
 
 Skip `Transform records` setup.
 
-For `Snowflake account URL`, run this SQL command in your Snowflake account to obtain the value:
+For `Snowflake account URL`, run this SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value:
 ```
 with PL as
 (SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-account-url')
@@ -440,12 +440,15 @@ As a result, you will see a nicely structured output with columns derived from t
 <!---------------------------->
 ## Cleanup
 Duration: 5
+
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
 Select the Cloudformation template you used to deploy the jumphost at the start of the demo, then click the `Delete` tab.
 
 See example screen capture below.
 
 ![](assets/cleanup.png)
+
+Navigate to the [EC2 console](https://console.aws.amazon.com/ec2/home#Instances:instanceState=running) and delete the jumphost.
 
 You will also need to delete the Firehose delivery stream. Navigate to the [ADF Console](https://console.aws.amazon.com/firehose/home?streams), select the delivery stream you created, and select `Delete` button at the top.
 
