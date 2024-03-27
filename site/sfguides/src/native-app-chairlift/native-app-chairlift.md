@@ -547,7 +547,7 @@ create stage if not exists chairlift_pkg.code.source;
 
 Next, upload the files into the stage. You can use Snowsight (i.e., the Snowflake UI), the SnowSQL command line tool, or the Snowflake VS Code extension to upload the files. In this step, we'll use Snowsight.
 
-Navigate to the `chairlift_pkg.code.source` stage in the Snowsight UI. In the top right, click on the **+ FILES** button. Next, click **Browse** in the modal that appears. 
+Switch to **CHAIRLIFT_PROVIDER** role and navigate to the `chairlift_pkg.code.source` stage in the Snowsight UI. In the top right, click on the **+ FILES** button. Next, click **Browse** in the modal that appears. 
 
 To avoid breaking any references to objects needed by the app, the folder structure within the stage must reflect the folder structure in the **app/** directory. Be sure to upload the native app source code exactly as follows:
 
@@ -696,6 +696,7 @@ DROP DATABASE chairlift_consumer_data;
 
 USE ROLE chairlift_provider;
 DROP APPLICATION PACKAGE chairlift_pkg;
+DROP DATABASE chairlift_provider_data;
 
 USE ROLE ACCOUNTADMIN;
 DROP WAREHOUSE chairlift_wh;
