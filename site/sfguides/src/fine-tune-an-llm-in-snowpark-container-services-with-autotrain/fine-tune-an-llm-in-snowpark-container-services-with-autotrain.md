@@ -46,7 +46,7 @@ Out of the box, LLMs can comprehend natural language but tend to fall short in u
 
 ### What is AutoTrain-Advanced?
 
-![add HG LOGO](./assets/hf.png)
+![HuggingFace](./assets/hf-logo.png)
 
 Fine-tuning can be a rather complex process. To alleviate much of this complexity, we will be running HuggingFace's AutoTrain-Advanced Python package in the containerized service to securely fine-tune an LLM using Snowflake compute. AutoTrain-Advanced will use pairs of inputs and outputs to fine-tune an open-source LLM to make its outputs better align to our use case's expectations. Refer to the [documentation](https://huggingface.co/docs/autotrain/index) for more info.
 
@@ -74,7 +74,7 @@ Duration: 10
 > aside positive
 > IMPORTANT: The Snowflake environment setup that follows is similar to the setup in [Quickstart: Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#1). However, here we have added an additional statement at the end to create a GPU-powered compute pool. You only need to complete the Setup Environment section.
 
-Run the following SQL commands in [`00_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/00_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the role, database, warehouse, and stage that we need to get started:
+Run the following SQL commands in [`00_snowflake_setup.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/00_snowflake_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the role, database, warehouse, and stage that we need to get started:
 ```SQL
 // Create an CONTAINER_USER_ROLE with required privileges
 USE ROLE ACCOUNTADMIN;
@@ -107,7 +107,7 @@ ENCRYPTION = (TYPE='SNOWFLAKE_SSE')
 DIRECTORY = (ENABLE = TRUE);
 ```
 
-Run the following SQL commands in [`01_snowpark_container_services_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) our first [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool), and our [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository)
+Run the following SQL commands in [`01_snowpark_container_services_setup.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/01_snowpark_container_services_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress), [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool), and our [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository).
 ```SQL
 USE ROLE ACCOUNTADMIN;
 CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
@@ -153,21 +153,23 @@ LLM fine-tuning (specifically, [Supervised Fine-Tuning / Generic Trainer](https:
 The format of `text` column contents is flexible but should align with the intended purpose and API used to engage with the LLM.
 
 Follow these steps to create the training data:
-  1. Download `product_offerings.csv` from the assets folder (if you have not already done so).
-  2. Upload `product_offerings.csv` as a table in `CONTAINER_HOL_DB.PUBLIC` in Snowsight:
-  ![File Upload](./assets/upload.png)
+  1. Download `product_offers.csv` from the `data` folder (if you have not already done so).
+  2. Upload `product_offers.csv` as a table in `CONTAINER_HOL_DB.PUBLIC` in Snowsight:
+  ![File Upload](./assets/create_table_from_file.png)
       - Select Database CONTAINER_HOL_DB and PUBLIC schema
       - Click Create Table From File
-      - Select or drag `product_offerings.csv` to upload and name table `PRODUCT_OFFERS`. Click Next.
-      - Expand `View options` and set Header to `First line contains header`. Click Load.
-  3. Run the following SQL commands in [`02_training_data.sql`](add link)
+      - Select or drag `product_offers.csv` to upload and name table `PRODUCT_OFFERS`. Click Next.
+      - Expand `View options` and set Header to `First line contains header` (if not selected). Click Load.
+  > aside negative
+> ERROR: If you receive an `Error Parsing Columns` file upload error, change your default warehouse to `CONTAINER_HOL_WH` or one available to the current role.
+  3. Run the following SQL commands in [`02_training_data.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/02_training_data.sql)
   ```SQL
   USE ROLE CONTAINER_USER_ROLE;
   
   // Create table of training data
   CREATE OR REPLACE TABLE CONTAINER_HOL_DB.PUBLIC.TRAINING_TABLE AS
   SELECT 
-      CONCAT(INSTRUCTION,' ### Metadata: ', METADATA,' ### Response: ', DESCRIPTION) AS "text"
+      CONCAT('<s>[INST] <<SYS>>', INSTRUCTION,'<</SYS>>', METADATA,'[/INST]', DESCRIPTION, '</s>') AS "text"
   FROM (
   SELECT
     'You are a customer service assistant with knowledge of product rewards available to customers. Describe this reward offering given reward metadata.' as INSTRUCTION
@@ -211,7 +213,7 @@ Follow these steps to create the training data:
 ## Service Image & Specification
 Duration: 15
 
-Next, we will craft the below ingredients for the Snowpark Container Service. If unfamiliar with defining Snowpark Container Service, see the [Intro to Snowpark Container Service Quickstart](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html?index=..%2F..index#0) or [Snowpark Container Services tutorial](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials).
+Next, we will craft the below ingredients for the Snowpark Container Service. If unfamiliar with defining Snowpark Container Services, see the [Intro to Snowpark Container Service Quickstart](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html?index=..%2F..index#0) or [Snowpark Container Services tutorial](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials).
 
 - **Dockerfile**: Normal Dockerfile document containing all the necessary setup, installations, and commands to execute the solution as a containerized service.
 - **entrypoint.sh**: Script of commands to execute when the containerized service runs.
@@ -219,7 +221,7 @@ Next, we will craft the below ingredients for the Snowpark Container Service. If
 
 ### Build and Push Image
 
-Navigate to `blahblahbal/autotrain.Dockerfile` in the project directory or paste the below into a text file. The Dockerfile will create an image with GPU support via CUDA API, install several packages including `autotrain-advanced`, and lastly execute the `entrypoint.sh` script at start.
+Navigate to `src/autotrain.Dockerfile` in the project directory or paste the below into a text file and save as `autotrain.Dockerfile`. The Dockerfile will create an image with GPU support via CUDA API, install several packages including `autotrain-advanced`, and lastly execute the `entrypoint.sh` script at start.
   ```Dockerfile
   FROM nvcr.io/nvidia/rapidsai/rapidsai:23.06-cuda11.8-runtime-ubuntu22.04-py3.10
 
@@ -239,7 +241,7 @@ Navigate to `blahblahbal/autotrain.Dockerfile` in the project directory or paste
   ENTRYPOINT ["./entrypoint.sh"]
   ```
 
-If you have not cloned/downloaded the project repository, create an `entrypoint.sh` file with the below content. This is not necessary if you've cloned or downloaded the project repository as you will already have this file.
+If you have not cloned/downloaded the project repository, create and save an `entrypoint.sh` file with the below content. This is not necessary if you've cloned or downloaded the project repository as you will already have this file.
 
 At startup, the container will execute these commands which will start a JupyterLab Notebook, download an LLM and begin fine-tuning, and remain running (until suspended/dropped).
 
@@ -253,23 +255,20 @@ At startup, the container will execute these commands which will start a Jupyter
   tail -f /dev/null # Keeps container running
   ```
 
-From the terminal, navigate to the `autotrain.Dockerfile` and run the below command to build the image locally. 
+From the terminal, navigate to the `autotrain.Dockerfile` file and run the below command(s) to build the image locally. For convenience, we tag the image with the Snowflake `<REPOSITORY_URL>`. You can find your `<REPOSITORY_URL>` by running one of the below:
+  - `SHOW IMAGE REPOSITORIES;` with Snowsight or SnowSQL
+  - `snow spec image-registry url` with [SnowCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/command-reference/spcs-commands/image-repository-commands/url)
 
 ```bash
+cd src
 docker build --rm --platform linux/amd64 -f autotrain.Dockerfile -t <REPOSITORY_URL>/autotrain .
 ```
 
-For convenience, we tag the image with the Snowflake `<REPOSITORY_URL>`. You can find your `<REPOSITORY_URL>` by running one of the below:
-  - `SHOW IMAGE REPOSITORIES;` with Snowsight or SnowSQL
-  - `snow spec image-registry url` with SnowCLI
-
-Building the image will take some time locally. In a separate terminal or once the image building completes, we will login to the Snowflake registry so we may push the image once built. 
+Building the image will take some time locally. In a separate terminal or once the image building completes, we will login to the Snowflake registry so we may push the image once built. Your `<SNOWFLAKE_REGISTRY_HOSTNAME>` is the beginning portion of your `<REPOSITORY_URL>` following the format `org-account.registry.snowflakecomputing.com`. Enter your Snowflake password once prompted.
 
 ```bash
 docker login <SNOWFLAKE_REGISTRY_HOSTNAME> -u <user_name>
 ```
-
-Your `<SNOWFLAKE_REGISTRY_HOSTNAME>` is the beginning portion of your `<REPOSITORY_URL>` following the format `org-account.registry.snowflakecomputing.com`. Enter your Snowflake password once prompted.
 
 Once the image is successfully built, run the below to push the image to the Snowflake image registry. Again, this may take some time.
 
@@ -285,9 +284,7 @@ In a Snowsight SQL Worksheet or SnowSQL, run the below SQL commands to create a 
  USE ROLE CONTAINER_USER_ROLE;
  CREATE SECRET CONTAINER_HOL_DB.PUBLIC.HF_TOKEN
   TYPE = generic_string
-  SECRET_STRING='
-       HF_TOKEN: <YOUR_HF_TOKEN>
-  ';
+  SECRET_STRING='<YOUR_HF_TOKEN>';
 ```
 
 > aside positive
@@ -295,7 +292,7 @@ In a Snowsight SQL Worksheet or SnowSQL, run the below SQL commands to create a 
 >  IMPORTANT: Some models, such as llama2, require prior authorization to access. See HuggingFace's corresponding model card to verify.
 
 ### Configure and Upload Specification
-Navigate to `blahblahbal/autotrain.yaml` in the project directory or paste the below into a yaml file. Be sure to update `<REPOSITORY_URL>` with your corresponding `<REPOSITORY_URL>` from the prior section. 
+Navigate to `src/autotrain.yaml` in the project directory or paste the below into a yaml file. Be sure to update `<REPOSITORY_URL>` with your corresponding `<REPOSITORY_URL>` from the prior section. 
   ```yaml
   spec:
   containers:
@@ -303,8 +300,8 @@ Navigate to `blahblahbal/autotrain.yaml` in the project directory or paste the b
     image: <REPOSITORY_URL>/autotrain
     secrets:
     - snowflakeSecret: CONTAINER_HOL_DB.PUBLIC.HF_TOKEN
-    secretKeyRef: secret_string
-    envVarName: HF_TOKEN
+      secretKeyRef: secret_string
+      envVarName: HF_TOKEN
     env:
       SNOWFLAKE_MOUNTED_STAGE_PATH: stage
       MODEL_CARD: meta-llama/Llama-2-7b-hf # Hugging Face model card
@@ -333,18 +330,22 @@ Navigate to `blahblahbal/autotrain.yaml` in the project directory or paste the b
 
 The above specification file has `meta-llama/Llama-2-7b-hf` as the selected model to fine-tune. The fine-tuned model will be placed in Snowflake stage `VOLUMES` under `llama-2-ft`.
 
-Two endpoints are included in the specification file: jupyter and app. JupyterLab will be used to check the fine-tuning status while the other endpoint will enable a quick chat-based test of the fine-tuned model. Lastly, two GPUs are requested to enable running a fine-tuned `meta-llama/Llama-2-7b-hf` and a non-fine-tuned `meta-llama/Llama-2-7b-hf` on separate GPUs.
+Two endpoints are included in the specification file: jupyter and app. JupyterLab will be used to check the fine-tuning status while the other endpoint will serve a quick chat-based test of the fine-tuned model. Lastly, two GPUs are requested to enable running a fine-tuned `meta-llama/Llama-2-7b-hf` and a non-fine-tuned `meta-llama/Llama-2-7b-hf` on separate GPUs in the chat test.
 
 Save the file and push to Snowflake stage using one of the below:
   - `PUT file://autotrain.yaml @CONTAINER_HOL_DB.PUBLIC.SPECS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;` with SnowSQL
-  - `snow object stage copy ./autotrain.yaml @specs --overwrite` with SnowCLI
+  - `snow object stage copy ./autotrain.yaml @specs --overwrite` with (SnowCLI)[https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/command-reference/object-commands/stage/copy]
   - Upload to stage CONTAINER_HOL_DB.PUBLIC.SPECS using Snowsight GUI.
 
 <!-- ------------------------ -->
 ## Container Service
 Duration: 3
 
-Finally, we will start the Snowpark Container Service. Run the following SQL commands in [`03_start_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_start_service.sql) using the Snowflake VSCode Extension OR in a SQL worksheet:
+Finally, we will start the Snowpark Container Service. Run the following SQL commands in [`03_start_service.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/03_start_service.sql) using the Snowflake VSCode Extension OR in a SQL worksheet. 
+
+> aside positive
+> 
+>  NOTE: The below SERVICE is tagged with a comment. This comment helps Snowflake capture usage trends that could lead to code improvements (performance, cost optimization, or functionality). As part of our continual improvement of all of our frameworks and accelerators, we review who and how our customers are leveraging these tools.  While our tagging of objects and sessions is meant to provide improvements back to our customers, we also understand that not all of our customers will maintain this tagging. 
 
 ```SQL
 USE ROLE CONTAINER_USER_ROLE;
@@ -356,7 +357,7 @@ CREATE SERVICE AUTOTRAIN
   SPECIFICATION_FILE = autotrain.yaml
   MIN_INSTANCES = 1
   MAX_INSTANCES = 1
-  EXTERNAL_ACCESS_INTEGRATIONS = (ALLOW_ALL_EAI);
+  EXTERNAL_ACCESS_INTEGRATIONS = (ALLOW_ALL_EAI)
   COMMENT = '{"origin": "sf_sit",
              "name": "hf_autotrain",
              "version": {"major": 1, "minor": 1},
@@ -372,21 +373,21 @@ SHOW ENDPOINTS IN SERVICE AUTOTRAIN;
 CALL SYSTEM$GET_SERVICE_LOGS('AUTOTRAIN', '0', 'autotrain');
 ```
 
-Once the container is up and running, command `SYSTEM$GET_SERVICE_STATUS` will return `RUNNING`. Fine-tuning will start once the container is running and will take some time. Training Llama-2-7b-hf on 1,000 records required roughly 1 hour. 
+Once the container is up and running, command `SYSTEM$GET_SERVICE_STATUS` will return `RUNNING`. Fine-tuning will start once the container is running and will take some time. Training Llama-2-7b-hf on 1,000 similar records required roughly 1 hour. 
 
 Progress can be monitored by visiting the Jupyter URL returned by command: `SHOW ENDPOINTS IN SERVICE AUTOTRAIN;`. 
 
-After logging in, visit `workspace/autotrain.err` in Jupyter to see progress. Once the fine-tuning is complete, a confirmation message will be written to the container logs, accessible via system function `SYSTEM$GET_SERVICE_LOGS`. At this point, the fine-tuning is done and the merged (base + adapter) fine-tuned model resides in Snowflake stage `VOLUMES`. Below we will run a quick test before suspending the service.
+After logging in, visit `workspace/autotrain.err` in Jupyter to see progress. Note that you will need to refresh the file for continued monitoring. Once the fine-tuning is complete, a confirmation message will be written to the container logs, accessible via system function `SYSTEM$GET_SERVICE_LOGS`. At this point, the fine-tuning is done and the merged (base + adapter) fine-tuned model resides in Snowflake stage `VOLUMES`. Below we will run a quick test before suspending the service.
 
 <!-- ------------------------ -->
 ## LLM Prompting
 Duration: 3
 
-A Gradio chat interface can be served from the container service using Jupyter. Within the Gradio interface, we can prompt the fine-tuned model (and the base foundational model).To access JupyterLab, execute `SHOW ENDPOINTS IN SERVICE AUTOTRAIN;` in a Snowsight SQL Worksheet or SnowSQL. Visit the URL listed with `jupyter` endpoint. 
+A Gradio chat interface can be served from the container service using JupyterLab. Within the Gradio interface, we can prompt the fine-tuned model (and the base foundational model) for quick validation. To access JupyterLab, execute `SHOW ENDPOINTS IN SERVICE AUTOTRAIN;` in a Snowsight SQL Worksheet or SnowSQL. Visit the URL listed with the `jupyter` endpoint. 
 
 Within JupyterLab, open a new terminal. 
 
-[add Jupyter terminal photo]
+[JupyterLab Terminal]((./assets/jupyter_terminal.png))
 
 From the Jupyter terminal, run the below pip installation(s):
 ```bash
@@ -416,14 +417,26 @@ When the above command returns `Uvicorn running on ...`, run the below command i
 python3 -m fastchat.serve.gradio_web_server --port 8000
 ```
 
-Finally, execute SHOW `ENDPOINTS IN SERVICE AUTOTRAIN;` and visit the URL listed with the `app` endpoint. 
+The above statement should write `Running on local URL:  http://0.0.0.0:8000`. 
 
-[include picture of gradio]()
+Finally, execute `SHOW ENDPOINTS IN SERVICE AUTOTRAIN;` and visit the URL listed with the `app` endpoint. This is the URL from which the Gradio chat interface is accessible.
 
-The dropdown will allow selecting a model to prompt. The selection matching the `PROJECT_NAME` in the `autotrain.yaml` specification file corresponds to the fine-tuned model. Below is a sample prompt of a novel offer you can use to prompt the LLM(s). Copy and paste to see if fine-tuning was effective.
+[Gradio Chat](.assets/chat.png)
+
+The dropdown will allow selecting a model to prompt. The selection matching the `PROJECT_NAME` in the `src/autotrain.yaml` specification file corresponds to the fine-tuned model. If opted to include, the model matching the `MODEL_CARD` in the `src/autotrain.yaml` specification file is the non-fine-tuned model. Below is a sample prompt of a novel offer you can use to prompt the LLM(s). Copy and paste to see if fine-tuning was effective.
 
 ```
-What is this offer: {"HYPERLINK":"sendit.com/bicycleaccesories"} ... blah blah blah
+What is this offer: 
+{
+"HYPERLINK": "www.bicyclemania.com/commute",
+"ORGANIZATION_NAME": "Bicycle Mania",
+"PRODUCT_CATEGORY": "Sports & Outdoors",
+"PRODUCT_DESCRIPTION": "Upgrade your daily commute with our sleek and efficient Urban Commuter Bicycle. Designed for city dwellers, this bicycle offers a smooth ride, agile handling, and unmatched style. Say goodbye to traffic jams and hello to a healthier, more eco-friendly lifestyle with Bicycle Mania's Urban Commuter Bicycle.",
+"PRODUCT_NAME": "Urban Commuter Bicycle",
+"QUALIFICATION": "Purchase Urban Commuter Bicycle and share a photo or video of your city commute with us on social media",
+"REWARD": "$50",
+"REWARD_TYPE": "Card"
+}
 ```
 
 
@@ -439,7 +452,7 @@ ALTER COMPUTE POOL CONTAINER_HOL_POOL_GPU_NV_M STOP ALL;
 ALTER COMPUTE POOL CONTAINER_HOL_POOL_GPU_NV_M SUSPEND;
 ```
 
-If you want to clean up and remove ALL of the objects you created during this quickstart, run the following from [`04_cleanup.sql`](update)
+If you want to clean up and remove ALL of the objects you created during this quickstart, run the following from [`04_cleanup.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/04_cleanup.sql)
 
 ```SQL
 USE ROLE CONTAINER_USER_ROLE;
@@ -448,6 +461,7 @@ ALTER COMPUTE POOL CONTAINER_HOL_POOL_GPU_NV_M SUSPEND;
 
 DROP SERVICE CONTAINER_HOL_DB.PUBLIC.AUTOTRAIN;
 DROP COMPUTE POOL CONTAINER_HOL_POOL_GPU_NV_M;
+DROP SECRET HF_TOKEN;
 
 DROP DATABASE CONTAINER_HOL_DB;
 DROP WAREHOUSE CONTAINER_HOL_WH;
