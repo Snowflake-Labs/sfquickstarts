@@ -476,8 +476,6 @@ Duration: 2
 
 Congratulations! You've successfully fine-tuned a Large Language Model to describe product offer metadata using Snowpark Container Services and HuggingFace's AutoTrain-Advanced module. And then you created a Gradio chat interface to evaluate the effectiveness of the fine-tuning.
 
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/XKd8rXPUNs2G1yM28).
-
 ### What You Learned
 
 - How to develop and start a Snowpark Container Service
