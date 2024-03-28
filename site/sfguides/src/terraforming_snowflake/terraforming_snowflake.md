@@ -117,7 +117,7 @@ Run the following to find the `YOUR_ACCOUNT_LOCATOR` and your Snowflake Region I
 SELECT current_account() as YOUR_ACCOUNT_LOCATOR, current_region() as YOUR_SNOWFLAKE_REGION_ID;
 ```
 
-You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#snowflake-region-ids). 
+You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier#snowflake-region-ids-and-region-groups). 
 
 **Example**: aws_us_west_2 would have a us-west-2 value for `YOUR_REGION_HERE`.
 
@@ -148,7 +148,7 @@ terraform {
   required_providers {
     snowflake = {
       source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.76"
+      version = "~> 0.87"
     }
   }
 }
@@ -163,7 +163,7 @@ resource "snowflake_database" "db" {
 
 resource "snowflake_warehouse" "warehouse" {
   name           = "TF_DEMO"
-  warehouse_size = "large"
+  warehouse_size = "xsmall"
   auto_suspend   = 60
 }
 ```
@@ -262,10 +262,10 @@ resource "snowflake_role" "role" {
   name     = "TF_DEMO_SVC_ROLE"
 }
 
-resource "snowflake_grant_privileges_to_role" "database_grant" {
-  provider   = snowflake.security_admin
-  privileges = ["USAGE"]
-  role_name  = snowflake_role.role.name
+resource "snowflake_grant_privileges_to_account_role" "database_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
   on_account_object {
     object_type = "DATABASE"
     object_name = snowflake_database.db.name
@@ -278,19 +278,19 @@ resource "snowflake_schema" "schema" {
   is_managed = false
 }
 
-resource "snowflake_grant_privileges_to_role" "schema_grant" {
-  provider   = snowflake.security_admin
-  privileges = ["USAGE"]
-  role_name  = snowflake_role.role.name
+resource "snowflake_grant_privileges_to_account_role" "schema_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
   on_schema {
     schema_name = "\"${snowflake_database.db.name}\".\"${snowflake_schema.schema.name}\""
   }
 }
 
-resource "snowflake_grant_privileges_to_role" "warehouse_grant" {
-  provider   = snowflake.security_admin
-  privileges = ["USAGE"]
-  role_name  = snowflake_role.role.name
+resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
   on_account_object {
     object_type = "WAREHOUSE"
     object_name = snowflake_warehouse.warehouse.name
@@ -311,38 +311,39 @@ resource "snowflake_user" "user" {
     rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
 }
 
-resource "snowflake_grant_privileges_to_role" "user_grant" {
-  provider   = snowflake.security_admin
-  privileges = ["MONITOR"]
-  role_name  = snowflake_role.role.name
+resource "snowflake_grant_privileges_to_account_role" "user_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["MONITOR"]
+  account_role_name = snowflake_role.role.name  
   on_account_object {
     object_type = "USER"
     object_name = snowflake_user.user.name
   }
 }
 
-resource "snowflake_role_grants" "grants" {
+resource "snowflake_grant_account_role" "grants" {
   provider  = snowflake.security_admin
   role_name = snowflake_role.role.name
-  users     = [snowflake_user.user.name]
+  user_name = snowflake_user.user.name
 }
+
 
 ```
 
-1. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
+3. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
 
-    Add the following resources to a new file named `outputs.tf`
+Add the following resources to a new file named `outputs.tf`
 
-    ```
-    output "snowflake_svc_public_key" {
-        value = tls_private_key.svc_key.public_key_pem
-    }
+```
+output "snowflake_svc_public_key" {
+  value = tls_private_key.svc_key.public_key_pem
+}
 
-    output "snowflake_svc_private_key" {
-        value     = tls_private_key.svc_key.private_key_pem
-        sensitive = true
-    }
-    ```
+output "snowflake_svc_private_key" {
+  value     = tls_private_key.svc_key.private_key_pem
+  sensitive = true
+}
+```
 
 ## Commit Changes to Source Control
 Duration: 3
