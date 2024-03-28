@@ -161,7 +161,7 @@ Follow these steps to create the training data:
       - Select or drag `product_offers.csv` to upload and name table `PRODUCT_OFFERS`. Click Next.
       - Expand `View options` and set Header to `First line contains header` (if not selected). Click Load.
   > aside negative
-> ERROR: If you receive an `Error Parsing Columns` file upload error, change your default warehouse to `CONTAINER_HOL_WH` or one available to the current role.
+> NOTE: If you receive an `Error Parsing Columns` file upload error, change your default warehouse to `CONTAINER_HOL_WH` or one available to the current role.
   3. Run the following SQL commands in [`02_training_data.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/02_training_data.sql)
   ```SQL
   USE ROLE CONTAINER_USER_ROLE;
@@ -387,7 +387,7 @@ A Gradio chat interface can be served from the container service using JupyterLa
 
 Within JupyterLab, open a new terminal. 
 
-[JupyterLab Terminal]((./assets/jupyter_terminal.png))
+![JupyterLab Terminal](./assets/jupyter_terminal.png)
 
 From the Jupyter terminal, run the below pip installation(s):
 ```bash
@@ -421,7 +421,7 @@ The above statement should write `Running on local URL:  http://0.0.0.0:8000`.
 
 Finally, execute `SHOW ENDPOINTS IN SERVICE AUTOTRAIN;` and visit the URL listed with the `app` endpoint. This is the URL from which the Gradio chat interface is accessible.
 
-[Gradio Chat](.assets/chat.png)
+![Gradio Chat](./assets/chat.png)
 
 The dropdown will allow selecting a model to prompt. The selection matching the `PROJECT_NAME` in the `src/autotrain.yaml` specification file corresponds to the fine-tuned model. If opted to include, the model matching the `MODEL_CARD` in the `src/autotrain.yaml` specification file is the non-fine-tuned model. Below is a sample prompt of a novel offer you can use to prompt the LLM(s). Copy and paste to see if fine-tuning was effective.
 
@@ -444,7 +444,7 @@ What is this offer:
 ## Cleanup
 Duration: 2
 
-If you no longer need the service and compute pool up and running, we can stop the service and suspend the compute pool so that we don't incur any cost (Snowpark Container Services bill credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing):
+If you no longer need the service and compute pool up and running, we can stop the service and suspend the compute pool so that we don't incur any cost. Snowpark Container Services bill credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing.
 
 ```SQL
 USE ROLE CONTAINER_USER_ROLE;
@@ -452,7 +452,7 @@ ALTER COMPUTE POOL CONTAINER_HOL_POOL_GPU_NV_M STOP ALL;
 ALTER COMPUTE POOL CONTAINER_HOL_POOL_GPU_NV_M SUSPEND;
 ```
 
-If you want to clean up and remove ALL of the objects you created during this quickstart, run the following from [`04_cleanup.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/04_cleanup.sql)
+If you want to clean up and remove ALL of the objects you created during this Quickstart, run the following from [`04_cleanup.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/04_cleanup.sql)
 
 ```SQL
 USE ROLE CONTAINER_USER_ROLE;
@@ -481,10 +481,10 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 ### What You Learned
 
 - How to develop and start a Snowpark Container Service
-- How to use secret environment variables for Snowpark Container Service
+- How to use secret environment variables for Snowpark Container Services
 - How to run LLM fine-tuning with HuggingFace's AutoTrain-Advanced in Snowpark Container Services
 - How to format training data for HuggingFace's AutoTrain-Advanced fine-tuning
-- How to start a Gradio web server and application for LLM prompting comparison
+- How to start a Gradio web server and chat application for LLM prompting comparison
 
 ### Related Resources
 
