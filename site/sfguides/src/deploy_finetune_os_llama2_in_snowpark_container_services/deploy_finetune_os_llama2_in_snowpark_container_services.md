@@ -5,20 +5,20 @@ categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Containers, Snowpark
+tags: Getting Started, Containers, Snowpark, Snowpark Container Services
 
 # Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview 
 Duration: 8
 
-By completing this QuickStart guide, you will get to explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview), now in `Public Preview` on AWS, to deploy and fine-tune open source Llama 2 Large Language Model (LLM) from Hugging Face.
+By completing this QuickStart guide, you will get to explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) (SPCS), currently in `Public Preview`, to deploy and fine-tune open source Llama 2 Large Language Model (LLM) from Hugging Face. ([Check SPCS availability](https://docs.snowflake.com/developer-guide/snowpark-container-services/overview#available-regions)).
 
 ### What is Snowpark Container Services?
 
 ![Snowpark Container Service](./assets/containers.png)
 
-[Snowpark Container Services (SPCS)](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) is a fully managed container offering that allows you to easily deploy, manage, and scale containerized services, jobs, and functions, all within the security and governance boundaries of Snowflake, with no data movement. As a fully managed service, SPCS comes with Snowflake’s native security, RBAC support, and built-in configuration and operational best-practices.
+Snowpark Container Services is a fully managed container offering that allows you to easily deploy, manage, and scale containerized services, jobs, and functions, all within the security and governance boundaries of Snowflake, with no data movement. As a fully managed service, SPCS comes with Snowflake’s native security, RBAC support, and built-in configuration and operational best-practices.
 
 Snowpark Container Services are fully integrated with both Snowflake features and third-party tools, such as Snowflake Virtual Warehouses and Docker, allowing teams to focus on building data applications, and not building or managing infrastructure. This managed service allows you to run and scale your container workloads across regions and clouds without the additional complexity of managing a control plane, worker nodes, and also while having quick and easy access to your Snowflake data.
 
@@ -54,7 +54,7 @@ Duration: 15
 
 **Step 1**. Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services). If you don't have Git installed, you can also download the repo as a .zip file.
 
-**Step 2**. In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file) using [`setup.sql`](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services/blob/main/setup.sql) and run the commands to create various objects such as database, schema, warehouse, stages, compute pool, image repository, etc. 
+**Step 2**. In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file) using [`setup.sql`](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services/blob/main/setup.sql) and run the commands to create various objects such as database, schema, warehouse, stages, compute pool, image repository, etc. 
 
 #### Useful resources for some of the newly introduced objects created during setup
 - The [OAuth security integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration) will allow us to login to our UI-based services using our web browser and Snowflake credentials.
@@ -65,11 +65,11 @@ Duration: 15
 ## Build, Tag and Push Docker Image
 Duration: 45
 
-In the cloned repo, you should see a [`Dockerfile`](https://github.com/Snowflake-Labs/sfguide-deploy-finetune-os-llama2-snowpark-container-services/blob/main/Dockerfile) that looks like this:
+In the cloned repo, you should see a [`Dockerfile`](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services/blob/main/Dockerfile) that looks like this:
 
 ```python
 # Use rapidsai image for GPU compute
-FROM rapidsai/rapidsai:23.04-cuda11.8-runtime-ubuntu22.04-py3.8
+FROM rapidsai/rapidsai:23.06-cuda11.8-runtime-ubuntu22.04-py3.10
 
 RUN apt-get update && apt-get install -y --no-install-recommends
 
@@ -77,19 +77,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends
 WORKDIR /notebooks
 # Copy Notebooks and data into the container at /notebooks
 COPY llm-notebook-with-fine-tune.ipynb .
-COPY llm-notebook-with-fine-tune-pre-run.ipynb .
-COPY llm-notebook-with-fine-tune-pre-run-all-rows.ipynb .
+COPY llm-notebook-with-fine-tune-all-rows.ipynb .
 COPY transcripts_base.json .
 COPY transcripts_inst.json .
 COPY utils.py .
 
 # Install Snowpark Python, Pandas and JupyterLab from Snowflake Anaconda channel
-RUN conda install -n rapids -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas jupyterlab
+RUN conda install -n rapids -c https://repo.anaconda.com/pkgs/snowflake snowflake-ml-python snowflake-snowpark-python pandas jupyterlab
 
-# Install other libraries
-RUN pip install snowflake-ml-python==1.1.2 && \ 
-    pip install transformers==4.34.0 tokenizers && \ 
-    pip install peft sentencepiece tokenizers vllm==0.2.1.post1 bitsandbytes datasets absl-py==1.3.0
+RUN pip install transformers==4.34.0 tokenizers && \ 
+    pip install peft sentencepiece tokenizers vllm==0.2.1.post1 bitsandbytes datasets absl-py==1.3.0 
 
 # Make port 8888 publicly available 
 EXPOSE 8888
@@ -102,7 +99,7 @@ Notes:
 
 - We're selecting `rapidsai` for the base image which will enable us to run GPU workloads for deploying and fine-tuning Llama 2 in SPCS.
 - We're setting working directory, and copying over Notebooks and data files.
-- We're installing packages including Snowpark Python, Pandas and JupyterLab from Snowflake Anaconda channel and other open source libraries for fine-tuning the model.
+- We're installing packages including Snowpark Python, Snowflake ML, Pandas and JupyterLab from Snowflake Anaconda channel and other open source libraries for fine-tuning the model.
 - We're exposing port 8888.
 - We're starting JupyterLab when the container launches.
 
@@ -217,7 +214,7 @@ FROM @dash_stage
 SPECIFICATION_FILE = 'llm-spcs.yaml'
 MIN_INSTANCES = 1
 MAX_INSTANCES = 1
-EXTERNAL_ACCESS_INTEGRATIONS = (HUGGINGFACE_ACCESS_INTEGRATION);
+EXTERNAL_ACCESS_INTEGRATIONS = (ALLOW_ALL_ACCESS_INTEGRATION);
 ```
 
 To check the status of the service, run the following in a SQL worksheet:
@@ -264,9 +261,7 @@ Here's a quick overview of the three notebooks.
 
 1) **llm-notebook-with-fine-tune.ipynb**: This is the main notebook you will run through to complete this QuickStart guide.
 
-2) **llm-notebook-with-fine-tune-pre-run.ipynb**: If for any reason you are not able to run through *llm-notebook-with-fine-tune.ipynb* notebook, you can use this notebook as reference. It has been pre-run so all the cells show the actual/expected output of running each cell.
-
-3) **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb**: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that--while all the code is exactly the same as in *llm-notebook-with-fine-tune.ipynb* the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in *llm-notebook-with-fine-tune.ipynb* the same model is fine-tuned using only 100 rows. And the improved model is evident in the inference results -- refer to the `output` vs `predicted` dataframe columns of the evaluation dataset in both notebooks. 
+2) **llm-notebook-with-fine-tune-all-rows.ipynb**: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that--while all the code is exactly the same as in *llm-notebook-with-fine-tune.ipynb* the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in *llm-notebook-with-fine-tune.ipynb* the same model is fine-tuned using only 100 rows. And the improved model is evident in the inference results -- refer to the `output` vs `predicted` dataframe columns of the evaluation dataset in both notebooks. 
 
 > aside positive
 > NOTE: Fine-tuning the model on a larger dataset compared to 100 rows in our case will take much longer so just be mindful of that.
@@ -422,11 +417,7 @@ To achieve good performance for the task, you will need at least 1 `num_epochs`.
 
 ### Log and Deploy Fine-tuned Llama 2
 
-In the next few cells, we will log and deploy fine-tuned Llama 2. Note that you might need to delete existing deployments and/or models if you're rerunning or starting over. If that's the case, run the following cells:
-
-```python
-registry.delete_deployment(model_name=MODEL_NAME,model_version=MODEL_VERSION,deployment_name=DEPLOYMENT_NAME)
-```
+In the next few cells, we will log and deploy fine-tuned Llama 2. Note that you might need to delete existing model if you're rerunning or starting over. If that's the case, run the following cells:
 
 ```python
 registry.delete_model(model_name=MODEL_NAME,model_version='BaseV1.1',delete_artifact=True)
