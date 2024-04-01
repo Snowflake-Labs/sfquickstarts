@@ -58,9 +58,9 @@ If the integration was successfully created, you should see output similar to th
 ## Create the `grader` function
 Duration: 2
 
-Next, create the `grader` function. This function will be used for grading (i.e., validating the successful completion of steps or tasks in the account).
+Next, create the `grader` function. This function will be used for validating the successful completion of lab steps in your account.
 
-Run the following code in new SQL worksheet:
+Run the following code in a new SQL worksheet:
 
 ```sql
 use role accountadmin;
@@ -75,15 +75,14 @@ create or replace external function util_db.public.grader(
  , description varchar) 
  returns variant 
  api_integration = dora_api_integration 
- context_headers = (current_timestamp,current_account, current_statement) 
+ context_headers = (current_timestamp,current_account, current_statement, current_account_name) 
  as 'https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/grader'  
 ;  
 ```
 
-The `grader` function will be located in the `UTIL_DB.PUBLIC` schema in your account. If you don't see the function, please refresh the objects in the **Databases** section of your account. In addition, ensure you are using the `ACCOUNTADMIN` role.
+The `grader` function will be located in the `UTIL_DB.PUBLIC` schema in your account. If you don't see the function, refresh the objects in the **Databases** section of your account. In addition, ensure you are using the `ACCOUNTADMIN` role.
 
 ![refresh picker](./assets/picker-refresh.png)
-
 <!-- ------------------------ -->
 ## Confirm that the auto-grader is provisioned correctly
 Duration: 1
@@ -99,16 +98,69 @@ select grader(step, (actual = expected), actual, expected, description) as grade
  'DORA_IS_WORKING' as step
  ,(select 123) as actual
  ,123 as expected
- ,'Dora is working!' as description
+ ,'The Snowflake auto-grader has been successfully set up in your account!' as description
 );
 ```
 
-If the auto-grader is correctly provisioned, you should see a **GRADED_RESULTS** column with several pieces of information, including a checkbox and a message `"description": "Dora is working!"`.
+If the auto-grader is correctly provisioned, you should see a **GRADED_RESULTS** column with several pieces of information, including a checkbox and a message `"description": "The Snowflake auto-grader has been successfully set up in your account!"`.
+<!-- ------------------------ -->
+## Create the `greeting` function
+Duration: 2
+
+Next, you'll create the `greeting` function. This function will link your Snowflake account to our badging system. If you don't complete this step, you'll risk not receiving your badge.
+
+Run the following code in new SQL worksheet:
+
+```sql
+use role accountadmin;
+
+use database util_db;
+
+create or replace external function util_db.public.greeting(
+      email varchar
+    , firstname varchar
+    , middlename varchar
+    , lastname varchar)
+returns variant
+api_integration = dora_api_integration
+context_headers = (current_timestamp, current_account, current_statement, current_account_name) 
+as 'https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/greeting'
+; 
+```
+
+The `greeting` function will be located in the `UTIL_DB.PUBLIC` schema in your account. If you don't see the function, please refresh the objects in the **Databases** section of your account. In addition, ensure you are using the `ACCOUNTADMIN` role.
+
+<!-- ------------------------ -->
+## Register your name and email
+Duration: 1
+
+Next, you'll need to register your name and email. You'll do this by running the `greeting` function with your name and email. This information will be used to issue your badge. Here are some important rules to follow PRIOR to running the SQL below:
+
+* Do **not** use all capital letters.
+* Do **not** use all lowercase letters.
+* Do **not** use CamelCase – put spaces between your words if there are spaces between the words in your name.
+* You must enter both a first and last name. Middle names are optional. Single letters do not count as names.
+* You can use accents or letters from any language.
+* You can use as many words as you want. For example, you can have a 3-word first name, a 3-word middle name and a 3-word last name! But please ensure there are spaces between the words in your name.
+
+Ensure that you follow these rules when running the SQL below in a new worksheet:
+
+```sql
+use role accountadmin;
+use database util_db;
+
+-- Replace <email> with your email address
+-- Replace <first name> <middle name> <last name> with your names
+select util_db.public.greeting(<email>, <first name>, <middle name>, <last name>);
+
+-- select util_db.public.greeting('my@email.com', 'Snowflake', 'The', 'Bear');
+```
+
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-That's it! You should now have the auto-grader correctly provisioned in your account. When grading Quickstarts, you'll need to invoke the auto-grader via steps specific to that Quickstart. Be sure to follow any specific steps corresponding to the Quickstart.
+That's it! You should now have the auto-grader correctly provisioned in your account.
 
 Resources:
 
