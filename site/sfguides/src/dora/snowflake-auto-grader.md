@@ -95,7 +95,7 @@ use database util_db;
 use schema public;
 
 select grader(step, (actual = expected), actual, expected, description) as graded_results from (SELECT
- 'DORA_IS_WORKING' as step
+ 'AUTO_GRADER_IS_WORKING' as step
  ,(select 123) as actual
  ,123 as expected
  ,'The Snowflake auto-grader has been successfully set up in your account!' as description
