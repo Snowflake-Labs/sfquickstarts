@@ -497,26 +497,40 @@ Let's review what we've covered so far:
 
 * Created the application package and uploaded the app's source code to the application package
 
-Next, you'll create the first version of the app. Run the following SQL in a worksheet:
+Next, you'll create the first version of the app. Run the following command in your terminal:
 
-```sql
-use role chairlift_provider;
-alter application package chairlift_pkg add version develop using '@chairlift_pkg.code.source';
+```bash
+snow app version create develop
 ```
 
-This statement will create the first (new) version of the native app using the source code files that you uploaded earlier.
+This command will create the first (new) version of the native app using the source code files that you uploaded earlier.
 
 > aside positive
 > 
->  **PATCH VERSIONS** Do not run the SQL statement below. It is included here to demonstrate how you can add a patch version of a native app.
+>  **PATCH VERSIONS** Do not run the command below. It is included here to demonstrate how you can add a patch version of a native app.
 
-In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following SQL statement:
+In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following command:
 
-```sql
-alter application package chairlift_pkg add patch for version develop using '@chairlift_pkg.code.source';
+```bash
+snow app version create develop --patch 1
 ```
 
 This SQL command returns the new patch number, which will be used when installing the application as the consumer.
+
+<!-- ------------------------ -->
+## Allow restricted application access to a secondary role
+Duration: 3
+
+Now that the source code has been uploaded into the application package and the application was installed, we can grant appropriate privileges to a secondary consumer role named **chairlift_viewer**. Note that the version and/or patch values may need to be updated to install the application using a different version or patch.
+
+```sql
+use role chairlift_admin;
+use warehouse chairlift_wh;
+
+-- allow our secondary viewer role restricted access to the app
+grant application role chairlift_app.app_viewer
+    to role chairlift_viewer;
+```
 
 <!-- ------------------------ -->
 ## Set up the application
