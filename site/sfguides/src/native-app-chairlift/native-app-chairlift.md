@@ -483,7 +483,7 @@ Open a new terminal in the root of the repository and execute the following comm
 snow app run
 ```
 
-This command will upload source files and create the application package and install the application instance automatically. 
+This command will upload source files, create the application package, and install the application object automatically. When you run it again, it will perform the minimum steps necessary to ensure the application is up-to-date with your local copy. 
 
 Snowflake CLI project is configured using `snowflake.yml` file.
 
