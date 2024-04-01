@@ -488,6 +488,37 @@ This command will upload source files, create the application package, and insta
 Snowflake CLI project is configured using `snowflake.yml` file.
 
 <!-- ------------------------ -->
+## Create the first version of the app
+Duration: 2
+
+Let's review what we've covered so far:
+
+* Created necessary account roles and objects, and granted proper privileges
+
+* Created the application package and uploaded the app's source code to the application package
+
+Next, you'll create the first version of the app. Run the following SQL in a worksheet:
+
+```sql
+use role chairlift_provider;
+alter application package chairlift_pkg add version develop using '@chairlift_pkg.code.source';
+```
+
+This statement will create the first (new) version of the native app using the source code files that you uploaded earlier.
+
+> aside positive
+> 
+>  **PATCH VERSIONS** Do not run the SQL statement below. It is included here to demonstrate how you can add a patch version of a native app.
+
+In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following SQL statement:
+
+```sql
+alter application package chairlift_pkg add patch for version develop using '@chairlift_pkg.code.source';
+```
+
+This SQL command returns the new patch number, which will be used when installing the application as the consumer.
+
+<!-- ------------------------ -->
 ## Set up the application
 Duration: 4
 
