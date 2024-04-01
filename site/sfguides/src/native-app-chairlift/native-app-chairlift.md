@@ -473,7 +473,7 @@ With the environment created, we can now create the application package for the 
 
 * Creates views and grants the setup script access to the views
 
-For more details, see the comments in the **provider/create-package.sql** script.
+For more details, see the comments in the **snowflake.yml** file.
 
 **Deploy the application package**
 
