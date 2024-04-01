@@ -355,9 +355,9 @@ Here's what the transcript summaries look like:
 
 Now let's try a bit more complex prompt that includes a concrete instruction to and see how the base model performs. Like so `Extract location and list of toys in JSON format:`.
 
-### <TODO... insert screenshot>
-
 Notice that in this case the model does not perform as well and the output is not consistent across all transcripts. It also includes additional information in plain-text format which makes displaying and processing it as a JSON object tricky.
+
+![Eval Inference 100 Rows](./assets/sample_eval_inference_100_rows)
 
 This is where fine-tuning the model can help. Let's see how we can accomplish that in the following sections.
 
