@@ -547,7 +547,7 @@ In this Quickstart, the **Configuration** tab is included to demonstrate how dif
 ## Clean up
 Duration: 1
 
-Let's clean up your Snowflake account. In the same terminal you open before, execute the following command:
+Let's clean up your Snowflake account. In the same terminal you opened before, execute the following command:
 
 ```bash
 snow app teardown
