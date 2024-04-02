@@ -562,7 +562,7 @@ SHOW APPLICATIONS;
 ## Run the Streamlit App
 Duration: 1
 
-With the application installed, you can now the app! To run the app, navigate to the `Apps` tab in Snowflake. From there, you will see your new application. Click on the app to launch it and give it a few seconds to warm up. 
+With the application installed, you can now run the app! To run the app, navigate to the `Apps` tab in Snowflake. From there, you will see your new application. Click on the app to launch it and give it a few seconds to warm up. 
 
 When running the app for the first time, you'll be prompted to do some first-time setup by granting the app access to certain tables (i.e., create object-level bindings). The bindings link references defined in the manifest file to corresponding objects in the Snowflake account. These bindings ensure that the application can run as intended.
 
