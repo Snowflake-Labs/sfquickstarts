@@ -1,246 +1,183 @@
-author: Vino Duraisamy
+author: 
 id: build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex
-summary: This guide will provide step-by-step details for building an LLM chatbot that answers questions based on Snowflake Quickstart Blogs
-categories: data-science-&-ml,app-development, marketing
+summary: This is a sample Snowflake Guide
+<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
+categories: Getting-Started
 environments: web
-status: Hidden
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, LLMs, Generative AI, Streamlit, ChatBot, OpenAI
+tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Build a Retrieval Augmented Generation(RAG) based LLM assistant using  Streamlit, OpenAI and LlamaIndex
+# Snowflake Guide Template
 <!-- ------------------------ -->
-## Overview
-
-Duration: 5
-
-This quickstart will cover the basics of Retrieval Augmented Generation (RAG) and how to build an LLM assistant using Streamlit, OpenAI and LlamaIndex. The AI assistant will be trained on Snowpark data engineering quickstarts and can answer questions related to those blogs.
-
-Here is a summary of what you will be able to learn in each step following this quickstart:
-
-- **Setup Environment**: Setup your development environment, access OpenAI API keys and install the dependancies needed to run this quickstart
-- **Data Pipeline**: Build a data pipeline to download the blogs on which the AI assisstant is trained on
-- **Build Index**: Chunk the blogs into smaller contexts which can then be appended with the input prompt to an LLM
-- **Streamlit Application**: Build a Streamlit App to serve as the UI for the LLM assistant
-
-Let's dive into the key features and technologies used in the demo, for better understanding.
-
-### Key Features & Technology
-
-- Large Language Models (LLMs)
-- Retrieval Augmented Generation
-- LlamaIndex
-- Streamlit
-
-### What is a large language model (LLM)?
-
-A large language model, or LLM, is a deep learning algorithm that can recognize, summarize, translate, predict and generate text and other content based on knowledge gained from massive datasets. Some examples of popular LLMs are [GPT-4](https://openai.com/research/gpt-4), [GPT-3](https://openai.com/blog/gpt-3-apps), [BERT](https://cloud.google.com/ai-platform/training/docs/algorithms/bert-start), [LLaMA](https://ai.facebook.com/blog/large-language-model-llama-meta-ai/), and [LaMDA](https://blog.google/technology/ai/lamda/).
-
-### What is OpenAI?
-
-OpenAI is the AI research and deployment company behind ChatGPT, GPT-4 (and its predecessors), DALL-E, and other notable offerings. Learn more about [OpenAI](https://openai.com/). We use OpenAI in this guide, but you are welcome to use the large language model of your choice in its place.
-
-### What is Retrieval Augmented Generation(RAG)?
-
-Retrieval Augmentation Generation (RAG) is an architecture that augments the capabilities of a Large Language Model (LLM) like GPT-4 by adding an information retrieval system that provides the models with relevant contextual data. Through this information retrieval system, we could provide the LLM with additional information around specific industry or a company's proprietary data and so on.
-
-### What is LlamaIndex?
-
-Applications built on top of LLMs often require augmenting these models with private or domain-specific data. LlamaIndex (formerly GPT Index) is a data framework for LLM applications to ingest, structure, and access private or domain-specific data.
-
-### What is Streamlit?
-
-Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform. Learn more about [Streamlit](https://streamlit.io/).
-
-### What You Will Learn?
-
-- How to build a data pipeline to download the blogs for retrieval
-- How to chuck the blogs into smaller contexts which can then be augmented with the input prompt to an LLM
-- How to build a Streamlit App to serve as the UI for the chatbot
-
-### Prerequisites
-
-- **GitHub account** - If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
-- A **OpenAI account** or API key to another language model - [Sign-in or create an account](https://openai.com/)
-  - [OpenAI API Key](https://platform.openai.com/account/api-keys)
-
-<!-- ------------------------ -->
-
-## Setup Environment
-
-The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-blog-ai-assistant). This repository contains all the code you will need to successfully complete this QuickStart Guide.
-
-Using HTTPS:
-
-```shell
-git clone https://github.com/Snowflake-Labs/sfguide-blog-ai-assistant.git
-```
-
-OR, using SSH:
-
-```shell
-git clone git@github.com:Snowflake-Labs/sfguide-blog-ai-assistant.git
-```
-
-Run the following command to install the dependancies.
-
-```shell
-cd sfguide-blog-ai-assistant 
-pip install -r requirements.txt
-```
-
-Great, we installed all the dependancies needed to work through this demo.
-
-<!-- ------------------------ -->
-
-## Data Pipeline to Download Blogs
-
-Duration: 5
-
-During this step, we will identify the blog or list of blogs that we want to query using the AI chatbot. In this example, the bot will answer questions about Snowpark Data Engineering quickstarts. The list of blogs the bot is capable of answering is defined in `data_pipeline.py` file in `PAGES` list.
-
-```python
-PAGES = [
-    "https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python",
-    "https://quickstarts.snowflake.com/guide/cloud_native_data_engineering_with_matillion_and_snowflake",
-    "https://quickstarts.snowflake.com/guide/data_engineering_with_apache_airflow",
-    "https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python",
-    "https://quickstarts.snowflake.com/guide/data_engineering_with_snowpark_python_and_dbt"
-]
-```
-
-> aside positive
-> IMPORTANT:
->
-> - You can append or replace this list with your own list of blogs as well. Open the code in an IDE of your choice and update the list.
-
-After you update the blogs list, switch to the terminal run the following command:
-
-```shell
-python data_pipeline.py
-```
-
-This will iteratively download all the blogs in `PAGES` list into  `.content` directory and convert them into markdown files. We use the `html2text` library to convert the html files into markdown files. 
-
-<!-- ------------------------ -->
-
-## Chunk the Blog Contents and Build Index
-
-Duration: 10
-
-In this step, we will build a vector index for the markdown files. It involves chunking the blogs in the `.content` directory, storing them as a [TreeIndex](https://gpt-index.readthedocs.io/en/latest/api_reference/indices/tree.html) using LlamaIndex.
-
-Before diving into building the index, let us understand the **Retrieval Augmented Generation(RAG)** architecture. It has three main steps.
-
-1. Choose a foundation model of your choice to generate text
-However, if I were to question the foundation model about the specifics of Snowpark and other features that were released recently, GPT-4 may not be able to answer.
-2. Augment the input prompt (i.e., your question) with relevant documents
-If we provide the model with Snowpark documentation or quickstart, it will be capable of answering questions. However, the context length of these models are small. GPT-4 has context length of 4000 tokens only. 4000 tokens is about 500 words, which is roughly 3-4 paragraphs. But Snowpark documentation is more than 4 paragraphs. What could be done?
-  i. We take the Snowflake documentation and chunk it with ~500 words per chunk. We then convert each of these chunks into vector embeddings, store them in a vector store, and build an index for easy retrieval.
-3. Query the foundation model for answers
-  i. During the inference phase, the input prompt is converted into a vector embedding, the vector store is searched to find the text chunk that has higher similarity to the input prompt and is returned to the foundation model.
-  ii. The model then uses the chunk of document that is relevant to the query to answer the query.
-
-Challenges in this approach:
-
-- How can you split the document into meaningful chunks so the context is not lost?
-- What are the different indexes you can build? 
-- How can you decide on the type of index to build for faster retrieval?
-
-Here is where LlamaIndex comes in. It abstracts away the complexity in smart chucking and indexing of the document. All you need to do is to select which type of index you need based on your use case, and let LlamaIndex do the work.
-
-Now that we understand RAG architecture, let's review the code in `build_index.py` and understand what each snippet of code does.
-
-```python
-def build_index(data_dir: str, knowledge_base_dir: str) -> None:
-    """Build the vector index from the markdown files in the directory."""
-    print("Building vector index...")
-    documents = SimpleDirectoryReader(data_dir).load_data()
-
-    index = TreeIndex.from_documents(documents, service_context=service_context)
-    index.storage_context.persist(persist_dir=knowledge_base_dir)
-    print("Done.")
-```
-
-The `build_index()` creates a TreeIndex from the markdown files in `.content` directory and persists the index in the local `.kb` directory. In LlamaIndex terminology, a node refers to a chunk of text from a document.
-
-The  `TreeIndex` builds a hierarchical tree from a set of nodes which become leaf nodes in the tree. 
-
-![TreeIndex](assets/tree_index.png)
-
-During the inference time, it queries the index by traversing from root nodes down to leaf nodes. Once the leaf node/nodes with relevant keywords as the user prompt is returned, a response is returned by the index. This response is then augmented with user prompt to chat with the model.
-
-![Retrieving from Key Index](assets/retrieval.png)
-
-Open the `build_index.py` file from an IDE of your choice and update the `YOUR_OPENAI_API_KEY` with your OpenAI API key.
-
-Open the terminal and run the following command to build the vector index:
-
-```shell
-python build_index.py
-``` 
-
-This will store the chunks of documents as a tree index in `.kb` directory.
-
-<!-- ------------------------ -->
-
-## Build a Streamlit Chatbot Application
-
-We're ready to start building our app. We will build a Streamlit App for the chat interface. As a first step, open the `streamlit_app.py` from an IDE of your choice and update the `YOUR_OPENAI_API_KEY` with your OpenAI API key.
-
-Open the terminal and run the following command to create the Streamlit App:
-
-```python
-streamlit run streamlit_app.py
-```
-
-The chat UI will open in a chrome window at `https://localhost:8051`. You can type your questions about Snowpark data engineering and the chatbot will respond.
-
-We'll break down the Python file snippet-by-snippet so that you understand the functionality of each section.
-
-Initialize the chatbot's message history by adding the system prompt that sets the tone and functionality of the chatbot. 
-
-```python
-if "messages" not in st.session_state:
-    system_prompt = (
-        "Your purpose is to answer questions about specific documents only. "
-        "Please answer the user's questions based on what you know about the document. "
-        "If the question is outside scope of the document, please politely decline. "
-        "If you don't know the answer, say `I don't know`. "
-    )
-    st.session_state.messages = [{"role": "system", "content": system_prompt}]
-```
-
-Prompt the user to enter the chat input by using Streamlit's `st.chat_input()` feature. After the user enters a message, add that message to the chat history by storing it in [session state](https://docs.streamlit.io/library/api-reference/session-state).
-
-```python
-if prompt := st.chat_input():
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
-```
-
-In the next step, the `load_index()` function returns the relevant chuck of document from the `.kb` directory. By invoking OpenAI's ChatCompletion API with the user prompt and the relevant document context, the chatbot generates a response.
-
-That's it. So when you finally run the app using the command `streamlit run streamlit_app.py`, you can interact with the chatbot and learn all about using Snowpark for data engineering use-cases.
-
-Here is how the app looks:
-
-![Preview of Final App](assets/app_demo.png)
-
-## Conclusion and next steps
-
+## Overview 
 Duration: 1
 
-Congratulations – you've just built an LLM-powered chatbot capable of answering questions based on the blog(s) you built it on.
+Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
-### Where to go from here
+It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
-This tutorial is just a starting point for exploring the possibilities of LLM-powered chat interfaces for data exploration and question-answering using Snowflake and Streamlit. 
+The rest of this Snowflake Guide explains the steps of writing your own guide. 
 
-Want to learn more about the tools and technologies used by your app? Check out the following resources:
+### Prerequisites
+- Familiarity with Markdown syntax
 
-- [Streamlit's new chat UI](https://docs.streamlit.io/library/api-reference/chat)
-- [Session state](https://docs.streamlit.io/library/api-reference/session-state)
-- [OpenAI's ChatCompetion feature](https://platform.openai.com/docs/api-reference/chat)
-- [Generative AI and Streamlit: A perfect match](https://blog.streamlit.io/generative-ai-and-streamlit-a-perfect-match/)
-- [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
+### What You’ll Learn 
+- how to set the metadata for a guide (category, author, id, etc)
+- how to set the amount of time each slide will take to finish 
+- how to include code snippets 
+- how to hyperlink items 
+- how to include images 
+
+### What You’ll Need 
+- A [GitHub](https://github.com/) Account 
+- [VSCode](https://code.visualstudio.com/download) Installed
+- [NodeJS](https://nodejs.org/en/download/) Installed
+- [GoLang](https://golang.org/doc/install) Installed
+
+### What You’ll Build 
+- A Snowflake Guide
+
+<!-- ------------------------ -->
+## Metadata Configuration
+Duration: 2
+
+It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+
+
+- **summary**: This is a sample Snowflake Guide 
+  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
+- **id**: sample 
+  - make sure to match the id here with the name of the file, all one word.
+- **categories**: data-science 
+  - You can have multiple categories, but the first one listed is used for the icon.
+- **environments**: web 
+  - `web` is default. If this will be published for a specific event or  conference, include it here.
+- **status**: Published
+  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
+- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
+- **tags**: Getting Started, Data Science, Twitter 
+  - Add relevant  tags to make your sfguide easily found and SEO friendly.
+- **authors**: Daniel Myers 
+  - Indicate the author(s) of this specific sfguide.
+
+---
+
+You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
+
+
+<!-- ------------------------ -->
+## Creating a Step
+Duration: 2
+
+A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+
+```markdown
+## Step 1 Title
+Duration: 3
+
+All the content for the step goes here.
+
+## Step 2 Title
+Duration: 1
+
+All the content for the step goes here.
+```
+
+To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+
+The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+
+<!-- ------------------------ -->
+## Code Snippets, Info Boxes, and Tables
+Duration: 2
+
+Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+
+### JavaScript
+```javascript
+{ 
+  key1: "string", 
+  key2: integer,
+  key3: "string"
+}
+```
+
+### Java
+```java
+for (statement 1; statement 2; statement 3) {
+  // code block to be executed
+}
+```
+
+### Info Boxes
+> aside positive
+> 
+>  This will appear in a positive info box.
+
+
+> aside negative
+> 
+>  This will appear in a negative info box.
+
+### Buttons
+<button>
+
+  [This is a download button](link.com)
+</button>
+
+### Tables
+<table>
+    <thead>
+        <tr>
+            <th colspan="2"> **The table header** </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>The table body</td>
+            <td>with two columns</td>
+        </tr>
+    </tbody>
+</table>
+
+### Hyperlinking
+[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+
+<!-- ------------------------ -->
+## Images, Videos, and Surveys, and iFrames
+Duration: 2
+
+Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
+
+### Images
+![Puppy](assets/SAMPLE.jpg)
+
+### Videos
+Videos from youtube can be directly embedded:
+<video id="KmeiFXrZucE"></video>
+
+### Inline Surveys
+<form>
+  <name>How do you rate yourself as a user of Snowflake?</name>
+  <input type="radio" value="Beginner">
+  <input type="radio" value="Intermediate">
+  <input type="radio" value="Advanced">
+</form>
+
+### Embed an iframe
+![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+
+<!-- ------------------------ -->
+## Conclusion
+Duration: 1
+
+At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+
+If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+
+### What we've covered
+- creating steps and setting duration
+- adding code snippets
+- embedding images, videos, and surveys
+- importing other markdown files
