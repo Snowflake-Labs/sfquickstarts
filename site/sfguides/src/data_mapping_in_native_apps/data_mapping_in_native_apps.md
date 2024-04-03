@@ -22,7 +22,8 @@ The Snowflake Native App Framework is a fantastic way for Snowflake application 
 
 * A basic understanding of Snowflake Native Applications
 * An introductory level of coding in Python
-* A basis knowledge of Snowflake
+* A basic knowledge of Snowflake
+* Snowflake CLI installed and configured
 
 ### What You'll Learn
 
@@ -60,9 +61,35 @@ The application provides a user interface which allows the consumer of the appli
 
 The first solution is not really what we want to be doing because the consumer will potentially have to create objects on their Snowflake instance just to satisfy the application's requirements, so this Quickstart will deliver the second solution.
 
+> aside positive
+> 
+> **Note** - The following steps explain how to create the app using the Snowflake CLI, as this option presents as a faster, more straightforward way to build Native Apps. You can also accomplish it by manually creating the folder structure and executing the SQL commands in Snowsight, but this alternative is out of the scope for this Quickstart.
+
+The files explained in the following steps, are already present in the project folder, and it is merely a deeper explanation of its contents.
+
+
+<!-- ------------------------ -->
+## Snowflake CLI First Steps
+Duration: 7
+
+The datamapping native app project resides in a Snowflake repository which contains several app examples for the user to learn its way into Snowflake Native Apps.
+
+The instructions on cloning the project repository and its execution are given in the readme file of this github [link NEEDS UPDATE AFTER PR](https://github.com/snowflakedb/native-apps-examples).
+
+### Clone instructions 
+
+1. Clone the project repo in your local machine. Repo could be cloned running:
+    ```sh
+    snow app init --template-repo git@github.com:snowflakedb/native-apps-examples.git --template datamapping-app
+    ```
+2. Replace the CSV filepath inside the **prepare_data.sh** file, line 28, like this:  
+    ```sh
+    snow object stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location
+    ```
+
 <!-- ------------------------ -->
 ## Building the Application
-Duration: 10
+Duration: 7
 
 The application itself is a simple one and has been broken down into three parts.
 
@@ -72,15 +99,19 @@ The application itself is a simple one and has been broken down into three parts
 
 To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart.  If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
 
-Head over to Snowsight on the provider account and open a new worksheet.
-
 The first thing you need to do is create a new database which will serve as the lookup database for the application
 
-```sql
-CREATE DATABASE IP2LOCATION;
-CREATE SCHEMA IP2LOCATION;
+> aside positive
+> 
+> **Note** - This setup SQL commands are managed by the *prepare_data.sh* file found in the repository, to run it simply type:
+ `SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh` in the folder root.
 
-CREATE TABLE LITEDB11 (
+```sh
+snow sql -q "
+CREATE DATABASE IF NOT EXISTS IP2LOCATION;
+CREATE SCHEMA IF NOT EXISTS IP2LOCATION;
+
+CREATE TABLE IF NOT EXISTS LITEDB11 (
 ip_from INT,
 ip_to INT,
 country_code char(2),
@@ -92,61 +123,43 @@ longitude DOUBLE,
 zip_code varchar(30),
 time_zone varchar(8)
 );
+
 --Create a file format for the file
 CREATE OR REPLACE FILE FORMAT LOCATION_CSV
 SKIP_HEADER = 1
-FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+FIELD_OPTIONALLY_ENCLOSED_BY = '\"'
 COMPRESSION = AUTO;
+
 --create a stage so we can upload the file
 CREATE STAGE LOCATION_DATA_STAGE
-file_format = LOCATION_CSV;
+file_format = LOCATION_CSV;"
+
+--Go ahead now and upload the file to the stage.  After the file is uploaded go back to
+your worksheet and copy the file into the table created earlier
+
+snow object stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
+
+snow sql -q "copy into litedb11 from @location_data_stage;
+SELECT COUNT(*) FROM LITEDB11;SELECT * FROM LITEDB11 LIMIT 10;" --database ip2location --schema ip2location
 ```
 
-Your database should now look like the following
-
-<img src="assets/producer_org.png" width="425" />
-
-
-You now need to upload the file you just downloaded from IP2Location to the stage you just created in Snowflake.  There are a couple of ways to do this:
-
-* Using Snowsight
-* Using SnowSQL
-
-Using Snowsight, come out of Worksheets and go to **data/databases** and then navigate to the stage we just created.  You should see a screen similar to the below
-
-<img src="assets/location_data_upload.png" width="800" />
-
-Go ahead now and upload the file to the stage.  After the file is uploaded go back to your worksheet and copy the file into the table created earlier
-
-```sql
---Copy the file into the table we just created
-COPY INTO LITEDB11 FROM @LOCATION_DATA_STAGE;
-```
-
-With the data loaded you can run some test queries to get a feel for the data
-
-```sql
-SELECT COUNT(*) FROM LITEDB11;
-SELECT * FROM LITEDB11 LIMIT 10;
-```
 We now have the reference database setup in the provider account so are now ready to start building the application itself.
 
 <!-- ------------------------ -->
 ## Provider Setup
 Duration: 5
 
-Staying in the same worksheet we will carry on creating the application.  As part of the application build we will need to upload some files to a stage again.  You can either clear out the stage you just used, or you can create another stage.  Here we create another stage
+> aside positive
+> 
+> **Note** - The code is here to illustrate how would you normally do the app creation using the manual steps, but this step is executed automatically by the CLI, for example, in a manual environment you will need to update your files to a stage, but that managed by the `snow app run` command.  In the of the following steps there will be instructions on how to execute it.
+
+Here we create another stage, and after that we go ahead and build out our application package
 
 ```sql
 USE DATABASE IP2LOCATION;
 USE SCHEMA IP2LOCATION;
 --create the new stage
 CREATE STAGE APPLICATION_STAGE;
-```
-
-We are now ready to go ahead and build out our application package.  In the worksheet execute the following
-
-```sql
 --create the application package
 CREATE APPLICATION PACKAGE IP2LOCATION_APP;
 --set context to the application package
@@ -165,7 +178,7 @@ SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11;
 GRANT SELECT ON VIEW IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
 ```
 
-Fantastic.  we now have an application package with permissions onto the lookup database.  That's the first part of the application completed but we will be revisiting this worksheet towards the end of the exercise as we need to add a version and patch to the application
+Fantastic.  we now have an application package with permissions onto the lookup database.  That's the first part of the application completed but we will be adding necessary file to deploy the actual application.
 
 <!-- ------------------------ -->
 ## The Manifest File
@@ -387,28 +400,7 @@ st.button('UPDATE!', on_click=update_table)
 
 ### Finishing the Application
 
-All the pieces are in place for our application so we now need to go back to the provider account and upload the files we have just created (manifest.yml, setup_script.sql and enricher_dash.py) to the stage **APPLICATION_STAGE**.  
-
-
-> aside positive
-> 
-> **Note** Remember our application manifest is expectng the file enricher_dash.py to be in a folder called **ui**
-
-once uploaded the stage should look like the following
-
-<img src="assets/code_complete.png" width="395" />
-
-Once the files are uploaded, go into your worksheets and finish off the building of the application package:
-
-```sql
-ALTER APPLICATION PACKAGE IP2LOCATION_APP
-  ADD VERSION MyFirstVersion
-  USING '@IP2LOCATION.IP2LOCATION.APPLICATION_STAGE';
-
-ALTER APPLICATION PACKAGE IP2LOCATION_APP SET DEFAULT RELEASE DIRECTIVE VERSION = MyFirstVersion PATCH = 0;
-```
-
-Our application package is built, now let's create an application.
+All the pieces are in place for our application, wejust created (manifest.yml, setup_script.sql and enricher_dash.py) and now we are going to actually deploy it in the next page, in a manual environment you would have to upload the files to the stage APPLICATION_STAGE and then run other commands from a SQL worksheet, but we are not covering that.  
 
 <!-- ------------------------ -->
 ## Creating and Deploying the Application
@@ -420,43 +412,40 @@ There are a few ways we could deploy our application:
 * Same Org / Different Org
 * Debug Mode / non-debug mode
 
-In this instance we are going to deploy the application locally so we can see what it looks like wthout having to have another account.  This will be in non-debug mode.
 
-```sql
-CREATE APPLICATION APPL_MAPPING
-FROM APPLICATION PACKAGE IP2LOCATION_APP
-USING VERSION MyFirstVersion;
+You can either go and manually upload the files into a stage, or as in this tutorial, take the Snowflake CLI approach and run:
+
+```sh
+    snow app run -i --database ip2location
 ```
 
-The application is now built.  Before we look at the application itself.  Because we have installed the application locally we need to create a table to test with.  Let's do that now.  In your worksheet execute the following
+At the root of the project you cloned, and the CLI is going to create the application for you, using the files explained in the previous steps, as well as the other configuration files present in the project folder.
 
-```sql
-CREATE DATABASE TEST_IPLOCATION;
-CREATE SCHEMA TEST_IPLOCATION;
+### Creating example data
+
+In this instance we deployed the application locally so we can see what it looks like wthout having to have another account. Before we look at the application itself.  Because we have installed the application locally we need to create a table to test with.  Let's do that now, in your console execute the following:
+
+```sh
+snow sql -q "CREATE DATABASE IF NOT EXISTS TEST_IPLOCATION;                      
+CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;
 
 CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
-	IP VARCHAR(16),
-	IP_DATA VARIANT
+        IP VARCHAR(16),
+        IP_DATA VARIANT
 );
 
-INSERT INTO TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');
+INSERT INTO TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
 ```
 
 ### Viewing the Application
 
-Come out of worksheets and head over to the Apps menu in Snowsight:
+Click on the link to your localhost that appeared in your console output.
 
-<img src="assets/find_apps.png" width="233" />
+ The application if you remember needs permissions onto a table in the consumer account (the one we just created.).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the shield icon to go to **Security**.
 
-click on that and you should see the following:
+<img src="assets/security_tab.png" width="288" />
 
-<img src="assets/deployed_app.png" width="1555" />
-
-The application if you remember needs permissions onto a table in the consumer account (the one we just created.).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the ellipses and select **View Details**:
-
-<img src="assets/perms.png" width="288" />
-
-This will take you through to a page which will allow you to specify the table that you want the application to work with.  This dialog is a result of the **REFERENCE** section in the manifest file.
+ This will take you through to a page which will allow you to specify the table that you want the application to work with.  This dialog is a result of the **REFERENCE** section in the manifest file.
 
 <img src="assets/assign_perms.png" width="901" />
 
@@ -480,12 +469,12 @@ Hit the **Update Mappings** button and then the **UPDATE!** button.  At the top 
 
 <img src="assets/statement.png" width="336" />
 
-Now go back to your worksheet to confirm that enhanced data has been written to your database table.
+Now go back to your console to confirm that enhanced data has been written to your database table.
 
-```sql
-USE DATABASE TEST_IPLOCATION;
+```sh
+snow sql -q " USE DATABASE TEST_IPLOCATION;
 USE SCHEMA TEST_IPLOCATION;
-SELECT * FROM TEST_DATA;
+SELECT * FROM TEST_DATA;"
 ```
 <img src="assets/complete.png" width="1243" />
 
@@ -495,11 +484,11 @@ Duration: 1
 
 Once you have finished with the application and want to clean up your environment you can execute the following script
 
-```sql
-DROP APPLICATION APPL_MAPPING;
+```sh
+snow sql -q " DROP APPLICATION APPL_MAPPING;
 DROP APPLICATION PACKAGE IP2LOCATION_APP;
 DROP DATABASE IP2LOCATION;
-DROP DATABASE TEST_IPLOCATION;
+DROP DATABASE TEST_IPLOCATION;"
 ```
 
 <!-- ------------------------ -->
