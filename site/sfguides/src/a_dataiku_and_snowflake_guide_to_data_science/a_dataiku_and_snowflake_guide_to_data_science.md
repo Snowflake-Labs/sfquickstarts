@@ -18,11 +18,18 @@ Duration: 1
 
 This Snowflake Quickstart introduces you to the basics of using Snowflake together with Dataiku Cloud as part of a Data Science project. We’ll be highlighting some of the well-integrated functionalities between the two technologies. It is designed specifically for use with the [Snowflake free 30-day trial](https://trial.snowflake.com), and the Dataiku Cloud free trial version via Snowflake’s Partner Connect. 
 
+The use case: Recent advancements in generative AI have made it easy to apply for jobs. But be careful! Scammers have also been known to create fake job applications in the hopes of stealing personal information. Let’s see if you — with Dataiku & Snowflake's help — can spot a real job posting from a fake one!
+
+> aside positive
+> 
+>  **About the data:** <br> The data for this quickstart comes from a Kaggle dataset of ~18000 job descriptions, out of which about 800 are fake. These are fairly simple datasets, once you have completed the lab you could consider enriching the project with additional data.
 
 ### Prerequisites
 
 - Use of the Snowflake free 30-day trial environment
 - Basic knowledge of SQL, and database concepts and objects
+
+
 
 ### What You'll Learn
 
@@ -39,20 +46,6 @@ The exercises in this lab will walk you through the steps to:
 ### What We’re Going To Build
 
 We will build a project that uses input datasets from Snowflake. We’ll build a data science pipeline by applying data transformations, building a machine learning model, and deploying it to Dataiku's Flow. We will then see how you can score the model against fresh data from Snowflake and automate.
-
-
-<!-- ------------------------ -->
-
-## Use Case
-
-Duration: 1
-
-Recent advancements in generative AI have made it easy to apply for jobs. But be careful! Scammers have also been known to create fake job applications in the hopes of stealing personal information. Let’s see if you — with Dataiku & Snowflake's help — can spot a real job posting from a fake one!
-
-
-> aside positive
-> 
->  **About the data:** <br> The data for this quickstart comes from a Kaggle dataset of ~18000 job descriptions, out of which about 800 are fake. These are fairly simple datasets, once you have completed the lab you could consider enriching the project with additional data.
 
 
 <!-- ------------------------ -->
@@ -823,7 +816,7 @@ Your code should now look similar to this (don't worry if you haven't separated 
 Duration: 5
 
 > aside positive
-> For the remainder of this lab we will be using Dataiku's Visual ML interface to design, train & test our model. This is the best option for most circumstances, however if you are specifically interested in trying out Snowflakes SnowparkML library then you could, of course, write that code from Dataiku as we just saw with the Python recipe but, even better, Dataiku provides a UI via a plugin so non-coders can use it. If you wish to develop your model using that plugin then jump to the final chapter of this guide
+> For the remainder of this lab we will be using Dataiku's Visual ML interface to design, train & test our model. This is the best option for most circumstances, however if you are specifically interested in trying out Snowflakes SnowparkML library then you could, of course, write that code from Dataiku as we just saw with the Python recipe but, even better, Dataiku provides a UI via a plugin so non-coders can use it. If you wish to develop your model using that plugin then jump to the optional chapter on the SnowparkML plugin near the end of this guide
 >
 
 One advantage of an end-to-end platform like Dataiku is that data preparation can be done in the same tool as machine learning. For example, before building a model, you may wish to create a holdout set. Let’s do this with a visual recipe.
@@ -1064,37 +1057,7 @@ Compare the schemas of the test and test_scored datasets.
 ![img](assets/DKU_Score6.png)
 
 >aside positive
-> How well was the model able to identify the fake job postings in the test dataset? That is a task for the Evaluate recipe, which you will encounter in other learning resources
-
-<!-- ------------------------ -->
-
-## Conclusions and next steps
-
-Duration: 3
-
-Congratulations on completing this introductory lab exercise! Congratulations! You've mastered the Snowflake basics and you’ve taken your first steps toward data cleansing, feature engineering and training machine learning models with Dataiku.
-
-You have seen how Dataiku's deep integrations with Snowflake can allow teams with different skill sets get the most out of their data at every stage of the machine learning lifecycle.
-
-We encourage you to continue with your free trial and continue to refine your models and by using some of the more advanced capabilities not covered in this lab.
-
-### Additional Resources
-
-- Join the [Snowflake Community](https://community.snowflake.com/s/)
-- Join the [Dataiku Community](https://community.dataiku.com/)
-- Sign up for [Snowflake University](http://https://community.snowflake.com/s/snowflake-university)
-- Join the [Dataiku Academy](https://academy.dataiku.com/)
-
-### What we've covered:
-
-- How to create stages, databases, tables, views, and virtual warehouses.
-- How to load structured and semi-structured data.
-- How to perform analytical queries on data in Snowflake, including joins between tables.
-- How to create a Dataiku trial account through Partner Connect
-- How to use both Visual and Code Recipes to explore and transform data
-- How to train, explore and understand a machine learning model
-
-
+> How well was the model able to identify the fake job postings in the test dataset? That is a task for the Evaluate recipe, which you will encounter in other learning resources.
 
 <!-- ------------------------ -->
 
@@ -1131,17 +1094,15 @@ There are a few steps you need to take to install the plugin and prepare the dat
 
 1. Return the Dataiku Cloud launchpad (https://launchpad-dku.app.dataiku.io)
 2. In the `Plugins` section select `+ ADD A PLUGIN`
-3. Seach for and install the Visual SnowparkML plugin
+3. Search for and install the Visual SnowparkML plugin
 
 ### Data pre-processing
 
-When using the plugin there are a few additional pre-processing steps necessary that we don't need to do when using Dataiku's standard Visual ML interface. We need to make sure that all the column names are in uppercase and that any columns of type `int` that have missing values are converted to `doubles`
+When using the plugin there are a few additional pre-processing steps necessary that we don't need to do when using Dataiku's standard Visual ML interface. Firstly we would need to make sure that all the column names are in uppercase but fortunately in our dataset that is already the case. Secondly we need to make sure that any columns of type `int` that have missing values are converted to `doubles`
 
 1. Click once on the `Jobs_Python` dataset in the flow to select it and then choose the `Prepare` recipe from the Actions menu, just like we did earlier in the lab
-2. As before click on the `+ADD A NEW STEP` button and locate the `Rename` processor
-3. This time select the `+ ADD MASS RENAMING` option and select `Convert to upper case` for the method then click `ok`
-4. There are a number of columns of type `int` with missing values. Change these to doubles by clicking on the datatype under the column name and selecting it.
-5. Click `RUN`
+2. There are a number of columns of type `int` with missing values. Change these to doubles by clicking on the datatype under the column name and selecting it.
+3. Click `RUN`
 
 ### SnowparkML Plugin
 
@@ -1169,6 +1130,32 @@ You can now set your Metrics, Features, Algos and more for your training session
 
 Congratulations. You are using SnowparkML from a UI! You can explore your model from the `MLflow` green diamond in the `Flow` looking at explainability and performance measures, model comparisons and much more.
 
+<!-- ------------------------ -->
 
+## Conclusions and next steps
+
+Duration: 3
+
+Congratulations on completing this introductory lab exercise! Congratulations! You've mastered the Snowflake basics and you’ve taken your first steps toward data cleansing, feature engineering and training machine learning models with Dataiku.
+
+You have seen how Dataiku's deep integrations with Snowflake can allow teams with different skill sets get the most out of their data at every stage of the machine learning lifecycle.
+
+We encourage you to continue with your free trial and continue to refine your models and by using some of the more advanced capabilities not covered in this lab.
+
+### Additional Resources
+
+- Join the [Snowflake Community](https://community.snowflake.com/s/)
+- Join the [Dataiku Community](https://community.dataiku.com/)
+- Sign up for [Snowflake University](http://https://community.snowflake.com/s/snowflake-university)
+- Join the [Dataiku Academy](https://academy.dataiku.com/)
+
+### What we've covered:
+
+- How to create stages, databases, tables, views, and virtual warehouses.
+- How to load structured and semi-structured data.
+- How to perform analytical queries on data in Snowflake, including joins between tables.
+- How to create a Dataiku trial account through Partner Connect
+- How to use both Visual and Code Recipes to explore and transform data
+- How to train, explore and understand a machine learning model
 
 
