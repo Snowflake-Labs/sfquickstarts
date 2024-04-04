@@ -18,7 +18,7 @@ Duration: 1
 
 This Snowflake Quickstart introduces you to the basics of using Snowflake together with Dataiku Cloud as part of a Data Science project. We’ll be highlighting some of the well-integrated functionalities between the two technologies. It is designed specifically for use with the [Snowflake free 30-day trial](https://trial.snowflake.com), and the Dataiku Cloud free trial version via Snowflake’s Partner Connect. 
 
-The use case: Recent advancements in generative AI have made it easy to apply for jobs. But be careful! Scammers have also been known to create fake job applications in the hopes of stealing personal information. Let’s see if you — with Dataiku & Snowflake's help — can spot a real job posting from a fake one!
+**The Use Case:** Recent advancements in generative AI have made it easy to apply for jobs. But be careful! Scammers have also been known to create fake job applications in the hopes of stealing personal information. Let’s see if you — with Dataiku & Snowflake's help — can spot a real job posting from a fake one!
 
 > aside positive
 > 
@@ -155,7 +155,7 @@ If you click on the bottom left of the UI where your username appears, you will 
 
 <!-- ------------------------ -->
 
-## Prepare Dataiku Trial Account via Snowflake Partner Connect
+## Prepare Dataiku Trial Account Via Snowflake Partner Connect
 
 Duration: 10
 
@@ -265,7 +265,7 @@ You’ve now successfully set up your Dataiku trial account via Snowflake’s Pa
 
 <!-- ------------------------ -->
 
-## Preparing and exploring the Data in Snowflake 
+## Preparing And Exploring The Data In Snowflake 
 
 Duration: 20
 
@@ -464,7 +464,7 @@ alter warehouse PC_DATAIKU_WH set warehouse_size=MEDIUM;
 
 <!-- ------------------------ -->
 
-## Creating and Running a Dataiku Project
+## Creating And Running A Dataiku Project
 
 Duration: 10
 
@@ -588,7 +588,7 @@ Click the `close` button when you are finished
 
 <!-- ------------------------ -->
 
-## Cleaning the data with the Prepare Recipe
+## Cleaning The Data With The Prepare Recipe
 
 Duration: 20
 
@@ -696,7 +696,7 @@ If your script now matches the below screenshot go ahead and click on the green 
 
 
 <!-- ------------------------ -->
-## Creating features with Snowpark
+## Feature Engineering With Snowpark
 
 Duration: 12
 
@@ -804,7 +804,7 @@ Your code should now look similar to this (don't worry if you haven't separated 
 
 <!-- ------------------------ -->
 
-## Split into training and testing dataset
+## Split The Dataset
 
 Duration: 5
 
@@ -847,7 +847,7 @@ When the job finishes, navigate back to the Flow (g + f) to see your progress.
 
 <!-- ------------------------ -->
 
-## Train a model
+## Train A Model
 
 Duration: 5
 
@@ -881,7 +881,7 @@ Based on the characteristics of the input training data, Dataiku has automatical
 
 <!-- ------------------------ -->
 
-## Inspect the results
+## Inspect The Results
 
 Duration: 10
 
@@ -899,7 +899,7 @@ One important aspect of a model is the ability to understand its predictions. Th
 
 ![img](assets/DKU_Inspect2.png)
 
-### Check Model Explainability - Cofusion Matrix
+### Check Model Explainability - Confusion Matrix
 
 A useful tool to evaluate and compare classification models is the confusion matrix. This compares the actual values of the target variable to our models predictions broken down into where the model got it right (true positives & true negatives) and where it got it wrong (false positives & false negatives).
 
@@ -937,7 +937,7 @@ Alongside the results, you’ll also want to be sure how exactly the model was t
 > There are many more features to better understand your model. Feel free to explore them as time permits
 
 <!-- ------------------------ -->
-## Iterate on the model training design (optional)
+## Iterate On The Model Training Design (optional)
 
 Duration: 10
 
@@ -995,7 +995,7 @@ Once you have just the top three features in the model design, you can kick off 
 
 <!-- ------------------------ -->
 
-## Apply a model to generate predictions on new data
+## Apply A Model To Generate Predictions On New Data
 
 Duration: 8
 
@@ -1054,7 +1054,7 @@ Compare the schemas of the test and test_scored datasets.
 
 <!-- ------------------------ -->
 
-## Document the Flow (optional)
+## Document The Flow (optional)
 
 
 > aside positive
@@ -1125,7 +1125,7 @@ Congratulations. You are using SnowparkML from a UI! You can explore your model 
 
 <!-- ------------------------ -->
 
-## Conclusions and next steps
+## Conclusions And Resources
 
 Duration: 3
 
@@ -1135,14 +1135,7 @@ You have seen how Dataiku's deep integrations with Snowflake can allow teams wit
 
 We encourage you to continue with your free trial and continue to refine your models and by using some of the more advanced capabilities not covered in this lab.
 
-### Additional Resources
-
-- Join the [Snowflake Community](https://community.snowflake.com/s/)
-- Join the [Dataiku Community](https://community.dataiku.com/)
-- Sign up for [Snowflake University](http://https://community.snowflake.com/s/snowflake-university)
-- Join the [Dataiku Academy](https://academy.dataiku.com/)
-
-### What we've covered:
+### What You Learned:
 
 - How to create stages, databases, tables, views, and virtual warehouses.
 - How to load structured and semi-structured data.
@@ -1150,5 +1143,14 @@ We encourage you to continue with your free trial and continue to refine your mo
 - How to create a Dataiku trial account through Partner Connect
 - How to use both Visual and Code Recipes to explore and transform data
 - How to train, explore and understand a machine learning model
+
+### Related Resources
+
+- Join the [Snowflake Community](https://community.snowflake.com/s/)
+- Join the [Dataiku Community](https://community.dataiku.com/)
+- Sign up for [Snowflake University](http://https://community.snowflake.com/s/snowflake-university)
+- Join the [Dataiku Academy](https://academy.dataiku.com/)
+
+
 
 
