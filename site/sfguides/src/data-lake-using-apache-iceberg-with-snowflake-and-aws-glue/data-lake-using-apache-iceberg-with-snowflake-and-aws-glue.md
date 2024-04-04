@@ -1,7 +1,6 @@
 author: Andries Engelbrecht
-id: data-lake-using-apache-iceberg-with-snowflake-and-aws-glue
+id: data_lake_using_apache_iceberg_with_snowflake_and_aws_glue
 summary: This guide shows how to integrate Snowflake with External Volumes to S3 and the Glue Data Catalog for use with Iceberg tables
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Data-Engineering
 environments: web
 status: Published 
@@ -519,15 +518,16 @@ ORDER BY CREATEDDATE DESC;
 ## Conclusion
 Duration: 1
 
-This lab provides ways of integrating Snowflake with the Glue Catalog, as well as how to modernize data lakes using Iceberg table format for improved performance and transactional capabilities with various services.
+You've succesfully converted parquet data to Iceberg format use AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analzye the Iceberg data.
 
-Please see 
-- [Snowflake Iceberg documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg)
-- [AWS Glue Iceberg Documentation](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-iceberg.html)
-
-
-### What we've covered
+### What You Learned
 - how Snowflake integrates with S3 and the Glue Data Catalog to modernize Data Lakes wiht Iceberg
 - converting paruqet files to Iceberg tables using AWS Glue
 - configuring the Snowflake integrations with S3 and Glue Data Catalog
 - creating Snowflake Icebrg tables with External Catalog as well as Snowflake Catalog
+
+### Related Resources 
+- [Snowflake Iceberg documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg)
+- [AWS Glue Iceberg Documentation](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-iceberg.html)
+
+
