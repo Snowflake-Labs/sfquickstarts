@@ -72,13 +72,6 @@ Duration: 5
 After activation, you will create a ```username```and ```password```. Write down these credentials. **Bookmark this URL for easy, future access**.
 
 
-<!-- #### Download lab resources:
-
-<button>
-
-[Download sample SQL](https://snowflake-corp-se-workshop.s3-us-west-1.amazonaws.com/VHOL_Snowflake_Dataiku/Snowflake_Dataiku_VHOL.sql) for use in Snowflake.
-</button> -->
-
 > aside negative
 > 
 >  **About the screen captures, sample code, and environment:** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
