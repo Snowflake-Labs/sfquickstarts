@@ -44,7 +44,7 @@ For this guide we will use a Financial Services use case where Insurance data is
 ## Configure the AWS Account
 Duration: 4
 
-`In this step we will use CloudFormation to configure objects in the AWS account needed for the quickstart, we will also cover basics of the AWS console and how to leverage browser tabs to multi task with various AWS services.`
+In this step we will use CloudFormation to configure objects in the AWS account needed for the quickstart, we will also cover basics of the AWS console and how to leverage browser tabs to multi task with various AWS services.
 
 Start by logging into your AWS Console.
 
@@ -99,7 +99,7 @@ Once complete click on the **Outputs** Tab in the center top. This will display 
 ## Use Glue to create Iceberg table and convert parquet data in place
 Duration: 6
 
-`In this step we will use AWS Glue to create an icebrg table and convert parquet data without rewriting the data on S3 to iceberg format. Glue Notebooks will be used.`
+In this step we will use AWS Glue to create an icebrg table and convert parquet data without rewriting the data on S3 to iceberg format. Glue Notebooks will be used.
 
 In one of the browser tabs with the AWS console type **S3** in the search bar and select **S3**. This will allow you to quickly see what data and folders are created in S3. **Verify** the AWS Region in the S3 screen.
 
@@ -173,7 +173,7 @@ As a bonus step you can open the bowser tab with the S3 console and see the new 
 ## Setup Snowflake account and configure the External Volume and Catalog integrations
 Duration: 7
 
-`In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create SNowflake objects such as a databaase, warehouse and role that are used the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the the Glue Catalog.`
+In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create SNowflake objects such as a databaase, warehouse and role that are used the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the the Glue Catalog.
 
 First we will download 2 SQL files to your local system, which will be used to run the lab.
 
@@ -428,7 +428,7 @@ Click the **Update policy** button and your trust relationship will be configure
 Duration: 4
 
 
-`In this step we will use the integrations with S3 adn Glue to create an Iceberg table object refering the Quotes Iceberg table. THat will be used for analysis with the internal Customer and Policy tables. We will then create an aggregate table written in Iceberg format on S3 and use Snowflake to query it`
+In this step we will use the integrations with S3 adn Glue to create an Iceberg table object refering the Quotes Iceberg table. THat will be used for analysis with the internal Customer and Policy tables. We will then create an aggregate table written in Iceberg format on S3 and use Snowflake to query it.
 
 We can now create an Iceberg table by referencing the Glue catalog. We simply execute the command below. Line 80 to 83.
 
