@@ -20,7 +20,18 @@ In summary this is what you will do:
 - Create a function that leverages Snowpark External Access to make a call to Open AI.
 - Create a Streamlit app that leverages the above function to generate responses using data from Snowflake and prompts.
 
+<!-- ------------------------ -->
+## Use Case
+
+Duration: 5
+
+This use case will leverage sample urls along with sample images that will be passed to the OpenAI model in order to provide recommendations from the urls using the image data as context along with the prompt.
+
+<!-- ------------------------ -->
 ### What is Generative AI?
+
+Duration: 5
+
 Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.
 
 ### What is Azure OpenAI?
@@ -42,12 +53,6 @@ with Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
 We will build an efficient architecture all within Snowflake that will access product urls and images in Snowflake and pass that data to a an OpenAI model to generate a recommendation . The architecture will look like this
 
 ![](assets/architecture.png)
-
-<!-- ------------------------ -->
-## Use Case
-Duration: 5
-
-This use case will leverage sample urls along with sample images that will be passed to the OpenAI model in order to provide recommendations from the urls using the image data as context along with the prompt.
 
 <!-- ------------------------ -->
 ## Azure / Open AI Environment
@@ -277,12 +282,11 @@ Consider the above concepts and also consider this pointed [guide to prompting](
 (it is required that you try the prompt in principal #6 🙂)
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion  And Resources
 
 Duration: 5
 
-### What we covered
-After setting up our Azure and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
+Congratulations! You've successfully built your first Streamlit App with OpenAI. After setting up our Azure and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
 
 ### What You Learned
 
