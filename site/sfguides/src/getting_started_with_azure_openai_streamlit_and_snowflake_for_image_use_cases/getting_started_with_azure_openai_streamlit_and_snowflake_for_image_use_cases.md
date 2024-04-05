@@ -11,7 +11,7 @@ authors: Matt Marzillo
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
+Duration: 10
 
 In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Azure OpenAI that will generate a recommendation for clothing items given an image of a person.
 
@@ -20,17 +20,7 @@ In summary this is what you will do:
 - Create a function that leverages Snowpark External Access to make a call to Open AI.
 - Create a Streamlit app that leverages the above function to generate responses using data from Snowflake and prompts.
 
-<!-- ------------------------ -->
-## Use Case
-
-Duration: 5
-
-This use case will leverage sample urls along with sample images that will be passed to the OpenAI model in order to provide recommendations from the urls using the image data as context along with the prompt.
-
-<!-- ------------------------ -->
 ### What is Generative AI?
-
-Duration: 5
 
 Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.
 
@@ -53,6 +43,10 @@ with Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
 We will build an efficient architecture all within Snowflake that will access product urls and images in Snowflake and pass that data to a an OpenAI model to generate a recommendation . The architecture will look like this
 
 ![](assets/architecture.png)
+
+### Use Case
+
+This use case will leverage sample urls along with sample images that will be passed to the OpenAI model in order to provide recommendations from the urls using the image data as context along with the prompt.
 
 <!-- ------------------------ -->
 ## Azure / Open AI Environment
