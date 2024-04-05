@@ -119,7 +119,7 @@ Let's create a stage in the RETAIL_HOL database that we just created and load im
 
 Name the stage 'IMAGE_STAGE', select 'Server Side Encryption' and enable the directory table. You can also use a SQL script to create the stage which is generated for you from the UI.
 
-Let's now download several pictures and upload them to the stage that we just created. Right click on each of the below images and save them to your local machine. Users are also encourage to use any other images they may have.
+Let's now download several pictures and upload them to the stage that we just created. Right click on each of the below images and save them to your local machine. Users are also encouraged to use any other images they may have.
 
 ![](assets/man1.jpeg)
 ![](assets/man2.jpeg)
@@ -282,13 +282,14 @@ Consider the above concepts and also consider this pointed [guide to prompting](
 Duration: 5
 
 ### What we covered
-After setting up our AWS and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to different OpenAI models and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
+After setting up our Azure and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
 
 ### What You Learned
 
 - How to set up a Snowflake and Azure / OpenAI environment to integrate the two platforms.
 - How to build a Snowpark External Access integration to call OpenAI.
 - How to build a Streamlit app that calls OpenAI leveraging tabular and image data from Snowflake.
+- How to build your first Generative AI App with image data in Snowflake!
 
 
 ### Related resources 
