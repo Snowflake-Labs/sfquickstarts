@@ -1,33 +1,32 @@
-author: 
-id: build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex
+id: build_rag_based_equipment_maintenance_app_using_snowflake_cortex
 summary: This is a sample Snowflake Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
-categories: Getting-Started
+categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering
+author: Ryan Ellis
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more.
 
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+The rest of this Snowflake Guide explains the steps of writing your own guide.
 
 ### Prerequisites
 - Familiarity with Markdown syntax
 
 ### What You’ll Learn 
 - how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+- how to set the amount of time each slide will take to finish
+- how to include code snippets
+- how to hyperlink items
+- how to include images
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
@@ -45,20 +44,20 @@ Duration: 2
 It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
 
 
-- **summary**: This is a sample Snowflake Guide 
+- **summary**: Build an Ai guided equipment maintence solution withh snowflake 
   - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
+- **id**: sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex.md 
   - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
+- **categories**: Coretex LLM Streamlit Manufacturing
   - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
+- **environments**: Snowflake Summit 2024 
   - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
+- **status**: `Published`
   - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
 - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
+- **tags**: Snowflake, Cortex, LLM 
   - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
+- **authors**: Ryan Ellis 
   - Indicate the author(s) of this specific sfguide.
 
 ---
@@ -73,20 +72,39 @@ Duration: 2
 A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
 ```markdown
-## Step 1 Title
+## Overview
 Duration: 3
+With the proliferation of LLM'sData & Machine Learning Engineers alike are being asked to cross over into application development.
+For this quickstart we will use Streamlit in Snowflake as our frontend.  We will use Snowflake's native CORTEX functions to access
+LLM's running on GPU's nativly in your snowflake account. As well as the repair manuals for the Otto 1500 AMR.  These repair manuals 
+in unison with some AI generated repair logs will demonstrate the art of the possible with AI guided equipment maintance in snowflake.
+First lets start with a little bit of architecture. 
+--architecture here
 
-All the content for the step goes here.
 
-## Step 2 Title
+
+
+
+
+## Snowflake Setup
 Duration: 1
 
-All the content for the step goes here.
+Our first step will be to run the cmds in initial_setup.sql file from gitbub.
+This will create our database, schema and stage needed to for our soluiton.
+Now using the UI, upload the repair manuals located in the Repair Manuals directory in github.
+--Srcreen shots up uploading manuals here
+
 ```
 
 To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
 
 The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+
+## Teardown
+To remove all the objects we just created run the SQL cmds in teardown.sql
+
+## Conclusion
+You have just seen how easy it is to get started with LLM's and RAG inside Snowflake.
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
