@@ -69,9 +69,9 @@ Change to the **accountadmin** role.
 ### Install the ServiceNow® connector
 Duration: 1
 
-The connector, the first of its kind to be deployed on Snowflake's native apps framework, is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. Once chosen, it is installed into your account as a database with several views, and stored procedures. 
+The connector, the first of its kind to be deployed on Snowflake's [Native App Framework](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/), is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. Once chosen, it is installed into your account as an application with several views, and stored procedures. 
 
-1. From the Snowflake Account Home page, select **Marketplace**.
+1. In the left menu select **Data Products** and then **Marketplace**.
 1. In the search window, enter **ServiceNow** and select the tile.
 1. Review the business needs and usage samples. 
 1. Select **Get**.
@@ -83,32 +83,34 @@ The connector, the first of its kind to be deployed on Snowflake's native apps f
 
 1. Select **Done**. We will manage it in the next section. 
 
-Let's check that the connector was installed. From Snowsight, go to **Data -> Databases**. You will see a new database with the name **Snowflake_Connector_for_ServiceNow**. Open the Public schema and views to see the Global_Config view. Some of the Procedures have
-also been installed. Others will appear after the installation finishes. 
+Let's check that the connector was installed. From Snowsight, go to **Data Products -> Apps**. You will see a new installed application with the name **Snowflake_Connector_for_ServiceNow**. 
 
-![installed](assets/installed.png)
+![installed_app](assets/installed_app.png)
 
-## Set up the Snowflake to ServiceNow® Oauth hand-shake
+Take a look at its public schema in **Data -> Databases** to see what views and procedures are available.
 
-This section shows how to set up the Oauth handshake using the Snowsight user interface, which is *massively* simpler than managing all the bits through code. 
+![installed_db](assets/installed_db.png)
 
-Please have two tabs in your browser open for the next part, as you will have to copy some data from Snowflake to ServiceNow® and vice-versa. 
+## Complete all the prerequisites
+
+Launch the Snowflake Connector for ServiceNow® from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
+You will be presented the list of tasks that need to be done before you'll be able to start the ingestion of the data.
+Please read the descriptions carefully and complete them one by one.
+
+One of the last steps asks you to create application registry if you want to use OAuth2 authentication. Let's focus on it for a while.
+
+Please have two tabs in your browser open for the next part, as you will have to copy some data from Snowflake to ServiceNow®.
 * From the Snowflake side, we want the connector to generate the **re-direct URL** which we will paste into the Application Registry, and
-* From the ServiceNow® side we want the Application Registry to provide the **Client id** and **password**, which we then paste into Snowflake.
+* From the ServiceNow® side we want the Application Registry to provide the **Client ID** and **secret**, which we then paste into Snowflake.
 
 ### On the Snowflake hand
 Duration: 1
 
-Launch the Snowflake Connector for ServiceNow® from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
-1. Select **Manage**.
-1. Select **Connect**. 
-1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** the trailing *service-now.com*.
-1. Select **OAuth2** for the Authentication method.
 1. Copy the redirect URL. You will need it in the next section.
 
-Now, open a new tab in your browser (without closing the above), and follow the steps in the next section. 
+Now, open a new tab in your browser (without closing the above), and follow the steps in the next section.
 
-### On the ServiceNow® Other hand
+### On the ServiceNow® other hand
 Duration: 2
 
 1. Log on to your ServiceNow® developer instance.
@@ -116,50 +118,31 @@ Duration: 2
 
 ![Application Registry](assets/now_reg_auth.png)
 1. Select **New** in the upper right-hand side of the window.
-1. Select **Create an OAuth API endpoint for external clients**. 
+1. Select **Create an OAuth API endpoint for external clients**.
 1. Give the endpoint a name, such as **Snowflake_connector**. Leave the client secret blank. This will autofill.
-1. Paste in the redirect URL that was generated on the Snowflake hand. 
+1. Paste in the redirect URL that was generated on the Snowflake hand.
 
 ![Oauth](assets/now_oauth_endpoint.png)
 1. Select **Submit**. The window closes.
-1. Select the registry you just created to re-open it. 
-1. Note that the **Client id** and **Client secret** are auto-generated. 
-1. Copy the **Client id**.
+1. Select the registry you just created to re-open it.
+1. Note that the **Client ID** and **Client secret** are auto-generated.
+1. Don't close the ServiceNow® browser tab or store the **Client ID** and **Client secret** in some safe place, they will be needed later.
 
 Now, time to jump back to the Snowflake configuration tab.
 
-### Now Let's Shake
-Duration: 1
-
-1. Paste the  **Client id** from ServiceNow® into the Snowflake configure pop-up.
-1. Go back to the ServiceNow® tab and copy the **Client secret** and paste it into the Snowflake configure pop-up. 
-1. No need to change the Advanced Settings, but feel free to check them out.
- ![Connect](assets/now_connect.png)
-1. Select **Connect**. Your ServiceNow accounts pops up and requests to connect to Snowflake. 
-![check](assets/now_check.png)
-1. Select **Allow**.
-The connection is established between the two systems. 
-
-To verify the connection, select the three dots [...] and **View Details**. At the top of the pop-up you will see the date **ServiceNow** Authenticated.
-
-![authenticated](assets/authenticated.png)
-
-Select **Done**. 
-
-> aside negative
-> If you are having issues, perhaps the Client secret wasn't copied. Unlock the password field and copy and paste the text.
 ## Configure the Connector
 Duration: 1
 
-Under the status for the connector, which displays "Choose Resources", select **Configure**.
+When all the preparation tasks are done, move to the next step by clicking **Start configuration**
 
-This displays the Configure Connector dialog. By default, the fields are set to the names of objects that are created when you configure the connector.
+This displays the Configure screen. By default, the fields are set to the names of objects that are created when you configure the connector.
+You can also provide names of existing objects.
 
-![default config](assets/configuredefaults.png)
+![default config](assets/configure_defaults.png)
 
-Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-installing-ui.html#configuring-the-snowflake-connector-for-servicenow) for more information on these fields. 
+Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-installing-ui.html#configuring-the-snowflake-connector-for-servicenow) for more information on these fields.
 
-Select **Configure**. The dialog box closes and the status of the connector changes to Provisioning. It can take a few minutes for the configuration process to complete.
+Select **Configure**. It can take a few minutes for the configuration process to complete, and you will be moved to the next step.
 
 > aside negative
 > Watch out!!! The created warehouse is created as a **Large** and with a auto timeout of 10 minutes. So this means, if you set to refresh every hour, the Large warehouse (8 credits/hour) will wake up for a minimum of 10 minutes every hour.  For this lab, you don't need all the power! Go to Admin-> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL, and the auto timeout to one minute. In a real-life use case, a Large warehouse size is often needed.
@@ -167,6 +150,38 @@ Select **Configure**. The dialog box closes and the status of the connector chan
 > aside positive
 > Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
 ![resource monitor](assets/monitor.png)
+
+## Set up the Snowflake to ServiceNow® Oauth hand-shake
+Duration: 1
+
+1. Select **OAuth2** as an authentication method
+1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** the trailing *service-now.com*.
+1. Paste the **Client id** and the **Client secret** from ServiceNow® into the Snowflake wizard.
+ ![Connect](assets/now_connect.png)
+1. Select **Connect**. Your ServiceNow accounts pops up and requests to connect to Snowflake. 
+![check](assets/now_check.png)
+1. Select **Allow**.
+The connection is established between the two systems.
+
+To verify the connection, select the three dots [...] and **View Details**. At the top of the pop-up you will see the date **ServiceNow** Authenticated.
+
+![authenticated](assets/authenticated.png)
+
+> aside negative
+> If you are having issues, perhaps the Client secret wasn't copied. Unlock the password field and copy and paste the text.
+
+## Configure deletions sync
+Duration: 1
+
+If you want not only inserts and updates, but also deletes to be synchronized to Snowflake, you have to provide name of the journal table.
+By default ServiceNow® uses `sys_audit_delete` table to store information about deleted records so feel free to provide this name.
+If you don't care about deletes, you can leave this field empty.
+
+![validate_source](assets/validate_source.png)
+
+Select **Validate** to check if the connector is able to connect to the source system and has access to all the required tables.
+It can take a few minutes for the process to complete.
+When it's done, please select **Define data to sync** to select tables for the ingestion.
 
 ## Select ServiceNow® Tables
 Duration: 1
