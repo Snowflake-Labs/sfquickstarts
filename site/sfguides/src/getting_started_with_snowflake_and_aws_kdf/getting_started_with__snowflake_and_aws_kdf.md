@@ -78,7 +78,7 @@ to SSH if your instance is in a private subnet
 Duration: 10
 
 #### 1. Create an EC2 instance
-First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=ADF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
+First, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ADF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
 to launch an EC2 instance(jumphost) with Cloudformation. Note the default AWS region is `us-west-2 (Oregon)`, at the time of writing this quickstart, three regions are available
 for this integration preview: `us-east-1`, `us-west-2`, and `eu-west-1`.
 
@@ -436,6 +436,24 @@ select * from flights_vw;
 
 As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
 ![](assets/flight_view.png)
+
+
+<!---------------------------->
+## Use Amazon Managed Flink for real-time analytics - Optional
+Duration: 15
+
+Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) to do real-time analytics.
+
+First, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn.json) to deploy a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), and two Kinesis Data Streams (KDS). One data stream serves as the input stream for Flink and the other one serves as the output stream.
+
+Please use the S3 bucket, private key you had in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
+
+
+
+
+
+
+
 
 <!---------------------------->
 ## Cleanup
