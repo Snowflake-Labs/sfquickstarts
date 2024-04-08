@@ -19,12 +19,21 @@ In this quick start you focus on a scenario where you are a supervisor in a vehi
 
 <img src="assets/CallCentre_SolutionArch.png" width="800" />
 
-This Quickstart will cover a lot of ground, and by the end you will have built a AI application for you the Call Centre . That pipeline will process data incrementally, be orchestrated with Snowflake tasks, and be deployed via a CI/CD pipeline. You'll also learn how to use Snowflake's new developer CLI tool and Visual Studio Code extension! Here's a quick visual overview:
+This Quickstart will cover a lot of ground, and by the end you will have built a AI application for you the Call Centre .
 
 > You can read the medium blog post [call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services](https://medium.com/snowflake/call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services-5e06b4baef46) to know more about this solution in detail.
-> **Note** - As of 3/28/2024, the [Vector Search] is still in preview.
+> **Note** - As of 3/28/2024, the [Vector Search] is still in private preview.
 
-Below is a video on the features of the app.
+Below gif explaining the main pages of the app and the information it gives about the audio.
+
+* Audio Analytics Page
+<img src="assets/video_AnalyticsPage.gif" width="800" />
+
+* RAG based chatbot
+<img src="assets/video_RAG.gif" width="800" />
+
+* Text2SQL Bot
+<img src="assets/video_Text2SQL.gif" width="800" />
 
 
 ### Prerequisites
@@ -74,7 +83,7 @@ During this Quickstart you will accomplish the following things:
 * Snowpark to invoke the cortex functions
 * Create and deploy Streamlit app in SPCS
 
-## Quickstart Setup
+## Setup
 
 Duration: 15
 
@@ -96,9 +105,15 @@ conda create --name demosnowparkdemo --override-channels -c https://repo.anacond
 conda install snowflake-snowpark-python pandas pyarrow streamlit
 ```
 
-<b> Update the connection.json file which will be in the folder sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs with your account, db, schema details </b>
+<b> Please update the [connection.json](https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs/blob/main/connection.json) file located within the sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs directory (in your cloned repository) to include the specifics of your Snowflake account, database, and schema. </b>
 
-## 1. Transcribing Audio Files
+Once you have created the conda environment. The setup is broken into three main steps:
+
+* Running whisper model in SPCS for transcribing audio files and extracting duration from audio file and loading that information into a Snowflake table. As part of this step we are extracting relavent information from the raw text required for building the dashboard, reporting and RAG based chatbot using Cortex LLM functions.
+* Running a open source LLM model from NumberStation which is fine tuned on SQL queries in SPCS for generating SQL queries from the natural language text (Text2SQL) which will be intergrated into the Streamlit App.
+* Creating and running a Streamlit app which is the front end for this solution running in SPCS.
+
+## Transcribing Audio Files
 
 In this step you will run either of the steps below. Step a will make you learn on how to setup the container which does the audio transcribe and extract call duration from the audio files. You have sample audio files for reference that you can use to get the text and call duration and understand the flow. Once you have understood the flow, we have a csv which has got all the data transcribed from audio file and made it available for the next steps to work. 
 
@@ -124,7 +139,7 @@ AudioAnalytics notebook does the following steps:
 * Store the embeddings of the extracted information in Snowflake table required for RAG based chatbot.
 * Populate a table used by the streamlit app for text2sql functionality. 
 
-## 2. Setup Text2SQL
+## Setup Text2SQL
 
 In this step we are hosting a LLM model from [NumberStation](https://huggingface.co/NumbersStation/nsql-llama-2-7B) which is fine tuned on sql queries for proving text2sql capabilities. We are hosting the model in SPCS and are showing the capabilities on how you can fine tune on your dataset which will have the questions and the queries. Using Fast API we are exposing the model as a rest api endpoint.
 
@@ -134,9 +149,15 @@ Run the following notebook to bring up the text2sql Container and creating other
 
  [text2sql_setup_code.ipynb](https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs/blob/main/text2sql/text2sql_setup_code.ipynb) found in **text2sql** folder in your cloned local directory.
 
-## 3. Setup Streamlit App
+ After completing this step you will have a service function which accepts a natural language text and generates a SQL query based on the context we have set.
 
-Run the following notebook to bring up the Snowpark container required for runnig Streamlit App which is the front end app for this application. The steps mentioned 
+ ```sql
+select text2sql('What is the distinct purpose of the calls in the last month?')::string;
+ ```
+
+## Setup Streamlit App
+
+Run the following notebook to bring up the Snowpark container required for runnig Streamlit App which is the front end app for this application. Below notebook has the steps to create all the objects required to create and run the streamlit app.
 
  [streamlit_setup_code.ipynb](https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs/blob/main/streamlit/streamlit_setup_code.ipynb) found in **streamlit** folder in your cloned local directory.
 
