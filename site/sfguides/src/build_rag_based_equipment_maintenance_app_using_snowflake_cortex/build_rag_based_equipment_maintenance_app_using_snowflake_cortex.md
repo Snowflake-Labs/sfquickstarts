@@ -4,7 +4,7 @@ categories: cortex,getting-started,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning
+tags: Getting Started, Snowpark Python, Streamlit, LLMs, Data Engineering,CORTEX
 authors: Ryan Ellis, Tim Long
 
 # Build Rag Based Equipment Maintenance App Using Snowflake Cortex
@@ -13,7 +13,7 @@ authors: Ryan Ellis, Tim Long
 
 Duration: 5
 
-By completing this guide, you will be able to go from downloaded maintenance manuals to an interactive application that can help your organization optimize the downtime experinced on your manufacturing equipment.
+By completing this guide, you will be able to go from downloaded maintenance manuals to an interactive application that can help your organization optimize the downtime experienced on your manufacturing equipment.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
@@ -22,7 +22,7 @@ Here is a summary of what you will be able to learn in each step by following th
 <!---
 - **Data Pipelines**: Use Snowflake Tasks to turn your data pipeline code into operational pipelines with integrated monitoring
 --->
-- **LLM's**: Process data, chat prompts and run highly tuned LLM's in Snowflake using Retrival Augmented Generation, to enhance a maintence technicions repair actions.  Giving them the info needed for faster repair times, and lower your machine downtime. 
+- **LLM's**: Process data, chat prompts and run highly tuned LLM's in Snowflake using Retrival Augmented Generation, to enhance a maintenance technicians repair actions.  Giving them the info needed for faster repair times, and lower your machine downtime.
 - **Streamlit**: Build an interactive Streamlit application using Python (no web development experience required) to gain knowledge from both the repair manuals and the repair logs of previous technicians.
 
 In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
@@ -37,7 +37,7 @@ Snowpark is the set of libraries and runtimes that securely enable developers to
 
 Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
-### What Snowflake CORTEX ?
+### What is Snowflake CORTEX ?
 
 [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
 
@@ -51,11 +51,11 @@ This quickstart will focus on
 
 - Snowpark Python Functions, which enables the use of popular Python  frameworks, such as PyPDF2 , for splitting, chunking and reading PDF's  without the need to move data out of Snowflake.
 
-**Vectors and Text Embedding** - Using the new Vector datatype and Text embedding model native to snowflake you will convert the uploaded PDF's to vectoried data for use with LLM's in Snowflake.
+**Vectors and Text Embedding** - Using the new Vector datatype and Text embedding model native to snowflake you will convert the uploaded PDF's to vectorized data for use with LLM's in Snowflake.
 
 ![Vectors](assets/vector.png)
 
-**Large Language Models** - Manage LLM's created both within and outside Snowflake. Models range from Small to Medium and on to Large.  Smaller models are faster and cheaper but less accurate.  Larger models are slower, but more accurate.  Snowflake has both open source and privately lisecened models running inside our snowflake security boundry.  And provides native access to them via Snowflake Cortex.
+**Large Language Models** - Manage LLM's created both within and outside Snowflake. Models range from Small to Medium and on to Large.  Smaller models are faster and cheaper but less accurate.  Larger models are slower, but more accurate.  Snowflake has both open source and privately licensed models running inside our snowflake security boundary.  And provides native access to them via Snowflake Cortex.
 
 ![Snowpark](assets/models.png)
 
@@ -69,7 +69,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 
 - How to analyze data and perform data engineering tasks using Snowpark and native Snowflake SQL
 - How to use the new vector datatype in Snowflake
-- How to use the 'E5-base-v2' text embeding model to vecotrize your data for use in Retrieval Augmented Generation
+- How to use the 'E5-base-v2' text embedding model to vectorize your data for use in Retrieval Augmented Generation
 - How to use Snowflake Cortex COMPLETE to invoke an LLM to answer natural language questions, using Retrieval Augmented Generation
 - How to create Streamlit application that uses the vectorized repair manuals and repair logs for inference based on user input
 
@@ -78,6 +78,14 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 - Access to [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) for source code
 - A Snowflake account, if you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
+
+### Vocabulary
+
+- **LLM**: Large Language Model
+- **RAG**: Retrieval-Augmented Generation
+- **Vector**: Used to represent text or data in a numerical form that the model can understand and process
+- **UDF**: User defined function
+- **UDTF**: User defined table function
 
 > aside positive
 > IMPORTANT: Before proceeding, make sure you have the correct access to CORTEX as described [here](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#required-privileges).
@@ -116,10 +124,7 @@ Create the internal stage for loading repair manuals into.
 CREATE STAGE REPAIR_MANUALS;
 ```
 
-Your snowflake environment is now ready to start loading files, creating tables, and vectorizing your input data.
-
-> aside positive
-> IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
+Your snowflake environment is now ready to start loading files, creating tables, and turning your input data into vectorized data.
 
 <!-- ------------------------ -->
 ## Get Started
@@ -145,7 +150,7 @@ OR, using SSH:
 git clone git@github.com:Snowflake-Labs/sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex.git
 ```
 
-If you do not have GIT installed you can download the four repair manusl needed below
+If you do not have GIT installed you can download the four repair manuals needed below
 
 [Otto 1500][1500]
 
@@ -163,11 +168,7 @@ If you do not have GIT installed you can download the four repair manusl needed 
 
 [lifter]: assets/Repair_Manuals/OTTO_Lifter_MkIV_OMM_Operation_maintenance_manual.pdf
 
-At this point you should have four repair manuals and the needed data structures to begin data engeering work on the solution.
-<!-- ------------------------ -->
-## Data Engineering
-
-Duration: 20
+At this point you should have four repair manuals and the needed data structures to begin data engineering work on the solution.
 
 In the following section you will use Snowpark and Snowflake native text embedding functions to read in, split and vectorize the PDF's you just downloaded.
 
@@ -176,7 +177,7 @@ In the following section you will use Snowpark and Snowflake native text embeddi
 3) Create tables for storing the repair manuals and the repair logs.  As well as tables for the vectorized text.
 4) Read in the repair manuals with the newly created Python UDF.
 5) Vectorize the PDF text chunks for later use in RAG based streamlit app.
-6) Create UDF's to parameterize the vecorized datasets (repair logs and manuals) and user prompts.
+6) Create UDF's to parameterize the vectorized datasets (repair logs and manuals) and user prompts.
 
 ### Upload Repair Manuals to Snowflake
 
@@ -190,7 +191,12 @@ In the following section you will use Snowpark and Snowflake native text embeddi
 
 ![StageFinal](assets/stagefinal.png)
 
-Next we will create the Python UDF to read in those PDF's we just uploaded to our internal stage
+<!-- ------------------------ -->
+## Data Engineering
+
+Duration: 20
+
+Now we will create the Python UDF to read in those PDF's we just uploaded to our internal stage. This Python UDF will use Snowpark and PyPDF2 to read in the repair manuals we just uploaded.  The UDF in addition to a SQL UDF will break up the repair manuals into vectorized chunks.
 
 ### Create Python UDF
 
@@ -316,7 +322,7 @@ FROM
 SELECT * FROM repair_manuals_chunked_vectors;
 ```
 
-Lets use our first LLM, and create a User Defined Function (UDF) to invoke the LLM using **RetrRetrieval-Augmented Generation** (RAG). For this quickstart we are using the [Mixtral-8x7b](https://mistral.ai/news/mixtral-of-experts/) model.  This model is supplied in your snowflake system without need for additional configuration. You can natively use it in Snowflake CORTEX.  
+Lets use our first LLM, and create a User Defined Function (UDF) to invoke the LLM using **Retrieval-Augmented Generation** (RAG). For this quickstart we are using the [Mixtral-8x7b](https://mistral.ai/news/mixtral-of-experts/) model.  This model is supplied in your snowflake system without need for additional configuration. You can natively use it in Snowflake CORTEX.  
 
 ```sql
 ----------------------------------------------------------------------
@@ -441,7 +447,7 @@ INSERT INTO repair_logs (date_reported, equipment_model, equipment_id, problem_r
 SELECT * FROM repair_logs;
 ```
 
-You have loaded the AI generated repair logs. But we need to format them for efficent RAG.  Run the below SQL command to format the repair logs into a format that will optimize our use of the LLM.
+You have loaded the AI generated repair logs. But we need to format them for efficient RAG.  Run the below SQL command to format the repair logs into a format that will optimize our use of the LLM.
 
 ```sql
 ----------------------------------------------------------------------
@@ -464,7 +470,7 @@ FROM
 SELECT * FROM repair_logs_formatted;
 ```
 
-Now that we have formatted the repair logs for optimized Retrieval-Augmented Generation.  We need to embedd the text so we can use it in with our LLM. We will be using the same text embedding model as before.
+Now that we have formatted the repair logs for optimized Retrieval-Augmented Generation.  We need to embed the text so we can use it in with our LLM. We will be using the same text embedding model as before.
 
 ```sql
 ----------------------------------------------------------------------
@@ -527,7 +533,7 @@ AS
 
 ```
 
-You can see we are using the **mixtral-8x7b** model again for this fucntion.  This is important, if you change which models are used for each call, the results will be different in that the quaility will be different.  So the higher quality model will always be chosen, which in come cases could supply a less appropriate answer. Lets validate the work done so far.
+You can see we are using the **mixtral-8x7b** model again for this function.  This is important, if you change which models are used for each call, the results will be different in that the quality will be different.  So the higher quality model will always be chosen, which in come cases could supply a less appropriate answer. Lets validate the work done so far.
 
 ```sql
 ----------------------------------------------------------------------
@@ -538,7 +544,7 @@ SET prompt = 'OTTO 1500 agv is not driving straight.  How do I troubleshoot and 
 SELECT * FROM TABLE(REPAIR_LOGS_LLM($prompt));
 ```
 
-If you have made it this far you should see something simialar to this.
+If you have made it this far you should see something similar to this.
 
 ![RepairValidate](assets/repairvalidate.png)
 
@@ -600,9 +606,9 @@ Your almost there, if you have made it this far you have used the following in S
 1) Snowflake Cortex to access cutting edge LLM's
 2) Python and Snowpark to create a UDF to read in repair logs.  The Python UDF you created can be re-used to read in many other PDF's for different apps, use cases.
 3) User defined table functions.  This is similar to the above UDF, but it returns a table instead of a single value.
-4) Snowflake's Vector embedding engine to vecotorize text so it can be used in prompt engineering.
+4) Snowflake's Vector embedding engine to vectorize text so it can be used in prompt engineering.
 5) Snowflake's native Vector data type.  No need to use an external DB or system for your vectors.  Snowflake can handle that for you.
-6) General snowfalke tables and compute. These objects are the workhorse behind the scenes that make it all possible.
+6) General Snowflake tables and compute. These objects are the workhorse behind the scenes that make it all possible.
 
 <!-- ------------------------ -->
 ### Streamlit
@@ -696,11 +702,11 @@ Once you have copy and pasted the above code into your streamlit app, click blue
 
 ![StreamlitFinal](assets/streamlitfinal.png)
 
-You can now ask any question you like of the LLM in regaurds to fixing the Otto 1500 AMR.  Imagine this app running on a tablet for your maintence crew as they go from robot to robot fixing common problems and entering repair logs.  Those same repair logs are then uploaded to Snowflake and the model uses them for the next query.
+You can now ask any question you like of the LLM in regards to fixing the Otto 1500 AMR.  Imagine this app running on a tablet for your maintenance crew as they go from robot to robot fixing common problems and entering repair logs.  Those same repair logs are then uploaded to Snowflake and the model uses them for the next query.
 
 ## Conclusion
 
-You have built an Ai guided equipment maintenace chat bot.  This chat bot base can be used for any piece of equipment.  If you have the repair manuals for a Drill Press, a lithography machine, or a robotic arm.  This app can be used to decrease downtime due to servicing the equipment when in a failed state. You can add your geniune repair logs to further enhance the quality of output from the LLM.
+You have built an Ai guided equipment maintenance chat bot.  This chat bot base can be used for any piece of equipment.  If you have the repair manuals for a Drill Press, a lithography machine, or a robotic arm.  This app can be used to decrease downtime due to servicing the equipment when in a failed state. You can add your geniune repair logs to further enhance the quality of output from the LLM.
 
 Duration: 3
 
@@ -708,7 +714,7 @@ Duration: 3
 
 - How to use Snowflake CORTEX to invoke LLM's running on large GPU's with a single line of SQL.
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
-- How to create Snowflake UDF's and UDTF's to package parts of your code for re-usablity and read ability
+- How to create Snowflake UDF's and UDTF's to package parts of your code for re-usability and read ability
 - How to vector embed text for use in LLM's prompt engineering
 - How to create Streamlit application that uses Snowflake CORTEX LLM's for inference based on user input
 
