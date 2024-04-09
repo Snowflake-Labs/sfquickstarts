@@ -145,7 +145,7 @@ Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-d
 Select **Configure**. It can take a few minutes for the configuration process to complete, and you will be moved to the next step.
 
 > aside negative
-> Watch out!!! The created warehouse is created as a **Large** and with a auto timeout of 10 minutes. So this means, if you set to refresh every hour, the Large warehouse (8 credits/hour) will wake up for a minimum of 10 minutes every hour.  For this lab, you don't need all the power! Go to Admin-> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL, and the auto timeout to one minute. In a real-life use case, a Large warehouse size is often needed.
+> Watch out!!! The created warehouse is created as a **Large** and with a auto suspension after 10 minutes. So this means, if you set to refresh every hour, the Large warehouse (8 credits/hour) will wake up for a minimum of 10 minutes every hour.  For this lab, you don't need all the power! Go to Admin-> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL, and the auto timeout to one minute. In a real-life use case, a Large warehouse size is often needed.
 
 > aside positive
 > Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
@@ -193,22 +193,19 @@ Duration: 1
 > - Incremental updates occur only for tables with **sys_updated_on** or **sys_created_on** columns.
 > - For tables that do not have sys_updated_on or sys_created_on columns, the connector uses **truncate and load** mode. In this mode, the table is always ingested using the initial load approach, and newly ingested data replaces the old data.
 
-1. In the **Snowflake Connector for ServiceNow** window, under the status for the connector, which displays "Start Data Sync", select **Select Tables**.
+1. In the **Snowflake Connector for ServiceNow** window, on the top bar, select **Data Sync**.
 
 1. To be able to run our test query later, we need to ingest a couple of tables. From the search window enter **incident** and check the box next to it and choose a 30 minute sync time. 
 
-1. To choose other tables, clear the search, put the table name and select the checkbox. Do this for the following tables:
-
-   * sys_audit_delete
-   * task
+1. To choose other tables, clear the search, put the table name and select the checkbox. Do this at least for **task** table.
 
  > aside positive
  >   Hint: Clear the search fields, and then select the title **Status** to sort and show all the tables you selected.
 
- ![Select](assets/Select.png)
+ ![Select](assets/select.png)
 
 
-1. Select **Start Ingestion**. The select windows closes and you get the message "Loading Data" from the main Connector window. In addition to the tables you choose, three system tables will also be loaded. These are necessary to build the views on the raw data: sys_dictionary, sys_db_object, and sys_glide_object.
+1. Select **Start Sync**. The select windows closes and you get the message "Syncing Data" from the main Connector window. In addition to the tables you choose, three system tables will also be loaded. These are necessary to build the views on the raw data: sys_dictionary, sys_db_object, and sys_glide_object.
 
 ![load](assets/load.png)
 
@@ -219,12 +216,12 @@ You receive a message indicating success. It appears once at least one table has
 > aside negative
 > Don't stop the ingest too quickly. Make sure the views are built in the destination database first.
 
-## Connector Monitoring (Query Sync History)
+## Connector Monitoring
  Duration: 2
 
-In the connector interface, choose **Query Sync History.** A worksheet
-opens with several SQL queries you can execute to get monitoring
-information. Here are some examples:
+Let's open a worksheet to check what's going on inside the connector.
+Here are some examples of SQL queries you can execute to get monitoring
+information:
 
 ```SQL
 // Get general information about all ingestions
@@ -234,43 +231,33 @@ SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
 SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats WHERE table_name = '<table_name>';
 
 // Check connector configuration
-SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.global_config;
+SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_configuration;
 
 // Calculate ingested data volume
-WITH d as (
-    SELECT
-        table_name,
-        last_value(totalrows) OVER (PARTITION BY table_name ORDER BY run_end_time) AS row_count
-    FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats
-)
-SELECT table_name, max(row_count) as row_count FROM d GROUP BY table_name ORDER BY table_name;
+SELECT
+    table_name,
+    sum(ingested_rows) AS row_count
+FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats
+GROUP BY table_name
+ORDER BY table_name;
 
-// Connector runtime (minutes from start)
-SELECT timediff('minute', min(run_start_time), max(run_end_time)) AS connector_runtime_in_minutes
-FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_stats;
+// General connector statistics
+SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_overview;
 ```
 
 
-## Setting reader role permissions
+## Configuring access to the ingested data
 Duration: 1
 
-Now that you have ingested some data, let's create the **servicenow_reader_role** to give it access to the database, schema, future tables, future views, and virtual warehouse.
-```SQL
-USE ROLE accountadmin;
-USE DATABASE SERVICENOW_DEST_DB;
-CREATE ROLE IF NOT EXISTS servicenow_reader_role;
-GRANT USAGE ON DATABASE SERVICENOW_DEST_DB TO ROLE servicenow_reader_role;
-GRANT USAGE ON SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role; 
-GRANT SELECT ON FUTURE TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
-GRANT SELECT ON FUTURE VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
-GRANT SELECT ON ALL TABLES IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
-GRANT SELECT ON ALL VIEWS IN SCHEMA DEST_SCHEMA TO ROLE servicenow_reader_role;
-GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_reader_role;
-```
+The connector exposes an application role named `DATA_READER`. 
+It's automatically granted to the role provided during the **Configure** step of the installation process.
+It was named `SERVICE_NOW_RESOURCES_PROVIDER` in the screenshot earlier in this guide.
+You can grant either application role or account role further if needed.
+
 ## Query the Data
 Duration: 1
 
-Check out the tables that the connector has created under the DEST_SCHEMA of the SERVICENOW_DEST_DB database. For each table in ServiceNow® that is configured for synchronization, the connector creates the following table and views:
+Check out the tables that the connector has created under the destination schema of the destination database. For each table in ServiceNow® that is configured for synchronization, the connector creates the following table and views:
 
 - A table with the same name that contains the data in raw form, where each record is contained in a single VARIANT column.
 
@@ -281,7 +268,7 @@ Check out the tables that the connector has created under the DEST_SCHEMA of the
 
 - A view named table_name__view_with_deleted that contains the same data as table_name__view as well as rows for records that have been deleted in ServiceNow®.
 
-- A table table_name__event_log that contains the history of changes made to records in ServiceNow®.
+- A table table_name__event_log that contains the history of changes fetched by the connector from ServiceNow®.
 
  To query from the raw data, check out [Accessing the raw data](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-accessing-data.html#accessing-the-raw-data). To query the views (recommended), check out [Accessing the flattened data](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-accessing-data.html#accessing-the-flattened-data).
 
@@ -289,56 +276,51 @@ Check out the tables that the connector has created under the DEST_SCHEMA of the
 Here's a little test query for you to identify the number of incidents raised by month and priority. Other example queries are provided on the Snowflake Connector for ServiceNow® page in the Marketplace.
 
 ```SQL
-USE ROLE SERVICENOW_READER_ROLE;
+USE ROLE SERVICE_NOW_RESOURCES_PROVIDER;
 USE DATABASE SERVICENOW_DEST_DB;
 USE SCHEMA DEST_SCHEMA;
 
 WITH T1 AS (
     SELECT
     DISTINCT
-        T.NUMBER AS TICKET_NUMBER
-        ,T.SHORT_DESCRIPTION
-        ,T.DESCRIPTION
-        ,T.PRIORITY
-        ,T.SYS_CREATED_ON AS CREATED_ON
-        ,T.SYS_UPDATED_ON AS UPDATED_ON
-        ,T.CLOSED_AT
-    FROM
-      TASK__VIEW T
-     LEFT JOIN 
-          INCIDENT__VIEW I 
-          ON I.SYS_ID = T.SYS_ID -- ADDITIONAL INCIDENT DETAIL
-      LEFT JOIN 
-          SYS_AUDIT_DELETE__VIEW DEL 
-          ON T.SYS_ID = DEL.DOCUMENTKEY -- THIS JOIN HELPS IDENTIFY DELETED TICKETS  
-    WHERE
-        DEL.DOCUMENTKEY IS NULL --  THIS CONDITION HELPS KEEP ALL DELETED RECORDS OUT
-    AND
-        I.SYS_ID IS NOT NULL -- THIS CONDITION HELPS KEEP JUST THE INCIDENT TICKETS
+        T.NUMBER AS TICKET_NUMBER,
+        T.SHORT_DESCRIPTION,
+        T.DESCRIPTION,
+        T.PRIORITY,
+        T.SYS_CREATED_ON AS CREATED_ON,
+        T.SYS_UPDATED_ON AS UPDATED_ON,
+        T.CLOSED_AT
+    FROM TASK__VIEW T
+    LEFT JOIN INCIDENT__VIEW I 
+        ON I.SYS_ID = T.SYS_ID -- ADDITIONAL INCIDENT DETAIL
+    WHERE I.SYS_ID IS NOT NULL -- THIS CONDITION HELPS KEEP JUST THE INCIDENT TICKETS
 )
 SELECT
-    YEAR(CREATED_ON) AS YEAR_CREATED
-    ,MONTH(CREATED_ON) AS MONTH_CREATED
-    ,PRIORITY
-    ,COUNT(DISTINCT TICKET_NUMBER) AS NUM_INCIDENTS
-FROM
-    T1
+    YEAR(CREATED_ON) AS YEAR_CREATED,
+    MONTH(CREATED_ON) AS MONTH_CREATED,
+    PRIORITY,
+    COUNT(DISTINCT TICKET_NUMBER) AS NUM_INCIDENTS
+FROM T1
 GROUP BY
-    YEAR_CREATED
-    ,MONTH_CREATED
-    ,PRIORITY
+    YEAR_CREATED,
+    MONTH_CREATED,
+    PRIORITY
 ORDER BY
-    YEAR_CREATED
-    ,MONTH_CREATED
-    ,PRIORITY
+    YEAR_CREATED,
+    MONTH_CREATED,
+    PRIORITY
 ;
 ```
-## Setting the monitoring role permissions
-If you would like to monitor errors, run stats, connector stats, enabled tables, you can set up a ServiceNow® monitoring role that allows access to the views in the connector database.  For example, run the following in a worksheet (and then use the role):
+## Granting access to the connector
+The connector exposes two more application roles except the one we used to access the data in destination database:
+* The `VIEWER` role have read only access to the connector configuration and state
+* The `ADMIN` role that can modify connector configuration and enable/disable ingestion
+If you would like to monitor errors, run stats, connector stats, enabled tables, you can set up a ServiceNow® monitoring role that allows access to the views and read only procedures in the connector database.
+For example, run the following in a worksheet (and then use the role):
 ```SQL
 USE ROLE accountadmin;
 CREATE ROLE IF NOT EXISTS servicenow_monitor_role;
-GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW TO ROLE servicenow_monitor_role;
+GRANT APPLICATION ROLE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.viewer TO ROLE servicenow_monitor_role;
 GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_monitor_role;
 ```
 
@@ -353,20 +335,9 @@ During this lab, we're only ingesting the data, so it makes sense to stop the in
 
 1. In Snowsight, select the **Snowflake Connector for ServiceNow** tile.
 
-1. In the **Snowflake Connector for ServiceNow** window, select **Stop Ingestion**.
+1. In the **Snowflake Connector for ServiceNow** window, select **Pause Connector**.
 
-![stop](assets/stop.png)
 
-Read the warning and select **Stop Ingestion**.
-
-## Uninstall the Connector (but not the data)
-If you are using the public preview connector, make sure to check out the limitations, one of which is during the preview period, before the connector is generally available, Snowflake will release an update that requires you to **uninstall** and reinstall the connector from the Snowflake Marketplace.
-
-To drop the connector you need to drop the connector database: 
-```SQL
-DROP DATABASE SNOWFLAKE_CONNECTOR_FOR_SERVICENOW;
-
-```
 ## Conclusion And Resources
 Duration: 1
 
