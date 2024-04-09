@@ -444,12 +444,12 @@ Duration: 15
 
 Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) to do real-time analytics.
 
-The schematic diagram below shows data from the source is streamed into an input KDS stream, processed by Flink in real-time, streamed into an output KDS stream, picked up by Data Firehose before landing in Snowflake. Amazon Glue Data Catalog serves as a metadata store for Flink tables.
+The schematic diagram below shows data from the source is streamed into an input KDS stream, processed by Flink in real-time, streamed into an output KDS stream, picked up by Data Firehose before landing in Snowflake. [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) serves as a metadata store for Flink tables.
 
 ![](assets/flink-schematic.png)
 
 #### 1. Deploy Flink Studio notebook and Kinesis Data Streams
-First, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn.json) to deploy a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), and two Kinesis Data Streams (KDS). One data stream serves as the input stream for Flink and the other one serves as the output stream.
+First, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One data stream serves as the input stream to Flink and the other one serves as the output stream.
 
 Please use the S3 bucket, private key you had in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
 
