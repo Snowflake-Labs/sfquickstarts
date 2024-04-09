@@ -451,7 +451,7 @@ The schematic diagram below shows data from the source is streamed into an input
 #### 1. Deploy Flink Studio notebook and Kinesis Data Streams
 To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One data stream serves as the input stream to Flink and the other one serves as the output stream.
 
-Please use the S3 bucket, private key you had in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
+Please enter appropriate values into the empty fields where you entered(i.e. bucket, private key, keyphrase, etc.) in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
 
 #### 2. Configure Flink Studio notebook
 Navigate to the [Studio notebook console](https://console.aws.amazon.com/flink/home#/list/notebooks), you should see that your notebook status is ready. Check the notebook and click 'Run' button at the top. The notebook should be running in about 5 minutes.
