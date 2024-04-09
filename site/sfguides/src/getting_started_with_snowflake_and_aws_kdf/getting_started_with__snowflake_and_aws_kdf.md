@@ -449,7 +449,7 @@ The schematic diagram below shows data from the source is streamed into an input
 ![](assets/flink-schematic.png)
 
 #### 1. Deploy Flink Studio notebook and Kinesis Data Streams
-First, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One data stream serves as the input stream to Flink and the other one serves as the output stream.
+To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One data stream serves as the input stream to Flink and the other one serves as the output stream.
 
 Please use the S3 bucket, private key you had in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
 
@@ -471,7 +471,7 @@ In Zeppelin, click `import note`.
 Give the note a name, i.e. `myNote`. Select `Select JSON File/IPYNB File` when prompted.
 ![](assets/zeppelin-import-note-2.png)
 
-Pick the `Flink-nb.zpln` file you just dowonloaded and click `Open`. You should now see the note showing up, click the note to open.
+Pick the `Flink-nb.zpln` file you just dowonloaded and click `Open`. You should now see the note name in the browser window, click the note to open.
 
 <!---------------------------->
 ## Cleanup
