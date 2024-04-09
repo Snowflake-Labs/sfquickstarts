@@ -292,31 +292,21 @@ num_chunks = 3 # Num-chunks provided as context. Play with this to check how it 
 def create_prompt (myquestion, rag):
 
     if rag == 1:    
-        createsql = f"""
-            create or replace table query_vec (qvec vector(float, 768))
-        """
-        session.sql(createsql).collect()
 
-        insertsql = f"""
-            insert into query_vec 
-              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
-        """
-
-        session.sql(insertsql).collect()
-
-        cmd = f"""
-        with results as
-        (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
+        cmd = """
+         with results as
+         (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec,
+                    snowflake.cortex.embed_text('e5-base-v2', ?)) as distance,
            chunk
-        from docs_chunks_table, query_vec
-        order by distance desc
-        limit {num_chunks})
-        select chunk, relative_path from results 
-        """
-
-        df_context = session.sql(cmd).to_pandas()       
-
+         from docs_chunks_table
+         order by distance desc
+         limit ?)
+         select chunk, relative_path from results 
+         """
+    
+        df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
+        
         context_lenght = len(df_context) -1
 
         prompt_context = ""
@@ -356,13 +346,10 @@ def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.cortex.complete(
-            '{model_name}',
-            {prompt})
-            as response
-            """
+             select snowflake.cortex.complete(?,?) as response
+           """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[model_name, prompt]).collect()
     return df_response, url_link, relative_path
 
 def display_response (question, model, rag=0):
@@ -373,9 +360,11 @@ def display_response (question, model, rag=0):
         display_url = f"Link to [{relative_path}]({url_link}) that may be useful"
         st.markdown(display_url)
 
+#Main code
+
 st.title("Asking Questions to Your Own Documents with Snowflake Cortex:")
 st.write("""You can ask questions and decide if you want to use your documents for context or allow the model to create their own response.""")
-st.write("This is the list of documents you already have. Just upload new documents into your DOCS staging area and they will be automatically processed")
+st.write("This is the list of documents you already have:")
 docs_available = session.sql("ls @docs").collect()
 list_docs = []
 for doc in docs_available:
@@ -383,14 +372,14 @@ for doc in docs_available:
 st.dataframe(list_docs)
 
 
-model = st.selectbox('Select your model:',('mistral-7b',
+model = st.sidebar.selectbox('Select your model:',('mistral-7b',
                                            'llama2-70b-chat',
                                            'mixtral-8x7b',
                                            'gemma-7b'))
 
 question = st.text_input("Enter question", placeholder="Is there any special lubricant to be used with the premium bike?", label_visibility="collapsed")
 
-rag = st.checkbox('Use your own documents as context?')
+rag = st.sidebar.checkbox('Use your own documents as context?')
 
 print (rag)
 
@@ -401,6 +390,7 @@ else:
 
 if question:
     display_response (question, model, use_rag)
+
 ```
 ### Explanation
 
@@ -411,26 +401,20 @@ create_prompt() receives a question as an argument and whether it has to use the
 When the box is checked, this code is going embed the question and look for the PDF chunk with the closest similarity to the question being asked. We can limit the number of chunks we want to provide as a context. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
 
 ```python
-        insertsql = f"""
-            insert into query_vec 
-              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
-        """
-
-        session.sql(insertsql).collect()
-
-        cmd = f"""
-        with results as
-        (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
+         cmd = """
+         with results as
+         (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec,
+                    snowflake.cortex.embed_text('e5-base-v2', ?)) as distance,
            chunk
-        from docs_chunks_table, query_vec
-        order by distance desc
-        limit {num_chunks})
-        select chunk, relative_path from results 
-        """
-
-        df_context = session.sql(cmd).to_pandas()
-``` 
+         from docs_chunks_table
+         order by distance desc
+         limit ?)
+         select chunk, relative_path from results 
+         """
+    
+        df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
+ ``` 
 
 So the code is doing a similarity search to look for the closest chunk of text and provide it as context in the prompt:
 
@@ -439,18 +423,16 @@ So the code is doing a similarity search to look for the closest chunk of text a
 The next section worth calling out is the complete() function which combines the LLM, the prompt template and whether to use the context or not to generate a response which includes a link to the asset from which the answer was obtained. 
 
 ```python
-def complete(myquestion, model, rag = 1):
+def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.cortex.complete(
-            '{model}',
-            {prompt})
-            as response
-            """
+             select snowflake.cortex.complete(?,?) as response
+           """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[model_name, prompt]).collect()
     return df_response, url_link, relative_path
+
 ```
 
 ![App](assets/fig9.png)
@@ -541,40 +523,92 @@ import pandas as pd
 pd.set_option("max_colwidth",None)
 
 ### Default Values
-model_name = 'mistral-7b' #Default but we allow user to select one
+#model_name = 'mistral-7b' #Default but we allow user to select one
 num_chunks = 3 # Num-chunks provided as context. Play with this to check how it affects your accuracy
 slide_window = 7 # how many last conversations to remember. This is the slide window.
-debug = 1 #Set this to 1 if you want to see what is the text created as summary and sent to get chunks
-use_chat_history = 0 #Use the chat history by default
+#debug = 1 #Set this to 1 if you want to see what is the text created as summary and sent to get chunks
+#use_chat_history = 0 #Use the chat history by default
 
 ### Functions
 
+def main():
+    
+    st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
+    st.write("This is the list of documents you already have and that will be used to answer your questions:")
+    docs_available = session.sql("ls @docs").collect()
+    list_docs = []
+    for doc in docs_available:
+        list_docs.append(doc["name"])
+    st.dataframe(list_docs)
+
+    config_options()
+    init_messages()
+     
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # Accept user input
+    if question := st.chat_input("What do you want to know about your products?"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": question})
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(question)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+    
+            question = question.replace("'","")
+    
+            with st.spinner(f"{st.session_state.model_name} thinking..."):
+                response = complete(question)
+                res_text = response[0].RESPONSE     
+            
+                res_text = res_text.replace("'", "")
+                message_placeholder.markdown(res_text)
+        
+        st.session_state.messages.append({"role": "assistant", "content": res_text})
+
+
+def config_options():
+
+    st.sidebar.selectbox('Select your model:',('mistral-7b',
+                                           'llama2-70b-chat',
+                                           'mixtral-8x7b',
+                                           'gemma-7b'), key="model_name")
+
+    # For educational purposes. Users can chech the difference when using memory or not
+    st.sidebar.checkbox('Do you want that I remember the chat history?', key="use_chat_history", value = True)
+
+    st.sidebar.checkbox('Debug: Click to see summary generated of previous conversation', key="debug", value = True)
+    st.sidebar.button("Start Over", key="clear_conversation")
+    st.sidebar.expander("Session State").write(st.session_state)
+
+
+def init_messages():
+
+    # Initialize chat history
+    if st.session_state.clear_conversation or "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    
 def get_similar_chunks (question):
 
-    createsql = f"""
-        create or replace table query_vec (qvec vector(float, 768))
+    cmd = """
+        with results as
+        (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec,
+                    snowflake.cortex.embed_text('e5-base-v2', ?)) as distance,
+           chunk
+        from docs_chunks_table
+        order by distance desc
+        limit ?)
+        select chunk, relative_path from results 
     """
-    session.sql(createsql).collect()
-
-    insertsql = f"""
-        insert into query_vec 
-          select snowflake.cortex.embed_text('e5-base-v2', '{question}')
-    """
-
-    session.sql(insertsql).collect()
-
-    cmd = f"""
-    with results as
-    (SELECT RELATIVE_PATH,
-       VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
-       chunk
-    from docs_chunks_table, query_vec
-    order by distance desc
-    limit {num_chunks})
-    select chunk, relative_path from results 
-    """
-
-    df_chunks = session.sql(cmd).to_pandas()       
+    
+    df_chunks = session.sql(cmd, params=[question, num_chunks]).to_pandas()       
 
     df_chunks_lenght = len(df_chunks) -1
 
@@ -590,13 +624,11 @@ def get_similar_chunks (question):
 def get_chat_history():
 #Get the history from the st.session_stage.messages according to the slide window parameter
     
-    chat_history = ""
+    chat_history = []
     
     start_index = max(0, len(st.session_state.messages) - slide_window)
     for i in range (start_index , len(st.session_state.messages) -1):
-        role = st.session_state.messages[i]["role"]
-        content = st.session_state.messages[i]["content"]
-        chat_history += f"[{role}] : {content}\n"
+         chat_history.append(st.session_state.messages[i])
 
     return chat_history
 
@@ -606,27 +638,27 @@ def summarize_question_with_history(chat_history, question):
 # This will be used to get embeddings and find similar chunks in the docs for context
 
     prompt = f"""
-        '
         Based on the chat history below and the question, generate a query that extend the question
         with the chat history provided. The query should be in natual language. 
         Answer with only the query. Do not add any explanation.
         
-        CHAT HISTORY: {chat_history}\n
-        QUESTION: {question}'
+        <chat_history>
+        {chat_history}
+        </chat_history>
+        <question>
+        {question}
+        </question>
         """
     
-    cmd = f"""
-            select snowflake.cortex.complete(
-                '{model_name}',
-                {prompt})
-                as response
-                """
-    df_response = session.sql(cmd).collect()
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
     sumary = df_response[0].RESPONSE     
 
-    if debug ==1:
-        st.text("Summary to be used to find similar chunks in the docs:")
-        st.caption(sumary)
+    if st.session_state.debug:
+        st.sidebar.text("Summary to be used to find similar chunks in the docs:")
+        st.sidebar.caption(sumary)
 
     sumary = sumary.replace("'", "")
 
@@ -634,11 +666,11 @@ def summarize_question_with_history(chat_history, question):
 
 def create_prompt (myquestion):
 
-    if use_chat_history == 1:
+    if st.session_state.use_chat_history:
         chat_history = get_chat_history()
 
         if chat_history != "": #There is chat_history, so not first question
-            question_summary = summarize_question_with_history(chat_history, question)
+            question_summary = summarize_question_with_history(chat_history, myquestion)
             prompt_context =  get_similar_chunks(question_summary)
         else:
             prompt_context = get_similar_chunks(myquestion) #First question when using history
@@ -647,19 +679,27 @@ def create_prompt (myquestion):
         chat_history = ""
   
     prompt = f"""
-          'You are an expert chat assistance that extracs information from the CONTEXT provided.
-           You offer a chat experience considering the information included in the CHAT HISTORY.
-           When ansering the question be concise and do not hallucinate. 
+           You are an expert chat assistance that extracs information from the CONTEXT provided
+           between <context> and </context> tags.
+           You offer a chat experience considering the information included in the CHAT HISTORY
+           provided between <chat_history> and </chat_history> tags..
+           When ansering the question contained between <question> and </question> tags
+           be concise and do not hallucinate. 
            If you don´t have the information just say so.
            
            Do not mention the CONTEXT used in your answer.
            Do not mention the CHAT HISTORY used in your asnwer.
            
-          CHAT HISTORY: {chat_history}
-          CONTEXT: {prompt_context}
-          QUESTION:  
-           {myquestion} 
-           Answer: '
+           <chat_history>
+           {chat_history}
+           </chat_history>
+           <context>          
+           {prompt_context}
+           </context>
+           <question>  
+           {myquestion}
+           </question>
+           Answer: 
            """
 
     return prompt
@@ -668,69 +708,15 @@ def create_prompt (myquestion):
 def complete(myquestion):
 
     prompt =create_prompt (myquestion)
-    cmd = f"""
-        select snowflake.cortex.complete(
-            '{model_name}',
-            {prompt})
-            as response
-            """
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
     return df_response
 
-
-## MAIN CODE
-st.title("Chat Document Assistant with Snowflake Cortex:")
-st.write("This is the list of documents you already have and that will be used")
-docs_available = session.sql("ls @docs").collect()
-list_docs = []
-for doc in docs_available:
-    list_docs.append(doc["name"])
-st.dataframe(list_docs)
-
-
-model_name = st.selectbox('Select your model:',('mistral-7b',
-                                           'llama2-70b-chat',
-                                           'mixtral-8x7b',
-                                           'gemma-7b'))
-
-# For educational purposes. Users can chech the difference when using memory or not
-use_chat_history = st.checkbox('Do you want that I remember the chat history?')
-
-debug = st.checkbox('Debug: Click to see summary generated of previous conversation')
-
-if st.button("Start Over"):
-    st.session_state.messages = []
-
-# Initialize chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# Accept user input
-if question := st.chat_input("Type your question about products and suppliers"): #DryProof670
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": question})
-    # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(question)
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-
-        question = question.replace("'","")
-
-        response = complete(question)
-        res_text = response[0].RESPONSE     
-        
-        res_text = res_text.replace("'", "")
-        message_placeholder.markdown(res_text)
-    
-    st.session_state.messages.append({"role": "assistant", "content": res_text})
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -786,27 +772,27 @@ def summarize_question_with_history(chat_history, question):
 # This will be used to get embeddings and find similar chunks in the docs for context
 
     prompt = f"""
-        '
         Based on the chat history below and the question, generate a query that extend the question
         with the chat history provided. The query should be in natual language. 
         Answer with only the query. Do not add any explanation.
         
-        CHAT HISTORY: {chat_history}\n
-        QUESTION: {question}'
+        <chat_history>
+        {chat_history}
+        </chat_history>
+        <question>
+        {question}
+        </question>
         """
     
-    cmd = f"""
-            select snowflake.cortex.complete(
-                '{model_name}',
-                {prompt})
-                as response
-                """
-    df_response = session.sql(cmd).collect()
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
     sumary = df_response[0].RESPONSE     
 
-    if debug ==1:
-        st.text("Summary to be used to find similar chunks in the docs:")
-        st.caption(sumary)
+    if st.session_state.debug:
+        st.sidebar.text("Summary to be used to find similar chunks in the docs:")
+        st.sidebar.caption(sumary)
 
     sumary = sumary.replace("'", "")
 
@@ -833,46 +819,54 @@ def create_prompt (myquestion):
 Use all those previous functions to get the <b>chat_history</b> and <b>prompt_context</b> and build the prompt. So, this prompt is adding the previous conversation plus the context extracted from the PDFs and the new question.
 
 ```python
-    prompt = f"""
-          'You are an expert chat assistance that extracs information from the CONTEXT provided.
-           You offer a chat experience considering the information included in the CHAT HISTORY.
-           When ansering the question be concise and do not hallucinate. 
+     prompt = f"""
+           You are an expert chat assistance that extracs information from the CONTEXT provided
+           between <context> and </context> tags.
+           You offer a chat experience considering the information included in the CHAT HISTORY
+           provided between <chat_history> and </chat_history> tags..
+           When ansering the question contained between <question> and </question> tags
+           be concise and do not hallucinate. 
            If you don´t have the information just say so.
            
            Do not mention the CONTEXT used in your answer.
            Do not mention the CHAT HISTORY used in your asnwer.
            
-          CHAT HISTORY: {chat_history}
-          CONTEXT: {prompt_context}
-          QUESTION:  
-           {myquestion} 
-           Answer: '
+           <chat_history>
+           {chat_history}
+           </chat_history>
+           <context>          
+           {prompt_context}
+           </context>
+           <question>  
+           {myquestion}
+           </question>
+           Answer: 
            """
-```
+ ```
 
 What makes this very easy with Streamlit are [st.chat_input](https://docs.streamlit.io/library/api-reference/chat/st.chat_input) and [st.chat_message](https://docs.streamlit.io/library/api-reference/chat/st.chat_message). This is the code that get the question with st.chat_input, add it to st.chat_message and to the memmory with st.session_state.messages.append and call <b>complete()</b> function to get the answer that is also printed and stored:
 
 ```python
-# Accept user input
-if question := st.chat_input("What do you want to know about your products?"): #DryProof670
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": question})
-    # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(question)
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-
-        question = question.replace("'","")
-
-        response = complete(question)
-        res_text = response[0].RESPONSE     
-        
-        res_text = res_text.replace("'", "")
-        message_placeholder.markdown(res_text)
+if question := st.chat_input("What do you want to know about your products"): 
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": question})
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(question)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
     
-    st.session_state.messages.append({"role": "assistant", "content": res_text})
+            question = question.replace("'","")
+    
+            with st.spinner(f"{st.session_state.model_name} thinking..."):
+                response = complete(question)
+                res_text = response[0].RESPONSE     
+            
+                res_text = res_text.replace("'", "")
+                message_placeholder.markdown(res_text)
+        
+        st.session_state.messages.append({"role": "assistant", "content": res_text})
 ```
 
 Here you have other examples of chats using info from your documents:
