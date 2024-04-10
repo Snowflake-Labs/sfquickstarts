@@ -49,10 +49,10 @@ Deployment is usually pretty quick, around five minutes. But, while you wait, le
 ## Create and set up the Snowflake Account
 
 ### Create the Snowflake Account
-If you do not have a Snowflake account, no problem, you can get a free trial  at [snowflake.com](https://www.snowflake.com/en/).Select **Start for Free** and follow the instructions. 
+If you do not have a Snowflake account, no problem, you can get a free trial  at [snowflake.com](https://www.snowflake.com/en/). Select **Start for Free** and follow the instructions. 
 ### Accept the Terms & Conditions
 Duration: 1
-1. Log on to your Snowflake account through the Snowsight web interface and change to the **orgadmin** role. 
+1. Log on to your Snowflake account through the Snowsight web interface and change to the **ORGADMIN** role. 
 1. Select “Admin -> Billing & Terms”.
 4. In the “Snowflake Marketplace” section, review the Consumer Terms of Service.
 5. If you agree to the terms, select “Accept Terms & Conditions”.
@@ -60,16 +60,17 @@ Duration: 1
 ### Set up a Virtual Warehouse
 Duration: 1
 
-You'll need some compute for the connector, so let's set up a virtual warehouse to do that. A second virtual warehouse will be created automatically in the configure section.
+You'll need some compute for the connector installation process, so let's set up a virtual warehouse to do that. A second virtual warehouse will be created automatically in the configure section.
 
-Change to the **accountadmin** role.
+Change to the **ACCOUNTADMIN** role.
 1. Navigate to Admin -> Warehouses and select **+ Warehouse**. 
-2. Name the  virtual warehouse **SERVICENOW_CONNECTOR_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
+2. Name the virtual warehouse **SERVICENOW_CONNECTOR_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
 
 ### Install the ServiceNow® connector
 Duration: 1
 
-The connector, the first of its kind to be deployed on Snowflake's [Native App Framework](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/), is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. Once chosen, it is installed into your account as an application with several views, and stored procedures. 
+The connector, the first of its kind to be deployed on Snowflake's [Native App Framework](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/), is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. 
+Once chosen, it is installed into your account as an application with several views, and stored procedures. 
 
 1. In the left menu select **Data Products** and then **Marketplace**.
 1. In the search window, enter **ServiceNow** and select the tile.
@@ -100,7 +101,7 @@ Please read the descriptions carefully and complete them one by one.
 One of the last steps asks you to create application registry if you want to use OAuth2 authentication. Let's focus on it for a while.
 
 Please have two tabs in your browser open for the next part, as you will have to copy some data from Snowflake to ServiceNow®.
-* From the Snowflake side, we want the connector to generate the **re-direct URL** which we will paste into the Application Registry, and
+* From the Snowflake side, we want the connector to generate the **redirect URL** which we will paste into the Application Registry, and
 * From the ServiceNow® side we want the Application Registry to provide the **Client ID** and **secret**, which we then paste into Snowflake.
 
 ### On the Snowflake hand
@@ -140,7 +141,7 @@ You can also provide names of existing objects.
 
 ![default config](assets/configure_defaults.png)
 
-Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-installing-ui.html#configuring-the-snowflake-connector-for-servicenow) for more information on these fields.
+Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-docs.snowflake.com/en/connectors/servicenow/v2/installing-snowsight-2.0#configuring-the-sncv2) for more information on these fields.
 
 Select **Configure**. It can take a few minutes for the configuration process to complete, and you will be moved to the next step.
 
@@ -270,7 +271,7 @@ Check out the tables that the connector has created under the destination schema
 
 - A table table_name__event_log that contains the history of changes fetched by the connector from ServiceNow®.
 
- To query from the raw data, check out [Accessing the raw data](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-accessing-data.html#accessing-the-raw-data). To query the views (recommended), check out [Accessing the flattened data](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-accessing-data.html#accessing-the-flattened-data).
+ To query from the raw data, check out [Accessing the raw data](https://other-docs.snowflake.com/en/connectors/servicenow/v2/accessing-data-2.0#accessing-the-raw-data). To query the views (recommended), check out [Accessing the flattened data](https://other-docs.snowflake.com/en/connectors/servicenow/v2/accessing-data-2.0#accessing-the-flattened-data).
 
 ### Use this query to identify number of incidents raised by month and priority
 Here's a little test query for you to identify the number of incidents raised by month and priority. Other example queries are provided on the Snowflake Connector for ServiceNow® page in the Marketplace.
@@ -351,7 +352,7 @@ Congratulations! You've successfully installed and configured the Snowflake Conn
 ### Related Resources
 * [Snowflake Connector for ServiceNow Available in Public Preview](https://www.snowflake.com/blog/snowflake-connector-servicenow-in-public-preview/)
 * [Introducing the Snowflake Native Application Framework](https://www.snowflake.com/blog/introducing-snowflake-native-application-framework/)
-* [Snowflake Connector for ServiceNow documentation](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html)
+* [Snowflake Connector for ServiceNow documentation](https://other-docs.snowflake.com/en/connectors/servicenow/v2/index-2.0)
 
 
 
