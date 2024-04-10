@@ -507,12 +507,15 @@ Do the same thing for the right cell. A Flink output table is also created.
 
 ![](assets/flink-nb-run-2.png)
 
-Now, scrow down to the remaining two cells to start filtering and monitoring by click the play button located at the top-right corner of the cells.
+Now, scrow down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of the cells.
 
 First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results.
 
 ![](assets/flink-nb-run-3.png)
 
+#### 6. Start ingesting live data to the input Kinesis data stream
+
+![](assets/real-time-analytics.gif)
 
 <!---------------------------->
 ## Cleanup
