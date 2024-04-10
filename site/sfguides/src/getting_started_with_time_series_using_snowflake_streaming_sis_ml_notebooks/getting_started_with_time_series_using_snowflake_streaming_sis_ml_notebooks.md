@@ -1,13 +1,13 @@
-author: Nathan Birch, Jonathan Regenstein
 id: getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks
-summary: Getting Start with Time Series in Snowflake
-categories: getting-started, data-engineering, streamlit, data-science-&-ml
+summary: Getting Started with Time Series Analysis in Snowflake
+categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
+author: nathan.birch@snowflake.com, jonathan.regenstein@snowflake.com
 
-# Getting Start with Time Series in Snowflake
+# Getting Started with Time Series Analysis in Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -17,25 +17,45 @@ Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
 The rest of this Snowflake Guide explains the steps of writing your own guide. 
+ 
+<!-- ------------------------ -->
+## Quickstart Setup
 
-### Prerequisites
-- Familiarity with Markdown syntax
+Duration: 10
 
-### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+### Fork the GitHub Repository
 
-### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
+The very first step is to fork the GitHub repository [Getting Started with Time Series in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
-### What You’ll Build 
-- A Snowflake Guide
+### Create GitHub Codespace
+
+For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
+
+To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
+
+<img src="assets/codespace_setup.png" width="800" />
+
+This will open a new tab and begin setting up your codespace. It will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
+
+- Creating a container for your environment
+- Installing Anaconda (conda)
+- Anaconda setup
+  - Creating the Anaconda environment
+  - Installing the Snowpark Python library
+- VS Code setup
+  - Installing VS Code
+  - Installing the Snowflake VS Code extension
+- Starting a hosted, web-based VS Code editor
+
+Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
+
+### Configure Snowflake Credentials
+[TODO]
+
+
+### Verify Your Anaconda Environment is AVailable
+
+During the codespace setup we created an Anaconda environment named `hol-timeseries`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(hol-timeseries)` before your bash prompt.
 
 <!-- ------------------------ -->
 ## Metadata Configuration
@@ -148,9 +168,6 @@ for (statement 1; statement 2; statement 3) {
 Duration: 2
 
 Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Puppy](assets/SAMPLE.jpg)
 
 ### Videos
 Videos from youtube can be directly embedded:
