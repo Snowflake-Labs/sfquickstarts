@@ -507,9 +507,9 @@ Do the same thing for the right cell. A Flink output table is also created.
 
 ![](assets/flink-nb-run-2.png)
 
-Now, scrow down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of the cells.
+Now, scrow down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of each cell.
 
-First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results.
+First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results. In a short moment, you will see some filtered data in the monitoring cell and they are all UA airplanes flying below 7000 feet.
 
 ![](assets/flink-nb-run-3.png)
 
