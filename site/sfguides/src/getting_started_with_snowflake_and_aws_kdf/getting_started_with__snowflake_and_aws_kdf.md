@@ -459,7 +459,7 @@ use ADF_STREAMING_DB;
 use schema ADF_STREAMING_SCHEMA;
 create or replace TABLE ADF_FLINK_TBL (
 	ORIG VARCHAR(5),
-	UTC INTEGER,
+	UTC VARCHAR(20),
 	ALT INTEGER,
 	ICAO VARCHAR(20),
 	LON FLOAT,
@@ -495,8 +495,8 @@ Click `Open Apache Zeppelin` when the notebook is running.
 Download a Zeppelin note from [here](https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/Flink-nb.zpln), and save it to your desktop.
 
 In Zeppelin, click `import note`.
-![](assets/zeppelin-import-note-1.png)
 
+![](assets/zeppelin-import-note-1.png)
 
 Give the note a name, i.e. `myNote`. Select `Select JSON File/IPYNB File` when prompted.
 ![](assets/zeppelin-import-note-2.png)
