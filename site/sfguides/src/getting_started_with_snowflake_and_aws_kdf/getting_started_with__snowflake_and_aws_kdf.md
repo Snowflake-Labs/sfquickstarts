@@ -442,11 +442,13 @@ As a result, you will see a nicely structured output with columns derived from t
 ## Use Amazon Managed Flink for real-time analytics - Optional
 Duration: 15
 
-Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) to do real-time analytics.
+Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) and [Kinesis Data Streams (KDS)](https://aws.amazon.com/kinesis/data-streams/) to do real-time analytics.
 
-The schematic diagram below shows data from the source is streamed into an input KDS stream, processed by Flink in real-time, streamed into an output KDS stream, picked up by Data Firehose before landing in Snowflake. [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) serves as a metadata store for Flink tables.
+The schematic diagram below illustrates the flow of data from the source, which is streamed into an input KDS stream. The data is then processed by [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) in real-time, before being ingested into an output KDS stream, it is picked up by Data Firehose and ultimately lands in Snowflake. [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) serves as a metadata store for Flink Studio notebook tables.
 
 ![](assets/flink-schematic.png)
+
+Optionally, if you are writing Flink applications instead of using the Flink Studio notebook, you can use the [Firehose Producer](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) to bypass the output Kinesis stream.
 
 #### 1. Create a table in Snowflake to receive Flink-filtered data
 Log into the Snowflake account as `streaming_user`. Run the following SQL commands to generate a table for capturing the filtered streams.
@@ -555,7 +557,7 @@ You should see the filtered flight tracked are captured in table `ADF_FLINK_TBL`
 Duration: 5
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
-Select the Cloudformation template you used to deploy the jumphost at the start of the demo, then click the `Delete` tab.
+Select the Cloudformation template you used to deploy the jumphost at the start of the demo, also the template for Amazon Managed Flink if you optionally deployed it, then click the `Delete` tab.
 
 See example screen capture below.
 
@@ -588,5 +590,3 @@ Related Resources
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
-
-
