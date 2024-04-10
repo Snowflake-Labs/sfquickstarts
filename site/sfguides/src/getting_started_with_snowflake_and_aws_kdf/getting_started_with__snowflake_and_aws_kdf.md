@@ -510,7 +510,7 @@ Do the same thing for the right cell. A Flink output table is also created.
 
 ![](assets/flink-nb-run-2.png)
 
-Step 3 above
+
 
 
 <!---------------------------->
