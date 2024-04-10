@@ -205,6 +205,9 @@ GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
 
+-- SET DEFAULT TIMEZONE TO UTC FOR DEMO PURPOSE
+ALTER ACCOUNT SET TIMEZONE = 'UTC';
+
 -- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
 -- IT WILL BE SOMETHING LIKE <organization_name>-<account_name>
 -- e.g. ykmxgak-wyb52636
@@ -448,17 +451,44 @@ The schematic diagram below shows data from the source is streamed into an input
 
 ![](assets/flink-schematic.png)
 
-#### 1. Deploy Flink Studio notebook and Kinesis Data Streams
-To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One data stream serves as the input stream to Flink and the other one serves as the output stream.
+#### 1. Create a table in Snowflake to receive Flink-filtered data
+Log into the Snowflake account as `streaming_user`. Run the following SQL commands to generate a table for capturing the filtered streams.
+
+```sql
+use ADF_STREAMING_DB;
+use schema ADF_STREAMING_SCHEMA;
+create or replace TABLE ADF_FLINK_TBL (
+	ORIG VARCHAR(5),
+	UTC INTEGER,
+	ALT INTEGER,
+	ICAO VARCHAR(20),
+	LON FLOAT,
+	ID VARCHAR(10),
+	DEST VARCHAR(5),
+	LAT FLOAT
+);
+```
+
+#### 2. Deploy Flink Studio notebook and Kinesis Data Streams
+To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn-jsnow.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One data stream serves as the input stream to Flink and the other one serves as the output stream.
 
 Please enter appropriate values into the empty fields where you entered(i.e. bucket, private key, keyphrase, etc.) in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
 
-#### 2. Configure Flink Studio notebook
-Navigate to the [Studio notebook console](https://console.aws.amazon.com/flink/home#/list/notebooks), you should see that your notebook status is ready. Check the notebook and click 'Run' button at the top. The notebook should be running in about 5 minutes.
+The Cloudformant template will be deployed in about 5 minutes, navigate to the 
+
+#### 3. Configure Flink Studio notebook
+Navigate to the [Studio notebook console](https://console.aws.amazon.com/flink/home#/list/notebooks), you should see that your notebook status is ready. Check the notebook and click `Run` button at the top. The notebook status should change to `Running` in about 5 minutes. 
 
 ![](assets/run-flink-nb.png)
 
-### 3. Configure Zeppelin notebook
+Click the `Outputs` tab and record the values for `KinesisDataInputStream` and `KinesisDataOutputStream`, we will need them later.
+
+![](assets/cfn-output.png)
+
+You will also notice notice that a Glue database is also created. Navigate to [Glue console](https://us-west-2.console.aws.amazon.com/glue/home#/v2/data-catalog/databases) to verify.
+
+
+#### 4. Configure Zeppelin notebook
 Click `Open Apache Zeppelin` when the notebook is running.
 ![](assets/zeppelin.png)
 
@@ -471,7 +501,17 @@ In Zeppelin, click `import note`.
 Give the note a name, i.e. `myNote`. Select `Select JSON File/IPYNB File` when prompted.
 ![](assets/zeppelin-import-note-2.png)
 
-Pick the `Flink-nb.zpln` file you just dowonloaded and click `Open`. You should now see the note name in the browser window, click the note to open.
+Pick the `Flink-nb.zpln` file you just dowonloaded. You should now see the note name in the browser window, click the note to open.
+
+#### 5. Run Flink notebook
+In the left cell, type in the value for `KinesisDataInputStream` you recorded from step 3 above, change `aws.region` to your local region. Highlight the content of the left cell, then click the triangle play button at the top. You should see the status changing from `Pending` to `Running` to `Finished`. This creates a Flink input table which maps to the input Kinesis data stream.
+
+Do the same thing for the right cell. A Flink output table is also created.
+
+![](assets/flink-nb-run-2.png)
+
+Step 3 above
+
 
 <!---------------------------->
 ## Cleanup
