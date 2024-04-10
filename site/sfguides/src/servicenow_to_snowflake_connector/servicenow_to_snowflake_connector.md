@@ -82,7 +82,7 @@ Once chosen, it is installed into your account as an application with several vi
 1. Select **Get**. You receive the following message, **Snowflake Connector for SeviceNow is now ready to use in your account.**
 ![Get ServiceNow Connector](assets/get_sn_ctr.png)
 
-1. Select **Done**. We will manage it in the next section. 
+1. Select **Done**. We will manage it in the next section.
 
 Let's check that the connector was installed. From Snowsight, go to **Data Products -> Apps**. You will see a new installed application with the name **Snowflake_Connector_for_ServiceNow**. 
 
