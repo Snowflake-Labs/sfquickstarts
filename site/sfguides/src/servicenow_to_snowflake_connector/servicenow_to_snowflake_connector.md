@@ -84,7 +84,7 @@ Once chosen, it is installed into your account as an application with several vi
 
 1. Select **Done**. We will manage it in the next section.
 
-Let's check that the connector was installed. From Snowsight, go to **Data Products -> Apps**. You will see a new installed application with the name **Snowflake_Connector_for_ServiceNow**. 
+Let's check that the connector was installed. From Snowsight, go to **Data Products** -> **Apps**. You will see a new installed application with the name **Snowflake_Connector_for_ServiceNow**. 
 
 ![installed_app](assets/installed_app.png)
 
@@ -94,7 +94,7 @@ Take a look at its public schema in **Data -> Databases** to see what views and 
 
 ## Complete all the prerequisites
 
-Launch the Snowflake Connector for ServiceNow® from the **Marketplace** -> **Snowflake Connector for ServiceNow**.
+Launch the Snowflake Connector for ServiceNow® from the **Data Products** -> **Apps** -> **Snowflake Connector for ServiceNow**.
 You will be presented the list of tasks that need to be done before you'll be able to start the ingestion of the data.
 Please read the descriptions carefully and complete them one by one.
 
