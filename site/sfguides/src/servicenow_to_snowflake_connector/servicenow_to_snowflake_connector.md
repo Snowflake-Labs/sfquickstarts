@@ -338,6 +338,18 @@ During this lab, we're only ingesting the data, so it makes sense to stop the in
 
 1. In the **Snowflake Connector for ServiceNow** window, select **Pause Connector**.
 
+## Uninstall the Connector (but not the data)
+Duration: 1
+
+If you completed the experiment or for any reason no longer need the connector you can easily uninstall it via the Snowflake Marketplace.
+
+1. Select **Data Products** and then **Apps**.
+1. Select three dots icon in the item on the list representing the connector app.
+1. Select **Uninstall**
+1. Decide if you want to delete the objects owned by the application (tables and views in the destination schema) or transfer ownership of them to another role
+1. Select **Uninstall**
+
+![uninstall](assets/uninstall.png)
 
 ## Conclusion And Resources
 Duration: 1
