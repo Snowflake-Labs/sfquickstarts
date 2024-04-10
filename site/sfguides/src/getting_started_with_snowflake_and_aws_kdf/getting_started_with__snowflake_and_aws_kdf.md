@@ -509,13 +509,46 @@ Do the same thing for the right cell. A Flink output table is also created.
 
 Now, scrow down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of each cell.
 
-First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results. In a short moment, you will see some filtered data in the monitoring cell and they are all UA airplanes flying below 7000 feet.
+First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results.
 
 ![](assets/flink-nb-run-3.png)
 
+Leave your Flink notebook window open.
+
 #### 6. Start ingesting live data to the input Kinesis data stream
+We are ready to ingest data now. Go to your EC2 console via [Session Manager](https://console.aws.amazon.com/systems-manager/session-manager) as instructed in step 3 of Chapter 2.
+
+Issue this shell command to download the python KDS producer.
+
+```shell
+cd /tmp
+wget https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/kds-producer.py
+```
+Now kick off the ingestion by executing below shell command, replace `<your input Kinesis stream>` with the name of your input Kinesis stream.
+
+```shell
+python3 /tmp/kds-producer.py <your input Kinesis stream>
+```
+![](assets/kds-ingestion.gif)
+
+ In a short moment, you will see some filtered data in the Flink notebook monitoring cell and they are all UA airplanes flying below 7000 feet.
+
 
 ![](assets/real-time-analytics.gif)
+
+
+#### 7. Verify the result in Snowflake
+Now go back to your Snowflake account as user 'streaming_user', and run the following SQL commands:
+
+```sql
+USE ADF_STREAMING_DB;
+USE SCHEMA ADF_STREAMING_SCHEMA;
+SELECT * from ADF_FLINK_TBL;
+
+You should see the filtered flight tracked are captured in table `ADF_FLINK_TBL`.
+
+```
+![](assets/verify-snowflake-result.png)
 
 <!---------------------------->
 ## Cleanup
