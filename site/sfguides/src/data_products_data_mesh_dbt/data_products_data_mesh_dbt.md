@@ -1,5 +1,5 @@
 author: Sean McIntyre
-id: data_products_data_mesh_dbt
+id: data-product-data-mesh-dbt
 summary: This is a sample Snowflake Guide
 <!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Snowflake Guide Template
+# Data Product Data Mesh dbt
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
