@@ -168,8 +168,6 @@ see below example screenshot:
 ## Prepare the Snowflake cluster for streaming
 Duration: 15
 
-Note that you need to complete the base workshop first without cleaning up the resources in order to proceed.
-
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
 Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
@@ -447,6 +445,10 @@ As a result, you will see a nicely structured output with columns derived from t
 <!---------------------------->
 ## Use Amazon Managed Flink for real-time analytics - Optional
 Duration: 20
+
+Note that you will need to complete the base workshop first without cleaning up the resources in order to proceed.
+
+Apache Flink is a powerful stream processing framework with a wide range of use cases across industries. Some common applications include Real-time analytics, Fraud detection, Sendor data process, Supply chain optimization, and many more.
 
 Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) and [Kinesis Data Streams (KDS)](https://aws.amazon.com/kinesis/data-streams/) to do real-time analytics.
 
