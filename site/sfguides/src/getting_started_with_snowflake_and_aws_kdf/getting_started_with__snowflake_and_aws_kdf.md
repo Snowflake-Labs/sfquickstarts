@@ -448,7 +448,7 @@ The schematic diagram below illustrates the flow of data from the source, which 
 
 ![](assets/flink-schematic.png)
 
-Optionally, if you are writing Flink applications instead of using the Flink Studio notebook, you can use the [Firehose Producer](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) to bypass the output Kinesis stream.
+We will be focusing on using Flink Studio notebook for this demo. Optionally, if you are writing Flink applications instead of using the Flink Studio notebook, you can use the [Firehose Producer](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) to bypass the output Kinesis stream.
 
 #### 1. Create a table in Snowflake to receive Flink-filtered data
 Log into the Snowflake account as `streaming_user`. Run the following SQL commands to generate a table for capturing the filtered streams.
@@ -469,7 +469,7 @@ create or replace TABLE ADF_FLINK_TBL (
 ```
 
 #### 2. Deploy Flink Studio notebook and Kinesis Data Streams
-To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn-jsnow.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One Kinesis stream serves as the input stream to Flink and the other one serves as the output stream.
+To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One Kinesis stream serves as the input stream to Flink and the other one serves as the output stream.
 
 Please enter appropriate values into the empty fields where you entered(i.e. bucket, private key, keyphrase, etc.) in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
 
