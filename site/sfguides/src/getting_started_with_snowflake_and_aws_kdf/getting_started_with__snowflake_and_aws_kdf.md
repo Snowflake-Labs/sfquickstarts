@@ -219,6 +219,24 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 Please write down the Account Identifier, we will need it later.
 ![](assets/account-identifier.png)
 
+We need to retrieve the `Snowflake private account URL` for use later, run below SQL command now and record the output, e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
+
+```sql
+with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-account-url')
+SELECT concat('https://'|| REPLACE(VALUE,'"','')) AS SNOWFLAKE_PRIVATE_ACCOUNT_URL
+from PL;
+```
+
+Now we need to retrieve the value of `VPCE ID` for use later, run below SQL command now and record the output, e.g. `com.amazonaws.vpce.us-west-2.vpce-svc-xyzabce999777333f1`.
+
+```sql
+with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
+SELECT REPLACE(VALUE,'"','') AS PRIVATE_LINK_VPCE_ID
+from PL;
+```
+
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
 First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` in `section #2 Provision a Linux jumphost in AWS` located in the left pane) in the following SQL command and execute.
@@ -297,19 +315,11 @@ Type in a name for the `Firehose stream name`.
 
 Skip `Transform records` setup.
 
-For `Snowflake account URL`, run this SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value:
-```
-with PL as
-(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-account-url')
-SELECT concat('https://'|| REPLACE(VALUE,'"','')) AS PRIVATE_LINK_VPCE_ID
-from PL;
-```
+For `Snowflake account URL`, enter the URL you recorded previously from step 1 in Chapter 3, e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`.
 
-e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
+Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the URL is a private endpoint with `privatelink` as a substring. 
 
-Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the
-URL is a private endpoint with `privatelink` as a substring. Alternatively, you can use the public endpoint without 
-the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, leave the `VPCE ID` field blank below.
+Alternatively, you can use the public endpoint without the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, also leave the `VPCE ID` field blank below.
 
 For `User`, type in `STREAMING_USER`.
 
@@ -325,13 +335,7 @@ For `Passphrase`, type in the phrase you used when generating the public key wit
 
 For `Role`, select `Use custom Snowflake role` and type in `ADF_STREAMING_RL`.
 
-For `VPCE ID`, run the following SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value.
-```commandline
-with PL as
-(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
-SELECT REPLACE(VALUE,'"','') AS PRIVATE_LINK_VPCE_ID
-from PL;
-```
+For `VPCE ID`, enter the value you recorded from step 1 in Chapter 3, e.g. `com.amazonaws.vpce.us-west-2.vpce-svc-xyzabce999777333f1`.
 
 For `Snowflake database`, type in `ADF_STREAMING_DB`.
 
