@@ -168,7 +168,7 @@ see below example screenshot:
 ## Prepare the Snowflake cluster for streaming
 Duration: 15
 
-Note that you need to complete the base workshop first in order to proceed.
+Note that you need to complete the base workshop first without cleaning up the resources in order to proceed.
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
