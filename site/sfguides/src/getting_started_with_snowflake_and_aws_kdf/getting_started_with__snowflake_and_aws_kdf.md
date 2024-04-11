@@ -523,7 +523,7 @@ We are ready to ingest data now. Go to your EC2 console via [Session Manager](ht
 Kick off the ingestion by executing below shell command, replace `<your input Kinesis stream>` with the name of your input Kinesis stream.
 
 ```shell
-curl -s https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/kds-producer.py | python3 - <your input Kinesis stream name>
+curl -s https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/kds-producer.py | python3 - <your input Kinesis stream name>
 ```
 ![](assets/kds-ingestion.gif)
 
