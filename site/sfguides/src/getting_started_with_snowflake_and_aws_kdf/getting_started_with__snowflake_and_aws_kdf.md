@@ -440,7 +440,7 @@ As a result, you will see a nicely structured output with columns derived from t
 
 <!---------------------------->
 ## Use Amazon Managed Flink for real-time analytics - Optional
-Duration: 15
+Duration: 20
 
 Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) and [Kinesis Data Streams (KDS)](https://aws.amazon.com/kinesis/data-streams/) to do real-time analytics.
 
