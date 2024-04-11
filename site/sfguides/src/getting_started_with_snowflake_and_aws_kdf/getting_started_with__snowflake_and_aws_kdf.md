@@ -443,7 +443,7 @@ As a result, you will see a nicely structured output with columns derived from t
 
 
 <!---------------------------->
-## Use Amazon Managed Flink for real-time analytics - Optional
+## Use Amazon Managed Service for Flink for real-time analytics - Optional
 Duration: 20
 
 Note that you will need to complete the base workshop first without cleaning up the resources in order to proceed.
