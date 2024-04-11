@@ -168,6 +168,8 @@ see below example screenshot:
 ## Prepare the Snowflake cluster for streaming
 Duration: 15
 
+Note that you need to complete the base workshop first in order to proceed.
+
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
 Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
