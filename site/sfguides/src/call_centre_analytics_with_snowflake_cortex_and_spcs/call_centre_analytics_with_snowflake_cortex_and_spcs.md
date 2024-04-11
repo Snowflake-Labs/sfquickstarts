@@ -24,6 +24,7 @@ This Quickstart will cover a lot of ground, and by the end you will have built a
 > You can read the medium blog post [call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services](https://medium.com/snowflake/call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services-5e06b4baef46) to know more about this solution in detail.
 > **Note** - As of 3/28/2024, the [Vector Search] is still in private preview.
 
+
 ### Prerequisites
 
 * Familiarity with Python
@@ -72,6 +73,7 @@ During this Quickstart you will accomplish the following things:
 * Building service functions for text2sql capability by hosting NumbersStation/nsql-llama-2–7B model in Snowpark Container Services using GPU’s. 
 * Snowpark to invoke the cortex functions
 * Create and deploy Streamlit app in SPCS
+
 
 Below gif explaining the main pages of the app and the information it gives about the audio.
 

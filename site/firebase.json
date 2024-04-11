@@ -71,7 +71,12 @@
       "source": "/guide/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex/{,/**}",
       "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
       "type": 301
-    }  
+    },
+    {
+      "source": "/guide/end_to_end_machine_learning_with_dataiku/{,/**}",
+      "destination": "/guide/a_dataiku_and_snowflake_guide_to_data_science",
+      "type": 301
+    }    
     ]
   }
 }
