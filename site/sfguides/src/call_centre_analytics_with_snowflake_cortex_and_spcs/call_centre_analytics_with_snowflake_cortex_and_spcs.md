@@ -60,6 +60,7 @@ You will need the following things before beginning:
 
 > **Note**: To get access to Snowflake Cortex vector functions and vector datatype (both currently in private preview) reach out to your Snowflake account team. This solution uses Cortex vector functions and vector datatype and you will encounter errors if these private preview features are not enabled in your account.
 
+
 ### What You’ll Build
 
 During this Quickstart you will accomplish the following things:
