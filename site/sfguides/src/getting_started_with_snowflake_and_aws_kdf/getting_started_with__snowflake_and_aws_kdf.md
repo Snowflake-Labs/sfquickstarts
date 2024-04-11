@@ -520,13 +520,7 @@ Leave your Flink notebook window open.
 #### 6. Start ingesting live data to the input Kinesis data stream
 We are ready to ingest data now. Go to your EC2 console via [Session Manager](https://console.aws.amazon.com/systems-manager/session-manager) as instructed in step 3 of Chapter 2.
 
-Issue this shell command to download the python KDS producer.
-
-```shell
-cd /tmp
-wget https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/kds-producer.py
-```
-Now kick off the ingestion by executing below shell command, replace `<your input Kinesis stream>` with the name of your input Kinesis stream.
+Kick off the ingestion by executing below shell command, replace `<your input Kinesis stream>` with the name of your input Kinesis stream.
 
 ```shell
 curl -s https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/kds-producer.py | python3 - <your input Kinesis stream name>
