@@ -484,7 +484,7 @@ Click the `Outputs` tab and record the values for `KinesisDataInputStream` and `
 
 ![](assets/cfn-output.png)
 
-You will also notice notice that a Glue database is also created. Navigate to [Glue console](https://us-west-2.console.aws.amazon.com/glue/home#/v2/data-catalog/databases) to verify.
+You will also notice notice that a Glue database is also created. Navigate to the [Glue console](https://us-west-2.console.aws.amazon.com/glue/home#/v2/data-catalog/databases) to verify.
 
 
 #### 4. Configure Zeppelin notebook
@@ -509,7 +509,7 @@ Do the same thing for the right cell. A Flink output table is also created.
 
 ![](assets/flink-nb-run-2.png)
 
-Now, scrow down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of each cell.
+Now, scroll down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of each cell.
 
 First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results.
 
@@ -533,7 +533,7 @@ curl -s https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowf
 ![](assets/real-time-analytics.gif)
 
 
-#### 7. Verify the result in Snowflake
+#### 7. Verify the results in Snowflake
 Now go back to your Snowflake account as user 'streaming_user', and run the following SQL commands:
 
 ```sql
