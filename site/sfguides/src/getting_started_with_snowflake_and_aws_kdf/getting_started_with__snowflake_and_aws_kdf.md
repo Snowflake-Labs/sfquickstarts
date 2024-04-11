@@ -444,7 +444,7 @@ Duration: 20
 
 Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) and [Kinesis Data Streams (KDS)](https://aws.amazon.com/kinesis/data-streams/) to do real-time analytics.
 
-The schematic diagram below illustrates the flow of data from the source, which is streamed into an input KDS stream. The data is then processed by [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) in real-time, before being ingested into an output KDS stream, it is picked up by Data Firehose and ultimately lands in Snowflake. [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) serves as a metadata store for Flink Studio notebook tables.
+The schematic diagram below illustrates the flow of data from the source, which is streamed into an input Kinesis stream. The data is then processed by [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) in real-time, before being ingested into an output Kinesis stream, it is picked up by Data Firehose and ultimately lands in Snowflake. [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) serves as a metadata store for Flink Studio notebook tables.
 
 ![](assets/flink-schematic.png)
 
@@ -469,7 +469,7 @@ create or replace TABLE ADF_FLINK_TBL (
 ```
 
 #### 2. Deploy Flink Studio notebook and Kinesis Data Streams
-To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn-jsnow.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One data stream serves as the input stream to Flink and the other one serves as the output stream.
+To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-us-west-2.s3.us-west-2.amazonaws.com/kdf/flink-kds-cfn-jsnow.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One Kinesis stream serves as the input stream to Flink and the other one serves as the output stream.
 
 Please enter appropriate values into the empty fields where you entered(i.e. bucket, private key, keyphrase, etc.) in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
 
@@ -529,7 +529,7 @@ wget https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/kds-producer.py
 Now kick off the ingestion by executing below shell command, replace `<your input Kinesis stream>` with the name of your input Kinesis stream.
 
 ```shell
-python3 /tmp/kds-producer.py <your input Kinesis stream>
+curl -s https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/kds-producer.py | python3 - <your input Kinesis stream name>
 ```
 ![](assets/kds-ingestion.gif)
 
