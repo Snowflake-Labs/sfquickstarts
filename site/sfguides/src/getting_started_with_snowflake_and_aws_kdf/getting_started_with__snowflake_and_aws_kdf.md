@@ -430,7 +430,7 @@ The SQL command creates a view, converts timestamps to different time zones, and
 You can also easily calculate the distance in miles between two geo locations. In above example, the `st_distance` function is used to calculate the distance between an airplane and San Francisco Airport.
 
 Let's query the view `flights_vw` now.
-```commandline
+```sql
 select * from flights_vw;
 ```
 
