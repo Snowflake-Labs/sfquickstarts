@@ -547,7 +547,7 @@ USE ADF_STREAMING_DB;
 USE SCHEMA ADF_STREAMING_SCHEMA;
 SELECT * from ADF_FLINK_TBL;
 ```
-You should see the filtered flight tracked are captured in table `ADF_FLINK_TBL`.
+You should see the filtered flight tracks are captured in table `ADF_FLINK_TBL`.
 
 
 ![](assets/verify-snowflake-result.png)
