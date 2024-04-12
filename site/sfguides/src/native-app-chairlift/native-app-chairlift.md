@@ -462,7 +462,7 @@ call populate_reading();
 ```
 
 <!-- ------------------------ -->
-## Create application package and install application using SnowCLI
+## Create application package and install application using Snowflake CLI
 Duration: 3
 
 With the environment created, we can now create the application package for the app. You'll run a command that creates this package and does a few key things:
