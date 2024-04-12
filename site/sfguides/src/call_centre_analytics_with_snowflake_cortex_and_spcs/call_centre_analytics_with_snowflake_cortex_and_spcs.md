@@ -24,25 +24,14 @@ This Quickstart will cover a lot of ground, and by the end you will have built a
 > You can read the medium blog post [call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services](https://medium.com/snowflake/call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services-5e06b4baef46) to know more about this solution in detail.
 > **Note** - As of 3/28/2024, the [Vector Search] is still in private preview.
 
-Below gif explaining the main pages of the app and the information it gives about the audio.
-
-* Audio Analytics Page
-<img src="assets/video_AnalyticsPage.gif" width="800" />
-
-* RAG based chatbot
-<img src="assets/video_RAG.gif" width="800" />
-
-* Text2SQL Bot
-<img src="assets/video_Text2SQL.gif" width="800" />
-
 
 ### Prerequisites
 
 * Familiarity with Python
 * Familiarity with the DataFrame API
 * Familiarity with Snowflake
-* Familiarity with Git repositories and GitHub
 * Docker
+
 
 ### What You’ll Learn
 
@@ -62,14 +51,16 @@ You will learn about the following Snowflake features during this Quickstart:
 
 You will need the following things before beginning:
 
-* Snowflake account
-  * **A Snowflake Account**
-  * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
+* Snowflake account in a cloud region where Snowflake Cortex LLM functions are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
+  * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake
 * GitHub account
   * **A GitHub account** If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
-  * **VS Code** (<https://code.visualstudio.com/download>) Installed
-  * **Docker installed**
-  * **Anaconda Installed**
+* **VS Code** (<https://code.visualstudio.com/download>) Installed
+* **Docker installed**
+* **Anaconda Installed**
+
+> **Note**: To get access to Snowflake Cortex vector functions and vector datatype (both currently in private preview) reach out to your Snowflake account team. This solution uses Cortex vector functions and vector datatype and you will encounter errors if these private preview features are not enabled in your account.
+
 
 ### What You’ll Build
 
@@ -82,6 +73,22 @@ During this Quickstart you will accomplish the following things:
 * Building service functions for text2sql capability by hosting NumbersStation/nsql-llama-2–7B model in Snowpark Container Services using GPU’s. 
 * Snowpark to invoke the cortex functions
 * Create and deploy Streamlit app in SPCS
+
+
+Below gif explaining the main pages of the app and the information it gives about the audio.
+
+* Audio Analytics Page
+
+<img src="assets/video_AnalyticsPage.gif" width="800" />
+
+* RAG based chatbot
+
+<img src="assets/video_RAG.gif" width="800" />
+
+* Text2SQL Bot
+
+<img src="assets/video_Text2SQL.gif" width="800" />
+
 
 ## Setup
 
