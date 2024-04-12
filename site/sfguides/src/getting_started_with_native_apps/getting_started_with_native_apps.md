@@ -117,21 +117,11 @@ Let's explore the directory structure:
         |   |-- scripts
         |       |-- setup.sql
                 |-- setup-package-script.sql
-        |-- test
-            |-- Test_App_Locally.sql
       |-- prepare_data.sh
       |-- snowflake.yml
 ```
 
-There are two main directories that we will be using:
-
-`src`
-
-- the `src` directory is used to store all of our various source code including stored procedures, user defined functions (UDFs), our streamlit application, and even our installation script `setup.sql`.
-
-`test`
-
-- the `test` directory contains both our sample data used for seeding our application tests, and our test script `Test_App_Locally.sql`
+There `src` directory is used to store all of our various source code including stored procedures, user defined functions (UDFs), our streamlit application, and even our installation script `setup.sql`.
 
 
 <!-- ------------------------ -->
@@ -423,7 +413,7 @@ A Snowflake Application Package is conceptually similar to that of an applicatio
 
 Now that we've understood our project files, lets create the Snowflake Application Package so we can upload our project:
 
-To create an application package you can go through the manual UI process or simply run:
+To create an application package you can go through the manual UI process or you can run:
 
 
 ```
@@ -575,6 +565,5 @@ For a slightly more advanced Snowflake Native Application, see the following Qui
 - Create an application package that contains the data and business logic of your application.
 - Share data with an application package.
 - Add business logic to an application package.
-- Test the application locally.
 - View and test the application in Snowsight.
 
