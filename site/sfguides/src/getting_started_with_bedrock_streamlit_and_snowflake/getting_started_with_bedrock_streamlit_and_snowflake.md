@@ -348,7 +348,7 @@ user_context = st.text_area('Product categories and other user context'
                     , height=100
                     , value='Product categories: Home Decor, Furniture, Lighting\nCustomer name: Obinze Agarwal\nStore name: Nilezone Bedshop').replace("'","")
 
-#Use the job description to write the job to a table and run the function against it:
+# define model and run function
 if(st.button('Ask Bedrock')):
     result = session.sql(f"""SELECT ask_bedrock('{system}','{user_context}', '{bedrock_model}')""").collect()
     st.header('Answer')
