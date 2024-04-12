@@ -598,6 +598,19 @@ Let's clean up your Snowflake account. In the same terminal you opened before, e
 snow app teardown
 ```
 
+Then, run the following SQL commands in a worksheet:
+
+```sql
+USE ROLE chairlift_admin;
+DROP DATABASE chairlift_consumer_data;
+
+USE ROLE ACCOUNTADMIN;
+DROP WAREHOUSE chairlift_wh;
+DROP ROLE chairlift_provider;
+DROP ROLE chairlift_viewer;
+DROP ROLE chairlift_admin;
+```
+
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
