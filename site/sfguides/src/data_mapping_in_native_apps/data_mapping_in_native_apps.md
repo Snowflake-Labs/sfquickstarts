@@ -91,7 +91,7 @@ The instructions on cloning the project repository and its execution are given i
 ## Building the Application
 Duration: 7
 
-The application itself is a simple one and has been broken down into three parts.
+The application itself has been broken down into three parts.
 
 * The building of the application package on the provider and the sharing of the lookup database with the application. 
 * The building of the application install script which contains the functionality to accept an IP address, look it up in the database we just shared with the application and write back enhanced data from the application. 
@@ -103,8 +103,9 @@ The first thing you need to do is create a new database which will serve as the 
 
 > aside positive
 > 
-> **Note** - This setup SQL commands are managed by the *prepare_data.sh* file found in the repository, to run it simply type:
- `SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh` in the folder root.
+> **Note** - This setup SQL commands are managed by the *prepare_data.sh* file found in the repository, to run it you can type:
+ ```SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh```  
+ in the folder root.
 
 ```sh
 snow sql -q "
@@ -151,7 +152,7 @@ Duration: 5
 
 > aside positive
 > 
-> **Note** - The code is here to illustrate how would you normally do the app creation using the manual steps, but this step is executed automatically by the CLI, for example, in a manual environment you will need to update your files to a stage, but that managed by the `snow app run` command.  In the of the following steps there will be instructions on how to execute it.
+> **Note** - The code is here to illustrate how would you normally do the app creation using the manual steps, but this step is executed automatically by the CLI, for example, in a manual environment you will need to update your files to a stage, but that managed by the **`snow app run`** command.  In the of the following steps there will be instructions on how to execute it.
 
 Here we create another stage, and after that we go ahead and build out our application package
 
@@ -400,7 +401,7 @@ st.button('UPDATE!', on_click=update_table)
 
 ### Finishing the Application
 
-All the pieces are in place for our application, wejust created (manifest.yml, setup_script.sql and enricher_dash.py) and now we are going to actually deploy it in the next page, in a manual environment you would have to upload the files to the stage APPLICATION_STAGE and then run other commands from a SQL worksheet, but we are not covering that.  
+All the pieces are in place for our application, we just created (manifest.yml, setup_script.sql and enricher_dash.py) and now we are going to actually deploy it in the next page, in a manual environment you would have to upload the files to the stage APPLICATION_STAGE and then run other commands from a SQL worksheet, but we are not covering that.  
 
 <!-- ------------------------ -->
 ## Creating and Deploying the Application
@@ -441,7 +442,7 @@ INSERT INTO TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
 
 Click on the link to your localhost that appeared in your console output.
 
- The application if you remember needs permissions onto a table in the consumer account (the one we just created.).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the shield icon to go to **Security**.
+ The application if you remember needs permissions onto a table in the consumer account (the one we just created).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the shield icon to go to **Security**.
 
 <img src="assets/security_tab.png" width="288" />
 
