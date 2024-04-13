@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Data Product Data Mesh dbt
+# Build Data Products and Data Mesh with dbt Cloud
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -20,7 +20,9 @@ It is important to include on the first page of your guide the following section
 The rest of this Snowflake Guide explains the steps of writing your own guide. 
 
 ### Prerequisites
-- Familiarity with Markdown syntax
+- Requires intermediate dbt familiarity
+  - If you're not familiar with dbt, please do dbt Fundamentals first
+  - Or if you are not a developer, please see such and such blog post / slides
 
 ### What You’ll Learn 
 - how to set the metadata for a guide (category, author, id, etc)
@@ -39,145 +41,137 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - A Snowflake Guide
 
 <!-- ------------------------ -->
-## Metadata Configuration
+## Setup
 Duration: 2
+<!-- TODO: Fix this ^^ -->
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+### DEV: Guideline to this step
+- Get a dbt Cloud account
+  - has to be able to create 2 projects for x-project ref... or does it? :thinkingface:
+- Get a Snowflake account
+  - Access to TPCH
 
+### PROD: Content
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
-
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
-
+Empty
 
 <!-- ------------------------ -->
-## Creating a Step
+## The story / background
 Duration: 2
+<!-- TODO: Fix this ^^ -->
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+### DEV: Guideline to this step
 
-```markdown
-## Step 1 Title
-Duration: 3
+- I'm thinking we need to set the stage for the people going through the QS guide. Might be a major hurdle, how do we get this effective without losing busy people?
+  - Maybe a video format as well?
+  - Nice graphic to explain what we're building?
 
-All the content for the step goes here.
+### PROD: Content
 
-## Step 2 Title
-Duration: 1
+We have sales and customer data in our source systems (TPCH)
 
-All the content for the step goes here.
-```
+There’s a team that builds the foundational data marts for the company off the ERP system. They are seasoned data engineers, with average experience 10 years. 2 years ago, they migrated their on-premise systems to Snowflake and dbt, and will never go back. The efficiency gained in dbt over their previous tools: SPs and graphical drag & drop tools is considerate.
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+The other teams in the company (marketing, sales) are excited to get their hands on data, and build their own transformations on top of the data that’s been built. They are thinking of doing some of their own reporting, and their own ML/AI, and want consistency of their data, so that‘s why they don’t build directly in the BI tool. More and more people are getting involved, there’s a new roadmap. A lot of these people have never been called “data engineers”, but more and more their jobs are looking like “analytics engineers” — people who do make business logic in Excel and BI tools,
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+The CDO’s main initiative this year is to get more people involved in data, because the initiatives are to increase usage of data in decisions, to have more accuracy and to save money
+
+The data platform team as a result looks to enable more and more people to own data pipelines on top of Snowflake. They’ve selected dbt Cloud to do this, because of the dbt Mesh capabilities
+
+The data platform team is interested in the FAIR principles of Data Mesh: Findable, Accessible, Interoperable, Repeatable. Since a lot of the data in the organization ends up in Snowflake, Snowflake is a natural place to center their data mesh around (even though not all the data is in Snowflake).
+
+Additionally, the data platform team wants to stop thinking in terms of team-based work, they would rather think in terms of data products: datasets should be created by teams, and be reliable, useful, secure, and well-governed, following DAUTNIVS principles. Then, Data Products can be composed in the mesh, giving modularity, reducing silos, and decreasing overall operating expenditures of the data program at their company.
+
+Here’s how they can do it
 
 <!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
+## Building out the dbt models
 Duration: 2
+<!-- TODO: Fix this ^^ -->
 
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+### DEV: Guideline to this step
 
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
 > aside positive
 > 
->  This will appear in a positive info box.
+> Ready for dev!
 
+- From TPCH, get to a `fct_orders` and a `dim_customers`
+- Includes a `models.yml` with good documentation
+- Commit and deploy -> run a job
 
-> aside negative
-> 
->  This will appear in a negative info box.
+Side-thought, would it make sense to link out to a reference base git repo?
 
-### Buttons
-<button>
+### PROD: Content
 
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+Empty
 
 <!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
+## Securing the data with Snowflake governance features
 Duration: 2
+<!-- TODO: Fix this ^^ -->
 
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
+### DEV: Guideline to this step
 
-### Images
-![Puppy](assets/SAMPLE.jpg)
+- Demonstrate how to use dbt to do Snowflake:
+  - Tagging
+  - Masking
+  - Grants / access controls
+  - (bonus points) column or row level security
+- Simple idea could be to do this on `dim_customers`, as there's PII: name, address, etc.
+- Commit and deploy -> run a job
 
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
+Side-thought, would it make sense to link out to a reference base git repo?
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
+### PROD: Content
 
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+Empty
 
 <!-- ------------------------ -->
-## Conclusion
+## Making the data available to other dbt users with dbt Mesh model governance features
 Duration: 1
+<!-- TODO: Fix this ^^ -->
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+### DEV: Guideline to this step
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+- Demonstrate how to add:
+  - Model contracts
+  - Model access
+  - model versions -> oh, requirements changed, we need to break out tier_name to low/mid/high_tier boolean
+- Commit and deploy -> run a job
 
-### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+### PROD: Content
+
+Empty
+
+<!-- ------------------------ -->
+## Create downstream dbt project that accesses base project
+Duration: 1
+<!-- TODO: Fix this ^^ -->
+
+### DEV: Guideline to this step
+
+- Demonstrate how to add:
+  - Create new project
+  - Link to first project
+  - Cross-project ref
+- Commit and deploy -> run a job (?)
+
+### PROD: Content
+
+Empty
+
+<!-- ------------------------ -->
+## Other stuff I don't know where it fits
+Duration: 1
+<!-- TODO: Fix this ^^ -->
+
+### DEV: Guideline to this step
+
+- dbt Cloud RBAC
+- dbt Explorer
+- Snowflake Private Listings
+
+### PROD: Content
+
+Empty
+
