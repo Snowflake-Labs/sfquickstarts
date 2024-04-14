@@ -156,7 +156,7 @@ create or replace stage docs ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE') DIRECTORY = (
 - Click on your schema **DATA**
 - Click on **Stages** and select **DOCS**
 - On the top right click on the +Files botton
-- Drag and drop the two PDF files you downloaded
+- Drag and drop the four PDF files you downloaded
 
 ![App](assets/fig2.png)
 
