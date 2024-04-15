@@ -305,7 +305,7 @@ In this step, we are going to create an ADF delivery stream for data streaming.
 
 Navigate to the [ADF console](https://console.aws.amazon.com/firehose/home?streams) and click `Create delivery stream`.
 
-In the `Source` section, select `Direct PUT` from the drop-down menu.
+In the `Source` section, select `Direct PUT` from the drop-down menu. Optionally, you can pick `Kinesis Data Streams` as the source, but we will focus on `Direct Put` in this workshop.
 
 In the `Destination` section, select `Snowflake` from the drop-down menu.
 
@@ -584,6 +584,7 @@ For those of you who are interested in learning more about how to build sleek da
 
 Related Resources
 
+- [Uplevel your data architecture with real- time streaming using Amazon Data Firehose and Snowflake](https://aws.amazon.com/blogs/big-data/uplevel-your-data-architecture-with-real-time-streaming-using-amazon-data-firehose-and-snowflake/)
 - [Unleashing the Full Potential of Real-Time Streaming with Amazon Kinesis Data Firehose and Snowpipe Streaming](https://medium.com/snowflake/unleashing-the-full-potential-of-real-time-streaming-with-amazon-kinesis-data-firehose-and-snowpipe-0283fb599364#Snowflake)
 - [Amazon Data Firehose (ADF)](https://aws.amazon.com/firehose/)
 - [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/)
