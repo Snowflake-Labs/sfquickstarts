@@ -348,7 +348,7 @@ user_context = st.text_area('Product categories and other user context'
                     , height=100
                     , value='Product categories: Home Decor, Furniture, Lighting\nCustomer name: Obinze Agarwal\nStore name: Nilezone Bedshop').replace("'","")
 
-#Use the job description to write the job to a table and run the function against it:
+# define model and run function
 if(st.button('Ask Bedrock')):
     result = session.sql(f"""SELECT ask_bedrock('{system}','{user_context}', '{bedrock_model}')""").collect()
     st.header('Answer')
@@ -457,11 +457,10 @@ filtered_categories_df
 
 user_context = f"Products purchased: {filtered_products_df}, Product Categories: {filtered_categories_df}"
 
-# Use the job description to write the job to a table and run the function against it:
-# Use the job description to write the job to a table and run the function against it:
-# Use the job description to write the job to a table and run the function against it:
+# define model and run function
+bedrock_model = 'anthropic.claude-3-sonnet-20240229-v1:0'
 if(st.button('Ask Bedrock')):
-    result = session.sql(f"""SELECT ask_bedrock('{system}','{user_context}','{bedrock_model}')""").collect()
+    result = session.sql(f"""SELECT ask_bedrock('{system}','{user_context}', '{bedrock_model}')""").collect()
     st.header('Answer')
     st.write(result[0][0].replace('"','')) 
 ```
