@@ -391,7 +391,7 @@ python3 /tmp/adf-producer.py <ADF delivery stream name>
 The Python script gets the raw flight data from a [real-time source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky) and streams into the delivery stream.
 You should see the flight data being ingested continuously to the ADF delivery stream in json format.
 
-![](assets/kdf-producer-ingest.png)
+![](assets/adf-producer-ingest.png)
 
 #### 3. Query the raw data in Snowflake
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
@@ -477,7 +477,7 @@ create or replace TABLE ADF_FLINK_TBL (
 ```
 
 #### 2. Deploy Flink Studio notebook and Kinesis Data Streams
-To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One Kinesis stream serves as the input stream to Flink and the other one serves as the output stream.
+To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One Kinesis stream serves as the input stream to Flink and the other one serves as the output stream.
 
 Please enter appropriate values into the empty fields where you entered(i.e. bucket, private key, keyphrase, etc.) in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
 
@@ -499,7 +499,7 @@ You will also notice notice that a Glue database is also created. Navigate to th
 Click `Open Apache Zeppelin` when the notebook is running.
 ![](assets/zeppelin.png)
 
-Download a Zeppelin note from [here](https://jsnow-vhol-assets.s3.us-west-2.amazonaws.com/adf/Flink-nb.zpln), and save it to your desktop.
+Download a Zeppelin note from [here](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/Flink-nb.zpln), and save it to your desktop.
 
 In Zeppelin, click `import note`.
 
