@@ -488,7 +488,7 @@ Navigate to the [Studio notebook console](https://console.aws.amazon.com/flink/h
 
 ![](assets/run-flink-nb.png)
 
-Click the `Outputs` tab and record the values for `KinesisDataInputStream` and `KinesisDataOutputStream`, we will need them later.
+Navigate to the CloudFormation stack that we successfully deployed (e.g.`amf_snowflake`) and click on the `Outputs` tab to record the values for `KinesisDataInputStream` and `KinesisDataOutputStream`, we will need them later.
 
 ![](assets/cfn-output.png)
 
