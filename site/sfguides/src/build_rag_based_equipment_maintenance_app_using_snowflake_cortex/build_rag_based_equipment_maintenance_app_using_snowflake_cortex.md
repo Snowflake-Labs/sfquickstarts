@@ -39,6 +39,7 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ### What is Snowflake CORTEX ?
 
+
 [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/) Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
 
 LLM Functions: SQL and Python functions that leverage large language models (LLMs) for understanding, querying, translating, summarizing, and generating free-form text.
