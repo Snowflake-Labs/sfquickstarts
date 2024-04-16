@@ -72,6 +72,7 @@ The files explained in the following steps, are already present in the project f
 ## Snowflake CLI First Steps
 Duration: 7
 
+The Snowflake CLI is a tool that allow us to run simple and powerful commands to communicate directly to your Snowflake account. You can find more information and install instructions [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
 The datamapping native app project resides in a Snowflake repository which contains several app examples for the user to learn its way into Snowflake Native Apps.
 
 The instructions on cloning the project repository and its execution are given in the readme file of this github [link NEEDS UPDATE AFTER PR](https://github.com/snowflakedb/native-apps-examples).
@@ -80,11 +81,11 @@ The instructions on cloning the project repository and its execution are given i
 
 1. Clone the project repo in your local machine. Repo could be cloned running:
     ```sh
-    snow app init --template-repo git@github.com:snowflakedb/native-apps-examples.git --template datamapping-app
+    git clone git@github.com:snowflakedb/native-apps-examples.git
     ```
 2. Replace the CSV filepath inside the **prepare_data.sh** file, line 28, like this:  
     ```sh
-    snow object stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location
+    snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location
     ```
 
 <!-- ------------------------ -->
@@ -99,7 +100,7 @@ The application itself has been broken down into three parts.
 
 To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart.  If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
 
-The first thing you need to do is create a new database which will serve as the lookup database for the application
+The first thing you need to do is create a new database which will serve as the lookup database for the application, following that, it is necessary to create a table, a file format, and a stage. That way we can upload our files to the **stage**, using the **file format** and after that loading that staged data into the **table**.
 
 > aside positive
 > 
@@ -125,20 +126,22 @@ zip_code varchar(30),
 time_zone varchar(8)
 );
 
---Create a file format for the file
+# Create a file format for the file
 CREATE OR REPLACE FILE FORMAT LOCATION_CSV
 SKIP_HEADER = 1
 FIELD_OPTIONALLY_ENCLOSED_BY = '\"'
 COMPRESSION = AUTO;
 
---create a stage so we can upload the file
+# create a stage so we can upload the file
 CREATE STAGE LOCATION_DATA_STAGE
 file_format = LOCATION_CSV;"
+```
 
---Go ahead now and upload the file to the stage.  After the file is uploaded go back to
+Go ahead now and upload the file to the stage.  After the file is uploaded go back to
 your worksheet and copy the file into the table created earlier
 
-snow object stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
+```sh
+snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
 
 snow sql -q "copy into litedb11 from @location_data_stage;
 SELECT COUNT(*) FROM LITEDB11;SELECT * FROM LITEDB11 LIMIT 10;" --database ip2location --schema ip2location
@@ -152,9 +155,9 @@ Duration: 5
 
 > aside positive
 > 
-> **Note** - The code is here to illustrate how would you normally do the app creation using the manual steps, but this step is executed automatically by the CLI, for example, in a manual environment you will need to update your files to a stage, but that managed by the **`snow app run`** command.  In the of the following steps there will be instructions on how to execute it.
+> **Note** - This code is here to illustrate how would you normally do the app creation using the manual steps, but **this step is executed automatically by the CLI**, for example, in a manual environment you will need to update your files to a stage, but that managed by the **`snow app run`** command.  In the following steps there will be instructions on how to execute it.
 
-Here we create another stage, and after that we go ahead and build out our application package
+Here, in our manual example, we create another stage, and after that we go ahead and build out our application package
 
 ```sql
 USE DATABASE IP2LOCATION;
@@ -168,7 +171,12 @@ USE IP2LOCATION_APP;
 --create a schema
 CREATE SCHEMA IP2LOCATION;
 --Grant the application permissions on the schema we just created
-GRANT USAGE ON SCHEMA IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP; 
+GRANT USAGE ON SCHEMA IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
+```
+
+Once we built the application package, we must give share permissions to the package to look into the database where our data resides. That is accomplished executing the following:
+
+```sql
 --grant permissions on the database where our data resides
 GRANT REFERENCE_USAGE ON DATABASE IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
 --we need to create a proxy artefact here referencing the data we want to use
@@ -179,7 +187,7 @@ SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11;
 GRANT SELECT ON VIEW IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
 ```
 
-Fantastic.  we now have an application package with permissions onto the lookup database.  That's the first part of the application completed but we will be adding necessary file to deploy the actual application.
+Fantastic,  we now have an application package with permissions onto the lookup database.  That's the first part of the application completed but we will be adding the necessary files to deploy the actual application.
 
 <!-- ------------------------ -->
 ## The Manifest File
@@ -401,7 +409,7 @@ st.button('UPDATE!', on_click=update_table)
 
 ### Finishing the Application
 
-All the pieces are in place for our application, we just created (manifest.yml, setup_script.sql and enricher_dash.py) and now we are going to actually deploy it in the next page, in a manual environment you would have to upload the files to the stage APPLICATION_STAGE and then run other commands from a SQL worksheet, but we are not covering that.  
+All the pieces are in place for our application, we just created (manifest.yml, setup_script.sql and enricher_dash.py) and now we are going to actually deploy it in the next step.
 
 <!-- ------------------------ -->
 ## Creating and Deploying the Application
@@ -414,7 +422,7 @@ There are a few ways we could deploy our application:
 * Debug Mode / non-debug mode
 
 
-You can either go and manually upload the files into a stage, or as in this tutorial, take the Snowflake CLI approach and run:
+In a manual environment you would have to upload the files to the stage APPLICATION_STAGE and then run other commands from a SQL worksheet, but instead, we are taking the Snowflake CLI approach and run:
 
 ```sh
     snow app run -i --database ip2location
@@ -486,10 +494,8 @@ Duration: 1
 Once you have finished with the application and want to clean up your environment you can execute the following script
 
 ```sh
-snow sql -q " DROP APPLICATION APPL_MAPPING;
-DROP APPLICATION PACKAGE IP2LOCATION_APP;
-DROP DATABASE IP2LOCATION;
-DROP DATABASE TEST_IPLOCATION;"
+snow sql -q "DROP DATABASE TEST_IPLOCATION;"
+snow app teardown
 ```
 
 <!-- ------------------------ -->
