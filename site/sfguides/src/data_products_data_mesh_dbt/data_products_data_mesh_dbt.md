@@ -97,7 +97,7 @@ Duration: 2
 
 - From TPCH, get to a `fct_orders` and a `dim_customers`
 - Includes a `models.yml` with good documentation
-- Commit and deploy -> run a job
+- (Optional) Commit and deploy -> run a job
 
 Side-thought, would it make sense to link out to a reference base git repo?
 
@@ -167,7 +167,7 @@ Duration: 1
 
 ### DEV: Guideline to this step
 
-- dbt Cloud RBAC
+- dbt Cloud RBAC <- out of scope but important to mention
 - dbt Explorer
 - Snowflake Private Listings
 
