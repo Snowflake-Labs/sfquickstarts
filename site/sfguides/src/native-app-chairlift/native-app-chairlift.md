@@ -65,34 +65,39 @@ git clone https://github.com/Snowflake-Labs/sfguide-native-apps-chairlift.git
 
 Take a look at the directory structure:
 
-```plaintext
+```console
 sfguide-native-apps-chairlift/
+├─ LEGAL.md
+├─ LICENSE
+├─ README.md
+├─ app/
+│  ├─ README.md
+│  ├─ manifest.yml
+│  ├─ setup_script.sql
+│  ├─ sql_lib/
+│  │  ├─ ... (.sql files)
+│  ├─ src/
+│     ├─ ui/
+│        ├─ ... (.py files)
 ├─ consumer/
 │  ├─ install-app.sql
 ├─ prepare/
 │  ├─ consumer-data.sql
 │  ├─ consumer-roles.sql
 │  ├─ provider-data.sql
-│  ├─ provider-roles.sql
+│  ├─ provider-role.sql
 ├─ provider/
 │  ├─ create-package.sql
-├─ src/
-│  ├─ README.md
-│  ├─ manifest.yml
-│  ├─ setup.sql
-│  ├─ ui/
-├─ LEGAL.md
-├─ LICENSE
-├─ README.md
+├─ ...
 ```
 
-The app's source code resides in the **src/** directory. There are also three other directories in this repository: **/prepare**, **/consumer**, and **/provider**. These three directories are specific to this Quickstart, and the files in these folders will be used to properly set up account roles and objects within the Snowflake account for this native app. In practice, you may have your own directory structure outside of the **/src** folder, or other methods for achieving what the files in these three other directories do.
+The app's entry point (**manifest.yml**) and the app's source code reside in the **app/** directory. There are also three other directories in this repository: **prepare/**, **consumer/**, and **provider/**. These three directories are specific to this Quickstart, and the files in these folders will be used to properly set up account roles and objects within the Snowflake account for this native app. In practice, you may have your own directory structure outside of the **app/** folder, or other methods for achieving what the files in these other directories do.
 
 Here's an overview of the directories:
 
-**src/** 
+**app/**
 
-- The **src/** directory contains the source code for the app. This includes all stored procedures, user-defined functions (UDFs), and the front-end for the app (in this Quickstart, the front-end files are within the **ui/** folder). It also includes two other required (and very important) files: **manifest.yml** and **setup.sql**. We'll take a deeper look at this directory in the next step.
+- The **app/** directory includes two required (and very important) files: The manifest file **manifest.yml** and the setup script **setup_script.sql**. The setup script can also reference other files. In our case, it references files in the **sql_lib/** directory, which include all stored procedures and user-defined functions (UDFs). The **app/src/** directory contains the source code for the app, like the front-end Streamlit files present in **app/src/ui/** directory. We'll take a deeper look at the **app/** directory in the next step.
 
 **prepare/** 
 
@@ -107,45 +112,64 @@ Here's an overview of the directories:
 - This directory is specific to this Quickstart. It contains a SQL script to create the application package and grant privileges on provider data.
 
 <!-- ------------------------ -->
-## The **src/** directory
+## The **app/** directory
 Duration: 4
 
-Let's take a deeper look at the **/src** directory for this app.
+Let's take a deeper look at the **app/** directory for this app.
 
-```plaintext
-src/
+```console
+app/
 ├─ README.md
 ├─ manifest.yml
-├─ setup.sql
-├─ ui/
-│  ├─ chairlift_data.py
-│  ├─ environment.yml
-│  ├─ first_time_setup.py
-│  ├─ references.py
-│  ├─ ui_common.py
-│  ├─ util.py
-│  ├─ v_configuration.py
-│  ├─ v_dashboard.py
-│  ├─ v_sensor_data.py
+├─ setup_script.sql
+├─ sql_lib/
+│  ├─ config_code-register_single_callback.sql
+│  ├─ config_data-configuration.sql
+│  ├─ shared_content-sensor_ranges.sql
+│  ├─ shared_content-sensor_service_schedules.sql
+│  ├─ shared_content-sensor_types_view.sql
+│  ├─ ui-v_configuration.sql
+│  ├─ ui-v_dashboard.sql
+│  ├─ ui-v_sensor_data.sql
+│  ├─ warnings_code-check_warnings.sql
+│  ├─ warnings_code-create_warning_check_task.sql
+│  ├─ warnings_code-update_warning_check_task_status.sql
+│  ├─ warnings_data-warnings.sql
+│  ├─ warnings_data-warnings_reading_cursor.sql
+├─ src/
+   ├─ ui/
+      ├─ chairlift_data.py
+      ├─ environment.yml
+      ├─ first_time_setup.py
+      ├─ references.py
+      ├─ ui_common.py
+      ├─ util.py
+      ├─ v_configuration.py
+      ├─ v_dashboard.py
+      ├─ v_sensor_data.py
 ```
 
-This directory contains the source code for the native app. This Quickstart uses **src/** as the name of the folder, mostly for the purposes of convention. In practice, this folder may take on any name you'd like. 
+This directory contains the source code for the native app. This Quickstart uses **app/** as the name of the folder, but in practice, this folder may take on any name you'd like. 
 
 Here's an overview of what this folder contains:
 
 **manifest.yml** 
 
-- A manifest file is a requirement when creating a native app. This file defines the runtime configuration for application. It contains metadata about the app (version, etc.), artifacts required by the app, and log configuration settings. It also defines the privileges that the consumer must grant when to the application when the application is installed in their account. Finally, it also contains references defined by the provider. Typically these references refer to tables and the corresponding privileges needed by the app to run against consumer data. For more information, see [Creating the Manifest File](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).
+- A manifest file is a requirement when creating a native app. This file defines the runtime configuration for the application. It contains metadata about the app (version, etc.), artifacts required by the app, and log configuration settings. It also defines the privileges that the consumer must grant to the application when the application is installed in their account. Finally, it also contains references defined by the provider. Typically these references refer to tables and the corresponding privileges needed by the app to run against consumer data. For more information, see [Creating the Manifest File](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).
 
-**setup.sql** 
+**setup_script.sql** 
 
 - A setup script is a requirement when creating a native app. This script contains statements that are run when the consumer installs or upgrades an application, or when a provider installs or upgrades an application for testing. The location of this script should be specified in the manifest file. For more information, see [Creating the Setup Script](https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script).
+
+**sql_lib/**
+
+- A directory that contains smaller SQL files that are included in the setup script. This helps keep the setup script short and well organized.
 
 **README.md** 
 
 - This file should provide a description of what the app does. This file is shown when viewing the app within Snowflake.
 
-**ui/** 
+**src/ui/** 
 
 - This directory is specific to this Quickstart, and contains all of the files and code used to create the front-end of the app. Front-ends for Snowflake Native Apps are built with Streamlit. You should peruse all of the files in this folder to get familiar with how the front-end is built, and pay special attention to the files that define the main views within the app, namely **v_dashboard.py**, **v_sensor_data.py**, and **v_configuration.py**. For more information, see [Adding Frontend Experience to Your Application with Streamlit](https://docs.snowflake.com/en/developer-guide/native-apps/adding-streamlit).
 
@@ -199,7 +223,7 @@ grant usage on warehouse chairlift_wh to role chairlift_viewer;
 ## Prepare objects in account
 Duration: 5
 
-Next, you'll run some scripts to setup some databases, schemas, and tables needed by the app.
+Next, you'll run some scripts to set up some databases, schemas, and tables needed by the app.
 
 The scripts will do a couple of things:
 
@@ -207,7 +231,7 @@ The scripts will do a couple of things:
 
 * The consumer scripts mock fictional, raw sensor data about the chairlifts. In practice, this data could be ingested directly into the consumer's account with a connector that collects raw sensor data from the chairlifts. For the purposes of this Quickstart, we mock this data so that the provider's native app can run against this data that lives in the consumer's account.
 
-To setup the environment, run the scripts below. You'll only need to execute these scripts once.
+To set up the environment, run the scripts below. You'll only need to execute these scripts once.
 
 **Execute prepare/provider-data.sql**
 
@@ -427,21 +451,21 @@ create or replace task populate_reading_every_minute
 as
     call populate_reading();
 
--- Get some initial data in the readings table
-call populate_reading();
-
 -- If you would like the data to be populated on a schedule, you can run:
 -- alter task chairlift_consumer_data.data.populate_reading_every_minute resume;
 
 -- To stop:
 -- alter task chairlift_consumer_data.data.populate_reading_every_minute suspend;
+
+-- Get some initial data in the readings table
+call populate_reading();
 ```
 
 <!-- ------------------------ -->
-## Create application package
+## Create application package and install application using Snowflake CLI
 Duration: 3
 
-With the environment created, we can now create the application package for the app. You'll run a script that creates this package and does a few key things:
+With the environment created, we can now create the application package for the app. You'll run a command that creates this package and does a few key things:
 
 * Creates the application package for the native app
 
@@ -449,95 +473,19 @@ With the environment created, we can now create the application package for the 
 
 * Creates views and grants the setup script access to the views
 
-For more details, see the comments in the **provider/create-package.sql** script.
+For more details, see the comments in the **snowflake.yml** file.
 
-**Execute provider/create-package.sql**
+**Deploy the application package**
 
-Open a SQL worksheet in Snowsight and execute the following script:
+Open a new terminal in the root of the repository and execute the following command:
 
-```sql
-use role chairlift_provider;
-use warehouse chairlift_wh;
-
--- create our application package
--- at this point, the package will not be installable because
--- it does not have a version; the version will be uploaded later
-create application package if not exists chairlift_pkg;
-
--- mark that our application package depends on an external database in
--- the provider account. By granting "reference_usage", the proprietary data
--- in the chairlift_provider_data database can be shared through the app
-grant reference_usage on database chairlift_provider_data
-    to share in application package chairlift_pkg;
-
--- now that we can reference our proprietary data, let\'s create some views
--- this "package schema" will be accessible inside of our setup script
-create schema if not exists chairlift_pkg.package_shared;
-use schema chairlift_pkg.package_shared;
-
--- View for sensor types full data
-create view if not exists package_shared.sensor_types_view
-  as select id, name, min_range, max_range, service_interval_count, service_interval_unit, lifetime_count, lifetime_unit
-  from chairlift_provider_data.core.sensor_types;
-
--- View for sensor reading ranges
-create view if not exists package_shared.sensor_ranges
-  as select id, min_range, max_range
-  from chairlift_provider_data.core.sensor_types;
-
--- View for sensor service scheduling
-create view if not exists package_shared.sensor_service_schedules
-  as select
-    id,
-    service_interval_count,
-    service_interval_unit,
-    lifetime_count,
-    lifetime_unit
-  from chairlift_provider_data.core.sensor_types;
-
--- these grants allow our setup script to actually refer to our views
-grant usage on schema package_shared
-  to share in application package chairlift_pkg;
-grant select on view package_shared.sensor_types_view
-  to share in application package chairlift_pkg;
-grant select on view package_shared.sensor_ranges
-  to share in application package chairlift_pkg;
-grant select on view package_shared.sensor_service_schedules
-  to share in application package chairlift_pkg;
+```bash
+snow app run
 ```
 
+This command will upload source files, create the application package, and install the application object automatically. When you run it again, it will perform the minimum steps necessary to ensure the application is up-to-date with your local copy. 
 
-<!-- ------------------------ -->
-## Upload app source code
-Duration: 4
-
-Now that the application package has been created, you'll upload the app's source code into the application package. To do this, you'll create a schema within the **chairlift_pkg** application package called **code**, and then create a stage within that schema called **source** (i.e., `chairlift_pkg.code.source`).
-
-Execute the following commands in a worksheet to create the schema and the stage:
-
-```sql
-use role chairlift_provider;
-create schema if not exists chairlift_pkg.code;
-create stage if not exists chairlift_pkg.code.source;
-```
-
-Next, upload the files into the stage. You can use Snowsight (i.e., the Snowflake UI), the SnowSQL command line tool, or the Snowflake VS Code extension to upload the files. In this step, we'll use Snowsight.
-
-Navigate to the `chairlift_pkg.code.source` stage in the Snowsight UI. In the top right, click on the **+ FILES** button. Next, click **Browse** in the modal that appears. 
-
-To avoid breaking any references to objects needed by the app, the folder structure within the stage must reflect the folder structure in your local repository directory. Be sure to upload the native app source code exactly as follows:
-
-1. Ensure you're in the **sfguide-native-apps-chairlift/src** directory and start by uploading the following files: **README.md**, **manifest.yml**, and **setup.sql**.
-
-2. Next, upload the remaining files. Once again, click on the **+ FILES** button. Note the "Specify the path to an existing folder or create a new one (optional)" field in the modal. In this field, enter **ui**. The modal will automatically prepend a forward slash to your entry, so the value will read as **/ui**. 
-
-3. Click **Browse**, navigate to the local **sfguide-native-apps-chairlift/src/ui** folder on your computer, select all files, and upload them. The folder structure within this stage should now reflect the folder structure in your local repository directory. 
-
-It is important to make sure the directory structures match so that any references to objects needed by the app do not break. See the screenshots below for reference.
-
-![Upload modal with ui/ in field](assets/upload.png)
-
-![Final directory structure](assets/structure.png)
+Snowflake CLI project is configured using `snowflake.yml` file.
 
 <!-- ------------------------ -->
 ## Create the first version of the app
@@ -549,57 +497,43 @@ Let's review what we've covered so far:
 
 * Created the application package and uploaded the app's source code to the application package
 
-Next, you'll create the first version of the app. Run the following SQL in a worksheet:
+Next, you'll create the first version of the app. Run the following command in your terminal:
 
-```sql
-use role chairlift_provider;
-alter application package chairlift_pkg add version develop using '@chairlift_pkg.code.source';
+```bash
+snow app version create develop
 ```
 
-This statement will create the first (new) version of the native app using the source code files that you uploaded earlier.
+This command will create the first (new) version of the native app using the source code files that you uploaded earlier.
 
 > aside positive
 > 
->  **PATCH VERSIONS** Do not run the SQL statement below. It is included here to demonstrate how you can add a patch version of a native app.
+>  **PATCH VERSIONS** Do not run the command below. It is included here to demonstrate how you can add a patch version of a native app.
 
-In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following SQL statement:
+In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following command:
 
-```sql
-alter application package chairlift_pkg add patch for version develop using '@chairlift_pkg.code.source';
+```bash
+snow app version create develop --patch 1
 ```
 
 This SQL command returns the new patch number, which will be used when installing the application as the consumer.
 
 <!-- ------------------------ -->
-## Install the application
+## Allow restricted application access to a secondary role
 Duration: 3
 
-Now that the source code has been uploaded into the application package, we can now install the application. To install the application in the same account, the provider role needs to grant installation and development permissions to the consumer role. 
-
-To do this, execute the following SQL statement using role **chairlift_provider**:
-
-```sql
-use role chairlift_provider;
-grant install, develop on application package chairlift_pkg to role chairlift_admin;
-```
-
-Next, execute the **consumer/install-app.sql** script. This script installs the application in the account, and grants appropriate privileges to the **chairlift_viewer** role. Note that the version and/or patch values may need to be updated to install the application using a different version or patch.
+Now that the source code has been uploaded into the application package and the application was installed, we can grant appropriate privileges to a secondary consumer role named **chairlift_viewer**. Note that the version and/or patch values may need to be updated to install the application using a different version or patch.
 
 ```sql
 use role chairlift_admin;
 use warehouse chairlift_wh;
 
--- create the actual application from the package in versioned dev mode
-create application chairlift_app
-    from application package chairlift_pkg
-    using version develop;
-
 -- allow our secondary viewer role restricted access to the app
 grant application role chairlift_app.app_viewer
     to role chairlift_viewer;
 ```
+
 <!-- ------------------------ -->
-## Setup the application
+## Set up the application
 Duration: 4
 
 With the application installed, you can now run the app in your Snowflake account!
@@ -658,16 +592,17 @@ In this Quickstart, the **Configuration** tab is included to demonstrate how dif
 ## Clean up
 Duration: 1
 
-Let's clean up your Snowflake account. Run the following SQL commands in a worksheet:
+Let's clean up your Snowflake account. In the same terminal you opened before, execute the following command:
+
+```bash
+snow app teardown
+```
+
+Then, run the following SQL commands in a worksheet:
 
 ```sql
------ CLEAN UP -----
 USE ROLE chairlift_admin;
-DROP APPLICATION chairlift_app;
 DROP DATABASE chairlift_consumer_data;
-
-USE ROLE chairlift_provider;
-DROP APPLICATION PACKAGE chairlift_pkg;
 
 USE ROLE ACCOUNTADMIN;
 DROP WAREHOUSE chairlift_wh;
@@ -675,7 +610,6 @@ DROP ROLE chairlift_provider;
 DROP ROLE chairlift_viewer;
 DROP ROLE chairlift_admin;
 ```
-
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -692,6 +626,7 @@ Congratulations! In just a few minutes, you built a Snowflake Native App that al
 
 ### Related Resources
 
+- [Snowflake Native App Developer Toolkit](https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)
 - [Official Native App documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Tutorial: Developing an Application with the Native Apps Framework](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial)
 - [Snowflake Demos](https://developers.snowflake.com/demos)

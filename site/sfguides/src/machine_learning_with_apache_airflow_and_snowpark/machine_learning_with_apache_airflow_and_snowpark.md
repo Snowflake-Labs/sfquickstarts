@@ -15,21 +15,35 @@ Duration: 5
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_0_header_image.png)
 
-Snowpark ML (in public preview) is a Python framework for Machine Learning workloads with Snowpark. Currently Snowpark ML provides a model registry (storing ML tracking data and models in Snowflake tables and stages), feature engineering primitives similar to scikit-learn (ie. LabelEncoder, OneHotEncoder, etc.) and support for training and deploying certain model types as well as deployments as user-defined functions (UDFs).
 
-This virtual hands-on lab demonstrates how to use [Apache Airflow](https://airflow.apache.org/) to orchestrate a machine learning pipeline leveraging Snowpark ML for feature engineering and model tracking. While Snowpark ML has its own support for models similar to scikit-learn this code demonstrates a "bring-your-own" model approach showing the use of open-source scikit-learn along with Snowpark ML model registry and model serving in an Airflow task rather than Snowpark UDF. It also shows the use of the Snowflake XCom backend which supports security and governance by serializing all task in/output to Snowflake tables and stages while storing in the Airflow XCom table a URI pointer to the data. 
+Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake. 
+
+This includes Snowpark ML, the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. Snowpark ML unifies data pre-processing, feature engineering, model training and integrated deployment into a single, easy-to-use Python library.
+
+Snowpark ML has 2 components: 
+
+- Snowpark ML Modeling enables the use of popular ML frameworks such as Scikit-learn and XGBoost for feature engineering and model training without moving data out of Snowflake. 
+- Snowpark ML Operations (PuPr) includes the Snowpark Model Registry, which enables scalable, secure deployment and management of models in Snowflake.
+  
+Manage and deploy models and their metadata easily into Snowflake warehouses as UDFs, or Snowpark Container Services as Service endpoints for batch inference
+
+This virtual hands-on lab demonstrates how to use Apache Airflow to orchestrate a machine learning pipeline leveraging Snowpark ML for model development, deployment, and managementfeature engineering and model managementtracking. While Snowpark ML has its own  provides integrated support for models similar to scikit-learn directly in Snowflake, this code demonstrates a "bring-your-own" model approach showing the use of open-source scikit-learn along with Snowpark ML mModel rRegistry and model serving in an Airflow task rather than Snowpark UDF. It also shows the use of the Snowflake XCom backend which supports security and governance by serializing all task in/output to Snowflake tables and stages while storing in the Airflow XCom table a URI pointer to the data.
 
 
 This workflow includes:
 
 - Sourcing structured, unstructured, and semistructured data from different systems
-- Extracting, transforming, and loading with the Snowpark Python provider for Airflow
+
+- Extracting, transforming, and loading with the Snowpark for Python provider for Airflow
+
 - Ingesting with Astronomer's Python SDK for Airflow
 - Audio file transcription with OpenAI Whisper
 - Natural language embeddings with OpenAI Embeddings and the Weaviate provider for Airflow
 - Vector search with Weaviate
 - Sentiment classification with LightGBM
-- ML model management with Snowflake ML
+
+- ML model management with Snowpark
+
 
 Let’s get started. 
 
@@ -45,21 +59,22 @@ This guide assumes you have a basic working knowledge of Python, Airflow, and Sn
 You will need the following things before beginning:
 
 1. Snowflake
-  1. **A Snowflake Account.**
-  1. **A Snowflake User created with appropriate permissions.** This user will need sys/accountadmin level permissions to create and manipulate the necessary databases.
-  2. Follow [these instructions](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda) to enable Anaconda Packages in your trial account
-1. GitHub
-  1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
-  1. **Download the Project's GitHub Repository.** To do this workshop, you'll need to download the following Repo onto your local machine: https://github.com/astronomer/airflow-snowparkml-demo/tree/main
-1. Integrated Development Environment (IDE)
-  1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git, open-source [Visual Studio Code](https://code.visualstudio.com/) is a good option.
-1. Docker
-  1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
-1. Astro CLI
-  1. **Astro CLI Installed**  We will be using the Astro CLI to easily create and run a local Airflow environment. Please install it on your local machine by following these [instructions](https://docs.astronomer.io/astro/cli/install-cli)
-1. OpenAI API key
-  1. **Optional Step to Enable Chatbot Functionality** We have pre-embedded all the documents so an openai key is not needed for the ingestion process. However, if you want to run the Streamlit app at the end of the workshop, you will need the key to tokenize the search and questions.
-  2. 
+  1a. **A Snowflake Account.**
+  1b. **A Snowflake User created with appropriate permissions.** This user will need sys/accountadmin level permissions to create and manipulate the necessary databases.
+  1c. Follow [these instructions](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda) to enable Anaconda Packages in your trial account
+2. GitHub
+   2a. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
+   2b. **Download the Project's GitHub Repository.** To do this workshop, you'll need to download the following Repo onto your local machine: https://github.com/astronomer/airflow-snowparkml-demo/tree/main
+3. Integrated Development Environment (IDE)
+  3a. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git, open-source [Visual Studio Code](https://code.visualstudio.com/) is a good option.
+4. Docker
+  4a. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
+5. Astro CLI
+  5a. **Astro CLI Installed**  We will be using the Astro CLI to easily create and run a local Airflow environment. Please install it on your local machine by following these [instructions](https://docs.astronomer.io/astro/cli/install-cli)
+6. OpenAI API key
+  6a. **Optional Step to Enable Chatbot Functionality** We have pre-embedded all the documents so an openai key is not needed for the ingestion process. However, if you want to run the Streamlit app at the end of the workshop, you will need the key to tokenize the search and questions.
+    
+
 ### What You’ll Build 
 - A Machine Learning Pipeline called "Customer Analytics" that predicts customer lifetime value based on customer sentiment
 
@@ -72,7 +87,8 @@ Duration: 2
 First, Clone [this repository](https://github.com/astronomer/airflow-snowparkml-demo/tree/main) and navigate into its directory in terminal, before opening the folder up in the code editor of your choice. 
 
 ```
-git clone https://github.com/astronautyates/SnowParkMLWorkshop
+git clone https://github.com/astronomer/airflow-snowparkml-demo/
+
 cd airflow-snowparkml-demo
 ```
 
@@ -145,7 +161,9 @@ After you've opened the UI, unpause the `customer_analytics` DAG and press the p
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_3_airflow_ui.png)
 
-This DAG demonstrates an end-to-end application workflow to generate predictions on customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCom backend and the Snowpark ML model registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.
+
+This DAG demonstrates an end-to-end application workflow to generate predictions on customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCom backend and the Snowpark Model Registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.
+
 
 <!-- ------------------------ -->
 ## DAG Explanation
@@ -222,6 +240,8 @@ After your pipeline has finished running, go into the grid view and check that a
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_8_pred_table2.png)
 
 
+<!-- ------------------------ -->
+
 ### View Streamlit Dashboard
 We can now view our analyzed data on a [Streamlit](https://streamlit.io/) dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.  
 
@@ -235,4 +255,8 @@ cd include/streamlit/src
 python -m streamlit run ./streamlit_app.py
 ```
 
-After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you'd like to enable the ability to ask questions about your data, you'll need to add an OpenAI API key in the .env file and restart your Airflow environment. 
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_9_streamlitss.png)
+After you've done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! The Question Answering interface in the Customer Analytics dashboard uses the Weaviate Q&A module which has integrations with LLM providers like OpenAI.  The Q&A module (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/qna-openai) accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents' (tweets, transcripts, etc.) vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents are provided as search results.  Because this is not a text search you can ask a question like "Who does Thomas like best?" and it will provide related tweets that talk about Thomas and Bertie as best friends.
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_10_streamlitss.png)
+One could also easily add generative search to the dashboard.  The generative search (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/generative-openai) module accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents' vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents related to the question are then used as context for a generated answer.  The question along with contextual documents are fed to ChatGPT with instructions to answer the question with the provided context.
+

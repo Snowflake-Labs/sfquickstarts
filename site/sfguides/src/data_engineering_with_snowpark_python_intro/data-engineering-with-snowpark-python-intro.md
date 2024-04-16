@@ -3,7 +3,7 @@ id: data_engineering_with_snowpark_python_intro
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
 categories: Getting-Started, featured, data-engineering
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Snowpark, Python, Intro
 
@@ -102,6 +102,14 @@ This will open a new tab and begin setting up your codespace. It will take a few
 - Starting a hosted, web-based VS Code editor
 
 Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
+
+### Configure Snowflake Credentials
+We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. A default config file was created for you during the codespace setup.
+
+The easiest way to edit the default `~/.snowsql/config` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowsql/config` and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the `accountname`, `username`, and `password` with your values. Then save and close the file.
+
+**Note:** The SnowCLI tool (and by extension this Quickstart) currently does not work with Key Pair authentication. It simply grabs your username and password details from the shared SnowSQL config file.
+
 ### Verify Your Anaconda Environment is Activated
 
 During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
@@ -508,7 +516,7 @@ During this step we will be orchestrating our new Snowpark pipelines with Snowfl
 
 In this step, we will create two tasks, one for each stored procedure, and chain them together. We will then deploy or run the tasks to operationalize the data pipeline.
 
-In this step, we will run through the commands in the Python file `steps/07_deploy_task_dag.py` from VS Code. To execute the file, you can open the terminal in VS Code and run `python steps/07_deploy_task_dag.py`.
+In this step, we will run through the commands in the Python file `steps/07_deploy_task_dag.py` from VS Code. To execute the file, you can open the terminal in VS Code and run `cd steps && python 07_deploy_task_dag.py`.
 
 To put this in context, we are on step **#7** in our data flow overview:
 
@@ -624,6 +632,15 @@ Snowflake provides some rich task observability features in the Snowsight UI. Tr
 - Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
 - Select the **Graph** tab. The task graph appears, displaying a hierarchy of child tasks.
 - Select a task to view its details.
+
+![Tasks](assets/tasks_and_dags.png)
+
+To monitor all the tasks at an account level, you can use the Task History tab as well.
+
+- In the Snowsight navigation menu, click **Activity** » **Task History**.
+- In the right pane, select the **Task Runs** tab. You can scroll through all the task runs in the account.
+
+![Task Runs](assets/task_history_runs.png)
 
 For more details, and to learn about viewing account level task history, please check out our [Viewing Task History](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html) documentation.
 

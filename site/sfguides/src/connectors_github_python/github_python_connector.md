@@ -161,7 +161,7 @@ Data from GitHub is ingested using [external access](https://docs.snowflake.com/
 
 ### Direct external access
 
-[Direct external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) is a public preview feature of Snowflake.
+Snowflake documentation: [External network access overview](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)
 
 ## Application logs
 Duration: 2
