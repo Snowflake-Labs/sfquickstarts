@@ -535,7 +535,7 @@ curl -s https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowf
 ```
 ![](assets/kds-ingestion.gif)
 
- In a short moment, you will see some filtered data in the Flink notebook monitoring cell and they are all UA airplanes flying below 7000 feet.
+ In a short moment, you will see some filtered data appearing in the Flink notebook monitoring cell and they are all UA airplanes flying below 7000 feet.
 
 
 ![](assets/real-time-analytics.gif)
