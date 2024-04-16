@@ -59,7 +59,7 @@ Let's get started!
 
 ### What You’ll Need 
 - [VSCode](https://code.visualstudio.com/download) Installed
-- [Snowlflake CLI](https://docs.snowflake.com/developer-guide/snowflake-cli-v2/installation/installation) Installed
+- [Snowflake CLI](https://docs.snowflake.com/developer-guide/snowflake-cli-v2/installation/installation) Latest version Installed
 
 ### What You’ll Build 
 - A Snowflake Native Application
@@ -87,7 +87,7 @@ Duration: 3
 To create our Snowflake Native Application, we will first clone the [starter project](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps) by running this command:
 
 ```bash
-snow app init --template git@github.com:Snowflake-Labs/sfguide-getting-started-with-native-apps.git
+git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-native-apps.git
 ```
 This command is going to create an application project in your local machine, and it is going to do it from the template obatained from the github repo.
 
@@ -191,17 +191,17 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
 ```
 
 Once we have created the necessary tables in the provider and consumer side, the next step is to load the csv files to the corresponding tables.
-That is accomplished using the `snow object stage copy` command, this uploads it directly to the table associated stage.
+That is accomplished using the `snow stage copy` command, this uploads it directly to the table associated stage.
 
 ```bash
 # loading shipping data into table stage
-snow object stage copy ./app/data/shipping_data.csv @%MFG_SHIPPING --database NATIVE_APP_QUICKSTART_DB --schema NATIVE_APP_QUICKSTART_SCHEMA
+snow stage copy ./app/data/shipping_data.csv @%MFG_SHIPPING --database NATIVE_APP_QUICKSTART_DB --schema NATIVE_APP_QUICKSTART_SCHEMA
 
 # loading orders data into table stage
-snow object stage copy ./app/data/order_data.csv @%MFG_ORDERS --database NATIVE_APP_QUICKSTART_DB --schema NATIVE_APP_QUICKSTART_SCHEMA
+snow stage copy ./app/data/order_data.csv @%MFG_ORDERS --database NATIVE_APP_QUICKSTART_DB --schema NATIVE_APP_QUICKSTART_SCHEMA
 
 # loading site recovery data into table stage
-snow object stage copy ./app/data/site_recovery_data.csv @%MFG_SITE_RECOVERY --database NATIVE_APP_QUICKSTART_DB --schema NATIVE_APP_QUICKSTART_SCHEMA
+snow stage copy ./app/data/site_recovery_data.csv @%MFG_SITE_RECOVERY --database NATIVE_APP_QUICKSTART_DB --schema NATIVE_APP_QUICKSTART_SCHEMA
 ```
 
 Now the data is in the table stage, but its not yet loaded inside the table, for that, the following commands are run in the file:
@@ -509,7 +509,7 @@ In this case, because the first version was already created, the system is going
 ## Install the Application
 Duration: 3
 
-To use the application, we'll first need to install it in the account. Normally you'd simply click an install button in the Snowflake Marketplace, but since we're building the application and using a single account to demonstrate the provider and consumer experiences, you'll need to run th same `snow app run` CLI command, as we mentioned before, this command creates the application package and also deploys de application. Behind the scenes, it runs something like this: 
+To use the application, we'll first need to install it in the account. Normally you would click an install button in the Snowflake Marketplace, but since we're building the application and using a single account to demonstrate the provider and consumer experiences, you'll run the same `snow app run` CLI command as we mentioned before. This command creates and/or updates the application package and also deploys the application. If you'd like to instead install the application yourself, you can do so like this:
 
 ```
 -- ################################################################
@@ -524,7 +524,7 @@ USE WAREHOUSE NATIVE_APP_QUICKSTART_WH;
 CREATE APPLICATION NATIVE_APP_QUICKSTART_APP FROM application package NATIVE_APP_QUICKSTART_PACKAGE using version V1 patch 0;
 ```
 
-When it finishes running, it is going to show you a link to open the app directly, or alternatively you should see the app NATIVE_APP_QUICKSTART_APP listed under Apps in the UI.
+When it finishes running, it is going to show you a link to open the app directly. Alternatively, you can see the NATIVE_APP_QUICKSTART_APP listed under Apps in the UI.
 
 <!-- ------------------------ -->
 ## Run the Streamlit App
@@ -544,7 +544,7 @@ To delete the application you just created, you can run this command:
 
 `snow app teardown`
 
-And to delete the database you used to poblate the application, this command will do:
+And to delete the database you used to populate the application, this command will do:
 
 `snow sql -q "DROP DATABASE NATIVE_APP_QUICKSTART_DB"`
 
