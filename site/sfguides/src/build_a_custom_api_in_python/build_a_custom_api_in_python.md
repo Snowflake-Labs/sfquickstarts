@@ -137,7 +137,7 @@ Duration: 1
 
 To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the terminal provided by Codespaces:
 ```bash
-docker build .
+docker build -t dataapi .
 ```
 
 <!-- ------------------------ -->
@@ -172,8 +172,8 @@ Run the following command in the terminal, replacing the `<repository_url>` with
 
 ```bash
 docker login <repository_url>
-docker build -t <repository_url> .
-docker push <repository_url>
+docker build -t <repository_url>/dataapi .
+docker push <repository_url>/dataapi
 ```
 
 <!-- ------------------------ -->
@@ -220,7 +220,7 @@ $$
 spec:
   container:
   - name: api
-    image: /api/public/api:latest
+    image: /api/public/api/dataapi:latest
     resources:                          
       requests:
         cpu: 0.5
@@ -273,7 +273,9 @@ There are 2 forms below that. The first one allows you to enter parameters to te
 
 When you hit the `Submit` button, the API endpoint is called and the data is returned to the web page.
 
-### Making the API Public with ngrok
+<!-- ------------------------ -->
+## Making the API Public
+Duration: 3
 
 For the next steps you will need a ngrok token. To get a token, go to http://ngrok.com and Sign up for a free account. After registration you can get your authtoken in the UI under Getting Stared.
 
@@ -301,7 +303,7 @@ $$
 spec:
   container:
   - name: api
-    image: /api/public/api:latest
+    image: /api/public/api/dataapi:latest
     env:
       NGROK_AUTHTOKEN: <YOUR_NGROK_AUTHTOKEN>
     resources:                          
@@ -375,12 +377,14 @@ Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
 ```SQL
-USE ROLE CCOUNTADMIN;
+USE ROLE ACCOUNTADMIN;
 
-DROP DATABASE API;
-DROP ROLE DATA_API_ROLE;
-DROP COMPUTE POOL API;
-DROP WAREHOUSE DATA_API_WH;
+DROP DATABASE IF EXISTS API;
+DROP ROLE IF EXISTS DATA_API_ROLE;
+DROP COMPUTE POOL IF EXISTS API;
+DROP WAREHOUSE IF EXISTS DATA_API_WH;
+DROP INTEGRATION IF EXISTS NGROK;
+DROP NETWORK RULE IF EXISTS NGROK_OUT;
 ```
 
 <!-- ------------------------ -->
