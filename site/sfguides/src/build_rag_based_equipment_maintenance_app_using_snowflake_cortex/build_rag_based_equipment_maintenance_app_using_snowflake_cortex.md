@@ -718,6 +718,22 @@ Once you have copy and pasted the above code into your streamlit app, click blue
 
 You can now ask any question you like of the LLM in regards to fixing the Otto 1500 AMR.  Imagine this app running on a tablet for your maintenance crew as they go from robot to robot fixing common problems and entering repair logs.  Those same repair logs are then uploaded to Snowflake and the model uses them for the next query.
 
+## Cleanup
+
+> aside negative
+> IMPORTANT:
+>
+> - If you have created other solutions in your LLM database, do not DROP it.  You will lose those solutions.
+>
+
+To clean up and completely remove this app run the below SQL commands.
+
+```sql
+DROP DATABASE LLM;
+```
+
+This drops all the created database objects including the internal stage, tables, UDF's and Streamlit app.
+
 ## Conclusion
 
 You have built an Ai guided equipment maintenance chat bot.  This chat bot base can be used for any piece of equipment.  If you have the repair manuals for a Drill Press, a lithography machine, or a robotic arm.  This app can be used to decrease downtime due to servicing the equipment when in a failed state. You can add your geniune repair logs to further enhance the quality of output from the LLM.
@@ -740,19 +756,3 @@ Duration: 3
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/FZsHyujZoffrQRjG8).
-
-## Cleanup
-
-> aside negative
-> IMPORTANT:
->
-> - If you have created other solutions in your LLM database, do not DROP it.  You will lose those solutions.
->
-
-To clean up and completely remove this app run the below SQL commands.
-
-```sql
-DROP DATABASE LLM;
-```
-
-This drops all the created database objects including the internal stage, tables, UDF's and Streamlit app.
