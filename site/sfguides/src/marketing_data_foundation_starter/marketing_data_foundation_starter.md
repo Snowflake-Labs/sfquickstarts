@@ -134,7 +134,7 @@ snow sql -f sql_scripts/setup.sql
 
 Duration: 4
 
-Upload all the sample data files in the folder data to stage created in step 1
+Upload all the sample data files in the folder data to the stage created in step 1
 
 
 ```console
@@ -156,16 +156,16 @@ snow object stage copy data/sample_data.gz @MARKETING_DATA_FOUNDATAION.demo.data
 ![Alt text](assets/Upload-to-Stage.png)
 
 
-If the upload fails due to access issue then, please follow the instructions in this [document](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui) to upload the files directly to Snowflake Stage.
+If the upload fails due to an access issue then, please follow the instructions in this [document](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui) to upload the files directly to Snowflake Stage.
 
 
-## Step 3: Load Sample data to table and Create Native Application
+## Step 3: Load Sample data to the table and Create a Native Application
 
 Duration: 2
 
-### Load data and create view
+### Load data and create views
 
-Run the below command to create the views that will be bundled along with the nativeapp
+Run the below command to create the views that will be bundled along with the native app
 
 ```console
 snow sql -f sql_scripts/build_views.sql
@@ -182,16 +182,11 @@ snow app run
 ## Conclusion
 Duration: 1
 
-Congratulations! You have successfully learnt how to easily build an end to end Native Application loading sample data. 
+Congratulations! You have successfully learned how to easily build an end-to-end Native Application loading sample data. 
 
 ### What you learned
 
-* How to host models in Snowpark Container Services to transcribe the audio files, get the call duration.
-* From the transribed text, extract required details like summary, sentiment,first call resolution, audio stats to name a few using cortex LLM functions.
-* Use Snowpark to create all resources and extract required information.
-* How to build a RAG based chatbot using streamlit using features like cortex vector search with in snowflake.
-*-* How to host a custom LLM model for text2sql capabilities and provide a text2sql chatbot interface from the streamlit app.
-
+* How to build a native application in Snowflake and how to deploy the same to your account using Snow CLI quickly.
 
 ### Related Resources
 
@@ -200,3 +195,4 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 * [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Getting Started with Snow CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0)
