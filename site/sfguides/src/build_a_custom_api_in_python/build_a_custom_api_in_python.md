@@ -33,6 +33,7 @@ The dataset is the [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-
 ### What You’ll Need 
 - [Snowflake](https://snowflake.com) Account in an AWS commercial region
 - [GitHub](https://github.com/) Account with credits for Codespaces
+- [ngrok](https://ngrok.com) Account (Optional, needed for Step 10)
 
 ### What You’ll Build 
 - API Powered by Snowflake
