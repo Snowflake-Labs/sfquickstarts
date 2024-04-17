@@ -278,7 +278,7 @@ When you hit the `Submit` button, the API endpoint is called and the data is ret
 ## Making the API Public
 Duration: 3
 
-For the next steps you will need a ngrok token. To get a token, go to http://ngrok.com and Sign up for a free account. After registration you can get your authtoken in the UI under Getting Stared.
+For the next steps you will need a ngrok token. To get a token, go to [ngrok](https://ngrok.com) and Sign up for a free account. After registration you can get your authtoken in the UI under Getting Stared.
 
 The service created will need network access to ngrok to create the tunnel. To do this, you'll need a new network rule, an external access integration and to use that integration in the service.
 
