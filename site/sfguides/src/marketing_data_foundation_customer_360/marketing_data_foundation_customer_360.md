@@ -94,9 +94,8 @@ Duration: 2
 
 Clone the git repo to your local
 
-<span style="color:red">TODO: USE CORRECT URL</span>
 ```console
-git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter.git
+git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-customer-360
 ```
 
 ### Create a connection
