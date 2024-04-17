@@ -9,183 +9,474 @@ author: nathan.birch@snowflake.com, jonathan.regenstein@snowflake.com
 
 # Getting Started with Time Series Analysis in Snowflake
 <!-- ------------------------ -->
-## Overview 
-Duration: 1
+## Overview
+Duration: 4
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+This guide will take you through a scenario of using Snowflake to ingest, transform, and analyze time series data using Snowflake, with the ultimate goal of serving time series data to end users via a Streamlit application in Snowflake.
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
+### Key Activities
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
- 
-<!-- ------------------------ -->
-## Quickstart Setup
+To achieve this goal, the following key activities will be performed:
+- **Configure a Snowflake account** to work with time series data
+- **Setup a streaming ingestion** client to to stream time series data into Snowflake using Snowpipe Streaming
+- **Model and transform** the streaming time series data
+- **Analyze the data** using time series queries
+- **Create time series Snowpark functions** to assist in analysis
+- **Deploy a time series Streamlit** application in Snowflake for end users to query time series
 
-Duration: 10
+### Streamlit Application
+**GOAL:** A Streamlit application will be deploy  Snowflake will allow users to easily report on time series IOT data streamed into Snowflake.
 
-### Fork the GitHub Repository
+<img src="assets/overview_0.png" width="800" />
 
-The very first step is to fork the GitHub repository [Getting Started with Time Series in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+### Architecture Plan
+A simulated IOT streaming datafeed will be used for this exercise, ingesting into a RAW staging table via Snowpark Streaming. Once data is streamed into a stage table, a task will detect when new records are loaded, and execute a procedure to transform the data into a dimensional model, ready for analytics. A Streamlit application will be deployed in Snowflake to then enable end users to report on the IOT streamed data.
 
-### Create GitHub Codespace
-
-For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
-
-To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
-
-<img src="assets/codespace_setup.png" width="800" />
-
-This will open a new tab and begin setting up your codespace. It will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
-
-- Creating a container for your environment
-- Installing Anaconda (conda)
-- Anaconda setup
-  - Creating the Anaconda environment
-  - Installing the Snowpark Python library
-- VS Code setup
-  - Installing VS Code
-  - Installing the Snowflake VS Code extension
-- Starting a hosted, web-based VS Code editor
-
-Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
-
-### Configure Snowflake Credentials
-[TODO]
-
-
-### Verify Your Anaconda Environment is AVailable
-
-During the codespace setup we created an Anaconda environment named `hol-timeseries`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(hol-timeseries)` before your bash prompt.
-
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
-
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
+<img src="assets/overview_1.png" width="800" />
 
 
 <!-- ------------------------ -->
-## Creating a Step
-Duration: 2
+## Prerequisites
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+### Knowledge and Tooling
 
-```markdown
-## Step 1 Title
-Duration: 3
+To participate in the virtual hands-on lab, attendees need the following:
+- Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects
+- Familiarity with command-line navigation within a terminal
+- Access or sign-up to a [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) with **ACCOUNTADMIN** access
+- Access to a personal GitHub account to fork the QuickStart repo and create GitHub Codespace
 
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
-```
-
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
-
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
+### Lab environment
+For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. At the time of writing, GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
 
 > aside negative
 > 
->  This will appear in a negative info box.
+> It is recommended to use a personal GitHub account which will have permissions to deploy a GitHub Codespace.
 
-### Buttons
-<button>
+### Snowflake Account details
+Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
 
-  [This is a download button](link.com)
-</button>
+```sql
+-- Note down your Snowflake account identifier details
+-- <account_identifier>.snowflakecomputing.com
 
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
+SELECT SYSTEM$ALLOWLIST();
+```
 
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+**Note** the **<account_identifier>**.snowflakecomputing.com by retrieving at the **host** attribute returned. This will be used to update the **<ACCOUNT_IDENTIFIER>** configuration variables during the Lab Setup.
 
 <!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
+## Lab Setup
+
+Duration: 10
+
+### Fork the GitHub Repository and Deploy a GitHub Codespace
+
+The very first step is to fork the GitHub repository [Getting Started with Time Series in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the **"Fork"** button near the top right. Complete any required fields and click **"Create Fork"**.
+
+To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
+
+<img src="assets/labsetup_0.png" width="800" />
+
+This will open a new tab and begin setting up your codespace.
+
+<img src="assets/labsetup_1.png" width="800" />
+
+> aside negative
+>
+> Please wait for the **postCreateCommand** to run.
+>
+> **Ignore any notifications** that may prompt to refresh the Codespace, these will disappear once the postCreateCommand has run.
+
+<img src="assets/labsetup_2.png" />
+
+### Github Codespace Deployment Summary
+The Github Codespace deployment will take a few minutes as it sets up the entire environment for this Quickstart. Once complete you should see a hosted web-based version of **VS Code Integrated Development Environment (IDE)** in your browser with your forked repository.
+
+<img src="assets/labsetup_3.png" width="800" />
+
+Here is what is being done for you:
+- Start a hosted, web-based VS Code editor
+- Pull a copy of the forked Lab QuickStart GitHub repository within the VS Code container
+- Installing Anaconda (conda)
+- Installing a Java Runtime Environment (JRE)
+- Anaconda setup
+  - Creating an Anaconda virtual environment: **hol-timeseries**
+  - Using the [Snowflake Anaconda Channel](https://repo.anaconda.com/pkgs/snowflake/)
+  - Installing the [Snowflake Snowpark Python library and connector](https://docs.snowflake.com/en/developer-guide/snowpark/index)
+  - Installing [Snowflake Command Line Interface (CLI)](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
+- VS Code setup
+  - Installing the [Snowflake VS Code Extension](https://docs.snowflake.com/en/user-guide/vscode-ext)
+- Private key pair setup using OpenSSL to be used to connect to Snowflake
+- Downloads and extracts a Java IOT streaming client application
+
+> aside negative
+>
+> If you do not see the **Snowflake VS Code Extension** try **Refreshing** your browser window.
+
+### Verify Your Anaconda Environment is Activated
+
+During the Codespace setup the postCreateCommand script created an Anaconda virtual environment named **hol-timeseries**. This virtual environment contains the packages needed to connect and interact with Snowflake using the Snowflake CLI.
+
+To activate the virtual environment:
+
+1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
+
+<img src="assets/labsetup_4.png" />
+
+2. Enter command `conda activate hol-timeseries`
+
+<img src="assets/labsetup_5.png" />
+
+The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
+
+### Configure Snowflake Account Connection Configurations
+
+> aside negative
+>
+> This section will require the Snowflake **<account_identifier>** noted earlier.
+>
+> **NOTE:** The account identifers entered will **NOT** include the **.snowflakecomputing.com**
+
+In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** with your account identifer value:
+
+1. `.snowflake/config.toml`
+    - **account** variable for both connections 
+2. `iotstream/snowflake.properties`
+    - **account** variable
+    - **host** variable
+    
+### Configure Snowflake VS Code Extension Connection
+
+1. Open the Snowflake VS Code Extension
+2. Enter your **<ACCOUNT_IDENTIFER>**
+3. Click Continue
+
+<img src="assets/labsetup_6.png" />
+
+1. For Auth Method select `Username/password`
+2. Now enter the **ACCOUNTADMIN** user
+3. Enter the ACCOUNTADMIN **password**
+3. Click `Sign in`
+
+<img src="assets/labsetup_7.png" />
+
+> aside positive
+>
+> **The VS Code Snowflake Extension** should now be connected to your Snowflake account and The Lab environment is now setup!
+
+<img src="assets/labsetup_8.png" />
+
+<!-- ------------------------ -->
+## Setup Snowflake Resources
+Duration: 5
+
+**Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
+
+<img src="assets/snowsetup_0.png" />
+
+### Retrieve Snowflake Private Keypair
+As part of the GitHub Codespace setup, an OpenSSL Private Keypair was generated in the VS Code `keys` directory.
+
+Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be need in the setup worksheet.
+
+> aside negative
+>
+> Only the **PUBLIC KEY** value is required, which is the section between:
+>
+> `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----`
+>
+> ensure you **DO NOT** copy these lines.
+
+### Update Snowflake Setup Worksheet
+Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
+
+**Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** retrieved from the `keys/rsa_key.pub` file.
+
+<img src="assets/snowsetup_1.png" />
+
+> aside positive
+>
+> The pasted **PUBLIC KEY** can show on mulitple lines and will work.
+
+The **Snowflake setup** worksheet is now ready for running.
+
+### Run Snowflake Setup Worksheet
+> 
+> Run through the worksheet **from the top** to **Setup Snowflake Resources**.
+> 
+
+<!-- ------------------------ -->
+## Snowpipe Streaming Ingestion
+
+```sql
+USE ROLE ROLE_HOL_TIMESERIES;
+USE SCHEMA HOL_TIMESERIES.STAGING;
+
+-- RAW IOTSTREAM Table
+CREATE OR REPLACE TABLE HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA (
+    RECORD_CONTENT VARIANT
+);
+
+```
+
+
+
+> aside positive
+> 
+>  [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) provides a change tracking mechanism for your tables and > views, enabling and ensuring "exactly once" semantics for new or changed data.
+>
+> [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) are Snowflake objects to execute a single command, which could be simple SQL command or calling an extensive stored > > procedure.  Tasks can be scheduled or run on-demand, either within a Snowflake Virtual warehouse or serverless.
+
+
+
+Test channel open
+```bash
+./Test.sh
+```
+
+Check channel is open
+```sql
+show channels;
+```
+
+Run initial load
+```bash
+./Run_MAX.sh
+```
+
+
+<!-- ------------------------ -->
+## Data Modelling and Transformation
 Duration: 2
 
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
+```sql
+USE ROLE ROLE_HOL_TIMESERIES;
+USE HOL_TIMESERIES.TRANSFORM;
 
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
+-- Setup Transform Tabls
+-- IOT Tag Metadata (Dimension)
+CREATE OR REPLACE TABLE HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA (
+    TAGKEY NUMBER NOT NULL,
+    NAMESPACE VARCHAR,
+    TAGNAME VARCHAR NOT NULL,
+    TAGALIAS ARRAY,
+    TAGDESCRIPTION VARCHAR,
+    TAGUOM VARCHAR,
+    TAGDATATYPE VARCHAR,
+    INGESTION_TIMESTAMP TIMESTAMP_NTZ,
+    CONSTRAINT PK_TSD_TAG_METADATA PRIMARY KEY (TAGKEY) RELY
+);
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+-- IOT Tag Readings (Fact)
+CREATE OR REPLACE TABLE HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS (
+    TAGKEY NUMBER NOT NULL,
+    TS TIMESTAMP_NTZ NOT NULL,
+    VAL VARCHAR,
+    VAL_NUMERIC FLOAT,
+    INGESTION_TIMESTAMP TIMESTAMP_NTZ,
+    CONSTRAINT FK_TSD_TAG_READINGS FOREIGN KEY (TAGKEY) REFERENCES HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA (TAGKEY) RELY
+);
+```
 
 <!-- ------------------------ -->
-## Conclusion
+## Time Series Analysis
+Duration: 2
+
+Setup serving layer views
+
+```sql
+-- Setup Reporting Views
+USE ROLE ROLE_HOL_TIMESERIES;
+USE HOL_TIMESERIES.ANALYTICS;
+
+-- IOT Tag Reference View
+CREATE OR REPLACE VIEW HOL_TIMESERIES.ANALYTICS.TS_TAG_REFERENCE AS
+SELECT
+    META.NAMESPACE,
+    META.TAGNAME,
+    META.TAGALIAS,
+    META.TAGDESCRIPTION,
+    META.TAGUOM,
+    META.TAGDATATYPE
+FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA META;
+
+-- IOT Tag Readings View
+CREATE OR REPLACE VIEW HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS AS
+SELECT
+    META.TAGNAME,
+    READ.TS AS TIMESTAMP,
+    READ.VAL AS VALUE,
+    READ.VAL_NUMERIC AS VALUE_NUMERIC
+FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA META
+INNER JOIN HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS READ
+ON META.TAGKEY = READ.TAGKEY;
+```
+
+Time Series queries
+
+```sql
+-- RAW DATA
+SELECT tagname, timestamp, value, NULL AS value_numeric
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE timestamp > '2000-03-26 12:45:37' 
+AND timestamp <= '2024-03-26 14:45:37' 
+AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
+ORDER BY tagname, timestamp
+;
+
+-- HI WATER MARK
+SELECT tagname, to_timestamp('2024-03-26 14:47:55') AS timestamp, MAX_BY(value, timestamp) AS value, MAX_BY(value_numeric, timestamp) AS value_numeric 
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE timestamp > '2000-03-26 08:47:55' 
+AND timestamp <= '2024-03-26 14:47:55' 
+AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
+GROUP BY tagname 
+ORDER BY tagname, timestamp
+;
+
+-- LOW WATER MARK
+SELECT tagname, to_timestamp('2024-03-26 14:47:55') AS timestamp, MIN_BY(value, timestamp) AS value, MIN_BY(value_numeric, timestamp) AS value_numeric 
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE timestamp > '2000-03-26 08:47:55' 
+AND timestamp <= '2024-03-26 14:47:55' 
+AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
+GROUP BY tagname 
+ORDER BY tagname, timestamp
+;
+
+-- DOWNSAMPLING / RESAMPLING
+-- BINNING
+SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END') AS timestamp, NULL AS value, APPROX_PERCENTILE(value_numeric, 0.5) AS value_numeric
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+WHERE timestamp > '2000-03-26 02:58:38' AND timestamp <= '2024-03-28 14:58:38' 
+AND tagname IN ('/WITSML/NO 15/9-F-7/DEPTH') 
+GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END'), tagname 
+ORDER BY tagname, timestamp
+;
+
+-- FIRST_VALUE / LAST_VALUE
+SELECT tagname, ts as timestamp, f_value_numeric, l_value_numeric
+FROM (
+SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 5, 'MINUTE', 'END') AS ts, timestamp, value_numeric, FIRST_VALUE(value_numeric) OVER (PARTITION BY tagname, ts ORDER BY timestamp) AS f_value_numeric, LAST_VALUE(value_numeric) OVER (PARTITION BY tagname, ts ORDER BY timestamp) AS l_value_numeric 
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS  
+WHERE timestamp > '2000-03-26 03:29:08' AND timestamp <= '2024-03-28 15:29:08' 
+AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
+GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 5, 'MINUTE', 'END'), timestamp, tagname, value_numeric
+)
+GROUP BY tagname, ts, f_value_numeric, l_value_numeric
+ORDER BY tagname, ts
+;
+
+
+-- STDDEV
+SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END') AS timestamp, NULL AS value, STDDEV(value_numeric) AS value_numeric 
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+WHERE timestamp > '2000-03-26 15:00:50' AND timestamp <= '2024-03-25 15:00:50' 
+AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
+GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END'), tagname 
+ORDER BY tagname, timestamp
+;
+
+
+```
+
+<!-- ------------------------ -->
+## Snowpark User Defined Table Function
+Duration: 2
+
+Setup LTTB Downsample Function
+```sql
+USE ROLE ROLE_HOL_TIMESERIES;
+USE HOL_TIMESERIES.ANALYTICS;
+
+-- LTTB Downsampling Table Function
+CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB (
+    TIMESTAMP NUMBER,
+    VALUE_NUMERIC FLOAT,
+    SIZE NUMBER
+) 
+RETURNS TABLE (
+    TIMESTAMP NUMBER,
+    VALUE_NUMERIC FLOAT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.11
+PACKAGES = ('pandas', 'plotly-resampler', 'setuptools')
+HANDLER = 'lttb_run'
+AS $$
+from _snowflake import vectorized
+import pandas as pd
+from plotly_resampler.aggregation.algorithms.lttb_py import LTTB_core_py
+
+class lttb_run:
+    @vectorized(input=pd.DataFrame)
+
+    def end_partition(self, df):
+        if df.SIZE.max() >= len(df.index):
+            return df[['TIMESTAMP','VALUE_NUMERIC']]
+        else:
+            idx = LTTB_core_py.downsample(
+                df.TIMESTAMP.to_numpy(),
+                df.VALUE_NUMERIC.to_numpy(),
+                n_out=df.SIZE.max()
+            )
+            return df[['TIMESTAMP','VALUE_NUMERIC']].iloc[idx]
+$$;
+```
+
+LTTB Query
+```sql
+-- LTTB
+SELECT data.tagname, lttb.timestamp::varchar::timestamp_ntz AS timestamp, NULL AS value, lttb.value_numeric 
+FROM (
+SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 1, 'SECOND', 'END') AS timestamp, APPROX_PERCENTILE(value_numeric, 0.5) AS value_numeric 
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE timestamp > '2000-03-26 02:50:21' AND timestamp <= '2024-03-26 14:50:21' 
+AND tagname IN ('/WITSML/NO 15/9-F-7/DEPTH') 
+GROUP BY tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 1, 'SECOND', 'END')
+) AS data 
+CROSS JOIN TABLE(HOL_TIMESERIES.ANALYTICS.function_ts_lttb(date_part(epoch_nanosecond, data.timestamp), data.value_numeric, 500) OVER (PARTITION BY data.tagname ORDER BY data.timestamp)) AS lttb
+ORDER BY tagname, timestamp
+;
+```
+
+<!-- ------------------------ -->
+## Streamlit in Snowflake
+Duration: 2
+
+Deploy Streamlit application to Snowflake
+
+```bash
+snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
+```
+
+<!-- ------------------------ -->
+## Milestone
+
+### Requirements
+- A Snowflake database that contains all data and objects built in this lab
+- A Stage and Staging table to initially land your incoming data stream
+- An Analytics-Ready Table
+- A Stream to track recently-received credit card transactions
+- Tasks orchestrated two ways to process those new transactions
+
+### Outcomes
+- how to create a Snowflake Stream
+- how to create and schedule a Snowflake Task 
+- how to orchestrate tasks into data pipelines
+- how Snowpark can be used to build new types of user-defined functions and stored procedures 
+- multiple ways to manage and monitor your Snowflake tasks and data pipelines
+
+
+<!-- ------------------------ -->
+## Clean-up
+Duration: 1
+
+
+
+<!-- ------------------------ -->
+## Conclusion and Resources
 Duration: 1
 
 At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
@@ -197,3 +488,7 @@ If you want to learn more about Snowflake Guide formatting, checkout the officia
 - adding code snippets
 - embedding images, videos, and surveys
 - importing other markdown files
+
+### Additional resources
+- [Getting Started with Snowflake CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html)
+- [Getting Started with Streams & Tasks](https://quickstarts.snowflake.com/guide/getting_started_with_streams_and_tasks/index.html)
