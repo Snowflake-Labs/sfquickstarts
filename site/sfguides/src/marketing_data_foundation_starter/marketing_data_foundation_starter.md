@@ -125,6 +125,10 @@ export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_conn
 ```
 
 ```console
+cd sfguide-marketing-data-foundation-starter
+```
+
+```console
 snow sql -f sql_scripts/setup.sql
 ```
 
