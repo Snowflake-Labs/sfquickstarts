@@ -78,7 +78,10 @@ To create a GitHub Codespace, click on the green `<> Code` button from the GitHu
 
 <img src="assets/labsetup_0.png" width="800" />
 
-This will open a new tab and begin setting up your codespace.
+> aside positive
+> 
+> This will open a new tab and begin **Setting up your codespace**.
+>
 
 <img src="assets/labsetup_1.png" width="800" />
 
@@ -87,6 +90,7 @@ This will open a new tab and begin setting up your codespace.
 > Please wait for the **postCreateCommand** to run.
 >
 > **Ignore any notifications** that may prompt to refresh the Codespace, these will disappear once the postCreateCommand has run.
+>
 
 <img src="assets/labsetup_2.png" />
 
@@ -163,17 +167,19 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 
 > aside positive
 >
-> **The VS Code Snowflake Extension** should now be connected to your Snowflake account and The Lab environment is now setup!
+> **The VS Code Snowflake Extension** should now be connected to your Snowflake.
 
 <img src="assets/labsetup_8.png" />
 
-<!-- ------------------------ -->
-## Setup Snowflake Resources
-Duration: 5
+### Update Snowflake Setup Worksheet
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
 
-<img src="assets/snowsetup_0.png" />
+<img src="assets/labsetup_9.png" />
+
+> aside negative
+>
+> We'll need to update the setup worksheet with your **PUBLIC KEY** to be used during the initial Snowflake setup.
 
 ### Retrieve Snowflake Private Keypair
 As part of the GitHub Codespace setup, an OpenSSL Private Keypair was generated in the VS Code `keys` directory.
@@ -188,23 +194,97 @@ Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be
 >
 > ensure you **DO NOT** copy these lines.
 
-### Update Snowflake Setup Worksheet
+### Update Snowflake Setup Worksheet with Lab PUBLIC KEY
 Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
 **Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** retrieved from the `keys/rsa_key.pub` file.
 
-<img src="assets/snowsetup_1.png" />
+<img src="assets/labsetup_10.png" />
 
 > aside positive
 >
 > The pasted **PUBLIC KEY** can show on mulitple lines and will work.
 
-The **Snowflake setup** worksheet is now ready for running.
+The **Snowflake setup** worksheets are now ready to run, and The Lab environment is now ready!
 
-### Run Snowflake Setup Worksheet
+<!-- ------------------------ -->
+## Setup Snowflake Resources
+Duration: 5
+
+Create the foundational Snowflake Objects for this lab.
+
+This includes:
+- Role: ROLE_HOL_TIMESERIES - role used for working through the lab
+- User: USER_HOL_TIMESERIES -
+- Warehouses:
+    - HOL_TRANSFORM_WH - warehouse used for transforming ingested data
+    - HOL_ANALYTICS_WH - warehouse used for analytics
+- Database: HOL_TIMESERIES - main database to store all lab objects
+- Schemas:
+    - STAGING - RAW data source landing schema
+    - TRANSFORM - transformed and modelled data schema
+    - ANALYTICS - serving and analytics functions schema
+
+<img src="assets/snowsetup_0.png" />
+
+> aside negative
 > 
-> Run through the worksheet **from the top** to **Setup Snowflake Resources**.
+>  This section will require the **ACCOUNTADMIN** login. This was previously setup in **Snowflake VS Code Extension** connection.
+>
+
+### Run Setup Worksheet
+
+> aside positive
 > 
+> Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
+>
+
+```sql
+-- Setup HOL role and user
+USE ROLE ACCOUNTADMIN;
+CREATE ROLE IF NOT EXISTS ROLE_HOL_TIMESERIES;
+GRANT ROLE ROLE_HOL_TIMESERIES TO ROLE SYSADMIN;
+CREATE OR REPLACE USER USER_HOL_TIMESERIES DEFAULT_ROLE = "ROLE_HOL_TIMESERIES" COMMENT = "HOL Time Series user.";
+GRANT ROLE ROLE_HOL_TIMESERIES TO USER USER_HOL_TIMESERIES;
+
+/* EXTERNAL ACTIVITY
+
+A public key is setup in Github Codespace file: keys/rsa_pub.key
+
+Retrieve the public key detail and replace <RSA_PUBLIC_KEY> with the contents of the public key
+excluding the -----BEGIN PUBLIC KEY----- and -----END PUBLIC KEY----- lines
+
+*/
+
+-- Set user public key
+ALTER USER USER_HOL_TIMESERIES SET RSA_PUBLIC_KEY='<RSA_PUBLIC_KEY>';
+
+-- Setup HOL infrastructure objects
+USE ROLE SYSADMIN;
+
+-- Transform WH
+CREATE WAREHOUSE IF NOT EXISTS HOL_TRANSFORM_WH WITH WAREHOUSE_SIZE = XSMALL AUTO_SUSPEND = 60 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE COMMENT = 'Transform Warehouse' ENABLE_QUERY_ACCELERATION = TRUE;
+-- Analytics WH
+CREATE WAREHOUSE IF NOT EXISTS HOL_ANALYTICS_WH WITH WAREHOUSE_SIZE = XSMALL AUTO_SUSPEND = 60 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE COMMENT = 'Analytics Warehouse' ENABLE_QUERY_ACCELERATION = TRUE;
+-- HOL Database
+CREATE DATABASE IF NOT EXISTS HOL_TIMESERIES COMMENT = 'HOL Time Series database.';
+-- HOL Schemas
+CREATE SCHEMA IF NOT EXISTS HOL_TIMESERIES.STAGING WITH MANAGED ACCESS COMMENT = 'HOL Time Series STAGING schema.';
+CREATE SCHEMA IF NOT EXISTS HOL_TIMESERIES.TRANSFORM WITH MANAGED ACCESS COMMENT = 'HOL Time Series TRANSFORM schema.';
+CREATE SCHEMA IF NOT EXISTS HOL_TIMESERIES.ANALYTICS WITH MANAGED ACCESS COMMENT = 'HOL Time Series ANALYTICS schema.';
+
+-- Grant HOL role object access
+GRANT USAGE ON DATABASE HOL_TIMESERIES TO ROLE ROLE_HOL_TIMESERIES;
+GRANT ALL ON WAREHOUSE HOL_TRANSFORM_WH TO ROLE ROLE_HOL_TIMESERIES;
+GRANT ALL ON WAREHOUSE HOL_ANALYTICS_WH TO ROLE ROLE_HOL_TIMESERIES;
+GRANT ALL ON SCHEMA HOL_TIMESERIES.STAGING TO ROLE ROLE_HOL_TIMESERIES;
+GRANT ALL ON SCHEMA HOL_TIMESERIES.TRANSFORM TO ROLE ROLE_HOL_TIMESERIES;
+GRANT ALL ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESERIES;
+```
+
+
+
+
 
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
@@ -454,24 +534,23 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 <!-- ------------------------ -->
 ## Milestone
 
-### Requirements
-- A Snowflake database that contains all data and objects built in this lab
-- A Stage and Staging table to initially land your incoming data stream
-- An Analytics-Ready Table
-- A Stream to track recently-received credit card transactions
-- Tasks orchestrated two ways to process those new transactions
+### Activitied
+- Ingest streaming time series data into Snowflake
+- Created a data pipeline to transform streaming time series data
+- Deployed ana analytics layer for serving time series data
+- Delivered a Streamlit application interface for end users to run time series analytics
 
 ### Outcomes
-- how to create a Snowflake Stream
-- how to create and schedule a Snowflake Task 
-- how to orchestrate tasks into data pipelines
-- how Snowpark can be used to build new types of user-defined functions and stored procedures 
-- multiple ways to manage and monitor your Snowflake tasks and data pipelines
+- A standard ingestion pattern has been established for easy onboarding of time series data sources
+- Unlocked low latency ingestion pipelines for data sources
+- Delivered an easy user experience in Streamlit to derive insights and value from time series data
 
 
 <!-- ------------------------ -->
 ## Clean-up
 Duration: 1
+
+- Remove [Github Codespace](https://github.com/codespaces)
 
 
 
@@ -479,15 +558,9 @@ Duration: 1
 ## Conclusion and Resources
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
 
 ### What we've covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+
 
 ### Additional resources
 - [Getting Started with Snowflake CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html)
