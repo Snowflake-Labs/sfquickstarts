@@ -60,11 +60,11 @@ Duration: 1
 ### Set up a Virtual Warehouse
 Duration: 1
 
-You'll need some compute for the connector installation process, so let's set up a virtual warehouse to do that. A second virtual warehouse will be created automatically in the configure section.
+You'll need some compute for the connector installation process, so let's set up a virtual warehouse to do that.
 
 Change to the **ACCOUNTADMIN** role.
 1. Navigate to Admin -> Warehouses and select **+ Warehouse**. 
-2. Name the virtual warehouse **SERVICENOW_CONNECTOR_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
+2. Name the virtual warehouse **CONNECTOR_UI_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
 
 ### Install the ServiceNow® connector
 Duration: 1
@@ -76,7 +76,7 @@ Once chosen, it is installed into your account as an application with several vi
 1. In the search window, enter **ServiceNow** and select the tile.
 1. Review the business needs and usage samples. 
 1. Select **Get**.
-1. Select the warehouse you created above, **SERVICENOW_CONNECTOR_WH**.
+1. Select the warehouse you created above, **CONNECTOR_UI_WH**.
 1. Select **Options**.
 1. For this lab, leave the default name for the installation database, **Snowflake_Connector_for_ServiceNow**. Do not select any additional roles.
 1. Select **Get**. You receive the following message, **Snowflake Connector for SeviceNow is now ready to use in your account.**
@@ -139,6 +139,8 @@ When all the preparation tasks are done, move to the next step by clicking **Sta
 This displays the Configure screen. By default, the fields are set to the names of objects that are created when you configure the connector.
 You can also provide names of existing objects.
 
+The virtual warehouse that you need to choose now will be used by the connector for background data ingestion processes.
+
 ![default config](assets/configure_defaults.png)
 
 Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-docs.snowflake.com/en/connectors/servicenow/v2/installing-snowsight-2.0#configuring-the-sncv2) for more information on these fields.
@@ -146,17 +148,17 @@ Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-d
 Select **Configure**. It can take a few minutes for the configuration process to complete, and you will be moved to the next step.
 
 > aside negative
-> Watch out!!! The created warehouse is created as a **Large** and with a auto suspension after 10 minutes. So this means, if you set to refresh every hour, the Large warehouse (8 credits/hour) will wake up for a minimum of 10 minutes every hour.  For this lab, you don't need all the power! Go to Admin-> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL, and the auto timeout to one minute. In a real-life use case, a Large warehouse size is often needed.
+> Watch out!!! The created warehouse is created as a **Large** and with a auto suspension after 10 minutes. So this means, if you set to refresh every hour, the Large warehouse (8 credits/hour) will wake up for a minimum of 10 minutes every hour.  For this lab, you don't need all the power! Go to Admin -> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL, and the auto timeout to one minute. In a real-life use case, a Large warehouse size is often needed.
 
 > aside positive
 > Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
 ![resource monitor](assets/monitor.png)
 
-## Set up the Snowflake to ServiceNow® Oauth hand-shake
+## Set up the Snowflake to ServiceNow® Oauth2 hand-shake
 Duration: 1
 
 1. Select **OAuth2** as an authentication method
-1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** the trailing *service-now.com*.
+1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** *https://* protocol the trailing *service-now.com*.
 1. Paste the **Client id** and the **Client secret** from ServiceNow® into the Snowflake wizard.
  ![Connect](assets/now_connect.png)
 1. Select **Connect**. Your ServiceNow accounts pops up and requests to connect to Snowflake. 
@@ -250,7 +252,7 @@ SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_overview;
 ## Configuring access to the ingested data
 Duration: 1
 
-The connector exposes an application role named `DATA_READER`. 
+The connector exposes an application role named `DATA_READER`. It has read access to all the ingested data in the destination schema.
 It's automatically granted to the role provided during the **Configure** step of the installation process.
 It was named `SERVICE_NOW_RESOURCES_PROVIDER` in the screenshot earlier in this guide.
 You can grant either application role or account role further if needed.
@@ -346,7 +348,7 @@ If you completed the experiment or for any reason no longer need the connector y
 1. Select **Data Products** and then **Apps**.
 1. Select three dots icon in the item on the list representing the connector app.
 1. Select **Uninstall**
-1. Decide if you want to delete the objects owned by the application (tables and views in the destination schema) or transfer ownership of them to another role
+1. Decide if you want to delete the objects owned by the application (tables and views with ingested data in the destination schema) or transfer ownership of them to another role
 1. Select **Uninstall**
 
 ![uninstall](assets/uninstall.png)
