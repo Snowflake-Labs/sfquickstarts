@@ -154,11 +154,11 @@ Select **Configure**. It can take a few minutes for the configuration process to
 > Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
 ![resource monitor](assets/monitor.png)
 
-## Set up the Snowflake to ServiceNow® Oauth2 hand-shake
+## Set up the Snowflake to ServiceNow® OAuth2 hand-shake
 Duration: 1
 
 1. Select **OAuth2** as an authentication method
-1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** *https://* protocol the trailing *service-now.com*.
+1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** *https://* protocol and the trailing *service-now.com*.
 1. Paste the **Client id** and the **Client secret** from ServiceNow® into the Snowflake wizard.
  ![Connect](assets/now_connect.png)
 1. Select **Connect**. Your ServiceNow accounts pops up and requests to connect to Snowflake. 
