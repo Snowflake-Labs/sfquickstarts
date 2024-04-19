@@ -9,7 +9,7 @@ tags: Marketing, Data Engineering, Native Application
 
 # Marketing Data Foundation Starter Guide
 <!-- ------------------------ -->
-## Introduction 
+## Overview 
 
 Duration: 15
 
@@ -112,7 +112,7 @@ Refer to the screenshot below for more info.
 ![Alt text](assets/Snowconnection-create-test.png)
 
 
-## Step 1: Create Database objects
+## Create Database objects
 
 Duration: 2
 
@@ -134,7 +134,7 @@ snow sql -f sql_scripts/setup.sql
 
 ![Alt text](assets/run-setup-script.png)
 
-## Step 2: Upload sample data to stage
+## Upload sample data to stage
 
 Duration: 4
 
@@ -163,7 +163,7 @@ snow object stage copy data/sample_data.gz @MARKETING_DATA_FOUNDATAION.demo.data
 If the upload fails due to an access issue then, please follow the instructions in this [document](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui) to upload the files directly to Snowflake Stage.
 
 
-## Step 3: Load Sample data to the table and Create a Native Application
+## Load Sample data to the table and Create a Native Application
 
 Duration: 2
 
@@ -183,7 +183,7 @@ snow app run
 
 ![Alt text](assets/Appcreation.png)
 
-## Conclusion
+## Conclusion and Resources
 Duration: 1
 
 Congratulations! You have successfully learned how to easily build an end-to-end Native Application loading sample data. 
