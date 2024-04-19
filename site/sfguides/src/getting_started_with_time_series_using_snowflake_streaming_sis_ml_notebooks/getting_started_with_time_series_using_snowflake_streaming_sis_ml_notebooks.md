@@ -10,9 +10,10 @@ author: nathan.birch@snowflake.com, jonathan.regenstein@snowflake.com
 # Getting Started with Time Series Analysis in Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 4
+Duration: 5
 
 This guide will take you through a scenario of using Snowflake to ingest, transform, and analyze time series data using Snowflake, with the ultimate goal of serving time series data to end users via a Streamlit application in Snowflake.
+
 
 ### Key Activities
 
@@ -24,10 +25,12 @@ To achieve this goal, the following key activities will be performed:
 - **Create time series Snowpark functions** to assist in analysis
 - **Deploy a time series Streamlit** application in Snowflake for end users to query time series
 
+
 ### Streamlit Application
-**GOAL:** A Streamlit application will be deploy  Snowflake will allow users to easily report on time series IOT data streamed into Snowflake.
+**GOAL:** Deploy a Streamlit application deployed to Snowflake to enable users to eaily execute time series queries against data streamed into Snowflake.
 
 <img src="assets/overview_0.png" width="800" />
+
 
 ### Architecture Plan
 A simulated IOT streaming datafeed will be used for this exercise, ingesting into a RAW staging table via Snowpark Streaming. Once data is streamed into a stage table, a task will detect when new records are loaded, and execute a procedure to transform the data into a dimensional model, ready for analytics. A Streamlit application will be deployed in Snowflake to then enable end users to report on the IOT streamed data.
@@ -46,12 +49,14 @@ To participate in the virtual hands-on lab, attendees need the following:
 - Access or sign-up to a [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) with **ACCOUNTADMIN** access
 - Access to a personal GitHub account to fork the QuickStart repo and create GitHub Codespace
 
+
 ### Lab environment
 For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. At the time of writing, GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
 
 > aside negative
 > 
 > It is recommended to use a personal GitHub account which will have permissions to deploy a GitHub Codespace.
+
 
 ### Snowflake Account details
 Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
@@ -63,52 +68,77 @@ Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIS
 SELECT SYSTEM$ALLOWLIST();
 ```
 
-**Note** the **<account_identifier>**.snowflakecomputing.com by retrieving at the **host** attribute returned. This will be used to update the **<ACCOUNT_IDENTIFIER>** configuration variables during the Lab Setup.
+**Note** the **<account_identifier>**.snowflakecomputing.com by retrieving the **host** attribute returned. This will be used during the lab when referencing the **<ACCOUNT_IDENTIFIER>** configuration variables during setup.
+
 
 <!-- ------------------------ -->
 ## Lab Setup
 
 Duration: 10
 
-### Fork the GitHub Repository and Deploy a GitHub Codespace
+### Fork the Lab GitHub Repository
 
-The very first step is to fork the GitHub repository [Getting Started with Time Series in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the **"Fork"** button near the top right. Complete any required fields and click **"Create Fork"**.
+The first step is to create a fork of the Lab GitHub repository.
 
-To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
+1. In a web browser log into your [Github](https://github.com/) account.
+
+2. Open [Getting Started with Time Series in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). 
+    - This repository contains all the code you need to successfully complete this Quickstart guide.
+
+3. Click on the **"Fork"** button near the top right.
+
+<img src="assets/labsetup_00.png" width="800" />
+
+4. Click **"Create Fork"**.
+
+<img src="assets/labsetup_01.png" width="800" />
+
+
+### Deploy a GitHub Codespace for the Lab
+
+Now create the GitHub Codespace. 
+
+1. Click on the green `<> Code` button from the GitHub repository homepage. 
+
+2. In the Code popup, click on the `Codespaces` tab.
+
+3. Click `Create codespace on main`.
 
 <img src="assets/labsetup_0.png" width="800" />
 
 > aside positive
 > 
-> This will open a new tab and begin **Setting up your codespace**.
+> This will open a new browser window and begin **Setting up your codespace**. The Github Codespace deployment will take several minutes to setup the entire environment for this lab.
 >
 
 <img src="assets/labsetup_1.png" width="800" />
 
 > aside negative
 >
-> Please wait for the **postCreateCommand** to run.
+> **Please wait** for the **postCreateCommand** to run.
 >
 > **Ignore any notifications** that may prompt to refresh the Codespace, these will disappear once the postCreateCommand has run.
 >
 
 <img src="assets/labsetup_2.png" />
 
+
 ### Github Codespace Deployment Summary
-The Github Codespace deployment will take a few minutes as it sets up the entire environment for this Quickstart. Once complete you should see a hosted web-based version of **VS Code Integrated Development Environment (IDE)** in your browser with your forked repository.
+
+Once complete you should see a hosted web-based version of **VS Code Integrated Development Environment (IDE)** in your browser with your forked repository.
 
 <img src="assets/labsetup_3.png" width="800" />
 
-Here is what is being done for you:
-- Start a hosted, web-based VS Code editor
-- Pull a copy of the forked Lab QuickStart GitHub repository within the VS Code container
-- Installing Anaconda (conda)
+The Github Codespace deployment is automating the following:
+- Starting a hosted, web-based VS Code Integrated Development Environment (IDE)
+- Pulling a copy of the forked Lab QuickStart GitHub repository within the VS Code container
+- Installing Python Anaconda (conda) package management
 - Installing a Java Runtime Environment (JRE)
-- Anaconda setup
-  - Creating an Anaconda virtual environment: **hol-timeseries**
+- Creates an Anaconda virtual environment called **hol-timeseries** with required packages for the lab installed
   - Using the [Snowflake Anaconda Channel](https://repo.anaconda.com/pkgs/snowflake/)
-  - Installing the [Snowflake Snowpark Python library and connector](https://docs.snowflake.com/en/developer-guide/snowpark/index)
-  - Installing [Snowflake Command Line Interface (CLI)](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
+  - Installs Snowflake Python packages
+    - [Snowflake Snowpark Python library and connector](https://docs.snowflake.com/en/developer-guide/snowpark/index) package
+    - [Snowflake Command Line Interface (CLI)](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
 - VS Code setup
   - Installing the [Snowflake VS Code Extension](https://docs.snowflake.com/en/user-guide/vscode-ext)
 - Private key pair setup using OpenSSL to be used to connect to Snowflake
@@ -117,6 +147,7 @@ Here is what is being done for you:
 > aside negative
 >
 > If you do not see the **Snowflake VS Code Extension** try **Refreshing** your browser window.
+
 
 ### Verify Your Anaconda Environment is Activated
 
@@ -134,13 +165,14 @@ To activate the virtual environment:
 
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
+
 ### Configure Snowflake Account Connection Configurations
 
 > aside negative
 >
 > This section will require the Snowflake **<account_identifier>** noted earlier.
 >
-> **NOTE:** The account identifers entered will **NOT** include the **.snowflakecomputing.com**
+> **NOTE:** The account identifers entered will **NOT** include the **.snowflakecomputing.com** domain.
 
 In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** with your account identifer value:
 
@@ -149,7 +181,8 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 2. `iotstream/snowflake.properties`
     - **account** variable
     - **host** variable
-    
+
+
 ### Configure Snowflake VS Code Extension Connection
 
 1. Open the Snowflake VS Code Extension
@@ -171,6 +204,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 
 <img src="assets/labsetup_8.png" />
 
+
 ### Update Snowflake Setup Worksheet
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
@@ -180,6 +214,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 > aside negative
 >
 > We'll need to update the setup worksheet with your **PUBLIC KEY** to be used during the initial Snowflake setup.
+
 
 ### Retrieve Snowflake Private Keypair
 As part of the GitHub Codespace setup, an OpenSSL Private Keypair was generated in the VS Code `keys` directory.
@@ -194,6 +229,7 @@ Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be
 >
 > ensure you **DO NOT** copy these lines.
 
+
 ### Update Snowflake Setup Worksheet with Lab PUBLIC KEY
 Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
@@ -206,6 +242,7 @@ Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 > The pasted **PUBLIC KEY** can show on mulitple lines and will work.
 
 The **Snowflake setup** worksheets are now ready to run, and The Lab environment is now ready!
+
 
 <!-- ------------------------ -->
 ## Setup Snowflake Resources
@@ -232,11 +269,12 @@ This includes:
 >  This section will require the **ACCOUNTADMIN** login. This was previously setup in **Snowflake VS Code Extension** connection.
 >
 
+
 ### Run Setup Worksheet
 
 > aside positive
 > 
-> Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
+> In the GitHub Codespace VS Code open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 >
 
 ```sql
@@ -281,9 +319,6 @@ GRANT ALL ON SCHEMA HOL_TIMESERIES.STAGING TO ROLE ROLE_HOL_TIMESERIES;
 GRANT ALL ON SCHEMA HOL_TIMESERIES.TRANSFORM TO ROLE ROLE_HOL_TIMESERIES;
 GRANT ALL ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESERIES;
 ```
-
-
-
 
 
 <!-- ------------------------ -->
@@ -359,6 +394,7 @@ CREATE OR REPLACE TABLE HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS (
 );
 ```
 
+
 <!-- ------------------------ -->
 ## Time Series Analysis
 Duration: 2
@@ -369,19 +405,20 @@ Setup serving layer views
 -- Setup Reporting Views
 USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.ANALYTICS;
+USE WAREHOUSE HOL_ANALYTICS_WH;
 
--- IOT Tag Reference View
+-- Tag Reference View
 CREATE OR REPLACE VIEW HOL_TIMESERIES.ANALYTICS.TS_TAG_REFERENCE AS
 SELECT
     META.NAMESPACE,
     META.TAGNAME,
     META.TAGALIAS,
     META.TAGDESCRIPTION,
-    META.TAGUOM,
+    META.TAGUNITS,
     META.TAGDATATYPE
 FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA META;
 
--- IOT Tag Readings View
+-- Tag Readings View
 CREATE OR REPLACE VIEW HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS AS
 SELECT
     META.TAGNAME,
@@ -396,70 +433,133 @@ ON META.TAGKEY = READ.TAGKEY;
 Time Series queries
 
 ```sql
+-- Run Time Series Analysis across various query profiles
 -- RAW DATA
-SELECT tagname, timestamp, value, NULL AS value_numeric
+SELECT TAGNAME, TIMESTAMP, VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE timestamp > '2000-03-26 12:45:37' 
-AND timestamp <= '2024-03-26 14:45:37' 
-AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
-ORDER BY tagname, timestamp
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+ORDER BY TAGNAME, TIMESTAMP
 ;
 
--- HI WATER MARK
-SELECT tagname, to_timestamp('2024-03-26 14:47:55') AS timestamp, MAX_BY(value, timestamp) AS value, MAX_BY(value_numeric, timestamp) AS value_numeric 
+-- STATISTICAL
+-- COUNT
+SELECT TAGNAME, TO_TIMESTAMP('2024-04-26 14:45:37') AS TIMESTAMP, COUNT(VALUE) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE timestamp > '2000-03-26 08:47:55' 
-AND timestamp <= '2024-03-26 14:47:55' 
-AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
-GROUP BY tagname 
-ORDER BY tagname, timestamp
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
 ;
 
--- LOW WATER MARK
-SELECT tagname, to_timestamp('2024-03-26 14:47:55') AS timestamp, MIN_BY(value, timestamp) AS value, MIN_BY(value_numeric, timestamp) AS value_numeric 
+-- COUNT DISTINCT
+SELECT TAGNAME, TO_TIMESTAMP('2024-04-26 14:45:37') AS TIMESTAMP, COUNT(DISTINCT VALUE) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE timestamp > '2000-03-26 08:47:55' 
-AND timestamp <= '2024-03-26 14:47:55' 
-AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
-GROUP BY tagname 
-ORDER BY tagname, timestamp
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+
+-- AVG
+SELECT TAGNAME, TO_TIMESTAMP('2024-04-26 14:45:37') AS TIMESTAMP, AVG(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+
+-- STDDEV
+SELECT TAGNAME, TO_TIMESTAMP('2024-04-26 14:45:37') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+
+-- VARIANCE
+SELECT TAGNAME, TO_TIMESTAMP('2024-04-26 14:45:37') AS TIMESTAMP, VARIANCE(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+
+-- MAX_BY - HI WATER
+SELECT TAGNAME, TO_TIMESTAMP('2024-04-26 14:45:37') AS TIMESTAMP, MAX_BY(VALUE, TIMESTAMP) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+
+-- MIN-BY - LOW WATER
+SELECT TAGNAME, TO_TIMESTAMP('2024-03-26 14:47:55') AS TIMESTAMP, MIN_BY(VALUE, TIMESTAMP) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
 ;
 
 -- DOWNSAMPLING / RESAMPLING
--- BINNING
-SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END') AS timestamp, NULL AS value, APPROX_PERCENTILE(value_numeric, 0.5) AS value_numeric
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
-WHERE timestamp > '2000-03-26 02:58:38' AND timestamp <= '2024-03-28 14:58:38' 
-AND tagname IN ('/WITSML/NO 15/9-F-7/DEPTH') 
-GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END'), tagname 
-ORDER BY tagname, timestamp
+-- BINNING - PERCENTILE
+SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+
+-- BINNING - AVERAGE
+SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TIMESTAMP, AVG(VALUE_NUMERIC) AS VALUE, COUNT(*) AS READING_COUNT
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+
+-- BINNING - STDDEV
+SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
 ;
 
 -- FIRST_VALUE / LAST_VALUE
-SELECT tagname, ts as timestamp, f_value_numeric, l_value_numeric
+SELECT TAGNAME, TS AS TIMESTAMP, F_VALUE, L_VALUE
 FROM (
-SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 5, 'MINUTE', 'END') AS ts, timestamp, value_numeric, FIRST_VALUE(value_numeric) OVER (PARTITION BY tagname, ts ORDER BY timestamp) AS f_value_numeric, LAST_VALUE(value_numeric) OVER (PARTITION BY tagname, ts ORDER BY timestamp) AS l_value_numeric 
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS  
-WHERE timestamp > '2000-03-26 03:29:08' AND timestamp <= '2024-03-28 15:29:08' 
-AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
-GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 5, 'MINUTE', 'END'), timestamp, tagname, value_numeric
+SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TS, TIMESTAMP, VALUE_NUMERIC, FIRST_VALUE(VALUE_NUMERIC) OVER (PARTITION BY TAGNAME, TS ORDER BY TIMESTAMP) AS F_VALUE, LAST_VALUE(VALUE_NUMERIC) OVER (PARTITION BY TAGNAME, TS ORDER BY TIMESTAMP) AS L_VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2000-03-26 12:45:37'
+AND TIMESTAMP <= '2024-04-26 14:45:37'
+AND TAGNAME = '/IOT/SENSOR/100'
+GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TIMESTAMP, TAGNAME, VALUE_NUMERIC
 )
-GROUP BY tagname, ts, f_value_numeric, l_value_numeric
-ORDER BY tagname, ts
+GROUP BY TAGNAME, TS, F_VALUE, L_VALUE
+ORDER BY TAGNAME, TS
 ;
-
-
--- STDDEV
-SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END') AS timestamp, NULL AS value, STDDEV(value_numeric) AS value_numeric 
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
-WHERE timestamp > '2000-03-26 15:00:50' AND timestamp <= '2024-03-25 15:00:50' 
-AND tagname = '/WITSML/NO 15/9-F-7/DEPTH' 
-GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 15, 'MINUTE', 'END'), tagname 
-ORDER BY tagname, timestamp
-;
-
-
 ```
+
 
 <!-- ------------------------ -->
 ## Snowpark User Defined Table Function
@@ -467,8 +567,10 @@ Duration: 2
 
 Setup LTTB Downsample Function
 ```sql
+-- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.ANALYTICS;
+USE WAREHOUSE HOL_ANALYTICS_WH;
 
 -- LTTB Downsampling Table Function
 CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB (
@@ -521,6 +623,7 @@ ORDER BY tagname, timestamp
 ;
 ```
 
+
 <!-- ------------------------ -->
 ## Streamlit in Snowflake
 Duration: 2
@@ -530,6 +633,7 @@ Deploy Streamlit application to Snowflake
 ```bash
 snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
 ```
+
 
 <!-- ------------------------ -->
 ## Milestone
@@ -551,7 +655,6 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 Duration: 1
 
 - Remove [Github Codespace](https://github.com/codespaces)
-
 
 
 <!-- ------------------------ -->
