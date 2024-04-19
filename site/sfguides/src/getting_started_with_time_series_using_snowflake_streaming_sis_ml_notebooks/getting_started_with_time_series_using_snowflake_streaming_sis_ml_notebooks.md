@@ -29,13 +29,13 @@ To achieve this goal, the following key activities will be performed:
 ### Streamlit Application
 **GOAL:** Deploy a Streamlit application deployed to Snowflake to enable users to eaily execute time series queries against data streamed into Snowflake.
 
-<img src="assets/overview_0.png" width="800" />
+<img src="assets/overview_streamlit.png" width="800" />
 
 
 ### Architecture Plan
 A simulated IOT streaming datafeed will be used for this exercise, ingesting into a RAW staging table via Snowpark Streaming. Once data is streamed into a stage table, a task will detect when new records are loaded, and execute a procedure to transform the data into a dimensional model, ready for analytics. A Streamlit application will be deployed in Snowflake to then enable end users to report on the IOT streamed data.
 
-<img src="assets/overview_1.png" width="800" />
+<img src="assets/overview_architecture.png" width="800" />
 
 
 <!-- ------------------------ -->
@@ -87,11 +87,11 @@ The first step is to create a fork of the Lab GitHub repository.
 
 3. Click on the **"Fork"** button near the top right.
 
-<img src="assets/labsetup_00.png" width="800" />
+<img src="assets/labsetup_fork.png" width="800" />
 
 4. Click **"Create Fork"**.
 
-<img src="assets/labsetup_01.png" width="800" />
+<img src="assets/labsetup_createfork.png" width="800" />
 
 
 ### Deploy a GitHub Codespace for the Lab
@@ -104,14 +104,14 @@ Now create the GitHub Codespace.
 
 3. Click `Create codespace on main`.
 
-<img src="assets/labsetup_0.png" width="800" />
+<img src="assets/labsetup_createcodespace.png" width="800" />
 
 > aside positive
 > 
 > This will open a new browser window and begin **Setting up your codespace**. The Github Codespace deployment will take several minutes to setup the entire environment for this lab.
 >
 
-<img src="assets/labsetup_1.png" width="800" />
+<img src="assets/labsetup_setupcodespace.png" width="800" />
 
 > aside negative
 >
@@ -120,14 +120,14 @@ Now create the GitHub Codespace.
 > **Ignore any notifications** that may prompt to refresh the Codespace, these will disappear once the postCreateCommand has run.
 >
 
-<img src="assets/labsetup_2.png" />
+<img src="assets/labsetup_postcreate.png" />
 
 
 ### Github Codespace Deployment Summary
 
 Once complete you should see a hosted web-based version of **VS Code Integrated Development Environment (IDE)** in your browser with your forked repository.
 
-<img src="assets/labsetup_3.png" width="800" />
+<img src="assets/labsetup_vscode.png" width="800" />
 
 The Github Codespace deployment is automating the following:
 - Starting a hosted, web-based VS Code Integrated Development Environment (IDE)
@@ -157,11 +157,11 @@ To activate the virtual environment:
 
 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
-<img src="assets/labsetup_4.png" />
+<img src="assets/labsetup_newterminal.png" />
 
 2. Enter command `conda activate hol-timeseries`
 
-<img src="assets/labsetup_5.png" />
+<img src="assets/labsetup_condaactivate.png" />
 
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
@@ -189,27 +189,27 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 2. Enter your **<ACCOUNT_IDENTIFER>**
 3. Click Continue
 
-<img src="assets/labsetup_6.png" />
+<img src="assets/labsetup_snowextension.png" />
 
 1. For Auth Method select `Username/password`
 2. Now enter the **ACCOUNTADMIN** user
 3. Enter the ACCOUNTADMIN **password**
 3. Click `Sign in`
 
-<img src="assets/labsetup_7.png" />
+<img src="assets/labsetup_snowsignin.png" />
 
 > aside positive
 >
 > **The VS Code Snowflake Extension** should now be connected to your Snowflake.
 
-<img src="assets/labsetup_8.png" />
+<img src="assets/labsetup_snowconnected.png" />
 
 
 ### Update Snowflake Setup Worksheet
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
 
-<img src="assets/labsetup_9.png" />
+<img src="assets/labsetup_worksheet1.png" />
 
 > aside negative
 >
@@ -230,12 +230,12 @@ Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be
 > ensure you **DO NOT** copy these lines.
 
 
-### Update Snowflake Setup Worksheet with Lab PUBLIC KEY
+### Update Snowflake Setup Worksheet with Lab Provisioned PUBLIC KEY
 Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
 **Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** retrieved from the `keys/rsa_key.pub` file.
 
-<img src="assets/labsetup_10.png" />
+<img src="assets/labsetup_rsakey.png" />
 
 > aside positive
 >
@@ -251,18 +251,18 @@ Duration: 5
 Create the foundational Snowflake Objects for this lab.
 
 This includes:
-- Role: ROLE_HOL_TIMESERIES - role used for working through the lab
-- User: USER_HOL_TIMESERIES -
+- Role: **ROLE_HOL_TIMESERIES** - role used for working throughout the lab
+- User: **USER_HOL_TIMESERIES** - the user to connect to Snowflake
 - Warehouses:
-    - HOL_TRANSFORM_WH - warehouse used for transforming ingested data
-    - HOL_ANALYTICS_WH - warehouse used for analytics
-- Database: HOL_TIMESERIES - main database to store all lab objects
+    - **HOL_TRANSFORM_WH** - warehouse used for transforming ingested data
+    - **HOL_ANALYTICS_WH** - warehouse used for analytics
+- Database: **HOL_TIMESERIES** - main database to store all lab objects
 - Schemas:
-    - STAGING - RAW data source landing schema
-    - TRANSFORM - transformed and modelled data schema
-    - ANALYTICS - serving and analytics functions schema
+    - **STAGING** - RAW data source landing schema
+    - **TRANSFORM** - transformed and modelled data schema
+    - **ANALYTICS** - serving and analytics functions schema
 
-<img src="assets/snowsetup_0.png" />
+<img src="assets/snowsetup_architecture.png" />
 
 > aside negative
 > 
@@ -270,11 +270,13 @@ This includes:
 >
 
 
-### Run Setup Worksheet
+### Run Snowflake Setup Worksheet
 
 > aside positive
 > 
 > In the GitHub Codespace VS Code open worksheet: `worksheets/hol_timeseries_1_setup.sql`
+>
+> **Run through the worksheet to get Snowflake resources created.**
 >
 
 ```sql
