@@ -59,16 +59,16 @@ The solution consists of the following components:
 
   - Demo recording: This shows a recording of the demo. It starts with an introduction of the Jupyter Notebook, and covers the Native Application afterwards.
 
-### Prerequisites
-- Install [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
-
 ### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that can create the database, schema, tables, stages, tasks, user-defined functions, and stored procedures, OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 - [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation) Installed 
 
-### What You’ll Build 
-- Marketing Data Foundation Starter Guide
+### What You Will Learn
+
+- How to use SnowCLI to connect to Snowflake
+- How to build and deploy a Native Application using our preloaded sample Facebook ads, LinkedIn ad data, Salesforce and Google click analytics datasets.
 
 <!-- ------------------------ -->
 ## The App Architecture
