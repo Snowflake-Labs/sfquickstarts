@@ -266,7 +266,7 @@ This includes:
 
 > aside negative
 > 
->  This section will require the **ACCOUNTADMIN** login. This was previously setup in **Snowflake VS Code Extension** connection.
+>  This section will run using the **ACCOUNTADMIN** login, which was previously setup in **Snowflake VS Code Extension** connection.
 >
 
 
@@ -274,7 +274,7 @@ This includes:
 
 > aside positive
 > 
-> In the GitHub Codespace VS Code open worksheet: `worksheets/hol_timeseries_1_setup.sql`
+> In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 >
 > **Run through the worksheet to get Snowflake resources created.**
 >
@@ -724,16 +724,16 @@ USE WAREHOUSE HOL_ANALYTICS_WH;
 -- LTTB Downsampling Table Function
 CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB (
     TIMESTAMP NUMBER,
-    VALUE_NUMERIC FLOAT,
+    VALUE FLOAT,
     SIZE NUMBER
 ) 
 RETURNS TABLE (
     TIMESTAMP NUMBER,
-    VALUE_NUMERIC FLOAT
+    VALUE FLOAT
 )
 LANGUAGE PYTHON
 RUNTIME_VERSION = 3.11
-PACKAGES = ('pandas', 'plotly-resampler', 'setuptools')
+PACKAGES = ('pandas', 'plotly-resampler')
 HANDLER = 'lttb_run'
 AS $$
 from _snowflake import vectorized
@@ -744,15 +744,15 @@ class lttb_run:
     @vectorized(input=pd.DataFrame)
 
     def end_partition(self, df):
-        if df.SIZE.max() >= len(df.index):
-            return df[['TIMESTAMP','VALUE_NUMERIC']]
+        if df.SIZE.iat[0] >= len(df.index):
+            return df[['TIMESTAMP','VALUE']]
         else:
             idx = LTTB_core_py.downsample(
                 df.TIMESTAMP.to_numpy(),
-                df.VALUE_NUMERIC.to_numpy(),
-                n_out=df.SIZE.max()
+                df.VALUE.to_numpy(),
+                n_out=df.SIZE.iat[0]
             )
-            return df[['TIMESTAMP','VALUE_NUMERIC']].iloc[idx]
+            return df[['TIMESTAMP','VALUE']].iloc[idx]
 $$;
 ```
 
