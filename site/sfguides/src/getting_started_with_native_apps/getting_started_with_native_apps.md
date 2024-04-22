@@ -232,7 +232,7 @@ Duration: 2
 
 In order for this data to be available to the application consumer, we'll need to share it in the application package via reference usage.
 
-The following code is managed by the **setup-packge-script** file and its automatically run when we deploy the application. Here's what the SQL does:
+The following steps are performed by the **setup-package-script.sql** file, which is automatically run whenever we deploy the application:
 
 - Creates a schema in the application package that will be used for sharing the shipping data
 
