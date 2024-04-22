@@ -246,7 +246,7 @@ Once you have the app created you can adjust the prompt in the app and change th
 
 Duration: 5
 
-You can download the notebook here: ![](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
+You can download the notebook ![here](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
 <!-- ------------------------ -->
 ## Conclusion  And Resources
