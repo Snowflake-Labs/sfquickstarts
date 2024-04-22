@@ -384,7 +384,7 @@ Run the following coide in a worksheet to create the Stored Procedure.
 
 
 ```SQL
-CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR, imputeTable VARCHAR)
+CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR)
 RETURNS STRING
 LANGUAGE PYTHON
 RUNTIME_VERSION = '3.8'
@@ -397,22 +397,14 @@ import snowflake.snowpark as snp
 import snowflake.snowpark.window as W
 import snowflake.snowpark.functions as F
 import snowflake.snowpark.types as T
-import snowflake.ml.modeling.impute as I
 
-def feature_transform(session, raw_table, target_table, impute_table):
+def feature_transform(session, raw_table, target_table):
     input_df = session.table(raw_table)
-    impute_df = session.table(impute_table)
     feature_cols = input_df.columns
     feature_cols.remove('"customer_ID"')
 
     for col_name in feature_cols:
         input_df = input_df.withColumn(col_name, F.col(col_name).cast(T.FloatType()))
-
-    my_imputer = I.SimpleImputer(input_cols= feature_cols,
-                           output_cols= feature_cols,
-                           strategy='most_frequent')
-    my_imputer.fit(impute_df)
-    input_df = my_imputer.transform(input_df)
     
     # Feature engineer raw input
     #Average
@@ -526,7 +518,7 @@ Let manually execute our pipeline for demonstrative purposes, and then later in 
 In a worksheet, run the following code:
 
 ```SQL
-CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA', 'TRANSFORMED_TABLE', 'CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA');
+CALL cc_profile_processing('CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA', 'TRANSFORMED_TABLE');
 ```
 ```SQL
 CALL cc_batch_processing('TRANSFORMED_TABLE', 'SCORED_TABLE');
@@ -574,7 +566,7 @@ CREATE OR REPLACE TASK FEATURE_ENG
     WAREHOUSE = 'QUERY_WH'
 AFTER CDC
 AS
-    CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE', 'CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA');
+    CALL cc_profile_processing('NEW_CC_DEFAULT_DATA', 'TRANSFORMED_TABLE');
 ```
 
 Then we make a task dependant on the above which scores the model.
