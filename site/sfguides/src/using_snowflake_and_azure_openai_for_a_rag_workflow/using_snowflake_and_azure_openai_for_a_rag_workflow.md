@@ -100,6 +100,12 @@ FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' ESCAPE_UNENCLOSED
 
 select top 10 * from MOVIE_REVIEWS;
 ```
+<!-- ------------------------ -->
+## Exploratory Analysis (OPTIONAL)
+
+Duration: 5
+
+You can download the notebook ![here](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
 <!-- ------------------------ -->
 -----------START HERE---------------
@@ -240,13 +246,6 @@ if(st.button('Ask ChatGPT')):
 Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate new recommendations. 
 
 ![](assets/movieapp.png)
-
-<!-- ------------------------ -->
-## Exploratory Analysis (OPTIONAL)
-
-Duration: 5
-
-You can download the notebook ![here](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
 <!-- ------------------------ -->
 ## Conclusion  And Resources
