@@ -87,6 +87,7 @@ The instructions on cloning the project repository and its execution are given i
     ```sh
     snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location
     ```
+    **Note:** The IP2LOCATION-LITE-DB11.CSV file can be downloaded in the next step.
 
 <!-- ------------------------ -->
 ## Building the Application
@@ -98,13 +99,13 @@ The application itself has been broken down into three parts.
 * The building of the application install script which contains the functionality to accept an IP address, look it up in the database we just shared with the application and write back enhanced data from the application. 
 * Arguably (certainly for this Quickstart) the most important part which is the user interface written using Streamlit. This is where we will do the mappings.
 
-To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart.  If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
+To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart. There are several versions of this IP information, and we are going to use the IPv4 verison for this tutorial. If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
 
 The first thing you need to do is create a new database which will serve as the lookup database for the application, following that, it is necessary to create a table, a file format, and a stage. That way we can upload our files to the **stage**, using the **file format** and after that loading that staged data into the **table**.
 
 > aside positive
 > 
-> **Note** - This setup SQL commands are managed by the *prepare_data.sh* file found in the repository, to run it you can type:
+> **Note** - This setup SQL commands are performed by the *prepare_data.sh* file found in the repository, to run it you can type:
  ```SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh```  
  in the folder root.
 
@@ -112,7 +113,9 @@ The first thing you need to do is create a new database which will serve as the 
 snow sql -q "
 CREATE DATABASE IF NOT EXISTS IP2LOCATION;
 CREATE SCHEMA IF NOT EXISTS IP2LOCATION;
+"
 
+snow sql -q "
 CREATE TABLE IF NOT EXISTS LITEDB11 (
 ip_from INT,
 ip_to INT,
@@ -133,8 +136,8 @@ FIELD_OPTIONALLY_ENCLOSED_BY = '\"'
 COMPRESSION = AUTO;
 
 # create a stage so we can upload the file
-CREATE STAGE LOCATION_DATA_STAGE
-file_format = LOCATION_CSV;"
+CREATE STAGE IF NOT EXISTS IP2LOCATION.IP2LOCATION.LOCATION_DATA_STAGE
+file_format = LOCATION_CSV;" --database ip2location --schema ip2location 
 ```
 
 Go ahead now and upload the file to the stage.  After the file is uploaded go back to
@@ -443,7 +446,7 @@ CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
         IP_DATA VARIANT
 );
 
-INSERT INTO TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
+INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
 ```
 
 ### Viewing the Application
