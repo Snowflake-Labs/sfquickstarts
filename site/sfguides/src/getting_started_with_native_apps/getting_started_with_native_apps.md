@@ -417,7 +417,7 @@ To create an application package you can go through the manual UI process or you
 
 
 ```
-snowflake app run
+snow app run
 ```
 
 >aside negative
