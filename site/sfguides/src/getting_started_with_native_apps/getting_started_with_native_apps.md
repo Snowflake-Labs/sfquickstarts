@@ -91,7 +91,7 @@ git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-native-apps
 ```
 This command is going to create an application project in your local machine, and it is going to do it from the template obatained from the github repo.
 
-If you do not have snow CLI or Git installed, you can also download the code directly from [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps/archive/refs/heads/main.zip) and extract it to a local folder.
+If you do not have Snowflake CLI or Git installed, you can also download the code directly from [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps/archive/refs/heads/main.zip) and extract it to a local folder.
 
 This repository contains all of our starter code for our native app. Throughout the rest of this tutorial we will be modifying various parts of the code to add functionality and drive a better understanding of what is happening at each step in the process.
 
