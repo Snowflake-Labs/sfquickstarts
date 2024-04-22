@@ -328,6 +328,6 @@ In questo quickstart hai:
 - Creato un’applicazione Streamlit per fornire previsioni immediate sulle vendite per turno in base alla posizione
 
 ### Fasi successive
-Per continuare il tuo percorso nel Data Cloud di Snowflake, visita il link qui sotto per vedere gli altri quickstart Powered by Tasty Bytes disponibili.
+Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere gli altri quickstart Powered by Tasty Bytes disponibili.
 
-- ### [Quickstart Powered by Tasty Bytes - Sommario](/guide/tasty_bytes_introduction_it/index.html#3)
+- ### [Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_it/index.html#3)
