@@ -487,7 +487,7 @@ Duration: 4
 
 We've now added some basic functionality to the native app. From here, we will create the first version of our application package. You can have multiple versions available. 
 
-Yo create our application package version we are going to execute the following command:
+To create a version in our application package, execute the following command:
 
 ```
 snow app version create V1 --interactive --database NATIVE_APP_QUICKSTART_PACKAGE
