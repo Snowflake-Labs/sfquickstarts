@@ -89,7 +89,7 @@ To create our Snowflake Native Application, we will first clone the [starter pro
 ```bash
 git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-native-apps.git
 ```
-This command is going to create an application project in your local machine, and it is going to do it from the template obatained from the github repo.
+This command is going to create an application project folder on your local machine, cloned from the github repo.
 
 If you do not have Snowflake CLI or Git installed, you can also download the code directly from [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps/archive/refs/heads/main.zip) and extract it to a local folder.
 
