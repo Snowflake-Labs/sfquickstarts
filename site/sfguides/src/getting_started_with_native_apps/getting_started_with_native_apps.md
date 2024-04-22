@@ -503,7 +503,7 @@ version:
   label: Version One
   comment: The first version of the application
 ```
-In this case, because the first version was already created, the system is going to add a patch version by default to make the differentiation from both packages, but this could be explicitly set in the `snow app version create` options.
+Because the first version was already created, the system is going to add a new patch in the existing version. You can explicitly number the patch by adding `--patch <number>` to the `snow app version create` arguments.
 
 <!-- ------------------------ -->
 ## Install the Application
