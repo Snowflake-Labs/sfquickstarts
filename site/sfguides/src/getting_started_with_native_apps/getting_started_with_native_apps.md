@@ -109,16 +109,16 @@ Let's explore the directory structure:
         |   |-- site_recovery_data.csv
         |-- src
         |   |-- manifest.yml
+        |   |-- setup.sql
         |   |-- libraries
         |   |   |-- environment.yml
         |   |   |-- procs.py
         |   |   |-- streamlit.py
         |   |   |-- udf.py
-        |   |-- scripts
-        |       |-- setup.sql
-                |-- setup-package-script.sql
-      |-- prepare_data.sh
-      |-- snowflake.yml
+    |-- scripts
+    |   |-- setup-package-script.sql
+    |-- prepare_data.sh
+    |-- snowflake.yml
 ```
 
 There `src` directory is used to store all of our various source code including stored procedures, user defined functions (UDFs), our streamlit application, and even our installation script `setup.sql`.
@@ -191,7 +191,8 @@ CREATE OR REPLACE TABLE MFG_SITE_RECOVERY (
 ```
 
 Once we have created the necessary tables in the provider and consumer side, the next step is to load the csv files to the corresponding tables.
-That is accomplished using the `snow stage copy` command, this uploads it directly to the table associated stage.
+A stage is available and directly linked to every table created in Snowflake,  so we are going to take advantage of that dedicated stage and upload the files directly to the table associated stage. You can find more information about stages types **[here](https://docs.snowflake.com/en/user-guide/data-load-overview)**
+That is accomplished using the `snow stage copy` command:
 
 ```bash
 # loading shipping data into table stage
@@ -490,12 +491,13 @@ We've now added some basic functionality to the native app. From here, we will c
 To create a version in our application package, execute the following command:
 
 ```
-snow app version create V1 --interactive --database NATIVE_APP_QUICKSTART_PACKAGE
+snow app version create V1
 ```
 
-This code is going to create the Version number 1 of out application package, in the NATIVE_APP_QUICKSTART_PACKAGE 
-database, the --interactive directive is used to show more information in other prompts different than terminal devices.
-As we explained before, you can also set the version information inside the manifest.yml, therefore when you run the `snow app run` command, it is going to automatically create the versioned application. It would look something like this:
+The code above is going to create the Version number 1 of out application package, in the NATIVE_APP_QUICKSTART_PACKAGE 
+database.. You can explicitly number the patch by adding `--patch <number>` to the `snow app version create` arguments. Because the first version was already created, and because we did not specify the patch number, the system is going to add a new patch in the existing version.
+
+As we explained before, you can also set the version information inside the manifest.yml, therefore when you run the `snow app run` command, it is going to automatically use that version. It would look something like this:
 
 ```
 version:
@@ -503,7 +505,7 @@ version:
   label: Version One
   comment: The first version of the application
 ```
-Because the first version was already created, the system is going to add a new patch in the existing version. You can explicitly number the patch by adding `--patch <number>` to the `snow app version create` arguments.
+
 
 <!-- ------------------------ -->
 ## Install the Application
