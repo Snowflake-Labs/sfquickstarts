@@ -366,7 +366,7 @@ SETUP SCRIPT NOW COMPLETED
 
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
-
+<img src="assets/test.png" />
 ```sql
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.STAGING;
