@@ -9,7 +9,7 @@ tags: Security, SnowSight, Dashboards
 
 # Snowflake Security Dashboards
 <!-- ------------------------ -->
-## Why Make Security Dashboards?
+## Overview
 Duration: 2
 
 The Security Field CTO team at Snowflake has talked with thousands of Snowflake customers over the years. Most of them have a simple request: "Tell us how to do security well for Snowflake, please." It's a reasonable thing to ask. We've tried many ways to deliver the answer to this question, from checklists and tutorials to documents and slides. In 2021, we started a project (code named "Snow Sentry") that aimed to take much of that advice and put it into code. We created a set of sample tiles contained in a single dashboard to act as an MVP for monitoring security items in Snowflake. You will build a replica of that MVP during this Quickstart lab. 
