@@ -57,7 +57,7 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Passaggio 5 - Rinominare un foglio di lavoro
-- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Collaboration”
+- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Collaboration”.
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Passaggio 6 - Accedere al codice SQL di questo quickstart in GitHub
@@ -257,7 +257,7 @@ $$;
 <img src = "assets/5.1.inch_to_mm.png">
 
 >aside positive
-quando si crea una UDF, si specifica un gestore il cui codice è scritto in uno dei linguaggi supportati. A seconda del linguaggio del gestore, puoi includerne il codice sorgente in linea con l’istruzione CREATE FUNCTION o fare riferimento alla sua posizione da CREATE FUNCTION, in cui il gestore è precompilato o codice sorgente in uno stage.
+Quando si crea una UDF, si specifica un gestore il cui codice è scritto in uno dei linguaggi supportati. A seconda del linguaggio del gestore, puoi includerne il codice sorgente in linea con l’istruzione CREATE FUNCTION o fare riferimento alla sua posizione da CREATE FUNCTION, in cui il gestore è precompilato o codice sorgente in uno stage.
 >
 
 ### Passaggio 2 - Creare il codice SQL per la vista
@@ -382,8 +382,8 @@ In questo quickstart hai:
 Se desideri ripetere questo quickstart, usa gli script di ripristino alla fine del foglio di lavoro associato.
 
 ### Fasi successive
-Per continuare il tuo percorso nel Data Cloud di Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
+Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
 
-- ### [Quickstart Powered by Tasty Bytes - Sommario](/guide/tasty_bytes_introduction_it/index.html#3)
+- ### [Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_it/index.html#3)
 
 
