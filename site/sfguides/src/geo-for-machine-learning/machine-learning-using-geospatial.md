@@ -11,7 +11,7 @@ tags: Geospatial, Performance, H3, Machine Learning.
 <!-- ----------------------------------------- -->
 ## Overview 
 
-Duration: 10
+Duration: 6
 
 Snowflake offers a rich toolkit for predictive analytics with a geospatial component. It includes two data types and specialized functions for transformation, prediction, and visualization. This guide is divided into multiple labs, each covering a separate use case that showcases different features for a real-world scenario.
 
@@ -22,7 +22,7 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 * Recommended: Complete [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0) quickstart
 
 ### What You’ll Learn
-In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. Use Case is broken up into a separate lab:
+In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. The quickstart is broken up into separate labs:
 * Lab 1: Forecasting time series on a map
 * Lab 2: Sentiment analysis of customer reviews
 
@@ -90,7 +90,7 @@ ALTER SESSION SET USE_CACHED_RESULT = FALSE;
 ```
 ## Forecasting time series on a map
 
-Duration: 45
+Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete preparation steps from `Setup your account` page.
@@ -592,7 +592,7 @@ You have information about public and school holidays and sports events among ou
 
 ## Customer Reviews Sentiment Analysis
 
-Duration: 45
+Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -898,3 +898,26 @@ You can also analyze what areas are getting higher scores for each of the catego
 
 > aside positive
 >  The code from this quickstart can be reused for other industries, such as urban mobility, retail, finance, etc. Basically, any industry that involves providing a service with geo components and customer reviews.
+
+## Conclusion And Resources
+
+Duration: 4
+
+Congratulations! You've successfully performed data engineering and data science tasks and trained a model to predict future taxi demand. Additionaly you practiced in creation of the LLM model to analyse sentiment analysis of the textual data. For each of those use cases you created a Streamlit application to analyse results.
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
+
+### What You Learned
+
+When you complete this quickstart, you will have gained practical experience in several areas:
+* How to acquire data from the Snowflake Marketplace
+* How to load data from external storage
+* How to transform geospatial data using H3 and Time Series functions
+* How to train models and predict results with Cortex ML
+* How to use LLM for analysing textual data
+* How to visualize data with Streamlit
+
+### Related Resources
+- [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
+- [Geospatial Analysis using Geometry Data Type quickstart](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) 
+- [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0)
