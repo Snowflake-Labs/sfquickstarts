@@ -26,8 +26,8 @@ To achieve this goal, the following key activities will be performed:
 - **Deploy a time series Streamlit** application in Snowflake for end users to query time series
 
 
-### Streamlit Application
-**GOAL:** Deploy a Streamlit application deployed to Snowflake to enable users to eaily execute time series queries against data streamed into Snowflake.
+### Goal
+The goal of this lab is to deploy a Streamlit application to Snowflake that will enable users to easily execute time series queries against data streamed into Snowflake.
 
 <img src="assets/overview_streamlit.png" width="800" />
 
@@ -76,7 +76,7 @@ SELECT SYSTEM$ALLOWLIST();
 
 Duration: 10
 
-### Fork the Lab GitHub Repository
+### Step 1 - Fork the Lab GitHub Repository
 
 The first step is to create a fork of the Lab GitHub repository.
 
@@ -94,7 +94,7 @@ The first step is to create a fork of the Lab GitHub repository.
 <img src="assets/labsetup_createfork.png" width="800" />
 
 
-### Deploy a GitHub Codespace for the Lab
+### Step 2 - Deploy a GitHub Codespace for the Lab
 
 Now create the GitHub Codespace.
 
@@ -149,7 +149,7 @@ The Github Codespace deployment is automating the following:
 > If you do not see the **Snowflake VS Code Extension** try **Refreshing** your browser window.
 
 
-### Verify Your Anaconda Environment is Activated
+### Step 3 - Verify Your Anaconda Environment is Activated
 
 During the Codespace setup the postCreateCommand script created an Anaconda virtual environment named **hol-timeseries**. This virtual environment contains the packages needed to connect and interact with Snowflake using the Snowflake CLI.
 
@@ -166,7 +166,7 @@ To activate the virtual environment:
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
 
-### Configure Snowflake Account Connection Configurations
+### Step 4 - Configure Snowflake Account Connection Configurations
 
 > aside negative
 >
@@ -183,7 +183,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
     - **host** variable
 
 
-### Configure Snowflake VS Code Extension Connection
+### Step 5 - Configure Snowflake VS Code Extension Connection
 
 1. Open the Snowflake VS Code Extension
 2. Enter your **<ACCOUNT_IDENTIFER>**
@@ -205,7 +205,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 <img src="assets/labsetup_snowconnected.png" />
 
 
-### Update Snowflake Setup Worksheet
+### Step 6 - Update Snowflake Setup Worksheet
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
 
@@ -366,7 +366,7 @@ SETUP SCRIPT NOW COMPLETED
 
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
-<img src="assets/test.png" />
+<img src="assets/2024-04-23_17-18-00.png" />
 ```sql
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.STAGING;
