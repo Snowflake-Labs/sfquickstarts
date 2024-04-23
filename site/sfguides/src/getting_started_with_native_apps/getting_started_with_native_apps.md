@@ -494,10 +494,10 @@ To create a version in our application package, execute the following command:
 snow app version create V1
 ```
 
-The code above is going to create the Version number 1 of out application package, in the NATIVE_APP_QUICKSTART_PACKAGE 
-database.. You can explicitly number the patch by adding `--patch <number>` to the `snow app version create` arguments. Because the first version was already created, and because we did not specify the patch number, the system is going to add a new patch in the existing version.
+Executing this command will create a version `V1` in our application package.
+You can explicitly number the patch by adding `--patch <number>` as an argument to `snow app version create`. Because this version does not yet exist and because we did not specify the patch number, the system is going to add our code as patch 0 in this version.
 
-As we explained before, you can also set the version information inside the manifest.yml, therefore when you run the `snow app run` command, it is going to automatically use that version. It would look something like this:
+As explained before, you can also set the version information inside of manifest.yml. In that case, running `snow app version create` without any arguments will automatically use that version. It would look something like this:
 
 ```
 version:
