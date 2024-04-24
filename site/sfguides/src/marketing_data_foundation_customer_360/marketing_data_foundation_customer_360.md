@@ -222,8 +222,7 @@ use schema demo;
 
 Duration: 4
 
-Upload all the sample data files in the folder data to stage created in step 1
-
+Upload all the sample data files in the folder data to stage created in `Create Database objects` step
 
 ```console
 snow object stage copy data/worldcities.csv @CUSTOMER_360.demo.data_stg/data
