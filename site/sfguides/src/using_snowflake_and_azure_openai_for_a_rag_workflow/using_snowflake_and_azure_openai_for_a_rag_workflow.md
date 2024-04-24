@@ -207,7 +207,8 @@ from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col, call_function
 
 # Title
-st.title("Movie Review Explorer")
+st.title(":movie_camera: Movie Review Explorer 	:clapper:")
+st.subheader(":snowflake: Powered by Snowflake & Azure Open AI")
 session = get_active_session()
 
 default_prompt = ''
@@ -243,7 +244,6 @@ if(st.button('Ask ChatGPT')):
 
     st.header('Context')
     context
-
 ```
 
 Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate more tailored responses. 
