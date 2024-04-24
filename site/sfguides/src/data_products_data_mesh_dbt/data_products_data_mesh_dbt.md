@@ -268,10 +268,8 @@ Now set up the core layer as follows:
 {{
     config(
         materialized = 'table',
-        tags=['finance']
     )
 }}
-
 
 with orders as (
     
@@ -285,6 +283,11 @@ line_items as (
 
 ),
 
+customers as (
+
+    select * from {{ ref('stg_customers') }}
+),
+
 order_item_summary as (
 
     select 
@@ -294,13 +297,13 @@ order_item_summary as (
         sum(item_tax_amount) as item_tax_amount,
         sum(net_item_sales_amount) as net_item_sales_amount
     from line_items
-    group by
-        1
+    group by 1
+
 ),
+
 final as (
 
     select 
-
         orders.order_key, 
         orders.order_date,
         orders.customer_key,
@@ -308,49 +311,23 @@ final as (
         orders.priority_code,
         orders.ship_priority,
         orders.clerk_name,
-        1 as order_count,
+        customers.name,
+        customers.market_segment,
         order_item_summary.gross_item_sales_amount,
         order_item_summary.item_discount_amount,
         order_item_summary.item_tax_amount,
         order_item_summary.net_item_sales_amount
     from orders
     inner join order_item_summary
-      on orders.order_key = order_item_summary.order_key
+        on orders.order_key = order_item_summary.order_key
+    inner join customers
+        on orders.customer_key = customers.customer_key
 )
+
 select *
 from final
 order by order_date
-```
 
-2. Create a `models/core/dim_customers.sql` to build a dimensional table with customer details
-
-```sql
-{{
-    config(
-        materialized = 'table',
-    )
-}}
-
-with customer as (
-
-    select * from {{ ref('stg_customers') }}
-
-),
-
-final as (
-    select 
-        customer_key,
-        name,
-        address,
-        nation_key,
-        phone_number,
-        account_balance,
-        market_segment
-    from customer
-)
-select *
-from final
-order by customer_key
 ```
 
 ### Execute
@@ -358,7 +335,7 @@ order by customer_key
 Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`.  This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
 
 ## Mesh Components:  Snowflake
-Duration: 10
+Duration: 5
 
 The goal of this section is to apply some of the functionality offered from Snowflake, like [object tagging](https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary) and [dynamic data masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro), to strengthen the governance around the data mesh architecture we want to architect.
 
@@ -397,7 +374,7 @@ Next, we'll use the `DATA_GOVERNOR` role to perform the following:
 - Create a tag for PII data
 - Create a masking policy for string data
 - Assign the masking policy to the tag
-- Assign the tag to the `name` column in the `customers` table
+- Assign the tag to the `c_name` column in the `customers` table
 
 ```sql
 use role data_governor;
@@ -440,27 +417,103 @@ select * from snowflake_sample_data.tpch_sf1.customer;
 Now that we've set up the appropriate roles, tags, and masking policies in Snowflake, it's time to jump into dbt Cloud and use some of the features there to further strengthen our data mesh architecture.
 
 ## Mesh Components:  dbt Cloud
+Duration: 5
 
-<!-- ------------------------ -->
-## Securing the data with Snowflake governance features
+Now that our Snowflake environment is set up with proper data governance practices, it's time to turn to dbt Cloud to utilize that model in a way that's both complimentary and additive.  To do that, we'll look at adding the following model governance features to our project:
 
+- [Contracts](https://docs.getdbt.com/docs/collaborate/govern/model-contracts)
+- [Access](https://docs.getdbt.com/docs/collaborate/govern/model-access) levels
 
-<!-- ------------------------ -->
-## Making the data available to other dbt users with dbt Mesh model governance features
-Duration: 1
-<!-- TODO: Fix this ^^ -->
+By using these configurations within your project, you'll be in effect creating a stable set of APIs that your downstream projects are able to consume from.
 
-### DEV: Guideline to this step
+To begin, add the file `models/core/core.yml` and add the code below:
 
-- Demonstrate how to add:
-  - Model contracts
-  - Model access
-  - model versions -> oh, requirements changed, we need to break out tier_name to low/mid/high_tier boolean
-- Commit and deploy -> run a job
+```yaml
+models:
+  - name: fct_orders
+    description: ""
+    access: public
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: order_key
+        data_type: number
+        description: ""
 
-### PROD: Content
+      - name: order_date
+        data_type: date
+        description: ""
 
-Empty
+      - name: customer_key
+        data_type: number
+        description: ""
+
+      - name: status_code
+        data_type: varchar
+        description: ""
+
+      - name: priority_code
+        data_type: varchar
+        description: ""
+
+      - name: ship_priority
+        data_type: number
+        description: ""
+
+      - name: clerk_name
+        data_type: varchar
+        description: ""
+
+      - name: name
+        data_type: varchar
+        description: ""
+
+      - name: market_segment
+        data_type: varchar
+        description: ""
+
+      - name: gross_item_sales_amount
+        data_type: number
+        description: ""
+
+      - name: item_discount_amount
+        data_type: number
+        description: ""
+
+      - name: item_tax_amount
+        data_type: number
+        description: ""
+
+      - name: net_item_sales_amount
+        data_type: number
+        description: ""
+```
+
+This code does the following:
+- It makes the `fct_orders` model public, which means other projects in the dbt Cloud account are now able to reference it
+- It will add and enforce a contract to this model.  This will enable dbt to do a couple things:  1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
+
+2. Navigate to the dbt Cloud IDE **Lineage** tab to see the model noted as **Public**, below the model name.
+
+**TODO: Insert picture here showing new lineage**
+
+3. Go to **Version control** and click the **Commit and Sync** button to commit your changes.
+4. Merge your changes to the main or production branch.
+
+### Create and run a dbt Cloud job
+To run your first deployment dbt Cloud job, you will need to create a new dbt Cloud job.  
+1. Click **Deploy** and then **Jobs**. 
+2. Click **Create job** and then **Deploy job**.
+3. Select the **Generate docs on run** option. This will enable dbt Cloud to pull in metadata from the warehouse to supplement the documentation found in the **Explore** section.
+
+**TODO: Insert pic here showing these steps**
+
+4. Then, click **Run now** to trigger the job.
+
+**TODO: Another pic showing clicking run now**
+
+5. Click **Explore** from the upper menu bar. You should now see your lineage, tests, and documentation coming through successfully.
 
 <!-- ------------------------ -->
 ## Create downstream dbt project that accesses base project
