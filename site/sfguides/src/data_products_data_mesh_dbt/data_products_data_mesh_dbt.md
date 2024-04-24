@@ -542,7 +542,7 @@ Duration: 1
 
 ### DEV: Guideline to this step
 
-- dbt Cloud RBAC
+- dbt Cloud RBAC <- out of scope but important to mention
 - dbt Explorer
 - Snowflake Private Listings
 
