@@ -436,6 +436,8 @@ models:
     config:
       contract:
         enforced: true
+      grants:
+        select: ['pii_allowed', 'finance_role']  # TODO:  Update this
     columns:
       - name: order_key
         data_type: number
@@ -493,6 +495,7 @@ models:
 This code does the following:
 - It makes the `fct_orders` model public, which means other projects in the dbt Cloud account are now able to reference it
 - It will add and enforce a contract to this model.  This will enable dbt to do a couple things:  1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
+- The grants config is used to set permissions or grants for a resource. When a model is run, dbt will run grant and/or revoke statements to ensure that the permissions on the database object match the grants you have configured on the resource.
 
 2. Navigate to the dbt Cloud IDE **Lineage** tab to see the model noted as **Public**, below the model name.
 
