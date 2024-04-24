@@ -103,13 +103,17 @@ select top 10 * from MOVIE_REVIEWS;
 <!-- ------------------------ -->
 ## Exploratory Analysis (OPTIONAL)
 
-Duration: 5
+Duration: 10
 
 You can download the notebook ![here](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
 You can do this by navigating to "Projects" from the Snowflake UI, selecting "Notebooks" and click the upload button in the top right and uploading the notebook you just downloaded.
 
 ![](assets/notebooks.png)
+
+You will be able to run through the code to explore the data that we just loaded. If there are any errors related to package requirements you can make those updates using the package install functionality in Snowflake Notebooks.
+
+![](assets/notebookeda.png)
 
 <!-- ------------------------ -->
 ## Snowpark External Access to call OpenAI
@@ -249,8 +253,6 @@ if(st.button('Ask ChatGPT')):
 Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate more tailored responses. 
 
 Important to note that the JAROWINKLER_SIMILARITY() function is being used here to calculate distance as other Snowflake distance functions are only available for embeddings created with Snowflake embed models and stored in a Snowflake vector data type.
-
-![](assets/movieapp.png)
 
 <!-- ------------------------ -->
 ## Conclusion  And Resources
