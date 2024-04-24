@@ -357,47 +357,93 @@ order by customer_key
 
 Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`.  This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
 
-<!-- ------------------------ -->
-## Building out the dbt models
-Duration: 2
-<!-- TODO: Fix this ^^ -->
+## Mesh Components:  Snowflake
+Duration: 10
 
-### DEV: Guideline to this step
+The goal of this section is to apply some of the functionality offered from Snowflake, like [object tagging](https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary) and [dynamic data masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro), to strengthen the governance around the data mesh architecture we want to architect.
 
-> aside positive
-> 
-> Ready for dev!
+The first thing we'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment.  The code below will:
 
-- From TPCH, get to a `fct_orders` and a `dim_customers`
-- Includes a `models.yml` with good documentation
-- Commit and deploy -> run a job
+- Create a `DATA_GOVERNOR` role for administering data governance responsibilities and grant appropriate permissions for masking and tagging
+- Create a `PII_ROLE` for users who can access PII data unmasked
 
-Side-thought, would it make sense to link out to a reference base git repo?
+```sql
+use role accountadmin;
 
-### PROD: Content
+-- data governor role setup
+create role if not exists data_governor;
+grant role data_governor to user doug_g2;
 
-Empty
+-- grants for data governor
+grant usage on database snowflake_sample_data to role data_governor;
+grant usage on schema snowflake_sample_data.tpch_sf1 to role data_governor;
+grant create tag on schema snowflake_sample_data.tpch_sf1 to role data_governor;
+grant create masking policy on schema snowflake_sample_data.tpch_sf1 to role data_governor;
+grant apply masking policy on account to role data_governor;
+grant apply tag on account to role data_governor;
+
+-- pii_allowed role setup
+create role if not exists pii_allowed;
+grant role pii_allowed to user doug_g2;
+
+-- grant appropriate access on the table to the pii_allowed role and public
+grant usage on database snowflake_sample_data to role pii_allowed;
+grant usage on schema snowflake_sample_data.tpch_sf1 to role pii_allowed;
+grant select on all tables in schema snowflake_sample_data.tpch_sf1 to role pii_allowed;
+```
+
+Next, we'll use the `DATA_GOVERNOR` role to perform the following:
+
+- Create a tag for PII data
+- Create a masking policy for string data
+- Assign the masking policy to the tag
+- Assign the tag to the `name` column in the `customers` table
+
+```sql
+use role data_governor;
+use database snowflake_sample_data;
+
+-- create the tag
+create tag if not exists snowflake_sample_data.tpch_sf1.pii_data;
+
+-- create the policy
+create masking policy snowflake_sample_data.tpch_sf1.pii_mask_string as (val string) returns string ->
+  case
+    when is_role_in_session('PII_ALLOWED') then val
+    else '****'
+  end;
+
+-- assign masking policy to tag
+alter tag snowflake_sample_data.tpch_sf1.pii_data set masking policy snowflake_sample_data.tpch_sf1.pii_mask_string;
+
+-- assign tag to sensitive columns
+use role data_governor;
+alter table snowflake_sample_data.tpch_sf1.customer modify column c_name set tag snowflake_sample_data.tpch_sf1.pii_data = 'C_NAME';
+```
+
+Now, test to ensure that only users with `PII_ALLOWED` role are authorized to view the columns tagged as `PII_DATA` unmasked.
+
+```sql
+-- role authorized to view pii_data unmasked
+use role pii_allowed;
+
+-- NAME column is unmasked
+select * from snowflake_sample_data.tpch_sf1.customer;
+
+-- role unauthorized to view pii_data
+use role public;
+
+-- NAME column is masked
+select * from snowflake_sample_data.tpch_sf1.customer;
+```
+
+Now that we've set up the appropriate roles, tags, and masking policies in Snowflake, it's time to jump into dbt Cloud and use some of the features there to further strengthen our data mesh architecture.
+
+## Mesh Components:  dbt Cloud
 
 <!-- ------------------------ -->
 ## Securing the data with Snowflake governance features
-Duration: 2
-<!-- TODO: Fix this ^^ -->
 
-### DEV: Guideline to this step
-
-- Demonstrate how to use dbt to do Snowflake:
-  - Tagging
-  - Masking
-  - Grants / access controls
-  - (bonus points) column or row level security
-- Simple idea could be to do this on `dim_customers`, as there's PII: name, address, etc.
-- Commit and deploy -> run a job
-
-Side-thought, would it make sense to link out to a reference base git repo?
-
-### PROD: Content
-
-Empty
 
 <!-- ------------------------ -->
 ## Making the data available to other dbt users with dbt Mesh model governance features
