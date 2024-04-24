@@ -31,7 +31,7 @@ In questo quickstart esamineremo un’ampia gamma di funzionalità di Snowflake,
 - Come fare lo swap, il drop e l’undrop di una tabella
 
 ### Cosa realizzerai
-- Comprensione di importanti funzionalità di trasformazione di Snowflake 
+- Comprenderai alcune importanti funzionalità di trasformazione di Snowflake 
 - Un clone di sviluppo di una tabella di produzione
 - Una nuova colonna in una tabella con le età calcolate dei food truck in anni
 
@@ -60,7 +60,7 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Passaggio 5 - Rinominare un foglio di lavoro
-- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Transformation”
+- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Transformation”.
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Passaggio 6 - Accedere al codice SQL di questo quickstart in GitHub
@@ -394,6 +394,6 @@ In questo quickstart hai:
 Se desideri ripetere questo quickstart, usa gli script di ripristino alla fine del foglio di lavoro associato.
 
 ### Fasi successive
-Per continuare il tuo percorso nel Data Cloud di Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
+Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
 
-- ### [Quickstart Powered by Tasty Bytes - Sommario](/guide/tasty_bytes_introduction_it/index.html#3)
+- ### [Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_it/index.html#3)
