@@ -9,7 +9,7 @@ tags: Marketing, Data Engineering, Native Application
 
 # Marketing Data Foundation For Customer 360 Starter Guide
 <!-- ------------------------ -->
-## Introduction 
+## Overview
 
 Duration: 15
 
@@ -64,11 +64,11 @@ The solution consists of the following components:
 
 <!-- ------------------------ -->
 
-## The App Architecture
+### The App Architecture
 
 This solution consists of a sample for Marketing Data for Customer 360.
 
-### Data Foundation Starter for Customer 360
+#### Data Foundation Starter for Customer 360
 
 ![C360 Architecture](assets/Detailed_Arch-Customer72.png)
 
@@ -139,7 +139,7 @@ Refer to the screenshot below:
 +--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-## Step 1: Create Database objects
+## Create Database objects
 
 Duration: 2
 
@@ -218,7 +218,7 @@ use schema demo;
 
 ```
 
-## Step 2: Upload sample data to stage
+## Upload sample data to stage
 
 Duration: 4
 
@@ -310,7 +310,7 @@ put file:///Users/dbabbjimenez/Developer/MarTech/sfguide-marketing-data-foundati
 If the upload fails due to access issue then, please follow the instructions in this [document](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui) to upload the files directly to Snowflake Stage.
 
 
-## Step 3: Load Sample data to table and Create Native Application
+## Load Sample data 
 
 Duration: 2
 
@@ -555,8 +555,13 @@ CREATE OR REPLACE SECURE VIEW CUSTOMER_360.DEMO.CAMPAIGN72_VIEW as SELECT * from
 | View CAMPAIGN72_VIEW successfully created. |
 +--------------------------------------------+
 ```
+## Create the native app
+
+Duration: 2
 
 ### Build NativeApp
+
+To deploy the native app you have to run the following command using SnowCLI:
 
 ```console
 snow app run
