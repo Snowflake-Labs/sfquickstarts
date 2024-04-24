@@ -107,8 +107,11 @@ Duration: 5
 
 You can download the notebook ![here](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
+You can do this by navigating to "Projects" from the Snowflake UI, selecting "Notebooks" and click the upload button in the top right and uploading the notebook you just downloaded.
+
+![](assets/notebooks.png)
+
 <!-- ------------------------ -->
------------START HERE---------------
 ## Snowpark External Access to call OpenAI
 
 Duration: 10
@@ -243,7 +246,9 @@ if(st.button('Ask ChatGPT')):
 
 ```
 
-Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate new recommendations. 
+Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate more tailored responses. 
+
+Important to note that the JAROWINKLER_SIMILARITY() function is being used here to calculate distance as other Snowflake distance functions are only available for embeddings created with Snowflake embed models and stored in a Snowflake vector data type.
 
 ![](assets/movieapp.png)
 
@@ -252,7 +257,9 @@ Once you have the app created you can adjust the prompt in the app and change th
 
 Duration: 5
 
-Congratulations! You've successfully built your first Streamlit App with OpenAI. After setting up our Azure and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
+Congratulations! You've successfully built your first Streamlit App with OpenAI for a RAG workload! After setting up our Azure and Snowflake and environments we built two primary things: UDFs that utilize Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
+
+![](assets/streamlitappmovies.png)
 
 ### What You Learned
 
