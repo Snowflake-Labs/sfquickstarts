@@ -5,7 +5,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Mesh
-authors: Sean McIntyre
+authors: Sean McIntyre, Doug Guthrie
 
 # Build Data Products and Data Mesh with dbt Cloud
 
@@ -21,13 +21,23 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
   - If you're not familiar with dbt, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
   - Or if you are not a developer, please see such and such blog post / slides
 
+- Snowflake
+    - Account admin access to a Snowflake Enterprise or Business Critical account
+    - Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
+
+> aside negative
+> 
+> Snowflake Standard Edition is not sufficient, due to usage of Snowflake Enterprise features
+
 - dbt Cloud
-    - You must have a dbt Cloud Enterprise account
+    - Account admin access to a dbt Cloud Enterprise account
     - Set your development and deployment [environments](https://docs.getdbt.com/docs/dbt-cloud-environments) to use dbt version 1.6 or later. You can also opt Keep on latest version of to always use the latest version of dbt.
 
-- Snowflake
-    - Access to a Snowflake account
-    - Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
+> aside negative
+> 
+> If you are participating in the Snowflake Summit Hands On Lab session, [please use this form](https://forms.gle/S7P9Rw1Udbfxf7TdA) to submit your account information so your account can be upgraded for the duration of the Hands On Lab.
+>
+> Otherwise, you may receive a dbt Cloud Enterprise account by [requesting one from the dbt Labs team](https://www.getdbt.com/contact).
 
 ### What You’ll Learn
 * How to understand when data mesh is the right solution for your organization
@@ -36,23 +46,16 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
 
 * How to properly set up a dbt Cloud account with dbt Mesh
 
-* How to utilize dbt's model governance features to increase the resiliency of your data mesh landscape
+* How to utilize dbt's model governance features to increase the resiliency of your data mesh
 
 ### What You’ll Build 
 
-* A dbt Cloud account containing multiple projects that showcase the governance features of Snowflake (Object tagging, masking, grants) alongside dbt Cloud's dbt Mesh framework
+* A dbt Cloud account containing multiple projects that showcase the governance features of Snowflake (object tagging, masking, grants) alongside dbt Cloud's dbt Mesh framework
 
-## The story / background
+<!-- ------------------------ -->
+## Motivating data mesh
 Duration: 5
 <!-- TODO: Fix this ^^ -->
-
-### DEV: Guideline to this step
-
-- I'm thinking we need to set the stage for the people going through the QS guide. Might be a major hurdle, how do we get this effective without losing busy people?
-  - Maybe a video format as well?
-  - Nice graphic to explain what we're building?
-
-### PROD: Content
 
 We have sales and customer data in our source systems (TPCH)
 
@@ -71,7 +74,91 @@ Additionally, the data platform team wants to stop thinking in terms of team-bas
 Here’s how they can do it
 
 <!-- ------------------------ -->
-## dbt Cloud Account Setup
+## Launch Snowflake and dbt Cloud for this Quickstart
+Duration: 10
+<!-- TODO: Fix this ^^ -->
+
+### Sign up for a Snowflake Enterprise trial account
+
+
+
+### Sign up for dbt Cloud Partner Connect
+
+<!-- ------------------------ -->
+## Set up Snowflake securely
+Duration: 10
+<!-- TODO: Fix this ^^ -->
+
+
+TODO: Insert image here
+
+
+
+The first thing we'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment.  The code below will:
+
+- Create a `jaffle_da` role for administering data governance responsibilities and grant appropriate permissions for masking and tagging
+- Create a `jaffle_da_pii_reader_role` for users who can access PII data unmasked
+
+First, let's make a warehouse.
+
+```sql
+use role accountadmin;
+
+create or replace warehouse jaffle_wh with warehouse_size xsmall;
+```
+
+First set up the jaffle_da workspace. The idea here is the jaffle_da_role is creating and managing resources in the jaffle_da database.
+
+```sql
+use role accountadmin;
+
+create database if not exists jaffle_da;
+create schema if not exists jaffle_da.prod;
+
+create role if not exists jaffle_da_role;
+create role if not exists jaffle_da_pii_reader_role;
+grant role jaffle_da_pii_reader_role to role jaffle_da_role;
+
+-- TODO: Can we simplify this to jaffle_da_role having full write access to jaffle_da database?
+grant usage on database jaffle_da to role jaffle_da_role;
+grant usage on schema jaffle_da.prod to role jaffle_da_role;
+grant usage on warehouse jaffle_wh to role jaffle_da_role;
+grant create schema on database jaffle_da to role jaffle_da_role;
+
+grant create tag on schema jaffle_da.prod to role jaffle_da_role;
+grant create masking policy on schema jaffle_da.prod to role jaffle_da_role;
+grant apply masking policy on account to role jaffle_da_role;
+grant apply tag on account to role jaffle_da_role;
+```
+
+Then the jaffle_finance workspace
+
+```sql
+create database if not exists jaffle_finance;
+create schema if not exists jaffle_finance.prod;
+
+create role if not exists jaffle_finance_role;
+
+grant usage on warehouse jaffle_wh to role jaffle_finance_role;
+grant usage on database jaffle_da to role jaffle_finance_role;
+grant usage on schema jaffle_da.prod to role jaffle_finance_role;
+grant select on all tables in schema jaffle_da.prod to role jaffle_finance_role;
+```
+
+To get this all working correctly, make sure to assign the relevant roles to your database user.
+
+```sql
+use role accountadmin;
+
+grant role jaffle_da_role to user <your-snowflake-username>;
+grant role jaffle_da_pii_reader_role to user <your-snowflake-username>;
+grant role jaffle_finance_role to user <your-snowflake-username>;
+```
+
+
+
+<!-- ------------------------ -->
+## Create dbt Cloud projects for collaboration
 Duration: 10
 <!-- TODO: Fix this ^^ -->
 
@@ -82,31 +169,57 @@ In this section, you'll create two new, empty projects in dbt Cloud to serve as 
 - **Foundational projects** (or upstream projects) typically contain core models and datasets that serve as the base for further analysis and reporting.
 - **Downstream projects** build on these foundations, often adding more specific transformations or business logic for dedicated teams or purposes. 
 
-Insert image here showing picture of project setup
+### First project: Jaffle | Data Platform
 
-To [create](/docs/cloud/about-cloud-setup) a new project in dbt Cloud:
+To [create](https://docs.getdbt.com/docs/cloud/about-cloud-setup) a new project in dbt Cloud:
 
 1. From **Account settings**, click **+ New Project**.
-2. Enter a project name and click **Continue**.
-   - Use "Jaffle | Data Platform" for one project
-   - Use "Jaffle | Finance" for the other project
-3. Select your data platform, then **Next** to set up your connection.
+2. In the **Project name** field, enter "Jaffle | Data Platform" and click **Continue**.
+3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
 4. In the **Configure your environment** section, enter the **Settings** for your new project.
+  - Account: The Snowflake account you are operating in
+  - Optional settings:
+    - Role: `jaffle_da_role`
+    - Database: `jaffle_da`
+    - Warehouse: `jaffle_wh`
+  - Development credentials:
+    - Auth method: `Username and password`
+    - Username: Your Snowflake username
+    - Password: Your Snowflake password
 5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
 6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
-   - For this guide, make sure you create a single [development](/docs/dbt-cloud-environments#create-a-development-environment) and [Deployment](/docs/deploy/deploy-environments) per project.
-     - For "Jaffle | Data Platform", set the default database to `jaffle_da`.
-     - For "Jaffle | Finance", set the default database to `jaffle_finance`
+7. Select Managed Repo, and name it `jaffle_da`. 
+8. Click into the Environments section and create a Deployment Environment called `Production`.
 
-**TODO** - Insert gif here of going through the project setup process
+### Second project: Jaffle | Finance
 
-7. Select managed 
+> aside negative
+> 
+> dbt Cloud Enterprise is required to create more than one project in an account. If you wish to try this Quickstart Guide with an Enterprise account, [please contact dbt Labs](https://www.getdbt.com/contact). Otherwise, you may skip creating a second project.
 
-7. Continue the prompts to complete the project setup. Once configured, each project should have:
-    - A data platform connection
-    - New git repo
-    - One or more [environments](/docs/deploy/deploy-environments) (such as development, deployment)
+1. From **Account settings**, click **+ New Project**.
+2. In the **Project name** field, enter "Jaffle | Finance" and click **Continue**.
+3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
+4. In the **Configure your environment** section, enter the **Settings** for your new project.
+  - Account: The Snowflake account you are operating in
+  - Optional settings:
+    - Role: `jaffle_finance_role`
+    - Database: `jaffle_finance`
+    - Warehouse: `jaffle_wh`
+  - Development credentials:
+    - Auth method: `Username and password`
+    - Username: Your Snowflake username
+    - Password: Your Snowflake password
+5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
+6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
+7. Select Managed Repo, and name it `jaffle_finance`. 
 
+Once configured, each project should have:
+  - A data platform connection
+  - New git repo
+  - One or more [environments](/docs/deploy/deploy-environments) (such as development, deployment)
+
+<!-- ------------------------ -->
 ## Build Foundational Project
 Duration: 10
 
@@ -117,14 +230,13 @@ dbt Cloud enables data practitioners to develop in their tool of choice and come
 In this section of the guide, you will set the "Jaffle | Data Platform" project as your foundational project using the dbt Cloud IDE.
 
 1. First, navigate to the **Develop** page to verify your setup.
-2. Click **Initialize dbt project** if you’ve started with an empty repo:
-
-3. Delete the `models/example` folder.  
-4. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `platform`.
-5. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
-6. In the **File Explorer**, hover over the project directory and click the **...**, then select **Create file**.
-7. Create two new folders: `models/staging` and `models/core`.
-
+2. If the repo you are working on is empty, click the **Initialize dbt project** button and commit the changes.
+3. Create a new branch.
+4. Delete the `models/example` folder.  
+5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `foundation`.
+6. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
+7. In the **File Explorer**, hover over the project directory and click the **...**, then select **Create file**.
+8. Create two new folders: `models/staging` and `models/core`.
 
 ### Staging layer
 Now that you've set up the foundational project, let's start building the data assets. Set up the staging layer as follows:
@@ -267,7 +379,7 @@ Now set up the core layer as follows:
 ```sql
 {{
     config(
-        materialized = 'table',
+        materialized='table',
     )
 }}
 
@@ -327,49 +439,19 @@ final as (
 select *
 from final
 order by order_date
-
 ```
 
 ### Execute
 
-Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`.  This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
+Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
 
-## Mesh Components:  Snowflake
+<!-- ------------------------ -->
+## Use dbt to apply Snowflake masking to PII
 Duration: 5
 
 The goal of this section is to apply some of the functionality offered from Snowflake, like [object tagging](https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary) and [dynamic data masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro), to strengthen the governance around the data mesh architecture we want to architect.
 
-The first thing we'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment.  The code below will:
-
-- Create a `DATA_GOVERNOR` role for administering data governance responsibilities and grant appropriate permissions for masking and tagging
-- Create a `PII_ROLE` for users who can access PII data unmasked
-
-```sql
-use role accountadmin;
-
--- data governor role setup
-create role if not exists data_governor;
-grant role data_governor to user doug_g2;
-
--- grants for data governor
-grant usage on database snowflake_sample_data to role data_governor;
-grant usage on schema snowflake_sample_data.tpch_sf1 to role data_governor;
-grant create tag on schema snowflake_sample_data.tpch_sf1 to role data_governor;
-grant create masking policy on schema snowflake_sample_data.tpch_sf1 to role data_governor;
-grant apply masking policy on account to role data_governor;
-grant apply tag on account to role data_governor;
-
--- pii_allowed role setup
-create role if not exists pii_allowed;
-grant role pii_allowed to user doug_g2;
-
--- grant appropriate access on the table to the pii_allowed role and public
-grant usage on database snowflake_sample_data to role pii_allowed;
-grant usage on schema snowflake_sample_data.tpch_sf1 to role pii_allowed;
-grant select on all tables in schema snowflake_sample_data.tpch_sf1 to role pii_allowed;
-```
-
-Next, we'll use the `DATA_GOVERNOR` role to perform the following:
+Next, we'll use the `jaffle_da_role` role to perform the following:
 
 - Create a tag for PII data
 - Create a masking policy for string data
@@ -377,29 +459,46 @@ Next, we'll use the `DATA_GOVERNOR` role to perform the following:
 - Assign the tag to the `c_name` column in the `customers` table
 
 ```sql
-use role data_governor;
-use database snowflake_sample_data;
+use role jaffle_da_role;
+use database jaffle_da;
 
 -- create the tag
-create tag if not exists snowflake_sample_data.tpch_sf1.pii_data;
+create tag if not exists jaffle_da.prod.pii_data;
 
 -- create the policy
-create masking policy snowflake_sample_data.tpch_sf1.pii_mask_string as (val string) returns string ->
+create or replace masking policy jaffle_da.prod.pii_mask_string as (val string) returns string ->
   case
-    when is_role_in_session('PII_ALLOWED') then val
+    when is_role_in_session('jaffle_da_pii_reader_role') then val
     else '****'
   end;
-
+  
 -- assign masking policy to tag
-alter tag snowflake_sample_data.tpch_sf1.pii_data set masking policy snowflake_sample_data.tpch_sf1.pii_mask_string;
-
--- grant data_governor role to your transformer role
-grant role data_governor to role transformer;
+alter tag jaffle_da.prod.pii_data set masking policy jaffle_da.prod.pii_mask_string;
 ```
 
 Now that we've set up the appropriate roles, tags, and masking policies in Snowflake, it's time to jump into dbt Cloud to both apply the masking policy to the relevant models and, additionally, use some of the features there to further strengthen our data mesh architecture.
 
-## Mesh Components:  dbt Cloud
+Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
+
+```sql
+{{
+    config(
+        materialized='table',
+        post_hook="alter table {{ this }} modify column name set tag snowflake_sample_data.tpch_sf1.pii_data = 'name'"
+    )
+}}
+```
+
+This will apply the tag to the column that we want to mask because it's PII data.
+
+Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
+
+> aside positive
+> 
+> To learn more about how to apply tags to Snowflake tables, look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from Infinite Lambda.
+
+<!-- ------------------------ -->
+## Add model contracts and enforce Snowflake grants with dbt
 Duration: 5
 
 Now that our Snowflake environment is set up with proper data governance practices, it's time to turn to dbt Cloud to utilize that model in a way that's both complimentary and additive.  To do that, we'll look at adding the following model governance features to our project:
@@ -421,7 +520,7 @@ models:
       contract:
         enforced: true
       grants:
-        select: ['pii_allowed', 'finance_role']  # TODO:  Update this
+        select: ['jaffle_da_pii_reader_role', 'jaffle_finance_role']
     columns:
       - name: order_key
         data_type: int
@@ -481,19 +580,6 @@ This code does the following:
 - It will add and enforce a contract to this model.  This will enable dbt to do a couple things:  1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
 - The grants config is used to set permissions or grants for a resource. When a model is run, dbt will run grant and/or revoke statements to ensure that the permissions on the database object match the grants you have configured on the resource.
 
-2. Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
-
-```sql
-{{
-    config(
-        materialized = 'table',
-        post_hook = "alter table {{ this }} modify column name set tag snowflake_sample_data.tpch_sf1.pii_data = 'name'"
-    )
-}}
-```
-
-This will apply the tag to the column that we want to mask because it's PII data.
-
 3. Navigate to the dbt Cloud IDE **Lineage** tab to see the model noted as **Public**, below the model name.
 
 **TODO: Insert picture here showing new lineage**
@@ -516,7 +602,7 @@ To run your first deployment dbt Cloud job, you will need to create a new dbt Cl
 5. Click **Explore** from the upper menu bar. You should now see your lineage, tests, and documentation coming through successfully.
 
 <!-- ------------------------ -->
-## Create downstream dbt project that accesses base project
+## Connect two dbt projects together
 Duration: 10
 
 In this section, you will set up the downstream project, "Jaffle | Finance", and cross-project reference the `fct_orders` model from the foundational project. Navigate to the Develop page to set up our project:
@@ -547,17 +633,18 @@ Notice the cross-project `ref` by using two arguments to the function - 1) name 
 7. Save your file and notice the lineage in the bottom pane.
 
 <!-- ------------------------ -->
-## Other stuff I don't know where it fits
+## Share data with Snowflake Private Listings
+Duration: 1
+
+To be filled in
+
+<!-- ------------------------ -->
+## Conclusion
 Duration: 1
 <!-- TODO: Fix this ^^ -->
 
-### DEV: Guideline to this step
+Additional features:
 
-- dbt Cloud RBAC <- out of scope but important to mention
-- dbt Explorer
-- Snowflake Private Listings
-
-### PROD: Content
-
-Empty
-
+- Downstream jobs
+- Versions
+- Secure project access with dbt Cloud Role Based Access Controls
