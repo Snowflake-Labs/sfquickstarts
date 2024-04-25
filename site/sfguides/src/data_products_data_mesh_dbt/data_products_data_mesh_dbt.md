@@ -393,28 +393,11 @@ create masking policy snowflake_sample_data.tpch_sf1.pii_mask_string as (val str
 -- assign masking policy to tag
 alter tag snowflake_sample_data.tpch_sf1.pii_data set masking policy snowflake_sample_data.tpch_sf1.pii_mask_string;
 
--- assign tag to sensitive columns
-use role data_governor;
-alter table snowflake_sample_data.tpch_sf1.customer modify column c_name set tag snowflake_sample_data.tpch_sf1.pii_data = 'C_NAME';
+-- grant data_governor role to your transformer role
+grant role data_governor to role transformer;
 ```
 
-Now, test to ensure that only users with `PII_ALLOWED` role are authorized to view the columns tagged as `PII_DATA` unmasked.
-
-```sql
--- role authorized to view pii_data unmasked
-use role pii_allowed;
-
--- NAME column is unmasked
-select * from snowflake_sample_data.tpch_sf1.customer;
-
--- role unauthorized to view pii_data
-use role public;
-
--- NAME column is masked
-select * from snowflake_sample_data.tpch_sf1.customer;
-```
-
-Now that we've set up the appropriate roles, tags, and masking policies in Snowflake, it's time to jump into dbt Cloud and use some of the features there to further strengthen our data mesh architecture.
+Now that we've set up the appropriate roles, tags, and masking policies in Snowflake, it's time to jump into dbt Cloud to both apply the masking policy to the relevant models and, additionally, use some of the features there to further strengthen our data mesh architecture.
 
 ## Mesh Components:  dbt Cloud
 Duration: 5
@@ -423,6 +406,7 @@ Now that our Snowflake environment is set up with proper data governance practic
 
 - [Contracts](https://docs.getdbt.com/docs/collaborate/govern/model-contracts)
 - [Access](https://docs.getdbt.com/docs/collaborate/govern/model-access) levels
+- [Grants](https://docs.getdbt.com/reference/resource-configs/grants)
 
 By using these configurations within your project, you'll be in effect creating a stable set of APIs that your downstream projects are able to consume from.
 
@@ -440,7 +424,7 @@ models:
         select: ['pii_allowed', 'finance_role']  # TODO:  Update this
     columns:
       - name: order_key
-        data_type: number
+        data_type: int
         description: ""
 
       - name: order_date
@@ -448,7 +432,7 @@ models:
         description: ""
 
       - name: customer_key
-        data_type: number
+        data_type: int
         description: ""
 
       - name: status_code
@@ -460,7 +444,7 @@ models:
         description: ""
 
       - name: ship_priority
-        data_type: number
+        data_type: int
         description: ""
 
       - name: clerk_name
@@ -476,19 +460,19 @@ models:
         description: ""
 
       - name: gross_item_sales_amount
-        data_type: number
+        data_type: numeric(38, 3)
         description: ""
 
       - name: item_discount_amount
-        data_type: number
+        data_type: numeric(38, 3)
         description: ""
 
       - name: item_tax_amount
-        data_type: number
+        data_type: numeric(38, 3)
         description: ""
 
       - name: net_item_sales_amount
-        data_type: number
+        data_type: numeric(38, 3)
         description: ""
 ```
 
@@ -497,7 +481,20 @@ This code does the following:
 - It will add and enforce a contract to this model.  This will enable dbt to do a couple things:  1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
 - The grants config is used to set permissions or grants for a resource. When a model is run, dbt will run grant and/or revoke statements to ensure that the permissions on the database object match the grants you have configured on the resource.
 
-2. Navigate to the dbt Cloud IDE **Lineage** tab to see the model noted as **Public**, below the model name.
+2. Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
+
+```sql
+{{
+    config(
+        materialized = 'table',
+        post_hook = "alter table {{ this }} modify column name set tag snowflake_sample_data.tpch_sf1.pii_data = 'name'"
+    )
+}}
+```
+
+This will apply the tag to the column that we want to mask because it's PII data.
+
+3. Navigate to the dbt Cloud IDE **Lineage** tab to see the model noted as **Public**, below the model name.
 
 **TODO: Insert picture here showing new lineage**
 
@@ -520,20 +517,34 @@ To run your first deployment dbt Cloud job, you will need to create a new dbt Cl
 
 <!-- ------------------------ -->
 ## Create downstream dbt project that accesses base project
-Duration: 1
-<!-- TODO: Fix this ^^ -->
+Duration: 10
 
-### DEV: Guideline to this step
+In this section, you will set up the downstream project, "Jaffle | Finance", and cross-project reference the `fct_orders` model from the foundational project. Navigate to the Develop page to set up our project:
 
-- Demonstrate how to add:
-  - Create new project
-  - Link to first project
-  - Cross-project ref
-- Commit and deploy -> run a job (?)
+1. If you’ve also started with a new git repo, click Initialize dbt project under the Version control section.
+2. Delete the models/example folder
+3. Navigate to the dbt_project.yml file and remove lines 39-42 (the my_new_project model reference).
+4. In the File Explorer, hover over the project directory, click the ... and Select Create file.
+5. Name the file dependencies.yml and add the upstream platform project and click save.
 
-### PROD: Content
+```yaml
+projects:
+  - name: platform
+```
 
-Empty
+6. You're now set to add a model that references the `fct_orders` model created in the separate project by your platform team.  In your models directory, create a file `models/agg_segment_revenue.sql`
+
+```sql
+select
+    market_segment,
+    sum(gross_item_sales_amount) as total_revenue,
+from {{ ref('platform', 'fct_orders') }}
+group by 1
+```
+
+Notice the cross-project `ref` by using two arguments to the function - 1) name of the project (as defined within that upstream project and declared in `dependencies.yml`) and 2) the name of a public model in that project.
+
+7. Save your file and notice the lineage in the bottom pane.
 
 <!-- ------------------------ -->
 ## Other stuff I don't know where it fits
