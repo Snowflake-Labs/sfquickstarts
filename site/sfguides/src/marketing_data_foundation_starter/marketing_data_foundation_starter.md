@@ -110,6 +110,7 @@ Run the below command and provide your account details.
 snow connection add
 ```
 
+
 Test your connection by running the below command
 
 ```console
@@ -190,6 +191,9 @@ snow sql -f sql_scripts/build_views.sql
 ```console
 snow app run
 ```
+
+![Alt text](assets/Appcreation.png)
+
 
 ## [Quick-deploy] Build and Deploy App in one go
 
