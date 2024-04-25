@@ -33,7 +33,7 @@ Il set di librerie e runtime in Snowflake che consente di distribuire ed elabora
 
 **Costrutti runtime flessibili**: Snowpark fornisce costrutti runtime flessibili che consentono agli utenti di inserire ed eseguire logica personalizzata. Gli sviluppatori possono creare in modo fluido pipeline di dati, modelli ML e applicazioni basate sui dati utilizzando User Defined Function e stored procedure.
 
-Scopri di più su [Snowpark](https://www.snowflake.com/snowpark/).
+Scopri di più su [Snowpark](https://www.snowflake.com/it/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
