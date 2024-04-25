@@ -909,7 +909,6 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 
 ### What You Learned
 
-When you complete this quickstart, you will have gained practical experience in several areas:
 * How to acquire data from the Snowflake Marketplace
 * How to load data from external storage
 * How to transform geospatial data using H3 and Time Series functions
