@@ -39,11 +39,15 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ### What is Snowflake CORTEX ?
 
-[Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
+
+[Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/) Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
 
 LLM Functions: SQL and Python functions that leverage large language models (LLMs) for understanding, querying, translating, summarizing, and generating free-form text.
 
 ML Functions: SQL functions that perform predictive analysis using machine learning to help you gain insights into your structured data and accelerate everyday analytics.
+
+> aside negative
+> IMPORTANT: Some of CORTEX's functions and features used in this quickstart are in PrPr and or PuPr.  Please reach out to your account team for enablement.  [Availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_ga=2.5151286.405859672.1709568467-277021311.1701887324&_gac=1.124754680.1707955750.Cj0KCQiA5rGuBhCnARIsAN11vgRLWfK6RIoIEqcZ7cFas8qwN4yCoL0q9nttp5UEmSocnPmhdBG57fgaAjqNEALw_wcB&_fsi=j2b82Wl3#availability).
 
 ![Snowpark](assets/cortex.png)
 
@@ -124,6 +128,17 @@ Create the internal stage for loading repair manuals into.
 CREATE STAGE REPAIR_MANUALS;
 ```
 
+Grant the appropriate CORTEX role to your user, so you can invoke the LLM's
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE ROLE cortex_user_role;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE cortex_user_role;
+
+GRANT ROLE cortex_user_role TO USER your_user;
+```
+
 Your snowflake environment is now ready to start loading files, creating tables, and turning your input data into vectorized data.
 
 <!-- ------------------------ -->
@@ -154,19 +169,19 @@ If you do not have GIT installed you can download the four repair manuals needed
 
 [Otto 1500][1500]
 
-[1500]: assets/Repair_Manuals/OPERATION_AND_MAINTENANCE_MANUAL_OTTO_1500_V2.pdf
+[1500]: https://github.com/Snowflake-Labs/sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex/blob/main/Ai%20Maintenance/Repair%20Manuals/OPERATION%20AND%20MAINTENANCE%20MANUAL%20OTTO%201500%20V2.pdf
 
 [Otto 600][600]
 
-[600]: assets/Repair_Manuals/OTTO_600_workflows_data_sheet.pdf
+[600]: https://github.com/Snowflake-Labs/sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex/blob/main/Ai%20Maintenance/Repair%20Manuals/OTTO-600-workflows-data-sheet.pdf
 
 [Otto 100][100]
 
-[100]: assets/Repair_Manuals/OPERATION_AND_MAINTENANCEMANUALOTTO_100_V2_4.pdf
+[100]: https://github.com/Snowflake-Labs/sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex/blob/main/Ai%20Maintenance/Repair%20Manuals/OPERATION%20AND%20MAINTENANCEMANUALOTTO%20100%20V2.4.pdf
 
 [Lifter][lifter]
 
-[lifter]: assets/Repair_Manuals/OTTO_Lifter_MkIV_OMM_Operation_maintenance_manual.pdf
+[lifter]: https://github.com/Snowflake-Labs/sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex/blob/main/Ai%20Maintenance/Repair%20Manuals/OTTO%20Lifter%20MkIV%20-%20OMM-000108%20Operation%20and%20maintenance%20manual.pdf
 
 At this point you should have four repair manuals and the needed data structures to begin data engineering work on the solution.
 
@@ -704,6 +719,22 @@ Once you have copy and pasted the above code into your streamlit app, click blue
 
 You can now ask any question you like of the LLM in regards to fixing the Otto 1500 AMR.  Imagine this app running on a tablet for your maintenance crew as they go from robot to robot fixing common problems and entering repair logs.  Those same repair logs are then uploaded to Snowflake and the model uses them for the next query.
 
+## Cleanup
+
+> aside negative
+> IMPORTANT:
+>
+> - If you have created other solutions in your LLM database, do not DROP it.  You will lose those solutions.
+>
+
+To clean up and completely remove this app run the below SQL commands.
+
+```sql
+DROP DATABASE LLM;
+```
+
+This drops all the created database objects including the internal stage, tables, UDF's and Streamlit app.
+
 ## Conclusion
 
 You have built an Ai guided equipment maintenance chat bot.  This chat bot base can be used for any piece of equipment.  If you have the repair manuals for a Drill Press, a lithography machine, or a robotic arm.  This app can be used to decrease downtime due to servicing the equipment when in a failed state. You can add your geniune repair logs to further enhance the quality of output from the LLM.
@@ -726,19 +757,3 @@ Duration: 3
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/FZsHyujZoffrQRjG8).
-
-## Cleanup
-
-> aside negative
-> IMPORTANT:
->
-> - If you have created other solutions in your LLM database, do not DROP it.  You will lose those solutions.
->
-
-To clean up and completely remove this app run the below SQL commands.
-
-```sql
-DROP DATABASE LLM;
-```
-
-This drops all the created database objects including the internal stage, tables, UDF's and Streamlit app.
