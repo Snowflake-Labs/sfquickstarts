@@ -12,7 +12,7 @@ lastUpdated: 2024-04-18
 <!-- Copy of Sigma hosted version, with customized prerequisites based on Snowflake's needs -->
 
 ## Overview 
-Duration: 5 
+Duration: 1 
 
 This QuickStart will guide you through an end-to-end example of utilizing Snowflake's new machine learning features. 
 
@@ -24,15 +24,23 @@ This approach not only maintains data security within Snowflake, but also broade
 
 In our example, we'll analyze historic food truck sales data. We aim to develop a model identifying key drivers of high sales in the past and explore how a business analyst can leverage this model for informed decision-making. The analyst will be able to collaborate with the data scientist all from a sigma workbook.
 
-Note: If you are coming to this QuickStart to learn how to build a model on top of a data asset you have already created, you can skip to [step 5.](http://localhost:8000/guide/partner_snowflake_predictive_model_using_sigma%20copy_for_Snowflake_hosting/index.html?index=..%2F..index#4)
-
 ### Target Audience
 Anyone who is interested in learning how to easily leverage the power of Snowflakes machine learning features, by using Sigma.
 
-### Prerequisites
-Thanks for signing up for Snowflake & Sigma’s Virtual Hands-On Lab, “Develop a Predictive Model Using Snowflake and Sigma”.
+### What You Will Learn
 
-To ensure that you can follow along during the lab, please complete the work below prior to the start of the lab.
+- How to explore and build a dataset for training a model
+- How to build a machine learning model using Snowpark ML
+- How to register a model in the Snowpark Model Registry
+- How to expose the model to business users in Sigma
+
+### Prerequisites
+Thanks for signing up for Snowflake & Sigma’s Hands-On Lab, “Develop a Predictive Model Using Snowflake and Sigma”.
+
+To ensure that you can follow along during the lab, please complete the work outlined on the following two pages prior to the start of the lab. 
+
+## Snowflake Prerequisites 
+Duration: 5
 
 #### 1: Sign up for a Snowflake Trial:
 You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the `ACCOUNTADMIN` role for some steps below.
@@ -41,64 +49,9 @@ You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snow
 #### 2: Enable Anaconda Packages in Snowflake:
 Follow the directions [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started) to accept Snowflake’s Third Party Terms. You will need to be an `ACCOUNTADMIN` role in order to complete this step. To select (or change) the current role for a session in Snowsight, click the user context dropdown in the upper-left corner of Snowsight, hover over to `Switch Role` and choose `ACCOUNTADMIN.`
 
-#### 3: Sign Up for a Sigma Trial:
-From Snowflake, in Snowsight, navigate to `Admin` > `Partner Connect`, then search for `Sigma` and follow the instructions to sign up for a free trial. 
 
-When signing up for a Sigma trial via Partner Connect, relevant Snowflake objects, such as a database (PC_SIGMA_DB), a compute warehouse (PC_SIGMA_WH), a role (PC_SIGMA_ROLE), and a user (PC_SIGMA_USER) for working with Snowflake data in Sigma. 
 
-Furthermore, Partner Connect will automatically create a Snowflake connection for you in Sigma. (Snowflake PC_SIGMA_WH).
-
-If you already have a Sigma account (or [created a Sigma trial manually](https://www.sigmacomputing.com/free-trial)), and did not use Partner Connect to create these Snowflake objects, you can run the following commands in a [Snowsight Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface):
-
-```code
-USE ROLE SYSADMIN;
-CREATE DATABASE PC_SIGMA_DB;
-CREATE WAREHOUSE PC_SIGMA_WH
-    WAREHOUSE_SIZE='XSMALL'
-    INITIALLY_SUSPENDED=TRUE
-    AUTO_SUSPEND=120;
-
-USE ROLE SECURITYADMIN;
-CREATE ROLE PC_SIGMA_ROLE;
-GRANT ALL ON DATABASE PC_SIGMA_DB TO ROLE PC_SIGMA_ROLE;
-GRANT USAGE ON WAREHOUSE PC_SIGMA_WH TO ROLE PC_SIGMA_ROLE;
-
-GRANT ROLE PC_SIGMA_ROLE TO ROLE SYSADMIN;
-GRANT ROLE PC_SIGMA_ROLE TO USER <your-snowflake-user>;
-```
-
-#### 4: Create Sigma Writeback DB
-Per Sigma best practices, create a dedicated database for writeback functionality. To create this writeback database, you can run the following commands in a [Snowsight Worksheet:](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface)
-
-```code
-USE ROLE SYSADMIN;
-CREATE DATABASE SIGMA_INTERNAL;
-CREATE SCHEMA SIGMA_INTERNAL.WRITEBACK;
-
-USE ROLE SECURITYADMIN;
-GRANT ALL ON DATABASE SIGMA_INTERNAL TO ROLE PC_SIGMA_ROLE;
-GRANT ALL ON SCHEMA SIGMA_INTERNAL.WRITEBACK TO ROLE PC_SIGMA_ROLE;
-```
-
-#### 5: Configure Sigma Connection:
-Follow [these instructions](https://help.sigmacomputing.com/hc/en-us/articles/360037430473-Set-up-write-access#h_01FDX02PCDXMKNB4D4139W2KEY) to set the Write DB and Write Schema in your Sigma connection. 
-
-If you set up Sigma via Partner Connect, the connection you will be editing is `Snowflake PC_SIGMA_WH`. 
-
-If you did not set up Sigma via Partner Connect, [follow these instructions](https://help.sigmacomputing.com/hc/en-us/articles/360037429913-Connect-to-Snowflake#h_01EN10KHTFJ9A3S46B5W5NX5M9) for creating a Snowflake connection in Sigma. 
-
-<aside class="negative">
-<strong>NOTE:</strong><br> You may not know your Sigma user (PC_SIGMA_USER) password, as via Partner Connect it is generated automatically. 
-</aside>
-
-To update your PC_SIGMA_USER password, you can run the following: 
-
-```code
-USE ROLE ACCOUNTADMIN;
-ALTER USER PC_SIGMA_USER SET PASSWORD='<assign-password-here>';
-```
-
-#### Install Python:
+#### 3: Install Python:
 If you do not have Python installed on your machine, install Python [here.](https://www.python.org/downloads/) 
 
 <aside class="negative">
@@ -113,7 +66,7 @@ python3 --version
 
 You should see the version of Python you chose to install.
 
-#### Install Snowpark ML:
+#### 4: Install Snowpark ML:
 From a terminal, run:
 
 ```code
@@ -139,7 +92,7 @@ conda env create -f /path/to/conda_env.yml
 
 If you are using VSCode and the Jupyter extension for VSCode (see step 9), using Anaconda will be your preferred installation method.
 
-#### Install Jupyter:
+#### 5: Install Jupyter:
 From a terminal, run:
 
 ```code
@@ -170,7 +123,7 @@ You should see an output similar to the following:
     traitlets        : 5.14.0
 ```
 
-#### Install VSCode (optional):
+#### 6: Install VSCode (optional):
 While you can use any IDE of your choice, for this lab we will be training our model in a Jupyter Notebook within VSCode. You can install VSCode [here](https://code.visualstudio.com/download), and can follow [these instructions](https://code.visualstudio.com/docs/datascience/jupyter-notebooks) to make sure you can open your own Jupyter Notebook in VScode. 
 
 A good way to test this is to run the following imports in a notebook cell and make sure there are no errors:
@@ -183,6 +136,66 @@ from snowflake.ml.modeling.linear_model import LinearRegression
 
 ![Footer](assets/sigma_footer.png)
 <!-- END OF SECTION-->
+
+## Sigma Prerequisites 
+Duration: 3
+
+#### 1: Sign Up for a Sigma Trial:
+From Snowflake, in Snowsight, navigate to `Admin` > `Partner Connect`, then search for `Sigma` and follow the instructions to sign up for a free trial. 
+
+When signing up for a Sigma trial via Partner Connect, relevant Snowflake objects, such as a database (PC_SIGMA_DB), a compute warehouse (PC_SIGMA_WH), a role (PC_SIGMA_ROLE), and a user (PC_SIGMA_USER) for working with Snowflake data in Sigma. 
+
+Furthermore, Partner Connect will automatically create a Snowflake connection for you in Sigma. (Snowflake PC_SIGMA_WH).
+
+If you already have a Sigma account (or [created a Sigma trial manually](https://www.sigmacomputing.com/free-trial)), and did not use Partner Connect to create these Snowflake objects, you can run the following commands in a [Snowsight Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface):
+
+```code
+USE ROLE SYSADMIN;
+CREATE DATABASE PC_SIGMA_DB;
+CREATE WAREHOUSE PC_SIGMA_WH
+    WAREHOUSE_SIZE='XSMALL'
+    INITIALLY_SUSPENDED=TRUE
+    AUTO_SUSPEND=120;
+
+USE ROLE SECURITYADMIN;
+CREATE ROLE PC_SIGMA_ROLE;
+GRANT ALL ON DATABASE PC_SIGMA_DB TO ROLE PC_SIGMA_ROLE;
+GRANT USAGE ON WAREHOUSE PC_SIGMA_WH TO ROLE PC_SIGMA_ROLE;
+
+GRANT ROLE PC_SIGMA_ROLE TO ROLE SYSADMIN;
+GRANT ROLE PC_SIGMA_ROLE TO USER <your-snowflake-user>;
+```
+
+#### 2: Create Sigma Writeback DB
+Per Sigma best practices, create a dedicated database for writeback functionality. To create this writeback database, you can run the following commands in a [Snowsight Worksheet:](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface)
+
+```code
+USE ROLE SYSADMIN;
+CREATE DATABASE SIGMA_INTERNAL;
+CREATE SCHEMA SIGMA_INTERNAL.WRITEBACK;
+
+USE ROLE SECURITYADMIN;
+GRANT ALL ON DATABASE SIGMA_INTERNAL TO ROLE PC_SIGMA_ROLE;
+GRANT ALL ON SCHEMA SIGMA_INTERNAL.WRITEBACK TO ROLE PC_SIGMA_ROLE;
+```
+
+#### 3: Configure Sigma Connection:
+Follow [these instructions](https://help.sigmacomputing.com/hc/en-us/articles/360037430473-Set-up-write-access#h_01FDX02PCDXMKNB4D4139W2KEY) to set the Write DB and Write Schema in your Sigma connection. 
+
+If you set up Sigma via Partner Connect, the connection you will be editing is `Snowflake PC_SIGMA_WH`. 
+
+If you did not set up Sigma via Partner Connect, [follow these instructions](https://help.sigmacomputing.com/hc/en-us/articles/360037429913-Connect-to-Snowflake#h_01EN10KHTFJ9A3S46B5W5NX5M9) for creating a Snowflake connection in Sigma. 
+
+<aside class="negative">
+<strong>NOTE:</strong><br> You may not know your Sigma user (PC_SIGMA_USER) password, as via Partner Connect it is generated automatically. 
+</aside>
+
+To update your PC_SIGMA_USER password, you can run the following: 
+
+```code
+USE ROLE ACCOUNTADMIN;
+ALTER USER PC_SIGMA_USER SET PASSWORD='<assign-password-here>';
+```
 
 ## Setup
 Duration: 20
@@ -598,8 +611,22 @@ Then, the residuals can be plotted to see if the predictive power of our model i
 ![Footer](assets/sigma_footer.png)
 <!-- END OF SECTION-->
 
-## Additional Resource Links
-Duration: 5
+<!-- ------------------------ -->
+## Conclusion And Resources
+
+Duration: 3
+
+Congratulations! You've successfully built a training dataset, trained a model, and exposed it in a easy to use medium through a Sigma front end. This exercise is just scratching the surface of what is possible with Snowflake, Snowpark, and Sigma.
+
+
+### What You Learned
+
+- How to explore and build a dataset for training a model
+- How to build a machine learning model using Snowpark ML
+- How to register a model in the Snowpark Model Registry
+- How to expose the model to business users in Sigma
+
+### Related Resources
 
 [Blog](https://www.sigmacomputing.com/blog/)<br>
 [Community](https://community.sigmacomputing.com/)<br>
@@ -614,5 +641,11 @@ Be sure to check out all the latest developments at [Sigma's First Friday Featur
 [<img src="./assets/facebook.png" width="75"/>](https://www.facebook.com/sigmacomputing)
 
 ![Footer](assets/sigma_footer.png)
+
+
+
+
+
+
 <!-- END OF WHAT WE COVERED -->
 <!-- END OF QUICKSTART -->
