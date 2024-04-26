@@ -17,10 +17,6 @@ Data mesh is gaining traction as a transformative approach to data architecture 
 In this guide, participants will explore how dbt Cloud's integration with Snowflake supports a data mesh by enabling better management of data dependencies, automation of data transformations, and continuous integration and delivery of data products. Through practical examples and guided exercises, you will learn how to set up your dbt Cloud environment to interact seamlessly with Snowflake, creating a scalable and efficient data infrastructure. By the end of this lab, you will understand how dbt Cloud enhances data visibility and accessibility in Snowflake, allowing platform teams to govern the mesh effectively and validate compliance of data products. Additionally, the session will cover strategies to make these data products discoverable and accessible to authorized users, ensuring that the right data is available to the right people at the right time.
 
 ### Prerequisites
-- Requires intermediate dbt familiarity
-  - If you're not familiar with dbt, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
-  - Or if you are not a developer, please see such and such blog post / slides
-
 - Snowflake
     - Account admin access to a Snowflake Enterprise or Business Critical account
     - Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
@@ -39,6 +35,10 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
 >
 > Otherwise, you may receive a dbt Cloud Enterprise account by [requesting one from the dbt Labs team](https://www.getdbt.com/contact).
 
+- Requires basic dbt familiarity
+  - If you're not familiar with dbt, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
+  - Or if you are not a developer, please see such and such blog post / slides
+
 ### What You’ll Learn
 * How to understand when data mesh is the right solution for your organization
 
@@ -53,36 +53,46 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
 * A dbt Cloud account containing multiple projects that showcase the governance features of Snowflake (object tagging, masking, grants) alongside dbt Cloud's dbt Mesh framework
 
 <!-- ------------------------ -->
-## Motivating data mesh
-Duration: 5
-<!-- TODO: Fix this ^^ -->
-
-We have sales and customer data in our source systems (TPCH)
-
-There’s a team that builds the foundational data marts for the company off the ERP system. They are seasoned data engineers, with average experience 10 years. 2 years ago, they migrated their on-premise systems to Snowflake and dbt, and will never go back. The efficiency gained in dbt over their previous tools: SPs and graphical drag & drop tools is considerate.
-
-The other teams in the company (finance, marketing, sales) are excited to get their hands on data, and build their own transformations on top of the data that’s been built. They are thinking of doing some of their own reporting, and their own ML/AI, and want consistency of their data, so that‘s why they don’t build directly in the BI tool. More and more people are getting involved, there’s a new roadmap. A lot of these people have never been called “data engineers”, but more and more their jobs are looking like “analytics engineers” — people who do make business logic in Excel and BI tools,
-
-The CDO’s main initiative this year is to get more people involved in data, because the initiatives are to increase usage of data in decisions, to have more accuracy and to save money
-
-The data platform team as a result looks to enable more and more people to own data pipelines on top of Snowflake. They’ve selected dbt Cloud to do this, because of the dbt Mesh capabilities
-
-The data platform team is interested in the FAIR principles of Data Mesh: Findable, Accessible, Interoperable, Repeatable. Since a lot of the data in the organization ends up in Snowflake, Snowflake is a natural place to center their data mesh around (even though not all the data is in Snowflake).
-
-Additionally, the data platform team wants to stop thinking in terms of team-based work, they would rather think in terms of data products: datasets should be created by teams, and be reliable, useful, secure, and well-governed, following DAUTNIVS principles. Then, Data Products can be composed in the mesh, giving modularity, reducing silos, and decreasing overall operating expenditures of the data program at their company.
-
-Here’s how they can do it
-
-<!-- ------------------------ -->
 ## Launch Snowflake and dbt Cloud for this Quickstart
 Duration: 10
 <!-- TODO: Fix this ^^ -->
 
 ### Sign up for a Snowflake Enterprise trial account
 
+Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the steps. **Make sure to select an Enterprise account.**
 
+### Launching dbt Cloud by Snowflake Partner Connect
 
-### Sign up for dbt Cloud Partner Connect
+1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
+
+2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which located within the `Admin` section. <br>
+
+    ![Open Partner Connect](assets/Snowflake_open_partner_connect.png)<br>
+
+    Check to make sure your role is set as the ACCOUNTADMIN role. If you're using the classic console, the Partner Connect button will be in the top bar just right of center.
+
+3. Find the dbt tile by typing `dbt` into the `Search Partner Connect` search bar. Click on the dbt tile.
+
+    ![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
+
+4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
+
+    ![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
+
+5. When you see the popup that says `Your partner account has been created`, click on `Activate`.
+
+    ![Activate Partner Connect](assets/snowflake_activate_partner_connect.png)
+
+6. You should be redirected to a dbt Cloud registration page. Fill out the form and make sure to save the password somewhere for login in the future.
+
+    ![dbt Cloud Registration](assets/dbt_Cloud_registration.png)
+
+7. Click on `Complete Registration`. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
+
+    ![dbt Cloud Home Page](assets/dbt_Cloud_home_page.png)
+
+8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
+
 
 <!-- ------------------------ -->
 ## Set up Snowflake securely
@@ -633,12 +643,6 @@ Notice the cross-project `ref` by using two arguments to the function - 1) name 
 7. Save your file and notice the lineage in the bottom pane.
 
 <!-- ------------------------ -->
-## Share data with Snowflake Private Listings
-Duration: 1
-
-To be filled in
-
-<!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 <!-- TODO: Fix this ^^ -->
@@ -646,5 +650,7 @@ Duration: 1
 Additional features:
 
 - Downstream jobs
-- Versions
+- Model versions
 - Secure project access with dbt Cloud Role Based Access Controls
+- dbt Cloud CLI
+- Share data with Snowflake Private Listings
