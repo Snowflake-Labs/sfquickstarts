@@ -1,7 +1,6 @@
 author: Marc Henderson
 id: application-control-framework
 summary: A guide to building a Native App with consumer controls and limits.
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started, App-Development, Streamlit
 environments: web
 status: Published 
@@ -34,7 +33,7 @@ The rest of this Snowflake guide walks you through deploying the ACF and demo da
 - Three (3) Snowflake accounts, each with ```ACCOUNTADMIN``` privileges (ideally in the same cloud/region)
   - One account will serve as the main account, where the ACF is deployed
   - One account will serve as an event account, where consumer events from the Native Apps are shared to.
-    - **NOTE:** this account should be enrolled in the Listing API Private Preview (PrPr) feature.  If the account is not, please contact your Snowflake Account team to get enrolled.
+    - The event account uses the Listing API, which is in Public Preview (PuPr).  Visit https://other-docs.snowflake.com/en/progaccess/listing-progaccess-about for more information.
     - Once this account is created, it will be set as the event account for the cloud region, by executing the following in the Snowflake Org account, as ```ORGADMIN```
     - ```CALL SYSTEM$SET_EVENT_SHARING_ACCOUNT_FOR_REGION('<REGION>', 'PUBLIC', '<ACCOUNT_NAME>');```
       - The account region can be found by executing ```SELECT CURRENT_REGION();```
