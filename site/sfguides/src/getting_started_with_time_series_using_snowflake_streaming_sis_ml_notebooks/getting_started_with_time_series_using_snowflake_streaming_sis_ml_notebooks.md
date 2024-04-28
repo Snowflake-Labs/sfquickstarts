@@ -12,7 +12,7 @@ author: nathan.birch@snowflake.com, jonathan.regenstein@snowflake.com
 ## Overview
 Duration: 5
 
-This guide will take you through a scenario of using Snowflake to ingest, transform, and analyze time series data using Snowflake, with the ultimate goal of serving time series data to end users via a Streamlit application in Snowflake.
+Snowflake has functionality built-in for ingesting, storing, and analyzing time series data. This guide will take you through a scenario of using Snowflake's Snowpipe Streaming to ingest a time series simulated stream, then utilize Dynamic tables to transform the ingested data from a raw JSON format into a model ready to analyze the data using Snowflake time series functions. Finally, a Streamlit applciation will be deployed to Snowflake to serve time series data to end users via an easy to use interface within Snowflake Snowsight.
 
 
 ### Key Activities
@@ -20,14 +20,14 @@ This guide will take you through a scenario of using Snowflake to ingest, transf
 To achieve this goal, the following key activities will be performed:
 - **Configure a Snowflake account** to work with time series data
 - **Setup a streaming ingestion** client to to stream time series data into Snowflake using Snowpipe Streaming
-- **Model and transform** the streaming time series data
+- **Model and transform** the streaming time series data using Dynamic Tables
 - **Analyze the data** using time series queries
-- **Create time series Snowpark functions** to assist in analysis
+- **Create a time series Snowpark functions** to assist in analysis
 - **Deploy a time series Streamlit** application in Snowflake for end users to query time series
 
 
 ### Goal
-The goal of this lab is to deploy a Streamlit application to Snowflake that will enable users to easily execute time series queries against data streamed into Snowflake.
+The goal of this lab is to gain experience with Snowflake time series functionailty by working through an end-to-end deploy of a Streamlit application that will enable users to easily execute time series queries against data streamed into Snowflake.
 
 <img src="assets/overview_streamlit.png" width="800" />
 
@@ -366,7 +366,6 @@ SETUP SCRIPT NOW COMPLETED
 
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
-<img src="assets/2024-04-23_17-18-00.png" />
 ```sql
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.STAGING;
@@ -408,9 +407,19 @@ Run initial load
 ## Data Modelling and Transformation
 Duration: 2
 
+Dynamic tables are new declarative way of defining your data pipeline in Snowflake. It's a new kind of Snowflake table which is defined as a query to continuously and automatically materialize the result of that query as a table. Dynamic Tables can join and aggregate across **multiple source objects** and **incrementally update** results as sources change. 
+
+Dynamic Tables can also be chained together to create a DAG for more complex data pipelines. 
+
+<img src="assets/dynamic_tables.png" />
+
+Dynamic Tables are the building blocks for continuous data pipelines. They are the easiest way to build data transformation pipelines in snowflake across batch and streaming use cases. 
+
+
 ```sql
 USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.TRANSFORM;
+USE WAREHOUSE HOL_TRANSFORM_WH;
 
 -- Setup Transform Tabls
 -- IOT Tag Metadata (Dimension)
@@ -752,7 +761,7 @@ ORDER BY TAGNAME, TS
 
 
 <!-- ------------------------ -->
-## Snowpark User Defined Table Function
+## Build Your Own - Snowpark User Defined Table Function
 Duration: 2
 
 Setup LTTB Downsample Function
@@ -828,13 +837,13 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 <!-- ------------------------ -->
 ## Milestone
 
-### Activitied
+### Key Activities
 - Ingest streaming time series data into Snowflake
 - Created a data pipeline to transform streaming time series data
 - Deployed ana analytics layer for serving time series data
 - Delivered a Streamlit application interface for end users to run time series analytics
 
-### Outcomes
+### Outcomes Achieved
 - A standard ingestion pattern has been established for easy onboarding of time series data sources
 - Unlocked low latency ingestion pipelines for data sources
 - Delivered an easy user experience in Streamlit to derive insights and value from time series data
