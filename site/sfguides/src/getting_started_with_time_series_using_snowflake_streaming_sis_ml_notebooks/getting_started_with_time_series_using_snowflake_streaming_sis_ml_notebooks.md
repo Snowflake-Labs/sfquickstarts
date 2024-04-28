@@ -269,15 +269,11 @@ This includes:
 >  This section will run using the **ACCOUNTADMIN** login, which was previously setup in **Snowflake VS Code Extension** connection.
 >
 
+### a) Run Snowflake Setup Worksheet
 
-### Run Snowflake Setup Worksheet
+In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
-> aside positive
-> 
-> In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
->
-> **Run through the worksheet to get Snowflake resources created.**
->
+**Run through the worksheet to get Snowflake resources created.**
 
 ```sql
 /*
@@ -366,24 +362,36 @@ SETUP SCRIPT NOW COMPLETED
 
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
+Duration: 5
+
+### a) Create Streaming Staging Table
+
+
+
+<img src="assets/snowpipe_stagetable.png" />
+
+In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_2_ingest.sql`
+
+**Run through the worksheet to get Snowflake resources created.**
+
+
 ```sql
+-- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.STAGING;
+USE WAREHOUSE HOL_TRANSFORM_WH;
 
--- RAW IOTSTREAM Table
+-- Setup staging tables
+-- IOTSTREAM
 CREATE OR REPLACE TABLE HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA (
+    RECORD_METADATA VARIANT,
     RECORD_CONTENT VARIANT
-);
-
+)
+CHANGE_TRACKING = TRUE
+COMMENT = 'IOTSTREAM staging table.'
+;
 ```
-
-
-
-> aside positive
-> 
->  [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) provides a change tracking mechanism for your tables and > views, enabling and ensuring "exactly once" semantics for new or changed data.
->
-> [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) are Snowflake objects to execute a single command, which could be simple SQL command or calling an extensive stored > > procedure.  Tasks can be scheduled or run on-demand, either within a Snowflake Virtual warehouse or serverless.
+### a) Test Streaming Client Channel
 
 
 
@@ -417,180 +425,43 @@ Dynamic Tables are the building blocks for continuous data pipelines. They are t
 
 
 ```sql
+-- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.TRANSFORM;
 USE WAREHOUSE HOL_TRANSFORM_WH;
 
--- Setup Transform Tabls
--- IOT Tag Metadata (Dimension)
-CREATE OR REPLACE TABLE HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA (
-    TAGKEY NUMBER NOT NULL,
-    NAMESPACE VARCHAR,
-    TAGNAME VARCHAR NOT NULL,
-    TAGALIAS ARRAY,
-    TAGDESCRIPTION VARCHAR,
-    TAGUOM VARCHAR,
-    TAGDATATYPE VARCHAR,
-    INGESTION_TIMESTAMP TIMESTAMP_NTZ,
-    CONSTRAINT PK_TSD_TAG_METADATA PRIMARY KEY (TAGKEY) RELY
-);
-
--- IOT Tag Readings (Fact)
-CREATE OR REPLACE TABLE HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS (
-    TAGKEY NUMBER NOT NULL,
-    TS TIMESTAMP_NTZ NOT NULL,
-    VAL VARCHAR,
-    VAL_NUMERIC FLOAT,
-    INGESTION_TIMESTAMP TIMESTAMP_NTZ,
-    CONSTRAINT FK_TSD_TAG_READINGS FOREIGN KEY (TAGKEY) REFERENCES HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA (TAGKEY) RELY
-);
-
--- IOT STREAM Load
--- Transform and load raw IOT sensor metadata
-INSERT INTO HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA
-WITH NEWTAGS AS (
-    SELECT DISTINCT
-        SRC.RECORD_METADATA:headers:namespace::VARCHAR AS NAMESPACE,
-        UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) AS TAGNAME,
-        SRC.RECORD_METADATA:headers:source::VARCHAR AS TAGDESCRIPTION,
-        SRC.RECORD_CONTENT:units::VARCHAR AS TAGUNITS,
-        SRC.RECORD_CONTENT:datatype::VARCHAR AS TAGDATATYPE
-    FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
-    WHERE NOT EXISTS (
-        SELECT 1 FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA TGT
-        WHERE TGT.TAGNAME = UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR)))
-    )
-)
-SELECT
-    (SELECT ZEROIFNULL(MAX(TAGKEY)) FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA) + ROW_NUMBER() OVER (PARTITION BY NULL ORDER BY SRC.TAGNAME) AS TAGKEY,
-    SRC.NAMESPACE AS NAMESPACE,
-    SRC.TAGNAME AS TAGNAME,
-    TO_ARRAY(SRC.TAGNAME) AS TAGALIAS,
-    SRC.TAGDESCRIPTION AS TAGDESCRIPTION,
-    SRC.TAGUNITS,
-    SRC.TAGDATATYPE,
-    SYSDATE() AS INGESTION_TIMESTAMP
-FROM NEWTAGS SRC
-ORDER BY TAGKEY, TAGNAME;
-
--- Transform and load raw IOT sensor Readings
-INSERT INTO HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS
-SELECT
-    META.TAGKEY,
-    SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ AS TS,
-    SRC.RECORD_CONTENT:value::VARCHAR AS VAL,
-    TRY_CAST(SRC.RECORD_CONTENT:value::VARCHAR AS FLOAT) AS VAL_NUMERIC,
-    SYSDATE() AS INGESTION_TIMESTAMP
-FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
-INNER JOIN HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA META ON META.TAGNAME = UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR)))
-WHERE NOT EXISTS (
-    SELECT 1 FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS TGT
-    WHERE TGT.TAGKEY = META.TAGKEY AND TGT.TS = SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ
-)
-ORDER BY TAGKEY, TS;
-
--- Setup loading procedure
-CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.TRANSFORM.PROCEDURE_TS_LOAD_READINGS(IN_LOOP_ENABLED NUMBER, IN_LOOP_ITERATIONS NUMBER)
-RETURNS VARCHAR
-LANGUAGE SQL
-COMMENT='Procedure to load IOTSTREAM readings.'
-EXECUTE AS OWNER
+-- Setup Transform Dynamic Tables
+-- Sensor metadata (Dimension)
+CREATE OR REPLACE DYNAMIC TABLE HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_METADATA
+TARGET_LAG = '1 MINUTE'
+WAREHOUSE = HOL_TRANSFORM_WH
+REFRESH_MODE = 'INCREMENTAL'
 AS
-BEGIN
-    IF (IN_LOOP_ENABLED <> 1) THEN
-        IN_LOOP_ITERATIONS := 1;
-    END IF;
+SELECT
+    SRC.RECORD_METADATA:headers:namespace::VARCHAR AS NAMESPACE,
+    SRC.RECORD_METADATA:headers:source::VARCHAR AS TAGSOURCE,
+    UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) AS TAGNAME,
+    SRC.RECORD_CONTENT:units::VARCHAR AS TAGUNITS,
+    SRC.RECORD_CONTENT:datatype::VARCHAR AS TAGDATATYPE
+FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
+QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) ORDER BY SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ, SRC.RECORD_METADATA:offset::NUMBER) = 1
+;
 
-    BEGIN TRANSACTION;
-        FOR i IN 1 TO IN_LOOP_ITERATIONS DO
-            -- Load IOT TAG Metadata
-            INSERT INTO HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA
-            WITH NEWTAGS AS (
-                SELECT DISTINCT
-                    SRC.RECORD_METADATA:headers:namespace::VARCHAR AS NAMESPACE,
-                    UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) AS TAGNAME,
-                    SRC.RECORD_METADATA:headers:source::VARCHAR AS TAGDESCRIPTION,
-                    SRC.RECORD_CONTENT:units::VARCHAR AS TAGUNITS,
-                    SRC.RECORD_CONTENT:datatype::VARCHAR AS TAGDATATYPE
-                FROM HOL_TIMESERIES.STAGING.STREAM_RAW_TS_IOTSTREAM_DATA SRC
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA TGT
-                    WHERE TGT.TAGNAME = UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR)))
-                )
-            )
-            SELECT
-                (SELECT ZEROIFNULL(MAX(TAGKEY)) FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA) + ROW_NUMBER() OVER (PARTITION BY NULL ORDER BY SRC.TAGNAME) AS TAGKEY,
-                SRC.NAMESPACE AS NAMESPACE,
-                SRC.TAGNAME AS TAGNAME,
-                TO_ARRAY(SRC.TAGNAME) AS TAGALIAS,
-                SRC.TAGDESCRIPTION AS TAGDESCRIPTION,
-                SRC.TAGUNITS,
-                SRC.TAGDATATYPE,
-                SYSDATE() AS INGESTION_TIMESTAMP
-            FROM NEWTAGS SRC
-            ORDER BY TAGKEY, TAGNAME;
-            
-            -- Load IOT Sensor Readings
-            INSERT INTO HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS
-            SELECT
-                META.TAGKEY,
-                SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ AS TS,
-                SRC.RECORD_CONTENT:value::VARCHAR AS VAL,
-                TRY_CAST(SRC.RECORD_CONTENT:value::VARCHAR AS FLOAT) AS VAL_NUMERIC,
-                SYSDATE() AS INGESTION_TIMESTAMP
-            FROM HOL_TIMESERIES.STAGING.STREAM_RAW_TS_IOTSTREAM_DATA SRC
-            INNER JOIN HOL_TIMESERIES.TRANSFORM.TS_TAG_METADATA META ON META.TAGNAME = UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR)))
-            WHERE NOT EXISTS (
-                SELECT 1 FROM HOL_TIMESERIES.TRANSFORM.TS_TAG_READINGS TGT
-                WHERE TGT.TAGKEY = META.TAGKEY AND TGT.TS = SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ
-            )
-            ORDER BY TAGKEY, TS;
-
-            COMMIT;
-        
-        END FOR;
-
-    RETURN 'SUCCESS';
-
-EXCEPTION
-    WHEN STATEMENT_ERROR THEN
-        ROLLBACK;
-        RETURN OBJECT_CONSTRUCT(
-            'error type', 'statement_error',
-            'sqlcode', SQLCODE,
-            'sqlerrm', SQLERRM,
-            'sqlstate', SQLSTATE);
-
-    WHEN EXPRESSION_ERROR THEN
-        ROLLBACK;
-        RETURN OBJECT_CONSTRUCT(
-            'error type', 'expression_error',
-            'sqlcode', SQLCODE,
-            'sqlerrm', SQLERRM,
-            'sqlstate', SQLSTATE);
-
-    WHEN OTHER THEN
-        ROLLBACK;
-        RETURN OBJECT_CONSTRUCT(
-            'error type', 'other error',
-            'sqlcode', SQLCODE,
-            'sqlerrm', SQLERRM,
-            'sqlstate', SQLSTATE);
-END;
-
--- Test Loading Procedure
-CALL HOL_TIMESERIES.TRANSFORM.PROCEDURE_TS_LOAD_READINGS(1,10);
-
--- Setup loading task - run when data is present in stream
-CREATE OR REPLACE TASK HOL_TIMESERIES.TRANSFORM.TASK_TS_LOAD_READINGS
-WAREHOUSE=HOL_TRANSFORM_WH
-SCHEDULE='USING CRON * * * * * UTC'
-COMMENT='Task to call IOTSTREAM procedure.'
-WHEN SYSTEM$STREAM_HAS_DATA('HOL_TIMESERIES.STAGING.STREAM_RAW_TS_IOTSTREAM_DATA')
-AS CALL HOL_TIMESERIES.TRANSFORM.PROCEDURE_TS_LOAD_READINGS(1,100);
-
--- Enable loading tak
-ALTER TASK HOL_TIMESERIES.TRANSFORM.TASK_TS_LOAD_READINGS RESUME;
+-- Sensor readings (Fact)
+CREATE OR REPLACE DYNAMIC TABLE HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS
+TARGET_LAG = '1 MINUTE'
+WAREHOUSE = HOL_TRANSFORM_WH
+REFRESH_MODE = 'INCREMENTAL'
+AS
+SELECT
+    UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) AS TAGNAME,
+    DATE_TRUNC('SECOND', SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ) AS TIMESTAMP,
+    SRC.RECORD_CONTENT:value::VARCHAR AS VALUE,
+    TRY_CAST(SRC.RECORD_CONTENT:value::VARCHAR AS FLOAT) AS VALUE_NUMERIC,
+    SRC.RECORD_METADATA:partition::VARCHAR AS PARTITION,
+    SRC.RECORD_METADATA:offset::VARCHAR AS OFFSET
+FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
+QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))), DATE_TRUNC('SECOND', SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ) ORDER BY SRC.RECORD_METADATA:offset::NUMBER) = 1;
 ```
 
 
@@ -847,6 +718,17 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 - A standard ingestion pattern has been established for easy onboarding of time series data sources
 - Unlocked low latency ingestion pipelines for data sources
 - Delivered an easy user experience in Streamlit to derive insights and value from time series data
+
+
+<!-- ------------------------ -->
+## Streams and Tasks
+
+> aside positive
+> 
+>  [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) provides a change tracking mechanism for your tables and > views, enabling and ensuring "exactly once" semantics for new or changed data.
+>
+> [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) are Snowflake objects to execute a single command, which could be simple SQL command or calling an extensive stored > > procedure.  Tasks can be scheduled or run on-demand, either within a Snowflake Virtual warehouse or serverless.
+
 
 
 <!-- ------------------------ -->
