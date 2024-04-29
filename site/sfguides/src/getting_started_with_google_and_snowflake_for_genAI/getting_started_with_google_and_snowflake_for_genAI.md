@@ -1,13 +1,13 @@
 author: marzillo-snow
-id: getting_started_with_google_palm_and_snowflake
-summary: This is a quickstart for using Snowflake with Google Palm
+id: getting_started_with_google_and_snowflake_for_genAI
+summary: This is a quickstart for using Snowflake with Google for Generative AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, LLM, GenAI, Google, GCP, Streamlit
 
-# Getting Started with Google Palm Streamlit and Snowflake
+# Getting Started with Google, Snowflake and Streamlit for Generative AI
 <!-- ------------------------ -->
 ## Overview
 
@@ -54,144 +54,217 @@ This use case will leverage sample customer reviews to allow users to analyze th
 
 <!-- ------------------------ -->
 
-
-------START HERE-------
-
-
-
 ## Google Environment
 
 Duration: 10
 
-For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to [platform.openi.com/api-keys](platform.openi.com/api-keys) and create a new secret key as it looks below. Make note of the model name and keyas you will need this to generate a response. 
+For this quickstart you will need a Google Cloud account with a Vertex AI service enabled. Users can create a trial Google Cloud account [here](cloud.google.com). There be a cost to run this lab, but if there is it will be nominal.
 
-![](assets/openai.png)
+Once you have your Google Cloud account you will need to create a project then enable the Vertex AI service. Once in the Vertex AI service you can select the model garden tab the left menu bar to view the models available in Vertex AI. For this lab we will be using the Palm Bison model for text generation.
 
-If you have access to image models in Azure you can follow the instructions [here](https://learn.microsoft.com/en-us/azure/ai-services/openai/gpt-v-quickstart?tabs=image%2Ccommand-line&pivots=programming-language-studio) to deploy an image model in Azure. (at the time of publishing this quickstart we will be using a gpt4 turbo image model). Make note of the deployment name for the image model that you deployed.
+![](assets/vertexai.png)
 
-Head back to the Azure portal and find the Azure Open AI service then click on "Keys and Endpoint" make note of the key and Endpoint as you will need this to generate a response.
+Once you have the Vertex AI service enabled in your Google Cloud Project head to "APIs and Services", click "Create Credentials" select "OAuth Client ID" then provide any name you would like and generate the client id. Note the Client ID and Client Secret.
 
-![](assets/aopenaiendpoint.png)
+![](assets/clientid.png)
+
+Now, go to https://developers.google.com/oauthplayground/ scroll down to the left menu bar, select "Vertex AI API..." and select both options. Click on the settings gear menu in the top right, select "Use your own OAuth credentials" and enter the Client ID and Secret from the previous step. Close the settings. Click "Authorize APIs".
+
+![](assets/oauthrefresh.png)
+
+
+Click "Exchange authorization code for tokens" and note the "Refresh Token".
+
+![](assets/refreshtoken.png)
+
 
 <!-- ------------------------ -->
 ## Snowflake Environment
 
 Duration: 10
 
-Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with links to items at a retail website that we will use to pass to OpenAI to provide recommendations. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.
+Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with customer reviews. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.
 
-Users are encouraged to alter the code to add additional urls to other items if they would like.
 
 ```sql
 --create database and warehouse
 use role accountadmin;
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
-CREATE OR REPLACE DATABASE RETAIL_HOL;
+CREATE DATABASE DEMOS;
+CREATE SCHEMA VERTEX;
 
---create table with links to items
-CREATE OR REPLACE TABLE clothing_link (
-  link_id INT,
-  links VARCHAR(512)
-);
+--create stage
+USE DATABASE DEMOS;
+USE SCHEMA VERTEX;
+CREATE OR REPLACE STAGE CUSTOMER_REVIEWS_STAGE
+URL='s3://hol-qs-bucket/'
+FILE_FORMAT = (TYPE = 'csv');
 
-INSERT INTO clothing_link (link_id, links)
-VALUES 
-  (1, 'https://www.macys.com/shop/product/xscape-womens-floral-print-rosette-halter-gown?ID=17659240'),
-  (2, 'https://www.macys.com/shop/product/calvin-klein-womens-3-4-sleeve-sheath-dress?ID=17294804'),
-  (3, 'https://www.macys.com/shop/product/calvin-klein-womens-tulip-sleeve-midi-dress?ID=16193818'),
-  (4, 'https://www.macys.com/shop/product/gloria-vanderbilt-womens-amanda-button-front-shirt?ID=11831590'),
-  (5, 'https://www.macys.com/shop/product/tommy-hilfiger-womens-solid-short-sleeve-polo-top?ID=11649535'),
-  (6, 'https://www.macys.com/shop/product/gloria-vanderbilt-womens-shape-effect-straight-leg-shorts?ID=17613003'),
-  (7, 'https://www.macys.com/shop/product/steve-madden-womens-harlow-notched-collar-blazer?ID=17690729'),
-  (8, 'https://www.macys.com/shop/product/womens-black-white-smocked-waist-geo-pants?ID=18038135'),
-  (9, 'https://www.macys.com/shop/product/levis-womens-high-rise-wide-leg-ripped-jeans?ID=17389986'),
-  (10, 'https://www.macys.com/shop/product/the-north-face-womens-heavyweight-crewneck-sweatshirt?ID=16631001'),
-  (11, 'https://www.macys.com/shop/product/dress-the-population-womens-sweetheart-midi-dress?ID=17669569'),
-  (12, 'https://www.macys.com/shop/product/tommy-hilfiger-mens-regular-fit-flex-poplin-shirt?ID=17527033'),
-  (13, 'https://www.macys.com/shop/product/nike-mens-air-max-2013-casual-sneakers-from-finish-line?ID=17121035'),
-  (14, 'https://www.macys.com/shop/product/tommy-hilfiger-mens-modern-fit-th-flex-stretch-chambray-suit-separate-jacket?ID=16771141'),
-  (15, 'https://www.macys.com/shop/product/hugo-by-hugo-boss-mens-regular-fit-logo-graphic-t-shirt-created-for-macys?ID=17547940'),
-  (16, 'https://www.macys.com/shop/product/cotton-on-mens-cabana-short-sleeve-shirts?ID=17850314'),
-  (17, 'https://www.macys.com/shop/product/nike-mens-calm-slide-sandals-from-finish-line?ID=15469912'),
-  (18, 'https://www.macys.com/shop/product/the-north-face-mens-thermoball-eco-snow-triclimate-jacket?ID=15433277'),
-  (19, 'https://www.macys.com/shop/product/weatherproof-vintage-mens-stonewash-crew-logo-stonewash-sweater?ID=17508384'),
-  (20, 'https://www.macys.com/shop/product/nike-mens-air-monarch-iv-training-sneakers-from-finish-line?ID=16391426'),
-  (21, 'https://www.macys.com/shop/product/nike-mens-air-monarch-iv-training-sneakers-from-finish-line?ID=16391426');
+--create loan_one table
+CREATE OR REPLACE TABLE REVIEWS
+  (ID STRING,
+   RATING STRING,
+   REVIEW STRING,
+   CUSTOMER_NAME STRING,
+   REVIEW_DATA DATE);
 
+COPY INTO REVIEWS FROM @CUSTOMER_REVIEWS_STAGE/Customer_Reviews.csv
+FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' ESCAPE_UNENCLOSED_FIELD = '\\' SKIP_HEADER = 1) ON_ERROR = 'CONTINUE';
 
-select * from clothing_link;
+select top 10 * from REVIEWS;
 ```
-
-Let's create a stage in the RETAIL_HOL database that we just created and load images. Click on 'Databases' on the left panel and select the 'PUBLIC' schema then the blue 'CREATE' button on the top left and create a 'Snowflake Managed' stage.
-
-![](assets/createstage.png)
-
-Name the stage 'IMAGE_STAGE', select 'Server Side Encryption' and enable the directory table. You can also use a SQL script to create the stage which is generated for you from the UI.
-
-Let's now download several pictures and upload them to the stage that we just created. Right click on each of the below images and save them to your local machine. Users are also encouraged to use any other images they may have.
-
-![](assets/man1.jpeg)
-![](assets/man2.jpeg)
-![](assets/woman1.jpeg)
-![](assets/woman2.jpeg)
-
-Once the images are downloaded locally head back to the Snowflake UI, click on the stage that we just created from the Databases menu and select '+ Files' in the top right. From here we can upload the images either by dragging them in or browsing to upload. 
-
-![](assets/uploadtostage.png)
-
-Once you have moved or selected the images click upload to upload the images to the Snowflake stage.
 
 <!-- ------------------------ -->
 ## Snowpark External Access to call OpenAI
 
 Duration: 10
 
-Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access OpenAI via a function called CHATGPT_IMAGE() that leverages a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to OpenAI (or any other external service).
+Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access Vertex models via a stored procedure and function that leverage a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to Vertex AI (or any other external service).
 
-You will have to replace the value of the endpoint and the token for the OpenAI service that you are using. Additionally, you may need to replace the name of the model near the bottom of the code that maps to the model/deployment name that you are using.
+You will have to replace several values that you previously noted as well as your Google deployment region and Google Project ID.
 
 ```sql
-use role ACCOUNTADMIN;
-use database RETAIL_HOL;
-use warehouse HOL_WH;
+--Snowflake External Access + Vertex GenAI API Demo
+--This demo shows how to use External Access in Snowflake to call the Vertex GenAI Palm2 LLM: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text
+--Author Alex Ross, Senior Sales Engineer, Snowflake
+--Last Modified 16th April 2024
 
-CREATE OR REPLACE NETWORK RULE CHATGPT_NETWORK_RULE
-    MODE = EGRESS
-    TYPE = HOST_PORT
-    VALUE_LIST = ('<endpoint>'); --will be 'api.openai.com' if using openai
+--Create demo database/schema
+USE ROLE ACCOUNTADMIN;
+USE DATABASE DEMOS;
+USE SCHEMA VERTEX;
 
-CREATE OR REPLACE SECRET CHATGPT_API_KEY
-    TYPE = GENERIC_STRING
-    SECRET_STRING='<openai token>';      
+--Create Security Integration For GCP OAuth
+--Visit https://console.cloud.google.com/apis/credentials to generate OAuth 2.0 Client IDs
+CREATE OR REPLACE SECURITY INTEGRATION vertex_access_integration
+  TYPE = API_AUTHENTICATION
+  AUTH_TYPE = OAUTH2
+  OAUTH_CLIENT_ID = '<CLIENT ID>'
+  OAUTH_CLIENT_SECRET = '<CLIENT SECRET>'
+  OAUTH_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token'
+  OAUTH_AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/auth'
+  OAUTH_ALLOWED_SCOPES = ('https://www.googleapis.com/auth/cloud-platform', 'https://<GOOGLE REGION>-aiplatform.googleapis.com')
+  ENABLED = TRUE;
+GRANT ALL ON INTEGRATION vertex_access_integration to ROLE PUBLIC;
 
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENAI_INTEGRATION
-    ALLOWED_NETWORK_RULES = (CHATGPT_NETWORK_RULE)
-    ALLOWED_AUTHENTICATION_SECRETS = (CHATGPT_API_KEY)
-    ENABLED=TRUE;
+--Create Secret to hold GCP OAuth refresh token
+--Visit https://developers.google.com/oauthplayground/ to generate OAuth refresh token using client ID and secret 
+CREATE OR REPLACE SECRET vertex_oauth_token
+TYPE = OAUTH2
+API_AUTHENTICATION = vertex_access_integration
+OAUTH_REFRESH_TOKEN ='<REFRESH TOKEN>';
+GRANT USAGE ON SECRET vertex_oauth_token to role PUBLIC;
+GRANT READ ON SECRET vertex_oauth_token to role PUBLIC;
 
-CREATE OR REPLACE FUNCTION CHATGPT_IMAGE(instructions STRING, list STRING, user_context STRING)
-returns string
-language python
-runtime_version=3.8
-handler = 'ask_chatGPT'
-external_access_integrations=(OPENAI_INTEGRATION)
-packages = ('openai')
-SECRETS = ('cred' = chatgpt_api_key )
-as
-$$
+--Create Network Rule to allow connectivity with Google API endpoints
+CREATE OR REPLACE NETWORK RULE gcp_apis_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('<GOOGLE REGION>-aiplatform.googleapis.com','oauth2.googleapis.com','accounts.google.com','www.googleapis.com:443');
+  
+--Create The External Access Integration
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION GCP_APIS_ACCESS_INTEGRATION
+  ALLOWED_NETWORK_RULES = (gcp_apis_network_rule)
+  ALLOWED_AUTHENTICATION_SECRETS = (vertex_oauth_token)
+  ENABLED = true;
+GRANT ALL ON INTEGRATION GCP_APIS_ACCESS_INTEGRATION TO ROLE PUBLIC;
+
+--Create SP to handle Rest API call to Vertex GenAI endpoint
+--Returns a string response based on prompt and parameters provided to the SP 
+CREATE OR REPLACE PROCEDURE GET_VERTEX_TEXT_GENERATION("PROMPT" VARCHAR(16777216), "TEMPERATURE" FLOAT, "MAX_OUTPUT_TOKENS" NUMBER(38,0), "TOP_P" FLOAT, "TOP_K" FLOAT)
+RETURNS VARCHAR(16777216)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python','requests')
+HANDLER = 'get_text_generation'
+EXTERNAL_ACCESS_INTEGRATIONS = (GCP_APIS_ACCESS_INTEGRATION)
+SECRETS = ('cred'=VERTEX_OAUTH_TOKEN)
+EXECUTE AS OWNER
+AS '
 import _snowflake
-from openai import OpenAI
-client = OpenAI(
-    api_key=_snowflake.get_generic_secret_string("cred") )
-def ask_chatGPT(instructions, list, user_context):
-    response = client.chat.completions.create(
-    model="gpt-4-vision-preview",
-    messages=[{"role": "system", "content": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<CONTEXT_LIST>Use this list to select from {list}<END_CONTEXT_LIST>\n<USER_CONTEXT>Use this image for your response:{user_context}<END_USER_CONTEXT>"}])
-    return response.choices[0].message.content
-$$;
+import requests
+import json
+
+def get_text_generation(session, prompt, temperature, max_output_tokens, top_p, top_k):
+    PROJECT_ID=''<GOOGLE PROJECT ID>''
+    LOCATION=''<GOOGLE REGION>>''
+    token = _snowflake.get_oauth_access_token(''cred'')
+    url = f''https://{LOCATION}-aiplatform.googleapis.com/v1/projects/{PROJECT_ID}/locations/{LOCATION}/publishers/google/models/text-bison:predict''
+    d = {''instances'':[{''prompt'': prompt}],
+         ''parameters'':{''temperature'': temperature,
+                ''maxOutputTokens'': max_output_tokens,
+                ''topK'': top_k,
+                ''topP'': top_p
+            }
+        }
+    h = {
+            ''Authorization'': ''Bearer '' + token,
+            ''Content-Type'': ''application/json; charset=utf-8''
+        }
+
+    try:
+        response = requests.post(url, data=json.dumps(d), headers=h)
+        data = response.json()
+        return data[''predictions''][0][''content'']
+    except:
+        return requests.post(url, data=json.dumps(d), headers=h).json()
+ 
+';
+
+call get_vertex_text_generation('why is snowflake the best data platform?',0.2,256,0.95,2); --Test SP is working as expected
+
+--Create a UDF to handle Rest API call to Vertex GenAI endpoint
+--This UDF is designed to be used to analyse a customer review
+--Returns a variant/json response based on prompt and parameters provided to the UDF 
+CREATE OR REPLACE FUNCTION GET_VERTEX_REVIEW_SENTIMENT_UDF("PROMPT" VARCHAR(16777216), "TEMPERATURE" FLOAT, "MAX_OUTPUT_TOKENS" NUMBER(38,0), "TOP_P" FLOAT, "TOP_K" FLOAT)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('snowflake-snowpark-python','requests')
+HANDLER = 'GET_VERTEX_REVIEW_SENTIMENT'
+EXTERNAL_ACCESS_INTEGRATIONS = (GCP_APIS_ACCESS_INTEGRATION)
+SECRETS = ('cred'=VERTEX_OAUTH_TOKEN)
+AS '
+import _snowflake
+import requests
+import json
+
+def GET_PREPROMPT():
+    preprompt = ''For the given review, return a JSON object that has the fields sentiment, explanation, summary, and product. Acceptable values for sentiment are Positive or Negative. The explanation field contains text that explains the sentiment. The summary field contains a single sentence summarizing the review in under 10 words. The product field contains the name or type of product purchased if it has been included in the review. DO NOT INCLUDE BACKTICKS IN THE RESPONSE. Review: ''
+    return preprompt
+
+def GET_VERTEX_REVIEW_SENTIMENT(prompt, temperature, max_output_tokens, top_p, top_k):
+    PROJECT_ID=''<GOOGLE PROJECT ID>''
+    LOCATION=''<GOOGLE REGION>''
+    token = _snowflake.get_oauth_access_token(''cred'')
+    url = f''https://{LOCATION}-aiplatform.googleapis.com/v1/projects/{PROJECT_ID}/locations/{LOCATION}/publishers/google/models/text-bison:predict''
+    d = {''instances'':[{''prompt'': GET_PREPROMPT() + prompt}],
+         ''parameters'':{''temperature'': temperature,
+                ''maxOutputTokens'': max_output_tokens,
+                ''topK'': top_k,
+                ''topP'': top_p
+            }
+        }
+    h = {
+            ''Authorization'': ''Bearer '' + token,
+            ''Content-Type'': ''application/json; charset=utf-8''
+        }
+
+    try:
+        response = requests.post(url, data=json.dumps(d), headers=h)
+        data = response.json()
+        return json.loads(data[''predictions''][0][''content''])
+    except:
+        return requests.post(url, data=json.dumps(d), headers=h).json()
+';
+GRANT USAGE ON FUNCTION GET_VERTEX_REVIEW_SENTIMENT_UDF(VARCHAR(16777216), FLOAT, NUMBER(38,0), FLOAT, FLOAT) TO ROLE PUBLIC;
+
+select GET_VERTEX_REVIEW_SENTIMENT_UDF('This is a shoe I will wear with black dress pants or jeans when I need comfort and a little style, but I am not impressed. This is a very flimsy shoe with little support at all. Unlike any other shoes I''ve purchased in the past. It looks nice, but it''s not comfortable.',0.2,256,0.95,2) as RESPONSE; --Test UDF
 ```
 
 <!-- ------------------------ -->
+
+----START HERE-------
 ## Build Streamlit App - With data in Snowflake 
 
 Duration: 10
