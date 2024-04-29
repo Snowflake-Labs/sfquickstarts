@@ -88,6 +88,8 @@ sfguide-native-apps-chairlift/
 │  ├─ provider-role.sql
 ├─ provider/
 │  ├─ create-package.sql
+├─ tests/
+│  ├─ ... (.py files)
 ├─ ...
 ```
 
@@ -110,6 +112,10 @@ Here's an overview of the directories:
 **provider/** 
 
 - This directory is specific to this Quickstart. It contains a SQL script to create the application package and grant privileges on provider data.
+
+**tests/**
+
+- This directory contains unit tests for the Front-ends of the app which are built with Streamlit.
 
 <!-- ------------------------ -->
 ## The **app/** directory
@@ -173,6 +179,53 @@ Here's an overview of what this folder contains:
 
 - This directory is specific to this Quickstart, and contains all of the files and code used to create the front-end of the app. Front-ends for Snowflake Native Apps are built with Streamlit. You should peruse all of the files in this folder to get familiar with how the front-end is built, and pay special attention to the files that define the main views within the app, namely **v_dashboard.py**, **v_sensor_data.py**, and **v_configuration.py**. For more information, see [Adding Frontend Experience to Your Application with Streamlit](https://docs.snowflake.com/en/developer-guide/native-apps/adding-streamlit).
 
+
+<!-- ------------------------ -->
+## Test the App
+Duration: 3
+
+Let's take a deeper look at the files and directories related to testing this native app.
+
+```console
+local_test_env.yml
+pytest.ini
+tests/
+├─ test_utils.py
+├─ test_v_configuration.py
+├─ test_v_dashboard.py
+├─ test_v_sensor_data.py
+```
+
+Here's an overview of the above files and directories:
+
+**local_test_env.yml**
+
+This file is an Anaconda environment file that contains the dependencies allowing you to run the tests. To activate the testing environment:
+```
+conda env update -f local_test_env.yml
+conda activate chairlift-test
+```
+To deactivate it:
+```
+conda deactivate
+
+```
+**pytest.ini**
+
+This file contains the different settings for pytest tests. For example, it contains the location of source code on which the unit tests run.
+
+**tests/**
+
+This directory contains Streamlit unit tests. **tests/test_utils.py** contains common util functions and Pytest fixtures used for the unit tests. The other files in this directory contain the actual tests. The included tests leverage [Streamlit App Testing](https://docs.streamlit.io/develop/api-reference/app-testing) framework which allows automated testing of Streamlit elements.
+
+### Running Unit tests
+
+To run unit tests, make sure that `chairlift-test` Anaconda environment is active, and then run the following command:
+```
+pytest -vv
+```
+
+You should observe all the tests passing.
 
 <!-- ------------------------ -->
 ## Set up account roles
