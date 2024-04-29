@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Summit Lab, Data Sharing, Horizon Access
 
-# Horizon Intra-Company Data Sharing
+# Horizon Access: Intra-Company Sharing
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
@@ -74,6 +74,7 @@ In this lab you will experience the latest **Snowflake Horizon Access pillar** f
     > select current_user(), current_account(), current_region(), current_version();
     > ```
 - #### [Install SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html#installing-snowsql) (CLI Client): used to load data into a Snowflake internal stage 
+- #### Install [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation) latest version
      
 
 ### What You’ll Learn 
@@ -118,14 +119,19 @@ Use of this dataset requires that we cite this ACL 2011 paper by Andrew Maas, et
 [Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte) Marketplace listing requires accepting terms of use by the Provider and Snowflake.
 
 <!-- ------------------------ -->
-## Horizon Provider Account Setup (AWS Trial)
+## Horizon Provider Account Setup (AWS Trial Account)
 Duration: 10
 
-Download ZIP or Clone [sfguide-horizon-intra-organization-sharing)](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) Github repo to your local machine
+Clone the [sfguide-horizon-intra-organization-sharing)](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) Github repo to your local machine by running this command in a Terminal window:
 
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing.git
+```
+
+If you do not have git installed, then download the code directly from [GitHub]()
 ![Code Button](assets/code-download.png)
 
-To simplify lab instructions, from a Terminal copy scripts folder to `/tmp` 
+To simplify lab instructions, copy the repository folder to `/tmp` 
 ```bash
 cp -r sfguide-horizon-intra-organization-sharing /tmp
 ```
@@ -228,13 +234,54 @@ Setup is now complete!
 <!-- ------------------------ -->
 ## Create, Publish and Install a Native Application Listing
 
+The Snowflake Native Application Framework provides developers the ability to create data intensive applications that run *within* the Snowflake platform with versioning controls.
+- Native Apps allow sharing of data and related business logic with other Snowflake accounts. The business logic can include stored procedures and functions.
+- Native Apps are shared with Consumer accounts using a Listing. A listing can be free or paid, and can be published on Snowflake Marketplace or to specific Consumer accounts.
+- Rich visualizations can be include in the application with Streamlit.
 
-<!-- ------------------------ -->
-## Share Unstructured Data within and across cloud regions
+![High Level View of Snowflake Native App Framework](assets/SAMPLE.jpg)
+
+
+You will build a native app that visualizes Tasty Bytes food truck Sales over Time by City. 
+
+The app will allow filtering on Year and City, while displaying the underlying raw data and associated SQL query. Row-access policies defined on database roles will allow Consumer account admins to control data access based on persona.
+
+Here is the directory structure of the code repository that was cloned or downloaded from GitHub earlier, relevant to `app` artifacts for the native app:
+
+```plaintext
+|-- app
+|   |-- readme.md
+|   |-- src
+|       |-- libraries
+|       |   |-- environment.yml
+|       |   |-- frosty_bytes_sis.py
+|       |   |-- procs.py
+|       |   |-- udfs.py
+|       |-- manifest.yml
+|       |-- setup_script.sql
+|-- scripts
+|   |-- setup_package_script.sql
+|-- snowflake.yml
+```
+
+Refer to the [Getting Started with Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/index.html?index=..%2F..index#0) Quickstart for details.
+
+Here is some background on how these files define the data and code assets in the native app:
+
+`src` - stores all source code including stored procedures, user-defined functions (UDFs), streamlit application and installation script `setup_script.sql`.
+
+`manifest.yml` - defines version metadata, location of artifacts (setup script, streamlit), configuration of logging/tracing.
+
+`snowflake.yml` - Snowflake CLI configuration file that contains native app name, location of source code directory, location of package setup script `setup_package_script.sql`
+
 
 
 <!-- ------------------------ -->
 ## Share Snowflake-Managed Iceberg Tables
+
+
+<!-- ------------------------ -->
+## Share Unstructured Data within and across cloud regions
 
 
 <!-- ------------------------ -->
