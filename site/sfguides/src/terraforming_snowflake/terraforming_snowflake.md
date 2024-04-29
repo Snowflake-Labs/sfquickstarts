@@ -407,7 +407,7 @@ Duration: 3
 
 If you are new to Terraform, there's still a lot to learn. We suggest researching [remote state](https://www.terraform.io/docs/language/state/remote.html), [input variables](https://www.terraform.io/docs/language/values/variables.html), and [building modules](https://www.terraform.io/docs/language/modules/develop/index.html). This will empower you to build and manage your Snowflake environment(s) through a simple declarative language.
 
-The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/SnowflakeLabs/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
+The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/Snowflake-Labs/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
 
 ### Next steps
 
