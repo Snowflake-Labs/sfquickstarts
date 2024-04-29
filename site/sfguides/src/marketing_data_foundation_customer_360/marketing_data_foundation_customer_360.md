@@ -15,7 +15,7 @@ Duration: 15
 
 Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing.
 
-This starter solution tackles this challenge of creating a marketing data foundation for customer 360.
+This starter solution tackles the challenge of creating a marketing data foundation for customer 360.
 This is part of the overall [Marketing Data Foundation Starter]() solution.
 
 ### Problem Space
