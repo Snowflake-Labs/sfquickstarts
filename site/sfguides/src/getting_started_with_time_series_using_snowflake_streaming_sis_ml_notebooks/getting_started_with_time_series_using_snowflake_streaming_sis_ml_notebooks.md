@@ -264,16 +264,18 @@ This includes:
 
 <img src="assets/snowsetup_architecture.png" />
 
-> aside negative
-> 
->  This section will run using the **ACCOUNTADMIN** login, which was previously setup in **Snowflake VS Code Extension** connection.
->
-
 ### a) Run Snowflake Setup Worksheet
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
 **Run through the worksheet to get Snowflake resources created.**
+
+> aside negative
+> 
+>  This section will run using the **ACCOUNTADMIN** login setup via **Snowflake VS Code Extension** connection.
+> 
+>  There are **EXTERNAL ACTIVITY** sections in the worksheet, these sections will be executed within the **GitHub Codespace**.
+>
 
 ```sql
 /*
@@ -294,9 +296,9 @@ GRANT ROLE ROLE_HOL_TIMESERIES TO USER USER_HOL_TIMESERIES;
 
 /* EXTERNAL ACTIVITY
 
-A public key is setup in Github Codespace VS Code environment
+A public key is setup in Github Codespace VS Code environment "keys" folder
 
-Retrieve the public key detail and replace <RSA_PUBLIC_KEY>
+Retrieve the public key detail from keys/rsa_key.pub and replace <RSA_PUBLIC_KEY>
 with the contents of the public key excluding
 the -----BEGIN PUBLIC KEY----- and -----END PUBLIC KEY----- lines
 
@@ -359,21 +361,23 @@ SETUP SCRIPT NOW COMPLETED
 */
 ```
 
-
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
 Duration: 5
 
+Now that the foundational objects have been deployed, we can now deploy a staging table to load streaming time series data, and begin streaming time series data via a Snowpipe Streaming client.
+
+<img src="assets/snowpipe_stagetable.png" />
+
 ### a) Create Streaming Staging Table
 
-
+We'll create a stage loading table to stream RAW time series data into Snowflake. This will be located in the **STAGING** schema of the **HOL_TIMESERIES** database.
 
 <img src="assets/snowpipe_stagetable.png" />
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_2_ingest.sql`
 
 **Run through the worksheet to get Snowflake resources created.**
-
 
 ```sql
 -- Set role, context, and warehouse
@@ -391,21 +395,55 @@ CHANGE_TRACKING = TRUE
 COMMENT = 'IOTSTREAM staging table.'
 ;
 ```
-### a) Test Streaming Client Channel
 
+> aside negative
+> 
+>  There is an **EXTERNAL ACTIVITY** sections in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
+>
 
+### Snowpipe Streaming Ingest Client SDK
 
-Test channel open
+Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka, to streaming rowset data into a Snowflake table at low latency.
+
+<img src="assets/data-load-snowpipe-streaming.png" />
+
+The Ingest Client SDK is configured with a secure connection to Snowflake, and will establish a streaming [Channel](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#channels) between the client and a Snowflake table.
+
+<img src="assets/data-load-snowpipe-streaming-client-channel.png" />
+
+Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client.
+
+### b) Test Streaming Client Channel
+
+In the **GitHub Codespace VS Code**:
+
+1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
+
+2. Change directory into to the **iotstream** folder: `cd iotstream`
+
+3. Run the `Test.sh` script to confirm a table channel stream can be established with Snowflake.
+
 ```bash
 ./Test.sh
 ```
 
-Check channel is open
+If successful, it will return:
+`** Successfully Connected, Test complete! **`
+
+4. Open the `worksheets/hol_timeseries_2_ingest.sql` **VS Code** worksheet run the `SHOW CHANNELS;` command to confirm a channel is open in Snowflake.
+
 ```sql
-show channels;
+SHOW CHANNELS;
 ```
 
-Run initial load
+The query should return a single channel `CHACHANNEL_1_TEST` opened to the `RAW_TS_IOTSTREAM_DATA` table.
+
+<img src="assets/snowpipe_channeltest.png" />
+
+With the channel connection being successful, we can now look at loading the full historical set, as fast as the connection and machine will allow.
+
+5. Back in the **VS Code** `Terminal` run the `Run_MAX.sh` script to load a month of IoT data.
+
 ```bash
 ./Run_MAX.sh
 ```
