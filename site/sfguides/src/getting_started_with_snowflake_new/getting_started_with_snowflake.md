@@ -78,11 +78,11 @@ Let's get you acquainted with Snowflake! This section covers the basic component
 
 ![snowflake navbar](assets/3UIStory_2.png)
 
-#### Worksheets
+#### Projects > Worksheets
 
 ![worksheets tab main](assets/3UIStory_3.png)
 
-The ​**Worksheets​** tab provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete. A new worksheet is created by clicking **+ Worksheet** on the top right.
+Under **Projects** on the left-hand panel, select the ​**Worksheets​** tab. This provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete. A new worksheet is created by clicking **`+`** on the top right.
 
 ![worksheets tab details](assets/3UIStory_4.png)
 
@@ -114,22 +114,17 @@ The various panes on this page can be resized by adjusting their sliders. If you
 >  **Worksheets vs the UI**
 Most of the exercises in this lab are executed using pre-written SQL within this worksheet to save time. These tasks can also be done via the UI, but would require navigating back-and-forth between multiple UI tabs.
 
-#### Dashboards
+#### Projects > Dashboards
 ![dashboards tab](assets/3UIStory_5.png)
 
-The **Dashboards** tab allows you to create flexible displays of one or more charts (in the form of tiles, which can be rearranged). Tiles and widgets are produced by executing SQL queries that return results in a worksheet. Dashboards work at a variety of sizes with minimal configuration.
+Under **Projects** on the left-hand panel, select the ​**Dashboards​** tab. This tab allows you to create flexible displays of one or more charts (in the form of tiles, which can be rearranged). Tiles and widgets are produced by executing SQL queries that return results in a worksheet. Dashboards work at a variety of sizes with minimal configuration.
 
-#### Databases
+#### Data > Databases
 ![databases tab](assets/3UIStory_6.png)
 
 Under **Data**, the **Databases**​ tab shows information about the databases you have created or have permission to access. You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that a database already exists in your environment. However, we will not be using it in this lab.
 
-#### Private Shared Data
-![shared data tab](assets/3UIStory_7.png)
-
-Also under **Data**, the **Private Shared Data** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.
-
-#### Marketplace
+#### Data Products > Marketplace
 
 ![marketplace tab](assets/3UIStory_8.png)
 <!-- victoria ^ -->
@@ -137,43 +132,51 @@ Also under **Data**, the **Private Shared Data** tab is where data sharing can b
 The **Marketplace** tab is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
 <!-- dash to check in with the marketplace marketing team on updated summary of marketplace -->
 
-#### Query History
+#### Data Products > Private Sharing
+![shared data tab](assets/3UIStory_7.png)
+
+Under **Data Products**, the **Private Sharing** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing later.
+
+#### Monitoring > Query History
 
 ![history tab](assets/3UIStory_9.png)
 
-Under **Activity** there are two tabs **Query History** and **Copy History**:
+Under **Monitoring** there are multiple tabs for tracking your usage of your Snowflake account:
 
 - **Query History** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
 - **Copy History** shows the status of copy commands run to ingest data into Snowflake.
+- **Task History** allows you to see the execution history for tasks and tasks graphs. (Tasks let you schedule the execution of SQL code. It is associated with a specific database and schema.)
+- **Dynamic Tables** is where you can use Snowsight to monitor dynamic table refreshes and examine dynamic tables and dynamic table graphs.
+- **Governance** tracks row- and column-level security, object tagging, data classification, access history, and more.
 
-#### Warehouses
+#### Admin > Warehouses
 
 ![warehouses tab](assets/3UIStory_10.png)
 
 Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
 
-#### Resource Monitors
+#### Admin > Cost Management
 
 ![resource monitors tab](assets/3UIStory_11.png)
 
-Under **Admin**, the **Resource Monitors** tab shows all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
+Under **Admin**, the **Cost Management** tab shows an overview of account consumption and budgets. It also includes details on all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
 
-#### Roles
+#### Admin > Users & Roles
 
 ![roles tab](assets/3UIStory_12.png)
 
-Under **Admin**, the **Roles** sub-tab of the **Users and Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
+Under **Admin**, the **Roles** sub-tab of the **Users & Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
 
 #### Users
 
 ![users tab](assets/3UIStory_13.png)
 
-Also under **Admin** tab, the **Users** sub-tab of the **Users and Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to ACCOUNTADMIN.
+Also under the **Admin** tab, the **Users** sub-tab of the **Users & Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to `ACCOUNTADMIN`.
 
 
 ![user preferences dropdown](assets/3UIStory_14.png)
 
-Clicking on your username in the top right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
+Clicking on your username in the bottom right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
 
 > aside negative
 > 
@@ -582,44 +585,42 @@ Next, let's look at how Snowflake allows us to create a view and also query the 
 > 
 >  **Views & Materialized Views**
 A view allows the result of a query to be accessed as if it were a table. Views can help present data to end users in a cleaner manner, limit what end users can view in a source table, and write more modular SQL.
+
 Snowflake also supports materialized views in which the query results are stored as though the results are a table. This allows faster access, but requires storage space. Materialized views can be created and queried if you are using Snowflake Enterprise Edition (or higher).
 
 Run the following command to create a columnar view of the semi-structured JSON SEC filing data, so it is easier for analysts to understand and query. The CIK corresponds to the Central Index Key, or unique identifier that SEC gives to each filing entity. The ADSH is the document number for any filing submitted to the SEC.
 
 ```SQL
-// create views that will structure our semi-structured JSON data
-create or replace view sec_filing_index_view as
-select
-    v:cik::string AS cik,
-    v:company_name::string AS company_name,
-    v:ein::int AS ein,
-    v:adsh::string AS adsh,
+CREATE OR REPLACE VIEW sec_filing_index_view AS
+SELECT
+    v:cik::string                   AS cik,
+    v:company_name::string          AS company_name,
+    v:ein::int                      AS ein,
+    v:adsh::string                  AS adsh,
     v:timestamp_accepted::timestamp AS timestamp_accepted,
-    v:filed_date::date AS filed_date,
-    v:form_type::string AS form_type,
-    v:fiscal_period::string AS fiscal_period,
-    v:fiscal_year::string AS fiscal_year
-from
-    sec_filing_index;
+    v:filed_date::date              AS filed_date,
+    v:form_type::string             AS form_type,
+    v:fiscal_period::string         AS fiscal_period,
+    v:fiscal_year::string           AS fiscal_year
+FROM sec_filing_index;
 
-create or replace view sec_filing_attributes_view as
-select
-    v:variable::string AS variable,
-    v:cik::string AS cik,
-    v:adsh::string AS adsh,
+CREATE OR REPLACE VIEW sec_filing_attributes_view AS
+SELECT
+    v:variable::string            AS variable,
+    v:cik::string                 AS cik,
+    v:adsh::string                AS adsh,
     v:measure_description::string AS measure_description,
-    v:tag::string AS tag,
-    v:tag_version::string AS tag_version,
-    v:unit_of_measure::string AS unit_of_measure,
-    v:value::string AS value,
-    v:report::int AS report,
-    v:statement::string AS statement,
-    v:period_start_date::date AS period_start_date,
-    v:period_end_date::date AS period_end_date,
-    v:covered_qtrs::int AS covered_qtrs,
-    v:metadata::variant AS metadata
-from
-    sec_filing_attributes;
+    v:tag::string                 AS tag,
+    v:tag_version::string         AS tag_version,
+    v:unit_of_measure::string     AS unit_of_measure,
+    v:value::string               AS value,
+    v:report::int                 AS report,
+    v:statement::string           AS statement,
+    v:period_start_date::date     AS period_start_date,
+    v:period_end_date::date       AS period_end_date,
+    v:covered_qtrs::int           AS covered_qtrs,
+    v:metadata::variant           AS metadata
+FROM sec_filing_attributes;
 ```
 
 SQL dot notation `v:variable` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
@@ -628,16 +629,13 @@ The new view should appear as `SEC_FILINGS_INDEX_VIEW` under `CYBERSYN` > `PUBLI
 
 ![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6_1.png)
 
-Verify the view with the following query: 
+Notice the results look just like a regular structured data source: 
 
 ```SQL
 SELECT *
 FROM sec_filing_index_view
 LIMIT 20;
 ```
-
-Notice the results look just like a regular structured data source.
-
 <!-- ------------------------ -->
 
 ## Getting Data from Snowflake Marketplace
@@ -646,19 +644,17 @@ Duration: 5
 
 ### Snowflake Data Marketplace
 
-Make sure you're using the `ACCOUNTADMIN` role and, navigate to the **Marketplace**:
+Make sure you're using the `ACCOUNTADMIN` role and, navigate to **Data Products** > **Marketplace**:
 
 ![data marketplace tab](assets/10Share_7.png)
 
 #### Find a listing
 
-The search box at the top allows you to search for a listings. The drop-down lists to the right of the search box let you filter data listings by Provider, Business Needs, and Category.
-
-Type `stock prices` in the search box, scroll through the results, and select [**Financial & Economic Essentials**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/) (provided by Cybersyn).
+Type `stock prices` in the search box at the top, scroll through the results, and select [**Financial & Economic Essentials**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/) (provided by Cybersyn).
 
 ![health tab](assets/10Share_8.png)  
 
-In the **Cybersyn Financial & Economic Essentials** page, you can learn more about the dataset and see some sample queries. When you're ready, click the **Get** button to make this information available within your Snowflake account:
+In the **Cybersyn Financial & Economic Essentials** page, you can learn more about the contents of the data listing, explore data dictionaries, and see some sample queries. You will also see links to documentation and the dataset's cloud region availability. When you're ready, click the **Get** button to make this information available within your Snowflake account:
 
 ![get data fields](assets/10Share_starschema_get_data.png)
 
@@ -680,7 +676,7 @@ If you chose **Open**, a new worksheet opens in a new browser tab/window:
 ![get data fields](assets/10Share_starschema_query_data2.png)
 
 Next:
-1. Click **Data** > **Databases**
+1. Click **Data** > **Databases**.
 2. Click the `Financial__Economic_Essentials` database.
 3. You can see details about the schemas, tables, and views that are available to query.
 
@@ -712,14 +708,14 @@ Go to the **ZERO_TO_SNOWFLAKE_WITH_CYBERSYN** worksheet and change the warehouse
 Role: `SYSADMIN`
 Warehouse: `ANALYTICS_WH (L)`
 Database: `CYBERSYN`
-Schema = `PUBLIC`
+Schema: `PUBLIC`
 
 ![sample data query results](assets/6Query_1.png)
 
 Run the following query to see a sample of the `company_metadata` data:
 
 ```SQL
-select * from company_metadata limit 20;
+SELECT * FROM company_metadata LIMIT 20;
 ```
 
 ![sample data query results](assets/6Query_2.png)
@@ -734,13 +730,18 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS post_market_close,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY date) - 1)::DOUBLE AS daily_return,
-    AVG(ts.value) OVER (PARTITION BY primary_ticker ORDER BY date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
-FROM cybersyn.stock_price_timeseries ts
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date) - 1)::DOUBLE AS daily_return,
+    AVG(ts.value) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
+FROM Financial__Economic_Essentials.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
-WHERE variable_name = 'Post-Market Close';
+WHERE ts.variable_name = 'Post-Market Close';
 ```
+
+> aside positive
+> 
+>  If you have defined a particular database in the worksheet and want to use a table from a different database, you must fully qualify the reference to the other table by providing its database and schema name.
+
 **Trading Volume Statistics:** Then, calculate the trading volume change from one day to the next to see if there's an increase or decrease in trading activity. This can be a sign of increasing or decreasing interest in a stock.
 
 ```SQL
@@ -749,11 +750,11 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS nasdaq_volume,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY date) - 1)::DOUBLE AS volume_change
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date) - 1)::DOUBLE AS volume_change
 FROM cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
-WHERE variable_name = 'Nasdaq Volume';
+WHERE ts.variable_name = 'Nasdaq Volume';
 ```
 
 ![hourly query results](assets/6Query_3.png)
@@ -785,17 +786,17 @@ In the **Query Details** pane on the right, note that the query runs significant
 
 Snowflake allows you to create clones, also known as "zero-copy clones" of tables, schemas, and databases in seconds. When a clone is created, Snowflake takes a snapshot of data present in the source object and makes it available to the cloned object. The cloned object is writable and independent of the clone source. Therefore, changes made to either the source object or the clone object are not included in the other.
 
-A popular use case for zero-copy cloning is to clone a production environment for use by Development & Testing teams to test and experiment without adversely impacting the production environment and eliminating the need to set up and manage two separate environments.
+_A popular use case for zero-copy cloning is to clone a production environment for use by Development & Testing teams to test and experiment without adversely impacting the production environment and eliminating the need to set up and manage two separate environments._
 
 > aside negative
 > 
 >  **Zero-Copy Cloning**
 A massive benefit of zero-copy cloning is that the underlying data is not copied. Only the metadata and pointers to the underlying data change. Hence, clones are “zero-copy" and storage requirements are not doubled when the data is cloned. Most data warehouses cannot do this, but for Snowflake it is easy!
 
-Run the following command in the worksheet to create a development (dev) table clone of the `trips` table:
+Run the following command in the worksheet to create a development (dev) table clone of the `company_metadata` table:
 
 ```SQL
-create table company_metadata_dev clone company_metadata;
+CREATE TABLE company_metadata_dev CLONE company_metadata;
 ```
 
 Click the three dots (**...**) in the left pane and select **Refresh**. Expand the object tree under the `CYBERSYN` database and verify that you see a new table named `company_metadata_dev`. Your Development team now can do whatever they want with this table, including updating or deleting it, without impacting the `company_metadata` table or any other object.
@@ -804,11 +805,7 @@ Click the three dots (**...**) in the left pane and select **Refresh**. Expand t
 
 ### Joining Tables
 
-We will now join the JSON SEC filing datasets together to investigate the revenue of one CPG company, Kraft Heinz. Run the query below to join `SEC_FILINGS_INDEX` to `SEC_FILINGS_ATTRIBUTES` to see how X has performed over time:
-
-> aside positive
-> 
->  If you have defined a particular database in the worksheet and want to use a table from a different database, you must fully qualify the reference to the other table by providing its database and schema name.
+We will now join the JSON SEC filing datasets together to investigate the revenue of one CPG company, Kraft Heinz. Run the query below to join `SEC_FILINGS_INDEX` to `SEC_FILINGS_ATTRIBUTES` to see how Kraft Heinz (KHC) business segments have performed over time:
 
 ```SQL
 WITH data_prep AS (
@@ -855,8 +852,6 @@ FROM data_prep
 ORDER BY product, period_end_date;
 ```
 ![weather results](assets/7SemiStruct_8_1.png)
-
-The query results show the quarterly performance of Kraft Heinz's business segments.
 
 <!-- ------------------------ -->
 
@@ -910,22 +905,23 @@ Let's roll back the `COMPANY_METADATA` table in the `CYBERSYN` database to a pre
 First, run the following SQL statements to switch your worksheet to the proper context:
 
 ```SQL
-use role sysadmin;
+USE ROLE sysadmin;
 
-use warehouse compute_wh;
+USE WAREHOUSE compute_wh;
 
-use database cybersyn;
+USE DATABASE cybersyn;
 
-use schema public;
+USE SCHEMA public;
 ```
 
 Run the following command to replace all of the company names in the table with the word "oops":
 
 ```SQL
-update company_metadata set company_name = 'oops';
+UPDATE company_metadata SET company_name = 'oops';
 ```
 
 Now, run a query that returns the companies. Notice that the company names are all the same:
+
 ```SQL
 SELECT *
 FROM company_metadata;
@@ -941,14 +937,12 @@ set query_id =
 where query_text like 'update%' order by start_time desc limit 1);
 ```
 
-Use Time Travel to recreate the table with the correct company names:
+Use Time Travel to recreate the table with the correct company names and verify the company names have been restored:
 ```SQL
-create or replace table company_metadata as
-(select * from company_metadata before (statement => $query_id));
-```
+CREATE OR REPLACE TABLE company_metadata AS
+(SELECT * FROM company_metadata before (statement => $query_id));
 
-Run the previous query again to verify that the company names have been restored:
-```SQL
+
 SELECT *
 FROM company_metadata;
 ```
@@ -961,9 +955,9 @@ FROM company_metadata;
 
 Duration: 8
 
-In this section, we will explore aspects of Snowflake's access control security model, such as creating a role and granting it specific permissions. We will also explore other usage of the `ACCOUNTADMIN` (Account Administrator) role, which was briefly introduced earlier in the lab.
+In this section, we will explore aspects of Snowflake's access control security model, such as creating a role and granting it specific permissions. We will also explore other usage of the `ACCOUNTADMIN` (Account Administrator) role.
 
-Continuing with the lab story, let's assume a junior DBA has joined our analytics team, and we want to create a new role for them with less privileges than the system-defined, default role of `SYSADMIN`.
+Continuing with the lab story, let's assume a junior DBA has joined our internal analytics team, and we want to create a new role for them with less privileges than the system-defined, default role of `SYSADMIN`.
 
 > aside negative
 > 
@@ -987,9 +981,9 @@ Before a role can be used for access control, at least one user must be assigned
 Use the following commands to create the role and assign it to you. Before you run the GRANT ROLE command, replace `YOUR_USERNAME_GOES_HERE` with your username:
 
 ```SQL
-create role junior_dba;
+CREATE ROLE junior_dba;
 
-grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
+GRANT ROLE junior_dba TO user YOUR_USERNAME_GOES_HERE;
 ```
 
 > aside positive
@@ -999,7 +993,7 @@ grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
 Change your worksheet context to the new `JUNIOR_DBA` role:
 
 ```SQL
-use role junior_dba;
+USE ROLE junior_dba;
 ```
 
 In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role. 
@@ -1009,16 +1003,16 @@ In the top right of the worksheet, notice that the context has changed to reflec
 Also, the warehouse is not selected because the newly created role does not have usage privileges on any warehouse. Let's fix it by switching back to `ACCOUNTADMIN` role and grant usage privileges to `COMPUTE_WH` warehouse.
 
 ```SQL
-use role accountadmin;
+USE ROLE accountadmin;
 
-grant usage on warehouse compute_wh to role junior_dba;
+GRANT USAGE ON WAREHOUSE compute_wh TO ROLE junior_dba;
 ```
 
 Switch back to the `JUNIOR_DBA` role. You should be able to use `COMPUTE_WH` now.
 ```SQL
-use role junior_dba;
+USE ROLE junior_dba;
 
-use warehouse compute_wh;
+USE WAREHOUSE compute_wh;
 ```
 
 Finally, you can notice that in the database object browser panel on the left, the `CYBERSYN` and `Financial__Economic_Essentials` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
@@ -1026,13 +1020,13 @@ Finally, you can notice that in the database object browser panel on the left, t
 Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN` and `Financial__Economic_Essentials` databases:
 
 ```SQL
-use role accountadmin;
+USE ROLE accountadmin;
 
-grant usage on database cybersyn to role junior_dba;
+GRANT USAGE ON DATABASE cybersyn TO ROLE junior_dba;
 
-grant usage on database Financial__Economic_Essentials to role junior_dba;
+GRANT USAGE ON DATABASE Financial__Economic_Essentials TO ROLE junior_dba;
 
-use role junior_dba;
+USE ROLE junior_dba;
 ```
 
 Notice that the `CYBERSYN` and `Financial__Economic_Essentials` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
