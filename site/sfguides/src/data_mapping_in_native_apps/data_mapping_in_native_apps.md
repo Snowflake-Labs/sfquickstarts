@@ -84,26 +84,21 @@ The project we are about to create is composed of several files in the following
     |-- snowflake.yml
     |-- prepare_data.sh
     
-
 ```
 
-Below you will find the files you need to create your own copy of the project. One is filled already, the other ones left you can leave them empty for now, we will be completing them further in the tutorial.  To start, go to your favorite code editor, create a folder named **Datamapping_app_streamlit** (or however you want to call it) and inside create these files following the structure above.
-
-First, create a folder called **app** and inside create the following files:
-
-- setup_script.sql
-
-- manifest.yml
+To start creating this folder structure, go to your console and inside the folder you want the project to reside. Execute the following **`snow app init datamapping_app_streamlit`**. This will create several files for a basic template, we are replacing some of them and also creating new ones.
 
 Now, inside the **app** folder, create another one, called **ui**, and add the following file
 
 - enricher_dash.py
 
-The next two files should go on the root of the project:
+The next step is to create an empty file called **prepare_data.sh** at the project root.
 
--  prepare_data.sh
 
--  snowflake.yml :
+From the project's root, create a new folder and name it **scripts**, inside, create a file named **setup_package_script.sql**.
+
+Finally, replace the content of **snowflake.yml** file with the following code:
+
     ```sh
     definition_version: 1
     native_app:
@@ -117,9 +112,6 @@ The next two files should go on the root of the project:
         - scripts/setup_package_script.sql
     ```
 
-From the project's root, create a new folder and name it **scripts**. Inside, create the following file (we will add content to it later):
-
--  setup_package_script.sql
 
 Finally, the tree structure inside your project structure should look like this:
 
@@ -211,7 +203,7 @@ CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
 INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
 ```
 
-You can run it by executing:
+You can the file it by executing:
  ```SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh```  
  in the folder root.
 
@@ -228,7 +220,7 @@ Duration: 5
 
 > aside positive
 > 
-> **Note** - You need to add the following content to the **setup_package_script.sql** file.
+> **Note** - You need to replace the content in the **setup_package_script.sql** file with the following code. The **{{ package_name }}** directive, allows the application to use whatever name the app package has, according to myoury system username, as a code variable.
 
 ```sql
 --Create a schema in the applcation package
@@ -264,7 +256,7 @@ The named stage in this example is the stage with the label **APPLICATION_STAGE*
 
 > aside positive
 >
-> **Note** - The **manifest.yml** file you created should contain this:
+> **Note** - The **manifest.yml** file you created should be replaced with this code:
 
 ```yaml
 manifest_version: 1
@@ -300,7 +292,7 @@ If the application role is not granted permissions onto an object then you will 
 
 > aside positive
 >
-> **Note** - Go ahead and fill your **setup_script.sql** file with the following code:
+> **Note** - Go ahead and replace your **setup_script.sql** file with the following code:
 
 ```sql
 --create an application role which the consumer can inherit
@@ -312,12 +304,12 @@ CREATE OR ALTER VERSIONED SCHEMA ENRICHIP;
 GRANT USAGE ON SCHEMA ENRICHIP TO APPLICATION ROLE APP_PUBLIC;
 
 --this is an application version of the object shared with the application package
-CREATE VIEW IF NOT EXISTS ENRICHIP.LITEDB11 AS SELECT * FROM IP2LOCATION.litedb11;
+CREATE VIEW ENRICHIP.LITEDB11 AS SELECT * FROM IP2LOCATION.litedb11;
 -- If the user prefers, access can be granted directly to the IPLOCATION.litebd11 view, created in the setup_package_script file.
 
 --accepts an IP address and returns a modified version of the IP address 
 --the modified version will be used in the lookup
-CREATE SECURE FUNCTION IF NOT EXISTS ENRICHIP.ip2long(ip_address varchar(16))
+CREATE OR REPLACE SECURE FUNCTION ENRICHIP.ip2long(ip_address varchar(16))
 RETURNS string
 LANGUAGE JAVASCRIPT
 AS
@@ -339,7 +331,7 @@ $$
 --converts it using the ip2long function above
 --looks up the returned value in the view
 --returns the enhanced information as an object
-CREATE SECURE FUNCTION IF NOT EXISTS ENRICHIP.ip2data(ip_address varchar(16))
+CREATE OR REPLACE SECURE FUNCTION ENRICHIP.ip2data(ip_address varchar(16))
 returns object
 as
 $$
@@ -390,7 +382,7 @@ grant usage on schema ui to application role app_public;
 
 --this is the reference to the streamlit (not the streamlit itself)
 --this was referenced in the manifest file
-create streamlit if not exists ui."Dashboard" from 'ui' main_file='enricher_dash.py';
+create or replace streamlit ui."Dashboard" from 'ui' main_file='enricher_dash.py';
 
 --grant the application role permissions onto the streamlit
 grant usage on streamlit ui."Dashboard" TO APPLICATION ROLE APP_PUBLIC;
@@ -521,7 +513,7 @@ Click **Add** and navigate to the table we just created and select it:
 
 > aside positive
 > 
-> **Note** - You may at this point be asked to specify a warehouse.   Assigning permissions requires a warehouse.
+> **Note** - You may at this point be asked to specify a warehouse, because assigning permissions requires a warehouse.
 
 <img src="assets/table_chosen.png" width="719" />
 
