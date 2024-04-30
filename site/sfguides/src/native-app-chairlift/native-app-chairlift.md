@@ -220,7 +220,7 @@ This directory contains Streamlit unit tests. **tests/test_utils.py** contains c
 
 ### Running Unit tests
 
-To run unit tests, make sure that `chairlift-test` Anaconda environment is active, and then run the following command:
+To run unit tests, make sure that `chairlift-test` conda environment is active, and then run the following command:
 ```
 pytest -vv
 ```
