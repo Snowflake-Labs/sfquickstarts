@@ -65,9 +65,6 @@ The first solution is not really what we want to be doing because the consumer w
 > 
 > **Note** - The following steps explain how to create the app using the Snowflake CLI, as this option presents as a faster, more straightforward way to build Native Apps. You can also accomplish it by manually creating the folder structure and executing the SQL commands in Snowsight, but this alternative is out of the scope for this Quickstart.
 
-The files explained in the following steps, are already present in the project folder, and it is merely a deeper explanation of its contents.
-
-
 <!-- ------------------------ -->
 ## Project Structure
 Duration: 7
@@ -90,11 +87,221 @@ The project we are about to create is composed of several files in the following
 
 ```
 
-Below you will find the entire documents that you will to create a copy for your own. Go to your favorite code editor, create a folder named **Datamapping_app_streamlit** (or however you want to call it) and inside create these files following the structure above.
+Below you will find the files you need to create your own copy of the project. One is filled already, the other ones left you can leave them empty for now, we will be completing them further in the tutorial.  To start, go to your favorite code editor, create a folder named **Datamapping_app_streamlit** (or however you want to call it) and inside create these files following the structure above.
 
 First, create a folder called **app** and inside create the following files:
 
-### setup_script.sql
+- setup_script.sql
+
+- manifest.yml
+
+Now, inside the **app** folder, create another one, called **ui**, and add the following file
+
+- enricher_dash.py
+
+The next two files should go on the root of the project:
+
+-  prepare_data.sh
+
+-  snowflake.yml :
+    ```sh
+    definition_version: 1
+    native_app:
+    name: IP2LOCATION_STREAMLIT
+    source_stage: app_src.stage
+    artifacts:
+        - src: app/*
+        dest: ./
+    package:
+        scripts:
+        - scripts/setup_package_script.sql
+    ```
+
+From the project's root, create a new folder and name it **scripts**, inside, put the following file:
+
+-  setup_package_script.sql
+
+Finally, the tree structure inside your project structure should look like this:
+
+<img src="assets/folder_structure.png" width="288" />
+
+
+### Snowflake CLI
+The Snowflake CLI is a tool that allow us to run simple and powerful commands to communicate directly to your Snowflake account. You can find more information and install instructions [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation).
+
+
+
+<!-- ------------------------ -->
+## Building the Application
+Duration: 7
+
+The application itself has been broken down into three parts.
+
+* The building of the **application package** on the provider and the sharing of the lookup database with the application. 
+* The building of the application **install script** which contains the functionality to accept an IP address, look it up in the database we just shared with the application and write back enhanced data from the application. 
+* Arguably (certainly for this Quickstart) the most important part which is the user interface written using Streamlit. This is where we will do the mappings.
+
+To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart. There are several versions of this IP information, and we are going to use the IPv4 verison for this tutorial. If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
+
+### Preparing the data
+
+The first thing you need to do is create a new database which will serve as the lookup database for the application, following that, it is necessary to create a table, a file format, and a stage. That way we can upload our files to the **stage**, using the **file format** and after that loading that staged data into the **table**.
+
+> aside positive
+> 
+> **Note** - This setup SQL commands are performed by the **prepare_data.sh** file created previously, you can complete it with the code below:
+
+```sh
+# Create a database and a schema to hold the data to lookup.
+snow sql -q "
+CREATE DATABASE IF NOT EXISTS IP2LOCATION;
+CREATE SCHEMA IF NOT EXISTS IP2LOCATION;
+"
+
+# Create the table to host the data.
+# Create a file format for the file
+# Create a stage so we can upload the file
+
+snow sql -q "
+CREATE TABLE IF NOT EXISTS LITEDB11 (
+ip_from INT,
+ip_to INT,
+country_code char(2),
+country_name varchar(64),
+region_name varchar(128),
+city_name varchar(128),
+latitude DOUBLE,
+longitude DOUBLE,
+zip_code varchar(30),
+time_zone varchar(8)
+);
+
+CREATE OR REPLACE FILE FORMAT LOCATION_CSV
+SKIP_HEADER = 1
+FIELD_OPTIONALLY_ENCLOSED_BY = '\"'
+COMPRESSION = AUTO;
+
+CREATE STAGE IF NOT EXISTS IP2LOCATION.IP2LOCATION.LOCATION_DATA_STAGE
+file_format = LOCATION_CSV;" --database ip2location --schema ip2location 
+
+# Copy the csv files from your local machine to the stage we created previously
+snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
+
+# Copy the csv file from the stage to load the table
+snow sql -q "
+copy into litedb11 from @location_data_stage
+files = ('IP2LOCATION-LITE-DB11.CSV')
+;" --database ip2location --schema ip2location
+
+# Simple query test to ensure the table is correctly filled.
+snow sql -q "SELECT COUNT(*) FROM LITEDB11;
+SELECT * FROM LITEDB11 LIMIT 10;" --database ip2location --schema ip2location
+
+# Create test database and schema.
+snow sql -q "CREATE DATABASE IF NOT EXISTS TEST_IPLOCATION;
+CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;
+
+# Create test table to insert some values
+CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
+	IP VARCHAR(16),
+	IP_DATA VARIANT
+);
+
+# Insert testing values to use later on
+INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
+```
+
+You can run it by executing:
+ ```SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh```  
+ in the folder root.
+
+We now have the reference database setup in the provider account so are ready to start building the application itself.
+
+<!-- ------------------------ -->
+## Provider Setup
+Duration: 5
+
+> aside positive
+> 
+> **Note** - This code is here to illustrate how would you normally do the app creation using the manual steps, but **this step is executed automatically by the CLI**, for example, in a manual environment you will need to update your files to a stage, but that is managed by the **`snow app run`** command.  In the following steps there will be instructions on how to execute it.
+
+
+> aside positive
+> 
+> **Note** - You need to add the following content to the **setup_package_script.sql** file.
+
+```sql
+--Create a schema in the applcation package
+CREATE SCHEMA IF NOT EXISTS {{ package_name }}.IP2LOCATION;
+
+--Grant the application permissions on the schema we just created
+GRANT USAGE ON SCHEMA {{ package_name }}.IP2LOCATION TO SHARE IN APPLICATION PACKAGE {{ package_name }};
+
+-- Grant the applications permissions to reference the database where the data is located
+GRANT REFERENCE_USAGE ON DATABASE IP2LOCATION TO SHARE IN APPLICATION PACKAGE {{ package_name }};
+
+--We should not reference directly to the table, instead we need to create a proxy artifact here referencing the data we want to use
+CREATE VIEW IF NOT EXISTS {{ package_name }}.IP2LOCATION.LITEDB11
+AS
+SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11;
+--Grant permissions to the application on the view.
+GRANT SELECT ON VIEW {{ package_name }}.IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE {{ package_name }};
+```
+
+Fantastic,  we now have an application package with permissions onto the lookup database.  That's the first part of the application completed but we will be adding the necessary files to deploy the actual application.
+
+<!-- ------------------------ -->
+## The Manifest File
+Duration: 3
+
+Every Snowflake Native App is required to have a manifest file.  The manifest file defines any properties of the application as well as the location of the application's setup script.  The manifest file for this application will not use all the possible fetures of the manifest file so you can read more about it [here](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).  The manifest file has three requirements:
+
+* The name of the manifest file must be manifest.yml.
+* The manifest file must be uploaded to a named stage so that it is accessible when creating an application package or Snowflake Native App.
+* The manifest file must exist at the root of the directory structure on the named stage.
+
+The named stage in this example is the stage with the label **APPLICATION_STAGE** created earlier.
+
+> aside positive
+>
+> **Note** - The **manifest.yml** file you created should contain this:
+
+```yaml
+manifest_version: 1
+artifacts:
+  setup_script: setup_script.sql
+  default_streamlit: ui."Dashboard"
+
+references:
+  - tabletouse:
+      label: "Table that contains data to be keyed"
+      description: "Table that has IP address column and a column to write into"
+      privileges:
+        - SELECT
+        - INSERT
+        - UPDATE
+        - REFERENCES
+      object_type: TABLE
+      multi_valued: false
+      register_callback: config_code.register_single_callback
+```
+
+The **artifacts** section details what files will be included in the application and their location relative to the manifest file.  The **references** section is where we define the permissions we require within the consumer account.  This is what we will ask the consumer to grant.  The way it does that is by calling the **register_callback** procedure which we will shortly define in our setup script.
+
+<!-- ------------------------ -->
+## The Setup Script
+Duration: 10
+
+In a Snowflake Native App, the setup script is used to define what objects will be created when the application is installed on the consumer account.  The location of the file as we have seen is defined in the manifest file.  The setup script is run on initial installation of the application and any subsequent upgrades/patches.
+
+Most setup scripts are called either **setup.sql** or **setup_script.sql** but that is not a hard and fast requirement.  In the setup script you will see that for some objects, the application role is given permissions and some not.  
+If the application role is permissioned onto an object then the object will be visible in Snowsight after the application is installed (permissions allowing).
+If the application role is not granted permissions onto an object then you will not see the object in Snowsight.  The application itself can still use the objects regardless.
+
+> aside positive
+>
+> **Note** - Go ahead and fill your **setup_script.sql** file with the following code:
+
 ```sql
 --create an application role which the consumer can inherit
 CREATE APPLICATION ROLE APP_PUBLIC;
@@ -106,7 +313,7 @@ GRANT USAGE ON SCHEMA ENRICHIP TO APPLICATION ROLE APP_PUBLIC;
 
 --this is an application version of the object shared with the application package
 CREATE VIEW IF NOT EXISTS ENRICHIP.LITEDB11 AS SELECT * FROM IP2LOCATION.litedb11;
--- If the user prefers, access can be granted directly to the IPLOCATION.litebd11 view, created in the setup-package-script file.
+-- If the user prefers, access can be granted directly to the IPLOCATION.litebd11 view, created in the setup_package_script file.
 
 --accepts an IP address and returns a modified version of the IP address 
 --the modified version will be used in the lookup
@@ -203,428 +410,6 @@ $$
 $$; 
 ```
 
-### manifest.yml
-```sh
-manifest_version: 1
-artifacts:
-  setup_script: setup_script.sql
-  default_streamlit: ui."Dashboard"
-
-references:
-  - tabletouse:
-      label: "Table that contains data to be keyed"
-      description: "Table that has IP address column and a column to write into"
-      privileges:
-        - SELECT
-        - INSERT
-        - UPDATE
-        - REFERENCES
-      object_type: TABLE
-      multi_valued: false
-      register_callback: config_code.register_single_callback
-```
-
-Inside the **app** folder, create another one, called **ui**, and add the following file
-### enricher_dash.py
-
-```py
-import streamlit as st
-import pandas as pd
-from snowflake.snowpark.context import get_active_session
-
-# get the active session
-session = get_active_session()
-# define the things that need mapping
-lstMappingItems =  ["IP ADDRESS COLUMN", "RESULT COLUMN"]
-# from our consumer table return a list of all the columns
-option_source = session.sql("SELECT * FROM REFERENCE('tabletouse') WHERE 1=0").to_pandas().columns.values.tolist()
-# create a dictionary to hold the mappings
-to_be_mapped= dict()
-#create a form to do the mapping visualisation
-with st.form("mapping_form"):
-    header = st.columns([1])
-    #give it a title
-    header[0].subheader('Define Mappings')
-    # for each mapping requirement add a selectbox
-    # populate the choices with the column list from the consumer table
-    for i in range(len(lstMappingItems)):
-        row = st.columns([1])
-        selected_col = row[0].selectbox(label = f'Choose Mapping for {lstMappingItems[i]}',options = option_source)
-        # add the mappings to the dictionary
-        to_be_mapped[lstMappingItems[i]] = selected_col
-        
-    row = st.columns(2)
-    # submit the mappings
-    submit = row[1].form_submit_button('Update Mappings')
-
-# not necessary but useful to see what the mappings look like
-st.json(to_be_mapped)
-
-#function call the stored procedure in the application that does the reading and writing
-def update_table():
-    # build the statement
-    statement = ' CALL ENRICHIP.enrich_ip_data(\'' + to_be_mapped["IP ADDRESS COLUMN"] + '\',\'' +  to_be_mapped["RESULT COLUMN"] + '\')'
-    #execute the statement
-    session.sql(statement).collect()
-    #again not necessary but useful for debugging (would the statement work in a worksheet)
-    st.write(statement)
-#update the consumer table
-st.button('UPDATE!', on_click=update_table)
-```
-
-The next to files go on the root of the project:
-
-### snowflake.yml
-```sh
-definition_version: 1
-native_app:
-  name: IP2LOCATION_STREAMLIT
-  source_stage: app_src.stage
-  artifacts:
-    - src: app/*
-      dest: ./
-  package:
-    scripts:
-      - scripts/setup-package-script.sql
-```
-
-### prepare_data.sh
-```sh
-snow sql -q "
-CREATE DATABASE IF NOT EXISTS IP2LOCATION;
-CREATE SCHEMA IF NOT EXISTS IP2LOCATION;
-"
-
-snow sql -q "
-CREATE TABLE IF NOT EXISTS LITEDB11 (
-ip_from INT,
-ip_to INT,
-country_code char(2),
-country_name varchar(64),
-region_name varchar(128),
-city_name varchar(128),
-latitude DOUBLE,
-longitude DOUBLE,
-zip_code varchar(30),
-time_zone varchar(8)
-);
-
---Create a file format for the file
-CREATE OR REPLACE FILE FORMAT LOCATION_CSV
-SKIP_HEADER = 1
-FIELD_OPTIONALLY_ENCLOSED_BY = '\"'
-COMPRESSION = AUTO;
-
---create a stage so we can upload the file
-CREATE STAGE IF NOT EXISTS IP2LOCATION.IP2LOCATION.LOCATION_DATA_STAGE
-file_format = LOCATION_CSV;" --database ip2location --schema ip2location 
-
-snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
-
-snow sql -q "
-copy into litedb11 from @location_data_stage
-files = ('IP2LOCATION-LITE-DB11.CSV')
-;" --database ip2location --schema ip2location
-
-snow sql -q "SELECT COUNT(*) FROM LITEDB11;
-SELECT * FROM LITEDB11 LIMIT 10;" --database ip2location --schema ip2location
-
-snow sql -q "CREATE DATABASE IF NOT EXISTS TEST_IPLOCATION;
-CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;
-
-CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
-	IP VARCHAR(16),
-	IP_DATA VARIANT
-);
-
-INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
-```
-
-From the project's root, create a new folder and name it **scripts**, inside, put the following file:
-
-### setup-package-scripts.sql
-
-```sql
---Create a schema in the applcation package
-CREATE SCHEMA IF NOT EXISTS {{ package_name }}.IP2LOCATION;
-
---Grant the application permissions on the schema we just created
-GRANT USAGE ON SCHEMA {{ package_name }}.IP2LOCATION TO SHARE IN APPLICATION PACKAGE {{ package_name }};
-
-GRANT REFERENCE_USAGE ON DATABASE IP2LOCATION TO SHARE IN APPLICATION PACKAGE {{ package_name }};
---We need to create a proxy artefact here referencing the data we want to use
-CREATE VIEW IF NOT EXISTS {{ package_name }}.IP2LOCATION.LITEDB11
-AS
-SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11;
---Grant permissions to the application
-GRANT SELECT ON VIEW {{ package_name }}.IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE {{ package_name }};
-```
-
-Finally, your tree structure inside your project structure should look like this:
-
-<img src="assets/folder_structure.png" width="288" />
-
-
-### Snowflake CLI
-The Snowflake CLI is a tool that allow us to run simple and powerful commands to communicate directly to your Snowflake account. You can find more information and install instructions [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
-
-
-
-<!-- ------------------------ -->
-## Building the Application
-Duration: 7
-
-The application itself has been broken down into three parts.
-
-* The building of the application package on the provider and the sharing of the lookup database with the application. 
-* The building of the application install script which contains the functionality to accept an IP address, look it up in the database we just shared with the application and write back enhanced data from the application. 
-* Arguably (certainly for this Quickstart) the most important part which is the user interface written using Streamlit. This is where we will do the mappings.
-
-To do the enhancement of the IP addresses we will use a dataset called DB11 from [IP2LOCATION](https://www.ip2location.com/database/ip2location). There is a free version of this database available [here](https://lite.ip2location.com/database/db11-ip-country-region-city-latitude-longitude-zipcode-timezone), which is the one we will use in this quickstart. There are several versions of this IP information, and we are going to use the IPv4 verison for this tutorial. If you do not have an account with them already you will need to create one. Download the dataset as a CSV file so it is ready to import  into the provider account.
-
-The first thing you need to do is create a new database which will serve as the lookup database for the application, following that, it is necessary to create a table, a file format, and a stage. That way we can upload our files to the **stage**, using the **file format** and after that loading that staged data into the **table**.
-
-> aside positive
-> 
-> **Note** - This setup SQL commands are performed by the *prepare_data.sh* file created previously, to run it you can type:
- ```SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh```  
- in the folder root.
-
-```sh
-snow sql -q "
-CREATE DATABASE IF NOT EXISTS IP2LOCATION;
-CREATE SCHEMA IF NOT EXISTS IP2LOCATION;
-"
-
-snow sql -q "
-CREATE TABLE IF NOT EXISTS LITEDB11 (
-ip_from INT,
-ip_to INT,
-country_code char(2),
-country_name varchar(64),
-region_name varchar(128),
-city_name varchar(128),
-latitude DOUBLE,
-longitude DOUBLE,
-zip_code varchar(30),
-time_zone varchar(8)
-);
-
-# Create a file format for the file
-CREATE OR REPLACE FILE FORMAT LOCATION_CSV
-SKIP_HEADER = 1
-FIELD_OPTIONALLY_ENCLOSED_BY = '\"'
-COMPRESSION = AUTO;
-
-# create a stage so we can upload the file
-CREATE STAGE IF NOT EXISTS IP2LOCATION.IP2LOCATION.LOCATION_DATA_STAGE
-file_format = LOCATION_CSV;" --database ip2location --schema ip2location 
-```
-
-Go ahead now and upload the file to the stage.  After the file is uploaded go back to
-your worksheet and copy the file into the table created earlier
-
-```sh
-snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
-
-snow sql -q "copy into litedb11 from @location_data_stage;
-SELECT COUNT(*) FROM LITEDB11;SELECT * FROM LITEDB11 LIMIT 10;" --database ip2location --schema ip2location
-```
-
-We now have the reference database setup in the provider account so are now ready to start building the application itself.
-
-<!-- ------------------------ -->
-## Provider Setup
-Duration: 5
-
-> aside positive
-> 
-> **Note** - This code is here to illustrate how would you normally do the app creation using the manual steps, but **this step is executed automatically by the CLI**, for example, in a manual environment you will need to update your files to a stage, but that managed by the **`snow app run`** command.  In the following steps there will be instructions on how to execute it.
-
-Here, in our manual example, we create another stage, and after that we go ahead and build out our application package
-
-```sql
-USE DATABASE IP2LOCATION;
-USE SCHEMA IP2LOCATION;
---create the new stage
-CREATE STAGE APPLICATION_STAGE;
---create the application package
-CREATE APPLICATION PACKAGE IP2LOCATION_APP;
---set context to the application package
-USE IP2LOCATION_APP;
---create a schema
-CREATE SCHEMA IP2LOCATION;
---Grant the application permissions on the schema we just created
-GRANT USAGE ON SCHEMA IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
-```
-
-Once we built the application package, we must give share permissions to the package to look into the database where our data resides. That is accomplished executing the following:
-
-```sql
---grant permissions on the database where our data resides
-GRANT REFERENCE_USAGE ON DATABASE IP2LOCATION TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
---we need to create a proxy artefact here referencing the data we want to use
-CREATE VIEW IP2LOCATION.LITEDB11
-AS
-SELECT * FROM IP2LOCATION.IP2LOCATION.LITEDB11;
---grant permissions to the application
-GRANT SELECT ON VIEW IP2LOCATION.LITEDB11 TO SHARE IN APPLICATION PACKAGE IP2LOCATION_APP;
-```
-
-Fantastic,  we now have an application package with permissions onto the lookup database.  That's the first part of the application completed but we will be adding the necessary files to deploy the actual application.
-
-<!-- ------------------------ -->
-## The Manifest File
-Duration: 3
-
-Every Snowflake Native App is required to have a manifest file.  The manifest file defines any properties of the application as well as the location of the application's setup script.  The manifest file for this application will not use all the possible fetures of the manifest file so you can read more about it [here](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).  The manifest file has three requirements:
-
-* The name of the manifest file must be manifest.yml.
-* The manifest file must be uploaded to a named stage so that it is accessible when creating an application package or Snowflake Native App.
-* The manifest file must exist at the root of the directory structure on the named stage.
-
-The named stage in this example is the stage with the label **APPLICATION_STAGE** created earlier.  The manifest file looks like this
-
-```yaml
-manifest_version: 1
-artifacts:
-  setup_script: setup_script.sql
-  default_streamlit: ui."Dashboard"
-
-references:
-  - tabletouse:
-      label: "Table that contains data to be keyed"
-      description: "Table that has IP address column and a column to write into"
-      privileges:
-        - SELECT
-        - INSERT
-        - UPDATE
-        - REFERENCES
-      object_type: TABLE
-      multi_valued: false
-      register_callback: config_code.register_single_callback
-```
-
-The **artifacts** section details what files will be included in the application and their location relative to the manifest file.  The **references** section is where we define the permissions we require within the consumer account.  This is what we will ask the consumer to grant.  The way it does that is by calling the **register_callback** procedure which we will shortly define in our setup script.
-
-<!-- ------------------------ -->
-## The Setup Script
-Duration: 10
-
-In a Snowflake Native App, the setup script is used to define what objects will be created when the application is installed on the consumer account.  The location of the file as we have seen is defined in the manifest file.  The setup script is run on initial installation of the application and any subsequent upgrades/patches.
-
-Most setup scripts are called either **setup.sql** or **setup_script.sql** but that is not a hard and fast requirement.  In the setup script you will see that for some objects, the application role is given permissions and some not.  
-If the application role is permissioned onto an object then the object will be visible in Snowsight after the application is installed (permissions allowing).
-If the application role is not granted permissions onto an object then you will not see the object in Snowsight.  The application itself can still use the objects regardless.
-
-```sql
---create an application role which the consumer can inherit
-CREATE APPLICATION ROLE APP_PUBLIC;
-
---create a schema
-CREATE OR ALTER VERSIONED SCHEMA ENRICHIP;
---grant permissions onto the schema to the application role
-GRANT USAGE ON SCHEMA ENRICHIP TO APPLICATION ROLE APP_PUBLIC;
-
---this is an application version of the object shared with the application package
-CREATE VIEW ENRICHIP.LITEDB11 AS SELECT * FROM IP2LOCATION.litedb11;
-
---accepts an IP address and returns a modified version of the IP address 
---the modified version will be used in the lookup
-CREATE OR REPLACE SECURE FUNCTION ENRICHIP.ip2long(ip_address varchar(16))
-RETURNS string
-LANGUAGE JAVASCRIPT
-AS
-$$
-var result = "";
-var parts = [];
-if (IP_ADDRESS.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
-parts = IP_ADDRESS.split('.');
-result = (parts[0] * 16777216 +
-(parts[1] * 65536) +
-(parts[2] * 256) +
-(parts[3] * 1));
-}
-return result;
-$$
-;
-
---this function accepts an ip address and 
---converts it using the ip2long function above
---looks up the returned value in the view
---returns the enhanced information as an object
-CREATE OR REPLACE SECURE FUNCTION ENRICHIP.ip2data(ip_address varchar(16))
-returns object
-as
-$$
-select object_construct('country_code', MAX(COUNTRY_CODE), 'country_name', MAX(COUNTRY_NAME),
-'region_name', MAX(REGION_NAME), 'city_name', MAX(CITY_NAME),
-'latitude', MAX(LATITUDE), 'longitude', MAX(LONGITUDE),
-'zip_code', MAX(ZIP_CODE), 'time_zome', MAX(TIME_ZONE))
-from ENRICHIP.LITEDB11 where ip_from <= ENRICHIP.ip2long(ip_address)::int AND ip_to >= ENRICHIP.ip2long(ip_address)::int
-$$
-;
-
---create a schema for our callback procedure mentioned in the manifest file
-create schema config_code;
---grant the application role permissions onto the schema
-grant usage on schema config_code to application role app_public;
-
---this is the permissions callback we saw in the manifest.yml file
-create procedure config_code.register_single_callback(ref_name string, operation string, ref_or_alias string)
-    returns string
-    language sql
-    as $$
-        begin
-            case (operation)
-                when 'ADD' then
-                    select system$set_reference(:ref_name, :ref_or_alias);
-                when 'REMOVE' then
-                    select system$remove_reference(:ref_name);
-                when 'CLEAR' then
-                    select system$remove_reference(:ref_name);
-                else
-                    return 'Unknown operation: ' || operation;
-            end case;
-            system$log('debug', 'register_single_callback: ' || operation || ' succeeded');
-            return 'Operation ' || operation || ' succeeded';
-        end;
-    $$;
-
---grant the application role permissions to the procedure
-grant usage on procedure config_code.register_single_callback(string, string, string) to application role app_public;
-
---create a schema for the UI (streamlit)
-create schema ui;
---grant the application role permissions onto the schema
-grant usage on schema ui to application role app_public;
-
---this is our streamlit.  The application will be looking for 
---file = enricher_dash.py in a folder called ui
-
---this is the reference to the streamlit (not the streamlit itself)
---this was referenced in the manifest file
-create or replace streamlit ui."Dashboard" from 'ui' main_file='enricher_dash.py';
-
---grant the application role permissions onto the streamlit
-grant usage on streamlit ui."Dashboard" TO APPLICATION ROLE APP_PUBLIC;
-
---this is where the consumer data is read and the enhanced information is written
-CREATE OR REPLACE PROCEDURE ENRICHIP.enrich_ip_data(inp_field varchar, out_field varchar)
-RETURNS number
-AS
-$$
-    DECLARE 
-        q VARCHAR DEFAULT 'UPDATE REFERENCE(''tabletouse'') SET ' || out_field || ' = ENRICHIP.ip2data(' || inp_field || ')';
-        result INTEGER DEFAULT 0;
-    BEGIN
-        EXECUTE IMMEDIATE q;
-        RETURN RESULT;
-    END;
-$$; 
-
-```
-
 > aside positive
 > 
 > **Note** - In the setup script we defined a stored procedure labeled **ENRICHIP.enrich_ip_data**.  In the body we make calls to **REFERENCE(tabletouse)**.  This reference was defined in the manifest file and it is the table to which the consumer has granted us permissions.  Because, as the application prodcuer, we have no way of knowing that ahead of time, the Snowflake Native App framework adds this facility and will resolve the references once permissions have been granted.
@@ -638,13 +423,17 @@ We now come to arguably the most important part of the application for us which 
 A little recap on what this UI needs to achieve:
 
 * Map a field in a table to an ip column
-* Map a field in a the same table to receive the enhaced output
+* Map a field in a the same table to receive the enhanced output
 
 Once we have the streamlit UI built we can then finish off the build of the application package.
 
 ### Building the User Interface
 
-The code for the streamlit looks like this.  There will be other ways of doing this, but this is one way.
+The code for the streamlit looks like this.  There will be other ways of doing this, but this is one way. 
+
+> aside positive
+>
+> **Note** - Add this code to your **enricher_dash.py** file.
 
 ```python
 import streamlit as st
@@ -714,23 +503,9 @@ In a manual environment you would have to upload the files to the stage APPLICAT
 
 At the root of the project, and the CLI is going to create the application for you, using the files explained in the previous steps, as well as the other configuration files present in the project folder.
 
-### Creating example data
-
-In this instance we deployed the application locally so we can see what it looks like wthout having to have another account. Before we look at the application itself.  Because we have installed the application locally we need to create a table to test with.  Let's do that now, in your console execute the following:
-
-```sh
-snow sql -q "CREATE DATABASE IF NOT EXISTS TEST_IPLOCATION;                      
-CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;
-
-CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
-        IP VARCHAR(16),
-        IP_DATA VARIANT
-);
-
-INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
-```
-
 ### Viewing the Application
+
+Because we have installed the application locally we needed to create a table to test with. That step we did it in the **prepare_data.sh** file.
 
 Click on the link to your localhost that appeared in your console output.
 
@@ -746,7 +521,7 @@ Click **Add** and navigate to the table we just created and select it:
 
 > aside positive
 > 
-> **Note** You may at this point be asked to specify a warehouse.   Assigning permissions requires a warehouse.
+> **Note** - You may at this point be asked to specify a warehouse.   Assigning permissions requires a warehouse.
 
 <img src="assets/table_chosen.png" width="719" />
 
