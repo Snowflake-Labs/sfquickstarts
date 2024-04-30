@@ -264,7 +264,7 @@ This includes:
 
 <img src="assets/snowsetup_architecture.png" />
 
-### a) Run Snowflake Setup Worksheet
+### Step 1 - Run Snowflake Setup Worksheet
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
@@ -369,7 +369,7 @@ Now that the foundational objects have been deployed, we can now deploy a stagin
 
 <img src="assets/snowpipe_stagetable.png" />
 
-### a) Create Streaming Staging Table
+### Step 1 - Create Streaming Staging Table
 
 We'll create a stage loading table to stream RAW time series data into Snowflake. This will be located in the **STAGING** schema of the **HOL_TIMESERIES** database.
 
@@ -413,7 +413,7 @@ The Ingest Client SDK is configured with a secure connection to Snowflake, and w
 
 Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client.
 
-### b) Test Streaming Client Channel
+### Step 2 - Test Streaming Client Channel
 
 In the **GitHub Codespace VS Code**:
 
