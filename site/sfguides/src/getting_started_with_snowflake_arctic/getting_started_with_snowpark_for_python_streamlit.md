@@ -1,5 +1,5 @@
 id: getting_started_with_snowflake_arctic
-summary: This guide provides the instructions for writing a Streamlit application that uses Snowflake Cortex and Arctic.
+summary: This guide provides the instructions for writing a Streamlit application that uses Snowflake Cortex and Snowflake Arctic Large Language Model.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowflake Arctic, Snowflake Cortex, Streamlit
 authors: Dash Desai
 
-# Getting Started With Snowflake Arctic
+# A Getting Started Guide With Snowflake Arctic
 <!-- ------------------------ -->
 ## Overview
 
@@ -162,7 +162,7 @@ Here we’re selecting the Snowflake Arctic model and giving it a prompt telling
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 10
+Duration: 9
 
 To put it all together, let's create a Streamlit application in Snowflake.
 
@@ -180,7 +180,7 @@ To put it all together, let's create a Streamlit application in Snowflake.
 
 - At this point, you will be provided code for an example Streamlit application
 
-**Step 6.** Replace the entire sample application code displayed in the code editor on the left with the following code snippet.
+**Step 6.** Replace the entire sample application code on the left with the following code snippet.
 
 ```python
 import streamlit as st
@@ -233,21 +233,26 @@ page_names_to_funcs = {
 
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
 page_names_to_funcs[selected_page]()
-
 ```
 
 ### Run
 
-To run the application, click on **Run** button located at the top right corner. If all goes well, you should see the application running as shown below.
+To run the application, click on **Run** located at the top right corner. If all goes well, you should see the application running as shown below.
 
 ![App](assets/snowflake_arctic.gif)
+
+> aside positive
+> Note: Besides Snowflake Arctic you can also use [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowflake Arctic quickstart guide.
+Congratulations! You've successfully completed the Getting Started with Snowflake Arctic quickstart guide. 
+
+> aside positive
+> Note: Besides Snowflake Arctic you can also use [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function.
 
 ### What You Learned
 
