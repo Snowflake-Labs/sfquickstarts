@@ -391,7 +391,7 @@ python3 /tmp/adf-producer.py <ADF delivery stream name>
 The Python script gets the raw flight data from a [real-time source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky) and streams into the delivery stream.
 You should see the flight data being ingested continuously to the ADF delivery stream in json format.
 
-![](assets/adf-producer-ingest.png)
+![](assets/kdf-producer-ingest.png)
 
 #### 3. Query the raw data in Snowflake
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
