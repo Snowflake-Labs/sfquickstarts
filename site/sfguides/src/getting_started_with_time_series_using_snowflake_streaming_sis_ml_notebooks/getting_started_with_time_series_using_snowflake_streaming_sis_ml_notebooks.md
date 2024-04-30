@@ -237,12 +237,11 @@ Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
 <img src="assets/labsetup_rsakey.png" />
 
+**NOTE:** The pasted **PUBLIC KEY** can show on mulitple lines and will work.
+
 > aside positive
 >
-> The pasted **PUBLIC KEY** can show on mulitple lines and will work.
-
-The **Snowflake setup** worksheets are now ready to run, and The Lab environment is now ready!
-
+> The **Snowflake setup** worksheets are now ready to run, and The Lab environment is now ready!
 
 <!-- ------------------------ -->
 ## Setup Snowflake Resources
@@ -361,13 +360,20 @@ SETUP SCRIPT NOW COMPLETED
 */
 ```
 
+> aside positive
+> 
+>  The Snowflake foundation objects have now been deployed, and we can continue on to setup a **Snowpipe Streaming Ingestion**.
+>
+
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
 Duration: 5
 
-Now that the foundational objects have been deployed, we can now deploy a staging table to load streaming time series data, and begin streaming time series data via a Snowpipe Streaming client.
+With the foundational objects setup, we can now deploy a staging table to stream time series data into Snowflake via a Snowpipe Streaming client.
 
-<img src="assets/snowpipe_stagetable.png" />
+For this lab a Java IOT Sumilator Client has been created to stream IoT sensor readings into Snowflake.
+
+<img src="assets/snowpipe_streamingest.png" />
 
 ### Step 1 - Create Streaming Staging Table
 
@@ -377,7 +383,7 @@ We'll create a stage loading table to stream RAW time series data into Snowflake
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_2_ingest.sql`
 
-**Run through the worksheet to get Snowflake resources created.**
+1. Create the staging table to load IoT streaming data
 
 ```sql
 -- Set role, context, and warehouse
@@ -396,24 +402,33 @@ COMMENT = 'IOTSTREAM staging table.'
 ;
 ```
 
+The IoT data will be streamed into Snowflake in a similar [schema format as Kafka](https://docs.snowflake.com/en/user-guide/kafka-connector-overview#schema-of-tables-for-kafka-topics) which contains two columns:
+- RECORD_CONTENT. This contains the Kafka message.
+- RECORD_METADATA. This contains metadata about the message, for example, the topic from which the message was read.
+
 > aside negative
 > 
 >  There is an **EXTERNAL ACTIVITY** sections in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
 >
 
-### Snowpipe Streaming Ingest Client SDK
+### INFO: Snowpipe Streaming Ingest Client SDK
 
 Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka, to streaming rowset data into a Snowflake table at low latency.
 
 <img src="assets/data-load-snowpipe-streaming.png" />
 
-The Ingest Client SDK is configured with a secure connection to Snowflake, and will establish a streaming [Channel](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#channels) between the client and a Snowflake table.
+The Ingest Client SDK is configured with a secure JDBC connection to Snowflake, and will establish a streaming [Channel](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#channels) between the client and a Snowflake table.
 
 <img src="assets/data-load-snowpipe-streaming-client-channel.png" />
 
-Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client.
-
 ### Step 2 - Test Streaming Client Channel
+
+Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client. The simulator Java application is available in the `iotstream` folder of the lab, and can be run via a terminal with a Java run time.
+
+> aside positive
+> 
+>  The lab environment has been setup with a **Java Runtime** to execute the Java Snowpipe Streaming client application.
+>
 
 In the **GitHub Codespace VS Code**:
 
@@ -427,48 +442,119 @@ In the **GitHub Codespace VS Code**:
 ./Test.sh
 ```
 
-If successful, it will return:
+If **successful**, it will return:
 `** Successfully Connected, Test complete! **`
 
-4. Open the `worksheets/hol_timeseries_2_ingest.sql` **VS Code** worksheet run the `SHOW CHANNELS;` command to confirm a channel is open in Snowflake.
+4. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and run the `SHOW CHANNELS` command to confirm a channel is now open to Snowflake.
 
 ```sql
 SHOW CHANNELS;
 ```
 
-The query should return a single channel `CHACHANNEL_1_TEST` opened to the `RAW_TS_IOTSTREAM_DATA` table.
+The query should return a single channel `CHANNEL_1_TEST` opened to the `RAW_TS_IOTSTREAM_DATA` table.
 
 <img src="assets/snowpipe_channeltest.png" />
 
-With the channel connection being successful, we can now look at loading the full historical set, as fast as the connection and machine will allow.
+### Step 3 - Load a Simulated IoT Data Set
 
-5. Back in the **VS Code** `Terminal` run the `Run_MAX.sh` script to load a month of IoT data.
+With the channel connection being successful, we can now load the IoT data set, as fast as the connection and machine will allow.
+
+<img src="assets/snowpipe_streamingclient.png" />
+
+The simlulated IoT dataset contians six sensor device tags at different frequencies, within a single **namespace**. A namespace generally represents a grouping of unique tags.
+
+| NAMESPACE | TAGNAME | FREQUENCY |
+| --- | --- | --- |
+| IOT | TAG101 | 5 SEC |
+| IOT | TAG201 | 10 SEC |
+| IOT | TAG301 | 1 SEC |
+| IOT | TAG401 | 60 SEC |
+| IOT | TAG501 | 60 SEC |
+| IOT | TAG601 | 10 SEC |
+
+
+1. In the **VS Code** `Terminal` run the `Run_MAX.sh` script to load the IoT data.
 
 ```bash
 ./Run_MAX.sh
 ```
 
+2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and view the stremed records.
+
+```sql
+-- Check stream table data
+SELECT * FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA LIMIT 10;
+```
+
+Each IoT device reading is a JSON payload, transmitted in the following Kafka like format:
+```json
+{
+    "meta":
+    {
+        "LogAppendTime": "1714487166815",
+        "headers":
+        {
+            "namespace": "IOT",
+            "source": "STREAM_DATA.csv",
+            "speed": "MAX"
+        },
+        "offset": "116",
+        "partition": "1",
+        "topic": "time-series"
+    },
+    "content":
+    {
+        "datatype": "double",
+        "tagname": "SENSOR/TAG301",
+        "timestamp": "1704067279",
+        "units": "KPA",
+        "value": "118.152"
+    } 
+}
+```
+
+> aside positive
+> 
+>  Data has now been **streamed into Snowflake**, and we can now look at modelling the data for analyitcs.
+>
 
 <!-- ------------------------ -->
-## Data Modelling and Transformation
-Duration: 2
+## Data Modelling, Transformation, and Continuous Ingestion
+Duration: 5
 
-Dynamic tables are new declarative way of defining your data pipeline in Snowflake. It's a new kind of Snowflake table which is defined as a query to continuously and automatically materialize the result of that query as a table. Dynamic Tables can join and aggregate across **multiple source objects** and **incrementally update** results as sources change. 
+Now that data is streamed into Snowflake, we are ready for some **Data Engineering** actvities to get the data into a report ready state for analytics. We'll be transforming the data from the JSON **VARIANT** format into a tabular format by leveraging Snowflake **Dynamic Tables**, to ensure that data streamed into Snowflake will continuously update the analytics layers.
 
-Dynamic Tables can also be chained together to create a DAG for more complex data pipelines. 
+Along with setting up Dynamic Tables for continuous loading, we'll also deploy some analytics views for the consumer serving layer. This will allow for specific columns of data to be exposed to the end users and applications.
+
+Finally, we'll start another continous stream of IoT data to see the Dynamic Tables continuously update.
+
+<img src="assets/model_dataengineering.png" />
+
+### INFO: Dynamic Tables
+
+[Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro) are a declarative way of defining your data pipeline in Snowflake. It's a Snowflake table which is defined as a query to continuously and automatically materialize the result of that query as a table. Dynamic Tables can join and aggregate across **multiple source objects** and **incrementally update** results as sources change.
+
+Dynamic Tables can also be chained together to create a DAG for more complex data pipelines.
 
 <img src="assets/dynamic_tables.png" />
 
-Dynamic Tables are the building blocks for continuous data pipelines. They are the easiest way to build data transformation pipelines in snowflake across batch and streaming use cases. 
+### Step 1 - Create Dynamic Tables
 
+For the IoT streaming data we'll setup two Dynamic Tables in a simple Dimension and Fact model:
+- DT_TS_TAG_METADATA (Dimension): Containing Tag Metadata such as tag names, sourcing, and data types
+- DT_TS_TAG_READINGS (Fact): Containing the readings from each IoT sensor in raw and numeric format
+
+<img src="assets/model_dynamictables.png" />
+
+1. In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` and run the Dynamic Table creation scripts.
 
 ```sql
+-- Setup Transform Dynamic Tables
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.TRANSFORM;
 USE WAREHOUSE HOL_TRANSFORM_WH;
 
--- Setup Transform Dynamic Tables
 -- Sensor metadata (Dimension)
 CREATE OR REPLACE DYNAMIC TABLE HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_METADATA
 TARGET_LAG = '1 MINUTE'
@@ -482,7 +568,7 @@ SELECT
     SRC.RECORD_CONTENT:units::VARCHAR AS TAGUNITS,
     SRC.RECORD_CONTENT:datatype::VARCHAR AS TAGDATATYPE
 FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
-QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) ORDER BY SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ, SRC.RECORD_METADATA:offset::NUMBER) = 1
+QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) ORDER BY SRC.RECORD_CONTENT:timestamp::NUMBER, SRC.RECORD_METADATA:offset::NUMBER) = 1
 ;
 
 -- Sensor readings (Fact)
@@ -499,17 +585,22 @@ SELECT
     SRC.RECORD_METADATA:partition::VARCHAR AS PARTITION,
     SRC.RECORD_METADATA:offset::VARCHAR AS OFFSET
 FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
-QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))), DATE_TRUNC('SECOND', SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ) ORDER BY SRC.RECORD_METADATA:offset::NUMBER) = 1;
+QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))), SRC.RECORD_CONTENT:timestamp::NUMBER ORDER BY SRC.RECORD_METADATA:offset::NUMBER) = 1;
 ```
 
+> aside positive
+> 
+>  Dynamic tables have a defined [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines how out of date the data can be before a refresh is automatically triggered. At the time of writing the minimum is 1 minute target lag.
+>
 
-<!-- ------------------------ -->
-## Time Series Analysis
-Duration: 2
+### Step 2 - Create Analytics Views for Consumers
 
-Setup serving layer views
+The Dynamic Tables are now setup to continously transform ingested streaming data. We can now look at setting up an **Analytics** serving layer with some views for end users and applications to consume the streaming data.
+
+<img src="assets/model_analyticviews.png" />
 
 ```sql
+-- Setup Analytics Views
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.ANALYTICS;
@@ -534,6 +625,21 @@ SELECT
     READ.VALUE_NUMERIC
 FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 ```
+
+### Step 3 - Start a Continous Simulated Stream
+
+<img src="assets/model_streamingclient.png" />
+
+1. In the **VS Code** `Terminal` run the `Run_Slooow.sh` script to load the IoT data.
+
+```bash
+./Run_Slooow.sh
+```
+
+
+<!-- ------------------------ -->
+## Time Series Analysis
+Duration: 10
 
 Time Series queries
 
@@ -807,7 +913,7 @@ ORDER BY SMP.TIMESTAMP;
 
 <!-- ------------------------ -->
 ## Build Your Own - Snowpark User Defined Table Function
-Duration: 2
+Duration: 5
 
 Setup LTTB Downsample Function
 ```sql
@@ -870,7 +976,7 @@ ORDER BY tagname, timestamp
 
 <!-- ------------------------ -->
 ## Streamlit in Snowflake
-Duration: 2
+Duration: 10
 
 Deploy Streamlit application to Snowflake
 
