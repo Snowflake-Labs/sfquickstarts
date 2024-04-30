@@ -1,7 +1,7 @@
 author: NaveenAlanThomas
 id: marketing_data_foundation_starter
 summary: Marketing Data Foundation Starter Guide
-categories: Data-Engineering
+categories: Marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -49,15 +49,21 @@ More specifically, this solution covers Data Ingestion, Semantic Unification, an
 
 ### Solution Details
 
-The solution consists of the following components:
+Below are some snippet of the app that you are going to build.
 
-  - Jupyter Notebooks: This is the primary interface for building this demo.
+#### Campaign Intelligence Starter
+
+![Alt text](assets/Campaign_Intelligence_Starter.png)
+
+#### Customer 360 Starter
+
+![Alt text](assets/Customer_360_starter.png)
+
+The solution consists of the following components:
 
   - Native Application: The code needed to build and deploy this solution as a Native App. You will deploy this app in your own Snowflake account.
 
-  - Solution Steps: Step-by-step instructions for installing the Native app in your own Snowflake account are available in the Setup notebook.
-
-  - Demo recording: This shows a recording of the demo. It starts with an introduction of the Jupyter Notebook, and covers the Native Application afterwards.
+  - Solution Steps: Step-by-step instructions for installing the Native app in your own Snowflake account are available in this quickstarts.
 
 ### What You’ll Need 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
@@ -98,12 +104,17 @@ git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-st
 
 ### Create a connection
 
+Run the below command and provide your account details.
+
 ```console
 snow connection add
 ```
 
+
+Test your connection by running the below command
+
 ```console
-snow connection test --connection="test_connection"
+snow connection test --connection="marketing_demo_conn"
 ```
 
 Refer to the screenshot below for more info.
@@ -142,19 +153,19 @@ Upload all the sample data files in the folder data to the stage created in step
 
 
 ```console
-snow object stage copy data/worldcities.csv @MARKETING_DATA_FOUNDATAION.demo.data_stg/data
+snow object stage copy data/worldcities.csv @MARKETING_DATA_FOUNDATION.demo.data_stg/data
 ```
 
 ```console
-snow object stage copy data/sf_data/ @MARKETING_DATA_FOUNDATAION.demo.data_stg/data/sf_data/
+snow object stage copy data/sf_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/sf_data/ --parallel 10
 ```
 
 ```console
-snow object stage copy data/ga_data/ @MARKETING_DATA_FOUNDATAION.demo.data_stg/data/ga_data/
+snow object stage copy data/ga_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/ga_data/ --parallel 20
 ```
 
 ```console
-snow object stage copy data/sample_data.gz @MARKETING_DATA_FOUNDATAION.demo.data_stg/data/
+snow object stage copy data/sample_data.gz @MARKETING_DATA_FOUNDATION.demo.data_stg/data/
 ```
 
 ![Alt text](assets/Upload-to-Stage.png)
@@ -179,6 +190,19 @@ snow sql -f sql_scripts/build_views.sql
 
 ```console
 snow app run
+```
+
+![Alt text](assets/Appcreation.png)
+
+
+## [Quick-deploy] Build and Deploy App in one go
+
+Duration: 2
+
+Please **DO NOT** run this step if you have completed individual steps above. This step is for users to quickly run all the snow cli commands in one go.
+
+```sh
+bash ./sfguide-marketing-data-foundation-starter/build_deploy_app.sh
 ```
 
 ![Alt text](assets/Appcreation.png)
