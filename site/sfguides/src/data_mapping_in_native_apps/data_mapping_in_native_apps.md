@@ -127,7 +127,7 @@ Finally, the tree structure inside your project structure should look like this:
 
 
 ### Snowflake CLI
-The Snowflake CLI is a tool that allow us to run simple and powerful commands to communicate directly to your Snowflake account. You can find more information and install instructions [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation).
+Snowflake CLI is a tool that allow you to issue simple and powerful commands directly to your Snowflake account. You can find more information and installation instructions [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation).
 
 
 
