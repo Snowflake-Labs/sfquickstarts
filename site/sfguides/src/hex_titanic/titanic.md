@@ -1,5 +1,5 @@
 author: aefendic@hex.tech and chase.romano@snowflake.com
-id: hex
+id: end_to_end_model_development_with_snowpark_and_hex
 summary: This lab will walk you through how to use Snowflake and Hex.
 categories: data-science-&-ml,partner-integrations
 environments: web
