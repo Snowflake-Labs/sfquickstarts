@@ -117,7 +117,7 @@ The next two files should go on the root of the project:
         - scripts/setup_package_script.sql
     ```
 
-From the project's root, create a new folder and name it **scripts**, inside, put the following file:
+From the project's root, create a new folder and name it **scripts**. Inside, create the following file (we will add content to it later):
 
 -  setup_package_script.sql
 
