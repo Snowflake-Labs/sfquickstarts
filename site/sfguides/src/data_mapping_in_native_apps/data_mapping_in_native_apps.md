@@ -135,7 +135,7 @@ The Snowflake CLI is a tool that allow us to run simple and powerful commands to
 ## Building the Application
 Duration: 7
 
-The application itself has been broken down into three parts.
+The application itself has been broken down into three parts:
 
 * The building of the **application package** on the provider and the sharing of the lookup database with the application. 
 * The building of the application **install script** which contains the functionality to accept an IP address, look it up in the database we just shared with the application and write back enhanced data from the application. 
