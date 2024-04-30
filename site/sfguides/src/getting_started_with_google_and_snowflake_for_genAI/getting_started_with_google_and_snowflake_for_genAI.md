@@ -106,7 +106,7 @@ CREATE OR REPLACE TABLE REVIEWS
    RATING STRING,
    REVIEW STRING,
    CUSTOMER_NAME STRING,
-   REVIEW_DATA DATE);
+   REVIEW_DATE DATE);
 
 COPY INTO REVIEWS FROM @CUSTOMER_REVIEWS_STAGE/Customer_Reviews.csv
 FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' ESCAPE_UNENCLOSED_FIELD = '\\' SKIP_HEADER = 1) ON_ERROR = 'CONTINUE';
@@ -264,113 +264,313 @@ select GET_VERTEX_REVIEW_SENTIMENT_UDF('This is a shoe I will wear with black dr
 
 <!-- ------------------------ -->
 
-----START HERE-------
 ## Build Streamlit App - With data in Snowflake 
 
 Duration: 10
 
-Now that we have our OpenAI function, let’s build our App.
+Now that we have our VertexAI Function and Stored Procedure let's build a Streamlit app to analyze customer reviews.
 
 Go back to the main account view by clicking ‘<- Worksheets’ and then select ‘Streamlit’.
 
-Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RETAIL_HOL database where the link table and the image stage are located. You can name the app whatever you would like, something like "Wardrobe Recommender" is appropriate.
+Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RETAIL_HOL database where the link table and the image stage are located. You can name the app whatever you would like, something like "Customer Review Analyzer" is appropriate.
 
 Once the app is created paste the below code into the app code and click 'Run' in order to create the Streamlit App!
 
 ```python
-# Import python packages
-import streamlit as st
-import base64
-import pandas as pd
-from snowflake.snowpark.context import get_active_session
-	
-# Keeping pandas from truncating long strings
-pd.set_option('display.max_colwidth', 1000)
+#SiS Customer Review Analyser App using Snowflake External Access & Vertex AI
+#Please run ensure you have successfully run Vertex_Demo.sql and created the GET_VERTEX_REVIEW_SENTIMENT_UDF Function
+#Author Alex Ross, Senior Sales Engineer, Snowflake
+#Last Modified 18th April 2024
 
-# Get the current credentials
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+import pandas as pd
+import json
+from snowflake.snowpark.functions import col, lit, sum as sum_, max as max_, count as count_
+
+def reset_session() -> None:
+    st.session_state["temperature"] = 0.0
+    st.session_state["token_limit"] = 256
+    st.session_state["top_k"] = 40
+    st.session_state["top_p"] = 0.8
+    st.session_state["debug_mode"] = False
+    st.session_state["prompt"] = []
+    st.session_state["response"] = []
+
+def create_session_state():
+    if "temperature" not in st.session_state:
+        st.session_state["temperature"] = 0.0
+    if "token_limit" not in st.session_state:
+        st.session_state["token_limit"] = 256
+    if "top_k" not in st.session_state:
+        st.session_state["top_k"] = 40
+    if "top_p" not in st.session_state:
+        st.session_state["top_p"] = 0.8
+    if "debug_mode" not in st.session_state:
+        st.session_state["debug_mode"] = False
+    if "prompt" not in st.session_state:
+        st.session_state["prompt"] = []
+    if "response" not in st.session_state:
+        st.session_state["response"] = []
+
+def dataframe_with_selections(df):
+    df_with_selections = df.copy()
+    df_with_selections.insert(0, "Select", False)
+
+    # Get dataframe row-selections from user with st.data_editor
+    edited_df = st.data_editor(
+        df_with_selections,
+        hide_index=True,
+        column_config={"Select": st.column_config.CheckboxColumn(required=True)},
+        disabled=df.columns,
+    )
+
+    # Filter the dataframe using the temporary column, then drop the column
+    selected_rows = edited_df[edited_df.Select]
+    return selected_rows.drop('Select', axis=1)
+
+def write_customer_review(selection, index):
+    st.title(":snowflake: :green[Customer Review]")   
+    st.write("**Customer**: " + selection["CUSTOMER_NAME"][index])
+    st.write('**Review**: ' + selection["REVIEW"][index])
+    st.write('**Review Date**: ' + str(selection["REVIEW_DATE"][index]))
+    st.write('**Rating**: ' + str(selection["RATING"][index]))
+
+def write_vertex_response(json_resp):
+    col1, col2 = st.columns([2,20])
+    with col1:
+        st.image('https://lh3.googleusercontent.com/e5M3Bi_o8iVajobAcS0LLDDJ2RN4LzchraKjfEKWvXaTkBw2WU50kuTnF6xHzMOifL6DMe16SCUqNt5w2gB9ZA=w80-h80', width=60)
+    with col2:
+        st.title(":blue[Vertex AI] Response")
+    st.write("**Summary**: " + json_resp["summary"])
+    st.write("**Product**: " + json_resp["product"])
+    st.write("**Sentiment**: " + json_resp["sentiment"])
+    st.write("**Explanation**: " + json_resp["explanation"])
+
+st.set_page_config(
+    page_title="Customer Review Analyser",
+    page_icon=":snowflake:",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+    menu_items={
+        "About": "# This app is a sample customer review analyser using Snowflake External Access & the Vertex PaLM Text Generator API"
+    },
+)
+
+with st.sidebar:
+    st.image('https://raw.githubusercontent.com/GoogleCloudPlatform/generative-ai/main/language/sample-apps/chat-streamlit/image/sidebar_image.jpg', width=None)
+    st.write("Model Settings:")
+
+    # define the temeperature for the model
+    temperature_value = st.slider("Temperature :", 0.0, 1.0, 0.2)
+    st.session_state["temperature"] = temperature_value
+
+    # define the temeperature for the model
+    token_limit_value = st.slider("Token limit :", 1, 1024, 256)
+    st.session_state["token_limit"] = token_limit_value
+
+    # define the temeperature for the model
+    top_k_value = st.slider("Top-K  :", 1, 40, 40)
+    st.session_state["top_k"] = top_k_value
+
+    # define the temeperature for the model
+    top_p_value = st.slider("Top-P :", 0.0, 1.0, 0.8)
+    st.session_state["top_p"] = top_p_value
+
+    if st.button("Reset Session"):
+        reset_session()
+
+# creating session states
+create_session_state()
+
+st.title(":shopping_trolley: Customer Review Analyser 	:bar_chart:")
+st.subheader(":snowflake: Powered by Snowflake & Vertex AI")
 session = get_active_session()
 
-# access underlying snowflake tables
-# let participants define this?-----------
-clothing_link_df = session.table("clothing_link").to_pandas()
-clothing_links = clothing_link_df['LINKS']
+df_reviews = session.table("DEMOS.VERTEX.CUSTOMER_REVIEWS")
 
-# Write directly to the app
-st.title("Wardrobe Recommender")
+col1, col2 = st.columns(2)
+with col1:
+    chart_data = df_reviews.group_by("REVIEW_DATE").agg((count_("*")).alias("REVIEW_COUNT"))
+    st.line_chart(chart_data, x = chart_data.columns[0], y = chart_data.columns[1], color="#29B5E8")
+with col2:
+    chart_data = df_reviews.group_by("RATING").agg((count_("*")).alias("REVIEW_COUNT"))
+    st.bar_chart(chart_data, x = chart_data.columns[0], y = chart_data.columns[1], color = "#71D3DC")
 
-# Add some cosmetic headers
-st.caption("Using Azure OpenAI with Snowflake to recommend wardrobes")
+rating_min, rating_max = st.select_slider('Filter Ratings To Display:',options=[1,2,3,4,5],value=(1, 5))
 
-default_prompt = 'Please review the provided image and recommend the top three links from the provided list that this person would most likely want to wear. Display the complete url for the link in your response as it is provided in the request.'
-with st.expander("Adjust system prompt"):
-    system = st.text_area("System instructions", value=default_prompt).replace("'","")
-st.markdown('------') 
+if rating_min or rating_max:
+    st.write("**Reviews Matching Rating Filter**")
+    reviews = df_reviews.filter(f"RATING >= {rating_min} AND RATING <={rating_max}").to_pandas()  
+    selection = dataframe_with_selections(reviews)
 
-# widget for image filter
-selected_image = st.selectbox(
-    'Select an image',
-     session.sql("SELECT RELATIVE_PATH FROM DIRECTORY(@image_stage)"))
-
-image_string = session.sql(f"""select GET_PRESIGNED_URL(@image_stage, '{selected_image}')""").collect()[0][0]
-st.image(image_string)
-
-# Use the job description to write the job to a table and run the function against it:
-if(st.button('Ask ChatGPT')):
-    result = session.sql(f"""SELECT chatgpt_image('{system}','{clothing_links}','{image_string}')""").collect()
-    st.header('Answer')
-    st.write(result[0][0].replace('"','')) 
+    st.write("Current Vertex AI Settings: ")
+    # if st.session_state['temperature'] or st.session_state['debug_mode'] or :
+    st.write(
+        "Temperature: ",
+        st.session_state["temperature"],
+        " \t \t Token limit: ",
+        st.session_state["token_limit"],
+        " \t \t Top-K: ",
+        st.session_state["top_k"],
+        " \t \t Top-P: ",
+        st.session_state["top_p"],
+        " \t \t Debug Model: ",
+        st.session_state["debug_mode"],
+    )
+    
+    if st.button("Submit To Vertex GenAI"):
+        if selection.empty:
+            st.write("Please select at least one review to submit to Vertex AI")
+        for index in selection.index:
+            session = get_active_session()
+            col1, col2 = st.columns(2)
+            with col1:
+                write_customer_review(selection, index)
+            with col2:        
+                with st.spinner("PaLM is working to generate, wait....."):
+                    review = selection["REVIEW"][index].replace("'", "\\'")
+                    response = session.sql(f"SELECT DEMOS.VERTEX.GET_VERTEX_REVIEW_SENTIMENT_UDF(\
+                        '{review}',\
+                        '{st.session_state['temperature']}',\
+                        '{st.session_state['token_limit']}',\
+                        '{st.session_state['top_p']}',\
+                        '{st.session_state['top_k']}') AS RESPONSE")
+                    json_resp = json.loads(response.to_pandas()["RESPONSE"][0])
+                    write_vertex_response(json_resp)
+            st.markdown("""---""")
+        
 ```
 
-Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate new recommendations. 
+The Streamlit app that you created uses the UDF that was created in the previous step to calculate the sentiment. The app does several other things to aggregate and visualize the reviews. 
 
-![](assets/wardrobeapp.png)
+![](assets/streamlitapp.png)
 
-<!-- ------------------------ -->
-## Test Prompt Engineering (OPTIONAL)
+In addition to this app users can build a second app that leverages the Stored Procedure that we created using the Streamlit Python code below.
 
-Duration: 5
+```python
+#SiS version of Google sample app using Snowflake External Access
+#Original code: https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/sample-apps/chat-streamlit
+#Please run ensure you have successfully run Vertex_Demo.sql and created the GET_VERTEX_TEXT_GENERATION Stored Procedure
+#Author Alex Ross, Senior Sales Engineer, Snowflake
+#Last Modified 18th April 2024
 
-Prompt engineering for a language model involves crafting your questions or prompts in a way that maximizes the effectiveness and accuracy of the responses you receive. Here are some simple guidelines to help you with prompt engineering:
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
 
-**Be Clear and Specific:** The more specific your prompt, the better. Clearly define what you're asking for. If you need information on a specific topic, mention it explicitly.
+def reset_session() -> None:
+    st.session_state["temperature"] = 0.0
+    st.session_state["token_limit"] = 256
+    st.session_state["top_k"] = 40
+    st.session_state["top_p"] = 0.8
+    st.session_state["debug_mode"] = False
+    st.session_state["prompt"] = []
+    st.session_state["response"] = []
 
-**Provide Context:** If your question builds on particular knowledge or a specific scenario, provide that context. This helps the model understand the frame of reference and respond more accurately.
+def hard_reset_session() -> None:
+    st.session_state = {states: [] for states in st.session_state}
 
-**Use Direct Questions:** Phrase your prompts as direct questions if you're looking for specific answers. This approach tends to yield more focused responses.
+def create_session_state():
+    if "temperature" not in st.session_state:
+        st.session_state["temperature"] = 0.0
+    if "token_limit" not in st.session_state:
+        st.session_state["token_limit"] = 256
+    if "top_k" not in st.session_state:
+        st.session_state["top_k"] = 40
+    if "top_p" not in st.session_state:
+        st.session_state["top_p"] = 0.8
+    if "debug_mode" not in st.session_state:
+        st.session_state["debug_mode"] = False
+    if "prompt" not in st.session_state:
+        st.session_state["prompt"] = []
+    if "response" not in st.session_state:
+        st.session_state["response"] = []
 
-**Break Down Complex Queries:** If you have a complex question, break it down into smaller, more manageable parts. This can help in getting more detailed and precise answers.
+st.set_page_config(
+    page_title="Vertex PaLM Text Generation API",
+    page_icon=":robot:",
+    layout="centered",
+    initial_sidebar_state="expanded",
+    menu_items={
+        "About": "# This app shows you how to use Vertex PaLM Text Generator API"
+    },
+)
 
-**Specify the Desired Format:** If you need the information in a particular format (like a list, a summary, a detailed explanation), mention this in your prompt.
+# creating session states
+create_session_state()
 
-**Avoid Ambiguity:** Try to avoid ambiguous language. The clearer you are, the less room there is for misinterpretation.
+st.image('https://raw.githubusercontent.com/GoogleCloudPlatform/generative-ai/main/language/sample-apps/chat-streamlit/image/palm.jpg', width=None)
+st.title(":red[PaLM 2] :blue[Vertex AI] Text Generation")
 
-**Sequential Prompts for Follow-ups:** If you're not satisfied with an answer or need more information, use follow-up prompts that build on the previous ones. This helps in maintaining the context and getting more refined answers.
+with st.sidebar:
+    st.image('https://raw.githubusercontent.com/GoogleCloudPlatform/generative-ai/main/language/sample-apps/chat-streamlit/image/sidebar_image.jpg', width=None)
+    st.write("Model Settings:")
 
-**Experiment and Iterate:** Don’t hesitate to rephrase or adjust your prompts based on the responses you get. Sometimes a slight change in wording can make a big difference.
+    # define the temeperature for the model
+    temperature_value = st.slider("Temperature :", 0.0, 1.0, 0.2)
+    st.session_state["temperature"] = temperature_value
 
-**Consider the Model's Limitations:** Remember that the model may not have the latest information, and it cannot browse the internet or access personal data unless explicitly provided in the prompt.
+    # define the temeperature for the model
+    token_limit_value = st.slider("Token limit :", 1, 1024, 256)
+    st.session_state["token_limit"] = token_limit_value
 
-**Ethical Use:** Always use the model ethically. Avoid prompts that are harmful, biased, or violate privacy or legal guidelines.
+    # define the temeperature for the model
+    top_k_value = st.slider("Top-K  :", 1, 40, 40)
+    st.session_state["top_k"] = top_k_value
 
-Let’s look at how we can experiment and iterate on the prompt that we provided to the LLM function in Streamlit. Go back to the previous step and test out different prompt strategies to see if you can improve the accuracy of the response.
+    # define the temeperature for the model
+    top_p_value = st.slider("Top-P :", 0.0, 1.0, 0.8)
+    st.session_state["top_p"] = top_p_value
 
-Consider the above concepts and also consider this pointed [guide to prompting](https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md)
+    if st.button("Reset Session"):
+        reset_session()
 
-(it is required that you try the prompt in principal #6 🙂)
+
+with st.container():
+    st.write("Current Generator Settings: ")
+    # if st.session_state['temperature'] or st.session_state['debug_mode'] or :
+    st.write(
+        "Temperature: ",
+        st.session_state["temperature"],
+        " \t \t Token limit: ",
+        st.session_state["token_limit"],
+        " \t \t Top-K: ",
+        st.session_state["top_k"],
+        " \t \t Top-P: ",
+        st.session_state["top_p"],
+        " \t \t Debug Model: ",
+        st.session_state["debug_mode"],
+    )
+
+    prompt = st.text_area("Add your prompt: ", height=100)
+    if prompt:
+        st.session_state["prompt"].append(prompt)
+        session = get_active_session()
+        with st.spinner("PaLM is working to generate, wait....."):
+            response = session.call("DEMOS.VERTEX.get_vertex_text_generation",
+                prompt,
+                st.session_state["temperature"],
+                st.session_state["token_limit"],
+                st.session_state["top_p"],
+                st.session_state["top_k"],
+            )
+            st.session_state["response"].append(response)
+            st.markdown(response)
+```
 
 <!-- ------------------------ -->
 ## Conclusion  And Resources
 
 Duration: 5
 
-Congratulations! You've successfully built your first Streamlit App with OpenAI. After setting up our Azure and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
+Congratulations! You've successfully built your first Streamlit App with Vertex AI LLMs. After setting up our Google Cloud and Snowflake environments we built two primary things: a set of a UDF and stored procedures that utilize Snowpark External Access to make a call to a Vertex AI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and Vertex AI.
 
 ### What You Learned
 
-- How to set up a Snowflake and Azure / OpenAI environment to integrate the two platforms.
-- How to build a Snowpark External Access integration to call OpenAI.
+- How to set up a Snowflake and Google Cloud environment to integrate the two platforms.
+- How to build a Snowpark External Access integration to call Vertex AI.
 - How to build a Streamlit app that calls OpenAI leveraging tabular and image data from Snowflake.
-- How to build your first Generative AI App with image data in Snowflake!
+- How to build your first Generative AI App with Vertex AI and Snowflake!
 
 
 ### Related resources 
@@ -380,6 +580,6 @@ Congratulations! You've successfully built your first Streamlit App with OpenAI.
 
 - [Streamlit](https://streamlit.io/)
 
-- [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
+- [Blog on this use case](https://cloudydata.substack.com/p/snowflake-and-vertex-ai-foundational)
 
 If you have any questions, reach out to your Snowflake account team!
