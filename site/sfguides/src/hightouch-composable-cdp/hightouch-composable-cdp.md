@@ -1,4 +1,4 @@
-summary: Self-serve marketing orchestration and campaign intelligence with Hightouch and Snowflake
+summary: Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake
 id: hightouch_cdp
 categories: Marketing,Getting-Started,Partner-Integrations
 environments: web
@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Marketing, MarTech, Composable CDP
 author: Luke Ambrosetti
 
-# Self-serve marketing orchestration and campaign intelligence with Hightouch and Snowflake
+# Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
