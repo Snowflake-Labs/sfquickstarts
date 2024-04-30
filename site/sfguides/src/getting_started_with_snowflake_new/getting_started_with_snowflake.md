@@ -151,32 +151,40 @@ Under **Monitoring** there are multiple tabs for tracking your usage of your Sno
 
 #### Admin > Warehouses
 
+Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
+
 ![warehouses tab](assets/3UIStory_10.png)
 
-Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
+
 
 #### Admin > Cost Management
 
+Under **Admin**, the **Cost Management** tab shows an overview of account consumption and budgets. It also includes details on all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
+
 ![resource monitors tab](assets/3UIStory_11.png)
 
-Under **Admin**, the **Cost Management** tab shows an overview of account consumption and budgets. It also includes details on all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
+
 
 #### Admin > Users & Roles
 
+The **Roles** sub-tab of the **Users & Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
+
 ![roles tab](assets/3UIStory_12.png)
 
-Under **Admin**, the **Roles** sub-tab of the **Users & Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
+
 
 #### Users
 
+The **Users** sub-tab of the **Users & Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to `ACCOUNTADMIN`.
+
 ![users tab](assets/3UIStory_13.png)
 
-Also under the **Admin** tab, the **Users** sub-tab of the **Users & Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to `ACCOUNTADMIN`.
+
+Clicking on your username in the bottom right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
 
 
 ![user preferences dropdown](assets/3UIStory_14.png)
 
-Clicking on your username in the bottom right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
 
 > aside negative
 > 
@@ -189,10 +197,9 @@ In a real-world environment, you would use different roles for the tasks in this
 ## Data Lab: Stock Price & SEC Filings Data
 
 Duration: 2
-<!-- dash to advise on changed durations from rework? (throughout entire document) -->
 
 ### The Lab Story
-You work at a grocery retailer. You want to understand the performance of major consumer goods (CPG) companies in the US that supply your store. This lab takes a look at daily stock price data and SEC company files to understand the performance of the CPG landscape.
+You work at a grocery retailer. You want to understand the performance of major consumer goods (CPG) companies in the US that supply your store. This lab takes a look at daily stock price data and quarterly and annual Securities Exchange Commission (SEC) company files to understand the performance of the CPG landscape. Public companies are required to submit a quarterly and annual report to the SEC detailing their financial data.
 
 We will start by collecting data from three different sources:
 1. Load company metadata `.csv` file.
@@ -407,7 +414,7 @@ Navigate back to the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet in the **Worksh
 Role: `SYSADMIN`
 Warehouse: `COMPUTE_WH`
 Database: `CYBERSYN`
-Schema = `PUBLIC`
+Schema: `PUBLIC`
 
 ![worksheet context](assets/5Load_4.png)
 
@@ -1037,7 +1044,7 @@ Notice that the `CYBERSYN` and `Financial__Economic_Essentials` databases now ap
 
 Let's change our access control role back to `ACCOUNTADMIN` to see other areas of the UI accessible only to this role. However, to perform this task, use the UI instead of the worksheet.
 
-First, click the **Home** icon in the top left corner of the worksheet. Then, in the top left corner of the UI, click your name to display the user preferences menu. In the menu, go to **Switch Role** and select `ACCOUNTADMIN`.
+First, click the **Home** icon in the top left corner of the worksheet. Then, in the bottom left corner of the UI, click your name to display the user preferences menu. In the menu, go to **Switch Role** and select `ACCOUNTADMIN`.
 
 ![switch UI role](assets/9Role_4.png)
 
@@ -1048,29 +1055,27 @@ Why did we use the user preference menu to change the role instead of the worksh
 
 Notice that once you switch the UI session to the `ACCOUNTADMIN` role, new tabs are available under **Admin**.
 
-#### Usage
+#### Admin > Cost Management
 
 ![account usage](assets/9Role_5.png)
 
-The **Usage** tab shows the following, each with their own page:
+The **Cost Management** tab shows your usage of Snowflake credits, with filters by account and consumption types:
 - **Organization**: Credit usage across all the accounts in your organization.
-- **Consumption**: Credits consumed by the virtual warehouses in the current account.
+- **Compute**: Credits consumed by the virtual warehouses in the current account.
 - **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
-- **Transfers**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
+- **Data Transfer**: Average amount of data transferred out of the region (for the current account) into other regions for the past month.
 
-The filters in the top right corner of each page can be used to break down the usage/consumption/etc. visualizations by different measures.
-
-#### Security
+#### Admin > Security
 
 ![account usage](assets/9Role_6.png)
 
 The **Security** tab contains network policies created for the Snowflake account. New network policies can be created by selecting “+ Network Policy” at the top right hand side of the page.
 
-#### Billing
+#### Admin > Billing & Terms
 
 ![account usage](assets/9Role_7.png)
 
-The **Billing** tab contains the payment method for the account:
+The **Billing & Terms** tab contains the payment method for the account:
 - If you are a Snowflake contract customer, the tab shows the name associated with your contract information.
 - If you are an on-demand Snowflake customer, the tab shows the credit card used to pay month-to-month, if one has been entered. If no credit card is on file, you can add one to continue using Snowflake when your trial ends.
 
@@ -1109,7 +1114,7 @@ In the home page, navigate to **Data** > **Databases**. In the list of databases
 
 Assume we are the Account Administrator for our Snowflake account. We have a trusted partner who wants to analyze our data on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. We can use secure data sharing to allow them to access this information.
 
-Navigate to **Data** > **Private Sharing**, then at the top of the tab click **Shared by My Account**. Click the **Share** button in the top right corner and select **Create a Direct Share**:
+Navigate to **Data Products** > **Private Sharing**, then at the top of the tab click **Shared By Your Account**. Click the **Share** button in the top right corner and select **Create a Direct Share**:
 
 ![shares outbound button](assets/10Share_2.png)
 
@@ -1117,7 +1122,7 @@ Click **+ Select Data** and navigate to the database and schema you want to shar
 
 ![share fields](assets/10Share_3.png)
 
-The default name of the share is a generic name with a random numeric value appended. Edit the default name to a more descriptive value that will help identify the share in the future (e.g. `ZERO_TO_SNOWFLAKE_SHARED_DATA`. You can also add a comment.
+The default name of the share is a generic name with a random numeric value appended. Edit the default name to a more descriptive value that will help identify the share in the future (e.g. `ZERO_TO_SNOWFLAKE_SHARED_DATA`). You can also add a comment.
 
 In a real-world scenario, the Account Administrator would next add one or more consumer accounts to the share, but we'll stop here for the purposes of this lab.
 
@@ -1143,20 +1148,16 @@ Snowflake provides several ways to securely share data without compromising conf
 
 Duration: 2
 
-If you would like to reset your environment by deleting all the objects created as part of this lab, ensure you are using the `ACCOUNTADMIN` role in the worksheet:
+If you would like to reset your environment by deleting all the objects created as part of this lab, ensure you are using the `ACCOUNTADMIN` role in the worksheet and run the following commands to drop the objects we created in the lab:
 
 ```SQL
-use role accountadmin;
-```
+USE ROLE accountadmin;
 
-Then, run the following SQL commands to drop all the objects we created in the lab:
+DROP DATABASE IF EXISTS CYBERSYN;
 
-```SQL
-drop database if exists CYBERSYN;
+DROP WAREHOUSE IF EXISTS analytics_wh;
 
-drop warehouse if exists analytics_wh;
-
-drop role if exists junior_dba;
+DROP ROLE IF EXISTS junior_dba;
 ```
 
 <!-- ------------------------ -->
