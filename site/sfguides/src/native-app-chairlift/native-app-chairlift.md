@@ -216,7 +216,7 @@ This file contains the different settings for pytest tests. For example, it cont
 
 **tests/**
 
-This directory contains Streamlit unit tests. **tests/test_utils.py** contains common util functions and Pytest fixtures used for the unit tests. The other files in this directory contain the actual tests. The included tests leverage [Streamlit App Testing](https://docs.streamlit.io/develop/api-reference/app-testing) framework which allows automated testing of Streamlit elements.
+This directory contains Streamlit unit tests. **tests/test_utils.py** contains common util functions and Pytest fixtures used for the unit tests. The other files in this directory contain the actual tests. The included tests leverage the [Streamlit App Testing](https://docs.streamlit.io/develop/api-reference/app-testing) framework which allows automated testing of Streamlit elements.
 
 ### Running Unit tests
 
