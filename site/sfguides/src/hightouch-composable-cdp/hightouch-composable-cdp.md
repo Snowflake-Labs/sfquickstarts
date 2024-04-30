@@ -22,7 +22,7 @@ Hightouch offers teams the ability to implement a Composable Customer Data Platf
 
 ![Hightouch Overview](assets/hightouch-overview-ccdp.png)
 
-### What to expect
+### What You Will Learn
 
 This Quickstart is for both business teams and data teams but will focus on how data teams can set up visual UIs for their business teams to use. You'll be hands-on with a semantic layer, audience builder, and analytics suite, with the end goal of taking home a demo that should excite both your data and marketing teams.  
 
@@ -33,6 +33,12 @@ At the end of this Quickstart, you will successfully:
 - Analyze the results of your split test with a suite of no-code analytics tools that pull insight directly from Snowflake.
 
 Note: To complete this quickstart, you must have access to the advanced features of Hightouch. If completing outside of Snowflake hands-on labs, please reach out to the Hightouch team to get access. 
+
+### Prerequisites
+
+- Snowflake Account
+
+You will need a Snowflake Account with ACCOUTADMIN access to install Hightouch via Partner Connect. If you don't have the correct permissions, you'll need to start a trial account, which the next section details.
 
 <!-- ------------------------ -->
 ## Pre-work: Create Hightouch Workspace
