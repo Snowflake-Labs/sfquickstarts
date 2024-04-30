@@ -200,7 +200,7 @@ Here's an overview of the above files and directories:
 
 **local_test_env.yml**
 
-This file is an Anaconda environment file that contains the dependencies allowing you to run the tests. To activate the testing environment:
+This file is a conda environment file that contains the dependencies allowing you to run the tests. To activate the testing environment:
 ```
 conda env update -f local_test_env.yml
 conda activate chairlift-test
