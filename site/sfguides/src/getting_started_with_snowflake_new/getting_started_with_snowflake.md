@@ -36,7 +36,7 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 - How to securely and easily share data with other accounts.
 
 ### Data You'll Use:
-**Cybersyn** is a Data-as-a-Service (DaaS) company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on where consumers spend money and time, Cybersyn acquires high-value datasets and builds derived data products from proprietary and public sources. With Cybersyn, you can access external data directly in your Snowflake instance — no ETL required. 
+**Cybersyn** is a next generation data company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on consumer insights, Cybersyn enables you to access external data directly in your Snowflake instance — no ETL required.
 
 This lab will use the following Cybersyn datasets:
 - Daily stock price data
@@ -204,18 +204,18 @@ Duration: 8
 
 Let's start by preparing to load structured `.csv` data into Snowflake.
 
-We are using company metadata developed from the Securities and Exchange Commission (SEC) that details the consumer packaged goods (CPG) companies we want to evaluate. The data has been exported and pre-staged for you in an Amazon AWS S3 bucket in the US-EAST region. It is in comma-delimited format with a single header line and double quotes enclosing all string values, including the field headings in the header line. This will come into play later in this section as we configure the Snowflake table to store this data.
+We are using company metadata developed from the Securities and Exchange Commission (SEC) that details the consumer packaged goods (CPG) companies we want to evaluate. The data has been exported and pre-staged for you in an Amazon AWS S3 bucket in the US-EAST region. It is in comma-delimited format with a single header line and double quotes enclosing all string values, including the field headings in the header line. This will be important when we configure the Snowflake table to store this data.
 
 <!-- victoria image of the CPG data -->
 
-_(The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Cybersyn -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.)_
-
 > aside negative
 > 
->  **Getting Data into Snowflake**
-There are many ways to get data into Snowflake from many locations including the `COPY` command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT solutions. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide-data-load.html). For the purposes of this lab, we use the `COPY` command and AWS S3 storage to load data manually. In a real-world scenario, you would more likely use an ETL solution or grab data directly from the Snowflake Marketplace!
+> **Free Datasets from Cybersyn direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Cybersyn -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
 
-#### Create a Database and Table
+**Getting Data into Snowflake**
+Data can be ingested into Snowflake from many locations by using the `COPY` command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT solutions. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide-data-load.html). For the purposes of this lab, we use the `COPY` command and AWS S3 storage to load data manually. In a real-world scenario, you would more likely use an ETL solution or grab data directly from the Snowflake Marketplace!
+
+### Create a Database and Table
 Ensure you are using the `SYSADMIN` role by selecting your name at the top left, **Switch Role** > **SYSADMIN**.
 
 Navigate to the **Databases** tab. Click **Create**, name the database `CYBERSYN`, then click **CREATE**.
@@ -289,7 +289,7 @@ Click `COMPANY_METADATA` and the **Columns** tab to see the table structure you 
 
 ### Create an External Stage
 
-We are working with structured, comma-delimited data that has already been staged in a public, external S3 bucket. Before we can use this data, we first need to create a Stage that specifies the location of our external bucket.
+We are working with structured, comma-delimited data that has already been staged in a public, external S3 bucket. Before we can use this data, we first need to create a _stage_ that specifies the location of our external bucket.
 
 > aside positive
 > 
@@ -299,7 +299,7 @@ From the **Databases** tab, click the `CYBERSYN` database and `PUBLIC` schema. C
 
 ![stages create](assets/4PreLoad_8.png)
 
-In the "Create Securable Object" dialog that opens, replace the following values in the SQL statement:
+In the `Create Securable Object` dialog that opens, replace the following values in the SQL statement:
 
 `<stage_name>`: `cybersyn_company_metadata`
 `<url>`: `s3://snowflake-workshop-lab/cybersyn-consumer-company-metadata-csv/`
@@ -348,9 +348,9 @@ show file formats in database cybersyn;
 The file format created should be listed in the result:
 ![create file format settings](assets/4PreLoad_12.png)
 
-In this section, we will use a virtual warehouse and the `COPY` command to initiate bulk loading of structured data into the Snowflake table we created in the last section.
-
 ### Resize and Use a Warehouse for Data Loading
+
+We will now use a virtual warehouse and the `COPY` command to initiate bulk loading of structured data into the Snowflake table we created.
 
 Compute resources are needed for loading data. Snowflake's compute nodes are called virtual warehouses and they can be dynamically sized up or out according to workload, whether you are loading data, running a query, or performing a DML operation. Each workload can have its own warehouse so there is no resource contention.
 
@@ -431,7 +431,6 @@ TRUNCATE TABLE company_metadata;
 
 Verify that the table is empty by running the following command:
 ```SQL
---verify table is clear
 SELECT * FROM company_metadata LIMIT 10;
 ```
 
@@ -687,14 +686,15 @@ Next:
 
 ![covid19 databases](assets/10Share_starschema_db_info.png)
 
-That's it! You have now successfully subscribed to the Financial & Economic Essentials datasets from Cybersyn, which is updated daily with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
+That's it! You have now successfully subscribed to the Financial & Economic Essentials datasets from Cybersyn, which are updated daily with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
 
-Positive
-To learn more about how to use the new worksheet interface, go to the [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight).
+> aside positive
+> 
+> To learn more about how to use the new worksheet interface, go to the [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight).
 
 <!-- ------------------------ -->
 
-## Working with Queries, the Results Cache, & Cloning
+## Querying, the Results Cache, & Cloning
 
 Duration: 8
 
@@ -724,10 +724,11 @@ select * from company_metadata limit 20;
 
 ![sample data query results](assets/6Query_2.png)
 
-Now, let's look at the performance of these companies in the stock market. Run the queries below in the worksheet. They show the daily closing stock price and trading volume per company. We also calculate the daily return, volume change, and 5-day moving average of the closing prices.
+Now, let's look at the performance of these companies in the stock market. Run the queries below in the worksheet. 
+
+**Closing Price Statistics:** First, calculate the daily return of a stock (the percent change in the stock price from the close of the previous day to the close of the current day) and 5-day moving average from closing prices (which helps smooth out daily price fluctuations to identify trends).
 
 ```SQL
--- Calculate the daily return of a stock (the percent change in the stock price from the close of the previous day to the close of the current day) and 5-day moving average from closing prices (which helps smooth out daily price fluctuations to identify trends).
 SELECT
     meta.primary_ticker,
     meta.company_name,
@@ -739,8 +740,10 @@ FROM cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE variable_name = 'Post-Market Close';
+```
+**Trading Volume Statistics:** Then, calculate the trading volume change from one day to the next to see if there's an increase or decrease in trading activity. This can be a sign of increasing or decreasing interest in a stock.
 
--- Calculate the trading volume change from one day to the next to see if there's an increase or decrease in trading activity. This can be a sign of increasing or decreasing interest in a stock.
+```SQL
 SELECT
     meta.primary_ticker,
     meta.company_name,
@@ -799,7 +802,9 @@ Click the three dots (**...**) in the left pane and select **Refresh**. Expand t
 
 ![trips_dev table](assets/6Query_6.png)
 
-We will now join the JSON SEC filing datasets together to investigate the revenue of one CPG company. Run the query below to join `SEC_FILINGS_INDEX` to `SEC_FILINGS_ATTRIBUTES` to see how X has performed over time:
+### Joining Tables
+
+We will now join the JSON SEC filing datasets together to investigate the revenue of one CPG company, Kraft Heinz. Run the query below to join `SEC_FILINGS_INDEX` to `SEC_FILINGS_ATTRIBUTES` to see how X has performed over time:
 
 > aside positive
 > 
@@ -1178,8 +1183,8 @@ We encourage you to continue with your free trial by loading your own sample or 
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
 - Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
 - Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
-- [Cybersyn data on the Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn)
-- [Cybersyn Data Catalog](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart)
+- Access Cybersyn's analytics-ready data on [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn).
+- Explore the [60+ public domain sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn makes available on Snowflake Marketplace.
 
 ### What we've covered:
 
