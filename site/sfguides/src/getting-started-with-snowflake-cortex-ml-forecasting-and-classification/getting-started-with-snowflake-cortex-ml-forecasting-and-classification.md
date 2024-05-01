@@ -1,7 +1,6 @@
 author: Ellery Berk
 id: getting-started-with-snowflake-cortex-ml-forecasting-and-classification
-summary: This is a sample Snowflake Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
+summary: This is an introduction to building with Cortex ML functions.
 categories: Getting-Started
 environments: web
 status: Published 
@@ -27,13 +26,14 @@ For these use cases, Snowflake has developed a set of SQL based ML Functions tha
 For further details on ML Functions, please refer to the [Snowflake documentation](https://docs.snowflake.com/guides-overview-analysis).
 
 ### Prerequisites
-- A Snowflake account login with an ACCOUNTADMIN role. If not, you will need to use a different role- Access to Snowsight and working knowledge of SQL.
+- A Snowflake account login with an `ACCOUNTADMIN` role. If not, you will need to use a different role- Access to Snowsight and working knowledge of SQL.
 
 ### What You’ll Learn 
-- How to make use of the Classification and Forecasting ML Function to create models and produce predictions
-- How to evaluate and interpret the model results and feature importances
-- How to score on new datasets to generate predictions
-- How to schedule recurring model training and prediction with Snowflake Tasks
+
+* How to make use of the Classification and Forecasting ML Function to create models and produce predictions
+* How to evaluate and interpret the model results and feature importances
+* How to score on new datasets to generate predictions
+* How to schedule recurring model training and prediction with Snowflake Tasks
 
 ### What You’ll Build 
 This Quickstart is designed to help you get up to speed with the Classification and Forecasting ML Functions.
@@ -48,7 +48,7 @@ After we build our models, we will evaluate them and look at the feature importa
 
 Let's get started!
 
-NOTE: As of April 2024, Cortex ML Classification is in Public Preview. From time to time, Snowflake may refine the underlying algorithm and will roll out the improvements through the regular Snowflake release process. You cannot revert to a previous version of the model, but models you have created with a previous version will continue to use that version. These changes in the underlying algorithm also means that the results you get when you run through the quickstart may differ from the images you see.
+**Note**: As of April 2024, Cortex ML Classification is in Public Preview. From time to time, Snowflake may refine the underlying algorithm and will roll out the improvements through the regular Snowflake release process. You cannot revert to a previous version of the model, but models you have created with a previous version will continue to use that version. These changes in the underlying algorithm also means that the results you get when you run through the quickstart may differ from the images you see.
 
 <!-- ------------------------ -->
 ## Setting Up Data in Snowflake
@@ -87,7 +87,7 @@ CREATE OR REPLACE FILE FORMAT quickstart.ml_functions.csv_ff
 -- Create an external stage pointing to AWS S3 for loading our data:
 CREATE OR REPLACE STAGE s3load 
     COMMENT = 'Quickstart S3 Stage Connection'
-    URL = 's3://sfquickstarts/frostbyte_tastybytes/mlpf_quickstart/'
+    URL = 's3://sfquickstarts/hol_snowflake_cortex_ml_for_sql/customers.csv'
     FILE_FORMAT = quickstart.ml_functions.csv_ff;
 
 -- Define our table schema
@@ -560,7 +560,7 @@ ALTER TASK train_task suspend;
 DROP TASK train_task;
 ```
 
-## 6. Conclusion
+## Conclusion and Resources
 Duration: 1
 
 You did it! You've successfully built and evaluated Snowflake Cortex ML Classification and Forecast models!
@@ -571,10 +571,13 @@ As a review, in this guide we covered how you are able to:
 3. Created predictions using both models.
 4. Evaluated the models to get a better understanding of how well they perform.
 
-Having gone through this guide, you are now eqipped to start building your own classification and forecasting models, whether for predicting customer churn, identifying strong leads in a marketing campaign with the classification function or predicting future demand using the forecasting function.
+### What You Learned 
+* How to build your own classification model 
+* How to build your own forecasting model 
+* How to evaluate those models and use them for prediction 
+* How to apply abstract concepts like classification and forecasting to real world problems 
 
-### Resources:
-This guide contained code patterns that you can leverage to get quickly started with Snowflake Cortex ML Functions. For further details, here are some useful resources:
+### Resources
 - Classification [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/classification), alongside the [classification syntax](https://docs.snowflake.com/sql-reference/classes/classification)
 - Forecasting [documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting)
 - To explore other Cortex ML Functions, please refer to the Snowflake Cortex [ML Functions Page](https://docs.snowflake.com/en/guides-overview-ml-powered-functions)
