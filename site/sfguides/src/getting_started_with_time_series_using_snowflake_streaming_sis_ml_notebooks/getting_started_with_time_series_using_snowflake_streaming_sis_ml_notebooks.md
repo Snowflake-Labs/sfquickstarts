@@ -12,53 +12,35 @@ author: nathan.birch@snowflake.com, jonathan.regenstein@snowflake.com
 ## Overview
 Duration: 5
 
-Snowflake has functionality built-in for ingesting, storing, and analyzing time series data. This guide will take you through a scenario of using Snowflake's Snowpipe Streaming to ingest a time series simulated stream, then utilize Dynamic tables to transform the ingested data from a raw JSON format into a model ready to analyze the data using Snowflake time series functions. Finally, a Streamlit applciation will be deployed to Snowflake to serve time series data to end users via an easy to use interface within Snowflake Snowsight.
+Snowflake offers a rich set of functionalities for time series analytics making it a performant and cost effective platform for bringing in your time series workloads. This lab covers a real world scenario of ingesting, analyzing and visualizing IOT time series data.
 
+### What You'll Learn
 
-### Key Activities
+Upon completing this quickstart, you will have learned how to perform time series analytics in Snowflake, and will have gained practical experience in several areas:
 
-To achieve this goal, the following key activities will be performed:
-- **Configure a Snowflake account** to work with time series data
 - **Setup a streaming ingestion** client to to stream time series data into Snowflake using Snowpipe Streaming
 - **Model and transform** the streaming time series data using Dynamic Tables
-- **Analyze the data** using time series queries
-- **Create a time series Snowpark functions** to assist in analysis
-- **Deploy a time series Streamlit** application in Snowflake for end users to query time series
-
-
-### Goal
-The goal of this lab is to gain experience with Snowflake time series functionailty by working through an end-to-end deploy of a Streamlit application that will enable users to easily execute time series queries against data streamed into Snowflake.
-
-<img src="assets/overview_streamlit.png" width="800" />
-
-
-### Architecture Plan
-A simulated IOT streaming datafeed will be used for this exercise, ingesting into a RAW staging table via Snowpark Streaming. Once data is streamed into a stage table, a task will detect when new records are loaded, and execute a procedure to transform the data into a dimensional model, ready for analytics. A Streamlit application will be deployed in Snowflake to then enable end users to report on the IOT streamed data.
+- **Analyzing the data** using native time series functions
+- **Building your own time series functions** using Snowpark UDFs when necessary
+- **Deploying a Streamlit application** for visualizing and analyzing time series data
 
 <img src="assets/overview_architecture.png" width="800" />
 
+### What You'll Need
 
-<!-- ------------------------ -->
-## Prerequisites
-
-### Knowledge and Tooling
-
-To participate in the virtual hands-on lab, attendees need the following:
-- Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects
-- Familiarity with command-line navigation within a terminal
-- Access or sign-up to a [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) with **ACCOUNTADMIN** access
-- Access to a personal GitHub account to fork the QuickStart repo and create GitHub Codespace
-
-
-### Lab environment
-For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. At the time of writing, GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
+- A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
+- [Sign-up for a Snowflake Trial](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) OR have access to an existing Snowflake account with the ACCOUNTADMIN role. Select the Enterprise edition, AWS as a cloud provider.
+- Access to a personal GitHub account to fork the QuickStart repo and create [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). Codespaces offer a hosted development environment. GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 or 4 node environment, which should be enough to work through this lab.
 
 > aside negative
 > 
 > It is recommended to use a personal GitHub account which will have permissions to deploy a GitHub Codespace.
 
+<!-- ------------------------ -->
+## Lab Setup
+Duration: 10
 
-### Snowflake Account details
+### Step 1 - Note Snowflake Account details
 Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
 
 ```sql
@@ -70,13 +52,7 @@ SELECT SYSTEM$ALLOWLIST();
 
 **Note** the **<account_identifier>**.snowflakecomputing.com by retrieving the **host** attribute returned. This will be used during the lab when referencing the **<ACCOUNT_IDENTIFIER>** configuration variables during setup.
 
-
-<!-- ------------------------ -->
-## Lab Setup
-
-Duration: 10
-
-### Step 1 - Fork the Lab GitHub Repository
+### Step 2 - Fork the Lab GitHub Repository
 
 The first step is to create a fork of the Lab GitHub repository.
 
@@ -94,7 +70,7 @@ The first step is to create a fork of the Lab GitHub repository.
 <img src="assets/labsetup_createfork.png" width="800" />
 
 
-### Step 2 - Deploy a GitHub Codespace for the Lab
+### Step 3 - Deploy a GitHub Codespace for the Lab
 
 Now create the GitHub Codespace.
 
@@ -148,8 +124,7 @@ The Github Codespace deployment is automating the following:
 >
 > If you do not see the **Snowflake VS Code Extension** try **Refreshing** your browser window.
 
-
-### Step 3 - Verify Your Anaconda Environment is Activated
+### Step 4 - Verify Your Anaconda Environment is Activated
 
 During the Codespace setup the postCreateCommand script created an Anaconda virtual environment named **hol-timeseries**. This virtual environment contains the packages needed to connect and interact with Snowflake using the Snowflake CLI.
 
@@ -166,7 +141,7 @@ To activate the virtual environment:
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
 
-### Step 4 - Configure Snowflake Account Connection Configurations
+### Step 5 - Configure Snowflake Account Connection Configurations
 
 > aside negative
 >
@@ -183,7 +158,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
     - **host** variable
 
 
-### Step 5 - Configure Snowflake VS Code Extension Connection
+### Step 6 - Configure Snowflake VS Code Extension Connection
 
 1. Open the Snowflake VS Code Extension
 2. Enter your **<ACCOUNT_IDENTIFER>**
@@ -205,7 +180,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 <img src="assets/labsetup_snowconnected.png" />
 
 
-### Step 6 - Update Snowflake Setup Worksheet
+### Step 7 - Update Snowflake Setup Worksheet
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
 
