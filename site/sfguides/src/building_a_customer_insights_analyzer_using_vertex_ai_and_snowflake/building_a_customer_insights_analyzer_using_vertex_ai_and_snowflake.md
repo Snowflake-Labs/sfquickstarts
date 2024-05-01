@@ -86,6 +86,8 @@ Duration: 10
 
 Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with customer reviews. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.
 
+Important to note that in this quickstart we wil be using the requests package to make the external call to Vertex AI. In the Summer of '24 the Snowflake environment will support the Vertex AI SDK.
+
 
 ```sql
 --create database and warehouse
