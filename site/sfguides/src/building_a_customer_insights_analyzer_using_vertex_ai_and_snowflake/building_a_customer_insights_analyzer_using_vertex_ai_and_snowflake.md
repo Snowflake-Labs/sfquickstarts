@@ -1,5 +1,6 @@
 author: marzillo-snow
-id: getting_started_with_google_and_snowflake_for_genAI
+id: building_a_customer_insights_analyzer_using_vertex_ai_and_snowflake
+
 summary: This is a quickstart for using Snowflake with Google for Generative AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
@@ -13,11 +14,11 @@ tags: Getting Started, Data Science, Data Engineering, LLM, GenAI, Google, GCP, 
 
 Duration: 10
 
-In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Google Palm to analyze customer reviews.
+In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Vertex AI and Generative AI to analyze customer reviews.
 
 In summary this is what you will do:
 - Set up environments in both Snowflake and GCP
-- Create a function that leverages Snowpark External Access to make a call to GCP Generative AI models.
+- Create a function that leverages Snowpark External Access to make a call to GCP Vertex AI Generative AI models.
 - Create a Streamlit app that leverages the above function to generate responses using data from Snowflake and prompts.
 
 ### What is Generative AI?
