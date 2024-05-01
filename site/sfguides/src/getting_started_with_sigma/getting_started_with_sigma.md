@@ -73,7 +73,7 @@ First let’s get you acquainted with Snowflake! This section covers the basic c
 
     - The **Shared Data** sub-tab is where data sharing can be configured to easily and securely share Snowflake table(s) among separate Snowflake accounts or external users, without having to create a second copy of the table data. At the end of this lab is a module on data sharing.
 
-    - The **Marketplace** sub-tab loads the Snowflake Data Marketplace, a place where you can access third party datasets.
+    - The **Marketplace** sub-tab loads the Snowflake Marketplace, a place where you can access third party datasets.
 
 - The **Compute** tab expands into three sub categories: History, Warehouses, and Resource Monitors.
 
