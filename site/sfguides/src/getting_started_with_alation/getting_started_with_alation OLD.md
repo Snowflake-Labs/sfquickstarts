@@ -45,7 +45,7 @@ Duration: 3
 
 ![Step1](./assets/Section3-AlationTrial-Screen1.png)
 
-* After you have logged in, access the ``` Admin ``` menu selection from the left navigation bar.
+* After you have logged in, access the ``` Data Products ``` menu selection from the left navigation bar.
 * Then select ``` Partner Connect ```
 * Either type in Alation in the search or scroll down to the Security & Governance section.
 
@@ -55,7 +55,7 @@ Duration: 3
 * Click: ``` Connect ```
 
 ![Line2](./assets/BorderLine.png)
-**3. Your Partner Connect Account has been Created**
+**3. Your Partner Connect Account has been Created**    
 ![Step3](./assets/Section3-AlationTrial-Screen3.png)
 * Click: ``` Activate ```
 
@@ -258,7 +258,6 @@ Search is core to increasing productivity and data literacy. Spend minutes inste
 Now it is time to move on to Compose, Alation's SQL editor!
 
 ![VHOL-Screen20](./assets/Section7-Search-screen7.png)
-
 <!-- ------------------------ -->
 ## Compose 
 Duration: 10
@@ -267,7 +266,7 @@ Duration: 10
 
 In addition to the rich cataloging and governance capabilities, the Alation Data Intelligence Platform enables users to interact with data stored in cataloged sources. This capability is called Compose and provides a fully integrated and governed SQL development environment.
 
-Compose is more than your typical SQL editor. Because it is integrated with the active metadata stored in the catalog, the editor's IntelliSense can provide suggestions as you type for tables, columns, joins, etc. Another advantage is that active data governance will show you when an item is deprecated, so you are not using bad data. 
+Compose is more than your typical SQL editor. Because it is integrated with the active metadata stored in the catalog, the editor's IntelliSense can provide suggestions as you type for tables, columns, joins, etc. Another advantage is that active data governance will show you when an item is deprecated, so you are not using bad data.
 
 Queries can be developed by those who know SQL and shared with others in the organization. No worries if you don't know how to read or write SQL. Queries can be published as forms, allowing the business user to fill out some prompts and get answers to the questions they need answered.
 
@@ -302,13 +301,10 @@ Queries and Compose are accessible from several places in the application. The f
 
 ![VHOL-Screen24](./assets/Section8-Compose-Screen4.png)
 
-4. You can click on the arrow to see additional queries and filters.
-
-![VHOL-Screen25](./assets/Section8-Compose-Screen5.png)
-
-5. In the example above, a select statement with that table appears since Compose was launched with Open with Compose from a table view.
+5. In the example below, a select statement with that table appears since Compose was launched with Open with Compose from a table view.
 6. The Connection Settings is where you provide your credentials to connect to the Alation provided Demo Sample Data - data source.
 
+![VHOL-Screen25](./assets/Section8-Compose-Screen5.png)
 ![VHOL-Border9](./assets/BorderLine.png)
 
 <table>   
@@ -336,9 +332,14 @@ Duration: 5
 
 **Overview**
 
-If you would like another sample database to explore and work within Alation, Snowflake provides a database for the fictitious food truck brand of Tasty Bytes. 
+Data quality is a critical data management function that helps identify issues based on the rules defined and executed against the data. Thresholds can be set to help guide users on whether using the data is appropriate or not. 
 
-This is entirely optional. If you are not interested, simply click on the Next button.
+Alation provides extensive data quality capabilities through its Open Data Quality Framework. Snowflake provides data quality features through Data Metric Functions (DMFs). The two integrated provide people with the health of the data at the point of consumption. Additional data quality policies provide the details of the data quality rule, thresholds for good, warning, and alert conditions, the data assets processed by the rule, and more.
+
+When the stakes are high, especially when providing data for AI models, data quality is a must!
+
+![VHOL-Screen27](./assets/Section9-Quality-Screen1.png)
+![VHOL-Screen28](./assets/Section9-Quality-Screen2.png)
 
 ![VHOL-Border4](./assets/BorderLine.png)
 
@@ -356,71 +357,61 @@ This is entirely optional. If you are not interested, simply click on the Next b
     </tbody>
 </table>
 
-- Install Tasty Bytes from this [link](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0/).
-- Return to the Alation web page.
 
-1. Click the down arrow next to Apps.
-2. Click on Sources.
+1. To review the DMFs currently created, click on Data Quality Processor in the left-hand navigation.
 
-![VHOL-Screen20](./assets/Screen8-Optional-Apps1.png)
+![VHOL-Screen29](./assets/Section9-Quality-Screen3.png)
 
-3. Click on the Add button.
+2. Click on arrow next to Snowflake DMFs to expand the list.
 
-![VHOL-Screen21](./assets/Screen8-Optional-Apps2.png)
+![VHOL-Screen30](./assets/Section9-Quality-Screen4.png)
 
-4. Click on the Data Source.
+3. Enter "email" to search the Data Metrics Functions.
+4. From the search results, click on COUNT_INCORRECT_EMAIL_FORMAT. 
 
-![VHOL-Screen22](./assets/Screen8-Optional-Apps3.png)
+![VHOL-Screen31](./assets/Section9-Quality-Screen5.png)
 
-5. Enter Tasty Bytes for the Data Source Title.
-6. Click on the Continue Setup button.
+5. Review the information about the COUNT_INCORRECT_EMAIL_FORMAT DMF. The key attributes are highlighted in the red boxes.
 
-![VHOL-Screen23](./assets/Screen8-Optional-Apps4.png)
+![VHOL-Screen32](./assets/Section9-Quality-Screen6.png)
 
-7. Click on the down arrow next to Database Type and select Snowflake OCF connector.
+6. Search for customer.
+7. Select the Customer (CSTMR) table.
 
-![VHOL-Screen24](./assets/Screen8-Optional-Apps5.png)
+![VHOL-Screen33](./assets/Section9-Quality-Screen7.png)
 
-8. Click on the General Settings tab.
+8. Notice the alert icon next to the Data Health tab. Click on it.
 
-![VHOL-Screen25](./assets/Screen8-Optional-Apps6.png)
+![VHOL-Screen34](./assets/Section9-Quality-Screen8.png)
 
-9. Scroll to Connector Settings and enter the JDBC URI. The format is:
-snowflake://**Your Snowflake Account**.snowflakecomputing.com:443/?warehouse=**YOUR WAREHOUSE**&db=FROSTBYTE_TASTY_BYTES
+9. Find the columns with alerts and locate the email column.
+10. Click on the COUNT_INCORRECT_EMAIL_FORMAT rule.
 
-10. Enter an administrative user with permission to access metadata - see the [link](https://docs2.alationdata.com/en/latest/sources/OpenConnectorFramework/Snowflake/SnowflakeOCFConnectorOverview.html) for more details.
+![VHOL-Screen35](./assets/Section9-Quality-Screen9.png)
 
-11. Enter the password of the user entered above.
+11. As you review the content of the rule, how can you tell it implements a DMF? Hint: Check out hightlighted red boxes.
 
-![VHOL-Screen26](./assets/Screen8-Optional-Apps7.png)
+![VHOL-Screen36](./assets/Section9-Quality-Screen10.png)
 
-12. Click on the Save button. A "Success" message should appear.
+<table>   
+    <thead>
+        <tr>
+            <th colspan="2"> </th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td><b>Benefits</b></td>
+        </tr>
+    </tbody>
+</table>
 
-![VHOL-Screen27](./assets/Screen8-Optional-Apps8.png)
+An integrated data quality solution that makes consumers aware of the data health at the point of consumption is priceless! Trust is the most critical factor for your data, especially when taking advantage of it with AI.
 
-13. Scroll toward the bottom of the screen and click on the Test button. If you receive the message "Network connection successful", then you are finished. If not, check your password to ensure it is correct and try again.
+Time to wrap this up with a quick Summary!
 
-![VHOL-Screen28](./assets/Screen8-Optional-Apps9.png)
-
-14. Scroll up and click on the Metadata Extraction tab.
-
-15. If you are already using a user with the ACCOUNT_ADMIN role, then please continue with Step 16. If your user is not part of the ACCCOUNT_ADMIN role, then Click on Setup Help for instructions on the permissions needed in Snowflake to run Metadata Extraction. This is a checklist of the required items focusing on the SNOWFLAKE.ACCOUNT_USAGE objects. 
-
-![VHOL-Screen29](./assets/Screen8-Optional-Apps10.png)
-
-16. Scroll down until you see the Run Extraction Now button, and click on it. This will submit the metadata extraction job.
-
-17. Once the job completes, the status should appear as "Succeeded." If you receive an error instead, make sure to check the permissions from Step 15 and try again.
-
-![VHOL-Screen30](./assets/Screen8-Optional-Apps11.png)
-
-18. You should now see the Tasty Bytes data source in the left-hand navigation under Data. Click on it.
-
-19. The list of the five schemas will appear.
-
-20. The number of tables will be displayed for each schema, showing us that Metadata Extraction worked! Feel free to explore further on your own.
-
-![VHOL-Screen31](./assets/Screen8-Optional-Apps12.png)
+![VHOL-Screen37](./assets/Section9-Quality-Screen11.png)
 
 <!-- ------------------------ -->
 ## Summary
@@ -432,8 +423,8 @@ You did it! In this short period, you have seen how Alation:
 - Guides users to make better business decisions with trusted data
 - Empowers organizations to continuously improve their data culture
 
-![VHOL-Screen32](./assets/Section10-Summary-Screen1.png)
-![VHOL-Screen33](./assets/Section10-Summary-Screen2.png)
+![VHOL-Screen38](./assets/Section10-Summary-Screen1.png)
+![VHOL-Screen39](./assets/Section10-Summary-Screen2.png)
 
 ![VHOL-Border10](./assets/BorderLine.png)
 
@@ -444,11 +435,11 @@ To get the most out of Alation during your trial.
 3. The Quick Start Tour has self-guided Self-service Analytics, Data Governance, and Compose demos. The Quick Start Tour is located under the ? in the top right of the webpage.
 4. If you would like to explore some of your own Snowflake databases, click on this link to see how to connect your own Snowflake data sources.
 
-![VHOL-Screen33](./assets/Section10-Summary-Screen3.png)
+![VHOL-Screen40](./assets/Section10-Summary-Screen3.png)
 
 5. For additional guided demos and product information, please go to [Alation.com](https://www.alation.com/).
 
-![VHOL-Screen34](./assets/Section10-Summary-Screen4.png)
+![VHOL-Screen41](./assets/Section10-Summary-Screen4.png)
 
 Last but not least, please check your email for continued guidance and tips throughout your trial. 
 
