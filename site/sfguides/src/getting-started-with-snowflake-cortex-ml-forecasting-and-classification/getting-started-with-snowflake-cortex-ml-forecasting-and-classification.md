@@ -87,7 +87,7 @@ CREATE OR REPLACE FILE FORMAT quickstart.ml_functions.csv_ff
 -- Create an external stage pointing to AWS S3 for loading our data:
 CREATE OR REPLACE STAGE s3load 
     COMMENT = 'Quickstart S3 Stage Connection'
-    URL = 's3://sfquickstarts/hol_snowflake_cortex_ml_for_sql/customers.csv'
+    URL = 's3://sfquickstarts/hol_snowflake_cortex_ml_for_sql/'
     FILE_FORMAT = quickstart.ml_functions.csv_ff;
 
 -- Define our table schema
@@ -113,13 +113,13 @@ CREATE OR REPLACE TABLE quickstart.ml_functions.bank_marketing(
     CONSUMER_CONFIDENCE_INDEX NUMBER(3,1), 
     EURIBOR_3_MONTH_RATE NUMBER(4, 3),
     NUMBER_EMPLOYEES NUMBER(5, 1),
-    CLIENT_SUBSCRIBED BOOLEAN
+    CLIENT_SUBSCRIBED BOOLEAN,
     TIMESTAMP TIMESTAMP_NTZ(9)
 );
 
 -- Ingest data from S3 into our table:
 COPY INTO quickstart.ml_functions.bank_marketing
-FROM @s3load/cortex_ml_classification.csv;
+FROM @s3load/customers.csv;
 
 -- View a sample of the ingested data: 
 SELECT * FROM quickstart.ml_functions.bank_marketing LIMIT 100;
