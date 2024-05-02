@@ -47,7 +47,7 @@ with Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
 ### What you’ll build
 We will build an efficient architecture all within Snowflake that will access product urls and images in Snowflake and pass that data to a a Google Cloud to generate a response. The architecture will look like this
 
-![](assets/Google%20Generative%20AI%20+%20Snowflake%20and%20Streamlit%20-%20Reference%20Architecture.png)
+![](assets/refarch.png)
 
 ### Use Case
 
