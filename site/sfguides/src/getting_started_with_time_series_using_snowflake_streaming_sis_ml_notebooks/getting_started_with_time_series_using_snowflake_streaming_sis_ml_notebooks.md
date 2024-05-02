@@ -953,11 +953,46 @@ ORDER BY tagname, timestamp
 ## Streamlit in Snowflake
 Duration: 10
 
-Deploy Streamlit application to Snowflake
+After completing the analysis of the time series data that was streamed into Snowflake using SQL queries, we are now ready to build visualisations that would help us easily analyse the data. For this purpose we are going to use Streamlit. First, let's breifly understand what is Streamlit.
+
+### What is Streamlit?
+Streamlit is an open-source Python library that makes it easy to create web applications for machine learning, data analysis, and visualization. It allows developers to build interactive and customizable web apps directly from Python scripts, without needing to write any HTML, CSS, or JavaScript. With Streamlit, data scientists can quickly prototype and share data science projects with others, making it a popular choice among data scientists and machine learning engineers for creating intuitive and user-friendly interfaces for their models and analyses.
+
+[Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) helps developers securely build, deploy, and share Streamlit apps on Snowflake’s data cloud. Using Streamlit in Snowflake, you can build applications that process and use data in Snowflake without moving data or application code to an external system.
+
+We will use the Snowflake CLI interface to deploy the Streamlit app on your Snowflake account from where you can launch the application and visualse data.Let's also get a brief understanding of Snowflake CLI
+
+### What is Snowflake CLI?
+
+[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction) is an open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations. It is a flexible and extensible tool that can accommodate modern development practices and technologies.
+
+With Snowflake CLI, developers can create, manage, update, and view apps running on Snowflake across workloads such as Streamlit in Snowflake, the Snowflake Native App Framework, Snowpark Container Services, and Snowpark. It supports a range of Snowflake features, including user-defined functions, stored procedures, Streamlit in Snowflake, and SQL execution.
+
+### Deploy Streamlit application to Snowflake :
+
+In the step #2 (Lab Setup) of this Quickstart, we have already setup a Github codespace with all the requirements necessary for building and deploying a Streamlit application. 
+
+In this step, we will now deploy the Streamlit application on the Snowflake account using Snowflake CLI:
+
+1. Navigate to the existing Terminal window where you have activated the hol-timeseries virtual environment and execute the following command:
 
 ```bash
 snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
 ```
+
+This command does the following:
+
+1. Deploys the Streamlit application using the Snowflake account details mentioned in the ".snowflake/config.toml" file
+2. --config-file option provides the location of the config file that contains Snowflake account details
+3. --replace option ensures that the existing application, if present, is overwritten
+4. --project option provides the path where the Streamlit app project resides
+5. --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
+
+### Launch Streamlit application :
+
+Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message "Streamlit successfully deployed" and also provide the URL for the Streamlit application. You can either copy the link and presss Command/Ctrl 
+
+<img src="assets/launch_streamlit.png" />
 
 
 <!-- ------------------------ -->
