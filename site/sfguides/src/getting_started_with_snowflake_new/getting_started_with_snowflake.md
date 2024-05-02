@@ -31,7 +31,7 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 
 - How to create stages, databases, tables, views, and virtual warehouses.
 - How to load structured and semi-structured data.
-- How to consume Cybersyn data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
+- How to consume Cybersyn data from the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
 - How to perform analytical queries on data in Snowflake, including joins between tables.
 - How to clone objects.
 - How to undo user errors using Time Travel.
@@ -525,7 +525,7 @@ The file format created should be listed in the result:
 
 Duration: 5
 
-### Snowflake Data Marketplace
+### Snowflake Marketplace
 
 In the previous section, you learned how to load and transform data in Snowflake. What if you could access external data without any ETL? In this section, we will learn how to access public domain data from Cybersyn, a Data-as-a-Service (DaaS) company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. 
 
@@ -577,7 +577,7 @@ Next:
 ![covid19 databases](assets/10Share_starschema_db_info.png)
 <!-- dash to update -->
 
-That's it! You have now successfully subscribed to the Financial & Economics Essentials data from Cybersyn, which distributes consumer spending and [public domain data from 60+ sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) exclusively on Snowflake Marketplace. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) in the Snowflake Data Marketplace.
+That's it! You have now successfully subscribed to the Financial & Economics Essentials data from Cybersyn, which distributes consumer spending and [public domain data from 60+ sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) exclusively on Snowflake Marketplace. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) in the Snowflake Marketplace.
 
 _To learn more about how to use the new worksheet interface, go to the [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight)._
 
@@ -1134,7 +1134,7 @@ With secure data sharing:
 
 Snowflake uses secure data sharing to provide account usage data and sample data sets to all Snowflake accounts. In this capacity, Snowflake acts as the data provider of the data and all other accounts.
 
-Secure data sharing also powers the Snowflake Data Marketplace, which is available to all Snowflake customers and allows you to discover and access third-party datasets from numerous data providers and SaaS vendors. Again, in this data sharing model, the data doesn't leave the provider's account and you can use the datasets without any transformation.
+Secure data sharing also powers the Snowflake Marketplace, which is available to all Snowflake customers and allows you to discover and access third-party datasets from numerous data providers and SaaS vendors. Again, in this data sharing model, the data doesn't leave the provider's account and you can use the datasets without any transformation.
 
 
 ### View Existing Shares
@@ -1231,7 +1231,7 @@ We encourage you to continue with your free trial by loading your own sample or 
 
 - How to create stages, databases, tables, views, and virtual warehouses.
 - How to load structured and semi-structured data.
-- How to consume Cybersyn data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
+- How to consume Cybersyn data from the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
 - How to perform analytical queries on data in Snowflake, including joins between tables.
 - How to clone objects.
 - How to undo user errors using Time Travel.
