@@ -37,7 +37,7 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 - How to undo user errors using Time Travel.
 - How to create roles and users, and grant them privileges.
 - How to securely and easily share data with other accounts.
-- How to consume datasets in the Snowflake Data Marketplace.
+- How to consume datasets in the Snowflake Marketplace.
 
 <!-- ------------------------ -->
 
@@ -1101,7 +1101,7 @@ With secure data sharing:
 
 Snowflake uses secure data sharing to provide account usage data and sample data sets to all Snowflake accounts. In this capacity, Snowflake acts as the data provider of the data and all other accounts.
 
-Secure data sharing also powers the Snowflake Data Marketplace, which is available to all Snowflake customers and allows you to discover and access third-party datasets from numerous data providers and SaaS vendors. Again, in this data sharing model, the data doesn't leave the provider's account and you can use the datasets without any transformation.
+Secure data sharing also powers the Snowflake Marketplace, which is available to all Snowflake customers and allows you to discover and access third-party datasets from numerous data providers and SaaS vendors. Again, in this data sharing model, the data doesn't leave the provider's account and you can use the datasets without any transformation.
 
 
 ### View Existing Shares
@@ -1142,7 +1142,7 @@ We've demonstrated how it only takes seconds to give other accounts access to da
 
 Snowflake provides several ways to securely share data without compromising confidentiality. In addition to tables, you can share secure views, secure UDFs (user-defined functions), and other secure objects. For more details about using these methods to share data while preventing access to sensitive information, see the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/data-sharing-secure-views.html).
 
-### Snowflake Data Marketplace
+### Snowflake Marketplace
 
 Make sure you're using the ACCOUNTADMIN role and, navigate to the **Marketplace**:
 
@@ -1186,7 +1186,7 @@ Next:
 
 ![covid19 databases](assets/10Share_starschema_db_info.png)
 
-That's it! You have now successfully subscribed to the COVID-19 dataset from Starschema, which is updated daily with global COVID data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
+That's it! You have now successfully subscribed to the COVID-19 dataset from Starschema, which is updated daily with global COVID data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Marketplace.
 
 Positive
 To learn more about how to use the new worksheet interface, go to the [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight)
@@ -1249,4 +1249,4 @@ We encourage you to continue with your free trial by loading your own sample or 
 - How to undo user errors using Time Travel.
 - How to create roles and users, and grant them privileges.
 - How to securely and easily share data with other accounts.
-- How to consume datasets in the Snowflake Data Marketplace.
+- How to consume datasets in the Snowflake Marketplace.
