@@ -1,4 +1,4 @@
-author: aefendic@hex.tech and chase.romano@snowflake.com
+author: Armin Efendic and Chase Romano
 id: end_to_end_model_development_with_snowpark_and_hex
 summary: This lab will walk you through how to use Snowflake and Hex.
 categories: data-science-&-ml,partner-integrations
@@ -10,7 +10,7 @@ tags: Hex, Notebooks, Partner Connect
 # End to End Model Development with Hex and Snowpark
 
 <!-- ------------------------ -->
-## Lab Overview 
+## Overview 
 Duration: 5
 
 In this quickstart, we will be utilizing the classic Titanic dataset to determine if we would survive the infamous maiden voyage. Highlights of the quickstart include, preprocessing, model training, registry, and finally an interactive Hex app for inference. By the end of this lab you will learn how to leverage Snowpark ML, Hex's Snowpark intergration, and model Registry in Snowflake.
@@ -19,37 +19,17 @@ In this quickstart, we will be utilizing the classic Titanic dataset to determin
 - Familiarity with basic Python and SQL 
 - Familiarity with training ML models
 - Familiarity with data science notebooks
-
-
-### What You'll Learn
-* How ot perform preprocessing with Snowpark ML
-* How to perform model training with Snowpark ML
-* How to register the model in Snowflakes Registry
-* How models are "deployed" in Snowflake
-* How to perform inference using Snowpark and SQL against the registered model
-
-
-### If You Would Like to Create All Assets In The Lab You’ll Need:
 - A [Snowflake](https://signup.Snowflake.com/) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
-
-- A Hex account which will be automatically created via Partner Connect. Please follow the steps below.
-
-<!-- ------------------------ -->
-## Creating a Snowflake account
-Duration: 5
 
 
 Head over to the [Snowflake](https://signup.Snowflake.com/) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
 
-## Connecting Snowflake with Hex
-Duration: 5
-
-
+#### Connecting Snowflake with Hex
 Once you've logged into your Snowflake account, you'll land on the `Learn` page. Simply navigate to the `Admin` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the connect button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
 
 ![](assets/vhol-partner-connect.gif)
 
-### Workflow roadblocks
+#### Workflow roadblocks
 The following issues may occur if you have an existing Hex account and you're not an Admin in that org.
 
 **Unauthorized error**
@@ -63,8 +43,8 @@ The following issues may occur if you have an existing Hex account and you're no
 
 *If you're still encountering issues, or encounter any issues other than the ones listed above, please contact our support team [support@hex.tech](mailto:support@hex.tech) with the subject "VHOL" for priority support.*
 
-### Creating a workspace
-Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page where you can create new projects, import existing projects (Hex or Jupyter) as well as navigate to other sections of your workspace.
+#### Creating a workspace
+Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page.
 
 <!-- ### Enabling ORGADMIN
 
@@ -100,6 +80,18 @@ The last thing we'll want to do is accept the [Anaconda terms and conditions ena
 ![](assets/vhol-accept-terms.gif) -->
 
 <!-- ------------------------ -->
+
+### What You Will Learn
+* How to perform preprocessing with Snowpark ML
+* How to perform model training with Snowpark ML
+* How to register the model in Snowflakes Registry
+* How models are "deployed" in Snowflake
+* How to perform inference using Snowpark and SQL against the registered model
+
+### What You Will Build
+In this quickstart, you will create machine learning model using Snowpark ML. This model will be registered to Snowflakes Model Registry and then we will call that model for inference. At the end, we will build a Hex app that calls the newly created model to predict our likelihood of surviving the infamous maiden voyage!
+<!-- ------------------------ -->
+
 ## Getting Started with Hex
 Duration: 5
 
@@ -108,7 +100,7 @@ Now we can move back over to Hex and get started on our project. The first thing
 <button>
 
 
-[Download Hex project](https://app.hex.tech/hex-public/hex/30a29735-a269-4e41-a6f7-84fb0414124b/draft/logic)
+[Get Hex project](https://app.hex.tech/hex-public/hex/30a29735-a269-4e41-a6f7-84fb0414124b/draft/logic)
 
 
 </button>
@@ -177,12 +169,12 @@ Key sections of the Hex project include:
 ## Sharing our results
 Duration: 3
 
-Now that we've completed going through our project, how can we share this project with others? To do this we can head over to the app side of things. At the top of your project, you'll see a button showing if you're in the logic or app view. By switching over to the app side of things, we can start arranging our cells and adding/removing them as we see fit. Check out the [Hex docs](https://learn.hex.tech/docs/build-apps/app-builder) to learn about how you can effectively use the app builder.
-
-A pre-built layout has been designed but feel free to customize and add any additional elements!
-
-Once you are happy with the layout, we can go a head and publish. Publishing is like taking a snapshot of the current state of our app and publishing it as an interactive web app that anyone can see. To publish, hit the green publish button in the top right corner. Once that's done, hit the  share button next to publish, and select `Publish to web`. Whoever you share the link with will be able to see the live version of your app!
-
+Now that we've completed going through our project, we can share this project with others! To do this:
+- Head over to the app builder
+- A pre-built layout has been designed but feel free to customize and add any additional elements
+- To customize add, remove, and arrange cells. Check out the [Hex docs](https://learn.hex.tech/docs/build-apps/app-builder) for more info.
+- Publish the app with the [Publish button](https://learn.hex.tech/docs/share-insights/apps/publish-and-share-apps)
+- Lastly, hit the share button next to publish, and select `Publish to web`.
 
 ## Conclusion
 Congratulations on making it to the end of this Lab! You can view a published version of this [project here](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)!
