@@ -75,18 +75,20 @@ The project we are about to create is composed of several files in the following
 -- Datamapping App project
 
     |-- app
-    |   |-- setup_script.sql
-    |   |-- manifest.yml
     |   |-- ui
     |   |   |-- enricher_dash.py
+    |   |-- manifest.yml
+    |   |-- setup_script.sql
     |-- scripts
     |   |-- setup-package-script.sql
-    |-- snowflake.yml
+    |-- .gitignore
     |-- prepare_data.sh
-    
+    |-- README.md
+    |-- snowflake.yml
 ```
 
-To start creating this folder structure, go to your console and inside the folder you want the project to reside. Execute the following **`snow app init datamapping_app_streamlit`**. This will create several files for a basic template, we are replacing some of them and also creating new ones.
+To start creating this folder structure, go to your console and inside the folder you want the project to reside. Execute the following command: 
+**`snow app init datamapping_app_streamlit`**.
 
 Now, inside the **app** folder, create another one, called **ui**, and add the following file
 
