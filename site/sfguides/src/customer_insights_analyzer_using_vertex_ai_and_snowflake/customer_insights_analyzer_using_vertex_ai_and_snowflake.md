@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: building_a_customer_insights_analyzer_using_vertex_ai_and_snowflake
+id: customer_insights_analyzer_using_vertex_ai_and_snowflake
 
 summary: This is a quickstart for using Snowflake with Google for Generative AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development
@@ -26,7 +26,7 @@ In summary this is what you will do:
 Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.
 
 ### Using Generative AI with Google Cloud
-Generative AI on Vertex AI  gives you access to many large generative AI models so you can evaluate, tune, and deploy them for use in your AI-powered applications. This page gives you an overview of the generative AI workflow on Vertex AI, the features and models that are available, and directs you to resources for getting started.
+Generative AI on Vertex AI  gives you access to many large generative AI models so you can evaluate, tune, and deploy them for use in your AI-powered applications. [This page](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/overview) gives you an overview of the generative AI workflow on Vertex AI, the features and models that are available, and directs you to resources for getting started.
 
 The below diagram shows how to use Google Cloud fot Generative AI.
 
@@ -59,7 +59,7 @@ This use case will leverage sample customer reviews to allow users to analyze th
 
 Duration: 10
 
-For this quickstart you will need a Google Cloud account with a Vertex AI service enabled. Users can create a trial Google Cloud account [here](cloud.google.com). There be a cost to run this lab, but if there is it will be nominal.
+For this quickstart you will need a Google Cloud account with a Vertex AI service enabled. Users can create a trial Google Cloud account [here](cloud.google.com). There will be a cost to run this lab, but if there is it will be nominal.
 
 Once you have your Google Cloud account you will need to create a project then enable the Vertex AI service. Once in the Vertex AI service you can select the model garden tab the left menu bar to view the models available in Vertex AI. For this lab we will be using the Palm Bison model for text generation.
 
@@ -86,7 +86,7 @@ Duration: 10
 
 Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with customer reviews. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.
 
-Important to note that in this quickstart we wil be using the requests package to make the external call to Vertex AI. In the Summer of '24 the Snowflake environment will support the Vertex AI SDK.
+Important to note that in this quickstart we will be using the requests package to make the external call to [Vertex Rest API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text). In the Summer of '24 the Snowflake environment will support the [Vertex AI SDK](https://cloud.google.com/vertex-ai/docs/python-sdk/use-vertex-ai-python-sdk) in the [Snowflake Anaconda Channel](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages).
 
 
 ```sql
@@ -95,6 +95,7 @@ use role accountadmin;
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 CREATE DATABASE DEMOS;
 CREATE SCHEMA VERTEX;
+USE WAREHOUSE HOL_WH
 
 --create stage
 USE DATABASE DEMOS;
@@ -275,7 +276,9 @@ Now that we have our VertexAI Function and Stored Procedure let's build a Stream
 
 Go back to the main account view by clicking ‘<- Worksheets’ and then select ‘Streamlit’.
 
-Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RETAIL_HOL database where the link table and the image stage are located. You can name the app whatever you would like, something like "Customer Review Analyzer" is appropriate.
+Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RDEMOS.VERTEX database and schema where the reviews table is located. You can name the app whatever you would like, something like "Customer Review Analyzer" is appropriate.
+
+![](assets/createsl.png)
 
 Once the app is created paste the below code into the app code and click 'Run' in order to create the Streamlit App!
 
@@ -390,7 +393,7 @@ st.title(":shopping_trolley: Customer Review Analyser 	:bar_chart:")
 st.subheader(":snowflake: Powered by Snowflake & Vertex AI")
 session = get_active_session()
 
-df_reviews = session.table("DEMOS.VERTEX.CUSTOMER_REVIEWS")
+df_reviews = session.table("DEMOS.VERTEX.REVIEWS")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -445,7 +448,7 @@ if rating_min or rating_max:
         
 ```
 
-The Streamlit app that you created uses the UDF that was created in the previous step to calculate the sentiment. The app does several other things to aggregate and visualize the reviews. 
+The Streamlit app provides a visual representation of the data stored in the REVIEWS table in Snowflake and enables a user to filter on the review rating. From here the user can select multiple reviews they would like to process via Vertex AI to obtain the sentiment, explanation, product name, and summary of the review. 
 
 ![](assets/streamlitapp.png)
 
