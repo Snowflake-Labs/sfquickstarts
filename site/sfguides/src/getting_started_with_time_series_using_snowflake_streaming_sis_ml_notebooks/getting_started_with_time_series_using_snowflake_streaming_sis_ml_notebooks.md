@@ -982,17 +982,19 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 
 This command does the following:
 
-1. Deploys the Streamlit application using the Snowflake account details mentioned in the ".snowflake/config.toml" file
-2. --config-file option provides the location of the config file that contains Snowflake account details
-3. --replace option ensures that the existing application, if present, is overwritten
-4. --project option provides the path where the Streamlit app project resides
-5. --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
+- Deploys the Streamlit application using the Snowflake account details mentioned in the ".snowflake/config.toml" file
+- --config-file option provides the location of the config file that contains Snowflake account details
+- --replace option ensures that the existing application, if present, is overwritten
+- --project option provides the path where the Streamlit app project resides
+- --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
 
 ### Launch Streamlit application :
 
-Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message "Streamlit successfully deployed" and also provide the URL for the Streamlit application. You can either copy the link and presss Command/Ctrl 
+Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message "Streamlit successfully deployed" and also provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply presss Command/Ctrl and click the link to launch the Streamlit application
 
 <img src="assets/launch_streamlit.png" />
+
+### Working with Streamlit Application :
 
 
 <!-- ------------------------ -->
