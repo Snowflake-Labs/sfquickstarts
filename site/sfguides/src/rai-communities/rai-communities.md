@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/RelationalAI/rai-samples/issues
 tags: Data Science, Community Detection, Graph Analysis, RelationalAI 
 
-# Snowflake Guide Template
+# Community Detection and Group Recommendations using RelationalAI
 <!-- ------------------------ -->
 ## Overview 
 
