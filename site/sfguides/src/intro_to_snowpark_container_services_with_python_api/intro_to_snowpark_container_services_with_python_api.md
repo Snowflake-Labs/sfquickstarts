@@ -262,16 +262,11 @@ LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
 ```
 
 ### Create and Test the Service
-Once we have successfully pushed our image and our spec YAML, we have all of the components uploaded to Snowflake that we need in order to create our service. There are three components required to create the service: a service name, a compute pool the service will run on, and the spec file that defines the service. Run the following SQL to create our Jupyter service:
-```sql
-use role CONTAINER_user_role;
-create service CONTAINER_HOL_DB.PUBLIC.jupyter_snowpark_service
-    in compute pool CONTAINER_HOL_POOL
-    from @specs
-    specification_file='jupyter-snowpark.yaml'
-    external_access_integrations = (ALLOW_ALL_EAI);
+Once we have successfully pushed our image and our spec YAML, we have all of the components uploaded to Snowflake that we need in order to create our service. There are three components required to create the service: a service name, a compute pool the service will run on, and the spec file that defines the service. Run the following Python script to create our Jupyter service:
+```Python API
+    Python API from 02_jupyter_service.py
 ```
-Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE');` to verify that the service is successfully running. These commands are also spelled out in [`02_jupyter_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/02_jupyter_service.sql).
+These script is the file [`02_jupyter_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/02_jupyter_service.py).
 
 Since we specified that the `jupyter-snowpark` endpoint running on port `8888` would be `public: true` in our spec YAML, Snowflake is going to generate a URL for our service that can be used to access the service via our Web Browser. To get the URL, once the service is successfully in a `RUNNING` state, execute the following:
 ```sql
