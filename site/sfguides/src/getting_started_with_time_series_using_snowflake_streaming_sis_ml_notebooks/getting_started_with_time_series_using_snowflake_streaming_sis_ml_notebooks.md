@@ -454,7 +454,7 @@ The simlulated IoT dataset contians six sensor device tags at different frequenc
 ./Run_MAX.sh
 ```
 
-2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and view the stremed records.
+2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and view the streamed records.
 
 ```sql
 -- Check stream table data
@@ -494,7 +494,7 @@ Each IoT device reading is a JSON payload, transmitted in the following Kafka li
 >
 
 <!-- ------------------------ -->
-## Data Modelling, Transformation, and Continuous Ingestion
+## Data Modelling and Transformation
 Duration: 5
 
 Now that data is streamed into Snowflake, we are ready for some **Data Engineering** actvities to get the data into a report ready state for analytics. We'll be transforming the data from the JSON **VARIANT** format into a tabular format by leveraging Snowflake **Dynamic Tables**, to ensure that data streamed into Snowflake will continuously update the analytics layers.
@@ -513,7 +513,7 @@ Dynamic Tables can also be chained together to create a DAG for more complex dat
 
 <img src="assets/dynamic_tables.png" />
 
-### Step 1 - Create Dynamic Tables
+### Step 1 - Model Time Series Data with Dynamic Tables
 
 For the IoT streaming data we'll setup two Dynamic Tables in a simple Dimension and Fact model:
 - DT_TS_TAG_METADATA (Dimension): Containing Tag Metadata such as tag names, sourcing, and data types
@@ -521,7 +521,7 @@ For the IoT streaming data we'll setup two Dynamic Tables in a simple Dimension 
 
 <img src="assets/model_dynamictables.png" />
 
-1. In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` and run the Dynamic Table creation scripts.
+In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` and run the Dynamic Table creation scripts.
 
 ```sql
 -- Setup Transform Dynamic Tables
@@ -601,20 +601,43 @@ SELECT
 FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 ```
 
-### Step 3 - Start a Continous Simulated Stream
-
-<img src="assets/model_streamingclient.png" />
-
-1. In the **VS Code** `Terminal` run the `Run_Slooow.sh` script to load the IoT data.
-
-```bash
-./Run_Slooow.sh
-```
-
-
 <!-- ------------------------ -->
 ## Time Series Analysis
 Duration: 10
+
+Now that we have created the analytics views, we can start to query the data using Snowflake time series native functions.
+
+<img src="assets/analysis_overview.png" />
+
+### INFO - Time Series Query Profiles
+
+The following query profiles will be covered in this section.
+
+| Query Profile | Functions | Description |
+| --- | --- | --- |
+| Raw | N/A | Raw data within a time range, with optional ordering. |
+| [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | MIN, MAX, AVG, COUNT, SUM, STDDEV | Mathematical calculations over values within a time range. |
+| [Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) | LAG, LEAD, FIRST_VALUE, LAST_VALUE, ROWS BETWEEN, RANGE BETWEEN | Functions over a group of related rows. |
+| Downsampling | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
+| Upsampling | [ASOF](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Interpolating values between different time intervals. |
+
+### Step 1 - Copy Worksheet Content To Snowsight Worksheet
+
+This section will be executed within a Snowflake Snowsight Worksheet.
+
+1. Login to Snowflake, and from the menu expand `Projects > Worksheets`
+
+<img src="assets/analysis_worksheets.png" />
+
+2. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+
+<img src="assets/analysis_newworksheet.png" />
+
+3. In **VS Code** open the worksheet `worksheets/hol_timeseries_4_anaysis.sql`
+
+4. **Copy** the contents of the worksheet to **clipboard**, and paste it into the newly created **Worksheet in Snowsight**
+
+### Step 2 - Run Throught the Worksheet Time Series Analysis Queries
 
 Time Series queries
 
@@ -887,8 +910,193 @@ ORDER BY SMP.TIMESTAMP;
 
 
 <!-- ------------------------ -->
-## Build Your Own - Snowpark User Defined Table Function
+## Build Your Own - Time Series Functions and Procedures
 Duration: 5
+
+Setup Upsampling Function
+
+Setup Interpolate Function
+```sql
+-- Set role, context, and warehouse
+USE ROLE ROLE_HOL_TIMESERIES;
+USE HOL_TIMESERIES.ANALYTICS;
+USE WAREHOUSE HOL_ANALYTICS_WH;
+
+-- Create Interpolate Table Function
+CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE (
+    V_TAGLIST VARCHAR,
+    V_START_TIMESTAMP TIMESTAMP_NTZ,
+    V_INTERVAL NUMBER,
+    V_BUCKETS NUMBER
+)
+RETURNS TABLE (
+    TIMESTAMP TIMESTAMP_NTZ,
+    TAGNAME VARCHAR,
+    INTERP_VALUE FLOAT,
+    LOCF_VALUE FLOAT,
+    LAST_TIMESTAMP TIMESTAMP_NTZ
+)
+LANGUAGE SQL
+AS
+$$
+WITH
+TSTAMPS AS (
+    SELECT 
+        DATEADD('SEC', V_INTERVAL * ROW_NUMBER() OVER (ORDER BY SEQ8()) - V_INTERVAL, V_START_TIMESTAMP) AS TIMESTAMP
+    FROM TABLE(GENERATOR(ROWCOUNT => V_BUCKETS))
+),
+TAGLIST AS (
+    SELECT
+        TRIM(TAGLIST.VALUE) AS TAGNAME
+    FROM
+        TABLE(SPLIT_TO_TABLE(V_TAGLIST, ',')) TAGLIST
+),
+TIMES AS (
+    SELECT
+        TSTAMPS.TIMESTAMP,
+        TAGLIST.TAGNAME
+    FROM
+        TSTAMPS
+        CROSS JOIN TAGLIST
+),
+LAST_VALUE AS (
+    SELECT
+        TIMES.TIMESTAMP,
+        RAW_DATA.TIMESTAMP RAW_TS,
+        RAW_DATA.TAGNAME,
+        RAW_DATA.VALUE_NUMERIC
+    FROM
+        TIMES ASOF JOIN HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS RAW_DATA
+            MATCH_CONDITION(TIMES.TIMESTAMP >= RAW_DATA.TIMESTAMP)
+            ON TIMES.TAGNAME = RAW_DATA.TAGNAME
+),
+NEXT_VALUE AS (
+    SELECT
+        TIMES.TIMESTAMP,
+        RAW_DATA.TIMESTAMP RAW_TS,
+        RAW_DATA.TAGNAME,
+        RAW_DATA.VALUE_NUMERIC
+    FROM
+        TIMES ASOF JOIN HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS RAW_DATA
+            MATCH_CONDITION(TIMES.TIMESTAMP < RAW_DATA.TIMESTAMP)
+            ON TIMES.TAGNAME = RAW_DATA.TAGNAME
+),
+COMB_VALUES AS (
+    SELECT
+        TIMES.TIMESTAMP,
+        TIMES.TAGNAME,
+        LV.VALUE_NUMERIC LAST_VAL,
+        LV.TIMESTAMP LV_TS,
+        LV.RAW_TS LV_RAW_TS,
+        NV.VALUE_NUMERIC NEXT_VAL,
+        NV.TIMESTAMP NV_TS,
+        NV.RAW_TS NV_RAW_TS
+    FROM TIMES
+    INNER JOIN LAST_VALUE LV ON TIMES.TIMESTAMP = LV.TIMESTAMP AND TIMES.TAGNAME = LV.TAGNAME
+    INNER JOIN NEXT_VALUE NV ON TIMES.TIMESTAMP = NV.TIMESTAMP AND TIMES.TAGNAME = NV.TAGNAME
+),
+INTERP AS (
+    SELECT
+        TIMESTAMP,
+        TAGNAME,
+        TIMESTAMPDIFF(SECOND, LV_RAW_TS, NV_RAW_TS) TDIF_BASE,
+        TIMESTAMPDIFF(SECOND, LV_RAW_TS, TIMESTAMP) TDIF,
+        LV_TS,
+        NV_TS,
+        LV_RAW_TS,
+        LAST_VAL,
+        NEXT_VAL,
+        DECODE(TDIF, 0, LAST_VAL, LAST_VAL + (NEXT_VAL - LAST_VAL) / TDIF_BASE * TDIF) IVAL
+    FROM
+        COMB_VALUES
+)
+SELECT
+    TIMESTAMP,
+    TAGNAME,
+    IVAL INTERP_VALUE,
+    LAST_VAL LOCF_VALUE,
+    LV_RAW_TS LAST_TIMESTAMP
+FROM
+    INTERP
+$$
+;
+```
+
+Interpolate Query
+```sql
+-- Directly Call Interpolate Table Function
+SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 01:05:23'::TIMESTAMP_NTZ, 5, 100)) ORDER BY TAGNAME, TIMESTAMP;
+```
+
+Interpolate Procedure
+```sql
+-- Add helper precedure to accept start and end times, and return either LOCF or Linear Interpolated Values
+CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN (
+    V_TAGLIST VARCHAR,
+    V_FROM_TIME TIMESTAMP_NTZ,
+    V_TO_TIME TIMESTAMP_NTZ,
+    V_INTERVAL NUMBER,
+    V_INTERP_TYPE VARCHAR
+)
+RETURNS TABLE (
+    TIMESTAMP TIMESTAMP_NTZ,
+    TAGNAME VARCHAR,
+    VALUE FLOAT
+)
+LANGUAGE SQL
+AS
+$$
+DECLARE
+TIME_BUCKETS NUMBER;
+RES RESULTSET;
+BEGIN
+    TIME_BUCKETS := (TIMESTAMPDIFF('SEC', :V_FROM_TIME, :V_TO_TIME) / :V_INTERVAL);
+
+    IF (:V_INTERP_TYPE = 'LOCF') THEN
+        RES := (SELECT TIMESTAMP, TAGNAME, LOCF_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
+    ELSE
+        RES := (SELECT TIMESTAMP, TAGNAME, INTERP_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
+    END IF;
+
+    RETURN TABLE(RES);
+END;
+$$
+;
+```
+
+LOCF Interpolate Query
+```sql
+-- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals
+CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN(
+    -- V_TAGLIST
+    '/IOT/SENSOR/TAG401',
+    -- V_FROM_TIME
+    '2024-01-01 01:05:00',
+    -- V_TO_TIME
+    '2024-01-01 03:05:00',
+    -- V_INTERVAL
+    10,
+    -- V_INTERP_TYPE
+    'LOCF'
+);
+```
+
+Linear Interpolate Query
+```sql
+-- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals
+CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN(
+    -- V_TAGLIST
+    '/IOT/SENSOR/TAG401',
+    -- V_FROM_TIME
+    '2024-01-01 01:05:00',
+    -- V_TO_TIME
+    '2024-01-01 03:05:00',
+    -- V_INTERVAL
+    10,
+    -- V_INTERP_TYPE
+    'LINEAR'
+);
+```
 
 Setup LTTB Downsample Function
 ```sql
@@ -950,7 +1158,7 @@ ORDER BY tagname, timestamp
 
 
 <!-- ------------------------ -->
-## Streamlit in Snowflake
+## Streamlit in Snowflake with Continuous Ingestion
 Duration: 10
 
 After completing the analysis of the time series data that was streamed into Snowflake using SQL queries, we are now ready to build visualisations that would help us easily analyse the data. For this purpose we are going to use Streamlit. First, let's breifly understand what is Streamlit.
@@ -996,6 +1204,16 @@ Once the Streamlit app is successfully deployed, the Snowflake CLI will display 
 
 ### Working with Streamlit Application :
 
+
+### Step 3 - Start a Continous Simulated Stream
+
+<img src="assets/model_streamingclient.png" />
+
+In the **VS Code** `Terminal` run the `Run_Slooow.sh` script to load the IoT data.
+
+```bash
+./Run_Slooow.sh
+```
 
 <!-- ------------------------ -->
 ## Milestone
