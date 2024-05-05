@@ -601,9 +601,14 @@ SELECT
 FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 ```
 
+> aside positive
+> 
+>  Data is now **modelled in Snowflake**, and we can now proceed to analyze the data using Snowflake time series functions.
+>
+
 <!-- ------------------------ -->
 ## Time Series Analysis
-Duration: 10
+Duration: 15
 
 Now that we have created the analytics views, we can start to query the data using Snowflake time series native functions.
 
@@ -637,22 +642,28 @@ This section will be executed within a Snowflake Snowsight Worksheet.
 
 4. **Copy** the contents of the worksheet to **clipboard**, and paste it into the newly created **Worksheet in Snowsight**
 
-### Step 2 - Run Throught the Worksheet Time Series Analysis Queries
+### Step 2 - Run the Snowsight Worksheet Time Series Analysis Queries
 
-Time Series queries
+**Raw**
 
 ```sql
--- Run Time Series Analysis across various query profiles
--- RAW DATA
+-- RAW
 SELECT TAGNAME, TIMESTAMP, VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:00:30'
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP < '2024-01-01 00:00:10'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP
 ;
+```
 
--- STATISTICAL
+<img src="assets/analysis_query_raw.png" />
+
+**Statistical Aggregates**
+
+**Count**
+
+```sql
 -- COUNT
 SELECT TAGNAME, TO_TIMESTAMP('2024-01-01 00:00:30') AS TIMESTAMP, COUNT(VALUE) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
@@ -662,7 +673,12 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TAGNAME
 ORDER BY TAGNAME, TIMESTAMP
 ;
+```
 
+<img src="assets/analysis_query_raw.png" />
+
+**Count Distinct**
+```sql
 -- COUNT DISTINCT
 SELECT TAGNAME, TO_TIMESTAMP('2024-01-01 00:00:30') AS TIMESTAMP, COUNT(DISTINCT VALUE) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
@@ -672,7 +688,9 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TAGNAME
 ORDER BY TAGNAME, TIMESTAMP
 ;
+```
 
+```sql
 -- SUM
 SELECT TAGNAME, TO_TIMESTAMP('2024-01-01 00:00:30') AS TIMESTAMP, SUM(VALUE_NUMERIC) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
@@ -915,6 +933,8 @@ Duration: 5
 
 Setup Upsampling Function
 
+<img src="assets/byo_functions.png" />
+
 Setup Interpolate Function
 ```sql
 -- Set role, context, and warehouse
@@ -1110,7 +1130,7 @@ CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB (
     TIMESTAMP NUMBER,
     VALUE FLOAT,
     SIZE NUMBER
-) 
+)
 RETURNS TABLE (
     TIMESTAMP NUMBER,
     VALUE FLOAT
@@ -1156,27 +1176,22 @@ ORDER BY tagname, timestamp
 ;
 ```
 
-
 <!-- ------------------------ -->
 ## Streamlit in Snowflake with Continuous Ingestion
 Duration: 10
 
-After completing the analysis of the time series data that was streamed into Snowflake using SQL queries, we are now ready to build visualisations that would help us easily analyse the data. For this purpose we are going to use Streamlit. First, let's breifly understand what is Streamlit.
+After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to deliver an analytics application for end users to easily consume time series data. For this purpose we are going to use Streamlit.
 
-### What is Streamlit?
-Streamlit is an open-source Python library that makes it easy to create web applications for machine learning, data analysis, and visualization. It allows developers to build interactive and customizable web apps directly from Python scripts, without needing to write any HTML, CSS, or JavaScript. With Streamlit, data scientists can quickly prototype and share data science projects with others, making it a popular choice among data scientists and machine learning engineers for creating intuitive and user-friendly interfaces for their models and analyses.
+<img src="assets/streamlit_overview.png" />
 
-[Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) helps developers securely build, deploy, and share Streamlit apps on Snowflake’s data cloud. Using Streamlit in Snowflake, you can build applications that process and use data in Snowflake without moving data or application code to an external system.
+### INFO: Streamlit
+Streamlit is an open-source Python library that makes it easy to create web applications for machine learning, data analysis, and visualization. [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) helps developers securely build, deploy, and share Streamlit apps on Snowflake’s data cloud, without moving data or application code to an external system.
 
-We will use the Snowflake CLI interface to deploy the Streamlit app on your Snowflake account from where you can launch the application and visualse data.Let's also get a brief understanding of Snowflake CLI
+### INFO: Snowflake CLI
 
-### What is Snowflake CLI?
+[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction) is an open-source command-line tool explicitly designed for developers to create, manage, update, and view apps running on Snowflake. We will use Snowflake CLI to deploy the Streamlit app to your Snowflake account.
 
-[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction) is an open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations. It is a flexible and extensible tool that can accommodate modern development practices and technologies.
-
-With Snowflake CLI, developers can create, manage, update, and view apps running on Snowflake across workloads such as Streamlit in Snowflake, the Snowflake Native App Framework, Snowpark Container Services, and Snowpark. It supports a range of Snowflake features, including user-defined functions, stored procedures, Streamlit in Snowflake, and SQL execution.
-
-### Deploy Streamlit application to Snowflake :
+### Step 1 - Deploy Streamlit application to Snowflake
 
 In the step #2 (Lab Setup) of this Quickstart, we have already setup a Github codespace with all the requirements necessary for building and deploying a Streamlit application. 
 
@@ -1196,16 +1211,7 @@ This command does the following:
 - --project option provides the path where the Streamlit app project resides
 - --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
 
-### Launch Streamlit application :
-
-Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message "Streamlit successfully deployed" and also provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply presss Command/Ctrl and click the link to launch the Streamlit application
-
-<img src="assets/launch_streamlit.png" />
-
-### Working with Streamlit Application :
-
-
-### Step 3 - Start a Continous Simulated Stream
+### Step 2 - Start a Continous Simulated Stream
 
 <img src="assets/model_streamingclient.png" />
 
@@ -1215,47 +1221,60 @@ In the **VS Code** `Terminal` run the `Run_Slooow.sh` script to load the IoT dat
 ./Run_Slooow.sh
 ```
 
-<!-- ------------------------ -->
-## Milestone
+### Step 3 - Launch the Streamlit Application
 
-### Key Activities
-- Ingest streaming time series data into Snowflake
-- Created a data pipeline to transform streaming time series data
-- Deployed ana analytics layer for serving time series data
-- Delivered a Streamlit application interface for end users to run time series analytics
+Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message "Streamlit successfully deployed" and also provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply presss Command/Ctrl and click the link to launch the Streamlit application
 
-### Outcomes Achieved
-- A standard ingestion pattern has been established for easy onboarding of time series data sources
-- Unlocked low latency ingestion pipelines for data sources
-- Delivered an easy user experience in Streamlit to derive insights and value from time series data
+<img src="assets/launch_streamlit.png" />
 
+### Working with Streamlit Application :
 
-<!-- ------------------------ -->
-## Streams and Tasks
-
-> aside positive
-> 
->  [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) provides a change tracking mechanism for your tables and > views, enabling and ensuring "exactly once" semantics for new or changed data.
->
-> [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) are Snowflake objects to execute a single command, which could be simple SQL command or calling an extensive stored > > procedure.  Tasks can be scheduled or run on-demand, either within a Snowflake Virtual warehouse or serverless.
 
 
 
 <!-- ------------------------ -->
-## Clean-up
-Duration: 1
+## Cleanup
+Duration: 2
 
-- Remove [Github Codespace](https://github.com/codespaces)
+1. In **VS Code** open the worksheet `worksheets/hol_timeseries_7_cleanup.sql` and run the script to remove Snowflake objects.
 
+```sql
+/*
+SNOWFLAKE CLEANUP SCRIPT
+*/
+
+-- Set role
+USE ROLE ACCOUNTADMIN;
+
+-- Cleanup Snowflake objects
+DROP DATABASE HOL_TIMESERIES;
+DROP WAREHOUSE HOL_TRANSFORM_WH;
+DROP WAREHOUSE HOL_REPORT_WH;
+DROP ROLE ROLE_HOL_TIMESERIES;
+DROP USER USER_HOL_TIMESERIES;
+
+/*
+CLEANUP SCRIPT COMPLETED
+*/
+```
+
+2. Stop or delete the [Github Codespace](https://github.com/codespaces), using the Codespace actions menu.
+
+<img src="assets/cleanup_codespace.png" />
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
+Duration: 2
 
+**Congratulations!** You've successfully deployed an end-to-end time series analytics solution with streaming data in Snowflake.
 
-### What we've covered
+### What You Learned
 
+- How to **stream time series data** into Snowflake using Snowpipe Streaming
+- How to **use Dynamic Tables** for continuous data pipeline transformations
+- How to **analyze time series data** using native Snowflake time series functions
+- How to **create custom time series functions** and procedure in Snowflake
+- How to **deploy a Streamlit application using Snowflake CLI** to enable end users to run time series analytics
 
-### Additional resources
+### Additional Resources
 - [Getting Started with Snowflake CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html)
-- [Getting Started with Streams & Tasks](https://quickstarts.snowflake.com/guide/getting_started_with_streams_and_tasks/index.html)
