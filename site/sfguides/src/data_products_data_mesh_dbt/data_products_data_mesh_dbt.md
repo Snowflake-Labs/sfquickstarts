@@ -62,7 +62,7 @@ Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the
 
 ### Launching dbt Cloud by Snowflake Partner Connect
 
-1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
+1. We recommend that you use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
 2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which located within the `Admin` section. <br>
 
@@ -98,28 +98,18 @@ Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the
 Duration: 10
 <!-- TODO: Fix this ^^ -->
 
-### Motivation
-
 TODO: Insert image here
 
 In this step, you will be setting up Snowflake for two teams: the core data team and the finance team. You will be using least privileged access principles in order to properly secure the data.
 
-#### Core data team: the foundation
+### Setting up the Snowflake foundation for the core data team
 
-This team is well-established and the average team member is capable of building data pipelines that powers business reporting across various domains: finance, marketing, sales, customer support, and so on. The team uses data management best practices like organizing data in dimensional models for maximum re-usability in various BI and AI/ML applications.
+The core data team is well-established in the organization and the average team member is capable of building data pipelines that powers business reporting across various domains: finance, marketing, sales, customer support, and so on. The team uses data management best practices like organizing data in dimensional models for maximum re-usability in various BI and AI/ML applications.
 
-Their project is called the `foundational` project.
+The first thing you'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment. The code below will:
 
-#### Finance team
-
-Meanwhile, the average finance team member is more accustomed to consuming dashboards and building spreadsheets, however more and more demands on data has led to the finance team to owning and managing more data to rapidly respond to changing demands. And so, the team has upskilled team members and brought on an analytics engineer to use Snowflake and dbt Cloud, in order to create data pipelines building off of the foundation project for daily reporting use-cases.
-
-### Setting up the projects
-
-The first thing we'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment. The code below will:
-
-- Create a `foundational_role` role for creating and managing resources in the `foundational_db` database, administering data governance responsibilities, and granting appropriate permissions for masking and tagging
-- Create a `foundational_pii_reader_role` for users who can access PII data unmasked
+- Create a `foundational_role` role for creating and managing resources in the `foundational_db` database using the `foundational_wh` warehouse. It will also be able to administer data governance responsibilities, and grant appropriate permissions for masking and tagging.
+- Create a `foundational_pii_reader_role` for users who can access PII data unmasked.
 
 ```sql
 use role accountadmin;
@@ -144,9 +134,13 @@ grant apply masking policy on account to role foundational_role;
 grant apply tag on account to role foundational_role;
 ```
 
+### Setting up Snowflake for the Finance team
+
+Meanwhile, the average finance team member is more accustomed to consuming dashboards and building spreadsheets, however more and more demands on data has led to the finance team to owning and managing more data to rapidly respond to changing demands. And so, the team has upskilled team members and brought on an analytics engineer to use Snowflake and dbt Cloud, in order to create data pipelines building off of the foundation project for daily reporting use-cases.
+
 Now create the Finance team workspace. The code below will:
 
-- Create a `finance_role` role for creating and managing resources in the `finance_db` database.
+- Create a `finance_role` role for creating and managing resources in the `finance_db` database using the `finance_wh` warehouse.
 
 ```sql
 create database if not exists finance_db;
@@ -161,7 +155,9 @@ grant usage on schema finance_db.prod to role finance_role;
 grant select on all tables in schema finance_db.prod to role finance_role;
 ```
 
-To get this all working correctly, make sure to assign the relevant roles to your database user.
+### Grant yourself permissions
+
+To get this all working correctly, make sure to assign the relevant roles to your own Snowflake database user.
 
 ```sql
 use role accountadmin;
@@ -172,70 +168,84 @@ grant role finance_role to user <your-snowflake-username>;
 ```
 
 <!-- ------------------------ -->
-## Create dbt Cloud projects for collaboration
+## Create dbt Cloud projects for cross-team collaboration
 Duration: 10
 <!-- TODO: Fix this ^^ -->
 
-### Create and configure two projects
+TODO: Insert image here
 
-In this section, you'll create two new, empty projects in dbt Cloud to serve as your foundational and downstream projects:
+In this step, you will set up 2 dbt Cloud Projects: one for the core data team, and one for the finance team.
 
-- **Foundational projects** (or upstream projects) typically contain core models and datasets that serve as the base for further analysis and reporting.
-- **Downstream projects** build on these foundations, often adding more specific transformations or business logic for dedicated teams or purposes. 
+You will notice that you need to input your Snowflake credentials and resources information created in the previous step. dbt Cloud uses Snowflake role and warehouse resources in order to build database tables and views. The platform is powerful enough for the core data team and also accessible enough for newcomers on the finance team to use, all while allowing collaboration between these two teams.
 
-### First project: Jaffle | Data Platform
+### Create the Foundational Project for the core data team
 
-To [create](https://docs.getdbt.com/docs/cloud/about-cloud-setup) a new project in dbt Cloud:
+Now you will create the Foundational Project dbt Cloud Project, which is to be exclusively developed by the core data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
 
 1. From **Account settings**, click **+ New Project**.
-2. In the **Project name** field, enter "Jaffle | Data Platform" and click **Continue**.
+2. In the **Project name** field, enter `Foundational Project` and click **Continue**.
 3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
 4. In the **Configure your environment** section, enter the **Settings** for your new project.
   - Account: The Snowflake account you are operating in
   - Optional settings:
-    - Role: `jaffle_da_role`
-    - Database: `jaffle_da`
-    - Warehouse: `jaffle_wh`
+    - Role: `foundational_role`
+    - Database: `foundational_db`
+    - Warehouse: `foundational_wh`
   - Development credentials:
     - Auth method: `Username and password`
     - Username: Your Snowflake username
     - Password: Your Snowflake password
 5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
 6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
-7. Select Managed Repo, and name it `jaffle_da`. 
+7. Select Managed Repo, and name it `foundational_repo`. 
 8. Click into the Environments section and create a Deployment Environment called `Production`.
 
-### Second project: Jaffle | Finance
+For further details about this step, you may refer to the dbt documentation on [creating a new project in dbt Cloud](https://docs.getdbt.com/docs/cloud/about-cloud-setup).
+
+### Create the Finance Project for the finance team
 
 > aside negative
 > 
-> dbt Cloud Enterprise is required to create more than one project in an account. If you wish to try this Quickstart Guide with an Enterprise account, [please contact dbt Labs](https://www.getdbt.com/contact). Otherwise, you may skip creating a second project.
+> dbt Cloud Enterprise is required to create more than one project in an account. If you do not have a dbt Cloud Enterprise account and wish to try this, [please contact dbt Labs](https://www.getdbt.com/contact). Otherwise, you may skip creating a second project and follow along.
+
+Meanwhile, the finance team will build on these foundations, and add more specific transformations or business logic for as required for their purposes. Follow the same steps as above, but fill in the finance team Snowflake information:
 
 1. From **Account settings**, click **+ New Project**.
-2. In the **Project name** field, enter "Jaffle | Finance" and click **Continue**.
+2. In the **Project name** field, enter `Finance Project` and click **Continue**.
 3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
 4. In the **Configure your environment** section, enter the **Settings** for your new project.
   - Account: The Snowflake account you are operating in
   - Optional settings:
-    - Role: `jaffle_finance_role`
-    - Database: `jaffle_finance`
-    - Warehouse: `jaffle_wh`
+    - Role: `finance_role`
+    - Database: `finance_db`
+    - Warehouse: `finance_wh`
   - Development credentials:
     - Auth method: `Username and password`
     - Username: Your Snowflake username
     - Password: Your Snowflake password
 5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
 6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
-7. Select Managed Repo, and name it `jaffle_finance`. 
+7. Select Managed Repo, and name it `finance_repo`. 
 
-Once configured, each project should have:
-  - A data platform connection
-  - New git repo
-  - One or more [environments](/docs/deploy/deploy-environments) (such as development, deployment)
+### Securing dbt Cloud with Snowflake
+
+When setting up dbt Cloud for production, there are four recommended security options to configure. They are out-of-scope for this particular Quickstart Guide, but worth mentioning at this point for the dbt Cloud and Snowflake administrators:
+
+1. **Snowflake OAuth:** Require developers to connect their dbt Cloud Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt Cloud users will only be able to access the data that their Snowflake user has been granted.
+2. **Snowflake Key Pair authentication:** For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
+3. **dbt Cloud Role Based Access Controls:** Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
+4. **dbt Cloud SSO:** Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
+
+TODO: fix links
+
 
 <!-- ------------------------ -->
 ## Build Foundational Project
 Duration: 10
+
+### Motivation
+
+Now it's time to add in the foundational 
 
 This upstream project is where you build your core data assets. This project will contain the raw data sources, staging models, and core business logic.
 
@@ -655,6 +665,5 @@ Additional features:
 
 - Downstream jobs
 - Model versions
-- Secure project access with dbt Cloud Role Based Access Controls
 - dbt Cloud CLI
 - Share data with Snowflake Private Listings
