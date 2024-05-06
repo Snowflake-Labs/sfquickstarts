@@ -422,7 +422,9 @@ try:
     print(logs)
 
     # SHOW ENDPOINTS IN SERVICE JUPYTER_SNOWPARK_SERVICE;
-    # Not supported in Python API
+    endpoints = s.get_endpoints()
+    for endpoint in endpoints:
+        print(endpoint)
 
     # --- After we make a change to our Jupyter notebook,
     # --- we will suspend and resume the service
@@ -440,8 +442,11 @@ finally:
 These script is the file [`02_jupyter_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/02_jupyter_service.py).
 
 Since we specified that the `jupyter-snowpark` endpoint running on port `8888` would be `public: true` in our spec YAML, Snowflake is going to generate a URL for our service that can be used to access the service via our Web Browser. To get the URL, once the service is successfully in a `RUNNING` state, execute the following:
-```sql
-SHOW ENDPOINTS IN SERVICE JUPYTER_SNOWPARK_SERVICE;
+```Python API
+    # SHOW ENDPOINTS IN SERVICE JUPYTER_SNOWPARK_SERVICE;
+    endpoints = s.get_endpoints()
+    for endpoint in endpoints:
+        print(endpoint)
 ```
 Copy the `jupyter-snowpark` endpoint URL, and paste it in your browser. You will be asked to login to Snowflake via your username and password, after which you should successfully see your Jupyter instance running, all inside of Snowflake! **Note, to access the service** the user logging in must have the `CONTAINER_USER_ROLE` AND their default role cannot be `ACCOUNTADMIN`, `SECURITYADMIN`, or `ORGADMIN`.
 
