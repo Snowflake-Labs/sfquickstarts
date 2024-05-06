@@ -65,7 +65,105 @@ Duration: 5
 
 Run the following Python API code in [`00_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/00_setup.py) using the Snowpark Python Connector and Python API to create the role, database, warehouse, and stage that we need to get started:
 ```Python API
-  Python API code from 00_setup.py
+  # create a SnowflakeConnection instance
+connection_acct_admin = connect(**CONNECTION_PARAMETERS_ACCOUNT_ADMIN)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_acct_admin)
+
+    # CREATE ROLE CONTAINER_USER_ROLE
+    root.roles.create(Role(
+        name='CONTAINER_USER_ROLE',
+        comment='My role to use container',
+    ))
+
+    # GRANT CREATE DATABASE ON ACCOUNT TO ROLE CONTAINER_USER_ROLE
+    # GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
+    # GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
+    # GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
+    # GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
+    # GRANT MONITOR USAGE ON ACCOUNT TO  ROLE  CONTAINER_USER_ROLE;
+    # GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
+    root.grants.create(Grant(
+        grantee=Grantees.role('CONTAINER_USER_ROLE'),
+        securable=Securables.current_account,
+        privileges=[Privileges.create_database,
+                    Privileges.create_warehouse,
+                    Privileges.create_warehouse,
+                    Privileges.create_compute_pool,
+                    Privileges.create_integration,
+                    Privileges.monitor_usage,
+                    Privileges.bind_service_endpoint
+                    ],
+    ))
+
+    # GRANT IMPORTED PRIVILEGES ON DATABASE snowflake TO ROLE CONTAINER_USER_ROLE;
+    root.grants.create(Grant(
+        grantee=Grantees.role('CONTAINER_USER_ROLE'),
+        securable=Securables.database('snowflake'),
+        privileges=[Privileges.imported_privileges
+                    ],
+    ))
+
+    # grant role CONTAINER_USER_ROLE to role ACCOUNTADMIN;
+    root.grants.create(Grant(
+        grantee=Grantees.role('ACCOUNTADMIN'),
+        securable=Securables.role('CONTAINER_USER_ROLE'),
+        privileges=[Privileges.usage],
+    ))
+
+    # Connect as CONTANTAINER_USE_ROLE
+    connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+
+    # CREATE OR REPLACE DATABASE CONTAINER_HOL_DB;
+    root.databases.create(Database(
+        name="CONTAINER_HOL_DB",
+        comment="This is a Container Quick Start Guide database"
+    ), mode=CreateMode.or_replace)
+
+    # CREATE OR REPLACE WAREHOUSE CONTAINER_HOL_WH
+    #   WAREHOUSE_SIZE = XSMALL
+    #   AUTO_SUSPEND = 120
+    #   AUTO_RESUME = TRUE;
+    root.warehouses.create(Warehouse(
+        name="CONTAINER_HOL_WH",
+        warehouse_size="XSMALL",
+        auto_suspend=120,
+        auto_resume="true",
+        comment="This is a Container Quick Start Guide warehouse"
+    ), mode=CreateMode.or_replace)
+
+    try:
+        # CREATE STAGE IF NOT EXISTS specs
+        # ENCRYPTION = (TYPE='SNOWFLAKE_SSE');
+        root.schemas[CONNECTION_PARAMETERS_CONTAINER_USER_ROLE.get("schema")].stages.create(
+            Stage(
+                name="specs",
+                encryption=Type(type=Types.SNOWFLAKE_SSE)
+        ))
+
+        # CREATE STAGE IF NOT EXISTS volumes
+        # ENCRYPTION = (TYPE='SNOWFLAKE_SSE')
+        # DIRECTORY = (ENABLE = TRUE);
+        root.schemas[CONNECTION_PARAMETERS_CONTAINER_USER_ROLE.get("schema")].stages.create(
+            Stage(
+                name="volumes",
+                encryption=Type(type=Types.SNOWFLAKE_SSE),
+                directory=DIRECTORY_TABLE(enable="true")
+        ))
+
+    finally:
+        connection_container_user_role.close()
+
+    # create collection objects as the entry
+finally:
+    connection_acct_admin.close()
+
 ```
 
 Run the following SQL commands in [`01_snowpark_container_services_python_api_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_python_api_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
@@ -91,7 +189,37 @@ GRANT USAGE ON INTEGRATION ALLOW_ALL_EAI TO ROLE CONTAINER_USER_ROLE;
 Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create
 our first [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool), and our [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository)
 ```Python API
-  Python API code from 01_snowpark_container_services_setup.py
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+    # CREATE COMPUTE POOL IF NOT EXISTS CONTAINER_HOL_POOL
+    # MIN_NODES = 1
+    # MAX_NODES = 1
+    # INSTANCE_FAMILY = standard_1;
+    root.compute_pools.create(ComputePool(
+      name="CONTAINER_HOL_POOL",
+      min_nodes=1,
+      max_nodes=1,
+      instance_family="STANDARD_1",
+    ))
+
+    # CREATE IMAGE REPOSITORY CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO;
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories.create(ImageRepository(
+      name="IMAGE_REPO",
+    ))
+
+    # SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
+    itr_data = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories.iter()
+    for image_repo in itr_data:
+        print(image_repo)
+
+finally:
+    connection_container_user_role.close()
+  
 ```
 - The [OAuth security integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration) will allow us to login to our UI-based services using our web browser and Snowflake credentials
 - The [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) will allow our services to reach outside of Snowflake to the public internet
@@ -264,7 +392,50 @@ LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
 ### Create and Test the Service
 Once we have successfully pushed our image and our spec YAML, we have all of the components uploaded to Snowflake that we need in order to create our service. There are three components required to create the service: a service name, a compute pool the service will run on, and the spec file that defines the service. Run the following Python script to create our Jupyter service:
 ```Python API
-    Python API from 02_jupyter_service.py
+
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+    # create service CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE
+    # in compute pool CONTAINER_HOL_POOL
+    # from @specs
+    # specification_file='jupyter-snowpark.yaml'
+    # external_access_integrations = (ALLOW_ALL_EAI);
+    s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].services.create(Service(
+        name="JUPYTER_SNOWPARK_SERVICE",
+        compute_pool="CONTAINER_HOL_POOL",
+        spec=ServiceSpecStageFile(stage="@specs", spec_file="jupyter-snowpark.yaml"),
+        external_access_integrations=["ALLOW_ALL_EAI"],
+    ))
+
+    # CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.jupyter_snowpark_service');
+    status = s.get_service_status()
+    print(status)
+
+    # CALL SYSTEM$GET_SERVICE_LOGS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE', '0', 'jupyter-snowpark',10);
+    # numb_lines is not supported in Python API
+    logs = s.get_service_logs("0", "jupyter-snowpark")
+    print(logs)
+
+    # SHOW ENDPOINTS IN SERVICE JUPYTER_SNOWPARK_SERVICE;
+    # Not supported in Python API
+
+    # --- After we make a change to our Jupyter notebook,
+    # --- we will suspend and resume the service
+    # --- and you can see that the changes we made in our Notebook are still there!
+    # ALTER SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE SUSPEND;
+    s.suspend()
+
+    # ALTER SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE RESUME;
+    s.resume()
+
+finally:
+    connection_container_user_role.close()
+
 ```
 These script is the file [`02_jupyter_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/02_jupyter_service.py).
 
@@ -460,31 +631,83 @@ LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
 ```
 
 ### Create and Test the Service
-Once we have successfully pushed our image and our spec YAML, we have all of the components uploaded to Snowflake that we need in order to create our service. There are three components required to create the service: a service name, a compute pool the service will run on, and the spec file that defines the service. Run the following SQL to create our Jupyter service:
-```sql
-use role CONTAINER_user_role;
-create service CONTAINER_HOL_DB.PUBLIC.convert_api
-    in compute pool CONTAINER_HOL_POOL
-    from @specs
-    specification_file='convert-api.yaml'
-    external_access_integrations = (ALLOW_ALL_EAI);
+Once we have successfully pushed our image and our spec YAML, we have all of the components uploaded to Snowflake that we need in order to create our service. There are three components required to create the service: a service name, a compute pool the service will run on, and the spec file that defines the service. Run the following Python API script to create our Jupyter service:
+```Python API
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+    # create service CONTAINER_HOL_DB.PUBLIC.convert_api
+    #     in compute pool CONTAINER_HOL_POOL
+    #     from @specs
+    #     specification_file='convert-api.yaml'
+    #     external_access_integrations = (ALLOW_ALL_EAI);
+    s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].services.create(Service(
+        name="convert_api",
+        compute_pool="CONTAINER_HOL_POOL",
+        spec=ServiceSpecStageFile(stage="@specs", spec_file="convert-api.yaml"),
+        external_access_integrations=["ALLOW_ALL_EAI"],
+    ))
+
+    # CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.CONVERT-API');
+    status = s.get_service_status()
+    print(status)
+
+    # CALL SYSTEM$GET_SERVICE_LOGS('CONTAINER_HOL_DB.PUBLIC.CONVERT_API', '0', 'convert-api',10);
+    # numb_lines is not supported in Python API
+    logs = s.get_service_logs("0", "convert-api")
+    print(logs)
+
+finally:
+    connection_container_user_role.close()
+
 ```
-Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.CONVERT-API');` to verify that the service is successfully running. These commands are also listed in [`03_rest_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.sql)
+These commands are also listed in [`03_rest_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.py)
 
 ### Create and Test the Service Function
-Once the service is up and running, we will create a Service Function that allows us to call our REST API's function via SQL. First, let's create a table with some sample weather data in it:
-```sql
+Once the service is up and running, we will create a Service Function that allows us to call our REST API's function via SQL. First, let's create a table and then create a Service function:
+```Python API
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+    # CREATE OR REPLACE TABLE WEATHER (
+    #     DATE DATE,
+    #     LOCATION VARCHAR,
+    #     TEMP_C NUMBER,
+    #     TEMP_F NUMBER
+    # );
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].tables.create(
+        Table(
+            name="WEATHER",
+            columns=[
+                    TableColumn(name="DATE", datatype="DATE"),
+                    TableColumn(name="LOCATION", datatype="VARCHAR"),
+                    TableColumn(name="TEMP_C", datatype="NUMBER"),
+                    TableColumn(name="TEMP_F", datatype="NUMBER"),
+                ],
+        ),
+        mode=CreateMode.or_replace
+    )
+
+finally:
+    connection_container_user_role.close()
+
+```
+
+Now, let's insert some sample weather data in the table using SQL:
+These SQL commands are also listed in [`03_rest_service_python_api.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service_python_api.sql)
+``` SQL 
 USE ROLE CONTAINER_USER_ROLE;
 USE DATABASE CONTAINER_HOL_DB;
 USE SCHEMA PUBLIC;
 USE WAREHOUSE CONTAINER_HOL_WH;
-
-CREATE OR REPLACE TABLE WEATHER (
-    DATE DATE,
-    LOCATION VARCHAR,
-    TEMP_C NUMBER,
-    TEMP_F NUMBER
-);
 
 INSERT INTO weather (DATE, LOCATION, TEMP_C, TEMP_F) 
     VALUES 
@@ -500,13 +723,39 @@ INSERT INTO weather (DATE, LOCATION, TEMP_C, TEMP_F)
         ('2023-10-23', 'Southampton', 12, NULL);
 ```
 Now, let's create a function that specifies our `convert-api` service's `convert-api` endpoint:
-```sql
-CREATE OR REPLACE FUNCTION convert_udf (input float)
-RETURNS float
-SERVICE=CONVERT_API      //Snowpark Container Service name
-ENDPOINT='convert-api'   //The endpoint within the container
-MAX_BATCH_ROWS=5         //limit the size of the batch
-AS '/convert';           //The API endpoint
+```Python API
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+    # CREATE OR REPLACE FUNCTION convert_udf (input float)
+    # RETURNS float
+    # SERVICE=CONVERT_API      //Snowflake container service
+    # ENDPOINT='convert-api'   //The endpoint within the container
+    # MAX_BATCH_ROWS=5         //limit the size of the batch
+    # AS '/convert';           //The API endpoint
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions.create(Function(
+        name="convert_udf",
+        arguments=[
+                    FunctionArgument(name="input", datatype="float")
+        ],
+        returns="float",
+        service_function_params=(ServiceFunctionParams(
+                                    service="CONVERT_API",
+                                    endpoint="convert-api",
+                                    path="/convert"
+                                )
+        ),
+        max_batch_rows=5
+    ))
+
+
+finally:
+    connection_container_user_role.close()
+
 ```
 We can now test our function:
 ```sql
@@ -548,41 +797,34 @@ Run the cell, and you should see the following output dataframe, with our new co
 
 Now, save the Jupyter notebook- when you come back to this service in the future, your new code will be saved because of our stage-backed volume mount!
 <!-- ------------------------ -->
-## Managing Services with SQL
+## Managing Services with Python API
 Duration: 5
 
-There are a number of useful functions we should explore with respect to controlling the service itself from SQL. More information on SQL commands can be found at [Snowpark Container Services SQL Commands](https://docs.snowflake.com/en/sql-reference/commands-snowpark-container-services#service) and [Snowpark Container Services System Functions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#what-s-next)
+There are a number of useful Python API we should explore with respect to controlling the service itself.  More information on Python API can be found at [Snowpark Container Services Python API](https://docs.snowflake.com/developer-guide/snowflake-python-api/snowflake-python-overview) 
 
-1. Get the status of your container using CALL $SYSTEM:
+1. Get the status of your container using ServiceResource.get_service_status():
 
-    From a SQl console:
-
-    ```sql
-    CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE');
+    ```Python API
+    s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].services["JUPYTER_SNOWPARK_SERVICE"]
+    s.get_service_status()
     ```
 
 2. Check the status of the logs with :
 
-    From a SQl console:
-
-    ```sql
-    CALL SYSTEM$GET_SERVICE_LOGS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE', '0', 'jupyter-snowpark',10);
+    ```Python API
+    s.get_service_logs("0","jupyter-snowpark")
     ```
 
-3. Suspend your container using the ALTER SERVICE command
+3. Suspend your container using the Python API
 
-    From a SQL console:
-
-    ```sql
-    ALTER SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE SUSPEND ;
+    ```Python API
+    s.suspend()
     ```
 
-4. Resume your container using the ALTER SERVICE command
+4. Resume your container using the Python API
 
-  From a SQL console:
-
-  ```sql
-  ALTER SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE RESUME ;
+  ```Python API
+  s.resume()
   ```
 
 <!-- ------------------------ -->
@@ -591,12 +833,68 @@ Duration: 2
 
 If you no longer need the services and compute pool up and running, we can stop the services and suspend the compute pool so that we don't incur any cost (Snowpark Container Services bill credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing) run the following from [`05_stop_snowpark_container_services_and_suspend_compute_pool.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/05_stop_snowpark_container_services_and_suspend_compute_pool.py):
 ```Python API
-  Python API code from 05_stop_snowpark_container_services_and_suspend_compute_pool.py
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+    # ALTER COMPUTE POOL CONTAINER_HOL_POOL STOP ALL;
+    root.compute_pools["CONTAINER_HOL_POOL"].stop_all_services()
+
+    # ALTER COMPUTE POOL CONTAINER_HOL_POOL SUSPEND;
+    root.compute_pools["CONTAINER_HOL_POOL"].suspend()
+
+finally:
+    connection_container_user_role.close()
+
 ```
 
 If you want to clean up and remove ALL of the objects you created during this quickstart, run the following from [`04_cleanup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/04_teardown.py):
 ```Python API
-  Python API code from 04_cleanup.py
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_container_user_role)
+
+    # ALTER COMPUTE POOL CONTAINER_HOL_POOL STOP ALL;
+    root.compute_pools["CONTAINER_HOL_POOL"].stop_all_services()
+
+    # ALTER COMPUTE POOL CONTAINER_HOL_POOL SUSPEND;
+    root.compute_pools["CONTAINER_HOL_POOL"].suspend()
+
+    # DROP SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE;
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].services["JUPYTER_SNOWPARK_SERVICE"].delete()
+
+    # DROP SERVICE CONTAINER_HOL_DB.PUBLIC.CONVERT_API;
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].services["CONVERT_API"].delete()
+
+    # DROP COMPUTE POOL CONTAINER_HOL_POOL;
+    root.compute_pools["CONTAINER_HOL_POOL"].delete()
+
+    # DROP DATABASE CONTAINER_HOL_DB;
+    root.databases["CONTAINER_HOL_DB"].delete()
+
+    # DROP WAREHOUSE CONTAINER_HOL_WH;
+    root.warehouses["CONTAINER_HOL_WH"].delete()
+
+    # create a SnowflakeConnection instance
+    connection_acct_admin = connect(**CONNECTION_PARAMETERS_ACCOUNT_ADMIN)
+
+    # create a root as the entry point for all object
+    root = Root(connection_acct_admin)
+
+    try:
+        # DROP ROLE CONTAINER_USER_ROLE;
+        root.roles["CONTAINER_USER_ROLE"].delete()
+    finally:
+        connection_acct_admin.close()
+
+finally:
+    connection_container_user_role.close()
 ```
 
 <!-- ------------------------ -->
