@@ -56,6 +56,8 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
 Duration: 10
 <!-- TODO: Fix this ^^ -->
 
+
+
 ### Sign up for a Snowflake Enterprise trial account
 
 Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the steps. **Make sure to select an Enterprise account.**
@@ -524,7 +526,7 @@ TODO: should this be "click dbt Build button?"
 
 > aside positive
 > 
-> In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. However, if you can manage these tags in configuration using a DataOps approach, using dbt. Look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from the dbt and Snowflake experts at Infinite Lambda.
+> In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can use dbt to manage these tags in configuration files and use a DataOps approach to apply the policies. Look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from the dbt and Snowflake experts at Infinite Lambda.
 
 ### So what?!
 
