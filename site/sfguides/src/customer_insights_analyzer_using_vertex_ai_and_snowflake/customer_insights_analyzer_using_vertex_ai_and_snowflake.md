@@ -13,10 +13,11 @@ tags: Getting Started, Data Science, Data Engineering, LLM, GenAI, Google, GCP, 
 
 Duration: 10
 
-In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Vertex AI and Generative AI to analyze customer reviews.
+In this quickstart you will build a Streamlit application that leverages Snowpark External Access in Snowflake with Vertex AI and Generative AI to analyze customer reviews.
+
 
 In summary this is what you will do:
-- Set up environments in both Snowflake and GCP
+- Set up environments in both Snowflake and Google Cloud Platform
 - Create a function that leverages Snowpark External Access to make a call to GCP Vertex AI Generative AI models.
 - Create a Streamlit app that leverages the above function to generate responses using data from Snowflake and prompts.
 
@@ -118,7 +119,7 @@ select top 10 * from REVIEWS;
 ```
 
 <!-- ------------------------ -->
-## Snowpark External Access to call OpenAI
+## Snowpark External Access to call Vertex AI
 
 Duration: 10
 
@@ -574,7 +575,7 @@ Congratulations! You've successfully built your first Streamlit App with Vertex 
 
 - How to set up a Snowflake and Google Cloud environment to integrate the two platforms.
 - How to build a Snowpark External Access integration to call Vertex AI.
-- How to build a Streamlit app that calls OpenAI leveraging tabular and image data from Snowflake.
+- How to build a Streamlit app that calls Vertex AI leveraging tabular and image data from Snowflake.
 - How to build your first Generative AI App with Vertex AI and Snowflake!
 
 
