@@ -180,7 +180,7 @@ You will notice that you need to input your Snowflake credentials and resources 
 
 ### Create the Foundational Project for the core data team
 
-Now you will create the Foundational Project dbt Cloud Project, which is to be exclusively developed by the core data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
+Now you will create the Foundational Project in dbt Cloud, which is to be exclusively developed by the core data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
 
 1. From **Account settings**, click **+ New Project**.
 2. In the **Project name** field, enter `Foundational Project` and click **Continue**.
@@ -243,27 +243,24 @@ TODO: fix links
 ## Build Foundational Project
 Duration: 10
 
-### Motivation
+Now it's time for you to add dbt code in the Foundational Project using the dbt Cloud IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a `fct_orders` table representing the all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.
 
-Now it's time to add in the foundational 
+### Setup the new project
 
-This upstream project is where you build your core data assets. This project will contain the raw data sources, staging models, and core business logic.
-
-dbt Cloud enables data practitioners to develop in their tool of choice and comes equipped with a local [dbt Cloud CLI](/docs/cloud/cloud-cli-installation) or in-browser [dbt Cloud IDE](/docs/cloud/dbt-cloud-ide/develop-in-the-cloud).
-
-In this section of the guide, you will set the "Jaffle | Data Platform" project as your foundational project using the dbt Cloud IDE.
+Here are the steps:
 
 1. First, navigate to the **Develop** page to verify your setup.
 2. If the repo you are working on is empty, click the **Initialize dbt project** button and commit the changes.
 3. Create a new branch.
 4. Delete the `models/example` folder.  
-5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `foundation`.
+5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `foundational_project`.
 6. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
 7. In the **File Explorer**, hover over the project directory and click the **...**, then select **Create file**.
 8. Create two new folders: `models/staging` and `models/core`.
 
-### Staging layer
-Now that you've set up the foundational project, let's start building the data assets. Set up the staging layer as follows:
+### Create the staging layer
+
+Now that you've set up the Foundational Project, let's start building the data assets. Set up the staging layer as follows:
 
 1. Create a new YAML file `models/staging/sources.yml`.
 2. Declare the sources by copying the following into the file and clicking **Save**.
@@ -467,59 +464,71 @@ order by order_date
 
 ### Execute
 
+TODO: Should this actually be "click the build button"?
+
 Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
 
+### Cloud vs CLI
+
+TODO Move dis: dbt Cloud enables data practitioners to develop in their tool of choice and comes equipped with a local [dbt Cloud CLI](/docs/cloud/cloud-cli-installation) or in-browser [dbt Cloud IDE](/docs/cloud/dbt-cloud-ide/develop-in-the-cloud).
+
+### So what?
+
+TODO: add
+
 <!-- ------------------------ -->
-## Use dbt to apply Snowflake masking to PII
+## Apply Snowflake masking to PII data
 Duration: 5
 
-The goal of this section is to apply some of the functionality offered from Snowflake, like [object tagging](https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary) and [dynamic data masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro), to strengthen the governance around the data mesh architecture we want to architect.
+Congratulations! You built a useful dataset. But, it's not secure. Organizational data privacy policies require Personally Identifable Information (PII) to be restricted only to a few select people within the organization. Naturally, this is restriction is best checked within Snowflake itself, as various applications within the organization access data, so restricting the data at the source helps protect your customers' privacy.
 
-Next, we'll use the `jaffle_da_role` role to perform the following:
+And so, in this step, you will apply Snowflake [object tagging](https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary) and [dynamic data masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro) to `fct_orders`, to restrict access to who can view the PII within the table, with the following steps:
 
 - Create a tag for PII data
 - Create a masking policy for string data
 - Assign the masking policy to the tag
-- Assign the tag to the `c_name` column in the `customers` table
+- Assign the tag to the `name` column in the `fct_orders` table
 
 ```sql
-use role jaffle_da_role;
-use database jaffle_da;
+use role foundational_role;
+use database foundational_db;
 
 -- create the tag
-create tag if not exists jaffle_da.prod.pii_data;
+create tag if not exists foundational_role.prod.pii_data;
 
 -- create the policy
-create or replace masking policy jaffle_da.prod.pii_mask_string as (val string) returns string ->
+create or replace masking policy foundational_role.prod.pii_mask_string as (val string) returns string ->
   case
-    when is_role_in_session('jaffle_da_pii_reader_role') then val
+    when is_role_in_session('foundational_pii_reader_role') then val
     else '****'
   end;
   
 -- assign masking policy to tag
-alter tag jaffle_da.prod.pii_data set masking policy jaffle_da.prod.pii_mask_string;
+alter tag foundational_role.prod.pii_data set masking policy foundational_role.prod.pii_mask_string;
 ```
 
-Now that we've set up the appropriate roles, tags, and masking policies in Snowflake, it's time to jump into dbt Cloud to both apply the masking policy to the relevant models and, additionally, use some of the features there to further strengthen our data mesh architecture.
-
-Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
+Now that you've set up the appropriate tags and masking policies in Snowflake, it's time to jump into dbt Cloud to use a [model post-hook](https://TODO:_link) to apply the masking policy to the `fct_orders` dbt model immediately after the table is built. Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
 
 ```sql
 {{
     config(
         materialized='table',
-        post_hook="alter table {{ this }} modify column name set tag snowflake_sample_data.tpch_sf1.pii_data = 'name'"
+        post_hook="alter table {{ this }} modify column name set tag foundational_role.prod.pii_data = 'name'"
     )
 }}
 ```
 
-This will apply the tag to the column that we want to mask because it's PII data.
-
 Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
+
+TODO: should this be "click dbt Build button?"
 
 > aside positive
 > 
-> To learn more about how to apply tags to Snowflake tables, look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from Infinite Lambda.
+> In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. However, if you can manage these tags in configuration using a DataOps approach, using dbt. Look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from the dbt and Snowflake experts at Infinite Lambda.
+
+### So what?!
+
+TODO: add
 
 <!-- ------------------------ -->
 ## Add model contracts and enforce Snowflake grants with dbt
