@@ -56,7 +56,7 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
 Duration: 10
 <!-- TODO: Fix this ^^ -->
 
-
+In this step, you will set up Snowflake and dbt Cloud accounts for use in the rest of the Quickstart guide.
 
 ### Sign up for a Snowflake Enterprise trial account
 
@@ -233,12 +233,10 @@ Meanwhile, the finance team will build on these foundations, and add more specif
 
 When setting up dbt Cloud for production, there are four recommended security options to configure. They are out-of-scope for this particular Quickstart Guide, but worth mentioning at this point for the dbt Cloud and Snowflake administrators:
 
-1. **Snowflake OAuth:** Require developers to connect their dbt Cloud Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt Cloud users will only be able to access the data that their Snowflake user has been granted.
-2. **Snowflake Key Pair authentication:** For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
-3. **dbt Cloud Role Based Access Controls:** Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
-4. **dbt Cloud SSO:** Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
-
-TODO: fix links
+1. [**Snowflake OAuth:**](https://docs.getdbt.com/docs/cloud/manage-access/set-up-snowflake-oauth) Require developers to connect their dbt Cloud Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt Cloud users will only be able to access the data that their Snowflake user has been granted.
+2. [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
+3. [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
+4. [**dbt Cloud SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
 
 
 <!-- ------------------------ -->
