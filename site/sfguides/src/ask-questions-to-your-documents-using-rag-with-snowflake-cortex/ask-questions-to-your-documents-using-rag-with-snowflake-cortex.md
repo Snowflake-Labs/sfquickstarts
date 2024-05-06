@@ -60,8 +60,8 @@ Let's download a few documents we have created about bikes. In those documents w
 
 - [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Mondracer_Infant_Bike.pdf)
 - [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Premium_Bicycle_User_Guide.pdf)
-- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
 - [Ski Boots TDBootz Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDBootz_Special.pdf)
+- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
 
 **Step 2**. Open a new Worksheet
 
@@ -918,7 +918,7 @@ alter task task_extract_chunk_vec_from_pdf resume;
 
 You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application. You may want to upload your own documents or try with this new bike guide:
 
-- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
+- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
 
 Try asking questions that are unique in that new bike guide like:
 
