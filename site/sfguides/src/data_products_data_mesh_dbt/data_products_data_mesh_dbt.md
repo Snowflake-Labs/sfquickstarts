@@ -18,16 +18,16 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
 
 ### Prerequisites
 - Snowflake
-    - Account admin access to a Snowflake Enterprise or Business Critical account
-    - Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
+  - Account admin access to a Snowflake Enterprise or Business Critical account
+  - Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
 
 > aside negative
 > 
 > Snowflake Standard Edition is not sufficient, due to usage of Snowflake Enterprise features
 
 - dbt Cloud
-    - Account admin access to a dbt Cloud Enterprise account
-    - Set your development and deployment [environments](https://docs.getdbt.com/docs/dbt-cloud-environments) to use dbt version 1.6 or later. You can also opt Keep on latest version of to always use the latest version of dbt.
+  - Account admin access to a dbt Cloud Enterprise account
+  - Set your development and deployment [environments](https://docs.getdbt.com/docs/dbt-cloud-environments) to use dbt version 1.6 or later. You can also opt Keep on latest version of to always use the latest version of dbt.
 
 > aside negative
 > 
@@ -36,8 +36,7 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
 > Otherwise, you may receive a dbt Cloud Enterprise account by [requesting one from the dbt Labs team](https://www.getdbt.com/contact).
 
 - Requires basic dbt familiarity
-  - If you're not familiar with dbt, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
-  - Or if you are not a developer, please see such and such blog post / slides
+  - To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
 
 ### What You’ll Learn
 * How to understand when data mesh is the right solution for your organization
@@ -99,60 +98,67 @@ Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the
 Duration: 10
 <!-- TODO: Fix this ^^ -->
 
+### Motivation
 
 TODO: Insert image here
 
+In this step, you will be setting up Snowflake for two teams: the core data team and the finance team. You will be using least privileged access principles in order to properly secure the data.
 
+#### Core data team: the foundation
 
-The first thing we'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment.  The code below will:
+This team is well-established and the average team member is capable of building data pipelines that powers business reporting across various domains: finance, marketing, sales, customer support, and so on. The team uses data management best practices like organizing data in dimensional models for maximum re-usability in various BI and AI/ML applications.
 
-- Create a `jaffle_da` role for administering data governance responsibilities and grant appropriate permissions for masking and tagging
-- Create a `jaffle_da_pii_reader_role` for users who can access PII data unmasked
+Their project is called the `foundational` project.
 
-First, let's make a warehouse.
+#### Finance team
+
+Meanwhile, the average finance team member is more accustomed to consuming dashboards and building spreadsheets, however more and more demands on data has led to the finance team to owning and managing more data to rapidly respond to changing demands. And so, the team has upskilled team members and brought on an analytics engineer to use Snowflake and dbt Cloud, in order to create data pipelines building off of the foundation project for daily reporting use-cases.
+
+### Setting up the projects
+
+The first thing we'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment. The code below will:
+
+- Create a `foundational_role` role for creating and managing resources in the `foundational_db` database, administering data governance responsibilities, and granting appropriate permissions for masking and tagging
+- Create a `foundational_pii_reader_role` for users who can access PII data unmasked
 
 ```sql
 use role accountadmin;
 
-create or replace warehouse jaffle_wh with warehouse_size xsmall;
+create database if not exists foundational_db;
+create schema if not exists foundational_db.prod;
+create or replace warehouse foundational_wh with warehouse_size xsmall;
+
+create role if not exists foundational_role;
+create role if not exists foundational_pii_reader_role;
+grant role foundational_pii_reader_role to role foundational_role;
+
+-- TODO: Can we simplify this to foundational_role having full write access to foundational_db database?
+grant usage on database foundational_db to role foundational_role;
+grant usage on schema foundational_db.prod to role foundational_role;
+grant usage on warehouse foundational_wh to role foundational_role;
+grant create schema on database foundational_db to role foundational_role;
+
+grant create tag on schema foundational_db.prod to role foundational_role;
+grant create masking policy on schema foundational_db.prod to role foundational_role;
+grant apply masking policy on account to role foundational_role;
+grant apply tag on account to role foundational_role;
 ```
 
-First set up the jaffle_da workspace. The idea here is the jaffle_da_role is creating and managing resources in the jaffle_da database.
+Now create the Finance team workspace. The code below will:
+
+- Create a `finance_role` role for creating and managing resources in the `finance_db` database.
 
 ```sql
-use role accountadmin;
+create database if not exists finance_db;
+create schema if not exists finance_db.prod;
+create or replace warehouse finance_wh with warehouse_size xsmall;
 
-create database if not exists jaffle_da;
-create schema if not exists jaffle_da.prod;
+create role if not exists finance_db;
 
-create role if not exists jaffle_da_role;
-create role if not exists jaffle_da_pii_reader_role;
-grant role jaffle_da_pii_reader_role to role jaffle_da_role;
-
--- TODO: Can we simplify this to jaffle_da_role having full write access to jaffle_da database?
-grant usage on database jaffle_da to role jaffle_da_role;
-grant usage on schema jaffle_da.prod to role jaffle_da_role;
-grant usage on warehouse jaffle_wh to role jaffle_da_role;
-grant create schema on database jaffle_da to role jaffle_da_role;
-
-grant create tag on schema jaffle_da.prod to role jaffle_da_role;
-grant create masking policy on schema jaffle_da.prod to role jaffle_da_role;
-grant apply masking policy on account to role jaffle_da_role;
-grant apply tag on account to role jaffle_da_role;
-```
-
-Then the jaffle_finance workspace
-
-```sql
-create database if not exists jaffle_finance;
-create schema if not exists jaffle_finance.prod;
-
-create role if not exists jaffle_finance_role;
-
-grant usage on warehouse jaffle_wh to role jaffle_finance_role;
-grant usage on database jaffle_da to role jaffle_finance_role;
-grant usage on schema jaffle_da.prod to role jaffle_finance_role;
-grant select on all tables in schema jaffle_da.prod to role jaffle_finance_role;
+grant usage on warehouse finance_wh to role finance_role;
+grant usage on database finance_db to role finance_role;
+grant usage on schema finance_db.prod to role finance_role;
+grant select on all tables in schema finance_db.prod to role finance_role;
 ```
 
 To get this all working correctly, make sure to assign the relevant roles to your database user.
@@ -160,12 +166,10 @@ To get this all working correctly, make sure to assign the relevant roles to you
 ```sql
 use role accountadmin;
 
-grant role jaffle_da_role to user <your-snowflake-username>;
-grant role jaffle_da_pii_reader_role to user <your-snowflake-username>;
-grant role jaffle_finance_role to user <your-snowflake-username>;
+grant role finance_role to user <your-snowflake-username>;
+grant role foundational_pii_reader_role to user <your-snowflake-username>;
+grant role finance_role to user <your-snowflake-username>;
 ```
-
-
 
 <!-- ------------------------ -->
 ## Create dbt Cloud projects for collaboration
