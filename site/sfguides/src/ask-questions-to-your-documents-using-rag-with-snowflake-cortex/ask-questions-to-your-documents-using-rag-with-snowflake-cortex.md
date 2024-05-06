@@ -25,7 +25,7 @@ Along the way, we will also share tips on how you could turn what may seem like 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
 
-![App](assets/qs_cortex_intro.gif)
+![App](assets/qs_cortex_intro_arctic.gif)
 
 ### RAG Overview
 
