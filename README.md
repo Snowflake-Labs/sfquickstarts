@@ -1,7 +1,6 @@
-# Snowflake Quickstarts
+# Snowflake QuickStart Guides
 
 https://github.com/Snowflake-Labs/sfquickstarts/assets/2223194/a9f57881-ccf0-4549-89d6-d2fe2569012a
-
 
 ## What are Snowflake Quickstarts?
 Snowflake Quickstarts are interactive tutorials and self-serve demos written in markdown syntax. Quickstarts provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at [quickstarts.snowflake.com](https://guides.snowflake.com/)
@@ -89,11 +88,11 @@ export PATH=$PATH:$HOME/go/bin
 
 ## How do I get my Snowflake Quickstart on [quickstarts.snowflake.com](https://quickstarts.snowflake.com)?
 
-1. You will need to sign Snowflake's CLA 
+1. You will need to sign [Snowflake's CLA](https://github.com/snowflakedb/CLA). The action required on your part is to specify in your (first) pull request comment that you accept it. 
 2. Fork this repository
 3. Clone it to your local machine
 4. Make your changes/edits/updates on your locally cloned repo
-5. Run the site locally again via `npm run serve` and make sure your Quickstart guide shows up as you expect it. Pay close attention to the layout and format. If you are unsure, use this [QuickStart](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#0) as a template to follow.
+5. Run the site locally again via `npm run serve` and make sure your QuickStart guide shows up as you expect it. Pay close attention to the layout and format. If you are unsure, use this [QuickStart](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#0) as a template to follow.
 6. Push the changes/edits/updates back to your repo
 7. Open this repository on GitHub.com
 8. Click the Pull Request button to open a new pull request
