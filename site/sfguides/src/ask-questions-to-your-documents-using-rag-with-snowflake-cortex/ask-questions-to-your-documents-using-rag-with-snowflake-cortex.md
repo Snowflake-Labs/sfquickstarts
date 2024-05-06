@@ -47,8 +47,6 @@ The final product includes an application that lets users test how the LLM respo
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 - Snowflake Cortex vector functions for semantic distance calculations along with VECTOR as a data type enabled.
 
-> aside negative
-> NOTE: To get access to Snowflake Cortex vector functions and vector datatype (both currently in private preview) reach out to your Snowflake account team.
 
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Functions
@@ -371,8 +369,9 @@ for doc in docs_available:
     list_docs.append(doc["name"])
 st.dataframe(list_docs)
 
-
-model = st.sidebar.selectbox('Select your model:',('mistral-7b',
+model = st.sidebar.selectbox('Select your model:',(
+                                           'snowflake-arctic',
+                                           'mistral-7b',
                                            'llama2-70b-chat',
                                            'mixtral-8x7b',
                                            'gemma-7b'))
@@ -456,8 +455,7 @@ To test out the RAG framework, here a few questions you can ask and then use the
 - Does the mondracer infant bike need any special tool?
 - Is there any temperature to be considered with the premium bicycle?
 - What is the temperature to store the ski boots?
-- What are the tires used for the road bike?
-- Is there any discount when buying the road bike?
+- What are the tires used for the road bike? Provide the specific model
 - Where have the ski boots been tested and who tested them?
 
 
@@ -574,11 +572,13 @@ def main():
 
 def config_options():
 
-    st.sidebar.selectbox('Select your model:',('mistral-7b',
+    st.sidebar.selectbox('Select your model:',(
+                                           'snowflake-arctic',
+                                           'mistral-7b',
                                            'llama2-70b-chat',
                                            'mixtral-8x7b',
                                            'gemma-7b'), key="model_name")
-
+                                           
     # For educational purposes. Users can chech the difference when using memory or not
     st.sidebar.checkbox('Do you want that I remember the chat history?', key="use_chat_history", value = True)
 
