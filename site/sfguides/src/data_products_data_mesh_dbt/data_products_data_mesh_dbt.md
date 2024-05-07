@@ -16,6 +16,14 @@ Data mesh is gaining traction as a transformative approach to data architecture 
 
 In this guide, participants will explore how dbt Cloud's integration with Snowflake supports a data mesh by enabling better management of data dependencies, automation of data transformations, and continuous integration and delivery of data products. Through practical examples and guided exercises, you will learn how to set up your dbt Cloud environment to interact seamlessly with Snowflake, creating a scalable and efficient data infrastructure. By the end of this lab, you will understand how dbt Cloud enhances data visibility and accessibility in Snowflake, allowing platform teams to govern the mesh effectively and validate compliance of data products. Additionally, the session will cover strategies to make these data products discoverable and accessible to authorized users, ensuring that the right data is available to the right people at the right time.
 
+
+
+
+
+TODO: Add in data product / data mesh schpiel
+
+
+
 ### Prerequisites
 - Snowflake
   - Account admin access to a Snowflake Enterprise or Business Critical account
@@ -39,17 +47,17 @@ In this guide, participants will explore how dbt Cloud's integration with Snowfl
   - To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
 
 ### What You’ll Learn
-* How to understand when data mesh is the right solution for your organization
+- How to understand when data mesh is the right solution for your organization
 
-* How to ensure proper governance of your Snowflake environment
+- How to ensure proper governance of your Snowflake environment
 
-* How to properly set up a dbt Cloud account with dbt Mesh
+- How to properly set up a dbt Cloud account with dbt Mesh
 
-* How to utilize dbt's model governance features to increase the resiliency of your data mesh
+- How to utilize dbt's model governance features to increase the resiliency of your data mesh
 
 ### What You’ll Build 
 
-* A dbt Cloud account containing multiple projects that showcase the governance features of Snowflake (object tagging, masking, grants) alongside dbt Cloud's dbt Mesh framework
+- A dbt Cloud account containing two projects that showcase the governance features of Snowflake (object tagging, masking, grants) alongside dbt Cloud's dbt Mesh framework.
 
 <!-- ------------------------ -->
 ## Launch Snowflake and dbt Cloud for this Quickstart
@@ -237,7 +245,6 @@ When setting up dbt Cloud for production, there are four recommended security op
 2. [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
 3. [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
 4. [**dbt Cloud SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
-
 
 <!-- ------------------------ -->
 ## Build Foundational Project
