@@ -72,24 +72,26 @@ Duration: 8
 >  **About the screenshots, sample code, and environment**
 Screenshots in this lab depict examples; results may vary slightly from what you see when you complete the exercises.
 
-### Navigating the Snowflake UI
+## Navigating the Snowflake UI
 
 Let's get you acquainted with Snowflake! This section covers the basic components of the user interface.
 
 ![snowflake navbar](assets/3UIStory_2.png)
 
-#### Projects > Worksheets
+### Projects > Worksheets
+
+Under **Projects** on the left-hand panel, select the ​**Worksheets​** tab. This provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete. A new worksheet is created by clicking **`+`** on the top right.
 
 ![worksheets tab main](assets/3UIStory_3.png)
 
-Under **Projects** on the left-hand panel, select the ​**Worksheets​** tab. This provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete. A new worksheet is created by clicking **`+`** on the top right.
+### Worksheet Structure 
 
 ![worksheets tab details](assets/3UIStory_4.png)
 
 The top left corner contains the following:
-- **Home** icon: Use this to get back to the main console/close the worksheet.
+- **Snowflake** icon: Use this to get back to the main console/close the worksheet.
 - **Worksheet_name** drop-down: The default name is the timestamp when the worksheet was created. Click the timestamp to edit the worksheet name. The drop-down also displays additional actions you can perform for the worksheet.
-- **Manage filters** button: Custom filters are special keywords that resolve as a subquery or list of values.
+- **Filters** button: Custom filters are special keywords that resolve as a subquery or list of values.
 
 The top right corner contains the following:
 - **Context** box: This lets Snowflake know which role and warehouse to use during this session. It can be changed via the UI or SQL commands.
@@ -114,32 +116,31 @@ The various panes on this page can be resized by adjusting their sliders. If you
 >  **Worksheets vs the UI**
 Most of the exercises in this lab are executed using pre-written SQL within this worksheet to save time. These tasks can also be done via the UI, but would require navigating back-and-forth between multiple UI tabs.
 
-#### Projects > Dashboards
-![dashboards tab](assets/3UIStory_5.png)
+### Projects > Dashboards
 
 Under **Projects** on the left-hand panel, select the ​**Dashboards​** tab. This tab allows you to create flexible displays of one or more charts (in the form of tiles, which can be rearranged). Tiles and widgets are produced by executing SQL queries that return results in a worksheet. Dashboards work at a variety of sizes with minimal configuration.
 
-#### Data > Databases
-![databases tab](assets/3UIStory_6.png)
+![dashboards tab](assets/3UIStory_5.png)
+
+### Data > Databases
 
 Under **Data**, the **Databases**​ tab shows information about the databases you have created or have permission to access. You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that a database already exists in your environment. However, we will not be using it in this lab.
 
-#### Data Products > Marketplace
+![databases tab](assets/3UIStory_6.png)
 
-![marketplace tab](assets/3UIStory_8.png)
-<!-- victoria ^ -->
+### Data Products > Marketplace
 
 The **Marketplace** tab is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
-<!-- dash to check in with the marketplace marketing team on updated summary of marketplace -->
 
-#### Data Products > Private Sharing
+![marketplace tab](assets/3UIStory_8.png)
+
+### Data Products > Private Sharing
+
+Under **Data Products**, the **Private Sharing** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data.
+
 ![shared data tab](assets/3UIStory_7.png)
 
-Under **Data Products**, the **Private Sharing** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing later.
-
-#### Monitoring > Query History
-
-![history tab](assets/3UIStory_9.png)
+### Monitoring > Query History
 
 Under **Monitoring** there are multiple tabs for tracking your usage of your Snowflake account:
 
@@ -149,42 +150,35 @@ Under **Monitoring** there are multiple tabs for tracking your usage of your Sno
 - **Dynamic Tables** is where you can use Snowsight to monitor dynamic table refreshes and examine dynamic tables and dynamic table graphs.
 - **Governance** tracks row- and column-level security, object tagging, data classification, access history, and more.
 
-#### Admin > Warehouses
+![history tab](assets/3UIStory_9.png)
+
+### Admin > Warehouses
 
 Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
 
 ![warehouses tab](assets/3UIStory_10.png)
 
-
-
-#### Admin > Cost Management
+### Admin > Cost Management
 
 Under **Admin**, the **Cost Management** tab shows an overview of account consumption and budgets. It also includes details on all the resource monitors that have been created to control the number of credits that virtual warehouses consume. For each resource monitor, it shows the credit quota, type of monitoring, schedule, and actions performed when the virtual warehouse reaches its credit limit.
 
 ![resource monitors tab](assets/3UIStory_11.png)
 
-
-
-#### Admin > Users & Roles
+### Admin > Users & Roles
 
 The **Roles** sub-tab of the **Users & Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
 
 ![roles tab](assets/3UIStory_12.png)
 
-
-
-#### Users
+### Users
 
 The **Users** sub-tab of the **Users & Roles** tab shows a list of users in the account, default roles, and owner of the users. For a new account, no records are shown because no additional roles have been created. Permissions granted through your current role determine the information shown for this tab. To see all the information available on the tab, switch your role to `ACCOUNTADMIN`.
 
 ![users tab](assets/3UIStory_13.png)
 
-
 Clicking on your username in the bottom right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
 
-
 ![user preferences dropdown](assets/3UIStory_14.png)
-
 
 > aside negative
 > 
