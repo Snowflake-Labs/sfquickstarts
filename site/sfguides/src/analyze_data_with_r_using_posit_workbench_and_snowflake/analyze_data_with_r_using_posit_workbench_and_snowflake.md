@@ -181,7 +181,7 @@ Now that we're in a familiar R environment,
 we need to prepare the packages we will use. For this analysis, we will use the [Tidyverse](https://www.tidyverse.org/) suite of packages, as well as a few others.
 
 ```r
-install.packages(c("tidyverse", "DBI", "dbplyr", "gt"))
+install.packages(c("tidyverse", "DBI", "dbplyr", "gt", "gtExtras"))
 ```
 
 We will also use the development version of the `{odbc}` package to connect to the Snowflake database.
@@ -198,6 +198,7 @@ library(tidyverse)
 library(DBI)
 library(dbplyr)
 library(gt)
+library(gtExtras)
 library(odbc)
 ```
 
