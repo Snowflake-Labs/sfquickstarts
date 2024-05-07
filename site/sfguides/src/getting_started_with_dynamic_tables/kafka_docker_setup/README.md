@@ -46,3 +46,22 @@ This command should display the installed Docker version.
 - Open a terminal or command promt and change dir to the folder called `kc-demo-shared`
 - Run `docker compose up` command from this folder. This will take some time to download and deploy the server for the very first run.
 - Note that this command will download open source Kafka and necessary libraries from the internet. The hands on lab is for demonstration purpose only and you should check for necessary license and compliance with your own administration team. This demo is not meant for production use.
+
+## After the first run you can simply start and stop the demo by using below commands
+
+### Start Kafka streaming to Snowflake
+
+`docker compose up`
+
+
+### Stop Kafka streaming to Snowflake
+
+`docker compose down`
+
+### Reset and remove tables created in Snowflake
+
+`drop table IF EXISTS cust_info;`
+
+`drop table IF EXISTS prod_stock_inv;`
+
+`drop table IF EXISTS salesdata;`
