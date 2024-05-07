@@ -1,5 +1,5 @@
 author: Daniel Chen
-id: posit-workbench-shiny-r
+id: analyze_data_with_r_using_posit_workbench_and_snowflake
 summary: Analyze Data with R using Posit Workbench and Snowflake
 categories: Getting-Started
 environments: web
