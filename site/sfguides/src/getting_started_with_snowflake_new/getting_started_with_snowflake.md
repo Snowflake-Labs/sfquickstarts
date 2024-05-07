@@ -663,31 +663,31 @@ Type `stock prices` in the search box at the top, scroll through the results, an
 
 In the **Cybersyn Financial & Economic Essentials** page, you can learn more about the contents of the data listing, explore data dictionaries, and see some sample queries. You will also see links to documentation and the dataset's cloud region availability. When you're ready, click the **Get** button to make this information available within your Snowflake account:
 
-![get data fields](assets/10Share_starschema_get_data.png)
+![get data fields](assets/10Share_cybersyn_get_data.png)
 
 Review the information in the dialog and click **Get** again:
 
-![get data fields](assets/10Share_starschema_get_data2.png)
+![get data fields](assets/10Share_cybersyn_get_data2.png)
 
 You can now click **Done** or choose to run the sample queries provided by Cybersyn:
 
-![get data fields](assets/10Share_starschema_query_data.png)
+![get data fields](assets/10Share_cybersyn_query_data.png)
 
-If you chose **Open**, a new worksheet opens in a new browser tab/window:
+If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
 1. Set your context 
 2. Select the query you want to run (or place your cursor in the query text).
 3. Click the **Run/Play** button (or use the keyboard shortcut).
 4. You can view the data results in the bottom pane.
 5. When you are done running the sample queries, click the **Home** icon in the upper left corner.
 
-![get data fields](assets/10Share_starschema_query_data2.png)
+![get data fields](assets/10Share_cybersyn_query_data2.png)
 
 Next:
 1. Click **Data** > **Databases**.
 2. Click the `Financial__Economic_Essentials` database.
 3. You can see details about the schemas, tables, and views that are available to query.
 
-![covid19 databases](assets/10Share_starschema_db_info.png)
+![covid19 databases](assets/10Share_cybersyn_db_info.png)
 
 That's it! You have now successfully subscribed to the Financial & Economic Essentials datasets from Cybersyn, which are updated daily with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
 
@@ -976,7 +976,7 @@ Snowflake offers very powerful and granular access control that dictates the obj
 In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, switch to the `ACCOUNTADMIN` role to create a new role. `ACCOUNTADMIN` encapsulates the `SYSADMIN` and `SECURITYADMIN` system-defined roles. It is the top-level role in the account and should be granted only to a limited number of users.
 
 ```SQL
-use role accountadmin;
+USE ROLE accountadmin;
 ```
 
 Notice that, in the top right of the worksheet, the context has changed to `ACCOUNTADMIN`:
@@ -990,7 +990,7 @@ Use the following commands to create the role and assign it to you. Before you r
 ```SQL
 CREATE ROLE junior_dba;
 
-GRANT ROLE junior_dba TO user YOUR_USERNAME_GOES_HERE;
+GRANT ROLE junior_dba TO USER YOUR_USERNAME_GOES_HERE;
 ```
 
 > aside positive
@@ -1024,14 +1024,14 @@ USE WAREHOUSE compute_wh;
 
 Finally, you can notice that in the database object browser panel on the left, the `CYBERSYN` and `Financial__Economic_Essentials` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
-Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN` and `Financial__Economic_Essentials` databases:
+Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN` and `Financial__Economic_Essentials` databases. _Note that the Cybersyn database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`._
 
 ```SQL
 USE ROLE accountadmin;
 
 GRANT USAGE ON DATABASE cybersyn TO ROLE junior_dba;
 
-GRANT USAGE ON DATABASE Financial__Economic_Essentials TO ROLE junior_dba;
+GRANT IMPORTED PRIVILEGES ON DATABASE Financial__Economic_Essentials TO ROLE junior_dba;
 
 USE ROLE junior_dba;
 ```
