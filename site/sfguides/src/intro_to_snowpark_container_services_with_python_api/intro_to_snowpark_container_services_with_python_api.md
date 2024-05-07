@@ -166,24 +166,39 @@ finally:
 
 ```
 
-Run the following SQL commands in [`01_snowpark_container_services_python_api_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_python_api_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
-```SQL
-USE ROLE ACCOUNTADMIN;
-CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
-  TYPE=oauth
-  OAUTH_CLIENT=snowservices_ingress
-  ENABLED=true;
+Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
+```Python API
 
-CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
-  TYPE = 'HOST_PORT'
-  MODE = 'EGRESS'
-  VALUE_LIST= ('0.0.0.0:443', '0.0.0.0:80');
+# create a SnowflakeConnection instance
+connection_acct_admin = connect(**CONNECTION_PARAMETERS_ACCOUNT_ADMIN)
 
-CREATE EXTERNAL ACCESS INTEGRATION ALLOW_ALL_EAI
-  ALLOWED_NETWORK_RULES = (ALLOW_ALL_RULE)
-  ENABLED = true;
+try:
+    # create a root as the entry point for all object
+    root = Root(connection_acct_admin)
 
-GRANT USAGE ON INTEGRATION ALLOW_ALL_EAI TO ROLE CONTAINER_USER_ROLE;
+    connection_acct_admin.cursor().execute("""CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
+        TYPE=oauth
+        OAUTH_CLIENT=snowservices_ingress
+        ENABLED=true;""")
+
+    connection_acct_admin.cursor().execute("""CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
+        TYPE = 'HOST_PORT'
+        MODE = 'EGRESS'
+        VALUE_LIST= ('0.0.0.0:443', '0.0.0.0:80');""")
+
+    connection_acct_admin.cursor().execute("""CREATE EXTERNAL ACCESS INTEGRATION ALLOW_ALL_EAI
+        ALLOWED_NETWORK_RULES = (ALLOW_ALL_RULE)
+        ENABLED = true;""")
+
+    # GRANT USAGE ON INTEGRATION ALLOW_ALL_EAI TO ROLE CONTAINER_USER_ROLE;
+    root.grants.create(Grant(
+        grantee=Grantees.role('CONTAINER_USER_ROLE'),
+        securable=Securables.integration("ALLOW_ALL_EAI"),
+        privileges=[Privileges.Usage]
+    ))
+
+finally:
+        connection_acct_admin.close()
 ```
 
 Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create
@@ -417,8 +432,7 @@ try:
     print(status)
 
     # CALL SYSTEM$GET_SERVICE_LOGS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE', '0', 'jupyter-snowpark',10);
-    # numb_lines is not supported in Python API
-    logs = s.get_service_logs("0", "jupyter-snowpark")
+    logs = s.get_service_logs("0", "jupyter-snowpark", 10)
     print(logs)
 
     # SHOW ENDPOINTS IN SERVICE JUPYTER_SNOWPARK_SERVICE;
@@ -662,8 +676,7 @@ try:
     print(status)
 
     # CALL SYSTEM$GET_SERVICE_LOGS('CONTAINER_HOL_DB.PUBLIC.CONVERT_API', '0', 'convert-api',10);
-    # numb_lines is not supported in Python API
-    logs = s.get_service_logs("0", "convert-api")
+    logs = s.get_service_logs("0", "convert-api", 10)
     print(logs)
 
 finally:
@@ -706,26 +719,29 @@ finally:
 
 ```
 
-Now, let's insert some sample weather data in the table using SQL:
-These SQL commands are also listed in [`03_rest_service_python_api.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service_python_api.sql)
-``` SQL 
-USE ROLE CONTAINER_USER_ROLE;
-USE DATABASE CONTAINER_HOL_DB;
-USE SCHEMA PUBLIC;
-USE WAREHOUSE CONTAINER_HOL_WH;
+Now, let's insert some sample weather data in the table using Python Connector:
+These commands are also listed in [`03_rest_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.py)
+``` Python Connector
+    
+    # Connect as CONTANTAINER_USE_ROLE
+    connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
 
-INSERT INTO weather (DATE, LOCATION, TEMP_C, TEMP_F) 
-    VALUES 
-        ('2023-03-21', 'London', 15, NULL),
-        ('2023-07-13', 'Manchester', 20, NULL),
-        ('2023-05-09', 'Liverpool', 17, NULL),
-        ('2023-09-17', 'Cambridge', 19, NULL),
-        ('2023-11-02', 'Oxford', 13, NULL),
-        ('2023-01-25', 'Birmingham', 11, NULL),
-        ('2023-08-30', 'Newcastle', 21, NULL),
-        ('2023-06-15', 'Bristol', 16, NULL),
-        ('2023-04-07', 'Leeds', 18, NULL),
-        ('2023-10-23', 'Southampton', 12, NULL);
+    connection_container_user_role.cursor().execute("""INSERT INTO weather (DATE, LOCATION, TEMP_C, TEMP_F)
+                        VALUES 
+                            ('2023-03-21', 'London', 15, NULL),
+                            ('2023-07-13', 'Manchester', 20, NULL),
+                            ('2023-05-09', 'Liverpool', 17, NULL),
+                            ('2023-09-17', 'Cambridge', 19, NULL),
+                            ('2023-11-02', 'Oxford', 13, NULL),
+                            ('2023-01-25', 'Birmingham', 11, NULL),
+                            ('2023-08-30', 'Newcastle', 21, NULL),
+                            ('2023-06-15', 'Bristol', 16, NULL),
+                            ('2023-04-07', 'Leeds', 18, NULL),
+                            ('2023-10-23', 'Southampton', 12, NULL);""")
+
+finally:
+    connection_container_user_role.close()
+
 ```
 Now, let's create a function that specifies our `convert-api` service's `convert-api` endpoint:
 ```Python API
@@ -763,15 +779,21 @@ finally:
 
 ```
 We can now test our function:
-```sql
-SELECT convert_udf(12) as conversion_result;
+```Python Connector
+
+ for (col1) in connection_container_user_role.cursor().execute("SELECT convert_udf(12) as conversion_result;"):
+        print('{0}'.format(col1))
+
 ```
 And even update our table to populate the `TEMP_F` field using our Service Function:
-```sql
-UPDATE WEATHER
-SET TEMP_F = convert_udf(TEMP_C);
+```Python Connector
+    
+    connection_container_user_role.cursor().execute("""UPDATE WEATHER
+                    SET TEMP_F = convert_udf(TEMP_C);""")
 
-SELECT * FROM WEATHER;
+    for (col1, col2, col3, col4) in connection_container_user_role.cursor().execute("SELECT * FROM WEATHER;"):
+        print('{0} {1} {2} {3}'.format(col1, col2, col3, col4))
+
 ```
 
 ### (Optional) Call the Convert Temperature Service Function from our Jupyter Notebook Service
@@ -817,7 +839,7 @@ There are a number of useful Python API we should explore with respect to contro
 2. Check the status of the logs with :
 
     ```Python API
-    s.get_service_logs("0","jupyter-snowpark")
+    s.get_service_logs("0","jupyter-snowpark",10)
     ```
 
 3. Suspend your container using the Python API
