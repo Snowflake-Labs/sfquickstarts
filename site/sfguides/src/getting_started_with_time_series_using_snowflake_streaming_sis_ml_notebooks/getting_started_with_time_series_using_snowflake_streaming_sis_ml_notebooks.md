@@ -14,6 +14,7 @@ Duration: 5
 
 Snowflake offers a rich set of functionalities for time series analytics making it a performant and cost effective platform for bringing in your time series workloads. This lab covers a real world scenario of ingesting, analyzing and visualizing IOT time series data.
 
+
 ### What You'll Learn
 
 Upon completing this quickstart, you will have learned how to perform time series analytics in Snowflake, and will have gained practical experience in several areas:
@@ -25,6 +26,7 @@ Upon completing this quickstart, you will have learned how to perform time serie
 - **Deploying a Streamlit application** for visualizing and analyzing time series data
 
 <img src="assets/overview_architecture.png" width="800" />
+
 
 ### What You'll Need
 
@@ -40,19 +42,7 @@ Upon completing this quickstart, you will have learned how to perform time serie
 ## Lab Setup
 Duration: 10
 
-### Step 1 - Note Snowflake Account details
-Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
-
-```sql
--- Note down your Snowflake account identifier details
--- <account_identifier>.snowflakecomputing.com
-
-SELECT SYSTEM$ALLOWLIST();
-```
-
-**Note** the **<account_identifier>**.snowflakecomputing.com by retrieving the **host** attribute returned. This will be used during the lab when referencing the **<ACCOUNT_IDENTIFIER>** configuration variables during setup.
-
-### Step 2 - Fork the Lab GitHub Repository
+### Step 1 - Fork the Lab GitHub Repository
 
 The first step is to create a fork of the Lab GitHub repository.
 
@@ -70,7 +60,7 @@ The first step is to create a fork of the Lab GitHub repository.
 <img src="assets/labsetup_createfork.png" width="800" />
 
 
-### Step 3 - Deploy a GitHub Codespace for the Lab
+### Step 2 - Deploy a GitHub Codespace for the Lab
 
 Now create the GitHub Codespace.
 
@@ -84,14 +74,14 @@ Now create the GitHub Codespace.
 
 > aside positive
 > 
-> This will open a new browser window and begin **Setting up your codespace**. The Github Codespace deployment will take several minutes to setup the entire environment for this lab.
+> This will open a new browser window and begin **Setting up your codespace**. The Github Codespace deployment will take several minutes to set up the entire environment for this lab.
 >
 
 <img src="assets/labsetup_setupcodespace.png" width="800" />
 
 > aside negative
 >
-> **Please wait** for the **postCreateCommand** to run.
+> **Please wait** for the **postCreateCommand** to run. It may take 5-10 mins to fully deploy.
 >
 > **Ignore any notifications** that may prompt to refresh the Codespace, these will disappear once the postCreateCommand has run.
 >
@@ -105,26 +95,14 @@ Once complete you should see a hosted web-based version of **VS Code Integrated 
 
 <img src="assets/labsetup_vscode.png" width="800" />
 
-The Github Codespace deployment is automating the following:
-- Starting a hosted, web-based VS Code Integrated Development Environment (IDE)
-- Pulling a copy of the forked Lab QuickStart GitHub repository within the VS Code container
-- Installing Python Anaconda (conda) package management
-- Installing a Java Runtime Environment (JRE)
-- Creates an Anaconda virtual environment called **hol-timeseries** with required packages for the lab installed
-  - Using the [Snowflake Anaconda Channel](https://repo.anaconda.com/pkgs/snowflake/)
-  - Installs Snowflake Python packages
-    - [Snowflake Snowpark Python library and connector](https://docs.snowflake.com/en/developer-guide/snowpark/index) package
-    - [Snowflake Command Line Interface (CLI)](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
-- VS Code setup
-  - Installing the [Snowflake VS Code Extension](https://docs.snowflake.com/en/user-guide/vscode-ext)
-- Private key pair setup using OpenSSL to be used to connect to Snowflake
-- Downloads and extracts a Java IOT streaming client application
+The Github Codespace deployment will contain all the resource needed to complete the lab.
 
 > aside negative
 >
 > If you do not see the **Snowflake VS Code Extension** try **Refreshing** your browser window.
+>
 
-### Step 4 - Verify Your Anaconda Environment is Activated
+### Step 3 - Verify Your Anaconda Environment is Activated
 
 During the Codespace setup the postCreateCommand script created an Anaconda virtual environment named **hol-timeseries**. This virtual environment contains the packages needed to connect and interact with Snowflake using the Snowflake CLI.
 
@@ -141,15 +119,20 @@ To activate the virtual environment:
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
 
-### Step 5 - Configure Snowflake Account Connection Configurations
+### Step 4 - Configure Snowflake Account Connection Configurations
 
-> aside negative
->
-> This section will require the Snowflake **<account_identifier>** noted earlier.
->
-> **NOTE:** The account identifers entered will **NOT** include the **.snowflakecomputing.com** domain.
+Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
 
-In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** with your account identifer value:
+```sql
+-- Note down your Snowflake account identifier details
+-- <account_identifier>.snowflakecomputing.com
+
+SELECT SYSTEM$ALLOWLIST();
+```
+
+**Note** the **<account_identifier>**.snowflakecomputing.com by retrieving the **host** attribute returned.
+
+In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFIER>** with your account identifier value:
 
 1. `.snowflake/config.toml`
     - **account** variable for both connections 
@@ -158,7 +141,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
     - **host** variable
 
 
-### Step 6 - Configure Snowflake VS Code Extension Connection
+### Step 5 - Configure Snowflake VS Code Extension Connection
 
 1. Open the Snowflake VS Code Extension
 2. Enter your **<ACCOUNT_IDENTIFER>**
@@ -180,7 +163,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 <img src="assets/labsetup_snowconnected.png" />
 
 
-### Step 7 - Update Snowflake Setup Worksheet
+### Step 6 - Update Snowflake Setup Worksheet
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
 
@@ -191,10 +174,10 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFER>** w
 > We'll need to update the setup worksheet with your **PUBLIC KEY** to be used during the initial Snowflake setup.
 
 
-### Retrieve Snowflake Private Keypair
-As part of the GitHub Codespace setup, an OpenSSL Private Keypair was generated in the VS Code `keys` directory.
+### Retrieve Snowflake Private Key-Pair
+As part of the GitHub Codespace setup, an OpenSSL Private Key-pair was generated in the VS Code `keys` directory.
 
-Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be need in the setup worksheet.
+Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be needed in the setup worksheet.
 
 > aside negative
 >
@@ -212,7 +195,7 @@ Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
 <img src="assets/labsetup_rsakey.png" />
 
-**NOTE:** The pasted **PUBLIC KEY** can show on mulitple lines and will work.
+**NOTE:** The pasted **PUBLIC KEY** can show on multiple lines and will work.
 
 > aside positive
 >
@@ -233,10 +216,11 @@ This includes:
 - Database: **HOL_TIMESERIES** - main database to store all lab objects
 - Schemas:
     - **STAGING** - RAW data source landing schema
-    - **TRANSFORM** - transformed and modelled data schema
+    - **TRANSFORM** - transformed and modeled data schema
     - **ANALYTICS** - serving and analytics functions schema
 
 <img src="assets/snowsetup_architecture.png" />
+
 
 ### Step 1 - Run Snowflake Setup Worksheet
 
@@ -305,7 +289,7 @@ CREATE DATABASE IF NOT EXISTS HOL_TIMESERIES COMMENT = 'HOL Time Series database
 CREATE SCHEMA IF NOT EXISTS HOL_TIMESERIES.STAGING WITH MANAGED ACCESS
 COMMENT = 'HOL Time Series STAGING schema.';
 
--- Create TRANSFORM schema - for modelled data
+-- Create TRANSFORM schema - for modeled data
 CREATE SCHEMA IF NOT EXISTS HOL_TIMESERIES.TRANSFORM WITH MANAGED ACCESS
 COMMENT = 'HOL Time Series TRANSFORM schema.';
 
@@ -337,7 +321,7 @@ SETUP SCRIPT NOW COMPLETED
 
 > aside positive
 > 
->  The Snowflake foundation objects have now been deployed, and we can continue on to setup a **Snowpipe Streaming Ingestion**.
+>  The Snowflake foundation objects have now been deployed, and we can continue on to set up a **Snowpipe Streaming Ingestion**.
 >
 
 <!-- ------------------------ -->
@@ -346,9 +330,10 @@ Duration: 5
 
 With the foundational objects setup, we can now deploy a staging table to stream time series data into Snowflake via a Snowpipe Streaming client.
 
-For this lab a Java IOT Sumilator Client has been created to stream IoT sensor readings into Snowflake.
+For this lab a Java IOT Simulator Client has been created to stream IoT sensor readings into Snowflake.
 
 <img src="assets/snowpipe_streamingest.png" />
+
 
 ### Step 1 - Create Streaming Staging Table
 
@@ -383,12 +368,13 @@ The IoT data will be streamed into Snowflake in a similar [schema format as Kafk
 
 > aside negative
 > 
->  There is an **EXTERNAL ACTIVITY** sections in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
+>  There is an **EXTERNAL ACTIVITY** section in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
 >
+
 
 ### INFO: Snowpipe Streaming Ingest Client SDK
 
-Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka, to streaming rowset data into a Snowflake table at low latency.
+Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka, to stream rows of data into a Snowflake table at low latency.
 
 <img src="assets/data-load-snowpipe-streaming.png" />
 
@@ -396,13 +382,14 @@ The Ingest Client SDK is configured with a secure JDBC connection to Snowflake, 
 
 <img src="assets/data-load-snowpipe-streaming-client-channel.png" />
 
+
 ### Step 2 - Test Streaming Client Channel
 
-Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client. The simulator Java application is available in the `iotstream` folder of the lab, and can be run via a terminal with a Java run time.
+Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client. The simulator Java application is available in the `iotstream` folder of the lab, and can be run via a terminal with a Java runtime.
 
 > aside positive
 > 
->  The lab environment has been setup with a **Java Runtime** to execute the Java Snowpipe Streaming client application.
+>  The lab environment has been set up with a **Java Runtime** to execute the Java Snowpipe Streaming client application.
 >
 
 In the **GitHub Codespace VS Code**:
@@ -430,13 +417,14 @@ The query should return a single channel `CHANNEL_1_TEST` opened to the `RAW_TS_
 
 <img src="assets/snowpipe_channeltest.png" />
 
+
 ### Step 3 - Load a Simulated IoT Data Set
 
 With the channel connection being successful, we can now load the IoT data set, as fast as the connection and machine will allow.
 
 <img src="assets/snowpipe_streamingclient.png" />
 
-The simlulated IoT dataset contians six sensor device tags at different frequencies, within a single **namespace**. A namespace generally represents a grouping of unique tags.
+The simulated IoT dataset contains six sensor device tags at different frequencies, within a single **namespace**. A namespace generally represents a grouping of unique tags.
 
 | NAMESPACE | TAGNAME | FREQUENCY |
 | --- | --- | --- |
@@ -490,20 +478,21 @@ Each IoT device reading is a JSON payload, transmitted in the following Kafka li
 
 > aside positive
 > 
->  Data has now been **streamed into Snowflake**, and we can now look at modelling the data for analyitcs.
+>  Data has now been **streamed into Snowflake**, and we can now look at modeling the data for analytics.
 >
 
 <!-- ------------------------ -->
 ## Data Modelling and Transformation
 Duration: 5
 
-Now that data is streamed into Snowflake, we are ready for some **Data Engineering** actvities to get the data into a report ready state for analytics. We'll be transforming the data from the JSON **VARIANT** format into a tabular format by leveraging Snowflake **Dynamic Tables**, to ensure that data streamed into Snowflake will continuously update the analytics layers.
+Now that data is streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be transforming the data from the JSON **VARIANT** format into a tabular format by leveraging Snowflake **Dynamic Tables**, to ensure that data streamed into Snowflake will continuously update the analytics layers.
 
 Along with setting up Dynamic Tables for continuous loading, we'll also deploy some analytics views for the consumer serving layer. This will allow for specific columns of data to be exposed to the end users and applications.
 
-Finally, we'll start another continous stream of IoT data to see the Dynamic Tables continuously update.
+Finally, we'll start another continuous stream of IoT data to see the Dynamic Tables continuously update.
 
 <img src="assets/model_dataengineering.png" />
+
 
 ### INFO: Dynamic Tables
 
@@ -512,6 +501,7 @@ Finally, we'll start another continous stream of IoT data to see the Dynamic Tab
 Dynamic Tables can also be chained together to create a DAG for more complex data pipelines.
 
 <img src="assets/dynamic_tables.png" />
+
 
 ### Step 1 - Model Time Series Data with Dynamic Tables
 
@@ -530,7 +520,10 @@ USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.TRANSFORM;
 USE WAREHOUSE HOL_TRANSFORM_WH;
 
--- Sensor metadata (Dimension)
+/* Tag metadata (Dimension)
+TAGNAME - uppercase concatenation of namespace and tag name
+QUALIFY - de-duplication filter to only include unique tag names
+*/
 CREATE OR REPLACE DYNAMIC TABLE HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_METADATA
 TARGET_LAG = '1 MINUTE'
 WAREHOUSE = HOL_TRANSFORM_WH
@@ -546,7 +539,10 @@ FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
 QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) ORDER BY SRC.RECORD_CONTENT:timestamp::NUMBER, SRC.RECORD_METADATA:offset::NUMBER) = 1
 ;
 
--- Sensor readings (Fact)
+/* Tag readings (Fact)
+TAGNAME - uppercase concatenation of namespace and tag name
+QUALIFY - de-duplication filter to only include unique tag readings based on tagname and timestamp
+*/
 CREATE OR REPLACE DYNAMIC TABLE HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS
 TARGET_LAG = '1 MINUTE'
 WAREHOUSE = HOL_TRANSFORM_WH
@@ -554,7 +550,7 @@ REFRESH_MODE = 'INCREMENTAL'
 AS
 SELECT
     UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) AS TAGNAME,
-    DATE_TRUNC('SECOND', SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ) AS TIMESTAMP,
+    SRC.RECORD_CONTENT:timestamp::VARCHAR::TIMESTAMP_NTZ AS TIMESTAMP,
     SRC.RECORD_CONTENT:value::VARCHAR AS VALUE,
     TRY_CAST(SRC.RECORD_CONTENT:value::VARCHAR AS FLOAT) AS VALUE_NUMERIC,
     SRC.RECORD_METADATA:partition::VARCHAR AS PARTITION,
@@ -565,12 +561,13 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 > aside positive
 > 
->  Dynamic tables have a defined [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines how out of date the data can be before a refresh is automatically triggered. At the time of writing the minimum is 1 minute target lag.
+>  Dynamic tables have a defined [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines how out of date the data can be before a refresh is automatically triggered. In this case, we have configured the Dynamic Tables to have a TARGET_LAG of 1 minute. 
 >
+
 
 ### Step 2 - Create Analytics Views for Consumers
 
-The Dynamic Tables are now setup to continously transform ingested streaming data. We can now look at setting up an **Analytics** serving layer with some views for end users and applications to consume the streaming data.
+The Dynamic Tables are now set up to continuously transform ingested streaming data. We can now look at setting up an **Analytics** serving layer with some views for end users and applications to consume the streaming data.
 
 <img src="assets/model_analyticviews.png" />
 
@@ -616,17 +613,21 @@ Now that we have created the analytics views, we can start to query the data usi
 
 <img src="assets/analysis_overview.png" />
 
+
 ### INFO - Time Series Query Profiles
 
 The following query profiles will be covered in this section.
 
-| Query Profile | Functions | Description |
+| **Query Profile** | **Functions** | **Description** |
 | --- | --- | --- |
 | Raw | Time Boundary: Left, Right, and Both | Raw data within a time range. |
-| [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | MIN, MAX, AVG, COUNT, SUM, STDDEV | Mathematical calculations over values within a time range. |
+| Math [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | MIN, MAX, AVG, COUNT, SUM | Mathematical calculations over values within a time range. |
+| Distribution [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | STDDEV, VARIANCE, KURTOSIS, SKEW | Statistics on distributions of data. |
 | [Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) | LAG, LEAD, FIRST_VALUE, LAST_VALUE, ROWS BETWEEN, RANGE BETWEEN | Functions over a group of related rows. |
 | Downsampling | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
+| Aligning time series datasets | [ASOF](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly. |
 | Upsampling | [ASOF](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Interpolating values between different time intervals. |
+
 
 ### Step 1 - Copy Worksheet Content To Snowsight Worksheet
 
@@ -644,16 +645,13 @@ This section will be executed within a Snowflake Snowsight Worksheet.
 
 4. **Copy** the contents of the worksheet to **clipboard**, and paste it into the newly created **Worksheet in Snowsight**
 
+
 ### Step 2 - Run the Snowsight Worksheet Time Series Analysis Queries
+
 
 ### Time Series Query Profile: Raw
 
-The following **Raw** queries show the left, right, and both time boundaries which determine how the time range is opened and closed in the filter query.
-
-**Time boundary:**
-- **Left:** start time **<=** time **<** end time
-- **Right:** start time **<** time **<=** end time
-- **Both:** start time **<=** time **<=** end time
+The following **Raw** query shows a left time boundary where the query starts on the input time and closes prior to the input end time.
 
 ```sql
 -- RAW - Left Time Boundary
@@ -664,47 +662,51 @@ AND TIMESTAMP < '2024-01-01 00:00:10'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP
 ;
-
--- RAW - Right Time Boundary
-SELECT TAGNAME, TIMESTAMP, VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:00:10'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-ORDER BY TAGNAME, TIMESTAMP
-;
-
--- RAW - Both Time Boundary
-SELECT TAGNAME, TIMESTAMP, VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP >= '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:00:10'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-ORDER BY TAGNAME, TIMESTAMP
-;
 ```
 
 **Raw - "Left" Time Boundary**
 <img src="assets/analysis_query_rawleft.png" />
-**Raw - "Right" Time Boundary**
-<img src="assets/analysis_query_rawright.png" />
-**Raw - "Both" Time Boundary**
-<img src="assets/analysis_query_rawboth.png" />
+
+> aside positive
+> 
+>  **Time Boundary**
+>
+> Depending on your requirment you can adjust the query time boundary to suite how you prefer to close out the time period.
+> - **Left:** start time **<=** time **<** end time
+> - **Right:** start time **<** time **<=** end time
+> - **Both:** start time **<=** time **<=** end time
+>
+
 
 ### INFO: Return Data Contract
 
-The queries following are written with a standard return set of columns, namely TAGNAME, TIMESTAMP, and VALUE. This is to mimic what an API might return if querying time series data, given a set of input parameters, similar to a data contract. The TAGNAME is updated to show that an aggregate has been applied to the returned values.
+The queries following are written with a standard return set of columns, namely TAGNAME, TIMESTAMP, and VALUE. This is to mimic what an API might return if querying time series data, given a set of input parameters, similar to a data contract. The TAGNAME is updated to show that an aggregate has been applied to the returned values, and the timestamp returned is generally the closing timestamp of the time boundary.
+
 
 ### Time Series Query Profile: Statistical Aggregates
 
-**Count**
+The following set of queries contains various aggregates covering **counts, math operations, distributions, and watermarks**. Aggregates have been grouped together using union queries.
+
+**Counts**
 
 ```sql
--- COUNT
-SELECT TAGNAME || '~COUNT_1HOUR' AS TAGNAME, MAX(TIMESTAMP) AS TIMESTAMP, COUNT(VALUE) AS VALUE
+/* COUNT AND COUNT DISTINCT
+Retrieve counts within the time boundary
+COUNT - Count of all values
+COUNT DISTINT - Count of unique values
+Counts can work with both varchar and numeric data types
+*/
+SELECT TAGNAME || '~COUNT_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, COUNT(VALUE) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP >= '2024-01-01 00:00:00'
-AND TIMESTAMP < '2024-01-01 01:00:00'
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~COUNT_DISTINCT_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, COUNT(DISTINCT VALUE) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TAGNAME
 ORDER BY TAGNAME
@@ -713,27 +715,39 @@ ORDER BY TAGNAME
 
 <img src="assets/analysis_query_aggcount.png" />
 
-**Count Distinct**
+**Math Operations**
 
 ```sql
--- COUNT DISTINCT
-SELECT TAGNAME || '~COUNT_DISTINCT_1HOUR' AS TAGNAME, MAX(TIMESTAMP) AS TIMESTAMP, COUNT(DISTINCT VALUE) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+/* MIN/MAX/AVG/SUM
+Retrieve statistical aggregates for the readings within the time boundary
+MIN - Minimum value
+MAX - Maximum value
+AVG - Average of values (mean)
+SUM - Sum of values
+Aggregates can work with numerical data types
+*/
+SELECT TAGNAME || '~MIN_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, MIN(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TAGNAME
-ORDER BY TAGNAME
-;
-```
-
-<img src="assets/analysis_query_aggcountdistinct.png" />
-
-**Sum**
-
-```sql
--- SUM
-SELECT TAGNAME || '~SUM_1HOUR' AS TAGNAME, MAX(TIMESTAMP) AS TIMESTAMP, SUM(VALUE_NUMERIC) AS VALUE
+UNION ALL
+SELECT TAGNAME || '~MAX_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, MAX(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~SUM_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, SUM(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~AVG_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, AVG(VALUE_NUMERIC) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
@@ -743,29 +757,41 @@ ORDER BY TAGNAME
 ;
 ```
 
-<img src="assets/analysis_query_aggsum.png" />
+<img src="assets/analysis_query_aggminmaxavgsum.png" />
 
-**Average**
+**Distribution Statistics**
 
 ```sql
--- AVG
-SELECT TAGNAME || '~AVG_1HOUR' AS TAGNAME, MAX(TIMESTAMP) AS TIMESTAMP, AVG(VALUE_NUMERIC) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+/* DISTRIBUTIONS - sample distributions statistics
+Retrieve distrition sample statistics within the time boundary
+STDDEV - closeness to the mean/average of the distribution
+VARIANCE - the spread between numbers in the time boundary
+KURTOSIS - measure of outliers occuring
+SKEW - left (negative) and right (positive) distribution skew
+Distributionas can work with numerical data types
+*/
+SELECT TAGNAME || '~STDDEV_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TAGNAME
-ORDER BY TAGNAME
-;
-```
-
-<img src="assets/analysis_query_aggavg.png" />
-
-**Standard Deviation**
-
-```sql
--- STDDEV
-SELECT TAGNAME || '~STDDEV_1HOUR' AS TAGNAME, MAX(TIMESTAMP) AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
+UNION ALL
+SELECT TAGNAME || '~VARIANCE_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, VARIANCE(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~KURTOSIS_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, KURTOSIS(VALUE_NUMERIC) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~SKEW_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, SKEW(VALUE_NUMERIC) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
@@ -775,44 +801,23 @@ ORDER BY TAGNAME
 ;
 ```
 
-<img src="assets/analysis_query_aggstddev.png" />
+<img src="assets/analysis_query_aggdistributions.png" />
 
-**Variance**
-
-```sql
--- VARIANCE
-SELECT TAGNAME || '~VARIANCE_1HOUR' AS TAGNAME, MAX(TIMESTAMP) AS TIMESTAMP, VARIANCE(VALUE_NUMERIC) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TAGNAME
-ORDER BY TAGNAME
-;
-```
-
-<img src="assets/analysis_query_aggvariance.png" />
-
-**High Watermark (MAX_BY)**
+**Watermarks**
 
 ```sql
--- MAX_BY - HIGH WATERMARK
+/* WATERMARKS
+Retrieve both the high and low watermark readings within the time boundary
+MAX_BY - High Watermark - latest reading in the time boundary
+MIN_BY - Low Watermark - earliest reading in the time boundary
+*/ 
 SELECT TAGNAME || '~MAX_BY_1HOUR' AS TAGNAME, MAX_BY(TIMESTAMP, TIMESTAMP) AS TIMESTAMP, MAX_BY(VALUE, TIMESTAMP) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TAGNAME
-ORDER BY TAGNAME
-;
-```
-
-<img src="assets/analysis_query_agghighwatermark.png" />
-
-**Low Watermark (MIN_BY)**
-
-```sql
--- MIN_BY - LOW WATERMARK
+UNION ALL
 SELECT TAGNAME || '~MIN_BY_1HOUR' AS TAGNAME, MIN_BY(TIMESTAMP, TIMESTAMP) AS TIMESTAMP, MIN_BY(VALUE, TIMESTAMP) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
@@ -823,7 +828,8 @@ ORDER BY TAGNAME
 ;
 ```
 
-<img src="assets/analysis_query_agglowwatermark.png" />
+<img src="assets/analysis_query_aggwatermark.png" />
+
 
 ### Time Series Query Profile: Window Functions
 
@@ -872,7 +878,7 @@ ORDER BY TAGNAME, TIMESTAMP
 
 ```sql
 -- RANGE BETWEEN INTERVAL - TIME BASED
--- PRECEEDING
+-- PRECEDING
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
     SUM(VALUE_NUMERIC) OVER (
         PARTITION BY TAGNAME ORDER BY TIMESTAMP
@@ -914,6 +920,7 @@ GROUP BY TAGNAME, TS, F_VALUE, L_VALUE
 ORDER BY TAGNAME, TS
 ;
 ```
+
 
 ### Time Series Query Profile: Downsampling
 
@@ -965,6 +972,7 @@ GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), T
 ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
+
 
 ### Time Series Query Profile: Upsampling
 
@@ -1285,12 +1293,15 @@ After completing the analysis of the time series data that was streamed into Sno
 
 <img src="assets/streamlit_overview.png" />
 
+
 ### INFO: Streamlit
 Streamlit is an open-source Python library that makes it easy to create web applications for machine learning, data analysis, and visualization. [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) helps developers securely build, deploy, and share Streamlit apps on Snowflake’s data cloud, without moving data or application code to an external system.
+
 
 ### INFO: Snowflake CLI
 
 [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction) is an open-source command-line tool explicitly designed for developers to create, manage, update, and view apps running on Snowflake. We will use Snowflake CLI to deploy the Streamlit app to your Snowflake account.
+
 
 ### Step 1 - Deploy Streamlit application to Snowflake
 
@@ -1312,7 +1323,8 @@ This command does the following:
 - --project option provides the path where the Streamlit app project resides
 - --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
 
-### Step 2 - Start a Continous Simulated Stream
+
+### Step 2 - Start a Continuous Simulated Stream
 
 <img src="assets/model_streamingclient.png" />
 
@@ -1322,11 +1334,13 @@ In the **VS Code** `Terminal` run the `Run_Slooow.sh` script to load the IoT dat
 ./Run_Slooow.sh
 ```
 
+
 ### Step 3 - Launch the Streamlit Application
 
 Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message "Streamlit successfully deployed" and also provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply presss Command/Ctrl and click the link to launch the Streamlit application
 
 <img src="assets/launch_streamlit.png" />
+
 
 ### Working with Streamlit Application :
 
@@ -1369,6 +1383,7 @@ Duration: 2
 
 **Congratulations!** You've successfully deployed an end-to-end time series analytics solution with streaming data in Snowflake.
 
+
 ### What You Learned
 
 - How to **stream time series data** into Snowflake using Snowpipe Streaming
@@ -1376,6 +1391,7 @@ Duration: 2
 - How to **analyze time series data** using native Snowflake time series functions
 - How to **create custom time series functions** and procedure in Snowflake
 - How to **deploy a Streamlit application using Snowflake CLI** to enable end users to run time series analytics
+
 
 ### Additional Resources
 - [Getting Started with Snowflake CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html)
