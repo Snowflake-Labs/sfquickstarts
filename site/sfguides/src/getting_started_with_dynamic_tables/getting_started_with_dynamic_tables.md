@@ -604,5 +604,4 @@ DROP SCHEMA DEMO.DT_DEMO;
 -- if you wish to drop the entire database
 DROP DATABASE DEMO;
 
-
 ```
