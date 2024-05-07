@@ -60,7 +60,7 @@ Let's assume that you are a data engineer at an online retail company, where a w
 
 ### Sample data
 
-You can either [follow these instructions to setup a local Kafka docker environment] (https://github.com/sfc-gh-pjain/sfguides/tree/DT_QS_Kafka/site/sfguides/src/getting_started_with_dynamic_tables/kafka_docker_setup)
+You can either [follow these instructions to setup a local Kafka docker environment](https://github.com/sfc-gh-pjain/sfguides/tree/DT_QS_Kafka/site/sfguides/src/getting_started_with_dynamic_tables/kafka_docker_setup)
 
 OR
 
