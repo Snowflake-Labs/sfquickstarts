@@ -71,6 +71,12 @@ CREATE DATABASE IF NOT EXISTS DEMO;
 CREATE SCHEMA IF NOT EXISTS DEMO.DT_DEMO;
 USE SCHEMA DEMO.DT_DEMO;
 
+CREATE WAREHOUSE XSMALL_WH 
+WAREHOUSE_TYPE = STANDARD
+  WAREHOUSE_SIZE = XSMALL
+  AUTO_SUSPEND = 300
+  AUTO_RESUME = TRUE;
+
 ```
 
 Once the database is created, we will create 3 UDTF to generate our source data. First table is **CUST_INFO** and insert 1000 customers into it using this new Python UDTF.
@@ -236,7 +242,7 @@ USE SCHEMA DEMO.DT_DEMO;
 
 CREATE OR REPLACE DYNAMIC TABLE customer_sales_data_history
     LAG='DOWNSTREAM'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=XSMALL_WH
 AS
 select 
     s.custid as customer_id,
@@ -265,7 +271,7 @@ Now, let's combine these results with the product table and create a SCD TYPE 2 
 ```
 CREATE OR REPLACE DYNAMIC TABLE salesreport
     LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=XSMALL_WH
 AS
     Select
         t1.customer_id,
@@ -366,7 +372,7 @@ This function computes the cumulative total and can be seamlessly incorporated i
 
 CREATE OR REPLACE DYNAMIC TABLE cumulative_purchase
     LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=XSMALL_WH
 AS
     select 
         month(creationtime) monthNum,
@@ -402,7 +408,7 @@ USE SCHEMA DEMO.DT_DEMO;
 
 CREATE OR REPLACE DYNAMIC TABLE PROD_INV_ALERT
     LAG = '1 MINUTE'
-    WAREHOUSE=LAB_S_WH
+    WAREHOUSE=XSMALL_WH
 AS
     SELECT 
         S.PRODUCT_ID, 
@@ -440,7 +446,7 @@ CREATE NOTIFICATION INTEGRATION IF NOT EXISTS
 ;
 
 CREATE OR REPLACE ALERT alert_low_inv
-  WAREHOUSE = my_warehouse
+  WAREHOUSE = XSMALL_WH
   SCHEDULE = '30 MINUTE'
   IF (EXISTS (
       SELECT *
@@ -585,3 +591,14 @@ Dynamic Tables are a new kind of Snowflake table which is defined as a query and
 - Creating data validation rule using Dynamic tables
 - Alerting on those rules
 - Monitoring Dynamic table using dashboard and SQL
+
+### Cleaup after Demo/HOL is complete for any cost/credits loss prevention
+
+```
+DROP SCHEMA DEMO.DT_DEMO;
+
+-- if you wish to drop the entire database
+DROP DATABASE DEMO;
+
+
+```
