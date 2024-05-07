@@ -10,6 +10,7 @@ tags: Getting Started, Data Science, R, Posit Workbench, Native Applications
 #  Analyze Data with R using Posit Workbench and Snowflake
 
 ## Overview
+Duration: 1
 
 This guide will show you how to use the R language to analyze data stored in Snowflake. It will take you through the process of setting up an R environment in an RStudio Pro IDE, which comes with the Posit Workbench Native App in Snowflake. It will also show you how to use R's `{dbplyr}` interface to translate R code into SQL where it can be run within a Snowflake database, which is an environment that provides more memory and compute power than the typical R environment.
 
@@ -41,6 +42,7 @@ or look at the materials provided in the accompanying repository:
 <https://github.com/posit-dev/snowflake-posit-quickstart-r>.
 
 ## Setup
+Duration: 3
 
 Before we begin there are a few components we need to get ready. We need to:
 
@@ -200,6 +202,7 @@ library(odbc)
 ```
 
 ## Access Snowflake data from R
+Duration: 5
 
 We will run our code in the R environment created by the RStudio Pro IDE, but the code will use data stored in the `WEB_TRAFFIC_FOUNDATION_EXPERIMENTAL` database on Snowflake.
 
@@ -336,6 +339,7 @@ We don't need to manage the process, it happens automatically behind the scenes.
 Learn more about `{dbplyr}` at [dbplyr.tidyverse.org](https://dbplyr.tidyverse.org/)
 
 ## Write to a Snowflake database
+Duration: 1
 
 You can also use `{DBI}` to create a new table in a database or append to an existing table.
 
@@ -354,6 +358,7 @@ dbWriteTable(conn2, name = "existing_table", value = df, append = TRUE)
 Now that we understand how R will interact with the database, we can use R to perform our analysis.
 
 ## Prepare data with `{dplyr}`
+Duration: 5
 
 We want to compare the pageviews, users, and sessions over time for a few popular websites. This information is split between the `timeseries` and `attributes` tables. Before we begin, we will need to join and clean the tables.
 
@@ -468,6 +473,7 @@ Our table now looks like this.
 
 
 ## Visualize Data with `{ggplot2}`
+Duration: 5
 
 The Cybersyn data provides signals that can help us:
 
@@ -507,6 +513,7 @@ timeseries |>
 > other domains. A user can store one or more new values to `domains` and then rerun the code.
 
 ## Make publication-ready tables with `{gt}`
+Duration: 5
 
 We can continue to explore our data with visualizations, or we can make a table that concisely displays multiple pieces of information at once. For example, we can use `{dplyr}` verbs to identify the median number of weekly pageviews, users, and session for our top domains.
 
@@ -647,6 +654,7 @@ comparison |>
 Now that we've accumulated some insights, let's think about how we might present the results of our data analysis to our colleagues.
 
 ## Build Reports and Dashboards with Quarto
+Duration: 2
 
 We've conveniently written our analysis in a Quarto (.qmd) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
 is an open-source publishing system that makes it easy to create
@@ -684,6 +692,7 @@ and is a great tool to communicate your data science analyses.
 
 
 ## Shiny Application
+Duration: 2
 
 Our visual analysis compared two specific websites: airbnb.com and vrbo.com, but we could reuse the code to compare any combination of websites. An efficient way to do this is with an interactive [Shiny](https://shiny.posit.co/) app.
 
@@ -711,5 +720,6 @@ If you're new to Shiny, you can try it online with
 It too, comes in a [Python](https://shinylive.io/py) version.
 
 ## Conclusion
+Duration: 1
 
 R is beloved by data scientists for its intuitive, concise syntax. You can now combine this syntax with the power and peace of mind of Snowflake. The Posit Workbench Native Application provides an IDE for R _within Snowflake_. You can then use R's existing database packages---`{DBI}`, `{odbc}`, `{dbplyr}`---to access your Snowflake databases.
