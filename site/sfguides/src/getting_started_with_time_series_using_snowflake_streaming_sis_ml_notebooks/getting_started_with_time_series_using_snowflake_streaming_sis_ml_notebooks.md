@@ -482,7 +482,7 @@ Each IoT device reading is a JSON payload, transmitted in the following Kafka li
 >
 
 <!-- ------------------------ -->
-## Data Modelling and Transformation
+## Data Modeling and Transformation
 Duration: 5
 
 Now that data is streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be transforming the data from the JSON **VARIANT** format into a tabular format by leveraging Snowflake **Dynamic Tables**, to ensure that data streamed into Snowflake will continuously update the analytics layers.
@@ -602,7 +602,7 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 
 > aside positive
 > 
->  Data is now **modelled in Snowflake**, and we can now proceed to analyze the data using Snowflake time series functions.
+>  Data is now **modeled in Snowflake**, and we can now proceed to analyze the data using Snowflake time series functions.
 >
 
 <!-- ------------------------ -->
@@ -624,9 +624,9 @@ The following query profiles will be covered in this section.
 | Math [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | MIN, MAX, AVG, COUNT, SUM | Mathematical calculations over values within a time range. |
 | Distribution [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | STDDEV, VARIANCE, KURTOSIS, SKEW | Statistics on distributions of data. |
 | [Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) | LAG, LEAD, FIRST_VALUE, LAST_VALUE, ROWS BETWEEN, RANGE BETWEEN | Functions over a group of related rows. |
-| Downsampling | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
-| Aligning time series datasets | [ASOF](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly. |
-| Upsampling | [ASOF](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Interpolating values between different time intervals. |
+| Time Gap Filling | [GENERATOR](https://docs.snowflake.com/en/sql-reference/functions/generator), [ROW_NUMBER](https://docs.snowflake.com/en/sql-reference/functions/row_number), [SEQ](https://docs.snowflake.com/en/sql-reference/functions/seq1) | Generating time stamps to fill time gaps. |
+| Downsampling / Time Binning | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
+| Upsampling / Aligning time series datasets | [ASOF](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly, and interpolating values. |
 
 
 ### Step 1 - Copy Worksheet Content To Snowsight Worksheet
@@ -718,12 +718,14 @@ ORDER BY TAGNAME
 **Math Operations**
 
 ```sql
-/* MIN/MAX/AVG/SUM
+/* MIN/MAX/AVG/SUM/APPROX_PERCENTILE
 Retrieve statistical aggregates for the readings within the time boundary
 MIN - Minimum value
 MAX - Maximum value
 AVG - Average of values (mean)
 SUM - Sum of values
+PERCENTILE_50 - 50% of values are less than this
+PERCENTILE_95 - 95% of values are less then this
 Aggregates can work with numerical data types
 */
 SELECT TAGNAME || '~MIN_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, MIN(VALUE_NUMERIC) AS VALUE
@@ -753,21 +755,35 @@ WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~PERCENTILE_50_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~PERCENTILE_95_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.95) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
 ORDER BY TAGNAME
 ;
 ```
 
-<img src="assets/analysis_query_aggminmaxavgsum.png" />
+<img src="assets/analysis_query_aggminmaxavgsumperc.png" />
 
 **Distribution Statistics**
 
 ```sql
 /* DISTRIBUTIONS - sample distributions statistics
 Retrieve distrition sample statistics within the time boundary
-STDDEV - closeness to the mean/average of the distribution
-VARIANCE - the spread between numbers in the time boundary
-KURTOSIS - measure of outliers occuring
-SKEW - left (negative) and right (positive) distribution skew
+STDDEV - Closeness to the mean/average of the distribution
+VARIANCE - Spread between numbers in the time boundary
+KURTOSIS - Measure of outliers occuring
+SKEW - Left tail (negative) and right tail (positive) distribution skew
 Distributionas can work with numerical data types
 */
 SELECT TAGNAME || '~STDDEV_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
@@ -833,104 +849,171 @@ ORDER BY TAGNAME
 
 ### Time Series Query Profile: Window Functions
 
-**Lag**
+Window functions enable aggregates to operate over groups of data, looking forward and backwards in the data rows.
+
+**Lag and Lead**
 
 ```sql
--- WINDOW FUNCTIONS
--- LAG
+/* WINDOW FUNCTIONS
+LAG - Prior time period value
+LEAD - Next time period value
+*/
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
     LAG(VALUE_NUMERIC) OVER (
-        PARTITION BY TAGNAME ORDER BY TIMESTAMP) AS PRIOR_VALUE
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP) AS LAG_VALUE,
+    LEAD(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP) AS LEAD_VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG101'
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP < '2024-01-01 00:00:10'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
 
+<img src="assets/analysis_query_windowlaglead.png" />
+
+**Rows Between - Preceding**
 ```sql
--- SUM - ROWS BETWEEN PRECEDING
+/* ROWS BETWEEN
+ROW_AVERAGE - Rolling average from 5 preceding rows
+ROW_SUM - Rolling sum from 5 preceding rows
+*/
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
     AVG(VALUE_NUMERIC) OVER (
         PARTITION BY TAGNAME ORDER BY TIMESTAMP
-        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) AS ROLL_SUM_VALUE
+        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) AS ROW_AVG_PRECEDING,
+    SUM(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) AS ROW_SUM_PRECEDING
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-31 00:00:00'
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP < '2024-01-01 00:00:10'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
 
+<img src="assets/analysis_query_windowrowsbetweenpre.png" />
+
+**Rows Between - Following**
 ```sql
--- FOLLOWING
+/* ROWS BETWEEN - FOLLOWING
+ROW_AVERAGE - Rolling average from 5 following rows
+ROW_SUM - Rolling sum from 5 following rows
+*/
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
-    AVG(VALUE_NUMERIC) OVER (PARTITION BY TAGNAME ORDER BY TIMESTAMP
-    ROWS BETWEEN CURRENT ROW AND 5 FOLLOWING) AS ROLL_VALUE
+    AVG(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        ROWS BETWEEN CURRENT ROW AND 5 FOLLOWING) AS ROW_AVG_FOLLOWING,
+    SUM(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        ROWS BETWEEN CURRENT ROW AND 5 FOLLOWING) AS ROW_SUM_FOLLOWING
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-31 00:00:00'
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP < '2024-01-01 00:00:10'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
 
+<img src="assets/analysis_query_windowrowsbetweenfoll.png" />
+
+**Range Between - Preceding and Following**
 ```sql
--- RANGE BETWEEN INTERVAL - TIME BASED
--- PRECEDING
+/* RANGE BETWEEN
+INTERVAL - Natural time input intervals
+*/
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
     SUM(VALUE_NUMERIC) OVER (
         PARTITION BY TAGNAME ORDER BY TIMESTAMP
-        RANGE BETWEEN INTERVAL '5 SEC' PRECEDING AND CURRENT ROW) AS PREC_ROLL_SUM_VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-31 00:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-ORDER BY TAGNAME, TIMESTAMP
-;
-```
-
-```sql
--- FOLLOWING
-SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
+        RANGE BETWEEN INTERVAL '5 SEC' PRECEDING AND CURRENT ROW) AS RANGE_SUM_PRECEDING,
     SUM(VALUE_NUMERIC) OVER (
         PARTITION BY TAGNAME ORDER BY TIMESTAMP
-        RANGE BETWEEN CURRENT ROW AND INTERVAL '5 SEC' FOLLOWING) AS FOLL_ROLL_SUM_VALUE
+        RANGE BETWEEN CURRENT ROW AND INTERVAL '5 SEC' FOLLOWING) AS RANGE_SUM_FOLLOWING
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-31 00:00:00'
+AND TIMESTAMP <= '2024-01-01 00:00:10'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
 
+<img src="assets/analysis_query_windowrangebetween.png" />
+
+**First and Last Value**
 ```sql
--- FIRST_VALUE / LAST_VALUE
-SELECT TAGNAME, TS AS TIMESTAMP, F_VALUE, L_VALUE
-FROM (
-SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TS, TIMESTAMP, VALUE_NUMERIC, FIRST_VALUE(VALUE_NUMERIC) OVER (PARTITION BY TAGNAME, TS ORDER BY TIMESTAMP) AS F_VALUE, LAST_VALUE(VALUE_NUMERIC) OVER (PARTITION BY TAGNAME, TS ORDER BY TIMESTAMP) AS L_VALUE
+/* FIRST_VALUE AND LAST_VALUE
+FIRST_VALUE - First value in the time boundary
+LAST_VALUE - Last value in the time boundary
+*/
+SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE, 
+    FIRST_VALUE(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP) AS FIRST_VALUE,
+    LAST_VALUE(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP) AS LAST_VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:00:30'
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP < '2024-01-01 00:00:10'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TIMESTAMP, TAGNAME, VALUE_NUMERIC
+ORDER BY TAGNAME, TIMESTAMP
+;
+```
+
+<img src="assets/analysis_query_windowfirstlast.png" />
+
+
+### Time Series Query Profile: Time Gap Filling
+
+Time gap filling is the process of generating timestamps for given a start and end time boundary, and joining to a tag with less frequent timestamp values.
+
+```sql
+/* TIME GAP FILLING
+TIME_PERIODS - variable passed into query to determine time stamps generated for gap filling
+*/
+SET TIME_PERIODS = (SELECT TIMESTAMPDIFF('SECOND', '2024-01-01 00:00:00'::TIMESTAMP_NTZ, '2024-01-01 00:00:00'::TIMESTAMP_NTZ + INTERVAL '1 MINUTE'));
+
+-- LAST OBSERVED VALUE CARRIED FORWARD (LOCF) - IGNORE NULLS
+WITH TIMES AS (
+    SELECT
+    DATEADD('SECOND', ROW_NUMBER() OVER (ORDER BY SEQ8()) - 1, '2024-01-01')::TIMESTAMP_NTZ AS TIMESTAMP
+    FROM TABLE(GENERATOR(ROWCOUNT => $TIME_PERIODS))
+),
+DATA AS (
+    SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
+    FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+    WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+    AND TIMESTAMP < '2024-01-01 00:01:00'
+    AND TAGNAME = '/IOT/SENSOR/TAG101'
 )
-GROUP BY TAGNAME, TS, F_VALUE, L_VALUE
-ORDER BY TAGNAME, TS
-;
+SELECT TIMES.TIMESTAMP,
+    NVL(DATA.TAGNAME,
+        LAG(DATA.TAGNAME) IGNORE NULLS OVER (
+        ORDER BY TIMES.TIMESTAMP)) AS TAGNAME,
+    DATA.VALUE,
+    NVL(DATA.VALUE,
+        LAG(DATA.VALUE) IGNORE NULLS OVER (
+        ORDER BY TIMES.TIMESTAMP)) AS LOCF_VALUE
+FROM TIMES
+LEFT JOIN DATA ON TIMES.TIMESTAMP = DATA.TIMESTAMP
+ORDER BY TAGNAME, TIMESTAMP;
 ```
 
+**Lag - LOCF - IGNORE NULLS**
 
-### Time Series Query Profile: Downsampling
+<img src="assets/analysis_query_gapfill_locf.png" />
+
+
+### Time Series Query Profile: Downsampling / Time Binning
+
+Downsampling is used to place time series data into time bins / buckets by using aggregate operations on the values within each time bin.
 
 ```sql
 -- DOWNSAMPLING / RESAMPLING
--- BINNING - PERCENTILE
 SELECT TAGNAME, TIME_SLICE(TIMESTAMP, 1, 'MINUTE', 'END') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TIMESTAMP <= '2024-01-01 00:10:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TIME_SLICE(TIMESTAMP, 1, 'MINUTE', 'END'), TAGNAME
 ORDER BY TAGNAME, TIMESTAMP
