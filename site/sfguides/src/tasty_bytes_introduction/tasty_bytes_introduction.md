@@ -61,7 +61,6 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 - Click on the Worksheets Tab in the left-hand navigation bar.
     - <img src ="assets/worksheet_tab.png" width="250"/>
 
-******: 4 & 5 can be combined with new UI
 ### Step 4 - Creating a Worksheet
 - Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet"
     - <img src = "assets/+_sqlworksheet.png" width ="200">
@@ -73,7 +72,7 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 ### Step 6 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 
-<button>[tb_fy25_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25/tb_fy25_introduction.sql)</button>
+<button>[tb_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25/tb_fy25_introduction.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -83,13 +82,13 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
 
 ### Step 9 - Synchronously Running all Setup SQL
-- Click inside the newly created Tasty Bytes - Setup Worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click "► Run" 
+- Click inside the newly created Tasty Bytes - Setup Worksheet, and next to "► Run" Click "▼" and choose "Run All"
     - <img src ="assets/run_all_queries.gif"/>
-******: Need refreshed image
+
 ### Step 10 - Completing Setup
-- After clicking "► Run" you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 5 minutes. Upon completion you will see a message stating `tb_101 setup is now complete` .
+- After clicking "Run All" you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 3 minutes. Upon completion you will see a message stating `tb_101 setup is now complete` .
     - <img src="assets/setup_complete.png">
-******: Need refreshed image
+
 
 ### Step 11 - Click Next -->
 
