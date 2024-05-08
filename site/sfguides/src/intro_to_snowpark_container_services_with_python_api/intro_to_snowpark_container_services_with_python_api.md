@@ -417,10 +417,13 @@ Now, we need to push our image to Snowflake. From the terminal:
     # docker push <repository_url>/python-jupyter-snowpark:dev
     client.api.push(repository_url + '/python-jupyter-snowpark:dev')
 ```
-This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following SQL using the Snowflake VSCode Extension or SQL worksheet:
-```sql
-USE ROLE CONTAINER_USER_ROLE;
-CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
+This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following Python API cod.:
+```Python API
+    # USE ROLE CONTAINER_USER_ROLE;
+    # CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
+    images = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories["IMAGE_REPO"].listImagesInRepository()
+    for image in images:
+        print(image)
 ```
 You should see your `python-jupyter-snowpark` image listed.
 
@@ -450,10 +453,23 @@ spec:
 cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
 snow object stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
 ```
-You can verify that your yaml was pushed successfully by running the following SQL using the Snowflake VSCode Extension or a SQL worksheet and verifying that the file is listed:
-```sql
-USE ROLE CONTAINER_USER_ROLE;
-LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
+You can verify that your yaml was pushed successfully by running the following Python API code and verifying that the file is listed:
+```Python API
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+
+    root = Root(connection_container_user_role)
+
+    #USE ROLE CONTAINER_USER_ROLE;
+    #LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
+    stageFiles = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"].listFiles()
+    for stageFile in stageFiles:
+        print(stageFile)
+
+finally:
+    connection_container_user_role.close()
+
 ```
 
 ### Create and Test the Service
@@ -706,10 +722,13 @@ Now, we need to push our image to Snowflake. From the terminal:
     # docker push <repository_url>/convert-api:dev
     client.api.push(repository_url + '/convert-api:dev')
 ```
-This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following SQL using the Snowflake VSCode Extension or SQL worksheet:
-```sql
-USE ROLE CONTAINER_USER_ROLE;
-CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
+This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following Python API code:
+```Python API
+    # USE ROLE CONTAINER_USER_ROLE;
+    # CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
+    images = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories["IMAGE_REPO"].listImagesInRepository()
+    for image in images:
+        print(image)
 ```
 You should see your `convert-api` image listed.
 
@@ -859,7 +878,7 @@ try:
     # ENDPOINT='convert-api'   //The endpoint within the container
     # MAX_BATCH_ROWS=5         //limit the size of the batch
     # AS '/convert';           //The API endpoint
-    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions.create(Function(
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions.create_service_function(Function(
         name="convert_udf",
         arguments=[
                     FunctionArgument(name="input", datatype="float")
@@ -872,7 +891,7 @@ try:
                                 )
         ),
         max_batch_rows=5
-    ))
+    ), mode=CreateMode.or_replace)
 
 
 finally:
@@ -882,8 +901,8 @@ finally:
 We can now test our function:
 ```Python Connector
 
- for (col1) in connection_container_user_role.cursor().execute("SELECT convert_udf(12) as conversion_result;"):
-        print('{0}'.format(col1))
+f = root.databases[“CONTAINER_HOL_DB”].schemas[“PUBLIC”].functions[“create_udf(float)“].execute_function([12])
+printf(f)
 
 ```
 And even update our table to populate the `TEMP_F` field using our Service Function:
