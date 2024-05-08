@@ -286,17 +286,44 @@ Duration: 10
 
   6. Start docker via opening Docker Desktop.
   
-  7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Snowflake VSCode Extension or in a SQL worksheet and copy the `repository_url` field, then execute a `docker login` with your registry host and user name from the terminal:
-  ```sql
-  // Get the image repository URL
-  use role CONTAINER_user_role;
-  show image repositories in schema CONTAINER_HOL_DB.PUBLIC;
-  // COPY the repository_url field, e.g. org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo
-  ```
-  ```bash
-  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
-  > prompt for password
+  7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Python API code [`06_docker_jupyter_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/06_docker_jupyter_service.py) :
+  ```Python API
+  # Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+
+    root = Root(connection_container_user_role)
+
+    # Get the image repository URL
+    #   use role CONTAINER_user_role;
+    #   show image repositories in schema CONTAINER_HOL_DB.PUBLIC;
+    #   // COPY the repository_url field, e.g. org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo
+    #   ```
+    #   ```bash
+    #   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
+    repos = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories
+    repo = repos["IMAGE_REPO"].fetch()
+
+    # Extract the registry hostname from the repository URL
+    pattern = r'^[^/]+'
+
+    repository_url = repo.repository_url
+    match = re.match(pattern, repository_url)
+    registry_hostname = match.group(0)
+
+    # Docker client
+    client = docker.from_env()
+
+    #   docker login <snowflake_registry_hostname> -u <user_name>
+    #   > prompt for password
+    # Login to the remote registry. Give user name and password for docker login
+    client.login(username = "<username>",
+                        password = "<password>",
+                        registry = registry_hostname,
+                        reauth = True)
+finally:
+    connection_container_user_role.close()
   ```
   **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
 
@@ -332,38 +359,60 @@ ENTRYPOINT ["jupyter", "notebook","--allow-root","--ip=0.0.0.0","--port=8888","-
 ```
 This is just a normal Dockerfile, where we install some packages, change our working directory, expose a port, and then launch our notebook service. There's nothing unique to Snowpark Container Services here! 
 
-Let's build and test the image locally from the terminal. **Note it is a best practice to tag your local images with a `local_repository` prefix.** Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark` and run a Docker build command:
+Let's build and test the image locally from the terminal. **Note it is a best practice to tag your local images with a `local_repository` prefix.** Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark` and run a Docker build command using Python code:
 ```bash
-cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
-docker build --platform=linux/amd64 -t <local_repository>/python-jupyter-snowpark:latest .
+
+# Build the Docker Image in the Example
+# cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
+# docker build --platform=linux/amd64 -t <local_repository>/python-jupyter-snowpark:latest .
+client.images.build(path='sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark', platform='linux/aarch64', tag='<local_repository>/python-jupyter-snowpark:latest')
+
 ```
 Verify the image built successfully:
 ```bash
-docker image list
+# Check to see if the image is there
+# Verify the image built successfully:
+# docker image list
+client.images.list()
 ```
 Now that our local image has built, let's validate that it runs successfully. From a terminal run:
 ```bash
-docker run -d -p 8888:8888 <local_repository>/python-jupyter-snowpark:latest
+# Test running the image
+# docker run -d -p 8888:8888 <local_repository>/python-jupyter-snowpark:latest
+client.containers.run(image='<local_repository>/python-jupyter-snowpark:latest', detach=True, ports={8888: 8888})
+
+# Use CURL to test the service
+# Open up a browser and navigate to [localhost:8888/lab](http://localhost:8888/lab) to verify 
+# your notebook service is working locally. Once you've verified that the service is working,
+# you can stop the container: `docker stop python-jupyter-snowpark`.
+os.system("""curl -X GET  http://localhost:8888/lab""")
 ```
-Open up a browser and navigate to [localhost:8888/lab](http://localhost:8888/lab) to verify your notebook service is working locally. Once you've verified that the service is working, you can stop the container: `docker stop python-jupyter-snowpark`.
 
 ### Tag and Push the Image
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
-  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
-  > prompt for password
-  docker tag <local_repository>/python-jupyter-snowpark:latest <repository_url>/python-jupyter-snowpark:dev
+    # Tag it
+    #  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, 
+    #  snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
+    #   docker login <snowflake_registry_hostname> -u <user_name>
+    #   > prompt for password
+    #   docker tag <local_repository>/python-jupyter-snowpark:latest <repository_url>/python-jupyter-snowpark:dev
+    image.tag(repository_url, 'dev')
 ```
   **Note the difference** between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)
 
 Verify that the new tagged image exists by running:
 ```bash
-docker image list
+    # Check to see if the image is there
+    # Verify the image built successfully:
+    # docker image list
+    client.images.list()
 ```
 Now, we need to push our image to Snowflake. From the terminal:
 ```bash
-docker push <repository_url>/python-jupyter-snowpark:dev
+    # Push the image to the remote registry
+    # docker push <repository_url>/python-jupyter-snowpark:dev
+    client.api.push(repository_url + '/python-jupyter-snowpark:dev')
 ```
 This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following SQL using the Snowflake VSCode Extension or SQL worksheet:
 ```sql
@@ -578,24 +627,38 @@ if __name__ == '__main__':
 
 The only thing unique to Snowflake about this container, is that the REST API code expects to receive requests in the format that [Snowflake External Function](https://docs.snowflake.com/en/sql-reference/external-functions-data-format#body-format) calls are packaged, and must also package the response in the expected format so that we can use it as a Service Function. **Note this is only required if you intend to interact with the API via a SQL function**.
 
-Let's build and test the image locally from the terminal. **Note it is a best practice to tag your local images with a `local_repository` prefix. Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/convert-api` and run a Docker build command:
+Let's build and test the image locally from the terminal. **Note it is a best practice to tag your local images with a `local_repository` prefix. Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/convert-api` and run a Docker build command using Python. Run the following using Python API code [`07_docker_rest_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/07_docker_rest_service.py) :
 ```bash
-cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
-docker build --platform=linux/amd64 -t <local_repository>/convert-api:latest .
+    # Build the Docker Image in the Example
+    # cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
+    # docker build --platform=linux/amd64 -t <local_repository>/convert-api:latest .
+    client.images.build(path='sfguide-intro-to-snowpark-container-services/src/convert-api', platform='linux/aarch64', tag='<local_repository>/convert-api:latest')
 ```
 Verify the image built successfully:
 ```bash
-docker image list
+    # Check to see if the image is there
+    # Verify the image built successfully:
+    # docker image list
+    client.images.list()
 ```
 Now that our local image has built, let's validate that it runs successfully. From a terminal run:
 ```bash
-docker run -d -p 9090:9090 <local_repository>/convert-api:latest
+    # Test running the image
+    # docker run -d -p 9090:9090 <local_repository>/convert-api:latest
+    client.containers.run(image='<local_repository>/convert-api:latest', detach=True, ports={9090: 9090})
 ```
 Test our local container endpoint by running the following from a different terminal window:
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"data": [[0, 12],[1,19],[2,18],[3,23]]}' http://localhost:9090/convert
+    # Use CURL to test the service
+    # curl -X POST -H "Content-Type: application/json" -d '{"data": [[0, 12],[1,19],[2,18],[3,23]]}' http://localhost:9090/convert
+    
+    os.system("""curl -X POST 
+                -H "Content-Type: application/json" 
+                -d '{"data": [[0, 12],[1,19],[2,18],[3,23]]}' 
+                http://localhost:9090/convert """)
+
 ```
-You should recieve back a JSON object, this will conatin the batch id and then the converted value in Fahrenheit:
+You should recieve back a JSON object, this will contain the batch id and then the converted value in Fahrenheit:
 ```bash
 {"data":[[0,53.6],[1,66.2],[2,64.4],[3,73.4]]}
 ```
@@ -605,19 +668,40 @@ Once you've verified that the service is working, you can stop the container: `d
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
-  > prompt for password
-  docker tag <local_repository>/convert-api:latest <repository_url>/convert-api:dev
+      #   docker login <snowflake_registry_hostname> -u <user_name>
+    #   > prompt for password
+    # Login to the remote registry. Give user name and password for docker login
+    client.login(username = "<username>",
+                        password = "<password>",
+                        registry = registry_hostname,
+                        reauth = True)
+
+     # Grab the image
+    image = next(i for i in client.images.list() if "<local_repository>/convert-api:dev" in i.tags)
+
+    # Tag it
+    #  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo,
+    #  snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
+    #   docker login <snowflake_registry_hostname> -u <user_name>
+    #   > prompt for password
+    #  docker tag <local_repository>/convert-api:latest <repository_url>/convert-api:dev
+    image.tag(repository_url, 'dev')
+ 
 ```
 **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
 
 Verify that the new tagged image exists by running:
 ```bash
-docker image list
+    # Check to see if the image is there
+    # Verify the image built successfully:
+    # docker image list
+    client.images.list()
 ```
 Now, we need to push our image to Snowflake. From the terminal:
 ```bash
-docker push <repository_url>/convert-api:dev
+    # Push the image to the remote registry
+    # docker push <repository_url>/convert-api:dev
+    client.api.push(repository_url + '/convert-api:dev')
 ```
 This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following SQL using the Snowflake VSCode Extension or SQL worksheet:
 ```sql
@@ -686,7 +770,7 @@ finally:
 These commands are also listed in [`03_rest_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.py)
 
 ### Create and Test the Service Function
-Once the service is up and running, we will create a Service Function that allows us to call our REST API's function via SQL. First, let's create a table and then create a Service function:
+Once the service is up and running, we will create a Service Function that allows us to call our REST API's function via Python Connector. First, let's create a table and then create a Service function:
 ```Python API
 # Connect as CONTANTAINER_USE_ROLE
 connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
