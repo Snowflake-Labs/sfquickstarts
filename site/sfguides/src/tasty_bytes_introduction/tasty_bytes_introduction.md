@@ -15,7 +15,7 @@ Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
 ### Overview
-Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by the frostbyte team at Snowflake.
+Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by Snowflake.
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
@@ -73,7 +73,7 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 ### Step 6 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 
-<button>[tb_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_introduction.sql)</button>
+<button>[tb_fy25_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25/tb_fy25_introduction.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -181,15 +181,14 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 
 ### Zero to Snowflake
 
-- #### [Financial Governance](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
-    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, and Account and Warehouse Level Timeout Parameters.
-******: Needs work
+- #### [Cost Management](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/)
+    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, Account and Warehouse Level Timeout Parameters, Budgets and Exploring Cost.
 - #### [Transformation](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/)
     - Learn about Snowflake Zero Copy Cloning, Result Set Cache, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
 - #### [Semi-Structured Data](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/)
 ******: Needs work
     - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot Notation and Lateral Flattening as well as View Creation and Snowsight Charting.
-- #### [Data Governance](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
+- #### [Governance with Snowflake Horizon](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/)
     - Learn about Snowflake System Defined Roles, Create and apply Grants to a custom role, and deploy both Tag Based Dynamic Data Masking and Row-Access Policies.
 ******: Needs work
 - #### [Collaboration](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/)
