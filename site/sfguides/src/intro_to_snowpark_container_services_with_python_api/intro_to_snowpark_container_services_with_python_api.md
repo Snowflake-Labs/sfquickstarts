@@ -80,7 +80,6 @@ try:
 
     # GRANT CREATE DATABASE ON ACCOUNT TO ROLE CONTAINER_USER_ROLE
     # GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
-    # GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
     # GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
     # GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE CONTAINER_USER_ROLE;
     # GRANT MONITOR USAGE ON ACCOUNT TO  ROLE  CONTAINER_USER_ROLE;
@@ -89,7 +88,6 @@ try:
         grantee=Grantees.role('CONTAINER_USER_ROLE'),
         securable=Securables.current_account,
         privileges=[Privileges.create_database,
-                    Privileges.create_warehouse,
                     Privileges.create_warehouse,
                     Privileges.create_compute_pool,
                     Privileges.create_integration,
@@ -379,13 +377,16 @@ Now that our local image has built, let's validate that it runs successfully. Fr
 ```bash
 # Test running the image
 # docker run -d -p 8888:8888 <local_repository>/python-jupyter-snowpark:latest
-client.containers.run(image='<local_repository>/python-jupyter-snowpark:latest', detach=True, ports={8888: 8888})
+container = client.containers.run(image='<local_repository>/python-jupyter-snowpark:latest', detach=True, ports={8888: 8888})
 
 # Use CURL to test the service
 # Open up a browser and navigate to [localhost:8888/lab](http://localhost:8888/lab) to verify 
 # your notebook service is working locally. Once you've verified that the service is working,
-# you can stop the container: `docker stop python-jupyter-snowpark`.
+# you can stop the container:
 os.system("""curl -X GET  http://localhost:8888/lab""")
+
+# docker stop python-jupyter-snowpark
+container.stop()
 ```
 
 ### Tag and Push the Image
@@ -397,6 +398,8 @@ Now that we have a local version of our container working, we need to push it to
     #   docker login <snowflake_registry_hostname> -u <user_name>
     #   > prompt for password
     #   docker tag <local_repository>/python-jupyter-snowpark:latest <repository_url>/python-jupyter-snowpark:dev
+        # Grab the image
+    image = next(i for i in client.images.list() if "<local_repository>/python-jupyter-snowpark:latest" in i.tags)
     image.tag(repository_url, 'dev')
 ```
   **Note the difference** between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)
@@ -645,7 +648,7 @@ Now that our local image has built, let's validate that it runs successfully. Fr
 ```bash
     # Test running the image
     # docker run -d -p 9090:9090 <local_repository>/convert-api:latest
-    client.containers.run(image='<local_repository>/convert-api:latest', detach=True, ports={9090: 9090})
+    container = client.containers.run(image='<local_repository>/convert-api:latest', detach=True, ports={9090: 9090})
 ```
 Test our local container endpoint by running the following from a different terminal window:
 ```bash
@@ -662,7 +665,7 @@ You should recieve back a JSON object, this will contain the batch id and then t
 ```bash
 {"data":[[0,53.6],[1,66.2],[2,64.4],[3,73.4]]}
 ```
-Once you've verified that the service is working, you can stop the container: `docker stop convert-api`.
+Once you've verified that the service is working, you can stop the container: `container.stop()`.
 
 ### Tag and Push the Image
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
@@ -677,7 +680,7 @@ Now that we have a local version of our container working, we need to push it to
                         reauth = True)
 
      # Grab the image
-    image = next(i for i in client.images.list() if "<local_repository>/convert-api:dev" in i.tags)
+    image = next(i for i in client.images.list() if "<local_repository>/convert-api:latest" in i.tags)
 
     # Tag it
     #  # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo,
@@ -727,10 +730,24 @@ spec:
 cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
 snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
 ```
-You can verify that your yaml was pushed successfully by running the following SQL using the Snowflake VSCode Extension or a SQL worksheet and verifying that the file is listed:
-```sql
-USE ROLE CONTAINER_USER_ROLE;
-LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
+You can verify that your yaml was pushed successfully by running the Python code and verifying that the file is listed. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py) :
+```Python API
+# Connect as CONTANTAINER_USE_ROLE
+connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+
+try:
+
+    root = Root(connection_container_user_role)
+
+    #USE ROLE CONTAINER_USER_ROLE;
+    #LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
+    stageFiles = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"].listFiles()
+    for stageFile in stageFiles:
+        print(stageFile)
+        
+finally:
+    connection_container_user_role.close()
+
 ```
 
 ### Create and Test the Service
