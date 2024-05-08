@@ -121,22 +121,23 @@ The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the *
 
 ### Step 4 - Configure Snowflake Account Connection Configurations
 
-Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
+1. Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
 
 ```sql
+SELECT SYSTEM$ALLOWLIST();
+
 -- Note down your Snowflake account identifier details
 -- <account_identifier>.snowflakecomputing.com
-
-SELECT SYSTEM$ALLOWLIST();
 ```
 
-**Note** the **<account_identifier>**.snowflakecomputing.com by retrieving the **host** attribute returned.
+2. **Note** the **<account_identifier>**.snowflakecomputing.com by retrieving the **host** attribute returned, where the **type** is **"type":"SNOWFLAKE_DEPLOYMENT_REGIONLESS"**.
 
-In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFIER>** with your account identifier value:
+3. In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFIER>** with your account identifier value:
 
-1. `.snowflake/config.toml`
-    - **account** variable for both connections 
-2. `iotstream/snowflake.properties`
+* `.snowflake/config.toml`
+    - **account** variable for **both** connections
+ 
+* `iotstream/snowflake.properties`
     - **account** variable
     - **host** variable
 
@@ -144,7 +145,7 @@ In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFIER>** 
 ### Step 5 - Configure Snowflake VS Code Extension Connection
 
 1. Open the Snowflake VS Code Extension
-2. Enter your **<ACCOUNT_IDENTIFER>**
+2. Enter your **<ACCOUNT_IDENTIFIER>**
 3. Click Continue
 
 <img src="assets/labsetup_snowextension.png" />
@@ -621,12 +622,12 @@ The following query profiles will be covered in this section.
 | **Query Profile** | **Functions** | **Description** |
 | --- | --- | --- |
 | Raw | Time Boundary: Left, Right, and Both | Raw data within a time range. |
-| Math [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | MIN, MAX, AVG, COUNT, SUM | Mathematical calculations over values within a time range. |
-| Distribution [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | STDDEV, VARIANCE, KURTOSIS, SKEW | Statistics on distributions of data. |
-| [Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) | LAG, LEAD, FIRST_VALUE, LAST_VALUE, ROWS BETWEEN, RANGE BETWEEN | Functions over a group of related rows. |
+| Math [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [MIN](https://docs.snowflake.com/en/sql-reference/functions/min), [MAX](https://docs.snowflake.com/en/sql-reference/functions/max), [AVG](https://docs.snowflake.com/en/sql-reference/functions/avg), [COUNT](https://docs.snowflake.com/en/sql-reference/functions/count), [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum), [APPROX_PERCENTILE](https://docs.snowflake.com/en/sql-reference/functions/approx_percentile) | Mathematical calculations over values within a time range. |
+| Distribution [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [STDDEV](https://docs.snowflake.com/en/sql-reference/functions/stddev), [VARIANCE](https://docs.snowflake.com/en/sql-reference/functions/variance), [KURTOSIS](https://docs.snowflake.com/en/sql-reference/functions/kurtosis), [SKEW](https://docs.snowflake.com/en/sql-reference/functions/skew) | Statistics on distributions of data. |
+| [Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) | [LAG](https://docs.snowflake.com/en/sql-reference/functions/lag), [LEAD](https://docs.snowflake.com/en/sql-reference/functions/lead), [FIRST_VALUE](https://docs.snowflake.com/en/sql-reference/functions/first_value), [LAST_VALUE](https://docs.snowflake.com/en/sql-reference/functions/last_value), ROWS BETWEEN, RANGE BETWEEN | Functions over a group of related rows. |
 | Time Gap Filling | [GENERATOR](https://docs.snowflake.com/en/sql-reference/functions/generator), [ROW_NUMBER](https://docs.snowflake.com/en/sql-reference/functions/row_number), [SEQ](https://docs.snowflake.com/en/sql-reference/functions/seq1) | Generating time stamps to fill time gaps. |
 | Downsampling / Time Binning | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
-| Upsampling / Aligning time series datasets | [ASOF](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly, and interpolating values. |
+| Aligning time series datasets | [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly, and interpolating values. |
 
 
 ### Step 1 - Copy Worksheet Content To Snowsight Worksheet
@@ -649,7 +650,7 @@ This section will be executed within a Snowflake Snowsight Worksheet.
 ### Step 2 - Run the Snowsight Worksheet Time Series Analysis Queries
 
 
-### Time Series Query Profile: Raw
+### Time Series Raw Query
 
 The following **Raw** query shows a left time boundary where the query starts on the input time and closes prior to the input end time.
 
@@ -664,18 +665,8 @@ ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
 
-**Raw - "Left" Time Boundary**
+**Raw Query**
 <img src="assets/analysis_query_rawleft.png" />
-
-> aside positive
-> 
->  **Time Boundary**
->
-> Depending on your requirment you can adjust the query time boundary to suite how you prefer to close out the time period.
-> - **Left:** start time **<=** time **<** end time
-> - **Right:** start time **<** time **<=** end time
-> - **Both:** start time **<=** time **<=** end time
->
 
 
 ### INFO: Return Data Contract
@@ -683,7 +674,7 @@ ORDER BY TAGNAME, TIMESTAMP
 The queries following are written with a standard return set of columns, namely TAGNAME, TIMESTAMP, and VALUE. This is to mimic what an API might return if querying time series data, given a set of input parameters, similar to a data contract. The TAGNAME is updated to show that an aggregate has been applied to the returned values, and the timestamp returned is generally the closing timestamp of the time boundary.
 
 
-### Time Series Query Profile: Statistical Aggregates
+### Time Series Statistical Aggregates
 
 The following set of queries contains various aggregates covering **counts, math operations, distributions, and watermarks**. Aggregates have been grouped together using union queries.
 
@@ -725,7 +716,7 @@ MAX - Maximum value
 AVG - Average of values (mean)
 SUM - Sum of values
 PERCENTILE_50 - 50% of values are less than this
-PERCENTILE_95 - 95% of values are less then this
+PERCENTILE_95 - 95% of values are less than this
 Aggregates can work with numerical data types
 */
 SELECT TAGNAME || '~MIN_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, MIN(VALUE_NUMERIC) AS VALUE
@@ -847,7 +838,7 @@ ORDER BY TAGNAME
 <img src="assets/analysis_query_aggwatermark.png" />
 
 
-### Time Series Query Profile: Window Functions
+### Time Series Window Functions
 
 Window functions enable aggregates to operate over groups of data, looking forward and backwards in the data rows.
 
@@ -963,7 +954,7 @@ ORDER BY TAGNAME, TIMESTAMP
 <img src="assets/analysis_query_windowfirstlast.png" />
 
 
-### Time Series Query Profile: Time Gap Filling
+### Time Series Gap Filling
 
 Time gap filling is the process of generating timestamps for given a start and end time boundary, and joining to a tag with less frequent timestamp values.
 
@@ -1004,130 +995,110 @@ ORDER BY TAGNAME, TIMESTAMP;
 <img src="assets/analysis_query_gapfill_locf.png" />
 
 
-### Time Series Query Profile: Downsampling / Time Binning
+### Downsampling Time Series Data
 
-Downsampling is used to place time series data into time bins / buckets by using aggregate operations on the values within each time bin.
+Downsampling is used to decreasing the frequency of time samples, such as from seconds to minutes, by placing time series data into fixed time intervals using aggregate operations on the existing values within each time interval.
 
+**Time Binning - 1min Aggregate - START Label**
 ```sql
--- DOWNSAMPLING / RESAMPLING
-SELECT TAGNAME, TIME_SLICE(TIMESTAMP, 1, 'MINUTE', 'END') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS VALUE
+/* TIME BINNING - 1min AGGREGATE with START label
+Create a downsampled time series data set with 1 minute aggregates, showing the START timestamp label
+COUNT - Count of values within the time bin
+SUM - Sum of values within the time bin
+AVG - Average of values (mean) within the time bin
+PERCENTILE_95 - 95% of values are less than this within the time bin
+*/
+SELECT TAGNAME, TIME_SLICE(TIMESTAMP, 1, 'MINUTE', 'START') AS TIMESTAMP,
+    COUNT(*) AS COUNT_VALUE,
+    SUM(VALUE_NUMERIC) AS SUM_VALUE,
+    AVG(VALUE_NUMERIC) AS AVG_VALUE,
+    APPROX_PERCENTILE(VALUE_NUMERIC, 0.95) AS PERCENTILE_95_VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:10:00'
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP < '2024-01-01 00:10:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TIME_SLICE(TIMESTAMP, 1, 'MINUTE', 'START'), TAGNAME
+ORDER BY TAGNAME, TIMESTAMP
+;
+```
+
+<img src="assets/analysis_query_timebin_start.png" />
+
+**Time Binning - 1min Aggregate - END Label**
+```sql
+/* TIME BINNING - 1min AGGREGATE with END label
+Create a downsampled time series data set with 1 minute aggregates, showing the START timestamp label
+COUNT - Count of values within the time bin
+SUM - Sum of values within the time bin
+AVG - Average of values (mean) within the time bin
+PERCENTILE_95 - 95% of values are less than this within the time bin
+*/
+SELECT TAGNAME, TIME_SLICE(TIMESTAMP, 1, 'MINUTE', 'END') AS TIMESTAMP,
+    COUNT(*) AS COUNT_VALUE,
+    SUM(VALUE_NUMERIC) AS SUM_VALUE,
+    AVG(VALUE_NUMERIC) AS AVG_VALUE,
+    APPROX_PERCENTILE(VALUE_NUMERIC, 0.95) AS PERCENTILE_95_VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP < '2024-01-01 00:10:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 GROUP BY TIME_SLICE(TIMESTAMP, 1, 'MINUTE', 'END'), TAGNAME
 ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
 
-```sql
--- BINNING - SUM
-SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TIMESTAMP, SUM(VALUE_NUMERIC) AS VALUE, COUNT(*) AS READING_COUNT
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:00:30'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TAGNAME
-ORDER BY TAGNAME, TIMESTAMP
-;
-```
+<img src="assets/analysis_query_timebin_end.png" />
+
+
+### Aligning Time Series Data
+
+Often you will need to align two data set that may have differing time frequencies. To do this you can utilize the Time Series ASOF join to pair closely matching records based on timestamps.
 
 ```sql
--- BINNING - AVERAGE
-SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TIMESTAMP, AVG(VALUE_NUMERIC) AS VALUE, COUNT(*) AS READING_COUNT
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:00:30'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TAGNAME
-ORDER BY TAGNAME, TIMESTAMP
-;
-```
-
-```sql
--- BINNING - STDDEV
-SELECT TAGNAME, TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 00:00:30'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TIME_SLICE(DATEADD(MILLISECOND, -1, TIMESTAMP), 10, 'SECOND', 'END'), TAGNAME
-ORDER BY TAGNAME, TIMESTAMP
-;
-```
-
-
-### Time Series Query Profile: Upsampling
-
-```sql
--- ASOF JOIN
-SELECT SMP.TAGNAME, SMP.TIMESTAMP, SMP.VALUE_NUMERIC AS VALUE, IOT.VALUE_NUMERIC AS IOT_VALUE, IOT.TAGNAME AS IOT_TAGNAME, IOT.TIMESTAMP AS IOT_TIMESTAMP
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS SMP
+/* ASOF JOIN - Align a 1sec tag with a 5sec tag
+Using the ASOF JOIN two data sets can be aligned by applying a matching condition to pair closely aligned timestamps and values.
+*/
+SELECT ONE_SEC.TAGNAME AS ONE_SEC_TAGNAME, ONE_SEC.TIMESTAMP AS ONE_SEC_TIMESTAMP, ONE_SEC.VALUE_NUMERIC AS ONE_SEC_VALUE, FIVE_SEC.VALUE_NUMERIC AS FIVE_SEC_VALUE, FIVE_SEC.TAGNAME AS FIVE_SEC_TAGNAME, FIVE_SEC.TIMESTAMP AS FIVE_SEC_TIMESTAMP
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS ONE_SEC
 ASOF JOIN (
+    -- 5 sec tag data
     SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC
     FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
     WHERE TAGNAME = '/IOT/SENSOR/TAG101'
-    ) IOT
-MATCH_CONDITION(SMP.TIMESTAMP >= IOT.TIMESTAMP)
-WHERE SMP.TAGNAME = '/IOT/SENSOR/TAG301'
-AND SMP.TIMESTAMP >= '2024-01-01 00:00:00'
-AND SMP.TIMESTAMP < '2024-01-01 00:01:00'
-ORDER BY SMP.TIMESTAMP;
+    ) FIVE_SEC
+MATCH_CONDITION(ONE_SEC.TIMESTAMP >= FIVE_SEC.TIMESTAMP)
+WHERE ONE_SEC.TAGNAME = '/IOT/SENSOR/TAG301'
+AND ONE_SEC.TIMESTAMP >= '2024-01-01 00:00:00'
+AND ONE_SEC.TIMESTAMP < '2024-01-01 00:01:00'
+ORDER BY ONE_SEC.TIMESTAMP;
 ```
 
+<img src="assets/analysis_query_asof_align.png" />
 
-```sql
-SET TIME_PERIODS = (SELECT TIMESTAMPDIFF('SECOND', '2024-01-01 00:00:00'::TIMESTAMP_NTZ, '2024-01-01 00:00:00'::TIMESTAMP_NTZ + INTERVAL '720 HOURS') / 5);
-
-SELECT '2024-01-01 00:00:00'::TIMESTAMP_NTZ + INTERVAL '720 HOURS';
-
-SELECT $TIME_PERIODS;
-
-WITH TIMES AS (
-    SELECT
-    DATEADD('SECOND', ROW_NUMBER() OVER (ORDER BY SEQ8()), '2024-01-01')::TIMESTAMP_NTZ AS TIMESTAMP
-    FROM TABLE(GENERATOR(ROWCOUNT => $TIME_PERIODS))
-),
-DATA AS (
-    SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
-    FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-    WHERE TIMESTAMP > '2024-01-01 00:00:00'
-    AND TIMESTAMP <= '2024-01-31 00:00:00'
-    AND TAGNAME = '/IOT/SENSOR/TAG101'
-)
-SELECT TIMES.TIMESTAMP, DATA.TAGNAME, DATA.VALUE,
-    LAG(DATA.VALUE) IGNORE NULLS OVER (
-        ORDER BY TIMES.TIMESTAMP) AS PRIOR_VALUE
-FROM TIMES
-LEFT JOIN DATA ON TIMES.TIMESTAMP = DATE_TRUNC('SECOND', DATA.TIMESTAMP)
-ORDER BY TIMESTAMP;
-
-WITH times AS (
-    SELECT dateadd(sec, 5 * row_number() over (order by SEQ8()), '2022-07-01 01:05:25.000') AS timestamp
-    FROM table(generator(rowcount => 518400)))
-SELECT * FROM TIMES;
-
-SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
-    LAG(VALUE_NUMERIC) IGNORE NULLS OVER (
-        PARTITION BY TAGNAME ORDER BY TIMESTAMP) AS PRIOR_VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-31 00:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG101'
-ORDER BY TAGNAME, TIMESTAMP
-;
-```
-
+> aside positive
+> 
+>  You have now run through several **Time Series Analysis** queries, we can now look at creating Time Series Functions.
+>
 
 <!-- ------------------------ -->
-## Build Your Own - Time Series Functions and Procedures
+## Build Your Own Time Series Functions
 Duration: 5
 
-Setup Upsampling Function
+Now that you have a great understanding of running Time Series Analysis, we will now look at deploying time series [User Defined Table Functions (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/udf-overview) that can query time series data in a re-usable manner. Table functions will accept a set of input parameters, and will operate and return data in a table format.
 
 <img src="assets/byo_functions.png" />
 
-Setup Interpolate Function
+
+### INFO: Upsampling Time Series Data
+
+Upsampling is used to increase the frequency of time samples, such as from hours to minutes, by placing time series data into fixed time intervals using aggregate operations on the values within each time interval. Due to the frequency of samples being increased it has the effect of creating new values if the interval is more frequent than the data itself. If the interval does not contain a value, it will be interpolated from the surrounding aggregated data.
+
+### Step 1 - Deploy Time Series Functions and Procedures
+
+1. In **VS Code** open the worksheet `worksheets/hol_timeseries_5_functions.sql`
+
+2. Run the **Create Interpolate Table Function**
+
 ```sql
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
@@ -1234,13 +1205,8 @@ $$
 ;
 ```
 
-Interpolate Query
-```sql
--- Directly Call Interpolate Table Function
-SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 01:05:23'::TIMESTAMP_NTZ, 5, 100)) ORDER BY TAGNAME, TIMESTAMP;
-```
+3. Run the **Create Interpolate Procedure** Script
 
-Interpolate Procedure
 ```sql
 -- Add helper precedure to accept start and end times, and return either LOCF or Linear Interpolated Values
 CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN (
@@ -1274,6 +1240,69 @@ BEGIN
 END;
 $$
 ;
+```
+
+4. Run the **LTTB Downsampling Table Function** Script
+
+```sql
+-- LTTB Downsampling Table Function
+CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB (
+    TIMESTAMP NUMBER,
+    VALUE FLOAT,
+    SIZE NUMBER
+)
+RETURNS TABLE (
+    TIMESTAMP NUMBER,
+    VALUE FLOAT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.11
+PACKAGES = ('pandas', 'plotly-resampler')
+HANDLER = 'lttb_run'
+AS $$
+from _snowflake import vectorized
+import pandas as pd
+from plotly_resampler.aggregation.algorithms.lttb_py import LTTB_core_py
+
+class lttb_run:
+    @vectorized(input=pd.DataFrame)
+
+    def end_partition(self, df):
+        if df.SIZE.iat[0] >= len(df.index):
+            return df[['TIMESTAMP','VALUE']]
+        else:
+            idx = LTTB_core_py.downsample(
+                df.TIMESTAMP.to_numpy(),
+                df.VALUE.to_numpy(),
+                n_out=df.SIZE.iat[0]
+            )
+            return df[['TIMESTAMP','VALUE']].iloc[idx]
+$$;
+```
+
+### Step 2 - Copy Worksheet Content To Snowsight Worksheet
+
+This section will be executed within a Snowflake Snowsight Worksheet.
+
+1. Login to Snowflake, and from the menu expand `Projects > Worksheets`
+
+<img src="assets/analysis_worksheets.png" />
+
+2. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+
+<img src="assets/analysis_newworksheet.png" />
+
+3. In **VS Code** open the worksheet `worksheets/hol_timeseries_6_function_queries.sql`
+
+4. **Copy** the contents of the worksheet to **clipboard**, and paste it into the newly created **Worksheet in Snowsight**
+
+
+### Step 3 - Query Time Series Data Using Deployed Functions and Procedures
+
+Interpolate Query
+```sql
+-- Directly Call Interpolate Table Function
+SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 01:05:23'::TIMESTAMP_NTZ, 5, 100)) ORDER BY TAGNAME, TIMESTAMP;
 ```
 
 LOCF Interpolate Query
@@ -1310,47 +1339,6 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN(
 );
 ```
 
-Setup LTTB Downsample Function
-```sql
--- Set role, context, and warehouse
-USE ROLE ROLE_HOL_TIMESERIES;
-USE HOL_TIMESERIES.ANALYTICS;
-USE WAREHOUSE HOL_ANALYTICS_WH;
-
--- LTTB Downsampling Table Function
-CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB (
-    TIMESTAMP NUMBER,
-    VALUE FLOAT,
-    SIZE NUMBER
-)
-RETURNS TABLE (
-    TIMESTAMP NUMBER,
-    VALUE FLOAT
-)
-LANGUAGE PYTHON
-RUNTIME_VERSION = 3.11
-PACKAGES = ('pandas', 'plotly-resampler')
-HANDLER = 'lttb_run'
-AS $$
-from _snowflake import vectorized
-import pandas as pd
-from plotly_resampler.aggregation.algorithms.lttb_py import LTTB_core_py
-
-class lttb_run:
-    @vectorized(input=pd.DataFrame)
-
-    def end_partition(self, df):
-        if df.SIZE.iat[0] >= len(df.index):
-            return df[['TIMESTAMP','VALUE']]
-        else:
-            idx = LTTB_core_py.downsample(
-                df.TIMESTAMP.to_numpy(),
-                df.VALUE.to_numpy(),
-                n_out=df.SIZE.iat[0]
-            )
-            return df[['TIMESTAMP','VALUE']].iloc[idx]
-$$;
-```
 
 LTTB Query
 ```sql
@@ -1385,14 +1373,59 @@ Streamlit is an open-source Python library that makes it easy to create web appl
 
 [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction) is an open-source command-line tool explicitly designed for developers to create, manage, update, and view apps running on Snowflake. We will use Snowflake CLI to deploy the Streamlit app to your Snowflake account.
 
+### Step 1 - Setup Snowflake Stage for Streamlit Application
 
-### Step 1 - Deploy Streamlit application to Snowflake
+1. In **VS Code** open the worksheet `worksheets/hol_timeseries_7_streamlit.sql`
 
-In the step #2 (Lab Setup) of this Quickstart, we have already setup a Github codespace with all the requirements necessary for building and deploying a Streamlit application. 
+2. Run the Worksheet to **create a stage for the Streamlit** application
 
-In this step, we will now deploy the Streamlit application on the Snowflake account using Snowflake CLI:
+```sql
+/*
+SNOWFLAKE STREAMLIT SCRIPT
+*/
 
-1. Navigate to the existing Terminal window where you have activated the hol-timeseries virtual environment and execute the following command:
+-- Set role, context, and warehouse
+USE ROLE ROLE_HOL_TIMESERIES;
+USE HOL_TIMESERIES.ANALYTICS;
+USE WAREHOUSE HOL_ANALYTICS_WH;
+
+-- CREATE STAGE FOR STREAMLIT FILES
+CREATE OR REPLACE STAGE HOL_TIMESERIES.ANALYTICS.STAGE_TS_STREAMLIT
+DIRECTORY = (ENABLE = TRUE, REFRESH_ON_CREATE = TRUE)
+ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+
+/* EXTERNAL ACTIVITY
+
+Use Snowflake CLI to upload Streamlit app
+
+*/
+
+/*
+STREAMLIT SCRIPT COMPLETED
+*/
+```
+
+> aside negative
+> 
+>  There are **EXTERNAL ACTIVITY** sections in the worksheet, this will covered in the next step.
+>
+
+
+### Step 2 - Deploy Streamlit Application to Snowflake
+
+In this step, we will now deploy the Streamlit application on the Snowflake account using Snowflake CLI.
+
+In the **GitHub Codespace VS Code**:
+
+1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
+
+2. Activate `hol-timeseries` python virtual environment
+
+```bash
+conda activate hol-timeseries
+```
+
+3. Run the following Snowflake CLI command to deploy the Streamlit application
 
 ```bash
 snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
@@ -1411,7 +1444,13 @@ This command does the following:
 
 <img src="assets/model_streamingclient.png" />
 
-In the **VS Code** `Terminal` run the `Run_Slooow.sh` script to load the IoT data.
+In the **GitHub Codespace VS Code**:
+
+1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
+
+2. Change directory into to the **iotstream** folder: `cd iotstream`
+
+3. Run the `Run_Slooow.sh` script to load the IoT data.
 
 ```bash
 ./Run_Slooow.sh
@@ -1428,13 +1467,11 @@ Once the Streamlit app is successfully deployed, the Snowflake CLI will display 
 ### Working with Streamlit Application :
 
 
-
-
 <!-- ------------------------ -->
 ## Cleanup
 Duration: 2
 
-1. In **VS Code** open the worksheet `worksheets/hol_timeseries_7_cleanup.sql` and run the script to remove Snowflake objects.
+1. In **VS Code** open the worksheet `worksheets/hol_timeseries_8_cleanup.sql` and run the script to remove Snowflake objects.
 
 ```sql
 /*
