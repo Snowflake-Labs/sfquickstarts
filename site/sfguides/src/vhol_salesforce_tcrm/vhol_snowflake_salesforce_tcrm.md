@@ -17,7 +17,7 @@ This guide will take you through the process of integrating Salesforce and Snowf
 
 Throughout this process, you will discover the ease at which it is possible to build integrated solutions with Snowflake and Salesforce using Tableau CRM. 
 
-To showcase customer 360, we will first load shipping data in Snowflake. Then the data will be enriched with weather information from the Snowflake Data Marketplace. We will then load customer service data in Salesforce, and using Tableau CRM the customer service data will then be synced with Snowflake, where it will be combined with the shipping and weather data. The customer service agent from the Salesforce environment will then be able to have access to the full combined service, shipping and weather data in Snowflake using Tableau CRM Direct Data connector.
+To showcase customer 360, we will first load shipping data in Snowflake. Then the data will be enriched with weather information from the Snowflake Marketplace. We will then load customer service data in Salesforce, and using Tableau CRM the customer service data will then be synced with Snowflake, where it will be combined with the shipping and weather data. The customer service agent from the Salesforce environment will then be able to have access to the full combined service, shipping and weather data in Snowflake using Tableau CRM Direct Data connector.
 
 Here is an outline of the workflow:
 
@@ -254,7 +254,7 @@ In the pop up display remove the current string in the entry field, and type in 
 ![](assets/p13.png)
 
 
-Click `Done` when finished. Then on the top of the window click `Snowflake Data Marketplace` to return to the listings of Marketplace Data Providers. 
+Click `Done` when finished. Then on the top of the window click `Snowflake Marketplace` to return to the listings of Marketplace Data Providers. 
 
 We now want to get data to allow us to consolidate geography data by state and zip code. SafeGraph provides a data set that will help with that. Following the same steps as before type `SafeGraph` in the top search box. Then select **SafeGraph** as provider and the **Foot Traffic Patterns - Starbucks** tile.
 
@@ -656,13 +656,13 @@ In this lab we have build a simple example of how you can combine and enrich Sal
 
 
 ### What We've Covered
-- use the Snowflake Data Marketplace to enrich data
+- use the Snowflake Marketplace to enrich data
 - sync Salesforce data to Snowflake
 - use live queries in Tableau CRM to provide insights in Salesforce from Snowflake 
 
 
 ### Related Resources
-- [Snowflake Data Marketplace](https://docs.snowflake.com/en/user-guide/data-marketplace.html)
+- [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/data-marketplace.html)
 - [Tableau CRM Sync Out for Snowflake](https://help.salesforce.com/articleView?id=sf.bi_integrate_connectors_sync_out_snowflake.htm&type=5)
 - [Tableau CRM Direct Data](https://help.salesforce.com/articleView?id=sf.bi_direct_data_for_snowflake.htm&type=5)
 
