@@ -13,6 +13,7 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake
 ## An Introduction to Tasty Bytes 
 Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
+******: Need FROSTBYTE-less header
 
 ### Overview
 Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by Snowflake.
@@ -23,7 +24,6 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 
 ### Who is Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
-******: Need FROSTBYTE-less header
 
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
