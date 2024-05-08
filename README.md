@@ -40,10 +40,9 @@ You can submit your own Quickstarts to be published on Snowflake's website by su
   1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
   3. Navigate to the site directory `cd sfquickstarts/site`
-  4. Set the project to use Node v14 by running `nvm use`. If you an encounter an error stating you don't have the correct version installed, run `nvm install`. For more help, see steps 1 and 2 in the Prerequisites above.
-  5. Install node dependencies `npm install`
-  6. Run the site `npm run serve`
-  7. Open a browser to http://localhost:8000/
+  4. Install node dependencies `npm install`
+  5. Run the site `npm run serve`
+  6. Open a browser to http://localhost:8000/
 
 Congratulations! You now have the Snowflake Quickstarts landing page running.
 
