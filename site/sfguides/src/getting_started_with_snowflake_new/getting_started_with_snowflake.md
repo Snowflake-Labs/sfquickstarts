@@ -334,11 +334,21 @@ In the results in the bottom pane, you should see the list of files in the stage
 Before we can load the data into Snowflake, we have to create a file format that matches the data structure. In the worksheet, again add the following command below the rest and execute to create the file format:
 
 ```SQL
-create or replace file format csv type='csv'
-  compression = 'auto' field_delimiter = ',' record_delimiter = '\n'
-  skip_header = 0 field_optionally_enclosed_by = '\042' trim_space = false
-  error_on_column_count_mismatch = false escape = 'none' escape_unenclosed_field = '\134'
-  date_format = 'auto' timestamp_format = 'auto' null_if = ('') comment = 'file format for ingesting data for zero to snowflake';
+CREATE OR REPLACE FILE FORMAT csv
+    TYPE = 'CSV'
+    COMPRESSION = 'AUTO'  -- Automatically determines the compression of files
+    FIELD_DELIMITER = ','  -- Specifies comma as the field delimiter
+    RECORD_DELIMITER = '\n'  -- Specifies newline as the record delimiter
+    SKIP_HEADER = 0  -- No headers to skip, starts reading from the first line
+    FIELD_OPTIONALLY_ENCLOSED_BY = '\042'  -- Fields are optionally enclosed by double quotes (ASCII code 34)
+    TRIM_SPACE = FALSE  -- Spaces are not trimmed from fields
+    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE  -- Does not raise an error if the number of fields in the data file varies
+    ESCAPE = 'NONE'  -- No escape character for special character escaping
+    ESCAPE_UNENCLOSED_FIELD = '\134'  -- Backslash is the escape character for unenclosed fields
+    DATE_FORMAT = 'AUTO'  -- Automatically detects the date format
+    TIMESTAMP_FORMAT = 'AUTO'  -- Automatically detects the timestamp format
+    NULL_IF = ('')  -- Treats empty strings as NULL values
+    COMMENT = 'File format for ingesting data for zero to snowflake';
 ```
 
 ![create file format](assets/4PreLoad_11.png)
@@ -346,7 +356,7 @@ create or replace file format csv type='csv'
 Verify the file format has been created with the correct settings by executing the following command:
 
 ```SQL
-show file formats in database cybersyn;
+SHOW FILE FORMATS IN DATABASE cybersyn;
 ```
 
 The file format created should be listed in the result:
@@ -362,7 +372,7 @@ Navigate to the **Warehouses** tab (under **Admin**). This is where you can view
 
 Note the **+ Warehouse** option in the upper right corner of the top. This is where you can quickly add a new warehouse. However, we want to use the existing warehouse `COMPUTE_WH` included in the 30-day trial environment.
 
-Click the row of the `COMPUTE_WH` warehouse. Then click the **...** (dot dot dot) in the upper right corner text above it to see the actions you can perform on the warehouse. We will use this warehouse to load the data from AWS S3.
+Click the row of the `COMPUTE_WH` warehouse. Then click the **[...]** in the upper right corner text above it to see the actions you can perform on the warehouse. We will use this warehouse to load the data from AWS S3.
 
 ![compute warehouse configure](assets/5Load_1.png)
 
@@ -405,22 +415,20 @@ Now we can run a COPY command to load the data into the `COMPANY_METADATA` table
 
 Navigate back to the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet in the **Worksheets** tab. Make sure the worksheet context is correctly set:
 
-Role: `SYSADMIN`
-Warehouse: `COMPUTE_WH`
-Database: `CYBERSYN`
-Schema: `PUBLIC`
+**Role:** `SYSADMIN`
+**Warehouse:** `COMPUTE_WH`
+**Database:** `CYBERSYN`
+**Schema:** `PUBLIC`
 
 ![worksheet context](assets/5Load_4.png)
 
 Execute the following statements in the worksheet to load the staged data into the table. This may take up to 30 seconds.
 
 ```SQL
-copy into company_metadata from @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ;
+COPY INTO company_metadata FROM @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
 ```
 
-In the result pane, you should see the status of each file that was loaded. Once the load is done, in the **Query Details** pane on the bottom right, you can scroll through the various statuses, error statistics, and visualizations for the last statement executed:
-
-![results load status](assets/5Load_5.png)
+In the result pane, you should see the status of each file that was loaded. Once the load is done, in the **Query Details** pane on the bottom right, you can scroll through the various statuses, error statistics, and visualizations for the last statement executed.
 
 Next, navigate to the **Query History** tab by clicking the **Home** icon and then **Activity** > **Query History**. Select the query at the top of the list, which should be the COPY INTO statement that was last executed. Select the **Query Profile** tab and note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
 
@@ -431,21 +439,17 @@ Now let's reload the `COMPANY_METADATA` table with a larger warehouse to see the
 Go back to the worksheet and use the `TRUNCATE TABLE` command to clear the table of all data and metadata:
 ```SQL
 TRUNCATE TABLE company_metadata;
-```
 
-Verify that the table is empty by running the following command:
-```SQL
+-- Verify that the table is empty by running the following command:
 SELECT * FROM company_metadata LIMIT 10;
 ```
 
 The result should show `Query produced no results`. Change the warehouse size to `LARGE` using the following `ALTER WAREHOUSE`:
 ```SQL
-alter warehouse compute_wh set warehouse_size='large';
-```
+ALTER WAREHOUSE compute_wh SET warehouse_size='large';
 
-Verify the change using the following SHOW WAREHOUSES:
-```SQL
-show warehouses;
+-- Verify the change using the following SHOW WAREHOUSES:
+SHOW WAREHOUSES;
 ```
 
 ![resize context to large in UI step 1](assets/5Load_7.png)
@@ -458,11 +462,8 @@ The size can also be changed using the UI by clicking on the worksheet context b
 Execute the same `COPY INTO` statement as before to load the same data again:
 
 ```SQL
-copy into company_metadata from @cybersyn_company_metadata
-file_format=CSV;
+COPY INTO company_metadata FROM @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
 ```
-
-![compare load durations](assets/5Load_9.png)
 
 Once the load is done, navigate back to the **Queries** page (**Home** icon > **Activity** > **Query History**). Compare the times of the two `COPY INTO` commands. The load using the `Large` warehouse was significantly faster.
 
@@ -716,7 +717,7 @@ Schema: `PUBLIC`
 Run the following query to see a sample of the `company_metadata` data:
 
 ```SQL
-SELECT * FROM company_metadata LIMIT 20;
+SELECT * FROM company_metadata;
 ```
 
 ![sample data query results](assets/6Query_2.png)
@@ -739,6 +740,8 @@ ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Post-Market Close';
 ```
 
+![post-market close query results](assets/6Query_3.png)
+
 > aside positive
 > 
 >  If you have defined a particular database in the worksheet and want to use a table from a different database, you must fully qualify the reference to the other table by providing its database and schema name.
@@ -758,7 +761,7 @@ ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Nasdaq Volume';
 ```
 
-![hourly query results](assets/6Query_3.png)
+![volume query results](assets/6Query_3b.png)
 
 ### Use the Result Cache
 
@@ -876,10 +879,8 @@ In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, run the following DROP comma
 
 ```SQL
 DROP TABLE sec_filings_index;
-```
 
-Run a query on the table:
-```SQL
+-- Run a query on the table:
 SELECT * FROM sec_filings_index LIMIT 10;
 ```
 
