@@ -536,7 +536,7 @@ In the results pane at the bottom of the worksheet, verify that your tables, `SE
 In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, use the following command to create a stage that points to the bucket where the semi-structured JSON data is stored on AWS S3:
 
 ```SQL
-create stage cybersyn_sec_filings
+CREATE STAGE cybersyn_sec_filings
 url = 's3://snowflake-workshop-lab/cybersyn_cpg_sec_filings';
 ```
 
@@ -551,9 +551,7 @@ In the results pane, you should see a list of `.gz` files from S3:
 
 ### Load and Verify the Semi-structured Data
 
-In this section, we will use a warehouse to load the data from the S3 bucket into the `SEC_FILINGS_INDEX` and `SEC_FILINGS_ATTRIBUTES` tables we created earlier.
-
-In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, execute the `COPY` command below to load the data.
+We will now use a warehouse to load the data from an S3 bucket into the tables we created earlier. In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, execute the `COPY` command below to load the data.
 
 Note that you can specify a `FILE FORMAT` object inline in the command. In the previous section where we loaded structured data in CSV format, we had to define a file format to support the CSV structure. Because the JSON data here is well-formed, we are able to simply specify the JSON type and use all the default settings:
 
