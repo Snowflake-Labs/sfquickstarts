@@ -322,7 +322,7 @@ Now let's take a look at the contents of the `cybersyn_company_metadata` stage. 
 Add the following SQL statement below the previous code and then execute:
 
 ```SQL
-list @cybersyn_company_metadata;
+LIST @cybersyn_company_metadata;
 ```
 
 In the results in the bottom pane, you should see the list of files in the stage:
@@ -456,8 +456,7 @@ SHOW WAREHOUSES;
 
 The size can also be changed using the UI by clicking on the worksheet context box, then the **Configure** (3-line) icon on the right side of the context box, and changing `Small` to `Large` in the **Size** drop-down:
 
-![resize context to large in UI step 1](assets/5Load_8.png)
-![resize context to large in UI step 2](assets/5Load_8b.png)
+![resize context to large in UI step 2](assets/5Load_8.png)
 
 Execute the same `COPY INTO` statement as before to load the same data again:
 
@@ -513,12 +512,12 @@ Snowflake can easily load and query semi-structured data such as JSON, Parquet, 
 > 
 >  **Executing Multiple Commands** Remember that you need to execute each command individually. However, you can execute them in sequence together by selecting all of the commands and then clicking the **Play/Run** button (or using the keyboard shortcut).
 
-Next, let's create two tables, `SEC_FILINGS_INDEX` and `SEC_FILINGS_METRICS` to use for loading JSON data. In the worksheet, execute the following `CREATE TABLE` commands:
+Next, let's create two tables, `SEC_FILINGS_INDEX` and `SEC_FILINGS_ATTRIBUTES` to use for loading JSON data. In the worksheet, execute the following `CREATE TABLE` commands:
 
 ```SQL
 CREATE TABLE sec_filings_index (v variant);
 
-CREATE TABLE sec_filings_metrics (v variant);
+CREATE TABLE sec_filings_attributes (v variant);
 ```
 
 Note that Snowflake has a special data type called `VARIANT` that allows storing the entire JSON object as a single row and querying the object directly.
@@ -528,7 +527,7 @@ Note that Snowflake has a special data type called `VARIANT` that allows storing
 >  **Semi-Structured Data Magic**
 The `VARIANT` data type allows Snowflake to ingest semi-structured data without having to predefine the schema.
 
-In the results pane at the bottom of the worksheet, verify that your tables, `SEC_FILINGS_INDEX` and `SEC_FILINGS_METRICS`, were created:
+In the results pane at the bottom of the worksheet, verify that your tables, `SEC_FILINGS_INDEX` and `SEC_FILINGS_ATTRIBUTES`, were created:
 
 ![success message](assets/7SemiStruct_2_1.png)
 
@@ -544,7 +543,7 @@ url = 's3://snowflake-workshop-lab/cybersyn_cpg_sec_filings';
 Now let's take a look at the contents of the `cybersyn_sec_filings` stage. Execute the following `LIST` command to display the list of files:
 
 ```SQL
-list @cybersyn_sec_filings;
+LIST @cybersyn_sec_filings;
 ```
 
 In the results pane, you should see a list of `.gz` files from S3:
@@ -559,8 +558,12 @@ In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, execute the `COPY` command b
 Note that you can specify a `FILE FORMAT` object inline in the command. In the previous section where we loaded structured data in CSV format, we had to define a file format to support the CSV structure. Because the JSON data here is well-formed, we are able to simply specify the JSON type and use all the default settings:
 
 ```SQL
-copy into sec_filings_index
-from @cybersyn_sec_filings
+COPY INTO sec_filings_index
+FROM @cybersyn_sec_filings/cybersyn_sec_report_index.json.gz
+    file_format = (type = json strip_outer_array = true);
+
+COPY INTO sec_filings_attributes
+FROM @cybersyn_sec_filings/cybersyn_sec_report_attributes.json.gz
     file_format = (type = json strip_outer_array = true);
 ```
 
@@ -569,8 +572,8 @@ Verify that each file has a status of `LOADED`:
 
 Now, let's take a look at the data that was loaded:
 ```SQL
-select * from sec_filings_index limit 10;
-select * from sec_filings_attributes limit 10;
+SELECT * FROM sec_filings_index LIMIT 10;
+SELECT * FROM sec_filings_attributes LIMIT 10;
 ```
 
 Click any of the rows to display the formatted JSON in the right panel:
@@ -593,39 +596,39 @@ Snowflake also supports materialized views in which the query results are stored
 Run the following command to create a columnar view of the semi-structured JSON SEC filing data, so it is easier for analysts to understand and query. The CIK corresponds to the Central Index Key, or unique identifier that SEC gives to each filing entity. The ADSH is the document number for any filing submitted to the SEC.
 
 ```SQL
-CREATE OR REPLACE VIEW sec_filing_index_view AS
+CREATE OR REPLACE VIEW sec_filings_index_view AS
 SELECT
-    v:cik::string                   AS cik,
-    v:company_name::string          AS company_name,
-    v:ein::int                      AS ein,
-    v:adsh::string                  AS adsh,
-    v:timestamp_accepted::timestamp AS timestamp_accepted,
-    v:filed_date::date              AS filed_date,
-    v:form_type::string             AS form_type,
-    v:fiscal_period::string         AS fiscal_period,
-    v:fiscal_year::string           AS fiscal_year
-FROM sec_filing_index;
+    v:CIK::string                   AS cik,
+    v:COMPANY_NAME::string          AS company_name,
+    v:EIN::int                      AS ein,
+    v:ADSH::string                  AS adsh,
+    v:TIMESTAMP_ACCEPTED::timestamp AS timestamp_accepted,
+    v:FILED_DATE::date              AS filed_date,
+    v:FORM_TYPE::string             AS form_type,
+    v:FISCAL_PERIOD::string         AS fiscal_period,
+    v:FISCAL_YEAR::string           AS fiscal_year
+FROM sec_filings_index;
 
-CREATE OR REPLACE VIEW sec_filing_attributes_view AS
+CREATE OR REPLACE VIEW sec_filings_attributes_view AS
 SELECT
-    v:variable::string            AS variable,
-    v:cik::string                 AS cik,
-    v:adsh::string                AS adsh,
-    v:measure_description::string AS measure_description,
-    v:tag::string                 AS tag,
-    v:tag_version::string         AS tag_version,
-    v:unit_of_measure::string     AS unit_of_measure,
-    v:value::string               AS value,
-    v:report::int                 AS report,
-    v:statement::string           AS statement,
-    v:period_start_date::date     AS period_start_date,
-    v:period_end_date::date       AS period_end_date,
-    v:covered_qtrs::int           AS covered_qtrs,
-    v:metadata::variant           AS metadata
-FROM sec_filing_attributes;
+    v:VARIABLE::string            AS variable,
+    v:CIK::string                 AS cik,
+    v:ADSH::string                AS adsh,
+    v:MEASURE_DESCRIPTION::string AS measure_description,
+    v:TAG::string                 AS tag,
+    v:TAG_VERSION::string         AS tag_version,
+    v:UNIT_OF_MEASURE::string     AS unit_of_measure,
+    v:VALUE::string               AS value,
+    v:REPORT::int                 AS report,
+    v:STATEMENT::string           AS statement,
+    v:PERIOD_START_DATE::date     AS period_start_date,
+    v:PERIOD_END_DATE::date       AS period_end_date,
+    v:COVERED_QTRS::int           AS covered_qtrs,
+    TRY_PARSE_JSON(v:METADATA)    AS metadata
+FROM sec_filings_attributes;
 ```
 
-SQL dot notation `v:variable` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
+SQL dot notation `v:VARIABLE` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
 The new view should appear as `SEC_FILINGS_INDEX_VIEW` under `CYBERSYN` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
 
@@ -635,7 +638,7 @@ Notice the results look just like a regular structured data source:
 
 ```SQL
 SELECT *
-FROM sec_filing_index_view
+FROM sec_filings_index_view
 LIMIT 20;
 ```
 <!-- ------------------------ -->
@@ -707,10 +710,10 @@ Within a real company, analytics users would likely have a different role than `
 
 Go to the **ZERO_TO_SNOWFLAKE_WITH_CYBERSYN** worksheet and change the warehouse to use the new warehouse you created in the last section. Your worksheet context should be the following:
 
-Role: `SYSADMIN`
-Warehouse: `ANALYTICS_WH (L)`
-Database: `CYBERSYN`
-Schema: `PUBLIC`
+**Role:** `SYSADMIN`
+**Warehouse:** `ANALYTICS_WH (L)`
+**Database:** `CYBERSYN`
+**Schema:** `PUBLIC`
 
 ![sample data query results](assets/6Query_1.png)
 
@@ -824,8 +827,8 @@ WITH data_prep AS (
         att.period_end_date,
         att.covered_qtrs,
         TRIM(att.metadata:"ProductOrService"::STRING) AS product
-    FROM sec_filing_attributes_view att
-    JOIN sec_filing_index_view idx
+    FROM sec_filings_attributes_view att
+    JOIN sec_filings_index_view idx
         ON idx.cik = att.cik AND idx.adsh = att.adsh
     WHERE idx.cik = '0001637459'
         AND idx.form_type IN ('10-K', '10-Q')
@@ -933,18 +936,24 @@ FROM company_metadata;
 
 Normally we would need to scramble and hope we have a backup lying around. In Snowflake, we can simply run a command to find the query ID of the last `UPDATE` command and store it in a variable named `$QUERY_ID`.
 
-```SQL
-set query_id =
-(select query_id from table(information_schema.query_history_by_session (result_limit=>5))
-where query_text like 'update%' order by start_time desc limit 1);
-```
-
 Use Time Travel to recreate the table with the correct company names and verify the company names have been restored:
 ```SQL
+-- Set the session variable for the query_id
+SET query_id = (
+  SELECT query_id
+  FROM TABLE(information_schema.query_history_by_session(result_limit=>5))
+  WHERE query_text LIKE 'UPDATE%'
+  ORDER BY start_time DESC
+  LIMIT 1
+);
+
+-- Use the session variable with the identifier syntax (e.g., $query_id)
 CREATE OR REPLACE TABLE company_metadata AS
-(SELECT * FROM company_metadata before (statement => $query_id));
+SELECT *
+FROM company_metadata
+BEFORE (STATEMENT => $query_id);
 
-
+-- Verify the company names have been restored
 SELECT *
 FROM company_metadata;
 ```
@@ -1068,8 +1077,6 @@ The **Security** tab contains network policies created for the Snowflake account
 
 #### Admin > Billing & Terms
 
-![account usage](assets/9Role_7.png)
-
 The **Billing & Terms** tab contains the payment method for the account:
 - If you are a Snowflake contract customer, the tab shows the name associated with your contract information.
 - If you are an on-demand Snowflake customer, the tab shows the credit card used to pay month-to-month, if one has been entered. If no credit card is on file, you can add one to continue using Snowflake when your trial ends.
@@ -1101,7 +1108,7 @@ Secure data sharing also powers the Snowflake Data Marketplace, which is availab
 
 ### View Existing Shares
 
-In the home page, navigate to **Data** > **Databases**. In the list of databases, look at the **SOURCE** column. You should see two databases with `Local` in the column. These are the two databases we created previously in the lab. The other database, `SNOWFLAKE`, shows `Share` in the column, indicating it's shared from a provider.
+In the home page, navigate to **Data** > **Databases**. In the list of databases, look at the **SOURCE** column. You should see one database with `Local` in the column, which we created previously in the lab. The other database, `SNOWFLAKE`, shows `Share` in the column, indicating it's shared from a provider.
 
 ![arrow over database icon](assets/10Share_1.png)
 
@@ -1121,11 +1128,7 @@ The default name of the share is a generic name with a random numeric value appe
 
 In a real-world scenario, the Account Administrator would next add one or more consumer accounts to the share, but we'll stop here for the purposes of this lab.
 
-Click the **Create Share** button at the bottom of the dialog:
-
-![success message](assets/10Share_4.png)
-
-The dialog closes and the page shows the secure share you created:
+Click the **Create Share** button at the bottom of the dialog. The dialog closes and the page shows the secure share you created.
 
 ![TRIPS_SHARE share](assets/10Share_5.png)
 
