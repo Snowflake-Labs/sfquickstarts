@@ -287,41 +287,41 @@ Duration: 10
   7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Python API code [`06_docker_jupyter_service.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/06_docker_jupyter_service.py) :
   ```Python API
   # Connect as CONTANTAINER_USE_ROLE
-connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
+    connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
 
-try:
+    try:
 
-    root = Root(connection_container_user_role)
+        root = Root(connection_container_user_role)
 
-    # Get the image repository URL
-    #   use role CONTAINER_user_role;
-    #   show image repositories in schema CONTAINER_HOL_DB.PUBLIC;
-    #   // COPY the repository_url field, e.g. org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo
-    #   ```
-    #   ```bash
-    #   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-    repos = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories
-    repo = repos["IMAGE_REPO"].fetch()
+        # Get the image repository URL
+        #   use role CONTAINER_user_role;
+        #   show image repositories in schema CONTAINER_HOL_DB.PUBLIC;
+        #   // COPY the repository_url field, e.g. org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo
+        #   ```
+        #   ```bash
+        #   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
+        repos = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories
+        repo = repos["IMAGE_REPO"].fetch()
 
-    # Extract the registry hostname from the repository URL
-    pattern = r'^[^/]+'
+        # Extract the registry hostname from the repository URL
+        pattern = r'^[^/]+'
 
-    repository_url = repo.repository_url
-    match = re.match(pattern, repository_url)
-    registry_hostname = match.group(0)
+        repository_url = repo.repository_url
+        match = re.match(pattern, repository_url)
+        registry_hostname = match.group(0)
 
-    # Docker client
-    client = docker.from_env()
+        # Docker client
+        client = docker.from_env()
 
-    #   docker login <snowflake_registry_hostname> -u <user_name>
-    #   > prompt for password
-    # Login to the remote registry. Give user name and password for docker login
-    client.login(username = "<username>",
-                        password = "<password>",
-                        registry = registry_hostname,
-                        reauth = True)
-finally:
-    connection_container_user_role.close()
+        #   docker login <snowflake_registry_hostname> -u <user_name>
+        #   > prompt for password
+        # Login to the remote registry. Give user name and password for docker login
+        client.login(username = "<username>",
+                            password = "<password>",
+                            registry = registry_hostname,
+                            reauth = True)
+    finally:
+        connection_container_user_role.close()
   ```
   **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
 
