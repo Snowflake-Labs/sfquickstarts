@@ -28,6 +28,13 @@ Upon completing this quickstart, you will have learned how to perform time serie
 <img src="assets/overview_architecture.png" width="800" />
 
 
+### What You'll Build
+
+By the end of this lab you will have and **end-to-end streaming Time Series Analysis solution**, with a front-end application deployed using Streamlit in Snowflake.
+
+<img src="assets/streamlit_video_summary.gif" />
+
+
 ### What You'll Need
 
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
@@ -37,6 +44,7 @@ Upon completing this quickstart, you will have learned how to perform time serie
 > aside negative
 > 
 > It is recommended to use a personal GitHub account which will have permissions to deploy a GitHub Codespace.
+>
 
 <!-- ------------------------ -->
 ## Lab Setup
@@ -1356,6 +1364,11 @@ ORDER BY tagname, timestamp
 ;
 ```
 
+> aside positive
+> 
+>  You have now built your own **Time Series Analysis** functions and procedures, these can be leverage within applications working with time series data, we can now look at deploying a Time Series application.
+>
+
 <!-- ------------------------ -->
 ## Streamlit in Snowflake with Continuous Ingestion
 Duration: 10
@@ -1459,13 +1472,36 @@ In the **GitHub Codespace VS Code**:
 
 ### Step 3 - Launch the Streamlit Application
 
-Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message "Streamlit successfully deployed" and also provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply presss Command/Ctrl and click the link to launch the Streamlit application
+Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message **"Streamlit successfully deployed"** and also provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply press Command/Ctrl and click the link to launch the Streamlit application.
 
 <img src="assets/launch_streamlit.png" />
 
 
-### Working with Streamlit Application :
+### Step 4 - Working with Streamlit Application
 
+The **Streamlit in Snowflake** application contains several pages, accessible via the left menu, that cover the following query profiles:
+* **Raw** Time Series Data
+* **Statistical Aggregate** Time Series Data
+* **Time Binning / Downasampling** Time Series Data
+
+Each page allows for selecting one or more tags, along with the option to change reporting times via a filtering menu, and the output will show with a chart visualitation as well as a table with the specific data set selected.
+
+<img src="assets/streamlit_video_summary.gif" />
+
+**Streamlit Features**
+
+At the bottom of each page there are options to:
+* **Select** how much data is displayed in the table along with the order
+* **Download as CSV** - To download the data in CSV file format
+* **Supporting Detail** - Shows the queries being run
+* **Refresh Mode** - Contains a toggle to enable auto refresh and see new data automatically
+
+<img src="assets/streamlit_video_features.gif" />
+
+> aside positive
+> 
+>  You have now successfully deployed a **Time Series Application** using Streamlit in Snowflake. This will allow end users easy access to visualise time series data as well as run their own **Time Series Analysis** on all Time Series data available in Snowflake.
+>
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -1501,8 +1537,10 @@ CLEANUP SCRIPT COMPLETED
 ## Conclusion and Resources
 Duration: 2
 
-**Congratulations!** You've successfully deployed an end-to-end time series analytics solution with streaming data in Snowflake.
-
+> aside positive
+> 
+> **Congratulations!** You've successfully deployed an end-to-end time series analytics solution with streaming data in Snowflake.
+>
 
 ### What You Learned
 
