@@ -39,7 +39,7 @@ First, we will procure free data from the Snowflake Marketplace and load it into
 Along the way, you will use R to analyze trends in web traffic for the websites of large corporations.
 You can follow along with this quickstart guide,
 or look at the materials provided in the accompanying repository:
-<https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/analyze_data_with_r_using_posit_workbench_and_snowflake>.
+<https://github.com/posit-dev/snowflake-posit-quickstart-r>.
 
 ## Setup
 Duration: 3
@@ -150,10 +150,10 @@ in the familiar RStudio Pro IDE. Since the IDE is provided by the Posit Workbenc
 
 #### Step 5: Access the Quickstart Materials
 
-This Quickstart will step you through the analysis contained in <https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/analyze_data_with_r_using_posit_workbench_and_snowflake/quarto.qmd>.
+This Quickstart will step you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd>.
 To follow along, open the file in your RStudio Pro IDE. You could do this by:
 
-1. **Simple copy-and-paste** Go to File > New File > Quarto Document and then copy the contents of [quarto.qmd](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/analyze_data_with_r_using_posit_workbench_and_snowflake/quarto.qmd) into your new file.
+1. **Simple copy-and-paste** Go to File > New File > Quarto Document and then copy the contents of [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/quarto.qmd) into your new file.
 2. **Starting a new project linked to the github repo.** To do this:
 
     1.  Go to File > New Project in the RStudio IDE menu bar.
@@ -657,7 +657,7 @@ Now that we've accumulated some insights, let's think about how we might present
 ## Build Reports and Dashboards with Quarto
 Duration: 2
 
-We've conveniently written our analysis in a Quarto (.qmd) document, [quarto.qmd](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/analyze_data_with_r_using_posit_workbench_and_snowflake/quarto.qmd). [Quarto](https://quarto.org/)
+We've conveniently written our analysis in a Quarto (.qmd) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
 is an open-source publishing system that makes it easy to create
 [data products](https://quarto.org/docs/guide/) such as
 [documents](https://quarto.org/docs/output-formats/html-basics.html),
@@ -698,7 +698,7 @@ Duration: 2
 Our visual analysis compared two specific websites: airbnb.com and vrbo.com, but we could reuse the code to compare any combination of websites. An efficient way to do this is with an interactive [Shiny](https://shiny.posit.co/) app.
 
 We've prepared an example Shiny app in the directory:
-<https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/analyze_data_with_r_using_posit_workbench_and_snowflake>
+<https://github.com/posit-dev/snowflake-posit-quickstart-r>
 
 ![](assets/shiny/shiny.png)
 
