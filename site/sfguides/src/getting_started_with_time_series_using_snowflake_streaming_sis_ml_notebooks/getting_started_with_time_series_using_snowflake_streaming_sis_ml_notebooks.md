@@ -30,7 +30,7 @@ Upon completing this quickstart, you will have learned how to perform time serie
 
 ### What You'll Build
 
-By the end of this lab you will have and **end-to-end streaming Time Series Analysis solution**, with a front-end application deployed using Streamlit in Snowflake.
+By the end of this lab you will have an **end-to-end streaming Time Series Analysis solution**, with a front-end application deployed using Streamlit in Snowflake.
 
 <img src="assets/streamlit_video_summary.gif" />
 
