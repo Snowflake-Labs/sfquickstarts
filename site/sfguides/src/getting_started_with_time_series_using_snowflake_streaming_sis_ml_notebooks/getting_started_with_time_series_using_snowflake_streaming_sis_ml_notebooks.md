@@ -39,7 +39,7 @@ By the end of this lab you will have an **end-to-end streaming Time Series Analy
 
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - [Sign-up for a Snowflake Trial](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) OR have access to an existing Snowflake account with the ACCOUNTADMIN role. Select the Enterprise edition, AWS as a cloud provider.
-- Access to a personal GitHub account to fork the QuickStart repo and create [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). Codespaces offer a hosted development environment. GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 or 4 node environment, which should be enough to work through this lab.
+- Access to a **personal [GitHub](https://github.com/signup) account** to fork the QuickStart repo and create [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). Codespaces offer a hosted development environment. GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 or 4 node environment, which should be enough to work through this lab.
 
 > aside negative
 > 
@@ -80,6 +80,13 @@ Now create the GitHub Codespace.
 
 <img src="assets/labsetup_createcodespace.png" width="800" />
 
+> aside negative
+>
+> If you are seeing the message **Codespace access limited**, you may be logged into Github with an organization account. Please [Sign up to GitHub](https://github.com/signup) using a personal account and retry the **Lab Setup**.
+>
+
+<img src="assets/labsetup_codespace_limited.png" />
+
 > aside positive
 > 
 > This will open a new browser window and begin **Setting up your codespace**. The Github Codespace deployment will take several minutes to set up the entire environment for this lab.
@@ -97,7 +104,7 @@ Now create the GitHub Codespace.
 <img src="assets/labsetup_postcreate.png" />
 
 
-### Github Codespace Deployment Summary
+### INFO: Github Codespace Deployment Summary
 
 Once complete you should see a hosted web-based version of **VS Code Integrated Development Environment (IDE)** in your browser with your forked repository.
 
@@ -124,10 +131,12 @@ To activate the virtual environment:
 
 <img src="assets/labsetup_condaactivate.png" />
 
+<img src="assets/labsetup_condaactivated.png" />
+
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
 
-### Step 4 - Configure Snowflake Account Connection Configurations
+### Step 4 - Update Snowflake Account Connection Identifiers
 
 1. Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
 
@@ -172,7 +181,7 @@ SELECT SYSTEM$ALLOWLIST();
 <img src="assets/labsetup_snowconnected.png" />
 
 
-### Step 6 - Update Snowflake Setup Worksheet
+### Step 6 - Expand Snowflake Worksheets Folder
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
 
@@ -183,24 +192,24 @@ SELECT SYSTEM$ALLOWLIST();
 > We'll need to update the setup worksheet with your **PUBLIC KEY** to be used during the initial Snowflake setup.
 
 
-### Retrieve Snowflake Private Key-Pair
+### INFO: Retrieve Snowflake Private Key-Pair
 As part of the GitHub Codespace setup, an OpenSSL Private Key-pair was generated in the VS Code `keys` directory.
 
 Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be needed in the setup worksheet.
 
 > aside negative
 >
-> Only the **PUBLIC KEY** value is required, which is the section between:
+> Only the **PUBLIC KEY** value is required, which is the section **between**
 >
 > `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----`
 >
 > ensure you **DO NOT** copy these lines.
 
 
-### Update Snowflake Setup Worksheet with Lab Provisioned PUBLIC KEY
-Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
+### Step 7 - Update Snowflake "Setup" Worksheet with Lab Provisioned PUBLIC KEY
+1. Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
-**Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** retrieved from the `keys/rsa_key.pub` file.
+2. **Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** retrieved from the `keys/rsa_key.pub` file.
 
 <img src="assets/labsetup_rsakey.png" />
 
@@ -519,8 +528,8 @@ Dynamic Tables can also be chained together to create a DAG for more complex dat
 ### Step 1 - Model Time Series Data with Dynamic Tables
 
 For the IoT streaming data we'll setup two Dynamic Tables in a simple Dimension and Fact model:
-- DT_TS_TAG_METADATA (Dimension): Containing Tag Metadata such as tag names, sourcing, and data types
-- DT_TS_TAG_READINGS (Fact): Containing the readings from each IoT sensor in raw and numeric format
+- **DT_TS_TAG_METADATA (Dimension)**: Containing Tag Metadata such as tag names, sourcing, and data types
+- **DT_TS_TAG_READINGS (Fact)**: Containing the readings from each IoT sensor in raw and numeric format
 
 <img src="assets/model_dynamictables.png" />
 
@@ -584,6 +593,10 @@ The Dynamic Tables are now set up to continuously transform ingested streaming d
 
 <img src="assets/model_analyticviews.png" />
 
+We'll create a set of analytics views similar to the Dynamic Tables with a subset of columns in the **ANALYTICS** schema:
+- **TS_TAG_REFERENCE (Dimension)**: Containing Tag Metadata such as tag names, sourcing, and data types
+- **TS_TAG_READINGS (Fact)**: Containing the readings from each IoT sensor in raw and numeric format
+
 In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` and run the **Analytics Views Setup** scripts.
 
 ```sql
@@ -615,7 +628,7 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 
 > aside positive
 > 
->  Data is now **modeled in Snowflake**, and we can now proceed to analyze the data using Snowflake time series functions.
+>  Data is now **modeled in Snowflake** and available in the **ANALYTICS** schema, and we can now proceed to analyze the data using Snowflake time series functions.
 >
 
 <!-- ------------------------ -->
@@ -1438,17 +1451,28 @@ In the **GitHub Codespace VS Code**:
 
 <img src="assets/labsetup_newterminal.png" />
 
-2. Activate `hol-timeseries` python virtual environment
+2. Activate `hol-timeseries` python virtual environment by running `conda activate hol-timeseries`
 
 ```bash
 conda activate hol-timeseries
 ```
 
-3. Run the following Snowflake CLI command to deploy the Streamlit application
+<img src="assets/labsetup_condaactivate.png" />
+
+<img src="assets/labsetup_condaactivated.png" />
+
+3. **Copy and run** the following Snowflake CLI command **into the Terminal** to deploy the Streamlit application
 
 ```bash
 snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
 ```
+
+> aside negative
+> 
+>  The **GitHub Codespace** may prompt to allow pasting into **VSCode**, select **Allow** if prompted.
+>
+
+<img src="assets/streamlit_codespace_paste.png" />
 
 **Streamlit Deploy with Snowflake CLI**
 
