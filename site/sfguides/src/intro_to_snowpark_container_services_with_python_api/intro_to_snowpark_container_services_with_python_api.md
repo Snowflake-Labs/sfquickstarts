@@ -65,7 +65,7 @@ Duration: 5
 
 Run the following Python API code in [`00_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/00_setup.py) using the Snowpark Python Connector and Python API to create the role, database, warehouse, and stage that we need to get started:
 ```Python API
-  # create a SnowflakeConnection instance
+# create a SnowflakeConnection instance
 connection_acct_admin = connect(**CONNECTION_PARAMETERS_ACCOUNT_ADMIN)
 
 try:
@@ -111,12 +111,8 @@ try:
         privileges=[Privileges.usage],
     ))
 
-    # Connect as CONTANTAINER_USE_ROLE
-    connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
-
-    # create a root as the entry point for all object
-    root = Root(connection_container_user_role)
-
+    # USE ROLE CONTANTAINER_USE_ROLE
+    root.session.use_role("CONTANTAINER_USE_ROLE")
 
     # CREATE OR REPLACE DATABASE CONTAINER_HOL_DB;
     root.databases.create(Database(
@@ -136,28 +132,23 @@ try:
         comment="This is a Container Quick Start Guide warehouse"
     ), mode=CreateMode.or_replace)
 
-    try:
-        # CREATE STAGE IF NOT EXISTS specs
-        # ENCRYPTION = (TYPE='SNOWFLAKE_SSE');
-        root.schemas[CONNECTION_PARAMETERS_CONTAINER_USER_ROLE.get("schema")].stages.create(
-            Stage(
-                name="specs",
-                encryption=Type(type=Types.SNOWFLAKE_SSE)
-        ))
+    # CREATE STAGE IF NOT EXISTS specs
+    # ENCRYPTION = (TYPE='SNOWFLAKE_SSE');
+    root.schemas[CONNECTION_PARAMETERS_ACCOUNT_ADMIN.get("schema")].stages.create(
+        Stage(
+            name="specs",
+            encryption=Type(type=Types.SNOWFLAKE_SSE)
+    ))
 
-        # CREATE STAGE IF NOT EXISTS volumes
-        # ENCRYPTION = (TYPE='SNOWFLAKE_SSE')
-        # DIRECTORY = (ENABLE = TRUE);
-        root.schemas[CONNECTION_PARAMETERS_CONTAINER_USER_ROLE.get("schema")].stages.create(
-            Stage(
-                name="volumes",
-                encryption=Type(type=Types.SNOWFLAKE_SSE),
-                directory=DIRECTORY_TABLE(enable="true")
-        ))
-
-    finally:
-        connection_container_user_role.close()
-
+    # CREATE STAGE IF NOT EXISTS volumes
+    # ENCRYPTION = (TYPE='SNOWFLAKE_SSE')
+    # DIRECTORY = (ENABLE = TRUE);
+    root.schemas[CONNECTION_PARAMETERS_ACCOUNT_ADMIN.get("schema")].stages.create(
+        Stage(
+            name="volumes",
+            encryption=Type(type=Types.SNOWFLAKE_SSE),
+            directory=DIRECTORY_TABLE(enable="true")
+    ))
     # create collection objects as the entry
 finally:
     connection_acct_admin.close()
@@ -202,12 +193,8 @@ finally:
 Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create
 our first [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool), and our [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository)
 ```Python API
-# Connect as CONTANTAINER_USE_ROLE
-connection_container_user_role = connect(**CONNECTION_PARAMETERS_CONTAINER_USER_ROLE)
-
-try:
-    # create a root as the entry point for all object
-    root = Root(connection_container_user_role)
+    # USE ROLE CONTANTAINER_USE_ROLE
+    root.session.use_role("CONTANTAINER_USE_ROLE")
 
     # CREATE COMPUTE POOL IF NOT EXISTS CONTAINER_HOL_POOL
     # MIN_NODES = 1
@@ -229,10 +216,6 @@ try:
     itr_data = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories.iter()
     for image_repo in itr_data:
         print(image_repo)
-
-finally:
-    connection_container_user_role.close()
-  
 ```
 - The [OAuth security integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration) will allow us to login to our UI-based services using our web browser and Snowflake credentials
 - The [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) will allow our services to reach outside of Snowflake to the public internet
