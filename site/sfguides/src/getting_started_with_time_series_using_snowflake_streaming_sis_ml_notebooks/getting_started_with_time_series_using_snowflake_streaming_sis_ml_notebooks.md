@@ -189,7 +189,7 @@ SELECT SYSTEM$ALLOWLIST();
 
 > aside negative
 >
-> We'll need to update the setup worksheet with your **PUBLIC KEY** to be used during the initial Snowflake setup.
+> We'll need to update the **setup worksheet** with your **PUBLIC KEY** to be used during the initial Snowflake setup.
 
 
 ### INFO: Retrieve Snowflake Private Key-Pair
@@ -510,8 +510,6 @@ Duration: 5
 Now that data is streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be transforming the data from the JSON **VARIANT** format into a tabular format by leveraging Snowflake **Dynamic Tables**, to ensure that data streamed into Snowflake will continuously update the analytics layers.
 
 Along with setting up Dynamic Tables for continuous loading, we'll also deploy some analytics views for the consumer serving layer. This will allow for specific columns of data to be exposed to the end users and applications.
-
-Finally, we'll start another continuous stream of IoT data to see the Dynamic Tables continuously update.
 
 <img src="assets/model_dataengineering.png" />
 
