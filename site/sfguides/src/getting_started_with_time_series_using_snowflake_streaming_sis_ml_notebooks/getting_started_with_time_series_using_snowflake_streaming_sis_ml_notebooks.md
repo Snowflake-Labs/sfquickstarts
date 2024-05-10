@@ -103,7 +103,7 @@ Once complete you should see a hosted web-based version of **VS Code Integrated 
 
 <img src="assets/labsetup_vscode.png" width="800" />
 
-The Github Codespace deployment will contain all the resource needed to complete the lab.
+The Github Codespace deployment will contain all the resources needed to complete the lab.
 
 > aside negative
 >
@@ -426,6 +426,8 @@ The query should return a single channel `CHANNEL_1_TEST` opened to the `RAW_TS_
 
 <img src="assets/snowpipe_channeltest.png" />
 
+With a channel now opened to the table we are ready to stream data into the table!
+
 
 ### Step 3 - Load a Simulated IoT Data Set
 
@@ -531,7 +533,7 @@ USE WAREHOUSE HOL_TRANSFORM_WH;
 
 /* Tag metadata (Dimension)
 TAGNAME - uppercase concatenation of namespace and tag name
-QUALIFY - de-duplication filter to only include unique tag names
+QUALIFY - deduplication filter to only include unique tag names
 */
 CREATE OR REPLACE DYNAMIC TABLE HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_METADATA
 TARGET_LAG = '1 MINUTE'
@@ -550,7 +552,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 /* Tag readings (Fact)
 TAGNAME - uppercase concatenation of namespace and tag name
-QUALIFY - de-duplication filter to only include unique tag readings based on tagname and timestamp
+QUALIFY - deduplication filter to only include unique tag readings based on tagname and timestamp
 */
 CREATE OR REPLACE DYNAMIC TABLE HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS
 TARGET_LAG = '1 MINUTE'
@@ -633,7 +635,7 @@ The following query profiles will be covered in this section.
 | Math [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [MIN](https://docs.snowflake.com/en/sql-reference/functions/min), [MAX](https://docs.snowflake.com/en/sql-reference/functions/max), [AVG](https://docs.snowflake.com/en/sql-reference/functions/avg), [COUNT](https://docs.snowflake.com/en/sql-reference/functions/count), [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum), [APPROX_PERCENTILE](https://docs.snowflake.com/en/sql-reference/functions/approx_percentile) | Mathematical calculations over values within a time range. |
 | Distribution [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [STDDEV](https://docs.snowflake.com/en/sql-reference/functions/stddev), [VARIANCE](https://docs.snowflake.com/en/sql-reference/functions/variance), [KURTOSIS](https://docs.snowflake.com/en/sql-reference/functions/kurtosis), [SKEW](https://docs.snowflake.com/en/sql-reference/functions/skew) | Statistics on distributions of data. |
 | [Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) | [LAG](https://docs.snowflake.com/en/sql-reference/functions/lag), [LEAD](https://docs.snowflake.com/en/sql-reference/functions/lead), [FIRST_VALUE](https://docs.snowflake.com/en/sql-reference/functions/first_value), [LAST_VALUE](https://docs.snowflake.com/en/sql-reference/functions/last_value), ROWS BETWEEN, RANGE BETWEEN | Functions over a group of related rows. |
-| Time Gap Filling | [GENERATOR](https://docs.snowflake.com/en/sql-reference/functions/generator), [ROW_NUMBER](https://docs.snowflake.com/en/sql-reference/functions/row_number), [SEQ](https://docs.snowflake.com/en/sql-reference/functions/seq1) | Generating time stamps to fill time gaps. |
+| Time Gap Filling | [GENERATOR](https://docs.snowflake.com/en/sql-reference/functions/generator), [ROW_NUMBER](https://docs.snowflake.com/en/sql-reference/functions/row_number), [SEQ](https://docs.snowflake.com/en/sql-reference/functions/seq1) | Generating timestamps to fill time gaps. |
 | Downsampling / Time Binning | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
 | Aligning time series datasets | [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly, and interpolating values. |
 
@@ -692,7 +694,7 @@ The following set of queries contains various aggregates covering **counts, math
 /* COUNT AND COUNT DISTINCT
 Retrieve counts within the time boundary
 COUNT - Count of all values
-COUNT DISTINT - Count of unique values
+COUNT DISTINCT - Count of unique values
 Counts can work with both varchar and numeric data types
 */
 SELECT TAGNAME || '~COUNT_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, COUNT(VALUE) AS VALUE
@@ -778,12 +780,12 @@ ORDER BY TAGNAME
 
 ```sql
 /* DISTRIBUTIONS - sample distributions statistics
-Retrieve distrition sample statistics within the time boundary
+Retrieve distribution sample statistics within the time boundary
 STDDEV - Closeness to the mean/average of the distribution
 VARIANCE - Spread between numbers in the time boundary
 KURTOSIS - Measure of outliers occuring
 SKEW - Left tail (negative) and right tail (positive) distribution skew
-Distributionas can work with numerical data types
+Distributions can work with numerical data types
 */
 SELECT TAGNAME || '~STDDEV_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
@@ -1005,11 +1007,11 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 ### Downsampling Time Series Data
 
-Downsampling is used to decreasing the frequency of time samples, such as from seconds to minutes, by placing time series data into fixed time intervals using aggregate operations on the existing values within each time interval.
+Downsampling is used to decrease the frequency of time samples, such as from seconds to minutes, by placing time series data into fixed time intervals using aggregate operations on the existing values within each time interval.
 
-**Time Binning - 1min Aggregate - START Label**
+**Time Binning - 1 min Aggregate - START Label**
 ```sql
-/* TIME BINNING - 1min AGGREGATE with START label
+/* TIME BINNING - 1 min AGGREGATE with START label
 Create a downsampled time series data set with 1 minute aggregates, showing the START timestamp label
 COUNT - Count of values within the time bin
 SUM - Sum of values within the time bin
@@ -1032,9 +1034,9 @@ ORDER BY TAGNAME, TIMESTAMP
 
 <img src="assets/analysis_query_timebin_start.png" />
 
-**Time Binning - 1min Aggregate - END Label**
+**Time Binning - 1 min Aggregate - END Label**
 ```sql
-/* TIME BINNING - 1min AGGREGATE with END label
+/* TIME BINNING - 1 min AGGREGATE with END label
 Create a downsampled time series data set with 1 minute aggregates, showing the START timestamp label
 COUNT - Count of values within the time bin
 SUM - Sum of values within the time bin
@@ -1060,10 +1062,10 @@ ORDER BY TAGNAME, TIMESTAMP
 
 ### Aligning Time Series Data
 
-Often you will need to align two data set that may have differing time frequencies. To do this you can utilize the Time Series ASOF join to pair closely matching records based on timestamps.
+Often you will need to align two data sets that may have differing time frequencies. To do this you can utilize the Time Series ASOF join to pair closely matching records based on timestamps.
 
 ```sql
-/* ASOF JOIN - Align a 1sec tag with a 5sec tag
+/* ASOF JOIN - Align a 1 second tag with a 5 second tag
 Using the ASOF JOIN two data sets can be aligned by applying a matching condition to pair closely aligned timestamps and values.
 */
 SELECT ONE_SEC.TAGNAME AS ONE_SEC_TAGNAME, ONE_SEC.TIMESTAMP AS ONE_SEC_TIMESTAMP, ONE_SEC.VALUE_NUMERIC AS ONE_SEC_VALUE, FIVE_SEC.VALUE_NUMERIC AS FIVE_SEC_VALUE, FIVE_SEC.TAGNAME AS FIVE_SEC_TAGNAME, FIVE_SEC.TIMESTAMP AS FIVE_SEC_TIMESTAMP
@@ -1216,7 +1218,7 @@ $$
 3. Run the **Create Interpolate Procedure** Script
 
 ```sql
--- Add helper precedure to accept start and end times, and return either LOCF or Linear Interpolated Values
+-- Add helper procedure to accept start and end times, and return either LOCF or Linear Interpolated Values
 CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN (
     V_TAGLIST VARCHAR,
     V_FROM_TIME TIMESTAMP_NTZ,
@@ -1366,7 +1368,7 @@ ORDER BY tagname, timestamp
 
 > aside positive
 > 
->  You have now built your own **Time Series Analysis** functions and procedures, these can be leverage within applications working with time series data, we can now look at deploying a Time Series application.
+>  You have now built your own **Time Series Analysis** functions and procedures, these can be called within applications working with time series data. We can now look at deploying a Time Series application.
 >
 
 <!-- ------------------------ -->
@@ -1420,7 +1422,7 @@ STREAMLIT SCRIPT COMPLETED
 
 > aside negative
 > 
->  There are **EXTERNAL ACTIVITY** sections in the worksheet, this will covered in the next step.
+>  There are **EXTERNAL ACTIVITY** sections in the worksheet, this will be covered in the next step.
 >
 
 
@@ -1444,6 +1446,8 @@ conda activate hol-timeseries
 snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
 ```
 
+**Streamlit Deploy with Snowflake CLI**
+
 This command does the following:
 
 - Deploys the Streamlit application using the Snowflake account details mentioned in the ".snowflake/config.toml" file
@@ -1453,7 +1457,89 @@ This command does the following:
 - --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
 
 
-### Step 2 - Start a Continuous Simulated Stream
+### Step 2 - Launch the Streamlit Application
+
+Once the Streamlit application is successfully deployed, Snowflake CLI will display the message **"Streamlit successfully deployed and available"** and will provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply press Command/Ctrl and click the link to launch the Streamlit application.
+
+<img src="assets/streamlit_launch.png" />
+
+
+### INFO: Working with the Streamlit Application
+
+The **Streamlit in Snowflake** application contains several pages, accessible via the left menu, that cover the following Time Series queries:
+* **Raw** Time Series Data
+* **Statistical Aggregate** Time Series Data
+* **Time Binning / Downsampling** Time Series Data
+
+<img src="assets/streamlit_video_summary.gif" />
+
+**Filtering Menu**
+
+Each page has a filtering menu to:
+* Select one or more tags
+* Change reporting time selection
+* Set the sample size of chart visualizations
+* Select various aggregations
+
+<img src="assets/streamlit_video_menu.gif" />
+
+**Streamlit Features**
+
+At the bottom of each page there are options to:
+* **Select** how much data is displayed in the table along with the order
+* **Download as CSV** - To download the data in CSV file format
+* **Supporting Detail** - Shows the queries being run
+* **Refresh Mode** - Contains a toggle to enable auto refresh and see new data automatically
+
+<img src="assets/streamlit_video_features.gif" />
+
+### Step 3 - Query Time Series Data using Streamlit in Snowflake
+
+The initial data set contains two weeks of data loaded for 1-Jan-2024 to 14-Jan-2024. Let's query this using the Streamlit application.
+
+Open the **Streamlit Application**:
+
+1. Select the **TS Raw** page
+
+2. From **Select Tag Name** choose the `/IOT/SENSOR/TAG101`
+
+3. For **Start Date** select `1-Jan-2024`
+
+4. For **Start Time** select `00:00`
+
+5. For **End Date** select `1-Jan-2024`
+
+6. For **End Time** select `04:00`
+
+<img src="assets/streamlit_query_filter.png" />
+
+> aside positive
+> 
+> **Streamlit** will automatically refresh the page after making filter selections.
+>
+> Review the chart and table detail.
+>
+
+7. Select the **TS Aggregates** page
+
+    - The aggregates page will show high level statistical detail for the selected tag and time period.
+
+8. Select the **TS Binning** page
+
+    - The binning page shows a 1 minute downsampled average for the selected tag and time period.
+
+9. Try changing the **Select Aggregation Method** to `MIN` 
+
+    - This will now show the 1 minute minimums for the tag and time period
+
+10. Try changing the **Label Position** to `START`
+
+    - The **Tag Data** table will now show the **Start** timestamp for each minute
+
+
+### Step 4 - Start a Continuous Simulated Stream
+
+We can now start a continuous stream of data into Snowflake, similar to the initial streaming load, to simulate IoT device data streaming in near real-time to Snowflake.
 
 <img src="assets/model_streamingclient.png" />
 
@@ -1469,38 +1555,25 @@ In the **GitHub Codespace VS Code**:
 ./Run_Slooow.sh
 ```
 
+> aside positive
+> 
+> If there are no errors, IoT data will now be **streaming into Snowflake**.
+>
 
-### Step 3 - Launch the Streamlit Application
+4. Back **in the Streamlit application** try enabling `Auto Refresh` by `Expanding Refresh Mode > Toggle Auto Refresh`
 
-Once the Streamlit app is successfully deployed, the Snowflake CLI will display the message **"Streamlit successfully deployed"** and also provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply press Command/Ctrl and click the link to launch the Streamlit application.
+    - The charts and data should now start to automatically update with new data streaming into Snowflake every minute.
 
-<img src="assets/launch_streamlit.png" />
+5. Select the **TS Raw** page to see the raw data
 
+6. Try adding `/IOT/SENSOR/401` to the **Select Tag Names** filter
 
-### Step 4 - Working with Streamlit Application
+    - The charts and data should now contain two tags with the data updating every minute.
 
-The **Streamlit in Snowflake** application contains several pages, accessible via the left menu, that cover the following query profiles:
-* **Raw** Time Series Data
-* **Statistical Aggregate** Time Series Data
-* **Time Binning / Downasampling** Time Series Data
-
-Each page allows for selecting one or more tags, along with the option to change reporting times via a filtering menu, and the output will show with a chart visualitation as well as a table with the specific data set selected.
-
-<img src="assets/streamlit_video_summary.gif" />
-
-**Streamlit Features**
-
-At the bottom of each page there are options to:
-* **Select** how much data is displayed in the table along with the order
-* **Download as CSV** - To download the data in CSV file format
-* **Supporting Detail** - Shows the queries being run
-* **Refresh Mode** - Contains a toggle to enable auto refresh and see new data automatically
-
-<img src="assets/streamlit_video_features.gif" />
 
 > aside positive
 > 
->  You have now successfully deployed a **Time Series Application** using Streamlit in Snowflake. This will allow end users easy access to visualise time series data as well as run their own **Time Series Analysis** on all Time Series data available in Snowflake.
+>  You have now successfully deployed a **Time Series Application** using Streamlit in Snowflake. This will allow end users easy access to visualize time series data as well as run their own **Time Series Analysis** on all Time Series data available in Snowflake.
 >
 
 <!-- ------------------------ -->
