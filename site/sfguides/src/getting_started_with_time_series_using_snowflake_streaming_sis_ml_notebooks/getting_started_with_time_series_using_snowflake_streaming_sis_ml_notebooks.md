@@ -348,7 +348,7 @@ Duration: 5
 
 With the foundational objects setup, we can now deploy a staging table to stream time series data into Snowflake via a Snowpipe Streaming client.
 
-For this lab a Java IOT Simulator Client has been created to stream IoT sensor readings into Snowflake.
+For this lab a Java IOT Simulator Client application has been created to stream IoT sensor readings into Snowflake.
 
 <img src="assets/snowpipe_streamingest.png" />
 
@@ -381,8 +381,8 @@ COMMENT = 'IOTSTREAM staging table.'
 ```
 
 The IoT data will be streamed into Snowflake in a similar [schema format as Kafka](https://docs.snowflake.com/en/user-guide/kafka-connector-overview#schema-of-tables-for-kafka-topics) which contains two columns:
-- RECORD_CONTENT. This contains the Kafka message.
-- RECORD_METADATA. This contains metadata about the message, for example, the topic from which the message was read.
+- **RECORD_CONTENT** - This contains the Kafka message.
+- **RECORD_METADATA** - This contains metadata about the message, for example, the topic from which the message was read.
 
 > aside negative
 > 
@@ -424,8 +424,13 @@ In the **GitHub Codespace VS Code**:
 ./Test.sh
 ```
 
-If **successful**, it will return:
-`** Successfully Connected, Test complete! **`
+> aside positive
+> 
+> If **successful**, it will return:
+> `** Successfully Connected, Test complete! **`
+>
+> This will confirm that the Java streaming client is able to connect to Snowflake, and is able to establish a channel to the target table.
+>
 
 4. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and run the `SHOW CHANNELS` command to confirm a channel is now open to Snowflake.
 
@@ -446,7 +451,7 @@ With the channel connection being successful, we can now load the IoT data set, 
 
 <img src="assets/snowpipe_streamingclient.png" />
 
-The simulated IoT dataset contains six sensor device tags at different frequencies, within a single **namespace**. A namespace generally represents a grouping of unique tags.
+The simulated IoT dataset contains six sensor device tags at different frequencies, within a single **namespace** called **"IOT"**.
 
 | NAMESPACE | TAGNAME | FREQUENCY |
 | --- | --- | --- |
@@ -464,12 +469,25 @@ The simulated IoT dataset contains six sensor device tags at different frequenci
 ./Run_MAX.sh
 ```
 
+> aside positive
+> 
+> The Java client application is being called using a Terminal shell script. The client accepts various speed parameters to change the number of rows that are streamed. The "MAX" script will send as many rows as the device will allow.
+>
+
 2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and view the streamed records.
 
 ```sql
 -- Check stream table data
 SELECT * FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA LIMIT 10;
 ```
+
+- **RECORD_CONTENT** - This contains the IOT Tag reading.
+
+<img src="assets/snowpipe_record_content.png" />
+
+- **RECORD_METADATA** - This contains metadata about IOT Tag reading.
+
+<img src="assets/snowpipe_record_meta.png" />
 
 Each IoT device reading is a JSON payload, transmitted in the following Kafka like format:
 ```json
@@ -507,7 +525,7 @@ Each IoT device reading is a JSON payload, transmitted in the following Kafka li
 ## Data Modeling and Transformation
 Duration: 5
 
-Now that data is streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be transforming the data from the JSON **VARIANT** format into a tabular format by leveraging Snowflake **Dynamic Tables**, to ensure that data streamed into Snowflake will continuously update the analytics layers.
+Now that data has been streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be transforming the data from the **JSON VARIANT** format into a tabular format. Using Snowflake **Dynamic Tables**, the data streamed into Snowflake will continuously update the analytics layers.
 
 Along with setting up Dynamic Tables for continuous loading, we'll also deploy some analytics views for the consumer serving layer. This will allow for specific columns of data to be exposed to the end users and applications.
 
@@ -581,13 +599,13 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 > aside positive
 > 
->  Dynamic tables have a defined [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines how out of date the data can be before a refresh is automatically triggered. In this case, we have configured the Dynamic Tables to have a TARGET_LAG of 1 minute. 
+>  **Dynamic Tables** have a [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines how out of date the data can be before a refresh is automatically triggered. In this case, we have configured the Dynamic Tables to have a TARGET_LAG of 1 minute. 
 >
 
 
 ### Step 2 - Create Analytics Views for Consumers
 
-The Dynamic Tables are now set up to continuously transform ingested streaming data. We can now look at setting up an **Analytics** serving layer with some views for end users and applications to consume the streaming data.
+The Dynamic Tables are now set up to continuously transform streaming data. We can now look at setting up an **Analytics** serving layer with some views for end users and applications to consume the streaming data.
 
 <img src="assets/model_analyticviews.png" />
 
@@ -633,7 +651,7 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 ## Time Series Analysis
 Duration: 15
 
-Now that we have created the analytics views, we can start to query the data using Snowflake time series native functions.
+Now that we have created the analytics views, we can start to query the data using Snowflake native time series functions.
 
 <img src="assets/analysis_overview.png" />
 
@@ -675,10 +693,10 @@ This section will be executed within a Snowflake Snowsight Worksheet.
 
 ### Time Series Raw Query
 
-The following **Raw** query shows a left time boundary where the query starts on the input time and closes prior to the input end time.
+We'll start with a simple **Raw** query that returns time series data between an input start time and end time.
 
 ```sql
--- RAW - Left Time Boundary
+-- RAW
 SELECT TAGNAME, TIMESTAMP, VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP >= '2024-01-01 00:00:00'
@@ -691,15 +709,9 @@ ORDER BY TAGNAME, TIMESTAMP
 **Raw Query**
 <img src="assets/analysis_query_rawleft.png" />
 
-
-### INFO: Return Data Contract
-
-The queries following are written with a standard return set of columns, namely TAGNAME, TIMESTAMP, and VALUE. This is to mimic what an API might return if querying time series data, given a set of input parameters, similar to a data contract. The TAGNAME is updated to show that an aggregate has been applied to the returned values, and the timestamp returned is generally the closing timestamp of the time boundary.
-
-
 ### Time Series Statistical Aggregates
 
-The following set of queries contains various aggregates covering **counts, math operations, distributions, and watermarks**. Aggregates have been grouped together using union queries.
+The following set of queries contains various [Aggregate Functions](https://docs.snowflake.com/en/sql-reference/functions-aggregation) covering **counts, math operations, distributions, and watermarks**.
 
 **Counts**
 
@@ -710,14 +722,9 @@ COUNT - Count of all values
 COUNT DISTINCT - Count of unique values
 Counts can work with both varchar and numeric data types
 */
-SELECT TAGNAME || '~COUNT_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, COUNT(VALUE) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TAGNAME
-UNION ALL
-SELECT TAGNAME || '~COUNT_DISTINCT_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, COUNT(DISTINCT VALUE) AS VALUE
+SELECT TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP,
+    COUNT(VALUE) AS COUNT_VALUE,
+    COUNT(DISTINCT VALUE) AS COUNT_DISTINCT_VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
@@ -742,42 +749,13 @@ PERCENTILE_50 - 50% of values are less than this
 PERCENTILE_95 - 95% of values are less than this
 Aggregates can work with numerical data types
 */
-SELECT TAGNAME || '~MIN_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, MIN(VALUE_NUMERIC) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TAGNAME
-UNION ALL
-SELECT TAGNAME || '~MAX_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, MAX(VALUE_NUMERIC) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TAGNAME
-UNION ALL
-SELECT TAGNAME || '~SUM_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, SUM(VALUE_NUMERIC) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TAGNAME
-UNION ALL
-SELECT TAGNAME || '~AVG_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, AVG(VALUE_NUMERIC) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TAGNAME
-UNION ALL
-SELECT TAGNAME || '~PERCENTILE_50_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS VALUE
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
-AND TIMESTAMP <= '2024-01-01 01:00:00'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-GROUP BY TAGNAME
-UNION ALL
-SELECT TAGNAME || '~PERCENTILE_95_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.95) AS VALUE
+SELECT TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP,
+    MIN(VALUE_NUMERIC) AS MIN_VALUE,
+    MAX(VALUE_NUMERIC) AS MAX_VALUE,
+    SUM(VALUE_NUMERIC) AS SUM_VALUE,
+    AVG(VALUE_NUMERIC) AS AVG_VALUE,
+    APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS PERCENTILE_50_VALUE,
+    APPROX_PERCENTILE(VALUE_NUMERIC, 0.95) AS PERCENTILE_95_VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
@@ -789,6 +767,12 @@ ORDER BY TAGNAME
 
 <img src="assets/analysis_query_aggminmaxavgsumperc.png" />
 
+### INFO: Query Result Data Contract
+
+The following **two** queries are written with a standard return set of columns, namely TAGNAME, TIMESTAMP, and VALUE. This is a way to structure your query results format if looking to build an API for time series data, similar to a data contract with consumers.
+
+The TAGNAME is updated to show that a calculation has been applied to the returned values, and multiple aggregations can be grouped together using unions.
+
 **Distribution Statistics**
 
 ```sql
@@ -797,7 +781,7 @@ Retrieve distribution sample statistics within the time boundary
 STDDEV - Closeness to the mean/average of the distribution
 VARIANCE - Spread between numbers in the time boundary
 KURTOSIS - Measure of outliers occuring
-SKEW - Left tail (negative) and right tail (positive) distribution skew
+SKEW - Left (negative) and right (positive) distribution skew
 Distributions can work with numerical data types
 */
 SELECT TAGNAME || '~STDDEV_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
@@ -863,7 +847,7 @@ ORDER BY TAGNAME
 
 ### Time Series Window Functions
 
-Window functions enable aggregates to operate over groups of data, looking forward and backwards in the data rows.
+[Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) enable aggregates to operate over groups of data, looking forward and backwards in the data rows.
 
 **Lag and Lead**
 
@@ -890,36 +874,13 @@ ORDER BY TAGNAME, TIMESTAMP
 **Rows Between - Preceding**
 ```sql
 /* ROWS BETWEEN
-ROW_AVERAGE - Rolling average from 5 preceding rows
-ROW_SUM - Rolling sum from 5 preceding rows
+ROW_SUM_PRECEDING - Rolling sum from 5 preceding rows and current row
+ROW_SUM_FOLLOWING - Rolling sum from current row and 5 following rows
 */
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
-    AVG(VALUE_NUMERIC) OVER (
-        PARTITION BY TAGNAME ORDER BY TIMESTAMP
-        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) AS ROW_AVG_PRECEDING,
     SUM(VALUE_NUMERIC) OVER (
         PARTITION BY TAGNAME ORDER BY TIMESTAMP
-        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) AS ROW_SUM_PRECEDING
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP >= '2024-01-01 00:00:00'
-AND TIMESTAMP < '2024-01-01 00:00:10'
-AND TAGNAME = '/IOT/SENSOR/TAG301'
-ORDER BY TAGNAME, TIMESTAMP
-;
-```
-
-<img src="assets/analysis_query_windowrowsbetweenpre.png" />
-
-**Rows Between - Following**
-```sql
-/* ROWS BETWEEN - FOLLOWING
-ROW_AVERAGE - Rolling average from 5 following rows
-ROW_SUM - Rolling sum from 5 following rows
-*/
-SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
-    AVG(VALUE_NUMERIC) OVER (
-        PARTITION BY TAGNAME ORDER BY TIMESTAMP
-        ROWS BETWEEN CURRENT ROW AND 5 FOLLOWING) AS ROW_AVG_FOLLOWING,
+        ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) AS ROW_SUM_PRECEDING,
     SUM(VALUE_NUMERIC) OVER (
         PARTITION BY TAGNAME ORDER BY TIMESTAMP
         ROWS BETWEEN CURRENT ROW AND 5 FOLLOWING) AS ROW_SUM_FOLLOWING
@@ -931,7 +892,7 @@ ORDER BY TAGNAME, TIMESTAMP
 ;
 ```
 
-<img src="assets/analysis_query_windowrowsbetweenfoll.png" />
+<img src="assets/analysis_query_windowrowsbetween.png" />
 
 **Range Between - Preceding and Following**
 ```sql
@@ -954,6 +915,32 @@ ORDER BY TAGNAME, TIMESTAMP
 ```
 
 <img src="assets/analysis_query_windowrangebetween.png" />
+
+> aside positive
+> 
+>  **RANGE BETWEEN** differs from **ROWS BETWEEN** in that it can handle gaps between **INTERVALS** of time or where the reporting frequency differs from the data frequency, for example data at 10 second frequency that you want to aggregate the prior 25 seconds.
+>
+> <img src="assets/analysis_info_range_between.png" />
+>
+
+**Range Between - 10 sec frequency tag with 25 sec preceding sum**
+```sql
+/* RANGE BETWEEN
+INTERVAL - 10 second tag with 25 seconds preceding SUM
+*/
+SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
+    SUM(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        RANGE BETWEEN INTERVAL '25 SEC' PRECEDING AND CURRENT ROW) AS RANGE_SUM_PRECEDING
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 00:01:40'
+AND TAGNAME = '/IOT/SENSOR/TAG201'
+ORDER BY TAGNAME, TIMESTAMP
+;
+```
+
+<img src="assets/analysis_query_windowrangebetween_gap.png" />
 
 **First and Last Value**
 ```sql
@@ -1001,19 +988,16 @@ DATA AS (
     AND TAGNAME = '/IOT/SENSOR/TAG101'
 )
 SELECT TIMES.TIMESTAMP,
-    NVL(DATA.TAGNAME,
-        LAG(DATA.TAGNAME) IGNORE NULLS OVER (
-        ORDER BY TIMES.TIMESTAMP)) AS TAGNAME,
-    DATA.VALUE,
-    NVL(DATA.VALUE,
-        LAG(DATA.VALUE) IGNORE NULLS OVER (
-        ORDER BY TIMES.TIMESTAMP)) AS LOCF_VALUE
+    A.TAGNAME AS TAGNAME,
+    B.VALUE,
+    A.VALUE AS LOCF_VALUE
 FROM TIMES
-LEFT JOIN DATA ON TIMES.TIMESTAMP = DATA.TIMESTAMP
+LEFT JOIN DATA B ON TIMES.TIMESTAMP = B.TIMESTAMP
+ASOF JOIN DATA A MATCH_CONDITION(TIMES.TIMESTAMP >= A.TIMESTAMP)
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-**Lag - LOCF - IGNORE NULLS**
+**Lag - LOCF - ASOF Join**
 
 <img src="assets/analysis_query_gapfill_locf.png" />
 
@@ -1025,7 +1009,7 @@ Downsampling is used to decrease the frequency of time samples, such as from sec
 **Time Binning - 1 min Aggregate - START Label**
 ```sql
 /* TIME BINNING - 1 min AGGREGATE with START label
-Create a downsampled time series data set with 1 minute aggregates, showing the START timestamp label
+Create a downsampled time series data set with 1 minute aggregates, showing the START timestamp label of the interval
 COUNT - Count of values within the time bin
 SUM - Sum of values within the time bin
 AVG - Average of values (mean) within the time bin
@@ -1050,7 +1034,7 @@ ORDER BY TAGNAME, TIMESTAMP
 **Time Binning - 1 min Aggregate - END Label**
 ```sql
 /* TIME BINNING - 1 min AGGREGATE with END label
-Create a downsampled time series data set with 1 minute aggregates, showing the START timestamp label
+Same as before, but now showing the END timestamp label of the interval
 COUNT - Count of values within the time bin
 SUM - Sum of values within the time bin
 AVG - Average of values (mean) within the time bin
@@ -1228,6 +1212,13 @@ $$
 ;
 ```
 
+> aside positive
+> 
+>  The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
+>
+> The **INTERPOLATE Table Function** will return both **linear interpolated values** and the **last observed value carried forward (LOCF)**.
+>
+
 3. Run the **Create Interpolate Procedure** Script
 
 ```sql
@@ -1264,6 +1255,11 @@ END;
 $$
 ;
 ```
+
+> aside positive
+> 
+>  The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return the last observed value carried forward (LOCF) or linear interpolated values (default).
+>
 
 4. Run the **LTTB Downsampling Table Function** Script
 
@@ -1302,6 +1298,15 @@ class lttb_run:
             return df[['TIMESTAMP','VALUE']].iloc[idx]
 $$;
 ```
+
+> aside positive
+> 
+>  The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that reduces the number of visual data points, whilst retaining the shape and variability of the time series data. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
+>
+> This is a **Snowpark Python** implementation using the **plotly-resampler** package.
+>
+> The original code for LTTB is available at [Sveinn Steinarsson - GitHub](https://github.com/sveinn-steinarsson/flot-downsample).
+>
 
 ### Step 2 - Copy Worksheet Content To Snowsight Worksheet
 
