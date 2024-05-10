@@ -1390,7 +1390,7 @@ ORDER BY tagname, timestamp
 >
 
 <!-- ------------------------ -->
-## Streamlit in Snowflake with Continuous Ingestion
+## Build Your Time Series Application in Streamlit
 Duration: 10
 
 After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to deliver an analytics application for end users to easily consume time series data. For this purpose we are going to use Streamlit.
