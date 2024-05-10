@@ -405,6 +405,8 @@ In the **GitHub Codespace VS Code**:
 
 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
+<img src="assets/labsetup_newterminal.png" />
+
 2. Change directory into to the **iotstream** folder: `cd iotstream`
 
 3. Run the `Test.sh` script to confirm a table channel stream can be established with Snowflake.
@@ -1434,6 +1436,8 @@ In the **GitHub Codespace VS Code**:
 
 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
+<img src="assets/labsetup_newterminal.png" />
+
 2. Activate `hol-timeseries` python virtual environment
 
 ```bash
@@ -1459,9 +1463,15 @@ This command does the following:
 
 ### Step 2 - Launch the Streamlit Application
 
-Once the Streamlit application is successfully deployed, Snowflake CLI will display the message **"Streamlit successfully deployed and available"** and will provide the URL for the Streamlit application. You can copy the link and paste it in a browser address bar or simply press Command/Ctrl and click the link to launch the Streamlit application.
+Once the Streamlit application is successfully deployed, Snowflake CLI will display the message **"Streamlit successfully deployed and available"** and will provide the URL for the Streamlit application.
 
 <img src="assets/streamlit_launch.png" />
+
+1. Press **Command/Ctrl** and **click the URL** link to launch the Streamlit application in a new tab. Alternatively, copy and paste the URL into a new tab.
+
+2. Select `Open` once prompted.
+
+<img src="assets/streamlit_open.png" />
 
 
 ### INFO: Working with the Streamlit Application
@@ -1547,6 +1557,8 @@ In the **GitHub Codespace VS Code**:
 
 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
+<img src="assets/labsetup_newterminal.png" />
+
 2. Change directory into to the **iotstream** folder: `cd iotstream`
 
 3. Run the `Run_Slooow.sh` script to load the IoT data.
@@ -1557,7 +1569,7 @@ In the **GitHub Codespace VS Code**:
 
 > aside positive
 > 
-> If there are no errors, IoT data will now be **streaming into Snowflake**.
+> If there are no errors, IoT data will now be **streaming into Snowflake**, and the **Dynamic Tables** will start to update.
 >
 
 4. Back **in the Streamlit application** try enabling `Auto Refresh` by `Expanding Refresh Mode > Toggle Auto Refresh`
@@ -1566,10 +1578,11 @@ In the **GitHub Codespace VS Code**:
 
 5. Select the **TS Raw** page to see the raw data
 
-6. Try adding `/IOT/SENSOR/401` to the **Select Tag Names** filter
+6. Try adding `/IOT/SENSOR/TAG401` and `/IOT/SENSOR/TAG601` to the **Select Tag Names** filter
 
-    - The charts and data should now contain two tags with the data updating every minute.
+    - The charts and data should now contain two additional tags with the data updating every minute.
 
+<img src="assets/streamlit_query_stream.png" />
 
 > aside positive
 > 
