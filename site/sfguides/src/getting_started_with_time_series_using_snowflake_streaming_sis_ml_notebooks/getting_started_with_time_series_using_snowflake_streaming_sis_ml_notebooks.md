@@ -136,9 +136,19 @@ To activate the virtual environment:
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
 
-### Step 4 - Update Snowflake Account Connection Identifiers
+### Step 4 - Update Snowflake Account Connection Identifiers in Lab Files
 
-1. Login to your Snowflake account using Snowsight and execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
+1. Login to your Snowflake account using a browser 
+
+2. From the menu expand `Projects > Worksheets`
+
+<img src="assets/analysis_worksheets.png" />
+
+3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+
+<img src="assets/analysis_newworksheet.png" />
+
+4. **In the new worksheet**, execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
 
 ```sql
 SELECT SYSTEM$ALLOWLIST();
@@ -147,9 +157,13 @@ SELECT SYSTEM$ALLOWLIST();
 -- <account_identifier>.snowflakecomputing.com
 ```
 
-2. **Note** the **<account_identifier>**.snowflakecomputing.com by retrieving the **host** attribute returned, where the **type** is **"type":"SNOWFLAKE_DEPLOYMENT_REGIONLESS"**.
+5. In the results returned, below the command, **select the first row returned**, and **Copy** the **<account_identifier>**.snowflakecomputing.com for the **host** attribute returned, where the **type** is **"type":"SNOWFLAKE_DEPLOYMENT_REGIONLESS"**.
 
-3. In VS Code navigate to the following files and replace **<ACCOUNT_IDENTIFIER>** with your account identifier value:
+    - **Worksheet Output** for `SELECT SYSTEM$ALLOWLIST();`. **<account_identifier>** is in-front of `.snowflakecomputing.com`.
+
+<img src="assets/labsetup_regionless.png" />
+
+6. Back in **VS Code**, navigate to the following files and replace **<ACCOUNT_IDENTIFIER>** with your account identifier value:
 
 * `.snowflake/config.toml`
     - **account** variable for **both** connections
@@ -162,7 +176,10 @@ SELECT SYSTEM$ALLOWLIST();
 ### Step 5 - Configure Snowflake VS Code Extension Connection
 
 1. Open the Snowflake VS Code Extension
-2. Enter your **<ACCOUNT_IDENTIFIER>**
+
+<img src="assets/labsetup_vscodeextension.png" />
+
+2. For **Account Identifier/URL**, enter your **<ACCOUNT_IDENTIFIER>**, **without** the `.snowflakecomputing.com`
 3. Click Continue
 
 <img src="assets/labsetup_snowextension.png" />
@@ -176,7 +193,7 @@ SELECT SYSTEM$ALLOWLIST();
 
 > aside positive
 >
-> **The VS Code Snowflake Extension** should now be connected to your Snowflake.
+> **The VS Code Snowflake Extension** should now be connected to your Snowflake. **Once connected**, it will show a `Sign Out` button along with **Databases** and **Applications** in the `OBJECT EXPLORER` section.
 
 <img src="assets/labsetup_snowconnected.png" />
 
@@ -214,6 +231,8 @@ Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be
 <img src="assets/labsetup_rsakey.png" />
 
 **NOTE:** The pasted **PUBLIC KEY** can show on multiple lines and will work.
+
+3. **NO NEED TO RUN** anything just yet, this is just setup, this worksheet will be run in the next section.
 
 > aside positive
 >
@@ -715,6 +734,8 @@ The following set of queries contains various [Aggregate Functions](https://docs
 
 **Counts**
 
+Retrieve count and distinct counts within the time boundary.
+
 ```sql
 /* COUNT AND COUNT DISTINCT
 Retrieve counts within the time boundary
@@ -737,6 +758,8 @@ ORDER BY TAGNAME
 <img src="assets/analysis_query_aggcount.png" />
 
 **Math Operations**
+
+
 
 ```sql
 /* MIN/MAX/AVG/SUM/APPROX_PERCENTILE
@@ -847,9 +870,11 @@ ORDER BY TAGNAME
 
 ### Time Series Window Functions
 
-[Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) enable aggregates to operate over groups of data, looking forward and backwards in the data rows.
+[Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) enable aggregates to operate over groups of data, looking forward and backwards in the data rows, and returning a single result for each group.
 
 **Lag and Lead**
+
+
 
 ```sql
 /* WINDOW FUNCTIONS
