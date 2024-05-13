@@ -161,8 +161,8 @@ And since you are interested in trip data for 2014 and 2015 you need to union `T
 
 ```
 CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides AS
-SELECT to_timestamp(PICKUP_DATETIME::varchar) PICKUP_TIME,
-       to_timestamp(DROPOFF_DATETIME::varchar) DROPOFF_TIME,
+SELECT CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(PICKUP_DATETIME::varchar)) PICKUP_TIME,
+       CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(DROPOFF_DATETIME::varchar)) DROPOFF_TIME,
        st_point(PICKUP_LONGITUDE, PICKUP_LATITUDE) AS PICKUP_LOCATION,
        st_point(DROPOFF_LONGITUDE, DROPOFF_LATITUDE) AS DROPOFF_LOCATION,
        trip_distance,
@@ -175,8 +175,8 @@ WHERE pickup_latitude BETWEEN -90 AND 90
   AND st_distance(st_point(PICKUP_LONGITUDE, PICKUP_LATITUDE), st_point(DROPOFF_LONGITUDE, DROPOFF_LATITUDE)) > 10
   AND TIMEDIFF(MINUTE, to_timestamp(PICKUP_DATETIME::varchar), to_timestamp(DROPOFF_DATETIME::varchar)) > 1
 UNION ALL
-SELECT to_timestamp(PICKUP_DATETIME::varchar) PICKUP_TIME,
-       to_timestamp(DROPOFF_DATETIME::varchar) DROPOFF_TIME,
+SELECT CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(PICKUP_DATETIME::varchar)) PICKUP_TIME,
+       CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(DROPOFF_DATETIME::varchar)) DROPOFF_TIME,
        st_point(PICKUP_LONGITUDE, PICKUP_LATITUDE) AS PICKUP_LOCATION,
        st_point(DROPOFF_LONGITUDE, DROPOFF_LATITUDE) AS DROPOFF_LOCATION,
        trip_distance,
@@ -194,7 +194,7 @@ Now you will create a table where, for each pair of timestamp/H3, we calculate t
 
 ```
 CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_h3 AS
-SELECT TIME_SLICE(TO_TIMESTAMP_NTZ(pickup_time), 60, 'minute', 'START') AS pickup_time,
+SELECT TIME_SLICE(pickup_time, 60, 'minute', 'START') AS pickup_time,
        H3_POINT_TO_CELL_string(pickup_location, 8) AS h3,
        count(*) AS pickups
 FROM advanced_analytics.public.ny_taxi_rides
@@ -226,7 +226,7 @@ WITH all_dates_hexagons AS (
     FROM TABLE(FLATTEN(ARRAY_GENERATE_RANGE(0, DATEDIFF('hour', '2014-01-01', '2015-12-31 23:59:00') + 1)))
     CROSS JOIN (SELECT DISTINCT h3 FROM advanced_analytics.public.ny_taxi_rides_h3)
 )
-SELECT TO_TIMESTAMP_NTZ(t1.pickup_time) as pickup_time, 
+SELECT t1.pickup_time, 
 t1.h3, IFF(t2.pickups IS NOT NULL, t2.pickups, 0) AS pickups
 FROM all_dates_hexagons t1
 LEFT JOIN advanced_analytics.public.ny_taxi_rides_h3 t2 
@@ -235,7 +235,7 @@ ON t1.pickup_time = t2.pickup_time AND t1.h3 = t2.h3;
 
 ### Step 4. Data Enrichment
 
-In this step, you will enhance our dataset with extra features that could improve the accuracy of our predictions. It makes sense to consider that the day of the week and public or school holidays could affect the demand for taxi services. Likewise, areas hosting sporting events might experience a surge in taxi pickups. To incorporate this insight, you will use data from [PredictHQ - Quickstart Demo](https://app.snowflake.com/marketplace/listing/GZSTZ3TGTNLQM/predicthq-quickstart-demo) listing, which provides information on events in New York for the years 2014-2015.
+In this step, you will enhance our dataset with extra features that could improve the accuracy of our predictions. Cortex model for time series automatically encodes days of the week as a separate feature, but it makes sense to consider that public or school holidays could affect the demand for taxi services. Likewise, areas hosting sporting events might experience a surge in taxi pickups. To incorporate this insight, you will use data from [PredictHQ - Quickstart Demo](https://app.snowflake.com/marketplace/listing/GZSTZ3TGTNLQM/predicthq-quickstart-demo) listing, which provides information on events in New York for the years 2014-2015.
 
 Run the following query to enrich the data with holiday, and event information. For sports events, you will include only those with a high rank.
 
@@ -541,12 +541,9 @@ if DF_FORECAST is None or len(DF_FORECAST) == 0:
 
 comparision_df_filter = (
     (pd.to_datetime(df_time_series["PICKUP_TIME"]).dt.date >= selected_date_range[0])
-    & (pd.to_datetime(df_time_series["PICKUP_TIME"]).dt.date < selected_date_range[1])
-    & (
-        pd.to_datetime(df_time_series["PICKUP_TIME"]).dt.time
-        >= selected_start_time_range
-    )
-    & (pd.to_datetime(df_time_series["PICKUP_TIME"]).dt.time < selected_end_time_range))
+    & (pd.to_datetime(df_time_series["PICKUP_TIME"]).dt.date <= selected_date_range[1])
+    & (pd.to_datetime(df_time_series["PICKUP_TIME"]).dt.time >= selected_start_time_range)
+    & (pd.to_datetime(df_time_series["PICKUP_TIME"]).dt.time <= selected_end_time_range))
 
 if h3_options == "All":
     st.markdown("### Comparison for All Hexagons")
@@ -581,7 +578,7 @@ Click `Expand to see SMAPE metric` in the sidebar and find hexagons with good/ba
 
 As you can see, overall, the model is quite good, with SMAPE below 0.3 for most of the hexagons. Even with its current quality, the model can already be used to predict future demand. However, let's still consider how you can improve it.
 
-The worst predictions are for hexagons corresponding to LaGuardia Airport (`882a100e25fffff`, `882a100f57fffff`, `882a100f53fffff`). To address this, you might consider adding information about flight arrivals and departures, which could improve the model's quality. It is a bit surprising to see poor quality at the hexagon `882a100897fffff`, which is close to Central Park. However, it seems that June 7th is the main driver of the poor prediction, as you significantly underpredicted during both day and night hours.
+The worst predictions are for hexagons corresponding to LaGuardia Airport (`882a100e25fffff`, `882a100f57fffff`, `882a100f53fffff`). To address this, you might consider adding information about flight arrivals and departures, which could improve the model's quality. It is a bit surprising to see poor quality at the hexagon `882a100897fffff`, which is close to Central Park. However, it seems that June 7th is the main driver of the poor prediction, as model significantly underpredicted during both day and night hours.
 
 <img src ='assets/geo_ml_9.png' width = 600>
 
@@ -813,63 +810,114 @@ Click on the packages tab and add `pydeck` and `branca` to the list of packages 
 Then copy-paste the following code to the editor and click `Run`:
 
 ```
-import streamlit as st
+from snowflake.snowpark.context import get_active_session
+from typing import Tuple
+import branca.colormap as cm
 import pandas as pd
 import pydeck as pdk
-import branca.colormap as cm
-from snowflake.snowpark.context import get_active_session
+import streamlit as st
 
-def get_h3_df_sentiment(resolution: float, type_of_sentiment: str, type_of_location: str) -> pd.DataFrame:
-    return session.sql(f'select h3_point_to_cell_string(to_geography({type_of_location}), {h3_resolution}) as h3, avg({type_of_sentiment}) as count\n'\
-                       'from advanced_analytics.public.orders_reviews_sentiment_analysis\n'\
-                       f' where {type_of_sentiment} is not null \n'\
-                        'group by 1').to_pandas()
+@st.cache_data
+def get_dataframe_from_raw_sql(query: str) -> pd.DataFrame:
+    session = get_active_session()
+    pandas_df = session.sql(query).to_pandas()
+    return pandas_df
 
-def get_h3_df_orders(resolution: float, type_of_location: str) -> pd.DataFrame:
-    return session.sql(f'select h3_point_to_cell_string(to_geography({type_of_location}), {h3_resolution}) as h3, count(*) as count\n'\
-                       'from advanced_analytics.public.orders_reviews_sentiment_analysis\n'\
-                        'group by 1').to_pandas()
+def get_h3_df_orders_quantiles(resolution: float, type_of_location: str) -> pd.DataFrame:
+    df = get_dataframe_from_raw_sql(
+        f"""SELECT
+        H3_POINT_TO_CELL_STRING(to_geography({ type_of_location }), { resolution }) AS h3,
+        round(count(*),2) as count
+        FROM advanced_analytics.public.orders_reviews_sentiment_analysis
+        GROUP BY 1""")
 
-def get_h3_layer(df: pd.DataFrame) -> pdk.Layer:
-    return pdk.Layer("H3HexagonLayer", df, get_hexagon="H3",
-                     get_fill_color="COLOR",
-                     get_line_color="COLOR",
-                     auto_highlight=True,
-                     pickable=True,
-                     opacity=0.5, extruded=False)
-    
+    quantiles = get_quantile_in_column(df, "COUNT")
+    return df, quantiles
+
+def get_h3_df_sentiment_quantiles(
+    resolution: float, type_of_sentiment: str, type_of_location: str
+) -> Tuple[pd.DataFrame, pd.core.series.Series]:
+    df = get_dataframe_from_raw_sql(
+        f""" SELECT 
+        H3_POINT_TO_CELL_STRING(TO_GEOGRAPHY({ type_of_location }),{ resolution }) AS h3,
+        round(AVG({ type_of_sentiment }),2) AS count
+        FROM advanced_analytics.public.orders_reviews_sentiment_analysis
+        WHERE { type_of_sentiment } IS NOT NULL 
+        GROUP BY 1""")
+
+    quantiles = get_quantile_in_column(df, "COUNT")
+    df = df[(df["COUNT"] >= values[0]) & (df["COUNT"] <= values[1])]
+    return df, quantiles
+
+def get_h3_layer(layer_dataframe: pd.DataFrame, elevation_3d: bool = False,) -> pdk.Layer:
+    highest_count_df = 0 if layer_dataframe is None else layer_dataframe["COUNT"].max()
+    return pdk.Layer(
+        "H3HexagonLayer",
+        layer_dataframe,
+        get_hexagon="H3",
+        get_fill_color="COLOR",
+        get_line_color="COLOR",
+        auto_highlight=True,
+        get_elevation=f"COUNT/{highest_count_df}",
+        elevation_scale=10000 if elevation_3d else 0,
+        elevation_range=[0, 300],
+        pickable=True,
+        opacity=0.5,
+        extruded=True)
+
+def get_quantile_in_column(
+    quantile_dataframe: pd.DataFrame, column_name: str
+) -> pd.core.series.Series:
+    return quantile_dataframe[column_name].quantile([0, 0.25, 0.5, 0.75, 1])
+
+def render_pydeck_chart(
+    chart_quantiles: pd.core.series.Series, 
+    chart_dataframe: pd.DataFrame, 
+    elevation_3d: bool = False):
+    colors = ["gray", "blue", "green", "yellow", "orange", "red"]
+    color_map = cm.LinearColormap(
+        colors,
+        vmin=chart_quantiles.min(),
+        vmax=chart_quantiles.max(),
+        index=chart_quantiles)
+    chart_dataframe["COLOR"] = chart_dataframe["COUNT"].apply(color_map.rgb_bytes_tuple)
+    st.pydeck_chart(
+        pdk.Deck(
+            map_provider="mapbox",
+            map_style="light",
+            initial_view_state=pdk.ViewState(
+                latitude=37.633,
+                longitude=-122.284,
+                zoom=7,
+                pitch=50 if elevation_3d else 0,
+                height=430),
+            tooltip={"html": "<b>Value:</b> {COUNT}",
+            "style": {"color": "white"}},
+            layers=get_h3_layer(chart_dataframe, elevation_3d)))
+
 st.set_page_config(layout="centered", initial_sidebar_state="expanded")
-session = get_active_session()
-st.title("Food Delivery Orders App")
+st.title("Reviews of Food Delivery Orders")
 
 with st.sidebar:
     h3_resolution = st.slider("H3 resolution", min_value=6, max_value=9, value=7)
     type_of_locations = st.selectbox("Dimensions", ("DELIVERY_LOCATION", "RESTAURANT_LOCATION"), index=0)
-    type_of_data = st.selectbox("Measures", ("ORDERS", "SENTIMENT_SCORE", "COST_SCORE", "FOOD_QUALITY_SCORE", "DELIVERY_TIME_SCORE"), index=0)
-    if type_of_data != 'ORDERS':
-        values = st.slider('Select a range for score values', 0.0, 5.0, (0.0, 5.0))
+    type_of_data = st.selectbox(
+        "Measures",("ORDERS","SENTIMENT_SCORE","COST_SCORE","FOOD_QUALITY_SCORE","DELIVERY_TIME_SCORE"), index=0)
+    if type_of_data != "ORDERS":
+        values = st.slider("Select a range for score values", 0.0, 5.0, (0.0, 5.0))
+        chckbox_3d_value = False
+    else:
+        chckbox_3d_value = st.checkbox("3D", key="chkbx_forecast", help="Renders H3 Hexagons in 3D")
 
-if type_of_data != 'ORDERS':
-    df = get_h3_df_sentiment(h3_resolution, type_of_data, type_of_locations)
-    quantiles = df["COUNT"].quantile([0, 0.25, 0.5, 0.75, 1])
-    colors = ['gray','blue','green','yellow','orange','red']
-    df = df[(df['COUNT'] >= values[0]) & (df['COUNT'] <= values[1])]
-    
-if type_of_data == 'ORDERS':
-    df = get_h3_df_orders(h3_resolution, type_of_locations)  
-    quantiles = df["COUNT"].quantile([0, 0.25, 0.5, 0.75, 1])
-    colors = ['gray','blue','green','yellow','orange','red']
+if type_of_data != "ORDERS":
+    df, quantiles = get_h3_df_sentiment_quantiles(h3_resolution, type_of_data, type_of_locations)
 
-st.image('https://sfquickstarts.s3.us-west-1.amazonaws.com/hol_geo_spatial_ml_using_snowflake_cortex/gradient.png')
-color_map = cm.LinearColormap(colors, vmin=quantiles.min(), vmax=quantiles.max(), index=quantiles)
-df['COLOR'] = df['COUNT'].apply(color_map.rgb_bytes_tuple)
-st.pydeck_chart(pdk.Deck(map_provider='mapbox', map_style='light',
-                         initial_view_state=pdk.ViewState(
-                             latitude=37.633,
-                             longitude=-122.284, zoom=7, height=430,),
-                             tooltip={'html': '<b>Value:</b> {COUNT}',
-                                      'style': {'color': 'white'}},
-                             layers=get_h3_layer(df)))
+if type_of_data == "ORDERS":
+    df, quantiles = get_h3_df_orders_quantiles(h3_resolution, type_of_locations)
+
+st.image("https://sfquickstarts.s3.us-west-1.amazonaws.com/hol_geo_spatial_ml_using_snowflake_cortex/gradient.png")
+
+render_pydeck_chart(quantiles, df, chckbox_3d_value)
 ```
 
 After clicking `Run` button you will see the following UI:
