@@ -720,7 +720,27 @@ If you're new to Shiny, you can try it online with
 [shinylive](https://shinylive.io/).
 It too, comes in a [Python](https://shinylive.io/py) version.
 
-## Conclusion
-Duration: 1
+## Conclusion and Resources
+Duration: 2
 
 R is beloved by data scientists for its intuitive, concise syntax. You can now combine this syntax with the power and peace of mind of Snowflake. The Posit Workbench Native Application provides an IDE for R _within Snowflake_. You can then use R's existing database packages---`{DBI}`, `{odbc}`, `{dbplyr}`---to access your Snowflake databases.
+
+### What You Learned
+
+- How to create an R session within the RStudio Pro IDE that comes with the Posit Workbench Native App
+- How to connect to your Snowflake data from R to create tables, visualizations, and more
+- Build an RStudio Pro IDE environment to use within Snowflake
+- Build a Quarto document that contains plots and tables built with R, using data available in the Snowflake Marketplace.
+- Build an interactive Shiny Application built with R, using data available in the Snowflake Marketplace
+
+
+### Releated Resources
+
+- [Source Code on GitHub](https://github.com/posit-dev/snowflake-posit-quickstart-r)
+- [More about Posit Workbench](https://posit.co/products/enterprise/workbench/)
+- [{tidyverse} package for data science in R](https://dbplyr.tidyverse.org/)
+- [{dbplyr} package for database connections](https://dbplyr.tidyverse.org/)
+- [{gt} package for tables](https://gt.rstudio.com/)
+- [Quarto for reproducible documents, reports, and data products](https://quarto.org/)
+- [Shiny for interactive dashboards and applications](https://shiny.posit.co/)
+- [Shinylive for serverless Shiny applications](https://shinylive.io/)
