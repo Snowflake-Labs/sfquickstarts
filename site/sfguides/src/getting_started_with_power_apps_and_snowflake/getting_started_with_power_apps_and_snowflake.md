@@ -101,6 +101,7 @@ Now we need to set up an app registration for Active Directory (Entra ID) OAuth,
 4.	Go to the resource created in Step 1 and go to Expose an API -> Add a client application -> Add your APPLICATION_CLIENT_ID from earlier in step 3 above -> Click Save
 5.	Follow [Step 3: Collect Azure AD Information for Snowflake](https://docs.snowflake.com/en/user-guide/oauth-azure#collect-azure-ad-information-for-snowflake) entirely.
 6.	If you have already established a connection using the Snowflake certified connector, Update existing security integration in Snowflake.  
+
 ```sql
 ALTER SECURITY INTEGRATION <existing integration name>
 set external_oauth_audience_list = ('<existing power bi audience list url>', '< Application ID URI from Step 1>')
@@ -130,14 +131,13 @@ CREATE SECURITY INTEGRATION <integration name>
         external_oauth_any_role_mode = 'ENABLE';
 ```
 
-``sql
-### Update existing security integration in Snowflake
+```sql
+--Update existing security integration in Snowflake
 ALTER SECURITY INTEGRATION <existing integration name>
 set external_oauth_audience_list = ('< Application ID URI from Step 1>');
 ```
 
 <!-- ------------------------ -->
-
 ## Build Power Automate Flow
 Duration: 15
 
