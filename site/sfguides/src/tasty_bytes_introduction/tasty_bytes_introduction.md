@@ -13,7 +13,6 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake
 ## An Introduction to Tasty Bytes 
 Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
-******: Need FROSTBYTE-less header
 
 ### Overview
 Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by Snowflake.
@@ -117,7 +116,7 @@ This query will return the Schemas within the Database we created via [SHOW SCHE
 SHOW SCHEMAS IN DATABASE tb_101;
 ```
 <img src = "assets/show_tb_schemas.png"> 
-******: Need refreshed image
+
 
 ### Step 3 - Exploring the Tables within the RAW_POS Schema within the Tasty Bytes Database
 This query will return the Tables within the `raw_pos` schema via [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables)
@@ -125,7 +124,7 @@ This query will return the Tables within the `raw_pos` schema via [SHOW TABLES](
 SHOW TABLES IN SCHEMA tb_101.raw_pos;
 ```
 <img src = "assets/show_tb_tables.png"> 
-******: Need refreshed image
+
 
 ### Step 4 - Exploring the Tasty Bytes Roles
 This query will return the Roles we created via [SHOW ROLES](https://docs.snowflake.com/en/sql-reference/sql/show-roles).
@@ -133,7 +132,7 @@ This query will return the Roles we created via [SHOW ROLES](https://docs.snowfl
 SHOW ROLES LIKE 'tb%';
 ```
 <img src = "assets/show_tb_roles.png"> 
-******: Need refreshed image
+
 
 ### Step 5 - Exploring the Tasty Bytes Warehouses
 This query will return the Warehouses we created via [SHOW WAREHOUSES](https://docs.snowflake.com/en/sql-reference/sql/show-warehouses).
@@ -141,7 +140,7 @@ This query will return the Warehouses we created via [SHOW WAREHOUSES](https://d
 SHOW WAREHOUSES LIKE 'tb%';
 ```
 <img src = "assets/show_tb_whs.png"> 
-******: Need refreshed image
+
 
 ### Step 6 - Putting it All Together
 These next three queries will:
@@ -162,7 +161,6 @@ FROM tb_101.raw_pos.menu m
 WHERE m.truck_brand_name = 'Plant Palace';
 ```
 <img src = "assets/plant_palace.png"> 
-******: Need refreshed image
 
 Amazing! Within a few minutes we now have a Tasty Bytes demo environment complete with data, roles and warehouses set up in our Snowflake account. Let's now take a look at all of the other Tasty Bytes Quickstarts available to us to leverage.
 
@@ -183,19 +181,16 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 - #### [Cost Management](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/)
     - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, Account and Warehouse Level Timeout Parameters, Budgets and Exploring Cost.
 - #### [Transformation](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/)
-    - Learn about Snowflake Zero Copy Cloning, Result Set Cache, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
+    - Learn about Snowflake Cloning, Caching, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
 - #### [Semi-Structured Data](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/)
-******: Needs work
-    - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot Notation and Lateral Flattening as well as View Creation and Snowsight Charting.
+    - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot and Bracket Notation and Lateral Flattening, Array Functions, View creation, and Snowsight Charting.
 - #### [Governance with Snowflake Horizon](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/)
-    - Learn about Snowflake System Defined Roles, Create and apply Grants to a custom role, and deploy both Tag Based Dynamic Data Masking and Row-Access Policies.
-******: Needs work
+    - Learn about Snowflake System Defined Roles, Role Based Access Control, Tag Based Masking, Policies (Row-Access, Aggregation, and Projection), Data Classification, Access History and Universal Sarch.
 - #### [Collaboration](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/)
     - Learn about the Snowflake Marketplace by leveraging free, instantly available, live data from Weathersource to conduct data driven analysis harmonizing first and third party sources.
-******: Needs work
 - #### [Geospatial](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
-    - Learn about Snowflake Geospatial support starting with acquiring free, instantly available live data from SafeGraph then moving onto constructing Geographic Points (ST_POINT), calculating distance (ST_DISTANCE), collecting coordinates (ST_COLLECT), drawing a Minimum Bounding Polygon (ST_ENVELOPE), calculating area (ST_AREA) and finding center points (ST_CENTROID).
-******: Needs work
+    - Learn Snowflake's Geospatial capabilities, beginning with obtaining free, real-time data from SafeGraph. Progress through creating geographic points (ST_POINT), measuring distances (ST_DISTANCE), aggregating coordinates (ST_COLLECT), establishing a Minimum Bounding Polygon (ST_ENVELOPE), determining areas (ST_AREA), identifying central points (ST_CENTROID), and executing advanced Geospatial Analysis using the H3 (Hexagonal Hierarchical Geospatial Indexing System).
+
 
 
 
