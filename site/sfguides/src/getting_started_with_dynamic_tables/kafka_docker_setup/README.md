@@ -41,7 +41,21 @@ This command should display the installed Docker version.
 ## Steps to start the kafka environment
 - Download [this zip file on your local desktop or laptop](https://github.com/sfc-gh-pjain/sfguides/tree/master/site/sfguides/src/getting_started_with_dynamic_tables/kafka_docker_setup/kc-demo-shared.zip) and unzip it into a folder called `kc-demo-shared`.
 - Go to the new unzipped folder
-- Open Snowflake `setup.sql` and copy it in a worksheet in your Snowflake account to create necessary Database objects required for this demo
+- Open Snowflake worksheet and copy below code and run it in your Snowflake account to create necessary Database objects required for this demo
+
+```
+CREATE DATABASE IF NOT EXISTS DEMO;
+CREATE SCHEMA IF NOT EXISTS DEMO.DT_DEMO;
+USE SCHEMA DEMO.DT_DEMO;
+
+CREATE WAREHOUSE XSMALL_WH 
+WAREHOUSE_TYPE = STANDARD
+  WAREHOUSE_SIZE = XSMALL
+  AUTO_SUSPEND = 300
+  AUTO_RESUME = TRUE;
+
+```
+
 - Generate private and public key. Follow [these instructions and click here](https://docs.snowflake.com/user-guide/kafka-connector-install#using-key-pair-authentication-key-rotation) to create keys and store public key in Snowflake 
 - Open the `consumer/sf_streaming.properties` in a text editor and update your Snowflake account and credentials and then save it. The Kafka connector relies on key pair authentication rather than basic authentication (i.e. username and password). For [Account URL look here](https://docs.snowflake.com/en/user-guide/admin-account-identifier)
 - Open a terminal or command promt and change dir to the folder called `kc-demo-shared`
