@@ -108,7 +108,6 @@ try:
     root.grants.grant(Grant(
         grantee=Grantees.role('ACCOUNTADMIN'),
         securable=Securables.role('CONTAINER_USER_ROLE'),
-        privileges=[Privileges.usage],
     ))
 
     # USE ROLE CONTANTAINER_USE_ROLE
@@ -400,11 +399,11 @@ Now, we need to push our image to Snowflake. From the terminal:
     # docker push <repository_url>/python-jupyter-snowpark:dev
     client.api.push(repository_url + '/python-jupyter-snowpark:dev')
 ```
-This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following Python API cod.:
+This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following Python API code:
 ```Python API
     # USE ROLE CONTAINER_USER_ROLE;
     # CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
-    images = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories["IMAGE_REPO"].listImagesInRepository()
+    images = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories["IMAGE_REPO"].list_images_in_repository()
     for image in images:
         print(image)
 ```
@@ -709,7 +708,7 @@ This may take some time, so you can move on to the next step **Configure and Pus
 ```Python API
     # USE ROLE CONTAINER_USER_ROLE;
     # CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
-    images = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories["IMAGE_REPO"].listImagesInRepository()
+    images = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].image_repositories["IMAGE_REPO"].list_images_in_repository()
     for image in images:
         print(image)
 ```
