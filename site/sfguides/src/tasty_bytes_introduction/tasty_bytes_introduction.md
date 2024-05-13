@@ -109,7 +109,7 @@ USE ROLE sysadmin;
 SHOW DATABASES LIKE 'tb_101';
 ```
 <img src = "assets/show_tb_db.png"> 
-******: Need refreshed image
+
 
 ### Step 2 - Exploring the Schemas within the Tasty Bytes Database
 This query will return the Schemas within the Database we created via [SHOW SCHEMAS](https://docs.snowflake.com/en/sql-reference/sql/show-schemas).
