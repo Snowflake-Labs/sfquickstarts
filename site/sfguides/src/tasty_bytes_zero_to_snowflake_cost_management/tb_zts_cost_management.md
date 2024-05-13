@@ -7,12 +7,12 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Zero to Snowflake, Cost Management
 
-# Tasty Bytes - Zero to Snowflake - Financial Governance
+# Tasty Bytes - Zero to Snowflake - Cost Management
 <!-- ------------------------ -->
 
-## Financial Governance in Snowflake
+## Cost Management in Snowflake
 Duration: 1
-<img src = "assets/financial_governance_header.png">
+<img src = "assets/cost_management_header.png">
 
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Cost Management!
@@ -30,13 +30,13 @@ For more detail on Cost Management in Snowflake please visit the [Cost Managemen
 - How to Suspend a Snowflake Warehouse
 - How to Create, Configure and Apply a Resource Monitor
 - How to Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
-- How to Set an Account Level Budget
+- How to Create a Tag and Assign it to a Warehouse
 - How to explore Cost with SQL or the Snowsight UI
 
 ### What You Will Build
 - A Snowflake Warehouse
 - A Resource Monitor
-- A Budget
+- A Cost Center Tag
 
 
 ## Creating a Worksheet and Copying in our SQL
@@ -79,27 +79,28 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
     - <img src = "assets/github_copy_raw_contents.png"/>
 ### Step 9 - Click Next -->
 
-## Creating a Warehouse 
+## Virtual Warehouses and Settings 
 Duration: 2
 
 ### Overview
 As a Tasty Bytes Snowflake Administrator we have been tasked with gaining an understanding of the features Snowflake provides to help ensure proper Financial Governance is in place before we begin querying and analyzing data.
 
-### Step 1 - Role and Warehouse Context
+### Step 1 - Role, Warehouse and Database Context
 Before we create a Warehouse, let's first set our Role and Warehouse context. 
 
-The queries below will assume the role of `tasty_admin` via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html) and leverage the `tasty_de_wh` warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html). 
+The queries below will set our Role to `tb_admin` using [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html), our Warehouse to  `tb_de_wh` warehouse using [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html) and our Database to `tb_101` using [USE DATABASE](https://docs.snowflake.com/en/sql-reference/sql/use-database) . 
 
-To run the queries, please highlight the two queries in your created Worksheet that match what you see below and click the "► Run" button in the top-right hand corner. 
+To run the queries, please highlight the three queries in your created Worksheet that match what you see below and click the "► Run" button in the top-right hand corner. 
 
-Once these are executed you will a `Statement executed successfully.` result and notice the Worksheet context reflect the Role and Warehouse as shown in the screenshot below.
+Once these are executed you will a `Statement executed successfully.` result and notice the Worksheet context reflect the Role, Warehouse and Database as shown in the screenshot below.
 
 ```
-USE ROLE tasty_admin;
-USE WAREHOUSE tasty_de_wh;
+USE ROLE tb_admin;
+USE WAREHOUSE tb_de_wh;
+USE DATABASE tb_101;
 ```
 
-<img src = "assets/3.1.use_role_and_wh.png"> 
+<img src = "assets/use_role_and_wh.png"> 
 
 ### Step 2 - Creating and Configuring a Warehouse
 Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to meet compute needs or scaling out to meet concurrency needs. 
@@ -108,10 +109,10 @@ Within Snowflake, Warehouses are highly configurable to meet your compute demand
 > A virtual warehouse, often referred to simply as a “warehouse”, is a cluster of compute resources in Snowflake.
 >
 
-The next query will create our first Warehouse named `tasty_test_wh`. Please execute this query now which result in another `Statement executed successfully.` message.
+The next query will create our first Warehouse named `tb_test_wh`. Please execute this query now which result in another `Statement executed successfully.` message.
 
 ```
-CREATE OR REPLACE WAREHOUSE tasty_test_wh WITH
+CREATE OR REPLACE WAREHOUSE tb_test_wh WITH
 COMMENT = 'test warehouse for tasty bytes'
     WAREHOUSE_TYPE = 'standard'
     WAREHOUSE_SIZE = 'xsmall' 
@@ -145,23 +146,188 @@ Based on the query we ran, please see the details below on what each configurati
 
 ### Step 3 - Click Next -->
 
-## Creating a Resource Monitor and Applying it to our Warehouse
+## Resuming, Suspending and Scaling a Warehouse
 Duration: 2
 
 ### Overview
-With a Warehouse in place, let's now leverage Snowflakes Resource Monitors to ensure the Warehouse has a monthly quota that will allow our admins to track it's consumed credits and ensure it is suspended if it exceeds its assigned quota.
+With a Warehouse created, let's now use it to answer a few questions from the business. While doing so we will learn how to resume, suspend and elastically scale the Warehouse.
+
+### Step 1 - Setting our Role and Warehouse Context and running a Query
+To begin, let's run the next three queries. The first two will set our `tbadmin` role and `tb_test_wh` context and the final one will query our `raw_pos.menu` table to find all food items sold at our Plant Palace branded trucks.
+
+```
+USE ROLE tb_admin;
+USE WAREHOUSE tb_test_wh;
+
+SELECT
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_id,
+    m.menu_item_name
+FROM raw_pos.menu m
+WHERE truck_brand_name = 'Plant Palace';
+```
+<img src = "assets/menu_items_plant_palace.png"> 
+
+
+### Step 2 - Scale our Warehouse Up
+After completing a basic query against one of our dimension tables, let's now get ready to query our much larger orders data set. 
+
+Let's now instantly scale our `tb_test_wh` up by executing our next query leveraging [ALTER WAREHOUSE... SET warehouse_size](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters). 
+
+Upon completion we will recieve another `Statement executed successfully` result.
+
+```
+ALTER WAREHOUSE tb_test_wh SET warehouse_size = 'XLarge';
+```
+
+### Step 3 - Run an Aggregation Query Against a Large Data Set
+With our Warehouse scaled up, let's now run our next query which uses [CONCAT](https://docs.snowflake.com/en/sql-reference/functions/concat), [COUNT](https://docs.snowflake.com/en/sql-reference/functions/count) and [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum) to calculate orders and total sales for Tasty Bytes customer loyalty members.
+
+```
+SELECT 
+    o.customer_id,
+    CONCAT(clm.first_name, ' ', clm.last_name) AS name,
+    COUNT(DISTINCT o.order_id) AS order_count,
+    SUM(o.price) AS total_sales
+FROM analytics.orders_v o
+JOIN analytics.customer_loyalty_metrics_v clm
+    ON o.customer_id = clm.customer_id
+GROUP BY o.customer_id, name
+ORDER BY order_count DESC;
+```
+<img src = "assets/total_orders_volume_loyalty.png">
+
+### Step 4 - Scale our Warehouse Down
+Having seen the instant upward scalability of our Snowflake Warehouse and how it can aggregate large result sets with ease, let's now instantly scale our `tb_test_wh` back down by running the next query. 
+
+Upon completion we will recieve another `Statement executed successfully` result.
+
+```
+ALTER WAREHOUSE tb_test_wh SET warehouse_size = 'XSmall';
+```
+
+### Step 5 - Suspend our Warehouse
+To cap things off, we previously set the `auto_suspend` to 60 seconds on our `tb_test_wh` but let's also take a look at how to manually suspend a warehouse by executing our final query.
+
+```
+ALTER WAREHOUSE tb_test_wh SUSPEND;
+```
+
+**Note**: Depending on how fast you have ran through these last statements you will receive of the two following results:
+1. **Statement executed successfully**: This means you were very fast in executing the steps in this section and have beat the `auto_suspend` Warehouse setting we configured to 60 seconds.
+2. **Invalid state. Warehouse 'TASTY_TEST_WH' cannot be suspended**: This means that the amazing `auto_suspend` Warehouse setting we configured to 60 seconds has won the Warehouse suspension race.
+
+### Step 6 - Click Next -->
+
+
+## Controlling Cost with Session Timeout Parameters
+Duration: 1
+
+### Overview
+With monitoring in place, let's now make sure we are protecting ourselves from bad long running queries ensuring timeout parameters are adjusted on the Warehouse.
+
+### Step 1 - Exploring Warehouse Statement Parameters
+To begin, let's run the next query to find all Warehouse Parameters related to Statements using the [SHOW PARAMETERS](https://docs.snowflake.com/en/sql-reference/sql/show-parameters) command.
+
+```
+SHOW PARAMETERS LIKE '%statement%' IN WAREHOUSE tb_test_wh;
+```
+<img src= "assets/show_parameters.png">
+
+ 
+### Step 2 - Adjusting Warehouse Statement Timeout Parameter
+Having seen the two available Warehouse Statement Parameters, let's first adjust `statement_timeout_in_seconds` to 30 minutes by running the next query. 
+
+Since this parameter is in seconds we will set it equal to 1800 (30 minutes x 60 seconds). 
+
+Once executed we will receive another `Statement executed successfully.` result.
+
+```
+ALTER WAREHOUSE tb_test_wh SET statement_timeout_in_seconds = 1800;
+```
+
+>aside positive
+> **[STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds):** Timeout in **seconds** for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.
+>
+
+### Step 3 - Adjusting Warehouse Statement Queued Timeout Parameter
+Next, we will adjust `statement_queued_timeout_in_seconds` to 10 minutes by running the next query. 
+
+Since this parameter is also in seconds we will set it equal to 600 (10 minutes x 60 seconds). 
+
+Once executed we will receive another `Statement executed successfully.` result.
+
+```
+ALTER WAREHOUSE tb_test_wh SET statement_queued_timeout_in_seconds = 600;
+```
+
+>aside positive
+> **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
+>
+
+### Step 4 - Click Next -->
+
+## Controlling Cost with Account Timeout Parameters
+Duration: 1
+
+### Overview
+The Timeout Parameters we set on our Test Warehouse are also available at the Account, User and Session level. Within this step, we will adjust these at the Account level.
+
+Moving forward we will plan to monitor these as our Snowflake Workloads and Usage grow to ensure they are continuing to protect our account from unneccesary consumption but allowing for expected longer jobs to complete
+
+#### Step 1 - Adjusting the Account Statement Timeout Parameter
+To begin, our Account level Statement Parameter changes let's adjust `statement_timeout_in_seconds` to 5 hours by running the next two queries. 
+
+Since this parameter is in seconds we will set it equal to 18000 ([5 hours x 60 minutes] x 60 seconds). 
+
+Once executed we will receive another `Statement executed successfully.` result.
+
+```
+USE ROLE accountadmin;
+
+ALTER ACCOUNT SET statement_timeout_in_seconds = 18000; -- 18000 seconds = 5 hours
+```
+
+>aside positive
+> **[STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds):** Timeout in **seconds** for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.
+>
+
+### Step 2 - Adjusting the Account Statement Queued Timeout Parameter
+As we did with our Warehouse, let's now adjust `statement_queued_timeout_in_seconds` to 1 hour by running the next query.
+
+Since this parameter is also in seconds we will set it equal to 3600 ([1 hour x 60 minutes] x 60 seconds). Once executed we will receive another `Statement executed successfully.` result.
+
+```
+ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
+```
+
+>aside positive
+> **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
+>
+
+### Step 3 - Click Next -->
+
+
+## Monitoring Cost with Resource Monitors
+Duration: 2
+
+### Overview
+With a Test Warehouse in place, let's now leverage Snowflakes Resource Monitors to ensure the Warehouse has a monthly quota. 
+
+This will also allow Admins to monitor credit consumption and trigger Warehouse suspension if the quota is surpassed.
+
+Within this step we will create our Resource Monitor using SQL but these can also be deployed and monitored in Snowsight by navigating to [Admin -> Cost Management](https://docs.snowflake.com/en/user-guide/cost-exploring-overall#overview-of-account-level-costs).
 
 > aside positive
 > A resource monitor can be used to monitor credit usage by virtual warehouses and the cloud services needed to support those warehouses. 
 > 
 
 ### Step 1 - Creating a Resource Monitor
-To begin, lets assume our `accountadmin` role and then create our first Resource Monitor using [CREATE RESOURCE MONITOR](https://docs.snowflake.com/en/sql-reference/sql/create-resource-monitor) by executing the next set of queries.
+To begin, lets create our first Resource Monitor using [CREATE RESOURCE MONITOR](https://docs.snowflake.com/en/sql-reference/sql/create-resource-monitor) by executing the next query.
 
 ```
-USE ROLE accountadmin;
-
-CREATE OR REPLACE RESOURCE MONITOR tasty_test_rm
+CREATE OR REPLACE RESOURCE MONITOR tb_test_rm
 WITH 
     CREDIT_QUOTA = 100 -- 100 credits
     FREQUENCY = monthly -- reset the monitor monthly
@@ -171,7 +337,7 @@ WITH
         ON 100 PERCENT DO SUSPEND -- suspend warehouse at 100 percent, let queries finish
         ON 110 PERCENT DO SUSPEND_IMMEDIATE;
 ```
-<img src = "assets/4.1.create_rm.png"> 
+<img src = "assets/create_rm.png"> 
 
 For additional detail on what each configuration handles in our statement above please see below:
 > aside positive
@@ -196,169 +362,59 @@ With our Resource Monitor successfully created, let's now apply it to our create
 Please execute the final query of this step which will result in a `Statement executed successfully.` message. 
 
 ```
-ALTER WAREHOUSE tasty_test_wh SET RESOURCE_MONITOR = tasty_test_rm;
+ALTER WAREHOUSE tb_test_wh SET RESOURCE_MONITOR = tb_test_rm;
 ```
 
 ### Step 3 - Click Next --->
 
-## Protecting our Warehouse from Long Running Queries
-Duration: 1
+
+## Tag Objects to Attribute Spend
+Duration: 2
 
 ### Overview
-With monitoring in place, let's now make sure we are protecting ourselves from bad long running queries ensuring timeout parameters are adjusted on the Warehouse.
-
-### Step 1 - Exploring Warehouse Statement Parameters
-To begin, let's run the next query to find all Warehouse Parameters related to Statements using the [SHOW PARAMETERS](https://docs.snowflake.com/en/sql-reference/sql/show-parameters) command.
-
-```
-SHOW PARAMETERS LIKE '%statement%' IN WAREHOUSE tasty_test_wh;
-```
-<img src= "assets/5.1.show_parameters.png">
-
+Within this step, we will help our Finance department attribute consumption costs for the Test Warehouse to our Development Team. 
  
-### Step 2 - Adjusting Warehouse Statement Timeout Parameter
-Having seen the two available Warehouse Statement Parameters, let's first adjust `statement_timeout_in_seconds` to 30 minutes by running the next query. 
+We will create a Tag object for associating Cost Centers to Database Objects and Warehouses and leverage it to assign the Development Team Cost Center to our Test Warehouse.
 
-Since this parameter is in seconds we will set it equal to 1800 (30 minutes x 60 seconds). 
-
-Once executed we will receive another `Statement executed successfully.` result.
+### Step 1 - Create our Tag
+To begin, let's our Cost Center Tag using [CREATE TAG](https://docs.snowflake.com/en/sql-reference/sql/create-tag) by executing the next query which will result in a `Tag COST_CENTER successfully created.` message.
 
 ```
-ALTER WAREHOUSE tasty_test_wh SET statement_timeout_in_seconds = 1800;
+CREATE OR REPLACE TAG cost_center;
 ```
 
->aside positive
-> **[STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds):** Timeout in **seconds** for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.
->
-
-### Step 3 - Adjusting Warehouse Statement Queued Timeout Parameter
-Next, we will adjust `statement_queued_timeout_in_seconds` to 10 minutes by running the next query. 
-
-Since this parameter is also in seconds we will set it equal to 600 (10 minutes x 60 seconds). 
-
-Once executed we will receive another `Statement executed successfully.` result.
+### Step 2 - Set Tag on Warehouse
+Now we will to set the Development Team Cost Center Tag to the Test Warehouse byu executing the following query which will result in a `Statement executed successfully.` message.
 
 ```
-ALTER WAREHOUSE tasty_test_wh SET statement_queued_timeout_in_seconds = 600;
+ALTER WAREHOUSE tb_test_wh SET TAG cost_center = 'DEVELOPMENT_TEAM';
 ```
 
->aside positive
-> **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
->
+### Step 3 - Click Next --->
 
-### Step 4 - Click Next -->
 
-## Protecting our Account from Long Running Queries
+## Exploring Cost with Snowsight
 Duration: 1
 
 ### Overview
-These timeout parameters are also available at the Account, User and Session level. As we do not expect any extremely long running queries let's also adjust these parameters on our Account. 
+Snowflake also provides many ways to visually inspect Cost data within Snowsight.
 
-Moving forward we will plan to monitor these as our Snowflake Workloads and Usage
-grow to ensure they are continuing to protect our account from unneccesary consumption but also not cancelling longer jobs we expect to be running.
 
-#### Step 1 - Adjusting the Account Statement Timeout Parameter
-To begin, our Account level Statement Parameter changes let's adjust `statement_timeout_in_seconds` to 5 hours by running the next query. 
+### Step 1 - [Overall Account Costs](https://docs.snowflake.com/en/user-guide/cost-exploring-overall#label-cost-exploring-account-overview)
+To access an overview of incurred costs within Snowsight:
+    1. Select Admin » Cost Management.
+    2. Select a warehouse to use to view the usage data.
+        • Snowflake recommends using an X-Small warehouse for this purpose.
+    3. Select Account Overview.
 
-Since this parameter is in seconds we will set it equal to 18000 ([5 hours x 60 minutes] x 60 seconds). 
+### Step 2 - [Drill Down into Incurred Costs](https://docs.snowflake.com/en/user-guide/cost-exploring-overall#label-cost-exploring-consumption-page)
+To access and drill down into overall cost within Snowsight: 
+    1. Select Admin » Cost Management.
+    2. Select a warehouse to use to view the usage data.
+        • Snowflake recommends using an X-Small warehouse for this purpose.
+    3. Select Consumption.
+    4. Select All Usage Types from the drop-down list.
 
-Once executed we will receive another `Statement executed successfully.` result.
-
-```
-ALTER ACCOUNT SET statement_timeout_in_seconds = 18000; 
-```
-
->aside positive
-> **[STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds):** Timeout in **seconds** for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.
->
-
-### Step 2 - Adjusting the Account Statement Queued Timeout Parameter
-As we did with our Warehouse, let's now adjust `statement_queued_timeout_in_seconds` to 1 hour by running the next query.
-
-Since this parameter is also in seconds we will set it equal to 3600 ([1 hour x 60 minutes] x 60 seconds). Once executed we will receive another `Statement executed successfully.` result.
-
-```
-ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
-```
-
->aside positive
-> **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
->
-
-### Step 3 - Click Next -->
-
-## Leveraging, Scaling and Suspending our Warehouse
-Duration: 1
-
-### Overview
-With Financial Governance building blocks in place, let's now leverage the Snowflake Warehouse we created to execute a few queries. Along the way, let's scale this Warehouse up and back down as well as test manually suspending it.
-
-### Step 1 - Use our Warehouse to Run a Simple Query
-To begin, let's run the next three queries. The first two will set our `tasty_admin` role and `tasty_test_wh` context and the final one will query our `raw_pos.menu` table to find all food items sold at our Cheeky Greek branded trucks.
-
-```
-USE ROLE tasty_admin;
-USE WAREHOUSE tasty_test_wh; 
-
-SELECT 
-    m.menu_type,
-    m.truck_brand_name,
-    m.menu_item_id,
-    m.menu_item_name
-FROM frostbyte_tasty_bytes.raw_pos.menu m
-WHERE truck_brand_name = 'Cheeky Greek';
-```
-<img src = "assets/7.1.cheeky_greek.png">
-
-### Step 2 - Scale our Warehouse Up
-After completing a basic query against one of our dimension tables, let's now get ready to query our much larger orders data set. 
-
-Let's now instantly scale our `tasty_test_wh` up by executing our next query leveraging [ALTER WAREHOUSE... SET warehouse_size](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters). 
-
-Upon completion we will recieve another `Statement executed successfully` result.
-
-```
-ALTER WAREHOUSE tasty_test_wh SET warehouse_size = 'XLarge';
-```
-
-### Step 3 - Run an Aggregation Query Against a Large Data Set
-With our Warehouse scaled up, let's now run our next query which uses [CONCAT](https://docs.snowflake.com/en/sql-reference/functions/concat), [COUNT](https://docs.snowflake.com/en/sql-reference/functions/count) and [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum) to calculate orders and total sales for Tasty Bytes customer loyalty members.
-
-```
-SELECT 
-    o.customer_id,
-    CONCAT(clm.first_name, ' ', clm.last_name) AS name,
-    COUNT(DISTINCT o.order_id) AS order_count,
-    SUM(o.price) AS total_sales
-FROM frostbyte_tasty_bytes.analytics.orders_v o
-JOIN frostbyte_tasty_bytes.analytics.customer_loyalty_metrics_v clm
-    ON o.customer_id = clm.customer_id
-GROUP BY o.customer_id, name
-ORDER BY order_count DESC;
-```
-<img src = "assets/7.1.cheeky_greek.png">
-
-### Step 4 - Scale our Warehouse Down
-Having seen the instant upward scalability of our Snowflake Warehouse and how it can aggregate large result sets with ease, let's now instantly scale our `tasty_test_wh` back down by running the next query. 
-
-Upon completion we will recieve another `Statement executed successfully` result.
-
-```
-ALTER WAREHOUSE tasty_test_wh SET warehouse_size = 'XSmall';
-```
-
-### Step 5 - Suspend our Warehouse
-To cap things off, we previously set the `auto_suspend` to 60 seconds on our `tasty_test_wh` but let's also take a look at how to manually suspend a warehouse by executing our final query.
-
-```
-ALTER WAREHOUSE tasty_test_wh SUSPEND;
-```
-
-**Note**: Depending on how fast you have ran through these last statements you will receive of the two following results:
-1. **Statement executed successfully**: This means you were very fast in executing the steps in this section and have beat the `auto_suspend` Warehouse setting we configured to 60 seconds.
-2. **Invalid state. Warehouse 'TASTY_TEST_WH' cannot be suspended**: This means that the amazing `auto_suspend` Warehouse setting we configured to 60 seconds has won the Warehouse suspension race.
-
-### Step 6 - Click Next -->
 
 ## Conclusion and Next Steps
 Duration: 1
@@ -372,7 +428,8 @@ By doing so you have now:
 - Suspended a Snowflake Warehouse
 - Created, Configured and Applied a Resource Monitor
 - Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.
-- Set an Account Level Budget
+- Created and Attached a Tag to a Warehouse
+- Explored Costs using Snowsight
 
 If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.
 
