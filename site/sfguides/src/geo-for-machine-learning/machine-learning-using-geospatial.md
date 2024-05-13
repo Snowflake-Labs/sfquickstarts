@@ -870,7 +870,6 @@ def get_quantile_in_column(
 ) -> pd.core.series.Series:
     return quantile_dataframe[column_name].quantile([0, 0.25, 0.5, 0.75, 1])
 
-
 def render_pydeck_chart(
     chart_quantiles: pd.core.series.Series, 
     chart_dataframe: pd.DataFrame, 
