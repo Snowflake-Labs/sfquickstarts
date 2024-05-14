@@ -96,10 +96,10 @@ It will take a few seconds to create the resources in your AWS account. In the E
 
 
 <!-- ------------------------ -->
-## Use Glue to create Iceberg table and convert parquet data in place
+## Use AWS Glue to create the Iceberg table
 Duration: 6
 
-In this step we will use AWS Glue to create an icebrg table and convert parquet data without rewriting the data on S3 to iceberg format. Glue Notebooks will be used.
+In this step we will use AWS Glue to create an icebrg table and convert parquet data to iceberg format. Glue Studio will be used.
 
 - In one of the browser tabs with the AWS console type **S3** in the search bar and select **S3**. This will allow you to quickly see what data and folders are created in S3. **Verify** the AWS Region in the S3 screen.
 
@@ -229,7 +229,7 @@ As a bonus step you can open the browser tab with the S3 console and see the new
 
 
 <!-- ------------------------ -->
-## Setup Snowflake account and configure the External Volume and Catalog integrations
+## Setup Snowflake account and configure the AWS integrations
 Duration: 7
 
 In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create Snowflake objects such as a databaase, warehouse and role that are used the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the the Glue Catalog.
@@ -434,9 +434,9 @@ It will look something like this
 ```sql
 CREATE or REPLACE CATALOG INTEGRATION HOL_ICE_GLUE_CAT_INT
   CATALOG_SOURCE=GLUE
-  CATALOG_NAMESPACE='iceberg_devday'
+  CATALOG_NAMESPACE='iceberg'
   TABLE_FORMAT=ICEBERG
-  GLUE_AWS_ROLE_ARN='arn:aws:iam::6546xxxxxxxx:role/iceberg-devday-GluesnowflakedevdayLabRole-xxxxxxxxxxxx'
+  GLUE_AWS_ROLE_ARN='arn:aws:iam::6546xxxxxxxx:role/glue-snowflake-GluesnowflakedevdayLabRole-xxxxxxxxxxxx'
   GLUE_CATALOG_ID='6546xxxxxxxxx'
   ENABLED=TRUE; 
 ```
@@ -503,7 +503,7 @@ Your IAM Trust policy will look something like this
 
 
 <!-- ------------------------ -->
-## Create the Iceberg Table, Perform Analysis and write aggregate data as Iceberg table
+## Working with Iceberg tables in Snowflake
 Duration: 4
 
 
