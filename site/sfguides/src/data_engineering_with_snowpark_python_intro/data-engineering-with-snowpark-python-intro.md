@@ -3,14 +3,12 @@ id: data_engineering_with_snowpark_python_intro
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
 categories: Getting-Started, featured, data-engineering
 environments: web
-status: Published
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Snowpark, Python, Intro
 
 # Intro to Data Engineering with Snowpark Python
-
 <!-- ------------------------ -->
-
 ## Overview
 
 Duration: 15
@@ -72,14 +70,13 @@ You will need the following things before beginning:
   - **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 
 <!-- ------------------------ -->
-
 ## Quickstart Setup
 
 Duration: 10
 
 ### Fork the GitHub Repository
 
-The very first step is to fork the GitHub repository [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro). This repository contains all the code you need to successfully complete this Quickstart guide. Click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+The very first step is to fork the GitHub repository [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
 ### Create GitHub Codespace
 
@@ -107,7 +104,6 @@ This will open a new tab and begin setting up your codespace. It will take a few
 Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
 
 ### Configure Snowflake Credentials
-
 We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. A default config file was created for you during the codespace setup.
 
 The easiest way to edit the default `~/.snowsql/config` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowsql/config` and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the `accountname`, `username`, and `password` with your values. Then save and close the file.
@@ -119,7 +115,6 @@ The easiest way to edit the default `~/.snowsql/config` file is directly from VS
 During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
 
 <!-- ------------------------ -->
-
 ## Setup Snowflake
 
 Duration: 10
@@ -159,7 +154,7 @@ Let's run through the commands individually and understand what each command doe
 
 ### Creating Account Level Objects
 
-- In this step, we create the role `HOL_ROLE` and assign this role to `CURRENT_USER()` within Snowflake. This role will have access permissions to create all the Snowflake objects needed for the quickstart. First, grant the `HOL_ROLE` the same permissions as `SYSADMIN` role. Then, grant permissions to run tasks, monitor the execution of tasks and to import privileges on the database to `HOL_ROLE`.
+- In this step, we create the role `HOL_ROLE` and assign this role to `CURRENT_USER()` within Snowflake. This role will have access permissions to create all the Snowflake objects needed for the quickstart. First, grant the `HOL_ROLE` the same permissions as `SYSADMIN` role. Then, grant permissions to run tasks, monitor the execution of tasks and to import privileges on the database to `HOL_ROLE`. 
 
 ```sql
 SET MY_USER = CURRENT_USER();
@@ -205,10 +200,10 @@ CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
-
 ## Load Weather
 
 Duration: 5
+
 
 During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace.
 
@@ -256,7 +251,7 @@ Open the `steps/04_load_weather.sql` script in VS Code from the file Explorer in
 SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 ```
 
-You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODE` by navigating to the Snowsight UI -> Data -> Databases.
+You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODE` by navigating to the Snowsight UI -> Data -> Databases.  
 
 > aside positive
 > IMPORTANT:
@@ -264,7 +259,6 @@ You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL
 > - If you used a different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
-
 ## Load Location and Order Detail
 
 Duration: 10
@@ -318,21 +312,21 @@ $$
 from snowflake.snowpark.files import SnowflakeFile
 from openpyxl import load_workbook
 import pandas as pd
-
+ 
 def main(session, file_path, worksheet_name, target_table):
  with SnowflakeFile.open(file_path, 'rb') as f:
      workbook = load_workbook(f)
      sheet = workbook.get_sheet_by_name(worksheet_name)
      data = sheet.values
-
+ 
      # Get the first line in file as a header line
      columns = next(data)[0:]
      # Create a DataFrame based on the second and subsequent lines of data
      df = pd.DataFrame(data, columns=columns)
-
+ 
      df2 = session.create_dataframe(df)
      df2.write.mode("overwrite").save_as_table(target_table)
-
+ 
  return True
 $$;
 ```
@@ -389,12 +383,12 @@ Below is the SQL query to create the SPROC:
 
 - We use the python runtime 3.10 for the SPROC, and use the python package `snowflake-snowpark-python`
 - First part of the Sproc contains `table_exists()` function which we use to verify if the raw tables exist in the defined database and schema.
-- Second part of the Sproc contains the `main()` function that reads the raw tables `ORDER_DETAIL`, `LOCATION`, and `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.HISTORY_DAY`. Remember the Frostbyte Weather Source data is from Snowflake Marketplace but we can use it like any other standard snowflake table.
+- Second part of the Sproc contains the  `main()` function that reads the raw tables `ORDER_DETAIL`, `LOCATION`, and `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.HISTORY_DAY`. Remember the Frostbyte Weather Source data is from Snowflake Marketplace but we can use it like any other standard snowflake table.
 - After loading all 3 raw tables into their respective Snowpark Python Dataframes, we prepare to join the Dataframes.
-- We join all three Dataframes into a final DataFrame `order_detail`.
+- We join all three Dataframes into a final DataFrame `order_detail`. 
 - Next step is data aggregation based on date, country and city. So we use group_by() on `DATE_VALID_STD`, `ISO_COUNTRY_CODE` and `CITY_NAME` columns.
 - After grouping by these 3 columns, we calculate the aggregate daily sales, daily average temperature in Farenheit, and daily average precipitation in inches.
-- The resulting DataFrame called `final_agg` is saved. If the table `DAILY_CITY_METRICS` does not exist, we create a table and save the `final_agg` DataFrame as a table. If the table already exists, we append it to the existing table using Snowpark `merge()` function.
+- The resulting DataFrame called `final_agg` is saved. If the table `DAILY_CITY_METRICS` does not exist, we create a table and save the `final_agg` DataFrame as a table. If the table already exists, we append it to the existing table using Snowpark `merge()` function. 
 
 ```sql
 CREATE OR REPLACE PROCEDURE LOAD_DAILY_CITY_METRICS_SP()
@@ -534,7 +528,7 @@ To put this in context, we are on step **#7** in our data flow overview:
 
 ### Exploring the different terminologies associated with Snowflake Tasks
 
-- **Tasks**: Task is a basic, smallest unit of execution. A task can execute a single SQL statement, a call to a stored procedure, or any procedural logic using [Snowflake Scripting](https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index). One or more tasks make up a Dag. A root task is a special type of task which is the first task in a dag with no parent tasks before it.
+- **Tasks**: Task is a basic, smallest unit of execution. A task can execute a single SQL statement, a call to a stored procedure, or any procedural logic using [Snowflake Scripting](https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index). One or more tasks make up a Dag.  A root task is a special type of task which is the first task in a dag with no parent tasks before it.
 - **Dags**: A Directed Acyclic Graph (DAG) is a series of tasks composed of a single root task and additional tasks, organized by their dependencies. DAGs flow in a single direction, meaning a task runs only after all of its predecessor tasks have run successfully to completion.
 - **Schedule Interval**: Schedule interval refers to the interval of time between successive scheduled executions of a standalone task or the root task in a DAG.
 - **Deploying a Dag**: When you create a dag, you define the schedule interval, transformation logic in the tasks and task dependencies. However, you need to deploy a dag to actually run those transformations on the schedule. If you don't deploy the dag, the dag will not run on the schedule.
@@ -546,7 +540,7 @@ Let us create a dag and configure the schedule and transformations we want to ru
 
 In this example, we have two tasks `dag_task1`, `dag_task2` and `dag_task3` as part of `HOL_DAG`. The dag is scheduled daily.
 
-- `dag_task1` loads the `order_detail` data by calling the stored procedure `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP`.
+- `dag_task1` loads the  `order_detail` data by calling the stored procedure `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP`.
 - `dag_task2` loads the `location` data by calling the stored procedure `LOAD_EXCEL_WORKSHEET_TO_TABLE_SP`.
 - `dag_task3` updates the `DAILY_CITY_METRICS` table in snowflake by calling the stored procedure `LOAD_DAILY_CITY_METRICS_SP`.
 
@@ -596,6 +590,8 @@ dag_op.run(dag)
 ```
 
 And for more details on Tasks see [Introduction to Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro.html).
+
+
 
 ### Task Metadata
 
@@ -660,10 +656,9 @@ One important thing to understand about tasks, is that the queries which get exe
 
 ![remove filter](assets/query_history_remove_filter2.png)
 
-You should now see all the queries run by your tasks!
+You should now see all the queries run by your tasks! 
 
 <!-- ------------------------ -->
-
 ## Teardown
 
 Duration: 2
