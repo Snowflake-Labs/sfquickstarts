@@ -5,7 +5,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
-author: nathan.birch@snowflake.com, jonathan.regenstein@snowflake.com
+author: nathan.birch@snowflake.com
 
 # Getting Started with Time Series Analysis in Snowflake
 <!-- ------------------------ -->
@@ -119,7 +119,7 @@ The Github Codespace deployment will contain all the resources needed to complet
 
 ### Step 3 - Verify Your Anaconda Environment is Activated
 
-During the Codespace setup the postCreateCommand script created an Anaconda virtual environment named **hol-timeseries**. This virtual environment contains the packages needed to connect and interact with Snowflake using the Snowflake CLI.
+During the Codespace setup the postCreateCommand script created an Anaconda virtual environment named **hol-timeseries**. This virtual environment contains the packages needed to connect and interact with Snowflake using the **Snowflake CLI**.
 
 To activate the virtual environment:
 
@@ -163,30 +163,33 @@ SELECT SYSTEM$ALLOWLIST();
 
 <img src="assets/labsetup_regionless.png" />
 
-6. Back in **VS Code**, navigate to the following files and replace **<ACCOUNT_IDENTIFIER>** with your account identifier value:
+6. Back in **VS Code**, navigate to the following files and in the files replace **<ACCOUNT_IDENTIFIER>** with your Snowflake account identifier value:
 
 * `.snowflake/config.toml`
     - **account** variable for **both** connections
+
+<img src="assets/labsetup_files_snowflakeconfig.png" />
  
 * `iotstream/snowflake.properties`
     - **account** variable
     - **host** variable
 
+<img src="assets/labsetup_files_iotstreamproperties.png" />
 
 ### Step 5 - Configure Snowflake VS Code Extension Connection
 
-1. Open the Snowflake VS Code Extension
+1. Open the **Snowflake VS Code Extension**
 
 <img src="assets/labsetup_vscodeextension.png" />
 
 2. For **Account Identifier/URL**, enter your **<ACCOUNT_IDENTIFIER>**, **without** the `.snowflakecomputing.com`
-3. Click Continue
+3. Click **Continue**
 
 <img src="assets/labsetup_snowextension.png" />
 
 1. For Auth Method select `Username/password`
-2. Now enter the **ACCOUNTADMIN** user
-3. Enter the ACCOUNTADMIN **password**
+2. For Username enter the **ACCOUNTADMIN user** (defined when setting up the Snowflake account)
+3. For Password enter the **ACCOUNTADMIN password**
 3. Click `Sign in`
 
 <img src="assets/labsetup_snowsignin.png" />
@@ -209,10 +212,10 @@ SELECT SYSTEM$ALLOWLIST();
 > We'll need to update the **setup worksheet** with your **PUBLIC KEY** to be used during the initial Snowflake setup.
 
 
-### INFO: Retrieve Snowflake Private Key-Pair
+### Step 7 - Retrieve the Snowflake Public Key
 As part of the GitHub Codespace setup, an OpenSSL Private Key-pair was generated in the VS Code `keys` directory.
 
-Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be needed in the setup worksheet.
+**Copy** the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be needed in the setup worksheet.
 
 > aside negative
 >
@@ -222,21 +225,24 @@ Retrieve the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be
 >
 > ensure you **DO NOT** copy these lines.
 
+<img src="assets/labsetup_publickey.png" />
 
-### Step 7 - Update Snowflake "Setup" Worksheet with Lab Provisioned PUBLIC KEY
+
+### Step 8 - Update Snowflake "Setup" Worksheet with Lab Provisioned PUBLIC KEY
 1. Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
-2. **Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** retrieved from the `keys/rsa_key.pub` file.
+2. **Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** copied from the `keys/rsa_key.pub` file.
 
 <img src="assets/labsetup_rsakey.png" />
 
 **NOTE:** The pasted **PUBLIC KEY** can show on multiple lines and will work.
 
-3. **NO NEED TO RUN** anything just yet, this is just setup, this worksheet will be run in the next section.
 
 > aside positive
+> 
+> **NO NEED TO RUN** anything just yet, this is just setup, this worksheet will be run in the next section.
 >
-> The **Snowflake setup** worksheets are now ready to run, and The Lab environment is now ready!
+> The **Snowflake setup** is complete, and The Lab environment is configured!
 
 <!-- ------------------------ -->
 ## Setup Snowflake Resources
@@ -1471,7 +1477,7 @@ STREAMLIT SCRIPT COMPLETED
 
 ### Step 2 - Deploy Streamlit Application to Snowflake
 
-In this step, we will now deploy the Streamlit application on the Snowflake account using Snowflake CLI.
+In this step, we will now deploy the Streamlit application on the Snowflake account using **Snowflake CLI**.
 
 In the **GitHub Codespace VS Code**:
 
@@ -1513,7 +1519,7 @@ This command does the following:
 - --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
 
 
-### Step 2 - Launch the Streamlit Application
+### Step 3 - Launch the Streamlit Application
 
 Once the Streamlit application is successfully deployed, Snowflake CLI will display the message **"Streamlit successfully deployed and available"** and will provide the URL for the Streamlit application.
 
@@ -1526,7 +1532,7 @@ Once the Streamlit application is successfully deployed, Snowflake CLI will disp
 <img src="assets/streamlit_open.png" />
 
 
-### INFO: Working with the Streamlit Application
+### Step 4 - Understanding the Streamlit Application
 
 The **Streamlit in Snowflake** application contains several pages, accessible via the left menu, that cover the following Time Series queries:
 * **Raw** Time Series Data
@@ -1555,7 +1561,8 @@ At the bottom of each page there are options to:
 
 <img src="assets/streamlit_video_features.gif" />
 
-### Step 3 - Query Time Series Data using Streamlit in Snowflake
+
+### Step 5 - Set Streamlit Filters and Query Data
 
 The initial data set contains two weeks of data loaded for 1-Jan-2024 to 14-Jan-2024. Let's query this using the Streamlit application.
 
@@ -1582,6 +1589,10 @@ Open the **Streamlit Application**:
 > Review the chart and table detail.
 >
 
+**Data for 1-Jan-2024 should now display**
+
+<img src="assets/streamlit_query_raw.png" />
+
 7. Select the **TS Aggregates** page
 
     - The aggregates page will show high level statistical detail for the selected tag and time period.
@@ -1592,14 +1603,14 @@ Open the **Streamlit Application**:
 
 9. Try changing the **Select Aggregation Method** to `MIN` 
 
-    - This will now show the 1 minute minimums for the tag and time period
+    - This will now show the 1 minute minimums for the tag and time period.
 
 10. Try changing the **Label Position** to `START`
 
-    - The **Tag Data** table will now show the **Start** timestamp for each minute
+    - The **Tag Data** table will now show the **Start** timestamp for each minute interval.
 
 
-### Step 4 - Start a Continuous Simulated Stream
+### Step 6 - Start a Continuous Simulated Stream
 
 We can now start a continuous stream of data into Snowflake, similar to the initial streaming load, to simulate IoT device data streaming in near real-time to Snowflake.
 
@@ -1690,4 +1701,6 @@ Duration: 2
 
 
 ### Additional Resources
-- [Getting Started with Snowflake CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html)
+- **Documentation** - [Analyzing time-series data](https://docs.snowflake.com/en/user-guide/querying-time-series-data)
+- **Blog** - [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](https://www.snowflake.com/blog/time-series-analytics-asof-join-generally-available/)
+- **Lab** - [Getting Started with Snowflake CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html)
