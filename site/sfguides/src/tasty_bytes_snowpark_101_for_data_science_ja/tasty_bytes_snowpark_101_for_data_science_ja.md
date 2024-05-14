@@ -72,7 +72,7 @@ Tasty Bytesは世界中の都市でキッチンカーを運行しており、各
   - frostbyteを検索
   - 「SafeGraph: frostbyte」をクリック
   - 「Get（取得）」をクリック
-  - データベースの名称をFROSTBYTE_WEATHERSOURCE（すべて大文字）に変更
+  - データベースの名称をFROSTBYTE_SAFEGRAPH（すべて大文字）に変更
   - 追加ロールへの付与 -> 「PUBLIC（公開）」
 
 <img src = "assets/acquire_safegraph.gif">

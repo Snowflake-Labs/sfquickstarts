@@ -76,7 +76,12 @@
       "source": "/guide/end_to_end_machine_learning_with_dataiku/{,/**}",
       "destination": "/guide/a_dataiku_and_snowflake_guide_to_data_science",
       "type": 301
-    }    
+    },
+    {
+      "source": "guide/machine_learning_with_aws_autopilot/{,/**}",
+      "destination": "/guide/getting_started_with_snowpark_for_machine_learning_on_sagemaker",
+      "type": 301
+    }
     ]
   }
 }
