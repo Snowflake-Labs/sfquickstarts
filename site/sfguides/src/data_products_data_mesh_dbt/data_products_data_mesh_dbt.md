@@ -14,8 +14,6 @@ Duration: 5
 
 ### What is a data mesh?
 
-![Architecture for Data Mesh](assets/architecture-for-data-mesh.png)
-
 A data mesh is a decentralized data management architecture comprising domain-specific data. Instead of having a single centralized data platform, teams own the processes around their own data.
 
 In a data mesh framework, teams own not only their own data, but also the data pipelines and processes associated with transforming it. A central data engineering team maintains both key data sets and a suite of self-service tools to enable individual data ownership. Domain-specific data teams then exchange data via well-defined and versioned contracts.
@@ -27,9 +25,13 @@ Data mesh architecture aims to solve the lingering issues in data systems by ado
 3. Self-service data platform
 4. Federated computational governance
 
+In the end, an operational data mesh architecture may look something like this:
+
+![Architecture for Data Mesh](assets/architecture-for-data-mesh.png)
+
 ### Why you might need a data mesh
 
-The following two conditions might be indicators that you may benefit from a data mesh.
+The following two conditions are indicators that you may benefit from a data mesh architecture.
 
 #### Slowdowns and silos in the data monolith
 
@@ -47,6 +49,12 @@ Monolithic systems rarely have clear contracts or boundaries. This means that da
 
 Finally, collaboration also becomes more difficult in a monolithic system. Since no one is familiar with the entire codebase, it takes more people and more time to complete data-related tasks. This affects time to market for new products and features -- which impacts the company’s bottom line.
 
+### What is a data product?
+
+A data product is a useful information asset, accessed by a clearly defined interface, with an expectation of timeliness and correctness by the consumer. Teams build and maintain data products using processes and technologies that they are responsible for, though they could be supported by other platform-oriented teams.
+
+In the context of this guide, the data products created will be a set of tables in Snowflake organized as a [star schema](https://en.wikipedia.org/wiki/Star_schema). Snowflake and dbt Cloud can also be used together to build flat and wide tables, and [data vaults](https://en.wikipedia.org/wiki/Data_vault_modeling).
+
 ### What this guide covers
 
 In this guide you will learn how to use dbt Cloud and Snowflake together to build **data products** that are:
@@ -57,12 +65,13 @@ In this guide you will learn how to use dbt Cloud and Snowflake together to buil
 - Self-describing
 - Interoperable
 - Secure and governed
+- Useful
 
-In addition, you will be guided through configuring dbt Cloud and Snowflake to achieve **federated governance** at a small scale by using a **self-service data platform**. As a result of this, you will experience building robust data products and an alternative to a monolithic data architecture.
+In addition, you will be guided through configuring dbt Cloud and Snowflake to achieve **federated governance** at a small scale by using a **self-service data platform**. As a result of this, you will experience building robust data products and a two-project data mesh, as an alternative to a monolithic data architecture.
 
 ### What this guide doesn't cover
 
-- **Interfaces other than SQL:** This guide focuses on building data products within Snowflake using batch-processing of data with SQL. The access interface is SQL, which is powerful due to its ubiquity in the data management industry, however is not all encompassing. Other kinds of data products interfaces include: REST APIs, FTPs, dashboards. They are outside of scope of this guide.
+- **Interfaces other than SQL:** This guide focuses on building data products within Snowflake using batch-processing of data with SQL. The access interface is SQL, which is powerful due to its ubiquity in the data management industry, however is not all encompassing. Other kinds of data products interfaces include: REST APIs, FTPs, dashboards, and spreadsheet management tools. They are outside of scope of this guide.
 
 - **Organizational structure:** Data mesh is a broad organizational strategy that covers not only technology and process, but also crucially the organization of people. You will not receive advice in this guide on how to organize people -- instead this is already in-place at your organization through the various teams, business units, departments, subsidiaries, and so on -- cobbled together through the passage of time.
 
@@ -88,7 +97,7 @@ In addition, you will be guided through configuring dbt Cloud and Snowflake to a
 >
 > If you are participating in the **Snowflake Summit Hands On Lab session**, [please use this form](https://forms.gle/S7P9Rw1Udbfxf7TdA) to submit your account information so your account can be upgraded for the duration of the Hands On Lab.
 >
-> Otherwise, you may receive a dbt Cloud Enterprise account by [requesting one from the dbt Labs team](https://www.getdbt.com/contact).
+> Otherwise, you may receive a dbt Cloud Enterprise account for evaluation purposes by [requesting one from the dbt Labs team](https://www.getdbt.com/contact).
 
 - Requires basic dbt familiarity
   - To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
@@ -140,11 +149,10 @@ Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the
 <!-- ------------------------ -->
 ## Set up Snowflake securely
 Duration: 10
-<!-- TODO: Fix this ^^ -->
 
-![Target Snowflake and dbt Cloud configuration](assets/target-configuration.png)
+In this step, you will be setting up Snowflake for two teams: the core data team and the finance team, as shown in the diagram below. You will be using least privileged access principles in order to properly secure the data.
 
-In this step, you will be setting up Snowflake for two teams: the core data team and the finance team. You will be using least privileged access principles in order to properly secure the data.
+![Target Snowflake configuration](assets/architecture-for-data-mesh-just-snowflake.png)
 
 ### Setting up the Snowflake foundation for the core data team
 
@@ -166,7 +174,6 @@ create role if not exists foundational_role;
 create role if not exists foundational_pii_reader_role;
 grant role foundational_pii_reader_role to role foundational_role;
 
--- TODO: Can we simplify this to foundational_role having full write access to foundational_db database?
 grant usage on database foundational_db to role foundational_role;
 grant usage on schema foundational_db.prod to role foundational_role;
 grant usage on warehouse foundational_wh to role foundational_role;
@@ -211,20 +218,29 @@ grant role foundational_pii_reader_role to user <your-snowflake-username>;
 grant role finance_role to user <your-snowflake-username>;
 ```
 
-### So what?
+### Wrapping up this step
 
-TODO: add
+With these basic setup steps within Snowflake, you have begun laying the first layer of an interoperable and secure data mesh. In the next step, you will add dbt Cloud to create the tables in the data products.
 
+Here is where we are in the journey towards robust data products:
+
+- Discoverable
+- Addressable
+- Trustworthy and truthful
+- Self-describing
+- Interoperable 🔜
+- Secure and governed 🔜
+- Useful
 
 <!-- ------------------------ -->
 ## Create dbt Cloud projects for cross-team collaboration
 Duration: 10
 
-TODO: Insert image here
-
-In this step, you will set up two dbt Cloud Projects: one for the core data team, and one for the finance team.
+In this step, you will set up two dbt Cloud Projects: one for the core data team, and one for the finance team, as depicted in the diagram below.
 
 You will notice that you need to input your Snowflake credentials and resources information created in the previous step. dbt Cloud uses Snowflake role and warehouse resources in order to build database tables and views. The platform is powerful enough for the core data team and also accessible enough for newcomers on the finance team to use, all while allowing collaboration between these two teams.
+
+![Target dbt Cloud configuration](assets/architecture-for-data-mesh-just-dbt-cloud.png)
 
 ### Create the Foundational Project for the core data team
 
@@ -283,6 +299,20 @@ When setting up dbt Cloud for production, there are four recommended security op
 2. [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
 3. [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
 4. [**dbt Cloud SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
+
+### Wrapping up this step
+
+dbt Cloud adds a layer of addressability and discoverability to the data platform. In the next step, you will build your first data product.
+
+Here is where we are in the journey towards robust data products:
+
+- Discoverable 🔜
+- Addressable 🔜
+- Trustworthy and truthful
+- Self-describing
+- Interoperable 🔜
+- Secure and governed 🔜
+- Useful
 
 <!-- ------------------------ -->
 ## Build Foundational Project
@@ -513,13 +543,24 @@ TODO: Should this actually be "click the build button"?
 
 Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
 
-### Additional features
+### Additional features to build data products
 
 - **Cloud CLI:** dbt Cloud enables data practitioners to develop in their tool of choice and comes equipped with a local [dbt Cloud CLI](/docs/cloud/cloud-cli-installation) or in-browser [dbt Cloud IDE](/docs/cloud/dbt-cloud-ide/develop-in-the-cloud).
+- TODO: Linting
 
-### So what?
+### Wrapping up this step
 
-TODO: add
+You now have built the first useful tables in the Foundational project, which any user or application can access using SQL. In the next step, you will secure the PII access to privileged users.
+
+Here is where we are in the journey towards robust data products:
+
+- Discoverable 🔜
+- Addressable 🔜
+- Trustworthy and truthful
+- Self-describing
+- Interoperable ✅
+- Secure and governed 🔜
+- Useful ✅
 
 <!-- ------------------------ -->
 ## Apply Snowflake masking to PII data
@@ -567,13 +608,23 @@ Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `d
 
 TODO: should this be "click dbt Build button?"
 
-### Additional features 
+### Additional features to govern and secure
 
 - In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can use dbt to manage these tags in configuration files and use a DataOps approach to apply the policies. Look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from the dbt and Snowflake experts at Infinite Lambda.
 
-### So what?!
+### Wrapping up this step
 
-TODO: add
+You have now secured the PII produced in this data product so it is restricted to privileged users, governed by native Snowflake features. In the next step, you will add model contracts and enforce grants with dbt.
+
+Here is where we are in the journey towards robust data products:
+
+- Discoverable 🔜
+- Addressable 🔜
+- Trustworthy and truthful
+- Self-describing
+- Interoperable ✅
+- Secure and governed ✅
+- Useful ✅
 
 <!-- ------------------------ -->
 ## Add model contracts and enforce Snowflake grants with dbt
@@ -588,6 +639,8 @@ Now that our Snowflake environment is set up with proper data governance practic
 By using these configurations within your project, you'll be in effect creating a stable set of APIs that your downstream projects are able to consume from.
 
 To begin, add the file `models/core/core.yml` and add the code below:
+
+TODO: add a couple of tests and descriptions
 
 ```yaml
 models:
@@ -654,6 +707,7 @@ models:
 ```
 
 This code does the following:
+
 - It makes the `fct_orders` model public, which means other projects in the dbt Cloud account are now able to reference it
 - It will add and enforce a contract to this model.  This will enable dbt to do a couple things:  1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
 - The grants config is used to set permissions or grants for a resource. When a model is run, dbt will run grant and/or revoke statements to ensure that the permissions on the database object match the grants you have configured on the resource.
@@ -682,6 +736,8 @@ To run your first deployment dbt Cloud job, you will need to create a new dbt Cl
 <!-- ------------------------ -->
 ## Connect two dbt projects together
 Duration: 10
+
+![Target Snowflake and dbt Cloud configuration](assets/target-configuration.png)
 
 In this section, you will set up the downstream Finance project and create a cross-project reference to the `fct_orders` model from the Foundational project. Navigate to the IDE to set up our project:
 
