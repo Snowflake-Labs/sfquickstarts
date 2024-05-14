@@ -136,7 +136,7 @@ try:
     root.schemas[CONNECTION_PARAMETERS_ACCOUNT_ADMIN.get("schema")].stages.create(
         Stage(
             name="specs",
-            encryption=Type(type=Types.SNOWFLAKE_SSE)
+            encryption=StageEncryption(type="SNOWFLAKE_SSE")
     ))
 
     # CREATE STAGE IF NOT EXISTS volumes
@@ -145,8 +145,8 @@ try:
     root.schemas[CONNECTION_PARAMETERS_ACCOUNT_ADMIN.get("schema")].stages.create(
         Stage(
             name="volumes",
-            encryption=Type(type=Types.SNOWFLAKE_SSE),
-            directory=DIRECTORY_TABLE(enable="true")
+            encryption=StageEncryption(type="SNOWFLAKE_SSE"),
+            directory_table=StageDirectoryTable(enable="true")
     ))
     # create collection objects as the entry
 finally:
@@ -430,10 +430,12 @@ spec:
       gid: 1000
 
 ```
-**Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
-```bash
-cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
-snow object stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
+**Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py) :
+```Python API
+    # cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
+    # snow object stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
+    s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
+    s.upload_file("./jupyter-snowpark.yaml", "/", auto_compress=False, overwrite=True)
 ```
 You can verify that your yaml was pushed successfully by running the following Python API code and verifying that the file is listed:
 ```Python API
@@ -445,7 +447,7 @@ try:
 
     #USE ROLE CONTAINER_USER_ROLE;
     #LS @CONTAINER_HOL_DB.PUBLIC.SPECS;
-    stageFiles = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"].listFiles()
+    stageFiles = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"].list_files()
     for stageFile in stageFiles:
         print(stageFile)
 
@@ -726,10 +728,12 @@ spec:
       port: 9090
       public: true
 ```
-**Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
-```bash
-cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
-snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
+**Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py)
+```Python API
+    # cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
+    # snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
+    s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
+    s.upload_file("./convert-api.yaml", "/", auto_compress=False, overwrite=True)
 ```
 You can verify that your yaml was pushed successfully by running the Python code and verifying that the file is listed. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py) :
 ```Python API
