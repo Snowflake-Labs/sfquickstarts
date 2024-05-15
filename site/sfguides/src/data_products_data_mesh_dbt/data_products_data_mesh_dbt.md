@@ -322,10 +322,10 @@ Meanwhile, the finance team will build on these foundations, and add more specif
 
 When setting up dbt Cloud for production, there are four recommended security options to configure. They are out-of-scope for this particular Quickstart Guide, but worth mentioning at this point:
 
-1. [**Snowflake OAuth:**](https://docs.getdbt.com/docs/cloud/manage-access/set-up-snowflake-oauth) Require developers to connect their dbt Cloud Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt Cloud users will only be able to access the data that their Snowflake user has been granted.
-2. [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
-3. [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
-4. [**dbt Cloud SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
+- [**Snowflake OAuth:**](https://docs.getdbt.com/docs/cloud/manage-access/set-up-snowflake-oauth) Require developers to connect their dbt Cloud Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt Cloud users will only be able to access the data that their Snowflake user has been granted.
+- [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
+- [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
+- [**dbt Cloud SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
 
 ### Wrapping up this step
 
@@ -342,7 +342,7 @@ Here is where you are in the journey towards a data product:
 - **Useful:** it has value
 
 <!-- ------------------------ -->
-## Build Foundational Project
+## Build Foundational project
 Duration: 5
 
 Now it's time for you to add dbt code in the Foundational Project using the dbt Cloud IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a `fct_orders` table representing the all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.
@@ -370,16 +370,16 @@ Now that you've set up the Foundational Project, let's start building the data a
 ```yaml
 sources:
   - name: tpch
-    description: TPCH data source from Snowflake Sample Data
+    description: "TPCH data source from Snowflake Sample Data"
     database: snowflake_sample_data
     schema: tpch_sf1
     tables:
       - name: orders
-        description: One record per order
+        description: "One record per order"
       - name: customer
-        description: One record per customer
+        description: "One record per customer"
       - name: lineitem
-        description: One record per line item within a single order (1 -> n)
+        description: "One record per line item within a single order (1 -> n)"
 ```
 
 3. Create a `models/staging/stg_customers.sql` file to select from the `customers` table in the `tpch` source.
@@ -493,11 +493,11 @@ renamed as (
 select * from renamed
 ```
 
-### Core Layer
+### Create the marts layer
 
-Now set up the core layer as follows:
+Now set up the marts layer as follows:
 
-1. Create a `models/core/fct_orders.sql` to build a fact table with order details
+1. Create a `models/mart/fct_orders.sql` to build a fact table with order details
 
 ```sql
 {{
@@ -564,16 +564,18 @@ from final
 order by order_date
 ```
 
-### Execute
+### Execute and admire
 
-TODO: Should this actually be "click the build button"?
+Navigate to the **Command bar** and execute `dbt build`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
 
-Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
+At this point, you may also admire what you have built by looking at the **Lineage tab** in the dbt Cloud IDE, and as shown in the graphic below.
+
+TODO: Add lineage graphic here
 
 ### Additional features to build data products
 
-- **Cloud CLI:** dbt Cloud enables data practitioners to develop in their tool of choice and comes equipped with a local [dbt Cloud CLI](/docs/cloud/cloud-cli-installation) or in-browser [dbt Cloud IDE](/docs/cloud/dbt-cloud-ide/develop-in-the-cloud).
-- TODO: Linting
+- **dbt Cloud CLI:** In this guide, we are using the dbt Cloud IDE available within the web browser. dbt Cloud enables data practitioners to also develop with a local [dbt Cloud CLI](/docs/cloud/cloud-cli-installation) using a locally-installed code editor of their choice.
+- **dbt Cloud IDE linting and formatting:** To keep data product code quality high and follow your team's coding standards, you can use the built-in [linters and formatters in dbt Cloud](https://docs.getdbt.com/docs/cloud/dbt-cloud-ide/lint-format).
 
 ### Wrapping up this step
 
@@ -620,7 +622,7 @@ create or replace masking policy foundational_role.prod.pii_mask_string as (val 
 alter tag foundational_role.prod.pii_data set masking policy foundational_role.prod.pii_mask_string;
 ```
 
-Now that you've set up the appropriate tags and masking policies in Snowflake, it's time to jump into dbt Cloud to use a [model post-hook](https://TODO:_link) to apply the masking policy to the `fct_orders` dbt model immediately after the table is built. Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
+Now that you've set up the appropriate tags and masking policies in Snowflake, it's time to jump into dbt Cloud to use a [model post-hook](https://docs.getdbt.com/reference/resource-configs/pre-hook-post-hook) to apply the masking policy to the `fct_orders` dbt model immediately after the table is built. Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
 
 ```sql
 {{
@@ -631,15 +633,9 @@ Now that you've set up the appropriate tags and masking policies in Snowflake, i
 }}
 ```
 
-Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `dbt run`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
+### Additional features to govern and secure
 
-TODO: should this be "click dbt Build button?"
-
-### Additional features to govern and secure (TODO)
-
-- In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can use dbt to manage these tags in configuration files and use a DataOps approach to apply the policies. Look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from the dbt and Snowflake experts at Infinite Lambda.
-
-- Share data with Snowflake Private Listings
+- **dbt-tags package:** In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can manage these tags in configuration files within your dbt Cloud project and use a DataOps approach to apply the policies. Look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from the dbt and Snowflake experts at Infinite Lambda.
 
 ### Wrapping up this step
 
@@ -656,120 +652,119 @@ Here is where you are in the journey towards a data product:
 - ✅ **Useful:** it has value
 
 <!-- ------------------------ -->
-## Add model contracts and enforce Snowflake grants with dbt
+## Add model contracts and enforce Snowflake grants
 Duration: 5
 
-Now that our Snowflake environment is set up with proper data governance practices, it's time to turn to dbt Cloud to utilize that model in a way that's both complimentary and additive.  To do that, we'll look at adding the following model governance features to our project:
+Now that you have set up with data masking, it's time to setup proper grants to the foundational project's `fct_orders` table, add a model contract, and make it accessible to other dbt projects by using the following features:
 
-- [Contracts](https://docs.getdbt.com/docs/collaborate/govern/model-contracts)
-- [Access levels](https://docs.getdbt.com/docs/collaborate/govern/model-access)
+- [Model contracts](https://docs.getdbt.com/docs/collaborate/govern/model-contracts)
+- [Model access levels](https://docs.getdbt.com/docs/collaborate/govern/model-access)
 - [Grants](https://docs.getdbt.com/reference/resource-configs/grants)
 
 By using these configurations within your project, you'll be in effect creating a stable set of APIs that your downstream projects are able to consume from.
 
-To begin, add the file `models/core/core.yml` and add the code below:
-
-TODO: add a couple of tests and descriptions
+To begin, add the file `models/mart/core.yml` and add the code below:
 
 ```yaml
 models:
   - name: fct_orders
-    description: ""
+    description: "This model contains order information from the transactional systems of the company."
+    
+    # Model access setting
     access: public
+    
     config:
+      # Model contract setting
       contract:
         enforced: true
+      
+      # Grant setting
       grants:
         select: ['foundational_pii_reader_role', 'finance_role']
+    
     columns:
       - name: order_key
         data_type: int
-        description: ""
+        description: "The unique identifier for each order"
+        tests:
+          - unique
+          - not_null
 
       - name: order_date
         data_type: date
-        description: ""
+        description: "The date and time when the order was placed"
 
       - name: customer_key
         data_type: int
-        description: ""
+        description: "The identifier for the customer who placed the order"
+        tests:
+          - not_null
 
       - name: status_code
         data_type: varchar
-        description: ""
+        description: "A code representing the current status of the order"
 
       - name: priority_code
         data_type: varchar
-        description: ""
+        description: "A code indicating the priority level of the order"
 
       - name: ship_priority
         data_type: int
-        description: ""
+        description: "The priority level for shipping the order"
 
       - name: clerk_name
         data_type: varchar
-        description: ""
+        description: "The name of the clerk responsible for processing the order"
 
       - name: name
         data_type: varchar
-        description: ""
+        description: "The name associated with the order, such as the product name or order name"
 
       - name: market_segment
         data_type: varchar
-        description: ""
+        description: "The segment of the market to which the order is targeted or classified"
 
       - name: gross_item_sales_amount
         data_type: numeric(38, 3)
-        description: ""
+        description: "The total sales amount for items in the order before any discounts or taxes"
 
       - name: item_discount_amount
         data_type: numeric(38, 3)
-        description: ""
+        description: "The total discount amount applied to items in the order"
 
       - name: item_tax_amount
         data_type: numeric(38, 3)
-        description: ""
+        description: "The total tax amount applied to items in the order"
 
       - name: net_item_sales_amount
         data_type: numeric(38, 3)
-        description: ""
+        description: "The total sales amount for items in the order after discounts and taxes have been applied"
 ```
 
 This code does the following:
 
-- It makes the `fct_orders` model public, which means other projects in the dbt Cloud account are now able to reference it
-- It will add and enforce a contract to this model.  This will enable dbt to do a couple things:  1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
+- It makes the `fct_orders` model public, which means other projects in the dbt Cloud account are now able to reference it.
+- It will add and enforce a contract to this model.  This will enable dbt to do a couple things: 1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
 - The grants config is used to set permissions or grants for a resource. When a model is run, dbt will run grant and/or revoke statements to ensure that the permissions on the database object match the grants you have configured on the resource.
 
-3. Navigate to the dbt Cloud IDE **Lineage** tab to see the model noted as **Public**, below the model name.
+### Committing your changes
 
-**TODO: Insert picture here showing new lineage**
+To finish this step up, go to the **Version control** section in the IDE and click the **Commit and Sync** button to commit your changes. Once that is complete, merge your changes to the main or production branch.
 
-3. Go to **Version control** and click the **Commit and Sync** button to commit your changes.
-4. Merge your changes to the main or production branch.
+### Additional features for model governance
 
-### Create and run a dbt Cloud job
-To run your first deployment dbt Cloud job, you will need to create a new dbt Cloud job.  
-1. Click **Deploy** and then **Jobs**. 
-2. Click **Create job** and then **Deploy job**.
-3. Select the **Generate docs on run** option. This will enable dbt Cloud to pull in metadata from the warehouse to supplement the documentation found in the **Explore** section.
-
-**TODO: Insert pic here showing these steps**
-
-4. Then, click **Run now** to trigger the job.
-
-### Additional features (TODO)
-
-- Model versions
+- **dbt model versions:** How do you make a change to the structure of the `fct_orders` model once downstream users and applications use it and expect its structure to remain the same due to the model contract? That is where [dbt model versions](https://docs.getdbt.com/docs/collaborate/govern/model-versions) come in, to allow for multiple versions of a model to co-exist for a limited period of time, while downstream queries are migrated.
+- **Snowflake Private Listings:** With Marketplace features now native to Snowflake, you can use dbt Cloud to manage listings and deploy them alongside your code, keeping the listings governed in version control.
+- **Persisting docs to Snowflake:** The [`persist_docs`](https://docs.getdbt.com/reference/resource-configs/persist_docs) configuration can commit the dbt documentation directly to Snowflake as comments, for use by other applications.
 
 ### Wrapping up this step
 
-TODO: add section
+In this step you added a straightforward YAML file, and now `fct_orders` is a tested data model with documentation, will have the proper grants applied when built, and is publicly available for other dbt Cloud projects to use. In the next step, you will build the Foundational project in production.
 
 Here is where you are in the journey towards a data product:
 
 - 🔜 **Discoverable:** it is easy to find
-- 🔜 **Addressable:** it has a unique, labeled location for retrieval
+- 👉🔜 **Addressable:** it has a unique, labeled location for retrieval
 - 👉✅ **Trustworthy and truthful:** it is worthy of consumer trust
 - 👉✅ **Self-describing:** it comes with product information
 - ✅ **Interoperable:** it works with other products
@@ -777,12 +772,55 @@ Here is where you are in the journey towards a data product:
 - ✅ **Useful:** it has value
 
 <!-- ------------------------ -->
-## Connect two dbt projects together
-Duration: 10
+## Create and run a dbt Cloud job
+Duration: 5
+
+Before a downstream team can leverage assets from this foundational project, you need to run a [deployment job](https://docs.getdbt.com/docs/deploy/deploy-jobs) successfully.
+
+To run your first deployment dbt Cloud job, you will need to create a new dbt Cloud job.
+
+1. Click **Deploy** and then **Jobs**. 
+2. Click **Create job** and then **Deploy job**.
+3. Select the **Generate docs on run** option. This will enable dbt Cloud to pull in metadata from the warehouse to supplement the documentation found in the **Explore** section.
+
+![Select the 'Generate docs on run' option when configuring your dbt Cloud job.](assets/generate_docs_on_run.png)
+
+4. Then, click **Run now** to trigger the job.
+
+![Select the 'Generate docs on run' option when configuring your dbt Cloud job.](assets/job_run_now.png)
+
+5. After the run is complete, click Explore from the upper menu bar. You should now see your lineage, tests, and documentation coming through successfully.
+
+### Additional job features for a data mesh
+
+- **Continuos integration (CI) jobs:** How can you catch data quality and contract errors, before your production runs? That's where [CI jobs](https://docs.getdbt.com/docs/deploy/ci-jobs) can help -- to check data quality on every Pull Request.
+- **Job chaining:** The [Trigger Job On Completion](https://docs.getdbt.com/docs/deploy/deploy-jobs#trigger-on-job-completion--) option in dbt Cloud Jobs allows for jobs not only to run on a schedule, but also one after another.
+- **Model timing tab:** The [Model Timing Tab](https://docs.getdbt.com/docs/deploy/run-visibility#model-timing) within each job run helps identify the longest-running queries on Snowflake within the particular job, in order to optimize them and save on platform costs.
+
+### Wrapping up this step
+
+In this step, you ran a dbt Cloud job that deployed a production version of the data to Snowflake and registered the project metadata in dbt Cloud's metadata storage. This was necessary for the next step, which is to reference the Foundational data from within the Finance dbt Cloud project.
+
+Here is where you are in the journey towards a data product:
+
+- 🔜 **Discoverable:** it is easy to find
+- 👉🔜 **Addressable:** it has a unique, labeled location for retrieval
+- ✅ **Trustworthy and truthful:** it is worthy of consumer trust
+- ✅ **Self-describing:** it comes with product information
+- ✅ **Interoperable:** it works with other products
+- ✅ **Secure and governed:** it has proper access controls
+- ✅ **Useful:** it has value
+
+<!-- ------------------------ -->
+## Adding the Finance project
+Duration: 5
+
+In this section, you will set up the downstream Finance project and create a cross-project reference to the `fct_orders` model from the Foundational project.
 
 ![Target Snowflake and dbt Cloud configuration](assets/target-configuration.png)
 
-In this section, you will set up the downstream Finance project and create a cross-project reference to the `fct_orders` model from the Foundational project. Navigate to the IDE to set up our project:
+
+Navigate to the IDE to set up our project:
 
 1. If you’ve also started with a new git repo, click Initialize dbt project under the Version control section.
 2. Delete the models/example folder
@@ -826,15 +864,15 @@ Here is where you are in the journey towards a data product:
 
 - 🔜 **Discoverable:** it is easy to find
 - 👉✅ **Addressable:** it has a unique, labeled location for retrieval
-- ✅ **Trustworthy and truthful:** it is worthy of consumer trust
+- 👉✅ **Trustworthy and truthful:** it is worthy of consumer trust
 - ✅ **Self-describing:** it comes with product information
-- ✅ **Interoperable:** it works with other products
-- ✅ **Secure and governed:** it has proper access controls
-- ✅ **Useful:** it has value
+- 👉✅ **Interoperable:** it works with other products
+- 👉✅ **Secure and governed:** it has proper access controls
+- 👉✅ **Useful:** it has value
 
 <!-- ------------------------ -->
-## Using dbt Cloud to discover data products
-
+## Using dbt Explorer to discover data products
+Duration: 5
 
 > aside negative
 > 
@@ -842,16 +880,6 @@ Here is where you are in the journey towards a data product:
 
 5. Click **Explore** from the upper menu bar. You should now see your lineage, tests, and documentation coming through successfully.
 
-
-
-Steps:
-1. Setup job
-2. Run job
-3. 
-
-### Additional features (TODO)
-
-- Downstream jobs
 
 ### Wrapping up this step
 
@@ -869,7 +897,7 @@ Here is where you are in the journey towards a data product:
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
+Duration: 5
 <!-- TODO: Fix this ^^ -->
 
 
