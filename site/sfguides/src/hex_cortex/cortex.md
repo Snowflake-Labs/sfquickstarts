@@ -120,6 +120,3 @@ Congratulations on making it to the end of this Lab! You've successfully trained
 * How to call the model to perform inference and recieve population growth projections
 * How to chart those predictions and other useful information with Hex's native visual cells
 * How to create and share a Hex app
-
-### Related Resources
-
