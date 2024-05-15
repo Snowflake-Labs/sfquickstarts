@@ -41,7 +41,7 @@ You will learn about the following Snowflake features in this Quickstart:
 
 - Native Git Integration
 - Declarative Database Change Management
-- Parametrization of SQL scripts with Jinja
+- Parametrization of SQL scripts with Jinja templating
 - GitHub Actions (CI/CD) integration
 - Snowflake’s Visual Studio Code extension
 - SnowflakeCLI tool
@@ -564,7 +564,7 @@ We've covered a ton in this Quickstart, and here are the highlights:
 
 - Native Git Integration
 - Declarative Database Change Management
-- Parametrization of SQL scripts with Jinja
+- Parametrization of SQL scripts with Jinja templating
 - GitHub Actions (CI/CD) integration
 - Snowflake’s Visual Studio Code extension
 - SnowflakeCLI tool
