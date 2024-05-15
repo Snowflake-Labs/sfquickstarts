@@ -797,10 +797,14 @@ ORDER BY TAGNAME;
 
 <img src="assets/analysis_query_aggminmaxavgsumperc.png" />
 
-**Relative Frequency**: Find the value that occurs most frequently within a time frame.
+**Relative Frequency**: Consider the use case of **calculating the frequency and relative frequency** of each value within a specific time frame, to **determine how often the value occurs**.
+
+Find the value that occurs most frequently within a time frame.
 
 ```sql
 /* RELATIVE FREQUENCY
+Consider the use case of calculating the frequency and relative frequency of each value within a specific time frame, to determine how often the value occurs.
+
 Find the value that occurs most frequently within a time frame.
 */
 SELECT 
@@ -816,6 +820,8 @@ AND VALUE IS NOT NULL
 GROUP BY TAGNAME, VALUE
 ORDER BY TAGNAME, FREQUENCY DESC;
 ```
+
+**Relative Frequency**: Value 424 occurs most, with a frequency of 13 and a relative frequency of 21.6%. 
 
 <img src="assets/analysis_query_relativefrequency.png" />
 
@@ -871,7 +877,9 @@ ORDER BY TAGNAME;
 
 <img src="assets/analysis_query_aggdistributions.png" />
 
-**Watermarks**: Retrieve both the high (latest time stamped value) and low watermark (earliest time stamped value) readings within the time boundary.
+**Watermarks**: Consider the use case of **determining a sensor variance over time** by calculating the latest (high watermark) and earliest (low watermark) readings within a time boundary.
+
+Retrieve both the high watermark (latest time stamped value) and low watermark (earliest time stamped value) readings within the time boundary.
 
 ```sql
 /* WATERMARKS
