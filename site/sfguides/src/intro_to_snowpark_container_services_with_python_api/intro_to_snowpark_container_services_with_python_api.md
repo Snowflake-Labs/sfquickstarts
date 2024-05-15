@@ -864,21 +864,19 @@ try:
     # ENDPOINT='convert-api'   //The endpoint within the container
     # MAX_BATCH_ROWS=5         //limit the size of the batch
     # AS '/convert';           //The API endpoint
-    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions.create_service_function(Function(
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions.create_service_function(
+        Function(
         name="convert_udf",
         arguments=[
-                    FunctionArgument(name="input", datatype="float")
+            FunctionArgument(name="input", datatype="REAL")
         ],
-        returns="float",
-        service_function_params=(ServiceFunctionParams(
-                                    service="CONVERT_API",
-                                    endpoint="convert-api",
-                                    path="/convert"
-                                )
+        returns="REAL",
+        service="CONVERT_API",
+        endpoint="convert-api",
+        path="/convert",
+        max_batch_rows=5,
         ),
-        max_batch_rows=5
-    ), mode=CreateMode.or_replace)
-
+        mode = CreateMode.or_replace)
 
 finally:
     connection_container_user_role.close()
@@ -887,8 +885,8 @@ finally:
 We can now test our function:
 ```Python Connector
 
-f = root.databases[“CONTAINER_HOL_DB”].schemas[“PUBLIC”].functions[“create_udf(float)“].execute_function([12])
-printf(f)
+    f = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions["convert_udf(REAL)"].execute_function([12])
+    print(f)
 
 ```
 And even update our table to populate the `TEMP_F` field using our Service Function:
