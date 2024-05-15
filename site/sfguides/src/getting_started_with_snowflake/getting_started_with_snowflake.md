@@ -1130,9 +1130,7 @@ Click the **Create Share** button at the bottom of the dialog. The dialog closes
 
 ![TRIPS_SHARE share](assets/10Share_5.png)
 
-You can add consumers, add/change the description, and edit the objects in the share at any time. In the page, click the **<** button next to the share name to return to the **Share with Other Accounts** page:
-
-![TRIPS_SHARE share](assets/10Share_6.png)
+You can add consumers, add/change the description, and edit the objects in the share at any time. In the page, click the **<** button next to the share name to return to the **Share with Other Accounts** page.
 
 We've demonstrated how it only takes seconds to give other accounts access to data in your Snowflake account in a secure manner with no copying or transferring of data required!
 
