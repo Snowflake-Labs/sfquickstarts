@@ -25,9 +25,14 @@ In this quickstart, we will be utilizing the classic Titanic dataset to determin
 Head over to the [Snowflake](https://signup.Snowflake.com/) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
 
 #### Connecting Snowflake with Hex
-Once you've logged into your Snowflake account, you'll land on the `Learn` page. Simply navigate to the `Admin` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the connect button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
+If you have an existing Hex account, login in to your account and continue to the `Getting Started With Hex` section. 
 
-![](assets/vhol-partner-connect.gif)
+Otherwise, once you've logged into your Snowflake account, simply navigate to the `Data Products` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the `Connect` button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
+
+#### Creating a workspace
+Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page.
+
+![](assets/hex_sign_up.png)
 
 #### Workflow roadblocks
 The following issues may occur if you have an existing Hex account and you're not an Admin in that org.
@@ -43,8 +48,6 @@ The following issues may occur if you have an existing Hex account and you're no
 
 *If you're still encountering issues, or encounter any issues other than the ones listed above, please contact our support team [support@hex.tech](mailto:support@hex.tech) with the subject "VHOL" for priority support.*
 
-#### Creating a workspace
-Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page.
 
 <!-- ### Enabling ORGADMIN
 
@@ -95,7 +98,7 @@ In this quickstart, you will create machine learning model using Snowpark ML. Th
 ## Getting Started with Hex
 Duration: 5
 
-Now we can move back over to Hex and get started on our project. The first thing you'll need to do is transfer the Hex project into your new Hex org.
+Now we can move back over to Hex and get started on our project. The first thing you'll need to do is transfer the Hex project into your new or existing Hex org.
 
 <button>
 
@@ -105,7 +108,7 @@ Now we can move back over to Hex and get started on our project. The first thing
 
 </button>
 
-Select Get a copy, select your new Hex org, and ensure the Hex project is in your new Hex org. 
+Select Get a copy, select your new or existing Hex org. 
 
 Now that you've got your project, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to import our Snowflake connection to our project.
 
@@ -113,16 +116,20 @@ We can import our Snowflake data connection by heading over to the `Data sources
 
 ![](assets/vhol-dc.gif)
 
+If you had an existing Hex org and did not create one via Partner Connect please follow [Hex documentation](https://learn.hex.tech/docs/connect-to-data/data-connections/data-connections-introduction) on creating a Snowflake connection. 
+
 ## Write the data back to Snowflake
 Duration: 5
 
-Let's write the data into the new Snowflake instance. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
+Now that you have the Hex project, let's write the data into the new Snowflake instance. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
 
 ![](assets/vhol-add-write.gif)
 
-Using this cell is quite simple. First we'll need choose the source data from the dataframes currently in the project that we want to write back into Snowflake. The first dataframe we'll want to write back is our `titanic` dataframe, so we'll choose `titanic` from our list. The next step is to select our Snowflake connection as the warehouse that we want to write the data to. Once complete, we'll choose the database and schema, then we can name our table. For the database, choose `PC_HEX_DB` and use the `PUBLIC` schema. For the table name, use `TITANIC_DATA`. Here is an example, ensure to appropriately name your table `TITIANIC_DATA`
+Using this cell is quite simple. First we'll need choose the source data from the dataframes currently in the project that we want to write back into Snowflake. The first dataframe we'll want to write back is our `titanic` dataframe, so we'll choose `titanic` from our list. The next step is to select our Snowflake connection as the warehouse that we want to write the data to. Once complete, we'll choose the database and schema, then we can name our table. For the database, choose `PC_HEX_DB` and use the `PUBLIC` schema. For the table name, use `TITANIC_DATA`. Here is an example, ensure to appropriately name your table `TITIANIC_DATA`.
 
 ![](assets/vhol-writeback.gif)
+
+*NOTE:* If you did not come from Partner Connect you will not see the `PC_HEX_DB` database and `PUBLIC` schema. You can create or use an existing database and schema. 
 
 To write the data back to our database, we'll want to enable the cell by clicking on the disabled button in the top right corner and selecting `Logic session`. To initiate the writeback, run the cell.
 
@@ -141,10 +148,10 @@ Now, we can connect to our Snowflake connection that we imported earlier. To do 
 
 ![](assets/vhol-Snowpark.gif)
 
-Add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project.
+Add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project. If you are using a different database and schema name, please ensure to scope the Snowpark session to the correct database and schema.
 
 ```python
-session.use_database(database='PC_HEX_DB')
+session.use_database('PC_HEX_DB')
 session.use_schema("PC_HEX_DB.PUBLIC")
 ```
 
@@ -177,8 +184,19 @@ Now that we've completed going through our project, we can share this project wi
 - Lastly, hit the share button next to publish, and select `Publish to web`.
 
 ## Conclusion
-Congratulations on making it to the end of this Lab! You can view a published version of this [project here](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)!
+Congratulations on making it to the end of this Lab! You've successfully perform feature engineering, trained an XGBoost model to predict the probably of survival onboard the Titanic, and logged that model to Snowflake's Model Registy. At the end, you created a Hex app that allowed users to pass in their own criteria to see if they would survive the Titanic.
 
-If you have any questions please feel free to reach out and connect with:
-Chase Romano - [LinkedIn](https://www.linkedin.com/in/chase-romano-0aa4046b/)
-Armin Efendic - [LinkedIn](https://www.linkedin.com/in/armin-efendic/)
+### What You Learned
+* How to perform preprocessing with Snowpark ML
+* How to perform model training with Snowpark ML
+* How to register the model in Snowflakes Registry
+* How models are "deployed" in Snowflake
+* How to perform inference using Snowpark and SQL against the registered model
+* How to create your own Hex app and share it out to end users
+
+### Related Resources
+* [Final Project](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)!
+* [Data Exploration & Analysis using Hex and Snowpark](https://developers.snowflake.com/solution/data-exploration-with-hex-and-snowpark/)
+* [Parallelized Time Series Forecasting Of Restaurant Foot Traffic Using Snowpark UDTF](https://developers.snowflake.com/solution/time-series-forecasting-using-snowpark-and-hex/)
+* [How To Leverage Libraries Outside of Snowpark ML](https://developers.snowflake.com/solution/optimizing-marketing-budget-using-snowpark-ml-in-hex-notebooks/)
+

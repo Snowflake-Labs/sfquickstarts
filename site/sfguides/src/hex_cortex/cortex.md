@@ -24,9 +24,14 @@ In this quickstart, we will be utilizing the population gathered by the US Censu
 Head over to the [Snowflake](https://signup.Snowflake.com/) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
 
 #### Connecting Snowflake with Hex
-Once you've logged into your Snowflake account, you'll land on the `Learn` page. Simply navigate to the `Admin` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the connect button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
+If you have an existing Hex account, login in to your account and continue to the `Getting Started With Hex` section. 
 
-![](assets/vhol-partner-connect.gif)
+Otherwise, once you've logged into your Snowflake account, simply navigate to the `Data Products` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the `Connect` button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
+
+#### Creating a workspace
+Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page.
+
+![](assets/hex_sign_up.png)
 
 #### Workflow roadblocks
 The following issues may occur if you have an existing Hex account and you're not an Admin in that org.
@@ -42,8 +47,6 @@ The following issues may occur if you have an existing Hex account and you're no
 
 *If you're still encountering issues, or encounter any issues other than the ones listed above, please contact our support team [support@hex.tech](mailto:support@hex.tech) with the subject "VHOL" for priority support.*
 
-#### Creating a workspace
-Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page.
 
 <!-- ------------------------ -->
 
@@ -109,8 +112,14 @@ Now that we've completed going through our project, we can share this project wi
 - Lastly, hit the share button next to publish, and select `Publish to web`.
 
 ## Conclusion
-Congratulations on making it to the end of this Lab! You can view a published version of this [project here](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)!
+Congratulations on making it to the end of this Lab! You've successfully trained an forecast model to predict the country population using only SQL. At the end, you created a Hex app highlight your analysis that can be easily shared with others.
 
-If you have any questions please feel free to reach out and connect with:
-Chase Romano - [LinkedIn](https://www.linkedin.com/in/chase-romano-0aa4046b/)
-Armin Efendic - [LinkedIn](https://www.linkedin.com/in/armin-efendic/)
+### What You Learned
+* How to use the Cortex Forecast Function
+* How to handle multi-series datasets
+* How to call the model to perform inference and recieve population growth projections
+* How to chart those predictions and other useful information with Hex's native visual cells
+* How to create and share a Hex app
+
+### Related Resources
+
