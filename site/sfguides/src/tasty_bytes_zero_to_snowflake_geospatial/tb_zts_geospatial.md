@@ -260,7 +260,7 @@ Duration: 3
 ### Overview
 Now that we understand how to create points, and calculate distance, we will now pile on a large set additional Snowflake Geospatial functionality to further our analysis.
 
-### Step 1 - create a Geographic Collection of Points and build our Minimum Bounding Polygon
+### Step 1 - Create a Geographic Collection of Points and build our Minimum Bounding Polygon
 Please execute the next query which will take the building blocks from the previous section and now collect all of our Geography Points and build a Minimum Bounding Polygon from them.
 
 Within this query we will see the usage of [ST_NPOINTS](https://docs.snowflake.com/en/sql-reference/functions/st_npoints), [ST_COLLECT](https://docs.snowflake.com/en/sql-reference/functions/st_collect), [ST_ENVELOPE](https://docs.snowflake.com/en/sql-reference/functions/st_envelope) and [ST_AREA](https://docs.snowflake.com/en/sql-reference/functions/st_area).
@@ -345,7 +345,7 @@ Duration: 2
 ### Overview
 As mentioned earlier, our Tasty Bytes Executives are interested in seeing what locations we may want to stop having our Food Trucks visit in their weekly schedules. Thankfully, every step we have taken so far has now enabled us to deliver on this exact request.
 
-## Step 1 - Top 50 Locations furthest away from our Top Selling Center Point in Paris
+### Step 1 - Top 50 Locations furthest away from our Top Selling Center Point in Paris
 Executing the next query we can identify which Paris locations we may want to take off our schedules. Within the query we will see a new function we haven't used yet, [TO_GEOGRAPHY](https://docs.snowflake.com/en/sql-reference/functions/to_geography).
 
 ```
@@ -469,6 +469,8 @@ SELECT H3_GRID_DISTANCE('871fb4671ffffff', '871fb4670ffffff') AS cell_distance;
 ```
 
 <img src = "assets/h3_grid_distance.png">
+
+### Step 5 - Click Next -->
 
 ## Conclusion and Next Steps
 Duration: 1

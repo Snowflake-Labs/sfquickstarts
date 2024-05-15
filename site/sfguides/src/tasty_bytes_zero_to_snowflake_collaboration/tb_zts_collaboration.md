@@ -231,7 +231,7 @@ Once again this sort of data might better present trends via a quick Snowsight C
 - X-Axis: DATE
 - Line: MAX_WIND_SPEED_100M_MPH(none)
 
-<img src = "assets/germany_chart.png">
+<img src = "assets/wind_chart.png">
 
 **Ah ha!** The wind for those zero sales days was at hurricane levels. This seems to be a better reason for why our trucks were not able to sell anything on those days. However since we ran this analysis in Harmonized let's now begin on our path to make this accessible in Analytics where our analysts can access these insights on their own.
 
