@@ -9,8 +9,11 @@ authors: Sean McIntyre, Doug Guthrie
 
 # Build Data Products and Data Mesh with dbt Cloud
 
-## Overview 
+<!-- ------------------------ -->
+## Introduction
 Duration: 5
+
+Welcome to the Build Data Products and Data Mesh with dbt Cloud Quickstart guide! Before you begin getting your hands into the technology, let's define what a data mesh is and describe what motivates the topic.
 
 ### What is a data mesh?
 
@@ -53,21 +56,42 @@ Finally, collaboration also becomes more difficult in a monolithic system. Since
 
 A data product is a useful information asset, accessed by a clearly defined interface, with an expectation of timeliness and correctness by the consumer. Teams build and maintain data products using processes and technologies that they are responsible for, though they could be supported by other platform-oriented teams.
 
-In the context of this guide, the data products created will be a set of tables in Snowflake organized as a [star schema](https://en.wikipedia.org/wiki/Star_schema). Snowflake and dbt Cloud can also be used together to build flat and wide tables, and [data vaults](https://en.wikipedia.org/wiki/Data_vault_modeling).
+The properties of a data product are:
+
+- **Discoverable:** it is easy to find
+- **Addressable:** it has a unique, labeled location for retrieval
+- **Trustworthy and truthful:** it is worthy of consumer trust
+- **Self-describing:** it comes with product information
+- **Interoperable:** it works with other products
+- **Secure and governed:** it has proper access controls
+- **Useful:** it has value
+
+### Learning more
+
+To learn more about data mesh, you may refer to dbt Labs' [Guide to Data Mesh e-book](https://8698602.fs1.hubspotusercontent-na1.net/hubfs/8698602/Guide%20to%20data%20mesh%20eBook%20V2.pdf).
+
+<!-- ------------------------ -->
+## About this guide
+Duration: 5
 
 ### What this guide covers
 
-In this guide you will learn how to use dbt Cloud and Snowflake together to build **data products** that are:
+Throughout this guide, imagine yourself building a data platform with Snowflake and dbt Cloud for your organization, starting with two teams:
 
-- Discoverable
-- Addressable
-- Trustworthy and truthful
-- Self-describing
-- Interoperable
-- Secure and governed
-- Useful
+1. **Core data team:** a team of experienced data engineers who build foundational data marts in Snowflake organized in a star schema of fact and dimensional tables
+2. **Finance team:** a team that includes data analysts in the finance department who want to own their data and data processes
 
-In addition, you will be guided through configuring dbt Cloud and Snowflake to achieve **federated governance** at a small scale by using a **self-service data platform**. As a result of this, you will experience building robust data products and a two-project data mesh, as an alternative to a monolithic data architecture.
+Each step of the guide will show you how to use features of both Snowflake and dbt Cloud to achieve building **data products**. As mentioned in the introduction, data products have the following properties:
+
+- **Discoverable:** it is easy to find
+- **Addressable:** it has a unique, labeled location for retrieval
+- **Trustworthy and truthful:** it is worthy of consumer trust
+- **Self-describing:** it comes with product information
+- **Interoperable:** it works with other products
+- **Secure and governed:** it has proper access controls
+- **Useful:** it has value
+
+By the end of this guide, you will achieve **federated governance** at a small scale by using **self-service data platforms**, as an alternative to a monolithic data architecture, which may be slow and brittle at scale.
 
 ### What this guide doesn't cover
 
@@ -79,17 +103,19 @@ In addition, you will be guided through configuring dbt Cloud and Snowflake to a
 
 ### Prerequisites
 
-- Snowflake
-  - Account admin access to a Snowflake Enterprise or Business Critical account
-  - Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
+#### Snowflake
+
+- Account admin access to a Snowflake Enterprise or Business Critical account
+- Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
 
 > aside negative
 > 
 > **You must use a Snowflake Enterprise account.** Snowflake Standard Edition is not sufficient, due to usage of Snowflake Enterprise features.
 
-- dbt Cloud
-  - Account admin access to a dbt Cloud Enterprise account
-  - Set your development and deployment [environments](https://docs.getdbt.com/docs/dbt-cloud-environments) to use dbt version 1.6 or later. You can also opt Keep on latest version of to always use the latest version of dbt.
+#### dbt Cloud
+
+- Account admin access to a dbt Cloud Enterprise account
+- Set your development and deployment [environments](https://docs.getdbt.com/docs/dbt-cloud-environments) to use dbt version 1.6 or later. You can also opt Keep on latest version of to always use the latest version of dbt.
 
 > aside negative
 > 
@@ -99,8 +125,9 @@ In addition, you will be guided through configuring dbt Cloud and Snowflake to a
 >
 > Otherwise, you may receive a dbt Cloud Enterprise account for evaluation purposes by [requesting one from the dbt Labs team](https://www.getdbt.com/contact).
 
-- Requires basic dbt familiarity
-  - To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
+#### Basic dbt familiarity
+
+To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
 
 <!-- ------------------------ -->
 ## Launch Snowflake and dbt Cloud for this Quickstart
@@ -222,15 +249,15 @@ grant role finance_role to user <your-snowflake-username>;
 
 With these basic setup steps within Snowflake, you have begun laying the first layer of an interoperable and secure data mesh. In the next step, you will add dbt Cloud to create the tables in the data products.
 
-Here is where we are in the journey towards robust data products:
+Here is where you are in the journey towards a data product:
 
-- Discoverable
-- Addressable
-- Trustworthy and truthful
-- Self-describing
-- Interoperable 🔜
-- Secure and governed 🔜
-- Useful
+- **Discoverable:** it is easy to find
+- **Addressable:** it has a unique, labeled location for retrieval
+- **Trustworthy and truthful:** it is worthy of consumer trust
+- **Self-describing:** it comes with product information
+- 👉🔜 **Interoperable:** it works with other products
+- 👉🔜 **Secure and governed:** it has proper access controls
+- **Useful:** it has value
 
 <!-- ------------------------ -->
 ## Create dbt Cloud projects for cross-team collaboration
@@ -238,7 +265,7 @@ Duration: 10
 
 In this step, you will set up two dbt Cloud Projects: one for the core data team, and one for the finance team, as depicted in the diagram below.
 
-You will notice that you need to input your Snowflake credentials and resources information created in the previous step. dbt Cloud uses Snowflake role and warehouse resources in order to build database tables and views. The platform is powerful enough for the core data team and also accessible enough for newcomers on the finance team to use, all while allowing collaboration between these two teams.
+You will notice that you need to input your Snowflake credentials and resources information created in the previous step. dbt Cloud uses Snowflake role and warehouse resources in order to build database tables and views. The platform is powerful enough for the core data team and also accessible enough for newcomers on the finance team to use, all the while allowing collaboration between these two teams.
 
 ![Target dbt Cloud configuration](assets/architecture-for-data-mesh-just-dbt-cloud.png)
 
@@ -304,15 +331,15 @@ When setting up dbt Cloud for production, there are four recommended security op
 
 dbt Cloud adds a layer of addressability and discoverability to the data platform. In the next step, you will build your first data product.
 
-Here is where we are in the journey towards robust data products:
+Here is where you are in the journey towards a data product:
 
-- Discoverable 🔜
-- Addressable 🔜
-- Trustworthy and truthful
-- Self-describing
-- Interoperable 🔜
-- Secure and governed 🔜
-- Useful
+- 👉🔜 **Discoverable:** it is easy to find
+- 👉🔜 **Addressable:** it has a unique, labeled location for retrieval
+- **Trustworthy and truthful:** it is worthy of consumer trust
+- **Self-describing:** it comes with product information
+- 🔜 **Interoperable:** it works with other products
+- 🔜 **Secure and governed:** it has proper access controls
+- **Useful:** it has value
 
 <!-- ------------------------ -->
 ## Build Foundational Project
@@ -552,15 +579,15 @@ Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `d
 
 You now have built the first useful tables in the Foundational project, which any user or application can access using SQL. In the next step, you will secure the PII access to privileged users.
 
-Here is where we are in the journey towards robust data products:
+Here is where you are in the journey towards a data product:
 
-- Discoverable 🔜
-- Addressable 🔜
-- Trustworthy and truthful
-- Self-describing
-- Interoperable ✅
-- Secure and governed 🔜
-- Useful ✅
+- 🔜 **Discoverable:** it is easy to find
+- 🔜 **Addressable:** it has a unique, labeled location for retrieval
+- **Trustworthy and truthful:** it is worthy of consumer trust
+- **Self-describing:** it comes with product information
+- 👉✅ **Interoperable:** it works with other products
+- 🔜 **Secure and governed:** it has proper access controls
+- 👉✅ **Useful:** it has value
 
 <!-- ------------------------ -->
 ## Apply Snowflake masking to PII data
@@ -608,23 +635,25 @@ Navigate to the [Command bar](https://arc.net/l/quote/kfovefjk) and execute a `d
 
 TODO: should this be "click dbt Build button?"
 
-### Additional features to govern and secure
+### Additional features to govern and secure (TODO)
 
 - In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can use dbt to manage these tags in configuration files and use a DataOps approach to apply the policies. Look into the [dbt-tags](https://dbt-tags.iflambda.com/latest/index.html) package from the dbt and Snowflake experts at Infinite Lambda.
+
+- Share data with Snowflake Private Listings
 
 ### Wrapping up this step
 
 You have now secured the PII produced in this data product so it is restricted to privileged users, governed by native Snowflake features. In the next step, you will add model contracts and enforce grants with dbt.
 
-Here is where we are in the journey towards robust data products:
+Here is where you are in the journey towards a data product:
 
-- Discoverable 🔜
-- Addressable 🔜
-- Trustworthy and truthful
-- Self-describing
-- Interoperable ✅
-- Secure and governed ✅
-- Useful ✅
+- 🔜 **Discoverable:** it is easy to find
+- 🔜 **Addressable:** it has a unique, labeled location for retrieval
+- **Trustworthy and truthful:** it is worthy of consumer trust
+- **Self-describing:** it comes with product information
+- ✅ **Interoperable:** it works with other products
+- 👉✅ **Secure and governed:** it has proper access controls
+- ✅ **Useful:** it has value
 
 <!-- ------------------------ -->
 ## Add model contracts and enforce Snowflake grants with dbt
@@ -729,9 +758,23 @@ To run your first deployment dbt Cloud job, you will need to create a new dbt Cl
 
 4. Then, click **Run now** to trigger the job.
 
-**TODO: Another pic showing clicking run now**
+### Additional features (TODO)
 
-5. Click **Explore** from the upper menu bar. You should now see your lineage, tests, and documentation coming through successfully.
+- Model versions
+
+### Wrapping up this step
+
+TODO: add section
+
+Here is where you are in the journey towards a data product:
+
+- 🔜 **Discoverable:** it is easy to find
+- 🔜 **Addressable:** it has a unique, labeled location for retrieval
+- 👉✅ **Trustworthy and truthful:** it is worthy of consumer trust
+- 👉✅ **Self-describing:** it comes with product information
+- ✅ **Interoperable:** it works with other products
+- ✅ **Secure and governed:** it has proper access controls
+- ✅ **Useful:** it has value
 
 <!-- ------------------------ -->
 ## Connect two dbt projects together
@@ -766,18 +809,74 @@ Notice the cross-project `ref` by using two arguments to the function - 1) name 
 
 7. Save your file and notice the lineage in the bottom pane.
 
-### So what?!
+> aside negative
+> 
+> ⚠️ Before the finance project can leverage assets from the foundational project, you need to create a production environment and run a deployment job successfully.
+>
+> If you receive a failure message in th
 
-TODO: add
+
+TODO: run build
+
+### Wrapping up this step
+
+TODO: add section
+
+Here is where you are in the journey towards a data product:
+
+- 🔜 **Discoverable:** it is easy to find
+- 👉✅ **Addressable:** it has a unique, labeled location for retrieval
+- ✅ **Trustworthy and truthful:** it is worthy of consumer trust
+- ✅ **Self-describing:** it comes with product information
+- ✅ **Interoperable:** it works with other products
+- ✅ **Secure and governed:** it has proper access controls
+- ✅ **Useful:** it has value
+
+<!-- ------------------------ -->
+## Using dbt Cloud to discover data products
+
+
+> aside negative
+> 
+> Before a downstream team can leverage assets from this foundational project, you need to create a production environment and run a deployment job successfully.
+
+5. Click **Explore** from the upper menu bar. You should now see your lineage, tests, and documentation coming through successfully.
+
+
+
+Steps:
+1. Setup job
+2. Run job
+3. 
+
+### Additional features (TODO)
+
+- Downstream jobs
+
+### Wrapping up this step
+
+TODO: add section
+
+Here is where you are in the journey towards a data product:
+
+- 👉✅ **Discoverable:** it is easy to find
+- ✅ **Addressable:** it has a unique, labeled location for retrieval
+- ✅ **Trustworthy and truthful:** it is worthy of consumer trust
+- ✅ **Self-describing:** it comes with product information
+- ✅ **Interoperable:** it works with other products
+- ✅ **Secure and governed:** it has proper access controls
+- ✅ **Useful:** it has value
 
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 <!-- TODO: Fix this ^^ -->
 
-Additional features:
 
-- Downstream jobs
-- Model versions
-- dbt Cloud CLI
-- Share data with Snowflake Private Listings
+I think it's important to say that just by using base features of dbt Cloud and Snowflake, you get data products for free.
+
+That way you put guardrails up across the data mesh
+
+People build things
+
+Less risk in building data mesh
