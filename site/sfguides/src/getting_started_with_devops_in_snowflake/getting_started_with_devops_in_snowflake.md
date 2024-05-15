@@ -53,7 +53,7 @@ You will learn about the following Snowflake features in this Quickstart:
 You will need the following things before starting:
 
 - Snowflake
-  - **A Snowflake Account**
+  - **A [Snowflake Account](https://signup.snowflake.com/)**
   - **A Snowflake user with ACCOUNTADMIN permissions**
   - **Anaconda Terms & Conditions accepted**. See [Using Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 - GitHub
@@ -74,7 +74,7 @@ During this Quickstart you will accomplish the following things:
 - Enrich your data with Cortex LLM functions 
 
 <!-- ------------------------ -->
-## Quickstart Setup
+## Setup Environment
 
 Duration: 4
 
@@ -356,7 +356,7 @@ There is a problem preventing us from doing so: Our pipeline definitions contain
 
 For the use case of changing the deployment target, variable replacement is all we need from Jinja. Jinja variables in SQL scripts are marked by `{{...}}`. We can provide a value for a variable in the USING clause of EXECUTE IMMEDIATE FROM. Template variables can be used everywhere is a SQL script. We can use variables to inject object names, property values or even entire statements.
 
-### Parametrize the Deployment Target
+### Parameterize the Deployment Target
 
 A number of small changes are necessary to parametrize which database the data pipeline gets deployed to. To get more control over our storage costs, we will also parametrize the retention time for the data in our target table.
 
@@ -550,7 +550,7 @@ Duration: 1
 Once you're finished with the Quickstart and want to clean things up, you can drop all the objects you created by running the teardown script. Open `steps/08_teardown.sql` in the VS Code extension and run all command using the "Execute All Statements" button in the upper right corner of the editor window.
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 
 Duration: 2
 
@@ -580,7 +580,3 @@ We've covered a ton in this Quickstart, and here are the highlights:
 - Related Tools
   - [Snowflake Visual Studio Code Extension](https://docs.snowflake.com/en/user-guide/vscode-ext)
   - [SnowflakeCLI Tool](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) and [GitHub Action](https://github.com/Snowflake-Labs/snowflake-cli-action)
-
-### Feedback
-
-If you have feedback or suggestions, we would love to hear from you. Please contact <developers@snowflake.com>.
