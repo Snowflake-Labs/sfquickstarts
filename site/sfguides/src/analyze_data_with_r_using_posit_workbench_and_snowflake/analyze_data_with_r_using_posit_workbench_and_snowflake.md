@@ -188,7 +188,7 @@ We will also use the development version of the `{odbc}` package to connect to t
 
 ```r
 install.packages("pak")
-pak::pak("r-dbi/odbc#662")
+pak::pak("r-dbi/odbc")
 ```
 
 After we install the packages, we load them.
