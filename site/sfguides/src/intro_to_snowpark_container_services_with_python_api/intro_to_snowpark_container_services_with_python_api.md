@@ -864,8 +864,8 @@ try:
     # ENDPOINT='convert-api'   //The endpoint within the container
     # MAX_BATCH_ROWS=5         //limit the size of the batch
     # AS '/convert';           //The API endpoint
-    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions.create_service_function(
-        Function(
+    root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].functions.create(
+        ServiceFunction(
         name="convert_udf",
         arguments=[
             FunctionArgument(name="input", datatype="REAL")
