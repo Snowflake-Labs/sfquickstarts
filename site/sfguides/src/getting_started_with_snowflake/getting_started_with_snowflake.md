@@ -305,8 +305,8 @@ From the **Databases** tab, click the `CYBERSYN` database and `PUBLIC` schema. C
 
 In the `Create Securable Object` dialog that opens, replace the following values in the SQL statement:
 
-`<stage_name>`: `cybersyn_company_metadata`
-`<url>`: `s3://sfquickstarts/zero_to_snowflake/cybersyn-consumer-company-metadata-csv/cybersyn_consumer_company_metadata.csv`
+**Stage Name**: `cybersyn_company_metadata`
+**URL**: `s3://sfquickstarts/zero_to_snowflake/cybersyn-consumer-company-metadata-csv/cybersyn_consumer_company_metadata.csv`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
 Also ensure you have removed 'credentials = (...)' statement which is not required. You can also comment it out like the picture below by using '--'. The create stage command should resemble the below picture or not include the 3rd line.
