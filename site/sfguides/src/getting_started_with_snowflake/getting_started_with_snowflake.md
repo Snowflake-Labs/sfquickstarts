@@ -2,7 +2,7 @@ id: getting_started_with_snowflake
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 categories: featured,getting-started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 authors: Victoria Warner (Cybersyn)
