@@ -72,7 +72,7 @@ Duration: 8
 >  **About the screenshots, sample code, and environment**
 Screenshots in this lab depict examples; results may vary slightly from what you see when you complete the exercises.
 
-## Navigating the Snowflake UI
+### Navigating the Snowflake UI
 
 Let's get you acquainted with Snowflake! This section covers the basic components of the user interface.
 
@@ -306,7 +306,7 @@ From the **Databases** tab, click the `CYBERSYN` database and `PUBLIC` schema. C
 In the `Create Securable Object` dialog that opens, replace the following values in the SQL statement:
 
 `<stage_name>`: `cybersyn_company_metadata`
-`<url>`: `s3://snowflake-workshop-lab/cybersyn-consumer-company-metadata-csv/`
+`<url>`: `s3://sfquickstarts/zero_to_snowflake/cybersyn-consumer-company-metadata-csv/cybersyn_consumer_company_metadata.csv`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
 Also ensure you have removed 'credentials = (...)' statement which is not required. You can also comment it out like the picture below by using '--'. The create stage command should resemble the below picture or not include the 3rd line.
@@ -537,7 +537,7 @@ In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, use the following command to
 
 ```SQL
 CREATE STAGE cybersyn_sec_filings
-url = 's3://snowflake-workshop-lab/cybersyn_cpg_sec_filings';
+url = 's3://sfquickstarts/zero_to_snowflake/cybersyn_cpg_sec_filings/';
 ```
 
 Now let's take a look at the contents of the `cybersyn_sec_filings` stage. Execute the following `LIST` command to display the list of files:
@@ -1026,7 +1026,7 @@ USE WAREHOUSE compute_wh;
 
 Finally, you can notice that in the database object browser panel on the left, the `CYBERSYN` and `Financial__Economic_Essentials` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
-Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN` and `Financial__Economic_Essentials` databases. _Note that the Cybersyn database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`._
+Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN` and `Financial__Economic_Essentials` databases. Note that the Cybersyn database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`.
 
 ```SQL
 USE ROLE accountadmin;
