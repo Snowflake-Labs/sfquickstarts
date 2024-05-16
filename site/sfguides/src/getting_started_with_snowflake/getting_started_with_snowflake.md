@@ -164,7 +164,6 @@ Under **Admin**, the **Cost Management** tab shows an overview of account consum
 
 ![resource monitors tab](assets/3UIStory_11.png)
 
-
 ### Admin > Users & Roles
 
 The **Roles** sub-tab of the **Users & Roles** tab shows a list of the roles and their hierarchies. Roles can be created, reorganized, and granted to users in this tab. The roles can also be displayed in tabular/list format by selecting the **Table** sub-tab.
@@ -192,7 +191,6 @@ In a real-world environment, you would use different roles for the tasks in this
 ## Data Lab: Stock Price & SEC Filings Data
 
 Duration: 2
-
 
 ### The Lab Story
 You work at a grocery retailer. You want to understand the performance of major consumer goods (CPG) companies in the US that supply your store. This lab takes a look at daily stock price data and quarterly and annual Securities Exchange Commission (SEC) company filings to understand the performance of the CPG landscape. Public companies are required to submit a quarterly and annual report to the SEC detailing their financial data.
