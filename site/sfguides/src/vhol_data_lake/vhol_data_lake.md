@@ -529,7 +529,7 @@ Now this function can be called in queries to use the parsed results of PDFs.
 select
   relative_path,
   file_url,
-  read_pdf('@documents/' || relative_path)
+  read_pdf(build_scoped_file_url(@documents, relative_path))
 from directory(@documents)
 limit 5;
 ```
