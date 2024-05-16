@@ -431,11 +431,11 @@ The results? A worksheet with all of the SQL you need to train your model, gener
 ### Step 3: Generate Predictions and Visualize 
 Duration: 3
 
-Once you’ve run the steps under `SETUP` in your worksheet, run this step in your worksheet to train your model: 
+**Once you’ve run the steps under `SETUP` in your worksheet,** run this step in your worksheet to train your model: 
 ```sql
 -- Train your forecasting model.
 CREATE OR REPLACE SNOWFLAKE.ML.FORECAST forecast_subscriptions_model(
-    INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training'),
+    INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training_v1'),
     SERIES_COLNAME => 'age_bin',
     TIMESTAMP_COLNAME => 'timestamp',
     TARGET_COLNAME => 'subscribed_count'
@@ -453,7 +453,7 @@ Otherwise, the below SQL uses the `forecast_subscriptions_model` we just trained
 BEGIN
     -- This is the step that creates your predictions.
     CALL forecast_subscriptions_model!FORECAST(
-        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values'),
+        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values_v1'),
         SERIES_COLNAME => 'age_bin',
         TIMESTAMP_COLNAME => 'timestamp'
     );
@@ -466,12 +466,12 @@ END;
 SELECT * FROM forecasts;
 ```
 
-We added a `WHERE` clause to this step in your worksheet so that we can visualize just one segment of our customers. Update your worksheet to the below to view historical and forecasted daily subscriptions for your 40 and up category.
+We added a `WHERE` clause to this step in your worksheet so that we can visualize just one segment of our customers. Update your worksheet to the below SQL to view historical and forecasted daily subscriptions for your 40 and up category.
 
 ```sql
 SELECT TIMESTAMP, subscribed_count AS actual, NULL AS forecast, NULL AS lower_bound, NULL AS upper_bound
     FROM forecast_training 
-    WHERE age_bin = '40 and up' and TIMESTAMP > ‘2010-02-01’
+    WHERE age_bin = '40 and up' and TIMESTAMP > '2010-02-01'
 UNION ALL
 SELECT  ts as TIMESTAMP, NULL AS actual, forecast, lower_bound, upper_bound
     FROM forecasts 
@@ -517,7 +517,7 @@ Duration: 3
 
 Now that we’ve gotten comfortable with our model, we can schedule our model to train and predict on a regular basis. This is helpful when our business needs predictions each week to help make planning decisions. These steps are not included in the worksheet you produced, so you’ll need to copy these into your worksheet.
 
-First, we’ll schedule recurring model training. Notice that we specify the warehouse the task should use and the timing of the task. This task is scheduled for midnight Monday morning – so that our forecasts are ready first thing Monday morning for our decision makers. (Try [crontab.guru](https://crontab.guru/#0_*_*_*) to create a different schedule.) The other important note is that we are training our model on the `forecast_training` table. Separately, we’ll need to make sure this table is updated weekly so that our model trains on the most recent data.
+First, we’ll schedule recurring model training. Notice that we specify the warehouse the task should use and the timing of the task. This task is scheduled for midnight Monday morning – so that our forecasts are ready first thing Monday morning for our decision makers. (Try [crontab.guru](https://crontab.guru/#0_*_*_*) to create a different schedule.) The other important note is that we are training our model on the `forecast_training_v1` table. Separately, we’ll need to make sure this table is updated weekly so that our model trains on the most recent data.
 ```sql
 -- Update your input data with recent data to make your predictions as accurate as possible. 
 CREATE TASK train_task
@@ -525,14 +525,14 @@ WAREHOUSE = my_warehouse
 SCHEDULE = 'USING CRON 0 0 * * 1  America/Los_Angeles' -- Runs at midnight PT, Monday morning.
 AS
     CREATE OR REPLACE SNOWFLAKE.ML.FORECAST forecast_subscriptions_model(
-        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training'),
+        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training_v1'),
         SERIES_COLNAME => 'age_bin',
         TIMESTAMP_COLNAME => 'timestamp',
         TARGET_COLNAME => 'subscribed_count'
     );
 ```
 
-Next, we’ll schedule recurring predictions. Again, we set our warehouse and the training schedule. Just like we did with the training step, we need to ensure that `forecast_future_values` is updated with future values for the timestamps we want to predict over. (For example, if we are predicting for the next two weeks, we need a table with a row for each day and age bin combination, with a column for the Euribor rate, since we included that feature in the model training step.) 
+Next, we’ll schedule recurring predictions. Again, we set our warehouse and the training schedule. Just like we did with the training step, we need to ensure that `forecast_future_values_v1` is updated with future values for the timestamps we want to predict over. (For example, if we are predicting for the next two weeks, we need a table with a row for each day and age bin combination, with a column for the Euribor rate, since we included that feature in the model training step.) 
 ```sql
 CREATE TASK predict_task
 WAREHOUSE = my_warehouse
@@ -540,7 +540,7 @@ SCHEDULE = 'USING CRON 0 1 * * 1 America/Los_Angeles' -- Runs at 1am PT, Monday 
 AS
     BEGIN
         CALL forecast_subscriptions_model!FORECAST(
-            INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values'),
+            INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values_v1'),
             SERIES_COLNAME => 'age_bin',
             TIMESTAMP_COLNAME => 'timestamp'
         );
@@ -558,6 +558,7 @@ EXECUTE TASK train_task;
 -- Suspend or drop your task.
 ALTER TASK train_task suspend;
 DROP TASK train_task;
+DROP TASK predict_task;
 ```
 
 ## Conclusion and Resources
