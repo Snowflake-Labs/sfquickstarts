@@ -176,6 +176,9 @@ SELECT SYSTEM$ALLOWLIST();
 
 <img src="assets/labsetup_files_iotstreamproperties.png" />
 
+7. **Save** file changes by pressing `Command/Ctrl` and `S`
+
+
 ### Step 5 - Configure Snowflake VS Code Extension Connection
 
 1. Open the **Snowflake VS Code Extension**
@@ -1068,8 +1071,8 @@ ORDER BY TAGNAME, TIMESTAMP;
 ### CHART: Rolling 5 MIN Average and Sum
 
 1. Select the `Chart` sub tab below the worksheet.
-2. Under Data select `VALUE` and set the Aggregation to `MAX`.
-3. Select `+ Add column` and select `RANGE_AVG_PRECEDING` and set Aggregation to `MAX`.
+2. Under Data select `VALUE` and set the Aggregation to `Max`.
+3. Select `+ Add column` and select `RANGE_AVG_5MIN` and set Aggregation to `Max`.
 
 <img src="assets/analysis_chart_range_5min.png" />
 
@@ -1077,7 +1080,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 Downsampling is used to decrease the frequency of time samples, such as from seconds to minutes, by placing time series data into fixed time intervals using aggregate operations on the existing values within each time interval.
 
-**Time Binning - 5 min Aggregate**: Create a downsampled time series data set with 5 minute aggregates, showing the START and END timestamp label of each interval.
+**Time Binning - 5 min Aggregate**: Create a downsampled time series data set with 5 minute aggregates, showing the **START and END timestamp label** of each interval.
 
 ```sql
 /* TIME BINNING - 5 min AGGREGATE with START and END label
@@ -1136,7 +1139,7 @@ ORDER BY ONE_SEC.TIMESTAMP;
 
 ### Gap Filling
 
-Time gap filling is the process of generating timestamps for given a start and end time boundary, and joining to a tag with less frequent timestamp values.
+Time gap filling is the process of generating timestamps for a given start and end time boundary, and joining to a tag with less frequent timestamp values.
 
 **Gap Filling**: Generate timestamps given a start and end time boundary, and join to a tag with less frequent values.
 
@@ -1209,6 +1212,7 @@ USE WAREHOUSE HOL_ANALYTICS_WH;
 CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE (
     V_TAGLIST VARCHAR,
     V_START_TIMESTAMP TIMESTAMP_NTZ,
+    V_END_TIMESTAMP TIMESTAMP_NTZ,
     V_INTERVAL NUMBER,
     V_BUCKETS NUMBER
 )
@@ -1252,6 +1256,9 @@ LAST_VALUE AS (
         TIMES ASOF JOIN HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS RAW_DATA
             MATCH_CONDITION(TIMES.TIMESTAMP >= RAW_DATA.TIMESTAMP)
             ON TIMES.TAGNAME = RAW_DATA.TAGNAME
+    WHERE
+        RAW_DATA.TIMESTAMP >= V_START_TIMESTAMP
+    AND RAW_DATA.TIMESTAMP <= V_END_TIMESTAMP
 ),
 NEXT_VALUE AS (
     SELECT
@@ -1261,8 +1268,11 @@ NEXT_VALUE AS (
         RAW_DATA.VALUE_NUMERIC
     FROM
         TIMES ASOF JOIN HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS RAW_DATA
-            MATCH_CONDITION(TIMES.TIMESTAMP < RAW_DATA.TIMESTAMP)
+            MATCH_CONDITION(TIMES.TIMESTAMP <= RAW_DATA.TIMESTAMP)
             ON TIMES.TAGNAME = RAW_DATA.TAGNAME
+    WHERE
+        RAW_DATA.TIMESTAMP >= V_START_TIMESTAMP
+    AND RAW_DATA.TIMESTAMP <= V_END_TIMESTAMP
 ),
 COMB_VALUES AS (
     SELECT
@@ -1301,8 +1311,7 @@ SELECT
     LV_RAW_TS LAST_TIMESTAMP
 FROM
     INTERP
-$$
-;
+$$;
 ```
 
 > aside positive
@@ -1315,8 +1324,8 @@ $$
 3. Run the **Create Interpolate Procedure** Script
 
 ```sql
--- Add helper procedure to accept start and end times, and return either LOCF or Linear Interpolated Values
-CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN (
+-- Add helper precedure to accept start and end times, and return either LOCF or Linear Interpolated Values
+CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE (
     V_TAGLIST VARCHAR,
     V_FROM_TIME TIMESTAMP_NTZ,
     V_TO_TIME TIMESTAMP_NTZ,
@@ -1335,18 +1344,17 @@ DECLARE
 TIME_BUCKETS NUMBER;
 RES RESULTSET;
 BEGIN
-    TIME_BUCKETS := (TIMESTAMPDIFF('SEC', :V_FROM_TIME, :V_TO_TIME) / :V_INTERVAL);
+    TIME_BUCKETS := CEIL((TIMESTAMPDIFF('SEC', :V_FROM_TIME, :V_TO_TIME) + 1) / :V_INTERVAL);
 
     IF (:V_INTERP_TYPE = 'LOCF') THEN
-        RES := (SELECT TIMESTAMP, TAGNAME, LOCF_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
+        RES := (SELECT TIMESTAMP, TAGNAME, LOCF_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_TO_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
     ELSE
-        RES := (SELECT TIMESTAMP, TAGNAME, INTERP_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
+        RES := (SELECT TIMESTAMP, TAGNAME, INTERP_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_TO_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
     END IF;
 
     RETURN TABLE(RES);
 END;
-$$
-;
+$$;
 ```
 
 > aside positive
@@ -1420,7 +1428,8 @@ This section will be executed within a Snowflake Snowsight Worksheet.
 
 ### Step 3 - Query Time Series Data Using Deployed Functions and Procedures
 
-Interpolate Query
+### Interpolate Query
+
 ```sql
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
@@ -1428,19 +1437,31 @@ USE HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
 -- Directly Call Table Function
-SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 01:05:00'::TIMESTAMP_NTZ, 5, 100)) ORDER BY TAGNAME, TIMESTAMP;
+SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 12:10:00'::TIMESTAMP_NTZ, '2024-01-01 13:10:00'::TIMESTAMP_NTZ, 10, 362)) ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-LOCF Interpolate Query
+<img src="assets/function_query_direct.png" />
+
+### CHART: Interpolation - Linear and LOCF
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data select `INTERP_VALUE` and set the Aggregation to `Max`.
+3. Select `+ Add column` and select `LOCF_VALUE` and set Aggregation to `Max`.
+
+<img src="assets/function_chart_linearlocf.png" />
+
+
+### Interpolation - Last Observed Value Carried Forward (LOCF) Query
+
 ```sql
--- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals
-CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN(
+-- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LOCF Interpolate
+CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
     -- V_TAGLIST
     '/IOT/SENSOR/TAG401',
     -- V_FROM_TIME
-    '2024-01-01 01:05:00',
+    '2024-01-01 12:10:00',
     -- V_TO_TIME
-    '2024-01-01 03:05:00',
+    '2024-01-01 13:10:00',
     -- V_INTERVAL
     10,
     -- V_INTERP_TYPE
@@ -1448,38 +1469,94 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN(
 );
 ```
 
-Linear Interpolate Query
+### CHART: Interpolation - LOCF
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data select `VALUE` and set the Aggregation to `Max`.
+
+<img src="assets/function_chart_locf.png" />
+
+
+### Interpolation - Linear Query
+
 ```sql
--- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals
-CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE_LIN(
+-- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LINEAR Interpolate
+CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
     -- V_TAGLIST
     '/IOT/SENSOR/TAG401',
     -- V_FROM_TIME
-    '2024-01-01 01:05:00',
+    '2024-01-01 12:10:00',
     -- V_TO_TIME
-    '2024-01-01 03:05:00',
+    '2024-01-01 13:10:00',
     -- V_INTERVAL
     10,
     -- V_INTERP_TYPE
-    'LINEAR'
+    'INTERP'
 );
 ```
 
-LTTB Query
+### CHART: Interpolation - Linear
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data select `VALUE` and set the Aggregation to `Max`.
+
+<img src="assets/function_chart_linear.png" />
+
+
+### LTTB Query
+
+The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that reduces the number of visual data points.
+
+Starting with a **RAW** query we can see the **LTTB** function in action, where the function will downsample a **day of data for a one second tag**, 86400 data points to 500 whilst keeping the context of the values.
+
+**RAW Query**
+
+```sql
+-- RAW
+SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC as VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2024-01-09 12:00:00'
+AND TIMESTAMP <= '2024-01-10 12:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+ORDER BY TAGNAME, TIMESTAMP;
+```
+
+### CHART: RAW Query
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data select `VALUE` and set the Aggregation to `Max`.
+3. Under Data select `TIMESTAMP` and set the Bucketing to `Minute`. 
+
+**86400 Data Points**
+
+<img src="assets/function_chart_lttb_raw.png" />
+
+We can now pass the same data into the **LTTB table function** and request 500 data points to be returned.
+
 ```sql
 -- LTTB
-SELECT data.tagname, lttb.timestamp::varchar::timestamp_ntz AS timestamp, NULL AS value, lttb.value_numeric 
+SELECT DATA.TAGNAME, LTTB.TIMESTAMP::VARCHAR::TIMESTAMP_NTZ AS TIMESTAMP, LTTB.VALUE 
 FROM (
-SELECT tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 1, 'SECOND', 'END') AS timestamp, APPROX_PERCENTILE(value_numeric, 0.5) AS value_numeric 
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE timestamp > '2000-03-26 02:50:21' AND timestamp <= '2024-03-26 14:50:21' 
-AND tagname IN ('/WITSML/NO 15/9-F-7/DEPTH') 
-GROUP BY tagname, TIME_SLICE(DATEADD(MILLISECOND, -1, timestamp), 1, 'SECOND', 'END')
-) AS data 
-CROSS JOIN TABLE(HOL_TIMESERIES.ANALYTICS.function_ts_lttb(date_part(epoch_nanosecond, data.timestamp), data.value_numeric, 500) OVER (PARTITION BY data.tagname ORDER BY data.timestamp)) AS lttb
-ORDER BY tagname, timestamp
-;
+    SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE
+    FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+    WHERE TIMESTAMP > '2024-01-01 00:00:00'
+    AND TIMESTAMP <= '2024-02-01 00:00:30'
+    AND TAGNAME = '/IOT/SENSOR/TAG301'
+) AS DATA 
+CROSS JOIN TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB(DATE_PART(EPOCH_NANOSECOND, DATA.TIMESTAMP), DATA.VALUE, 500) OVER (PARTITION BY DATA.TAGNAME ORDER BY DATA.TIMESTAMP)) AS LTTB
+ORDER BY TAGNAME, TIMESTAMP;
 ```
+
+### CHART: LTTB Query
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data select `VALUE` and set the Aggregation to `Max`.
+3. Under Data select `TIMESTAMP` and set the Bucketing to `Minute`. 
+
+**500 Data Points**
+
+<img src="assets/function_chart_lttb_downsampled.png" />
+
 
 > aside positive
 > 
