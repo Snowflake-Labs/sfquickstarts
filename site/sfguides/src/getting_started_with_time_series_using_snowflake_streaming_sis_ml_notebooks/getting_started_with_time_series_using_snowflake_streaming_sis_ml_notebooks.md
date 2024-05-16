@@ -1531,6 +1531,8 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 <img src="assets/function_chart_lttb_raw.png" />
 
+**LTTB Query**
+
 We can now pass the same data into the **LTTB table function** and request 500 data points to be returned.
 
 ```sql
