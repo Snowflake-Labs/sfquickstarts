@@ -481,14 +481,14 @@ With the channel connection being successful, we can now load the IoT data set, 
 
 The simulated IoT dataset contains six sensor device tags at different frequencies, within a single **namespace** called **"IOT"**.
 
-| NAMESPACE | TAGNAME | FREQUENCY |
-| --- | --- | --- |
-| IOT | TAG101 | 5 SEC |
-| IOT | TAG201 | 10 SEC |
-| IOT | TAG301 | 1 SEC |
-| IOT | TAG401 | 60 SEC |
-| IOT | TAG501 | 60 SEC |
-| IOT | TAG601 | 10 SEC |
+| **NAMESPACE** | **TAGNAME** | **FREQUENCY** | **UNITS** | **DATA_TYPE** | **TYPE** |
+| --- | --- | --- | --- | --- | --- |
+| IOT | TAG101 | 5 SEC | PSI | DOUBLE | Pressure Gauge |
+| IOT | TAG201 | 10 SEC | RPM | DOUBLE | Motor RPM |
+| IOT | TAG301 | 1 SEC | KPA | DOUBLE | Pressure Gauge |
+| IOT | TAG401 | 60 SEC | CM3S | DOUBLE | Flow Sensor |
+| IOT | TAG501 | 60 SEC | DEGF | DOUBLE | Temperature Gauge |
+| IOT | TAG601 | 10 SEC | KPA | DOUBLE | Pressure Gauge |
 
 
 1. In the **VS Code** `Terminal` run the `Run_MAX.sh` script to load the IoT data.
@@ -1010,7 +1010,9 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 > aside negative
 > 
->  Now assume a scenario, where there are **time gaps or missing data** received from a sensor. Such as a sensor that sends roughly every 5 seconds, or if a sensor experiences a fault.
+>  Now assume a scenario, where there are **time gaps or missing data** received from a sensor. Such as a sensor that sends roughly every 5 seconds and experiences a fault.
+>
+> In this example I am using [DATE_PART](https://docs.snowflake.com/en/sql-reference/functions/date_part) to exclude seconds 20, 45, and 55 from the data.
 >
 > ```sql
 > SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE
@@ -1018,15 +1020,16 @@ ORDER BY TAGNAME, TIMESTAMP;
 > WHERE TIMESTAMP >= '2024-01-01 00:00:00'
 > AND TIMESTAMP < '2024-01-01 00:02:00'
 > AND TAGNAME = '/IOT/SENSOR/TAG101'
+> AND DATE_PART('SECOND', TIMESTAMP) NOT IN (20, 45, 55)
 > ORDER BY TAGNAME, TIMESTAMP;
 > ```
 >
 > <img src="assets/analysis_query_windowrangebetween_gaps.png" />
 >
-> Now say you want to perform an aggregation to **calculate the 5 minute rolling average** of sensor readings,
+> Now say you want to perform an aggregation to **calculate the 1 minute rolling average** of sensor readings,
 over a specific time frame to detect trends and patterns in the data.
 >
-> **ROWS BETWEEN** would require **additional calculation** to determine the number of rows that make up the 5 minute interval, and **may NOT yield correct results** if the sensor data arrives at **INCONSISTENT times**.
+> **ROWS BETWEEN** may NOT yield correct results, as the number of rows that make up the 1 minute interval could be inconsistent. In this case for a 5 second tag without gaps, you might have assumed 12 rows would make up 1 minute.
 >
 
 > aside positive
@@ -1037,18 +1040,55 @@ over a specific time frame to detect trends and patterns in the data.
 > * **Handle time gaps** in data being analyzed.
 >   - For example, if a sensor is faulty or sends data at inconsistent intervals.
 > * Allow for **reporting frequencies that differ** from the data frequency.
->   - For example, data at 5 second frequency that you want to aggregate the prior 5 minutes.
->
-> More detail at [Interval Constants](https://docs.snowflake.com/en/sql-reference/data-types-datetime#interval-constants)
+>   - For example, data at 5 second frequency that you want to aggregate the prior 1 minute.
 >
 > <img src="assets/analysis_info_range_between.png" />
 >
+> More detail at [Interval Constants](https://docs.snowflake.com/en/sql-reference/data-types-datetime#interval-constants)
+>
 
-**Range Between - 5 MIN Rolling Average and Sum**: Create a rolling AVG and SUM for the time **INTERVAL** five minutes preceding, inclusive of the current row.
+**Range Between - 1 MIN Rolling Average and Sum showing gap differences**: Create a rolling AVG and SUM for the time **INTERVAL** 1 minute preceding, inclusive of the current row. Assuming the preceding 12 rows would make up 1 minute of data.
+
+```sql
+SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
+    AVG(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        RANGE BETWEEN INTERVAL '1 MIN' PRECEDING AND CURRENT ROW) AS RANGE_AVG_1MIN,
+    AVG(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        ROWS BETWEEN 12 PRECEDING AND CURRENT ROW) AS ROW_AVG_1MIN,
+    SUM(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        RANGE BETWEEN INTERVAL '1 MIN' PRECEDING AND CURRENT ROW) AS RANGE_SUM_1MIN,
+    SUM(VALUE_NUMERIC) OVER (
+        PARTITION BY TAGNAME ORDER BY TIMESTAMP
+        ROWS BETWEEN 12 PRECEDING AND CURRENT ROW) AS ROW_SUM_1MIN
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND DATE_PART('SECOND', TIMESTAMP) NOT IN (20, 45, 55)
+AND TAGNAME = '/IOT/SENSOR/TAG101'
+ORDER BY TAGNAME, TIMESTAMP;
+```
+
+**The first minute of data aligns, however, after the first minute the rolling values will start to show differences**.
+
+<img src="assets/analysis_query_windowrangebetween_error.png" />
+
+### CHART: Rolling 1 MIN Average and Sum - showing differences between RANGE BETWEEN and ROWS BETWEEN
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data select the `VALUE` column and set the Aggregation to `Max`.
+3. Select `+ Add column` and select `RANGE_AVG_1MIN` and set Aggregation to `Max`.
+4. Select `+ Add column` and select `ROW_AVG_1MIN` and set Aggregation to `Max`.
+
+<img src="assets/analysis_chart_rangerow_1min.png" />
+
+**Range Between - 5 MIN Rolling Average and Sum**: Let's expand on RANGE BETWEEN and create a rolling AVG and SUM for the time **INTERVAL** five minutes preceding, inclusive of the current row.
 
 ```sql
 /* WINDOW FUNCTIONS - RANGE BETWEEN
-Create a rolling AVG and SUM for the time **INTERVAL** five minutes preceding, inclusive of the current row.
+Let's expand on RANGE BETWEEN and create a rolling AVG and SUM for the time **INTERVAL** five minutes preceding, inclusive of the current row.
 
 INTERVAL - 5 MIN AVG and SUM preceding the current row
 */
@@ -1060,7 +1100,7 @@ SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
         PARTITION BY TAGNAME ORDER BY TIMESTAMP
         RANGE BETWEEN INTERVAL '5 MIN' PRECEDING AND CURRENT ROW) AS RANGE_SUM_5MIN
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-01 00:00:00'
+WHERE TIMESTAMP >= '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
 AND TAGNAME = '/IOT/SENSOR/TAG401'
 ORDER BY TAGNAME, TIMESTAMP;
@@ -1068,10 +1108,10 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 <img src="assets/analysis_query_windowrangebetween_5min.png" />
 
-### CHART: Rolling 5 MIN Average and Sum
+### CHART: Rolling 5 MIN Average
 
 1. Select the `Chart` sub tab below the worksheet.
-2. Under Data select `VALUE` and set the Aggregation to `Max`.
+2. Under Data select the `VALUE` and set the Aggregation to `Max`.
 3. Select `+ Add column` and select `RANGE_AVG_5MIN` and set Aggregation to `Max`.
 
 <img src="assets/analysis_chart_range_5min.png" />
@@ -1843,6 +1883,13 @@ Duration: 2
 - How to **analyze time series data** using native Snowflake time series functions
 - How to **create custom time series functions** and procedure in Snowflake
 - How to **deploy a Streamlit application using Snowflake CLI** to enable end users to run time series analytics
+
+
+### Feedback
+
+Thank you for participating in the **Getting Started with Time Series Analytics for IoT in Snowflake** hands on lab!
+
+We would greatly appreciate get your feedback in our [**Time series analytics survey**](https://docs.google.com/forms/d/e/1FAIpQLSft8rz7OslJoZ4JZIUWMcNjdD45FwKZH5BGNRGY1n5kNIu1dg/viewform).
 
 
 ### Additional Resources
