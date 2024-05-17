@@ -347,15 +347,14 @@ FROM TABLE(information_schema.tag_references_all_columns
 **Perfect!** Just as desired, we see our created tag is associated to the PII columns we will look to mask in the next section.
 
 ### Step 6 - Click Next -->
------
 
 ## Creating Masking Policies and Applying to Tags
 Duration: 3
 
 ### Overview
-With our Tag foundation in place, we can now begin to develop Dynamic Masking 
-Policies to support different masking requirements for our name, phone number
-and e-mail columns.
+With our Tags in place we can now create our Masking Policies that will mask data for all but privileged Roles. We need to create 1 policy for every data type where the return data type can be implicitly cast into the column datatype. We can only assign 1 policy per datatype to an individual Tag.
+
+---stopped here
 
 ### Step 1 - Creating Masking Policies
 For the three different column types we are looking to mask, we want to address the following:
