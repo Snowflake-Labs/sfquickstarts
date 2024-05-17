@@ -243,7 +243,7 @@ GRANT ROLE tb_test_role TO USER identifier($my_user_var);
 
 
 ## Column-Level Security and Tagging = Tag-Based Masking
-Duration: 3
+Duration: 4
 
 ### Overview
 The first Governance feature set we want to deploy and test will be Snowflake Tag Based Dynamic Data Masking. This will allow us to mask PII data in columns from our Test Role but not from more privileged Roles.
@@ -282,7 +282,7 @@ SAMPLE (1000 ROWS);
 >
 
 ### Step 2 - Creating our Schemas
-To keep ourselves organized and to follow best practices, let's now create and privilege `Tag` and `Governance` schemas within our Database by executing the next five queries.
+To keep ourselves organized and to follow best practices, let's now create and privilege `Tags` and `Governance` schemas within our Database by executing the next five queries.
 
 
 ```
@@ -300,87 +300,54 @@ GRANT ALL ON SCHEMA governance TO ROLE sysadmin;
 ```
 
 
-### Step 3 - Creating our Tags
--------stopped here
-To begin our masking process, please run this steps three [CREATE TAG](https://docs.snowflake.com/en/sql-reference/sql/create-tag) queries. 
+### Step 3 - Creating our Tag
+To begin our masking process, please run the [CREATE TAG](https://docs.snowflake.com/en/sql-reference/sql/create-tag) query below. 
 
-Within these queries we are creating: 
-
-- A `pii_name_tag` for attaching to our `first_name` and `last_name` columns.
-- A `pii_phone_number_tag` for attaching to our `phone_number` column.
-- A `pii_email_tag` for attaching to our `e_mail` column.
+Within this query we are creating a `tasty_pii` Tag for these values: NAME, PHONE_NUMBER, EMAIL, BIRTHDAY. Not only will this tag prevent free text values, but it will also add the Tag to the selection menu to Snowsight. This will result in a `Tag TASTY_PII successfully created.` result.
 
 ```
-USE ROLE accountadmin;
-
-CREATE OR REPLACE TAG frostbyte_tasty_bytes.raw_customer.pii_name_tag
-    COMMENT = 'PII Tag for Name Columns';
+CREATE OR REPLACE TAG tags.tasty_pii
+    ALLOWED_VALUES 'NAME', 'PHONE_NUMBER', 'EMAIL', 'BIRTHDAY'
+    COMMENT = 'Tag for PII, allowed values are: NAME, PHONE_NUMBER, EMAIL, BIRTHDAY';
 ```
-
-<img src = "assets/4.2.name_tag.png">
-
-```
-CREATE OR REPLACE TAG frostbyte_tasty_bytes.raw_customer.pii_phone_number_tag
-    COMMENT = 'PII Tag for Phone Number Columns';
-```
-
-<img src = "assets/4.2.phone_tag.png">
-
-
-```
-CREATE OR REPLACE TAG frostbyte_tasty_bytes.raw_customer.pii_email_tag
-    COMMENT = 'PII Tag for E-mail Columns';
-```
-
-<img src = "assets/4.2.email_tag.png">
-
 
 >aside positive
 >Tags enable data stewards to track sensitive data for compliance, discovery, protection, and resource usage use cases through either a centralized or decentralized data governance management approach.
 >
 
-### Step 3 - Applying Tags
-With the Tags in place, let's now execute the next four queries one by one which use [ALTER TABLE... MODIFY COLUMN](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column) to set our tags to each respective column.
-
-Each of these queries will result in a `Statement executed successfully.` message.
+### Step 4 - Applying Tags
+With the Tag in place, let's now execute the next query which uses [ALTER TABLE... MODIFY COLUMN](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column) to set our tag to each respective column in the `customer_loyalty` table. This will result in a `Statement executed successfully.` message.
 
 ```
-ALTER TABLE frostbyte_tasty_bytes.raw_customer.customer_loyalty 
-    MODIFY COLUMN first_name 
-        SET TAG frostbyte_tasty_bytes.raw_customer.pii_name_tag = 'First Name';
-
-ALTER TABLE frostbyte_tasty_bytes.raw_customer.customer_loyalty 
-    MODIFY COLUMN last_name 
-        SET TAG frostbyte_tasty_bytes.raw_customer.pii_name_tag = 'Last Name';
-
-ALTER TABLE frostbyte_tasty_bytes.raw_customer.customer_loyalty 
-    MODIFY COLUMN phone_number 
-        SET TAG frostbyte_tasty_bytes.raw_customer.pii_phone_number_tag = 'Phone Number';
-
-ALTER TABLE frostbyte_tasty_bytes.raw_customer.customer_loyalty 
-    MODIFY COLUMN e_mail
-        SET TAG frostbyte_tasty_bytes.raw_customer.pii_email_tag = 'E-mail Address';
+ALTER TABLE raw_customer.customer_loyalty
+    MODIFY COLUMN 
+    first_name SET TAG tags.tasty_pii = 'NAME',
+    last_name SET TAG tags.tasty_pii = 'NAME',
+    phone_number SET TAG tags.tasty_pii = 'PHONE_NUMBER',
+    e_mail SET TAG tags.tasty_pii = 'EMAIL',
+    birthday_date SET TAG tags.tasty_pii = 'BIRTHDAY';
 ```
 
-### Step 4 - Exploring Tags on a Table
-With our Tags created and applied to Columns, please kick off the next query where we leverage the [TAG_REFERENCES_ALL_COLUMNS](https://docs.snowflake.com/en/sql-reference/functions/tag_references_all_columns) function to validate the work we just completed.
+### Step 5 - Exploring Tags on a Table
+With our Tag created and applied to Columns, please kick off the next query where we leverage the [TAG_REFERENCES_ALL_COLUMNS](https://docs.snowflake.com/en/sql-reference/functions/tag_references_all_columns) function to validate the work we just completed.
 
 ```
-SELECT 
+SELECT
     tag_database,
     tag_schema,
     tag_name,
     column_name,
-    tag_value 
-FROM TABLE(frostbyte_tasty_bytes.information_schema.tag_references_all_columns
-    ('frostbyte_tasty_bytes.raw_customer.customer_loyalty','table'));
+    tag_value
+FROM TABLE(information_schema.tag_references_all_columns
+    ('tb_101.raw_customer.customer_loyalty','table'));
 ```
 
-<img src = "assets/4.4.find_tags.png">
+<img src = "assets/tag_ref_all.png">
 
-**Perfect!** Just as desired, we see all of our created tags are associated to the PII columns we will look to mask in the next section.
+**Perfect!** Just as desired, we see our created tag is associated to the PII columns we will look to mask in the next section.
 
-### Step 5 - Click Next -->
+### Step 6 - Click Next -->
+-----
 
 ## Creating Masking Policies and Applying to Tags
 Duration: 3
