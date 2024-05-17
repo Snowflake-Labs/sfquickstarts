@@ -13,7 +13,7 @@ tags: Getting Started,  LLMs, Generative AI, Streamlit, Data Engineering
 ## Overview 
 Duration: 1
 
-Through this quickstart guide, you will exploreDocument AI. You will set up your Snowflake environment use Document AI to create a model to extract values from documents, use the model to extract values from documents and use streamlit to build a application to verify the extracted documents.  
+Through this quickstart guide, you will explore Document AI. You will set up your Snowflake environment, use Document AI to create a model to extract values from documents, create a document extraction pipline using the model and use streamlit to build a application to verify the extracted values.  
 
 ### What is Document AI 
 Document AI is a Snowflake machine learning feature that uses a large language model (LLM) to extract data from documents. With Document AI, you can prepare pipelines for continuous processing of new documents of a specific type, such as invoice or finance statement documents.
@@ -94,6 +94,9 @@ CREATE OR REPLACE TABLE doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS_VERIFI
 ```
 
 These can also be found in the **setup.sql** file.
+
+### Clone the git repository
+...
 
 We are now ready to start.
 
