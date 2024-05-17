@@ -245,6 +245,7 @@ temp as(
         , size as file_size
         , last_modified
         , file_url as snowflake_file_url
+        -- VERIFY THAT BELOW IS USING THE SAME NAME AND NUMER AS THE MODEL INSTRUCTIONS YOU COPIED IN THE PREVIOUS STEP!
         ,  DOC_AI_QS_DB.DOC_AI_SCHEMA.DOC_AI_QS_CO_BRANDING!PREDICT(get_presigned_url('@doc_ai_stage', RELATIVE_PATH ), 1) as json
     from directory(@doc_ai_stage)
 )
