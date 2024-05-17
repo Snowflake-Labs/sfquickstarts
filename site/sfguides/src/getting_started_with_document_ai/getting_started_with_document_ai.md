@@ -280,7 +280,7 @@ select * from doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS;
 ```  
 ![List stage](assets/extraction_result.png)  
 
-We have now applied our model on all our documents and stored the extraced values in a table, if we wanted to run this every time we ad a new document to the stage we can use [streams](https://docs.snowflake.com/en/user-guide/streams-intro) and [tasks](https://docs.snowflake.com/en/user-guide/tasks-intro), for an example see the Extra section.
+We have now applied our model on all our documents and stored the extraced values in a table, if we wanted to run this every time we ad a new document to the stage we can use [streams](https://docs.snowflake.com/en/user-guide/streams-intro) and [tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
 
 Next step is to create the Streamlit application for verifying the extracted values.
 
