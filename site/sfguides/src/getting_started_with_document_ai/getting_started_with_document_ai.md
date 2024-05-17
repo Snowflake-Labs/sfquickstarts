@@ -120,7 +120,10 @@ In Snowsight make sure you have changed the role to DOC_AI_QS_ROLE, you can see 
 4. Click on **Create**
 
 ### Step 2: Upload documents
-
+In this step we wil upload example documents that we will use to ask value extraction questions against, so we can verify that the questionswork.  
+> aside positive
+    >
+    >The recommendation is to use at least 20 documents, but in this qucikstart we will only use 5 to speed up the review step.  
 1. Click on **Upload documents** to start the process of uploading documents  
 ![Upload Documents Start](assets/start_upload.png)  
 2. Click on **Uploads documents** and add the documents in the **training_documents** folder and click **Upload**  
@@ -129,7 +132,7 @@ In Snowsight make sure you have changed the role to DOC_AI_QS_ROLE, you can see 
 ![Upload Dialog](assets/uploaded_documents.png)  
 
 ### Step 3: Specify values
-
+In this step we will define the questions for extracting values and the name of the key the value will be added to.  
 1. Click on **+ Value** and start adding the value names and questions from the table below   
 <table>
     <thead>
@@ -282,7 +285,7 @@ Next step is to create the Streamlit application for verifying the extracted val
 Duration: 10
 
 ### Overview
-In this step we will create a Streamlit application in SNowflake to be used for verifying the extracted values.
+In this step we will create a Streamlit application in Snowflake to be used for verifying the extracted values.
 
 ### Step 1: Create a Streamlit application
 The Python code for this step can also be found **streamlit_app.py** file.
