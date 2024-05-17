@@ -86,7 +86,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 Duration: 1
 
 ### Overview
-Our Tasty Bytes Adminstrator has been tasked with learning the process of deploying Role Based Access Control (RBAC) and proper Data Governance across our Snowflake Account. 
+Our Tasty Bytes Adminstrator has been tasked with learning the process of deploying Role Based Access Control (RBAC) and proper Governance across our Snowflake Account. 
 
 To begin, let's first dive into the Snowflake System Defined Roles provided by default in all accounts and learn a bit more on their privileges.
 
@@ -127,7 +127,7 @@ FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
 WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN','PUBLIC');
 ```
 ---> stopped here
-<img src = "assets/3.3.result_scan.png">
+<img src = "assets/sysroles.png">
 
 In our result set we can see the high-level descriptions of what these Snowflake System Defined Roles have privileges to do. 
 
@@ -142,27 +142,29 @@ Duration: 1
 Now that we understand these System Defined roles, let's begin leveraging them to create a test role and grant it access to the Customer Loyalty data we will deploy our initial Data Governance features against and also providing the ability to use our `tasty_dev_wh` Warehouse.
 
 ### Step 1 - Using the Useradmin Role to Create our Test Role
-As we saw, a `useradmin` can create and manage users and roles. Please kick off the next two queries with the first assuming that `useradmin` role and the second leveraging a [CREATE ROLE](https://docs.snowflake.com/en/sql-reference/sql/create-role) command to generate a new `tasty_test_role` we will use throughout this Quickstart.
+As we saw, a `useradmin` can create and manage users and roles. Please kick off the next two queries with the first assuming that `useradmin` role and the second leveraging a [CREATE ROLE](https://docs.snowflake.com/en/sql-reference/sql/create-role) command to generate a new `tb_test_role` we will use throughout this Quickstart. This will result in a `Role TB_TEST_ROLE successfully created.` message.
 
 ```
 USE ROLE useradmin;
 
-CREATE OR REPLACE ROLE tasty_test_role
+CREATE OR REPLACE ROLE tb_test_role
     COMMENT = 'test role for tasty bytes';
 ```
 
-<img src = "assets/4.1.create_role.png">
-
 
 ### Step 2 - Using the Securityadmin Role to Grant Warehouse Privileges
-With our `tasty_test_role` in place, we can now begin to use [GRANT](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege) statements to give access privileges to required Database objects and our `tasty_dev_wh` Warehouse.
+With our `tb_test_role` in place, we can now begin to use [GRANT](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege) statements to give access privileges to required Database objects and our `tb_dev_wh` Warehouse.
 
-To begin, please run the next two queries which will first assume the `securityadmin` role that we learned can manage security aspects in our account and second grant OPERATE and USAGE on our `tasty_dev_wh` to our `tasty_test_role`. 
+To begin, please run the next three queries which will first assume the `securityadmin` role that we learned can manage security aspects in our account, next we will grant ALL privileges on this Warehouse to our `sysadmin`  and finally grant OPERATE and USAGE on our `tb_dev_wh` to our `tb_test_role`. 
 
 When completed we will recieve a `Statement executed successfully.` message.
 
 ```
-GRANT OPERATE, USAGE ON WAREHOUSE tasty_dev_wh TO ROLE tasty_test_role;
+USE ROLE securityadmin;
+
+GRANT ALL ON WAREHOUSE tb_dev_wh TO ROLE sysadmin;
+
+GRANT OPERATE, USAGE ON WAREHOUSE tb_dev_wh TO ROLE tb_test_role;
 ```
 
 For more on Snowflake Warehouse Privilege Grants please see below:
@@ -179,13 +181,13 @@ For more on Snowflake Warehouse Privilege Grants please see below:
 >
 
 ### Step 3 - Using the Securityadmin Role to Grant Database and Schema Privileges
-With the Warehouse privileges in place, please execute the next two queries which will provide the `tasty_test_role` with the USAGE privilege on the `frostbyte_tasty_bytes` database and all schemas within.
+With the Warehouse privileges in place, please execute the next two queries which will provide the `tb_test_role` with the USAGE privilege on the `tb_101` database and all schemas within.
 
 Once again when completed we will recieve a `Statement executed successfully. X objects affected.` message.
 
 ```
-GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_test_role;
-GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes TO ROLE tasty_test_role;
+GRANT USAGE ON DATABASE tb_101 TO ROLE tb_test_role;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE tb_101 TO ROLE tb_test_role;
 ```
 
 For more on Snowflake Database and Schema Grants please see below:
@@ -200,14 +202,14 @@ For more on Snowflake Database and Schema Grants please see below:
 >
 
 ### Step 4 - Using the Securityadmin Role to Grant Table and View Privileges
-As we will be testing several Data Governance features as our `tasty_test_role` let's ensure it can run SELECT statements across our entire Data Model. 
+As we will be testing several Data Governance features as our `tb_test_role` let's ensure it can run SELECT statements across our entire Data Model. 
 
 Please now execute the next three queries of this section which will once again result in a `Statement executed successfully. X objects affected.` message.
 
 ```
-GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes.raw_customer TO ROLE tasty_test_role;
-GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos TO ROLE tasty_test_role;
-GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes.analytics TO ROLE tasty_test_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA tb_101.raw_customer TO ROLE tb_test_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA tb_101.raw_pos TO ROLE tb_test_role;
+GRANT SELECT ON ALL VIEWS IN SCHEMA tb_101.analytics TO ROLE tb_test_role;
 ```
 
 For more on Snowflake View and Table Privilege Grants please see below:
@@ -224,7 +226,7 @@ For more on Snowflake View and Table Privilege Grants please see below:
 >
 
 ### Step 5 - Using the Securityadmin Role to Grant our Role to our User
-With our `tasty_test_role` properly privileged, let's now execute the last two queries of this section. Here we will first [SET](https://docs.snowflake.com/en/sql-reference/sql/set) a SQL Variable called `my_user_var` equal to our [CURRENT_USER](https://docs.snowflake.com/en/sql-reference/functions/current_user). 
+With our `tb_test_role` properly privileged, let's now execute the last two queries of this section. Here we will first [SET](https://docs.snowflake.com/en/sql-reference/sql/set) a SQL Variable called `my_user_var` equal to our [CURRENT_USER](https://docs.snowflake.com/en/sql-reference/functions/current_user). 
 
 The second query will then grant our role to our user we are logged in as which has been stored in our `$my_user_var`. 
 
@@ -232,42 +234,46 @@ As we've seen before, our query will result in a `Statement executed successfull
 
 ```
 SET my_user_var  = CURRENT_USER();
-GRANT ROLE tasty_test_role TO USER identifier($my_user_var);
+GRANT ROLE tb_test_role TO USER identifier($my_user_var);
 ```
 
-**Awesome!** We now have a `tasty_test_role` with required Database Object and Warehouse privileges and our user is able to leverage it.
+**Awesome!** We now have a `tb_test_role` with required Database Object and Warehouse privileges and our user is able to leverage it.
 
 ### Step 6 - Click Next -->
 
 
-## Creating and Attaching Tags to our PII Columns
-Duration: 2
+## Column-Level Security and Tagging = Tag-Based Masking
+Duration: 3
 
 ### Overview
-The first Data Governance feature set we want to deploy and test will be Snowflake Tag Based Dynamic Data Masking. This feature will allow us to mask PII data in  columns at query run time from our test role but leave it exposed to more privileged roles.
+The first Governance feature set we want to deploy and test will be Snowflake Tag Based Dynamic Data Masking. This will allow us to mask PII data in columns from our Test Role but not from more privileged Roles.
 
 Before we can begin masking data, let's first explore what PII exists in our Customer Loyalty data.
 
 ### Step 1 - Finding our PII Columns
-Thanks to our last step, we can now officially use our `tasty_test_role` Role and leverage the `tasty_dev_wh` Warehouse from that role. 
+Thanks to our last step, we can now officially use our `tb_test_role` Role and leverage the `tb_dev_wh` Warehouse from that role. 
 
-Please execute the next three queries which will first handle setting that context. With the context in place the third query will explore our `raw_customer.customer_loyalty` which we ingest from the Tasty Bytes Customer Loyalty Program provider.
+Please execute the next four queries which will first handle setting our context. With the context in place the fourth query will explore our `raw_customer.customer_loyalty` which we ingest from the Tasty Bytes Customer Loyalty Program provider.
 
 ```
-USE ROLE tasty_test_role;
-USE WAREHOUSE tasty_dev_wh;
+USE ROLE tb_test_role;
+USE WAREHOUSE tb_dev_wh;
+USE DATABASE tb_101;
 
-SELECT 
+SELECT
     cl.customer_id,
     cl.first_name,
     cl.last_name,
     cl.e_mail,
     cl.phone_number,
     cl.city,
-    cl.country
-FROM frostbyte_tasty_bytes.raw_customer.customer_loyalty cl;
+    cl.country,
+    cl.sign_up_date,
+    cl.birthday_date
+FROM raw_customer.customer_loyalty cl 
+SAMPLE (1000 ROWS);
 ```
-<img src = "assets/4.1.customer_loyalty.png">
+<img src = "assets/customer_loyalty.png">
 
 **Woah!!** there is a lot of PII we need to take care before our users can touch this data. Luckily we can use Snowflakes native Tag-Based Masking functionality to do just this.
 
@@ -275,7 +281,27 @@ FROM frostbyte_tasty_bytes.raw_customer.customer_loyalty cl;
 > A [Tag-based Masking Policy](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies) combines the object tagging and masking policy features to allow a masking policy to be set on a tag using an ALTER TAG command. When the data type in the masking policy signature and the data type of the column match, the tagged column is automatically protected by the conditions in the masking policy.
 >
 
-### Step 2 - Creating Tags
+### Step 2 - Creating our Schemas
+To keep ourselves organized and to follow best practices, let's now create and privilege `Tag` and `Governance` schemas within our Database by executing the next five queries.
+
+
+```
+USE ROLE accountadmin;
+
+CREATE OR REPLACE SCHEMA tags
+    COMMENT = 'Schema containing Object Tags';
+
+GRANT USAGE ON SCHEMA tags TO ROLE public;
+
+CREATE OR REPLACE SCHEMA governance
+    COMMENT = 'Schema containing Security Policies';
+
+GRANT ALL ON SCHEMA governance TO ROLE sysadmin;
+```
+
+
+### Step 3 - Creating our Tags
+-------stopped here
 To begin our masking process, please run this steps three [CREATE TAG](https://docs.snowflake.com/en/sql-reference/sql/create-tag) queries. 
 
 Within these queries we are creating: 
