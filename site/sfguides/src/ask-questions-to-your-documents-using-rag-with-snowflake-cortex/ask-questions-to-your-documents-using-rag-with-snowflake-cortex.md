@@ -175,9 +175,6 @@ Duration: 15
 
 In this step we are going to leverage our document processing functions to prepare documents before turning the text into embeddings using Snowflake Cortex. These embeddings will be stored in a Snowflake Table using the new native VECTOR data type. 
 
-> aside negative
-> NOTE: To get access to these features (currently in private preview) reach out to your Snowflake account team.
-
 ![App](assets/fig4.png)
 
 **Step 1**. Create the table where we are going to store the chunks and vectors for each PDF. Note here the usage of the new VECTOR data type:
