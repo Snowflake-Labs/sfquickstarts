@@ -1071,7 +1071,7 @@ AND TAGNAME = '/IOT/SENSOR/TAG101'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-**The first minute of data aligns, however, after the first minute the rolling values will start to show differences**.
+**The first minute of data aligns for both RANGE BETWEEN and ROWS BETWEEN, however, after the first minute the rolling values will start to show variances due to the introduced time gaps**.
 
 <img src="assets/analysis_query_windowrangebetween_error.png" />
 
