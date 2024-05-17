@@ -32,11 +32,15 @@ Within this Quickstart we will learn about Snowflake Roles, Role Based Access Co
 - How to Create a Tag
 - How to Create a Masking Policy
 - How to Deploy a Tag Based Masking Policy
-- How to a Create Row Access Policiy using a Mapping Table
+- How to Create a Row Access Policy using a Mapping Table
+- How to Create a Aggregation Policy
+- How to Create a Project Policy
+- How to Leverage Automatic and Custom Data Classification
+- How to use Universal Search
 
 ### What You Will Build
 - Complete Role Based Access Control for a Test Role
-- A Robust Data Governance Foundation Including Row and Column Security
+- A Robust Data Governance Foundation for your Account
 
 ## Creating a Worksheet and Copying in our SQL
 Duration: 1
@@ -67,7 +71,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_data_governance.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_data_governance.sql)</button>
+<button>[tb_zts_data_governance.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25/tb_fy25_governance_snowflake_horizon.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -95,12 +99,8 @@ Once complete our results pane will result in a `Statement Executed Successfully
 
 ```
 USE ROLE accountadmin;
-USE WAREHOUSE tasty_dev_wh;
+USE WAREHOUSE tb_dev_wh;
 ```
-
-Once the above queries are executed we can see in the top-right corner the exact role and warehouse we instructed Snowflake to use.
-
-<img src = "assets/3.1.context.png">
 
 With our context set, we can continue on our learning journey.
 
@@ -111,9 +111,8 @@ Now let's run the next query which leverages [SHOW ROLES](https://docs.snowflake
 SHOW ROLES;
 ```
 
-<img src = "assets/3.2.show_roles.png">
 
-If you are operating in a trial account with only Tasty Bytes deployed your result set may match the above screenshot closely, however if you are using an existing Snowflake account your list may be more extensive. 
+If you are operating in a trial account with only Tasty Bytes deployed you will only see a few `tb_` roles, however if you are using an existing Snowflake account your list may be more extensive. 
 
 Thankfully we can filter down this result set which we will cover in the next step.
 
@@ -127,7 +126,7 @@ SELECT
 FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
 WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN','PUBLIC');
 ```
-
+---> stopped here
 <img src = "assets/3.3.result_scan.png">
 
 In our result set we can see the high-level descriptions of what these Snowflake System Defined Roles have privileges to do. 
