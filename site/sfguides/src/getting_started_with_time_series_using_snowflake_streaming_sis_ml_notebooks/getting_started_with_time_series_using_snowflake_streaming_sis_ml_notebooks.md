@@ -12,12 +12,12 @@ author: nathan.birch@snowflake.com
 ## Overview
 Duration: 5
 
-Snowflake offers a rich set of functionalities for time series analytics making it a performant and cost effective platform for bringing in your time series workloads. This lab covers a real world scenario of ingesting, analyzing and visualizing IOT time series data.
+Snowflake offers a rich set of functionalities for **Time Series Analytics** making it a performant and cost effective platform for bringing in your time series workloads. This quickstart lab covers a real world scenario of ingesting, analyzing and visualizing IOT time series data.
 
 
 ### What You'll Learn
 
-Upon completing this quickstart, you will have learned how to perform time series analytics in Snowflake, and will have gained practical experience in several areas:
+Upon completing this quickstart lab, you will have learned how to perform time series analytics in Snowflake, and will have gained practical experience in several areas:
 
 - **Setup a streaming ingestion** client to to stream time series data into Snowflake using Snowpipe Streaming
 - **Model and transform** the streaming time series data using Dynamic Tables
@@ -39,7 +39,7 @@ By the end of this lab you will have an **end-to-end streaming Time Series Analy
 
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - [Sign-up for a Snowflake Trial](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) OR have access to an existing Snowflake account with the ACCOUNTADMIN role. Select the Enterprise edition, AWS as a cloud provider.
-- Access to a **personal [GitHub](https://github.com/signup) account** to fork the QuickStart repo and create [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). Codespaces offer a hosted development environment. GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 or 4 node environment, which should be enough to work through this lab.
+- Access to a **personal [GitHub](https://github.com/signup) account** to fork the quickstart repo and create [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). Codespaces offer a hosted development environment. GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 or 4 node environment, which should be enough to work through this lab.
 
 > aside negative
 > 
@@ -57,7 +57,7 @@ The first step is to create a fork of the Lab GitHub repository.
 1. In a web browser log into your [Github](https://github.com/) account.
 
 2. Open [Getting Started with Time Series in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). 
-    - This repository contains all the code you need to successfully complete this Quickstart guide.
+    - This repository contains all the code you need to successfully complete this quickstart guide.
 
 3. Click on the **"Fork"** button near the top right.
 
@@ -110,7 +110,7 @@ Once complete you should see a hosted web-based version of **VS Code Integrated 
 
 <img src="assets/labsetup_vscode.png" width="800" />
 
-The Github Codespace deployment will contain all the resources needed to complete the lab.
+**The Github Codespace deployment will contain all the resources needed to complete the lab**.
 
 > aside negative
 >
@@ -123,7 +123,7 @@ During the Codespace setup the postCreateCommand script created an Anaconda virt
 
 To activate the virtual environment:
 
-1. Remove any open Terminal by clicking the `Kill Terminal` button
+1. Remove any existing open Terminal by clicking the `Kill Terminal` button
 
 <img src="assets/labsetup_killterminal.png" />
 
@@ -287,7 +287,7 @@ In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1
 
 ```sql
 /*
-SNOWFLAKE FOUNDATION SETUP SCRIPT
+SNOWFLAKE SETUP SCRIPT
 */
 
 -- Login and assume ACCOUNTADMIN role
@@ -304,9 +304,9 @@ GRANT ROLE ROLE_HOL_TIMESERIES TO USER USER_HOL_TIMESERIES;
 
 /* EXTERNAL ACTIVITY
 
-A public key is setup in Github Codespace VS Code environment "keys" folder
+A public key is setup in Github Codespace VS Code environment
 
-Retrieve the public key detail from keys/rsa_key.pub and replace <RSA_PUBLIC_KEY>
+Retrieve the public key detail and replace <RSA_PUBLIC_KEY>
 with the contents of the public key excluding
 the -----BEGIN PUBLIC KEY----- and -----END PUBLIC KEY----- lines
 
@@ -364,8 +364,13 @@ GRANT ALL ON SCHEMA HOL_TIMESERIES.TRANSFORM TO ROLE ROLE_HOL_TIMESERIES;
 
 GRANT ALL ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESERIES;
 
+-- Cortex ML Functions
+GRANT CREATE SNOWFLAKE.ML.ANOMALY_DETECTION ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESERIES;
+
+GRANT CREATE SNOWFLAKE.ML.FORECAST ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESERIES;
+
 /*
-SETUP SCRIPT NOW COMPLETED
+SETUP SCRIPT COMPLETED
 */
 ```
 
@@ -1660,7 +1665,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 ## Build Your Time Series Application in Streamlit
 Duration: 15
 
-After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to deliver an analytics application for end users to easily consume time series data. For this purpose we are going to use Streamlit.
+After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to **deliver a Time Series Analytics application** for end users to easily consume time series data. For this purpose we are going to use Streamlit.
 
 <img src="assets/streamlit_overview.png" />
 
@@ -1924,8 +1929,13 @@ Duration: 2
 
 > aside positive
 > 
-> **Congratulations!** You've successfully deployed an end-to-end time series analytics solution with streaming data in Snowflake.
+> **Congratulations!**
 >
+> You've successfully deployed an end-to-end **Time Series Analytics** solution with streaming data in Snowflake.
+>
+> **We would greatly appreciate your feedback in our [Time series analytics survey](https://docs.google.com/forms/d/e/1FAIpQLSft8rz7OslJoZ4JZIUWMcNjdD45FwKZH5BGNRGY1n5kNIu1dg/viewform)**.
+>
+
 
 ### What You Learned
 
@@ -1934,13 +1944,6 @@ Duration: 2
 - How to **analyze time series data** using native Snowflake time series functions
 - How to **create custom time series functions** and procedure in Snowflake
 - How to **deploy a Streamlit application using Snowflake CLI** to enable end users to run time series analytics
-
-
-### Feedback
-
-Thank you for participating in the **Getting Started with Time Series Analytics for IoT in Snowflake** hands on lab!
-
-**We would greatly appreciate your feedback in our [Time series analytics survey](https://docs.google.com/forms/d/e/1FAIpQLSft8rz7OslJoZ4JZIUWMcNjdD45FwKZH5BGNRGY1n5kNIu1dg/viewform)**.
 
 
 ### Additional Resources
