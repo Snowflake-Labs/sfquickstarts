@@ -4,7 +4,7 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
+tags: Getting Started, Data Engineering
 author: nathan.birch@snowflake.com
 
 # Getting Started with Time Series Analytics for IoT in Snowflake
@@ -123,11 +123,15 @@ During the Codespace setup the postCreateCommand script created an Anaconda virt
 
 To activate the virtual environment:
 
-1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
+1. Remove any open Terminal by clicking the `Kill Terminal` button
+
+<img src="assets/labsetup_killterminal.png" />
+
+2. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
 <img src="assets/labsetup_newterminal.png" />
 
-2. Enter command `conda activate hol-timeseries`
+3. Enter command `conda activate hol-timeseries`
 
 <img src="assets/labsetup_condaactivate.png" />
 
@@ -414,7 +418,7 @@ The IoT data will be streamed into Snowflake in a similar [schema format as Kafk
 
 > aside negative
 > 
->  There is an **EXTERNAL ACTIVITY** section in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
+>  There are **EXTERNAL ACTIVITY** sections in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
 >
 
 
@@ -429,7 +433,7 @@ The Ingest Client SDK is configured with a secure JDBC connection to Snowflake, 
 <img src="assets/data-load-snowpipe-streaming-client-channel.png" />
 
 
-### Step 2 - Test Streaming Client Channel
+### Step 2 - Test Streaming Client
 
 Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client. The simulator Java application is available in the `iotstream` folder of the lab, and can be run via a terminal with a Java runtime.
 
@@ -499,25 +503,36 @@ The simulated IoT dataset contains six sensor device tags at different frequenci
 
 > aside positive
 > 
-> The Java client application is being called using a Terminal shell script. The client accepts various speed parameters to change the number of rows that are streamed. The "MAX" script will send as many rows as the device will allow.
+> The **Java client application** is being called using a **Terminal shell script**. The client accepts various speed parameters to change the number of rows that are streamed. The **"MAX"** script will send as many rows as the device will allow.
 >
 
-2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and view the streamed records.
+2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and run the `SHOW CHANNELS` command to confirm a new channel is now open to Snowflake.
+
+```sql
+SHOW CHANNELS;
+```
+
+The query should return a new channel `CHANNEL_1_MAX` opened to the `RAW_TS_IOTSTREAM_DATA` table, with an **offset_token** showing the number of rows loaded.
+
+<img src="assets/snowpipe_channelmax.png" />
+
+3. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and view the streamed records, by running the `Check stream table data` script.
 
 ```sql
 -- Check stream table data
 SELECT * FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA LIMIT 10;
 ```
 
-- **RECORD_CONTENT** - This contains the IOT Tag reading.
-
-<img src="assets/snowpipe_record_content.png" />
-
 - **RECORD_METADATA** - This contains metadata about IOT Tag reading.
 
 <img src="assets/snowpipe_record_meta.png" />
 
-Each IoT device reading is a JSON payload, transmitted in the following Kafka like format:
+- **RECORD_CONTENT** - This contains the IOT Tag reading.
+
+<img src="assets/snowpipe_record_content.png" />
+
+Each IoT device reading is a **JSON payload**, transmitted in the following Kafka like format:
+
 ```json
 {
     "meta":
@@ -553,9 +568,9 @@ Each IoT device reading is a JSON payload, transmitted in the following Kafka li
 ## Data Modeling and Transformation
 Duration: 5
 
-Now that data has been streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be transforming the data from the **JSON VARIANT** format into a tabular format. Using Snowflake **Dynamic Tables**, the data streamed into Snowflake will continuously update the analytics layers.
+Now that data has been streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be **transforming the data** from the **JSON VARIANT** format into a tabular format. Using Snowflake **Dynamic Tables**, the data streamed into Snowflake will continuously update the analytics layers.
 
-Along with setting up Dynamic Tables for continuous loading, we'll also deploy some analytics views for the consumer serving layer. This will allow for specific columns of data to be exposed to the end users and applications.
+Along with setting up Dynamic Tables for continuous loading, we'll also deploy some **analytics views** for the consumer serving layer. This will allow for specific columns of data to be exposed to the end users and applications.
 
 <img src="assets/model_dataengineering.png" />
 
@@ -631,7 +646,38 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 >
 
 
-### Step 2 - Create Analytics Views for Consumers
+### Step 2 - Review Dynamic Table Details
+
+1. Login to Snowflake, and from the menu expand `Data > Databases > HOL_TIMESERIES > TRANSFORM > Dynamic Tables > DT_TS_TAG_METADATA > Refresh History`
+
+**The DT_TS_TAG_METADATA table will show six rows loaded, representing the six tags of data streamed into Snowflake**.
+
+<img src="assets/model_dynamictables_metadata.png" />
+
+2. Open the `Data Preview` tab
+
+**You can now see the Tag Metadata in a columnar table format**.
+
+<img src="assets/model_dynamictables_metadata_preview.png" />
+
+3. Select `Dynamic Tables > DT_TS_TAG_READINGS > Refresh History`
+
+**The DT_TS_TAG_READINGS table will show all the tag readings streamed into Snowflake**.
+
+<img src="assets/model_dynamictables_readings.png" />
+
+4. Open the `Data Preview` tab
+
+**You can now see the Tag Readings in a columnar table format**.
+
+<img src="assets/model_dynamictables_readings_preview.png" />
+
+> aside positive
+> 
+>  Data is now being **transformed in Snowflake** using **Dynamic Tables**.
+>
+
+### Step 3 - Create Analytics Views for Consumers
 
 The Dynamic Tables are now set up to continuously transform streaming data. We can now look at setting up an **Analytics** serving layer with some views for end users and applications to consume the streaming data.
 
@@ -702,7 +748,7 @@ The following query profiles will be covered in this section.
 
 ### Step 1 - Copy Worksheet Content To Snowsight Worksheet
 
-This section will be executed within a Snowflake Snowsight Worksheet.
+**This section will be executed within a Snowflake Snowsight Worksheet.**
 
 1. Login to Snowflake, and from the menu expand `Projects > Worksheets`
 
@@ -1114,6 +1160,10 @@ ORDER BY TAGNAME, TIMESTAMP;
 2. Under Data select the `VALUE` and set the Aggregation to `Max`.
 3. Select `+ Add column` and select `RANGE_AVG_5MIN` and set Aggregation to `Max`.
 
+
+**A rolling average could be useful in scenarios where you are trying to detect
+EXCEEDANCES in equipment operating limits over periods of time, such as a maximum pressure limit.**
+
 <img src="assets/analysis_chart_range_5min.png" />
 
 ### Downsampling Time Series Data
@@ -1227,14 +1277,14 @@ ORDER BY TAGNAME, TIMESTAMP;
 ## Build Your Own Time Series Functions
 Duration: 10
 
-Now that you have a great understanding of running Time Series Analysis, we will now look at deploying time series [User Defined Table Functions (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/udf-overview) that can query time series data in a re-usable manner. Table functions will accept a set of input parameters, and will operate and return data in a table format.
+Now that you have a great understanding of running **Time Series Analysis**, we will now look at deploying time series [User Defined Table Functions (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/udf-overview) that can query time series data in a re-usable manner. Table functions will accept a set of input parameters and perform operations on a data set, and return results in a table format.
 
 <img src="assets/byo_functions.png" />
 
 
 ### INFO: Upsampling Time Series Data
 
-Upsampling is used to increase the frequency of time samples, such as from hours to minutes, by placing time series data into fixed time intervals using aggregate operations on the values within each time interval. Due to the frequency of samples being increased it has the effect of creating new values if the interval is more frequent than the data itself. If the interval does not contain a value, it will be interpolated from the surrounding aggregated data.
+**Upsampling** is used to **increase the frequency** of time samples, such as from hours to minutes, by placing time series data into fixed time intervals using aggregate operations on the values within each time interval. Due to the frequency of samples being increased it has the effect of **creating new values if the interval is more frequent** than the data itself. If the interval does not contain a value, it will be **interpolated from the surrounding aggregated data**.
 
 ### Step 1 - Deploy Time Series Functions and Procedures
 
@@ -1364,7 +1414,7 @@ $$;
 3. Run the **Create Interpolate Procedure** Script
 
 ```sql
--- Add helper precedure to accept start and end times, and return either LOCF or Linear Interpolated Values
+-- Add helper procedure to accept start and end times, and return either LOCF or Linear Interpolated Values
 CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE (
     V_TAGLIST VARCHAR,
     V_FROM_TIME TIMESTAMP_NTZ,
@@ -1485,8 +1535,9 @@ SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSO
 ### CHART: Interpolation - Linear and LOCF
 
 1. Select the `Chart` sub tab below the worksheet.
-2. Under Data select `INTERP_VALUE` and set the Aggregation to `Max`.
-3. Select `+ Add column` and select `LOCF_VALUE` and set Aggregation to `Max`.
+2. Under Data select `TIMESTAMP` and set Bucketing to `Second`
+3. Under Data select `INTERP_VALUE` and set the Aggregation to `Max`.
+4. Select `+ Add column` and select `LOCF_VALUE` and set Aggregation to `Max`.
 
 <img src="assets/function_chart_linearlocf.png" />
 
@@ -1555,8 +1606,8 @@ Starting with a **RAW** query we can see the **LTTB** function in action, where 
 -- RAW
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC as VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-WHERE TIMESTAMP > '2024-01-09 12:00:00'
-AND TIMESTAMP <= '2024-01-10 12:00:00'
+WHERE TIMESTAMP > '2024-01-09 21:00:00'
+AND TIMESTAMP <= '2024-01-09 23:00:00'
 AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
@@ -1565,9 +1616,9 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
-3. Under Data select `TIMESTAMP` and set the Bucketing to `Minute`. 
+3. Under Data select `TIMESTAMP` and set the Bucketing to `Second`. 
 
-**86400 Data Points**
+**7200 Data Points**
 
 <img src="assets/function_chart_lttb_raw.png" />
 
@@ -1579,10 +1630,10 @@ We can now pass the same data into the **LTTB table function** and request 500 d
 -- LTTB
 SELECT DATA.TAGNAME, LTTB.TIMESTAMP::VARCHAR::TIMESTAMP_NTZ AS TIMESTAMP, LTTB.VALUE 
 FROM (
-    SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE
+    SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC as VALUE
     FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
-    WHERE TIMESTAMP > '2024-01-01 00:00:00'
-    AND TIMESTAMP <= '2024-02-01 00:00:30'
+    WHERE TIMESTAMP > '2024-01-09 21:00:00'
+    AND TIMESTAMP <= '2024-01-09 23:00:00'
     AND TAGNAME = '/IOT/SENSOR/TAG301'
 ) AS DATA 
 CROSS JOIN TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB(DATE_PART(EPOCH_NANOSECOND, DATA.TIMESTAMP), DATA.VALUE, 500) OVER (PARTITION BY DATA.TAGNAME ORDER BY DATA.TIMESTAMP)) AS LTTB
@@ -1593,7 +1644,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
-3. Under Data select `TIMESTAMP` and set the Bucketing to `Minute`. 
+3. Under Data select `TIMESTAMP` and set the Bucketing to `Second`. 
 
 **500 Data Points**
 
@@ -1889,7 +1940,7 @@ Duration: 2
 
 Thank you for participating in the **Getting Started with Time Series Analytics for IoT in Snowflake** hands on lab!
 
-We would greatly appreciate get your feedback in our [**Time series analytics survey**](https://docs.google.com/forms/d/e/1FAIpQLSft8rz7OslJoZ4JZIUWMcNjdD45FwKZH5BGNRGY1n5kNIu1dg/viewform).
+**We would greatly appreciate your feedback in our [Time series analytics survey](https://docs.google.com/forms/d/e/1FAIpQLSft8rz7OslJoZ4JZIUWMcNjdD45FwKZH5BGNRGY1n5kNIu1dg/viewform)**.
 
 
 ### Additional Resources
