@@ -749,6 +749,7 @@ The following query profiles will be covered in this section.
 | Downsampling / Time Binning | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
 | Aligning time series datasets | [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly, and interpolating values. |
 | Gap Filling | [GENERATOR](https://docs.snowflake.com/en/sql-reference/functions/generator), [ROW_NUMBER](https://docs.snowflake.com/en/sql-reference/functions/row_number), [SEQ](https://docs.snowflake.com/en/sql-reference/functions/seq1) | Generating timestamps to fill time gaps. |
+| Forecasting | [Time-Series Forecasting (Snowflake Cortex ML Functions)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting), [FORECAST](https://docs.snowflake.com/en/sql-reference/classes/forecast/commands/create-forecast)  | Generating Time Series Forecasts using Snowflake Cortex ML. |
 
 
 ### Step 1 - Copy Worksheet Content To Snowsight Worksheet
@@ -1273,6 +1274,101 @@ ORDER BY TAGNAME, TIMESTAMP;
 <img src="assets/analysis_query_gapfill_locf.png" />
 
 
+### Time Series Forecasting
+
+**[Time-Series Forecasting](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)** employs a machine learning algorithm to predict future data by using historical time series data.
+
+Forecasting is part of Snowflake Cortex, Snowflake’s intelligent, fully-managed AI and ML service.
+This feature is part of the Snowflake Cortex ML function suite.
+
+**Forecasting**: Generate a time series forecast for a single tag looking forward one day.
+
+1. Create a forecast training data view from historical data.
+
+```sql
+/* FORECAST DATA - Training Data Set - /IOT/SENSOR/TAG401
+A single tag of data for two weeks.
+
+Create a forecast training data view from historical data.
+*/
+CREATE OR REPLACE VIEW HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401 AS
+SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TAGNAME = '/IOT/SENSOR/TAG401'
+ORDER BY TAGNAME, TIMESTAMP;
+```
+
+2. Create a Time-Series Forecast model using the training data view.
+
+```sql
+/* FORECAST MODEL - Training Data Set - /IOT/SENSOR/TAG401
+Create a Time-Series Forecast model using the training data view.
+
+INPUT_DATA - The data set used for training the forecast model
+SERIES_COLUMN - The column that splits multiple series of data, such as different TAGNAMES
+TIMESTAMP_COLNAME - The column containing the Time Series times
+TARGET_COLNAME - The column containing the target value
+*/
+CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
+    INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401'),
+    SERIES_COLNAME => 'TAGNAME',
+    TIMESTAMP_COLNAME => 'TIMESTAMP',
+    TARGET_COLNAME => 'VALUE'
+);
+```
+
+3. Test Forecasting model output for one day.
+
+```sql
+/* FORECAST MODEL OUTPUT - Forecast for 1 Day
+Test Forecasting model output for one day.
+
+SERIES_VALUE - Defines the series being forecasted - for example the specific tag
+FORECASTING_PERIODS - The number of periods being forecasted
+*/
+CALL HOL_TIMESERIES_FORECAST!FORECAST(SERIES_VALUE => TO_VARIANT('/IOT/SENSOR/TAG401'), FORECASTING_PERIODS => 1440);
+```
+
+4. Create a forecast analysis combining historical data with forecast data.
+
+```sql
+/* FORECAST COMBINED - Combined ACTUAL and FORECAST data
+Create a forecast analysis combining historical data with forecast data.
+
+UNION the historical ACTUAL data with the FORECAST data using RESULT_SCAN
+*/
+SELECT
+    'ACTUAL' AS DATASET,
+    TAGNAME,
+    TIMESTAMP,
+    VALUE,
+    NULL AS FORECAST,
+    NULL AS UPPER
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401
+WHERE TAGNAME = '/IOT/SENSOR/TAG401'
+AND TO_DATE(TIMESTAMP) = '2024-01-14'
+UNION ALL
+SELECT
+    'FORECAST' AS DATASET,
+    SERIES AS TAGNAME,
+    TS AS TIMESTAMP,
+    NULL AS VALUE,
+    FORECAST,
+    UPPER_BOUND AS UPPER
+FROM TABLE(RESULT_SCAN(-1))
+ORDER BY DATASET, TAGNAME, TIMESTAMP;
+```
+
+### CHART: Time Series Forecast
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data set the first column to `VALUE` and set the Aggregation to `Max`.
+3. Select the `TIMESTAMP` column and set the Bucketing to `Minute`.
+4. Select `+ Add column` and select `FORECAST` and set Aggregation to `Max`.
+
+<img src="assets/analysis_chart_forecast.png" />
+
+
 > aside positive
 > 
 >  You have now run through several **Time Series Analysis** queries, we can now look at creating Time Series Functions.
@@ -1671,12 +1767,13 @@ After completing the analysis of the time series data that was streamed into Sno
 
 
 ### INFO: Streamlit
-Streamlit is an open-source Python library that makes it easy to create web applications for machine learning, data analysis, and visualization. [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) helps developers securely build, deploy, and share Streamlit apps on Snowflake’s data cloud, without moving data or application code to an external system.
+**Streamlit** is an open-source Python library that makes it easy to **create web applications for machine learning, data analysis, and visualization**. **[Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)** helps developers securely build, deploy, and share **Streamlit apps on Snowflake’s data cloud platform**, without moving data or application code to an external system.
 
 
 ### INFO: Snowflake CLI
 
-[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction) is an open-source command-line tool explicitly designed for developers to create, manage, update, and view apps running on Snowflake. We will use Snowflake CLI to deploy the Streamlit app to your Snowflake account.
+**[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction)** is an open-source command-line tool designed for developers to **easily create, deploy, update, and view apps running on Snowflake**. We will use Snowflake CLI to deploy the **Time Series Streamlit application** to your Snowflake account.
+
 
 ### Step 1 - Setup Snowflake Stage for Streamlit Application
 
@@ -1753,11 +1850,11 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 
 This command does the following:
 
-- Deploys the Streamlit application using the Snowflake account details mentioned in the ".snowflake/config.toml" file
-- --config-file option provides the location of the config file that contains Snowflake account details
-- --replace option ensures that the existing application, if present, is overwritten
-- --project option provides the path where the Streamlit app project resides
-- --connection option dictates which connection section from the ".snowflake/config.toml" file should be used for deployment
+- **Deploys the Streamlit application** using the Snowflake account details mentioned in the ".snowflake/config.toml" file
+- **--config-file** option provides the location of the config file that **contains Snowflake account details**
+- **--replace** option ensures that the **existing application, if present, is overwritten**
+- **--project** option provides the **path where the Streamlit app project resides**
+- **--connection** option dictates **which connection section from the ".snowflake/config.toml"** file should be used for deployment
 
 
 ### Step 3 - Launch the Streamlit Application
