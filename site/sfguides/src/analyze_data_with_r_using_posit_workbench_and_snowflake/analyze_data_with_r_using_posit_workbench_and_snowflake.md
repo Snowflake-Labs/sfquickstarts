@@ -114,7 +114,7 @@ Scroll down to the `Debug` section, then click `List Endpoints`. Click on the en
 
 ### Create an RStudio Pro Session
 
-Posit Workbench provides several IDEs, such as Jupyter Notebook, JupyterLab, and VS Code. For this analysis we will use an RStudio Pro IDE.
+Posit Workbench provides several IDEs, such as RStudio Pro, JupyterLab, and VS Code. For this analysis we will use an RStudio Pro IDE.
 
 #### Step 1: New Session
 
@@ -188,7 +188,7 @@ We will also use the development version of the `{odbc}` package to connect to t
 
 ```r
 install.packages("pak")
-pak::pak("r-dbi/odbc#662")
+pak::pak("r-dbi/odbc")
 ```
 
 After we install the packages, we load them.
