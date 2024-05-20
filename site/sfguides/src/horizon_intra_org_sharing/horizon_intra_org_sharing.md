@@ -11,7 +11,7 @@ tags: Summit Lab, Data Sharing, Horizon Access
 # Horizon Access: Intra-Company Sharing
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
+Duration: 15
 
 Sharing information between departments, business units and subsidiaries of a company is critical for success, particularly when there are organizational silos in place. A modern data platform must provide decentralized ownership, universal discovery, access control, federated governance, and observability. 
 
@@ -172,6 +172,7 @@ Execute the following SQL commands in the _**Account Setup**_ worksheet to boots
 
 <!-- ------------------------ -->
 ## Citations and Terms of Use
+Duration: 1
 
 Raw text data provided for this lab is an extract from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/)
 
@@ -270,6 +271,8 @@ Setup is now complete!
 
 <!-- ------------------------ -->
 ## Create, Publish and Install a Data Listing 
+Duration: 20
+
 In this section you will create, publish, consume, alter, and monitor a [listing](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about).
 ### Build and Publish a Listing in the Provider Studio UI
 
@@ -386,6 +389,8 @@ ORDER BY date_valid_std DESC;
 
 
 ## Listing Management and Monitoring
+Duration: 20
+
 ### Use the Listing API to modify listing properties programmatically.
 
 1. [SHOW LISTINGS](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) in the AWS Provider account where you published the listing.
@@ -510,6 +515,7 @@ FROM stream_daily_weather_changes;
 
 <!-- ------------------------ -->
 ## Protect Data with Governance Policies 
+Duration: 20
 
 This section of the lab introduces several capabilities for data providers to restrict the usage of their products by consumers.
 
@@ -881,6 +887,7 @@ WHERE city = 'Melbourne' AND last_name = 'Arellano';
 
 
 ## Publish and Monitor Data Quality Metrics for Listings
+Duration: 15
 
 In this section the data provider will capture [data quality metrics](https://docs.snowflake.com/en/user-guide/data-quality-intro) and share them with the data consumers. In particular, we want to monitor the data quality in the view ANALYTICS.ORDERS_BY_POSTAL_CODE_V.
 
@@ -1047,6 +1054,7 @@ Take the following 3 steps in the UI:
 
 <!-- ------------------------ -->
 ## Create, Publish and Install a Native Application Listing
+Duration: 20
 
 The [Snowflake Native Application Framework](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/native-apps/overview) provides developers the ability to create data intensive applications that run *within* the Snowflake platform with versioning controls.
 - Native Apps allow sharing of data and related business logic with other Snowflake accounts. 
@@ -1263,6 +1271,7 @@ select distinct primary_city from tasty_bytes_global_sales.app_instance_schema.o
 
 <!-- ------------------------ -->
 ## Share Snowflake-Managed Iceberg Tables
+Duration: 10
 
 Iceberg tables in Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage managed by the customer. Snowflake supports Iceberg tables that use the Apache Parquet file format.
 
@@ -1332,6 +1341,7 @@ ORDER BY order_total DESC;
 
 <!-- ------------------------ -->
 ## Share Unstructured Data within and across cloud regions
+Duration: 20
 
 We have previously staged 100 movie reviews extracted from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/).
 
@@ -1458,6 +1468,8 @@ Try the same steps on <mark>Azure Consumer Account</mark>
 
 <!-- ------------------------ -->
 ## Explore Data Assets with Universal Search and Snowflake Copilot
+
+<mark>TODO - may defer to V2 post-summit</mark>
 
 <!-- ------------------------ -->
 ## Conclusion
