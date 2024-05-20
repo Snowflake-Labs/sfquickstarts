@@ -481,6 +481,9 @@ We can create the users like this:
 USE ROLE ACCOUNTADMIN;
 CREATE ROLE tasty_app_ext_role;
 
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_app_ext_role;
+GRANT USAGE ON SCHEMA app TO ROLE tasty_app_ext_role;
+
 CREATE USER IF NOT EXISTS user1 PASSWORD='password1' MUST_CHANGE_PASSWORD=TRUE DEFAULT_ROLE=tasty_app_ext_role;
 GRANT ROLE tasty_app_ext_role TO USER user1;
 ```
