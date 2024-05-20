@@ -48,7 +48,6 @@ The following issues may occur if you have an existing Hex account and you're no
 
 *If you're still encountering issues, or encounter any issues other than the ones listed above, please contact our support team [support@hex.tech](mailto:support@hex.tech) with the subject "VHOL" for priority support.*
 
-
 <!-- ### Enabling ORGADMIN
 
 We'll revisit your newly created workspace in a bit, but for now, head back over to Snowflake. Let's navigate to the `Admin` tab again but this time select `Users & roles`. From here, you should see 3 users with one of them being named `PC_HEX_USER`. This is the user that was created when you activated Hex with partner connect. We'll need to activate the `ORGADMIN` role for this user. Select `PC_HEX_USER`, and at the bottom of the page you'll see a section to grant new roles.
@@ -107,6 +106,7 @@ Now we can move back over to Hex and get started on our project. The first thing
 
 
 </button>
+
 
 Select Get a copy, select your new or existing Hex org. 
 
@@ -195,8 +195,7 @@ Congratulations on making it to the end of this Lab! You've successfully perform
 * How to create your own Hex app and share it out to end users
 
 ### Related Resources
-* [Final Project](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)!
+* [Final Project](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)
 * [Data Exploration & Analysis using Hex and Snowpark](https://developers.snowflake.com/solution/data-exploration-with-hex-and-snowpark/)
 * [Parallelized Time Series Forecasting Of Restaurant Foot Traffic Using Snowpark UDTF](https://developers.snowflake.com/solution/time-series-forecasting-using-snowpark-and-hex/)
 * [How To Leverage Libraries Outside of Snowpark ML](https://developers.snowflake.com/solution/optimizing-marketing-budget-using-snowpark-ml-in-hex-notebooks/)
-
