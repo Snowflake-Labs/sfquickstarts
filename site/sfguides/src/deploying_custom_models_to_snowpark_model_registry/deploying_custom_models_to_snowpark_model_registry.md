@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Machine Learning, Snowpark, Model registry
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will learn how to ad a custom model to the Snowpark Model Registry. You will set up your Snowflake and Python environments, train a model using the lifetime library and deploy that model to the Snowpark Model Registry. 
+Through this quickstart guide, you will learn how to ad a custom model to the Snowpark Model Registry. You will set up your Snowflake and Python environments, train a model using the PyCaret library, deploy that model to the Snowpark Model Registry and run the inference within your Snowflake enviroment.
 
 ### What is Snowpark?
 
@@ -52,17 +52,29 @@ The Snowflake Model Registry supports the following types of models.
 This quickstart will focus on
 *  how to create models using the snowflake.ml.model.CustomModel class, log them to the Snowflake Model Registry, and use them. 
 
-### What you will learn 
-Bla bla
+### What You’ll Learn 
+* how to train a PyCaret model
+* how to create a CustomModel class for a PyCaret model 
+* how to log a CustoModel to Snowflake Model Registry
+* how to run inference in Snowflake using a custom model.
 
 ### Prerequisites
-bla bla
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
+    > aside positive
+    >
+    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python)
+- [Anaconda](https://www.anaconda.com/) installed
+- [Python 3.10](https://www.python.org/downloads/) installed
+    - Note that you will be creating a Python environment with 3.10 in the **Setup the Python Environment** step
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
-bla bla
+A set on notebooks that trains a PyCaret model, creates a CustomModel for it and log and use it in Snowflake.
+
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
-Duration: 2
+Duration: 5
 
 > aside positive
 >
@@ -72,30 +84,16 @@ Run the following SQL commands in a SQL worksheet to create the [warehouse](http
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
-CREATE OR REPLACE WAREHOUSE ML_HOL_WH; --by default, this creates an XS Standard Warehouse
-CREATE OR REPLACE DATABASE ML_HOL_DB;
-CREATE OR REPLACE SCHEMA ML_HOL_SCHEMA;
-CREATE OR REPLACE STAGE ML_HOL_ASSETS; --to store model assets
-
--- create csv format
-CREATE FILE FORMAT IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT 
-    SKIP_HEADER = 1 
-    TYPE = 'CSV';
-
--- create external stage with the csv format to stage the diamonds dataset
-CREATE STAGE IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.DIAMONDS_ASSETS 
-    FILE_FORMAT = ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT 
-    URL = 's3://sfquickstarts/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv';
-    -- https://sfquickstarts.s3.us-west-1.amazonaws.com/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv
-
-LS @DIAMONDS_ASSETS;
+CREATE OR REPLACE WAREHOUSE MRCM_HOL_WH; --by default, this creates an XS Standard Warehouse
+CREATE OR REPLACE DATABASE MRCM_HOL_DB; -- will be used to store the custom model
+CREATE OR REPLACE SCHEMA MRCM_HOL_SCHEMA;  -- will be used to store the custom model
 ```
 
 These can also be found in the **setup.sql** file.
 
 <!-- ------------------------ -->
 ## Set up the Python environment
-Duration: 7
+Duration: 10
 
 > aside positive
 >
@@ -103,7 +101,7 @@ Duration: 7
 
 ### Snowpark for Python and Snowpark ML
 
-- Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
+- Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.10, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
 - Open a new terminal window and execute the following commands in the same terminal window:
 
@@ -114,7 +112,7 @@ Duration: 7
 
   2. Activate the conda environment.
   ```
-  conda activate snowpark-ml-hol
+  conda activate custom-model-hol
   ```
 
   2. `Optionally` start notebook server:
@@ -131,9 +129,9 @@ Duration: 7
   "user"      : "<your_username_goes_here>",
   "password"  : "<your_password_goes_here>",
   "role"      : "ACCOUNTADMIN",
-  "warehouse" : "ML_HOL_WH",
-  "database"  : "ML_HOL_DB",
-  "schema"    : "ML_HOL_SCHEMA"
+  "warehouse" : "MRCM_HOL_WH",
+  "database"  : "MRCM_HOL_DB",
+  "schema"    : "MRCM_HOL_SCHEMA"
 }
 ```
 
@@ -142,40 +140,29 @@ Duration: 7
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
 
 <!-- ------------------------ -->
-## Set up the data in Snowflake
+## Train a PyCaret model
 Duration: 7
 
-Open the following jupyter notebook and run each of the cells: [1_snowpark_ml_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/1_snowpark_ml_data_ingest.ipynb)
+Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/)
+
+In this notebook, we will train a PyCaret model and save it to local disc.
 
 <!-- ------------------------ -->
-## ML Feature Transformations
+## Create a CustoModel and log it to Snowflake Model Registry
 Duration: 10
 
-Open the following jupyter notebook and run each of the cells: [2_snowpark_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
+Open the following jupyter notebook and run each of the cells: [2_create_and_deploy_custom_model.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
 
-In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling API. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
-
-<!-- ------------------------ -->
-## ML Model Training and Inference
-Duration: 15
-
-Open the following jupyter notebook and run each of the cells: [3_snowpark_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/3_snowpark_ml_model_training_inference.ipynb)
-
-In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling API. We also show how to execute batch inference through the Snowpark Model Registry.
+In this notebook, we will create a CustomModel class that we will use with our trained PyCaret model, created in porevious notebook, to log it into the Snowflake Model Registry.
 
 <!-- ------------------------ -->
 ## Conclusion
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowpark for Machine Learning through the introduction of Snowpark ML, the Python library and underlying infrastructure for data science and machine learning tasks. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the CustomModel class to log a model trained with a Machine Learning library that is not supported by default, but exists in the Snowflake Anaconda channel.
 
 For more information, check out the resources below:
 
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python)
+- [Storing Custom Models in the Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-custom-models)
 - [Snowpark ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- [Getting Started with Data Engineering and ML Using Snowpark](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html?index=..%2F..index#0)
-- [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
-- [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
-- [Snowpark for Python Developer Docs](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-
 <!-- ------------------------ -->
