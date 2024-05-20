@@ -179,7 +179,7 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 ### Zero to Snowflake
 
 - #### [Cost Management](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/)
-    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, Account and Warehouse Level Timeout Parameters, Budgets and Exploring Cost.
+    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, Account and Warehouse Level Timeout Parameters, and Exploring Cost.
 - #### [Transformation](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/)
     - Learn about Snowflake Cloning, Caching, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
 - #### [Semi-Structured Data](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/)
@@ -190,6 +190,19 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
     - Learn about the Snowflake Marketplace by leveraging free, instantly available, live data from Weathersource to conduct data driven analysis harmonizing first and third party sources.
 - #### [Geospatial](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
     - Learn Snowflake's Geospatial capabilities, beginning with obtaining free, real-time data from SafeGraph. Progress through creating geographic points (ST_POINT), measuring distances (ST_DISTANCE), aggregating coordinates (ST_COLLECT), establishing a Minimum Bounding Polygon (ST_ENVELOPE), determining areas (ST_AREA), identifying central points (ST_CENTROID), and executing advanced Geospatial Analysis using the H3 (Hexagonal Hierarchical Geospatial Indexing System).
+
+### Other Tasty Bytes Quickstarts
+- #### [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index)
+
+- #### [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index)
+
+- #### [Developing React Native Applications using Snowflake Hybrid Tables](https://quickstarts.snowflake.com/guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/index.html?index=..%2F..index)
+
+- #### [Tasty Bytes - Developing React Native Data Application with SQL API](https://quickstarts.snowflake.com/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api/index.html?index=..%2F..index)
+
+- #### [Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application](https://quickstarts.snowflake.com/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/index.html?index=..%2F..index)
+
+
 
 
 

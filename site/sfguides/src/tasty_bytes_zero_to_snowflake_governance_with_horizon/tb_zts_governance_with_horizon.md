@@ -129,6 +129,7 @@ WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN
 ---> stopped here
 <img src = "assets/sysroles.png">
 
+
 In our result set we can see the high-level descriptions of what these Snowflake System Defined Roles have privileges to do. 
 
 >aside positive
