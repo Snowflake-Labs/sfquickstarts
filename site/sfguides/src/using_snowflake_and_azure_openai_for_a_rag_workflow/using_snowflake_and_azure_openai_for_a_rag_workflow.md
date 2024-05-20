@@ -188,7 +188,7 @@ $$;
 
 -- Create table with embeddings from Azure OpenAI
 CREATE OR REPLACE TABLE MOVIE_REVIEWS_EMBEDDING AS 
-SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC;
+SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC LIMIT 1000;
 ```
 
 <!-- ------------------------ -->
@@ -255,7 +255,7 @@ if(st.button('Ask ChatGPT')):
 
 Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate more tailored responses. 
 
-Important to note that the JAROWINKLER_SIMILARITY() function is being used here to calculate distance as other Snowflake distance functions are only available for embeddings created with Snowflake embed models and stored in a Snowflake vector data type.
+Important to note that the VECTOR_COSINE_SIMILARITY() function is being used here to calculate distance, but other distance functions are available in Snowflake.
 
 <!-- ------------------------ -->
 ## Conclusion  And Resources
