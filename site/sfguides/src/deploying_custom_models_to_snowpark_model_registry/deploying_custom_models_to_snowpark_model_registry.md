@@ -153,7 +153,7 @@ Duration: 10
 
 Open the following jupyter notebook and run each of the cells: [2_create_and_deploy_custom_model.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
 
-In this notebook, we will create a CustomModel class that we will use with our trained PyCaret model, created in porevious notebook, to log it into the Snowflake Model Registry.
+In this notebook, we will create a CustomModel class that we will use with our trained PyCaret model, created in porevious notebook,  og it into the Snowflake Model Registry and do inference using the logged model on a Snowpark DataFrame.
 
 <!-- ------------------------ -->
 ## Conclusion
