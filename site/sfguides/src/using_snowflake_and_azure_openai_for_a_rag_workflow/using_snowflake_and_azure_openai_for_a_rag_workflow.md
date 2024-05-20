@@ -3,9 +3,9 @@ summary: Using Snowflake with Azure OpenAI to build a RAG workflow
 categories: featured,rag,app-development, azure, openai, streamlit, genai, ai, ml, image
 environments: web
 status: Published
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: RAG, Generative AI, Snowflake External Access, Azure, OpenAI, Snowpark, Streamlit
 authors: Matt Marzillo
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 
 # Using Snowflake with Azure OpenAI to build a RAG workflow
 <!-- ------------------------ -->
@@ -188,7 +188,7 @@ $$;
 
 -- Create table with embeddings from Azure OpenAI
 CREATE OR REPLACE TABLE MOVIE_REVIEWS_EMBEDDING AS 
-SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC;
+SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC LIMIT 1000;
 ```
 
 <!-- ------------------------ -->
