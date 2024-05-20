@@ -742,8 +742,8 @@ The following query profiles will be covered in this section.
 | **Query Type** | **Functions** | **Description** |
 | --- | --- | --- |
 | Raw | Time Boundary: Left, Right, and Both | Raw data within a time range. |
-| Math [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [MIN](https://docs.snowflake.com/en/sql-reference/functions/min), [MAX](https://docs.snowflake.com/en/sql-reference/functions/max), [AVG](https://docs.snowflake.com/en/sql-reference/functions/avg), [COUNT](https://docs.snowflake.com/en/sql-reference/functions/count), [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum), [APPROX_PERCENTILE](https://docs.snowflake.com/en/sql-reference/functions/approx_percentile), FREQUENCY | Mathematical calculations over values within a time range. |
-| Distribution [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [STDDEV](https://docs.snowflake.com/en/sql-reference/functions/stddev), [VARIANCE](https://docs.snowflake.com/en/sql-reference/functions/variance), [KURTOSIS](https://docs.snowflake.com/en/sql-reference/functions/kurtosis), [SKEW](https://docs.snowflake.com/en/sql-reference/functions/skew) | Statistics on distributions of data. |
+| Math [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [MIN](https://docs.snowflake.com/en/sql-reference/functions/min), [MAX](https://docs.snowflake.com/en/sql-reference/functions/max), [AVG](https://docs.snowflake.com/en/sql-reference/functions/avg), [COUNT](https://docs.snowflake.com/en/sql-reference/functions/count), [SUM](https://docs.snowflake.com/en/sql-reference/functions/sum), FREQUENCY | Mathematical calculations over values within a time range. |
+| Distribution [Statistical Aggregates](https://docs.snowflake.com/en/sql-reference/functions-aggregation) | [APPROX_PERCENTILE](https://docs.snowflake.com/en/sql-reference/functions/approx_percentile), [STDDEV](https://docs.snowflake.com/en/sql-reference/functions/stddev), [VARIANCE](https://docs.snowflake.com/en/sql-reference/functions/variance), [KURTOSIS](https://docs.snowflake.com/en/sql-reference/functions/kurtosis), [SKEW](https://docs.snowflake.com/en/sql-reference/functions/skew) | Statistics on distributions of data. |
 | [Window Functions](https://docs.snowflake.com/en/sql-reference/functions-analytic) | [LAG](https://docs.snowflake.com/en/sql-reference/functions/lag), [LEAD](https://docs.snowflake.com/en/sql-reference/functions/lead), [FIRST_VALUE](https://docs.snowflake.com/en/sql-reference/functions/first_value), [LAST_VALUE](https://docs.snowflake.com/en/sql-reference/functions/last_value), ROWS BETWEEN, RANGE BETWEEN | Functions over a group of related rows. |
 | Watermarks | [MAX_BY](https://docs.snowflake.com/en/sql-reference/functions/max_by), [MIN_BY](https://docs.snowflake.com/en/sql-reference/functions/min_by) | Find latest or earliest values ordered by timestamps. |
 | Downsampling / Time Binning | [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) | Time binning aggregations over time intervals. |
@@ -823,15 +823,13 @@ ORDER BY TAGNAME;
 **Math Operations**: Retrieve statistical detail for the readings within the time boundary.
 
 ```sql
-/* MIN/MAX/AVG/SUM/APPROX_PERCENTILE
+/* MIN/MAX/AVG/SUM
 Retrieve statistical aggregates for the readings within the time boundary.
 
 MIN - Minimum value
 MAX - Maximum value
 AVG - Average of values (mean)
 SUM - Sum of values
-PERCENTILE_50 - 50% of values are less than this
-PERCENTILE_95 - 95% of values are less than this
 
 Note: Aggregates can work with numerical data types.
 */
@@ -839,9 +837,7 @@ SELECT TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP,
     MIN(VALUE_NUMERIC) AS MIN_VALUE,
     MAX(VALUE_NUMERIC) AS MAX_VALUE,
     SUM(VALUE_NUMERIC) AS SUM_VALUE,
-    AVG(VALUE_NUMERIC) AS AVG_VALUE,
-    APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS PERCENTILE_50_VALUE,
-    APPROX_PERCENTILE(VALUE_NUMERIC, 0.95) AS PERCENTILE_95_VALUE
+    AVG(VALUE_NUMERIC) AS AVG_VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS 
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
 AND TIMESTAMP <= '2024-01-01 01:00:00'
@@ -893,6 +889,8 @@ The **TAGNAME** is updated to show that a calculation has been applied to the re
 /* DISTRIBUTIONS - sample distributions statistics
 Retrieve distribution sample statistics within the time boundary.
 
+PERCENTILE_50 - 50% of values are less than this
+PERCENTILE_95 - 95% of values are less than this
 STDDEV - Closeness to the mean/average of the distribution.
 VARIANCE - Spread between numbers in the time boundary.
 KURTOSIS - Measure of outliers occuring.
@@ -900,6 +898,20 @@ SKEW - Left (negative) and right (positive) distribution skew.
 
 Note: Distributions can work with numerical data types.
 */
+SELECT TAGNAME || '~PERCENTILE_50_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.5) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
+SELECT TAGNAME || '~PERCENTILE_95_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, APPROX_PERCENTILE(VALUE_NUMERIC, 0.95) AS VALUE
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
+WHERE TIMESTAMP > '2024-01-01 00:00:00'
+AND TIMESTAMP <= '2024-01-01 01:00:00'
+AND TAGNAME = '/IOT/SENSOR/TAG301'
+GROUP BY TAGNAME
+UNION ALL
 SELECT TAGNAME || '~STDDEV_1HOUR' AS TAGNAME, TO_TIMESTAMP_NTZ('2024-01-01 01:00:00') AS TIMESTAMP, STDDEV(VALUE_NUMERIC) AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-01 00:00:00'
