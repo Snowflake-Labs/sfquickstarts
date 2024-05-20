@@ -177,9 +177,7 @@ Looking specifically at Vertex AI two additional considerations that you may wan
 - Deploying models to Snowflake via a User Defined Function
 
 ### Additional Considerations
-- There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.
-
-- [Snowpark for python with SageMaker](https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381)
+- There are some great blogs on Medium regarding Snowpark and using Snowflake with the Google Cloud Platform
 
 - [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
 
