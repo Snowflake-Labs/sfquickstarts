@@ -52,7 +52,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
 ### Step 3 - Navigating to Worksheets
 - Click on the Worksheets Tab in the left-hand navigation bar.
@@ -276,7 +275,7 @@ The Timeout Parameters we set on our Test Warehouse are also available at the Ac
 
 Moving forward we will plan to monitor these as our Snowflake Workloads and Usage grow to ensure they are continuing to protect our account from unneccesary consumption but allowing for expected longer jobs to complete
 
-#### Step 1 - Adjusting the Account Statement Timeout Parameter
+### Step 1 - Adjusting the Account Statement Timeout Parameter
 To begin, our Account level Statement Parameter changes let's adjust `statement_timeout_in_seconds` to 5 hours by running the next two queries. 
 
 Since this parameter is in seconds we will set it equal to 18000 ([5 hours x 60 minutes] x 60 seconds). 

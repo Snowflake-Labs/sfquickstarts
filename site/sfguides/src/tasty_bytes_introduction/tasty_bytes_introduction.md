@@ -54,7 +54,6 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 
 ### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
 ### Step 3 - Navigating to Worksheets
 - Click on the Worksheets Tab in the left-hand navigation bar.

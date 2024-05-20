@@ -55,7 +55,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
 ### Step 3 - Navigating to Worksheets
 - Click on the Worksheets Tab in the left-hand navigation bar.
@@ -126,7 +125,7 @@ SELECT
 FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
 WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN','PUBLIC');
 ```
----> stopped here
+
 <img src = "assets/sysroles.png">
 
 
@@ -356,8 +355,6 @@ Duration: 3
 ### Overview
 With our Tags in place we can now create our Masking Policies that will mask data for all but privileged Roles. We need to create 1 policy for every data type where the return data type can be implicitly cast into the column datatype. We can only assign 1 policy per datatype to an individual Tag.
 
----stopped here
-
 ### Step 1 - Creating our first Data Masking Policy
 For the three different column types we are looking to mask, we want to address the following:
 - **Names:** Complete masking for any role that is not `accountadmin` or `sysadmin`
@@ -416,7 +413,7 @@ ALTER TAG tags.tasty_pii SET
 
 We can now officially say we have deployed Tag Based Masking Policies. Let's move on to the next step where we will validate our work.
 
-### Step 3 - Validating our Work
+### Step 4 - Validating our Work
 With Tag Based Masking in-place, let's check things out by first assuming our Test Role and using our Development Warehouse and then beginning to query both raw and downstream data.
 
 Within our first query we will query the Raw layer Customer Loyalty table directly.
@@ -458,7 +455,7 @@ ORDER BY lifetime_sales_usd;
 
 <img src = "assets/analytics_mask_test.png"> 
 
-### Step 4 - Click Next -->
+### Step 5 - Click Next -->
 
 ## Row-Access Policies
 Duration: 5
@@ -792,7 +789,7 @@ SELECT * FROM TABLE(information_schema.tag_references_all_columns('raw_pos.franc
 
 
 
-## Sensitive Data Classification
+## Custom Data Classification
 Duration: 4
 
 ### Overview
@@ -827,7 +824,7 @@ With our schema available, let's now create our `placekey` Custom Classifier by 
 CREATE OR REPLACE snowflake.data_privacy.custom_classifier classifiers.placekey();
 ```
 
-### Step 3 = Adding REGEX to our Placekey Custom Classifier
+### Step 3 - Adding REGEX to our Placekey Custom Classifier
 Next let's test the Regular Expression (Regex) that our Data Engineer has created to locate the Placekey value by running our next query.
 
 ```
@@ -859,7 +856,7 @@ SELECT placekey!LIST();
 <img src = "assets/list.png">
 
 ### Step 4 - Using our Placekey Custom Classifier
-Let's now use SYSTEM$CLASSIFY and our Classifier against the Location table
+Let's now use [SYSTEM$CLASSIFY](https://docs.snowflake.com/en/sql-reference/stored-procedures/system_classify) and our Classifier against the `Location` table
 
 ```
 CALL SYSTEM$CLASSIFY('raw_pos.location', {'custom_classifiers': ['placekey'], 'auto_tag':true});
@@ -977,7 +974,7 @@ Universal Search understands your query and information about your database obje
 
 To leverage Universal Search in Snowsight:
 - Use the Left Navigation Menu
-= Select "Search" (Magnifying Glass)
+- Select "Search" (Magnifying Glass)
 - Enter Search criteria such as:
     - Tasty Bytes
     - Snowflake Best Practices
