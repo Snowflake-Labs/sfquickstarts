@@ -30,7 +30,7 @@ Upon completing this quickstart lab, you will have learned how to perform time s
 
 ### What You'll Build
 
-By the end of this lab you will have an **end-to-end streaming Time Series Analysis solution**, with a front-end application deployed using Streamlit in Snowflake.
+By the end of this lab you will have an **end-to-end streaming Time Series Analysis solution**, with a front-end application deployed using **Streamlit in Snowflake**.
 
 <img src="assets/streamlit_video_summary.gif" />
 
@@ -56,7 +56,7 @@ The first step is to create a fork of the Lab GitHub repository.
 
 1. In a web browser log into your [Github](https://github.com/) account.
 
-2. Open [Getting Started with Time Series in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). 
+2. Open [Getting Started with Time Series Analytics for IoT in Snowflake associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks). 
     - This repository contains all the code you need to successfully complete this quickstart guide.
 
 3. Click on the **"Fork"** button near the top right.
@@ -140,7 +140,7 @@ To activate the virtual environment:
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
 
-### Step 4 - Update Snowflake Account Connection Identifiers in Lab Files
+### Step 4 - Update Snowflake Connection Account Identifiers in Lab Files
 
 1. Login to your Snowflake account using a browser 
 
@@ -157,7 +157,8 @@ The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the *
 ```sql
 SELECT SYSTEM$ALLOWLIST();
 
--- Note down your Snowflake account identifier details
+-- Note down your Snowflake account identifier host detail
+-- where "type":"SNOWFLAKE_DEPLOYMENT_REGIONLESS"
 -- <account_identifier>.snowflakecomputing.com
 ```
 
@@ -220,7 +221,7 @@ SELECT SYSTEM$ALLOWLIST();
 
 
 ### Step 7 - Retrieve the Snowflake Public Key
-As part of the GitHub Codespace setup, an OpenSSL Private Key-pair was generated in the VS Code `keys` directory.
+As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be generated in the **VS Code** `keys` directory.
 
 **Copy** the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be needed in the setup worksheet.
 
@@ -255,7 +256,7 @@ As part of the GitHub Codespace setup, an OpenSSL Private Key-pair was generated
 ## Setup Snowflake Resources
 Duration: 5
 
-Create the foundational Snowflake Objects for this lab.
+#### Create the Foundational Snowflake Objects for this Lab
 
 This includes:
 - Role: **ROLE_HOL_TIMESERIES** - role used for working throughout the lab
@@ -383,9 +384,9 @@ SETUP SCRIPT COMPLETED
 ## Snowpipe Streaming Ingestion
 Duration: 10
 
-With the foundational objects setup, we can now deploy a staging table to stream time series data into Snowflake via a Snowpipe Streaming client.
+With the foundational objects setup, we can now **deploy a staging table** to stream time series data into Snowflake via a Snowpipe Streaming client.
 
-For this lab a Java IOT Simulator Client application has been created to stream IoT sensor readings into Snowflake.
+For this lab a **Java IOT Simulator Client** application has been created to stream IoT sensor readings into Snowflake.
 
 <img src="assets/snowpipe_streamingest.png" />
 
@@ -429,7 +430,7 @@ The IoT data will be streamed into Snowflake in a similar [schema format as Kafk
 
 ### INFO: Snowpipe Streaming Ingest Client SDK
 
-Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka, to stream rows of data into a Snowflake table at low latency.
+Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka Connectors, to stream rows of data into a Snowflake table at low latency.
 
 <img src="assets/data-load-snowpipe-streaming.png" />
 
@@ -479,7 +480,7 @@ The query should return a single channel `CHANNEL_1_TEST` opened to the `RAW_TS_
 
 <img src="assets/snowpipe_channeltest.png" />
 
-With a channel now opened to the table we are ready to stream data into the table!
+**With a channel now opened to the table we are ready to stream data into the table.**
 
 
 ### Step 3 - Load a Simulated IoT Data Set
@@ -488,9 +489,9 @@ With the channel connection being successful, we can now load the IoT data set, 
 
 <img src="assets/snowpipe_streamingclient.png" />
 
-The simulated IoT dataset contains six sensor device tags at different frequencies, within a single **namespace** called **"IOT"**.
+The simulated IoT dataset contains six sensor devices at various frequencies, with each device being assigned a unique Tag Names within a single **namespace** called **"IOT"**.
 
-| **NAMESPACE** | **TAGNAME** | **FREQUENCY** | **UNITS** | **DATA_TYPE** | **TYPE** |
+| **Namespace** | **Tag Name** | **Frequency** | **Units** | **Data Type** | **Sensor Type** |
 | --- | --- | --- | --- | --- | --- |
 | IOT | TAG101 | 5 SEC | PSI | DOUBLE | Pressure Gauge |
 | IOT | TAG201 | 10 SEC | RPM | DOUBLE | Motor RPM |
@@ -582,7 +583,7 @@ Along with setting up Dynamic Tables for continuous loading, we'll also deploy s
 
 ### INFO: Dynamic Tables
 
-[Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro) are a declarative way of defining your data pipeline in Snowflake. It's a Snowflake table which is defined as a query to continuously and automatically materialize the result of that query as a table. Dynamic Tables can join and aggregate across **multiple source objects** and **incrementally update** results as sources change.
+[Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro) are a declarative way of defining your data pipeline in Snowflake. It's a Snowflake table which is **defined as a query to continuously and automatically materialize the result of that query as a table**. Dynamic Tables can join and aggregate across **multiple source objects** and **incrementally update** results as sources change.
 
 Dynamic Tables can also be chained together to create a DAG for more complex data pipelines.
 
@@ -647,7 +648,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 > aside positive
 > 
->  **Dynamic Tables** have a [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines how out of date the data can be before a refresh is automatically triggered. In this case, we have configured the Dynamic Tables to have a TARGET_LAG of 1 minute. 
+>  **Dynamic Tables** have a [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines a **target “freshness”** for the  data. In this case, we have configured the Dynamic Tables to have a TARGET_LAG of 1 minute, so we want the Dynamic Table to **update within 1 minute of the base tables being updated**.
 >
 
 
@@ -730,7 +731,7 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 ## Time Series Analysis
 Duration: 20
 
-Now that we have created the analytics views, we can start to query the data using Snowflake native time series functions.
+Now that we have created the analytics views, we can start to query the data using **Snowflake native time series functions**.
 
 <img src="assets/analysis_overview.png" />
 
@@ -1186,9 +1187,11 @@ EXCEEDANCES in equipment operating limits over periods of time, such as a maximu
 
 ### Downsampling Time Series Data
 
-Downsampling is used to decrease the frequency of time samples, such as from seconds to minutes, by placing time series data into fixed time intervals using aggregate operations on the existing values within each time interval.
+Downsampling is used to **decrease the frequency of time samples**, such as from seconds to minutes, by placing time series data into fixed time intervals using aggregate operations on the existing values within each time interval.
 
-**Time Binning - 5 min Aggregate**: Create a downsampled time series data set with 5 minute aggregates, showing the **START and END timestamp label** of each interval.
+**Time Binning - 5 min Aggregate**: Consider a use case where you want to obtain a broader view of a high frequency pressure gauge, by aggregating data into evenly spaced intervals to find trends over time.
+
+Create a downsampled time series data set with 5 minute aggregates, showing the **START and END timestamp label** of each interval.
 
 ```sql
 /* TIME BINNING - 5 min AGGREGATE with START and END label
@@ -1219,12 +1222,16 @@ ORDER BY TAGNAME, START_TIMESTAMP;
 
 ### Aligning Time Series Data
 
-Often you will need to align two data sets that may have differing time frequencies. To do this you can utilize the Time Series ASOF join to pair closely matching records based on timestamps.
+Often you will need to **align two data sets** that may have differing time frequencies. To do this you can utilize the **Time Series ASOF JOIN** to pair closely matching records based on timestamps.
 
-**Joining Time Series Data with ASOF JOIN**: Using the `ASOF JOIN`, join two data sets by applying a `MATCH_CONDITION` to pair closely aligned timestamps and values.
+**Joining Time Series Data with ASOF JOIN**: Consider the use case where you want to align a one second and five second pressure gauge to determine if there is a correlation.
+
+Using the `ASOF JOIN`, join two data sets by applying a `MATCH_CONDITION` to pair closely aligned timestamps and values.
 
 ```sql
 /* ASOF JOIN - Align a 1 second tag with a 5 second tag
+Consider the use case where you want to align a one second and five second pressure gauge to determine if there is a correlation.
+
 Using the `ASOF JOIN`, join two data sets by applying a `MATCH_CONDITION` to pair closely aligned timestamps and values.
 */
 SELECT ONE_SEC.TAGNAME AS ONE_SEC_TAGNAME, ONE_SEC.TIMESTAMP AS ONE_SEC_TIMESTAMP, ONE_SEC.VALUE_NUMERIC AS ONE_SEC_VALUE, FIVE_SEC.VALUE_NUMERIC AS FIVE_SEC_VALUE, FIVE_SEC.TAGNAME AS FIVE_SEC_TAGNAME, FIVE_SEC.TIMESTAMP AS FIVE_SEC_TIMESTAMP
@@ -1237,13 +1244,21 @@ ASOF JOIN (
     ) FIVE_SEC
 MATCH_CONDITION(ONE_SEC.TIMESTAMP >= FIVE_SEC.TIMESTAMP)
 WHERE ONE_SEC.TAGNAME = '/IOT/SENSOR/TAG301'
-AND ONE_SEC.TIMESTAMP >= '2024-01-01 00:00:00'
-AND ONE_SEC.TIMESTAMP < '2024-01-01 00:01:00'
+AND ONE_SEC.TIMESTAMP >= '2024-01-03 09:15:00'
+AND ONE_SEC.TIMESTAMP <= '2024-01-03 09:45:00'
 ORDER BY ONE_SEC.TIMESTAMP;
 ```
 
 <img src="assets/analysis_query_asof_align.png" />
 
+### CHART: Aligned Time Series Data
+
+1. Select the `Chart` sub tab below the worksheet.
+2. Under Data set the first Data column to `ONE_SEC_VALUE` with an Aggregation of `Max`.
+3. Set the X-Axis to `ONE_SEC_TIMESTAMP` and a Bucketing of `Second`
+3. Select `+ Add column` and select `FIVE_SEC_VALUE` and set Aggregation to `Max`.
+
+<img src="assets/analysis_chart_align.png" />
 
 ### Gap Filling
 
@@ -1329,6 +1344,11 @@ CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
 );
 ```
 
+> aside negative
+> 
+>  Training the Time Series Forecast model may take 2-3 minutes. Indicative training times available at [Training on Multi-Series Data](https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting#training-on-multi-series-data).
+>
+
 3. Test Forecasting model output for one day.
 
 ```sql
@@ -1341,7 +1361,7 @@ FORECASTING_PERIODS - The number of periods being forecasted
 CALL HOL_TIMESERIES_FORECAST!FORECAST(SERIES_VALUE => TO_VARIANT('/IOT/SENSOR/TAG401'), FORECASTING_PERIODS => 1440);
 ```
 
-4. Create a forecast analysis combining historical data with forecast data.
+4. Create a forecast analysis combining historical data with forecast data using [RESULT_SCAN](https://docs.snowflake.com/en/sql-reference/functions/result_scan).
 
 ```sql
 /* FORECAST COMBINED - Combined ACTUAL and FORECAST data
@@ -1383,7 +1403,7 @@ ORDER BY DATASET, TAGNAME, TIMESTAMP;
 
 > aside positive
 > 
->  You have now run through several **Time Series Analysis** queries, we can now look at creating Time Series Functions.
+>  You have now run through several **Time Series Analysis** queries, we can now look at creating **Time Series Functions**.
 >
 
 <!-- ------------------------ -->
@@ -1519,7 +1539,7 @@ $$;
 
 > aside positive
 > 
->  The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
+>  The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to **look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time**, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
 >
 > The **INTERPOLATE Table Function** will return both **linear interpolated values** and the **last observed value carried forward (LOCF)**.
 >
@@ -1562,7 +1582,7 @@ $$;
 
 > aside positive
 > 
->  The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return the last observed value carried forward (LOCF) or linear interpolated values (default).
+>  The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the last observed value carried forward (LOCF) or linear interpolated values (default).
 >
 
 4. Run the **LTTB Downsampling Table Function** Script
@@ -1605,7 +1625,7 @@ $$;
 
 > aside positive
 > 
->  The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that reduces the number of visual data points, whilst retaining the shape and variability of the time series data. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
+>  The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that **reduces the number of visual data points, whilst retaining the shape and variability of the time series data**. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
 >
 > This is a **Snowpark Python** implementation using the **plotly-resampler** package.
 >
@@ -1633,13 +1653,17 @@ This section will be executed within a Snowflake Snowsight Worksheet.
 
 ### Interpolate Query
 
+The Interpolation table function will return both the **last observed value carried forward (LOCF) and linear interpolated values (default)**.
+
 ```sql
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
--- Directly Call Table Function
+/* INTERPOLATE TABLE FUNCTION
+The Interpolation table function will return both the last observed value carried forward (LOCF) and linear interpolated values (default).
+*/
 SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 12:10:00'::TIMESTAMP_NTZ, '2024-01-01 13:10:00'::TIMESTAMP_NTZ, 10, 362)) ORDER BY TAGNAME, TIMESTAMP;
 ```
 
@@ -1657,8 +1681,16 @@ SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSO
 
 ### Interpolation - Last Observed Value Carried Forward (LOCF) Query
 
+The Interpolation Procedure will accept a start time and end time, along with a bucket interval size in seconds.
+It will then calculate the number of buckets within the time boundary, and call the Interpolate table function.
+
 ```sql
--- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LOCF Interpolate
+/* INTERPOLATE PROCEDURE - LOCF
+The Interpolation Procedure will accept a start time and end time, along with a bucket interval size in seconds.
+It will then calculate the number of buckets within the time boundary, and call the Interpolate table function.
+
+Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LOCF Interpolate
+*/
 CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
     -- V_TAGLIST
     '/IOT/SENSOR/TAG401',
@@ -1683,8 +1715,14 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 
 ### Interpolation - Linear Query
 
+Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation return.
+
 ```sql
--- Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LINEAR Interpolate
+/* INTERPOLATE PROCEDURE - LOCF
+Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation return.
+
+Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LINEAR Interpolate
+*/
 CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
     -- V_TAGLIST
     '/IOT/SENSOR/TAG401',
@@ -1709,14 +1747,16 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 
 ### LTTB Query
 
-The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that reduces the number of visual data points.
+The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that reduces the number of visual data points, whilst retaining the shape and variability of the time series data.
 
-Starting with a **RAW** query we can see the **LTTB** function in action, where the function will downsample a **day of data for a one second tag**, 86400 data points to 500 whilst keeping the context of the values.
+Starting with a **RAW** query we can see the **LTTB** function in action, where the function will **downsample two hours of data for a one second tag**, 7200 data points to 500 whilst keeping the shape and variability of the values.
 
 **RAW Query**
 
 ```sql
--- RAW
+/* RAW - 2 HOURS OF 1 SEC DATA
+Source of downsample - 7200 data points
+*/
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC as VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TIMESTAMP > '2024-01-09 21:00:00'
@@ -1740,7 +1780,12 @@ ORDER BY TAGNAME, TIMESTAMP;
 We can now pass the same data into the **LTTB table function** and request 500 data points to be returned.
 
 ```sql
--- LTTB
+/* LTTB - DOWNSAMPLE TO 500 DATA POINTS
+We can now pass the same data into the LTTB table function and request 500 data points to be returned.
+
+The DATA subquery sets up the data set, and this is cross joined with the LTTB table function,
+with an input of TIMESTAMP, VALUE, and the downsample size of 500.
+*/
 SELECT DATA.TAGNAME, LTTB.TIMESTAMP::VARCHAR::TIMESTAMP_NTZ AS TIMESTAMP, LTTB.VALUE 
 FROM (
     SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC as VALUE
@@ -1759,7 +1804,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
 3. Under Data select `TIMESTAMP` and set the Bucketing to `Second`. 
 
-**500 Data Points**
+**500 Data Points - The shape and variability of the values are retained, when compared to the 7200 data point RAW chart**.
 
 <img src="assets/function_chart_lttb_downsampled.png" />
 
@@ -1773,7 +1818,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 ## Build Your Time Series Application in Streamlit
 Duration: 15
 
-After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to **deliver a Time Series Analytics application** for end users to easily consume time series data. For this purpose we are going to use Streamlit.
+After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to **deliver a Time Series Analytics application** for end users to easily consume time series data. For this purpose we are going use a **Streamlit in Snowflake** application, deployed using **Snowflake CLI**.
 
 <img src="assets/streamlit_overview.png" />
 
@@ -1962,7 +2007,7 @@ Open the **Streamlit Application**:
 
 ### Step 6 - Start a Continuous Simulated Stream
 
-We can now start a continuous stream of data into Snowflake, similar to the initial streaming load, to simulate IoT device data streaming in near real-time to Snowflake.
+We can now **start a continuous stream of data into Snowflake**, similar to the initial streaming load, to simulate IoT device **data streaming in near real-time** to Snowflake.
 
 <img src="assets/model_streamingclient.png" />
 
@@ -1987,7 +2032,7 @@ In the **GitHub Codespace VS Code**:
 
 4. Back **in the Streamlit application** try enabling `Auto Refresh` by `Expanding Refresh Mode > Toggle Auto Refresh`
 
-    - The charts and data should now start to automatically update with new data streaming into Snowflake every minute.
+    - The charts and data should now start to **automatically update with new data streaming into Snowflake every minute**.
 
 5. Select the **TS Raw** page to see the raw data
 
