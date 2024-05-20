@@ -33,7 +33,7 @@ Within this Quickstart we will learn about Snowflake Roles, Role Based Access Co
 - How to Create a Masking Policy
 - How to Deploy a Tag Based Masking Policy
 - How to Create a Row Access Policy using a Mapping Table
-- How to Create a Aggregation Policy
+- How to Create an Aggregation Policy
 - How to Create a Project Policy
 - How to Leverage Automatic and Custom Data Classification
 - How to use Universal Search
@@ -960,6 +960,32 @@ ORDER BY number_of_queries DESC;
 
 ### Step 2 - Click Next -->
 
+## Discovery with Snowflake Horizon - Universal Search
+Duration: 2
+
+### Overview
+Having explored a wide variety of Governance functionality available in Snowflake, it is time to put it all together with Universal Search.
+
+Universal Search enables Tasty Bytes to easily find Account objects, Snowflake Marketplace listings, relevant Snowflake Documentation and Snowflake Community Knowledge Base articles.
+
+Universal Search understands your query and information about your database objects and can find objects with names that differ from your search terms.
+ 
+ Even if you misspell or type only part of your search term, you can still see useful results.
+
+### Step 1 - Universal Search
+
+To leverage Universal Search in Snowsight:
+- Use the Left Navigation Menu
+= Select "Search" (Magnifying Glass)
+- Enter Search criteria such as:
+    - Tasty Bytes
+    - Snowflake Best Practices
+    - How to use Snowflake Column Masking
+
+<img src = "assets/tasty_bytes.png">
+
+
+### Step 2 - Click Next -->
 
 ## Conclusion and Next Steps
 Duration: 1
@@ -975,6 +1001,10 @@ By doing so you have now:
 - Created a Masking Policy
 - Deployed a Tag Based Masking Policy
 - Created a Row Access Policy using a Mapping Table
+- Created an Aggregation Policy
+- Created a Project Policy
+- Leveraged Automatic and Custom Data Classification
+- Used Universal Search
 
 If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.
 
