@@ -273,6 +273,7 @@ SELECT
 FROM raw_customer.customer_loyalty cl 
 SAMPLE (1000 ROWS);
 ```
+
 <img src = "assets/customer_loyalty.png">
 
 **Woah!!** there is a lot of PII we need to take care before our users can touch this data. Luckily we can use Snowflakes native Tag-Based Masking functionality to do just this.
@@ -356,108 +357,89 @@ With our Tags in place we can now create our Masking Policies that will mask dat
 
 ---stopped here
 
-### Step 1 - Creating Masking Policies
+### Step 1 - Creating our first Data Masking Policy
 For the three different column types we are looking to mask, we want to address the following:
 - **Names:** Complete masking for any role that is not `accountadmin` or `sysadmin`
 - **Phone Numbers**: Partial masking with only the first three numbers exposed to any role that is not `accountadmin` or `sysadmin`.
 - **E-mail Addresses**: Partial masking with only the email provider information available to any role that is not `accountadmin` or `sysadmin`.
 
-Please now execute the four queries in this step one by one, which will first set our `sysadmin` Role context and then create the three Masking Policies necessary to address the masking requirements above. 
-
-Along the way we will see the use of [CREATE MASKING POLICY](https://docs.snowflake.com/en/sql-reference/sql/create-masking-policy) as well as the other Snowflake feature functions required to complete the partial masking including [CURRENT_ROLE](https://docs.snowflake.com/en/sql-reference/functions/current_role), [CONCAT](https://docs.snowflake.com/en/sql-reference/functions/concat), [LEFT](https://docs.snowflake.com/en/sql-reference/functions/left), and [SPLIT_PART](https://docs.snowflake.com/en/sql-reference/functions/split_part).
+In this step we will create our tasty_pii_string_mask Masking Policy. Within the policy we will see the use of [CREATE MASKING POLICY](https://docs.snowflake.com/en/sql-reference/sql/create-masking-policy) as well as the other Snowflake functions required to complete our masking including [CURRENT_ROLE](https://docs.snowflake.com/en/sql-reference/functions/current_role), [CONCAT](https://docs.snowflake.com/en/sql-reference/functions/concat), [LEFT](https://docs.snowflake.com/en/sql-reference/functions/left), and [SPLIT_PART](https://docs.snowflake.com/en/sql-reference/functions/split_part). This query will result in a `Masking policy TASTY_PII_STRING_MASK successfully created.` message.
 
 ```
-USE ROLE sysadmin;
-
-CREATE OR REPLACE MASKING POLICY frostbyte_tasty_bytes.raw_customer.name_mask AS (val STRING) RETURNS STRING ->
-    CASE 
-        WHEN CURRENT_ROLE() IN ('SYSADMIN', 'ACCOUNTADMIN') THEN val
-    ELSE '**~MASKED~**'
-END;
-```
-
-<img src = "assets/5.1.name_mask.png">
-
-```
-CREATE OR REPLACE MASKING POLICY frostbyte_tasty_bytes.raw_customer.phone_mask AS (val STRING) RETURNS STRING ->
+CREATE OR REPLACE MASKING POLICY governance.tasty_pii_string_mask AS (val STRING) RETURNS STRING ->
     CASE
-        WHEN CURRENT_ROLE() IN ('SYSADMIN', 'ACCOUNTADMIN') THEN val
-    ELSE CONCAT(LEFT(val,3), '-***-****')
+        -- these active roles have access to unmasked values 
+        WHEN CURRENT_ROLE() IN ('ACCOUNTADMIN','SYSADMIN')
+            THEN val 
+        -- if a column is tagged with TASTY_PII : PHONE_NUMBER 
+        -- then mask everything but the first 3 digits   
+        WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('TAGS.TASTY_PII') = 'PHONE_NUMBER'
+            THEN CONCAT(LEFT(val,3), '-***-****')
+        -- if a column is tagged with TASTY_PII : EMAIL  
+        -- then mask everything before the @ sign  
+        WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('TAGS.TASTY_PII') = 'EMAIL'
+            THEN CONCAT('**~MASKED~**','@', SPLIT_PART(val, '@', -1))
+        -- all other conditions should be fully masked   
+    ELSE '**~MASKED~**' 
 END;
 ```
 
-<img src = "assets/5.1.email_mask.png">
-
+### Step 2 - Addressing Re-Identification
+The combination of an individuals City, first 3 Phone Number digits, and Birthday to re-identify them. Let's play it safe and also truncate Birthdays into 5 year buckets which will fit the use case of our Analyst. Run the next query to create our Date Masking Policy to return modified Birthdays. This will return `Masking policy TASTY_PII_DATE_MASK successfully created.`
 
 ```
-CREATE OR REPLACE MASKING POLICY frostbyte_tasty_bytes.raw_customer.email_mask AS (val STRING) RETURNS STRING ->
-    CASE 
-        WHEN CURRENT_ROLE() IN ('SYSADMIN', 'ACCOUNTADMIN') THEN val
-    ELSE CONCAT('**~MASKED~**','@', SPLIT_PART(val, '@', -1))
+CREATE OR REPLACE MASKING POLICY governance.tasty_pii_date_mask AS (val DATE) RETURNS DATE ->
+    CASE
+        -- these active roles have access to unmasked values 
+        WHEN CURRENT_ROLE() IN ('ACCOUNTADMIN','SYSADMIN')
+            THEN val
+        -- if a column is tagged with TASTY_PII : BIRTHDAY  
+        -- then truncate to 5 year buckets 
+        WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('TAGS.TASTY_PII') = 'BIRTHDAY'
+            THEN DATE_FROM_PARTS(YEAR(val) - (YEAR(val) % 5),1,1)
+        -- if a Date column is not tagged with BIRTHDAY, return NULL
+    ELSE NULL 
 END;
 ```
 
-<img src = "assets/5.1.phone_mask.png">
+### Step 3 - Set Masking Policies on Tagged Columns
+Now we are able to use an ALTER TAG statement to set the Masking Policies on the PII tagged columns Please now execute the query in this step which applies each Masking Policy to the appropriate Tag using [ALTER TAG... SET MASKING POLICY](https://docs.snowflake.com/en/sql-reference/sql/alter-tag) command.
 
-### Step 2 - Applying Masking Policies to Tags
-With each Tag now having a Masking Policy let's apply those Masking Policies to our Tags which have already been applied to our PII columns. 
-
-Please now execute the four queries in this step which sets the `accountadmin` Role context and applies each Masking Policy to the appropriate Tag using [ALTER TAG... SET MASKING POLICY](https://docs.snowflake.com/en/sql-reference/sql/alter-tag) command.
-
-With each query we will recieve a `Statement executed successfully.` message indicating the association is successful.
+This will result in a `Statement executed successfully.` message.
 
 ```
-USE ROLE accountadmin;
-
-ALTER TAG frostbyte_tasty_bytes.raw_customer.pii_name_tag 
-    SET MASKING POLICY frostbyte_tasty_bytes.raw_customer.name_mask;
-    
-ALTER TAG frostbyte_tasty_bytes.raw_customer.pii_phone_number_tag
-    SET MASKING POLICY frostbyte_tasty_bytes.raw_customer.phone_mask;
-    
-ALTER TAG frostbyte_tasty_bytes.raw_customer.pii_email_tag
-    SET MASKING POLICY frostbyte_tasty_bytes.raw_customer.email_mask;
+ALTER TAG tags.tasty_pii SET
+    MASKING POLICY governance.tasty_pii_string_mask,
+    MASKING POLICY governance.tasty_pii_date_mask;
 ```
 
 We can now officially say we have deployed Tag Based Masking Policies. Let's move on to the next step where we will validate our work.
 
-### Step 3 - Click Next -->
+### Step 3 - Validating our Work
+With Tag Based Masking in-place, let's check things out by first assuming our Test Role and using our Development Warehouse and then beginning to query both raw and downstream data.
 
-## Testing our Tag Based Masking Policies
-Duration: 2
-
-### Overview
-With deployment of our Tag Based Masking Policies in place let's validate what we have conducted so far to confirm we were successful in meeting Tasty Bytes Customer Loyalty PII Data Masking requirements.
-
-### Step 1 - Testing our Masking Policy in a non-Admin Role
-Putting together what we have done so far, let's once again assume our `tasty_test_role` Role, leverage the `tasty_test_wh` Warehouse and query the `raw_customer.customer_loyalty` Table directly. 
-
-Go ahead and kick off the next three queries to complete this.
+Within our first query we will query the Raw layer Customer Loyalty table directly.
 
 ```
-USE ROLE tasty_test_role;
-USE WAREHOUSE tasty_dev_wh;
+USE ROLE tb_test_role;
+USE WAREHOUSE tb_dev_wh;
 
-SELECT 
+SELECT
     cl.customer_id,
     cl.first_name,
     cl.last_name,
     cl.phone_number,
     cl.e_mail,
+    cl.birthday_date,
     cl.city,
     cl.country
-FROM frostbyte_tasty_bytes.raw_customer.customer_loyalty cl
+FROM raw_customer.customer_loyalty cl
 WHERE cl.country IN ('United States','Canada','Brazil');
 ```
 
-<img src = "assets/6.1.raw_masked.png">
+<img src = "assets/raw_mask_test.png">
 
-**Amazing work!** Exactly as we have been tasked to do, we have successfully dynamically masked our PII from our `tasty_test_role`. 
-
-### Step 2 - Testing our Masking Policy Downstream
-Since we reference this `raw_customer.customer_loyalty` Table in downstream Views let's see if this Masking Policy impacts us there as well.
-
-Please kick off the next query which calculates our Customer Loyalty members `lifetime_sales_usd` totals and sorts them in descending order by this amount.
+Since we reference this `raw_customer.customer_loyalty` Table in downstream Views let's see if this Masking Policy impacts us there as well. Please kick off the next query which calculates our Customer Loyalty members `lifetime_sales_usd` totals and sorts them in descending order by this amount.
 
 ```
 SELECT TOP 10
@@ -467,44 +449,18 @@ SELECT TOP 10
     clm.phone_number,
     clm.e_mail,
     SUM(clm.total_sales) AS lifetime_sales_usd
-FROM frostbyte_tasty_bytes.analytics.customer_loyalty_metrics_v clm
+FROM analytics.customer_loyalty_metrics_v clm
 WHERE clm.city = 'San Mateo'
 GROUP BY clm.customer_id, clm.first_name, clm.last_name, clm.phone_number, clm.e_mail
-ORDER BY lifetime_sales_usd DESC;
+ORDER BY lifetime_sales_usd;
 ```
 
-<img src = "assets/6.2.analytics_masked.png">
-
-**Awesome!** Exactly as we expected these Masking Policies are truly dynamic and scalable.
-
-### Step 3 - Testing our Masking Policy in an Admin Role
-To finish our testing, let's now kick off the next two queries which will run the same query as above but this time as our most privileged `accountadmin` Role.
-
-```
-USE ROLE accountadmin;
-
-SELECT TOP 10
-    clm.customer_id,
-    clm.first_name,
-    clm.last_name,
-    clm.phone_number,
-    clm.e_mail,
-    SUM(clm.total_sales) AS lifetime_sales_usd
-FROM frostbyte_tasty_bytes.analytics.customer_loyalty_metrics_v clm
-WHERE 1=1
-    AND clm.city = 'San Mateo'
-GROUP BY clm.customer_id, clm.first_name, clm.last_name, clm.phone_number, clm.e_mail
-ORDER BY lifetime_sales_usd DESC;
-```
-
-<img src = "assets/6.3.analytics_admin.png">
-
-**Yay!** Once again this is working as exactly as desired. Our Admin Roles have access to PII but nobody else in the company will ever be able to see this data in its raw form. 
+<img src = "assets/analytics_mask_test.png"> 
 
 ### Step 4 - Click Next -->
 
-## Deploying and Testing Row Level Security
-Duration: 3
+## Row-Access Policies
+Duration: 5
 
 ### Overview
 Happy with our Tag Based Dynamic Masking controlling masking at the Column level,
@@ -523,53 +479,46 @@ For our use case, we will leverage the mapping table approach.
 ### Step 1 - Creating a Mapping Table
 To begin our Row Level Security journey we will start by creating a `row_policy_map` table that will serve as our Mapping Table which a Row Access Policy condition can reference to filter the query result set. 
 
-Let's now kick off the first two queries in this section which will assume the `sysadmin` Role and create our Mapping Table that will accept Roles and the City they should have permission to see.
+Let's now kick off the first two queries in this section which will assume the `accountadmin` Role and create our Mapping Table that will accept Roles and the City they should have permission to see. This will result in `Table ROW_POLICY_MAP successfully created.`.
 
 ```
-USE ROLE sysadmin;
+USE ROLE accountadmin;
 
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.public.row_policy_map
     (role STRING, city_permissions STRING);
 ```
 
-<img src = "assets/7.1.mapping.png">
-
 
 ### Step 2 - Inserting Mapping Records
-With our `row_policy_map` in place, please kick off the next query which will [INSERT](https://docs.snowflake.com/en/sql-reference/sql/insert) a record that maps our `tasty_test_role` to Tokyo.
+With our `row_policy_map` in place, please kick off the next query which will [INSERT](https://docs.snowflake.com/en/sql-reference/sql/insert) a record that maps our `tb_test_role` to Tokyo. This query will result in `number of rows insterted: 1`.
 
 ```
-INSERT INTO frostbyte_tasty_bytes.public.row_policy_map
-    VALUES ('TASTY_TEST_ROLE','Tokyo');
+INSERT INTO governance.row_policy_map
+    VALUES ('TB_TEST_ROLE','Tokyo'); 
 ```
 
-<img src = "assets/7.2.insert.png">
 
 
 ### Step 3 - Creating a Row Access Policy
 Now that we have a record in our `row_policy_map` Table, we can kick off our next query to create our Row Access Policy.
 
-Within this query we are using [CREATE ROW ACCESS POLICY](https://docs.snowflake.com/en/sql-reference/sql/create-row-access-policy) that will allow our Admin and Tasty Workload Roles to see all rows but if a user is using a Role that is seen in our Mapping Table they will only be allowed to see the rows relevant to the City they are mapped to.
+Within this query we are using [CREATE ROW ACCESS POLICY](https://docs.snowflake.com/en/sql-reference/sql/create-row-access-policy) that will allow our Admin and Tasty Workload Roles to see all rows but if a user is using a Role that is seen in our Mapping Table they will only be allowed to see the rows relevant to the City they are mapped to. After executing this query you will recieve a `Row access policy 'CUSTOMER_CITY_ROW_POLICY' is successfully created.` result.
 
 ```
-CREATE OR REPLACE ROW ACCESS POLICY frostbyte_tasty_bytes.public.customer_city_row_policy
+CREATE OR REPLACE ROW ACCESS POLICY governance.customer_city_row_policy
     AS (city STRING) RETURNS BOOLEAN ->
-       CURRENT_ROLE() IN 
-       (
-           'ACCOUNTADMIN','SYSADMIN', 'TASTY_ADMIN', 'TASTY_DATA_ENGINEER', 
-           'TASTY_DATA_APP','TASTY_BI','TASTY_DATA_SCIENTIST','TASTY_DEV'
-       ) 
-        OR EXISTS 
+       CURRENT_ROLE() IN ('ACCOUNTADMIN','SYSADMIN') -- list of roles that will not be subject to the policy
+        OR EXISTS -- this clause references our mapping table from above to handle the row level filtering
             (
-            SELECT rp.role 
-                FROM frostbyte_tasty_bytes.public.row_policy_map rp
+            SELECT rp.role
+                FROM governance.row_policy_map rp
             WHERE 1=1
                 AND rp.role = CURRENT_ROLE()
                 AND rp.city_permissions = city
-            );
+            )
+COMMENT = 'Policy to limit rows returned based on mapping table of ROLE and CITY: governance.row_policy_map';
 ```
 
-<img src = "assets/7.3.rap.png">
 
 ### Step 4 - Applying a Row Access Policy to a Table
 Please kick off the next query which will associate our Row Access Policy to our `city` Column within the `customer_loyalty` table.
@@ -577,73 +526,230 @@ Please kick off the next query which will associate our Row Access Policy to our
 Once complete we will recieve a `Statement executed successfully.` message indicating our policy is applied.
 
 ```
-ALTER TABLE frostbyte_tasty_bytes.raw_customer.customer_loyalty
-    ADD ROW ACCESS POLICY frostbyte_tasty_bytes.public.customer_city_row_policy ON (city);
+ALTER TABLE raw_customer.customer_loyalty
+    ADD ROW ACCESS POLICY governance.customer_city_row_policy ON (city);
 ```
 
 ### Step 5 - Testing our Row Access Policy in a Non-Privileged Role
-With everything in place, we can begin to test that our Row Access Policy is operating as expected. Please now kick off the next two queries which set our `tasty_test_role` Role context and query the `customer_loyalty` table to return a list of our Customer Loyalty members including a calculated `age` Column that leverages [DATEDIFF](https://docs.snowflake.com/en/sql-reference/functions/datediff) and [CURRENT_DATE](https://docs.snowflake.com/en/sql-reference/functions/current_date) functions.
+With everything in place, we can begin to test that our Row Access Policy is operating as expected. Please now kick off the next two queries which set our `tb_test_role` Role context and query the `customer_loyalty` table to return a list of our Customer Loyalty members including a calculated `age` Column that leverages [DATEDIFF](https://docs.snowflake.com/en/sql-reference/functions/datediff) and [CURRENT_DATE](https://docs.snowflake.com/en/sql-reference/functions/current_date) functions.
 
 ```
-USE ROLE tasty_test_role;
+USE ROLE tb_test_role;
 
-SELECT 
+SELECT
     cl.customer_id,
     cl.first_name,
     cl.last_name,
     cl.city,
     cl.marital_status,
     DATEDIFF(year, cl.birthday_date, CURRENT_DATE()) AS age
-FROM frostbyte_tasty_bytes.raw_customer.customer_loyalty cl
+FROM raw_customer.customer_loyalty cl SAMPLE (10000 ROWS)
 GROUP BY cl.customer_id, cl.first_name, cl.last_name, cl.city, cl.marital_status, age;
 ```
 
-<img src = "assets/7.5.tokyo.png">
+<img src = "assets/raw_rls_test.png">
 
-**Yay!** Our Row Access Policy is working as expected and we are also seeing our masking in place since we are using the `tasty_test_role`. 
-
-One cool Snowsight feature is the query stats pane which will automatically appear when clicking within a Column. In the screenshot above you can see how this was leveraged to confirm 100% of the records returned were for Tokyo.
+**Yay!** Our Row Access Policy is working as expected and we are also seeing our masking in place since we are using the `tby_test_role`. 
 
 
 ### Step 6 - Testing our Row Access Policy Downstream
 As we did previously, let's now confirm our Row Access Policy is in effect when we query our downstream Analytics `customer_loyalty_metrics_v` View by running the next query.
 
 ```
-SELECT 
+SELECT
     clm.city,
     SUM(clm.total_sales) AS total_sales_usd
-FROM frostbyte_tasty_bytes.analytics.customer_loyalty_metrics_v clm
+FROM analytics.customer_loyalty_metrics_v clm
 GROUP BY clm.city;
 ```
 
-<img src = "assets/7.6.tokyo_again.png">
+<img src = "assets/analytics_rls_test.png">
 
-Just as expected, our Data Governance features are seen downstream despite only having to define them once and apply them to the Raw Tables our Analytics Views retrieve query results from.
+Just as expected, our Governance features are seen downstream despite only having to define them once and apply them to the Raw Tables our Analytics Views retrieve query results from. 
 
-### Step 7 - Testing our Row Access Policy in a Privileged Role
-To conclude things, let's make sure a privileged user is once again able to see all records. 
+### Step 7 - Click Next -->
 
-Please kick off the next two queries which switches our Role context back to `sysadmin` and runs the same SQL we saw filtered down only to Tokyo for our `tasty_test_role` earlier.
+
+## Aggregation Policies
+Duration: 4
+
+### Overview
+ Outside of the Data Access Policies (Masking and Row Access) we have covered, Snowflake Horizon also provides [Privacy Policies](https://docs.snowflake.com/en/user-guide/aggregation-policies). In this section we will cover the ability to set Aggregation Policies on Database Objects which can restrict certain roles to only aggregate data by only allowing for queries that aggregate data into groups of a minimum size versus retrieving individual roles.
+
+For Tasty Bytes and the Test role we have created, let's test an Aggregation Policy ut against our Raw Order Header table.
+
+> aside positive
+>
+> An **Aggregation Policy** is a schema-level object that controls what type of query can access data from a table or view. When an aggregation policy is applied to a table, queries against that table must aggregate data into groups of a minimum size in order to return results, thereby preventing a query from returning information from an individual record.
+>
+
+
+### Step 1 - Creating a Conditional Aggregation Policy
+To begin, let's once again assume our `Accountadmin` role. For our use case, we will create a Conditional Aggregation Policy in our `Governance` Schema that will only allow queries from non-admin users to return results for queries that aggregate more than 1000 rows. Please kick off the next two queries which will result `Aggregation policy 'TASTY_ORDER_TEST_AGGREGATION_POLICY' is successfuly created/`. 
 
 ```
-USE ROLE sysadmin;
+USE ROLE accountadmin;
 
+CREATE OR REPLACE AGGREGATION POLICY governance.tasty_order_test_aggregation_policy
+  AS () RETURNS AGGREGATION_CONSTRAINT ->
+    CASE
+      WHEN CURRENT_ROLE() IN ('ACCOUNTADMIN','SYSADMIN')
+      THEN NO_AGGREGATION_CONSTRAINT()  
+      ELSE AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE => 1000) -- atleast 1000 rows in aggregate
+    END;
+```
+
+### Step 2 - Setting our Aggregation Policy on a Table
+With the Aggregation Policy created, let's apply it to our Order Header table in the next query which will return a `Statement executed successully.` message.
+
+```
+ALTER TABLE raw_pos.order_header
+    SET AGGREGATION POLICY governance.tasty_order_test_aggregation_policy;
+```
+
+### Step 3 - Testing our Aggregation Policy
+Now let's test our work by assuming our Test Role and executing a few queries against the `order_header` table. Please execute the next two queries which will set our role and run a TOP 10 SELECT statement from the table.
+
+```
+USE ROLE tb_test_role;
+
+SELECT TOP 10 * FROM raw_pos.order_header;
+```
+
+<img src = "assets/agg_test_fail.png">
+
+Run the next query to see what happens if we include over 1000 rows.
+
+<img src = "assets/agg_test_fail.png">
+
+### Step 4 - Conducting Aggregate Analysis
+Bringing in the Customer Loyalty table that we have previously:
+ - Deployed Masking against PII columns
+ - Deployed Row Level Security to restrict our Test Role to only Tokyo results
+
+Let's answer a few aggregate questions that the business has presented to our Analyst.
+
+**Question 1** - What are the total order amounts by gender?
+
+```
 SELECT 
-    cl.customer_id,
-    cl.first_name,
-    cl.last_name,
+    cl.gender,
     cl.city,
-    cl.marital_status,
-    DATEDIFF(year, cl.birthday_date, CURRENT_DATE()) AS age
-FROM frostbyte_tasty_bytes.raw_customer.customer_loyalty cl
-GROUP BY cl.customer_id, cl.first_name, cl.last_name, cl.city, cl.marital_status, age;
+    COUNT(oh.order_id) AS count_order,
+    SUM(oh.order_amount) AS order_total
+FROM raw_pos.order_header oh
+JOIN raw_customer.customer_loyalty cl
+    ON oh.customer_id = cl.customer_id
+GROUP BY ALL
+ORDER BY order_total DESC;
 ```
 
-<img src = "assets/7.7.sysadmin.png">
+<img src = "assets/agg_1.png">
 
-**Remarkable!** We have now successfully learned what an end to end Data Governance workflow can look like in Snowflake showcasing the ease of use and scalability our Column Masking and Row Level Security functionality can provide.
 
-### Step 8 - Click Next -->
+**Question 2** - What are the total order amounts by Postal Code?
+
+```
+SELECT 
+    cl.postal_code,
+    cl.city,
+    COUNT(oh.order_id) AS count_order,
+    SUM(oh.order_amount) AS order_total
+FROM raw_pos.order_header oh
+JOIN raw_customer.customer_loyalty cl
+    ON oh.customer_id = cl.customer_id
+GROUP BY ALL
+ORDER BY order_total DESC;
+```
+
+<img src = "assets/agg_2.png">
+
+
+> aside positive
+> Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
+>
+
+
+## Projection Policies
+Duration: 3
+
+### Overview:
+Within this step, we will cover another Privacy Policy framework provided by Snowflake Horizon this time diving into [Projection Policies](https://docs.snowflake.com/en/user-guide/projection-policies) which in short will prevent queries from using a SELECT statement to project values from a column.
+
+
+### Step 1 - Creating a Conditional Projection Policy
+For our use case, we will create a Conditional Projection Policy in our `Governance` Schema that will only allow our Admin Roles to project the columns we will assign it to. Please execute the next two queries which will assume our `accountadmin` Role and create our `tasty_customer_test_projection_policy` Projection Policy. This will result in `Projection policy 'TASTY_CUSTOMER_TEST_PROJECTION_POLICY' is successfully created.`
+
+
+```
+USE ROLE accountadmin;
+
+CREATE OR REPLACE PROJECTION POLICY governance.tasty_customer_test_projection_policy
+  AS () RETURNS PROJECTION_CONSTRAINT -> 
+  CASE
+    WHEN CURRENT_ROLE() IN ('ACCOUNTADMIN','SYSADMIN')
+    THEN PROJECTION_CONSTRAINT(ALLOW => true)
+    ELSE PROJECTION_CONSTRAINT(ALLOW => false)
+  END;
+```
+
+
+> aside positive
+> A projection policy is a first-class, schema-level object that defines whether a column can be projected in the output of a SQL query result. A column with a projection policy assigned to it is said to be projection constrained.
+>
+
+
+### Step 2 - Applying our Projection Policy to our Postal Code column
+With the Projection Policy in place, let's assign it to our Postal Code column by executing the query below. This will result in a `Statement executed successfully.` message.
+
+```
+ALTER TABLE raw_customer.customer_loyalty
+ MODIFY COLUMN postal_code
+ SET PROJECTION POLICY governance.tasty_customer_test_projection_policy; 
+```
+
+
+### Step 3 - Testing our Projection Policy
+Now we can move on to testing our Projection Policy by first assuming our `tb_test_role` Role and running a SELECT TOP 100 * query against our `customer_loyalty` table.
+
+
+```
+USE ROLE tb_test_role;
+
+SELECT TOP 100 * FROM raw_customer.customer_loyalty;
+```
+
+<img src = "assets/projection_fail.png">
+
+
+Let's execute the next query to see what happens if we EXCLUDE the `postal_code` column.
+
+```
+SELECT TOP 100 * EXCLUDE postal_code FROM raw_customer.customer_loyalty;
+```
+
+<img src = "assets/projection_no_postal.png">
+
+### Step 4 - Click Next -->
+
+
+## Sensitive Data Classification
+Duration: 3
+
+### Overview
+In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to attempt to automatically detect sensitive information and apply relevant Snowflake system defined privacy tags. 
+
+Classification is a multi-step process that associates Snowflake-defined system tags to columns by analyzing the fields and metadata for personal data. Data  Classification can be done via SQL or the Snowsight interface.
+
+Within this step we will be using SQL to classify a single table as well as all tables within a schema.
+
+To learn how to complete Data Classification within the Snowsight interface, please see the following documentation: 
+
+Using Snowsight to classify tables in a schema 
+  • https://docs.snowflake.com/en/user-guide/governance-classify-using#using-sf-web-interface-to-classify-tables-in-a-schema
+
+### Step 1 - 
+-- last commit here
 
 ## Conclusion and Next Steps
 Duration: 1
