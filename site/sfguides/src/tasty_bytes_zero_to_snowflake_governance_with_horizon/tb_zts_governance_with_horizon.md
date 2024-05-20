@@ -748,14 +748,224 @@ To learn how to complete Data Classification within the Snowsight interface, ple
 Using Snowsight to classify tables in a schema 
   • https://docs.snowflake.com/en/user-guide/governance-classify-using#using-sf-web-interface-to-classify-tables-in-a-schema
 
-### Step 1 - 
--- last commit here
+### Step 1 - SYSTEM$CLASSIFY
+As our Raw Customer Schema only includes one table, let's use [SYSTEM$CLASSIFY](https://docs.snowflake.com/en/sql-reference/stored-procedures/system_classify) against it after we assume our `accountadmin` role. Please execute the next two queries.
+
+
+```
+USE ROLE accountadmin;
+
+CALL SYSTEM$CLASSIFY('raw_customer.customer_loyalty', {'auto_tag': true});
+```
+
+<img src = "assets/system$classify.png">
+
+
+Now let's view the new Tags Snowflake applied automatically via Data Classification by executing the next query.
+
+```
+SELECT * FROM TABLE(information_schema.tag_references_all_columns('raw_customer.customer_loyalty','table'));
+```
+
+<img src = "assets/system$classify_info.png">
+
+### Step 2 - SYSTEM$CLASSIFY_SCHEMA
+As our Raw Point-of-Sale Schema includes numerous tables, let's use [SYSTEM$CLASSIFY_SCHEMA](https://docs.snowflake.com/en/sql-reference/stored-procedures/system_classify_schema) against it in our next query.
+
+```
+CALL SYSTEM$CLASSIFY_SCHEMA('raw_pos', {'auto_tag': true});
+```
+
+<img src = "assets/system$classify_schema.png">
+
+
+Once again, let's view the Tags applied using the Franchise table within the Schema.
+
+```
+SELECT * FROM TABLE(information_schema.tag_references_all_columns('raw_pos.franchise','table'));
+```
+
+<img src = "assets/system$classify_schema_info.png">
+
+### Step 3 - Click Next -->
+
+
+
+## Sensitive Data Classification
+Duration: 4
+
+### Overview
+Snowflake provides the CUSTOM_CLASSIFIER class in the SNOWFLAKE.DATA_PRIVACY schema to enable Data Engineers to extend their Data Classification capabilities based on their own knowledge of their data.
+
+In this step, we will cover creating and deploying a [Customer Classifier](https://docs.snowflake.com/en/user-guide/classify-custom) to identify [Placekey](https://www.placekey.io/pricing) location identifiers across our data.
+
+### Step 1 - Exploring our Data
+To begin, let's take a look at our `Location` table where we know Placekey is present so that we can see what they look like.
+
+```
+SELECT 
+    TOP 10 *
+FROM raw_pos.location
+WHERE city = 'London';
+```
+
+<img src = "assets/london.png">
+
+### Step 2 - Creating our Classifiers Schema and Placekey Custom Classifier
+
+Let's now create a `Classifier` Schema to store our Classifiers in by running the next query. This will result in a `Schema CLASSIFIERS successfully created.` message.
+
+```
+CREATE OR REPLACE SCHEMA classifiers
+    COMMENT = 'Schema containing Custom Classifiers';
+```
+
+With our schema available, let's now create our `placekey` Custom Classifier by executing the next query which will provide a `Instance PLACEKEY successfully created.` message.
+
+```
+CREATE OR REPLACE snowflake.data_privacy.custom_classifier classifiers.placekey();
+```
+
+### Step 3 = Adding REGEX to our Placekey Custom Classifier
+Next let's test the Regular Expression (Regex) that our Data Engineer has created to locate the Placekey value by running our next query.
+
+```
+SELECT 
+    placekey
+FROM raw_pos.location
+WHERE placekey REGEXP('^[a-zA-Z0-9\d]{3}-[a-zA-Z0-9\d]{3,4}@[a-zA-Z0-9\d]{3}-[a-zA-Z0-9\d]{3}-.*$');
+```
+
+<img src = "assets/placekey_regex.png">
+
+Let's now use the [ADD_REGEX](https://docs.snowflake.com/en/sql-reference/classes/custom_classifier/methods/add_regex) method to assign this to our Placekey Classifier
+```
+CALL placekey!ADD_REGEX(
+  'PLACEKEY', -- semantic category
+  'IDENTIFIER', -- privacy category
+  '^[a-zA-Z0-9\d]{3}-[a-zA-Z0-9\d]{3,4}@[a-zA-Z0-9\d]{3}-[a-zA-Z0-9\d]{3}-.*$', -- regex expression
+  'PLACEKEY*', --column name regex
+  'Add a regex to identify Placekey' -- description
+);
+```
+
+With the details in place, we can now use the [LIST](https://docs.snowflake.com/en/sql-reference/classes/custom_classifier/methods/list) method to validate our work
+
+```
+SELECT placekey!LIST();
+```
+
+<img src = "assets/list.png">
+
+### Step 4 - Using our Placekey Custom Classifier
+Let's now use SYSTEM$CLASSIFY and our Classifier against the Location table
+
+```
+CALL SYSTEM$CLASSIFY('raw_pos.location', {'custom_classifiers': ['placekey'], 'auto_tag':true});
+```
+
+<img src = "assets/classify_location.png">
+
+To finish, let's confirm our `Placekey` column was successfully tagged
+```
+SELECT 
+    tag_name,
+    level, 
+    tag_value,
+    column_name
+FROM TABLE(information_schema.tag_references_all_columns('raw_pos.location','table'))
+WHERE tag_value = 'PLACEKEY';
+```
+
+<img src = "assets/placekey_info.png">
+
+Moving forward as Schemas or Tables are created and updated we can use this exact process of Automatic and Custom Classification to maintain a strong governance posture and build rich semantic-layer metadata.
+
+
+## Access History (Reads and Writes)
+Duration: 3
+
+### Overview:
+Access History provides insights into user queries encompassing what data was  read and when, as well as what statements have performed a write operations.
+ 
+For Tasty Bytes, Access History is particularly important for Compliance, Auditing, and Governance.
+
+Within this step, we will walk through leveraging Access History to find when the last time our Raw data was read from and written to.
+
+> aside negative
+> Access History latency is up to 3 hours. If you have just recently setupb the Tasty Bytes environment, some of the queries below may not have results. 
+>
+
+### Step 1 - Leveraging Access History
+
+By executing the next query we will see how many queries have accessed each of your Raw layer tables directly.
+
+```
+SELECT 
+    value:"objectName"::STRING AS object_name,
+    COUNT(DISTINCT query_id) AS number_of_queries
+FROM snowflake.account_usage.access_history,
+LATERAL FLATTEN (input => direct_objects_accessed)
+WHERE object_name ILIKE 'tb_101.raw_%'
+GROUP BY object_name
+ORDER BY number_of_queries DESC;
+```
+
+<img src = "assets/ah_1.png">
+*Please note your results may not match the image above*
+
+Within the next query we will determined what is the breakdown between Read and Write queries and when did they last occur.
+
+```
+SELECT 
+    value:"objectName"::STRING AS object_name,
+    CASE 
+        WHEN object_modified_by_ddl IS NOT NULL THEN 'write'
+        ELSE 'read'
+    END AS query_type,
+    COUNT(DISTINCT query_id) AS number_of_queries,
+    MAX(query_start_time) AS last_query_start_time
+FROM snowflake.account_usage.access_history,
+LATERAL FLATTEN (input => direct_objects_accessed)
+WHERE object_name ILIKE 'tb_101.raw_%'
+GROUP BY object_name, query_type
+ORDER BY object_name, number_of_queries DESC;
+```
+
+<img src = "assets/ah_2.png">
+*Please note your results may not match the image above*
+
+To wrap things up, our last query will determine how many queries have accessed each of our Raw layer tables indirectly.
+
+```
+SELECT 
+    base.value:"objectName"::STRING AS object_name,
+    COUNT(DISTINCT query_id) AS number_of_queries
+FROM snowflake.account_usage.access_history,
+LATERAL FLATTEN (input => base_objects_accessed) base,
+LATERAL FLATTEN (input => direct_objects_accessed) direct,
+WHERE 1=1
+    AND object_name ILIKE 'tb_101.raw_%'
+    AND object_name <> direct.value:"objectName"::STRING -- base object is not direct object
+GROUP BY object_name
+ORDER BY number_of_queries DESC;
+```
+
+<img src = "assets/ah_3.png">
+
+> aside positive
+> **Direct Objects Accessed:** Data objects directly named in the query explicitly.
+> **Base Objects Accessed:** Base data objects required to execute a query.
+>
+
+### Step 2 - Click Next -->
+
 
 ## Conclusion and Next Steps
 Duration: 1
 
 ### Conclusion
-Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Data Governance Quickstart. 
+Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart. 
 
 By doing so you have now:
 - Learned System Defined Roles Exist in Snowflake Accounts
