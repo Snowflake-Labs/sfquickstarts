@@ -1,13 +1,12 @@
-author: marzillo-snow
-id: getting_started_with_snowpark_for_machine_learning_on_sagemaker
-summary: This is a qucikstart for using Snowpark for ML on SageMaker
+id: getting_started_with_snowpark_for_machine_learning_on_vertexai
+summary: This is a qucikstart for using Snowpark for ML on Vertex AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
+tags: Getting Started, Data Science, Data Engineering, GCP, Vertex AI
 
-# Getting Started with Snowpark for Machine Learning on SageMaker
+# Getting Started with Snowpark for Machine Learning on Vertex AI
 <!-- ------------------------ -->
 ## Overview 
 Duration: 15
@@ -18,34 +17,33 @@ Snowpark includes client-side APIs and server-side runtimes that extends Snowfla
 
 A key component of Snowpark for Python is that you can "Bring Your Own IDE"- anywhere that you can run a Python kernel, you can run client-side Snowpark Python. You can use it in your code development the exact same way as any other Python library or module. In this quickstart, we will be using Jupyter Notebooks, but you could easily replace Jupyter with any IDE of your choosing.
 
-Amazon SageMaker is a fully managed machine learning service. With SageMaker, data scientists and developers can quickly and easily build and train machine learning models, and then directly deploy them into a production-ready hosted environment. It provides an integrated Jupyter authoring notebook instance for easy access to your data sources for exploration and analysis, so you don't have to manage servers. It also provides common machine learning algorithms that are optimized to run efficiently against extremely large data in a distributed environment. With native support for bring-your-own-algorithms and frameworks, SageMaker offers flexible distributed training options that adjust to your specific workflows.
+Vertex AI is Google's unified artificial intelligence platform designed to streamline the process of building, deploying, and scaling machine learning models. Integrating a wide range of services, Vertex AI allows data scientists and engineers to efficiently manage end-to-end workflows, from data preparation and model training to hyperparameter tuning and model deployment. Its robust features include easy access to AutoML for automated model generation, custom training with user-defined algorithms, and support for popular frameworks like TensorFlow, PyTorch, and XGBoost. By leveraging Google Cloud's powerful infrastructure, Vertex AI ensures scalability, reduced latency, and operational efficiency, enabling organizations to derive actionable insights from their data more effectively.
 
-This quickstart is designed to service as an introduction to using SageMaker with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing SageMaker workloads.
+This quickstart is designed to service as an introduction to using Vertex AI with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Vertex AI workloads.
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
-- Familiarity with SageMaker and an AWS account
+- Familiarity with Vertex AI and a Google Cloud account
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 
 ### You'll Learn
-- Using a SageMaker Notebook with Snowpark
+- Using a Jupyter Notebook in Vertex AI with Snowpark
 - Loading and transforming data via Snowpark
 - Defining User Defined Functions for distributed scoring of machine learning models
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/)
-- [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
-- The AWS account should be a sandbox account with open network policies or you you should [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the same region as the Snowflake account
-- In the VPC [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic
+- [Google Cloud Account](https://cloud.google.com/free?hl=en)
+
 
 ### What You’ll Build 
 You will build an end-to-end data science workflow leveraging Snowpark for Python
 - to load, clean and prepare data
-- to train a machine learning model using Python in a SageMaker notebook
+- to train a machine learning model using Python in a Vertex AI Workbench notebook
 - to deploy the trained models in Snowflake using Python User Defined Functions (UDFs)
 
 The end-to-end workflow will look like this:
-![](assets/snowpark_sagemaker_arch.png)
+![](assets/sfvertexarch.png)
 
 <!-- ------------------------ -->
 ## Use Case
@@ -78,38 +76,30 @@ https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#usi
 5. If you agree to the terms, select Acknowledge & Continue.
 
 <!-- ------------------------ -->
-## Set Up Sagemaker Environment
+## Set Up Vertex AI Environment
 Duration: 5
 
-If you haven't used SageMaker Studio before, for first time setup you will need to create a SageMaker Studio domain by following the [Quick setup](https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html) process. After creating your domain you should be able to [Launch SageMaker Studio from the Domain details page](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-launch.html#studio-launch-console-domain).
+If you haven't used Vertex AI you will have to create a Vertex AI service inside of a Google Cloud project. You can review material [here](https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform) though it is straightforward to create the service by searching "Vertex AI" in the Google Cloud console and starting up the service.
 
-Once you've opened SageMaker Studio, our first step will be to launch a Python 3.8 notebook environment for Snowpark compatibility. To do this, select the 'Open Launcher' tile from the Home tab and then 'Change environment' so that you are using an image that utilizes Python version 3.8. The following images will work well for this quickstart:
-- PyTorch 1.12 Python 3.8 CPU Optimized
-- TensorFlow 2.6 Python 3.8 CPU Optimized
+Once you have a Vertex AI service created you will proceed to the "Workbench" blade, select "Instances" the select "Create New". You can rename the instance but leave all of the default configurations as shown. 
 
-![](assets/sagemaker_image.png)
+![](assets/workbenchshot.png)
 
-> Notes: 
-New AWS accounts will come with VPC & subnets with internet gateway for egress. 
-SageMaker is slow and it's good to double check things for each SageMaker step.
+Start the instance and wait several minutes for the instance to start then click "Open JupyterLab" and open a terminal window.
+
+![](assets/terminal.png)
 
 <!-- ------------------------ -->
 ## Clone Github Repo
 Duration: 5
 
-Now open up a terminal window:
-![](assets/terminal_sagemaker.png)
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 ```bash
-git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-sagemaker.git
-cd sfguide-getting-started-snowpark-python-sagemaker
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-vertexai
 ```
 
-Next, Open up the image terminal to install packages from the Snowflake Conda channel:
-![](assets/image_terminal.png)
-
-> Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0
+Click into the folder on the side that has been copied..........................
 
 
 <!-- ------------------------ -->
