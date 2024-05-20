@@ -13,24 +13,24 @@ tags: Hex, Notebooks, Partner Connect
 ## Overview 
 Duration: 5
 
-In this quickstart, we will be utilizing the classic Titanic dataset to determine if we would survive the infamous maiden voyage. Highlights of the quickstart include, preprocessing, model training, registry, and finally an interactive Hex app for inference. By the end of this lab you will learn how to leverage Snowpark ML, Hex's Snowpark intergration, and model Registry in Snowflake.
+In this quickstart, we will be utilizing the classic Titanic dataset to determine if we would survive the infamous maiden voyage. Highlights of the quickstart include, preprocessing, model training, registry, and finally an interactive Hex app for inference. By the end of this lab you will learn how to leverage Snowpark ML, Hex's Snowpark intergration, and Snowflake's Model Registry.
 
 ### Prerequisites
 - Familiarity with basic Python and SQL 
 - Familiarity with training ML models
 - Familiarity with data science notebooks
-- A [Snowflake](https://signup.Snowflake.com/) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
+- A [Snowflake](https://signup.Snowflake.com/) account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
 
 
 Head over to the [Snowflake](https://signup.Snowflake.com/) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
 
 #### Connecting Snowflake with Hex
-If you have an existing Hex account, login in to your account and continue to the `Getting Started With Hex` section. 
+If you have an existing Hex account, login in to your account and continue to the **What You Will Learn** section below. 
 
 Otherwise, once you've logged into your Snowflake account, simply navigate to the `Data Products` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the `Connect` button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
 
 #### Creating a workspace
-Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page.
+Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace.
 
 ![](assets/hex_sign_up.png)
 
@@ -91,7 +91,7 @@ The last thing we'll want to do is accept the [Anaconda terms and conditions ena
 * How to perform inference using Snowpark and SQL against the registered model
 
 ### What You Will Build
-In this quickstart, you will create machine learning model using Snowpark ML. This model will be registered to Snowflakes Model Registry and then we will call that model for inference. At the end, we will build a Hex app that calls the newly created model to predict our likelihood of surviving the infamous maiden voyage!
+In this quickstart, you will create machine learning model using Snowpark ML. This model will be registered to Snowflake's Model Registry and then we will call that model for inference. At the end, we will build a Hex app that calls the newly created model to predict our likelihood of surviving the infamous maiden voyage!
 <!-- ------------------------ -->
 
 ## Getting Started with Hex
@@ -108,54 +108,57 @@ Now we can move back over to Hex and get started on our project. The first thing
 </button>
 
 
-Select Get a copy, select your new or existing Hex org. 
+- Select Get a copy.
+- Select your new or existing Hex org. 
 
 Now that you've got your project, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to import our Snowflake connection to our project.
 
-We can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake. Once you import this connection, all the setup steps will be completed and we can dive into the project. 
+We can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake if you created the Hex account via Partner Connect.
 
-![](assets/vhol-dc.gif)
+![](assets/import_connection.png)
 
 If you had an existing Hex org and did not create one via Partner Connect please follow [Hex documentation](https://learn.hex.tech/docs/connect-to-data/data-connections/data-connections-introduction) on creating a Snowflake connection. 
+
+### Common Problems
+If coming from Partner Connect or creating a new database connection, ensure that your database connection has both the Snowpark and Writeback toggle enabled. Navigate to the Settings window and select the desired Snowflake database connection. 
+
+![](assets/edit_connection.png)
+
+Enable the Snowpark and Writeback toggles.
+
+![](assets/connection_toggles.png)
 
 ## Write the data back to Snowflake
 Duration: 5
 
-Now that you have the Hex project, let's write the data into the new Snowflake instance. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
+Now that you have the Hex project, let's write the data into the imported Snowflake instance. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. 
 
-![](assets/vhol-add-write.gif)
+Using this cell is quite simple. First we'll need choose the source data from the dataframes currently in the project that we want to write back into Snowflake. The dataframe we'll want to write back is our `titanic` dataframe, so we'll choose `titanic` from our list. The next step is to select our Snowflake connection as the warehouse that we want to write the data to. Once complete, we'll choose the database and schema, then we can name our table. For the database, choose `PC_HEX_DB` and use the `PUBLIC` schema. For the table name, use `TITANIC_DATA`.
 
-Using this cell is quite simple. First we'll need choose the source data from the dataframes currently in the project that we want to write back into Snowflake. The first dataframe we'll want to write back is our `titanic` dataframe, so we'll choose `titanic` from our list. The next step is to select our Snowflake connection as the warehouse that we want to write the data to. Once complete, we'll choose the database and schema, then we can name our table. For the database, choose `PC_HEX_DB` and use the `PUBLIC` schema. For the table name, use `TITANIC_DATA`. Here is an example, ensure to appropriately name your table `TITIANIC_DATA`.
+![](assets/writeback.png)
 
-![](assets/vhol-writeback.gif)
+***NOTE:*** If you did not come from Partner Connect you will not see the `PC_HEX_DB` database and `PUBLIC` schema. You can create or use an existing database and schema. 
 
-*NOTE:* If you did not come from Partner Connect you will not see the `PC_HEX_DB` database and `PUBLIC` schema. You can create or use an existing database and schema. 
-
-To write the data back to our database, we'll want to enable the cell by clicking on the disabled button in the top right corner and selecting `Logic session`. To initiate the writeback, run the cell.
-
-![](assets/vhol-execute-write.gif)
-
-We will not be needing these cells anyone, and you can delete them if you would like.
 
 ## Create a Snowpark Session
 Duration: 3
 
-Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a Snowpark session using this connection. Click on the dropdown next to the `query` button and select `get Snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a Snowpark session.
+Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a Snowpark session using this connection. Click on the dropdown next to the `query` button and select `Get Snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a Snowpark session.
 
 
 *The cell created by this button will be positioned under the cell that is currently selected. It is best practice to have this new cell be placed right below package import cell.*
 
 
-![](assets/vhol-Snowpark.gif)
+![](assets/get_snowpark_session.png)
 
-Add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project. If you are using a different database and schema name, please ensure to scope the Snowpark session to the correct database and schema.
+Scope the Snowpark session to the appropriate database and schema. If you are using a different database and schema name, please ensure to scope the Snowpark session to the correct database and schema.
 
 ```python
 session.use_database('PC_HEX_DB')
 session.use_schema("PC_HEX_DB.PUBLIC")
 ```
 
-In this cell, we reference our Snowpark session with the variable `session` which is the name assigned by default. Your cell should look like this:
+In this cell, we reference our Snowpark session with the variable `session` which is the name assigned by default. Your cells should look similar to this:
 
 ![](assets/snowpark_session.png)
 
