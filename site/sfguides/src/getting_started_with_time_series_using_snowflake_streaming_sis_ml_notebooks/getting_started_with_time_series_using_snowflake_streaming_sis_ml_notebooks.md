@@ -824,7 +824,7 @@ ORDER BY TAGNAME;
 
 ```sql
 /* MIN/MAX/AVG/SUM
-Retrieve statistical aggregates for the readings within the time boundary.
+Retrieve statistical aggregates for the readings within the time boundary using math operations.
 
 MIN - Minimum value
 MAX - Maximum value
@@ -846,7 +846,7 @@ GROUP BY TAGNAME
 ORDER BY TAGNAME;
 ```
 
-<img src="assets/analysis_query_aggminmaxavgsumperc.png" />
+<img src="assets/analysis_query_aggminmaxavgsum.png" />
 
 **Relative Frequency**: Consider the use case of **calculating the frequency and relative frequency** of each value within a specific time frame, to **determine how often the value occurs**.
 
@@ -889,8 +889,8 @@ The **TAGNAME** is updated to show that a calculation has been applied to the re
 /* DISTRIBUTIONS - sample distributions statistics
 Retrieve distribution sample statistics within the time boundary.
 
-PERCENTILE_50 - 50% of values are less than this
-PERCENTILE_95 - 95% of values are less than this
+PERCENTILE_50 - 50% of values are less than this value.
+PERCENTILE_95 - 95% of values are less than this value.
 STDDEV - Closeness to the mean/average of the distribution.
 VARIANCE - Spread between numbers in the time boundary.
 KURTOSIS - Measure of outliers occuring.
