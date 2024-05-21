@@ -104,7 +104,7 @@ Now create the GitHub Codespace.
 <img src="assets/labsetup_postcreate.png" />
 
 
-### INFO: Github Codespace Deployment Summary
+#### INFO: Github Codespace Deployment Summary
 
 Once complete you should see a hosted web-based version of **VS Code Integrated Development Environment (IDE)** in your browser with your forked repository.
 
@@ -277,18 +277,20 @@ This includes:
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
-**Run through the worksheet to get Snowflake resources created.**
+#### Run through the worksheet to get Snowflake resources created
 
 > aside negative
 > 
->  This section will run using the **ACCOUNTADMIN** login setup via **Snowflake VS Code Extension** connection.
+> This section will run using the **ACCOUNTADMIN** login setup via **Snowflake VS Code Extension** connection.
 > 
 >  There are **EXTERNAL ACTIVITY** sections in the worksheet, these sections will be executed within the **GitHub Codespace**.
 >
 
 > aside positive
 > 
->  The **Snowflake VS Code Extension** will detect **SQL Executable** lines within a worksheet.
+> #### INFO: Snowflake VS Code Extension
+>
+> The **Snowflake VS Code Extension** will detect **SQL Executable** lines within a worksheet.
 > 
 > **Click** the `Execute` link above each line to run the SQL command.
 >
@@ -386,7 +388,7 @@ SETUP SCRIPT COMPLETED
 
 > aside positive
 > 
->  The Snowflake foundation objects have now been deployed, and we can continue on to set up a **Snowpipe Streaming Ingestion**.
+> The Snowflake foundation objects have now been deployed, and we can continue on to set up a **Snowpipe Streaming Ingestion**.
 >
 
 <!-- ------------------------ -->
@@ -433,11 +435,11 @@ The IoT data will be streamed into Snowflake in a similar [schema format as Kafk
 
 > aside negative
 > 
->  There are **EXTERNAL ACTIVITY** sections in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
+> There are **EXTERNAL ACTIVITY** sections in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
 >
 
 
-### INFO: Snowpipe Streaming Ingest Client SDK
+#### INFO: Snowpipe Streaming Ingest Client SDK
 
 Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka Connectors, to stream rows of data into a Snowflake table at low latency.
 
@@ -454,7 +456,7 @@ Now that a staging table is available to stream time series data. We can look at
 
 > aside positive
 > 
->  The lab environment has been set up with a **Java Runtime** to execute the Java Snowpipe Streaming client application.
+> The lab environment has been set up with a **Java Runtime** to execute the Java Snowpipe Streaming client application.
 >
 
 In the **GitHub Codespace VS Code**:
@@ -498,7 +500,7 @@ With the channel connection being successful, we can now load the IoT data set, 
 
 <img src="assets/snowpipe_streamingclient.png" />
 
-The simulated IoT dataset contains six sensor devices at various frequencies, with each device being assigned a unique Tag Names within a single **namespace** called **"IOT"**.
+The simulated **IoT dataset contains six sensor devices** at various frequencies, with each device being assigned a unique Tag Names within a single **namespace** called **"IOT"**.
 
 | **Namespace** | **Tag Name** | **Frequency** | **Units** | **Data Type** | **Sensor Type** |
 | --- | --- | --- | --- | --- | --- |
@@ -518,7 +520,9 @@ The simulated IoT dataset contains six sensor devices at various frequencies, wi
 
 > aside positive
 > 
-> The **Java client application** is being called using a **Terminal shell script**. The client accepts various speed parameters to change the number of rows that are streamed. The **"MAX"** script will send as many rows as the device will allow.
+> #### INFO: Java Streaming Client Application
+>
+> The **Java streaming client application** is being called using a **Terminal shell script**. The client accepts various speed parameters to change the number of rows that are streamed. The **"MAX"** script will send as many rows as the device will allow to the **Snowpipe Streaming API**.
 >
 
 2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and run the `SHOW CHANNELS` command to confirm a new channel is now open to Snowflake.
@@ -576,7 +580,7 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 
 > aside positive
 > 
->  Data has now been **streamed into Snowflake**, and we can now look at modeling the data for analytics.
+> Data has now been **streamed into Snowflake**, and we can now look at modeling the data for analytics.
 >
 
 <!-- ------------------------ -->
@@ -590,7 +594,7 @@ Along with setting up Dynamic Tables for continuous loading, we'll also deploy s
 <img src="assets/model_dataengineering.png" />
 
 
-### INFO: Dynamic Tables
+#### INFO: Dynamic Tables
 
 [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro) are a declarative way of defining your data pipeline in Snowflake. It's a Snowflake table which is **defined as a query to continuously and automatically materialize the result of that query as a table**. Dynamic Tables can join and aggregate across **multiple source objects** and **incrementally update** results as sources change.
 
@@ -657,7 +661,9 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 > aside positive
 > 
->  **Dynamic Tables** have a [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines a **target “freshness”** for the  data. In this case, we have configured the Dynamic Tables to have a TARGET_LAG of 1 minute, so we want the Dynamic Table to **update within 1 minute of the base tables being updated**.
+> #### INFO: Dynamic Table TARGET_LAG Parameter
+>
+> **Dynamic Tables** have a [TARGET_LAG](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-understand-dt-lag) parameter, which defines a **target “freshness”** for the  data. In this case, we have configured the Dynamic Tables to have a TARGET_LAG of 1 minute, so we want the Dynamic Table to **update within 1 minute of the base tables being updated**.
 >
 
 
@@ -689,7 +695,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 > aside positive
 > 
->  Data is now being **transformed in Snowflake** using **Dynamic Tables**.
+> Data is now being **transformed in Snowflake** using **Dynamic Tables**.
 >
 
 ### Step 3 - Create Analytics Views for Consumers
@@ -733,7 +739,7 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 
 > aside positive
 > 
->  Data is now **modeled in Snowflake** and available in the **ANALYTICS** schema, and we can now proceed to analyze the data using Snowflake time series functions.
+> Data is now **modeled in Snowflake** and available in the **ANALYTICS** schema, and we can now proceed to analyze the data using Snowflake time series functions.
 >
 
 <!-- ------------------------ -->
@@ -745,7 +751,7 @@ Now that we have created the analytics views, we can start to query the data usi
 <img src="assets/analysis_overview.png" />
 
 
-### INFO - Time Series Query Profiles
+#### INFO - Time Series Query Profiles
 
 The following query profiles will be covered in this section.
 
@@ -886,12 +892,14 @@ ORDER BY TAGNAME, FREQUENCY DESC;
 
 <img src="assets/analysis_query_relativefrequency.png" />
 
-
-### INFO: Query Result Data Contract
-
-The following **two** queries are written with a standard return set of columns, namely **TAGNAME, TIMESTAMP, and VALUE**. This is a way to structure your query results format if **looking to build an API for time series data**, similar to a data contract with consumers.
-
-The **TAGNAME** is updated to show that a calculation has been applied to the returned values, and multiple aggregations can be grouped together using [UNION ALL](https://docs.snowflake.com/en/sql-reference/operators-query).
+> aside positive
+> 
+> #### INFO: Query Result Data Contract
+>
+> The following **two** queries are written with a standard return set of columns, namely **TAGNAME, TIMESTAMP, and VALUE**. This is a way to structure your query results format if **looking to build an API for time series data**, similar to a data contract with consumers.
+>
+> The **TAGNAME** is updated to show that a calculation has been applied to the returned values, and multiple aggregations can be grouped together using [UNION ALL](https://docs.snowflake.com/en/sql-reference/operators-query).
+>
 
 **Distribution Statistics**: Retrieve distribution sample statistics within the time boundary.
 
@@ -1084,7 +1092,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 > aside negative
 > 
->  Now assume a scenario, where there are **time gaps or missing data** received from a sensor. Such as a sensor that sends roughly every 5 seconds and experiences a fault.
+> Now assume a scenario, where there are **time gaps or missing data** received from a sensor. Such as a sensor that sends roughly every 5 seconds and experiences a fault.
 >
 > In this example I am using [DATE_PART](https://docs.snowflake.com/en/sql-reference/functions/date_part) to exclude seconds 20, 45, and 55 from the data.
 >
@@ -1358,7 +1366,7 @@ CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
 
 > aside negative
 > 
->  **Training the Time Series Forecast model** may take 2-3 minutes in this case. Indicative training times available at [Training on Multi-Series Data](https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting#training-on-multi-series-data).
+> **Training the Time Series Forecast model** may take 2-3 minutes in this case. Indicative training times available at [Training on Multi-Series Data](https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting#training-on-multi-series-data).
 >
 
 3. Test Forecasting model output for one day.
@@ -1417,7 +1425,7 @@ ORDER BY DATASET, TAGNAME, TIMESTAMP;
 
 > aside positive
 > 
->  You have now run through several **Time Series Analysis** queries, we can now look at creating **Time Series Functions**.
+> You have now run through several **Time Series Analysis** queries, we can now look at creating **Time Series Functions**.
 >
 
 <!-- ------------------------ -->
@@ -1429,7 +1437,7 @@ Now that you have a great understanding of running **Time Series Analysis**, we 
 <img src="assets/byo_functions.png" />
 
 
-### INFO: Upsampling Time Series Data
+#### INFO: Upsampling Time Series Data
 
 **Upsampling** is used to **increase the frequency** of time samples, such as from hours to minutes, by placing time series data into fixed time intervals using aggregate operations on the values within each time interval. Due to the frequency of samples being increased it has the effect of **creating new values if the interval is more frequent** than the data itself. If the interval does not contain a value, it will be **interpolated from the surrounding aggregated data**.
 
@@ -1553,7 +1561,7 @@ $$;
 
 > aside positive
 > 
->  The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to **look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time**, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
+> The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to **look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time**, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
 >
 > The **INTERPOLATE Table Function** will return both **linear interpolated values** and the **last observed value carried forward (LOCF)**.
 >
@@ -1596,7 +1604,7 @@ $$;
 
 > aside positive
 > 
->  The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the last observed value carried forward (LOCF) or linear interpolated values (default).
+> The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the last observed value carried forward (LOCF) or linear interpolated values (default).
 >
 
 4. Run the **LTTB Downsampling Table Function** Script
@@ -1639,7 +1647,7 @@ $$;
 
 > aside positive
 > 
->  The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that **reduces the number of visual data points, whilst retaining the shape and variability of the time series data**. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
+> The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that **reduces the number of visual data points, whilst retaining the shape and variability of the time series data**. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
 >
 > This is a **Snowpark Python** implementation using the **plotly-resampler** package.
 >
@@ -1831,7 +1839,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 > aside positive
 > 
->  You have now built your own **Time Series Analysis** functions and procedures, these can be called within applications working with time series data. We can now look at deploying a Time Series application.
+> You have now built your own **Time Series Analysis** functions and procedures, these can be called within applications working with time series data. We can now look at deploying a Time Series application.
 >
 
 <!-- ------------------------ -->
@@ -1842,14 +1850,16 @@ After completing the analysis of the time series data that was streamed into Sno
 
 <img src="assets/streamlit_overview.png" />
 
-
-### INFO: Streamlit
-**Streamlit** is an open-source Python library that makes it easy to **create web applications for machine learning, data analysis, and visualization**. **[Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)** helps developers securely build, deploy, and share **Streamlit apps on Snowflake’s data cloud platform**, without moving data or application code to an external system.
-
-
-### INFO: Snowflake CLI
-
-**[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction)** is an open-source command-line tool designed for developers to **easily create, deploy, update, and view apps running on Snowflake**. We will use Snowflake CLI to deploy the **Time Series Streamlit application** to your Snowflake account.
+> aside positive
+> 
+> #### INFO: Streamlit
+> **Streamlit** is an open-source Python library that makes it easy to **create web applications for machine learning, data analysis, and visualization**. **[Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)** helps developers securely build, deploy, and share **Streamlit apps on Snowflake’s data cloud platform**, without moving data or application code to an external system.
+>
+>
+> #### INFO: Snowflake CLI
+>
+> **[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/introduction/introduction)** is an open-source command-line tool designed for developers to **easily create, deploy, update, and view apps running on Snowflake**. We will use Snowflake CLI to deploy the **Time Series Streamlit application** to your Snowflake account.
+>
 
 
 ### Step 1 - Setup Snowflake Stage for Streamlit Application
@@ -1886,7 +1896,7 @@ STREAMLIT SCRIPT COMPLETED
 
 > aside negative
 > 
->  There are **EXTERNAL ACTIVITY** sections in the worksheet, this will be covered in the next step.
+> There are **EXTERNAL ACTIVITY** sections in the worksheet, this will be covered in the next step.
 >
 
 
@@ -1918,7 +1928,7 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 
 > aside negative
 > 
->  The **GitHub Codespace** may prompt to allow pasting into **VSCode**, select **Allow** if prompted.
+> The **GitHub Codespace** may prompt to allow pasting into **VSCode**, select **Allow** if prompted.
 >
 
 <img src="assets/streamlit_codespace_paste.png" />
@@ -2064,7 +2074,7 @@ In the **GitHub Codespace VS Code**:
 
 > aside positive
 > 
->  You have now successfully deployed a **Time Series Application** using Streamlit in Snowflake. This will allow end users easy access to visualize time series data as well as run their own **Time Series Analysis** on all Time Series data available in Snowflake.
+> You have now successfully deployed a **Time Series Application** using Streamlit in Snowflake. This will allow end users easy access to visualize time series data as well as run their own **Time Series Analysis** on all Time Series data available in Snowflake.
 >
 
 <!-- ------------------------ -->
@@ -2103,11 +2113,11 @@ Duration: 2
 
 > aside positive
 > 
-> **Congratulations!**
+> ### Congratulations!
 >
 > You've successfully deployed an end-to-end **Time Series Analytics** solution with streaming data in Snowflake.
 >
-> **We would greatly appreciate your feedback in our [Time series analytics survey](https://docs.google.com/forms/d/e/1FAIpQLSft8rz7OslJoZ4JZIUWMcNjdD45FwKZH5BGNRGY1n5kNIu1dg/viewform)**.
+> #### We would greatly appreciate your feedback in our [Time series analytics survey](https://docs.google.com/forms/d/e/1FAIpQLSft8rz7OslJoZ4JZIUWMcNjdD45FwKZH5BGNRGY1n5kNIu1dg/viewform)
 >
 
 
@@ -2121,6 +2131,12 @@ Duration: 2
 
 
 ### Additional Resources
-- **Documentation** - [Analyzing time-series data](https://docs.snowflake.com/en/user-guide/querying-time-series-data)
-- **Blog** - [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](https://www.snowflake.com/blog/time-series-analytics-asof-join-generally-available/)
-- **Lab** - [Getting Started with Snowflake CLI](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html)
+- **Documentation**
+    - [Analyzing time-series data](https://docs.snowflake.com/en/user-guide/querying-time-series-data)
+    - [Time-Series Forecasting (Snowflake Cortex ML Functions)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)
+    - [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+    - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+    -[Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
+    - [Overview of the Kafka connector](https://docs.snowflake.com/en/user-guide/kafka-connector-overview)
+- **Blog**
+    - [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](https://www.snowflake.com/blog/time-series-analytics-asof-join-generally-available/)
