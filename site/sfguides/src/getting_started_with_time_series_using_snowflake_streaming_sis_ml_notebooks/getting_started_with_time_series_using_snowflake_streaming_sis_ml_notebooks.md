@@ -1092,7 +1092,9 @@ ORDER BY TAGNAME, TIMESTAMP;
 > 
 > #### INFO: Snowsight Statistics
 >
-> Snowsight will provide high level statistics and histograms for columns of data, as well as selected cells of numerical data, to the right of the returned result set.
+> **Snowflake [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight)** will provide high level statistics and histograms for columns of data, as well as selected cells of numerical data, to the right of the returned result set.
+>
+> More detail at [Exploring the worksheet results](https://docs.snowflake.com/en/user-guide/ui-snowsight-query#exploring-the-worksheet-results).
 >
 
 **Selecting the first six row cells will show the matching ROWS BETWEEN averages preceding and following**.
