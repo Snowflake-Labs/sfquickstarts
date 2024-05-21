@@ -1088,6 +1088,15 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
+> aside positive
+> 
+> #### INFO: Snowsight Statistics
+>
+> Snowsight will provide high level statistics and histograms for columns of data, as well as selected cells of numerical data, to the right of the returned result set.
+>
+
+**Selecting the first six row cells will show the matching ROWS BETWEEN averages preceding and following**.
+
 <img src="assets/analysis_query_windowrowsbetween.png" />
 
 > aside negative
