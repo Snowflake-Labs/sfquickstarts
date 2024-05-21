@@ -1681,6 +1681,8 @@ SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSO
 3. Under Data select `INTERP_VALUE` and set the Aggregation to `Max`.
 4. Select `+ Add column` and select `LOCF_VALUE` and set Aggregation to `Max`.
 
+**The chart will display a both linear and a step-based pattern for interpolated values between data points**.
+
 <img src="assets/function_chart_linearlocf.png" />
 
 
@@ -1715,6 +1717,8 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
 
+**The chart will display a step-based pattern where the prior value is interpolated between data points**.
+
 <img src="assets/function_chart_locf.png" />
 
 
@@ -1746,6 +1750,8 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
+
+**The chart will display a smoother linear interpolated value between data points**.
 
 <img src="assets/function_chart_linear.png" />
 
