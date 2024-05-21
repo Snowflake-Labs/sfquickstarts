@@ -27,7 +27,7 @@ This quickstart will cover a lot of ground. By the end of this guide, you will h
 The data pipeline used as an example in this quickstart makes use of data available on the Snowflake marketplace to come up with the perfect spot for a family vacation. Let's get started!
 
 > aside negative
-> Note: The Git integration, Create or Alter and Jinja templating are still in preview.
+> Note: The Git integration, Create-or-Alter and Jinja templating are still in preview.
 
 ### Prerequisites
 
@@ -68,7 +68,7 @@ During this Quickstart you will accomplish the following things:
 - Create a vectorized Python UDF making use of dynamic file access
 - Create a data engineering pipeline to process data from multiple sources
 - Orchestrate the pipeline with tasks
-- Make declarative changes to the pipeline with Create or Alter
+- Make declarative changes to the pipeline with Create-or-Alter
 - Separate dev and prod environments with Jinja templating
 - Deploy the pipeline via an automated CI/CD pipeline
 - Enrich your data with Cortex LLM functions 
@@ -207,7 +207,7 @@ In this step, we will run through the commands in the Python file `steps/04_orch
 > aside positive
 > Tip: The query used in the “email_notification” task selects suitable places for a summer vacation. If you are running the pipeline in the colder months, it might not return any results. In that case, adapt the filters and off you go on your winter vacation! You might want to add snowfall days to your weather metrics.
 
-### Declarative Create or Alter Command
+### Declarative Create-or-Alter Command
 
 When creating the target table and the tasks orchestrating the pipeline, we make use of the new CREATE OR ALTER command. CREATE OR ALTER behaves similarly to CREATE OR REPLACE except that an existing table is not replaced, but rather altered to the target state.
 
@@ -225,7 +225,7 @@ create or alter table vacation_spots (
 ```
 
 > aside negative
-> Note: The Create or Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
+> Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
 
 ### Verify Pipeline Completion
 
@@ -255,7 +255,7 @@ Declarative definitions are concise, idempotent and easy to understand as we don
 This is where the new CREATE OR ALTER command shines. It allows us to have one single source of truth for the current state of the object. Potential rollbacks are super easy to do thanks to the straightforward integration with version control tools such as Git. Just apply an older version of the CREATE OR ALTER. This makes CREATE OR ALTER a great choice to manage data pipelines.
 
 > aside negative
-> Note: The Create or Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
+> Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
 
 ### Adding a new Data Source to the Pipeline
 
@@ -554,7 +554,7 @@ Once you're finished with the Quickstart and want to clean things up, you can dr
 
 Duration: 2
 
-Wow, we have covered a lot of ground during this Quickstart! Not only can you now skip this year’s vacation planning, but you have also learned how to manage a data pipeline with DevOps practices. We followed the Infrastructure as Code principle and learned how to use Snowflake’s native version control mechanism in combination with declarative CREATE OR ALTERs, making database change management much less error-prone and less painful. With the help of SnowflakeCLI and Jinja templating will can test our changes before automatically rolling them out to production with the help of a CI/CD pipeline.
+Wow, we have covered a lot of ground during this Quickstart! Not only can you now skip this year’s vacation planning, but you have also learned how to manage a data pipeline with DevOps practices. We followed the Infrastructure as Code principle and learned how to use Snowflake’s native version control mechanism in combination with declarative Create-or-Alters, making database change management much less error-prone and less painful. With the help of SnowflakeCLI and Jinja templating will can test our changes before automatically rolling them out to production with the help of a CI/CD pipeline.
 
 But we've really only just scratched the surface of what's possible with Snowflake DevOps. Hopefully you now have the building blocks, and examples, you need to get started integrating DevOps best practices into your own data engineering pipelines. So, what will you DevOps-ify first?
 
