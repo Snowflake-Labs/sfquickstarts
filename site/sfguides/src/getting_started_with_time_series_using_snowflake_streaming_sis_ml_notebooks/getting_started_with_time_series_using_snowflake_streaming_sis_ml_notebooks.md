@@ -522,7 +522,7 @@ The simulated **IoT dataset contains six sensor devices** at various frequencies
 > 
 > #### INFO: Java Streaming Client Application
 >
-> The **Java streaming client application** is being called using a **Terminal shell script**. The client accepts various speed parameters to change the number of rows that are streamed. The **"MAX"** script will send as many rows as the device will allow to the **Snowpipe Streaming API**.
+> The **Java streaming client application** is being called using a **Terminal shell script**. The Java application accepts various speed input parameters to change the number of rows that are streamed. The **"MAX"** script will send as many rows as the device will allow to the **Snowpipe Streaming API** target table.
 >
 
 2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and run the `SHOW CHANNELS` command to confirm a new channel is now open to Snowflake.
