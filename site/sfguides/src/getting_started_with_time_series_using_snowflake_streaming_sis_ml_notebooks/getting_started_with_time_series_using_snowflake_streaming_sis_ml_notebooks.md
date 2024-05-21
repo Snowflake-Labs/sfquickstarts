@@ -1346,11 +1346,11 @@ WHERE TAGNAME = '/IOT/SENSOR/TAG401'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-2. Create a Time-Series Forecast model using the training data view.
+2. Create a Time-Series [SNOWFLAKE.ML.FORECAST](https://docs.snowflake.com/en/sql-reference/classes/forecast/commands/create-forecast) model using the training data view.
 
 ```sql
 /* FORECAST MODEL - Training Data Set - /IOT/SENSOR/TAG401
-Create a Time-Series Forecast model using the training data view.
+Create a Time-Series SNOWFLAKE.ML.FORECAST model using the training data view.
 
 INPUT_DATA - The data set used for training the forecast model
 SERIES_COLUMN - The column that splits multiple series of data, such as different TAGNAMES
