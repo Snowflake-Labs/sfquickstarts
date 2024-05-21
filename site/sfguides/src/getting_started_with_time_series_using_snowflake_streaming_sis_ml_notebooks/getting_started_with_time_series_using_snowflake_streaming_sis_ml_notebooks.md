@@ -1147,6 +1147,8 @@ ORDER BY TAGNAME, TIMESTAMP;
 3. Select `+ Add column` and select `RANGE_AVG_1MIN` and set Aggregation to `Max`.
 4. Select `+ Add column` and select `ROW_AVG_1MIN` and set Aggregation to `Max`.
 
+**The chart shows variances between the RANGE BETWEEN and ROWS BETWEEN occuring after the first minute**.
+
 <img src="assets/analysis_chart_rangerow_1min.png" />
 
 **Range Between - 5 MIN Rolling Average and Sum**: Let's expand on RANGE BETWEEN and create a rolling AVG and SUM for the time **INTERVAL** five minutes preceding, inclusive of the current row.
@@ -1262,26 +1264,29 @@ ORDER BY ONE_SEC.TIMESTAMP;
 
 ### Gap Filling
 
-Time gap filling is the process of generating timestamps for a given start and end time boundary, and joining to a tag with less frequent timestamp values.
+Time gap filling is the process of generating timestamps for a given start and end time boundary, and joining to a tag with less frequent timestamp values, and filling missing / gap timestamps with a prior value. This can also be referred to as **Upsampling or Forward Filling**.
 
-**Gap Filling**: Generate timestamps given a start and end time boundary, and join to a tag with less frequent values.
+**Gap Filling**: Generate timestamps given a start and end time boundary, and us ASOF JOIN to a tag with less frequent values to forward fill using last observed value carried forward (LOCF).
 
 ```sql
-/* TIME GAP FILLING
-Generate timestamps given a start and end time boundary, and join to a tag with less frequent values.
+/* GAP FILLING - 1 SEC TIMESTAMPS WITH 5 SEC TAG
+Generate timestamps given a start and end time boundary, and us ASOF JOIN to a tag with less frequent values to forward fill using last observed value carried forward (LOCF).
 
 TIME_PERIODS - A variable passed into the query to determine the number of time stamps generated for gap filling.
 */
+-- SET TIME_PERIODS IN SECONDS
 SET TIME_PERIODS = (SELECT TIMESTAMPDIFF('SECOND', '2024-01-01 00:00:00'::TIMESTAMP_NTZ, '2024-01-01 00:00:00'::TIMESTAMP_NTZ + INTERVAL '1 MINUTE'));
 
 -- LAST OBSERVED VALUE CARRIED FORWARD (LOCF) - IGNORE NULLS
 WITH TIMES AS (
+    -- 1 SECOND TIMESTAMPS USING TIME PERIODS
     SELECT
     DATEADD('SECOND', ROW_NUMBER() OVER (ORDER BY SEQ8()) - 1, '2024-01-01')::TIMESTAMP_NTZ AS TIMESTAMP,
     '/IOT/SENSOR/TAG101' AS TAGNAME
     FROM TABLE(GENERATOR(ROWCOUNT => $TIME_PERIODS))
 ),
 DATA AS (
+    -- 5 SECOND TAG
     SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE,
     FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
     WHERE TIMESTAMP >= '2024-01-01 00:00:00'
