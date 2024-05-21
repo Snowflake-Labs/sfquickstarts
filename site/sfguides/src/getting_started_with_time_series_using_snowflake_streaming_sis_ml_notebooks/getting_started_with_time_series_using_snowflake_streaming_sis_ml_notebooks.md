@@ -2139,6 +2139,7 @@ Duration: 2
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
 - [Overview of the Kafka connector](https://docs.snowflake.com/en/user-guide/kafka-connector-overview)
+- [Using Snowflake Connector for Kafka with Snowpipe Streaming](https://docs.snowflake.com/user-guide/data-load-snowpipe-streaming-kafka)
 
 
 #### Blog
