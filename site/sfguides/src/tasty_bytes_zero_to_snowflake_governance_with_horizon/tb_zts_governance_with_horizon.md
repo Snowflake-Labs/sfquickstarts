@@ -70,7 +70,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
-<button>[tb_zts_data_governance.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25/tb_fy25_governance_snowflake_horizon.sql)</button>
+<button>[tb_zts_data_governance.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25_Zero_To_Snowflake/tb_governance_snowflake_horizon.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
