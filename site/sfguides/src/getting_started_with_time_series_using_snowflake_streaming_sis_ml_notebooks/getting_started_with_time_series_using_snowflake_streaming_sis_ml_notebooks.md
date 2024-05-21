@@ -522,7 +522,7 @@ The simulated **IoT dataset contains six sensor devices** at various frequencies
 > 
 > #### INFO: Java Streaming Client Application
 >
-> The **Java streaming client application** is being called using a **Terminal shell script**. The Java application accepts various speed input parameters to change the number of rows that are streamed. The **"MAX"** script will send as many rows as the device will allow to the **Snowpipe Streaming API** target table.
+> The **Java streaming client application** is being called using a **Terminal shell script**. The Java application accepts various speed input parameters to change the number of rows that are streamed. The **"MAX"** script will send as many rows as the device will allow to the **Snowpipe Streaming API** and into the target table.
 >
 
 2. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and run the `SHOW CHANNELS` command to confirm a new channel is now open to Snowflake.
@@ -2010,7 +2010,9 @@ At the bottom of each page there are options to:
 
 ### Step 5 - Set Streamlit Filters and Query Data
 
-The initial data set contains two weeks of data loaded for 1-Jan-2024 to 14-Jan-2024. Let's query this using the Streamlit application.
+#### Initial IoT Data Loaded: 1-Jan-2024 to 14-Jan-2024
+
+The initial data set **contains two weeks of data loaded for 1-Jan-2024 to 14-Jan-2024**. Let's query this using the Streamlit application.
 
 Open the **Streamlit Application**:
 
@@ -2054,6 +2056,17 @@ Open the **Streamlit Application**:
 10. Try changing the **Label Position** to `START`
 
     - The **Tag Data** table will now show the **Start** timestamp for each minute interval.
+
+> aside positive
+> 
+> #### INFO: Tag Data Schema
+>
+> The **Tag Data detail tables** in the Streamlit Application have a **schema** that returns columns for **TAGNAME, TIMESTAMP, and VALUE**. This is to mimic an **API data contract** that will return a consistent schema structure of the data.
+>
+> If an **aggregation has been applied** to the Tag Data, the **TAGNAME will be updated** to reflect the aggregation and time interval of the data.
+>
+> <img src="assets/streamlit_tag_data.png" />
+>
 
 
 ### Step 6 - Start a Continuous Simulated Stream
