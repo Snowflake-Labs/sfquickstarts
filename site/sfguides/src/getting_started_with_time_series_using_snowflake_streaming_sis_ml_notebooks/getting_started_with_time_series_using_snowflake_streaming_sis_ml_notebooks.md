@@ -1899,6 +1899,12 @@ STREAMLIT SCRIPT COMPLETED
 > There are **EXTERNAL ACTIVITY** sections in the worksheet, this will be covered in the next step.
 >
 
+> aside positive
+> 
+> #### INFO: Pre-Built Streamlit Application
+>
+> A pre-built **Streamlit Application** has been provided as part of this lab. It is located in the `streamlit` **project** folder of the **GitHub Codespace VS Code** repository.
+>
 
 ### Step 2 - Deploy Streamlit Application to Snowflake
 
