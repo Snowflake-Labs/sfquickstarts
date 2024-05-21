@@ -286,6 +286,15 @@ In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1
 >  There are **EXTERNAL ACTIVITY** sections in the worksheet, these sections will be executed within the **GitHub Codespace**.
 >
 
+> aside positive
+> 
+>  The **Snowflake VS Code Extension** will detect **SQL Executable** lines within a worksheet.
+> 
+> **Click** the `Execute` link above each line to run the SQL command.
+>
+> <img src="assets/snowsetup_vscode_execute.png" />
+>
+
 ```sql
 /*
 SNOWFLAKE SETUP SCRIPT
