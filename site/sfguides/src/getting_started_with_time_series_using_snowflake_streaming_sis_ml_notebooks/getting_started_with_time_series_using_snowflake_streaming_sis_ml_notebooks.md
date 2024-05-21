@@ -1327,10 +1327,9 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **[Time-Series Forecasting](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)** employs a machine learning algorithm to predict future data by using historical time series data.
 
-Forecasting is part of Snowflake Cortex, Snowflake’s intelligent, fully-managed AI and ML service.
-This feature is part of the Snowflake Cortex ML function suite.
+Forecasting is part of **Snowflake Cortex, Snowflake’s intelligent, fully-managed AI and ML service**.
 
-**Forecasting**: Generate a time series forecast for a single tag looking forward one day for a flow sensor. This could be useful in tracking expected production output.
+**Forecasting**: Consider a use case where you want to **predict expected production output** based on a flow sensor. In this case, you could **generate a time series forecast** for a single tag looking forward one day for a flow sensor.
 
 1. Create a forecast training data view from historical data.
 
