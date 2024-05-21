@@ -1181,9 +1181,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 2. Under Data select the `VALUE` and set the Aggregation to `Max`.
 3. Select `+ Add column` and select `RANGE_AVG_5MIN` and set Aggregation to `Max`.
 
-
-**A rolling average could be useful in scenarios where you are trying to detect
-EXCEEDANCES in equipment operating limits over periods of time, such as a maximum pressure limit.**
+**A rolling average could be useful in scenarios where you are trying to detect EXCEEDANCES in equipment operating limits over periods of time, such as a maximum pressure limit**.
 
 <img src="assets/analysis_chart_range_5min.png" />
 
@@ -1266,11 +1264,11 @@ ORDER BY ONE_SEC.TIMESTAMP;
 
 Time gap filling is the process of generating timestamps for a given start and end time boundary, and joining to a tag with less frequent timestamp values, and filling missing / gap timestamps with a prior value. This can also be referred to as **Upsampling or Forward Filling**.
 
-**Gap Filling**: Generate timestamps given a start and end time boundary, and us ASOF JOIN to a tag with less frequent values to forward fill using last observed value carried forward (LOCF).
+**Gap Filling**: Generate timestamps given a start and end time boundary, and use ASOF JOIN to a tag dataset with less frequent values, to forward fill using last observed value carried forward (LOCF).
 
 ```sql
 /* GAP FILLING - 1 SEC TIMESTAMPS WITH 5 SEC TAG
-Generate timestamps given a start and end time boundary, and us ASOF JOIN to a tag with less frequent values to forward fill using last observed value carried forward (LOCF).
+Generate timestamps given a start and end time boundary, and use ASOF JOIN to a tag dataset with less frequent values, to forward fill using last observed value carried forward (LOCF).
 
 TIME_PERIODS - A variable passed into the query to determine the number of time stamps generated for gap filling.
 */
@@ -1313,7 +1311,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 Forecasting is part of Snowflake Cortex, Snowflake’s intelligent, fully-managed AI and ML service.
 This feature is part of the Snowflake Cortex ML function suite.
 
-**Forecasting**: Generate a time series forecast for a single tag looking forward one day.
+**Forecasting**: Generate a time series forecast for a single tag looking forward one day for a flow sensor. This could be useful in tracking expected production output.
 
 1. Create a forecast training data view from historical data.
 
@@ -1351,7 +1349,7 @@ CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
 
 > aside negative
 > 
->  Training the Time Series Forecast model may take 2-3 minutes. Indicative training times available at [Training on Multi-Series Data](https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting#training-on-multi-series-data).
+>  **Training the Time Series Forecast model** may take 2-3 minutes in this case. Indicative training times available at [Training on Multi-Series Data](https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting#training-on-multi-series-data).
 >
 
 3. Test Forecasting model output for one day.
@@ -1402,6 +1400,8 @@ ORDER BY DATASET, TAGNAME, TIMESTAMP;
 2. Under Data set the first column to `VALUE` and set the Aggregation to `Max`.
 3. Select the `TIMESTAMP` column and set the Bucketing to `Minute`.
 4. Select `+ Add column` and select `FORECAST` and set Aggregation to `Max`.
+
+**The chart will show a flow sensor with ACTUALS and FORECAST values**.
 
 <img src="assets/analysis_chart_forecast.png" />
 
@@ -1823,7 +1823,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 ## Build Your Time Series Application in Streamlit
 Duration: 15
 
-After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to **deliver a Time Series Analytics application** for end users to easily consume time series data. For this purpose we are going use a **Streamlit in Snowflake** application, deployed using **Snowflake CLI**.
+After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to **deliver a Time Series Analytics application** for end users to easily consume time series data. For this purpose we are going to use a **Streamlit in Snowflake** application, deployed using **Snowflake CLI**.
 
 <img src="assets/streamlit_overview.png" />
 
