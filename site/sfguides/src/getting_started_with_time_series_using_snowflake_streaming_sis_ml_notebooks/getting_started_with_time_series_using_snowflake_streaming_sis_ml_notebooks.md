@@ -1933,15 +1933,18 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 
 <img src="assets/streamlit_codespace_paste.png" />
 
-**Streamlit Deploy with Snowflake CLI**
-
-This command does the following:
-
-- **Deploys the Streamlit application** using the Snowflake account details mentioned in the ".snowflake/config.toml" file
-- **--config-file** option provides the location of the config file that **contains Snowflake account details**
-- **--replace** option ensures that the **existing application, if present, is overwritten**
-- **--project** option provides the **path where the Streamlit app project resides**
-- **--connection** option dictates **which connection section from the ".snowflake/config.toml"** file should be used for deployment
+> aside positive
+> 
+> #### INFO: Streamlit Deploy with Snowflake CLI
+>
+> This command does the following:
+>
+> - **Deploys the Streamlit application** using the Snowflake account details mentioned in the ".snowflake/config.toml" file
+> - **--config-file** option provides the location of the config file that **contains Snowflake account details**
+> - **--replace** option ensures that the **existing application, if present, is overwritten**
+> - **--project** option provides the **path where the Streamlit app project resides**
+> - **--connection** option dictates **which connection section from the ".snowflake/config.toml"** file should be used for deployment
+>
 
 
 ### Step 3 - Launch the Streamlit Application
@@ -1956,17 +1959,29 @@ Once the Streamlit application is successfully deployed, Snowflake CLI will disp
 
 <img src="assets/streamlit_open.png" />
 
+> aside positive
+> 
+> #### INFO: Launch Streamlit Apps inside Snowflake
+>
+> You can also launch **Streamlit Applications** from inside Snowflake by going to `Projects > Streamlit` and opening the `HOL_TIMESERIES_STREAMLIT` application.
+>
+> <img src="assets/streamlit_open_snowsight.png" />
+>
+
 
 ### Step 4 - Understanding the Streamlit Application
 
-The **Streamlit in Snowflake** application contains several pages, accessible via the left menu, that cover the following Time Series queries:
+The **Streamlit in Snowflake** application contains several **pages**, accessible via the left menu, that cover various Time Series queries.
+
+#### Streamlit Pages
+
 * **Raw** Time Series Data
 * **Statistical Aggregate** Time Series Data
 * **Time Binning / Downsampling** Time Series Data
 
 <img src="assets/streamlit_video_summary.gif" />
 
-**Filtering Menu**
+#### Filtering Menu
 
 Each page has a filtering menu to:
 * Select one or more tags
@@ -1976,7 +1991,7 @@ Each page has a filtering menu to:
 
 <img src="assets/streamlit_video_menu.gif" />
 
-**Streamlit Features**
+#### Streamlit Features
 
 At the bottom of each page there are options to:
 * **Select** how much data is displayed in the table along with the order
@@ -2063,6 +2078,8 @@ In the **GitHub Codespace VS Code**:
 4. Back **in the Streamlit application** try enabling `Auto Refresh` by `Expanding Refresh Mode > Toggle Auto Refresh`
 
     - The charts and data should now start to **automatically update with new data streaming into Snowflake every minute**.
+
+<img src="assets/streamlit_refresh.png" />
 
 5. Select the **TS Raw** page to see the raw data
 
