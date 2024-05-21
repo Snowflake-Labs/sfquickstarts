@@ -2131,12 +2131,15 @@ Duration: 2
 
 
 ### Additional Resources
-- **Documentation**
-    - [Analyzing time-series data](https://docs.snowflake.com/en/user-guide/querying-time-series-data)
-    - [Time-Series Forecasting (Snowflake Cortex ML Functions)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)
-    - [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-    - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
-    -[Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
-    - [Overview of the Kafka connector](https://docs.snowflake.com/en/user-guide/kafka-connector-overview)
-- **Blog**
-    - [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](https://www.snowflake.com/blog/time-series-analytics-asof-join-generally-available/)
+
+#### Documentation
+- [Analyzing time-series data](https://docs.snowflake.com/en/user-guide/querying-time-series-data)
+- [Time-Series Forecasting (Snowflake Cortex ML Functions)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)
+- [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+- [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
+- [Overview of the Kafka connector](https://docs.snowflake.com/en/user-guide/kafka-connector-overview)
+
+
+#### Blog
+- [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](https://www.snowflake.com/blog/time-series-analytics-asof-join-generally-available/)
