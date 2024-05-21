@@ -31,23 +31,42 @@ Additionally, you can create your own customized, fine-tuned Document AI model t
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
-    >Download the [git repo](https://github.com/Snowflake-Labs/)
+    >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai)
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 * A Snowflake account login with a role that has the ability to create role, database, schema, tables, stages and assign permissions. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
-You will use documents from the [Contract Understanding Atticus Dataset (CUAD) v1](https://zenodo.org/records/4595826) in order to extract values and verifying that clauses exists in co-branding agreements. 
+You will use documents from the [Contract Understanding Atticus Dataset (CUAD) v1.](https://doi.org/10.5281/zenodo.4595826) in order to extract values and verifying that clauses exists in co-branding agreements. The QuickStart [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai) includes the documents we are going to use.
+
+> aside positive
+>
+> **Citation**  
+> The Atticus Project. (2021). Contract Understanding Atticus Dataset (CUAD) v1. https://doi.org/10.5281/zenodo.4595826
 
 <!-- ------------------------ -->
 ## Setup the Snowflake enviroment
 Duration: 10
 
 ### Overview
-You will use Snowsight, the Snowflake web interface, to:
-* Create Snowflake objects (i.e warehouse, database, schema, etc..)
+This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)
+
+### Clone the git repository
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+
+Using HTTPS:
+
+```shell
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai.git
+```
+
+OR, using SSH:
+
+```shell
+git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-document-ai.git
+```
 
 ### Creating Objects
-Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema) and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role).
+Run the following SQL commands, those can also be found in the **setup.sql** file, in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema) and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role).
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
@@ -92,12 +111,6 @@ CREATE OR REPLACE TABLE doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS_VERIFI
 );
 
 ```
-
-These can also be found in the **setup.sql** file.
-
-### Clone the git repository
-...
-
 We are now ready to start.
 
 <!-- ------------------------ -->
