@@ -72,7 +72,7 @@ Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event
 
 See below sample screen capture for reference.
 
-![](assets/msk-cft-stack-1.png)
+![](assets/eventhubs.png)
 
 Leave everything as default in the `Configure stack options` page and click `Next`.
 In the `Review` page, click `Submit`.
