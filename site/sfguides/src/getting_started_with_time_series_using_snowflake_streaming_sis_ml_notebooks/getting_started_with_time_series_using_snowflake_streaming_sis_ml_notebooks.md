@@ -1488,15 +1488,39 @@ Now that you have a great understanding of running **Time Series Analysis**, we 
 <img src="assets/byo_functions.png" />
 
 
-#### INFO: Upsampling Time Series Data
+### INFO: Table Functions Deploy
 
-**Upsampling** is used to **increase the frequency** of time samples, such as from hours to minutes, by placing time series data into fixed time intervals using aggregate operations on the values within each time interval. Due to the frequency of samples being increased it has the effect of **creating new values if the interval is more frequent** than the data itself. If the interval does not contain a value, it will be **interpolated from the surrounding aggregated data**.
+In this section two types of Time Series table functions will be deployed for **resample time series data**.
+
+#### Function 1 - Interpolation / Upsampling Time Series Data
+
+**Upsampling** is used to **increase the frequency** of time samples, such as from hours to minutes, by placing time series data into fixed time intervals using aggregate operations on the values within each time interval. Due to the frequency of samples being increased it has the effect of **creating new values if the interval is more frequent** than the data itself.
+
+If the interval does not contain a value, it will be **interpolated from the surrounding aggregated data**.
+
+#### Function 2 - Downsampling Time Series Data
+
+**Downsampling** is used to **decrease the frequency** of time samples, such as from seconds to minutes. For the downsampling table function, we will deploy the **Largest Triangle Three Buckets (LTTB)** downsampling function, which is part of the **Snowpark Python - plotly-resampler** package.
+
+The **LTTB** algorithm **reduces the number of visual data points in a time series data set, whilst retaining the shape and variability of the time series data**. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
+
 
 ### Step 1 - Deploy Time Series Functions and Procedures
 
 1. In **VS Code** open the worksheet `worksheets/hol_timeseries_5_functions.sql`
 
-2. Run the **Create Interpolate Table Function**
+2. Click the `Execute All Statements` button at the top right of the worksheet to **deploy all functions and procedures**.
+
+<img src="assets/function_info_runall.png" />
+
+> aside positive
+> 
+> #### INFO: INTERPOLATE Table Function
+>
+> The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to **look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time**, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
+>
+> The **INTERPOLATE Table Function** will return both **linear interpolated values** and **last observed value carried forward (LOCF) values**.
+>
 
 ```sql
 -- Set role, context, and warehouse
@@ -1612,12 +1636,10 @@ $$;
 
 > aside positive
 > 
-> The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to **look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time**, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
+> #### INFO: INTERPOLATE Procedure
 >
-> The **INTERPOLATE Table Function** will return both **linear interpolated values** and **last observed value carried forward (LOCF) values**.
+> The **INTERPOLATE Procedure** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the linear interpolated values or last observed value carried forward (LOCF). **Default is LOCF**.
 >
-
-3. Run the **Create Interpolate Procedure** Script
 
 ```sql
 -- Add helper procedure to accept start and end times, and return either LOCF or Linear Interpolated Values
@@ -1657,10 +1679,12 @@ $$;
 
 > aside positive
 > 
-> The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the linear interpolated values or last observed value carried forward (LOCF). **Default is LOCF**.
+> #### INFO: Largest Triangle Three Buckets (LTTB) Function
 >
-
-4. Run the **LTTB Downsampling Table Function** Script
+> The **Largest Triangle Three Buckets (LTTB)** function uses the **Snowpark Python - plotly-resampler** package. This package is available in the [Anaconda Snowflake Snowpark for Python Channel](https://repo.anaconda.com/pkgs/snowflake/) and runs securely inside Snowflake warehouses when executed.
+>
+> The original code for LTTB is available at [Sveinn Steinarsson - GitHub](https://github.com/sveinn-steinarsson/flot-downsample).
+>
 
 ```sql
 -- LTTB Downsampling Table Function
@@ -1698,16 +1722,10 @@ class lttb_run:
 $$;
 ```
 
-> aside positive
-> 
-> The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that **reduces the number of visual data points, whilst retaining the shape and variability of the time series data**. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
->
-> This is a **Snowpark Python** implementation using the **plotly-resampler** package.
->
-> The original code for LTTB is available at [Sveinn Steinarsson - GitHub](https://github.com/sveinn-steinarsson/flot-downsample).
->
 
 ### Step 2 - Copy Worksheet Content To Snowsight Worksheet
+
+**With the functions deployed, we can look at using them to query time series data**.
 
 #### This section will be executed within a Snowflake Snowsight Worksheet
 
@@ -1836,7 +1854,7 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 
 The **Largest Triangle Three Buckets (LTTB)** algorithm is a time series downsampling algorithm that reduces the number of visual data points, whilst retaining the shape and variability of the time series data.
 
-Starting with a **RAW** query we can see the **LTTB** function in action, where the function will **downsample two hours of data for a one second tag**, 7200 data points to 500 whilst keeping the shape and variability of the values.
+Starting with a **RAW** query we can see the **LTTB** function in action, where the function will **downsample two hours of data for a one second tag**, 7200 data points downsampled to 500 data points whilst keeping the shape and variability of the values.
 
 **RAW Query**
 
