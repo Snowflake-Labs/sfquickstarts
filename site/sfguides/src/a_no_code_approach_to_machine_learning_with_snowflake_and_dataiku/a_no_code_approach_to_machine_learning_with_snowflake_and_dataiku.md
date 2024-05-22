@@ -1,12 +1,14 @@
 author: Stephen Franks
 id: a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku
-summary: This is a sample Snowflake Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
-categories: Getting-Started
+summary: This is an introduction to Dataiku and Snowflake
+categories: Data-Science-&-Ml,Solution-Examples,Partner-Integrations, Data-Science-&-Ai
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, 
+tags: Getting Started, Data Science, Data Engineering
+
+<br>
+
 # A No Code Approach to Machine Learning with Snowflake and Dataiku
 <!-- ------------------------ -->
 ## Overview 
