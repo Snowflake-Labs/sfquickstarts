@@ -433,7 +433,7 @@ By doing so you have now:
 If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.
 
 ### Next Steps
-To continue your journey in the Snowflake Data Cloud, please now visit the link below to see all other Powered by Tasty Bytes - Quickstarts available to you.
+To continue your journey in the Snowflake AI Data Cloud, please now visit the link below to see all other Powered by Tasty Bytes - Quickstarts available to you.
 
 - ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
 
