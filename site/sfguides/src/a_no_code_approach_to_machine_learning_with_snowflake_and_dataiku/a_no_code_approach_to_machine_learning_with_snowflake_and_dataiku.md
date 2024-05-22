@@ -7,7 +7,6 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
-<br>
 
 # A No Code Approach to Machine Learning with Snowflake and Dataiku
 <!-- ------------------------ -->
