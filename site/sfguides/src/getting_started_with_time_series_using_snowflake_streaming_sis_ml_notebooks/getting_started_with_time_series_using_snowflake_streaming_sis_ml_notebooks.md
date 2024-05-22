@@ -534,6 +534,11 @@ The simulated **IoT dataset contains six sensor devices** at various frequencies
 ./Run_MAX.sh
 ```
 
+> aside negative
+> 
+> Depending on the **speed of the machine** running the Java streaming client application, and the **network connectivity**, this may take a minute to load.
+>
+
 > aside positive
 > 
 > #### INFO: Java Streaming Client Application
@@ -716,7 +721,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 ### Step 3 - Create Analytics Views for Consumers
 
-The Dynamic Tables are now set up to continuously transform streaming data. We can now look at setting up an **Analytics** serving layer with some views for end users and applications to consume the streaming data.
+The Dynamic Tables are now set up to continuously transform streaming data. We can now look at setting up a **Curated Analytics** serving layer with some views for end users and applications to consume the streaming data.
 
 <img src="assets/model_analyticviews.png" />
 
@@ -782,11 +787,12 @@ The following query profiles will be covered in this section.
 | Aligning time series datasets | [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) | Joining time series datasets when the timestamps don't match exactly, and interpolating values. |
 | Gap Filling | [GENERATOR](https://docs.snowflake.com/en/sql-reference/functions/generator), [ROW_NUMBER](https://docs.snowflake.com/en/sql-reference/functions/row_number), [SEQ](https://docs.snowflake.com/en/sql-reference/functions/seq1) | Generating timestamps to fill time gaps. |
 | Forecasting | [Time-Series Forecasting (Snowflake Cortex ML Functions)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting), [FORECAST](https://docs.snowflake.com/en/sql-reference/classes/forecast/commands/create-forecast)  | Generating Time Series Forecasts using Snowflake Cortex ML. |
+| Date & Time Functions | [Date & Time Functions](https://docs.snowflake.com/en/sql-reference/functions-date-time) | This family of functions can be used to construct, convert, extract, or modify DATE/TIME/TIMESTAMP data. |
 
 
 ### Step 1 - Copy Worksheet Content To Snowsight Worksheet
 
-**This section will be executed within a Snowflake Snowsight Worksheet.**
+#### This section will be executed within a Snowflake Snowsight Worksheet
 
 1. Login to Snowflake, and from the menu expand `Projects > Worksheets`
 
@@ -800,8 +806,23 @@ The following query profiles will be covered in this section.
 
 4. **Copy** the contents of the worksheet to **clipboard**, and paste it into the newly created **Worksheet in Snowsight**
 
+> aside positive
+> 
+> #### INFO: Snowsight Worksheet Query Statement Execution
+>
+> In the following sections you will run various query statements within a **Snowsight Worksheet**.
+>
+> To run an individual query, **select the query by placing your cursor within the query statement**, and then click the `Run` button at the top right of the worksheet.
+>
+> <img src="assets/analysis_info_queryrun.png" />
+>
+> You may want to run multiple query statements at the same time, in this case you can **highlight all the query statements you want to run together**, and then click the `Run` button.
+>
+> <img src="assets/analysis_info_queryrun_multi.png" />
+>
 
-### Step 2 - Run the Snowsight Worksheet Time Series Analysis Queries
+
+### Step 2 - Run Through the Snowsight Worksheet Time Series Analysis Queries
 
 
 ### Exploring Raw Time Series Data
@@ -1686,7 +1707,7 @@ $$;
 
 ### Step 2 - Copy Worksheet Content To Snowsight Worksheet
 
-This section will be executed within a Snowflake Snowsight Worksheet.
+#### This section will be executed within a Snowflake Snowsight Worksheet
 
 1. Login to Snowflake, and from the menu expand `Projects > Worksheets`
 
