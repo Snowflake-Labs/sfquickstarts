@@ -68,7 +68,7 @@ To participate in the virtual hands-on lab, attendees need the following resourc
 Duration: 30
 
 #### 1. Create an Event Hub
-Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub. Make sure that you select public access to the Event Hub in the networking setting.
+Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub. Select the `Standard` [pricing tier](https://azure.microsoft.com/en-us/pricing/details/event-hubs/) to use Apache Kafka. Make sure that you select public access to the Event Hub in the networking setting.
 
 See below sample screen capture for reference, here we have created a namespace called `SnowflakeTest`.
 
