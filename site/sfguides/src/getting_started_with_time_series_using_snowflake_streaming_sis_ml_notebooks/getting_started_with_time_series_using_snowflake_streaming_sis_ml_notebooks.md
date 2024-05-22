@@ -1756,15 +1756,19 @@ SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSO
 
 ### Interpolation - Last Observed Value Carried Forward (LOCF) Query
 
-The Interpolation Procedure will accept a start time and end time, along with a bucket interval size in seconds.
+The **Interpolation Procedure** will accept a start time and end time, along with a bucket interval size in seconds.
+
 It will then calculate the number of buckets within the time boundary, and call the Interpolate table function.
+
+Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals, with `LOCF` Interpolate type.
 
 ```sql
 /* INTERPOLATE PROCEDURE - LOCF
 The Interpolation Procedure will accept a start time and end time, along with a bucket interval size in seconds.
+
 It will then calculate the number of buckets within the time boundary, and call the Interpolate table function.
 
-Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LOCF Interpolate
+Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals, with `LOCF` Interpolate type.
 */
 CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
     -- V_TAGLIST
@@ -1792,13 +1796,15 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 
 ### Interpolation - Linear Query
 
-Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation table.
+Similar to the LOCF interpolation procedure call, this will create a **LINEAR Interpolation** table.
+
+Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals, with `LINEAR` Interpolate type.
 
 ```sql
-/* INTERPOLATE PROCEDURE - LOCF
-Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation table.
+/* INTERPOLATE PROCEDURE - LINEAR
+Similar to the LOCF interpolation procedure call, this will create a Linear Interpolation table.
 
-Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LINEAR Interpolate
+Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals, with `LINEAR` Interpolate type.
 */
 CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
     -- V_TAGLIST
