@@ -68,54 +68,24 @@ To participate in the virtual hands-on lab, attendees need the following resourc
 Duration: 30
 
 #### 1. Create an Event Hub
-Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub.
+Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub. Make sure that you select public access to the Event Hub in the networking setting.
 
 See below sample screen capture for reference, here we have created a namespace called `SnowflakeTest`.
 
 ![](assets/eventhubs.png)
 
 ### 2. Create a Linux virtual machine
+Follow this [doc](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/deploying_rhel_8_on_microsoft_azure/assembly_deploying-a-rhel-image-as-a-virtual-machine-on-microsoft-azure_cloud-content-azure#:~:text=attach%20your%20subscriptions.-,The%20subscription%20includes%20the%20Red%20Hat%20product%20cost;%20you%20pay,Hat%20Update%20Infrastructure%20(RHUI).) to create a Linux(Red Hat enterprise) virtual machine in Azure. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can also select Ubuntu or other Linux distributions but will need to modify the scripts.
 
-In about 10-30 minutes depending on your AWS region, the Cloudformation template provisions an MSK cluster with two brokers. It will also
-provision a Linux EC2 instance in the subnet you selected. We will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
+Make sure that you also allow ssh access to the VM in the network rule setting.
 
-#### 2. Configure the Linux session for timeout and default shell
+Once the VM is provisioned, we will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
 
-In this step we need to connect to the EC2 instance in order to interact with the MSK cluster.
-
-Go to the AWS [Systems Manager](https://us-west-2.console.aws.amazon.com/systems-manager/home) console in the same region where you setup the MSK cluster,
-Click `Session Manager` on the left pane.
-
-![](assets/session-mgr-1.png)
-
-Next, we will set the preferred shell as bash.
-
-Click the `Preferences` tab.
-![](assets/session-mgr-1.0.png)
-
-Click the `Edit` button.
-![](assets/session-mgr-1.1.png)
-
-Go to `General preferences` section, type in 60 minutes for idle session timeout value.
-
-![](assets/session-mgr-1.1.5.png)
-
-Further scroll down to `Linux shell profile` section, and type in `/bin/bash` before clicking `Save` button.
-
-![](assets/session-mgr-1.2.png)
-
-
-#### 3. Connect to the Linux EC2 instance console
-Now go back to the `Session` tab and click the `Start session` button.
-![](assets/session-mgr-2.png)
-
-Now you should see the EC2 instance created by the Cloudformation template under `Target instances`.
-Its name should be `<Cloudformation stack name>-jumphost`, select it and click `Start session`.
-
-![](assets/session-mgr-3.png)
+#### 3. Connect to the Linux VM console
+From you local machine, either using a ssh application such as [Putty](https://www.putty.org/) if you have a Windows PC or simply the ssh CLI (`ssh -i <your private_key for the VM> <VM's public IP address> -l azureuser)` for Linux or Mac based systems.
 
 #### 4. Create a key-pair to be used for authenticating with Snowflake
-Create a key pair in AWS Session Manager console by executing the following commands. You will be prompted to give an encryption password, remember 
+Create a key pair in the VM console by executing the following commands. You will be prompted to give an encryption password, remember 
 this phrase, you will need it later.
 
 ```commandline
