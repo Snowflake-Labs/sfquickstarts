@@ -772,7 +772,7 @@ Now that we have created the analytics views, we can start to query the data usi
 <img src="assets/analysis_overview.png" />
 
 
-#### INFO - Time Series Query Profiles
+#### INFO: Time Series Query Profiles
 
 The following query profiles will be covered in this section.
 
@@ -1512,6 +1512,10 @@ The **LTTB** algorithm **reduces the number of visual data points in a time seri
 2. Click the `Execute All Statements` button at the top right of the worksheet to **deploy all functions and procedures**.
 
 <img src="assets/function_info_runall.png" />
+
+#### INFO: Time Series Functions and Procedures
+
+The following functions and procedures have been deployed.
 
 > aside positive
 > 
