@@ -277,24 +277,40 @@ This includes:
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
-#### Run through the worksheet to get Snowflake resources created
-
-> aside negative
-> 
-> This section will run using the **ACCOUNTADMIN** login setup via **Snowflake VS Code Extension** connection.
-> 
->  There are **EXTERNAL ACTIVITY** sections in the worksheet, these sections will be executed within the **GitHub Codespace**.
->
-
 > aside positive
 > 
 > #### INFO: Snowflake VS Code Extension
 >
-> The **Snowflake VS Code Extension** will detect **SQL Executable** lines within a worksheet.
-> 
-> **Click** the `Execute` link above each line to run the SQL command.
+> The **Snowflake VS Code Extension** will detect **executable statement** lines within a worksheet. You can choose to run all or specific statements.
 >
+> - **Execute All Statements**: To run the worksheet in full, select the `Execute All Statements` button at the top right of the worksheet.
+>
+> <img src="assets/labsetup_vscodeextension_runall.png" />
+>
+> - **Multiple Statements**: Highlighting / selecting the statements you want to run, and pressing **Command/Ctrl** and **Enter**.
+>
+> <img src="assets/labsetup_vscodeextension_runmulti.png" />
+>
+> - **Individual Statements**: Click the `Execute` link above each statement line.
+> 
 > <img src="assets/snowsetup_vscode_execute.png" />
+>
+> **Executed statements** will show in the **QUERY HISTORY** tab of the Snowflake VS Code Extension.
+>
+> <img src="assets/labsetup_vscodeextension_queryhistory.png" />
+>
+
+#### Run the Worksheet to get Snowflake Resources Created
+
+**As the worksheet has been set up during the "Lab Setup" section, click** `Execute All Statements`.
+
+<img src="assets/labsetup_vscodeextension_runall.png" />
+
+> aside negative
+> 
+> This section will run using the **ACCOUNTADMIN** role and login setup via **Snowflake VS Code Extension** connection.
+> 
+> There is an **EXTERNAL ACTIVITY** section in the worksheet, which was already done as part of **"Lab Setup"**.
 >
 
 ```sql
@@ -1286,7 +1302,7 @@ ORDER BY ONE_SEC.TIMESTAMP;
 3. Set the X-Axis to `ONE_SEC_TIMESTAMP` and a Bucketing of `Second`
 3. Select `+ Add column` and select `FIVE_SEC_VALUE` and set Aggregation to `Max`.
 
-**One sensor is showing a significant drop whilst the other is showing an increase to a peak at similar times, which could potentially be an anomoly**.
+**One sensor is showing a significant drop whilst the other is showing an increase to a peak at similar times, which could potentially be an anomaly**.
 
 <img src="assets/analysis_chart_align.png" />
 
@@ -1476,7 +1492,7 @@ CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE (
 RETURNS TABLE (
     TIMESTAMP TIMESTAMP_NTZ,
     TAGNAME VARCHAR,
-    INTERP_VALUE FLOAT,
+    LINEAR_VALUE FLOAT,
     LOCF_VALUE FLOAT,
     LAST_TIMESTAMP TIMESTAMP_NTZ
 )
@@ -1563,7 +1579,7 @@ INTERP AS (
 SELECT
     TIMESTAMP,
     TAGNAME,
-    IVAL INTERP_VALUE,
+    IVAL LINEAR_VALUE,
     LAST_VAL LOCF_VALUE,
     LV_RAW_TS LAST_TIMESTAMP
 FROM
@@ -1575,7 +1591,7 @@ $$;
 > 
 > The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to **look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time**, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
 >
-> The **INTERPOLATE Table Function** will return both **linear interpolated values** and the **last observed value carried forward (LOCF)**.
+> The **INTERPOLATE Table Function** will return both **linear interpolated values** and **last observed value carried forward (LOCF) values**.
 >
 
 3. Run the **Create Interpolate Procedure** Script
@@ -1603,10 +1619,12 @@ RES RESULTSET;
 BEGIN
     TIME_BUCKETS := CEIL((TIMESTAMPDIFF('SEC', :V_FROM_TIME, :V_TO_TIME) + 1) / :V_INTERVAL);
 
-    IF (:V_INTERP_TYPE = 'LOCF') THEN
-        RES := (SELECT TIMESTAMP, TAGNAME, LOCF_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_TO_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
+    IF (:V_INTERP_TYPE = 'LINEAR') THEN
+        -- LINEAR
+        RES := (SELECT TIMESTAMP, TAGNAME, LINEAR_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_TO_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
     ELSE
-        RES := (SELECT TIMESTAMP, TAGNAME, INTERP_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_TO_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
+        -- LOCF
+        RES := (SELECT TIMESTAMP, TAGNAME, LOCF_VALUE AS VALUE FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE(:V_TAGLIST, :V_FROM_TIME, :V_TO_TIME, :V_INTERVAL, :TIME_BUCKETS)) ORDER BY TAGNAME, TIMESTAMP);
     END IF;
 
     RETURN TABLE(RES);
@@ -1616,7 +1634,7 @@ $$;
 
 > aside positive
 > 
-> The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the last observed value carried forward (LOCF) or linear interpolated values (default).
+> The **INTERPOLATE PROCEDURE** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the linear interpolated values or last observed value carried forward (LOCF). **Default is LOCF**.
 >
 
 4. Run the **LTTB Downsampling Table Function** Script
@@ -1687,7 +1705,7 @@ This section will be executed within a Snowflake Snowsight Worksheet.
 
 ### Interpolate Query
 
-The Interpolation table function will return both the **last observed value carried forward (LOCF) and linear interpolated values (default)**.
+The Interpolation table function will return both the **linear interpolated values and last observed value carried forward (LOCF)**.
 
 ```sql
 -- Set role, context, and warehouse
@@ -1696,7 +1714,7 @@ USE HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
 /* INTERPOLATE TABLE FUNCTION
-The Interpolation table function will return both the last observed value carried forward (LOCF) and linear interpolated values (default).
+The Interpolation table function will return both the linear interpolated values and last observed value carried forward (LOCF).
 */
 SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 12:10:00'::TIMESTAMP_NTZ, '2024-01-01 13:10:00'::TIMESTAMP_NTZ, 10, 362)) ORDER BY TAGNAME, TIMESTAMP;
 ```
@@ -1707,10 +1725,10 @@ SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSO
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `TIMESTAMP` and set Bucketing to `Second`
-3. Under Data select `INTERP_VALUE` and set the Aggregation to `Max`.
+3. Under Data select `LINEAR_VALUE` and set the Aggregation to `Max`.
 4. Select `+ Add column` and select `LOCF_VALUE` and set Aggregation to `Max`.
 
-**The chart will display a both linear and a step-based pattern for interpolated values between data points**.
+**The chart will display both LINEAR and LOCF for interpolated values between data points**.
 
 <img src="assets/function_chart_linearlocf.png" />
 
@@ -1746,18 +1764,18 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
 
-**The chart will display a step-based pattern where the prior value is interpolated between data points**.
+**The chart will display a LOCF value where the prior value is interpolated between data points**.
 
 <img src="assets/function_chart_locf.png" />
 
 
 ### Interpolation - Linear Query
 
-Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation return.
+Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation table.
 
 ```sql
 /* INTERPOLATE PROCEDURE - LOCF
-Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation return.
+Similar to the Interpolation - LOCF procedure call, this will create a Linear Interpolation table.
 
 Call Interpolate Procedure with Taglist, Start Time, End Time, and Intervals - LINEAR Interpolate
 */
@@ -1771,7 +1789,7 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
     -- V_INTERVAL
     10,
     -- V_INTERP_TYPE
-    'INTERP'
+    'LINEAR'
 );
 ```
 
@@ -1780,7 +1798,7 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
 
-**The chart will display a smoother linear interpolated value between data points**.
+**The chart will display a smoother LINEAR interpolated value between data points**.
 
 <img src="assets/function_chart_linear.png" />
 
