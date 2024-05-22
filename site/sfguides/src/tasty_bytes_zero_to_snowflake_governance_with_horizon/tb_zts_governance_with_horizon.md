@@ -85,7 +85,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 Duration: 1
 
 ### Overview
-Our Tasty Bytes Adminstrator has been tasked with learning the process of deploying Role Based Access Control (RBAC) and proper Governance across our Snowflake Account. 
+Our Tasty Bytes Administrator has been tasked with learning the process of deploying Role Based Access Control (RBAC) and proper Governance across our Snowflake Account. 
 
 To begin, let's first dive into the Snowflake System Defined Roles provided by default in all accounts and learn a bit more on their privileges.
 
@@ -401,7 +401,7 @@ END;
 ```
 
 ### Step 3 - Set Masking Policies on Tagged Columns
-Now we are able to use an ALTER TAG statement to set the Masking Policies on the PII tagged columns Please now execute the query in this step which applies each Masking Policy to the appropriate Tag using [ALTER TAG... SET MASKING POLICY](https://docs.snowflake.com/en/sql-reference/sql/alter-tag) command.
+Now we are able to use an ALTER TAG statement to set the Masking Policies on the PII tagged columns Please now execute the query in this step, which applies each Masking Policy to the appropriate Tag using [ALTER TAG... SET MASKING POLICY](https://docs.snowflake.com/en/sql-reference/sql/alter-tag) command.
 
 This will result in a `Statement executed successfully.` message.
 
@@ -672,7 +672,7 @@ ORDER BY order_total DESC;
 Duration: 3
 
 ### Overview:
-Within this step, we will cover another Privacy Policy framework provided by Snowflake Horizon this time diving into [Projection Policies](https://docs.snowflake.com/en/user-guide/projection-policies) which in short will prevent queries from using a SELECT statement to project values from a column.
+Within this step, we will cover another Privacy Policy framework provided by Snowflake Horizon, this time diving into [Projection Policies](https://docs.snowflake.com/en/user-guide/projection-policies) which in short will prevent queries from using a SELECT statement to project values from a column.
 
 
 ### Step 1 - Creating a Conditional Projection Policy

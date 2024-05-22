@@ -15,7 +15,7 @@ Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
 ### Overview
-Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by Snowflake.
+Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictitious food truck brand, Tasty Bytes, created by Snowflake.
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
@@ -47,7 +47,7 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 Duration: 6
 
 ### Overview
-For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight we would highly consider taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
+For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight, we highly recommend taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
 
 ### Step 1 - Accessing Snowflake via URL
 - Open a browser window and enter the URL of your Snowflake Account. If you do not already have a Snowflake account please revisit the previous section to sign up for a Free Snowflake Trial Account. 
@@ -178,7 +178,7 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 ### Zero to Snowflake
 
 - #### [Cost Management](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/)
-    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, Account and Warehouse Level Timeout Parameters, and Exploring Cost.
+    - Learn about Snowflake Virtual Warehouses and their configurability, Resource Monitors, Account and Warehouse Level Timeout Parameters, and Exploring Cost.
 - #### [Transformation](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/)
     - Learn about Snowflake Cloning, Caching, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
 - #### [Semi-Structured Data](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/)

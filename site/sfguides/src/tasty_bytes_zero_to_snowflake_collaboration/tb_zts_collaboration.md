@@ -31,8 +31,8 @@ Welcome to the Tasty Bytes - Zero to Snowflake Quickstart focused on Collaborati
 
 ### What You Will Build
 - The Harmonization of First Party Sales and Third Party Weather Data
-- Seamless Convertability from Fahrenheit to Celsius
-- Seamless Convertability from Inch to Millimeter
+- Seamless convertibility from Fahrenheit to Celsius
+- Seamless convertibility from Inch to Millimeter
 - An Understanding of How to Unlock Additional Insights via the Snowflake Marketplace
 
 ## Creating a Worksheet and Copying in our SQL
@@ -240,7 +240,7 @@ Once again this sort of data might better present trends via a quick Snowsight C
 Duration: 3
 
 ### Overview
-We have now determined that Hurricane level winds were probably at play for the days with zero sales that our Financial Analysts brought to our attention.
+We have determined that hurricane-level winds were likely the reason for the days with zero sales that our financial analysts brought to our attention.
 
 Let's now make these sort of research available to anyone in our organization by deploying an Analytics view that all Tasty Bytes employees can access.
 
@@ -388,7 +388,7 @@ GROUP BY city;
 
 
 
-**Yay!** If this was available when our Financial Analysts were initially running their research, they would not have even needed to ping our data teams as the insights are right there. 
+**Yay!** If this had been available when our Financial Analysts were initially running their research, they would not have even needed to ping our data teams as the insights are right there. 
 
 By completing this Quickstart we have seen how quickly we are able to derive real world business value by our work and how easy it is to use the Snowflake Marketplace to unlock additional data insights.
 

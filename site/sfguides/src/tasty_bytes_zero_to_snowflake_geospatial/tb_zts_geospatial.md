@@ -84,7 +84,7 @@ Tasty Bytes operates Food Trucks in numerous cities and countries across the glo
 
 One important item that our Executives are interested in is to learn more about how these locations relate to each other as well as if there are any locations we currently serve that are potentially too far away from hot selling city centers.
 
-Unfortunately what we have seen so far is our first party data does not give us the building blocks required to complete this sort of Geospatial analysis. Thankfully, the Snowflake Marketplace has great listings from SafeGraph that can assist us here.
+Unfortunately what we have seen so far is our first-party data does not give us the building blocks required to complete this sort of Geospatial analysis. Thankfully, the Snowflake Marketplace has great listings from SafeGraph that can assist us here.
 
 
 ### Step 1 - Acquiring SafeGraph POI Data from the Snowflake Marketplace 
@@ -177,7 +177,7 @@ Duration: 1
 With Point of Interest metrics now readily available from the Snowflake Marketplace without any ETL required, let's start on our Geospatial analysis journey.
 
 ### Step 1 - Creating a Geography Point
-Latitude and Longitude are two building block POI metrics we now have access to thanks for SafeGraph. 
+Latitude and Longitude are two building block POI metrics we now have access to thanks to SafeGraph. 
 
 Please execute the next two queries to re-assume to `tb_data_engineer` role and create our Geography Point leveraging the [ST_MAKEPOINT/ST_POINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) function.
 
@@ -200,7 +200,7 @@ ORDER BY total_sales_usd DESC;
 
 <img src = "assets/st_makepoint.png">
 
-The results we see in the `geo_point` column are going to be essential for everything else we do moving forward. 
+The results we see in the geo_point column will be essential for everything else we do moving forward.
 
 One thing to note here is despite typically hearing Latitude then Longitude this function requires these values to be input in the Longitude, Latitude order.
 
@@ -208,7 +208,6 @@ One thing to note here is despite typically hearing Latitude then Longitude this
 
 ## Calculating Straight Line Distance between Points
 Duration: 1
-
 
 ### Overview
 Starting with our Geographic Point, we can now begin to dive into some of the powerful Geospatial functions Snowflake offers natively. 
@@ -367,7 +366,7 @@ ORDER BY kilometer_from_top_selling_center DESC;
 
 <img src = "assets/far_out.png">
 
-Fantastic work! We have now delivered on the exact as from our Executive Team via a simple process through leveraging SafeGraph from the Snowflake Marketplace. 
+Fantastic work! We have now delivered on the exact as from our Executive Team through a simple process by leveraging SafeGraph from the Snowflake Marketplace.
 
 ### Step 2 - Click Next -->
 
@@ -459,7 +458,7 @@ ORDER BY total_sales_usd DESC;
 To conclude, in the next query we will see if our two Top Selling Resolution 6 Hexagons border each other using H3_GRID_DISTANCE(https://docs.snowflake.com/en/sql-reference/functions/h3_grid_distance).
 
 >aside positive
-> A neighbour cell is one step away and two cells with one hexagon between them are two steps apart.
+> A neighbor cell is one step away and two cells with one hexagon between them are two steps apart.
 >
 
 

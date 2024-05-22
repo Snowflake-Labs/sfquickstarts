@@ -355,7 +355,7 @@ WHERE t.make = 'Ford';
 <img src = "assets/validate_prod.png">
 
 ### Step 3 - Dropping and Undropping Tables
-We can officially say our developer has completed their assigned task. With the `truck_type` column in place and correctly calulated, our `sysadmin` can 
+We can officially say our developer has completed their assigned task. With the `truck_type` column in place and correctly calculated, our `sysadmin` can 
 clean up the left over Table and sign off for the day.
 
 ### Step 4 - Dropping a Table

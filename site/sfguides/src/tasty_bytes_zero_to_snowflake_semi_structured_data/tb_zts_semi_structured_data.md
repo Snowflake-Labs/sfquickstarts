@@ -35,7 +35,7 @@ For more detail on Semi-Structured Data in Snowflake please visit the [Semi-Stru
 ### What You Will Build
 - An End to End Semi-Structured Data Process
 - A Harmonized (Silver) and Analytics (Gold) View
-- An Executive Worthy Bar Chart
+- An Executive-Worthy Bar Chart
 
 ## Creating a Worksheet and Copying in our SQL
 Duration: 1

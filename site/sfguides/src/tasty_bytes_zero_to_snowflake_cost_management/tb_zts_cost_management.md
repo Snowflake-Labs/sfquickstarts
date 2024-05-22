@@ -17,7 +17,7 @@ Duration: 1
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Cost Management!
 
-Within this Quickstart, we will learn about Cost Management in Snowflake by diving into Snowflake Warehouses and their configurabilities, Resource Monitors, Account and Warehouse Level Timeout Parameters, Budgets and Exploring Cost.
+Within this Quickstart, we will learn about Cost Management in Snowflake by diving into Snowflake Warehouses and their configurability, Resource Monitors, Account and Warehouse Level Timeout Parameters, Budgets and Exploring Cost.
 
 For more detail on Cost Management in Snowflake please visit the [Cost Management Overview documentation](https://docs.snowflake.com/en/guides-overview-cost#cost-management).
 
@@ -91,7 +91,7 @@ The queries below will set our Role to `tb_admin` using [USE ROLE](https://docs.
 
 To run the queries, please highlight the three queries in your created Worksheet that match what you see below and click the "► Run" button in the top-right hand corner. 
 
-Once these are executed you will a `Statement executed successfully.` result and notice the Worksheet context reflect the Role, Warehouse and Database as shown in the screenshot below.
+Once these are executed you will see a `Statement executed successfully.` result and notice the Worksheet context reflect the Role, Warehouse and Database as shown in the screenshot below.
 
 ```
 USE ROLE tb_admin;
@@ -169,7 +169,7 @@ WHERE truck_brand_name = 'Plant Palace';
 <img src = "assets/menu_items_plant_palace.png"> 
 
 
-### Step 2 - Scale our Warehouse Up
+### Step 2 - Scaling Our Warehouse Up
 After completing a basic query against one of our dimension tables, let's now get ready to query our much larger orders data set. 
 
 Let's now instantly scale our `tb_test_wh` up by executing our next query leveraging [ALTER WAREHOUSE... SET warehouse_size](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters). 
@@ -213,7 +213,7 @@ To cap things off, we previously set the `auto_suspend` to 60 seconds on our `tb
 ALTER WAREHOUSE tb_test_wh SUSPEND;
 ```
 
-**Note**: Depending on how fast you have ran through these last statements you will receive of the two following results:
+**Note**: Depending on how fast you have run through these last statements, you will receive one of the following two results:
 1. **Statement executed successfully**: This means you were very fast in executing the steps in this section and have beat the `auto_suspend` Warehouse setting we configured to 60 seconds.
 2. **Invalid state. Warehouse 'TASTY_TEST_WH' cannot be suspended**: This means that the amazing `auto_suspend` Warehouse setting we configured to 60 seconds has won the Warehouse suspension race.
 
@@ -358,7 +358,7 @@ For additional detail on what each configuration handles in our statement above 
 ### Step 2 - Applying our Resource Monitor to our Warehouse
 With our Resource Monitor successfully created, let's now apply it to our created Warehouse using [ALTER WAREHOUSE ... SET RESOURCE_MONITOR](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters). 
 
-Please execute the final query of this step which will result in a `Statement executed successfully.` message. 
+Please execute the final query of this step which will result in another `Statement executed successfully.` message. 
 
 ```
 ALTER WAREHOUSE tb_test_wh SET RESOURCE_MONITOR = tb_test_rm;
