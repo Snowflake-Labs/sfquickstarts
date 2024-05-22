@@ -70,12 +70,11 @@ Duration: 30
 #### 1. Create an Event Hub
 Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub.
 
-See below sample screen capture for reference.
+See below sample screen capture for reference, here we have created a namespace called `SnowflakeTest`.
 
 ![](assets/eventhubs.png)
 
-Leave everything as default in the `Configure stack options` page and click `Next`.
-In the `Review` page, click `Submit`.
+### 2. Create a Linux virtual machine
 
 In about 10-30 minutes depending on your AWS region, the Cloudformation template provisions an MSK cluster with two brokers. It will also
 provision a Linux EC2 instance in the subnet you selected. We will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
