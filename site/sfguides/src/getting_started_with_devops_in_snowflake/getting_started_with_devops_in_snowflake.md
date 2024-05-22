@@ -543,35 +543,34 @@ SnowflakeCLI simplifies the development and deployment of the following Snowflak
 Here, we only use a fraction of its capabilities. We use it to first refresh the Git repository’s contents in Snowflake to then execute the parametrized deployment script `deploy_parametrized_pipeline.sql`.
 
 <!-- ------------------------ -->
-## Teardown
+## Cleanup
 
 Duration: 1
 
-Once you're finished with the Quickstart and want to clean things up, you can drop all the objects you created by running the teardown script. Open `steps/08_teardown.sql` in the VS Code extension and run all command using the "Execute All Statements" button in the upper right corner of the editor window.
+Once you're finished with the Quickstart and want to clean things up, you can drop all the objects you created by running the cleanup script. Open `steps/08_cleanup.sql` in the VS Code extension and run all command using the "Execute All Statements" button in the upper right corner of the editor window.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 2
 
-Wow, we have covered a lot of ground during this Quickstart! Not only can you now skip this year’s vacation planning, but you have also learned how to manage a data pipeline with DevOps practices. We followed the Infrastructure as Code principle and learned how to use Snowflake’s native version control mechanism in combination with declarative Create-or-Alters, making database change management much less error-prone and less painful. With the help of SnowflakeCLI and Jinja templating will can test our changes before automatically rolling them out to production with the help of a CI/CD pipeline.
+Wow, we have covered a lot of ground during this Quickstart! Not only can you now skip this year’s vacation planning, but you have also learned how to manage a data pipeline with DevOps practices. You followed the Infrastructure as Code principle and used Snowflake’s version control capabilities in combination with declarative Create-or-Alters to make database change management much less error-prone and less painful. With the help of SnowflakeCLI and Jinja templating you verified your changes in a test environment before automatically rolling them out to production with the help of a CI/CD pipeline.
 
-But we've really only just scratched the surface of what's possible with Snowflake DevOps. Hopefully you now have the building blocks, and examples, you need to get started integrating DevOps best practices into your own data engineering pipelines. So, what will you DevOps-ify first?
+But we've really only just scratched the surface of what's possible with Snowflake DevOps. You now have the building blocks, and examples, you need to get started integrating DevOps best practices into your own data engineering pipelines. So, what will you DevOps-ify first?
 
-### What we have covered
+### What You Learned
 
-We've covered a ton in this Quickstart, and here are the highlights:
+You have learned a ton in this guide. Here are the highlights:
 
-- Native Git Integration
-- Declarative Database Change Management
-- Parametrization of SQL scripts with Jinja templating
-- GitHub Actions (CI/CD) integration
-- Snowflake’s Visual Studio Code extension
-- SnowflakeCLI tool
-- Data Sharing/Marketplace (instead of ETL)
-- LLM interference with Snowflake Cortex
+- How to connect Snowflake to Git with the native Git integration
+- How to simplify database change management with declarative Create-or-Alters
+- How to verify your changes in a test environment with Jinja templating
+- How to use Snowflake’s Visual Studio Code extension
+- How to build CI/CD pipelines with SnowflakeCLI and GitHub Actions
+- How to gain access to the powerful data on Snowflake's Marketplace
+- How to enhance your data with Snowflake Cortex LLM functions
 
-### Related resources
+### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-devops-in-snowflake)
 - [DevOps in Snowflake: How Git and Database Change Management enable a file-based object lifecycle](https://medium.com/snowflake/devops-in-snowflake-how-git-and-database-change-management-enable-a-file-based-object-lifecycle-1f61a0d5257c)
