@@ -1,10 +1,10 @@
-id: getting_started_with_snowpipe_streaming_aws_msk
-summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK).
+id: getting_started_with_snowpipe_streaming_azure_eventhubs
+summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Azure Eventhubs.
 categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Kafka, Streaming, Amazon MSK, Snowpipe Streaming, SnowSQL
+tags: Getting Started, Kafka, Streaming, Azure, Eventhubs, Snowpipe Streaming, SnowSQL
 authors: James Sun
 
 # Getting Started with Snowpipe Streaming and Amazon MSK
@@ -23,10 +23,10 @@ Here are some of the use cases that can benefit from Snowpipe streaming:
 - Ingestion into ML feature stores
 
 In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution using 
-Snowflake's Snowpipe streaming and [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/).
+Snowflake's Snowpipe streaming and [Azure Event Hubs](https://azure.microsoft.com/en-us/products/event-hubs).
 
-The architecture diagram below shows the deployment. An MSK cluster and a Linux 
-EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
+The architecture diagram below shows the deployment. An MSK cluster and an [Azure Linux 
+Virtual Machine](https://azure.microsoft.com/en-us/products/virtual-machines) (jumphost) will be provisioned in an [Azure Virtual Network](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview). 
 The Linux jumphost will host the Kafka producer and Snowpipe streaming via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html).
 
 The Kafka producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kafka cluster before being picked up by the Kafka connector and delivered to a Snowflake table.
