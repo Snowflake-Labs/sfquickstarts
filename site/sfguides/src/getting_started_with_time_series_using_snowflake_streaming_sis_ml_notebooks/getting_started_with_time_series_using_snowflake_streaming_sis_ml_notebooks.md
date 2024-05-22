@@ -1282,6 +1282,8 @@ GROUP BY TIME_SLICE(TIMESTAMP, 5, 'MINUTE', 'START'), TIME_SLICE(TIMESTAMP, 5, '
 ORDER BY TAGNAME, START_TIMESTAMP;
 ```
 
+**For a one second tag (3600 data points over an hour), the results will show in five minute intervals containing 300 data points each, along with aggregates for counts, sum, average, and 95th percentile values**.
+
 <img src="assets/analysis_query_timebin.png" />
 
 
