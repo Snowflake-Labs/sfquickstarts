@@ -1488,9 +1488,9 @@ Now that you have a great understanding of running **Time Series Analysis**, we 
 <img src="assets/byo_functions.png" />
 
 
-### INFO: Table Functions Deploy
+### Table Functions Deploy
 
-In this section two types of Time Series table functions will be deployed for **resample time series data**.
+In this section two types of Time Series table functions will be deployed to **resample time series data**.
 
 #### Function 1 - Interpolation / Upsampling Time Series Data
 
