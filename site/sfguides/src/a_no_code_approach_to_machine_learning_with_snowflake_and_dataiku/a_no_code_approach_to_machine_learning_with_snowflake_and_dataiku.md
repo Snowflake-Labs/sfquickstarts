@@ -21,10 +21,9 @@ With Dataiku’s Visual Snowpark ML plugin - you won’t need to write a single 
 - Data Scientists - we’re all trying to roll our own abstracted ML training and deployment platform - and we think you’ll like this one.
 
 
-### Prerequisites:
-- None! You should be interested in using machine learning - which is just fancy pattern matching on past trends to predict the future
 
-`The Use Case:` Consumer lending is difficult. What factors about an individual and their loan application could indicate whether they’re likely to pay back the loan? How can our bank optimize the loans approved and rejected based on our risk tolerance? 
+### Use Case
+Consumer lending is difficult. What factors about an individual and their loan application could indicate whether they’re likely to pay back the loan? How can our bank optimize the loans approved and rejected based on our risk tolerance? 
 We’ll use machine learning to help with this decision making process. Our model will learn patterns between historical loan applications and default, then we can use it to make predictions for a fresh batch of applications. 
 
 
@@ -180,9 +179,50 @@ It's beyond the scope of this course to cover plugins in depth but for this lab 
 
 1. Click on `Plugins` on the left menu
 2. Select `+ ADD A PLUGIN` 
-3. Find `Visual SnowparkML`, check `Install on my Dataiku instance`, and click `INSTALL`
+3. Find `Visual SnowparkML`
+4. Check `Install on my Dataiku instance`, and click `INSTALL`
 
 ![img](assets/PC8.png)
+
+
+![img](assets/PC9.png)
+
+1. Click on `Code Envs` on the left menu
+2. Select `ADD A CODE ENVIRONMENT` 
+3. Select  `NEW PYTHON ENV`
+4. Name your code env `py_39_snowpark` **NOTE: The name must match exactly** 
+5. Click `CREATE`
+
+![img](assets/PC10.png)
+
+![img](assets/PC11.png)
+
+![img](assets/PC12.png)
+
+6. Select `Pandas 1.3 (Python 3.7 and above) from Core Packages menu
+7. Add the following packages
+```sql
+scikit-learn==1.3.2
+mlflow==2.9.2
+statsmodels==0.12.2
+protobuf==3.16.0
+xgboost==1.7.3
+lightgbm==3.3.5
+matplotlib==3.7.1
+scipy==1.10.1
+snowflake-snowpark-python==1.14.0
+snowflake-snowpark-python[pandas]==1.14.0
+snowflake-connector-python[pandas]==3.7.0
+MarkupSafe==2.0.1
+cloudpickle==2.0.0
+flask==1.0.4
+Jinja2==2.11.3
+snowflake-ml-python==1.5.0
+```
+8. Select `rebuild env` from the menu on the left
+9. Click `Save and update`
+
+![img](assets/PC13.png)
 
 You've now successfully set up your Dataiku trial account via Snowflake's Partner Connect. We are now ready to continue with the lab. For this, move back to your Snowflake browser.
 
