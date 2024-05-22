@@ -33,7 +33,6 @@ The Kafka producer calls the data sources' REST API and receives time-series dat
 The data in Snowflake table can be visualized in real-time with [Azure Managed Grafana](https://azure.microsoft.com/en-us/products/managed-grafana) and [Streamlit](https://streamlit.io)
 The historical data can also be analyzed by BI tools like [Microsoft Power BI on Azure](https://azure.microsoft.com/en-us/products/power-bi).
 
-
 ![Architecture diagram for the Demo](assets/Overview-2-flight-arch.png)
 
 ![Data visualization](assets/Overview-2-dashboarding.png)
@@ -41,7 +40,7 @@ The historical data can also be analyzed by BI tools like [Microsoft Power BI on
 ### Prerequisites
 
 - Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects
-- Familiarity with AWS Services (e.g. EC2, MSK, etc), Networking and the Management Console
+- Familiarity with Azure Services, Networking and the Management Console
 - Basic knowledge of Python and Linux shell scripting
 
 ### What You'll Need Before the Lab
@@ -49,47 +48,27 @@ The historical data can also be analyzed by BI tools like [Microsoft Power BI on
 To participate in the virtual hands-on lab, attendees need the following resources.
 
 - A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
-- An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
-- Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. Please refer
-to this [AWS document](https://docs.aws.amazon.com/whitepapers/latest/amazon-msk-migration-guide/amazon-managed-streaming-for-apache-kafka-amazon-msk.html) for the MSK networking topology)
-  - In the AWS account, [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html), preferrably in the same region as the Snowflake account
-  - In the VPC, [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-subnets.html) and attach an [internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) to allow egress traffic to the internet by using a routing table and security group for outbound traffic.
-  Note that the subnets can be public or private, for private subnets, you will need to attach a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to allow egress traffic to the internet. Public subnets are sufficient for this lab.
-  - Now if you have decided to create your own VPC/subnets, for your convenience, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake-VPC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/MyFullVPC-2pub-2priv.json) to deploy a VPC with a pair of public and private subnets, internet gateway and NAT gateway for you. 
-Note that you must have network administrator permissions to deploy these resources. 
+- An [Azure Account](https://learn.microsoft.com/en-us/dotnet/azure/create-azure-account) with administrator privileges.
 
 ### What You'll Learn
 
-- Using [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/)
-- Connecting to EC2 instances with [Amazon System Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), this is an alternative
-to SSH if your instance is in a private subnet
+- Using [Azure Event Hubs](https://azure.microsoft.com/en-us/products/event-hubs).
 - Using [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html), the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 - Using Snowflake to query tables populated with time-series data
 
 ### What You'll Build
 
-- [Create a provisioned Kafka cluster](https://docs.aws.amazon.com/msk/latest/developerguide/msk-create-cluster.html)
+- [Create an Azure Event Hub](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create)
 - Create Kafka producers and connectors
-- Create topics in a Kafka cluster
-- A Snowflake database for hosting real-time flight data
+- Create an Event hub (Kafka topic) for data streaming 
+- A Snowflake database to receive real-time flight data
 
 <!---------------------------->
 ## Create a provisioned Kafka cluster and a Linux jumphost in AWS
 Duration: 30
 
-#### 1. Create a Linux VM
-The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure
-the communications between the MSK cluster and clients are secure. 
-
-First, follow this [quickstart](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu)
-to launch a Linux VM on Azure cloud. Make sure that you are able to ssh into the VM and do not install the web server.
-
-Click `Next` at the `Create stack` page. 
-Set the Stack name or modify the default value to customize it to your identity. Leave the default Kafka version as is. For `Subnet1` and `Subnet2`, in the drop-down menu, pick two different subnets respectively, they can be either public or private subnets depending on the network layout of your VPC. Please note that if
-you plan to use [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) later, you should choose private subnets here. 
-For `MSKSecurityGroupId`, we recommend
-using the [default security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html) in your VPC, if you do not have the default security group, [create one](https://docs.aws.amazon.com/vpc/latest/userguide/default-security-group.html) on your own before moving forward. Leave `TLSMutualAuthentication` as false and the jumphost instance type and AMI id as default before clicking
-`Next`. 
+#### 1. Create an Event Hub
+Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub.
 
 See below sample screen capture for reference.
 
