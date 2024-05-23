@@ -68,9 +68,9 @@ Below is a schematic of the data share
 ### Example Use Cases
 
 From a business point of view, this architecture exists to satisfy several use cases. Examples include:
-- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBank's data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a service contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
+- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this example, Zamoboni required access to SnowBank's data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a service contract with a bank. They could execute a default risk model over the customer attributes that the bank has.
 - Superannuation and Life Insurance Companies. A more specific example above is claims processing for life insurance. Often times, Superannuation companies have the necessary attributes required by the insurance companies for claims processing.
-- Whitelabel Insurance. Some insurance companies have offerings to whitelabel insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
+- White label Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the white label partner for risk scoring is analogous to this use case.
 
 ### Dataset Details
 
@@ -92,7 +92,7 @@ Duration: 10
 
 Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/). Follow the prompts to create a Snowflake Account.
 
-Repeat the process above. Be sure to select the same cloud and region as the first account your created. Although it is possible to share accross clouds and regions, this guide will not cover this scenario.
+Repeat the process above. Be sure to select the same cloud and region as the first account your created. Although it is possible to share across clouds and regions, this guide will not cover this scenario.
 
 Check your emails and follow the prompts to activate both the accounts. One will be the Provider (SnowBank) and one will be the Consumer (Zamboni).
 
@@ -106,7 +106,7 @@ In our business scenario, this step represents SnowBank loading data from their 
 
 ### Initial Set Up
 
-We first need to accept the terms and conditions to use Ananconda and Snowflake Marketplace. Navigate to Admin > Billings and Terms and enable both Anaconda and Snowflake Marketplace. Screenshot is below ![Diagram](assets/accept_terms_navigation.png)
+We first need to accept the terms and conditions to use Anaconda and Snowflake Marketplace. Navigate to Admin > Billings and Terms and enable both Anaconda and Snowflake Marketplace. Screenshot is below ![Diagram](assets/accept_terms_navigation.png)
 
 Next, open up a worksheet and run all following steps as the ACCOUNTADMIN role
 
@@ -130,7 +130,7 @@ CREATE OR REPLACE WAREHOUSE QUERY_WH WITH
 
 ### Load Data 
 
-Next we will create a database and schema that will house the tables that store our data to be shared with Zamoboni.
+Next we will create a database and schema that will house the tables that store our data to be shared with Zamboni.
 
 ```SQL
 -- Create the application database and schema
@@ -263,7 +263,7 @@ In the SnowBank account, open up Snowsight and navigate to Data > Provider Studi
 
 In the modal, enter the name of the Private Listing that we wish to share with our external partner (Zamboni). We have named it cc_default_training_data. They will securely access this data from their own Snowflake account, and share back the scored results. We have selected "Only Specified Consumers" in our discovery settings, so that our data can only be seen with the partners we explicitly want to share with. Screenshot is below: ![Diagram](assets/private_listing_navigation.png)
 
-In the next modal, click the "+ Select" option. Select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing by clicking "Done". Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consumer account. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshow is below: ![Diagram](assets/create_listing_navigation.png)
+In the next modal, click the "+ Select" option. Select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing by clicking "Done". Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consumer account. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshot is below: ![Diagram](assets/create_listing_navigation.png)
 
 Click Publish, and now your listing is live and ready for the consumer. No movement of data, no SFTP. The data is live and ready to query. Next we switch over to the Zamboni account to accept the share.
 
@@ -312,7 +312,7 @@ We will train our model in the next step. We stay in this account.
 ## Consumer Account (Zamboni) - Create Model
 Duration: 45
 
-For this section, make sure you download the corresponding git repo (https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration) so you have the files referenced in this section.
+For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration) so you have the files referenced in this section.
 
 ### Set Up Snowpark for Python and Snowpark ML
 
@@ -380,7 +380,7 @@ You should see BATCH_PREDICT_CC_DEFAULT Vectorized UDF we deployed in the previo
 
 Next we will create some stored procedures which hold our feature engineering logic. We will do this so we can later execute these Stored Procedures from a Task for automation.
 
-Run the following coide in a worksheet to create the Stored Procedure.
+Run the following code in a worksheet to create the Stored Procedure.
 
 
 ```SQL
@@ -631,7 +631,7 @@ You should now see SCORED_DATA as one of the Databases in your catalog, with the
 ## Provider Account (SnowBank) -  Add New Data
 Duration: 10
 
-In this section, we will add some new data to demonstate how the automated pipeline would operate between the two accounts.
+In this section, we will add some new data to demonsrate how the automated pipeline would operate between the two accounts.
 
 Specifically, we will add the credit card default information of 2 customers (new_customer_1 and new_customer_2) to the CC_DEFAULT_UNSCORED_DATA in the SnowBank account. This will then trigger the Stream in the Zamboni account via the live share. Thereafter, the feature engineering task will run, and the scoring model will run sequentially via tasks, and the new data will be appended to the SCORED_TABLE in the Zamboni Account. Since that table is shared live with SnowBank, we will see the new scored results. This entire pipeline is automated using Snowflake Features.
 
@@ -647,10 +647,10 @@ In a fully automated scenario where the CDC task runs on a schedule, this is all
 We have not run ours on a schedule so we can step through what is happening. However the principle is the same. Let's switch over to the Zamboni account and see it in action.
 
 <!-- ------------------------ -->
-## Consumer Account (Zamoboni) -  Manually Inspect Automated Pipeline
+## Consumer Account (Zamboni) -  Manually Inspect Automated Pipeline
 Duration: 15
 
-In production, this step would most likely be an automated ingestion pipeline form a source system. However for this example we have set the schedule to once a year to avoind unnecessary credit consumption
+In production, this step would most likely be an automated ingestion pipeline form a source system. However for this example we have set the schedule to once a year to avoid unnecessary credit consumption
 
 First, lets check if our stream has picked up the changes in our shared table
 
@@ -707,27 +707,10 @@ WHERE "customer_ID" = 'new_customer_2';
 We should see from the results that the newly scored data is in our Snowflake Account.
 
 <!-- ------------------------ -->
-## Wrap Up and Summary
-Duration: 5
-
-From this quickstart, we can see how we can create an end-to-end automated ML pipeline between two Snowflake accounts seamlessly. We were able to:
-- Share live data between 2 accounts
-- Train and Deploy an ML Model
-- Use Streams and Tasks to automate the pipeline
-
-To recap, from a business point of view, this architecture exists to satisfy several use cases. Examples include:
-- This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this exmaple, Zamoboni required access to SnowBanks data to risk score their data. A specific example of this could be a [Lenders Mortgage Insurance](https://insurancecouncil.com.au/articles/lenders-mortgage-insurance/) company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has, without the data leaving the security and governance controls of Snowflake.
-- Superannuation and Life Insurance Companies. Another example of sharing data securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a [streamlined customer claims process](https://www.snowflake.com/trending/insurance-analytics/). With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.
-- Whitelabel Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analagous to this use case.
-
-
-The next Quickstart in this series extends on this idea by leveraging our Native Apps framework.
-
-<!-- ------------------------ -->
 ## Clean Up
 Duration: 10
 
-Open up the Zamoboni Account and [unpublish the Listing](https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing). You can do this by navigating to Data > Provider Studio > Listings, and select the listing. A screenshot is below ![Diagram](assets/delist_navigation.png)
+Open up the Zamboni Account and [unpublish the Listing](https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing). You can do this by navigating to Data > Provider Studio > Listings, and select the listing. A screenshot is below ![Diagram](assets/delist_navigation.png)
 
 Next select the "Live" button in the top right and select "Unpublish". After that, select the bin icon and delete the listing. A screenshot is below ![Diagram](assets/delete_listing_navigation.png)
 
@@ -759,3 +742,33 @@ DROP DATABASE DATA_SHARING_DEMO;
 DROP DATABASE SCORED_DATA;
 DROP WAREHOUSE QUERY_WH;
 ```
+
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+Duration: 5
+
+Congratulations! You have successfully created an end-to-end automated ML pipeline between two Snowflake accounts leveraging Snowflake's Collaboration features. 
+
+From a business point of view, this architecture could satisfy several use cases. Examples include:
+- This SnowBank and Zamboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this example, Zamboni required access to SnowBank's data to risk score their data. A specific example of this could be a [Lenders Mortgage Insurance](https://insurancecouncil.com.au/articles/lenders-mortgage-insurance/) company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has, without the data leaving the security and governance controls of Snowflake.
+- Superannuation and Life Insurance Companies. Another example of sharing data securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a [streamlined customer claims process](https://www.snowflake.com/trending/insurance-analytics/). With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.
+- White label Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analogous to this use case.
+
+### What You Learned
+
+From this quickstart, we can see how we can create an end-to-end automated ML pipeline between two Snowflake accounts seamlessly. We were able to:
+- Share live data between 2 accounts
+- Train and Deploy an ML Model
+- Use Streams and Tasks to automate the pipeline
+
+The next Quickstart in this series extends on this idea by leveraging our Native Apps framework.
+
+### Related Resources
+
+- Source code on GitHub is found [here](https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration/tree/main)
+- More information on Snowflake’s Collaboration features [here](https://www.snowflake.com/en/data-cloud/workloads/collaboration/)
+- Snowflake Documentation on data sharing and collaboration [here](https://docs.snowflake.com/guides-overview-sharing)
+- More information on Snowpark / Machine Learning in Snowflake can be found [here](https://www.snowflake.com/en/data-cloud/workloads/ai-ml/)
+- Developer Guide on End-to-End Machine Learning in Snowflake [here](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+- More information on Native Apps can be found [here](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/)
