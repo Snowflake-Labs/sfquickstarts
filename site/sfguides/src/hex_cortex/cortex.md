@@ -3,7 +3,7 @@ id: building_ml_models_in_minutes_with_hex_and_cortex
 summary: This lab will walk you through how to use Cortex ML Functions and Hex.
 categories: data-science-&-ml,partner-integrations
 environments: web
-status: Published
+status: Unpublished
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Hex, Notebooks, Partner Connect
 
@@ -73,22 +73,25 @@ Now we can move back over to Hex and get started on our project. The first thing
 
 </button>
 
-Select Get a copy, select your new Hex org, and ensure the Hex project is in your new Hex org. 
+- Select Get a copy.
+- Select your new or existing Hex org. 
 
 Now that you've got your project, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to import our Snowflake connection to our project.
 
-We can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake. Once you import this connection, all the setup steps will be completed and we can dive into the project. 
+We can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake if you created the Hex account via Partner Connect.
 
-![](assets/vhol-dc.gif)
+![](assets/import_connection.png)
 
-## Writing Data Back To Snowflake
-Duration: 5
+If you had an existing Hex org and did not create one via Partner Connect please follow [Hex documentation](https://learn.hex.tech/docs/connect-to-data/data-connections/data-connections-introduction) on creating a Snowflake connection. 
 
-In this project we will write  data into our new Snowflake instance. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
+### Common Problems
+If coming from Partner Connect or creating a new database connection, ensure that your database connection has both the Snowpark and Writeback toggle enabled. Navigate to the Settings window and select the desired Snowflake database connection. 
 
-![](assets/vhol-add-write.gif)
+![](assets/edit_connection.png)
 
-Detailed instructions on how and when to utilize this type of cell is found in the Hex project.
+Enable the Snowpark and Writeback toggles.
+
+![](assets/connection_toggles.png)
 
 ## Hex Project
 Duration: 45
