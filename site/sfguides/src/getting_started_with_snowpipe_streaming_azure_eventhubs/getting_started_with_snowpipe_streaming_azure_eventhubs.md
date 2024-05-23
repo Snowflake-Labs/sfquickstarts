@@ -599,7 +599,7 @@ DROP USER IF EXISTS STREAMING_USER;
 ```
 
 <!---------------------------->
-## Conclusions
+## Conclusion
 Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using an Azure event hub and the Kafka connector for Snowpipe streaming hosted on a VM. You can also containerize the connector on the [Azure Kubernetes Services (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) to leverage the benefits of scability and manageability.
