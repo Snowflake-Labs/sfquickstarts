@@ -47,7 +47,7 @@ The historical data can also be analyzed by BI tools like [Microsoft Power BI on
 
 To participate in the virtual hands-on lab, attendees need the following resources.
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
+- A [Snowflake Enterprise Account on Azure](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
 - An [Azure Account](https://learn.microsoft.com/en-us/dotnet/azure/create-azure-account) with administrator privileges.
 
 ### What You'll Learn
@@ -64,27 +64,35 @@ To participate in the virtual hands-on lab, attendees need the following resourc
 - A Snowflake database to receive real-time flight data
 
 <!---------------------------->
-## Create a provisioned Kafka cluster and a Linux jumphost in AWS
+## Create an Event Hub and a Linux virtual machine in Azure cloud
 Duration: 30
 
-#### 1. Create an Event Hub
-Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub. Select the `Standard` [pricing tier](https://azure.microsoft.com/en-us/pricing/details/event-hubs/) to use Apache Kafka. Make sure that you select public access to the Event Hub in the networking setting.
+#### 1. Create a resource group
+
+Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal) to create a resource group, say `Streaming`.
+
+![](assets/rg.png)
+
+#### 2. Create an Event Hub in the resource group
+Go to the resource group, and click `+ Create` tab to create an Event hub by
+following this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub. Select the `Standard` [pricing tier](https://azure.microsoft.com/en-us/pricing/details/event-hubs/) to use Apache Kafka. Make sure that you select public access to the Event Hub in the networking setting.
 
 See below sample screen capture for reference, here we have created a namespace called `SnowflakeTest`.
 
 ![](assets/eventhubs.png)
 
-### 2. Create a Linux virtual machine
-Follow this [doc](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/deploying_rhel_8_on_microsoft_azure/assembly_deploying-a-rhel-image-as-a-virtual-machine-on-microsoft-azure_cloud-content-azure#:~:text=attach%20your%20subscriptions.-,The%20subscription%20includes%20the%20Red%20Hat%20product%20cost;%20you%20pay,Hat%20Update%20Infrastructure%20(RHUI).) to create a Linux(Red Hat enterprise) virtual machine in Azure. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can also select Ubuntu or other Linux distributions but will need to modify the scripts.
+### 3. Create a Linux virtual machine
+In the same resource group, create a Linux virtual machine by
+following this [doc](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/deploying_rhel_8_on_microsoft_azure/assembly_deploying-a-rhel-image-as-a-virtual-machine-on-microsoft-azure_cloud-content-azure#:~:text=attach%20your%20subscriptions.-,The%20subscription%20includes%20the%20Red%20Hat%20product%20cost;%20you%20pay,Hat%20Update%20Infrastructure%20(RHUI).) to create a Linux(Red Hat enterprise) virtual machine in Azure. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can also select Ubuntu or other Linux distributions but will need to modify the scripts.
 
 Make sure that you also allow ssh access to the VM in the network rule setting.
 
 Once the VM is provisioned, we will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
 
-#### 3. Connect to the Linux VM console
+#### 4. Connect to the Linux VM console
 From you local machine, either using a ssh application such as [Putty](https://www.putty.org/) if you have a Windows PC or simply the ssh CLI (`ssh -i <your private_key for the VM> <VM's public IP address> -l azureuser)` for Linux or Mac based systems.
 
-#### 4. Create a key-pair to be used for authenticating with Snowflake
+#### 5. Create a key-pair to be used for authenticating with Snowflake
 Create a key pair in the VM console by executing the following commands. You will be prompted to give an encryption password, remember 
 this phrase, you will need it later.
 
@@ -114,7 +122,7 @@ see below example screenshot:
 ![](assets/key-pair-sessionmgr-3.png)
 
 
-#### 5. Install the Kafka connector for Snowpipe streaming
+#### 6. Install the Kafka connector for Snowpipe streaming
 
 Run the following command to install the Kafka connector and Snowpipe streaming SDK
 
@@ -145,7 +153,7 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fi
 
 ```
 
-#### 6. Retrieve the connection string 
+#### 7. Retrieve the connection string 
 
 Go to the Event Hubs console, select the namespace you just created, then select `Settings` and `Shared access policies` on the left pane and click `RootManageSharedAccessKey` policy. See example screenshot below.
 
@@ -177,7 +185,7 @@ echo "export BS=$BS" >> ~/.bashrc
 
 ```
 
-#### 7. Create a configuration file `connect-standalone.properties` for the Kafka connector
+#### 8. Create a configuration file `connect-standalone.properties` for the Kafka connector
 
 Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/azureuser/snowpipe-streaming/scripts` for the client to authenticate with the Event hubs namespace.
 
@@ -212,7 +220,7 @@ EOF
 ```
 A configuration file `connect-standalone.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
-#### 8. Create a security client.properties configuration file for the producer
+#### 9. Create a security client.properties configuration file for the producer
 
 Run the following commands to create a security configuration file `client.properties`.
 
@@ -229,7 +237,7 @@ EOF
 
 A configuration file `client.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
-#### 9. Create an event hub called “streaming” in the namespace
+#### 10. Create an event hub called “streaming” in the namespace
 
 Go to the Event Hubs namespace and clicke `+ Event Hub`.
 
@@ -478,7 +486,8 @@ If everything goes well, you should something similar to screen capture below:
 
 #### 2. Start the producer that will ingest real-time data to the Event Hub
 
-Start a new Linux session in `step 3` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane.
+In the VM shell, run the following command:
+
 ```commandline
 curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
