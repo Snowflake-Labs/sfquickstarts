@@ -157,11 +157,9 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fi
 
 #### 7. Retrieve the connection string 
 
-Go to the Event Hubs console, select the namespace you just created, then select `Settings` and `Shared access policies` on the left pane and click `RootManageSharedAccessKey` policy. See example screenshot below.
+Go to the Event Hubs console, select the namespace you just created, then select `Settings` and `Shared access policies` on the left pane and click `RootManageSharedAccessKey` policy. Then copy the `Connection string-primary key`, see screenshot below.
 
-![](assets/bs-3.png)
-
-Then copy the `Connection string-primary key`, see screenshot below.
+See example screenshot below.
 
 ![](assets/bs-4.png)
 
