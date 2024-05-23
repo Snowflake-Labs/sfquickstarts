@@ -1244,7 +1244,7 @@ Let's publish this dashboard to share this insight and feedback with others. Cli
 
 Congratulations! you have completed the lab.
 
-In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that data with geospatial data, and weather data from Snowflake Data marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
+In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that data with geospatial data, and weather data from Snowflake Marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
 
 [To skip individual commands download tb_reset_vhol.sql & create Worksheet to run SQL file](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_reset_vhol.sql).
 
@@ -1291,7 +1291,7 @@ DROP WAREHOUSE IF EXISTS tasty_bi_wh;
 [Secure Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro.html)
 <br>
 </br>
-[Snowflake Data Marketplace](https://other-docs.snowflake.com/en/data-marketplace.html)
+[Snowflake Marketplace](https://other-docs.snowflake.com/en/data-marketplace.html)
 <br></br>
 
 ### Video on the Demo

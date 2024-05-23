@@ -19,7 +19,7 @@ Duration: 1
 
 이 랩의 스토리는 이동성 변화와 더불어 유럽의 COVID-19 사례를 조사할 것입니다. 과거 데이터를 사용하여 COVID-19 사망률을 예측하고 이동성 변화가 이에 큰 영향을 미쳤는지 확인하고자 합니다.
 
-데이터 소스는 Snowflake Data Marketplace에서 가져온 Starschema Covid-19 데이터베이스입니다. Snowflake의 Snowsight에서 데이터를 분석한 다음 Dataiku로 이동하여 일부 변환(계산을 위해 Snowflake로 푸시다운되는 것)을 수행할 것입니다. 그런 다음 예측 모델을 생성할 것입니다.
+데이터 소스는 Snowflake Marketplace에서 가져온 Starschema Covid-19 데이터베이스입니다. Snowflake의 Snowsight에서 데이터를 분석한 다음 Dataiku로 이동하여 일부 변환(계산을 위해 Snowflake로 푸시다운되는 것)을 수행할 것입니다. 그런 다음 예측 모델을 생성할 것입니다.
 
 사용할 특정 테이블은 지방과 일별로 사례 수를 보고하는 JHU_COVID_19 데이터 세트와 다양한 지역에 걸쳐 국가의 주/지역과 일별로 이동성의 퍼센트 변화를 보고하는 GOOG_GLOBAL_MOBILITY_REPORT 데이터 세트입니다.
 
@@ -255,21 +255,21 @@ Negative : 사용자 암호(Snowflake에서 생성되며 절대 표시되지 않
 ![img](assets/dataiku28.png)
 
 <!-- ------------------------ -->
-## Snowflake Data Marketplace에서 COVID-19 데이터 가져오기 및 준비
+## Snowflake Marketplace에서 COVID-19 데이터 가져오기 및 준비
 
 Duration: 20
 
-Positive : **Snowflake의 데이터 공유** <br> Snowflake Data Marketplace는 Snowflake의 호스팅된 데이터 익스체인지입니다. 여기에서 모든 Snowflake 고객은 원활하게 타사 데이터에 액세스할 수 있습니다. 또한 여기에서 회사는 데이터를 게시하고 다른 Snowflake 고객이 검색하고 구매할 데이터 서비스를 제공할 수 있습니다. 오늘날 220개 이상의 데이터 목록과 더불어 100명 이상의 데이터 공급자를 보유하고 있습니다. 더 자세한 정보는 [이 웹 페이지](https://www.snowflake.com/data-marketplace/)를 검토하십시오. <br> 또한 Snowflake Data Exchange를 확장하고, 여러분의 고객을 위한 파일을 생성하기 위해 FTP, 파일 공유 및 ETL 프로세스의 필요를 없앨 수 있으며, Snowflake Data Exchange를 표준화할 수 있습니다. 이는 데이터 사일로를 허물 것이며 이를 통해 여러분의 회사, 공급업체, 파트너 또는 고객을 높은 수준으로 통제하는 방식으로 마찰 없이 데이터를 공유할 수 있습니다. 여러분의 Data Exchange는 단일 데이터 사본에 대한 실시간 액세스를 통제합니다. 이를 통해 데이터에 대한 액세스를 안전하게 제어할 수 있으며, 파일을 복사하거나 ETL 파이프라인을 구축하는 것과 같은 기존 데이터 공유 메서드의 비용과 문제를 제거합니다.
+Positive : **Snowflake의 데이터 공유** <br> Snowflake Marketplace는 Snowflake의 호스팅된 데이터 익스체인지입니다. 여기에서 모든 Snowflake 고객은 원활하게 타사 데이터에 액세스할 수 있습니다. 또한 여기에서 회사는 데이터를 게시하고 다른 Snowflake 고객이 검색하고 구매할 데이터 서비스를 제공할 수 있습니다. 오늘날 220개 이상의 데이터 목록과 더불어 100명 이상의 데이터 공급자를 보유하고 있습니다. 더 자세한 정보는 [이 웹 페이지](https://www.snowflake.com/data-marketplace/)를 검토하십시오. <br> 또한 Snowflake Data Exchange를 확장하고, 여러분의 고객을 위한 파일을 생성하기 위해 FTP, 파일 공유 및 ETL 프로세스의 필요를 없앨 수 있으며, Snowflake Data Exchange를 표준화할 수 있습니다. 이는 데이터 사일로를 허물 것이며 이를 통해 여러분의 회사, 공급업체, 파트너 또는 고객을 높은 수준으로 통제하는 방식으로 마찰 없이 데이터를 공유할 수 있습니다. 여러분의 Data Exchange는 단일 데이터 사본에 대한 실시간 액세스를 통제합니다. 이를 통해 데이터에 대한 액세스를 안전하게 제어할 수 있으며, 파일을 복사하거나 ETL 파이프라인을 구축하는 것과 같은 기존 데이터 공유 메서드의 비용과 문제를 제거합니다.
 
-### Snowflake Data Marketplace에서 COVID-19 데이터 가져오기
+### Snowflake Marketplace에서 COVID-19 데이터 가져오기
 
-Snowflake Data Marketplace에 액세스하기 위해 다음 단계를 따르십시오.
+Snowflake Marketplace에 액세스하기 위해 다음 단계를 따르십시오.
 
 현재 역할이 `ACCOUNTADMIN`(오른쪽 상단에 표시됨)인지 확인합니다. 아니라면 오른쪽 상단에 있는 프로필을 클릭하여 역할을 업데이트합니다.
 
 ![img](assets/dataiku29.png)
 
-상단에 있는 **Data Marketplace** 아이콘을 클릭하고 **Explore the Snowflake Data Marketplace**를 클릭합니다.
+상단에 있는 **Data Marketplace** 아이콘을 클릭하고 **Explore the Snowflake Marketplace**를 클릭합니다.
 
 ![img](assets/dataiku30.png)
 
@@ -277,7 +277,7 @@ Data Marketplace를 처음 사용하는 경우 다음 로그인 화면이 나타
 
 ![img](assets/dataiku31.png)
 
-이제 Snowflake Data Marketplace로 리디렉션될 것입니다.
+이제 Snowflake Marketplace로 리디렉션될 것입니다.
 
 이는 여러 업계에 걸쳐 다양한 외부 데이터 소스를 표시할 것입니다. 오른쪽 상단에 있는 Search 상자를 통해 목록 또는 데이터 공급자를 검색할 수 있습니다. 왼쪽에 있는 사이드 메뉴는 Data Marketplace에서 사용 가능한 데이터 카테고리를 보여줍니다.
 

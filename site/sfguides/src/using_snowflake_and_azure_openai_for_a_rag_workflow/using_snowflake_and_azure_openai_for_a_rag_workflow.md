@@ -3,9 +3,9 @@ summary: Using Snowflake with Azure OpenAI to build a RAG workflow
 categories: featured,rag,app-development, azure, openai, streamlit, genai, ai, ml, image
 environments: web
 status: Published
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: RAG, Generative AI, Snowflake External Access, Azure, OpenAI, Snowpark, Streamlit
 authors: Matt Marzillo
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 
 # Using Snowflake with Azure OpenAI to build a RAG workflow
 <!-- ------------------------ -->
@@ -128,7 +128,7 @@ The last two lines of code here create a new table that adds a field for the emb
 
 ```sql
 use role ACCOUNTADMIN;
-use database RETAIL_HOL;
+use database REVIEWS_DB;
 use warehouse HOL_WH;
 
 CREATE OR REPLACE NETWORK RULE CHATGPT_NETWORK_RULE
@@ -147,7 +147,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENAI_INTEGRATION
 
 --Create function for embeddings with azure openai
 CREATE OR REPLACE FUNCTION CHATGPT_EMBED(text STRING)
-returns string
+returns array
 language python
 runtime_version=3.8
 handler = 'ask_CHATGPT_EMBED'
@@ -188,7 +188,7 @@ $$;
 
 -- Create table with embeddings from Azure OpenAI
 CREATE OR REPLACE TABLE MOVIE_REVIEWS_EMBEDDING AS 
-SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC;
+SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC LIMIT 1000;
 ```
 
 <!-- ------------------------ -->
@@ -223,22 +223,25 @@ st.markdown('------')
 
 # Use the job description to write the job to a table and run the function against it:
 if(st.button('Ask ChatGPT')):
-    
+
+
     context = session.sql(f"""
     select movie_review from
     (
     select 
         Review as movie_review,
-        TO_VARIANT(chatgpt_embed('{question_prompt}')) as q_embed,
+        CAST(chatgpt_embed('{question_prompt}')AS VECTOR(FLOAT, 1536)) as q_embed,
         EMBEDDING,
-        JAROWINKLER_SIMILARITY(EMBEDDING, q_embed) as sim
+        VECTOR_COSINE_SIMILARITY(EMBEDDING, q_embed) as sim
     from 
-        MOVIE_REVIEWS_EMBEDDING as content
+        MOVIE_REVIEWS_EMBEDDING as content 
     where
-        sim > 60
+        sim > .5
     order by 
         sim desc
     )""")
+
+    
     context_list = context.to_pandas()
     context_list = context_list.MOVIE_REVIEW.str.cat(sep='NEXT REVIEW').replace("'", "")
     result = session.sql(f"""SELECT chatgpt('{question_prompt}' || 'using the following information as context' || '{context_list}')""").collect()
