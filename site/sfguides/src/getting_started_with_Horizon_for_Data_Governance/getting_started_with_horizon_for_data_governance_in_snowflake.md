@@ -38,20 +38,9 @@ Before we dive into the lab, lets take a look at a typical governance workflow a
 ![img](assets/5Pillars.png)
 
   
-![img](assets/lab.png)
-
-### Background video resources 
-
-#### Data Engineer Persona
-<video id="MdZ1PaJWH2w"></video>
 
 
-#### Data Governor/Steward Persona  
-<video id="bF6FAMeGEZc"></video> 
-
-
-#### Governor Admin Persona  
-<video id="doView4YqUI"></video> 
+Now that you have the introduction to Horizon and our personas, lets get started.
 
 <!-- ------------------------ -->
 ## Setup
