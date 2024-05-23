@@ -165,7 +165,7 @@ see below example screenshot:
 ![](assets/key-pair-sessionmgr-3.png)
 
 <!---------------------------->
-## Prepare the Snowflake cluster for streaming
+## Prepare the Snowflake account for streaming
 Duration: 15
 
 #### 1. Creating user, role, and database

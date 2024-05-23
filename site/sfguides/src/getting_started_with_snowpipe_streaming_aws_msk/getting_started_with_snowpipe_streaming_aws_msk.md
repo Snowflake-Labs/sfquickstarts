@@ -295,7 +295,7 @@ See below example screenshot:
 ![](assets/list-kafka-topic.png)
 
 <!---------------------------->
-## Prepare the Snowflake cluster for streaming
+## Prepare the Snowflake account for streaming
 Duration: 10
 
 #### 1. Creating user, role, and database
