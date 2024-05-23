@@ -19,6 +19,25 @@ In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing
  - a Data Governor monitoring and masking PII
  - a Data Governor Admin auditing access and lineage 
 
+### Introduction to Horizon
+
+Before we dive into the lab, lets take a look at a typical governance workflow and learn a bit more about the personas we will be exploring today. 
+#### Typical Governance Workflow  
+![img](assets/workflow.png)
+
+#### 5 Pillars of Horizon  
+![img](assets/5Pillars.png)
+
+#### [Data Engineer Persona Video](https://youtu.be/MdZ1PaJWH2w?si=o8k8HDrzQjZ5Jhst)  
+
+
+#### [Data Governor/Steward Persona Video](https://youtu.be/bF6FAMeGEZc?si=mKxGlzJL6843B-FK)  
+
+
+#### [Data Governor Admin Persona Video](https://youtu.be/doView4YqUI?si=tQd_KP7YzIIvogla)  
+
+Now that you have the introduction to Horizon and our personas, lets get started.
+
 ### - What You’ll Learn 
 - How to protect sensitive data using Snowflake's role-based masking policies
 - How to visualize column-level lineage for impact analysis
@@ -26,22 +45,6 @@ In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing
 
 ### - What You’ll Need 
 - A trial [Snowflake](https://signup.snowflake.com/) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
-
-## Introduction to Horizon
-Duration: 30
-
-Before we dive into the lab, lets take a look at a typical governance workflow and learn a bit more about the personas we will be exploring today. 
-### Typical Governance Workflow  
-![img](assets/workflow.png)
-
-### 5 Pillars of Horizon  
-![img](assets/5Pillars.png)
-
-  
-
-
-Now that you have the introduction to Horizon and our personas, lets get started.
-
 <!-- ------------------------ -->
 ## Setup
 Duration: 10
@@ -904,11 +907,11 @@ ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS
     SET AGGREGATION POLICY HRZN_DB.TAG_SCHEMA.aggregation_policy;
 ````    
 
-Lets try running a simple SELECT *?
+- Lets try running a simple SELECT *?
 ````
 SELECT TOP 10 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
-What happens if we include over 100 rows?
+- What happens if we include over 100 rows?
 ````
 SELECT TOP 101 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
@@ -916,11 +919,11 @@ Now, lets switch to the Data User role and try those same queries.
 ````
 USE ROLE HRZN_DATA_USER;
 ````
-Lets try running a simple SELECT *?
+- Lets try running a simple SELECT *?
 ````
 SELECT TOP 10 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
-What happens if we include over 100 rows?
+- What happens if we include over 100 rows?
 ````
 SELECT TOP 101 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
@@ -930,9 +933,8 @@ Lets answer a few aggregate business questions on on the Customer Order table th
 1. Deployed Masking against PII columns
 2. Deployed Row Level Security to restrict our Test Role to only Massachusetts results
 
-Total Order Amounts
+- What are the total order amounts?
 ````
--- what are the total order amounts
 SELECT 
     cl.state,
     cl.city,
@@ -970,7 +972,7 @@ ORDER BY order_total DESC;
 ````
 
 
-What are the total order amounts by company and job
+-What are the total order amounts by company and job?
  >aside negative
  >Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
  ````
