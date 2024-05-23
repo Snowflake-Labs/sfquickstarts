@@ -14,7 +14,7 @@ Duration: 2
 
 In today's fast-paced business environment, companies are facing increasing competition. Those that can effectively leverage the value of their data to drive improved outcomes will have the upper hand. With the ever-increasing volume and availability of data from sources such as IoT devices, mobile devices, and websites, there is a growing need for real-time data processing.
 
-This quickstart is a part of a series covering various aspects of wваorking with Streaming Data in Snowflake:
+This quickstart is a part of a series covering various aspects of working with Streaming Data in Snowflake:
 
 * **Streaming Data Integration with Snowflake (this very guide)** - This guide will focus on design patterns and building blocks for data integration within Snowflake
 
