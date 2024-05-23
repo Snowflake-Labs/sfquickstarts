@@ -11,7 +11,6 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake
 # Tasty Bytes - Zero to Snowflake - Collaboration
 <!-- ------------------------ -->
 
-## Direct Access to Third Party Data via Snowflake Marketplace
 Duration: 1
 <img src = "assets/collaboration_header.png">
 
