@@ -11,6 +11,7 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake
 # Tasty Bytes - Zero to Snowflake - Collaboration
 <!-- ------------------------ -->
 
+## Collaboration in Snowflake
 Duration: 1
 <img src = "assets/collaboration_header.png">
 
@@ -49,16 +50,13 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 - Log into your Snowflake account.
 
 ### Step 3 - Navigating to Worksheets
-- Click on the Worksheets Tab in the left-hand navigation bar.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+- Click on the Projects Tab in the left-hand navigation bar and click Worksheets.
 
 ### Step 4 - Creating a Worksheet
-- Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet"
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+- Within Worksheets, click the "+" button in the top-right corner of Snowsight.
 
 ### Step 5 - Renaming a Worksheet
 - Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Collaboration"
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Step 6 - Accessing Quickstart SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
