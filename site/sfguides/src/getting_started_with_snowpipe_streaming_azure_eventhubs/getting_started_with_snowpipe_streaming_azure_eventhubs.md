@@ -146,38 +146,44 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fi
 
 ```
 
-#### 6. Retrieve the broker string from the MSK cluster.
-Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click the newly created MSK cluster, it should have a substring `MSKCluster` in its name.
+#### 6. Retrieve the connection string 
 
-![](assets/bs-1.png)
+Go to the Event Hubs console, select the namespace you just created, then select `Settings` and `Shared access policies` on the left pane and click `RootManageSharedAccessKey` policy. See example screenshot below.
 
-Click `View client information`
-![](assets/bs-2.png)
-
-We are going to use TLS authentication between the client and brokers. Copy down the broker string under `Private endpoint` for TLS authentication type.
 ![](assets/bs-3.png)
 
-Now switch back to the Session Manager window and execute the following command by replacing `<broker string>` with 
-the copied values.
-
-```commandline
-export BS=<broker string>
-```
-
-Now run the following command to add `BS` as an environment variable so it is recognized across the Linux sessions.
-```
-echo "export BS=$BS" >> ~/.bashrc
-```
-See the following example screen capture.
+Then copy the `Connection string-primary key`, see screenshot below.
 
 ![](assets/bs-4.png)
-#### 7. Create a configuration file `connect-standalone.properties` for the Kafka connector
 
-Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/ssm-user/snowpipe-streaming/scripts` for the client to authenticate
-with the Kafka cluster.
+Now switch back to the VM console and execute the following command by replacing `<connection string>` with 
+the copied values. DO NOT forget to include the double quotes.
 
 ```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
+export CS="<connection string>"
+```
+see the example screen capture below.
+![](assets/bs-5.png)
+
+We also need to retrieve the kafka broker string(BS) from the connection string by running this command:
+```
+export BS=`echo $CS | awk -F\/ '{print $3":9093"}'`
+```
+
+Now run the following command to add `CS` as an environment variable so it is recognized across the Linux sessions.
+
+```
+echo "export CS=\"$CS\"" >> ~/.bashrc
+echo "export BS=$BS" >> ~/.bashrc
+
+```
+
+#### 7. Create a configuration file `connect-standalone.properties` for the Kafka connector
+
+Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/ssm-user/snowpipe-streaming/scripts` for the client to authenticate with the Event hubs namespace.
+
+```commandline
+dir=/home/azureuser/snowpipe-streaming/scripts
 mkdir -p $dir && cd $dir
 cat << EOF > $dir/connect-standalone.properties
 #************CREATING SNOWFLAKE Connector****************
@@ -194,26 +200,25 @@ offset.storage.file.filename=/tmp/connect.offsets
 # Flush much faster than normal, which is useful for testing/debugging
 offset.flush.interval.ms=10000
 
-#*********** FOR SSL  ****************
-security.protocol=SSL
-ssl.truststore.location=/tmp/kafka.client.truststore.jks
-ssl.truststore.password=changeit
-ssl.enabled.protocols=TLSv1.1,TLSv1.2
-
-consumer.security.protocol=SSL
-consumer.ssl.truststore.location=/tmp/kafka.client.truststore.jks
-consumer.ssl.truststore.password=changeit
-consumer.ssl.enabled.protocols=TLSv1.1,TLSv1.2
+# required EH Kafka security settings
+security.protocol=SASL_SSL
+sasl.mechanism=PLAIN
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="\$ConnectionString" password="$CS";
+consumer.security.protocol=SASL_SSL
+consumer.sasl.mechanism=PLAIN
+consumer.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="\$ConnectionString" password="$CS";
+plugin.path=/home/azureuser/snowpipe-streaming/kafka_2.12-2.8.1/libs
 EOF
 
 ```
-A configuration file `connect-standalone.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
+A configuration file `connect-standalone.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
 #### 8. Create a security client.properties configuration file for the producer
 
-Run the following commands to create a security configuration file `client.properties` for the MSK cluster
+Run the following commands to create a security configuration file `client.properties`.
+
 ```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
+dir=/home/azureuser/snowpipe-streaming/scripts
 cat << EOF > $dir/client.properties
 security.protocol=SSL
 ssl.truststore.location=/tmp/kafka.client.truststore.jks
@@ -223,16 +228,25 @@ EOF
 
 ```
 
-A configuration file `client.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
+A configuration file `client.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
-#### 9. Create a streaming topic called “streaming” in the MSK cluster
+#### 9. Create an event hub called “streaming” in the namespace
 
-Now we can run the following commands to create a Kafka topic on the MSK cluster to stream our data.
- 
-```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming --partitions 2 --replication-factor 2
-```
-You should see the response `Created topic streaming` if it is successful.
+Go to the Event Hubs namespace and clicke `+ Event Hub`.
+![](assets/create-topic-1.png)
+
+Give the event hub a name, say `streaming`, then click `Next: Capture`.
+![](assets/create-topic-2.png)
+
+Leave everthing as default, and click `Next: Review + create`.
+![](assets/create-topic-3.png)
+
+Click `Create` to create the event hub.
+![](assets/create-topic-4.png)
+
+Scroll down to the list of event hubs, you will see the `streaming` event hub there.
+![](assets/create-topic-5.png)
+
 
 To describe the topic, run the following commands:
 ```commandline
