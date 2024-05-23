@@ -10,14 +10,14 @@ tags: Horizon, Data Intelligence, Data Engineering, Data Governance, Observabili
 # Getting Started with Horizon for Data Governance in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 3
 
 Horizon is a suite of native Snowflake features that allow people easily find, understand, and trust data. In this lab you'll learn how Horizon ensures people have reliable and trustworthy data to make confident, data-driven decisions while ensuring observability and security of data assets.
 
 In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing a provided sample database of synthetic customer orders. Using this example data, you will learn how Horizon can monitor and provide visibility into your data within Snowflake. We will examine Horizon features from three different personas within Snowflake 
  - a Data Engineer monitoring pipelines
  - a Data Governor monitoring and masking PII
- - a finally an IT Administrator 
+ - a Data Governor Admin auditing access and lineage 
 
 ### - What You’ll Learn 
 - How to protect sensitive data using Snowflake's role-based masking policies
@@ -27,6 +27,32 @@ In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing
 ### - What You’ll Need 
 - A trial [Snowflake](https://signup.snowflake.com/) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
 
+## Introduction to Horizon
+Duration: 30
+
+Before we dive into the lab, lets take a look at a typical governance workflow and learn a bit more about the personas we will be exploring today. 
+### Typical Governance Workflow  
+![img](assets/workflow.png)
+
+### 5 Pillars of Horizon  
+![img](assets/5Pillars.png)
+
+  
+![img](assets/lab.png)
+
+
+### Background video resources 
+
+#### Data Engineer Persona
+<video id="MdZ1PaJWH2w"></video>
+
+
+#### Data Governor/Steward Persona  
+<video id="bF6FAMeGEZc"></video> 
+
+
+#### Governor Admin Persona  
+<video id="doView4YqUI">
 <!-- ------------------------ -->
 ## Setup
 Duration: 10
@@ -40,29 +66,11 @@ Let's get started! First we will run the [script 0_lab_setup.sql](https://github
 
 In Snowsight create a new worksheet and rename it 0_lab_setup.
 
-**2. Copy the below script in its entirety and paste into.**
+**2. Copy the below script in its entirety and paste into your worksheet.**
 
 This script will create the objects needed to run the lab. More explanation on these objects and how they are used will be provided in later steps.
-```
-
-/***************************************************************************************************
-| H | O | R | I | Z | O | N |   | L | A | B | S | 
-
-Demo:         Horizon Lab
-Version:      HLab v1
-Create Date:  Apr 17, 2024
-Author:       Ravi Kumar
-Reviewers:    Ben Weiss, Susan Devitt
-Copyright(c): 2024 Snowflake Inc. All rights reserved.
-****************************************************************************************************/
-/****************************************************************************************************
-SUMMARY OF CHANGES
-Date(yyyy-mm-dd)    Author              Comments
-------------------- ------------------- ------------------------------------------------------------
-Apr 17, 2024        Ravi Kumar           Initial Lab
-***************************************************************************************************/
-
-
+### [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/0-lab-Setup.sql)
+````
 --Create all Roles and assign to user
 USE ROLE SECURITYADMIN;
 CREATE OR REPLACE ROLE HRZN_DATA_ENGINEER;
@@ -213,7 +221,7 @@ CREATE OR REPLACE TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS (
     ORDER_TAX FLOAT,	
     ORDER_TOTAL FLOAT
 );
--- Load data from S3 into target tables. Then perform GRANTs.
+-- Load data from S3 into target tables. Then perform GRANTS.
 COPY INTO HRZN_DB.HRZN_SCH.CUSTOMER
 FROM s3://sfquickstarts/summit_2024_horizon_hol/CustomerDataRaw.csv
 FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1)
@@ -241,11 +249,6 @@ GRANT APPLY AGGREGATION POLICY ON ACCOUNT TO ROLE HRZN_DATA_GOVERNOR;
 GRANT APPLY PROJECTION POLICY ON ACCOUNT TO ROLE HRZN_DATA_GOVERNOR;
 
 GRANT DATABASE ROLE SNOWFLAKE.CLASSIFICATION_ADMIN TO ROLE HRZN_DATA_GOVERNOR;
-
-
-
-
-
 
 
 --USE ROLE HRZN_DATA_ENGINEER;
@@ -287,7 +290,7 @@ WHERE C.ID  = CS.ID;
 create OR REPLACE stage CustomerNYStage;
 copy into @CustomerNYStage from HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY_NY;
 ```
-
+<!-- ------------------------ -->
 ## Horizon as a Data Engineer - Data Quality Monitoring
 Duration: 20
 
@@ -1287,7 +1290,7 @@ Base Objects Accessed: Base data objects required to execute a query.
  >aside negative
  > Clean up (Optional).
  >Create a new worksheet named 99_lab_teardown. Copy and paste the entire Teardown Script at [ 99-lab-teardown.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/99-lab-teardown.sql) 
-
+<!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 5
 
