@@ -74,18 +74,20 @@ Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/azure-resource-m
 ![](assets/rg.png)
 
 #### 2. Create an Event Hub in the resource group
-Go to the resource group, and click `+ Create` tab to create an Event hub by
-following this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create) to create an Event Hub. Select the `Standard` [pricing tier](https://azure.microsoft.com/en-us/pricing/details/event-hubs/) to use Apache Kafka. Make sure that you select public access to the Event Hub in the networking setting.
+Go to the newly created resource group, and click `+ Create` tab to create an event hub by
+following this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create). Select the `Standard` [pricing tier](https://azure.microsoft.com/en-us/pricing/details/event-hubs/) to use Apache Kafka. Make sure that you select public access to the Event Hub in the networking setting.
 
 See below sample screen capture for reference, here we have created a namespace called `SnowflakeTest`.
 
 ![](assets/eventhubs.png)
 
 ### 3. Create a Linux virtual machine
-In the same resource group, create a Linux virtual machine by
-following this [doc](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/deploying_rhel_8_on_microsoft_azure/assembly_deploying-a-rhel-image-as-a-virtual-machine-on-microsoft-azure_cloud-content-azure#:~:text=attach%20your%20subscriptions.-,The%20subscription%20includes%20the%20Red%20Hat%20product%20cost;%20you%20pay,Hat%20Update%20Infrastructure%20(RHUI).) to create a Linux(Red Hat enterprise) virtual machine in Azure. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can also select Ubuntu or other Linux distributions but will need to modify the scripts.
+In the same resource group, create a Linux(Red Hat enterprise) virtual machine by
+following this [doc](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu). Choose `Redhat Enterprise` as the image. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can select Ubuntu or other Linux distributions but will need to modify the scripts.
 
-Make sure that you also allow ssh access to the VM in the network rule setting.
+Also make sure that you allow ssh access to the VM in the network rule setting.
+
+Download and save the private key for use in the next step.
 
 Once the VM is provisioned, we will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
 
@@ -583,23 +585,16 @@ You can now go back to the Snowflake worksheet to run a `select count(1) from fl
 <!---------------------------->
 ## Cleanup
 
-When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
-Select the Cloudformation template you used to deploy the MSK cluster at the start of the demo, then click the `Delete` tab. All the resources that were deployed previously, such as EC2 instances, MSK clusters, roles, etc., will be cleaned up.
-
-See example screen capture below.
-
-![](assets/cleanup.png)
-
-After the deletion of the MSK cluster, you will also need to delete the Cloudformation template for VPC if you created your own at the very beginning of the lab.
+When you are done with the demo, to tear down the Azure resources, follow this [doc](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/delete-resource-group?tabs=azure-powershell) to dismantle the resource group and its associated resources. 
 
 For Snowflake cleanup, execute the following SQL commands.
 
 ```commandline
 USE ROLE ACCOUNTADMIN;
 
-DROP DATABASE MSK_STREAMING_DB;
-DROP WAREHOUSE MSK_STREAMING_WH;
-DROP ROLE MSK_STREAMING_RL;
+DROP DATABASE AZ_STREAMING_DB;
+DROP WAREHOUSE AZ_STREAMING_WH;
+DROP ROLE AZ_STREAMING_RL;
 
 -- Drop the streaming user
 DROP USER IF EXISTS STREAMING_USER;
@@ -609,22 +604,15 @@ DROP USER IF EXISTS STREAMING_USER;
 ## Conclusions
 Duration: 5
 
-In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
-connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 
-scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
-[Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
-
-For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
-[quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/) to continue.
+In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using an Azure event hub and the Kafka connector for Snowpipe streaming hosted on a VM. You can also containerize the connector on the [Azure Kubernetes Services (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) to leverage the benefits of scability and manageability.
 
 Related Resources
 
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
-- [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/)
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
-- [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
-- [Amazon Managed Streaming for Apache Kafka (MSK)](https://aws.amazon.com/msk/)
+- [Azure Event Hubs](https://azure.microsoft.com/en-us/products/event-hubs)
+- [Snowflake on Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/snowflake.snowflake_contact_me?tab=overview)
 
 
