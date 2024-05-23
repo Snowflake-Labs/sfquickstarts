@@ -172,7 +172,7 @@ export CS="<connection string>"
 see the example screen capture below.
 ![](assets/bs-5.png)
 
-We also need to retrieve the kafka broker string(BS) from the connection string by running this command:
+We also need to extract the kafka broker string(BS) from the connection string by running this command:
 ```
 export BS=`echo $CS | awk -F\/ '{print $3":9093"}'`
 ```
