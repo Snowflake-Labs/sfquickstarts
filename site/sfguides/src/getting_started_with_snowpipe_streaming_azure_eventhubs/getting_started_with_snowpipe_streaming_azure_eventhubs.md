@@ -65,7 +65,7 @@ To participate in the virtual hands-on lab, attendees need the following resourc
 
 <!---------------------------->
 ## Create an Event Hub and a Linux virtual machine in Azure cloud
-Duration: 30
+Duration: 25
 
 #### 1. Create a resource group
 
@@ -386,7 +386,6 @@ At this point, the Snowflake setup is complete.
 
 <!---------------------------->
 ## Configure Kafka connector for Snowpipe Streaming
-
 Duration: 10
 
 #### 1. Run the following commands to collect various connection parameters for the Kafka connector
@@ -582,6 +581,7 @@ You can now go back to the Snowflake worksheet to run a `select count(1) from fl
 
 <!---------------------------->
 ## Cleanup
+Duration: 5
 
 When you are done with the demo, to tear down the Azure resources, follow this [doc](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/delete-resource-group?tabs=azure-powershell) to dismantle the resource group and its associated resources. 
 
