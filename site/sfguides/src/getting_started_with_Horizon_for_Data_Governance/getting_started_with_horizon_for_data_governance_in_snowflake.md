@@ -40,7 +40,6 @@ Before we dive into the lab, lets take a look at a typical governance workflow a
   
 ![img](assets/lab.png)
 
-
 ### Background video resources 
 
 #### Data Engineer Persona
@@ -52,7 +51,8 @@ Before we dive into the lab, lets take a look at a typical governance workflow a
 
 
 #### Governor Admin Persona  
-<video id="doView4YqUI">
+<video id="doView4YqUI"></video> 
+
 <!-- ------------------------ -->
 ## Setup
 Duration: 10
@@ -70,6 +70,7 @@ In Snowsight create a new worksheet and rename it 0_lab_setup.
 
 This script will create the objects needed to run the lab. More explanation on these objects and how they are used will be provided in later steps.
 ### [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/0-lab-Setup.sql)
+
 ````
 --Create all Roles and assign to user
 USE ROLE SECURITYADMIN;
@@ -289,8 +290,9 @@ WHERE C.ID  = CS.ID;
 -- create new user stage, then copy CUSTOMER data here
 create OR REPLACE stage CustomerNYStage;
 copy into @CustomerNYStage from HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY_NY;
-```
+````
 <!-- ------------------------ -->
+
 ## Horizon as a Data Engineer - Data Quality Monitoring
 Duration: 20
 
@@ -547,7 +549,7 @@ ORDER BY change_commit_time DESC;
 have consistent threshold notifications for data quality on the tables that you measure. 
 
 
-<!-- ------------------------ -->
+
 ## Horizon as Data Governor - Search & Discovery
 Duration: 30
 
