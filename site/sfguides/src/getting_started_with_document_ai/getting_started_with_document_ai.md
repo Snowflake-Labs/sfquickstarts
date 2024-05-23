@@ -92,6 +92,10 @@ USE ROLE doc_ai_qs_role;
 -- CREATE A SCHEMA FOR THE DOCUEMNT AI MODEL, STAGE etc
 CREATE SCHEMA doc_ai_qs_db.doc_ai_schema;
 
+-- EXPLICIT GRANT USAGE AND snowflake.ml.document_intelligence on the  SCHEMA
+GRANT USAGE ON SCHEMA doc_ai_qs_db.doc_ai_schema to role doc_ai_qs_role;
+GRANT CREATE snowflake.ml.document_intelligence on schema doc_ai_qs_db.doc_ai_schema to role doc_ai_qs_role;
+
 -- CREATE A STAGE FOR STORING DOCUMENTS
 CREATE STAGE doc_ai_qs_db.doc_ai_schema.doc_ai_stage
   DIRECTORY = (enable = true)
