@@ -209,7 +209,7 @@ In this step, we will run through the commands in the Python file `steps/04_orch
 
 ### Declarative Create-or-Alter Command
 
-When creating the target table and the tasks orchestrating the pipeline, we make use of the new CREATE OR ALTER command. CREATE OR ALTER behaves similarly to CREATE OR REPLACE except that an existing table is not replaced, but rather altered to the target state.
+When creating the target table and the tasks orchestrating the pipeline, we make use of the new [CREATE OR ALTER](https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table) command. CREATE OR ALTER behaves similarly to CREATE OR REPLACE except that an existing table is not replaced, but rather altered to the target state.
 
 ```sql
 create or alter table vacation_spots (
@@ -252,7 +252,7 @@ Declarative definitions are concise, idempotent and easy to understand as we don
 
 ### Declarative Pipeline Evolution
 
-This is where the new CREATE OR ALTER command shines. It allows us to have one single source of truth for the current state of the object. Potential rollbacks are super easy to do thanks to the straightforward integration with version control tools such as Git. Just apply an older version of the CREATE OR ALTER. This makes CREATE OR ALTER a great choice to manage data pipelines.
+This is where the new [CREATE OR ALTER](https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table) command shines. It allows us to have one single source of truth for the current state of the object. Potential rollbacks are super easy to do thanks to the straightforward integration with version control tools such as Git. Just apply an older version of the CREATE OR ALTER. This makes CREATE OR ALTER a great choice to manage data pipelines.
 
 > aside negative
 > Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
@@ -362,7 +362,7 @@ A number of small changes are necessary to parametrize which database the data p
 
 Let’s perform the necessary changes! Follow along and perform the described steps yourself in VS Code.
 
-1. Open `steps/01_setup_snowflake.sql` and parametrize part the database name in the CREATE DATABASE command.
+1. Open `steps/01_setup_snowflake.sql` and parametrize part the database name in the CREATE OR REPLACE DATABASE QUICKSTART_PROD command.
 
 ```sql
 CREATE OR REPLACE DATABASE QUICKSTART_{{environment}}; 
