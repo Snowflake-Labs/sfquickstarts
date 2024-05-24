@@ -641,7 +641,7 @@ In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` an
 -- Dynamic Tables Setup
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
-USE HOL_TIMESERIES.TRANSFORM;
+USE SCHEMA HOL_TIMESERIES.TRANSFORM;
 USE WAREHOUSE HOL_TRANSFORM_WH;
 
 /* Tag metadata (Dimension)
@@ -738,7 +738,7 @@ In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` an
 -- Analytics Views Setup
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
-USE HOL_TIMESERIES.ANALYTICS;
+USE SCHEMA HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
 -- Tag Reference View
@@ -815,18 +815,28 @@ The following query profiles will be covered in this section.
 >
 > In the following sections you will run various query statements within a **Snowsight Worksheet**.
 >
-> To run an individual query, **select the query by placing your cursor within the query statement**, and then click the `Run` button at the top right of the worksheet.
->
-> <img src="assets/analysis_info_queryrun.png" />
->
-> You may want to run multiple query statements at the same time, in this case you can **highlight all the query statements you want to run together**, and then click the `Run` button.
+> **Multiple Statements:** To run multiple query statements, **highlight all the query statements you want to run together**, and then click the `Run` button.
 >
 > <img src="assets/analysis_info_queryrun_multi.png" />
+>
+> **Individual Statements:** To run individual query statements, **select the query by placing your cursor within the query statement**, and then click the `Run` button at the top right of the worksheet.
+>
+> <img src="assets/analysis_info_queryrun.png" />
 >
 
 
 ### Step 2 - Run Through the Snowsight Worksheet Time Series Analysis Queries
 
+### Set Session Context
+
+Run the following three statements to ensure the worksheet session is in the right context.
+
+```sql
+-- Set role, context, and warehouse
+USE ROLE ROLE_HOL_TIMESERIES;
+USE SCHEMA HOL_TIMESERIES.ANALYTICS;
+USE WAREHOUSE HOL_ANALYTICS_WH;
+```
 
 ### Exploring Raw Time Series Data
 
@@ -1164,6 +1174,8 @@ over a specific time frame to detect trends and patterns in the data.
 >
 > **ROWS BETWEEN** may NOT yield correct results, as the number of rows that make up the 1 minute interval could be inconsistent. In this case for a 5 second tag without gaps, you might have assumed 12 rows would make up 1 minute.
 >
+
+#### NOTE: At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview, we have included it in the lab content below for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be available in your region. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
 
 > aside positive
 > 
@@ -1532,7 +1544,7 @@ The following functions and procedures have been deployed.
 ```sql
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
-USE HOL_TIMESERIES.ANALYTICS;
+USE SCHEMA HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
 -- Create Interpolate Table Function
@@ -1760,7 +1772,7 @@ The Interpolation table function will return both the **linear interpolated valu
 ```sql
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
-USE HOL_TIMESERIES.ANALYTICS;
+USE SCHEMA HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
 /* INTERPOLATE TABLE FUNCTION
@@ -1961,7 +1973,7 @@ SNOWFLAKE STREAMLIT SCRIPT
 
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
-USE HOL_TIMESERIES.ANALYTICS;
+USE SCHEMA HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
 -- CREATE STAGE FOR STREAMLIT FILES
