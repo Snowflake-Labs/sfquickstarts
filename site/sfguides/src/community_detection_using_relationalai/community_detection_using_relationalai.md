@@ -13,6 +13,10 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 
 In this quickstart, we will review how to use RelationalAI, a Native App available in the Snowflake Marketplace, to run community detection algorithms.  Community detection allows us to use our existing data, order records from various food trucks, and identify "communities", groups of customers that probably know each other, which allows us to build a social graph and interacts with groups of related customers.
 
+### What Is RelationalAI?
+RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.
+Users can build a knowledge graph using Python, and materialize it on top of their Snowflake data, shared with the RelationalAI app through Snowflake Streams.  Insights can be written to Snowflake tables and shared across the organization.
+
 ### What You’ll Learn 
 - How to run all sorts of graph algorithms on your data, where it already lives, to discover new insights
 - How to visualize graphs
@@ -28,10 +32,6 @@ In this quickstart, we will review how to use RelationalAI, a Native App availab
 ### What You’ll Build 
 - A community detection algorithm to find which food truck customers frequently eat together
 - A visualization of this data
-
-### What Is RelationalAI?
-RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.
-Users can build a knowledge graph using Python, and materialize it on top of their Snowflake data, shared with the RelationalAI app through Snowflake Streams.  Insights can be written to Snowflake tables and shared across the organization.
 
 <!-- ------------------------ -->
 ## Build a Harmonized View 
