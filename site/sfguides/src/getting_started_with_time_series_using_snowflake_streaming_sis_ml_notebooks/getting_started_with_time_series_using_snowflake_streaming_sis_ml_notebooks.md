@@ -1688,7 +1688,9 @@ $$;
 > 
 > #### INFO: Largest Triangle Three Buckets (LTTB) Function
 >
-> The **Largest Triangle Three Buckets (LTTB)** function uses the **Snowpark Python - plotly-resampler** package. This package is available in the [Anaconda Snowflake Snowpark for Python Channel](https://repo.anaconda.com/pkgs/snowflake/) and runs securely inside Snowflake warehouses when executed.
+> The **Largest Triangle Three Buckets (LTTB) downsampling** function uses the **Snowpark Python - plotly-resampler** package. The **LTTB** algorithm **reduces the number of visual data points in a time series data set, whilst retaining the shape and variability of the time series data**.
+>
+> **LTTB** package is available in the [Anaconda Snowflake Snowpark for Python Channel](https://repo.anaconda.com/pkgs/snowflake/) via **plotly-resampler** and runs securely inside Snowflake warehouses when executed.
 >
 > The original code for LTTB is available at [Sveinn Steinarsson - GitHub](https://github.com/sveinn-steinarsson/flot-downsample).
 >
