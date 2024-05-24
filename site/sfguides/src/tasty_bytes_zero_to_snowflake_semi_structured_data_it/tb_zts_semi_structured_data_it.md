@@ -10,7 +10,7 @@ tags: Guida introduttiva, Getting Started, Data Engineering, Data Warehouse, it
 # Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati
 <!-- ------------------------ -->
 
-## Elaborazione dei dati semi-strutturati in Snowflake
+## Elaborare dati semi-strutturati in Snowflake
 Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### Panoramica
@@ -21,7 +21,7 @@ Nel corso del quickstart impareremo come elaborare i dati semi-strutturati in Sn
 Per maggiori dettagli sui dati semi-strutturati in Snowflake, consulta la [documentazione introduttiva sui dati semi-strutturati](https://docs.snowflake.com/en/user-guide/semistructured-concepts)
 
 ### Prerequisiti
-- Prima di iniziare, assicurati di avere completato il [**quickstart Introduzione a Tasty Bytes**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html), che spiega nei dettagli come configurare un account di prova e implementare l’ambiente base di Tasty Bytes necessario per completare questo quickstart.
+- Prima di iniziare, assicurati di avere completato il [**quickstart Introduzione a Tasty Bytes**](/guide/tasty_bytes_introduction_it/index.html), che spiega nei dettagli come configurare un account di prova e implementare l’ambiente base di Tasty Bytes necessario per completare questo quickstart.
 
 ### Cosa imparerai
 - Che cos’è il tipo di dati VARIANT
@@ -60,7 +60,7 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Passaggio 5 - Rinominare un foglio di lavoro
-- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Semi-Structured Data”
+- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Semi-Structured Data”.
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Passaggio 6 - Accedere al codice SQL di questo quickstart in GitHub
@@ -150,7 +150,7 @@ Dopo avere visto come interrogare facilmente i dati semi-strutturati contenuti i
 In questa sezione elaboreremo ulteriormente i dati semi-strutturati per soddisfare i requisiti.
 
 ### Passaggio 1 - Introduzione all’appiattimento laterale
-Per estrarre dalla colonna `menu_item_health_metrics_obj` i dati richiesti dagli utenti a valle, esegui la prossima query, che utilizza la funzionalità di notazione punto che abbiamo appena visto insieme alle funzioni [FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten) e [LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral) di Snowflake per fornirci il primo array`ingredient` che ci è stato richiesto.
+Per estrarre dalla colonna `menu_item_health_metrics_obj` i dati richiesti dagli utenti a valle, esegui la prossima query, che utilizza la funzionalità di notazione punto che abbiamo appena visto insieme alle funzioni [FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten) e [LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral) di Snowflake per fornirci il primo array `ingredient` che ci è stato richiesto.
 
 >aside positive
 **Flatten:** una funzione per tabelle che produce una vista laterale a partire da una colonna VARIANT, OBJECT o ARRAY. La funzione Flatten può essere utilizzata per convertire dati semi-strutturati in una rappresentazione relazionale.
@@ -260,7 +260,7 @@ In questa query vediamo alcune nuove funzioni che non abbiamo ancora trattato. P
 Utilizziamo inoltre i parametri [SELECT * EXCLUDE e RENAME](https://docs.snowflake.com/en/sql-reference/sql/select#parameters), che possono facilitare molto il compito degli sviluppatori SQL riducendo la complessità della definizione di una query o di una vista.
 
 >aside positive
-**Exclude:** quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.\*), EXCLUDE specifica le colonne da escludere dai risultati.
+**Exclude:** quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.\*), specifica le colonne da escludere dai risultati.
 >
 > **Rename:** quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.\*), specifica gli alias delle colonne da utilizzare nei risultati.
 >
@@ -340,7 +340,7 @@ GROUP BY m.brand_name;
 
 <img src = "assets/6.3.results.png">
 
-Di default, Snowsight restituisce i risultati delle query sotto forma di tabelle. Tuttavia, una potente funzionalità di Snowsight che non abbiamo ancora trattato è l’[utilizzo dei grafici](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations#using-charts)
+Di default, Snowsight restituisce i risultati delle query sotto forma di tabelle. Tuttavia, una potente funzionalità di Snowsight che non abbiamo ancora trattato è l’[utilizzo dei grafici](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations#using-charts).
 
 Ora segui le frecce nella schermata qui sotto per creare un grafico a barre che mette a confronto le voci di menu per determinate restrizioni dietetiche dei diversi marchi di food truck.
 
@@ -367,6 +367,6 @@ In questo quickstart hai:
 Se desideri ripetere questo quickstart, usa gli script di ripristino alla fine del foglio di lavoro associato.
 
 ### Fasi successive
-Per continuare il tuo percorso nel Data Cloud di Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
+Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
 
 - ### [Quickstart Powered by Tasty Bytes - Sommario](/guide/tasty_bytes_introduction_it/index.html#3)

@@ -44,7 +44,7 @@ Let's get started.
 ## Architecture and Use Case Overview
 Duration: 1
 
-In this lab, we are going to analyze the historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas, which is available in Snowflake Data Marketplace. We’ll also make use of a few manual uploads.
+In this lab, we are going to analyze the historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas, which is available in Snowflake Marketplace. We’ll also make use of a few manual uploads.
 To do this, we are going to set up the environments, build scalable pipelines in dbt, establish data tests , and promote code to production. 
 
 ![Architecture Overview](assets/arch_diagram.png)  
