@@ -8,39 +8,47 @@ feedback link: https://github.com/RelationalAI/rai-samples/issues
 tags: Getting Started, Data Science, Data Engineering, RelationalAI, Recommender Systems
 
 # Recommender Systems with RelationalAI’s Snowflake Native App
-<!-- ------------------------ -->
+
 ## Overview 
 Duration: 5
 
 By completing this guide, you will be able to build a collaborative filtering recommender system RelationalAI’s Native App on Snowflake.
 
-### What is RelationalAI?
+### What Is RelationalAI?
+RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.
 
-RelationalAI is the industry’s first relational knowledge graph coprocessor for the Data Cloud, enabling users to easily apply an expanding set of AI techniques to their data, where it already lives. With RelationalAI, organizations can enhance their data with meaning and build a common model of their business, simplifying computing and powering better decisions.
-
-<!-- ------------------------ -->
-
+Users can build a knowledge graph using Python, and materialize it on top of their Snowflake data, shared with the RelationalAI app through Snowflake Streams.  Insights can be written to Snowflake tables and shared across the organization.
 
 ### What you will learn
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Setup Environment**: How to run graph algorithms on your data, where it already lives.
 - **Data Preparation**: How to load data from a Snowflake table into a RelationalAI model
-- **Build Recommender system**: How to use the graph representation to build a recommnedation algorithm
+- **Build Recommender system**: How to use the graph representation to build a recommendation algorithm
 
+
+### What You’ll Need 
+- A [Snowflake](https://signup.snowflake.com/) Account
+- Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
+- The [RAI Recommendation Jupyter notebook](https://github.com/RelationalAI/rai-samples/tree/main/samples/recommender-system/collaborative_filtering.ipynb) used in this quickstart
+
+### What You’ll Build 
+- A recommmender system on the 100k Movielense database using Snowflake and RelationalAI
+
+<!-- ------------------------ -->
 
 ## Install the RelationalAI Native App In Your Account
 Duration: 5
 
 In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘RelationalAI’ Native App and install it in your account by clicking the “Get” button.  You will be prompted to accept permission granting, after which an installation dialog will run.  
 You should see a screen like this prompting you to choose a warehouse:
-![RAI Install Warehouse Selection](assets/rai_warehouse_selection.png)
+![RAI Install Warehouse Selection](./assets/rai_warehouse_selection.png)
 
 After selecting a warehouse (any size will do, this is only for installation), a progress dialog will briefly show, followed by the Streamlit splash screen for the RelationalAI App.
-![RAI Native App Splash Screen](assets/rai_splash_screen.png)
+![RAI Native App Splash Screen](./assets/rai_splash_screen.png)
 
 The link provided contains the full initial setup guide as well as system documentation and a user guide.  First run through the initial setup guide, which involves setting up additional permissions using the Shield Icon:
-![RAI Native App Shield Icon](assets/rai_shield_highlight.png)
+![RAI Native App Shield Icon](./assets/rai_shield_highlight.png)
 
 At the end of the install guide you will start up the RelationalAI service using the SQL command:
 ```sql
@@ -78,7 +86,7 @@ From the app folder, create conda environment. Then activate conda environment a
 ### RelationalAI Config File
 After installing the `relationalai` package, you will need to setup an initial RAI configuration with the Snowflake credentials you want to use (similar to the configuration for Snowflake CLI):
 
-![RAI Init](assets/rai_init.png)
+![RAI Init](./assets/rai_init.png)
 
 <!-- ------------------------ -->
 ## Data Preparation
@@ -242,5 +250,14 @@ Duration: 2
 
 Thanks to RelationalAI’s Native App on Snowflake, we built a recommendation system with just a few steps. Although the dataset used was a small graph with thousands of nodes and edges, our solution can scale to real world datasets due to our cloud-native architecture that separates compute from storage.
 
+In this Quickstart you learned
+
+- How to find and install the RelationalAI Native App from the Snowflake Marketplace
+- How to build a knowledge graph on top of your Snowflake data without having to extract data from Snowflake
+- How to create a recommender system using graph algorithms on the MovieLense 100k dataset.
+
 ### Related Resources
-- [Blogpost](https://medium.com/@haythemtellili/recommender-systems-with-relationalais-snowflake-native-app-68d9c76bb07f)
+- To learn about more about RelationalAI and view full documentation, visit [https://relational.ai](https://relational.ai)
+- To see a brief summary of the recommender system you just built, see [Blogpost](https://medium.com/@haythemtellili/recommender-systems-with-relationalais-snowflake-native-app-68d9c76bb07f)
+- [Snowflake Marketplace](https://app.snowflake.com/marketplace)
+- More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
