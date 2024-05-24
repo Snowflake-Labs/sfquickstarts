@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 
 Duration: 5
 
-This Snowflake Quickstart introduces you to the using Snowflake together with Dataiku Cloud as part of a Machine learning project, and build an end-to-end machine learning solution. This lab will showcase seamless integration of both Snowflake and Dataiku at every stage of ML life cycle. We will also use Snowflake Data Marketplace to enrich the dataset. 
+This Snowflake Quickstart introduces you to the using Snowflake together with Dataiku Cloud as part of a Machine learning project, and build an end-to-end machine learning solution. This lab will showcase seamless integration of both Snowflake and Dataiku at every stage of ML life cycle. We will also use Snowflake Marketplace to enrich the dataset. 
 
 ### Business Problem 
 
@@ -25,7 +25,7 @@ Will go through a **supervised machine learning** by building a binary classific
 
 We will be exploring a financial service use of evaluating loan information to predict if a lender will default on a loan. The base data set was derived from loan data from the Lending Club.
 
-In addition to base data, this will then be enriched with unemployment data from Knoema on the Snowflake Data Marketplace.
+In addition to base data, this will then be enriched with unemployment data from Knoema on the Snowflake Marketplace.
 
 
 ### What We’re Going To Build
@@ -376,7 +376,7 @@ We have successfully loaded the data from ```external stage``` to snowflake.
 
 **Step 5** : Time to switch to get ```Konema Employement Data``` from Snowflake Market place
 
-We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Data Marketplace and see what external data is available from the data providers.
+We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Marketplace and see what external data is available from the data providers.
 
 Lets go to ```home screen``` by clicking on ```home``` icon. 
 
@@ -427,7 +427,7 @@ When the confirmation is provided click on ```done``` and then you can close the
 ![22](assets/sf-22-marketplace4.png)
 
 
-  Other advantage of using Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.
+  Other advantage of using Snowflake Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.
   
 1. After done just to ```confirm``` the datasets are properly configured
 

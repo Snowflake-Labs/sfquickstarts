@@ -2,7 +2,7 @@ summary: Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning 
 id: machine_learning_with_aws_autopilot 
 categories: data-science-&-ml,partner-integrations
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning 
 authors: Snowflake

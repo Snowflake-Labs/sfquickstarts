@@ -15,7 +15,7 @@ Duration: 2
 
 Snowflake has simplified the integration of Machine Learning models into Data Applications through its convenient features that allow for the deployment of ML models as Stored Procedures, User Defined Functions (UDF's), and User Defined Table Functions (UDTF's). Furthermore, Snowflake offers a SQL API, a RESTful API to facilitate querying the deployed ML models, enabling seamless integration between the application and the ML model.
 
-In this tutorial, the application you are building helps fictitious food truck company, Tasty Bytes and it's Truck drivers to view the location recommendations provided by the ML model directly in the Data Application. This Location Recommendation ML model is built within Snowflake using Snowpark which makes it easy for python users to leverage Snowflake platform. This model uses historical sales data and Safegraph weather data from Snowflake Data Marketplace to provide more information to the model. This tutorial will guide you through the process of how we are deploying and integrating ML model into the Truck Driver App. 
+In this tutorial, the application you are building helps fictitious food truck company, Tasty Bytes and it's Truck drivers to view the location recommendations provided by the ML model directly in the Data Application. This Location Recommendation ML model is built within Snowflake using Snowpark which makes it easy for python users to leverage Snowflake platform. This model uses historical sales data and Safegraph weather data from Snowflake Marketplace to provide more information to the model. This tutorial will guide you through the process of how we are deploying and integrating ML model into the Truck Driver App. 
 
 ### Prerequisites
 - Privileges necessary to create a user, database, and warehouse in Snowflake
@@ -25,7 +25,7 @@ In this tutorial, the application you are building helps fictitious food truck c
 - Access to run SQL in the Snowflake
 
 ### What You Will Learn 
-- How to access third-party data from the **Snowflake Data Marketplace**
+- How to access third-party data from the **Snowflake Marketplace**
 - How to **train a model in Snowflake** with a stored procedure
 - How to **deploy a model in Snowflake** to a user-defined function for model inference
 - How to **integrate a ML model** into the Data App
@@ -470,7 +470,7 @@ Duration: 1
 **You did it!** You have successfully completed the Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application Quickstart.
 
 By doing so you have learned:
-- Acquired third-party data from the **Snowflake Data Marketplace**
+- Acquired third-party data from the **Snowflake Marketplace**
 - Trained a ML model in Snowflake with a stored procedure
 - Deployed ML model as a UDF in Snowflake for model inference
 - Integrated ML model into the Data App
