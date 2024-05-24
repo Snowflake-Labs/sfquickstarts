@@ -33,7 +33,7 @@ Here is a summary of what you will be able to learn in each step by following th
 - The [RAI Recommendation Jupyter notebook](https://github.com/RelationalAI/rai-samples/tree/main/samples/recommender-system/collaborative_filtering.ipynb) used in this quickstart
 
 ### What You’ll Build 
-- A recommmender system on the 100k Movielense database using Snowflake and RelationalAI
+- A recommmender system on the 100k MovieLens database using Snowflake and RelationalAI
 
 <!-- ------------------------ -->
 
@@ -254,7 +254,7 @@ In this Quickstart you learned
 
 - How to find and install the RelationalAI Native App from the Snowflake Marketplace
 - How to build a knowledge graph on top of your Snowflake data without having to extract data from Snowflake
-- How to create a recommender system using graph algorithms on the MovieLense 100k dataset.
+- How to create a recommender system using graph algorithms on the MovieLens 100k dataset.
 
 ### Related Resources
 - To learn about more about RelationalAI and view full documentation, visit [https://relational.ai](https://relational.ai)
