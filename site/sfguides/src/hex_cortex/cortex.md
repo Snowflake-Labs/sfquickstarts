@@ -26,7 +26,7 @@ Head over to the [Snowflake](https://signup.Snowflake.com/) sign-up page and reg
 #### Connecting Snowflake with Hex
 If you have an existing Hex account, login in to your account and continue to the `Getting Started With Hex` section. 
 
-Otherwise, once you've logged into your Snowflake account, simply navigate to the `Data Products` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the `Connect` button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
+Otherwise, once you've logged into your Snowflake account, simply navigate to the `Data Products` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, select the `Connect` button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
 
 #### Creating a workspace
 Once activated, you'll be brought over to Hex and will be prompted to create/name your new workspace. After you've named your workspace, you'll be brought to the [projects](https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home) page.
@@ -68,33 +68,16 @@ Now we can move back over to Hex and get started on our project. The first thing
 <button>
 
 
-[Get Hex project](https://app.hex.tech/hex-public/hex/12851f3a-23b7-4b92-887a-109231d6d5be/draft/logic)
+[Get Hex project](https://app.hex.tech/hex-public/hex/dbac0486-1d27-4a10-9db8-7eb73a7ce4e4/draft/logic?utm_source=quickstart)
 
 
 </button>
 
-<<<<<<< HEAD
-Select Get a copy, select your new Hex org, and ensure the Hex project is in your new Hex org. 
 
-Now that you've got your project, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to import our Snowflake connection to our project.
-
-We can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake. Once you import this connection, all the setup steps will be completed and we can dive into the project. 
-
-![](assets/vhol-dc.gif)
-
-## Writing Data Back To Snowflake
-Duration: 5
-
-In this project we will write  data into our new Snowflake instance. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
-
-![](assets/vhol-add-write.gif)
-
-Detailed instructions on how and when to utilize this type of cell is found in the Hex project.
-=======
 - Select Get a copy.
 - Select your new or existing Hex org. 
 
-Now that you've got your project, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to import our Snowflake connection to our project.
+Now that you've got your project, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to import our Snowflake connection to our project. You can follow along with the video, Creating a [Snowflake Database Connection and Transferring Data](https://www.loom.com/share/d949de0c7c6e49f3b286af07d70cd96b?sid=99eeb02b-8b64-4c64-93c4-910110358c2b), describing how to create/edit your Snowflake connection and write data into your Snowflake database from Hex (which will be described in the Hex project).
 
 We can import our Snowflake data connection by heading over to the `Data sources` tab represented by a database icon with a lightning bolt. At the bottom of this section, you'll see a portion that says available workspace connections and you should see one that says Snowflake if you created the Hex account via Partner Connect.
 
@@ -110,7 +93,6 @@ If coming from Partner Connect or creating a new database connection, ensure tha
 Enable the Snowpark and Writeback toggles.
 
 ![](assets/connection_toggles.png)
->>>>>>> master
 
 ## Hex Project
 Duration: 45
@@ -118,7 +100,7 @@ Duration: 45
 The rest of the lab can entirely be followed step-by-step from the Hex project. Any subsequent steps and explanation will be found in the Hex project itself.
 
 Key sections of the Hex project include:
-- Data Gather and Clean Up
+- Data Exploration
 - Single Series Modeling
 - Mutli-Series Modeling
 - Hex app creation
@@ -133,7 +115,7 @@ Now that we've completed going through our project, we can share this project wi
 - Publish the app with the [Publish button](https://learn.hex.tech/docs/share-insights/apps/publish-and-share-apps)
 - Lastly, hit the share button next to publish, and select `Publish to web`.
 
-## Conclusion
+## Conclusion and Resources
 Congratulations on making it to the end of this Lab! You've successfully trained an forecast model to predict the country population using only SQL. At the end, you created a Hex app highlight your analysis that can be easily shared with others.
 
 ### What You Learned
@@ -142,3 +124,10 @@ Congratulations on making it to the end of this Lab! You've successfully trained
 * How to call the model to perform inference and recieve population growth projections
 * How to chart those predictions and other useful information with Hex's native visual cells
 * How to create and share a Hex app
+
+### Related Resources
+* [Final Project](https://app.hex.tech/hex-public/app/12851f3a-23b7-4b92-887a-109231d6d5be/latest)
+* [Building ML Models In Minutes With Hex and Snowflake Cortex](https://medium.com/snowflake/building-ml-models-in-minutes-with-hex-and-snowflake-cortex-434e94486365)
+* [Machine Learning Made Easy With Cortex ML Functions And Hex](https://www.youtube.com/watch?v=Sj64VEyfwww)
+* [Cortex ML Functions Documentation](https://docs.snowflake.com/en/guides-overview-ml-functions)
+* [Hex Documentation](https://learn.hex.tech/)
