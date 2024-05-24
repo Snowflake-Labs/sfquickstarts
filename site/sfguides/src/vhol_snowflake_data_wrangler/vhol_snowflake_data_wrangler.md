@@ -15,13 +15,13 @@ authors: andries.engelbrecht@snowflake.com
 Duration: 5
 
 
-This guide will take you through the process of integrating SageMaker and Snowflake using Data Wrangler and SageMaker Studio. It will cover the powerful features in both Snowflake and Data Wrangler to enrich your data with SNowflake Data Marketplace data, and also how to quickly and effectively evaluate the enriched data’s potential to train ML models.
+This guide will take you through the process of integrating SageMaker and Snowflake using Data Wrangler and SageMaker Studio. It will cover the powerful features in both Snowflake and Data Wrangler to enrich your data with Snowflake Marketplace data, and also how to quickly and effectively evaluate the enriched data’s potential to train ML models.
 
 
 We will be exploring a financial service use of evaluating loan information to predict if a lender will default on a loan. The base data set was derived from loan data from the Lending Club.
 
 
-We will first load this data set into Snowflake to simulate data collected from internal systems for analytical purposes. Using Snowflake’s Zero Copy Cloning feature will make this data available to the Data Science team, without duplicating the data and also protecting the production data from any data manipulation. The data will then be enriched with unemployment data from Knoema on the Snowflake Data Marketplace.
+We will first load this data set into Snowflake to simulate data collected from internal systems for analytical purposes. Using Snowflake’s Zero Copy Cloning feature will make this data available to the Data Science team, without duplicating the data and also protecting the production data from any data manipulation. The data will then be enriched with unemployment data from Knoema on the Snowflake Marketplace.
 
 
 From within SageMaker Studio we will then retrieve the data using Data Wrangler, which we will use to do analysis of the combined loan and unemployment data. Using Data Wrangler we will perform feature engineering and then analyze the data for ML model potential. The data prep flow will then be used to provide data for model training. Finally we will deploy a scoring pipeline and write the data back to Snowflake.
@@ -135,7 +135,7 @@ GRANT ROLE ML_ROLE TO USER ML_USER;
 
 
 
-Next we will grant privileges to the ML\_ROLE to allow it to create storage integrations that are needed for Data Wrangler. We will also grant privileges to create databases in Snowflake and also import shares. This will allow the roles to access and import Snowflake Data Marketplace data, as well as create the Snowflake database that will be used for machine learning. For this we need to use the ACCOUNTADMIN role.
+Next we will grant privileges to the ML\_ROLE to allow it to create storage integrations that are needed for Data Wrangler. We will also grant privileges to create databases in Snowflake and also import shares. This will allow the roles to access and import Snowflake Marketplace data, as well as create the Snowflake database that will be used for machine learning. For this we need to use the ACCOUNTADMIN role.
 
 
 
@@ -435,7 +435,7 @@ SELECT * FROM LOAN_DATA LIMIT 100;
 ```
 
 
-### Snowflake Data Marketplace data
+### Snowflake Marketplace data
 
 
 
@@ -497,7 +497,7 @@ Click on **Worksheets** on the left hand menu and then select your worksheet you
 
 ![](assets/image92.png)
 
-Data from the Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.
+Data from the Snowflake Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.
 
 
 
@@ -1138,7 +1138,7 @@ SELECT the **Import tab** at the top and click on the Snowflake icon.
 
 
 
-Run the following query to extract the unemployment rate data that you obtained from the Snowflake Data Marketplace.
+Run the following query to extract the unemployment rate data that you obtained from the Snowflake Marketplace.
 
 
 
