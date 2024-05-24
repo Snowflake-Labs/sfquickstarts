@@ -98,7 +98,7 @@ WHERE REGION='California';
 ```
 
 ## Install the RelationalAI Native App In Your Account
-`Duration: 5`
+Duration: 5
 
 In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘RelationalAI’ Native App and install it in your account by clicking the “Get” button.  You will be prompted to accept permission granting, after which an installation dialog will run.  
 You should see a screen like this prompting you to choose a warehouse:
@@ -126,7 +126,7 @@ GRANT APPLICATION ROLE relationalai.user TO ROLE rai_user;
 Refer to the [initial setup](https://github.com/RelationalAI/rai-sf-app-docs/wiki/Guide-%E2%80%90-Initial-Setup)  for full instructions and the user guide.  
 
 ## Setup Your Environment
-`Duration: 5`
+Duration: 5
 
 Now with your Snowflake account is ready to go, to build a knowledge graph using RelationalAI from within your Snowflake account, we need to setup the local environment with Jupyter Lab and the RelationalAI Python library.  The easiest way to do this is using the miniconda installer:
 Download the miniconda installer from https://conda.io/miniconda.html. (OR, you may use any other Python environment with Python 3.12).
@@ -168,7 +168,7 @@ After defining how each of those types are derived, you'll learn how to create a
 discover communities inside the graph, even visualizing them to aid in understanding the shape of your graph
 ![RAI Notebook 4](assets/rai_notebook_4.png)
 
-## Conclusion
+## Conclusion & Resources
 Duration: 1
 
 Congratulations on completing the our Community Detection using RelationalAI guide! In this Quickstart you learned
@@ -177,7 +177,7 @@ Congratulations on completing the our Community Detection using RelationalAI gui
 - How to build a knowledge graph on top of your Snowflake data without having to extract data from Snowflake
 - How to run graph algorithms on your knowledge graph and visualize relationships in the graph
 
-### Resources 
+### Resources
 - To learn about more about RelationalAI and view full documentation, visit [https://relational.ai](https://relational.ai)
 - [Louvain community detection method](https://en.wikipedia.org/wiki/Louvain_method)
 - [Snowflake Marketplace](https://app.snowflake.com/marketplace)
