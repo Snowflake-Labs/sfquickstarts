@@ -186,7 +186,7 @@ Now that we've completed going through our project, we can share this project wi
 - Publish the app with the [Publish button](https://learn.hex.tech/docs/share-insights/apps/publish-and-share-apps)
 - Lastly, hit the share button next to publish, and select `Publish to web`.
 
-## Conclusion
+## Conclusion and Resources
 Congratulations on making it to the end of this Lab! You've successfully perform feature engineering, trained an XGBoost model to predict the probably of survival onboard the Titanic, and logged that model to Snowflake's Model Registy. At the end, you created a Hex app that allowed users to pass in their own criteria to see if they would survive the Titanic.
 
 ### What You Learned
