@@ -252,21 +252,21 @@ After your service has started, you can get the endpoints with this command:
 SHOW ENDPOINTS IN SERVICE API;
 ```
 
-Make note of the ingress_url as that will be need to test the application. This service will start the API, running at `https://<INGRESS_URL>`.
+Make note of the ingress_url as that will be need to test the application. This service will start the API, running at https://<INGRESS_URL>.
 
 
 <!-- ------------------------ -->
 ## Testing the API
 Duration: 1
 
-To verify the API is online, go to the `https://<INGRESS_URL>` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
+To verify the API is online, go to the https://<INGRESS_URL> in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
 
 ```json
 {"result":"Nothing to see here"}
 ```
 
 ### Testing using a webpage
-This project comes with a simple webpage that allows you to test the API. To get to it, open `https://<INGRESS_URL>/test` in a web browser.
+This project comes with a simple webpage that allows you to test the API. To get to it, open https://<INGRESS_URL>/test in a web browser.
 
 At the top you can choose if you want to exercise the Snowflake Connector for Python or the Snowflake Snowpark API endpoints.
 
