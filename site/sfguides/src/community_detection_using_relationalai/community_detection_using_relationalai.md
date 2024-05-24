@@ -14,9 +14,9 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 In this quickstart, we will review how to use RelationalAI, a Native App available in the Snowflake Marketplace, to run community detection algorithms.  Community detection allows us to use our existing data, order records from various food trucks, and identify "communities", groups of customers that probably know each other, which allows us to build a social graph and interacts with groups of related customers.
 
 ### What You’ll Learn 
--- How to run all sorts of graph algorithms on your data, where it already lives, to discover new insights.
--- How to visualize graphs.
--- How, thanks to native applications with Snowpark Container Services, we can do all of this within the Data Cloud!
+- How to run all sorts of graph algorithms on your data, where it already lives, to discover new insights
+- How to visualize graphs
+- How, thanks to native applications with Snowpark Container Services, we can do all of this within the Data Cloud
 
 ### What You’ll Need 
 - A [Snowflake](https://signup.snowflake.com/) Account
@@ -100,7 +100,30 @@ WHERE REGION='California';
 ## Install the RelationalAI Native App In Your Account
 `Duration: 5`
 
-In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘RelationalAI’ Native App and install it in your account by clicking the “Get” button.  After installation, follow the [initial setup](https://github.com/RelationalAI/rai-sf-app-docs/wiki/Guide-%E2%80%90-Initial-Setup) instructions.
+In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘RelationalAI’ Native App and install it in your account by clicking the “Get” button.  You will be prompted to accept permission granting, after which an installation dialog will run.  
+You should see a screen like this prompting you to choose a warehouse:
+![RAI Install Warehouse Selection](assets/rai_warehouse_selection.png)
+
+After selecting a warehouse (any size will do, this is only for installation), a progress dialog will briefly show, followed by the Streamlit splash screen for the RelationalAI App.
+![RAI Native App Splash Screen](assets/rai_splash_screen.png)
+
+The link provided contains the full initial setup guide as well as system documentation and a user guide.  First run through the initial setup guide, which involves setting up additional permissions using the Shield Icon:
+![RAI Native App Shield Icon](assets/rai_shield_highlight.png)
+
+At the end of the install guide you will start up the RelationalAI service using the SQL command:
+```sql
+CALL relationalai.app.start_service('rai_compute_pool','rai_warehouse');
+```
+
+Finally, you need to create a role that should be granted to any users permitted to use this application
+```sql
+-- In your account, create a role specific for accessing the app
+CREATE ROLE rai_user;
+-- Link the app's user role to the created role
+GRANT APPLICATION ROLE relationalai.user TO ROLE rai_user;
+```
+
+Refer to the [initial setup](https://github.com/RelationalAI/rai-sf-app-docs/wiki/Guide-%E2%80%90-Initial-Setup)  for full instructions and the user guide.  
 
 ## Setup Your Environment
 `Duration: 5`
@@ -132,10 +155,30 @@ Duration: 15
 ```
 and visit the url (something like 'locationhost:8888/lab?token=XXXX) printed in the console output in your browser
 
-3) Open the `community_detection_RelationalAI_V1.ipynb` file in Jupyter lab and follow the instructions
+3) Open the `community_detection_RelationalAI_V1.ipynb` file in Jupyter lab.  You should see the top of the notebook:
+![RAI Notebook 1](assets/rai_notebook_1.png)
+
+The notebook will walk you through defining a knowledge graph out of your harmonized Snowflake table, first defining a Record type from your Snowflake table
+![RAI Notebook 2](assets/rai_notebook_2.png)
+
+Then creating our other concepts in our knowledge graph, Customers, Trucks, Transactions, Connections and Communities
+![RAI Notebook 3](assets/rai_notebook_3.png)
+
+After defining how each of those types are derived, you'll learn how to create a community graph and run the Louvain graph algorithm to 
+discover communities inside the graph, even visualizing them to aid in understanding the shape of your graph
+![RAI Notebook 4](assets/rai_notebook_4.png)
 
 ## Conclusion
 Duration: 1
 
-Congratulations on completing the our Community Detection using RelationalAI guide! To learn about more about RelationalAI and 
-view full documentation, visit [https://relational.ai](https://relational.ai)
+Congratulations on completing the our Community Detection using RelationalAI guide! In this Quickstart you learned
+
+- How to find and install the RelationalAI Native App from the Snowflake Marketplace
+- How to build a knowledge graph on top of your Snowflake data without having to extract data from Snowflake
+- How to run graph algorithms on your knowledge graph and visualize relationships in the graph
+
+### Resources 
+- To learn about more about RelationalAI and view full documentation, visit [https://relational.ai](https://relational.ai)
+- [Louvain community detection method](https://en.wikipedia.org/wiki/Louvain_method)
+- [Snowflake Marketplace](https://app.snowflake.com/marketplace)
+- More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
