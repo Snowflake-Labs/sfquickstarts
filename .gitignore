@@ -8,3 +8,4 @@ node_modules
 site/.firebaserc
 site/.firebase/**
 package-lock.json
+site/package-lock.json
