@@ -13,11 +13,11 @@ tags: LLM,Snowpark Container Services, NVIDIA,Apps
 
 ## Overview
 
-Duration: 1
+Duration: 2
 
-This repo primarily shows how to download a Large Language Model [Mistral-7b-instruct v0.1](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1) from [HuggingFace](https://huggingface.co/) and then shrink the model size to fit in a smaller GPU(A10G->GPU_NV_M) on [NemoLLM Inference Microservice NIMs](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags) Container using the [model_generator](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh) and [instruct.yaml](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/instruct.yaml) provided by NVIDIA.
+This quickstart primarily shows how to download a Large Language Model [Mistral-7b-instruct v0.1](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1) from [HuggingFace](https://huggingface.co/) and then shrink the model size to fit in a smaller GPU(A10G->GPU_NV_M) on [NemoLLM Inference Microservice NIMs](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags) Container using the [model_generator](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh) and [instruct.yaml](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/instruct.yaml) provided by NVIDIA.
 
-![Architecture](./assets/architecture.png)
+![Architecture](assets/architecture.png)
 
 If you are interested in shrinking a different Large Language Model from Huggingface, you need a different `instruct.yaml` file that will generate a new model which will fit in a smaller GPU.
 
@@ -65,7 +65,7 @@ git clone https://<user>:<token>@huggingface.co/mistralai/Mistral-7B-Instruct-v0
 
 ## Model Generator Explained
 
-Duration: 10
+Duration: 5
 
 Model Generator [model_generator.sh](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh) script downloads `Mistral LLM` model from Huggingface and using NIMs and `model_generator` package shrink the LLM model to fit to a smaller GPU (`A10G = GPU_NV_M`).
 
@@ -97,7 +97,9 @@ ln -s /blockstore/model/store/ensemble /model-store/ensemble
 ln -s /blockstore/model/store/trt_llm_0.0.1_trtllm /model-store/trt_llm_0.0.1_trtllm
 ```
 
-## Inference Service
+## Inference Service Explained
+
+Duration: 5
 
 The Inference service executes the `model_generator.sh` to generate the model and launch the `triton` inference server with requested/assigned number of GPUs.
 
@@ -120,19 +122,28 @@ The Inference service is configured using an YAML as shown,
         nvidia.com/gpu: {{num_gpus_per_instance}}
 ```
 
-## Snowflake Native Application
+## Download the sources
 
-### Download the sources
+Duration: 1
 
-Clone the guide demo sources and set the `$DEMO_HOME` environment variable to the source folder,
+Clone the guide demo sources,
 
 ```shell
 git clone https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services
+```
+
+Navigate to the demo source folder, and export the source folder to an environment variable `$DEMO_HOME`,
+
+```shell
 cd sfguide-build-ai-app-using-nvidia-snowpark-container-services
 export DEMO_HOME="$PWD"
 ```
 
-### Create Provider and Consumer Roles
+## Create Provider and Consumer Roles
+
+Duration: 5
+
+On your Snowsight worksheet run the following SQL commands to create the Snowflake Native App `Provider` and `Consumer` roles,
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -167,7 +178,9 @@ GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE WITH
 GRANT ROLE NVIDIA_LLM_APP_CONSUMER_ROLE to USER <USER_NAME>;
 ```
 
-### Snowflake Setup
+## Snowflake Native App Prerequisite
+
+Duration: 5
 
 ```sql
 SET COMPUTE_POOL_NAME = 'my-compute-pool';
@@ -212,9 +225,9 @@ SHOW IMAGE REPOSITORIES;
 -- Follow Docker Setup steps to push images to snowflake image repository
 ```
 
-### Installation and Setup
+## Docker Setup
 
-#### Docker Setup
+Duration: 15
 
 Register at <https://org.ngc.nvidia.com/setup/api-key> and download your nvcr.io login credentials. Let use store the credentials in the environment variable named `$NVCR_DOCKER_USER` and `$NVCR_DOCKER_API_KEY`,
 
@@ -224,7 +237,7 @@ Login to nvcr.io,
 echo -n "$NVCR_DOCKER_API_KEY" | docker login nvcr.io --user "$NVCR_DOCKER_USER" --password-stdin
 ```
 
-#### Build Images
+### Build Images
 
 After successful login build the following images that will be used by the Snowflake Native app,
 
@@ -262,12 +275,9 @@ List the images we built so far,
 docker images
 ```
 
-#### Push Images to Snowflake Image Registry
+### Push Images to Snowflake Image Registry
 
 Get the Snowflake Image Registry URL using the command,
-
-> aside postive
-> Execute the following command in Snowsight worksheet or Snowflake CLI
 
 ```sql
 SHOW SHOW IMAGE REPOSITORIES
@@ -305,17 +315,19 @@ Check if the `instruct.yaml` and `modelgenerator.sh` files are available on the 
 docker run --rm=true "$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/nemollm-inference-ms:24.02.nimshf" -- ls
 ```
 
-### As a Provider
+## As a Provider
+
+Duration: 10
 
 ```sql
 USE ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
 ```
 
-#### Create Native App
+### Create Native App
 
 Create NIM Application by running the [nims_app_pkg.sql](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/Native%20App/Provider/02%20nims_app_pkg.sql) on your Snowsight worksheet.
 
-#### Test Application
+### Test Application
 
 Let us test the application before it is published,
 
@@ -330,9 +342,11 @@ call core.list_app_instance($APP_INSTANCE);
 call core.get_app_endpoint($APP_INSTANCE);
 ```
 
-#### Publish Your Native App
+## Publish Your Native App
 
-> aside postive
+Duration: 5
+
+> aside positive
 > Before you publish the App, try to test your App [locally](https://docs.snowflake.com/en/developer-guide/native-apps/installing-testing-application)
 
 Run the following script to publish the Native application,
@@ -366,7 +380,9 @@ BEGIN
 END;
 ```
 
-### As a Consumer
+## As a Consumer
+
+Duration: 5
 
 Follow the [steps](https://other-docs.snowflake.com/en/native-apps/consumer-about) to download and install the Native App.
 
@@ -449,13 +465,17 @@ CALL CORE.LIST_APP_INSTANCE('APP1'); -- MAKE SURE ALL CONTAINERS ARE READY
 CALL CORE.GET_APP_ENDPOINT('APP1'); -- GET APP ENDPOINTS TO ACCESS STREAMLIT APP
 ```
 
-### Exposing Consumer App using Streamlit
+## Exposing Consumer App using Streamlit
+
+Duration: 1
 
 Get the Native App endpoint URL,
 
 ```sql
 CALL CORE.GET_APP_ENDPOINT('APP1')
 ```
+
+![Streamlit Endpoint URL](assets/streamlit_url.png)
 
 Copy the endpoint URL next to the Streamlit App and launch that URL on a browser to open the Streamlit App.
 
@@ -480,6 +500,6 @@ Learnt How-To,
 
 ### Related Resources
 
-- <https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1>
-- <https://developer.nvidia.com/nemo-microservices>
-- <https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/>
+- [Mistral-7B-Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1)
+- [NeMo Microservices](https://developer.nvidia.com/nemo-microservices)
+- [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/)
