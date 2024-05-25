@@ -105,8 +105,12 @@ At the end of this guide, you will have achieved **federated governance** and a 
 
 #### Snowflake
 
+Here are the requirements for this Quickstart Guide:
+
 - Account admin access to a Snowflake Enterprise or Business Critical account
 - Access to the TPCH dataset, specifically in the `SNOWFLAKE_SAMPLE_DATA` database and the `TPCH_SF1` schema.
+
+In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a Snowflake account.
 
 > aside negative
 > 
@@ -114,8 +118,12 @@ At the end of this guide, you will have achieved **federated governance** and a 
 
 #### dbt Cloud
 
+Here are the requirements for this Quickstart Guide:
+
 - Account admin access to a dbt Cloud Enterprise account
 - Set your development and deployment [environments](https://docs.getdbt.com/docs/dbt-cloud-environments) to use dbt version 1.6 or later. You can also choose the "Keep on latest version" option to always use the latest version of dbt.
+
+In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a dbt Cloud account using Snowflake Partner Connect.
 
 > aside negative
 > 
@@ -127,7 +135,7 @@ At the end of this guide, you will have achieved **federated governance** and a 
 
 #### Basic dbt familiarity
 
-To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first
+To get the most out of this course, it is recommended you know the basics of dbt. To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first.
 
 <!-- ------------------------ -->
 ## Launch Snowflake and dbt Cloud for this Quickstart
@@ -195,7 +203,7 @@ use role accountadmin;
 
 create database if not exists foundational_db;
 create schema if not exists foundational_db.prod;
-create or replace warehouse foundational_wh with warehouse_size xsmall;
+create or replace warehouse foundational_wh with warehouse_size = xsmall;
 
 create role if not exists foundational_role;
 create role if not exists foundational_pii_reader_role;
@@ -225,7 +233,7 @@ create database if not exists finance_db;
 create schema if not exists finance_db.prod;
 create or replace warehouse finance_wh with warehouse_size xsmall;
 
-create role if not exists finance_db;
+create role if not exists finance_role;
 
 grant usage on warehouse finance_wh to role finance_role;
 grant usage on database finance_db to role finance_role;
@@ -240,7 +248,7 @@ To get this all working correctly, make sure to assign the relevant roles to you
 ```sql
 use role accountadmin;
 
-grant role finance_role to user <your-snowflake-username>;
+grant role foundational_role to user <your-snowflake-username>;
 grant role foundational_pii_reader_role to user <your-snowflake-username>;
 grant role finance_role to user <your-snowflake-username>;
 ```
@@ -269,9 +277,9 @@ You will notice that you need to input your Snowflake credentials and resources 
 
 ![Target dbt Cloud configuration](assets/architecture-for-data-mesh-just-dbt-cloud.png)
 
-### Create the Foundational Project for the central data team
+### Create the foundational project for the central data team
 
-Now you will create the Foundational Project in dbt Cloud, which is to be exclusively developed by the central data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
+Now you will create the foundational project in dbt Cloud, which is to be exclusively developed by the central data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
 
 1. From **Account settings**, click **+ New Project**.
 2. In the **Project name** field, enter `Foundational Project` and click **Continue**.
@@ -342,10 +350,10 @@ Here is where you are in the journey towards a data product:
 - **Useful:** it has value
 
 <!-- ------------------------ -->
-## Build Foundational project
+## Build foundational project
 Duration: 5
 
-Now it's time for you to add dbt code in the Foundational Project using the dbt Cloud IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a `fct_orders` table representing all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.
+Now it's time for you to add dbt code in the foundational project using the dbt Cloud IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a `fct_orders` table representing all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.
 
 ### Setup the new project
 
@@ -358,11 +366,11 @@ Here are the steps:
 5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `foundational_project`.
 6. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
 7. In the **File Explorer**, hover over the project directory and click the **...**, then select **Create file**.
-8. Create two new folders: `models/staging` and `models/mart`.
+8. Create two new folders: `models/staging` and `models/marts`.
 
 ### Create the staging layer
 
-Now that you've set up the Foundational Project, let's start building the data assets. Set up the staging layer as follows:
+Now that you've set up the foundational project, let's start building the data assets. Set up the staging layer as follows:
 
 1. Create a new YAML file `models/staging/sources.yml`.
 2. Declare the sources by copying the following into the file and clicking **Save**.
@@ -495,9 +503,7 @@ select * from renamed
 
 ### Create the marts layer
 
-Now set up the marts layer as follows:
-
-1. Create a `models/mart/fct_orders.sql` to build a fact table with order details
+Now set up the marts layer by creating a file `models/marts/fct_orders.sql` to build a fact table with order details:
 
 ```sql
 {{
@@ -572,6 +578,13 @@ At this point, you may also see what you have built by looking at the **Lineage 
 
 ![dbt Cloud lineage](assets/lineage.png)
 
+### Committing your changes
+
+To finish this step up, go to the **Version control** section in the IDE to:
+
+1. Click the **Commit and Sync** button to commit your changes.
+2. **Merge** your changes to the main or production branch.
+
 ### Additional features to build data products
 
 - [**dbt Cloud CLI:**](https://docs.getdbt.com/docs/cloud/cloud-cli-installation) In this guide, we are using the dbt Cloud IDE available within the web browser. dbt Cloud enables data practitioners to also develop with a local dbt Cloud CLI using a locally-installed code editor of their choice.
@@ -579,7 +592,7 @@ At this point, you may also see what you have built by looking at the **Lineage 
 
 ### Wrapping up this step
 
-You now have built the first useful tables in the Foundational project, which any user or application can access using SQL. In the next step, you will secure the PII access to privileged users.
+You now have built the first useful tables in the foundational project, which any user or application can access using SQL. In the next step, you will secure the PII access to privileged users.
 
 Here is where you are in the journey towards a data product:
 
@@ -629,7 +642,7 @@ Open up the `fct_orders.sql` file and modify the config block at the top to incl
 {{
     config(
         materialized='table',
-        post_hook="alter table {{ this }} modify column name set tag foundational_role.prod.pii_data = 'name'"
+        post_hook="alter table {{ this }} modify column name set tag foundational_db.prod.pii_data = 'name'"
     )
 }}
 ```
@@ -662,7 +675,7 @@ By using these configurations within your project, you'll be, in effect, creatin
 
 ### Adding the model YAML metadata
 
-To begin, add the file `models/mart/core.yml` and add the code below:
+To begin, add the file `models/marts/core.yml` and add the code below:
 
 ```yaml
 models:
@@ -750,8 +763,8 @@ This YAML file does the following:
 
 To finish this step up, go to the **Version control** section in the IDE and:
 
-8. Click the **Commit and Sync** button to commit your changes.
-9. **Merge** your changes to the main or production branch.
+1. Click the **Commit and Sync** button to commit your changes.
+2. **Merge** your changes to the main or production branch.
 
 ### Additional features for model governance
 
@@ -761,7 +774,7 @@ To finish this step up, go to the **Version control** section in the IDE and:
 
 ### Wrapping up this step
 
-In this step you added a straightforward YAML file, and now `fct_orders` is a tested data model with documentation, will have the proper grants applied when built, and is publicly available for other dbt Cloud projects to use. In the next step, you will build the Foundational project in production.
+In this step you added a straightforward YAML file, and now `fct_orders` is a tested data model with documentation, will have the proper grants applied when built, and is publicly available for other dbt Cloud projects to use. In the next step, you will build the foundational project in production.
 
 Here is where you are in the journey towards a data product:
 
@@ -785,13 +798,16 @@ To run your first deployment dbt Cloud job, you will need to create a new dbt Cl
 
 1. Click **Deploy** and then **Jobs**. 
 2. Click **Create job** and then **Deploy job**.
-3. Select the **Generate docs on run** option. This will enable dbt Cloud to pull in metadata from the warehouse to supplement the documentation found in the **Explore** section.
+3. Fill in details about the job, calling it **Daily Job**.
+4. Select the **Generate docs on run** option. This will enable dbt Cloud to pull in metadata from the warehouse to supplement the documentation found in the **Explore** section.
 
 ![Select the 'Generate docs on run' option when configuring your dbt Cloud job.](assets/generate_docs_on_run.png)
 
-4. Then, click **Run now** to trigger the job.
+5. Then, click **Run now** to trigger the job.
 
 ![Select the 'Generate docs on run' option when configuring your dbt Cloud job.](assets/job_run_now.png)
+
+6. You may optionally set a schedule for the the job to run on.
 
 ### Additional job features for a data mesh
 
@@ -835,7 +851,8 @@ In this penultimate step, you will now set up dbt Cloud to build the finance tea
 2. Now, open up the **Cloud IDE** in the **Develop** toolbar.
 3. If you’ve also started with a new git repo, click **Initialize dbt project** under the **Version control** section.
 4. Delete the `models/example` folder
-5. Navigate to the `dbt_project.yml` file and remove lines 39-42 (the `my_new_project` model reference).
+5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `finance_project`.
+5. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
 6. In the **File Explorer**, hover over the project directory, click the **...**, then select **Create file**.
 7. Name the file `dependencies.yml` and add the upstream platform project and click **Save**.
 
