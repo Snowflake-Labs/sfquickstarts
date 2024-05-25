@@ -1,11 +1,11 @@
-author: Karuna Nadadur, Kamesh Sampath
+authors: Karuna Nadadur, Kamesh Sampath
 id: build_llm_app_nvidia_scs
 summary: Build LLM App Powered By NVIDIA on Snowpark Container Services
-categories: llm,snowpark-container-services,nvidia,app
+categories: getting-started,llm,snowpark-container-services,nvidia,snowflake-native-app
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: LLM,Snowpark Container Services, NVIDIA,Apps
+tags: Getting Started,Snowpark Container Services, Snowflake Native Apps
 
 # Build LLM App Powered By NVIDIA on Snowpark Container Services
 
@@ -21,13 +21,22 @@ This quickstart primarily shows how to download a Large Language Model [Mistral-
 
 If you are interested in shrinking a different Large Language Model from Huggingface, you need a different `instruct.yaml` file that will generate a new model which will fit in a smaller GPU.
 
-## What You’ll Need
+### What You Will Learn
 
-### NVIDIA
+- Build Snowflake LLM Native App powered by NVIDIA Inference microservices
+- Download Mistral-7b-instruct LLM from Huggingface
+- Generate a new model using model generator on NIM container
+- Publish Mistral Inference App as internal Snowflake Native Application
+- Launch the Inference Server using Snowpark Container Services
+- Expose the Inference Service as Streamlit Application
+
+### Prerequisites
+
+#### NVIDIA
 
 In this example, we are not downloading the model hosted on [nvcr.io](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags), but we will still be using [NIMs Inference Microservices container](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags) for optimized GPU performance.[Register and create your login credentials](https://ngc.nvidia.com/) and get yourself added to a organisation/team.
 
-### Huggingface
+#### Huggingface
 
 Since you are downloading the model from Huggingface, you need to
 
@@ -51,15 +60,6 @@ git clone https://<user>:<token>@huggingface.co/mistralai/Mistral-7B-Instruct-v0
 - A Snowflake account. A [free trial](https://signup.snowflake.com/) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
 
 - A storage bucket with the same cloud provider in the same region that hosts your Snowflake account above. Direct credential access required as storage integrations are not supported for External Volumes.
-
-## What You’ll Build
-
-- Build Snowflake LLM Native App powered by NVIDIA Inference microservices
-- Download Mistral-7b-instruct LLM from Huggingface
-- Generate a new model using model generator on NIM container
-- Publish Mistral Inference App as internal Snowflake Native Application
-- Launch the Inference Server using Snowpark Container Services
-- Expose the Inference Service as Streamlit Application
 
 <!-- ------------------------ -->
 
@@ -97,6 +97,8 @@ ln -s /blockstore/model/store/ensemble /model-store/ensemble
 ln -s /blockstore/model/store/trt_llm_0.0.1_trtllm /model-store/trt_llm_0.0.1_trtllm
 ```
 
+<!-- ------------------------ -->
+
 ## Inference Service Explained
 
 Duration: 5
@@ -122,7 +124,9 @@ The Inference service is configured using an YAML as shown,
         nvidia.com/gpu: {{num_gpus_per_instance}}
 ```
 
-## Download the sources
+<!-- ------------------------ -->
+
+## Download Demo Sources
 
 Duration: 1
 
@@ -138,6 +142,8 @@ Navigate to the demo source folder, and export the source folder to an environme
 cd sfguide-build-ai-app-using-nvidia-snowpark-container-services
 export DEMO_HOME="$PWD"
 ```
+
+<!-- ------------------------ -->
 
 ## Create Provider and Consumer Roles
 
@@ -177,6 +183,8 @@ GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE WITH
 
 GRANT ROLE NVIDIA_LLM_APP_CONSUMER_ROLE to USER <USER_NAME>;
 ```
+
+<!-- ------------------------ -->
 
 ## Snowflake Native App Prerequisite
 
@@ -224,6 +232,8 @@ SHOW IMAGE REPOSITORIES;
 -- Follow steps in 'docker.md' to run the commands using docker installed machine (AWS EC2 instance preferred).
 -- Follow Docker Setup steps to push images to snowflake image repository
 ```
+
+<!-- ------------------------ -->
 
 ## Docker Setup
 
@@ -315,6 +325,8 @@ Check if the `instruct.yaml` and `modelgenerator.sh` files are available on the 
 docker run --rm=true "$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/nemollm-inference-ms:24.02.nimshf" -- ls
 ```
 
+<!-- ------------------------ -->
+
 ## As a Provider
 
 Duration: 10
@@ -341,6 +353,8 @@ use schema app1;
 call core.list_app_instance($APP_INSTANCE);
 call core.get_app_endpoint($APP_INSTANCE);
 ```
+
+<!-- ------------------------ -->
 
 ## Publish Your Native App
 
@@ -380,11 +394,15 @@ BEGIN
 END;
 ```
 
+<!-- ------------------------ -->
+
 ## As a Consumer
 
 Duration: 5
 
 Follow the [steps](https://other-docs.snowflake.com/en/native-apps/consumer-about) to download and install the Native App.
+
+### Launch Snowflake Native App
 
 After you have installed the App on the consumer account, use the following template to launch the Native App on the consumer account,
 
@@ -465,7 +483,9 @@ CALL CORE.LIST_APP_INSTANCE('APP1'); -- MAKE SURE ALL CONTAINERS ARE READY
 CALL CORE.GET_APP_ENDPOINT('APP1'); -- GET APP ENDPOINTS TO ACCESS STREAMLIT APP
 ```
 
-## Exposing Consumer App using Streamlit
+<!-- ------------------------ -->
+
+### Exposing Consumer App using Streamlit
 
 Duration: 1
 
@@ -481,7 +501,7 @@ Copy the endpoint URL next to the Streamlit App and launch that URL on a browser
 
 <!-- ------------------------ -->
 
-## Conclusion
+## Conclusion And Resources
 
 Duration: 1
 
