@@ -78,7 +78,7 @@ Duration: 5
 
 Throughout this guide, imagine yourself building a data platform with Snowflake and dbt Cloud for your organization, starting with two teams:
 
-1. **Core data team:** a team of experienced data engineers who build foundational data marts in Snowflake organized in a star schema of fact and dimensional tables
+1. **Central data team:** a team of experienced data engineers who build foundational data marts in Snowflake organized in a star schema of fact and dimensional tables
 2. **Finance team:** a team that includes data analysts in the finance department who want to own their data and data processes
 
 Each step of the guide will show you how to use features of both Snowflake and dbt Cloud to achieve building **data products**. As mentioned in the introduction, data products have the following properties:
@@ -177,13 +177,13 @@ Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the
 ## Set up Snowflake securely
 Duration: 5
 
-In this step, you will be setting up Snowflake for two teams: the core data team and the finance team, as shown in the diagram below. You will be using least privileged access principles in order to properly secure the data.
+In this step, you will be setting up Snowflake for two teams: the central data team and the finance team, as shown in the diagram below. You will be using least privileged access principles in order to properly secure the data.
 
 ![Target Snowflake configuration](assets/architecture-for-data-mesh-just-snowflake.png)
 
-### Setting up the Snowflake foundation for the core data team
+### Setting up the Snowflake foundation for the central data team
 
-The core data team is well-established in the organization and the average team member is capable of building data pipelines that powers business reporting across various domains: finance, marketing, sales, customer support, and so on. The team uses data management best practices like organizing data in dimensional models for maximum re-usability in various BI and AI/ML applications.
+The central data team is well-established in the organization and the average team member is capable of building data pipelines that powers business reporting across various domains: finance, marketing, sales, customer support, and so on. The team uses data management best practices like organizing data in dimensional models for maximum re-usability in various BI and AI/ML applications.
 
 The first thing you'll need to do is set up a role specifically for applying these governance practices to the Snowflake environment. The code below will:
 
@@ -263,15 +263,15 @@ Here is where you are in the journey towards a data product:
 ## Create dbt Cloud projects for cross-team collaboration
 Duration: 5
 
-Now you will create two dbt Cloud Projects: one for the core data team, and one for the finance team, as depicted in the diagram below.
+Now you will create two dbt Cloud Projects: one for the central data team, and one for the finance team, as depicted in the diagram below.
 
-You will notice that you need to input your Snowflake credentials and resources information created in the previous step. dbt Cloud uses Snowflake role and warehouse resources in order to build database tables and views. The platform is powerful enough for the core data team and also accessible enough for newcomers on the finance team to use, all the while allowing collaboration between these two teams.
+You will notice that you need to input your Snowflake credentials and resources information created in the previous step. dbt Cloud uses Snowflake role and warehouse resources in order to build database tables and views. The platform is powerful enough for the central data team and also accessible enough for newcomers on the finance team to use, all the while allowing collaboration between these two teams.
 
 ![Target dbt Cloud configuration](assets/architecture-for-data-mesh-just-dbt-cloud.png)
 
-### Create the Foundational Project for the core data team
+### Create the Foundational Project for the central data team
 
-Now you will create the Foundational Project in dbt Cloud, which is to be exclusively developed by the core data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
+Now you will create the Foundational Project in dbt Cloud, which is to be exclusively developed by the central data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
 
 1. From **Account settings**, click **+ New Project**.
 2. In the **Project name** field, enter `Foundational Project` and click **Continue**.
@@ -324,7 +324,7 @@ When setting up dbt Cloud for production, there are four recommended security op
 
 - [**Snowflake OAuth:**](https://docs.getdbt.com/docs/cloud/manage-access/set-up-snowflake-oauth) Require developers to connect their dbt Cloud Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt Cloud users will only be able to access the data that their Snowflake user has been granted.
 - [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
-- [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the core data team project resources.
+- [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the central data team project resources.
 - [**dbt Cloud SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
 
 ### Wrapping up this step
@@ -358,7 +358,7 @@ Here are the steps:
 5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `foundational_project`.
 6. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
 7. In the **File Explorer**, hover over the project directory and click the **...**, then select **Create file**.
-8. Create two new folders: `models/staging` and `models/core`.
+8. Create two new folders: `models/staging` and `models/mart`.
 
 ### Create the staging layer
 
@@ -599,7 +599,7 @@ Congratulations! You built a useful dataset. But, it's not secure. Organizationa
 
 ### Setting up data masking tags and policies in Snowflake
 
-Using Snowsight to execute the following commands to create [object tags](https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary) and a [data masking policy](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro).
+Use Snowsight to execute the following commands to create [object tags](https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary) and a [data masking policy](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro).
 
 ```sql
 use role foundational_role;
@@ -877,7 +877,7 @@ Now run a production dbt Cloud Job of the finance project, as you did with the f
 
 ### Wrapping up this step
 
-With a few lines of code, the finance team now is building directly off of the core data team's work. They are synchronized which ensures data consistency, but autonomous to create their data product to power their own applications. The finance team can also feel confident that the data they are addressing will be reliable, due to the model contract that's in-place with the `fct_orders` model.
+With a few lines of code, the finance team now is building directly off of the central data team's work. They are synchronized which ensures data consistency, but autonomous to create their data product to power their own applications. The finance team can also feel confident that the data they are addressing will be reliable, due to the model contract that's in-place with the `fct_orders` model.
 
 Here is where you are in the journey towards a data product:
 
