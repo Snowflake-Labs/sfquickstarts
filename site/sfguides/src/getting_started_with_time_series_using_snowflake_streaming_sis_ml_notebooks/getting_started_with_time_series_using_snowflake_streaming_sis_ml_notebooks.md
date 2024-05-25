@@ -314,9 +314,7 @@ In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1
 >
 
 ```sql
-/*
-SNOWFLAKE SETUP SCRIPT
-*/
+/*##### SNOWFLAKE SETUP SCRIPT #####*/
 
 -- Login and assume ACCOUNTADMIN role
 USE ROLE ACCOUNTADMIN;
@@ -330,15 +328,13 @@ CREATE OR REPLACE USER USER_HOL_TIMESERIES DEFAULT_ROLE = "ROLE_HOL_TIMESERIES"
 COMMENT = "HOL Time Series user.";
 GRANT ROLE ROLE_HOL_TIMESERIES TO USER USER_HOL_TIMESERIES;
 
-/* EXTERNAL ACTIVITY
-
-A public key is setup in Github Codespace VS Code environment
+/*###### EXTERNAL ACTIVITY #####
+A public key is setup in Github Codespace VS Code environment: keys/rsa_key.pub
 
 Retrieve the public key detail and replace <RSA_PUBLIC_KEY>
 with the contents of the public key excluding
 the -----BEGIN PUBLIC KEY----- and -----END PUBLIC KEY----- lines
-
-*/
+##############################*/
 
 -- Assign lab user public key
 ALTER USER USER_HOL_TIMESERIES SET RSA_PUBLIC_KEY='<RSA_PUBLIC_KEY>';
@@ -400,9 +396,7 @@ GRANT CREATE SNOWFLAKE.ML.FORECAST ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE RO
 -- Notebooks
 GRANT CREATE NOTEBOOK ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESERIES;
 
-/*
-SETUP SCRIPT COMPLETED
-*/
+/*##### SNOWFLAKE SETUP SCRIPT #####*/
 ```
 
 > aside positive
@@ -429,16 +423,19 @@ We'll create a stage loading table to stream RAW time series data into Snowflake
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_2_ingest.sql`
 
-1. Create the staging table to load IoT streaming data
+1. Run the **Staging Table** script to create the IoT stream staging table.
 
 ```sql
+/*##############################
+-- Staging Table - START
+##############################*/
+
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.STAGING;
 USE WAREHOUSE HOL_TRANSFORM_WH;
 
--- Setup staging tables
--- IOTSTREAM
+-- Setup staging tables - RAW_TS_IOTSTREAM_DATA
 CREATE OR REPLACE TABLE HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA (
     RECORD_METADATA VARIANT,
     RECORD_CONTENT VARIANT
@@ -446,6 +443,10 @@ CREATE OR REPLACE TABLE HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA (
 CHANGE_TRACKING = TRUE
 COMMENT = 'IOTSTREAM staging table.'
 ;
+
+/*##############################
+-- Staging Table - END
+##############################*/
 ```
 
 The IoT data will be streamed into Snowflake in a similar [schema format as Kafka](https://docs.snowflake.com/en/user-guide/kafka-connector-overview#schema-of-tables-for-kafka-topics) which contains two columns:
@@ -485,6 +486,10 @@ In the **GitHub Codespace VS Code**:
 <img src="assets/labsetup_newterminal.png" />
 
 2. Change directory into to the **iotstream** folder: `cd iotstream`
+
+```bash
+cd iotstream
+```
 
 3. Run the `Test.sh` script to confirm a table channel stream can be established with Snowflake.
 
@@ -529,7 +534,6 @@ The simulated **IoT dataset contains six sensor devices** at various frequencies
 | IOT | TAG401 | 60 SEC | CM3S | DOUBLE | Flow Sensor |
 | IOT | TAG501 | 60 SEC | DEGF | DOUBLE | Temperature Gauge |
 | IOT | TAG601 | 10 SEC | KPA | DOUBLE | Pressure Gauge |
-
 
 1. In the **VS Code** `Terminal` run the `Run_MAX.sh` script to load the IoT data.
 
@@ -638,7 +642,10 @@ For the IoT streaming data we'll setup two Dynamic Tables in a simple Dimension 
 In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` and run the **Dynamic Tables Setup** scripts.
 
 ```sql
--- Dynamic Tables Setup
+/*##############################
+-- Dynamic Tables Setup - START
+##############################*/
+
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.TRANSFORM;
@@ -663,6 +670,7 @@ FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
 QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) ORDER BY SRC.RECORD_CONTENT:timestamp::NUMBER, SRC.RECORD_METADATA:offset::NUMBER) = 1
 ;
 
+
 /* Tag readings (Fact)
 TAGNAME - uppercase concatenation of namespace and tag name
 QUALIFY - deduplication filter to only include unique tag readings based on tagname and timestamp
@@ -681,6 +689,10 @@ SELECT
     SRC.RECORD_METADATA:offset::VARCHAR AS OFFSET
 FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
 QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))), SRC.RECORD_CONTENT:timestamp::NUMBER ORDER BY SRC.RECORD_METADATA:offset::NUMBER) = 1;
+
+/*##############################
+-- Dynamic Tables Setup - END
+##############################*/
 ```
 
 > aside positive
@@ -735,7 +747,10 @@ We'll create a set of analytics views similar to the Dynamic Tables with a subse
 In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` and run the **Analytics Views Setup** scripts.
 
 ```sql
--- Analytics Views Setup
+/*##############################
+-- Analytics Views Setup - START
+##############################*/
+
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.ANALYTICS;
@@ -759,6 +774,10 @@ SELECT
     READ.VALUE,
     READ.VALUE_NUMERIC
 FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
+
+/*##############################
+-- Analytics Views Setup - END
+##############################*/
 ```
 
 > aside positive
@@ -920,7 +939,8 @@ Find the value that occurs most frequently within a time frame.
 
 ```sql
 /* RELATIVE FREQUENCY
-Consider the use case of calculating the frequency and relative frequency of each value within a specific time frame, to determine how often the value occurs.
+Consider the use case of calculating the frequency and relative frequency of each value
+within a specific time frame, to determine how often the value occurs.
 
 Find the value that occurs most frequently within a time frame.
 */
@@ -1175,7 +1195,7 @@ over a specific time frame to detect trends and patterns in the data.
 > **ROWS BETWEEN** may NOT yield correct results, as the number of rows that make up the 1 minute interval could be inconsistent. In this case for a 5 second tag without gaps, you might have assumed 12 rows would make up 1 minute.
 >
 
-#### NOTE: At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview, we have included it in the lab content below for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be available in your region. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
+#### NOTE: At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview, we have included it in the lab content below for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be released in your region just yet, it is targeted to be Public Preview soon. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
 
 > aside positive
 > 
@@ -1352,9 +1372,11 @@ Time gap filling is the process of generating timestamps for a given start and e
 
 ```sql
 /* GAP FILLING - 1 SEC TIMESTAMPS WITH 5 SEC TAG
-Generate timestamps given a start and end time boundary, and use ASOF JOIN to a tag dataset with less frequent values, to forward fill using last observed value carried forward (LOCF).
+Generate timestamps given a start and end time boundary, and use ASOF JOIN
+to a tag dataset with less frequent values, to forward fill using last observed value carried forward (LOCF).
 
-TIME_PERIODS - A variable passed into the query to determine the number of time stamps generated for gap filling.
+1 - SET TIME_PERIODS - A variable passed into the query to determine the number of time stamps generated for gap filling.
+2 - Run the LOCF query passing in the TIME_PERIODS to the generated calendar
 */
 -- SET TIME_PERIODS IN SECONDS
 SET TIME_PERIODS = (SELECT TIMESTAMPDIFF('SECOND', '2024-01-01 00:00:00'::TIMESTAMP_NTZ, '2024-01-01 00:00:00'::TIMESTAMP_NTZ + INTERVAL '1 MINUTE'));
@@ -1402,7 +1424,7 @@ Forecasting is part of **Snowflake Cortex, Snowflake’s intelligent, fully-mana
 /* FORECAST DATA - Training Data Set - /IOT/SENSOR/TAG401
 A single tag of data for two weeks.
 
-Create a forecast training data view from historical data.
+1 - Create a forecast training data view from historical data.
 */
 CREATE OR REPLACE VIEW HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401 AS
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE
@@ -1415,12 +1437,14 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 ```sql
 /* FORECAST MODEL - Training Data Set - /IOT/SENSOR/TAG401
-Create a Time-Series SNOWFLAKE.ML.FORECAST model using the training data view.
+2 - Create a Time-Series SNOWFLAKE.ML.FORECAST model using the training data view.
 
 INPUT_DATA - The data set used for training the forecast model
 SERIES_COLUMN - The column that splits multiple series of data, such as different TAGNAMES
 TIMESTAMP_COLNAME - The column containing the Time Series times
 TARGET_COLNAME - The column containing the target value
+
+Training the Time Series Forecast model may take 2-3 minutes in this case.
 */
 CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
     INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401'),
@@ -1439,7 +1463,7 @@ CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
 
 ```sql
 /* FORECAST MODEL OUTPUT - Forecast for 1 Day
-Test Forecasting model output for one day.
+3 - Test Forecasting model output for one day.
 
 SERIES_VALUE - Defines the series being forecasted - for example the specific tag
 FORECASTING_PERIODS - The number of periods being forecasted
@@ -1451,7 +1475,7 @@ CALL HOL_TIMESERIES_FORECAST!FORECAST(SERIES_VALUE => TO_VARIANT('/IOT/SENSOR/TA
 
 ```sql
 /* FORECAST COMBINED - Combined ACTUAL and FORECAST data
-Create a forecast analysis combining historical data with forecast data.
+4 - Create a forecast analysis combining historical data with forecast data.
 
 UNION the historical ACTUAL data with the FORECAST data using RESULT_SCAN
 */
@@ -1502,20 +1526,29 @@ Now that you have a great understanding of running **Time Series Analysis**, we 
 
 <img src="assets/byo_functions.png" />
 
+#### INFO: Time Series Query Profiles
+
+The following query profiles will be covered in this section.
+
+| **Query Type** | **Functions** | **Description** |
+| --- | --- | --- |
+| Upsampling / Interpolation | Custom Interpolation Table Function | Time binning aggregations with interpolated values over time intervals. |
+| Downsampling - LTTB | Custom Snowpark Downsampling Table Function | Downsampling to a set number of data points whilst retaining the shape and variability of the time series data. |
+
 
 ### Table Functions Deploy
 
-In this section two types of Time Series table functions will be deployed to **resample time series data**.
+In this section we'll deploy two types of Time Series [User-Defined Table Functions (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/udf-overview) that will be used to **resample time series data**.
 
-#### Function 1 - Interpolation / Upsampling Time Series Data
+#### Function 1 - SQL - Interpolation / Upsampling Time Series Data
 
 **Upsampling** is used to **increase the frequency** of time samples, such as from hours to minutes, by placing time series data into fixed time intervals using aggregate operations on the values within each time interval. Due to the frequency of samples being increased it has the effect of **creating new values if the interval is more frequent** than the data itself.
 
 If the interval does not contain a value, it will be **interpolated from the surrounding aggregated data**.
 
-#### Function 2 - Downsampling Time Series Data
+#### Function 2 - Python - Downsampling Time Series Data
 
-**Downsampling** is used to **decrease the frequency** of time samples, such as from seconds to minutes. For the downsampling table function, we will deploy the **Largest Triangle Three Buckets (LTTB)** downsampling function, which is part of the **Snowpark Python - plotly-resampler** package.
+**Downsampling** is used to **decrease the frequency** of time samples, such as from seconds to minutes. For the downsampling table function, we will deploy the **Largest Triangle Three Buckets (LTTB)** downsampling algorithm, which is part of the **[Snowpark Python](https://repo.anaconda.com/pkgs/snowflake/) - plotly-resampler** package.
 
 The **LTTB** algorithm **reduces the number of visual data points in a time series data set, whilst retaining the shape and variability of the time series data**. It's useful for reducing large time series data sets for charting purposes where the consumer system may have reduced memory resources.
 
@@ -1534,7 +1567,7 @@ The following functions and procedures have been deployed.
 
 > aside positive
 > 
-> #### INFO: INTERPOLATE Table Function
+> #### INFO: SQL INTERPOLATE Table Function
 >
 > The **INTERPOLATE Table Function** is using the [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) for each time interval to **look both backwards (LAST_VALUE) and forwards (NEXT_VALUE) in time**, to calculate the time and value difference at each time interval, which is then used to generate a smooth linear interpolated value.
 >
@@ -1542,12 +1575,9 @@ The following functions and procedures have been deployed.
 >
 
 ```sql
--- Set role, context, and warehouse
-USE ROLE ROLE_HOL_TIMESERIES;
-USE SCHEMA HOL_TIMESERIES.ANALYTICS;
-USE WAREHOUSE HOL_ANALYTICS_WH;
-
+/*##############################
 -- Create Interpolate Table Function
+##############################*/
 CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE (
     V_TAGLIST VARCHAR,
     V_START_TIMESTAMP TIMESTAMP_NTZ,
@@ -1655,13 +1685,16 @@ $$;
 
 > aside positive
 > 
-> #### INFO: INTERPOLATE Procedure
+> #### INFO: SQL INTERPOLATE Procedure
 >
 > The **INTERPOLATE Procedure** can calculate the number of time buckets within a time boundary based on the interval specified. It then calls the **INTERPOLATE** table function, and depending on the **V_INTERP_TYPE** variable, it will return either the linear interpolated values or last observed value carried forward (LOCF). **Default is LOCF**.
 >
 
 ```sql
--- Add helper procedure to accept start and end times, and return either LOCF or Linear Interpolated Values
+/*##############################
+-- Create Interpolate Procedure
+-- Interpolate helper procedure to accept start and end times, and return either LOCF or Linear Interpolated Values
+##############################*/
 CREATE OR REPLACE PROCEDURE HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE (
     V_TAGLIST VARCHAR,
     V_FROM_TIME TIMESTAMP_NTZ,
@@ -1698,9 +1731,9 @@ $$;
 
 > aside positive
 > 
-> #### INFO: Largest Triangle Three Buckets (LTTB) Function
+> #### INFO: Python Largest Triangle Three Buckets (LTTB) Function
 >
-> The **Largest Triangle Three Buckets (LTTB) downsampling** function uses the **Snowpark Python - plotly-resampler** package. The **LTTB** algorithm **reduces the number of visual data points in a time series data set, whilst retaining the shape and variability of the time series data**.
+> The **Largest Triangle Three Buckets (LTTB) downsampling** function uses a [Vectorized Python UDTF](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-tabular-vectorized) with an LTTB handler built using the **[Snowpark Python](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-tabular-vectorized) - plotly-resampler** package. The **LTTB** algorithm **reduces the number of visual data points in a time series data set, whilst retaining the shape and variability of the time series data**.
 >
 > **LTTB** package is available in the [Anaconda Snowflake Snowpark for Python Channel](https://repo.anaconda.com/pkgs/snowflake/) via **plotly-resampler** and runs securely inside Snowflake warehouses when executed.
 >
@@ -1708,12 +1741,14 @@ $$;
 >
 
 ```sql
+/*##############################
 -- LTTB Downsampling Table Function
+##############################*/
 CREATE OR REPLACE FUNCTION HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB (
     TIMESTAMP NUMBER,
     VALUE FLOAT,
     SIZE NUMBER
-)
+) 
 RETURNS TABLE (
     TIMESTAMP NUMBER,
     VALUE FLOAT
@@ -1765,9 +1800,26 @@ $$;
 
 ### Step 3 - Query Time Series Data Using Deployed Functions and Procedures
 
-### Interpolate Query
+### Set Session Context
 
-The Interpolation table function will return both the **linear interpolated values and last observed value carried forward (LOCF)**.
+Run the following three statements to ensure the worksheet session is in the right context.
+
+```sql
+-- Set role, context, and warehouse
+USE ROLE ROLE_HOL_TIMESERIES;
+USE SCHEMA HOL_TIMESERIES.ANALYTICS;
+USE WAREHOUSE HOL_ANALYTICS_WH;
+```
+
+### Upsampling / Interpolation Query
+
+Upsampling is used to **increase the frequency of time samples**.
+
+The first set of queries use the **INTERPOLATE table functions and procedures**
+to produce values for upsampling both **last observed values carried forward (LOCF)** and
+**LINEAR interpolated smoothing** values between data points.
+
+Call the interpolate table function to return both the **linear interpolated values and last observed value carried forward (LOCF)**.
 
 ```sql
 -- Set role, context, and warehouse
@@ -1776,7 +1828,7 @@ USE SCHEMA HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
 /* INTERPOLATE TABLE FUNCTION
-The Interpolation table function will return both the linear interpolated values and last observed value carried forward (LOCF).
+Call the interpolate table function to return both the linear interpolated values and last observed value carried forward (LOCF).
 */
 SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 12:10:00'::TIMESTAMP_NTZ, '2024-01-01 13:10:00'::TIMESTAMP_NTZ, 10, 362)) ORDER BY TAGNAME, TIMESTAMP;
 ```
@@ -2181,6 +2233,10 @@ In the **GitHub Codespace VS Code**:
 
 2. Change directory into to the **iotstream** folder: `cd iotstream`
 
+```bash
+cd iotstream
+```
+
 3. Run the `Run_Slooow.sh` script to load the IoT data.
 
 ```bash
@@ -2215,15 +2271,18 @@ In the **GitHub Codespace VS Code**:
 ## Cleanup
 Duration: 3
 
-1. In **VS Code** open the worksheet `worksheets/hol_timeseries_8_cleanup.sql` and run the script to remove Snowflake objects.
+1. In **VS Code** open the worksheet `worksheets/hol_timeseries_8_cleanup.sql`.
+
+2. Click the `Execute All Statements` button at the top right of the worksheet to **run the cleanup script**.
+
+<img src="assets/cleanup_script_runall.png" />
 
 ```sql
-/*
-SNOWFLAKE CLEANUP SCRIPT
-*/
+/*##### CLEANUP SCRIPT #####*/
 
--- Set role
+-- Set role and context
 USE ROLE ACCOUNTADMIN;
+USE DATABASE SNOWFLAKE;
 
 -- Cleanup Snowflake objects
 DROP DATABASE HOL_TIMESERIES;
@@ -2232,9 +2291,7 @@ DROP WAREHOUSE HOL_REPORT_WH;
 DROP ROLE ROLE_HOL_TIMESERIES;
 DROP USER USER_HOL_TIMESERIES;
 
-/*
-CLEANUP SCRIPT COMPLETED
-*/
+/*##### CLEANUP SCRIPT #####*/
 ```
 
 2. Stop or delete the [Github Codespace](https://github.com/codespaces), using the Codespace actions menu.
