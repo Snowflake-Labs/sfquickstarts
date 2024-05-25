@@ -235,6 +235,13 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 
 <img src="assets/labsetup_publickey.png" />
 
+> aside negative
+> 
+> The **GitHub Codespace** may prompt to access the clipboard in **VSCode**, select **Allow** if prompted.
+>
+
+<img src="assets/streamlit_codespace_paste.png" />
+
 
 ### Step 8 - Update Snowflake "Setup" Worksheet with Lab Provisioned PUBLIC KEY
 1. Open worksheet: `worksheets/hol_timeseries_1_setup.sql`
@@ -2084,7 +2091,7 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 
 > aside negative
 > 
-> The **GitHub Codespace** may prompt to allow pasting into **VSCode**, select **Allow** if prompted.
+> The **GitHub Codespace** may prompt to access the clipboard in **VSCode**, select **Allow** if prompted.
 >
 
 <img src="assets/streamlit_codespace_paste.png" />
@@ -2287,7 +2294,7 @@ USE DATABASE SNOWFLAKE;
 -- Cleanup Snowflake objects
 DROP DATABASE HOL_TIMESERIES;
 DROP WAREHOUSE HOL_TRANSFORM_WH;
-DROP WAREHOUSE HOL_REPORT_WH;
+DROP WAREHOUSE HOL_ANALYTICS_WH;
 DROP ROLE ROLE_HOL_TIMESERIES;
 DROP USER USER_HOL_TIMESERIES;
 
