@@ -3,7 +3,7 @@ id: getting_started_with_streamlit_in_snowflake
 summary: How to run custom Streamlit app in Snowflake 
 categories: Streamlit
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 

@@ -544,13 +544,13 @@ It seems our LTE network covers more than 90% of the motorways. A good number to
 
 Duration: 20
 
-In this section we will cover more advanced use case where we will leverage H3 functions from Carto toolbox.
+In this section we will cover more advanced use case where we will leverage H3 functions.
 
 ### How many kilometers of UK roads have poor or no LTE coverage?
 
-As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions from `CARTO’s Analytics Toolbox`.
+As an analyst, you might want to find out how many kilometers of motorways in the UK do not have good coverage by our network. Let's use the `UK Open Map Data` dataset and build a decay model of our signal using H3 functions.
 
-Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_FROMGEOGPOINT` function.
+Let's first create our signal decay model for our antennas. In the following query, we will create a table with an H3 cell id for each cell tower. To get the H3 cell id, we will use the `H3_LATLNG_TO_CELL` function.
 
 Run the foillowing query in your Snowflake worksheet:
 
@@ -559,7 +559,7 @@ CREATE OR REPLACE TABLE geolab.geography.uk_lte AS
 SELECT
     row_number() over(order by null) as id
     , cell_range
-    , carto.carto.H3_FROMLONGLAT(lon, lat, 9) as h3
+    , H3_LATLNG_TO_CELL(lat, lon, 9) as h3
 FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS 
 where mcc in ('234', '235')
 and radio = 'LTE'
@@ -567,13 +567,13 @@ ORDER BY h3;
 ```
 
 Now that we have our antenna geometries, we can compute the H3 cells and it's neighbors for the `CELL_RANGE` accordingly.
-First, we will apply the `H3_KRING` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_KRING` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
+First, we will apply the `H3_GRID_DISK` function to compute all neighboring H3 cells within a certain distance from a given H3 cell. The distance is calculated by dividing the `CELL_RANGE` by 586 meters, which represents the spacing between H3 cells at resolution 9.  Since `H3_GRID_DISK` yields an array, we must use the lateral flatten feature to cross the original rows with the array.
 
 Then we will create a decay function based on the H3 distance, so we need to determine the maximum H3 distance for each antenna. We can then group the data by H3 cell and choose the highest signal strength within that cell. As we have computed H3 neighbors for each antenna, antennas in close proximity will have generated the same H3 cell multiple times; thus, we will select the one with the strongest signal.
 
 The model multiplies the "starting signal strength" of 100 by the distance between the antenna and the H3 cell, and it adds more noise as the H3 cell is further away. The signal will range from 0 (poor) to 100 (strongest).
 
-Clustering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
+Ordering by H3 will enable CARTO to execute queries faster, which is beneficial for visualization purposes.
 
 Run the following query.
 
@@ -583,23 +583,24 @@ with h3_neighbors as (
     select 
         id
         , p.value::string as h3
-        , carto.carto.h3_distance(h3, p.value) as h3_distance
+        , h3_grid_distance(h3, p.value::int) as h3_grid_distance
     from geolab.geography.uk_lte,
-    table(flatten(input => carto.carto.h3_kring(h3, ceil(least(cell_range, 6000) / 586)::int
+    table(flatten(input => h3_grid_disk(h3, ceil(least(cell_range, 6000) / 586)::int
         ))) p
 ), 
 max_distance_per_antena as (
-    select id, max(h3_distance) as h3_max_distance
+    select id, max(h3_grid_distance) as h3_max_distance
     from h3_neighbors 
     group by id
 )
 select 
     h3, 
-    max((100 * pow(1 - h3_distance / (h3_max_distance + 1), 2)) -- decay
+    max((100 * pow(1 - h3_grid_distance / (h3_max_distance + 1), 2)) -- decay
     ) * uniform(0.8, 1::float, random() -- noise
     ) as signal_strength
 from h3_neighbors join max_distance_per_antena using(id)
-group by h3;
+group by h3
+order by h3;
 ```
 
 Now that we have created our signal decay model, let’s visualize it on CARTO. For that, we can just run the following query from the query console into a new map.
@@ -629,7 +630,7 @@ To intersect the road layer with the H3 signal strength layer, we will split the
 
 Then when each original road segment has an ID from 1 to n (total points in Linestring) we can create the Linestring from each point to the following point with the `ST_COLLECT` function.
 
-Finally, we use the same `H3_FROMGEOGPOINT` for the selected resolution and we use the Linestring centroid for the point geography.
+Finally, we use the same `H3_POINT_TO_CELL` for the selected resolution and we use the Linestring centroid for the point geography.
 
 Run the following two queries.
 
@@ -672,7 +673,7 @@ select
     , st_collect(segment) as geom -- This is creating the original road segments by collecting them.
 from segments 
 left join GEOLAB.GEOGRAPHY.UK_LTE_COVERAGE_H3
-on carto.carto.h3_fromgeogpoint(st_centroid(segment), 9) = h3
+on H3_POINT_TO_CELL(st_centroid(segment), 9) = h3
 where segment is not null
 group by 1, 2, 3
 order by st_geohash(geom);
@@ -688,7 +689,7 @@ from GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED
 group by signal;
 ```
 
-We now know that we have 58,910 km with good coverage and 10,963 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
+We now know that we have 58,907 km with good coverage and 10,966 with poor/no coverage. Interestingly, that is about 15 % of the UK roads!
 
 Lastly, with this layer, we can add it to our CARTO map and visualize the road segment according to the signal feature we created.
 
@@ -723,5 +724,5 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to use a transformation like ST_COLLECT.
 * How to perform measurement calculations like ST_DISTANCE and ST_LENGTH.
 * How to perform relational calculations like ST_DWITHIN and ST_WITHIN.
-* How to use Spatial grid and H3 functions like H3_FROMGEOGPOINT, H3_KRING, H3_POLYFILL.
+* How to use Spatial grid and H3 functions like H3_POINT_TO_CELL, H3_GRID_DISK, H3_GRID_DISTANCE
 * How to use Search Optimization to speed up geospatial queries.

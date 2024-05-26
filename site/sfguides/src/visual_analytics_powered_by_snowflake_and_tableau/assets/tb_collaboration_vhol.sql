@@ -6,6 +6,7 @@ Quickstart Section 3 - Investigating Zero Sales Days in our First Party Data
   our truck sales went to 0. 
   
   One example they have provided was for Hamburg, Germany in February of 2022.
+  Author:Chandra
 ----------------------------------------------------------------------------------*/
 
 -- Section 3: Step 1 - Querying Point of Sales Data for Trends

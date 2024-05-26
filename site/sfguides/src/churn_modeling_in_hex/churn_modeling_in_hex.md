@@ -25,7 +25,7 @@ In this Quickstart guide, we will play the role of a data scientist at a telecom
 ### What You'll Learn
 
 - How to import/export data between Hex and Snowflake
-- How to train a Random Forest with Snowpark ML model 
+- How to train a Random Forest with Snowpark ML model
 - How to visualize the predicted results from the forecasting model
 - How to convert a Hex project into an interactive web app and make predictions on new users
 
@@ -47,32 +47,29 @@ After activating your account, you'll be directed to Hex and prompted to create 
 
 Duration: 5
 
-Now we can move back over to Hex and get started on our project. The first thing you'll need to do is download the Hex project that contains all of the code to train our model.
+Now we can move back over to Hex and get started on our project. The first thing you'll need to do is get the Hex project that contains all of the code we'll work through to train our model.
+
+Clicking this button will copy the template project into your new workspace.
 
 <button>
 
-[Download Hex project](https://static.hex.site/Churn_modeling.yaml)
+[Duplicate Hex project](https://app.hex.tech/new-project?signup=true&baseHexId=057d76c5-b7c3-465e-9e61-f939106e7c5d&baseOrgId=hex-public)
 
 </button>
 
-![](assets/import.gif)
+Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project.
 
-Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to:
+Before we dive into the code, we'll need to import our Snowflake data connection, which has been automatically created by the partner connect process.
 
-1. Change our compute profile to run Python 3.8
-2. Import our Snowflake data connection
-
-Which we can do all from the left control panel. To change the compute profile, click on the Environments tab represented by a cube. At the top of this section you'll see the compute profile portion at the top. Click on the Image dropdown and select Python 3.8.
-
-![](assets/3.8.gif)
-
-Next we can import our data connection by heading over to the Data sources tab represented by a database icon with a lightning bolt. You should see two data connections - [Demo] Hex public data and Snowflake. Import both connections.
+Head over to the Data sources tab represented by a database icon with a lightning bolt. You should see two data connections - [Demo] Hex public data and Snowflake. Import both connections.
 
 ![](assets/DC.gif)
 
-One nice feature of Hex is the [reactive execution model](https://learn.hex.tech/docs/develop-logic/compute-model/reactive-execution). This means that when you run a cell, all related cells are also executed so that your projects are always in a clean state. However, to ensure we don’t get ahead of ourselves, were going to turn this feature off. In the top right corner of your screen, you’ll see a Run mode dropdown. If this is set to Auto, select the dropdown and change it to cell only.
+One nice feature of Hex is the [reactive execution model](https://learn.hex.tech/docs/develop-logic/compute-model/reactive-execution). This means that when you run a cell, all related cells are also executed so that your projects are always in a clean state. However, if you want to ensure you don’t get ahead of yourself as we run through the tutorial, you can opt to turn this feature off. In the top right corner of your screen, you’ll see a Run mode dropdown. If this is set to Auto, select the dropdown and change it to cell only.
 
 ![](assets/mode.gif)
+
+In the walkthrough video of the lab, we opt to leave this on and instead un-comment out the template code as we work through the project.
 
 ## Reading and writing data
 
@@ -94,7 +91,7 @@ At the bottom of this cell, you will see a green output variable labeled `data`.
 
 Once the config is set, enable `Logic session` as the writeback mode (in the upper right of the cell) and run the cell.
 
-In the SQL cell labeled **Churn data**, change the data source to `Snowflake` and execute the cell. You will see a green output variable named data at the bottom. 
+In the SQL cell labeled **Churn data**, change the data source to `Snowflake` and execute the cell. You will see a green output variable named data at the bottom.
 
 ![](assets/sf_churn.png)
 
@@ -159,39 +156,81 @@ Duration: 10
 
 In order to predict the churn outcomes for customers not in our dataset, we’ll need to train a model that can identify users who are at risk of churning from the history of users who have. However, it was mentioned in the last section that there is an imbalance in the class distribution that will cause problems for our model if not handled properly. One way to handle this is to create new data points such that the classes balance out. This is also known as upsampling.
 
-For this, we’ll be using the `SMOTE` algorithm from the `imblearn` package. Run the code cell labeled **Upsampling the data**.
+For this, we’ll be using the `SMOTE` algorithm from the `imblearn` package.
+
+First, we'll get our features— aka everything except the target column, Churn. We do this in a SQL cell, making use of the SELECT / EXCLUDE syntax in Snowflake! Uncomment + run the SQL cell called "Features".
+
+Now, we'll upsample. We could do this locally using SMOTE, but we want this entire workflow to run in Snowpark end-to-end, so we're going to create a stored procedure to do our upsampling.
+
+Run the code cell labeled **Upsampling the data**.
 
 ```python
-# Extract the training features
-features_names = [col for col in data.columns if col not in ['Churn']]
-features = data[features_names]
+def upsample(
+    session: Session,
+    features_table_name: str,
+) -> str:
 
-# extract the target
-target = data['Churn']
+    import pandas as pd
+    import sklearn
+    from imblearn.over_sampling import SMOTE
 
-# upsample the minority class in the dataset
-upsampler = SMOTE(random_state = 111)
-features, target = upsampler.fit_resample(features, target)
+    features_table = session.table(features_table_name).to_pandas()
+    X = features_table.drop(columns=["Churn"])
+    y = features_table["Churn"]
+    upsampler = SMOTE(random_state=111)
+    r_X, r_y = upsampler.fit_resample(X, y)
+    upsampled_data = pd.concat([r_X, r_y], axis=1)
+    upsampled_data.reset_index(inplace=True)
+    upsampled_data.rename(columns={'index': 'INDEX'}, inplace=True)
 
-# adds the target and reassigns features to data
-features['Churn'] = target
 
-# convert to snowpark dataframe and add an index column to preserve the order of our data
-snowpark_data = features
-snowpark_data["INDEX"] = snowpark_data.reset_index().index
-dataset = session.create_dataframe(snowpark_data)
+
+    upsampled_data_spdf = session.write_pandas(
+        upsampled_data,
+        table_name=f'{features_table_name}_SAMPLED',
+        auto_create_table=True,
+        table_type='', # creates a permanent table
+        overwrite=True,
+    )
+
+    return "Success"
 ```
+
+Now we have created a function that will be our stored procedure. It will perform upsampling, and write the upsampled data back to a new Snowflake table called '{features_table_name}\_SAMPLED'.
+
+Now we create + call the stored procedure, in 2 more python cells:
+
+```python
+session.sql('CREATE OR REPLACE STAGE SNOWPARK_STAGE').collect()
+
+session.sproc.register(
+    upsample,
+    name="upsample_data_with_SMOTE",
+    stage_location='@SNOWPARK_STAGE',
+    is_permanent=True,
+    execute_as='caller',
+    packages=['imbalanced-learn==0.10.1', 'pandas', 'snowflake-snowpark-python==1.6.1', 'scikit-learn==1.2.2'],
+    replace=True,
+)
+```
+
+```python
+# # here we call the sproc to perform the upsampling
+session.call('upsample_data_with_SMOTE', 'TELECOM_CHURN')
+```
+
+Now all that's left is to query the upsampled data from the table using another SQL cell, in this case the Features upsampled cell. If you prefer, you could change your stored procedure to return a Snowpark DataFrame directly rather than writing back a permanent table, but if you are going to be doing continued work on this dataset, writing a permanent table may make more sense.
 
 Now that we have balanced our dataset, we can prepare our model for training. The model we have chosen for this project is a Random Forest classifier. A random forest creates an ensemble of smaller models that all make predictions on the same data. The prediction with the most votes is the prediction the model chooses.
 
-Rather than use a typical random forest object, we'll make use of Snowflake ML. Snowflake ML offers capabilities for data science and machine learning tasks within Snowflake. It provides estimators and transformers compatible with scikit-learn and xgboost, allowing users to build and train ML models directly on Snowflake data. This eliminates the need to move data or use stored procedures. It uses wrappers around scikit-learn and xgboost classes for training and inference, ensuring optimized performance and security within Snowflake. 
+Rather than use a typical random forest object, we'll make use of Snowflake ML. Snowflake ML offers capabilities for data science and machine learning tasks within Snowflake. It provides estimators and transformers compatible with scikit-learn and xgboost, allowing users to build and train ML models directly on Snowflake data. This eliminates the need to move data or use stored procedures. It uses wrappers around scikit-learn and xgboost classes for training and inference, ensuring optimized performance and security within Snowflake.
 
 In the cell labeled `Snowflake ML model preprocessing` we'll import Snowpark ML to further process our dataset to prepare it for our model.
 
 ```python
-import snowflake.ml.modeling.preprocessing as pp 
+import snowflake.ml.modeling.preprocessing as pp
 from snowflake.ml.modeling.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split  
+dataset = features_upsampled
 
 # Get the list of column names from the dataset
 feature_names_input = [c for c in dataset.columns if c != '"Churn"' and c != "INDEX"]
@@ -199,18 +238,18 @@ feature_names_input = [c for c in dataset.columns if c != '"Churn"' and c != "IN
 
 # Initialize a StandardScaler object with input and output column names
 scaler = pp.StandardScaler(
-    input_cols=feature_names_input, 
+    input_cols=feature_names_input,
     output_cols=feature_names_input
 )
 
 # Fit the scaler to the dataset
-scaler.fit(dataset)  
+scaler.fit(dataset)
 
 # Transform the dataset using the fitted scaler
-scaled_features = scaler.transform(dataset)  
+scaled_features = scaler.transform(dataset)
 
 # Define the target variable (label) column name
-label = ['"Churn"']  
+label = ['"Churn"']
 
 # Define the output column name for the predicted label
 output_label = ["predicted_churn"]
@@ -218,8 +257,6 @@ output_label = ["predicted_churn"]
 # Split the scaled_features dataset into training and testing sets with an 80/20 ratio
 training, testing = scaled_features.random_split(weights=[0.8, 0.2], seed=111)
 ```
-
-
 
 ### Accepting Anaconda terms
 
@@ -232,7 +269,22 @@ To do this, navigate back to Snowflake and click on your username in the top lef
 
 Duration: 5
 
-Now we can train our model. Run the cell labeled `Snowflake ML model training`.
+Now we can train our model. Run the cell labeled `Model training`.
+
+```python
+# Initialize a RandomForestClassifier object with input, label, and output column names
+model = RandomForestClassifier(
+    input_cols=feature_names_input,
+    label_cols=label,
+    output_cols=output_label,
+)
+
+# Train the RandomForestClassifier model using the training set
+model.fit(training)
+
+# Predict the target variable (churn) for the testing set using the trained model
+results = model.predict(testing)
+```
 
 ![](assets/train.png)
 
@@ -247,7 +299,6 @@ In order to understand how well our model performs at identifying users at risk 
 Run the code cell labeled **Evaluate model** on _accuracy and recall._
 
 ```python
-# run the model on the testing set
 predictions = results.to_pandas().sort_values("INDEX")[['predicted_churn'.upper()]].astype(int).to_numpy().flatten()
 actual = testing.to_pandas().sort_values("INDEX")[['Churn']].to_numpy().flatten()
 
@@ -373,7 +424,7 @@ Once you've arranged your cells and are satisfied with how it looks, use the sha
 
 Duration: 1
 
-Congratulations on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this [project here](https://app.hex.tech/hex-public/app/3987c3db-976e-41c9-a7b0-dec571159260/10/d8ffce15-67ec-4704-96ad-656baad8187f)!
+Congratulations on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this [project here](https://app.hex.tech/hex-public/app/8bd7b9bb-7f6c-41f1-9b4c-ff563a7fcaea/latest)!
 
 ### What we've covered
 

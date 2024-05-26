@@ -19,11 +19,21 @@ First things first though for those that are new to some of these technologies.
 
 ### What is Snowpark?
 
-It allows developers to query data and write data applications in languages other than SQL using a set of APIs and DataFrame-style programming constructs in Python, Java, and Scala. These applications run on and take advantage of the same distributed computation on Snowflake's elastic engine as your SQL workloads. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
+
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).
+
+**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
+
+Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+
+![Snowpark](assets/snowpark.png)
 
 ### What is Streamlit?
 
-Streamlit is a pure-Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).
+Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
+
+Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What is PyTorch?
 
@@ -143,9 +153,11 @@ predicted_label = session.sql(f"SELECT image_recognition_using_bytes(image_bytes
 - In the above code snippet, the Snowpark for Python UDF *image_recognition_using_bytes()* is passed the contents of the column *image_bytes* where the column *FILE_NAME* matches the name of the image file generated using uuid.
 
 <!-- ------------------------ -->
-## Snowpark for Python and PyTorch
+## PyTorch and Snowpark Python
 
 Duration: 10
+
+### PyTorch
 
 For this particular application, we will be using [PyTorch implementation of MobileNet V3](https://github.com/d-li14/mobilenetv3.pytorch).
 
@@ -161,7 +173,13 @@ session.file.put('mobilenetv3.py','@dash_files',overwrite=True,auto_compress=Fal
 session.file.put('mobilenetv3-large-1cd25616.pth','@dash_files',overwrite=True,auto_compress=False)
 ```
 
-And here's the Snowpark for Python UDF code that uses the pre-trained model for image recognition in ***both applications***.
+<br/>
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<br/>
+
+![Snowpark](assets/snowpark_python_udfs.png)
+
+Here's the Snowpark for Python UDF code that uses the pre-trained model for image recognition in ***both applications***.
 
 ```python
 # Add model files as dependencies on the UDF
@@ -261,7 +279,7 @@ In order to build and run the applications, setup your environment as described 
 - From the app folder, create conda environment. Then activate conda environment and install Snowpark for Python and other libraries including Streamlit. *Note: You can skip installing openai if you're not going to run the second application.*
 
 ```python
-conda create --name snowpark-img-rec -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+conda create --name snowpark-img-rec -c https://repo.anaconda.com/pkgs/snowflake python=3.9
 conda activate snowpark-img-rec
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook cachetools
 pip install streamlit
@@ -269,7 +287,7 @@ pip install uuid
 pip install openai
 ```
 
-*Note: The versions at the time of writing this -- snowflake-snowpark-python 1.0.0, streamlit 1.16.0, openai 0.26.0.*
+*Note: The latest versions this application has been tested -- snowflake-snowpark-python 1.8.0, streamlit 1.28.0, openai 0.28.1.*
 
 - Update [connection.json](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/connection.json) with your Snowflake account details and credentials. *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
