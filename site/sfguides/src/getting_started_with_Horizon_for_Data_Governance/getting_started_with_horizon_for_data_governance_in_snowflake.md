@@ -369,7 +369,7 @@ WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN
 
 Now that we understand System Defined Roles, let's begin leveraging them to create a Test Role and provide it access to the Customer Order data we will deploy our initial Snowflake Horizon Governance features against.
 
-We will use the Useradmin Role to create a Test Role
+We will use the Useradmin Role to create a Data Analyst Role
 ```
 USE ROLE USERADMIN;
 
@@ -434,19 +434,18 @@ SET MY_USER_ID  = CURRENT_USER();
 Now we can GRANT our Role to the User we are currently logged in as and use that role
 ```
 GRANT ROLE HRZN_DATA_ANALYST TO USER identifier($MY_USER_ID);
-
-USE ROLE HRZN_DATA_ENGINEER;
 ```
 
 ### Data Quality Monitoring 
 
-Within Snowflake, you can measure the quality of your data by using Data Metric Functions. Using these, we want to ensure that there are not duplicate or invalid Customer Email Addresses present in our system. While our team works to resolve any existing bad records, we will work to monitor these occuring moving forward.
+Within Snowflake, you can measure the quality of your data by using Data Metric Functions. Using these, we want to ensure that there are not duplicate or invalid Customer Email Addresses present in our system. While our team works to resolve any existing bad records, as a data engineer, we will work to monitor these occuring moving forward.
 
 #### Creating Data Metric functions
 Within this step, we will walk through adding Data Metric Functions to our Customer Order Table to capture Duplicate and Invalid Email Address counts everytime data is updated.
 
 Creating a System DMF by first setting a schedule on the table and then setting the metrics
 ```
+USE ROLE HRZN_DATA_ENGINEER;
 --Schedule
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES';
 
@@ -491,7 +490,7 @@ As we did above, let's see how many Invalid Email Addresses currently exist
 SELECT HRZN_DB.HRZN_SCH.INVALID_EMAIL_COUNT(SELECT EMAIL FROM HRZN_DB.HRZN_SCH.CUSTOMER) AS INVALID_EMAIL_COUNT;
 ```
 
-Before we can apply our DMF's to the table, we must first set the Data Metric Schedule. For our demo we will Trigger this to run every 5 minutes
+Before we can apply our DMF's to the table, we must first set the Data Metric Schedule. For our demo we will trigger this to run every 5 minutes
 ```
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER SET DATA_METRIC_SCHEDULE = '5 minute'; 
 ```
@@ -544,7 +543,7 @@ ORDER BY change_commit_time DESC;
 
 
 
-## Horizon as Data Governor - Search & Discovery
+## Horizon as Data Governor - Know & protect your data
 Duration: 30
 
 **Overview**
@@ -595,7 +594,7 @@ USE SCHEMA HRZN_SCH;
 ````
 #### Sensitive Data Classification
 
- In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to attempt to automatically detect
+ In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to automatically detect
  sensitive information and apply relevant Snowflake system defined privacy tags. 
 
  Classification is a multi-step process that associates Snowflake-defined system
