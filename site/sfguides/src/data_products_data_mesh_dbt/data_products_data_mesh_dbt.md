@@ -145,7 +145,21 @@ In this step, you will set up Snowflake and dbt Cloud accounts for use in the re
 
 ### Sign up for a Snowflake Enterprise trial account
 
-Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the steps. **Make sure to select an Enterprise account.**
+Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the steps. **Make sure to select an Enterprise account.**  You'll also be prompted to select a cloud provider - Microsoft Azure, Amazon Web Services, or Google Cloud Platform.  Choose the one that makes the most sense for you. <br>
+
+![Snowflake Cloud Provider](assets/snowflake_cloud_provider.png)<br>
+
+An email to activate your account will be sent after following the steps in the sign up flow.  Click the button in the email "Click to Activate"
+
+![Snowflake Activate Account](assets/snowflake_activation_email.png)<br>
+
+Next, specify a username and password for your account.
+
+![Snowflake Activate Account](assets/snowflake_username_password.png)<br>
+
+When prompted to either explore a sample data set or load data into snowflake, select the "Skip for Now" button.
+
+**Your Snowflake account is ready!**
 
 ### Launching dbt Cloud by Snowflake Partner Connect
 
@@ -198,6 +212,12 @@ The first thing you'll need to do is set up a role specifically for applying the
 - Create a `foundational_role` role for creating and managing resources in the `foundational_db` database using the `foundational_wh` warehouse. It will also be able to administer data governance responsibilities, and grant appropriate permissions for masking and tagging.
 - Create a `foundational_pii_reader_role` for users who can access PII data unmasked.
 
+In the Snowflake UI, click on `Projects` in the lefthand sidebar, then `Worksheets` which is located within the `Projects` section.  Then select the blue plus icon in the top-right of the screen to create a new SQL worksheet. <br>
+
+![Snowflake SQL Worksheet](assets/snowflake_sql_worksheet.png)
+
+Then copy the code below, paste it into the worksheet, select all (Ctrl + A or Cmd + A), and Execute (Ctrl + Enter or Cmd + Enter or Click the blue play icon in the top right)
+
 ```sql
 use role accountadmin;
 
@@ -213,6 +233,8 @@ grant usage on database foundational_db to role foundational_role;
 grant usage on schema foundational_db.prod to role foundational_role;
 grant usage on warehouse foundational_wh to role foundational_role;
 grant create schema on database foundational_db to role foundational_role;
+grant create table on schema foundational_db.prod to role foundational_role;
+grant create view on schema foundational_db.prod to role foundational_role;
 
 grant create tag on schema foundational_db.prod to role foundational_role;
 grant create masking policy on schema foundational_db.prod to role foundational_role;
@@ -231,7 +253,7 @@ Now create the finance team workspace. The code below will:
 ```sql
 create database if not exists finance_db;
 create schema if not exists finance_db.prod;
-create or replace warehouse finance_wh with warehouse_size xsmall;
+create or replace warehouse finance_wh with warehouse_size = xsmall;
 
 create role if not exists finance_role;
 
@@ -239,11 +261,15 @@ grant usage on warehouse finance_wh to role finance_role;
 grant usage on database finance_db to role finance_role;
 grant usage on schema finance_db.prod to role finance_role;
 grant select on all tables in schema finance_db.prod to role finance_role;
+
+grant usage on database foundational_db to role finance_role;
+grant usage on schema foundational_db.prod to role finance_role;
+grant select on all tables in schema foundational_db.prod to role finance_role;
 ```
 
 ### Grant yourself permissions
 
-To get this all working correctly, make sure to assign the relevant roles to your own Snowflake database user.
+To get this all working correctly, make sure to assign the relevant roles to your own Snowflake database user.  **Ensure that you're replacing <your-snowflake-username> in the script below with your Snowflake username.**.
 
 ```sql
 use role accountadmin;
@@ -281,11 +307,12 @@ You will notice that you need to input your Snowflake credentials and resources 
 
 Now you will create the foundational project in dbt Cloud, which is to be exclusively developed by the central data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
 
-1. From **Account settings**, click **+ New Project**.
+1. Click the gear icon in the top-right corner of the navbar and then select **Account Settings**.
+2. From **Account settings**, select projects in the left sidebar, and then click **+ New Project** near the top-right corner.
 2. In the **Project name** field, enter `Foundational Project` and click **Continue**.
 3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
 4. In the **Configure your environment** section, enter the **Settings** for your new project.
-  - Account: The Snowflake account you are operating in
+  - Account: The Snowflake account you are operating in.
   - Optional settings:
     - Role: `foundational_role`
     - Database: `foundational_db`
@@ -296,8 +323,22 @@ Now you will create the foundational project in dbt Cloud, which is to be exclus
     - Password: Your Snowflake password
 5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
 6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
-7. Select Managed Repo, and name it `foundational_repo`. 
-8. Click into the Environments section and create a Deployment Environment called `Production`.
+7. Select Managed Repo, name it `foundational_repo`, and click "Create".
+8. In the "Deployment Environments" section in the middle of the screen, click "Create Environment".
+9. In the **Create new Environment** section, enter the settings for your environment.
+  - Environment name: `Production`
+  - Deployment type: `Production` (This should already be set appropriately.)
+  - dbt version: `Keep on latest version`
+  - Deployment connection:
+    - These are optional and allow for creating overrides for the connection we set up when creating the project.  You can leave these as is.
+  - Deployment credentials:
+    - Auth method: `Username and password`
+    - Username: Your Snowflake username
+    - Password: Your Snowflake password
+    - schema: `prod`
+  - Test the connection (bottom of form) and then save (top-right of form) once successful.
+
+**Normally, we'd use a service account here to write to the production space**
 
 For further details about this step, you may refer to the dbt documentation on [creating a new project in dbt Cloud](https://docs.getdbt.com/docs/cloud/about-cloud-setup).
 
@@ -309,7 +350,7 @@ For further details about this step, you may refer to the dbt documentation on [
 
 Meanwhile, the finance team will build on these foundations, and add more specific transformations or business logic as required for their purposes. Follow the same steps as above, but fill in the finance team Snowflake information:
 
-1. From **Account settings**, click **+ New Project**.
+1. From **Account settings**, select projects in the left sidebar, and then click **+ New Project** near the top-right corner.
 2. In the **Project name** field, enter `Finance Project` and click **Continue**.
 3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
 4. In the **Configure your environment** section, enter the **Settings** for your new project.
@@ -324,7 +365,20 @@ Meanwhile, the finance team will build on these foundations, and add more specif
     - Password: Your Snowflake password
 5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
 6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
-7. Select Managed Repo, and name it `finance_repo`. 
+7. Select Managed Repo, and name it `finance_repo`.
+8. In the "Deployment Environments" section in the middle of the screen, click "Create Environment".
+9. In the **Create new Environment** section, enter the settings for your environment.
+  - Environment name: `Production`
+  - Deployment type: `Production` (This should already be set appropriately.)
+  - dbt version: `Keep on latest version`
+  - Deployment connection:
+    - These are optional and allow for creating overrides for the connection we set up when creating the project.  You can leave these as is.
+  - Deployment credentials:
+    - Auth method: `Username and password`
+    - Username: Your Snowflake username
+    - Password: Your Snowflake password
+    - schema: `prod`
+  - Test the connection (bottom of form) and then save (top-right of form) once successful.
 
 ### Additional features to secure dbt Cloud and Snowflake
 
@@ -359,14 +413,15 @@ Now it's time for you to add dbt code in the foundational project using the dbt 
 
 Here are the steps:
 
-1. First, navigate to the **Develop** page to verify your setup.
-2. If the repo you are working on is empty, click the **Initialize dbt project** button and commit the changes.
-3. Create a new branch.
-4. Delete the `models/example` folder.  
-5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `foundational_project`.
-6. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
-7. In the **File Explorer**, hover over the project directory and click the **...**, then select **Create file**.
-8. Create two new folders: `models/staging` and `models/marts`.
+1. Navigate back to the foundational project via the account / project dropdown in the top-right section of the navbar.
+2. First, navigate to the **Cloud IDE** via the **Develop** dropdown in the navbar to verify your setup.
+3. If the repo you are working on is empty, click the **Initialize dbt project** button and commit the changes.
+4. Create a new branch.
+5. Delete the `models/example` folder.  
+6. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `foundational_project`.
+7. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
+8. In the **File Explorer**, hover over the models directory and click the **...**, then select **Create Folder**.
+9. Create two new folders: `staging` and `marts`.  **If you've done this right, these directories will be inside the `models` directory.**
 
 ### Create the staging layer
 
@@ -803,11 +858,11 @@ To run your first deployment dbt Cloud job, you will need to create a new dbt Cl
 
 ![Select the 'Generate docs on run' option when configuring your dbt Cloud job.](assets/generate_docs_on_run.png)
 
-5. Then, click **Run now** to trigger the job.
+5. You may optionally set a schedule for the the job to run on.
+6. Save the job
+7. Then, click **Run now** to trigger the job.
 
-![Select the 'Generate docs on run' option when configuring your dbt Cloud job.](assets/job_run_now.png)
-
-6. You may optionally set a schedule for the the job to run on.
+![Run your job.](assets/job_run_now.png)
 
 ### Additional job features for a data mesh
 
@@ -849,7 +904,7 @@ In this penultimate step, you will now set up dbt Cloud to build the finance tea
 
 1. First, select the **Finance Project** from the dbt Cloud project selector.
 2. Now, open up the **Cloud IDE** in the **Develop** toolbar.
-3. If you’ve also started with a new git repo, click **Initialize dbt project** under the **Version control** section.
+3. If you’ve also started with a new git repo, click **Initialize dbt project** button under the **Version control** section and commit the changes.
 4. Delete the `models/example` folder
 5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `finance_project`.
 5. In your `dbt_project.yml` file, remove lines 39-42 (the `my_new_project` model reference).
@@ -871,7 +926,7 @@ from {{ ref('foundational_project', 'fct_orders') }}
 group by 1
 ```
 
-Notice the cross-project `ref` by using two arguments to the function: 1) name of the project,as defined within that upstream project and declared in `dependencies.yml`, and 2) the name of a public model in that project.
+Notice the cross-project `ref` by using two arguments to the function: 1) name of the project, as defined within that upstream project and declared in `dependencies.yml`, and 2) the name of a public model in that project.
 
 9. **Save** your file and notice the lineage in the bottom pane.
 10. **Compile** the code and notice that this model is now referencing the production version of the foundational project's `fct_orders` table.
