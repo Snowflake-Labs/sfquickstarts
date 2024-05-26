@@ -151,9 +151,9 @@ Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the
 
 1. We recommend that you use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
-2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which is located within the `Admin` section. <br>
+2. In the Snowflake UI, click on `Data Products` in the lefthand sidebar, then `Partner Connect` which is located within the `Data Products` section. <br>
 
-    ![Open Partner Connect](assets/Snowflake_open_partner_connect.png)<br>
+    ![Open Partner Connect](assets/snowflake_partner_connect.png)<br>
 
     Check to make sure your role is set as the ACCOUNTADMIN role. If you're using the classic console, the Partner Connect button will be in the top bar just right of center.
 
