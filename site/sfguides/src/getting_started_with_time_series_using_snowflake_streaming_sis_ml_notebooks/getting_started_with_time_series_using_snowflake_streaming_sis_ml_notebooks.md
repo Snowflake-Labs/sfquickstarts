@@ -259,6 +259,25 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 >
 > The **Snowflake setup** is complete, and The Lab environment is configured!
 
+> aside negative
+> 
+> ### Lab Troubleshooting
+>
+> **Under some sections of the lab, Troubleshooting steps have been provided to assist with any issues that may occur**.
+>
+> In the event that you experience issues in a particular section, refer to the **Troubleshooting** steps where provided.
+>
+> Please use the following steps to **download the lab files locally** for reference, and in case of the GitHub Codespace not deploying.
+>
+> #### Download and Extract Lab Files
+> 
+> 1. **Download** Lab Files: <button>[Getting Started with Time Series Analytics for IoT in Snowflake](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks/archive/refs/heads/main.zip)</button>
+>
+> 2. Extract the **lab downloaded files** to an accessible location on your computer.
+>
+> 3. The lab will refer to the extracted **lab downloaded files** as `Lab Downloaded Files`.
+>
+
 <!-- ------------------------ -->
 ## Setup Snowflake Resources
 Duration: 5
@@ -409,6 +428,28 @@ GRANT CREATE NOTEBOOK ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESE
 > aside positive
 > 
 > The Snowflake foundation objects have now been deployed, and we can continue on to set up a **Snowpipe Streaming Ingestion**.
+>
+
+> aside negative
+> 
+> ### Troubleshooting
+>
+> This section runs through a **SQL Worksheet**, this can be run in Snowflake with a **Snowsight Worksheet**. Use the following steps to **Troubleshoot**.
+>
+>
+> 1. Inside the `Lab Downloaded Files` folder open `worksheets/hol_timeseries_1_setup.sql` and **copy** the contents of the file.
+>
+> 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
+>
+> <img src="assets/analysis_worksheets.png" />
+>
+> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+>
+> <img src="assets/analysis_newworksheet.png" />
+>
+> 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
+>
+> 5. **Run** all the commands in the worksheet.
 >
 
 <!-- ------------------------ -->
@@ -618,6 +659,43 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 > Data has now been **streamed into Snowflake**, and we can now look at modeling the data for analytics.
 >
 
+> aside negative
+> 
+> ### Troubleshooting
+>
+> If you encounter issues with getting data loaded via the **Snowpipe Streaming Ingestion** section, use the following steps to **Troubleshoot**.
+>
+> #### Manually Load the IoT Data
+>
+> 1. Inside the `Lab Downloaded Files` folder open `help/snowflake_manual_ingest.sql` and **copy** the contents of the file.
+>
+> 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
+>
+> <img src="assets/analysis_worksheets.png" />
+>
+> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+>
+> <img src="assets/analysis_newworksheet.png" />
+>
+> 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
+>
+> 5. **Run** all the commands in the worksheet.
+>
+> #### GitHub Codespace is Showing Out of Memory Errors
+>
+> The **GitHub Codespace machine type** can be changed to an instance with more memory.
+>
+> 1. Open [GitHub Codespaces](https://github.com/codespaces).
+>
+> <img src="assets/troubleshoot_ingest_codespace_machine.png" />
+>
+> 2. Select a **machine type with more memory**, and click `Update Codespace`.
+>
+> <img src="assets/troubleshoot_ingest_codespace_machineupdate.png" />
+>
+> 3. **Re-run** the ingestion scripts.
+>
+
 <!-- ------------------------ -->
 ## Data Modeling and Transformation
 Duration: 5
@@ -712,7 +790,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 ### Step 2 - Review Dynamic Table Details
 
-1. Login to Snowflake, and from the menu expand `Data > Databases > HOL_TIMESERIES > TRANSFORM > Dynamic Tables > DT_TS_TAG_METADATA > Refresh History`
+1. **Login to Snowflake**, and from the menu expand `Data > Databases > HOL_TIMESERIES > TRANSFORM > Dynamic Tables > DT_TS_TAG_METADATA > Refresh History`
 
 **The DT_TS_TAG_METADATA table will show six rows loaded, representing the six tags of data streamed into Snowflake**.
 
@@ -792,6 +870,28 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 > Data is now **modeled in Snowflake** and available in the **ANALYTICS** schema, and we can now proceed to analyze the data using Snowflake time series functions.
 >
 
+> aside negative
+> 
+> ### Troubleshooting
+>
+> This section runs through a **SQL Worksheet**, this can be run in Snowflake with a **Snowsight Worksheet**. Use the following steps to **Troubleshoot**.
+>
+>
+>1. Inside the `Lab Downloaded Files` folder open `worksheets/hol_timeseries_3_transform.sql` and **copy** the contents of the file.
+>
+> 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
+>
+> <img src="assets/analysis_worksheets.png" />
+>
+> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+>
+> <img src="assets/analysis_newworksheet.png" />
+>
+> 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
+>
+> 5. **Run** all the commands in the worksheet.
+>
+
 <!-- ------------------------ -->
 ## Time Series Analysis
 Duration: 20
@@ -823,7 +923,7 @@ The following query profiles will be covered in this section.
 
 #### This section will be executed within a Snowflake Snowsight Worksheet
 
-1. Login to Snowflake, and from the menu expand `Projects > Worksheets`
+1. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`
 
 <img src="assets/analysis_worksheets.png" />
 
@@ -1792,7 +1892,7 @@ $$;
 
 #### This section will be executed within a Snowflake Snowsight Worksheet
 
-1. Login to Snowflake, and from the menu expand `Projects > Worksheets`
+1. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`
 
 <img src="assets/analysis_worksheets.png" />
 
@@ -1999,6 +2099,28 @@ ORDER BY TAGNAME, TIMESTAMP;
 > You have now built your own **Time Series Analysis** functions and procedures, these can be called within applications working with time series data. We can now look at deploying a Time Series application.
 >
 
+> aside negative
+> 
+> ### Troubleshooting
+>
+> This section runs through a **SQL Worksheet**, this can be run in Snowflake with a **Snowsight Worksheet**. Use the following steps to **Troubleshoot**.
+>
+>
+> 1. Inside the `Lab Downloaded Files` folder open `worksheets/hol_timeseries_5_functions.sql` and **copy** the contents of the file.
+>
+> 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
+>
+> <img src="assets/analysis_worksheets.png" />
+>
+> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+>
+> <img src="assets/analysis_newworksheet.png" />
+>
+> 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
+>
+> 5. **Run** all the commands in the worksheet.
+>
+
 <!-- ------------------------ -->
 ## Build Your Time Series Application in Streamlit
 Duration: 15
@@ -2026,29 +2148,25 @@ After completing the analysis of the time series data that was streamed into Sno
 2. Run the Worksheet to **create a stage for the Streamlit** application
 
 ```sql
-/*
-SNOWFLAKE STREAMLIT SCRIPT
-*/
+/*##### STREAMLIT SCRIPT #####*/
 
 -- Set role, context, and warehouse
 USE ROLE ROLE_HOL_TIMESERIES;
 USE SCHEMA HOL_TIMESERIES.ANALYTICS;
 USE WAREHOUSE HOL_ANALYTICS_WH;
 
--- CREATE STAGE FOR STREAMLIT FILES
+-- Create a stage for Streamlit
 CREATE OR REPLACE STAGE HOL_TIMESERIES.ANALYTICS.STAGE_TS_STREAMLIT
 DIRECTORY = (ENABLE = TRUE, REFRESH_ON_CREATE = TRUE)
 ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 
-/* EXTERNAL ACTIVITY
+/*###### EXTERNAL ACTIVITY #####
+Use Snowflake CLI to upload Streamlit app:
+$ conda activate hol-timeseries
+$ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
+##############################*/
 
-Use Snowflake CLI to upload Streamlit app
-
-*/
-
-/*
-STREAMLIT SCRIPT COMPLETED
-*/
+/*##### STREAMLIT SCRIPT #####*/
 ```
 
 > aside negative
@@ -2274,6 +2392,121 @@ cd iotstream
 > You have now successfully deployed a **Time Series Application** using Streamlit in Snowflake. This will allow end users easy access to visualize time series data as well as run their own **Time Series Analysis** on all Time Series data available in Snowflake.
 >
 
+> aside negative
+> 
+> ### Troubleshooting
+>
+> This section runs through **deploying a Streamlit application using Snowflake CLI in the GitHub Codespace**. Use the following steps to **Troubleshoot**.
+> 
+> #### Confirm Snowflake CLI can Connect to Snowflake
+>
+> 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open.
+>
+> <img src="assets/labsetup_newterminal.png" />
+>
+> 2. Activate `hol-timeseries` python virtual environment by running `conda activate hol-timeseries`.
+>
+> ```bash
+> conda activate hol-timeseries
+> ```
+>
+> <img src="assets/labsetup_condaactivate.png" />
+>
+> <img src="assets/labsetup_condaactivated.png" />
+>
+> 3. **Copy and run** the following Snowflake CLI command **into the Terminal** to deploy the Streamlit application.
+>
+> ```bash
+> snow --config-file=".snowflake/config.toml" connection test --connection="hol-timeseries-streamlit"
+> ```
+>   - You should receive an output with **Status "OK"**.
+>
+> <img src="assets/troubleshoot_snowflakecli_conntest.png" />
+>
+> 4. If the **Status is NOT "OK"**, review the error returned to Troubleshoot further.
+>
+> 5. Refer to the **"Lab Setup"** section and confirm configuration of `.snowflake/config.toml` file and **Snowflake user** `public key` setup.
+>
+> 6. Once **Snowflake CLI** is connected, re-run this section.
+>
+> #### Manually Deploy Streamlit Application using SQL
+>
+> 1. Review [Creating a Streamlit app by using SQL](https://docs.snowflake.com/en/developer-guide/streamlit/create-streamlit-sql).
+>
+> 2. **Create a stage** using the `Lab Downloaded Files` worksheet `worksheets/hol_timeseries_7_streamlit.sql`.
+>
+> ```sql
+> -- Set role, context, and warehouse
+> USE ROLE ROLE_HOL_TIMESERIES;
+> USE SCHEMA HOL_TIMESERIES.ANALYTICS;
+> USE WAREHOUSE HOL_ANALYTICS_WH;
+>
+> -- Create a stage for Streamlit
+> CREATE OR REPLACE STAGE HOL_TIMESERIES.ANALYTICS.STAGE_TS_STREAMLIT
+> DIRECTORY = (ENABLE = TRUE, REFRESH_ON_CREATE = TRUE)
+> ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+> ```
+>
+> 3. **Login to Snowflake**, and **open the stage** by expanding `Data > Databases > HOL_TIMESERIES > ANALYTICS > Stages > STAGE_TS_STREAMLIT`.
+>
+> <img src="assets/troubleshoot_streamlit_stage.png" />
+>
+> 4. At the top right of the stage click the `+ Files` button.
+>
+> <img src="assets/troubleshoot_streamlit_addfiles.png" />
+>
+> 5. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT**, then click **Upload**.
+>       - streamlit/1_TS_Home.py
+>       - streamlit/environment.yml
+>
+> <img src="assets/troubleshoot_streamlit_files_home.png" />
+> 
+> 6. Click the `+ Files` button.
+>
+> <img src="assets/troubleshoot_streamlit_addfiles.png" />
+>
+> 7. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/pages` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/pages**, then click **Upload**.
+>       - streamlit/pages/2_TS_Raw.py
+>       - streamlit/pages/3_TS_Aggregates.py
+>       - streamlit/pages/4_TS_Binning.py
+>       - streamlit/pages/8_TS_About.py
+>
+> <img src="assets/troubleshoot_streamlit_files_pages.png" />
+>
+> 8. Click the `+ Files` button.
+>
+> <img src="assets/troubleshoot_streamlit_addfiles.png" />
+>
+> 9. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/common` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/streamlit/common**, then click **Upload**.
+>       - streamlit/common/snowflake.png
+>       - streamlit/common/snowflakelogo.png
+>
+> <img src="assets/troubleshoot_streamlit_files_common.png" />
+>
+> 10. Under the Snowflake logo at the top left, select `+ Create > SQL Worksheet`.
+>
+> <img src="assets/troubleshoot_streamlit_files_worksheet.png" />
+>
+> 11. **Run** the following SQL to create the Streamlit Application.
+>
+> ```sql
+> -- Set role, context, and warehouse
+> USE ROLE ROLE_HOL_TIMESERIES;
+> USE SCHEMA HOL_TIMESERIES.ANALYTICS;
+> USE WAREHOUSE HOL_ANALYTICS_WH;
+>
+> -- Create Stramlit Application
+> CREATE OR REPLACE STREAMLIT HOL_TIMESERIES_STREAMLIT
+> ROOT_LOCATION = '@HOL_TIMESERIES.ANALYTICS.STAGE_TS_STREAMLIT/HOL_TIMESERIES_STREAMLIT'
+> MAIN_FILE = '/1_TS_Home.py'
+> QUERY_WAREHOUSE = HOL_ANALYTICS_WH;
+> ```
+>
+> 12. **Launch the Streamlit** application from `Projects > Streamlit > HOL_TIMESERIES_STREAMLIT`.
+>
+> <img src="assets/troubleshoot_streamlit_launch.png" />
+>
+
 <!-- ------------------------ -->
 ## Cleanup
 Duration: 3
@@ -2305,6 +2538,27 @@ DROP USER USER_HOL_TIMESERIES;
 
 <img src="assets/cleanup_codespace.png" />
 
+> aside negative
+> 
+> ### Troubleshooting
+>
+> This section runs through a **SQL Worksheet**, this can be run in Snowflake with a **Snowsight Worksheet**. Use the following steps to **Troubleshoot**.
+>
+> 1. Inside the `Lab Downloaded Files` folder open `worksheets/hol_timeseries_8_cleanup.sql` and **copy** the contents of the file.
+>
+> 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
+>
+> <img src="assets/analysis_worksheets.png" />
+>
+> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+>
+> <img src="assets/analysis_newworksheet.png" />
+>
+> 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
+>
+> 5. **Run** all the commands in the worksheet.
+>
+
 <!-- ------------------------ -->
 ## Conclusion and Resources
 Duration: 2
@@ -2330,7 +2584,7 @@ Duration: 2
 
 ### Additional Resources
 
-#### Documentation
+#### Snowflake Documentation
 - [Analyzing time-series data](https://docs.snowflake.com/en/user-guide/querying-time-series-data)
 - [Time-Series Forecasting (Snowflake Cortex ML Functions)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)
 - [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
@@ -2340,5 +2594,14 @@ Duration: 2
 - [Using Snowflake Connector for Kafka with Snowpipe Streaming](https://docs.snowflake.com/user-guide/data-load-snowpipe-streaming-kafka)
 
 
-#### Blog
+#### Snowflake Blog
 - [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](https://www.snowflake.com/blog/time-series-analytics-asof-join-generally-available/)
+- [Snowflake Blog](https://www.snowflake.com/blog/)
+
+
+#### Snowflake Community
+- [Join the Snowflake Community](https://community.snowflake.com/)
+
+
+#### Snowflake Training and Certification
+- [Training Courses and Certifications](https://learn.snowflake.com/)
