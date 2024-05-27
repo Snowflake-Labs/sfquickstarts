@@ -2433,7 +2433,11 @@ cd iotstream
 >
 > 1. Review [Creating a Streamlit app by using SQL](https://docs.snowflake.com/en/developer-guide/streamlit/create-streamlit-sql).
 >
-> 2. **Create a stage** using the `Lab Downloaded Files` worksheet `worksheets/hol_timeseries_7_streamlit.sql`.
+> 2. **Login to Snowflake**, and select `+ Create > SQL Worksheet` under the Snowflake logo at the top left.
+>
+> <img src="assets/troubleshoot_streamlit_files_worksheet.png" />
+> 
+> 3. **Create a stage** using the `Lab Downloaded Files` worksheet `worksheets/hol_timeseries_7_streamlit.sql` SQL.
 >
 > ```sql
 > -- Set role, context, and warehouse
@@ -2447,25 +2451,25 @@ cd iotstream
 > ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 > ```
 >
-> 3. **Login to Snowflake**, and **open the stage** by expanding `Data > Databases > HOL_TIMESERIES > ANALYTICS > Stages > STAGE_TS_STREAMLIT`.
+> 4. **Open the stage** by expanding `Data > Databases > HOL_TIMESERIES > ANALYTICS > Stages > STAGE_TS_STREAMLIT`.
 >
 > <img src="assets/troubleshoot_streamlit_stage.png" />
 >
-> 4. At the top right of the stage click the `+ Files` button.
+> 5. At the top right of the stage click the `+ Files` button.
 >
 > <img src="assets/troubleshoot_streamlit_addfiles.png" />
 >
-> 5. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT**, then click **Upload**.
+> 6. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT**, then click **Upload**.
 >       - streamlit/1_TS_Home.py
 >       - streamlit/environment.yml
 >
 > <img src="assets/troubleshoot_streamlit_files_home.png" />
 > 
-> 6. Click the `+ Files` button.
+> 7. Click the `+ Files` button.
 >
 > <img src="assets/troubleshoot_streamlit_addfiles.png" />
 >
-> 7. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/pages` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/pages**, then click **Upload**.
+> 8. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/pages` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/pages**, then click **Upload**.
 >       - streamlit/pages/2_TS_Raw.py
 >       - streamlit/pages/3_TS_Aggregates.py
 >       - streamlit/pages/4_TS_Binning.py
@@ -2473,21 +2477,21 @@ cd iotstream
 >
 > <img src="assets/troubleshoot_streamlit_files_pages.png" />
 >
-> 8. Click the `+ Files` button.
+> 9. Click the `+ Files` button.
 >
 > <img src="assets/troubleshoot_streamlit_addfiles.png" />
 >
-> 9. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/common` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/streamlit/common**, then click **Upload**.
+> 10. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/common` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/streamlit/common**, then click **Upload**.
 >       - streamlit/common/snowflake.png
 >       - streamlit/common/snowflakelogo.png
 >
 > <img src="assets/troubleshoot_streamlit_files_common.png" />
 >
-> 10. Under the Snowflake logo at the top left, select `+ Create > SQL Worksheet`.
+> 11. Under the Snowflake logo at the top left, select `+ Create > SQL Worksheet`.
 >
 > <img src="assets/troubleshoot_streamlit_files_worksheet.png" />
 >
-> 11. **Run** the following SQL to create the Streamlit Application.
+> 12. **Run** the following SQL to create the Streamlit Application.
 >
 > ```sql
 > -- Set role, context, and warehouse
@@ -2502,7 +2506,7 @@ cd iotstream
 > QUERY_WAREHOUSE = HOL_ANALYTICS_WH;
 > ```
 >
-> 12. **Launch the Streamlit** application from `Projects > Streamlit > HOL_TIMESERIES_STREAMLIT`.
+> 13. **Launch the Streamlit** application from `Projects > Streamlit > HOL_TIMESERIES_STREAMLIT`.
 >
 > <img src="assets/troubleshoot_streamlit_launch.png" />
 >
