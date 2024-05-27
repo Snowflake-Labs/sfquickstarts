@@ -295,6 +295,7 @@ This includes:
     - **STAGING** - RAW data source landing schema
     - **TRANSFORM** - transformed and modeled data schema
     - **ANALYTICS** - serving and analytics functions schema
+- Grants: Access control grants for role **ROLE_HOL_TIMESERIES**
 
 <img src="assets/snowsetup_architecture.png" />
 
