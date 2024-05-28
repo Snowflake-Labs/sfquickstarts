@@ -1520,7 +1520,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **Forecasting**: Consider a use case where you want to **predict expected production output** based on a flow sensor. In this case, you could **generate a time series forecast** for a single tag looking forward one day for a flow sensor.
 
-1. Create a forecast training data view from historical data.
+1. Create a forecast **training data set** from historical data.
 
 ```sql
 /* FORECAST DATA - Training Data Set - /IOT/SENSOR/TAG401
@@ -1535,7 +1535,7 @@ WHERE TAGNAME = '/IOT/SENSOR/TAG401'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-2. Create a Time-Series [SNOWFLAKE.ML.FORECAST](https://docs.snowflake.com/en/sql-reference/classes/forecast/commands/create-forecast) model using the training data view.
+2. Create a Time-Series [SNOWFLAKE.ML.FORECAST](https://docs.snowflake.com/en/sql-reference/classes/forecast/commands/create-forecast) model using the training data set.
 
 ```sql
 /* FORECAST MODEL - Training Data Set - /IOT/SENSOR/TAG401
