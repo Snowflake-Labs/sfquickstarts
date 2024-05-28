@@ -188,8 +188,7 @@ $$;
 
 -- Create table with embeddings from Azure OpenAI
 CREATE OR REPLACE TABLE MOVIE_REVIEWS_EMBEDDING AS 
-SELECT *, CAST(CHATGPT_EMBED(REVIEW)AS VECTOR(FLOAT, 1536)) AS EMBEDDING FROM MOVIE_REVIEWS LIMIT 1000;
-select * from MOVIE_REVIEWS_EMBEDDING;
+SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC;
 ```
 
 <!-- ------------------------ -->
@@ -235,7 +234,9 @@ if(st.button('Ask ChatGPT')):
         EMBEDDING,
         VECTOR_COSINE_SIMILARITY(EMBEDDING, q_embed) as sim
     from 
-        MOVIE_REVIEWS_EMBEDDING as content 
+        MOVIE_REVIEWS_EMBEDDING as content
+    where
+        sim > 60
     order by 
         sim desc
     limit 3

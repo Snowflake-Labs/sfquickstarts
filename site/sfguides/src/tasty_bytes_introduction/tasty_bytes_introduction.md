@@ -15,7 +15,7 @@ Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
 ### Overview
-Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictious food truck brand, Tasty Bytes, created by the frostbyte team at Snowflake.
+Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictitious food truck brand, Tasty Bytes, created by Snowflake.
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
@@ -47,31 +47,27 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 Duration: 6
 
 ### Overview
-For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight we would highly consider taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
+For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight, we highly recommend taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
 
 ### Step 1 - Accessing Snowflake via URL
 - Open a browser window and enter the URL of your Snowflake Account. If you do not already have a Snowflake account please revisit the previous section to sign up for a Free Snowflake Trial Account. 
 
 ### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
 
 ### Step 3 - Navigating to Worksheets
-- Click on the Worksheets Tab in the left-hand navigation bar.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+- Click on the Projects Tab in the left-hand navigation bar and click Worksheets.
 
 ### Step 4 - Creating a Worksheet
-- Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet"
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+- Within Worksheets, click the "+" button in the top-right corner of Snowsight.
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Setup"
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Introduction"
 
 ### Step 6 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 
-<button>[tb_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_introduction.sql)</button>
+<button>[tb_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25_Zero_To_Snowflake/tb_introduction.sql)</button>
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
@@ -81,12 +77,13 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
 
 ### Step 9 - Synchronously Running all Setup SQL
-- Click inside the newly created Tasty Bytes - Setup Worksheet, Select All (*CMD + A for Mac or CTRL + A for Windows*) and Click "► Run" 
+- Click inside the newly created Tasty Bytes - Setup Worksheet, and next to "► Run" Click "▼" and choose "Run All"
     - <img src ="assets/run_all_queries.gif"/>
 
 ### Step 10 - Completing Setup
-- After clicking "► Run" you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 5 minutes. Upon completion you will see a message stating `frostbyte_tasty_bytes setup is now complete` .
+- After clicking "Run All" you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 3 minutes. Upon completion you will see a message stating `tb_101 setup is now complete` .
     - <img src="assets/setup_complete.png">
+
 
 ### Step 11 - Click Next -->
 
@@ -104,54 +101,59 @@ With the Tasty Bytes Setup successful, we can now explore the Database, Roles an
 This query will return the Database we created via [SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html) using our SYSADMIN role.
 ```
 USE ROLE sysadmin;
-SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
+SHOW DATABASES LIKE 'tb_101';
 ```
 <img src = "assets/show_tb_db.png"> 
+
 
 ### Step 2 - Exploring the Schemas within the Tasty Bytes Database
 This query will return the Schemas within the Database we created via [SHOW SCHEMAS](https://docs.snowflake.com/en/sql-reference/sql/show-schemas).
 ```
-SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
+SHOW SCHEMAS IN DATABASE tb_101;
 ```
 <img src = "assets/show_tb_schemas.png"> 
+
 
 ### Step 3 - Exploring the Tables within the RAW_POS Schema within the Tasty Bytes Database
 This query will return the Tables within the `raw_pos` schema via [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables)
 ```
-SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
+SHOW TABLES IN SCHEMA tb_101.raw_pos;
 ```
 <img src = "assets/show_tb_tables.png"> 
+
 
 ### Step 4 - Exploring the Tasty Bytes Roles
 This query will return the Roles we created via [SHOW ROLES](https://docs.snowflake.com/en/sql-reference/sql/show-roles).
 ```
-SHOW ROLES LIKE 'tasty%';
+SHOW ROLES LIKE 'tb%';
 ```
 <img src = "assets/show_tb_roles.png"> 
+
 
 ### Step 5 - Exploring the Tasty Bytes Warehouses
 This query will return the Warehouses we created via [SHOW WAREHOUSES](https://docs.snowflake.com/en/sql-reference/sql/show-warehouses).
 ```
-SHOW WAREHOUSES LIKE 'tasty%';
+SHOW WAREHOUSES LIKE 'tb%';
 ```
 <img src = "assets/show_tb_whs.png"> 
 
+
 ### Step 6 - Putting it All Together
 These next three queries will:
-1. Assume the `tasty_data_engineer` role via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html)
-2. Leverage the `tasty_de_wh` Warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html)
+1. Assume the `tb_data_engineer` role via [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html)
+2. Leverage the `tb_de_wh` Warehouse via [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html)
 3. Query our `raw_pos.menu` table to find which Menu Items are sold at our Plant Palace branded food trucks.
     
 ```
-USE ROLE tasty_data_engineer;
-USE WAREHOUSE tasty_de_wh;
+USE ROLE tb_data_engineer;
+USE WAREHOUSE tb_de_wh;
 
 SELECT
     m.menu_type_id,
     m.menu_type,
     m.truck_brand_name,
     m.menu_item_name
-FROM frostbyte_tasty_bytes.raw_pos.menu m
+FROM tb_101.raw_pos.menu m
 WHERE m.truck_brand_name = 'Plant Palace';
 ```
 <img src = "assets/plant_palace.png"> 
@@ -172,20 +174,33 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 
 ### Zero to Snowflake
 
-- #### [Financial Governance](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
-    - Learn about Snowflake Virtual Warehouses and their configurabilities, Resource Monitors, and Account and Warehouse Level Timeout Parameters.
-- #### [Transformation](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/)
-    - Learn about Snowflake Zero Copy Cloning, Result Set Cache, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
-- #### [Semi-Structured Data](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/)
-    - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot Notation and Lateral Flattening as well as View Creation and Snowsight Charting.
-- #### [Data Governance](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
-    - Learn about Snowflake System Defined Roles, Create and apply Grants to a custom role, and deploy both Tag Based Dynamic Data Masking and Row-Access Policies.
-- #### [Collaboration](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/)
+- #### [Cost Management](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/index.html?index=..%2F..index)
+    - Learn about Snowflake Virtual Warehouses and their configurability, Resource Monitors, Account and Warehouse Level Timeout Parameters, and Exploring Cost.
+- #### [Transformation](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/index.html?index=..%2F..index)
+    - Learn about Snowflake Cloning, Caching, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
+- #### [Semi-Structured Data](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/index.html?index=..%2F..index)
+    - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot and Bracket Notation and Lateral Flattening, Array Functions, View creation, and Snowsight Charting.
+- #### [Governance with Snowflake Horizon](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index)
+    - Learn about Snowflake System Defined Roles, Role Based Access Control, Tag Based Masking, Policies (Row-Access, Aggregation, and Projection), Data Classification, Access History and Universal Search.
+- #### [Collaboration](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/index.html?index=..%2F..index)
     - Learn about the Snowflake Marketplace by leveraging free, instantly available, live data from Weathersource to conduct data driven analysis harmonizing first and third party sources.
-- #### [Geospatial](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
-    - Learn about Snowflake Geospatial support starting with acquiring free, instantly available live data from SafeGraph then moving onto constructing Geographic Points (ST_POINT), calculating distance (ST_DISTANCE), collecting coordinates (ST_COLLECT), drawing a Minimum Bounding Polygon (ST_ENVELOPE), calculating area (ST_AREA) and finding center points (ST_CENTROID).
+- #### [Geospatial](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/index.html?index=..%2F..index)
+    - Learn Snowflake's Geospatial capabilities, beginning with obtaining free, real-time data from SafeGraph. Progress through creating geographic points (ST_POINT), measuring distances (ST_DISTANCE), aggregating coordinates (ST_COLLECT), establishing a Minimum Bounding Polygon (ST_ENVELOPE), determining areas (ST_AREA), identifying central points (ST_CENTROID), and executing advanced Geospatial Analysis using the H3 (Hexagonal Hierarchical Geospatial Indexing System).
 
-### Workload Deep Dives (*Coming Soon*)
+### Other Tasty Bytes Quickstarts
+- #### [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index)
+
+- #### [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index)
+
+- #### [Developing React Native Applications using Snowflake Hybrid Tables](https://quickstarts.snowflake.com/guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/index.html?index=..%2F..index)
+
+- #### [Tasty Bytes - Developing React Native Data Application with SQL API](https://quickstarts.snowflake.com/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api/index.html?index=..%2F..index)
+
+- #### [Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application](https://quickstarts.snowflake.com/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/index.html?index=..%2F..index)
+
+
+
+
 
 
 
