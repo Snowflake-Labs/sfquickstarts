@@ -56,7 +56,7 @@ This use case will leverage movie reviews and we will build a Streamlit app that
 
 Duration: 10
 
-For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to [platform.openi.com/api-keys](platform.openi.com/api-keys) and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
+For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openi.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
 
 ![](assets/openai.png)
 
@@ -101,11 +101,11 @@ FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' ESCAPE_UNENCLOSED
 select top 10 * from MOVIE_REVIEWS;
 ```
 <!-- ------------------------ -->
-## Exploratory Analysis (OPTIONAL)
+## Exploratory Analysis 
 
 Duration: 10
 
-You can download the notebook ![here](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
+You can download the notebook [here](https://github.com/Snowflake-Labs/sfguide-using-snowflake-and-azure-openai-for-rag-workflow/blob/main/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
 You can do this by navigating to "Projects" from the Snowflake UI, selecting "Notebooks" and click the upload button in the top right and uploading the notebook you just downloaded.
 
@@ -188,7 +188,8 @@ $$;
 
 -- Create table with embeddings from Azure OpenAI
 CREATE OR REPLACE TABLE MOVIE_REVIEWS_EMBEDDING AS 
-SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC LIMIT 1000;
+SELECT *, CAST(CHATGPT_EMBED(REVIEW)AS VECTOR(FLOAT, 1536)) AS EMBEDDING FROM MOVIE_REVIEWS LIMIT 1000;
+select * from MOVIE_REVIEWS_EMBEDDING;
 ```
 
 <!-- ------------------------ -->
@@ -235,10 +236,9 @@ if(st.button('Ask ChatGPT')):
         VECTOR_COSINE_SIMILARITY(EMBEDDING, q_embed) as sim
     from 
         MOVIE_REVIEWS_EMBEDDING as content 
-    where
-        sim > .5
     order by 
         sim desc
+    limit 3
     )""")
 
     
