@@ -148,23 +148,19 @@ The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the *
 
 <img src="assets/analysis_worksheets.png" />
 
-3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
 <img src="assets/analysis_newworksheet.png" />
 
-4. **In the new worksheet**, execute the [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) command:
+4. **In the new worksheet**, execute the following command that uses [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) to find your **ACCOUNT_IDENTIFIER**:
 
 ```sql
-SELECT SYSTEM$ALLOWLIST();
-
--- Note down your Snowflake account identifier host detail
--- where "type":"SNOWFLAKE_DEPLOYMENT_REGIONLESS"
--- <account_identifier>.snowflakecomputing.com
+SELECT REPLACE(AL.VALUE:host::VARCHAR, '.snowflakecomputing.com', '') AS ACCOUNT_IDENTIFIER
+FROM TABLE(FLATTEN(input => PARSE_JSON(SYSTEM$ALLOWLIST()))) AS AL
+WHERE AL.VALUE:type::VARCHAR = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 ```
 
-5. In the results returned, below the command, **select the first row returned**, and **Copy** the **<account_identifier>**.snowflakecomputing.com for the **host** attribute returned, where the **type** is **"type":"SNOWFLAKE_DEPLOYMENT_REGIONLESS"**.
-
-    - **Worksheet Output** for `SELECT SYSTEM$ALLOWLIST();`. **<account_identifier>** is in-front of `.snowflakecomputing.com`.
+5. In the results returned, below the command, select the row returned, and **Copy** the **ACCOUNT_IDENTIFIER**.
 
 <img src="assets/labsetup_regionless.png" />
 
@@ -444,7 +440,7 @@ GRANT CREATE NOTEBOOK ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESE
 >
 > <img src="assets/analysis_worksheets.png" />
 >
-> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+> 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
 > <img src="assets/analysis_newworksheet.png" />
 >
@@ -674,7 +670,7 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 >
 > <img src="assets/analysis_worksheets.png" />
 >
-> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+> 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
 > <img src="assets/analysis_newworksheet.png" />
 >
@@ -753,9 +749,7 @@ SELECT
     SRC.RECORD_CONTENT:units::VARCHAR AS TAGUNITS,
     SRC.RECORD_CONTENT:datatype::VARCHAR AS TAGDATATYPE
 FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA SRC
-QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) ORDER BY SRC.RECORD_CONTENT:timestamp::NUMBER, SRC.RECORD_METADATA:offset::NUMBER) = 1
-;
-
+QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:headers:namespace::VARCHAR, '/', TRIM(SRC.RECORD_CONTENT:tagname::VARCHAR))) ORDER BY SRC.RECORD_CONTENT:timestamp::NUMBER, SRC.RECORD_METADATA:offset::NUMBER) = 1;
 
 /* Tag readings (Fact)
 TAGNAME - uppercase concatenation of namespace and tag name
@@ -884,7 +878,7 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 >
 > <img src="assets/analysis_worksheets.png" />
 >
-> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+> 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
 > <img src="assets/analysis_newworksheet.png" />
 >
@@ -928,7 +922,7 @@ The following query profiles will be covered in this section.
 
 <img src="assets/analysis_worksheets.png" />
 
-2. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+2. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
 <img src="assets/analysis_newworksheet.png" />
 
@@ -1348,7 +1342,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 <img src="assets/analysis_query_windowrangebetween_error.png" />
 
-### CHART: Rolling 1 MIN Average and Sum - showing differences between RANGE BETWEEN and ROWS BETWEEN
+##### CHART: Rolling 1 MIN Average and Sum - showing differences between RANGE BETWEEN and ROWS BETWEEN
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select the `VALUE` column and set the Aggregation to `Max`.
@@ -1383,7 +1377,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 <img src="assets/analysis_query_windowrangebetween_5min.png" />
 
-### CHART: Rolling 5 MIN Average
+##### CHART: Rolling 5 MIN Average
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select the `VALUE` and set the Aggregation to `Max`.
@@ -1461,7 +1455,7 @@ ORDER BY ONE_SEC.TIMESTAMP;
 
 <img src="assets/analysis_query_asof_align.png" />
 
-### CHART: Aligned Time Series Data
+##### CHART: Aligned Time Series Data
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data set the first Data column to `ONE_SEC_VALUE` with an Aggregation of `Max`.
@@ -1520,9 +1514,9 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 ### Time Series Forecasting
 
-**[Time-Series Forecasting](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)** employs a machine learning algorithm to predict future data by using historical time series data.
+**[Time-Series Forecasting](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/forecasting)** employs a machine learning (ML) algorithm to predict future data by using historical time series data.
 
-Forecasting is part of **Snowflake Cortex, Snowflake’s intelligent, fully-managed AI and ML service**.
+**Forecasting** is part of **[ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions#time-series-functions) in Snowflake Cortex, Snowflake’s intelligent, fully-managed AI and ML service**.
 
 **Forecasting**: Consider a use case where you want to **predict expected production output** based on a flow sensor. In this case, you could **generate a time series forecast** for a single tag looking forward one day for a flow sensor.
 
@@ -1532,9 +1526,9 @@ Forecasting is part of **Snowflake Cortex, Snowflake’s intelligent, fully-mana
 /* FORECAST DATA - Training Data Set - /IOT/SENSOR/TAG401
 A single tag of data for two weeks.
 
-1 - Create a forecast training data view from historical data.
+1 - Create a forecast training data set from historical data. This will use a temporary table.
 */
-CREATE OR REPLACE VIEW HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401 AS
+CREATE OR REPLACE TEMPORARY TABLE HOL_TIMESERIES.ANALYTICS.TEMP_TS_TAG_TRAIN AS
 SELECT TAGNAME, TIMESTAMP, VALUE_NUMERIC AS VALUE
 FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TAGNAME = '/IOT/SENSOR/TAG401'
@@ -1545,7 +1539,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 ```sql
 /* FORECAST MODEL - Training Data Set - /IOT/SENSOR/TAG401
-2 - Create a Time-Series SNOWFLAKE.ML.FORECAST model using the training data view.
+2 - Create a Time-Series SNOWFLAKE.ML.FORECAST model using the training data set.
 
 INPUT_DATA - The data set used for training the forecast model
 SERIES_COLUMN - The column that splits multiple series of data, such as different TAGNAMES
@@ -1555,7 +1549,7 @@ TARGET_COLNAME - The column containing the target value
 Training the Time Series Forecast model may take 2-3 minutes in this case.
 */
 CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
-    INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401'),
+    INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'HOL_TIMESERIES.ANALYTICS.TEMP_TS_TAG_TRAIN'),
     SERIES_COLNAME => 'TAGNAME',
     TIMESTAMP_COLNAME => 'TIMESTAMP',
     TARGET_COLNAME => 'VALUE'
@@ -1594,7 +1588,7 @@ SELECT
     VALUE,
     NULL AS FORECAST,
     NULL AS UPPER
-FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS_401
+FROM HOL_TIMESERIES.ANALYTICS.TS_TAG_READINGS
 WHERE TAGNAME = '/IOT/SENSOR/TAG401'
 AND TO_DATE(TIMESTAMP) = '2024-01-14'
 UNION ALL
@@ -1609,7 +1603,7 @@ FROM TABLE(RESULT_SCAN(-1))
 ORDER BY DATASET, TAGNAME, TIMESTAMP;
 ```
 
-### CHART: Time Series Forecast
+##### CHART: Time Series Forecast
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data set the first column to `VALUE` and set the Aggregation to `Max`.
@@ -1619,6 +1613,48 @@ ORDER BY DATASET, TAGNAME, TIMESTAMP;
 **The chart will show a flow sensor with ACTUALS and FORECAST values**.
 
 <img src="assets/analysis_chart_forecast.png" />
+
+
+### Co-Pilot
+
+**[Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot)** is an **LLM-powered assistant** that simplifies data analysis while maintaining robust data governance, and seamlessly integrates into your existing Snowflake workflow.
+
+Snowflake Copilot is **powered by a model fine-tuned by Snowflake that runs securely inside Snowflake Cortex**, Snowflake’s intelligent, fully managed AI service.
+
+Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot#tips-for-using-sf-copilot) when using Copilot.
+
+1. At the top left of the screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+
+<img src="assets/analysis_newsheet.png" />
+
+2. At the bottom right of the worksheet, click the **Ask Copilot** button.
+
+<img src="assets/analysis_askcopilot.png" />
+
+3. A Copilot tab will appear to the right of the window, at the bottom click **Select Database**.
+
+<img src="assets/analysis_selectdatabase.png" />
+
+4. Select the database and schema `HOL_TIMESERIES > ANALYTICS`.
+
+<img src="assets/analysis_database_analytics.png" />
+
+5. **Try asking Copilot the following prompts**, by entering them into the text prompt box. Copilot will output a **generated SQL query** along with annotations of how it structures the SQL query.
+
+    - Show me namespace, tag name and latest value for tag /IOT/SENSOR/TAG301
+    - Show me the average values by namespace and tag name
+    - Show me max of value for tag name /IOT/SENSOR/TAG101 on January 10 2024 by tag name
+    - Show me 1hr averages for tag /IOT/SENSOR/TAG301 on January 3 2024 by tag
+
+<img src="assets/analysis_query_copilot.png" />
+
+6. Click the `Run` button below the generated SQL query. If it's correct, please give the generated prompt output a **thumbs up**!
+
+<img src="assets/analysis_query_copilot_run.png" />
+
+**Copilot** will execute the SQL in the worksheet.
+
+<img src="assets/analysis_query_copilot_hourlybin.png" />
 
 
 > aside positive
@@ -1897,7 +1933,7 @@ $$;
 
 <img src="assets/analysis_worksheets.png" />
 
-2. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+2. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
 <img src="assets/analysis_newworksheet.png" />
 
@@ -1943,7 +1979,7 @@ SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSO
 
 <img src="assets/function_query_direct.png" />
 
-### CHART: Interpolation - Linear and LOCF
+##### CHART: Interpolation - Linear and LOCF
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `TIMESTAMP` and set Bucketing to `Second`
@@ -1985,7 +2021,7 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 );
 ```
 
-### CHART: Interpolation - LOCF
+##### CHART: Interpolation - LOCF
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
@@ -2021,7 +2057,7 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 );
 ```
 
-### CHART: Interpolation - Linear
+##### CHART: Interpolation - Linear
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
@@ -2051,7 +2087,7 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-### CHART: RAW Query
+##### CHART: RAW Query
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
@@ -2084,7 +2120,7 @@ CROSS JOIN TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_LTTB(DATE_PART(EPOCH_NANOS
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-### CHART: LTTB Query
+##### CHART: LTTB Query
 
 1. Select the `Chart` sub tab below the worksheet.
 2. Under Data select `VALUE` and set the Aggregation to `Max`.
@@ -2113,7 +2149,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 >
 > <img src="assets/analysis_worksheets.png" />
 >
-> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+> 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
 > <img src="assets/analysis_newworksheet.png" />
 >
@@ -2555,7 +2591,7 @@ DROP USER USER_HOL_TIMESERIES;
 >
 > <img src="assets/analysis_worksheets.png" />
 >
-> 3. At the top right of the **Worksheets** screen select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
+> 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
 > <img src="assets/analysis_newworksheet.png" />
 >
