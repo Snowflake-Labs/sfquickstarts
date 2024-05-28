@@ -1641,9 +1641,9 @@ Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/u
 
 5. **Try asking Copilot the following prompts**, by entering them into the text prompt box. Copilot will output a **generated SQL query** along with annotations of how it structures the SQL query.
 
-    - Show me namespace, tag name and latest value for tag /IOT/SENSOR/TAG301
+    - Show me namespace, tag name, time, and latest value for tag /IOT/SENSOR/TAG301
     - Show me the average values by namespace and tag name
-    - Show me max of value for tag name /IOT/SENSOR/TAG101 on January 10 2024 by tag name
+    - Show me the max value, and time for tag name /IOT/SENSOR/TAG101 on January 10 2024 by tag name
     - Show me 1hr averages for tag /IOT/SENSOR/TAG301 on January 3 2024 by tag
 
 <img src="assets/analysis_query_copilot.png" />
