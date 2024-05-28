@@ -2,7 +2,7 @@ summary: This guide provides the instructions for writing an LLM chatbot in Stre
 id: frosty_llm_chatbot_on_streamlit_snowflake
 categories: data-science-&-ml,app-development
 environments: web
-status: Publish
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowpark Python, Streamlit, OpenAI, LLMs
 authors: Joshua Carroll, Richard Meng, Caroline Frasca
@@ -114,7 +114,7 @@ You can also access Snowsight from the Classic Console:
 4. Select the appropriate roles to access the database being created and accept the Snowflake consumer terms and Cybersyn's terms of use.
 5. Select **"Query Data,"** which will open a worksheet with example queries.
 
-![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Data Marketplace](assets/Cybersyn_Example_Queries.png)
+![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Marketplace](assets/Cybersyn_Example_Queries.png)
 
 ### Prep database
 Before building our app, we need to run a set of SQL statements in Snowflake to create two views. The first view is `FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED`, which includes:

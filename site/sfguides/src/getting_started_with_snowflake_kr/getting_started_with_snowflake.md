@@ -1144,7 +1144,7 @@ ACCOUNTADMIN 역할을 사용 중인지 확인하고 **Data** 아래에서 **Mar
 
 ![covid19 databases](assets/10Share_starschema_db_info.png)
 
-이제 글로벌 COVID 데이터로 매일 업데이트되는 Starschema의 COVID-19 데이터 세트를 성공적으로 구독했습니다. 데이터베이스, 테이블, 뷰 또는 ETL 프로세스를 생성할 필요가 없었습니다. Snowflake Data Marketplace에서 공유 데이터를 검색하고 액세스했습니다.
+이제 글로벌 COVID 데이터로 매일 업데이트되는 Starschema의 COVID-19 데이터 세트를 성공적으로 구독했습니다. 데이터베이스, 테이블, 뷰 또는 ETL 프로세스를 생성할 필요가 없었습니다. Snowflake Marketplace에서 공유 데이터를 검색하고 액세스했습니다.
 
 > aside positive
 > 
@@ -1208,4 +1208,4 @@ Duration: 2
 -   사용자 오류를 실행 취소하는 방법
 -   역할 및 사용자를 생성하고 권한을 부여하는 방법
 -   다른 계정과 안전하고 쉽게 데이터를 공유하는 방법
--   Snowflake Data Marketplace에서 데이터 세트를 사용하는 방법.
+-   Snowflake Marketplace에서 데이터 세트를 사용하는 방법.

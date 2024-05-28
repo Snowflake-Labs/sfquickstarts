@@ -24,8 +24,8 @@ The Snowflake Python API allows you to manage Snowflake using Python. Using the 
 - How to install the Snowflake Python API library
 - How to create a Root object to use the API
 - How to create tables, schemas, and warehouses using the API
-- (Coming Soon) How to create and manage tasks using the API
-- (Coming Soon) How to use Snowpark Container Services with the Snowflake Python API
+- How to create and manage tasks using the API
+- How to use Snowpark Container Services with the Snowflake Python API
 
 ### What You’ll Need 
 - A Snowflake account ([trial](https://signup.snowflake.com/), or otherwise)
@@ -135,7 +135,7 @@ Duration: 10
 In this Quickstart, we'll walk through a Jupyter notebook to incrementally showcase the capabilities of the Snowflake Python API. Let's start by setting up your development environment so that you can run the notebook.
 
 1. First, download the [
-Quickstart: Getting Started with the Snowflake Python API](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/sfguide-getting-started-snowflake-python-api/getting_started_snowflake_python_api.ipynb) notebook from the accompanying repo for this Quickstart.
+Quickstart: Getting Started with the Snowflake Python API notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-python-api/blob/main/getting_started_snowflake_python_api.ipynb) from the accompanying repo for this Quickstart.
 
 2. Next, open the notebook in a code editor that supports Jupyter notebooks (i.e., Visual Studio Code). 
 Alternatively, open the notebook in your browser by starting a notebook server with `jupyter notebook` and navigating to the notebook in your browser. To do this, you'll need to ensure your environment can run a notebook (be sure to run `conda install notebook` in your terminal, then start the notebook server).
@@ -696,7 +696,7 @@ Snowpark Container Services is a fully managed container offering designed to fa
 
 For this section, we'll switch to a new notebook. The notebook contains **sample code** that runs an NGINX web server using Snowpark Container Services, all running in Snowflake. The notebook is provided for convenience and demonstrative purposes.
 
- Download and open the following notebook in your preferred code editor, or with `jupyter notebook`: [Snowpark Container Services – Python API](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/sfguide-getting-started-snowflake-python-api/snowpark_container_services_python_api.ipynb).
+ Download and open the following notebook in your preferred code editor, or with `jupyter notebook`: [Snowpark Container Services – Python API](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-python-api/blob/main/snowpark_container_services_python_api.ipynb).
  
  In the first cell, we import the required libraries, create our connection to Snowflake, and instantiate our `Root` object. We also create objects to represent references to existing Snowflake objects in a Snowflake account. Our Snowpark Container Services will reside in the **PUBLIC** schema.
 

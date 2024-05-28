@@ -41,7 +41,7 @@ def load_data(session):
     #US Inflation, Personal consumption expenditures (PCE) per year
     #Prepare data frame, set query parameters
     snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
-               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100')
                .filter(col('DATE') >= '1972-01-01')
                .filter(month(col('DATE')) == 1))
     #Select columns, subtract 100 from value column to reference baseline

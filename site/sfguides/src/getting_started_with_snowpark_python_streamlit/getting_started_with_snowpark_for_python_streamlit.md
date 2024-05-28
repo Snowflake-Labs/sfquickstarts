@@ -1,11 +1,11 @@
 id: getting_started_with_snowpark_for_python_streamlit
-summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
+summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and Cybersyn data from Snowflake Marketplace.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
-authors: Dash Desai
+authors: Dash Desai, Victoria Warner (Cybersyn)
 
 # Getting Started With Snowpark for Python and Streamlit
 <!-- ------------------------ -->
@@ -13,11 +13,11 @@ authors: Dash Desai
 
 Duration: 5
 
-This guide provides the instructions for building a Streamlit application using Snowpark for Python and data from Snowflake Marketplace.
+This guide provides the instructions for building a Streamlit application using Snowpark for Python and [Cybersyn data](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) from the Snowflake Marketplace.
 
 ### What You Will Build
 
-A Streamlit application that loads and visualizes the data loaded from Snowflake Marketplace using Snowpark for Python.
+A Streamlit application that loads and visualizes daily **stock performance** and **foreign exchange (FX) rate** data loaded from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace using Snowpark for Python.
 
 ![App](assets/sis.gif)
 
@@ -39,10 +39,16 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
+### What is Cybersyn?
+
+Cybersyn is a data-as-a-service company creating a real-time view of the world's economy with analytics-ready economic data on Snowflake Marketplace. Cybersyn builds derived data products from datasets that are difficult to procure, clean, or join. With Cybersyn, you can access external data directly in your Snowflake instance — no ETL required.
+
+Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marketplace/listing/GZTSZ290BUX62/) and [explore all 60+ public sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc).
+
 ### What You Will Learn
 
 - How to access current Session object in Streamlit
-- How to load data from Snowflake Marketplace
+- How to load data from Cybersyn on the Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
 - How to run Streamlit in Snowflake
@@ -50,8 +56,8 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 ### Prerequisites
 
 - A [Snowflake](https://www.snowflake.com/) account in **AWS US Oregon**
-- Access to **Environment Data Atlas** dataset provided by **Knoema**.
-  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on **Get Data** and follow the instructions to gain access to ENVIRONMENT_DATA_ATLAS. In particular, we will use data in schema **ENVIRONMENT** from tables **EDGARED2019**, **WBWDI2019Jan**, and **UNENVDB2018**.
+- Access to the **Financial & Economic Essentials** dataset provided by **Cybersyn**.
+  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/), click on **Get Data** and follow the instructions to gain access. In particular, we will use data in schema **CYBERSYN** from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 
 <!-- ------------------------ -->
 ## Get Started
@@ -82,10 +88,14 @@ Duration: 2
 Delete existing sample application code in the code editor on the left and add the following code snippet at the very top.
 
 ```python
+# Import libraries
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import sum, col
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
 import altair as alt
 import streamlit as st
+import pandas as pd
 
 # Set page config
 st.set_page_config(layout="wide")
@@ -101,97 +111,141 @@ In the above code snippet, we're importing the required libraries, setting the a
 
 Duration: 5
 
-Now add the following Python function that loads and caches data from *ENVIRONMENT_DATA_ATLAS.ENVIRONMENT.EDGARED2019* and *ENVIRONMENT_DATA_ATLAS.ENVIRONMENT.WBWDI2019Jan* tables.
+Now add the following Python function that loads and caches data from the `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES` and `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES` tables.
 
 ```python
 @st.cache_data()
 def load_data():
-    # Load CO2 emissions data
-    snow_df_co2 = session.table("ENVIRONMENT_DATA_ATLAS.ENVIRONMENT.EDGARED2019").filter(col('Indicator Name') == 'Fossil CO2 Emissions').filter(col('Type Name') == 'All Type').sort('"Date"').with_column_renamed('"Date"','"Year"')
+    # Load and transform daily stock price data.
+    snow_df_stocks = (
+        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
+        .filter(
+            (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
+            (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
+        .groupBy("TICKER", "DATE")
+        .agg(
+            max(when(col("VARIABLE_NAME") == "Nasdaq Volume", col("VALUE"))).alias("NASDAQ_VOLUME"),
+            max(when(col("VARIABLE_NAME") == "Post-Market Close", col("VALUE"))).alias("POSTMARKET_CLOSE")
+        )
+    )
+    
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy("TICKER").orderBy("DATE")
+    snow_df_stocks_transformed = snow_df_stocks.withColumn("DAY_OVER_DAY_CHANGE", 
+        (col("POSTMARKET_CLOSE") - lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)) /
+        lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)
+    )
 
-    # Load and transform forest occupied land area data
-    snow_df_land = session.table("ENVIRONMENT_DATA_ATLAS.ENVIRONMENT.\"WBWDI2019Jan\"").filter(col('Series Name') == 'Forest area (% of land area)')
-    snow_df_land = snow_df_land.group_by('Country Name').agg(sum('$61').alias("Total Share of Forest Land")).sort('Country Name')
-    return snow_df_co2.to_pandas(), snow_df_land.to_pandas()
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+    
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
 
 # Load and cache data
-df_co2_overtime, df_forest_land = load_data()
+df_stocks, df_fx = load_data()
 ```
 
-In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, *filter(), group_by(), agg(), sum(), alias() and sort()*.
+In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, `filter()`, `group_by()`, `agg()`, `sum()`, `alias()` and `isin()`.
 
 <!-- ------------------------ -->
-## CO2 Emissions by Countries
+## Daily Stock Performance on the Nasdaq by Company
 
 Duration: 5
 
-Now add the following Python function that displays a country selection dropdown and a chart to visualize CO2 emissions over time for the selected countries.
+Now add the following Python function that displays daily stock performance. Create selection dropdowns for date, stock ticker, and metric to be visualized.
 
 ```python
-def co2_emmissions():
-    st.subheader('CO2 Emissions by Countries Over Time')
+def stock_prices():
+    st.subheader('Stock Performance on the Nasdaq for the Magnificent 7')
+    
+    df_stocks['DATE'] = pd.to_datetime(df_stocks['DATE'])
+    max_date = df_stocks['DATE'].max()  # Most recent date
+    min_date = df_stocks['DATE'].min()  # Earliest date
+    
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
 
-    countries = ['United States','China','Russia','India','United Kingdom','Germany','Japan','Canada']
-    selected_countries = st.multiselect('',countries, default = ['United States','China','Russia','India','United Kingdom'])
+    # Use the adjusted default start date in the 'date_input' widget
+    start_date, end_date = st.date_input("Date range:", [default_start_date, max_date], min_value=min_date, max_value=max_date, key='date_range')
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks['DATE'] >= start_date_ts) & (df_stocks['DATE'] <= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered['TICKER'].unique().tolist()
+    default_tickers = [ticker for ticker in ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA'] if ticker in unique_tickers]
+    selected_tickers = st.multiselect('Ticker(s):', unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered['TICKER'].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox('Metric:',('DAY_OVER_DAY_CHANGE','POSTMARKET_CLOSE','NASDAQ_VOLUME'), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x='DATE',
+        y=alt.Y(metric, title=metric),
+        color='TICKER',
+        tooltip=['TICKER','DATE',metric]
+    ).interactive()
+    st.altair_chart(line_chart, use_container_width=True)
+```
+
+In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_stocks` dataframe filtered by ticker, date, and metric using Streamlit's built in components. This enhances the customizability of the visualization.
+
+<!-- ------------------------ -->
+
+## EUR Exchange (FX) Rates by Quote Currency
+
+Duration: 5
+
+Next, add the following Python function that displays a currency selection dropdown and a chart to visualize euro exchange rates over time for the selected quote currencies.
+
+```python
+def fx_rates():
+    st.subheader('EUR Exchange (FX) Rates by Currency Over Time')
+
+    # GBP, CAD, USD, JPY, PLN, TRY, CHF
+    currencies = ['British Pound Sterling','Canadian Dollar','United States Dollar','Japanese Yen','Polish Zloty','Turkish Lira','Swiss Franc']
+    selected_currencies = st.multiselect('', currencies, default = ['British Pound Sterling','Canadian Dollar','United States Dollar','Swiss Franc','Polish Zloty'])
     st.markdown("___")
 
-    # Display an interactive chart to visualize CO2 emissions over time by the selected countries
+    # Display an interactive chart to visualize exchange rates over time by the selected currencies
     with st.container():
-        countries_list = countries if len(selected_countries) == 0 else selected_countries
-        df_co2_overtime_filtered = df_co2_overtime[df_co2_overtime['Location Name'].isin(countries_list)]
-        line_chart = alt.Chart(df_co2_overtime_filtered).mark_line(
+        currencies_list = currencies if len(selected_currencies) == 0 else selected_currencies
+        df_fx_filtered = df_fx[df_fx['QUOTE_CURRENCY_NAME'].isin(currencies_list)]
+        line_chart = alt.Chart(df_fx_filtered).mark_line(
             color="lightblue",
             line=True,
-            point=alt.OverlayMarkDef(color="red")
         ).encode(
-            x='Year',
-            y='Value',
-            color='Location Name',
-            tooltip=['Location Name','Year','Value']
+            x='DATE',
+            y='VALUE',
+            color='QUOTE_CURRENCY_NAME',
+            tooltip=['QUOTE_CURRENCY_NAME','DATE','VALUE']
         )
         st.altair_chart(line_chart, use_container_width=True)
 ```
 
-In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_co2_overtime* dataframe filtered by the countries selected via Streamlit's *multiselect()* user input component.
+In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_fx` dataframe filtered by the currencies selected via Streamlit's `multiselect()` user input component.
 
 <!-- ------------------------ -->
-## Forest Occupied Land Area by Countries
 
-Duration: 5
-
-Next, add the following Python function that displays a slider input element and a chart to visualize forest occupied land area by countries based on the set threshold.
-
-```python
-def forest_occupied_land():
-    st.subheader('Forest Occupied Land Area by Countries')
-
-    threshold = st.slider(label='Forest Occupied Land By Countries', min_value=1000, max_value=2500, value=1800, step=200, label_visibility='hidden')
-    st.markdown("___")
-
-    # Display an interactive chart to visualize forest occupied land area by countries
-    with st.container():
-        filter = df_forest_land['Total Share of Forest Land'] > threshold
-        pd_df_land_top_n = df_forest_land.where(filter)
-        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True)
-```
-
-In the above code snippet, a bar chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the *df_forest_land* dataframe filtered by the threshold set via Streamlit's *slider()* user input component.
-
-<!-- ------------------------ -->
 ## Application Components
 
 Duration: 5
 
-Add the following code snippet to display application header, create a sidebar, and map *co2_emmissions()* and *forest_occupied_land()* functions to **CO2 Emissions** and **Forest Occupied Land** options respectively in the sidebar.
+Add the following code snippet to display application header, create a sidebar, and map `stock_prices()` and `fx_rates()` functions to **Daily Stock Performance Data** and **Exchange (FX) Rates** options respectively in the sidebar.
 
 ```python
 # Display header
-st.header("Knoema: Environment Data Atlas")
+st.header("Cybersyn: Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "CO2 Emissions": co2_emmissions,
-    "Forest Occupied Land": forest_occupied_land
+    "Daily Stock Performance Data": stock_prices,
+    "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
 page_names_to_funcs[selected_page]()
@@ -211,9 +265,12 @@ Here's what the entire application code should look like.
 ```python
 # Import libraries
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import sum, col
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
 import altair as alt
 import streamlit as st
+import pandas as pd
 
 # Set page config
 st.set_page_config(layout="wide")
@@ -223,59 +280,101 @@ session = get_active_session()
 
 @st.cache_data()
 def load_data():
-    # Load CO2 emissions data
-    snow_df_co2 = session.table("ENVIRONMENT_DATA_ATLAS.ENVIRONMENT.EDGARED2019").filter(col('Indicator Name') == 'Fossil CO2 Emissions').filter(col('Type Name') == 'All Type').sort('"Date"').with_column_renamed('"Date"','"Year"')
+    # Load and transform daily stock price data.
+    snow_df_stocks = (
+        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
+        .filter(
+            (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
+            (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
+        .groupBy("TICKER", "DATE")
+        .agg(
+            max(when(col("VARIABLE_NAME") == "Nasdaq Volume", col("VALUE"))).alias("NASDAQ_VOLUME"),
+            max(when(col("VARIABLE_NAME") == "Post-Market Close", col("VALUE"))).alias("POSTMARKET_CLOSE")
+        )
+    )
+    
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy("TICKER").orderBy("DATE")
+    snow_df_stocks_transformed = snow_df_stocks.withColumn("DAY_OVER_DAY_CHANGE", 
+        (col("POSTMARKET_CLOSE") - lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)) /
+        lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)
+    )
 
-    # Load forest occupied land area data
-    snow_df_land = session.table("ENVIRONMENT_DATA_ATLAS.ENVIRONMENT.\"WBWDI2019Jan\"").filter(col('Series Name') == 'Forest area (% of land area)')
-    snow_df_land = snow_df_land.group_by('Country Name').agg(sum('$61').alias("Total Share of Forest Land")).sort('Country Name')
-    return snow_df_co2.to_pandas(), snow_df_land.to_pandas()
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+    
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
 
 # Load and cache data
-df_co2_overtime, df_forest_land = load_data()
+df_stocks, df_fx = load_data()
 
-def co2_emmissions():
-    st.subheader('CO2 Emissions by Countries Over Time')
+def stock_prices():
+    st.subheader('Stock Performance on the Nasdaq for the Magnificent 7')
+    
+    df_stocks['DATE'] = pd.to_datetime(df_stocks['DATE'])
+    max_date = df_stocks['DATE'].max()  # Most recent date
+    min_date = df_stocks['DATE'].min()  # Earliest date
+    
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
 
-    countries = ['United States','China','Russia','India','United Kingdom','Germany','Japan','Canada']
-    selected_countries = st.multiselect('',countries, default = ['United States','China','Russia','India','United Kingdom'])
+    # Use the adjusted default start date in the 'date_input' widget
+    start_date, end_date = st.date_input("Date range:", [default_start_date, max_date], min_value=min_date, max_value=max_date, key='date_range')
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks['DATE'] >= start_date_ts) & (df_stocks['DATE'] <= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered['TICKER'].unique().tolist()
+    default_tickers = [ticker for ticker in ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA'] if ticker in unique_tickers]
+    selected_tickers = st.multiselect('Ticker(s):', unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered['TICKER'].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox('Metric:',('DAY_OVER_DAY_CHANGE','POSTMARKET_CLOSE','NASDAQ_VOLUME'), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x='DATE',
+        y=alt.Y(metric, title=metric),
+        color='TICKER',
+        tooltip=['TICKER','DATE',metric]
+    ).interactive()
+    st.altair_chart(line_chart, use_container_width=True)
+
+def fx_rates():
+    st.subheader('EUR Exchange (FX) Rates by Currency Over Time')
+
+    # GBP, CAD, USD, JPY, PLN, TRY, CHF
+    currencies = ['British Pound Sterling','Canadian Dollar','United States Dollar','Japanese Yen','Polish Zloty','Turkish Lira','Swiss Franc']
+    selected_currencies = st.multiselect('', currencies, default = ['British Pound Sterling','Canadian Dollar','United States Dollar','Swiss Franc','Polish Zloty'])
     st.markdown("___")
 
-    # Display an interactive chart to visualize CO2 emissions over time for the selected countries
+    # Display an interactive chart to visualize exchange rates over time by the selected currencies
     with st.container():
-        countries_list = countries if len(selected_countries) == 0 else selected_countries
-        df_co2_overtime_filtered = df_co2_overtime[df_co2_overtime['Location Name'].isin(countries_list)]
-        line_chart = alt.Chart(df_co2_overtime_filtered).mark_line(
+        currencies_list = currencies if len(selected_currencies) == 0 else selected_currencies
+        df_fx_filtered = df_fx[df_fx['QUOTE_CURRENCY_NAME'].isin(currencies_list)]
+        line_chart = alt.Chart(df_fx_filtered).mark_line(
             color="lightblue",
             line=True,
-            point=alt.OverlayMarkDef(color="red")
         ).encode(
-            x='Year',
-            y='Value',
-            color='Location Name',
-            tooltip=['Location Name','Year','Value']
+            x='DATE',
+            y='VALUE',
+            color='QUOTE_CURRENCY_NAME',
+            tooltip=['QUOTE_CURRENCY_NAME','DATE','VALUE']
         )
         st.altair_chart(line_chart, use_container_width=True)
 
-def forest_occupied_land():
-    st.subheader('Forest Occupied Land Area by Countries')
-
-    threshold = st.slider(label='Forest Occupied Land By Countries', min_value=1000, max_value=2500, value=1800, step=200, label_visibility='hidden')
-    st.markdown("___")
-
-    # Display an interactive chart to visualize forest occupied land area by countries
-    with st.container():
-        filter = df_forest_land['Total Share of Forest Land'] > threshold
-        pd_df_land_top_n = df_forest_land.where(filter)
-        st.bar_chart(data=pd_df_land_top_n.set_index('Country Name'), width=850, height=400, use_container_width=True) 
-
 # Display header
-st.header("Knoema: Environment Data Atlas")
+st.header("Cybersyn: Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "CO2 Emissions": co2_emmissions,
-    "Forest Occupied Land": forest_occupied_land
+    "Daily Stock Performance Data": stock_prices,
+    "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
 page_names_to_funcs[selected_page]()
@@ -283,29 +382,27 @@ page_names_to_funcs[selected_page]()
 
 ### Run
 
-To run the application, click on **Run** button located at the top right corner.
-
-If all goes well, you should see the application running as shown below.
+To run the application, click on **Run** button located at the top right corner. If all goes well, you should see the application running as shown below.
 
 ![App](assets/sis.gif)
 
 In the application:
 
-1. Select **CO2 Emissions** or **Forest Occupied Land** option from the sidebar
-2. Select or unselect countries to visualize CO2 emissions over time for the selected countries
-3. Increase/decrease the emissions threshold value using the slider to visualize the forest occupied land area by countries based on the set threshold
+1. Select **Daily Stock Performance Data** or **Exchange (FX) Rates** option from the sidebar.
+2. Select or unselect currencies to visualize euro exchange rates over time for select currencies.
+3. Select a different stock price metric and date range to visualize additional metrics for stock performance evaluation.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit quickstart guide.
+Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit with Cybersyn data quickstart guide.
 
 ### What You Learned
 
 - How to access current Session object in Streamlit
-- How to load data from Snowflake Marketplace
+- How to load data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
 - How to run Streamlit in Snowflake
@@ -314,3 +411,5 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
+- [Cybersyn data on the Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc)
+- [Cybersyn Data Catalog](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart)

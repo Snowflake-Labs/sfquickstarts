@@ -1,0 +1,15 @@
+{
+  "title": "Quickstarts Snowflake en français",
+  "description": "Suivez nos tutoriels et nos guides pas-à-pas pour vous lancer avec le Data Cloud Snowflake",
+  "tags": ["fr"],
+  "categories": [],
+  "customStyle": "style.css",
+  "exclude": [],
+  "logoUrl": "/images/og-image.png",
+  "toolbarBgColor": "#37474F",
+  "catLevel": 0,
+  "sort": "mainCategory",
+  "pins": [],
+  "ga": "",
+  "hidden": false
+}

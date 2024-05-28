@@ -120,7 +120,7 @@ Before we begin to review working with Snowflake Marketplace data sets, verify y
     ``` sql
     SELECT variable_name, date, value, unit 
     FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES 
-    WHERE variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100' 
+    WHERE variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100' 
     AND MONTH(date) = 1 
     ORDER BY date;
     ```
@@ -158,7 +158,7 @@ SELECT COUNT(*) FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_
 SELECT variable_name, date, value, unit
 FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES
 WHERE 
-variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100'
+variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100'
 AND MONTH(date) = 1
 ORDER BY date;
 
@@ -263,7 +263,7 @@ Now we will query the data using a Snowpark DataFrame. As Snowpark uses lazy eva
 ``` python
 # Now use Snowpark dataframe
 snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
-               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100')
                .filter(col('DATE') >= '1972-01-01')
                .filter(month(col('DATE')) == 1)
                .orderBy(col('DATE'))) 
@@ -279,7 +279,7 @@ As part of the application we would like to have some predictions of the Persona
 ``` python
 # Let Snowflake perform filtering using the Snowpark pushdown and display results in a Pandas dataframe
 snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
-               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100')
                .filter(col('DATE') >= '1972-01-01')
                .filter(month(col('DATE')) == 1))
 pd_df_pce_year = snow_df_pce.select(year(col('DATE')).alias('"Year"'), col('VALUE').alias('PCE')).orderBy(col('DATE')).to_pandas()
@@ -471,7 +471,7 @@ def load_data(session):
     #US Inflation, Personal consumption expenditures (PCE) per year
     #Prepare data frame, set query parameters
     snow_df_pce = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
-               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+               .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100')
                .filter(col('DATE') >= '1972-01-01')
                .filter(month(col('DATE')) == 1))
     #Select columns, subtract 100 from value column to reference baseline
@@ -502,7 +502,7 @@ def load_data(session):
    
     #Data per quarter
     snow_df_pce_q = (session.table("CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES")
-                     .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2012=100')
+                     .filter(col('VARIABLE_NAME') == 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100')
                      .filter(month(col('DATE')).in_(lit(1), lit(4), lit(7), lit(10)))
                      .select(year(col('DATE')).alias('"Year"'), 
                              call_builtin("date_part", 'quarter', col('DATE')).alias('"Quarter"'),
@@ -526,7 +526,7 @@ In this step, you'll add...
     # Add header and a subheader
     st.title("Cybersyn: Financial & Economic Essentials")
     st.header("Powered by Snowpark for Python and Snowflake Marketplace | Made with Streamlit")
-    st.subheader("Personal consumption expenditures (PCE) over the last 25 years, baseline is 2012")
+    st.subheader("Personal consumption expenditures (PCE) over the last 25 years, baseline is 2017")
     with st.expander("What is the Personal Consumption Expenditures Price Index?"):
         st.write("""
          The prices you pay for goods and services change all the time – moving at different rates and even in different directions. Some prices may drop while others are going up. A price index is a way of looking beyond individual price tags to measure overall inflation (or deflation) for a group of goods and services over time.

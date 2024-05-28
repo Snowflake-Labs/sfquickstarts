@@ -75,6 +75,7 @@ The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/co
 - Paste and run the following SQL commands in the worksheet to create the required Snowflake objects, ingest sales data from S3, and update your Search Path to make it easier to work with the ML Functions. 
 
 ```sql
+-- Using accountadmin is often suggested for quickstarts, but any role with sufficient privledges can work
 USE ROLE ACCOUNTADMIN;
 
 -- Create development database, schema for our work: 
@@ -90,22 +91,23 @@ CREATE OR REPLACE WAREHOUSE quickstart_wh;
 USE WAREHOUSE quickstart_wh;
 
 -- Set search path for ML Functions:
+-- ref: https://docs.snowflake.com/en/user-guide/ml-powered-forecasting#preparing-for-forecasting
 ALTER ACCOUNT
 SET SEARCH_PATH = '$current, $public, SNOWFLAKE.ML';
 
--- Create a csv file format: 
+-- Create a csv file format to be used to ingest from the stage: 
 CREATE OR REPLACE FILE FORMAT quickstart.ml_functions.csv_ff
-type = 'csv'
-SKIP_HEADER = 1,
-COMPRESSION = AUTO;
+    type = 'csv'
+    SKIP_HEADER = 1,
+    COMPRESSION = AUTO;
 
--- Create an external stage pointing to s3, to load sales data: 
+-- Create an external stage pointing to AWS S3 for loading sales data: 
 CREATE OR REPLACE STAGE s3load 
-COMMENT = 'Quickstart S3 Stage Connection'
-url = 's3://sfquickstarts/frostbyte_tastybytes/mlpf_quickstart/'
-file_format = quickstart.ml_functions.csv_ff;
+    COMMENT = 'Quickstart S3 Stage Connection'
+    url = 's3://sfquickstarts/frostbyte_tastybytes/mlpf_quickstart/'
+    file_format = quickstart.ml_functions.csv_ff;
 
--- Define Tasty Byte Sales Table
+-- Define Tasty Byte Sales table
 CREATE OR REPLACE TABLE quickstart.ml_functions.tasty_byte_sales(
   	DATE DATE,
 	PRIMARY_CITY VARCHAR(16777216),
@@ -113,12 +115,12 @@ CREATE OR REPLACE TABLE quickstart.ml_functions.tasty_byte_sales(
 	TOTAL_SOLD NUMBER(17,0)
 );
 
--- Ingest data from s3 into our table
+-- Ingest data from S3 into our table
 COPY INTO quickstart.ml_functions.tasty_byte_sales 
-FROM @s3load/ml_functions_quickstart.csv;
+    FROM @s3load/ml_functions_quickstart.csv;
 
 -- View a sample of the ingested data: 
-SELECT * FROM quickstart.ml_functions.tasty_byte_sales limit 100;
+SELECT * FROM quickstart.ml_functions.tasty_byte_sales LIMIT 100;
 ```
 
 At this point, we have all the data we need to start building models. We will get started with building our first forecasting model.  
@@ -134,9 +136,11 @@ We will start off by first building a forecasting model to predict the demand fo
 Before building our model, let's first visualize our data to get a feel for what daily sales looks like. Run the following sql command in your Snowsight UI, and toggle to the chart at the bottom.
 
 ```sql
+-- Note, your database and schema context for this table was set on page 2 step 2
+-- query a sample of the ingested data
 SELECT *
-FROM tasty_byte_sales
-where menu_item_name like 'Lobster Mac & Cheese';
+    FROM tasty_byte_sales
+    WHERE menu_item_name LIKE 'Lobster Mac & Cheese';
 ```
 After toggling to the chart, we should see a daily sales for the item Lobster Mac & Cheese going back all the way to 2014: 
 
@@ -145,10 +149,10 @@ After toggling to the chart, we should see a daily sales for the item Lobster Ma
 Observing the chart, one thing we can notice is that there appears to be a seasonal trend present for sales, on a yearly basis. This is an important consideration for building robust forecasting models, and we want to make sure that we feed in enough training data that represents one full cycle of the time series data we are modeling for. The forecasting ML function is smart enough to be able to automatically identify and handle multiple seasonality patterns, so we will go ahead and use the latest year's worth of data as input to our model. In the query below, we will also convert the date column using the `to_timestamp_ntz` function, so that it be used in the forecasting function. 
 
 ```sql
--- Create Table containing the latest years worth of sales data: 
+-- Create table containing the latest years worth of sales data: 
 CREATE OR REPLACE TABLE vancouver_sales AS (
     SELECT
-        to_timestamp_ntz(date) as timestamp,
+        to_timestamp_ntz(date) AS timestamp,
         primary_city,
         menu_item_name,
         total_sold
@@ -176,14 +180,14 @@ CREATE OR REPLACE VIEW lobster_sales AS (
         menu_item_name LIKE 'Lobster Mac & Cheese'
 );
 
---Build Forecasting model:
+-- Build Forecasting model; this could take ~15-25 secs; please be patient
 CREATE OR REPLACE forecast lobstermac_forecast (
     INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'lobster_sales'),
     TIMESTAMP_COLNAME => 'TIMESTAMP',
     TARGET_COLNAME => 'TOTAL_SOLD'
 );
 
--- Show models to confirm training has completed: 
+-- Show models to confirm training has completed
 SHOW forecast;
 ```
 In the steps above, we create a view containing the relevant daily sales for our Lobster Mac & Cheese item, to which we pass to the forecast function. The last step should confirm that the model has been created, and ready to create predictions. 
@@ -243,6 +247,7 @@ If we have a look at the tabular results below, we can see that the following co
 The forecast function exposes a  `config_object` that allows you to control the outputted prediction interval. This value ranges from 0 to 1, with a larger value providing a wider range between the lower and upper bound. See below for an example of how change this when producing inferences: 
 
 ```sql
+-- Run the forecast; this could take <15 secs
 CALL lobstermac_forecast!FORECAST(FORECASTING_PERIODS => 10, CONFIG_OBJECT => {'prediction_interval': .9});
 ```
 
@@ -262,7 +267,7 @@ Follow the SQL Commands below to create a multi-series forecasting model for the
 
 ```sql
 
--- Create a table for the holidays in Vancouver, which is located in British Columbia (BC) in Cananda (CA)
+-- Create a view for the holidays in Vancouver, which is located in British Columbia (BC) in Cananda (CA)
 CREATE OR REPLACE VIEW canadian_holidays AS (
     SELECT
         date,
@@ -281,8 +286,8 @@ CREATE OR REPLACE VIEW canadian_holidays AS (
         date ASC
 );
 
--- Create a view for our training data, including the holidays for all items sold: 
-CREATE OR REPLACE VIEW allitems_vancouver as (
+-- Create a view for our training data, including the holidays for all items sold
+CREATE OR REPLACE VIEW allitems_vancouver AS (
     SELECT
         vs.timestamp,
         vs.menu_item_name,
@@ -290,11 +295,11 @@ CREATE OR REPLACE VIEW allitems_vancouver as (
         ch.holiday_name
     FROM 
         vancouver_sales vs
-        left join canadian_holidays ch on vs.timestamp = ch.date
-    WHERE MENU_ITEM_NAME in ('Mothers Favorite', 'Bottled Soda', 'Ice Tea')
+        LEFT JOIN canadian_holidays ch ON vs.timestamp = ch.date
+    WHERE MENU_ITEM_NAME IN ('Mothers Favorite', 'Bottled Soda', 'Ice Tea')
 );
 
--- Train Model: 
+-- Train Model; this could take ~15-25 secs; please be patient
 CREATE OR REPLACE forecast vancouver_forecast (
     INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'allitems_vancouver'),
     SERIES_COLNAME => 'MENU_ITEM_NAME',
@@ -302,6 +307,7 @@ CREATE OR REPLACE forecast vancouver_forecast (
     TARGET_COLNAME => 'TOTAL_SOLD'
 );
 
+-- show it
 SHOW forecast;
 ```
 
@@ -321,7 +327,7 @@ SELECT MAX(timestamp) FROM vancouver_sales;
 CREATE OR REPLACE VIEW vancouver_forecast_data AS (
     WITH future_dates AS (
         SELECT
-            '2023-05-28' ::DATE + row_number() over (
+            '2023-05-28' ::DATE + row_number() OVER (
                 ORDER BY
                     0
             ) AS timestamp
@@ -365,26 +371,33 @@ CALL vancouver_forecast!forecast(
 
 -- Store results into a table: 
 CREATE OR REPLACE TABLE vancouver_predictions AS (
-    SELECT
-        *
-    FROM
-        TABLE(RESULT_SCAN(-1))
+    SELECT *
+    FROM TABLE(RESULT_SCAN(-1))
 );
 
 ```
 Above, we used the generator function to generate the next 10 days from 05/28/2023, which was the latest date in our training dataset. We then performed a cross join against all the distinct food items we sell within Vancouver, and lastly joined it against our holiday table so that the model is able to make use of it. 
 
-### Step 3: Feature Importances
+### Step 3: Feature Importance & Evaluation Metrics
 
 An important part of the model building process is understanding how the individual columns or features that you put into the model weigh in on the final predictions made. This can help provide intuition into what the most significant drivers are, and allow us to iterate by either including other columns that may be predictive or removing those that don't provide much value. The forecasting ML Function gives you the ability to calculate [feature importance](https://docs.snowflake.com/en/user-guide/analysis-forecasting#understanding-feature-importance), using the `explain_feature_importance` method as shown below. 
 
+
 ```sql
+-- get Feature Importance
 CALL VANCOUVER_FORECAST!explain_feature_importance();
 ```
 
 The output of this call for our multi-series forecast model is shown below, which you can explore further on snowsight. One thing to notice here is that, for this particular dataset, including holidays as an exogenous variable didn't dramatically impact our predictions. We may consider dropping this altogether, and only rely on the daily sales themselves. **Note**, based on the version of the ML Function, the outputted feature importances may be different compared to what is shown below due how features are generated by the model. 
 
 <img src = "assets/feature_importances.png">
+
+In addition to feature importances, evaluating model accuracy is important in knowing if the model is able to accurately make future predictions. Using the sql command below, you can get a variety of model metrics that describe how well it performed on a holdout set. For more details please see [understanding evaluation metrics](https://docs.snowflake.com/en/user-guide/ml-powered-forecasting#understanding-evaluation-metrics).
+
+```sql
+-- Evaluate model performance:
+CALL VANCOUVER_FORECAST!show_evaluation_metrics();
+```
 
 <!-- ------------------------ -->
 ## Identifying Anomalous Sales with the Anomaly Detection ML Function
@@ -397,20 +410,21 @@ In the past couple of sections we have built forecasting models for the items so
 In this section, we will make use of the [anomaly detection ML Function](https://docs.snowflake.com/en/user-guide/analysis-anomaly-detection) to build a model for anamolous sales for all items sold in Vancouver. Since we had found that holidays were not impacting the model, we have dropped that as a column for our anomaly model. 
 
 ```sql
--- Create a view containing our training data: 
+-- Create a view containing our training data
 CREATE OR REPLACE VIEW vancouver_anomaly_training_set AS (
-SELECT *
-FROM vancouver_sales
-WHERE timestamp < (SELECT max(timestamp) FROM vancouver_sales) - interval '1 Month'
+    SELECT *
+    FROM vancouver_sales
+    WHERE timestamp < (SELECT MAX(timestamp) FROM vancouver_sales) - interval '1 Month'
 );
 
--- Create a view containing the data we want to make inferences on: 
+-- Create a view containing the data we want to make inferences on
 CREATE OR REPLACE VIEW vancouver_anomaly_analysis_set AS (
-SELECT *
-FROM vancouver_sales
-WHERE timestamp > (SELECT max(timestamp) FROM vancouver_anomaly_training_set));
+    SELECT *
+    FROM vancouver_sales
+    WHERE timestamp > (SELECT MAX(timestamp) FROM vancouver_anomaly_training_set)
+);
 
--- Create the model: UNSUPERVISED method, however can pass labels as well - 
+-- Create the model: UNSUPERVISED method, however can pass labels as well; this could take ~15-25 secs; please be patient 
 CREATE OR REPLACE snowflake.ml.anomaly_detection vancouver_anomaly_model(
     INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'vancouver_anomaly_training_set'),
     SERIES_COLNAME => 'MENU_ITEM_NAME',
@@ -419,7 +433,7 @@ CREATE OR REPLACE snowflake.ml.anomaly_detection vancouver_anomaly_model(
     LABEL_COLNAME => ''
 ); 
 
--- Call the model and store the results into table:
+-- Call the model and store the results into table; this could take ~10-20 secs; please be patient
 CALL vancouver_anomaly_model!DETECT_ANOMALIES(
     INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'vancouver_anomaly_analysis_set'),
     SERIES_COLNAME => 'MENU_ITEM_NAME',
@@ -428,13 +442,13 @@ CALL vancouver_anomaly_model!DETECT_ANOMALIES(
     CONFIG_OBJECT => {'prediction_interval': 0.95}
 );
 
+-- Create a table from the results
 CREATE OR REPLACE TABLE vancouver_anomalies AS (
-    SELECT
-        *
-    FROM 
-        TABLE(RESULT_SCAN(-1))
+    SELECT *
+    FROM TABLE(RESULT_SCAN(-1))
 );
 
+-- Review the results
 SELECT * FROM vancouver_anomalies;
 ```
 
@@ -451,6 +465,7 @@ The output of the model should look similar to that found in the image below. Re
 With our model output, we are now in a position to see how many times an anomalous sale occured for each of the items in our most recent month's worth of sales data. Using the sql below:
 
 ```sql
+-- Query to identify trends
 SELECT series, is_anomaly, count(is_anomaly) AS num_records
 FROM vancouver_anomalies
 WHERE is_anomaly =1
@@ -473,6 +488,7 @@ In this last section, we will walk through how we can use the models created pre
 3. A [Snowpark Python Stored Procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-python) to extract the anomalies and send formatted emails containing the most trending items. 
 
 ```sql
+-- Note: It's important to update the recipient email twice in the code below
 -- Create a task to run every month to retrain the anomaly detection model: 
 CREATE OR REPLACE TASK ad_vancouver_training_task
     WAREHOUSE = quickstart_wh
@@ -511,19 +527,20 @@ END;
 END;
 
 -- Create an email integration: 
-CREATE NOTIFICATION INTEGRATION my_email_int
+CREATE OR REPLACE NOTIFICATION INTEGRATION my_email_int
 TYPE = EMAIL
 ENABLED = TRUE
-ALLOWED_RECIPIENTS = ('<EMAIL GOES HERE>');
+ALLOWED_RECIPIENTS = ('<EMAIL-RECIPIENT>');  -- update the recipient's email here
 
 -- Create Snowpark Python Stored Procedure to format email and send it
-create or replace procedure send_anomaly_report()
-returns string
-language python
+CREATE OR REPLACE PROCEDURE send_anomaly_report()
+RETURNS string
+LANGUAGE python
 runtime_version = 3.9
 packages = ('snowflake-snowpark-python')
 handler = 'send_email'
-as
+-- update the recipient's email below
+AS
 $$
 def send_email(session):
     session.call('extract_anomalies').collect()
@@ -532,19 +549,19 @@ def send_email(session):
       ).to_pandas().to_html()
     session.call('system$send_email',
         'my_email_int',
-        '<EMAIL RECIPIENTS GO HERE>',
+        '<EMAIL RECIPIENT HERE!>',
         'Email Alert: Anomaly Report Has Been created',
         printed,
         'text/html')
 $$;
 
 -- Orchestrating the Tasks: 
-create or replace task send_anomaly_report_task
-warehouse = quickstart_wh
-after AD_VANCOUVER_TRAINING_TASK
-as call send_anomaly_report();
+CREATE OR REPLACE TASK send_anomaly_report_task
+    warehouse = quickstart_wh
+    AFTER AD_VANCOUVER_TRAINING_TASK
+    AS CALL send_anomaly_report();
 
--- Steps to immediately execute the task:  
+-- Steps to resume and then immediately execute the task DAG:  
 ALTER TASK SEND_ANOMALY_REPORT_TASK RESUME;
 ALTER TASK AD_VANCOUVER_TRAINING_TASK RESUME;
 EXECUTE TASK AD_VANCOUVER_TRAINING_TASK;
