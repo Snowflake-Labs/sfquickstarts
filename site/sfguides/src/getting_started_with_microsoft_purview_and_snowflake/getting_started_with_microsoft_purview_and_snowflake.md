@@ -19,19 +19,18 @@ In this Quickstart you will create a data catalog demonstrating how to use Purvi
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://signup.snowflake.com/) and a Snowflake account
 - Familiarity with Azure and an Azure account, and a Purview workspace
 
-### You'll Learn How to
+### What You Will Learn
 - deploy Microsoft Purview
 - set up a Snowflake database, and scan that data using Purview
 - classify, label, and view lineage of your data
 
-### What You’ll Need 
+### What You Will Need 
 - A free [Snowflake Account](https://signup.snowflake.com/)
 - [Azure Account](https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c) with Purview
 
-### What You’ll Build 
+### What You Will Build 
 You will create a Purview instance with a catalog of classified Snowflake data and lineage to track where your data comes from and where it gets used.
 
 ### Use Case
