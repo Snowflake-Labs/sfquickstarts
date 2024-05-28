@@ -1623,6 +1623,8 @@ Snowflake Copilot is **powered by a model fine-tuned by Snowflake that runs secu
 
 Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot#tips-for-using-sf-copilot) when using Copilot.
 
+#### NOTE: At the time of publishing this lab, in late May 2024, Co-Pilot was in Public Preview in AWS US regions, we have included it in the lab content below for reference. If you do not see Co-Pilot, it may NOT be released in your region just yet. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
+
 1. At the top left of the screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
 <img src="assets/analysis_newsheet.png" />
