@@ -662,6 +662,12 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 >
 > If you encounter issues with getting data loaded via the **Snowpipe Streaming Ingestion** section, use the following steps to **Troubleshoot**.
 >
+> #### Connection Test.sh Script Error: Exception in thread "main" java.lang.SecurityException: Authorization failed after retry
+>
+> This error indicates that the **user public key setup** is the likely issue.
+>
+> Refer to the **"Lab Setup" section Step 7 and 8**, and then run through the **Setup Snowflake Resources** section again.
+>
 > #### Manually Load the IoT Data
 >
 > 1. Inside the `Lab Downloaded Files` folder open `help/snowflake_manual_ingest.sql` and **copy** the contents of the file.
@@ -682,7 +688,7 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 >
 > The **GitHub Codespace machine type** can be changed to an instance with more memory.
 >
-> 1. Open [GitHub Codespaces](https://github.com/codespaces).
+> 1. Open [GitHub Codespaces](https://github.com/codespaces). Select `Menu > Change machine type`.
 >
 > <img src="assets/troubleshoot_ingest_codespace_machine.png" />
 >
@@ -690,7 +696,11 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 >
 > <img src="assets/troubleshoot_ingest_codespace_machineupdate.png" />
 >
-> 3. **Re-run** the ingestion scripts.
+> 3. If the GitHub Codespace was already running, select `Menu > Stop codespace`
+>
+> <img src="assets/troubleshoot_ingest_codespace_machinestop.png" />
+>
+> 4. Select the Github Codespace to launch it, and **Re-run** the ingestion scripts.
 >
 
 <!-- ------------------------ -->
@@ -1662,6 +1672,17 @@ Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/u
 > aside positive
 > 
 > You have now run through several **Time Series Analysis** queries, we can now look at creating **Time Series Functions**.
+>
+
+> aside negative
+> 
+> ### Troubleshooting
+>
+> If you encounter issues in the **Time Series Analysis** section, use the following steps to **Troubleshoot**.
+>
+> #### RANGE BETWEEN Query Returning Error: Invalid window frame
+>
+> At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview, we have included it in the lab content below for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be released in your region just yet, it is targeted to be Public Preview soon. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
 >
 
 <!-- ------------------------ -->
