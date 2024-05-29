@@ -439,7 +439,7 @@ CREATE or REPLACE NETWORK RULE IDENTIFIER($APP_LOCAL_EGRESS_RULE)
   MODE= 'EGRESS'
   VALUE_LIST = ('0.0.0.0:443','0.0.0.0:80');
 
--- If this statement is failing, it is because database NVIDIA_MS_APP_LOCAL_DB doesn't exist
+-- If this statement is failing, it is because database NVIDIA_MS_APP_LOCAL_DB doesnt exist
 -- Check the value of $APP_LOCAL_DB and replace NVIDIA_MS_APP_LOCAL_DB with the value of $APP_LOCAL_DB
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION IDENTIFIER($APP_LOCAL_EAI)
   ALLOWED_NETWORK_RULES = (NVIDIA_NEMO_MS_APP_LOCAL_DB.EGRESS.NVIDIA_MS_APP_RULE)
@@ -523,3 +523,4 @@ Learnt How-To,
 - [Mistral-7B-Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1)
 - [NeMo Microservices](https://developer.nvidia.com/nemo-microservices)
 - [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/)
+- [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
