@@ -1,5 +1,5 @@
 author: sikha-das
-id: getting_started_with_snowflake_ml_for_python
+id: intro_to_machine_learning_with_snowpark_ml_for_python
 summary: Through this quickstart guide, you will explore Snowflake for Machine Learning.
 categories: Getting-Started
 environments: web
@@ -49,7 +49,7 @@ To get started with Snowflake ML, developers can use the Python APIs from the [S
 
 ![snowflake_model_registry](assets/snowflake_model_registry.png)
 
-Snowflake ML provides the following advantages:
+**Snowflake ML provides the following advantages:**
 - Transform your data and train your models using popular Python ML frameworks such as scikit-learn, xgboost, and lightgbm without moving data out of Snowflake
 - Streamline model management and batch inference with built-in versioning support and role-based access control catering to both Python and SQL users
 - Keep your ML pipeline running within Snowflake's security and governance perimeters
