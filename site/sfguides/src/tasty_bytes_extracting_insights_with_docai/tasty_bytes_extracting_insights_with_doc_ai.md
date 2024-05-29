@@ -1,5 +1,5 @@
 author: Jacob Kranzler
-id: tasty_bytes_extracting_insights_with_doc_ai
+id: tasty_bytes_extracting_insights_with_docai
 summary: Walkthrough extracting data from PDF Inspection Reports using Document AI
 categories: Tasty-Bytes, Getting-Started
 environments: web
@@ -108,10 +108,9 @@ For use in a future step, we will need to download 2 separate .zip files that co
 
 Please leverage the two buttons below to download these .zip files. Once downloaded please unzip the files into a location that can easily be accessed in our next steps.
 
-<a href="assets/inspection_reports_train.zip" class="md-button" download> Download Training Set</a>
+- [Training Set ZIP](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_extracting_insights_with_docai/assets/inspection_reports_train.zip)
 
-
-<a href="assets/inspection_reports_full.zip" class="md-button" download> Download Full Set</a>
+- [Full Set ZIP](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_extracting_insights_with_docai/assets/inspection_reports_full.zip)
 
 
 ### Step 3 - Click Next -->
