@@ -194,7 +194,7 @@ Once the next document appears, please again conduct the following steps for eac
 - If **Yes** - Click the check-box to indicate this value was extracted correctly.
 - If **No** - Delete the provided value and enter the correct value.
 
-<img src="assets/doc_ai_review.gif"/>
+<img src="assets/docai_review.gif"/>
 
 After completing review of all documents, please navigate back to the Document AI UI by click the arrow next to **Documents review**
 
