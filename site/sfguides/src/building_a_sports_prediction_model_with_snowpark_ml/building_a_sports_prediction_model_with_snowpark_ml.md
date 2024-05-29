@@ -187,7 +187,7 @@ At the end of this stage, we will have a predicted winner of the tournament. Gre
 
 <img src="assets/beckham-england.gif" alt="england" width="400"/>
 
-## Conclusion and Resources2
+## Conclusion and Resources
 Duration: 1
 
 Congratulation! - you've completed all the steps to build a full end-to-end model pipeline with Snowpark ML, seen how to persist models into the Snowflake Model Registry, and then used these Models for inference with both Snowpark Python and SQL.
