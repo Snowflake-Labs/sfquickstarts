@@ -188,9 +188,11 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
     - Learn Snowflake's Geospatial capabilities, beginning with obtaining free, real-time data from SafeGraph. Progress through creating geographic points (ST_POINT), measuring distances (ST_DISTANCE), aggregating coordinates (ST_COLLECT), establishing a Minimum Bounding Polygon (ST_ENVELOPE), determining areas (ST_AREA), identifying central points (ST_CENTROID), and executing advanced Geospatial Analysis using the H3 (Hexagonal Hierarchical Geospatial Indexing System).
 
 ### Other Tasty Bytes Quickstarts
-- #### [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index)
+- #### [Extracting Insights from Unstructured Data using DocumentAI](https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index)
 
 - #### [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index)
+
+- #### [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index)
 
 - #### [Developing React Native Applications using Snowflake Hybrid Tables](https://quickstarts.snowflake.com/guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/index.html?index=..%2F..index)
 
