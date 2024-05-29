@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Document AI
 
-# Extracting Insights with Document AI
+# Extracting Insights from Unstructured Data with Document AI
 <!-- ------------------------ -->
 
 ## Extracting Insights with Document AI
@@ -15,6 +15,10 @@ Duration: 1
 
 ### Overview
 Within this Quickstart, we will walk through how to train and leverage a Document Extraction Model using Document AI. We will use this model to convert unstructured Inspection Reports into structured, easy-to-analyze rows and columns all within the Snowflake AI Data Cloud.
+
+To learn more about Document AI - [Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
+
+To learn more about Snowflake's Artic-TILT LLM for Document AI - [Documentation](https://www.snowflake.com/blog/arctic-tilt-compact-llm-advanced-document-ai/)
 
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
@@ -32,7 +36,9 @@ Within this Quickstart, we will walk through how to train and leverage a Documen
 Duration: 3
 
 ### Overview
-For this section, please create a new Snowflake SQL Worksheet by Navigating to Projects -> Worksheets and clicking the **+** button. Once created, rename the Worksheet to **DocumentAI Quickstart Setup** before moving on.
+For this section, please create a new Snowflake SQL Worksheet by Navigating to Projects -> Worksheets and clicking the **+** button. 
+
+Once your Worksheet is created, rename the Worksheet to **DocumentAI Quickstart Setup** before moving on.
 
 ### Step 1 - Setting up our Account
 Please copy the following SQL and paste it in your Worksheet. Once pasted, run all of the queries at once using **Run All** which will deploy the following within your account:
@@ -102,10 +108,10 @@ For use in a future step, we will need to download 2 separate .zip files that co
 
 Please leverage the two buttons below to download these .zip files. Once downloaded please unzip the files into a location that can easily be accessed in our next steps.
 
-<a href="assets/inspection_reports_train.zip" class="md-button" download>:octicons-download-16: Download Training Set</a>
+<a href="assets/inspection_reports_train.zip" class="md-button" download> Download Training Set</a>
 
 
-<a href="assets/inspection_reports_full.zip" class="md-button" download>:octicons-download-16: Download Full Set</a>
+<a href="assets/inspection_reports_full.zip" class="md-button" download> Download Full Set</a>
 
 
 ### Step 3 - Click Next -->
@@ -138,9 +144,9 @@ Duration: 30
 Within the Snowsight interface please switch your role to `TB_DOC_AI` and, navigate to AI & ML -> Document AI. From there click the **+ Build** button.
 
 Within the New Build screen, enter the following:
-- Build Name: INSPECTION_REPORT_EXTRACTION
-- Choose Database: TB_DOC_AI
-- Choose Schema: RAW_DOC
+- **Build Name:** INSPECTION_REPORT_EXTRACTION
+- **Choose Database:** TB_DOC_AI
+- **Choose Schema:** RAW_DOC
 
 <img src="assets/new_build.png"/>
 
@@ -159,24 +165,21 @@ To begin defining our values to extract from our documents, click the **Add valu
 
 From here please enter the following set of Values and Questions one by one that are documented below. For each pair, please complete the following before clicking **Add value** to enter the next pair:
 
-> aside positive
-> For demonstration purposes, we are only extracting 5 values however please feel free to add additional Value and Question Pairs for the document
->
-
 **Did the Model extract the Value correctly?**
 - If **Yes** - Click the check-box to indicate this value was extracted correctly.
 - If **No** - Delete the provided value and enter the correct value.
 
 **Value | Question**
-- TRUCK_ID | What is the Truck Identifier?
-- DATE | What is the Date?
-- PIC_PRESENT | Was the Person in charge present (Y or N)?
-- FOOD_PROPER_TEMP | Was the Food received at the proper temperature (Y or N)?
-- VEHICLE_RUNS_WELL | Did the Vehicle run and was it in well maintained condition?
-
+- **TRUCK_ID:** What is the Truck Identifier?
+- **DATE:** What is the Date?
+- **PIC_PRESENT:** Was the Person in charge present (Y or N)?
+- **FOOD_PROPER_TEMP:** Was the Food received at the proper temperature (Y or N)?
+- **VEHICLE_RUNS_WELL:** Did the Vehicle run and was it in well maintained condition?
 
 > aside positive
-> For demonstration purposes, we are only extracting 5 values however please feel free to add additional Value and Question Pairs for the document
+> For demonstration purposes, we are only extracting 5 values however please feel free to add more.
+> 
+> Please see [Question optimization for extracting information with Document AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/optimizing-questions) for best practices.
 >
 
 <img src="assets/question_values.png"/>
@@ -222,7 +225,9 @@ Duration: 1
 ### Overview
 In the last section, we walked through training our Inspection Report Extraction model in Snowflake. We will now use that model to extract our values from the full set of documents we uploaded to our stage earlier.
 
-For this section, please create a new Snowflake SQL Worksheet by Navigating to Projects -> Worksheets and clicking the **+** button. Once created, rename the Worksheet to **DocumentAI Quickstart SQL** before moving on.
+Please create a new Snowflake SQL Worksheet by Navigating to Projects -> Worksheets and clicking the **+** button.
+
+Once your Worksheet is created, rename the Worksheet to **DocumentAI Quickstart SQL** before moving on.
 
 ### Step 1 - Setting our Context
 Within our fresh SQL Worksheet, please execute the following three queries below to set our Role, Warehouse, Database and Schema context. Each of these will result in a `Statement executed successfully message.`
