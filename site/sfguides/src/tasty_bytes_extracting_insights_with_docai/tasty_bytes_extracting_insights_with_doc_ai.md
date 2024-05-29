@@ -16,14 +16,14 @@ Duration: 1
 ### Overview
 Within this Quickstart, we will walk through how to train and leverage a Document Extraction Model using Document AI. We will use this model to convert unstructured Inspection Reports into structured, easy-to-analyze rows and columns all within the Snowflake AI Data Cloud.
 
-To learn more about Document AI - [Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
+- [Document AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
 
-To learn more about Snowflake's Artic-TILT LLM for Document AI - [Documentation](https://www.snowflake.com/blog/arctic-tilt-compact-llm-advanced-document-ai/)
+- [Snowflake's Artic-TILT LLM for Document AI Documentation](https://www.snowflake.com/blog/arctic-tilt-compact-llm-advanced-document-ai/)
 
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - A Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You can choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
     
 ### What You Will Learn 
