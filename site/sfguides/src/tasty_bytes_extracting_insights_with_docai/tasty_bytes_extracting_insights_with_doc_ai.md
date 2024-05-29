@@ -10,6 +10,8 @@ tags: Getting Started, Tasty Bytes, Document AI
 # Extracting Insights from Unstructured Data with Document AI
 <!-- ------------------------ -->
 
+<img src="assets/docaiheader.png"/>
+
 ## Extracting Insights with Document AI
 Duration: 1
 
