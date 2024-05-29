@@ -1,13 +1,13 @@
 author: Ellery Berk
 id: getting-started-with-snowflake-cortex-ml-forecasting-and-classification
-summary: This is an introduction to building with Cortex ML functions.
+summary: This is an introduction to building with ML functions.
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Cortex ML Functions, Advanced Analytics, Machine Learning 
+tags: Getting Started, Snowflake ML Functions, Advanced Analytics, Machine Learning 
 
-# Getting Started with Snowflake Cortex ML Forecasting and Classification
+# Getting Started with Snowflake ML Forecasting and Classification
 <!-- ------------------------ -->
 ## Overview 
 Duration: 3
@@ -48,7 +48,7 @@ After we build our models, we will evaluate them and look at the feature importa
 
 Let's get started!
 
-**Note**: As of April 2024, Cortex ML Classification is in Public Preview. From time to time, Snowflake may refine the underlying algorithm and will roll out the improvements through the regular Snowflake release process. You cannot revert to a previous version of the model, but models you have created with a previous version will continue to use that version. These changes in the underlying algorithm also means that the results you get when you run through the quickstart may differ from the images you see.
+**Note**: As of April 2024, the ML Classification function is in Public Preview. From time to time, Snowflake may refine the underlying algorithm and will roll out the improvements through the regular Snowflake release process. You cannot revert to a previous version of the model, but models you have created with a previous version will continue to use that version. These changes in the underlying algorithm also means that the results you get when you run through the quickstart may differ from the images you see.
 
 <!-- ------------------------ -->
 ## Setting Up Data in Snowflake
@@ -145,7 +145,7 @@ The variables in this dataset can be roughly grouped into three categories:
 2. Data around the interactions that the bank may have had with the customer previously, i.e `contact` which describes communication type used (either cellular or telephone), and `previous` which describes the number of contacts that were performed before the campaign was run
 3. Social and economic data (i.e `employee_variation_rate`, etc..) that details economic indicators during the time that the contact was made. These variables add information about the macroeconomic for when the customer was contacted, and may prove to be useful in predicting whether or not the customer accepts the term deposit.
 
-The target variable that we will want to predict is the column denoted by `client_subscribed`. This is a binary variable, meaning it takes on one of two values, either `TRUE` OR `FALSE`. While in this case we only have two values, Cortex ML Classification function can also handle [Multi-Class Classification](https://en.wikipedia.org/wiki/Multiclass_classification), where there are more than three classes we want to group/classify.
+The target variable that we will want to predict is the column denoted by `client_subscribed`. This is a binary variable, meaning it takes on one of two values, either `TRUE` OR `FALSE`. While in this case we only have two values, the ML Classification function can also handle [Multi-Class Classification](https://en.wikipedia.org/wiki/Multiclass_classification), where there are more than three classes we want to group/classify.
 
 For the full data dictionary, refer to the [Bank Marketing Dataset](https://archive.ics.uci.edu/dataset/222/bank+marketing) for the Variables Table. **Note** that the macroeconomic variables are not listed in the chart, you may find that by downloading the dataset, and opening the file `bank-additional-names.txt` contained within the `bank-additional` folder. 
 
@@ -171,7 +171,7 @@ Our input dataset has a total of 41,188 rows of data, and roughly 11% percent of
 
 ```sql
 -- Create a view with a column that will be filtered for either training/inference purposes
-CREATE OR REPLACE VIEW partitioned_data as (
+CREATE OR REPLACE TABLE partitioned_data as (
   SELECT *, 
         CASE WHEN UNIFORM(0::float, 1::float, RANDOM()) < .95 THEN 'training' ELSE 'inference' END AS split_group
   FROM bank_marketing
@@ -193,10 +193,10 @@ CREATE OR REPLACE VIEW inference_view AS (
 In the code above, we made use of the both the `Uniform` and the `Random` function to first generate a random number between 0 and 1, and then assign it to either the `training` or `inference` group.
 In the next section, we will use these views to build our model and make predictions.
 
-### Step 2: Use Snowflake Cortex UI
-Duration 2
+### Step 2: Use Snowflake AI & ML Studio
+Duration: 2
 
-We’ll use the new **Snowflake Cortex UI** to set us up for classification.
+We’ll use the new **Snowflake AI & ML Studio** to set us up for classification.
 
 First, navigate to Snowsight. Click “Create” next to the Classification button below. 
 
@@ -236,10 +236,10 @@ First, train your model:
 CREATE OR REPLACE snowflake.ml.classification bank_classifier(
     INPUT_DATA => SYSTEM$REFERENCE('VIEW', 'training_view'),
     TARGET_COLNAME => 'CLIENT_SUBSCRIBED',
-    CONFIG_OBJECT => {'evaluate': TRUE , 'on_error': 'skip'}
+    CONFIG_OBJECT => {'on_error': 'skip'}
 );
 ```
-The above parameters map to the choices we made in the Snowflake Cortex UI: 
+The above parameters map to the choices we made in the Snowflake AI & ML Studio: 
 1. `INPUT_DATA`: refers to the the reference to the training data. You can pass in a reference to a table or a view if the data is ready as it is in our case, or make use of a [query reference](https://docs.snowflake.com/developer-guide/stored-procedure/stored-procedures-calling-references#label-reference-object-query-references) to pass in a query for the data you want to train the model on.
 2. `TARGET_COLNAME`: refers to the variable/column we want to predict, which in our case is the binary variable `CLIENT_SUBSCRIBED`. 
 3. `CONFIG_OBJECT`: This is an optional object that contains key-value pairs that provides you the ability to create evaluation metrics as part of the training procedure, handle potential error riddled rows, and also to configure how much of the dataset passed into the `INPUT_DATA` would be reserved for the holdout evaluation set.  
@@ -369,7 +369,7 @@ GROUP BY timestamp, age_bin;
 select * from daily_subscriptions where age_bin = '40 and up';
 
 -- Split data into data for training and hold out one month for predictions. 
--- Since we're using interest rate to help train the model, we need to provide this variable at prediction time, too. 
+-- Since we are using interest rate to help train the model, we need to provide this variable at prediction time, too. 
 CREATE OR REPLACE TABLE forecast_training AS SELECT
     * 
 FROM daily_subscriptions 
@@ -383,10 +383,10 @@ FROM daily_subscriptions
 WHERE timestamp NOT IN (SELECT timestamp FROM forecast_training);
 ```
 
-### Step 2: Use Snowflake Cortex UI 
+### Step 2: Use Snowflake AI & ML Studio 
 Duration: 3
 
-We’ll use the new Snowflake Cortex UI to set us up for forecasting. 
+We’ll use the new Snowflake AI & ML Studio to set us up for forecasting. 
 
 First, navigate to Snowsight. Click “Create” next to the Forecasting button below. 
 
@@ -431,11 +431,11 @@ The results? A worksheet with all of the SQL you need to train your model, gener
 ### Step 3: Generate Predictions and Visualize 
 Duration: 3
 
-Once you’ve run the steps under `SETUP` in your worksheet, run this step in your worksheet to train your model: 
+**Once you’ve run the steps under `SETUP` in your worksheet,** run this step in your worksheet to train your model: 
 ```sql
 -- Train your forecasting model.
 CREATE OR REPLACE SNOWFLAKE.ML.FORECAST forecast_subscriptions_model(
-    INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training'),
+    INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training_v1'),
     SERIES_COLNAME => 'age_bin',
     TIMESTAMP_COLNAME => 'timestamp',
     TARGET_COLNAME => 'subscribed_count'
@@ -453,7 +453,7 @@ Otherwise, the below SQL uses the `forecast_subscriptions_model` we just trained
 BEGIN
     -- This is the step that creates your predictions.
     CALL forecast_subscriptions_model!FORECAST(
-        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values'),
+        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values_v1'),
         SERIES_COLNAME => 'age_bin',
         TIMESTAMP_COLNAME => 'timestamp'
     );
@@ -466,12 +466,12 @@ END;
 SELECT * FROM forecasts;
 ```
 
-We added a `WHERE` clause to this step in your worksheet so that we can visualize just one segment of our customers. Update your worksheet to the below to view historical and forecasted daily subscriptions for your 40 and up category.
+We added a `WHERE` clause to this step in your worksheet so that we can visualize just one segment of our customers. Update your worksheet to the below SQL to view historical and forecasted daily subscriptions for your 40 and up category.
 
 ```sql
 SELECT TIMESTAMP, subscribed_count AS actual, NULL AS forecast, NULL AS lower_bound, NULL AS upper_bound
     FROM forecast_training 
-    WHERE age_bin = '40 and up'
+    WHERE age_bin = '40 and up' and TIMESTAMP > '2010-02-01'
 UNION ALL
 SELECT  ts as TIMESTAMP, NULL AS actual, forecast, lower_bound, upper_bound
     FROM forecasts 
@@ -517,7 +517,7 @@ Duration: 3
 
 Now that we’ve gotten comfortable with our model, we can schedule our model to train and predict on a regular basis. This is helpful when our business needs predictions each week to help make planning decisions. These steps are not included in the worksheet you produced, so you’ll need to copy these into your worksheet.
 
-First, we’ll schedule recurring model training. Notice that we specify the warehouse the task should use and the timing of the task. This task is scheduled for midnight Monday morning – so that our forecasts are ready first thing Monday morning for our decision makers. (Try [crontab.guru](https://crontab.guru/#0_*_*_*) to create a different schedule.) The other important note is that we are training our model on the `forecast_training` table. Separately, we’ll need to make sure this table is updated weekly so that our model trains on the most recent data.
+First, we’ll schedule recurring model training. Notice that we specify the warehouse the task should use and the timing of the task. This task is scheduled for midnight Monday morning – so that our forecasts are ready first thing Monday morning for our decision makers. (Try [crontab.guru](https://crontab.guru/#0_*_*_*) to create a different schedule.) The other important note is that we are training our model on the `forecast_training_v1` table. Separately, we’ll need to make sure this table is updated weekly so that our model trains on the most recent data.
 ```sql
 -- Update your input data with recent data to make your predictions as accurate as possible. 
 CREATE TASK train_task
@@ -525,14 +525,14 @@ WAREHOUSE = my_warehouse
 SCHEDULE = 'USING CRON 0 0 * * 1  America/Los_Angeles' -- Runs at midnight PT, Monday morning.
 AS
     CREATE OR REPLACE SNOWFLAKE.ML.FORECAST forecast_subscriptions_model(
-        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training'),
+        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_training_v1'),
         SERIES_COLNAME => 'age_bin',
         TIMESTAMP_COLNAME => 'timestamp',
         TARGET_COLNAME => 'subscribed_count'
     );
 ```
 
-Next, we’ll schedule recurring predictions. Again, we set our warehouse and the training schedule. Just like we did with the training step, we need to ensure that `forecast_future_values` is updated with future values for the timestamps we want to predict over. (For example, if we are predicting for the next two weeks, we need a table with a row for each day and age bin combination, with a column for the Euribor rate, since we included that feature in the model training step.) 
+Next, we’ll schedule recurring predictions. Again, we set our warehouse and the training schedule. Just like we did with the training step, we need to ensure that `forecast_future_values_v1` is updated with future values for the timestamps we want to predict over. (For example, if we are predicting for the next two weeks, we need a table with a row for each day and age bin combination, with a column for the Euribor rate, since we included that feature in the model training step.) 
 ```sql
 CREATE TASK predict_task
 WAREHOUSE = my_warehouse
@@ -540,7 +540,7 @@ SCHEDULE = 'USING CRON 0 1 * * 1 America/Los_Angeles' -- Runs at 1am PT, Monday 
 AS
     BEGIN
         CALL forecast_subscriptions_model!FORECAST(
-            INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values'),
+            INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'forecast_future_values_v1'),
             SERIES_COLNAME => 'age_bin',
             TIMESTAMP_COLNAME => 'timestamp'
         );
@@ -552,18 +552,19 @@ AS
 If you’d like to test your task, you can run EXECUTE TASK. To suspend or drop your task, run the ALTER and DROP commands below. 
 
 ```sql
--- Execute your task immediately to confirm it's working. 
+-- Execute your task immediately to confirm it is working. 
 EXECUTE TASK train_task;
 
 -- Suspend or drop your task.
 ALTER TASK train_task suspend;
 DROP TASK train_task;
+DROP TASK predict_task;
 ```
 
 ## Conclusion and Resources
 Duration: 1
 
-You did it! You've successfully built and evaluated Snowflake Cortex ML Classification and Forecast models!
+You did it! You've successfully built and evaluated Snowflake ML Classification and Forecast models!
 
 As a review, in this guide we covered how you are able to:
 1. Import our data and perform some exploratory data analysis in the Snowsight UI

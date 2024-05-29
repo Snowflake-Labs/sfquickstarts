@@ -3,9 +3,9 @@ summary: Using Snowflake with Azure OpenAI to build a RAG workflow
 categories: featured,rag,app-development, azure, openai, streamlit, genai, ai, ml, image
 environments: web
 status: Published
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: RAG, Generative AI, Snowflake External Access, Azure, OpenAI, Snowpark, Streamlit
 authors: Matt Marzillo
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 
 # Using Snowflake with Azure OpenAI to build a RAG workflow
 <!-- ------------------------ -->
@@ -56,7 +56,7 @@ This use case will leverage movie reviews and we will build a Streamlit app that
 
 Duration: 10
 
-For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to [platform.openi.com/api-keys](platform.openi.com/api-keys) and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
+For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openi.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
 
 ![](assets/openai.png)
 
@@ -101,11 +101,11 @@ FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' ESCAPE_UNENCLOSED
 select top 10 * from MOVIE_REVIEWS;
 ```
 <!-- ------------------------ -->
-## Exploratory Analysis (OPTIONAL)
+## Exploratory Analysis 
 
 Duration: 10
 
-You can download the notebook ![here](assets/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
+You can download the notebook [here](https://github.com/Snowflake-Labs/sfguide-using-snowflake-and-azure-openai-for-rag-workflow/blob/main/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
 You can do this by navigating to "Projects" from the Snowflake UI, selecting "Notebooks" and click the upload button in the top right and uploading the notebook you just downloaded.
 
@@ -128,7 +128,7 @@ The last two lines of code here create a new table that adds a field for the emb
 
 ```sql
 use role ACCOUNTADMIN;
-use database RETAIL_HOL;
+use database REVIEWS_DB;
 use warehouse HOL_WH;
 
 CREATE OR REPLACE NETWORK RULE CHATGPT_NETWORK_RULE
@@ -147,7 +147,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENAI_INTEGRATION
 
 --Create function for embeddings with azure openai
 CREATE OR REPLACE FUNCTION CHATGPT_EMBED(text STRING)
-returns string
+returns array
 language python
 runtime_version=3.8
 handler = 'ask_CHATGPT_EMBED'
@@ -223,22 +223,26 @@ st.markdown('------')
 
 # Use the job description to write the job to a table and run the function against it:
 if(st.button('Ask ChatGPT')):
-    
+
+
     context = session.sql(f"""
     select movie_review from
     (
     select 
         Review as movie_review,
-        TO_VARIANT(chatgpt_embed('{question_prompt}')) as q_embed,
+        CAST(chatgpt_embed('{question_prompt}')AS VECTOR(FLOAT, 1536)) as q_embed,
         EMBEDDING,
-        JAROWINKLER_SIMILARITY(EMBEDDING, q_embed) as sim
+        VECTOR_COSINE_SIMILARITY(EMBEDDING, q_embed) as sim
     from 
         MOVIE_REVIEWS_EMBEDDING as content
     where
         sim > 60
     order by 
         sim desc
+    limit 3
     )""")
+
+    
     context_list = context.to_pandas()
     context_list = context_list.MOVIE_REVIEW.str.cat(sep='NEXT REVIEW').replace("'", "")
     result = session.sql(f"""SELECT chatgpt('{question_prompt}' || 'using the following information as context' || '{context_list}')""").collect()
@@ -252,7 +256,7 @@ if(st.button('Ask ChatGPT')):
 
 Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate more tailored responses. 
 
-Important to note that the JAROWINKLER_SIMILARITY() function is being used here to calculate distance as other Snowflake distance functions are only available for embeddings created with Snowflake embed models and stored in a Snowflake vector data type.
+Important to note that the VECTOR_COSINE_SIMILARITY() function is being used here to calculate distance, but other distance functions are available in Snowflake.
 
 <!-- ------------------------ -->
 ## Conclusion  And Resources
