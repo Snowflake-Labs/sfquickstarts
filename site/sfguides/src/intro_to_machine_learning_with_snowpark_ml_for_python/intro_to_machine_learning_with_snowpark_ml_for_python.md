@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Getting Started with Snowflake ML for Python
+# Getting Started with Snowflake ML
 <!-- ------------------------ -->
 ## Overview 
 
@@ -37,7 +37,7 @@ Capabilities for custom ML include:
 
 ![snowflame_ml_overview](assets/snowflake_ml_overview.png)
 
-To get started with Snowflake ML, developers can use the Python APIs from the [Snowflake ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex. 
+To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex. 
 
 **Feature Engineering and Preprocessing:** Improve performance and scalability with distributed execution for common scikit-learn preprocessing functions.
 
@@ -110,25 +110,7 @@ Now, let's create our first Notebook by importing a `.ipynb` file. First, make s
 
 ![Notebook Dropdown](./assets/nb_dropdown.png)
 
-Next, click the gray upload/import .ipynb button, and select [1_sf_nb_snowpark_ml_data_ingest.ipynb](./1_sf_nb_snowpark_ml_data_ingest.ipynb) from your local filesystem:
-
-![Notebook Upload](./assets/nb_import.png)
-
-Leave the populated notebook name as-is (or change it if you'd like!), and make sure that the location is set to `ML_HOL_DB` and `ML_HOL_SCHEMA`. Lastly, make sure the Notebook warehouse is `ML_HOL_WH`, and click Create:
-
-![Notebook Config](./assets/nb_config.png)
-
-This will create and open the notebook you just uploaded. Follow the instructions at the top of the Notebook to select any necessary packages you might need via the Packages drop-down:
-
-![Packages](./assets/sample_packages.png)
-
-Then, click `Start` and run the Notebook start to finish! Repeat this process with all three Notebooks to see how easy it is to write Python and SQL code in a single, familiar Notebook interface directly in Snowsight!
-
-Now, let's create our first Notebook by importing a `.ipynb` file. First, make sure your current role is SYSADMIN. Then, select the Notebooks tab under the Projects drop-down in the left side-bar:
-
-![Notebook Dropdown](./assets/nb_dropdown.png)
-
-Next, click the gray upload/import .ipynb button, and select [1_sf_nb_snowpark_ml_data_ingest.ipynb](./1_sf_nb_snowpark_ml_data_ingest.ipynb) from your local filesystem:
+Next, click the gray upload/import .ipynb button, and select [1_sf_nb_snowflake_ml_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/1_sf_nb_snowflake_ml_data_ingest.ipynb) from your local filesystem:
 
 ![Notebook Upload](./assets/nb_import.png)
 
@@ -146,7 +128,7 @@ Then, click `Start` and run the Notebook start to finish! Repeat this process wi
 ## Set up the data in Snowflake
 Duration: 7
 
-Open the following notebook and run each of the cells: [1_sf_nb_snowflake_ml_data_ingest](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/1_sf_nb_snowflake_ml_data_ingest.ipynb)
+Open the following notebook in Snowflake Notebooks and run each of the cells: [1_sf_nb_snowflake_ml_data_ingest](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/1_sf_nb_snowflake_ml_data_ingest.ipynb)
 
 Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table from an external stage. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart. 
 
@@ -156,7 +138,7 @@ The overall goal of this ML project is to predict the price of diamonds given di
 ## ML Feature Transformations
 Duration: 10
 
-Open the following notebook and run each of the cells: [2_sf_nb_snowflake_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/2_sf_nb_snowflake_ml_feature_transformations.ipynb)
+Open the following notebook in Snowflake Notebooks and run each of the cells: [2_sf_nb_snowflake_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/2_sf_nb_snowflake_ml_feature_transformations.ipynb)
 
 In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
@@ -164,13 +146,13 @@ In this notebook, we will walk through a few transformations on the `diamonds` d
 ## ML Model Training and Inference
 Duration: 15
 
-Open the following jupyter notebook and run each of the cells: [3_sf_nb_snowflake_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/3_sf_nb_snowflake_ml_model_training_inference.ipynb)
+Open the following notebook in Snowflake Notebooks and run each of the cells: [3_sf_nb_snowflake_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/3_sf_nb_snowflake_ml_model_training_inference.ipynb)
 
 In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling. We also show how to execute batch inference through the Snowflake Model Registry.
 
 <!-- ------------------------ -->
 ## Conclusion
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowpark for Machine Learning through the introduction of Snowflake ML, the integrated set of capabilities for end-to-end ML workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake ML, the integrated set of capabilities for end-to-end ML workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
 
 For more information, check out the resources below:
 
