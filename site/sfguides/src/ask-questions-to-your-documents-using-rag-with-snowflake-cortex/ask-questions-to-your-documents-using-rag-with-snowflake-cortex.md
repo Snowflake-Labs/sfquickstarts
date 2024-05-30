@@ -25,7 +25,7 @@ Along the way, we will also share tips on how you could turn what may seem like 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
 
-![App](assets/qs_cortex_intro.gif)
+![App](assets/qs_cortex_intro_arctic.gif)
 
 ### RAG Overview
 
@@ -47,8 +47,6 @@ The final product includes an application that lets users test how the LLM respo
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 - Snowflake Cortex vector functions for semantic distance calculations along with VECTOR as a data type enabled.
 
-> aside negative
-> NOTE: To get access to Snowflake Cortex vector functions and vector datatype (both currently in private preview) reach out to your Snowflake account team.
 
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Functions
@@ -62,8 +60,8 @@ Let's download a few documents we have created about bikes. In those documents w
 
 - [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Mondracer_Infant_Bike.pdf)
 - [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Premium_Bicycle_User_Guide.pdf)
-- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
 - [Ski Boots TDBootz Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDBootz_Special.pdf)
+- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
 
 **Step 2**. Open a new Worksheet
 
@@ -177,9 +175,6 @@ Duration: 15
 
 In this step we are going to leverage our document processing functions to prepare documents before turning the text into embeddings using Snowflake Cortex. These embeddings will be stored in a Snowflake Table using the new native VECTOR data type. 
 
-> aside negative
-> NOTE: To get access to these features (currently in private preview) reach out to your Snowflake account team.
-
 ![App](assets/fig4.png)
 
 **Step 1**. Create the table where we are going to store the chunks and vectors for each PDF. Note here the usage of the new VECTOR data type:
@@ -204,7 +199,7 @@ insert into docs_chunks_table (relative_path, size, file_url,
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
     from 
         directory(@docs),
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
@@ -217,10 +212,10 @@ The insert statement is reading the records from the docs_stream stream and it i
 The **chunk** text is passed to Snowflake Cortex to generate the embeddings with this code:
 
 ```code
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
 ````
 
-That code is calling the embed_text function using the e5-base-v2 trnasformer and returning an embedding vector.
+That code is calling the embed_text function using the e5-base-v2 transformer and returning an embedding vector.
 
 
 If you check the **docs_chunks_table** table, you should see the PDFs has been processed 
@@ -292,39 +287,27 @@ num_chunks = 3 # Num-chunks provided as context. Play with this to check how it 
 def create_prompt (myquestion, rag):
 
     if rag == 1:    
-        createsql = f"""
-            create or replace table query_vec (qvec vector(float, 768))
-        """
-        session.sql(createsql).collect()
 
-        insertsql = f"""
-            insert into query_vec 
-              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
-        """
-
-        session.sql(insertsql).collect()
-
-        cmd = f"""
-        with results as
-        (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
+        cmd = """
+         with results as
+         (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
            chunk
-        from docs_chunks_table, query_vec
-        order by distance desc
-        limit {num_chunks})
-        select chunk, relative_path from results 
-        """
-
-        df_context = session.sql(cmd).to_pandas()       
-
+         from docs_chunks_table
+         order by similarity desc
+         limit ?)
+         select chunk, relative_path from results 
+         """
+    
+        df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
+        
         context_lenght = len(df_context) -1
 
         prompt_context = ""
         for i in range (0, context_lenght):
             prompt_context += df_context._get_value(i, 'CHUNK')
-        #st.text(prompt_context)
 
-                                #prompt_context = df_context._get_value(0,'CHUNK')
         prompt_context = prompt_context.replace("'", "")
         relative_path =  df_context._get_value(0,'RELATIVE_PATH')
     
@@ -356,13 +339,10 @@ def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.cortex.complete(
-            '{model_name}',
-            {prompt})
-            as response
-            """
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+           """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[model_name, prompt]).collect()
     return df_response, url_link, relative_path
 
 def display_response (question, model, rag=0):
@@ -373,24 +353,32 @@ def display_response (question, model, rag=0):
         display_url = f"Link to [{relative_path}]({url_link}) that may be useful"
         st.markdown(display_url)
 
+#Main code
+
 st.title("Asking Questions to Your Own Documents with Snowflake Cortex:")
 st.write("""You can ask questions and decide if you want to use your documents for context or allow the model to create their own response.""")
-st.write("This is the list of documents you already have. Just upload new documents into your DOCS staging area and they will be automatically processed")
+st.write("This is the list of documents you already have:")
 docs_available = session.sql("ls @docs").collect()
 list_docs = []
 for doc in docs_available:
     list_docs.append(doc["name"])
 st.dataframe(list_docs)
 
-
-model = st.selectbox('Select your model:',('mistral-7b',
-                                           'llama2-70b-chat',
-                                           'mixtral-8x7b',
-                                           'gemma-7b'))
+#Here you can choose what LLM to use. Please note that they will have different cost & performance
+model = st.sidebar.selectbox('Select your model:',(
+                                    'mixtral-8x7b',
+                                    'snowflake-arctic',
+                                    'mistral-large',
+                                    'llama3-8b',
+                                    'llama3-70b',
+                                    'reka-flash',
+                                     'mistral-7b',
+                                     'llama2-70b-chat',
+                                     'gemma-7b'))
 
 question = st.text_input("Enter question", placeholder="Is there any special lubricant to be used with the premium bike?", label_visibility="collapsed")
 
-rag = st.checkbox('Use your own documents as context?')
+rag = st.sidebar.checkbox('Use your own documents as context?')
 
 print (rag)
 
@@ -411,26 +399,21 @@ create_prompt() receives a question as an argument and whether it has to use the
 When the box is checked, this code is going embed the question and look for the PDF chunk with the closest similarity to the question being asked. We can limit the number of chunks we want to provide as a context. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
 
 ```python
-        insertsql = f"""
-            insert into query_vec 
-              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
-        """
-
-        session.sql(insertsql).collect()
-
-        cmd = f"""
-        with results as
-        (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
+         cmd = """
+          with results as
+         (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
            chunk
-        from docs_chunks_table, query_vec
-        order by distance desc
-        limit {num_chunks})
-        select chunk, relative_path from results 
-        """
+         from docs_chunks_table
+         order by similarity desc
+         limit ?)
+         select chunk, relative_path from results 
 
-        df_context = session.sql(cmd).to_pandas()
-``` 
+          """
+    
+        df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
+ ``` 
 
 So the code is doing a similarity search to look for the closest chunk of text and provide it as context in the prompt:
 
@@ -439,18 +422,16 @@ So the code is doing a similarity search to look for the closest chunk of text a
 The next section worth calling out is the complete() function which combines the LLM, the prompt template and whether to use the context or not to generate a response which includes a link to the asset from which the answer was obtained. 
 
 ```python
-def complete(myquestion, model, rag = 1):
+def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.cortex.complete(
-            '{model}',
-            {prompt})
-            as response
-            """
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+           """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[model_name, prompt]).collect()
     return df_response, url_link, relative_path
+
 ```
 
 ![App](assets/fig9.png)
@@ -461,7 +442,7 @@ Streamlit in Snowflake provides a side-by-side editor and preview screen that ma
 
 ![App](assets/fig10.png)
 
-In the app, we can see the two documents we had uploaded previously and can be used to ask questions while trying multiple options using interactive widgets:
+In the app, we can see the documents we had uploaded previously and can be used to ask questions while trying multiple options using interactive widgets:
 
 - LLM dropdown: Evaluate the response to the same question from different LLMs available in Snowflake Cortex.
 - Context toggle: Check the box to receive answer with RAG. Uncheck to see how LLM answers without access to the context.
@@ -470,12 +451,9 @@ To test out the RAG framework, here a few questions you can ask and then use the
 
 - Is there any special lubricant to be used with the premium bike?
 - What is the warranty for the premium bike?
-- What is the max recommended speed for the infant bike?
 - Does the mondracer infant bike need any special tool?
 - Is there any temperature to be considered with the premium bicycle?
 - What is the temperature to store the ski boots?
-- What are the tires used for the road bike?
-- Is there any discount when buying the road bike?
 - Where have the ski boots been tested and who tested them?
 
 
@@ -541,40 +519,100 @@ import pandas as pd
 pd.set_option("max_colwidth",None)
 
 ### Default Values
-model_name = 'mistral-7b' #Default but we allow user to select one
+#model_name = 'mistral-7b' #Default but we allow user to select one
 num_chunks = 3 # Num-chunks provided as context. Play with this to check how it affects your accuracy
 slide_window = 7 # how many last conversations to remember. This is the slide window.
-debug = 1 #Set this to 1 if you want to see what is the text created as summary and sent to get chunks
-use_chat_history = 0 #Use the chat history by default
+#debug = 1 #Set this to 1 if you want to see what is the text created as summary and sent to get chunks
+#use_chat_history = 0 #Use the chat history by default
 
 ### Functions
 
+def main():
+    
+    st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
+    st.write("This is the list of documents you already have and that will be used to answer your questions:")
+    docs_available = session.sql("ls @docs").collect()
+    list_docs = []
+    for doc in docs_available:
+        list_docs.append(doc["name"])
+    st.dataframe(list_docs)
+
+    config_options()
+    init_messages()
+     
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # Accept user input
+    if question := st.chat_input("What do you want to know about your products?"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": question})
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(question)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+    
+            question = question.replace("'","")
+    
+            with st.spinner(f"{st.session_state.model_name} thinking..."):
+                response = complete(question)
+                res_text = response[0].RESPONSE     
+            
+                res_text = res_text.replace("'", "")
+                message_placeholder.markdown(res_text)
+        
+        st.session_state.messages.append({"role": "assistant", "content": res_text})
+
+
+def config_options():
+
+
+    
+    st.sidebar.selectbox('Select your model:',(
+                                    'mixtral-8x7b',
+                                    'snowflake-arctic',
+                                    'mistral-large',
+                                    'llama3-8b',
+                                    'llama3-70b',
+                                    'reka-flash',
+                                     'mistral-7b',
+                                     'llama2-70b-chat',
+                                     'gemma-7b'), key="model_name")
+                                           
+    # For educational purposes. Users can chech the difference when using memory or not
+    st.sidebar.checkbox('Do you want that I remember the chat history?', key="use_chat_history", value = True)
+
+    st.sidebar.checkbox('Debug: Click to see summary generated of previous conversation', key="debug", value = True)
+    st.sidebar.button("Start Over", key="clear_conversation")
+    st.sidebar.expander("Session State").write(st.session_state)
+
+
+def init_messages():
+
+    # Initialize chat history
+    if st.session_state.clear_conversation or "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    
 def get_similar_chunks (question):
 
-    createsql = f"""
-        create or replace table query_vec (qvec vector(float, 768))
+    cmd = """
+        with results as
+        (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
+           chunk
+        from docs_chunks_table
+        order by similarity desc
+        limit ?)
+        select chunk, relative_path from results 
     """
-    session.sql(createsql).collect()
-
-    insertsql = f"""
-        insert into query_vec 
-          select snowflake.cortex.embed_text('e5-base-v2', '{question}')
-    """
-
-    session.sql(insertsql).collect()
-
-    cmd = f"""
-    with results as
-    (SELECT RELATIVE_PATH,
-       VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
-       chunk
-    from docs_chunks_table, query_vec
-    order by distance desc
-    limit {num_chunks})
-    select chunk, relative_path from results 
-    """
-
-    df_chunks = session.sql(cmd).to_pandas()       
+    
+    df_chunks = session.sql(cmd, params=[question, num_chunks]).to_pandas()       
 
     df_chunks_lenght = len(df_chunks) -1
 
@@ -590,13 +628,11 @@ def get_similar_chunks (question):
 def get_chat_history():
 #Get the history from the st.session_stage.messages according to the slide window parameter
     
-    chat_history = ""
+    chat_history = []
     
     start_index = max(0, len(st.session_state.messages) - slide_window)
     for i in range (start_index , len(st.session_state.messages) -1):
-        role = st.session_state.messages[i]["role"]
-        content = st.session_state.messages[i]["content"]
-        chat_history += f"[{role}] : {content}\n"
+         chat_history.append(st.session_state.messages[i])
 
     return chat_history
 
@@ -606,27 +642,27 @@ def summarize_question_with_history(chat_history, question):
 # This will be used to get embeddings and find similar chunks in the docs for context
 
     prompt = f"""
-        '
         Based on the chat history below and the question, generate a query that extend the question
         with the chat history provided. The query should be in natual language. 
         Answer with only the query. Do not add any explanation.
         
-        CHAT HISTORY: {chat_history}\n
-        QUESTION: {question}'
+        <chat_history>
+        {chat_history}
+        </chat_history>
+        <question>
+        {question}
+        </question>
         """
     
-    cmd = f"""
-            select snowflake.cortex.complete(
-                '{model_name}',
-                {prompt})
-                as response
-                """
-    df_response = session.sql(cmd).collect()
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
     sumary = df_response[0].RESPONSE     
 
-    if debug ==1:
-        st.text("Summary to be used to find similar chunks in the docs:")
-        st.caption(sumary)
+    if st.session_state.debug:
+        st.sidebar.text("Summary to be used to find similar chunks in the docs:")
+        st.sidebar.caption(sumary)
 
     sumary = sumary.replace("'", "")
 
@@ -634,11 +670,11 @@ def summarize_question_with_history(chat_history, question):
 
 def create_prompt (myquestion):
 
-    if use_chat_history == 1:
+    if st.session_state.use_chat_history:
         chat_history = get_chat_history()
 
-        if chat_history != "": #There is chat_history, so not first question
-            question_summary = summarize_question_with_history(chat_history, question)
+        if chat_history != []: #There is chat_history, so not first question
+            question_summary = summarize_question_with_history(chat_history, myquestion)
             prompt_context =  get_similar_chunks(question_summary)
         else:
             prompt_context = get_similar_chunks(myquestion) #First question when using history
@@ -647,19 +683,27 @@ def create_prompt (myquestion):
         chat_history = ""
   
     prompt = f"""
-          'You are an expert chat assistance that extracs information from the CONTEXT provided.
-           You offer a chat experience considering the information included in the CHAT HISTORY.
-           When ansering the question be concise and do not hallucinate. 
+           You are an expert chat assistance that extracs information from the CONTEXT provided
+           between <context> and </context> tags.
+           You offer a chat experience considering the information included in the CHAT HISTORY
+           provided between <chat_history> and </chat_history> tags..
+           When ansering the question contained between <question> and </question> tags
+           be concise and do not hallucinate. 
            If you don´t have the information just say so.
            
            Do not mention the CONTEXT used in your answer.
            Do not mention the CHAT HISTORY used in your asnwer.
            
-          CHAT HISTORY: {chat_history}
-          CONTEXT: {prompt_context}
-          QUESTION:  
-           {myquestion} 
-           Answer: '
+           <chat_history>
+           {chat_history}
+           </chat_history>
+           <context>          
+           {prompt_context}
+           </context>
+           <question>  
+           {myquestion}
+           </question>
+           Answer: 
            """
 
     return prompt
@@ -668,73 +712,19 @@ def create_prompt (myquestion):
 def complete(myquestion):
 
     prompt =create_prompt (myquestion)
-    cmd = f"""
-        select snowflake.cortex.complete(
-            '{model_name}',
-            {prompt})
-            as response
-            """
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
     return df_response
 
-
-## MAIN CODE
-st.title("Chat Document Assistant with Snowflake Cortex:")
-st.write("This is the list of documents you already have and that will be used")
-docs_available = session.sql("ls @docs").collect()
-list_docs = []
-for doc in docs_available:
-    list_docs.append(doc["name"])
-st.dataframe(list_docs)
-
-
-model_name = st.selectbox('Select your model:',('mistral-7b',
-                                           'llama2-70b-chat',
-                                           'mixtral-8x7b',
-                                           'gemma-7b'))
-
-# For educational purposes. Users can chech the difference when using memory or not
-use_chat_history = st.checkbox('Do you want that I remember the chat history?')
-
-debug = st.checkbox('Debug: Click to see summary generated of previous conversation')
-
-if st.button("Start Over"):
-    st.session_state.messages = []
-
-# Initialize chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# Accept user input
-if question := st.chat_input("Type your question about products and suppliers"): #DryProof670
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": question})
-    # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(question)
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-
-        question = question.replace("'","")
-
-        response = complete(question)
-        res_text = response[0].RESPONSE     
-        
-        res_text = res_text.replace("'", "")
-        message_placeholder.markdown(res_text)
-    
-    st.session_state.messages.append({"role": "assistant", "content": res_text})
+if __name__ == "__main__":
+    main()
 
 ```
 
-The app will look like this
+The app will look like this (note the side bar where you can select several options)
 
 ![App](assets/fig12_UI.png)
 
@@ -786,27 +776,27 @@ def summarize_question_with_history(chat_history, question):
 # This will be used to get embeddings and find similar chunks in the docs for context
 
     prompt = f"""
-        '
         Based on the chat history below and the question, generate a query that extend the question
         with the chat history provided. The query should be in natual language. 
         Answer with only the query. Do not add any explanation.
         
-        CHAT HISTORY: {chat_history}\n
-        QUESTION: {question}'
+        <chat_history>
+        {chat_history}
+        </chat_history>
+        <question>
+        {question}
+        </question>
         """
     
-    cmd = f"""
-            select snowflake.cortex.complete(
-                '{model_name}',
-                {prompt})
-                as response
-                """
-    df_response = session.sql(cmd).collect()
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
     sumary = df_response[0].RESPONSE     
 
-    if debug ==1:
-        st.text("Summary to be used to find similar chunks in the docs:")
-        st.caption(sumary)
+    if st.session_state.debug:
+        st.sidebar.text("Summary to be used to find similar chunks in the docs:")
+        st.sidebar.caption(sumary)
 
     sumary = sumary.replace("'", "")
 
@@ -833,46 +823,54 @@ def create_prompt (myquestion):
 Use all those previous functions to get the <b>chat_history</b> and <b>prompt_context</b> and build the prompt. So, this prompt is adding the previous conversation plus the context extracted from the PDFs and the new question.
 
 ```python
-    prompt = f"""
-          'You are an expert chat assistance that extracs information from the CONTEXT provided.
-           You offer a chat experience considering the information included in the CHAT HISTORY.
-           When ansering the question be concise and do not hallucinate. 
+     prompt = f"""
+           You are an expert chat assistance that extracs information from the CONTEXT provided
+           between <context> and </context> tags.
+           You offer a chat experience considering the information included in the CHAT HISTORY
+           provided between <chat_history> and </chat_history> tags..
+           When ansering the question contained between <question> and </question> tags
+           be concise and do not hallucinate. 
            If you don´t have the information just say so.
            
            Do not mention the CONTEXT used in your answer.
            Do not mention the CHAT HISTORY used in your asnwer.
            
-          CHAT HISTORY: {chat_history}
-          CONTEXT: {prompt_context}
-          QUESTION:  
-           {myquestion} 
-           Answer: '
+           <chat_history>
+           {chat_history}
+           </chat_history>
+           <context>          
+           {prompt_context}
+           </context>
+           <question>  
+           {myquestion}
+           </question>
+           Answer: 
            """
-```
+ ```
 
 What makes this very easy with Streamlit are [st.chat_input](https://docs.streamlit.io/library/api-reference/chat/st.chat_input) and [st.chat_message](https://docs.streamlit.io/library/api-reference/chat/st.chat_message). This is the code that get the question with st.chat_input, add it to st.chat_message and to the memmory with st.session_state.messages.append and call <b>complete()</b> function to get the answer that is also printed and stored:
 
 ```python
-# Accept user input
-if question := st.chat_input("What do you want to know about your products?"): #DryProof670
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": question})
-    # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(question)
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-
-        question = question.replace("'","")
-
-        response = complete(question)
-        res_text = response[0].RESPONSE     
-        
-        res_text = res_text.replace("'", "")
-        message_placeholder.markdown(res_text)
+if question := st.chat_input("What do you want to know about your products"): 
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": question})
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(question)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
     
-    st.session_state.messages.append({"role": "assistant", "content": res_text})
+            question = question.replace("'","")
+    
+            with st.spinner(f"{st.session_state.model_name} thinking..."):
+                response = complete(question)
+                res_text = response[0].RESPONSE     
+            
+                res_text = res_text.replace("'", "")
+                message_placeholder.markdown(res_text)
+        
+        st.session_state.messages.append({"role": "assistant", "content": res_text})
 ```
 
 Here you have other examples of chats using info from your documents:
@@ -882,6 +880,14 @@ Here you have other examples of chats using info from your documents:
 Another example:
 
 ![App](assets/fig17_infant.png)
+
+Here another suggestion based on specific info from the documents (unique for us):
+
+- What is the name of the ski boots?
+- Where have been tested?
+- Who tested them?
+- Do they include any special component?
+
 
 You can try with your own documents. You will notice different peformance depending on the LLM you will be using. 
 
@@ -914,7 +920,7 @@ create or replace task task_extract_chunk_vec_from_pdf
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
     from 
         docs_stream,
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path)))            as func;
@@ -924,15 +930,27 @@ alter task task_extract_chunk_vec_from_pdf resume;
 
 You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application. You may want to upload your own documents or try with this new bike guide:
 
-- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
+- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
+
+After uploading the document (and if you are fast enough before the doc is automatically processed) you can see the doc in the stream:
+
+```SQL
+select * from docs_stream;
+```
+
+It will return no value once the doc has been processed. Once the documet is in your table, you can start asking questions and will be used in the RAG Process
+
+```SQL
+select * from docs_chunks_table where relative_path ilike '%Road_Bike%';
+```
+
 
 Try asking questions that are unique in that new bike guide like:
 
-- What is the name of the ultimate downhill bike?
-- What is the suspension used for the downhill bike?
+- What tires model brings the road bike?
+- Is there any discount for the Xtreme Road Bike?
+
 (note: try different models to see different results)
-- What is the carbon used for the downhill bike?
-- Who are the testers for the downhill bike?
 
 Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
 

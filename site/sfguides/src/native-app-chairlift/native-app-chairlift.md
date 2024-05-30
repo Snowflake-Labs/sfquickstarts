@@ -88,6 +88,8 @@ sfguide-native-apps-chairlift/
 │  ├─ provider-role.sql
 ├─ provider/
 │  ├─ create-package.sql
+├─ tests/
+│  ├─ ... (.py files)
 ├─ ...
 ```
 
@@ -110,6 +112,10 @@ Here's an overview of the directories:
 **provider/** 
 
 - This directory is specific to this Quickstart. It contains a SQL script to create the application package and grant privileges on provider data.
+
+**tests/**
+
+- This directory contains unit tests for the Front-ends of the app which are built with Streamlit.
 
 <!-- ------------------------ -->
 ## The **app/** directory
@@ -173,6 +179,53 @@ Here's an overview of what this folder contains:
 
 - This directory is specific to this Quickstart, and contains all of the files and code used to create the front-end of the app. Front-ends for Snowflake Native Apps are built with Streamlit. You should peruse all of the files in this folder to get familiar with how the front-end is built, and pay special attention to the files that define the main views within the app, namely **v_dashboard.py**, **v_sensor_data.py**, and **v_configuration.py**. For more information, see [Adding Frontend Experience to Your Application with Streamlit](https://docs.snowflake.com/en/developer-guide/native-apps/adding-streamlit).
 
+
+<!-- ------------------------ -->
+## Test the App
+Duration: 3
+
+Let's take a deeper look at the files and directories related to testing this native app.
+
+```console
+local_test_env.yml
+pytest.ini
+tests/
+├─ test_utils.py
+├─ test_v_configuration.py
+├─ test_v_dashboard.py
+├─ test_v_sensor_data.py
+```
+
+Here's an overview of the above files and directories:
+
+**local_test_env.yml**
+
+This file is a conda environment file that contains the dependencies allowing you to run the tests. To activate the testing environment:
+```
+conda env update -f local_test_env.yml
+conda activate chairlift-test
+```
+To deactivate it:
+```
+conda deactivate
+
+```
+**pytest.ini**
+
+This file contains the different settings for pytest tests. For example, it contains the location of source code on which the unit tests run.
+
+**tests/**
+
+This directory contains Streamlit unit tests. **tests/test_utils.py** contains common util functions and Pytest fixtures used for the unit tests. The other files in this directory contain the actual tests. The included tests leverage the [Streamlit App Testing](https://docs.streamlit.io/develop/api-reference/app-testing) framework which allows automated testing of Streamlit elements.
+
+### Running Unit tests
+
+To run unit tests, make sure that `chairlift-test` conda environment is active, and then run the following command:
+```
+pytest -vv
+```
+
+You should observe all the tests passing.
 
 <!-- ------------------------ -->
 ## Set up account roles
@@ -462,10 +515,10 @@ call populate_reading();
 ```
 
 <!-- ------------------------ -->
-## Create application package
+## Create application package and install application using Snowflake CLI
 Duration: 3
 
-With the environment created, we can now create the application package for the app. You'll run a script that creates this package and does a few key things:
+With the environment created, we can now create the application package for the app. You'll run a command that creates this package and does a few key things:
 
 * Creates the application package for the native app
 
@@ -473,99 +526,19 @@ With the environment created, we can now create the application package for the 
 
 * Creates views and grants the setup script access to the views
 
-For more details, see the comments in the **provider/create-package.sql** script.
+For more details, see the comments in the **snowflake.yml** file.
 
-**Execute provider/create-package.sql**
+**Deploy the application package**
 
-Open a SQL worksheet in Snowsight and execute the following script:
+Open a new terminal in the root of the repository and execute the following command:
 
-```sql
-use role chairlift_provider;
-use warehouse chairlift_wh;
-
--- create our application package
--- at this point, the package will not be installable because
--- it does not have a version; the version will be uploaded later
-create application package if not exists chairlift_pkg;
-
--- mark that our application package depends on an external database in
--- the provider account. By granting "reference_usage", the proprietary data
--- in the chairlift_provider_data database can be shared through the app
-grant reference_usage on database chairlift_provider_data
-    to share in application package chairlift_pkg;
-
--- now that we can reference our proprietary data, let\'s create some views
--- this "package schema" will be accessible inside of our setup script
-create schema if not exists chairlift_pkg.package_shared;
-use schema chairlift_pkg.package_shared;
-
--- View for sensor types full data
-create view if not exists package_shared.sensor_types_view
-  as select id, name, min_range, max_range, service_interval_count, service_interval_unit, lifetime_count, lifetime_unit
-  from chairlift_provider_data.core.sensor_types;
-
--- View for sensor reading ranges
-create view if not exists package_shared.sensor_ranges
-  as select id, min_range, max_range
-  from chairlift_provider_data.core.sensor_types;
-
--- View for sensor service scheduling
-create view if not exists package_shared.sensor_service_schedules
-  as select
-    id,
-    service_interval_count,
-    service_interval_unit,
-    lifetime_count,
-    lifetime_unit
-  from chairlift_provider_data.core.sensor_types;
-
--- these grants allow our setup script to actually refer to our views
-grant usage on schema package_shared
-  to share in application package chairlift_pkg;
-grant select on view package_shared.sensor_types_view
-  to share in application package chairlift_pkg;
-grant select on view package_shared.sensor_ranges
-  to share in application package chairlift_pkg;
-grant select on view package_shared.sensor_service_schedules
-  to share in application package chairlift_pkg;
+```bash
+snow app run
 ```
 
+This command will upload source files, create the application package, and install the application object automatically. When you run it again, it will perform the minimum steps necessary to ensure the application is up-to-date with your local copy. 
 
-<!-- ------------------------ -->
-## Upload app source code
-Duration: 4
-
-Now that the application package has been created, you'll upload the app's source code into the application package. To do this, you'll create a schema within the **chairlift_pkg** application package called **code**, and then create a stage within that schema called **source** (i.e., `chairlift_pkg.code.source`).
-
-Execute the following commands in a worksheet to create the schema and the stage:
-
-```sql
-use role chairlift_provider;
-create schema if not exists chairlift_pkg.code;
-create stage if not exists chairlift_pkg.code.source;
-```
-
-Next, upload the files into the stage. You can use Snowsight (i.e., the Snowflake UI), the SnowSQL command line tool, or the Snowflake VS Code extension to upload the files. In this step, we'll use Snowsight.
-
-Navigate to the `chairlift_pkg.code.source` stage in the Snowsight UI. In the top right, click on the **+ FILES** button. Next, click **Browse** in the modal that appears. 
-
-To avoid breaking any references to objects needed by the app, the folder structure within the stage must reflect the folder structure in the **app/** directory. Be sure to upload the native app source code exactly as follows:
-
-1. Ensure you're in the **sfguide-native-apps-chairlift/app** directory and start by uploading the following files: **README.md**, **manifest.yml**, and **setup_script.sql**.
-
-2. Next, upload **sql_lib** files. Once again, click on the **+ FILES** button. Note the "Specify the path to an existing folder or create a new one (optional)" field in the modal. In this field, enter **sql_lib**. The modal will automatically prepend a forward slash to your entry, so the value will read as **/sql_lib**. 
-
-3. Click **Browse**, navigate to the local **sfguide-native-apps-chairlift/app/sql_lib** folder on your computer, select all files, and upload them. 
-
-4. Next, upload **ui** files. Click on the **+ FILES** button, and use **/src/ui** as the destination path in the stage.
-
-5. Click **Browse**, navigate to the local **sfguide-native-apps-chairlift/app/src/ui** folder on your computer, select all files, and upload them. The folder structure within this stage should now reflect the folder structure in your local **app/** directory.
-
-It is important to make sure the directory structures match so that any references to objects needed by the app do not break. See the screenshots below for reference.
-
-![Upload modal with ui/ in field](assets/upload.png)
-
-![Final directory structure](assets/structure.png)
+Snowflake CLI project is configured using `snowflake.yml` file.
 
 <!-- ------------------------ -->
 ## Create the first version of the app
@@ -577,55 +550,41 @@ Let's review what we've covered so far:
 
 * Created the application package and uploaded the app's source code to the application package
 
-Next, you'll create the first version of the app. Run the following SQL in a worksheet:
+Next, you'll create the first version of the app. Run the following command in your terminal:
 
-```sql
-use role chairlift_provider;
-alter application package chairlift_pkg add version develop using '@chairlift_pkg.code.source';
+```bash
+snow app version create develop
 ```
 
-This statement will create the first (new) version of the native app using the source code files that you uploaded earlier.
+This command will create the first (new) version of the native app using the source code files that you uploaded earlier.
 
 > aside positive
 > 
->  **PATCH VERSIONS** Do not run the SQL statement below. It is included here to demonstrate how you can add a patch version of a native app.
+>  **PATCH VERSIONS** Do not run the command below. It is included here to demonstrate how you can add a patch version of a native app.
 
-In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following SQL statement:
+In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following command:
 
-```sql
-alter application package chairlift_pkg add patch for version develop using '@chairlift_pkg.code.source';
+```bash
+snow app version create develop --patch 1
 ```
 
 This SQL command returns the new patch number, which will be used when installing the application as the consumer.
 
 <!-- ------------------------ -->
-## Install the application
+## Allow restricted application access to a secondary role
 Duration: 3
 
-Now that the source code has been uploaded into the application package, we can now install the application. To install the application in the same account, the provider role needs to grant installation and development permissions to the consumer role. 
-
-To do this, execute the following SQL statement using role **chairlift_provider**:
-
-```sql
-use role chairlift_provider;
-grant install, develop on application package chairlift_pkg to role chairlift_admin;
-```
-
-Next, execute the **consumer/install-app.sql** script. This script installs the application in the account, and grants appropriate privileges to the **chairlift_viewer** role. Note that the version and/or patch values may need to be updated to install the application using a different version or patch.
+Now that the source code has been uploaded into the application package and the application was installed, we can grant appropriate privileges to a secondary consumer role named **chairlift_viewer**. Note that the version and/or patch values may need to be updated to install the application using a different version or patch.
 
 ```sql
 use role chairlift_admin;
 use warehouse chairlift_wh;
 
--- create the actual application from the package in versioned dev mode
-create application chairlift_app
-    from application package chairlift_pkg
-    using version develop;
-
 -- allow our secondary viewer role restricted access to the app
 grant application role chairlift_app.app_viewer
     to role chairlift_viewer;
 ```
+
 <!-- ------------------------ -->
 ## Set up the application
 Duration: 4
@@ -686,16 +645,17 @@ In this Quickstart, the **Configuration** tab is included to demonstrate how dif
 ## Clean up
 Duration: 1
 
-Let's clean up your Snowflake account. Run the following SQL commands in a worksheet:
+Let's clean up your Snowflake account. In the same terminal you opened before, execute the following command:
+
+```bash
+snow app teardown
+```
+
+Then, run the following SQL commands in a worksheet:
 
 ```sql
------ CLEAN UP -----
 USE ROLE chairlift_admin;
-DROP APPLICATION chairlift_app;
 DROP DATABASE chairlift_consumer_data;
-
-USE ROLE chairlift_provider;
-DROP APPLICATION PACKAGE chairlift_pkg;
 
 USE ROLE ACCOUNTADMIN;
 DROP WAREHOUSE chairlift_wh;
@@ -703,7 +663,6 @@ DROP ROLE chairlift_provider;
 DROP ROLE chairlift_viewer;
 DROP ROLE chairlift_admin;
 ```
-
 
 <!-- ------------------------ -->
 ## Conclusion

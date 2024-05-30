@@ -191,7 +191,7 @@ Congratulations! You just run your first dbt models on Snowflake!
 ## Architecture and Use Case Overview
 Duration: 2
 
-In this lab, we are going to analyze historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas that is available in Snowflake Data Marketplace, plus few manual uploads. 
+In this lab, we are going to analyze historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas that is available in Snowflake Marketplace, plus few manual uploads. 
 
 We are going to set up the environments from scratch, build scalable pipelines in dbt, establish data tests, and Snowflake and promote code to production.  Finally we will use Snowsight to build a simple dashboard to visualize the results. 
 
@@ -207,7 +207,7 @@ Stay tuned!
 ## Connect to Data Sources
 Duration: 5
 
-Let's go to the Snowflake Data Marketplace and find what we need. The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab). Click on Preview App at the top of the UI
+Let's go to the Snowflake Marketplace and find what we need. The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab). Click on Preview App at the top of the UI
 
 ![Preview App](assets/image9.png)  
 
