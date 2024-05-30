@@ -26,10 +26,12 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 ### Prerequisites
 - A Snowflake account, and familiarity with the Snowsight interface
 - Privileges necessary to create a user, database, and warehouse in Snowflake
-- Ability to install and run software on your computer
 - Basic experience using git
 - Intermediate knowledge of Node.js and React JS
 - Intermediate knowledge of containerised applications
+
+- GitHub Codespaces -or- Ability to install and run software on your computer
+
 
 > aside positive
 > **Snowpark Container Services availability**
@@ -43,11 +45,14 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 - How to run and test the frontend and API on your machine
 
 ### What You’ll Need 
+#### Option 1, using GitHub Codespaces:
+- [GitHub Codespaces](https://github.com/) GitHub Account with credits for GitHub Codespaces
+#### Option 2, local build:
 - [VSCode](https://code.visualstudio.com/download) Installed
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) Installed
+- [Docker](https://docs.docker.com/get-docker/) Installed
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) Installed
-- [NodeJS](https://nodejs.org/en/download/) (Optional) Installed for local testing
-- [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Optional) Installed for local testing
+- [NodeJS](https://nodejs.org/en/download/) Installed
+- [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) Installed
 
 ### What You’ll Build 
 In this quickstart we will build and deploy a Data Application running on Snowpark Container Services.
@@ -509,11 +514,23 @@ GRANT ROLE tasty_app_ext_role TO USER user3;
 
 <!-- ------------------------ -->
 
-## Adapting the backend code
+## Building the backend code
 Duration: 5
 
 ### Overview
 We now look at the code for the backend and frontend to adapt it to run in Snowpark Container Services.
+
+#### Option 1 - Build using GitHub Codespaces
+If you have access to GitHub and credits on an account that let's you run GitHub Codespaces, you can directly build the entire code and push the containerized images to the image repository in the cloud environment.
+
+If you don't have access to this, or prefer to build this locally, go to Option 2 instead.
+
+First, create your on fork of the main repository, go to the GitHub repository at [GitHub: Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git) and create your own fork of the repo.
+
+Once you have your own fork, go to the '<> CODE' button and select 'Codespaces' and create a new.
+
+
+
 
 The code for this lab is hosted on GitHub. Start by cloning the repository into a separate folder. Note that we are cloning a specific branch `spcs` here that contains the code adapted for this guide.
 ```bash
@@ -531,7 +548,13 @@ docker --version
 -- Docker version 24.0.6, build ed223bc
 ```
 
-For local testing, we can then let the backend connect to the Snowflake account using credentials we supply in the environment variables. Copy the `.env.example` file to `.env` and fill out the details for your account there:
+For local testing, we can then let the backend connect to the Snowflake account using credentials we supply in the environment variables. Copy the `.env.example` file to `.env` and fill out the details for your account there. 
+```bash
+cp .env.example .env
+sed -i -e "s/{INSERT A RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
+sed -i -e "s/{INSERT ANOTHER RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
+```
+:
 ```bash
 SNOWFLAKE_ACCOUNT={INSERT_ACCOUNT_NAME_HERE}
 SNOWFLAKE_USERNAME={INSERT_USER_NAME_HERE}
@@ -541,8 +564,8 @@ SNOWFLAKE_WAREHOUSE=TASTY_APP_WAREHOUSE
 SNOWFLAKE_DATABASE=frostbyte_tasty_bytes
 SNOWFLAKE_SCHEMA=app
 
-ACCESS_TOKEN_SECRET={INSERT A RANDOM STRING HERE}
-REFRESH_TOKEN_SECRET={INSERT A RANDOM STRING HERE}
+ACCESS_TOKEN_SECRET=a1to.....9wlnNq
+REFRESH_TOKEN_SECRET=KVDq9.....icVNh
 
 PORT=3000
 
@@ -554,7 +577,11 @@ There is a `docker-compose.yaml` file in this folder that we will use to spin up
 docker compose up
 ```
 
-Try to access the API by calling the endpoint now:
+Try to access the API by calling the endpoint now. If you are in GitHub Codespaces, you will be offered a unique URL that is generated for you, like 'https://<random-generated-identifier>-3000.app.github.dev/' that you can access, if you are on your local environment, it will be a localhost URL, like 'http://localhost:3000/'
+```bash
+curl https://<random-generated-identifier>-3000.app.github.dev/franchise/1
+```
+or, open up a new terminal and access it (this will also work inside Codespaces)
 ```bash
 curl http://localhost:3000/franchise/1
 ```
@@ -728,7 +755,7 @@ backend-backend_service-1  | Using warehouse: TASTY_APP_WAREHOUSE
 backend-backend_service-1  | Using role: TASTY_APP_ADMIN_ROLE
 ```
 
-Calling one of the endpoints now results in a `HTTP 422` response and no data. If we provide a header that looks like the SPCS authentication header it now uses that to validate the user:
+Calling one of the endpoints now results in a `HTTP 422` response and the test `Incorrect data` (which is what we expect from the `validateSnowflakeHeader` in `auth.js`). If we provide a header that looks like the SPCS authentication header it now uses that to validate the user:
 
 ```bash
 curl --header "Sf-Context-Current-User:user1"  http://localhost:3000/franchise/1
@@ -784,7 +811,7 @@ Once connected, the rest of the backend code is working the same, regardless if 
 
 <!-- ------------------------ -->
 
-## Adapting the frontend code
+## Building the frontend code
 Duration: 3
 
 ### Overview
@@ -1001,6 +1028,19 @@ And when decoded, that token should look something like this:
   "exp": 1705946545
 }
 ```
+
+You can try this if you like, by starting up the backend again in a new Terminal window:
+```bash
+cd src/backend
+docker compose up
+```
+And then directly call the `authorize` endpoint:
+```bash
+curl --header "Sf-Context-Current-User:user1" http://localhost:3000/authorize
+```
+Copy the content of the `accessToken` attribute in the JSON response, and then go to [https://jwt.io/](https://jwt.io/) and paste the response there. This should decode the token for you and show an output like above.
+
+Additionally, if you want to verify this token, you can supply the random string we added to the `.env` file for the backend.
 
 Throughout the `Home.js` and `Details.js` we then update all call to the backend to use the common helper function from `Utils.js` to call the backend, like this:
 ```js
