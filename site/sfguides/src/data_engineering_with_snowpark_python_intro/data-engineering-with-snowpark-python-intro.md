@@ -109,7 +109,7 @@ This will open a new tab and begin setting up your codespace. It will take a few
   - Installing the Snowflake VS Code extension
 - Starting a hosted, web-based VS Code editor
 
-Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
+Once the codespace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
 
 ### Configure Snowflake Credentials
 We will not be directly using [the SnowCLI command line client](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) for this Quickstart, but we will be storing our Snowflake connection details in the SnowCLI connections file located at `~/.snowflake/connections.toml`. A default connection file was created for you during the codespace setup.
@@ -155,7 +155,7 @@ Open '03_git_config.sql' in VS Code.
 
 ---
 
-
+> aside positive
 > IMPORTANT:
 >
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -190,7 +190,8 @@ GRANT OWNERSHIP ON SCHEMA PUBLIC TO ROLE GIT_ADMIN;
 
 > aside positive
 > IMPORTANT
-> Make sure to update lines 22, 23, 32, and 39 with the values specific to your github repo
+> 
+> Make sure to update lines 22, 23, 32, and 39 with the values specific to your Github repo
 
 ```sql
 USE ROLE GIT_ADMIN;
@@ -227,7 +228,7 @@ SHOW GIT BRANCHES IN DE_QUICKSTART;
 ls @DE_QUICKSTART/branches/main;
 ```
 
-Now that we know our repository is accessible, we will create the objects and permissions necessary to run the lab. This uses Jinja templating to allow to substitute values with variables at run time, as well as looping and other capabilities. In today's example, we simply pass in the current user so that the role used for the lab is granted to the current user, but you can use variables to define the environment the code is deployed to and more. More information on using `EXECUTE IMMEDIATE FROM` and Jinja2 templating is available in the [documentation here](https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from). 
+Now that we know our repository is accessible, we will create the objects and permissions necessary to run the lab. This uses Jinja2 templating to allow to substitute values with variables at run time, as well as looping and other capabilities. In today's example, we simply pass in the current user so that the role used for the lab is granted to the current user, but you can use variables to define the environment the code is deployed to and more. More information on using `EXECUTE IMMEDIATE FROM` and Jinja2 templating is available in the [documentation here](https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from). 
 
 Execute the following lines together. 
 ```sql
@@ -354,15 +355,15 @@ You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL
 ## Load Raw
 Duration: 10 
 
-During this step we will be loading the raw Tasty Bytes POS and Customer loyalty data from raw Parquet files in `s3://sfquickstarts/data-engineering-with-snowpark-python/` to our `RAW_POS` and `RAW_CUSTOMER` schemas in Snowflake. And you are going to be orchestrating this process from your laptop in Python using the Snowpark Python API. To put this in context, we are on step **#2** in our data flow overview:
+During this step we will be loading the raw Tasty Bytes POS and Customer loyalty data from raw Parquet files in `s3://sfquickstarts/data-engineering-with-snowpark-python/` to our `RAW_POS` and `RAW_CUSTOMER` schemas in Snowflake. And you are going to be orchestrating this process from your laptop in Python using the Snowpark Python API. To put this in context, we are on step **#5** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
 
 ### Run the Script
-To load the raw data, execute the `app/05_raw_data.py` script. This can be done a number of ways in VS Code, from a terminal or directly by VS Code. For this demo you will need to execute the Python scripts from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
+To load the raw data, execute the `app/05_load_raw_data.py` script. This can be done a number of ways in VS Code, from a terminal or directly by VS Code. For this demo you will need to execute the Python scripts from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
-python app/05_raw_data.py
+python app/05_load_raw_
 ```
 
 While that is running, please open the script in VS Code and continue on this page to understand what is happening.
@@ -447,7 +448,7 @@ During this step we will be transforming the raw data into an aggregated metrics
 
 To run this step, we will follow the same process as before. From your terminal, run the following command:
 ```bash
-python app/05_raw_data.py
+python 
 ```
 
 To put this in context, we are on step **#6** in our data flow overview:
@@ -659,7 +660,7 @@ You should now see all the queries run by your tasks!
 ## Deploy via CI/CD
 Duration: 15
 
-During this step, we will comment out the validation code we use in `app/05_raw_data.py' as this is not needed in production. Open this file in VS Code and comment line 70 from the very bottom section of the code as shown below.
+During this step, we will comment out the validation code we use in the snippet below as this is not needed in production. Open this file in VS Code and comment line 70 from the very bottom section of the code as shown below.
 
 ```python
 # For local debugging
@@ -748,7 +749,6 @@ As soon as you pushed the changes to your GitHub forked repo the workflow kicked
 
 <img src="assets/github-actions-run-summary.png" width="800" />
 
-The output of the `Deploy Snowpark apps` step should be familiar to you by now, and should be what you saw in the terminal in VS Code when you ran SnowCLI in previous steps. The one thing that may be different is the order of the output, but you should be able to see what's happening.
 <!-- ------------------------ -->
 ## Teardown
 
